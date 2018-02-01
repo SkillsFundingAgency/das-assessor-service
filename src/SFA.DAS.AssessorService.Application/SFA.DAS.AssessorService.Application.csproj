@@ -42,5 +42,19 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SFA.DAS.AssessorService.Data\SFA.DAS.AssessorService.Data.csproj">
+      <Project>{f6ac3c6e-a45b-4fdc-92d0-8a665d9a3929}</Project>
+      <Name>SFA.DAS.AssessorService.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SFA.DAS.AssessorService.Domain\SFA.DAS.AssessorService.Domain.csproj">
+      <Project>{804db2c2-7671-42cc-b264-b2ee5a21f5fc}</Project>
+      <Name>SFA.DAS.AssessorService.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SFA.DAS.AssessorService.Integration\SFA.DAS.AssessorService.Integration.csproj">
+      <Project>{43e0dd08-34df-41f4-a037-3f8e295a2533}</Project>
+      <Name>SFA.DAS.AssessorService.Integration</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
