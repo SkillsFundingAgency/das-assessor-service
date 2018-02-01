@@ -30,12 +30,13 @@ namespace SFA.DAS.AssessorService.Web.DependencyResolution {
                     scan.AssembliesFromApplicationBaseDirectory(a => a.GetName().Name.StartsWith(ServiceNamespace));
                     scan.WithDefaultConventions();
 					scan.With(new ControllerConvention());
-                    
+                    scan.ConnectImplementationsToTypesClosing(typeof(IRequestHandler<>)); 
+                    scan.ConnectImplementationsToTypesClosing(typeof(IRequestHandler<,>));
+                    scan.ConnectImplementationsToTypesClosing(typeof(INotificationHandler<>));
                 });
             For<SingleInstanceFactory>().Use<SingleInstanceFactory>(ctx => t => ctx.GetInstance(t));
             For<MultiInstanceFactory>().Use<MultiInstanceFactory>(ctx => t => ctx.GetAllInstances(t));
             For<IMediator>().Use<Mediator>();
-            //For<IExample>().Use<Example>();
         }
     }
 }
