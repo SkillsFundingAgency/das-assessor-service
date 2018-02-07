@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  sfa.das.assessorservice.application.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "80"
+
+  sfa.das.assessorservice.web:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "80"
+

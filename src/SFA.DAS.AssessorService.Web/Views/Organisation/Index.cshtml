@@ -1,0 +1,15 @@
+﻿@model SFA.DAS.AssessorService.Web.ViewModels.Organisation
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<div class="row">
+    <h2>Organisation DEtails</h2>
+    <h3>Name: @Model.Name</h3>
+    <h3>EPAOrdIg: @Model.Id</h3>
+    <h3>UkPrn: @Model.UkPrn</h3>
+</div>
+
+<a asp-controller="Account" asp-action="SignOut">Sign out</a>
