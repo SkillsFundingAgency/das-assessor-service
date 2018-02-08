@@ -1,11 +1,26 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Add and print apprentice's certificates as an End Point Assessor Organisation";
 }
 
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <h1 class="heading-xlarge">Add and print apprentice's certificates as an End Point Assessor Organisation</h1>
 
-<div class="row">
-    <h1>Amazing Landing Page</h1>
-    <br />
-    
-    <a asp-action="Index" asp-controller="Organisation">Click here to Sign In</a> .
+        <p>This service is for End Point Assessor registered with the apprenticeship service.</p>
+        <ul class="list list-bullet">
+            <li>add details of the certificates for apprentices they have assessed'</li>
+            <li>request printing and delivery of the apprentices' certificates</li>
+        </ul>
+
+        <h2 class="heading-medium">Before you start</h2>
+        <p>You need to have an account with the government’s Information Management Services system (IdAMS) to use this.</p>
+        <p>If your organisation doesn't already have an IdAMS account, you’ll get your account details when you <a href="https://www.gov.uk/government/publications/register-of-apprentice-assessment-organisations-how-to-apply" target="_blank" rel="external">Apply to be on the Register of end-point assessment organisations</a>.</p>
+        <p>If your organisation does already have an IdAMS account, an account super user from your organisation will need to give you access to the apprenticeship service.</p>
+
+        <div class="form-group">
+            <a asp-action="Index" asp-controller="Organisation">Click here to login to your account</a> .
+        </div>
+
+
+    </div>
 </div>
