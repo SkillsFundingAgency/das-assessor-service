@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Web.Services;
 
@@ -10,7 +11,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     {
         private readonly IOrganisationService _organisationService;
 
-        public OrganisationController(IOrganisationService organisationService, ICache cache) : base(cache)
+        public OrganisationController(IOrganisationService organisationService, ICache cache, IHttpContextAccessor contextAccessor) : base(cache, contextAccessor)
         {
             _organisationService = organisationService;
         }
@@ -23,24 +24,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var organisation = await _organisationService.GetOrganisation(jwt);
             
             return View(organisation);
-        }
-    }
-
-    public class BaseController : Controller
-    {
-        private readonly ICache _cache;
-
-        public BaseController(ICache cache)
-        {
-            _cache = cache;
-        }
-
-        protected string GetJwt()
-        {
-            // This needs to handle the token not being in the cache, the token having expired.
-            var userObjectId = (User.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier"))?.Value;
-
-            return _cache.GetString(userObjectId);
         }
     }
 }
