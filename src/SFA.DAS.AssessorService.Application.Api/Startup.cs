@@ -1,22 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using SFA.DAS.AssessmentOrgs.Api.Client;
-using SFA.DAS.AssessorService.Application.Api.Extensions;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Data;
+using StructureMap;
 
 namespace SFA.DAS.AssessorService.Application.Api
 {
@@ -29,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Api
 
         public IConfiguration Configuration { get; }
 
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddAuthentication(sharedOptions =>
                 {
@@ -50,12 +45,43 @@ namespace SFA.DAS.AssessorService.Application.Api
                     };
                 });
 
-            
-            services.AddMediatR(Assembly.Load("SFA.DAS.AssessorService.Application"));
-            services.AddMvc();
 
-            services.AddTransient<IOrganisationRepository, OrganisationRepository>();
-            services.AddTransient<IAssessmentOrgsApiClient, AssessmentOrgsApiClient>();
+            
+            //services.AddMediatR(Assembly.Load("SFA.DAS.AssessorService.Application"));
+            services.AddMvc().AddControllersAsServices();
+
+            return ConfigureIOC(services);
+
+            //services.AddTransient<IOrganisationRepository, OrganisationRepository>();
+            //services.AddTransient<IAssessmentOrgsApiClient, AssessmentOrgsApiClient>();
+        }
+
+        private IServiceProvider ConfigureIOC(IServiceCollection services)
+        {
+            var container = new Container();
+
+            container.Configure(config =>
+            {
+                config.Scan(_ =>
+                {
+                    //_.AssemblyContainingType(typeof(Startup));
+                    _.AssembliesFromApplicationBaseDirectory(c => c.FullName.StartsWith("SFA"));
+                    _.WithDefaultConventions();
+
+                    _.ConnectImplementationsToTypesClosing(typeof(IRequestHandler<>)); // Handlers with no response
+                    _.ConnectImplementationsToTypesClosing(typeof(IRequestHandler<,>)); // Handlers with a response
+                    _.ConnectImplementationsToTypesClosing(typeof(INotificationHandler<>));
+                });
+
+                config.For<SingleInstanceFactory>().Use<SingleInstanceFactory>(ctx => t => ctx.GetInstance(t));
+                config.For<MultiInstanceFactory>().Use<MultiInstanceFactory>(ctx => t => ctx.GetAllInstances(t));
+                config.For<IMediator>().Use<Mediator>();
+                config.For<IAssessmentOrgsApiClient>().Use(() => new AssessmentOrgsApiClient(null));
+
+                config.Populate(services);
+            });
+
+            return container.GetInstance<IServiceProvider>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

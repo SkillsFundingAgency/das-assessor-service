@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Services;
+using StructureMap;
 
 namespace SFA.DAS.AssessorService.Web
 {
@@ -25,7 +22,7 @@ namespace SFA.DAS.AssessorService.Web
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddAuthentication(sharedOptions =>
             {
@@ -39,19 +36,33 @@ namespace SFA.DAS.AssessorService.Web
                 })
             .AddCookie();
 
-            services.AddMvc().AddSessionStateTempDataProvider();
+            services.AddMvc().AddControllersAsServices().AddSessionStateTempDataProvider();
 
-            services.AddSession(options =>
+            services.AddSession();
+
+            return ConfigureIOC(services);
+        }
+
+        private IServiceProvider ConfigureIOC(IServiceCollection services)
+        {
+            var container = new Container();
+
+            container.Configure(config =>
             {
-                // Set a short timeout for easy testing.
-                //options.IdleTimeout = TimeSpan.FromSeconds(10);
-                options.Cookie.HttpOnly = true;
+                config.Scan(_ =>
+                {
+                    _.AssemblyContainingType(typeof(Startup));
+                    _.WithDefaultConventions();
+                });
+
+                config.For<IHttpClient>().Use<StandardHttpClient>();
+                config.For<ICache>().Use<Services.SessionCache>();
+
+                //Populate the container using the service collection
+                config.Populate(services);
             });
 
-            services.AddTransient<ICache, SessionCache>();
-            services.AddTransient<IOrganisationService, OrganisationService>();
-            services.AddTransient<IHttpClient, StandardHttpClient>();
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            return container.GetInstance<IServiceProvider>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
