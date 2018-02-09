@@ -9,7 +9,6 @@
     <PackageReference Include="Moq" Version="4.8.1" />
     <PackageReference Include="nunit" Version="3.9.0" />
     <PackageReference Include="Nunit3testadapter" Version="3.9.0" />
-    <PackageReference Include="SFA.DAS.AssessmentOrgs.Api.Client" Version="0.10.122" />
   </ItemGroup>
 
   <ItemGroup>

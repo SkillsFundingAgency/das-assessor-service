@@ -13,15 +13,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.App
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{EB54D000-867F-48CA-AE28-BDBE0CCE1322}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.Integration", "SFA.DAS.AssessorService.Integration\SFA.DAS.AssessorService.Integration.csproj", "{39B77149-636E-4C8B-A7DC-1FAAD0596CC1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Integration", "SFA.DAS.AssessorService.Integration\SFA.DAS.AssessorService.Integration.csproj", "{39B77149-636E-4C8B-A7DC-1FAAD0596CC1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.Domain", "SFA.DAS.AssessorService.Domain\SFA.DAS.AssessorService.Domain.csproj", "{95283279-6151-4580-A781-93903696A1A2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Domain", "SFA.DAS.AssessorService.Domain\SFA.DAS.AssessorService.Domain.csproj", "{95283279-6151-4580-A781-93903696A1A2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.Application", "SFA.DAS.AssessorService.Application\SFA.DAS.AssessorService.Application.csproj", "{AC67EDD9-70F9-4A60-B7D3-74E1434D8800}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Application", "SFA.DAS.AssessorService.Application\SFA.DAS.AssessorService.Application.csproj", "{AC67EDD9-70F9-4A60-B7D3-74E1434D8800}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.Application.UnitTests", "SFA.DAS.AssessorService.Application.UnitTests\SFA.DAS.AssessorService.Application.UnitTests.csproj", "{4C41B95D-C9E5-461A-B198-F1F36A61176A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Application.UnitTests", "SFA.DAS.AssessorService.Application.UnitTests\SFA.DAS.AssessorService.Application.UnitTests.csproj", "{4C41B95D-C9E5-461A-B198-F1F36A61176A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.Data", "SFA.DAS.AssessorService.Data\SFA.DAS.AssessorService.Data.csproj", "{A5A5E353-A6B4-4809-83F4-1199572AAF11}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Data", "SFA.DAS.AssessorService.Data\SFA.DAS.AssessorService.Data.csproj", "{A5A5E353-A6B4-4809-83F4-1199572AAF11}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExternalApi", "ExternalApi", "{EFD6034B-FA26-4A09-8FDA-D03C3326560C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessmentOrgs.Api.Client.Core", "SFA.DAS.AssessmentOrgs.Api.Client.Core\SFA.DAS.AssessmentOrgs.Api.Client.Core.csproj", "{13718FBC-6B4E-41BE-A23B-2AFF88F42DA3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -65,6 +69,10 @@ Global
 		{A5A5E353-A6B4-4809-83F4-1199572AAF11}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A5A5E353-A6B4-4809-83F4-1199572AAF11}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A5A5E353-A6B4-4809-83F4-1199572AAF11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13718FBC-6B4E-41BE-A23B-2AFF88F42DA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13718FBC-6B4E-41BE-A23B-2AFF88F42DA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13718FBC-6B4E-41BE-A23B-2AFF88F42DA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13718FBC-6B4E-41BE-A23B-2AFF88F42DA3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -73,6 +81,7 @@ Global
 		{F8E42D52-9A76-4475-92FA-CF8FF286EF4C} = {EB54D000-867F-48CA-AE28-BDBE0CCE1322}
 		{E6E3A82F-A269-42E3-A1C6-0B157CFF4408} = {EB54D000-867F-48CA-AE28-BDBE0CCE1322}
 		{4C41B95D-C9E5-461A-B198-F1F36A61176A} = {EB54D000-867F-48CA-AE28-BDBE0CCE1322}
+		{13718FBC-6B4E-41BE-A23B-2AFF88F42DA3} = {EFD6034B-FA26-4A09-8FDA-D03C3326560C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C5B677B2-0D72-4629-A5FD-F94B00EC858B}

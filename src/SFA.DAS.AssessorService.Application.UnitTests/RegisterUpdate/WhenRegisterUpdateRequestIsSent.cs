@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.AssessmentOrgs.Api.Client;
+using SFA.DAS.AssessmentOrgs.Api.Client.Core;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.RegisterUpdate;
 

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using SFA.DAS.AssessmentOrgs.Api.Client;
+using SFA.DAS.AssessmentOrgs.Api.Client.Core;
 using StructureMap;
 
 namespace SFA.DAS.AssessorService.Application.Api

@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using SFA.DAS.AssessmentOrgs.Api.Client;
+using SFA.DAS.AssessmentOrgs.Api.Client.Core;
 using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.RegisterUpdate
