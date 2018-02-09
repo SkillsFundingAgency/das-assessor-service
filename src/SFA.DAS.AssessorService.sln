@@ -7,21 +7,21 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.App
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Web", "SFA.DAS.AssessorService.Web\SFA.DAS.AssessorService.Web.csproj", "{CC8BD1D6-B3DB-454C-BC39-C035ED99CF56}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Application", "SFA.DAS.AssessorService.Application\SFA.DAS.AssessorService.Application.csproj", "{D8D7164F-080F-4115-9FBD-3359C5851C50}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Data", "SFA.DAS.AssessorService.Data\SFA.DAS.AssessorService.Data.csproj", "{26F80035-AF2F-40F5-8B48-161B0D94EE38}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Domain", "SFA.DAS.AssessorService.Domain\SFA.DAS.AssessorService.Domain.csproj", "{B5101491-4CEE-4250-9B9F-8CB9D76BD485}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Integration", "SFA.DAS.AssessorService.Integration\SFA.DAS.AssessorService.Integration.csproj", "{03806039-B401-4AEF-B06E-15AA9765FADE}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.Application.UnitTests", "SFA.DAS.AssessorService.Application.UnitTests\SFA.DAS.AssessorService.Application.UnitTests.csproj", "{C93B809C-01A0-4C13-9B5F-E5591EB415C0}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Web.UnitTests", "SFA.DAS.AssessorService.Web.UnitTests\SFA.DAS.AssessorService.Web.UnitTests.csproj", "{F8E42D52-9A76-4475-92FA-CF8FF286EF4C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.Application.Api.UnitTests", "SFA.DAS.AssessorService.Application.Api.UnitTests\SFA.DAS.AssessorService.Application.Api.UnitTests.csproj", "{E6E3A82F-A269-42E3-A1C6-0B157CFF4408}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Application.Api.UnitTests", "SFA.DAS.AssessorService.Application.Api.UnitTests\SFA.DAS.AssessorService.Application.Api.UnitTests.csproj", "{E6E3A82F-A269-42E3-A1C6-0B157CFF4408}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{EB54D000-867F-48CA-AE28-BDBE0CCE1322}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.Integration", "SFA.DAS.AssessorService.Integration\SFA.DAS.AssessorService.Integration.csproj", "{39B77149-636E-4C8B-A7DC-1FAAD0596CC1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.Domain", "SFA.DAS.AssessorService.Domain\SFA.DAS.AssessorService.Domain.csproj", "{95283279-6151-4580-A781-93903696A1A2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.Application", "SFA.DAS.AssessorService.Application\SFA.DAS.AssessorService.Application.csproj", "{AC67EDD9-70F9-4A60-B7D3-74E1434D8800}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.Application.UnitTests", "SFA.DAS.AssessorService.Application.UnitTests\SFA.DAS.AssessorService.Application.UnitTests.csproj", "{4C41B95D-C9E5-461A-B198-F1F36A61176A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.Data", "SFA.DAS.AssessorService.Data\SFA.DAS.AssessorService.Data.csproj", "{A5A5E353-A6B4-4809-83F4-1199572AAF11}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,26 +37,6 @@ Global
 		{CC8BD1D6-B3DB-454C-BC39-C035ED99CF56}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC8BD1D6-B3DB-454C-BC39-C035ED99CF56}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CC8BD1D6-B3DB-454C-BC39-C035ED99CF56}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D8D7164F-080F-4115-9FBD-3359C5851C50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D8D7164F-080F-4115-9FBD-3359C5851C50}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D8D7164F-080F-4115-9FBD-3359C5851C50}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D8D7164F-080F-4115-9FBD-3359C5851C50}.Release|Any CPU.Build.0 = Release|Any CPU
-		{26F80035-AF2F-40F5-8B48-161B0D94EE38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{26F80035-AF2F-40F5-8B48-161B0D94EE38}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{26F80035-AF2F-40F5-8B48-161B0D94EE38}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{26F80035-AF2F-40F5-8B48-161B0D94EE38}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B5101491-4CEE-4250-9B9F-8CB9D76BD485}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B5101491-4CEE-4250-9B9F-8CB9D76BD485}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B5101491-4CEE-4250-9B9F-8CB9D76BD485}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B5101491-4CEE-4250-9B9F-8CB9D76BD485}.Release|Any CPU.Build.0 = Release|Any CPU
-		{03806039-B401-4AEF-B06E-15AA9765FADE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{03806039-B401-4AEF-B06E-15AA9765FADE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{03806039-B401-4AEF-B06E-15AA9765FADE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{03806039-B401-4AEF-B06E-15AA9765FADE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C93B809C-01A0-4C13-9B5F-E5591EB415C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C93B809C-01A0-4C13-9B5F-E5591EB415C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C93B809C-01A0-4C13-9B5F-E5591EB415C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C93B809C-01A0-4C13-9B5F-E5591EB415C0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F8E42D52-9A76-4475-92FA-CF8FF286EF4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F8E42D52-9A76-4475-92FA-CF8FF286EF4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F8E42D52-9A76-4475-92FA-CF8FF286EF4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -65,14 +45,34 @@ Global
 		{E6E3A82F-A269-42E3-A1C6-0B157CFF4408}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E6E3A82F-A269-42E3-A1C6-0B157CFF4408}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E6E3A82F-A269-42E3-A1C6-0B157CFF4408}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39B77149-636E-4C8B-A7DC-1FAAD0596CC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39B77149-636E-4C8B-A7DC-1FAAD0596CC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39B77149-636E-4C8B-A7DC-1FAAD0596CC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39B77149-636E-4C8B-A7DC-1FAAD0596CC1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95283279-6151-4580-A781-93903696A1A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95283279-6151-4580-A781-93903696A1A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95283279-6151-4580-A781-93903696A1A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95283279-6151-4580-A781-93903696A1A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC67EDD9-70F9-4A60-B7D3-74E1434D8800}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC67EDD9-70F9-4A60-B7D3-74E1434D8800}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC67EDD9-70F9-4A60-B7D3-74E1434D8800}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC67EDD9-70F9-4A60-B7D3-74E1434D8800}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C41B95D-C9E5-461A-B198-F1F36A61176A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C41B95D-C9E5-461A-B198-F1F36A61176A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C41B95D-C9E5-461A-B198-F1F36A61176A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C41B95D-C9E5-461A-B198-F1F36A61176A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5A5E353-A6B4-4809-83F4-1199572AAF11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5A5E353-A6B4-4809-83F4-1199572AAF11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5A5E353-A6B4-4809-83F4-1199572AAF11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5A5E353-A6B4-4809-83F4-1199572AAF11}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{C93B809C-01A0-4C13-9B5F-E5591EB415C0} = {EB54D000-867F-48CA-AE28-BDBE0CCE1322}
 		{F8E42D52-9A76-4475-92FA-CF8FF286EF4C} = {EB54D000-867F-48CA-AE28-BDBE0CCE1322}
 		{E6E3A82F-A269-42E3-A1C6-0B157CFF4408} = {EB54D000-867F-48CA-AE28-BDBE0CCE1322}
+		{4C41B95D-C9E5-461A-B198-F1F36A61176A} = {EB54D000-867F-48CA-AE28-BDBE0CCE1322}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C5B677B2-0D72-4629-A5FD-F94B00EC858B}

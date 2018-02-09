@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
 
             handler.Handle(new RegisterUpdateRequest(), new CancellationToken()).Wait();
 
-            apiClient.Verify(client => client.FindAllAsync());
+            apiClient.Verify(client => client.FindAllAsync()); 
         }
     }
 }
