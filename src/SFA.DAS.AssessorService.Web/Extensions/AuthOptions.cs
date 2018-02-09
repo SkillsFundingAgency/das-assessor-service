@@ -1,6 +1,6 @@
 ﻿namespace Microsoft.AspNetCore.Authentication
 {
-    public class AzureAdOptions
+    public class AuthOptions
     {
         public string ClientId { get; set; }
 
@@ -38,7 +38,7 @@
         /// <summary>
         /// Instance of the settings for this Web application (to be used in controllers)
         /// </summary>
-        public static AzureAdOptions Settings { set; get; }
+        public static AuthOptions Settings { set; get; }
 
         public string TokenEncodingKey { get; set; }
     }

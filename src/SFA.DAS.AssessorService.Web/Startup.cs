@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SFA.DAS.AssessorService.Web.Extensions;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Services;
 using StructureMap;
@@ -31,8 +32,8 @@ namespace SFA.DAS.AssessorService.Web
             })
             .AddAzureAd(options =>
                 {
-                    Configuration.Bind("AzureAd", options);
-                    AzureAdOptions.Settings = options;
+                    Configuration.Bind("AuthOptions", options);
+                    AuthOptions.Settings = options;
                 })
             .AddCookie();
 

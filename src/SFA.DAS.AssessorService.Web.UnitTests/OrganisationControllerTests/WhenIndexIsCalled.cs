@@ -5,6 +5,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Web.Controllers;
@@ -45,7 +46,9 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
                 .Setup(c => c.GetString("userid1"))
                 .Returns("jwt");
 
-            _organisationController = new OrganisationController(_organisationService.Object, _cache.Object, httpContext.Object);
+            var logger = new Mock<ILogger<OrganisationController>>();
+
+            _organisationController = new OrganisationController(_organisationService.Object, _cache.Object, httpContext.Object, logger.Object);
         }
 
         [Test]

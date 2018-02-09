@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Web.Services;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
@@ -11,7 +12,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     {
         private readonly IOrganisationService _organisationService;
 
-        public OrganisationController(IOrganisationService organisationService, ICache cache, IHttpContextAccessor contextAccessor) : base(cache, contextAccessor)
+        public OrganisationController(IOrganisationService organisationService, ICache cache, 
+            IHttpContextAccessor contextAccessor, ILogger<OrganisationController> logger) : base(cache, contextAccessor, logger)
         {
             _organisationService = organisationService;
         }

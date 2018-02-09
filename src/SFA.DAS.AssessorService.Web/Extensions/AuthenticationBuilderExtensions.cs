@@ -3,47 +3,47 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Microsoft.IdentityModel.Tokens;
 using SFA.DAS.AssessorService.Web.Utils;
 
-namespace Microsoft.AspNetCore.Authentication
+namespace SFA.DAS.AssessorService.Web.Extensions
 {
-    public static class AzureAdAuthenticationBuilderExtensions
+    public static class AuthenticationBuilderExtensions
     {        
         public static AuthenticationBuilder AddAzureAd(this AuthenticationBuilder builder)
             => builder.AddAzureAd(_ => { });
 
-        public static AuthenticationBuilder AddAzureAd(this AuthenticationBuilder builder, Action<AzureAdOptions> configureOptions)
+        public static AuthenticationBuilder AddAzureAd(this AuthenticationBuilder builder, Action<AuthOptions> configureOptions)
         {
             builder.Services.Configure(configureOptions);
-            builder.Services.AddSingleton<IConfigureOptions<OpenIdConnectOptions>, ConfigureAzureOptions>();
+            builder.Services.AddSingleton<IConfigureOptions<OpenIdConnectOptions>, ConfigureAuthenticationOptions>();
             builder.AddOpenIdConnect();
             return builder;
         }
 
-        private class ConfigureAzureOptions: IConfigureNamedOptions<OpenIdConnectOptions>
+        private class ConfigureAuthenticationOptions: IConfigureNamedOptions<OpenIdConnectOptions>
         {
-            private readonly AzureAdOptions _azureOptions;
+            private readonly AuthOptions _options;
 
-            public ConfigureAzureOptions(IOptions<AzureAdOptions> azureOptions)
+            public ConfigureAuthenticationOptions(IOptions<AuthOptions> options)
             {
-                _azureOptions = azureOptions.Value;
+                _options = options.Value;
             }
 
             public void Configure(string name, OpenIdConnectOptions options)
             {
-                options.ClientId = _azureOptions.ClientId;
-                options.Authority = $"{_azureOptions.Instance}{_azureOptions.TenantId}";
+                options.ClientId = _options.ClientId;
+                options.Authority = $"{_options.Instance}{_options.TenantId}";
                 options.UseTokenLifetime = true;
-                options.CallbackPath = _azureOptions.CallbackPath;
+                options.CallbackPath = _options.CallbackPath;
                 options.RequireHttpsMetadata = false;
-                options.ClientSecret = _azureOptions.ClientSecret;
+                options.ClientSecret = _options.ClientSecret;
                 options.ResponseType = "id_token code";
                 options.Resource = "https://graph.windows.net"; // AAD graph
                 
@@ -60,7 +60,7 @@ namespace Microsoft.AspNetCore.Authentication
                     new Claim("ukprn", userObjectId, ClaimValueTypes.String)
                 };
 
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_azureOptions.TokenEncodingKey));
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.TokenEncodingKey));
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
                 var token = new JwtSecurityToken(
@@ -75,18 +75,6 @@ namespace Microsoft.AspNetCore.Authentication
                 context.HttpContext.Session.SetString(userObjectId, jwt);
 
                 return Task.FromResult(0);
-            }
-
-            private async Task OnAuthorizationCodeReceived(AuthorizationCodeReceivedContext context)
-            {
-                string userObjectId = (context.Principal.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier"))?.Value;
-                var authContext = new AuthenticationContext(context.Options.Authority, new SimpleSessionCache(userObjectId, context.HttpContext.Session));
-                var credential = new ClientCredential(context.Options.ClientId, context.Options.ClientSecret);
-
-                var authResult = await authContext.AcquireTokenByAuthorizationCodeAsync(context.TokenEndpointRequest.Code,
-                    new Uri(context.TokenEndpointRequest.RedirectUri, UriKind.RelativeOrAbsolute), credential, context.Options.Resource);
-             
-                context.HandleCodeRedemption(authResult.AccessToken, context.ProtocolMessage.IdToken);
             }
 
             public void Configure(OpenIdConnectOptions options)
