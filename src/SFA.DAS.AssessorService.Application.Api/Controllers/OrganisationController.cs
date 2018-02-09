@@ -16,9 +16,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _organisationRepository = organisationRepository;
         }
 
-
+        /// <summary>
+        /// Returns the logged on User's EPOA details.
+        /// </summary>
+        /// <returns>The User's EPOA Organisation</returns>
         [HttpGet]
-        // GET
         public async Task<IActionResult> Get()
         {
             var ukprn = (User.FindFirst("ukprn"))?.Value;

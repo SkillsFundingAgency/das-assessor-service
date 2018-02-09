@@ -217,3 +217,88 @@ Parameter name: configuration
 2018-02-09 13:27:42.7909 Info Adding target Null Target[blackhole]
 2018-02-09 13:27:42.7909 Info Adding target Redis Target[redis]
 2018-02-09 13:27:42.8498 Info Configured from an XML element in nlog.config...
+2018-02-09 13:52:03.7551 Info Message Template Auto Format enabled
+2018-02-09 13:52:03.7813 Info Loading assembly: SFA.DAS.NLog.Targets.Redis
+2018-02-09 13:52:04.0875 Info Adding target File Target[allfile]
+2018-02-09 13:52:04.4461 Info Adding target File Target[ownFile-web]
+2018-02-09 13:52:04.5020 Info Adding target Null Target[blackhole]
+2018-02-09 13:52:04.5782 Info Adding target Redis Target[redis]
+2018-02-09 13:52:04.6222 Info Configured from an XML element in nlog.config...
+2018-02-09 13:52:04.8401 Info Found 62 configuration items
+2018-02-09 13:52:07.0726 Info Found 62 configuration items
+2018-02-09 13:52:11.8653 Info Message Template Auto Format enabled
+2018-02-09 13:52:11.8920 Info Found 62 configuration items
+2018-02-09 13:52:11.9065 Info Loading assembly: SFA.DAS.NLog.Targets.Redis
+2018-02-09 13:52:11.9285 Info Adding target File Target[allfile]
+2018-02-09 13:52:11.9306 Info Adding target File Target[ownFile-web]
+2018-02-09 13:52:11.9306 Info Adding target Null Target[blackhole]
+2018-02-09 13:52:11.9306 Info Adding target Redis Target[redis]
+2018-02-09 13:52:11.9306 Info Configured from an XML element in nlog.config...
+2018-02-09 13:56:05.5381 Info Message Template Auto Format enabled
+2018-02-09 13:56:05.5618 Info Loading assembly: SFA.DAS.NLog.Targets.Redis
+2018-02-09 13:56:05.8081 Info Adding target File Target[allfile]
+2018-02-09 13:56:05.8847 Info Adding target File Target[ownFile-web]
+2018-02-09 13:56:05.8847 Info Adding target Null Target[blackhole]
+2018-02-09 13:56:05.8847 Info Adding target Redis Target[redis]
+2018-02-09 13:56:05.9119 Info Configured from an XML element in nlog.config...
+2018-02-09 13:56:05.9853 Info Found 62 configuration items
+2018-02-09 13:56:08.4244 Info Found 62 configuration items
+2018-02-09 13:56:12.7891 Info Message Template Auto Format enabled
+2018-02-09 13:56:12.8063 Info Found 62 configuration items
+2018-02-09 13:56:12.8450 Info Loading assembly: SFA.DAS.NLog.Targets.Redis
+2018-02-09 13:56:12.8450 Info Adding target File Target[allfile]
+2018-02-09 13:56:12.8450 Info Adding target File Target[ownFile-web]
+2018-02-09 13:56:12.8450 Info Adding target Null Target[blackhole]
+2018-02-09 13:56:12.8542 Info Adding target Redis Target[redis]
+2018-02-09 13:56:12.8542 Info Configured from an XML element in nlog.config...
+2018-02-09 13:59:03.8756 Info Message Template Auto Format enabled
+2018-02-09 13:59:03.9104 Info Loading assembly: SFA.DAS.NLog.Targets.Redis
+2018-02-09 13:59:04.3743 Info Adding target File Target[allfile]
+2018-02-09 13:59:04.7342 Info Adding target File Target[ownFile-web]
+2018-02-09 13:59:04.7342 Info Adding target Null Target[blackhole]
+2018-02-09 13:59:04.7464 Info Adding target Redis Target[redis]
+2018-02-09 13:59:04.7464 Info Configured from an XML element in nlog.config...
+2018-02-09 13:59:04.8638 Info Found 62 configuration items
+2018-02-09 13:59:06.8254 Info Found 62 configuration items
+2018-02-09 13:59:12.3662 Info Message Template Auto Format enabled
+2018-02-09 13:59:12.3913 Info Found 62 configuration items
+2018-02-09 13:59:12.4674 Info Loading assembly: SFA.DAS.NLog.Targets.Redis
+2018-02-09 13:59:12.4674 Info Adding target File Target[allfile]
+2018-02-09 13:59:12.4674 Info Adding target File Target[ownFile-web]
+2018-02-09 13:59:12.4674 Info Adding target Null Target[blackhole]
+2018-02-09 13:59:12.4674 Info Adding target Redis Target[redis]
+2018-02-09 13:59:12.4771 Info Configured from an XML element in nlog.config...
+2018-02-09 14:00:45.9873 Info Message Template Auto Format enabled
+2018-02-09 14:00:46.0204 Info Loading assembly: SFA.DAS.NLog.Targets.Redis
+2018-02-09 14:00:46.3035 Info Adding target File Target[allfile]
+2018-02-09 14:00:46.3383 Info Adding target File Target[ownFile-web]
+2018-02-09 14:00:46.3383 Info Adding target Null Target[blackhole]
+2018-02-09 14:00:46.3575 Info Adding target Redis Target[redis]
+2018-02-09 14:00:46.3575 Info Configured from an XML element in nlog.config...
+2018-02-09 14:00:46.4291 Info Found 62 configuration items
+2018-02-09 14:00:48.7018 Info Found 62 configuration items
+2018-02-09 14:00:53.0195 Info Message Template Auto Format enabled
+2018-02-09 14:00:53.1002 Info Found 62 configuration items
+2018-02-09 14:00:53.1124 Info Loading assembly: SFA.DAS.NLog.Targets.Redis
+2018-02-09 14:00:53.1124 Info Adding target File Target[allfile]
+2018-02-09 14:00:53.1124 Info Adding target File Target[ownFile-web]
+2018-02-09 14:00:53.1181 Info Adding target Null Target[blackhole]
+2018-02-09 14:00:53.1181 Info Adding target Redis Target[redis]
+2018-02-09 14:00:53.1181 Info Configured from an XML element in nlog.config...
+2018-02-09 14:05:16.3929 Info Message Template Auto Format enabled
+2018-02-09 14:05:16.4411 Info Loading assembly: SFA.DAS.NLog.Targets.Redis
+2018-02-09 14:05:17.0298 Info Adding target File Target[allfile]
+2018-02-09 14:05:17.0913 Info Adding target File Target[ownFile-web]
+2018-02-09 14:05:17.1029 Info Adding target Null Target[blackhole]
+2018-02-09 14:05:17.1218 Info Adding target Redis Target[redis]
+2018-02-09 14:05:17.1489 Info Configured from an XML element in nlog.config...
+2018-02-09 14:05:17.2696 Info Found 62 configuration items
+2018-02-09 14:05:19.6780 Info Found 62 configuration items
+2018-02-09 14:05:23.4549 Info Message Template Auto Format enabled
+2018-02-09 14:05:23.4657 Info Found 62 configuration items
+2018-02-09 14:05:23.4657 Info Loading assembly: SFA.DAS.NLog.Targets.Redis
+2018-02-09 14:05:23.4657 Info Adding target File Target[allfile]
+2018-02-09 14:05:23.4795 Info Adding target File Target[ownFile-web]
+2018-02-09 14:05:23.4795 Info Adding target Null Target[blackhole]
+2018-02-09 14:05:23.4795 Info Adding target Redis Target[redis]
+2018-02-09 14:05:23.4795 Info Configured from an XML element in nlog.config...

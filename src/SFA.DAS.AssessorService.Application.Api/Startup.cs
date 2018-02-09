@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Text;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -10,6 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using SFA.DAS.AssessmentOrgs.Api.Client.Core;
 using StructureMap;
+using StructureMap.Diagnostics.TreeView;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace SFA.DAS.AssessorService.Application.Api
 {
@@ -47,6 +50,14 @@ namespace SFA.DAS.AssessorService.Application.Api
             
             //services.AddMediatR(Assembly.Load("SFA.DAS.AssessorService.Application"));
             services.AddMvc().AddControllersAsServices();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info {Title = "SFA.DAS.AssessorService.Application.Api", Version = "v1"});
+                var basePath = AppContext.BaseDirectory;
+                var xmlPath = Path.Combine(basePath, "SFA.DAS.AssessorService.Application.Api.xml");
+                c.IncludeXmlComments(xmlPath);
+            });
 
             return ConfigureIOC(services);
 
@@ -88,6 +99,13 @@ namespace SFA.DAS.AssessorService.Application.Api
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "SFA.DAS.AssessorService.Application.Api v1");
+            });
 
             app.UseAuthentication();
             app.UseMvc();
