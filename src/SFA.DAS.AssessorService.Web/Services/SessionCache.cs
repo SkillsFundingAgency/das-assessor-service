@@ -15,5 +15,10 @@ namespace SFA.DAS.AssessorService.Web.Services
         {
             return _context.HttpContext.Session.GetString(key);
         }
+
+        public void SetString(string key, string value)
+        {
+            _context.HttpContext.Session.SetString(key, value);
+        }
     }
 }

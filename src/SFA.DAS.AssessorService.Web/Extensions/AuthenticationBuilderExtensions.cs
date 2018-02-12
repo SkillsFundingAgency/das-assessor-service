@@ -8,9 +8,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Microsoft.IdentityModel.Tokens;
-using SFA.DAS.AssessorService.Web.Utils;
 
 namespace SFA.DAS.AssessorService.Web.Extensions
 {
@@ -67,7 +65,7 @@ namespace SFA.DAS.AssessorService.Web.Extensions
                     issuer: "sfa.das.assessorservice",
                     audience: "sfa.das.assessorservice.api",
                     claims: claims,
-                    expires: DateTime.Now.AddMinutes(30),
+                    expires: DateTime.Now.AddSeconds(30),
                     signingCredentials: creds);
 
                 var jwt = new JwtSecurityTokenHandler().WriteToken(token);

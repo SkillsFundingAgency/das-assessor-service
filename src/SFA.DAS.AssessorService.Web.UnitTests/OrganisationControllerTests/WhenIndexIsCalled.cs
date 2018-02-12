@@ -1,5 +1,4 @@
-﻿using System;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Authorization;
@@ -9,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Web.Controllers;
+using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Services;
 using SFA.DAS.AssessorService.Web.ViewModels;
 
@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
     {
         private OrganisationController _organisationController;
         private Mock<IOrganisationService> _organisationService;
-        private Mock<ICache> _cache;
+        private Mock<ITokenService> _tokenService;
 
         [SetUp]
         public void Arrange()
@@ -41,14 +41,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
                     }))
                 });
 
-            _cache = new Mock<ICache>();
-            _cache
-                .Setup(c => c.GetString("userid1"))
-                .Returns("jwt");
-
             var logger = new Mock<ILogger<OrganisationController>>();
 
-            _organisationController = new OrganisationController(_organisationService.Object, _cache.Object, httpContext.Object, logger.Object);
+            _tokenService = new Mock<ITokenService>();
+            _tokenService.Setup(s => s.GetJwt()).Returns("jwt");
+
+            _organisationController = new OrganisationController(_organisationService.Object, logger.Object, _tokenService.Object);
         }
 
         [Test]
@@ -65,10 +63,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
         }
 
         [Test]
-        public void ThenTheJwtIsPulledFromTheCache()
+        public void ThenTheTokenServiceIsAskedForTheJwt()
         {
             _organisationController.Index().Wait();
-            _cache.Verify(c => c.GetString("userid1"));
+            _tokenService.Verify(s => s.GetJwt());
         }
 
         [Test]
