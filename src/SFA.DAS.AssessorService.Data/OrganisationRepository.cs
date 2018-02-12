@@ -16,8 +16,8 @@ namespace SFA.DAS.AssessorService.Data
         {
             _organisations = new Dictionary<string, Organisation>()
             {
-                { "c208ec2f-ecbf-4f1e-a6e2-8b96c6a6461b", new Organisation() {Id = "EPA0002", Name = "An EPAO", UkPrn = "c208ec2f-ecbf-4f1e-a6e2-8b96c6a6461b"}},
-                { "c93b96be-5625-4ccf-8d81-bac1df0272d4", new Organisation() {Id = "EPA0045", Name = "An Completely different EPAO", UkPrn = "c93b96be-5625-4ccf-8d81-bac1df0272d4"}}
+                { "c208ec2f-ecbf-4f1e-a6e2-8b96c6a6461b", new Organisation() {EpaoOrgId = "EPA0002", Name = "An EPAO", UkPrn = "c208ec2f-ecbf-4f1e-a6e2-8b96c6a6461b"}},
+                { "c93b96be-5625-4ccf-8d81-bac1df0272d4", new Organisation() {EpaoOrgId = "EPA0045", Name = "An Completely different EPAO", UkPrn = "c93b96be-5625-4ccf-8d81-bac1df0272d4"}}
             };
         }
 
@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Data
         {
             return Task.FromResult(new List<Organisation>()
             {
-                new Organisation() {Id = "EPA0001", Name = "BCS, The Chartered Institute for IT"}
+                new Organisation() {EpaoOrgId = "EPA0001", Name = "BCS, The Chartered Institute for IT"}
             }.AsEnumerable());
         }
 
