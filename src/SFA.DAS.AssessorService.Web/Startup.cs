@@ -12,6 +12,8 @@ using SFA.DAS.AssessorService.Web.Services;
 using SFA.DAS.AssessorService.Web.Settings;
 using StructureMap;
 
+namespace SFA.DAS.AssessorService.Web
+{
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -25,19 +27,19 @@ using StructureMap;
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddAuthentication(sharedOptions =>
-            {
-                sharedOptions.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                sharedOptions.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-            })
-            .AddAzureAd(options =>
+                {
+                    sharedOptions.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    sharedOptions.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+                })
+                .AddAzureAd(options =>
                 {
                     Configuration.Bind("AuthOptions", options);
                     AuthOptions.Settings = options;
                 })
-            .AddCookie();
+                .AddCookie();
 
             services.AddMvc().AddControllersAsServices().AddSessionStateTempDataProvider();
-         
+
             services.AddSession();
 
             return ConfigureIOC(services);
@@ -61,8 +63,8 @@ using StructureMap;
                 //Populate the container using the service collection
                 config.Populate(services);
             });
-            
-           // WebConfiguration configuration = GetConfiguration();
+
+            // WebConfiguration configuration = GetConfiguration();
 
             return container.GetInstance<IServiceProvider>();
         }
@@ -120,4 +122,5 @@ using StructureMap;
             });
         }
     }
+
 }
