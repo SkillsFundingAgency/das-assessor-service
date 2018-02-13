@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.AssessorService.Web.Extensions;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Services;
+using SFA.DAS.AssessorService.Web.Settings;
 using StructureMap;
 
 namespace SFA.DAS.AssessorService.Web
@@ -62,9 +63,37 @@ namespace SFA.DAS.AssessorService.Web
                 //Populate the container using the service collection
                 config.Populate(services);
             });
+            
+           // WebConfiguration configuration = GetConfiguration();
 
             return container.GetInstance<IServiceProvider>();
         }
+
+        private const string ServiceName = "SFA.DAS.Support.Portal";
+        private const string Version = "1.0";
+
+        //private WebConfiguration GetConfiguration()
+        //{
+        //    //var environment = CloudConfigurationManager.GetSetting("EnvironmentName");
+
+        //    //var storageConnectionString = CloudConfigurationManager.GetSetting("ConfigurationStorageConnectionString");
+
+        //    //if (environment == null) throw new ArgumentNullException(nameof(environment));
+        //    //if (storageConnectionString == null) throw new ArgumentNullException(nameof(storageConnectionString));
+
+
+        //    //var configurationRepository = new AzureTableStorageConfigurationRepository(storageConnectionString); ;
+
+        //    //var configurationOptions = new ConfigurationOptions(ServiceName, environment, Version);
+
+        //    //var configurationService = new ConfigurationService(configurationRepository, configurationOptions);
+
+        //    //var webConfiguration = configurationService.Get<WebConfiguration>();
+
+        //    //if (webConfiguration == null) throw new ArgumentOutOfRangeException($"The requried configuration settings were not retrieved, please check the environmentName case, and the configuration connection string is correct.");
+
+        //    //return webConfiguration;
+        //}
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
