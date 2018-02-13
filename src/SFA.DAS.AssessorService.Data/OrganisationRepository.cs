@@ -27,12 +27,12 @@ namespace SFA.DAS.AssessorService.Data
             return Task.CompletedTask;
         }
 
-        public Task<IEnumerable<Organisation>> GetAllOrganisations()
+        public async Task<IEnumerable<Organisation>> GetAllOrganisations()
         {
-            return Task.FromResult(new List<Organisation>()
+            return new List<Organisation>()
             {
                 new Organisation() {EpaoOrgId = "EPA0001", Name = "BCS, The Chartered Institute for IT"}
-            }.AsEnumerable());
+            }.AsEnumerable();
         }
 
         public Task<Organisation> GetByUkPrn(string ukprn)
