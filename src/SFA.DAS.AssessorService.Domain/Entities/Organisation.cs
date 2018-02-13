@@ -1,21 +1,25 @@
-﻿namespace SFA.DAS.AssessorService.Domain.Entities
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace SFA.DAS.AssessorService.Domain.Entities
 {
     public class Organisation
     {
-        public string Id { get; set; }
-
+        [Key]
+        public long OrganisationId { get; set; }
+        public string EpaoOrgId { get; set; }
+        public string UkPrn { get; set; }
         public string Name { get; set; }
 
-        public string Uri { get; set; }
+        [ForeignKey("PrimaryContactId")]
+        public Contact PrimaryContact{ get; set; }
+        public long PrimaryContactId { get; set; }
 
-        public string Email { get; set; }
+        public OrganisationStatus Status { get; set; }
 
-        public string Phone { get; set; }
-
-        public string Website { get; set; }
-
-        public Address Address { get; set; }
-
-        public string UkPrn { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+        public DateTime DeletedAt { get; set; }
     }
 }
