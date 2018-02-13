@@ -5,14 +5,20 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="fluentassertions" Version="5.0.0" />
-    <PackageReference Include="Microsoft.net.Test.Sdk" Version="15.5.0" />
-    <PackageReference Include="Moq" Version="4.8.1" />
-    <PackageReference Include="nunit" Version="3.9.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="3.9.0" />
+    <PackageReference Include="dotnet-test-mspec" Version="0.2.0" />
+    <PackageReference Include="FluentAssertions" Version="5.0.0-rc0004" />
+    <PackageReference Include="Machine.Specifications" Version="0.12.0" />
+    <PackageReference Include="Machine.Specifications.Runner.VisualStudio" Version="2.6.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.5.0" />
+    <PackageReference Include="moq" Version="4.8.1" />
+    <PackageReference Include="MSTest.TestAdapter" Version="1.2.0" />
+    <PackageReference Include="MSTest.TestFramework" Version="1.2.0" />
+    <PackageReference Include="nbuilder" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SFA.DAS.AssessmentOrgs.Api.Client.Core\SFA.DAS.AssessmentOrgs.Api.Client.Core.csproj" />
+    <ProjectReference Include="..\SFA.DAS.AssessorService.Application\SFA.DAS.AssessorService.Application.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Web\SFA.DAS.AssessorService.Web.csproj" />
   </ItemGroup>
 

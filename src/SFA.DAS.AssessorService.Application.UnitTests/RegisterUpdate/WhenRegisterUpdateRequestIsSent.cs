@@ -1,25 +1,34 @@
-﻿using System.Threading;
-using Moq;
-using NUnit.Framework;
-using SFA.DAS.AssessmentOrgs.Api.Client.Core;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Application.RegisterUpdate;
-
-namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
+﻿namespace SFA.DAS.AssessorService.Application.MSpec.UnitTests
 {
-    [TestFixture]
+    using Machine.Specifications;
+    using Moq;
+    using SFA.DAS.AssessmentOrgs.Api.Client.Core;
+    using SFA.DAS.AssessorService.Application.Interfaces;
+    using SFA.DAS.AssessorService.Application.RegisterUpdate;
+    using System.Threading;
+
+    [Subject("Authentication")]
     public class WhenRegisterUpdateRequestIsSent
     {
-        [Test]
-        public void ACallToTheEpaoRegisterApiIsMade()
+        private static Mock<IAssessmentOrgsApiClient> _apiClient;
+        private static Mock<IOrganisationRepository> _organisationRepository;
+        private static RegisterUpdateHandler _registerUpdateHandler;
+
+        Establish context = () =>
         {
-            var apiClient = new Mock<IAssessmentOrgsApiClient>();
-            var organisationRepository = new Mock<IOrganisationRepository>();
-            var handler = new RegisterUpdateHandler(apiClient.Object, organisationRepository.Object);
+            _apiClient = new Mock<IAssessmentOrgsApiClient>();
+            _organisationRepository = new Mock<IOrganisationRepository>();
+            _registerUpdateHandler = new RegisterUpdateHandler(_apiClient.Object, _organisationRepository.Object);
+        };
 
-            handler.Handle(new RegisterUpdateRequest(), new CancellationToken()).Wait();
+        Because of = () =>
+        {
+            _registerUpdateHandler.Handle(new RegisterUpdateRequest(), new CancellationToken()).Wait();
+        };
 
-            apiClient.Verify(client => client.FindAllAsync()); 
-        }
+        Machine.Specifications.It should_have_persisted_customer = () =>
+        {
+            _apiClient.Verify(client => client.FindAllAsync());
+        };
     }
 }
