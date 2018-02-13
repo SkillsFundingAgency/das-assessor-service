@@ -10,7 +10,7 @@
         public Organisation Organisation { get; set; }
 
         public int EndPointAssessorContactId { get; set; }
-        public int EndPointAssessorOrganisationId{ get; set; }
+        public string EndPointAssessorOrganisationId{ get; set; }
         public int EndPointAssessorUKPRN { get; set; }
 
         public string ContactName { get; set; }

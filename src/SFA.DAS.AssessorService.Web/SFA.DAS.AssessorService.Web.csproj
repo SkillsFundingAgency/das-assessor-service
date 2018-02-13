@@ -20,4 +20,8 @@
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SFA.DAS.AssessorService.Data\SFA.DAS.AssessorService.Data.csproj" />
+  </ItemGroup>
+
 </Project>

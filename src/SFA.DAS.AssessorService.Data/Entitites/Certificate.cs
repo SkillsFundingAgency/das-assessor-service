@@ -31,7 +31,7 @@
         public string ContactAddLine2 { get; set; }
         public string ContactAddLine3 { get; set; }
         public string ContactAddLine4 { get; set; }
-        public string ContactPostcode { get; set; }
+        public string ContactPostCode { get; set; }
         public string Registration { get; set; }
         public DateTime LearningStartDate { get; set; }
 

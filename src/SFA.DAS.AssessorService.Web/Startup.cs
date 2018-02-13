@@ -12,8 +12,6 @@ using SFA.DAS.AssessorService.Web.Services;
 using SFA.DAS.AssessorService.Web.Settings;
 using StructureMap;
 
-namespace SFA.DAS.AssessorService.Web
-{
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -39,7 +37,7 @@ namespace SFA.DAS.AssessorService.Web
             .AddCookie();
 
             services.AddMvc().AddControllersAsServices().AddSessionStateTempDataProvider();
-
+         
             services.AddSession();
 
             return ConfigureIOC(services);

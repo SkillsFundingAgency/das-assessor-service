@@ -1,21 +1,21 @@
-﻿using System;
-using System.IO;
-using System.Text;
-using MediatR;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
-using SFA.DAS.AssessmentOrgs.Api.Client.Core;
-using StructureMap;
-using StructureMap.Diagnostics.TreeView;
-using Swashbuckle.AspNetCore.Swagger;
-
-namespace SFA.DAS.AssessorService.Application.Api
+﻿namespace SFA.DAS.AssessorService.Application.Api
 {
+    using System;
+    using System.IO;
+    using System.Text;
+    using MediatR;
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.IdentityModel.Tokens;
+    using SFA.DAS.AssessmentOrgs.Api.Client.Core;
+    using SFA.DAS.AssessorService.Data;
+    using StructureMap;
+    using Swashbuckle.AspNetCore.Swagger;
+
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -46,8 +46,9 @@ namespace SFA.DAS.AssessorService.Application.Api
                     };
                 });
 
+            services.AddDbContext<AssessorDbContext>(options =>
+             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            
             //services.AddMediatR(Assembly.Load("SFA.DAS.AssessorService.Application"));
             services.AddMvc().AddControllersAsServices();
 
