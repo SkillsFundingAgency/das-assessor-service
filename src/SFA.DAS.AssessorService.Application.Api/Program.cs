@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using NLog.Web;
 using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.AssessorService.Data;
-using SFA.DAS.AssessorService.Data.Entitites;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Api
 {

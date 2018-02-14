@@ -1,7 +1,7 @@
 ﻿namespace SFA.DAS.AssessorService.Data
 {
-    using Microsoft.EntityFrameworkCore;
-    using SFA.DAS.AssessorService.Data.Entitites;
+    using Microsoft.EntityFrameworkCore;    
+    using SFA.DAS.AssessorService.Domain.Entities;
 
     public class AssessorDbContext : DbContext
     {

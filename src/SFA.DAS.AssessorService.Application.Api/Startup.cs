@@ -42,19 +42,19 @@
                         ValidIssuer = "sfa.das.assessorservice",
                         ValidAudience = "sfa.das.assessorservice.api",
                         IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(Configuration["AzureAd:TokenEncodingKey"]))  
+                            Encoding.UTF8.GetBytes(Configuration["AzureAd:TokenEncodingKey"]))
                     };
                 });
 
             services.AddDbContext<AssessorDbContext>(options =>
-             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             //services.AddMediatR(Assembly.Load("SFA.DAS.AssessorService.Application"));
             services.AddMvc().AddControllersAsServices();
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info {Title = "SFA.DAS.AssessorService.Application.Api", Version = "v1"});
+                c.SwaggerDoc("v1", new Info { Title = "SFA.DAS.AssessorService.Application.Api", Version = "v1" });
                 var basePath = AppContext.BaseDirectory;
                 var xmlPath = Path.Combine(basePath, "SFA.DAS.AssessorService.Application.Api.xml");
                 c.IncludeXmlComments(xmlPath);

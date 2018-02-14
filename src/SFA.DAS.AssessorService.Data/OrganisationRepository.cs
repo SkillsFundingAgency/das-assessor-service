@@ -1,24 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.Entities;
-
-namespace SFA.DAS.AssessorService.Data
+﻿namespace SFA.DAS.AssessorService.Data
 {
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Microsoft.EntityFrameworkCore;
+    using SFA.DAS.AssessorService.Application.Interfaces;
+    using SFA.DAS.AssessorService.Domain.Entities;
+
     public class OrganisationRepository : IOrganisationRepository
     {
-        private Dictionary<string, Organisation> _organisations;
+        private readonly AssessorDbContext _assessorDbContext;
 
-        public OrganisationRepository()
+        public OrganisationRepository(AssessorDbContext assessorDbContext)
         {
-            _organisations = new Dictionary<string, Organisation>()
-            {
-                { "c208ec2f-ecbf-4f1e-a6e2-8b96c6a6461b", new Organisation() {EpaoOrgId = "EPA0002", Name = "An EPAO", UkPrn = "c208ec2f-ecbf-4f1e-a6e2-8b96c6a6461b"}},
-                { "c93b96be-5625-4ccf-8d81-bac1df0272d4", new Organisation() {EpaoOrgId = "EPA0045", Name = "An Completely different EPAO", UkPrn = "c93b96be-5625-4ccf-8d81-bac1df0272d4"}}
-            };
+            _assessorDbContext = assessorDbContext;
         }
 
         public Task CreateNewOrganisation(Organisation newOrganisation)
@@ -31,13 +27,16 @@ namespace SFA.DAS.AssessorService.Data
         {
             return new List<Organisation>()
             {
-                new Organisation() {EpaoOrgId = "EPA0001", Name = "BCS, The Chartered Institute for IT"}
+                new Organisation() { EndPointAssessorOrganisationId = "EPA0001", EndPointAssessorName = "BCS, The Chartered Institute for IT" }
             }.AsEnumerable();
         }
 
-        public Task<Organisation> GetByUkPrn(string ukprn)
+        public async Task<Organisation> GetByUkPrn(int ukprn)
         {
-            return Task.FromResult(_organisations[ukprn]);
+            var organisation = await _assessorDbContext.Organisations                      
+                         .FirstOrDefaultAsync(q => q.EndPointAssessorUKPRN == ukprn);
+
+            return null;
         }
     }
 }

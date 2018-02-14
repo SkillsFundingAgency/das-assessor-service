@@ -8,6 +8,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
     {
         Task CreateNewOrganisation(Organisation newOrganisation);
         Task<IEnumerable<Organisation>> GetAllOrganisations();
-        Task<Organisation> GetByUkPrn(string ukprn);
+        Task<Organisation> GetByUkPrn(int ukprn);
     }
 }

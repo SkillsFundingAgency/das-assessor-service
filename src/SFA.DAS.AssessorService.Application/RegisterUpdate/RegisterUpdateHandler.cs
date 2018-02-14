@@ -25,13 +25,13 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
             var organisations = await _organisationRepository.GetAllOrganisations();
             foreach (var epaoSummary in epaosOnRegister)
             {
-                if (!organisations.Any(o => o.EpaoOrgId == epaoSummary.Id))
+                if (!organisations.Any(o => o.EndPointAssessorOrganisationId == epaoSummary.Id))
                 {
                     var epao = _apiClient.Get(epaoSummary.Id);
                     await _organisationRepository.CreateNewOrganisation(new Organisation()
                     {
-                        EpaoOrgId = epao.Id,
-                        Name = epao.Name
+                        EndPointAssessorOrganisationId = epao.Id,
+                        EndPointAssessorName = epao.Name
                     });
                 }
             }

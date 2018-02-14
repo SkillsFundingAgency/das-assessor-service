@@ -1,30 +1,28 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.AssessorService.Application.Interfaces;
-
-namespace SFA.DAS.AssessorService.Application.Api.Controllers
+﻿namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+    using SFA.DAS.AssessorService.Application.Interfaces;
+
     [Authorize]
-    [Route("api/v1/[controller]")]
+    [Route("api/v1/assessment-providers")]
     public class OrganisationController : Controller
     {
         private readonly IOrganisationRepository _organisationRepository;
-        
+
         public OrganisationController(IOrganisationRepository organisationRepository)
         {
             _organisationRepository = organisationRepository;
         }
 
-        /// <summary>
-        /// Returns the logged on User's EPOA details.
-        /// </summary>
-        /// <returns>The User's EPOA Organisation</returns>
         [HttpGet]
-        public async Task<IActionResult> Get()
+        [HttpGet("{ukprn}")]
+        public async Task<IActionResult> Get(int ukprn)
         {
-            var ukprn = (User.FindFirst("ukprn"))?.Value;
             var organisation = await _organisationRepository.GetByUkPrn(ukprn);
+            if (organisation == null)
+                return NotFound("No provider with ukprn {ukprn} found");
 
             return Ok(organisation);
         }
