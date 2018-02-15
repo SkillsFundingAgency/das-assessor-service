@@ -20,7 +20,7 @@
         {
             OrganisationService = new Mock<IOrganisationService>();
             OrganisationService
-               .Setup(serv => serv.GetOrganisation("jwt"))
+               .Setup(serv => serv.GetOrganisation("jwt", 12345))
                .Returns(Task.FromResult(new Organisation() { Id = "ID1" }));
 
             var httpContext = new Mock<IHttpContextAccessor>();

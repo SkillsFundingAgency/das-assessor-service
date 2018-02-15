@@ -23,9 +23,9 @@
             Result = OrganisationContoller.Get(10).Result;
         };
 
-        Machine.Specifications.It verify_succesfully = () =>
+        private Machine.Specifications.It verify_succesfully = () =>
         {
-            (Result is BadRequestResult).Should().Equals(true);
+            Result.Should().BeOfType<BadRequestResult>();
         };
     }
 }

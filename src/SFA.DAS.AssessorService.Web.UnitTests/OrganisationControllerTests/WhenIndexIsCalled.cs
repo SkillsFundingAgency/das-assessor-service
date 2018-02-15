@@ -30,7 +30,7 @@
 
         Machine.Specifications.It should_get_an_oorganisation = () =>
         {
-            OrganisationService.Verify(serv => serv.GetOrganisation("jwt"));
+            OrganisationService.Verify(serv => serv.GetOrganisation("jwt", 12345));
         };
 
         Machine.Specifications.It should_return_a_viewresult = () =>
