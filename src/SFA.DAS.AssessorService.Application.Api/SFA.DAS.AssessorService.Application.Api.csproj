@@ -16,10 +16,12 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="6.2.2" />
+    <PackageReference Include="Faker.Net" Version="1.0.3" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="7.4.0" />
     <PackageReference Include="Mediatr" Version="4.0.1" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="4.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.5" />
+    <PackageReference Include="NBuilder" Version="5.0.0" />
     <PackageReference Include="Nlog.Web.AspNetCore" Version="4.5.0-rc2" />
     <PackageReference Include="SFA.DAS.NLog.Targets.Redis" Version="1.0.0.56651" />
     <PackageReference Include="StructureMap.Microsoft.DependencyInjection" Version="1.4.0" />

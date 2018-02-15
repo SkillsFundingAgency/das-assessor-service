@@ -34,14 +34,13 @@
         {
             var validator = new UkPrnValidator();
             var result = validator.Validate(ukprn);
-
             if (!result.IsValid)
                 return BadRequest();
 
             var organisation = await _organisationRepository.GetByUkPrn(ukprn);
             if (organisation == null)
             {
-                return NotFound(_localizer[ResourceMessageName.NoAssesmentProviderFound, ukprn].Value);
+                return NotFound(_localizer[ResourceMessageName.NoAssesmentProviderFound, ukprn].Value);                
             }
 
             return Ok(organisation);
