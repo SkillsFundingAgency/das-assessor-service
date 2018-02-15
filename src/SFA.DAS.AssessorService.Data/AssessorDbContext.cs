@@ -5,10 +5,13 @@
 
     public class AssessorDbContext : DbContext
     {
-        public AssessorDbContext(DbContextOptions<AssessorDbContext> options)
+        public AssessorDbContext(DbContextOptions<AssessorDbContext> options, bool migrate)
           : base(options)
         {
-
+            if (migrate)
+            {
+                Database.Migrate();
+            }
         }
 
         public DbSet<Certificate> Certificates { get; set; }

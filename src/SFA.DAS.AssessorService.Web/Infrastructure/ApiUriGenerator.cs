@@ -4,10 +4,10 @@
     {
         public static class Organisation
         {
-            public static string GetOrganisation(string baseUri)
+            public static string GetOrganisation(string baseUri, int ukprn)
             {
                 // Build URI for GetOrganisation call to API.
-                return baseUri;
+                return $"{baseUri}/{ukprn}";
             }
         }
     }

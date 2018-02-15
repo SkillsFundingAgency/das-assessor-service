@@ -25,9 +25,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
+            var ukprn = User.FindFirst("http://schemas.portal.com/ukprn").Value;
             var jwt = _tokenService.GetJwt();
 
-            var organisation = await _organisationService.GetOrganisation(jwt);
+            var organisation = await _organisationService.GetOrganisation(jwt, int.Parse(ukprn));
             
             return View(organisation);
         }

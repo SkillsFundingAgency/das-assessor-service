@@ -3,9 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authentication.WsFederation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -15,14 +13,10 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 using Newtonsoft.Json;
-//using SFA.DAS.AssessorService.Web.Extensions;
+using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Services;
-using SFA.DAS.AssessorService.Web.Settings;
-using SFA.DAS.Configuration;
-using SFA.DAS.Configuration.AzureTableStorage;
 using StructureMap;
-using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 
 namespace SFA.DAS.AssessorService.Web
 {
@@ -134,7 +128,6 @@ namespace SFA.DAS.AssessorService.Web
 
             var dynResult = result.Result as DynamicTableEntity;
             var data = dynResult.Properties["Data"].StringValue;
-
 
             var webConfig = JsonConvert.DeserializeObject<WebConfiguration>(data);
 
