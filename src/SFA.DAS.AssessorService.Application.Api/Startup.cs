@@ -1,6 +1,8 @@
 ﻿namespace SFA.DAS.AssessorService.Application.Api
 {
     using System;
+    using System.Collections.Generic;
+    using System.Globalization;
     using System.IO;
     using System.Text;
     using FluentValidation.AspNetCore;
@@ -8,6 +10,8 @@
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Localization;
+    using Microsoft.AspNetCore.Mvc.Razor;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
@@ -50,6 +54,10 @@
                 });
 
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
+            services.AddMvc()
+                .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix,
+                     opts => { opts.ResourcesPath = "Resources"; })
+                    .AddDataAnnotationsLocalization();
 
             services.AddDbContext<AssessorDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
@@ -66,6 +74,21 @@
                 var xmlPath = Path.Combine(basePath, "SFA.DAS.AssessorService.Application.Api.xml");
                 c.IncludeXmlComments(xmlPath);
             });
+
+            services.Configure<RequestLocalizationOptions>(
+        opts =>
+        {
+            var supportedCultures = new List<CultureInfo>
+            {
+                new CultureInfo("en-GB")               
+            };
+
+            opts.DefaultRequestCulture = new RequestCulture("en-GB");
+            // Formatting numbers, dates, etc.
+            opts.SupportedCultures = supportedCultures;
+            // UI strings that we have localized.
+            opts.SupportedUICultures = supportedCultures;
+        });
 
             return ConfigureIOC(services);
 
