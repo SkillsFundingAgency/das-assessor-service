@@ -25,7 +25,7 @@
 
         private Machine.Specifications.It verify_succesfully = () =>
         {
-            Result.Should().BeOfType<BadRequestResult>();
+            Result.Should().BeOfType<BadRequestObjectResult>();
         };
     }
 }
