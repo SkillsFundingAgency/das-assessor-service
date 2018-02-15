@@ -47,10 +47,7 @@ namespace SFA.DAS.AssessorService.Web
                 })
                 .AddWsFederation(options =>
                 {
-                    //options.Wtrealm = "https://citizenazuresfabisgov.onmicrosoft.com/SFA.DAS.ProviderApprenticeshipsService.Web";
-                    //options.Wtrealm = "https://vacancyservicepoc";
                     options.Wtrealm = Configuration.Authentication.WtRealm;
-                    //options.MetadataAddress = "https://adfs.preprod.skillsfunding.service.gov.uk/FederationMetadata/2007-06/FederationMetadata.xml";
                     options.MetadataAddress = Configuration.Authentication.MetadataAddress;
                     options.Events.OnSecurityTokenValidated = OnTokenValidated;
                     // options.CallbackPath = "/";
