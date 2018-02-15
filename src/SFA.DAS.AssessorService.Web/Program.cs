@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using NLog.Web;
@@ -25,6 +26,14 @@ namespace SFA.DAS.AssessorService.Web
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .UseKestrel(options =>
+                {
+                    options.AddServerHeader = false;
+                    options.Listen(IPAddress.Loopback, 5015, listenOptions =>
+                    {
+                        listenOptions.UseHttps("sfa.das.assessorservice.pfx", "C0ventry18");
+                    });
+                })
                 .UseStartup<Startup>()
                 .UseNLog()
                 .Build();
