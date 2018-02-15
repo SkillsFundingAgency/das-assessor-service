@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using NLog.Web;
 using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.AssessorService.Data;
-using SFA.DAS.AssessorService.Data.Entitites;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Api
 {
@@ -57,6 +57,7 @@ namespace SFA.DAS.AssessorService.Application.Api
                     Id = Guid.NewGuid(),
                     EndPointAssessorName = "David Gouge",
                     EndPointAssessorOrganisationId = "1234",
+                    EndPointAssessorUKPRN = 10000000,
                     CreatedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now,
                     Status = "Active"
@@ -72,7 +73,7 @@ namespace SFA.DAS.AssessorService.Application.Api
                     ContactName = "David Gouge",
                     EndPointAssessorContactId = 1,
                     EndPointAssessorOrganisationId = "1234",
-                    EndPointAssessorUKPRN = 9999,
+                    EndPointAssessorUKPRN = 10000000,
                     Status = "Active",
                     CreatedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now,
@@ -88,7 +89,7 @@ namespace SFA.DAS.AssessorService.Application.Api
                     ContactName = "John Coxhead",
                     EndPointAssessorContactId = 1,
                     EndPointAssessorOrganisationId = "1234",
-                    EndPointAssessorUKPRN = 9999,
+                    EndPointAssessorUKPRN = 10000000,
                     Status = "Active",
                     CreatedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now,

@@ -1,30 +1,47 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.AssessorService.Application.Interfaces;
-
-namespace SFA.DAS.AssessorService.Application.Api.Controllers
+﻿namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
+    using System.Net;
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Localization;
+    using SFA.DAS.AssessorService.Application.Api.Validators;
+    using SFA.DAS.AssessorService.Application.Interfaces;
+    using SFA.DAS.AssessorService.ViewModel.Models;
+    using Swashbuckle.AspNetCore.SwaggerGen;
+
     [Authorize]
-    [Route("api/v1/[controller]")]
+    [Route("api/v1/assessment-providers")]
     public class OrganisationController : Controller
     {
         private readonly IOrganisationRepository _organisationRepository;
-        
-        public OrganisationController(IOrganisationRepository organisationRepository)
+        private readonly IStringLocalizer<OrganisationController> _localizer;
+
+        public OrganisationController(IOrganisationRepository organisationRepository,
+            IStringLocalizer<OrganisationController> localizer)
         {
             _organisationRepository = organisationRepository;
+            _localizer = localizer;
         }
 
-        /// <summary>
-        /// Returns the logged on User's EPOA details.
-        /// </summary>
-        /// <returns>The User's EPOA Organisation</returns>
         [HttpGet]
-        public async Task<IActionResult> Get()
+        [HttpGet("{ukprn}")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(OrganisationQueryViewModel))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest)]
+        [SwaggerResponse((int)HttpStatusCode.NotFound, Type = typeof(string))]
+        public async Task<IActionResult> Get(int ukprn)
         {
-            var ukprn = (User.FindFirst("ukprn"))?.Value;
+            var validator = new UkPrnValidator();
+            var result = validator.Validate(ukprn);
+
+            if (!result.IsValid)
+                return BadRequest();
+
             var organisation = await _organisationRepository.GetByUkPrn(ukprn);
+            if (organisation == null)
+            {
+                return NotFound(_localizer["NoAssesmentProviderFound", ukprn].Value);
+            }
 
             return Ok(organisation);
         }

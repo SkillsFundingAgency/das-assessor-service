@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.AssessorService.Data.Entitites
+﻿namespace SFA.DAS.AssessorService.Domain.Entities
 {
     using System;
     using System.Collections.Generic;
