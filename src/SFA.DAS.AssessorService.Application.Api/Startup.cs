@@ -2,15 +2,13 @@
 {
     using System;
     using System.IO;
-    using System.Text;
+    using FluentValidation.AspNetCore;
     using MediatR;
-    using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.IdentityModel.Tokens;
     using SFA.DAS.AssessmentOrgs.Api.Client.Core;
     using SFA.DAS.AssessorService.Data;
     using SFA.DAS.AssessorService.Domain.Entities;
@@ -48,11 +46,15 @@
             //        };
             //    });
 
+
+
             services.AddDbContext<AssessorDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             //services.AddMediatR(Assembly.Load("SFA.DAS.AssessorService.Application"));
             services.AddMvc().AddControllersAsServices();
+            services.AddMvc().AddFluentValidation(fvc =>
+               fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
 
             services.AddSwaggerGen(c =>
             {

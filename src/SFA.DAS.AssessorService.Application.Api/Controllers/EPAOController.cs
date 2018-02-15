@@ -1,11 +1,11 @@
-﻿using System.Threading.Tasks;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Application.RegisterUpdate;
-
-namespace SFA.DAS.AssessorService.Application.Api.Controllers
+﻿namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
+    using System.Threading.Tasks;
+    using MediatR;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Logging;
+    using SFA.DAS.AssessorService.Application.RegisterUpdate;
+
     [Route("api/v1/[controller]")]
     public class RegisterUpdateController : Controller
     {

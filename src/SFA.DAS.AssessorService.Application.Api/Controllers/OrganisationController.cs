@@ -2,6 +2,7 @@
 {
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
+    using SFA.DAS.AssessorService.Application.Api.Validators;
     using SFA.DAS.AssessorService.Application.Interfaces;
 
     //[Authorize]
@@ -19,6 +20,12 @@
         [HttpGet("{ukprn}")]
         public async Task<IActionResult> Get(int ukprn)
         {
+            var validator = new UkPrnValidator();
+            var result = validator.Validate(ukprn);
+
+            if (!result.IsValid)
+                return BadRequest();
+
             var organisation = await _organisationRepository.GetByUkPrn(ukprn);
             if (organisation == null)
                 return NotFound("No provider with ukprn {ukprn} found");
