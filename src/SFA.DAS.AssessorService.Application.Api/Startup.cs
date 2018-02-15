@@ -13,6 +13,8 @@
     using Microsoft.IdentityModel.Tokens;
     using SFA.DAS.AssessmentOrgs.Api.Client.Core;
     using SFA.DAS.AssessorService.Data;
+    using SFA.DAS.AssessorService.Domain.Entities;
+    using SFA.DAS.AssessorService.ViewModel.Models;
     using StructureMap;
     using Swashbuckle.AspNetCore.Swagger;
 
@@ -27,24 +29,24 @@
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddAuthentication(sharedOptions =>
-                {
-                    sharedOptions.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = "sfa.das.assessorservice",
-                        ValidAudience = "sfa.das.assessorservice.api",
-                        IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(Configuration["AzureAd:TokenEncodingKey"]))
-                    };
-                });
+            //services.AddAuthentication(sharedOptions =>
+            //    {
+            //        sharedOptions.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            //    })
+            //    .AddJwtBearer(options =>
+            //    {
+            //        options.TokenValidationParameters = new TokenValidationParameters
+            //        {
+            //            ValidateIssuer = true,
+            //            ValidateAudience = true,
+            //            ValidateLifetime = true,
+            //            ValidateIssuerSigningKey = true,
+            //            ValidIssuer = "sfa.das.assessorservice",
+            //            ValidAudience = "sfa.das.assessorservice.api",
+            //            IssuerSigningKey = new SymmetricSecurityKey(
+            //                Encoding.UTF8.GetBytes(Configuration["AzureAd:TokenEncodingKey"]))
+            //        };
+            //    });
 
             services.AddDbContext<AssessorDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
@@ -106,6 +108,11 @@
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "SFA.DAS.AssessorService.Application.Api v1");
+            });
+
+            AutoMapper.Mapper.Initialize(cfg =>
+            {
+                cfg.CreateMap<Organisation, OrganisationQueryViewModel>();
             });
 
             app.UseAuthentication();

@@ -1,11 +1,10 @@
 ﻿namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
     using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using SFA.DAS.AssessorService.Application.Interfaces;
 
-    [Authorize]
+    //[Authorize]
     [Route("api/v1/assessment-providers")]
     public class OrganisationController : Controller
     {

@@ -4,9 +4,11 @@
     using System.Diagnostics;
     using System.Linq;
     using System.Threading.Tasks;
+    using AutoMapper;
     using Microsoft.EntityFrameworkCore;
     using SFA.DAS.AssessorService.Application.Interfaces;
     using SFA.DAS.AssessorService.Domain.Entities;
+    using SFA.DAS.AssessorService.ViewModel.Models;
 
     public class OrganisationRepository : IOrganisationRepository
     {
@@ -31,12 +33,15 @@
             }.AsEnumerable();
         }
 
-        public async Task<Organisation> GetByUkPrn(int ukprn)
+        public async Task<OrganisationQueryViewModel> GetByUkPrn(int ukprn)
         {
             var organisation = await _assessorDbContext.Organisations                      
                          .FirstOrDefaultAsync(q => q.EndPointAssessorUKPRN == ukprn);
-
-            return null;
+            if (organisation == null)
+                return null;                
+            
+            var organisationViewModel = Mapper.Map<OrganisationQueryViewModel>(organisation);
+            return organisationViewModel;
         }
     }
 }
