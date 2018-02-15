@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Validators\UkPrnValidator\WhenUkPrnValidatorValidatesSuccess.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="dotnet-test-mspec" Version="0.2.0" />
     <PackageReference Include="FluentAssertions" Version="5.0.0-rc0004" />
     <PackageReference Include="Machine.Specifications" Version="0.12.0" />

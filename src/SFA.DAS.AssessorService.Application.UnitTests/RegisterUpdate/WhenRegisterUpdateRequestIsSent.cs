@@ -7,7 +7,7 @@
     using SFA.DAS.AssessorService.Application.RegisterUpdate;
     using System.Threading;
 
-    [Subject("Authentication")]
+    [Subject("AssessorService")]
     public class WhenRegisterUpdateRequestIsSent
     {
         private static Mock<IAssessmentOrgsApiClient> _apiClient;
