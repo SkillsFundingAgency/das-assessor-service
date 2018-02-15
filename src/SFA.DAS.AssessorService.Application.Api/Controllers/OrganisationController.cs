@@ -2,13 +2,14 @@
 {
     using System.Net;
     using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using SFA.DAS.AssessorService.Application.Api.Validators;
     using SFA.DAS.AssessorService.Application.Interfaces;
     using SFA.DAS.AssessorService.ViewModel.Models;
     using Swashbuckle.AspNetCore.SwaggerGen;
 
-    //[Authorize]
+    [Authorize]
     [Route("api/v1/assessment-providers")]
     public class OrganisationController : Controller
     {
