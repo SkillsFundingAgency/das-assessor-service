@@ -7,12 +7,15 @@
 
     [Subject("AssessorService")]
     public class WhenGetAssessmentProvidersGetUkPrnValidationFails : WhenGetAssessmentProvidersTestBase
-    {      
+    {
         Establish context = () =>
         {
             Setup();
-        
-            OrganisationContoller = new OrganisationController(OrganizationRepository.Object, StringLocalizer.Object);
+
+            OrganisationContoller = new OrganisationController(
+                OrganizationRepository.Object, 
+                StringLocalizer.Object,
+                UkPrnValidator);
         };
 
         Because of = () =>

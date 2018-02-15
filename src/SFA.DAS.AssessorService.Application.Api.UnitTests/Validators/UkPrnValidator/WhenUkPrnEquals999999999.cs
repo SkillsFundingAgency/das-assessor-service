@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.AssessorService.Application.MSpec.UnitTests
+﻿namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.UkPrnValidator
 {
     using FluentValidation.Results;
     using Machine.Specifications;
@@ -6,19 +6,18 @@
     using FluentAssertions;
 
     [Subject("AssessorService")]
-    public class WhenUkPrnValidatorValidatorUkPrnEquals99999999
+    public class WhenUkPrnValidatorValidatorUkPrnEquals99999999 : UkPrnValidatorTestBase
     {
-        private static UkPrnValidator _ukPrnValidator;
         private static ValidationResult _validationResult;
 
         Establish context = () =>
         {
-            _ukPrnValidator = new UkPrnValidator();
+            Setup();
         };
 
         Because of = () =>
         {
-            _validationResult = _ukPrnValidator.Validate(99999999);
+            _validationResult = UkPrnValidator.Validate(99999999);
         };
 
         Machine.Specifications.It verify_succesfully = () =>
