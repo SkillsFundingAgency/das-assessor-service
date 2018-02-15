@@ -1,4 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -22,15 +23,15 @@ namespace SFA.DAS.AssessorService.Web.Infrastructure
 
         public string GetJwt()
         {
-            var userId = _contextAccessor.HttpContext.User
-                .FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier").Value;
+            var ukprn = _contextAccessor.HttpContext.User
+                .FindFirst("http://schemas.portal.com/ukprn").Value;
 
-            var result = _cache.GetString(userId);
+            var result = _cache.GetString(ukprn);
 
             if (result == null)
             {
-                result = GetNewToken();
-                _cache.SetString(userId, result);
+                result = GetNewToken(ukprn);
+                _cache.SetString(ukprn, result);
             }
             else
             {
@@ -38,21 +39,27 @@ namespace SFA.DAS.AssessorService.Web.Infrastructure
 
                 if (token.ValidTo >= SystemTime.UtcNow()) return result;
 
-                result = GetNewToken();
-                _cache.SetString(userId, result);
+                result = GetNewToken(ukprn);
+                _cache.SetString(ukprn, result);
             }
             
             return result;
         }
 
-        private string GetNewToken()
+        private string GetNewToken(string ukprn)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["AuthOptions:TokenEncodingKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
+            var claims = new[]
+            {
+                new Claim("ukprn", ukprn, ClaimValueTypes.String)
+            };
+
             var newToken = new JwtSecurityToken(
                 issuer: "sfa.das.assessorservice",
                 audience: "sfa.das.assessorservice.api",
+                claims: claims,
                 expires: SystemTime.UtcNow().AddMinutes(30),
                 signingCredentials: creds);
 

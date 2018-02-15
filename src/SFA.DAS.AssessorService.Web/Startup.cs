@@ -1,27 +1,39 @@
 ﻿using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authentication.WsFederation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using SFA.DAS.AssessorService.Web.Extensions;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Table;
+using Newtonsoft.Json;
+//using SFA.DAS.AssessorService.Web.Extensions;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Services;
 using SFA.DAS.AssessorService.Web.Settings;
+using SFA.DAS.Configuration;
+using SFA.DAS.Configuration.AzureTableStorage;
 using StructureMap;
+using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 
 namespace SFA.DAS.AssessorService.Web
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup()
         {
-            Configuration = configuration;
+            Configuration = GetConfiguration().Result;
         }
 
-        public IConfiguration Configuration { get; }
+        public IWebConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
@@ -29,12 +41,17 @@ namespace SFA.DAS.AssessorService.Web
             services.AddAuthentication(sharedOptions =>
                 {
                     sharedOptions.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                    sharedOptions.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+                    sharedOptions.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    sharedOptions.DefaultChallengeScheme = WsFederationDefaults.AuthenticationScheme;
+                    sharedOptions.DefaultSignOutScheme = WsFederationDefaults.AuthenticationScheme;
                 })
-                .AddAzureAd(options =>
+                .AddWsFederation(options =>
                 {
-                    Configuration.Bind("AuthOptions", options);
-                    AuthOptions.Settings = options;
+                    options.Wtrealm = Configuration.Authentication.WtRealm;
+                    options.MetadataAddress = Configuration.Authentication.MetadataAddress;
+                    options.Events.OnSecurityTokenValidated = OnTokenValidated;
+                    // options.CallbackPath = "/";
+                    // options.SkipUnrecognizedRequests = true;
                 })
                 .AddCookie();
 
@@ -43,6 +60,33 @@ namespace SFA.DAS.AssessorService.Web
             services.AddSession();
 
             return ConfigureIOC(services);
+        }
+
+        private Task OnTokenValidated(SecurityTokenValidatedContext context)
+        {
+            var ukprn = (context.Principal.FindFirst("http://schemas.portal.com/ukprn"))?.Value;
+
+            // get ukprn *hopefully* from idams claims. Currently using the objectId as the ukprn.
+            var claims = new[]
+            {
+                new Claim("ukprn", ukprn, ClaimValueTypes.String)
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.Api.TokenEncodingKey));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: "sfa.das.assessorservice",
+                audience: "sfa.das.assessorservice.api",
+                claims: claims,
+                expires: DateTime.Now.AddMinutes(5),
+                signingCredentials: creds);
+
+            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+
+            context.HttpContext.Session.SetString(ukprn, jwt);
+
+            return Task.FromResult(0);
         }
 
         private IServiceProvider ConfigureIOC(IServiceCollection services)
@@ -59,41 +103,43 @@ namespace SFA.DAS.AssessorService.Web
 
                 config.For<IHttpClient>().Use<StandardHttpClient>();
                 config.For<ICache>().Use<Services.SessionCache>();
-
-                //Populate the container using the service collection
+                
+                config.For<IWebConfiguration>().Use(Configuration);
+                
                 config.Populate(services);
             });
 
-            // WebConfiguration configuration = GetConfiguration();
+
 
             return container.GetInstance<IServiceProvider>();
         }
 
-        private const string ServiceName = "SFA.DAS.Support.Portal";
+        private const string ServiceName = "SFA.DAS.AssessorService";
         private const string Version = "1.0";
 
-        //private WebConfiguration GetConfiguration()
-        //{
-        //    //var environment = CloudConfigurationManager.GetSetting("EnvironmentName");
+        private async Task<WebConfiguration> GetConfiguration()
+        {
+            var environment = "LOCAL";
+            var storageConnectionString = "UseDevelopmentStorage=true;";
 
-        //    //var storageConnectionString = CloudConfigurationManager.GetSetting("ConfigurationStorageConnectionString");
+            if (environment == null) throw new ArgumentNullException(nameof(environment));
+            if (storageConnectionString == null) throw new ArgumentNullException(nameof(storageConnectionString));
 
-        //    //if (environment == null) throw new ArgumentNullException(nameof(environment));
-        //    //if (storageConnectionString == null) throw new ArgumentNullException(nameof(storageConnectionString));
+            var conn = CloudStorageAccount.Parse(storageConnectionString);
+            var tableClient = conn.CreateCloudTableClient();
+            var table = tableClient.GetTableReference("Configuration");
+
+            var operation = TableOperation.Retrieve(environment, $"{ServiceName}_{Version}");
+            var result = await table.ExecuteAsync(operation);
+
+            var dynResult = result.Result as DynamicTableEntity;
+            var data = dynResult.Properties["Data"].StringValue;
 
 
-        //    //var configurationRepository = new AzureTableStorageConfigurationRepository(storageConnectionString); ;
+            var webConfig = JsonConvert.DeserializeObject<WebConfiguration>(data);
 
-        //    //var configurationOptions = new ConfigurationOptions(ServiceName, environment, Version);
-
-        //    //var configurationService = new ConfigurationService(configurationRepository, configurationOptions);
-
-        //    //var webConfiguration = configurationService.Get<WebConfiguration>();
-
-        //    //if (webConfiguration == null) throw new ArgumentOutOfRangeException($"The requried configuration settings were not retrieved, please check the environmentName case, and the configuration connection string is correct.");
-
-        //    //return webConfiguration;
-        //}
+            return webConfig;
+        }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using NLog.Web;
@@ -20,12 +21,12 @@ namespace SFA.DAS.AssessorService.Application.Api
                 logger.Info("Starting up host");
 
                 var host = BuildWebHost(args);
-                using (var scope = host.Services.CreateScope())
-                {
-                    var services = scope.ServiceProvider;
-                    var context = services.GetService<AssessorDbContext>();
-                    AddTestData(context);
-                }
+                //using (var scope = host.Services.CreateScope())
+                //{
+                //    var services = scope.ServiceProvider;
+                //    var context = services.GetService<AssessorDbContext>();
+                //    AddTestData(context);
+                //}
 
                 host.Run();
 
@@ -40,9 +41,9 @@ namespace SFA.DAS.AssessorService.Application.Api
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseKestrel(c => c.AddServerHeader = false)
+                .UseKestrel()
                 .UseStartup<Startup>()
-                .UseUrls("http://localhost:59021")
+                .UseUrls("http://localhost:44351")
                 .UseNLog()
                 .Build();
 
