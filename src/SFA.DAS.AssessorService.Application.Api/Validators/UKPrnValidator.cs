@@ -1,12 +1,33 @@
 ﻿namespace SFA.DAS.AssessorService.Application.Api.Validators
 {
-    using FluentValidation;
+    using FluentValidation.Results;
+    using Microsoft.Extensions.Localization;
+    using SFA.DAS.AssessorService.Application.Api.Consts;
 
-    public class UkPrnValidator : AbstractValidator<int>
+    public class UkPrnValidator
     {
-        public UkPrnValidator()
+        private readonly IStringLocalizer<UkPrnValidator> _localizer;
+
+        public UkPrnValidator(IStringLocalizer<UkPrnValidator> localizer)
         {
-            RuleFor(ukPrn => ukPrn).InclusiveBetween(10000000, 99999999);
+            _localizer = localizer;
+        }
+
+        public ValidationResult Validate(int ukprn)
+        {
+            var validationResult = new ValidationResult();
+
+            var isValid = (ukprn >= 10000000) && (ukprn <= 99999999);
+            if (isValid)
+            {
+                validationResult = new ValidationResult();
+            }
+            else
+            {
+                validationResult.Errors.Add(new ValidationFailure(nameof(ukprn), _localizer[ResourceMessageName.InvalidUKPRN, nameof(ukprn)].Value));
+            }
+
+            return validationResult;
         }
     }
 }

@@ -12,13 +12,15 @@
         private static OrganisationQueryViewModel _organisationQueryViewModel;
 
         Establish context = () =>
-        {          
+        {
+            Setup();
+
             _organisationQueryViewModel = Builder<OrganisationQueryViewModel>.CreateNew().Build();
 
             OrganizationRepository.Setup(q => q.GetByUkPrn(Moq.It.IsAny<int>()))
                 .Returns(Task.FromResult((_organisationQueryViewModel)));
-            
-            OrganisationContoller = new OrganisationController(OrganizationRepository.Object, StringLocalizer.Object);
+
+            OrganisationContoller = new OrganisationController(OrganizationRepository.Object, StringLocalizer.Object, UkPrnValidator);
         };
 
         Because of = () =>
