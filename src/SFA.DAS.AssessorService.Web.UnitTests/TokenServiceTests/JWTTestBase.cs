@@ -33,7 +33,7 @@
                 {
                     User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
                     {
-                                    new Claim("http://schemas.microsoft.com/identity/claims/objectidentifier", "userid1")
+                        new Claim("http://schemas.portal.com/ukprn", "12345")
                     }))
                 });
 
@@ -50,9 +50,15 @@
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(TokenEncodingKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
+            var claims = new[]
+            {
+                new Claim("ukprn", "12345", ClaimValueTypes.String)
+            };
+
             var token = new JwtSecurityToken(
                 issuer: "sfa.das.assessorservice",
                 audience: "sfa.das.assessorservice.api",
+                claims: claims,
                 expires: expireDateTime,
                 signingCredentials: creds);
 

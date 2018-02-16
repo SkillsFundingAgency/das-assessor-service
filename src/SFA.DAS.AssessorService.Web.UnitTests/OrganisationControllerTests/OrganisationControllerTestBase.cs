@@ -31,7 +31,7 @@
                     User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
                     {
                         new Claim("ukprn", "12345"),
-                        new Claim("http://schemas.microsoft.com/identity/claims/objectidentifier", "userid1")
+                        new Claim("http://schemas.portal.com/ukprn", "12345")
                     }))
                 });
 
@@ -40,7 +40,7 @@
             TokenService = new Mock<ITokenService>();            
             TokenService.Setup(s => s.GetJwt()).Returns("jwt");
 
-            OrganisationController = new OrganisationController(OrganisationService.Object, logger.Object, TokenService.Object);
+            OrganisationController = new OrganisationController(OrganisationService.Object, logger.Object, TokenService.Object, httpContext.Object);
         }
     }
 }

@@ -23,12 +23,12 @@
             _actionResult = OrganisationController.Index().Result;
         };
 
-        Machine.Specifications.It should_get_s_token = () =>
+        Machine.Specifications.It should_get_a_token = () =>
         {
             TokenService.Verify(serv => serv.GetJwt(), Times.AtMostOnce);
         };
 
-        Machine.Specifications.It should_get_an_oorganisation = () =>
+        Machine.Specifications.It should_get_an_organisation = () =>
         {
             OrganisationService.Verify(serv => serv.GetOrganisation("jwt", 12345));
         };
@@ -38,7 +38,7 @@
             _actionResult.Should().BeOfType<ViewResult>();
         };
 
-        Machine.Specifications.It should_return_a_prganisation = () =>
+        Machine.Specifications.It should_return_an_organisation = () =>
         {
             var result = _actionResult as ViewResult;
             result.Model.Should().BeOfType<Organisation>();
