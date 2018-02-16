@@ -48,10 +48,9 @@ namespace SFA.DAS.AssessorService.Web
                     options.Wtrealm = Configuration.Authentication.WtRealm;
                     options.MetadataAddress = Configuration.Authentication.MetadataAddress;
                     options.Events.OnSecurityTokenValidated = OnTokenValidated;
-                    // options.CallbackPath = "/";
-                    // options.SkipUnrecognizedRequests = true;
+                    options.CallbackPath = "/Account/SignedIn";
                 })
-                .AddCookie();
+                .AddCookie(options => { options.ReturnUrlParameter = "/Account/SignedIn"; });
 
             services.AddMvc().AddControllersAsServices().AddSessionStateTempDataProvider();
 
@@ -83,6 +82,8 @@ namespace SFA.DAS.AssessorService.Web
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
 
             context.HttpContext.Session.SetString(ukprn, jwt);
+
+            
 
             return Task.FromResult(0);
         }

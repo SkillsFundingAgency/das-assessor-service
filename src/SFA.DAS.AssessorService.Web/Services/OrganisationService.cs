@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.Rest;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Infrastructure;
@@ -24,11 +25,16 @@ namespace SFA.DAS.AssessorService.Web.Services
         {
             var apiUri = ApiUriGenerator.Organisation.GetOrganisation(_remoteServiceBaseUrl, ukprn);
 
-            var dataString = await _httpClient.GetStringAsync(apiUri, token);
+            var getResponse = await _httpClient.GetAsync(apiUri, token);
 
-            var response = JsonConvert.DeserializeObject<Organisation>(dataString);
+            if (getResponse.IsSuccessStatusCode)
+            {
+                var response = JsonConvert.DeserializeObject<Organisation>(await getResponse.Content.ReadAsStringAsync());
 
-            return response;
+                return response;
+            }
+
+            return null;
         }
     }
 }
