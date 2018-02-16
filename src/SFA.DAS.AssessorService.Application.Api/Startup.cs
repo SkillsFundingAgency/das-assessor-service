@@ -32,10 +32,12 @@ namespace SFA.DAS.AssessorService.Application.Api
     public class Startup
     {
         private readonly IHostingEnvironment _env;
+        private readonly IConfiguration _config;
 
-        public Startup(IHostingEnvironment env)
+        public Startup(IHostingEnvironment env, IConfiguration config)
         {
             _env = env;
+            _config = config;
             Configuration = GetConfiguration().Result;
         }
 
@@ -169,8 +171,8 @@ namespace SFA.DAS.AssessorService.Application.Api
 
         private async Task<WebConfiguration> GetConfiguration()
         {
-            var environment = "LOCAL";
-            var storageConnectionString = "UseDevelopmentStorage=true;";
+            var environment = _config["Environment"];// "LOCAL";
+            var storageConnectionString = _config["ConnectionStrings:Storage"]; //"UseDevelopmentStorage=true;";
 
             if (environment == null) throw new ArgumentNullException(nameof(environment));
             if (storageConnectionString == null) throw new ArgumentNullException(nameof(storageConnectionString));
