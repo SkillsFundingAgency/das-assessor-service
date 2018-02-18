@@ -160,6 +160,9 @@ namespace SFA.DAS.AssessorService.Application.Api
             AutoMapper.Mapper.Initialize(cfg =>
             {
                 cfg.CreateMap<Organisation, OrganisationQueryViewModel>();
+                cfg.CreateMap<OrganisationCreateViewModel, OrganisationCreateDomainModel>();
+                cfg.CreateMap<OrganisationCreateDomainModel, Organisation>();
+                cfg.CreateMap<Organisation, OrganisationQueryViewModel>();
             });
 
             app.UseAuthentication();

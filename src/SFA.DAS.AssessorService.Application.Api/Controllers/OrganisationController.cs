@@ -72,7 +72,7 @@
             var organisationQueryViewModel = await _mediator.Send(organisationCreateViewModel);     
 
             return CreatedAtRoute("Create",
-                new { ukprn = 1 },
+                new { ukprn = ukprn },
                 organisationQueryViewModel);
         }
     }
