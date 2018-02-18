@@ -19,10 +19,15 @@ namespace SFA.DAS.AssessorService.Data
             _assessorDbContext = assessorDbContext;
         }
 
-        public Task CreateNewOrganisation(Organisation newOrganisation)
+        public async Task<OrganisationQueryViewModel> CreateNewOrganisation(OrganisationCreateDomainModel newOrganisation)
         {
-            Debug.WriteLine("Saving Org");
-            return Task.CompletedTask;
+            var organisation = Mapper.Map<Organisation>(newOrganisation);
+
+            _assessorDbContext.Organisations.Add(organisation);
+            await _assessorDbContext.SaveChangesAsync();
+
+            var organisationQueryViewModel = Mapper.Map<OrganisationQueryViewModel>(organisation);
+            return organisationQueryViewModel;
         }
 
         public async Task<IEnumerable<Organisation>> GetAllOrganisations()
@@ -35,13 +40,20 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<OrganisationQueryViewModel> GetByUkPrn(int ukprn)
         {
-            var organisation = await _assessorDbContext.Organisations                      
+            var organisation = await _assessorDbContext.Organisations
                          .FirstOrDefaultAsync(q => q.EndPointAssessorUKPRN == ukprn);
             if (organisation == null)
-                return null;                
-            
+                return null;
+
             var organisationViewModel = Mapper.Map<OrganisationQueryViewModel>(organisation);
             return organisationViewModel;
+        }
+
+        public async Task<bool> CheckIfAlreadyExists(string endPointAssessorOrganisationId)
+        {
+            var organisation = await _assessorDbContext.Organisations
+                         .FirstOrDefaultAsync(q => q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId);
+            return organisation == null ? false : true;
         }
     }
 }

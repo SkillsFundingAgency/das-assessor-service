@@ -5,12 +5,14 @@
     using FizzWare.NBuilder;
     using SFA.DAS.AssessorService.ViewModel.Models;
     using System.Threading.Tasks;
+    using Moq;
+    using Microsoft.Extensions.Logging;
 
     [Subject("AssessorService")]
     public class WhenGetAssessmentProvidersGetUkSucceeds : WhenGetAssessmentProvidersTestBase
     {
         private static OrganisationQueryViewModel _organisationQueryViewModel;
-
+      
         Establish context = () =>
         {
             Setup();
@@ -20,7 +22,12 @@
             OrganizationRepository.Setup(q => q.GetByUkPrn(Moq.It.IsAny<int>()))
                 .Returns(Task.FromResult((_organisationQueryViewModel)));
 
-            OrganisationContoller = new OrganisationController(OrganizationRepository.Object, StringLocalizer.Object, UkPrnValidator);
+            OrganisationContoller = new OrganisationController(
+                Mediator.Object,
+                OrganizationRepository.Object, 
+                StringLocalizer.Object, 
+                UkPrnValidator,
+                Logger.Object);
         };
 
         Because of = () =>

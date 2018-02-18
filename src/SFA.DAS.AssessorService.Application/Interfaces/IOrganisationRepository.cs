@@ -6,9 +6,11 @@
     using SFA.DAS.AssessorService.ViewModel.Models;
 
     public interface IOrganisationRepository
-    {
-        Task CreateNewOrganisation(Organisation newOrganisation);
+    {       
         Task<IEnumerable<Organisation>> GetAllOrganisations();
         Task<OrganisationQueryViewModel> GetByUkPrn(int ukprn);
+        Task<bool> CheckIfAlreadyExists(string endPointAssessorOrganisationId);
+
+        Task<OrganisationQueryViewModel> CreateNewOrganisation(OrganisationCreateDomainModel newOrganisation);        
     }
 }

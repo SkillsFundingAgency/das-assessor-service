@@ -11,13 +11,6 @@
             {
                 context.Result = new BadRequestObjectResult(context.ModelState);
             }
-
-            //if (!context.ModelState.IsValid)
-            //{
-            //    context.Result = new BadRequestObjectResult(new ApiBadRequestResponse(context.ModelState)));
-            //}
-
-            //base.OnActionExecuting(context);
         }
     }
 }
