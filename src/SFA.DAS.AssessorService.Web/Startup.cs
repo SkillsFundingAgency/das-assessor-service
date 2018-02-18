@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.WsFederation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.WindowsAzure.Storage;
@@ -22,8 +23,11 @@ namespace SFA.DAS.AssessorService.Web
 {
     public class Startup
     {
-        public Startup()
+        private readonly IConfiguration _config;
+
+        public Startup(IConfiguration config)
         {
+            _config = config;
             Configuration = GetConfiguration().Result;
         }
 
@@ -113,8 +117,8 @@ namespace SFA.DAS.AssessorService.Web
 
         private async Task<WebConfiguration> GetConfiguration()
         {
-            var environment = "LOCAL";
-            var storageConnectionString = "UseDevelopmentStorage=true;";
+            var environment = _config["Environment"];// "LOCAL";
+            var storageConnectionString = _config["ConnectionStrings:Storage"]; //"UseDevelopmentStorage=true;";
 
             if (environment == null) throw new ArgumentNullException(nameof(environment));
             if (storageConnectionString == null) throw new ArgumentNullException(nameof(storageConnectionString));
