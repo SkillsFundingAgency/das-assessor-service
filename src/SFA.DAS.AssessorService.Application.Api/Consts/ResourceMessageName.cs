@@ -4,7 +4,9 @@
     {
         public const string NoAssesmentProviderFound = "NoAssesmentProviderFound";
         public const string InvalidUKPRN = "InvalidUKPRN";
-        public const string EndPointAssessorOrganisationIdMustExist = "EndPointAssessorOrganisationIdMustExist";
-        public const string EndPointAssessorNameMustExist = "EndPointAssessorNameMustExist";
+        public const string EndPointAssessorOrganisationIdMustBeDefined = "EndPointAssessorOrganisationIdMustBeDefined";
+        public const string EndPointAssessorNameMustBeDefined = "EndPointAssessorNameMustBeDefined";
+        public const string PrimaryContactDoesNotExist = "PrimaryContactDoesNotExist";
+        public const string AlreadyExists = "AlreadyExists";
     }
 }

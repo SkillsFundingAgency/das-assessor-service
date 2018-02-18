@@ -21,9 +21,11 @@
                 .Returns(Task.FromResult<OrganisationQueryViewModel>(null));
 
             OrganisationContoller = new OrganisationController(
-                OrganizationRepository.Object,
-                StringLocalizer.Object,
-                UkPrnValidator);
+                  Mediator.Object,
+                  OrganizationRepository.Object,
+                  StringLocalizer.Object,
+                  UkPrnValidator,
+                  Logger.Object);
         };
 
         Because of = () =>
