@@ -45,24 +45,24 @@ namespace SFA.DAS.AssessorService.Application.Api
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            //services.AddAuthentication(sharedOptions =>
-            //    {
-            //        sharedOptions.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            //    })
-            //    .AddJwtBearer(options =>
-            //    {
-            //        options.TokenValidationParameters = new TokenValidationParameters
-            //        {
-            //            ValidateIssuer = true,
-            //            ValidateAudience = true,
-            //            ValidateLifetime = true,
-            //            ValidateIssuerSigningKey = true,
-            //            ValidIssuer = "sfa.das.assessorservice",
-            //            ValidAudience = "sfa.das.assessorservice.api",
-            //            IssuerSigningKey = new SymmetricSecurityKey(
-            //                Encoding.UTF8.GetBytes(Configuration.Api.TokenEncodingKey))
-            //        };
-            //    });
+            services.AddAuthentication(sharedOptions =>
+                {
+                    sharedOptions.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = "sfa.das.assessorservice",
+                        ValidAudience = "sfa.das.assessorservice.api",
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(Configuration.Api.TokenEncodingKey))
+                    };
+                });
 
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
             services.AddMvc()
@@ -102,7 +102,7 @@ namespace SFA.DAS.AssessorService.Application.Api
                 });
 
             var serviceProvider = ConfigureIOC(services);
-            
+
             TestDataService.AddTestData(serviceProvider.GetService<AssessorDbContext>());
 
             return serviceProvider;
@@ -134,9 +134,9 @@ namespace SFA.DAS.AssessorService.Application.Api
 
                 var option = new DbContextOptionsBuilder<AssessorDbContext>();
                 option.UseSqlServer(Configuration.SqlConnectionString);
-                
+
                 config.For<AssessorDbContext>().Use(c => new AssessorDbContext(option.Options, _env.IsDevelopment()));
-                
+
                 config.Populate(services);
             });
 
