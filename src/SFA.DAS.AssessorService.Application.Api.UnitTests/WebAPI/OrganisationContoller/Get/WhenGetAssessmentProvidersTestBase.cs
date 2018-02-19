@@ -16,10 +16,10 @@
         protected static Mock<IStringLocalizer<OrganisationController>> StringLocalizer;
         protected static IActionResult Result;
         protected static UkPrnValidator UkPrnValidator;
-        protected static Mock<ILogger<OrganisationController>> Logger;
+        protected static Mock<ILogger<OrganisationQueryController>> Logger;
         protected static Mock<IMediator> Mediator;
 
-        protected static OrganisationController OrganisationContoller;
+        protected static OrganisationQueryController OrganisationContoller;
 
         protected static void Setup()
         {
@@ -35,7 +35,7 @@
             localizedString = new LocalizedString(key, "10000000");
             ukPrnStringLocalizer.Setup(q => q[Moq.It.IsAny<string>(), Moq.It.IsAny<string>()]).Returns(localizedString);
 
-            Logger = new Mock<ILogger<OrganisationController>>();
+            Logger = new Mock<ILogger<OrganisationQueryController>>();
             Mediator = new Mock<IMediator>();
 
             UkPrnValidator = new UkPrnValidator(ukPrnStringLocalizer.Object);

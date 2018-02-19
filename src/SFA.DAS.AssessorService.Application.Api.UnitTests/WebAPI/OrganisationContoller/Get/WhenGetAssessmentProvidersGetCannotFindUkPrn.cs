@@ -20,7 +20,7 @@
             OrganizationRepository.Setup(q => q.GetByUkPrn(Moq.It.IsAny<int>()))
                 .Returns(Task.FromResult<OrganisationQueryViewModel>(null));
 
-            OrganisationContoller = new OrganisationController(
+            OrganisationContoller = new OrganisationQueryController(
                   Mediator.Object,
                   OrganizationRepository.Object,
                   StringLocalizer.Object,

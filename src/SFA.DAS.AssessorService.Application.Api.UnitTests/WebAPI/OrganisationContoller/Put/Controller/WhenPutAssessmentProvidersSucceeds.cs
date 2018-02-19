@@ -28,7 +28,6 @@
 
             OrganisationContoller = new OrganisationController(
                   Mediator.Object,
-                  OrganizationRepository.Object,
                   StringLocalizer.Object,
                   UkPrnValidator,
                   Logger.Object);

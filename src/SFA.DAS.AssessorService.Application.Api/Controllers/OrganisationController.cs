@@ -20,50 +20,20 @@
     public class OrganisationController : Controller
     {
         private readonly IMediator _mediator;
-        private readonly IOrganisationRepository _organisationRepository;
         private readonly IStringLocalizer<OrganisationController> _localizer;
         private readonly UkPrnValidator _ukPrnValidator;
         private readonly ILogger<OrganisationController> _logger;
 
         public OrganisationController(IMediator mediator,
-            IOrganisationRepository organisationRepository,
             IStringLocalizer<OrganisationController> localizer,
             UkPrnValidator ukPrnValidator,
             ILogger<OrganisationController> logger
             )
         {
             _mediator = mediator;
-            _organisationRepository = organisationRepository;
             _localizer = localizer;
             _ukPrnValidator = ukPrnValidator;
             _logger = logger;
-        }
-
-        [HttpGet("{ukprn}")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(OrganisationQueryViewModel))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest)]
-        [SwaggerResponse((int)HttpStatusCode.NotFound, Type = typeof(string))]
-        public async Task<IActionResult> Get(int ukprn)
-        {
-            var result = _ukPrnValidator.Validate(ukprn);
-            if (!result.IsValid)
-                return BadRequest(result.Errors[0].ErrorMessage);
-
-            var organisation = await _organisationRepository.GetByUkPrn(ukprn);
-            if (organisation == null)
-            {
-                return NotFound(_localizer[ResourceMessageName.NoAssesmentProviderFound, ukprn].Value);
-            }
-
-            return Ok(organisation);
-        }
-
-        [HttpGet]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(OrganisationQueryViewModel))]
-        public async Task<IActionResult> Get()
-        {
-            var organisations = await _organisationRepository.GetAllOrganisations();
-            return Ok(organisations);
         }
 
         [HttpPost(Name = "Create")]
