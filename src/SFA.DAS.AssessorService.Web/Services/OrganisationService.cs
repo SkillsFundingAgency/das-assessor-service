@@ -10,13 +10,13 @@ namespace SFA.DAS.AssessorService.Web.Services
     {
         private readonly IHttpClient _httpClient;
         private readonly IWebConfiguration _config;
-        private string _remoteServiceBaseUrl;
+        private readonly string _remoteServiceBaseUrl;
 
         public OrganisationService(IHttpClient httpClient, IWebConfiguration config)
         {
             _httpClient = httpClient;
             _config = config;
-            var apiServiceHost = _config.Api.ApiBaseAddress;// "http://localhost:59021";
+            var apiServiceHost = _config.Api.ApiBaseAddress;
             _remoteServiceBaseUrl = $"{apiServiceHost}/api/v1/assessment-providers";
         }
 
@@ -24,9 +24,11 @@ namespace SFA.DAS.AssessorService.Web.Services
         {
             var apiUri = ApiUriGenerator.Organisation.GetOrganisation(_remoteServiceBaseUrl, ukprn);
 
-            var dataString = await _httpClient.GetStringAsync(apiUri, token);
+            var getResponse = await _httpClient.GetAsync(apiUri, token);
 
-            var response = JsonConvert.DeserializeObject<Organisation>(dataString);
+            if (!getResponse.IsSuccessStatusCode) return null;
+
+            var response = JsonConvert.DeserializeObject<Organisation>(await getResponse.Content.ReadAsStringAsync());
 
             return response;
         }

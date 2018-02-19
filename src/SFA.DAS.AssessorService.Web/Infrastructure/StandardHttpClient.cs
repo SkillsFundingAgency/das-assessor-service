@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Web.Infrastructure
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<string> GetStringAsync(string uri, string authorizationToken = null, string authorizationMethod = "Bearer")
+        public async Task<HttpResponseMessage> GetAsync(string uri, string authorizationToken = null, string authorizationMethod = "Bearer")
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
 
@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Web.Infrastructure
 
             var response = await _client.SendAsync(requestMessage);
 
-            return await response.Content.ReadAsStringAsync();
+            return response;
         }
 
         private async Task<HttpResponseMessage> DoPostPutAsync<T>(HttpMethod method, string uri, T item, string authorizationToken = null, string requestId = null, string authorizationMethod = "Bearer")
