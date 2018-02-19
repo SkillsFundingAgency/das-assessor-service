@@ -46,8 +46,6 @@
             var result = _result as OrganisationQueryViewModel;
             result.Should().NotBeNull();
         };
-
-       
     }
 }
 

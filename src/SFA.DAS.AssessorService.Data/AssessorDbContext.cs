@@ -5,6 +5,11 @@
 
     public class AssessorDbContext : DbContext
     {
+        public AssessorDbContext()
+        {
+
+        }
+
         public AssessorDbContext(DbContextOptions<AssessorDbContext> options, bool migrate)
           : base(options)
         {
