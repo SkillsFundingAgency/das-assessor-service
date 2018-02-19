@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.AssessorService.Application.CreateOrganisation
+﻿namespace SFA.DAS.AssessorService.Application.OrganisationHandlers
 {
     using System.Threading;
     using System.Threading.Tasks;

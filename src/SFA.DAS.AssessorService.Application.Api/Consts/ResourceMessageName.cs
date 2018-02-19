@@ -8,5 +8,7 @@
         public const string EndPointAssessorNameMustBeDefined = "EndPointAssessorNameMustBeDefined";
         public const string PrimaryContactDoesNotExist = "PrimaryContactDoesNotExist";
         public const string AlreadyExists = "AlreadyExists";
+        public const string DoesNotExist = "DoesNotExist";
+        public const string IdMustExist = "IdMustExist";
     }
 }

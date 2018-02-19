@@ -4,7 +4,7 @@
     using FluentAssertions;
     using Machine.Specifications;
     using Moq;
-    using SFA.DAS.AssessorService.Application.CreateOrganisation;
+    using SFA.DAS.AssessorService.Application.OrganisationHandlers;
     using SFA.DAS.AssessorService.Application.Interfaces;
     using SFA.DAS.AssessorService.ViewModel.Models;
     using System.Threading;

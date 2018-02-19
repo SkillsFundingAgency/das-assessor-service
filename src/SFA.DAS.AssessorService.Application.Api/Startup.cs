@@ -43,24 +43,24 @@ namespace SFA.DAS.AssessorService.Application.Api
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddAuthentication(sharedOptions =>
-                {
-                    sharedOptions.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = "sfa.das.assessorservice",
-                        ValidAudience = "sfa.das.assessorservice.api",
-                        IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(Configuration.Api.TokenEncodingKey))
-                    };
-                });
+            //services.AddAuthentication(sharedOptions =>
+            //    {
+            //        sharedOptions.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            //    })
+            //    .AddJwtBearer(options =>
+            //    {
+            //        options.TokenValidationParameters = new TokenValidationParameters
+            //        {
+            //            ValidateIssuer = true,
+            //            ValidateAudience = true,
+            //            ValidateLifetime = true,
+            //            ValidateIssuerSigningKey = true,
+            //            ValidIssuer = "sfa.das.assessorservice",
+            //            ValidAudience = "sfa.das.assessorservice.api",
+            //            IssuerSigningKey = new SymmetricSecurityKey(
+            //                Encoding.UTF8.GetBytes(Configuration.Api.TokenEncodingKey))
+            //        };
+            //    });
 
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
             services.AddMvc()
@@ -158,6 +158,9 @@ namespace SFA.DAS.AssessorService.Application.Api
                 cfg.CreateMap<OrganisationCreateViewModel, OrganisationCreateDomainModel>();
                 cfg.CreateMap<OrganisationCreateDomainModel, Organisation>();
                 cfg.CreateMap<Organisation, OrganisationQueryViewModel>();
+
+                cfg.CreateMap<OrganisationUpdateViewModel, OrganisationUpdateDomainModel>();
+                cfg.CreateMap<Organisation, OrganisationQueryViewModel>();                
             });
 
             app.UseAuthentication();
