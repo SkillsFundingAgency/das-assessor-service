@@ -32,7 +32,8 @@
 
         private bool AlreadyExist(Guid id)
         {
-            return _organisationRepository.CheckIfAlreadyExists(id).Result;
+            var result = _organisationRepository.CheckIfAlreadyExists(id).Result;
+            return result;
         }
 
         private bool HaveAssociatedPrimaryContactInContacts(int? primaryContactId)
