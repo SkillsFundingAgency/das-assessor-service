@@ -12,6 +12,8 @@
 
         public static void SetupAutomapper()
         {
+            AutoMapper.Mapper.Reset();
+
             AutoMapper.Mapper.Initialize(cfg =>
             {
                 cfg.CreateMap<Organisation, OrganisationQueryViewModel>();
