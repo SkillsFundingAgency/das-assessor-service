@@ -83,8 +83,8 @@
 
         public async Task Delete(int ukprn)
         {
-            var organisationEntity = await _assessorDbContext.Organisations
-                      .FirstOrDefaultAsync(q => q.EndPointAssessorUKPRN == ukprn);
+            var organisationEntity = _assessorDbContext.Organisations
+                      .FirstOrDefault(q => q.EndPointAssessorUKPRN == ukprn);
 
             if (organisationEntity == null)
                 throw (new NotFound());
