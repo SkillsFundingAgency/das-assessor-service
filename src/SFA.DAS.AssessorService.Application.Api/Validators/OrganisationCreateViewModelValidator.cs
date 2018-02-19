@@ -23,20 +23,20 @@
 
             var organisationCreateViewModel = new OrganisationCreateViewModel();
 
-            RuleFor(customer => customer.EndPointAssessorOrganisationId).NotEmpty().WithMessage(_localizer[ResourceMessageName.EndPointAssessorOrganisationIdMustBeDefined, nameof(organisationCreateViewModel.EndPointAssessorOrganisationId)].Value);
-            RuleFor(customer => customer.EndPointAssessorName).NotEmpty().WithMessage(_localizer[ResourceMessageName.EndPointAssessorNameMustBeDefined, nameof(organisationCreateViewModel.EndPointAssessorName)].Value);
-            RuleFor(customer => customer.EndPointAssessorUKPRN).InclusiveBetween(10000000, 99999999).WithMessage(_localizer[ResourceMessageName.InvalidUKPRN, nameof(organisationCreateViewModel.EndPointAssessorUKPRN)].Value);
-            
-            RuleFor(customer => customer.PrimaryContactId).Must(HaveAssociatedPrimaryContactinContacts).WithMessage(_localizer[ResourceMessageName.PrimaryContactDoesNotExist, nameof(organisationCreateViewModel.PrimaryContactId)].Value);
+            RuleFor(organisation => organisation.EndPointAssessorOrganisationId).NotEmpty().WithMessage(_localizer[ResourceMessageName.EndPointAssessorOrganisationIdMustBeDefined, nameof(organisationCreateViewModel.EndPointAssessorOrganisationId)].Value);
+            RuleFor(organisation => organisation.EndPointAssessorName).NotEmpty().WithMessage(_localizer[ResourceMessageName.EndPointAssessorNameMustBeDefined, nameof(organisationCreateViewModel.EndPointAssessorName)].Value);
+            RuleFor(organisation => organisation.EndPointAssessorUKPRN).InclusiveBetween(10000000, 99999999).WithMessage(_localizer[ResourceMessageName.InvalidUKPRN, nameof(organisationCreateViewModel.EndPointAssessorUKPRN)].Value);
+
+            RuleFor(customer => customer.PrimaryContactId).Must(HaveAssociatedPrimaryContactInContacts).WithMessage(_localizer[ResourceMessageName.PrimaryContactDoesNotExist, nameof(organisationCreateViewModel.PrimaryContactId)].Value);
             RuleFor(customer => customer.EndPointAssessorOrganisationId).Must(AlreadyExists).WithMessage(_localizer[ResourceMessageName.AlreadyExists, nameof(organisationCreateViewModel.EndPointAssessorOrganisationId)].Value);
         }
 
         private bool AlreadyExists(string endPointAssessorOrganisationId)
         {
-            return  !_organisationRepository.CheckIfAlreadyExists(endPointAssessorOrganisationId).Result;
+            return !_organisationRepository.CheckIfAlreadyExists(endPointAssessorOrganisationId).Result;
         }
 
-        private bool HaveAssociatedPrimaryContactinContacts(int? primaryContactId)
+        private bool HaveAssociatedPrimaryContactInContacts(int? primaryContactId)
         {
             if (!primaryContactId.HasValue)
                 return true;

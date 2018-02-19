@@ -14,7 +14,7 @@
     using SFA.DAS.AssessorService.ViewModel.Models;
     using Swashbuckle.AspNetCore.SwaggerGen;
 
-    [Authorize]
+    //[Authorize]
     [Route("api/v1/assessment-providers")]
     public class OrganisationController : Controller
     {
@@ -63,7 +63,7 @@
         public async Task<IActionResult> Create(int ukprn,
             [FromBody] OrganisationCreateViewModel organisationCreateViewModel)
         {
-            _logger.LogInformation("Received Update Request");
+            _logger.LogInformation("Received Create Request");
           
             var result = _ukPrnValidator.Validate(ukprn);
             if (!result.IsValid)
@@ -74,6 +74,22 @@
             return CreatedAtRoute("Create",
                 new { ukprn = ukprn },
                 organisationQueryViewModel);
+        }
+
+        [HttpPut(Name = "Update")]
+        [ValidateBadRequest]
+        public async Task<IActionResult> Update(int ukprn,
+          [FromBody] OrganisationUpdateViewModel organisationUpdateViewModel)
+        {
+            _logger.LogInformation("Received Update Request");
+
+            var result = _ukPrnValidator.Validate(ukprn);
+            if (!result.IsValid)
+                return BadRequest(result.Errors[0].ErrorMessage);
+
+            var organisationQueryViewModel = await _mediator.Send(organisationUpdateViewModel);
+
+            return NoContent();
         }
     }
 }
