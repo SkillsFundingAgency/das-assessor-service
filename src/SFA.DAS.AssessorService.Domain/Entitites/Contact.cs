@@ -15,6 +15,12 @@
 
         public string ContactName { get; set; }
         public string ContactEmail { get; set; }
-        public string Status { get; set; }
+        public ContactStatus Status { get; set; }
+    }
+
+    public enum ContactStatus
+    {
+        Live,
+        Deleted
     }
 }

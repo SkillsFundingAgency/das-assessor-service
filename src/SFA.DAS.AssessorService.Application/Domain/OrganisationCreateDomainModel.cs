@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.AssessorService.ViewModel.Models
+﻿using SFA.DAS.AssessorService.Domain.Entities;
+
+namespace SFA.DAS.AssessorService.ViewModel.Models
 {
     using MediatR;
 
@@ -8,6 +10,6 @@
         public int EndPointAssessorUKPRN { get; set; }
         public string EndPointAssessorName { get; set; }
         public int? PrimaryContactId { get; set; }
-        public string Status { get; set; }
+        public OrganisationStatus Status { get; set; }
     }
 }

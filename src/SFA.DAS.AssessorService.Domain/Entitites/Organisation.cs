@@ -13,9 +13,16 @@
         public int? PrimaryContactId { get; set; }
 
 
-        public string Status { get; set; }
+        public OrganisationStatus Status { get; set; }
 
         public ICollection<Certificate> Certificates { get; set; } = new List<Certificate>();      
         public ICollection<Contact> Contacts { get; set; } = new List<Contact>();
+    }
+
+    public enum OrganisationStatus
+    {
+        New,
+        Live,
+        Deleted
     }
 }

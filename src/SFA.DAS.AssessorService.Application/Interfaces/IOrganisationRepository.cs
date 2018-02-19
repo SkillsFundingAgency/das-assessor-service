@@ -10,7 +10,7 @@
         Task<IEnumerable<Organisation>> GetAllOrganisations();
         Task<OrganisationQueryViewModel> GetByUkPrn(int ukprn);
         Task<bool> CheckIfAlreadyExists(string endPointAssessorOrganisationId);
-
-        Task<OrganisationQueryViewModel> CreateNewOrganisation(OrganisationCreateDomainModel newOrganisation);        
+        Task<OrganisationQueryViewModel> CreateNewOrganisation(OrganisationCreateDomainModel newOrganisation);
+        Task DeleteOrganisationByEpaoId(string epaoId);
     }
 }

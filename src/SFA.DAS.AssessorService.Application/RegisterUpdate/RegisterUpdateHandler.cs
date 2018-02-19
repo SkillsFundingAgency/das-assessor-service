@@ -11,6 +11,10 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
 {
     public class RegisterUpdateHandler : IRequestHandler<RegisterUpdateRequest>
     {
+        /// <summary>
+        /// THIS SHOULD NOT BE ACCESSING THE REPOSITORY DIRECTLY, BUT THROUGH THE API
+        /// </summary>
+        
         private readonly IAssessmentOrgsApiClient _apiClient;
         private readonly IOrganisationRepository _organisationRepository;
 
@@ -34,6 +38,14 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
                         EndPointAssessorOrganisationId = epao.Id,
                         EndPointAssessorName = epao.Name
                     });
+                }
+            }
+
+            foreach (var org in organisations)
+            {
+                if (!epaosOnRegister.Any(e => e.Id == org.EndPointAssessorOrganisationId))
+                {
+                    await _organisationRepository.DeleteOrganisationByEpaoId(org.EndPointAssessorOrganisationId);
                 }
             }
         }

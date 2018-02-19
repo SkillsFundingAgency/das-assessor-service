@@ -31,7 +31,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Epa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.ViewModel", "SFA.DAS.AssessorService.ViewModel\SFA.DAS.AssessorService.ViewModel.csproj", "{65E918D5-263A-417E-BA96-0326E9260F06}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.Settings", "SFA.DAS.AssessorService.Settings\SFA.DAS.AssessorService.Settings.csproj", "{16E01083-F698-4E7F-9822-B76D251B8655}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Settings", "SFA.DAS.AssessorService.Settings\SFA.DAS.AssessorService.Settings.csproj", "{16E01083-F698-4E7F-9822-B76D251B8655}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

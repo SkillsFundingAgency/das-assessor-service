@@ -22,11 +22,11 @@
             var organisationCreateDomainModel = Mapper.Map<OrganisationCreateDomainModel>(organisationCreateViewModel);
             if (organisationCreateViewModel.PrimaryContactId.HasValue)
             {
-                organisationCreateDomainModel.Status = OrganisationStatus.Live;
+                organisationCreateDomainModel.Status = Domain.Entities.OrganisationStatus.Live;
             }
             else
             {
-                organisationCreateDomainModel.Status = OrganisationStatus.New;
+                organisationCreateDomainModel.Status = Domain.Entities.OrganisationStatus.New;
             }
 
             var organisationQueryViewModel = await _organisationRepository.CreateNewOrganisation(organisationCreateDomainModel);

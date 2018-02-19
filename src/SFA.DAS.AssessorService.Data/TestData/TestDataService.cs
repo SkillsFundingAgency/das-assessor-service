@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     EndPointAssessorUKPRN = 10003375,
                     CreatedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now,
-                    Status = "Active"
+                    Status = OrganisationStatus.Live
                 };
 
                 context.Organisations.Add(organisation);
@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     EndPointAssessorContactId = 1,
                     EndPointAssessorOrganisationId = "1234",
                     EndPointAssessorUKPRN = 10000000,
-                    Status = "Active",
+                    Status = ContactStatus.Live,
                     CreatedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now,
                     OrganisationId = organisation.Id
@@ -49,7 +49,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     EndPointAssessorContactId = 1,
                     EndPointAssessorOrganisationId = "1234",
                     EndPointAssessorUKPRN = 10000000,
-                    Status = "Active",
+                    Status = ContactStatus.Live,
                     CreatedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now,
                     OrganisationId = organisation.Id
@@ -87,12 +87,12 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     StandardLevel = 1,
                     StandardName = "Test",
                     StandardPublicationDate = DateTime.Now,
-                    Status = "Active",
+                    Status = CertificateStatus.Ready,
                     ULN = 123456,
                     CreatedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now,
                     CreatedBy = firstContact.Id,
-                    UpdatedBY = firstContact.Id
+                    UpdatedBy = firstContact.Id
 
                 };
 
@@ -126,12 +126,12 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     StandardLevel = 1,
                     StandardName = "Test",
                     StandardPublicationDate = DateTime.Now,
-                    Status = "Active",
+                    Status = CertificateStatus.Ready,
                     ULN = 123456,
                     CreatedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now,
                     CreatedBy = firstContact.Id,
-                    UpdatedBY = firstContact.Id
+                    UpdatedBy = firstContact.Id
                 };
 
                 context.Certificates.Add(secondCertificate);
@@ -144,7 +144,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     CertificateId = firstCertificate.Id,
                     EndPointAssessorCertificateId = 2222222,
                     EventTime = DateTime.Now,
-                    Status = "Active",
+                    Status = CertificateStatus.Ready,
 
                     CreatedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now
@@ -159,7 +159,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     CertificateId = secondCertificate.Id,
                     EndPointAssessorCertificateId = 2222222,
                     EventTime = DateTime.Now,
-                    Status = "Active",
+                    Status = CertificateStatus.Ready,
 
                     CreatedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now

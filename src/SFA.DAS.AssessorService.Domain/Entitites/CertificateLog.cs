@@ -10,7 +10,7 @@
 
         public int EndPointAssessorCertificateId { get; set; }
         public string Action { get; set; }
-        public string Status { get; set; }
+        public CertificateStatus Status { get; set; }
         public DateTime EventTime { get; set; }
     }
 }

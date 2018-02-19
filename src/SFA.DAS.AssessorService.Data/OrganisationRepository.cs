@@ -29,6 +29,13 @@
             return organisationQueryViewModel;
         }
 
+        public async Task DeleteOrganisationByEpaoId(string epaoId)
+        {
+            var organisation = _assessorDbContext.Organisations.Single(o => o.EndPointAssessorOrganisationId == epaoId);
+            organisation.Status = OrganisationStatus.Deleted;
+            await _assessorDbContext.SaveChangesAsync();
+        }
+
         public async Task<IEnumerable<Organisation>> GetAllOrganisations()
         {
             return new List<Organisation>()

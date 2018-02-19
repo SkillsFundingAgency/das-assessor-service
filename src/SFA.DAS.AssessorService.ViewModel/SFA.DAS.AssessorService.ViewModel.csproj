@@ -8,4 +8,8 @@
     <PackageReference Include="Mediatr" Version="4.0.1" />  
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SFA.DAS.AssessorService.Domain\SFA.DAS.AssessorService.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
