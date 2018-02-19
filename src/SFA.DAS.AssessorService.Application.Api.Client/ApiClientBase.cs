@@ -135,6 +135,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
             }
         }
 
+        protected async Task Delete(HttpRequestMessage requestMessage)
+        {
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetJwt());
+
+            var response = await HttpClient.SendAsync(requestMessage);
+
+            if (response.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                throw new HttpRequestException();
+            }
+        }
+
         //internal T RequestAndDeserialise<T>(HttpRequestMessage request, string missing = null) where T : class
 
         //{

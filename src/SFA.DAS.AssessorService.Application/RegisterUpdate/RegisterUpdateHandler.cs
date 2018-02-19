@@ -3,41 +3,41 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.AssessmentOrgs.Api.Client.Core;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.ViewModel.Models;
 
 namespace SFA.DAS.AssessorService.Application.RegisterUpdate
 {
     public class RegisterUpdateHandler : IRequestHandler<RegisterUpdateRequest>
     {
-        /// <summary>
-        /// THIS SHOULD NOT BE ACCESSING THE REPOSITORY DIRECTLY, BUT THROUGH THE API
-        /// </summary>
-        
-        private readonly IAssessmentOrgsApiClient _apiClient;
-        private readonly IOrganisationRepository _organisationRepository;
+        private readonly IAssessmentOrgsApiClient _registerApiClient;
+        private readonly IOrganisationsApiClient _internalApiClient;
 
-        public RegisterUpdateHandler(IAssessmentOrgsApiClient apiClient, IOrganisationRepository organisationRepository)
+        public RegisterUpdateHandler(IAssessmentOrgsApiClient registerApiClient, IOrganisationsApiClient internalApiClient)
         {
-            _apiClient = apiClient;
-            _organisationRepository = organisationRepository;
+            _registerApiClient = registerApiClient;
+            _internalApiClient = internalApiClient;
         }
 
         public async Task Handle(RegisterUpdateRequest message, CancellationToken cancellationToken)
         {
-            var epaosOnRegister = await _apiClient.FindAllAsync();
-            var organisations = await _organisationRepository.GetAllOrganisations();
+            var epaosOnRegister = await _registerApiClient.FindAllAsync();
+
+            var organisations = await _internalApiClient.Get();
+
+            //var organisations = await _organisationRepository.GetAllOrganisations();
             foreach (var epaoSummary in epaosOnRegister)
             {
                 if (!organisations.Any(o => o.EndPointAssessorOrganisationId == epaoSummary.Id))
                 {
-                    var epao = _apiClient.Get(epaoSummary.Id);
-                    await _organisationRepository.CreateNewOrganisation(new OrganisationCreateDomainModel
-                    {
-                        EndPointAssessorOrganisationId = epao.Id,
-                        EndPointAssessorName = epao.Name
-                    });
+                    var epao = _registerApiClient.Get(epaoSummary.Id);
+
+                    await _internalApiClient.Create(epao.UkPrn,
+                        new OrganisationCreateViewModel()
+                        {
+                            EndPointAssessorOrganisationId = epao.Id,
+                            EndPointAssessorName = epao.Name
+                        });
                 }
             }
 
@@ -45,7 +45,7 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
             {
                 if (!epaosOnRegister.Any(e => e.Id == org.EndPointAssessorOrganisationId))
                 {
-                    await _organisationRepository.DeleteOrganisationByEpaoId(org.EndPointAssessorOrganisationId);
+                    await _internalApiClient.Delete(org.EndPointAssessorUKPRN);
                 }
             }
         }

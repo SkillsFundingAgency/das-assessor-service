@@ -5,11 +5,8 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Mediatr" Version="4.0.1" />
-    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.6" />
+    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.8" />
     <PackageReference Include="StructureMap" Version="4.6.1" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SFA.DAS.AssessorService.Application\SFA.DAS.AssessorService.Application.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">
