@@ -8,6 +8,7 @@
     using Microsoft.EntityFrameworkCore;
     using SFA.DAS.AssessorService.Application.Interfaces;
     using SFA.DAS.AssessorService.Domain.Entities;
+    using SFA.DAS.AssessorService.Domain.Exceptions;
     using SFA.DAS.AssessorService.ViewModel.Models;
 
     public class OrganisationRepository : IOrganisationRepository
@@ -58,7 +59,7 @@
         public async Task<OrganisationQueryViewModel> GetByUkPrn(int ukprn)
         {
             var organisation = await _assessorDbContext.Organisations
-                         .FirstOrDefaultAsync(q => q.EndPointAssessorUKPRN == ukprn);
+                         .FirstOrDefaultAsync(q => q.EndPointAssessorUKPRN == ukprn && q.IsDeleted == false);
             if (organisation == null)
                 return null;
 
@@ -69,20 +70,31 @@
         public async Task<bool> CheckIfAlreadyExists(string endPointAssessorOrganisationId)
         {
             var organisation = await _assessorDbContext.Organisations
-                         .FirstOrDefaultAsync(q => q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId);
+                         .FirstOrDefaultAsync(q => q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId && q.IsDeleted == false);
             return organisation == null ? false : true;
         }
 
         public async Task<bool> CheckIfAlreadyExists(Guid id)
         {
             var organisation = await _assessorDbContext.Organisations
-                        .FirstOrDefaultAsync(q => q.Id == id);
+                        .FirstOrDefaultAsync(q => q.Id == id && q.IsDeleted == true);
             return organisation == null ? false : true;
         }
 
-        public virtual void SetEntityStateModified(Organisation organisation)
+        public async Task Delete(int ukprn)
         {
-            _assessorDbContext.Entry(organisation).State = EntityState.Modified;
+            var organisationEntity = await _assessorDbContext.Organisations
+                      .FirstOrDefaultAsync(q => q.EndPointAssessorUKPRN == ukprn);
+
+            if (organisationEntity == null)
+                throw (new NotFound());
+
+            organisationEntity.DeletedAt = DateTime.Now;
+            organisationEntity.IsDeleted = true;
+
+            _assessorDbContext.MarkAsModified(organisationEntity);
+
+            await _assessorDbContext.SaveChangesAsync();
         }
     }
 }

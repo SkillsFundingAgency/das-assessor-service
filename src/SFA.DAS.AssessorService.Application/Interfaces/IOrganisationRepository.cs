@@ -15,5 +15,7 @@
 
         Task<OrganisationQueryViewModel> CreateNewOrganisation(OrganisationCreateDomainModel newOrganisation);
         Task<OrganisationQueryViewModel> UpdateOrganisation(OrganisationUpdateDomainModel organisationUpdateDomainModel);
+
+        Task Delete(int ukprn);
     }
 }

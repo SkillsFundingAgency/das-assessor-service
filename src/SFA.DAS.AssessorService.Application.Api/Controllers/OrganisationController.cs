@@ -11,6 +11,7 @@
     using SFA.DAS.AssessorService.Application.Api.Consts;
     using SFA.DAS.AssessorService.Application.Api.Validators;
     using SFA.DAS.AssessorService.Application.Interfaces;
+    using SFA.DAS.AssessorService.Domain.Exceptions;
     using SFA.DAS.AssessorService.ViewModel.Models;
     using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -24,7 +25,7 @@
         private readonly UkPrnValidator _ukPrnValidator;
         private readonly ILogger<OrganisationController> _logger;
 
-        public OrganisationController(IMediator mediator, 
+        public OrganisationController(IMediator mediator,
             IOrganisationRepository organisationRepository,
             IStringLocalizer<OrganisationController> localizer,
             UkPrnValidator ukPrnValidator,
@@ -64,12 +65,12 @@
             [FromBody] OrganisationCreateViewModel organisationCreateViewModel)
         {
             _logger.LogInformation("Received Create Request");
-          
+
             var result = _ukPrnValidator.Validate(ukprn);
             if (!result.IsValid)
                 return BadRequest(result.Errors[0].ErrorMessage);
-           
-            var organisationQueryViewModel = await _mediator.Send(organisationCreateViewModel);     
+
+            var organisationQueryViewModel = await _mediator.Send(organisationCreateViewModel);
 
             return CreatedAtRoute("Create",
                 new { ukprn = ukprn },
@@ -90,6 +91,33 @@
             var organisationQueryViewModel = await _mediator.Send(organisationUpdateViewModel);
 
             return NoContent();
+        }
+
+        [HttpDelete(Name = "Delete")]
+        [ValidateBadRequest]
+        public async Task<IActionResult> Delete(int ukprn)
+        {
+            try
+            {
+                _logger.LogInformation("Received Update Request");
+
+                var result = _ukPrnValidator.Validate(ukprn);
+                if (!result.IsValid)
+                    return BadRequest(result.Errors[0].ErrorMessage);
+
+                var organisationDeleteViewModel = new OrganisationDeleteViewModel
+                {
+                    UKPrn = ukprn
+                };
+
+                await _mediator.Send(organisationDeleteViewModel);
+
+                return NoContent();
+            }
+            catch (NotFound exception)
+            {             
+                return NotFound();
+            }
         }
     }
 }
