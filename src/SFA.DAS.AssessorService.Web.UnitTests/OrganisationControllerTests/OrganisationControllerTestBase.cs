@@ -1,4 +1,7 @@
-﻿namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
+﻿using SFA.DAS.AssessorService.Application.Api.Client;
+using SFA.DAS.AssessorService.ViewModel.Models;
+
+namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
 {
     using System.Security.Claims;
     using System.Threading.Tasks;
@@ -13,15 +16,17 @@
     public class OrganisationControllerTestBase
     {
         protected static OrganisationController OrganisationController;
-        protected static Mock<IOrganisationService> OrganisationService;
-        protected static Mock<ITokenService> TokenService;       
+        //protected static Mock<IOrganisationService> OrganisationService;
+        protected static Mock<ITokenService> TokenService;
+
+        protected static Mock<IOrganisationsApiClient> ApiClient;
 
         public static void  Setup()
         {
-            OrganisationService = new Mock<IOrganisationService>();
-            OrganisationService
-               .Setup(serv => serv.GetOrganisation("jwt", 12345))
-               .Returns(Task.FromResult(new Organisation() { Id = "ID1" }));
+            //OrganisationService = new Mock<IOrganisationService>();
+            //OrganisationService
+            //   .Setup(serv => serv.GetOrganisation("jwt", 12345))
+            //   .Returns(Task.FromResult(new Organisation() { Id = "ID1" }));
 
             var httpContext = new Mock<IHttpContextAccessor>();
             httpContext
@@ -39,8 +44,11 @@
 
             TokenService = new Mock<ITokenService>();            
             TokenService.Setup(s => s.GetJwt()).Returns("jwt");
+            
+            ApiClient = new Mock<IOrganisationsApiClient>();
+            ApiClient.Setup(c => c.Get(12345)).ReturnsAsync(new OrganisationQueryViewModel() {});
 
-            OrganisationController = new OrganisationController(OrganisationService.Object, logger.Object, TokenService.Object, httpContext.Object);
+            OrganisationController = new OrganisationController(logger.Object, httpContext.Object, ApiClient.Object);
         }
     }
 }

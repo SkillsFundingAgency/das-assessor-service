@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.AssessorService.Web.Services
+﻿namespace SFA.DAS.AssessorService.Application.Api.Client
 {
     public interface ICache
     {

@@ -11,10 +11,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Services;
 using StructureMap;
+using SessionCache = SFA.DAS.AssessorService.Application.Api.Client.SessionCache;
 
 namespace SFA.DAS.AssessorService.Web
 {
@@ -99,10 +101,13 @@ namespace SFA.DAS.AssessorService.Web
                 });
 
                 config.For<IHttpClient>().Use<StandardHttpClient>();
-                config.For<ICache>().Use<Services.SessionCache>();
+                config.For<ICache>().Use<SessionCache>();
+                config.For<ITokenService>().Use<TokenService>();
                 
                 config.For<IWebConfiguration>().Use(Configuration);
-                
+
+                config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(Configuration.Api.ApiBaseAddress);
+
                 config.Populate(services);
             });
             

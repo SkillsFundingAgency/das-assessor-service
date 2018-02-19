@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.AssessorService.Web.UnitTests.TokenServiceTests
+﻿using SFA.DAS.AssessorService.Application.Api.Client;
+
+namespace SFA.DAS.AssessorService.Web.UnitTests.TokenServiceTests
 {
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Configuration;

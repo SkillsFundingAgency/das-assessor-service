@@ -4,9 +4,9 @@ using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using SFA.DAS.AssessorService.Web.Services;
+using SFA.DAS.AssessorService.Web.Infrastructure;
 
-namespace SFA.DAS.AssessorService.Web.Infrastructure
+namespace SFA.DAS.AssessorService.Application.Api.Client
 {
     public class TokenService : ITokenService
     {

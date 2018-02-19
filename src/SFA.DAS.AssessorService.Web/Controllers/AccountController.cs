@@ -2,11 +2,9 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.WsFederation;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.AssessorService.Web.Infrastructure;
-using SFA.DAS.AssessorService.Web.Services;
+using SFA.DAS.AssessorService.Application.Api.Client;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -14,14 +12,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     public class AccountController : Controller
     {
         private readonly IHttpContextAccessor _contextAccessor;
-        private readonly IOrganisationService _organisationService;
-        private readonly ITokenService _tokenService;
+        private readonly IOrganisationsApiClient _apiClient;
 
-        public AccountController(IHttpContextAccessor contextAccessor, IOrganisationService organisationService, ITokenService tokenService)
+        public AccountController(IHttpContextAccessor contextAccessor, IOrganisationsApiClient apiClient)
         {
             _contextAccessor = contextAccessor;
-            _organisationService = organisationService;
-            _tokenService = tokenService;
+            _apiClient = apiClient;
         }
 
         [HttpGet]
@@ -37,7 +33,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public async Task<IActionResult> PostSignIn()
         {
             var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn").Value;
-            var organisationExists = await _organisationService.GetOrganisation(_tokenService.GetJwt(), int.Parse(ukprn));
+            var organisationExists = await _apiClient.Get(int.Parse(ukprn));
             return organisationExists != null ? this.RedirectToAction("Index", "Organisation") : this.RedirectToAction("NotRegistered", "Home");
         }
 
