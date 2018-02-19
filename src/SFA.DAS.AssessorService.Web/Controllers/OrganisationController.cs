@@ -32,8 +32,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var jwt = _tokenService.GetJwt();
 
             var organisation = await _organisationService.GetOrganisation(jwt, int.Parse(ukprn));
-            
-            return View(organisation);
+
+            if (organisation != null)
+                return View(organisation);
+
+            return RedirectToAction("NotRegistered", "Home");
         }
     }
 }

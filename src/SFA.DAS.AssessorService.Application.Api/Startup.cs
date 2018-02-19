@@ -20,10 +20,6 @@ using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.ViewModel.Models;
 using StructureMap;
 using Swashbuckle.AspNetCore.Swagger;
-using System.Threading.Tasks;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Table;
-using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Data.TestData;
 using SFA.DAS.AssessorService.Settings;
 
@@ -33,12 +29,14 @@ namespace SFA.DAS.AssessorService.Application.Api
     {
         private readonly IHostingEnvironment _env;
         private readonly IConfiguration _config;
+        private const string ServiceName = "SFA.DAS.AssessorService";
+        private const string Version = "1.0";
 
         public Startup(IHostingEnvironment env, IConfiguration config)
         {
             _env = env;
             _config = config;
-            Configuration = GetConfiguration().Result;
+            Configuration = ConfigurationService.GetConfig(_config["Environment"], _config["ConnectionStrings:Storage"], Version, ServiceName).Result;
         }
 
         public IWebConfiguration Configuration { get; }
@@ -69,9 +67,6 @@ namespace SFA.DAS.AssessorService.Application.Api
                 .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix,
                      opts => { opts.ResourcesPath = "Resources"; })
                     .AddDataAnnotationsLocalization();
-
-            //services.AddDbContext<AssessorDbContext>(options =>
-            //    options.UseSqlServer(Configuration.SqlConnectionString));
 
             services
                 .AddMvc()
@@ -167,32 +162,6 @@ namespace SFA.DAS.AssessorService.Application.Api
 
             app.UseAuthentication();
             app.UseMvc();
-        }
-
-        private const string ServiceName = "SFA.DAS.AssessorService";
-        private const string Version = "1.0";
-
-        private async Task<WebConfiguration> GetConfiguration()
-        {
-            var environment = _config["Environment"];// "LOCAL";
-            var storageConnectionString = _config["ConnectionStrings:Storage"]; //"UseDevelopmentStorage=true;";
-
-            if (environment == null) throw new ArgumentNullException(nameof(environment));
-            if (storageConnectionString == null) throw new ArgumentNullException(nameof(storageConnectionString));
-
-            var conn = CloudStorageAccount.Parse(storageConnectionString);
-            var tableClient = conn.CreateCloudTableClient();
-            var table = tableClient.GetTableReference("Configuration");
-
-            var operation = TableOperation.Retrieve(environment, $"{ServiceName}_{Version}");
-            var result = await table.ExecuteAsync(operation);
-
-            var dynResult = result.Result as DynamicTableEntity;
-            var data = dynResult.Properties["Data"].StringValue;
-
-            var webConfig = JsonConvert.DeserializeObject<WebConfiguration>(data);
-
-            return webConfig;
         }
     }
 }
