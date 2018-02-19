@@ -1,5 +1,6 @@
 ﻿namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
+    using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
     using MediatR;
@@ -20,51 +21,46 @@
     public class ContactQueryController : Controller
     {
         private readonly IMediator _mediator;
-        private readonly IOrganisationRepository _organisationRepository;
+        private readonly IContactRepository _contactRepository;
         private readonly IStringLocalizer<OrganisationController> _localizer;
         private readonly UkPrnValidator _ukPrnValidator;
         private readonly ILogger<OrganisationController> _logger;
 
         public ContactQueryController(IMediator mediator,
-            IOrganisationRepository organisationRepository,
+            IContactRepository contactRepository,
             IStringLocalizer<OrganisationController> localizer,
             UkPrnValidator ukPrnValidator,
             ILogger<OrganisationController> logger
             )
         {
             _mediator = mediator;
-            _organisationRepository = organisationRepository;
+            _contactRepository = contactRepository;
             _localizer = localizer;
             _ukPrnValidator = ukPrnValidator;
             _logger = logger;
         }
 
-        //[HttpGet("{ukprn}")]
-        //[SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(OrganisationQueryViewModel))]
-        //[SwaggerResponse((int)HttpStatusCode.BadRequest)]
-        //[SwaggerResponse((int)HttpStatusCode.NotFound, Type = typeof(string))]
-        //public async Task<IActionResult> Get(int ukprn)
-        //{
-        //    var result = _ukPrnValidator.Validate(ukprn);
-        //    if (!result.IsValid)
-        //        return BadRequest(result.Errors[0].ErrorMessage);
+        [HttpGet("{ukprn}")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(OrganisationQueryViewModel))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest)]
+        [SwaggerResponse((int)HttpStatusCode.NotFound, Type = typeof(string))]
+        public async Task<IActionResult> Get(int ukprn)
+        {
+            var result = _ukPrnValidator.Validate(ukprn);
+            if (!result.IsValid)
+                return BadRequest(result.Errors[0].ErrorMessage);
 
-        //    var organisation = await _organisationRepository.GetByUkPrn(ukprn);
-        //    if (organisation == null)
-        //    {
-        //        return NotFound(_localizer[ResourceMessageName.NoAssesmentProviderFound, ukprn].Value);
-        //    }
+            var contacts = await _contactRepository.GetContacts(ukprn);
+            return Ok(contacts);
+        }
 
-        //    return Ok(organisation);
-        //}
-
-        //[HttpGet]
-        //[SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(OrganisationQueryViewModel))]
-        //public async Task<IActionResult> Get()
-        //{
-        //    var organisations = await _organisationRepository.GetAllOrganisations();
-        //    return Ok(organisations);
-        //}
+        [HttpGet("user/{userName}")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(OrganisationQueryViewModel))]
+        public async Task<IActionResult> Get(string userName)
+        {
+            var organisations = await _contactRepository.GetContacts(userName);
+            return Ok(organisations);
+        }
 
         //[HttpPost(Name = "Create")]
         //[ValidateBadRequest]
