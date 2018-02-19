@@ -2,9 +2,11 @@
 {
     using System.Net;
     using System.Threading.Tasks;
+    using MediatR;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Localization;
+    using Microsoft.Extensions.Logging;
     using SFA.DAS.AssessorService.Application.Api.Attributes;
     using SFA.DAS.AssessorService.Application.Api.Consts;
     using SFA.DAS.AssessorService.Application.Api.Validators;
@@ -16,17 +18,24 @@
     [Route("api/v1/assessment-providers")]
     public class OrganisationController : Controller
     {
+        private readonly IMediator _mediator;
         private readonly IOrganisationRepository _organisationRepository;
         private readonly IStringLocalizer<OrganisationController> _localizer;
         private readonly UkPrnValidator _ukPrnValidator;
+        private readonly ILogger<OrganisationController> _logger;
 
-        public OrganisationController(IOrganisationRepository organisationRepository,
+        public OrganisationController(IMediator mediator, 
+            IOrganisationRepository organisationRepository,
             IStringLocalizer<OrganisationController> localizer,
-            UkPrnValidator ukPrnValidator)
+            UkPrnValidator ukPrnValidator,
+            ILogger<OrganisationController> logger
+            )
         {
+            _mediator = mediator;
             _organisationRepository = organisationRepository;
             _localizer = localizer;
             _ukPrnValidator = ukPrnValidator;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -51,49 +60,20 @@
 
         [HttpPost(Name = "Create")]
         [ValidateBadRequest]
-        public IActionResult Create(int ukprn,
+        public async Task<IActionResult> Create(int ukprn,
             [FromBody] OrganisationCreateViewModel organisationCreateViewModel)
         {
+            _logger.LogInformation("Received Update Request");
+          
             var result = _ukPrnValidator.Validate(ukprn);
             if (!result.IsValid)
                 return BadRequest(result.Errors[0].ErrorMessage);
-
-            //if (book == null)
-            //{
-            //    return BadRequest();
-            //}
-
-            //if (book.Description == book.Title)
-            //{
-            //    ModelState.AddModelError(nameof(BookForCreationDto),
-            //        "The provided description should be different from the title.");
-            //}
-
-            //if (!ModelState.IsValid)
-            //{
-            //    // return 422
-            //    return new UnprocessableEntityObjectResult(ModelState);
-            //}
-
-            //if (!_libraryRepository.AuthorExists(authorId))
-            //{
-            //    return NotFound();
-            //}
-
-            //var bookEntity = Mapper.Map<Book>(book);
-
-            //_libraryRepository.AddBookForAuthor(authorId, bookEntity);
-
-            //if (!_libraryRepository.Save())
-            //{
-            //    throw new Exception($"Creating a book for author {authorId} failed on save.");
-            //}
-
-            //var bookToReturn = Mapper.Map<BookDto>(bookEntity);
+           
+            var organisationQueryViewModel = await _mediator.Send(organisationCreateViewModel);     
 
             return CreatedAtRoute("Create",
-                new { ukprn = 1 },
-                new OrganisationQueryViewModel { });
+                new { ukprn = ukprn },
+                organisationQueryViewModel);
         }
     }
 }

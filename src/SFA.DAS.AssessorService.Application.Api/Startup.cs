@@ -102,7 +102,7 @@ namespace SFA.DAS.AssessorService.Application.Api
                 });
 
             var serviceProvider = ConfigureIOC(services);
-            
+
             TestDataService.AddTestData(serviceProvider.GetService<AssessorDbContext>());
 
             return serviceProvider;
@@ -134,9 +134,9 @@ namespace SFA.DAS.AssessorService.Application.Api
 
                 var option = new DbContextOptionsBuilder<AssessorDbContext>();
                 option.UseSqlServer(Configuration.SqlConnectionString);
-                
+
                 config.For<AssessorDbContext>().Use(c => new AssessorDbContext(option.Options, _env.IsDevelopment()));
-                
+
                 config.Populate(services);
             });
 
@@ -159,6 +159,9 @@ namespace SFA.DAS.AssessorService.Application.Api
 
             AutoMapper.Mapper.Initialize(cfg =>
             {
+                cfg.CreateMap<Organisation, OrganisationQueryViewModel>();
+                cfg.CreateMap<OrganisationCreateViewModel, OrganisationCreateDomainModel>();
+                cfg.CreateMap<OrganisationCreateDomainModel, Organisation>();
                 cfg.CreateMap<Organisation, OrganisationQueryViewModel>();
             });
 

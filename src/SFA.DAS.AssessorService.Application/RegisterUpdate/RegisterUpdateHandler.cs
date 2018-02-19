@@ -5,6 +5,7 @@ using MediatR;
 using SFA.DAS.AssessmentOrgs.Api.Client.Core;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.ViewModel.Models;
 
 namespace SFA.DAS.AssessorService.Application.RegisterUpdate
 {
@@ -28,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
                 if (!organisations.Any(o => o.EndPointAssessorOrganisationId == epaoSummary.Id))
                 {
                     var epao = _apiClient.Get(epaoSummary.Id);
-                    await _organisationRepository.CreateNewOrganisation(new Organisation()
+                    await _organisationRepository.CreateNewOrganisation(new OrganisationCreateDomainModel
                     {
                         EndPointAssessorOrganisationId = epao.Id,
                         EndPointAssessorName = epao.Name
