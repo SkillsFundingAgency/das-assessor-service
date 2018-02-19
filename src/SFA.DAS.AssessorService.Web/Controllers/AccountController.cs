@@ -38,14 +38,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn").Value;
             var organisationExists = await _organisationService.GetOrganisation(_tokenService.GetJwt(), int.Parse(ukprn));
-            if (organisationExists != null)
-            {
-                return this.RedirectToAction("Index", "Organisation");
-            }
-            else
-            {
-                return this.RedirectToAction("NotRegistered", "Home");
-            }
+            return organisationExists != null ? this.RedirectToAction("Index", "Organisation") : this.RedirectToAction("NotRegistered", "Home");
         }
 
         [HttpGet]

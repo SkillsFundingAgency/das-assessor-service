@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Microsoft.Rest;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Infrastructure;
@@ -11,13 +10,13 @@ namespace SFA.DAS.AssessorService.Web.Services
     {
         private readonly IHttpClient _httpClient;
         private readonly IWebConfiguration _config;
-        private string _remoteServiceBaseUrl;
+        private readonly string _remoteServiceBaseUrl;
 
         public OrganisationService(IHttpClient httpClient, IWebConfiguration config)
         {
             _httpClient = httpClient;
             _config = config;
-            var apiServiceHost = _config.Api.ApiBaseAddress;// "http://localhost:59021";
+            var apiServiceHost = _config.Api.ApiBaseAddress;
             _remoteServiceBaseUrl = $"{apiServiceHost}/api/v1/assessment-providers";
         }
 
@@ -27,14 +26,11 @@ namespace SFA.DAS.AssessorService.Web.Services
 
             var getResponse = await _httpClient.GetAsync(apiUri, token);
 
-            if (getResponse.IsSuccessStatusCode)
-            {
-                var response = JsonConvert.DeserializeObject<Organisation>(await getResponse.Content.ReadAsStringAsync());
+            if (!getResponse.IsSuccessStatusCode) return null;
 
-                return response;
-            }
+            var response = JsonConvert.DeserializeObject<Organisation>(await getResponse.Content.ReadAsStringAsync());
 
-            return null;
+            return response;
         }
     }
 }
