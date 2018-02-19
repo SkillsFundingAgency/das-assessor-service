@@ -48,12 +48,12 @@
             return organisationQueryViewModel;
         }
 
-        public async Task<IEnumerable<Organisation>> GetAllOrganisations()
+        public  async Task<IEnumerable<OrganisationQueryViewModel>> GetAllOrganisations()
         {
-            return new List<Organisation>()
-            {
-                new Organisation() { EndPointAssessorOrganisationId = "EPA0001", EndPointAssessorName = "BCS, The Chartered Institute for IT" }
-            }.AsEnumerable();
+            var organisations = await _assessorDbContext.Organisations
+                .Select(q => Mapper.Map<OrganisationQueryViewModel>(q)).ToListAsync();
+
+            return organisations;
         }
 
         public async Task<OrganisationQueryViewModel> GetByUkPrn(int ukprn)

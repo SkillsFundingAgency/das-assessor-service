@@ -39,7 +39,6 @@
             _logger = logger;
         }
 
-        [HttpGet]
         [HttpGet("{ukprn}")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(OrganisationQueryViewModel))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest)]
@@ -59,8 +58,18 @@
             return Ok(organisation);
         }
 
+        [HttpGet]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(OrganisationQueryViewModel))]
+        public async Task<IActionResult> Get()
+        {
+            var organisations = await _organisationRepository.GetAllOrganisations();
+            return Ok(organisations);
+        }
+
         [HttpPost(Name = "Create")]
         [ValidateBadRequest]
+        [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(OrganisationQueryViewModel))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(OrganisationQueryViewModel))]
         public async Task<IActionResult> Create(int ukprn,
             [FromBody] OrganisationCreateViewModel organisationCreateViewModel)
         {
@@ -79,6 +88,8 @@
 
         [HttpPut(Name = "Update")]
         [ValidateBadRequest]
+        [SwaggerResponse((int)HttpStatusCode.NoContent, Type = typeof(OrganisationQueryViewModel))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(OrganisationQueryViewModel))]
         public async Task<IActionResult> Update(int ukprn,
           [FromBody] OrganisationUpdateViewModel organisationUpdateViewModel)
         {
@@ -95,6 +106,9 @@
 
         [HttpDelete(Name = "Delete")]
         [ValidateBadRequest]
+        [SwaggerResponse((int)HttpStatusCode.NoContent)]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest)]
+        [SwaggerResponse((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> Delete(int ukprn)
         {
             try
