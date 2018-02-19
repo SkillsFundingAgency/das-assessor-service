@@ -23,8 +23,7 @@
             _organisationRepository = organisationRepository;
 
             var organisationUpdateViewModel = new OrganisationUpdateViewModel();
-
-            RuleFor(organisation => organisation.Id).NotEmpty().WithMessage(_localizer[ResourceMessageName.IdMustExist, nameof(organisationUpdateViewModel.Id)].Value);
+          
             RuleFor(organisation => organisation.EndPointAssessorName).NotEmpty().WithMessage(_localizer[ResourceMessageName.EndPointAssessorNameMustBeDefined, nameof(organisationUpdateViewModel.EndPointAssessorName)].Value);
             RuleFor(organisation => organisation.PrimaryContactId).Must(HaveAssociatedPrimaryContactInContacts).WithMessage(_localizer[ResourceMessageName.PrimaryContactDoesNotExist, nameof(organisationUpdateViewModel.PrimaryContactId)].Value);     
             RuleFor(organisation => organisation.Id).Must(AlreadyExist).WithMessage(_localizer[ResourceMessageName.DoesNotExist, nameof(organisationUpdateViewModel.Id)].Value);

@@ -32,13 +32,15 @@
 
         public async Task<OrganisationQueryViewModel> UpdateOrganisation(OrganisationUpdateDomainModel organisationUpdateDomainModel)
         {
-            var organisationEntity = _assessorDbContext.Organisations.First(q => q.Id == organisationUpdateDomainModel.Id);
+            var organisationEntity = _assessorDbContext.Organisations.FirstOrDefault(q => q.Id == organisationUpdateDomainModel.Id);
 
             organisationEntity.PrimaryContactId = organisationUpdateDomainModel.PrimaryContactId;
             organisationEntity.EndPointAssessorName = organisationUpdateDomainModel.EndPointAssessorName;
             organisationEntity.Status = organisationUpdateDomainModel.Status;
 
-            _assessorDbContext.Entry(organisationEntity).State = EntityState.Modified;
+            // Workaround for Mocking
+            _assessorDbContext.MarkAsModified(organisationEntity);
+
             await _assessorDbContext.SaveChangesAsync();
 
             var organisationQueryViewModel = Mapper.Map<OrganisationQueryViewModel>(organisationEntity);
@@ -76,6 +78,11 @@
             var organisation = await _assessorDbContext.Organisations
                         .FirstOrDefaultAsync(q => q.Id == id);
             return organisation == null ? false : true;
+        }
+
+        public virtual void SetEntityStateModified(Organisation organisation)
+        {
+            _assessorDbContext.Entry(organisation).State = EntityState.Modified;
         }
     }
 }
