@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.OrganisationContoller.Post.Handlers
+﻿namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.OrganisationContoller.Put.Repository
 {
     using FizzWare.NBuilder;
     using FluentAssertions;
@@ -13,26 +13,23 @@
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using System;
+    using System.Linq;
 
     [Subject("AssessorService")]
-    public class WhenCreatePersistsData
+    public class WhenDeletePersistsData
     {
         private static OrganisationRepository _organisationRepository;
         private static Mock<AssessorDbContext> _assessorDbContext;
-        private static OrganisationCreateDomainModel _organisationCreateDomainModel;
+        private static OrganisationUpdateDomainModel _organisationUpdateDomainModel;
         private static Mock<DbSet<Organisation>> _organisationDBSetMock;
-        //private static CreateOrganisationHandler CreateOrganisationHandler;
-        //protected static Mock<IOrganisationRepository> OrganisationRepositoryMock;
-        //protected static OrganisationCreateDomainModel _organisationCreateDomainModel;
-        protected static OrganisationQueryViewModel _result;
-        //protected static OrganisationCreateViewModel _organisationCreateViewModel;
-        //protected static OrganisationQueryViewModel _result;
+
+        protected static Task _result;
+
 
         Establish context = () =>
         {
             Bootstrapper.Initialize();
-
-            _organisationCreateDomainModel = Builder<OrganisationCreateDomainModel>.CreateNew().Build();
 
             _assessorDbContext = new Mock<AssessorDbContext>();
             _organisationDBSetMock = new Mock<DbSet<Organisation>>();
@@ -40,11 +37,25 @@
             var mockSet = new Mock<DbSet<Organisation>>();
             var mockContext = new Mock<AssessorDbContext>();
 
-            var organisations = new List<Organisation>();
 
-            mockSet.Setup(m => m.Add(Moq.It.IsAny<Organisation>())).Callback((Organisation organisation) => organisations.Add(organisation));
+            var organisations = new List<Organisation>
+            {
+                Builder<Organisation>.CreateNew()
+                .With(q => q.EndPointAssessorUKPRN = 10000000)
+                .Build()
+            }.AsQueryable();
+
+            mockSet.As<IQueryable<Organisation>>().Setup(m => m.Provider).Returns(organisations.Provider);
+            mockSet.As<IQueryable<Organisation>>().Setup(m => m.Expression).Returns(organisations.Expression);
+            mockSet.As<IQueryable<Organisation>>().Setup(m => m.ElementType).Returns(organisations.ElementType);
+            mockSet.As<IQueryable<Organisation>>().Setup(m => m.GetEnumerator()).Returns(organisations.GetEnumerator());
+
+            mockContext.Setup(c => c.Organisations).Returns(mockSet.Object);
 
             _assessorDbContext.Setup(q => q.Organisations).Returns(mockSet.Object);
+            _assessorDbContext.Setup(x => x.MarkAsModified(Moq.It.IsAny<Organisation>()));
+
+
             _assessorDbContext.Setup(q => q.SaveChangesAsync(new CancellationToken()))
                 .Returns(Task.FromResult((Moq.It.IsAny<int>())));
 
@@ -54,13 +65,15 @@
 
         Because of = () =>
         {
-            _result = _organisationRepository.CreateNewOrganisation(_organisationCreateDomainModel).Result;
+            _result = _organisationRepository.Delete(10000000);
         };
 
         Machine.Specifications.It verify_succesfully = () =>
         {
-            _result.Should().NotBeNull();
+            var taskresult = _result as Task;
+            taskresult.Should().NotBeNull();
         };
     }
 }
+
 

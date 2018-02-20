@@ -8,6 +8,7 @@
     using Microsoft.EntityFrameworkCore;
     using SFA.DAS.AssessorService.Application.Interfaces;
     using SFA.DAS.AssessorService.Domain.Entities;
+    using SFA.DAS.AssessorService.Domain.Exceptions;
     using SFA.DAS.AssessorService.ViewModel.Models;
 
     public class OrganisationRepository : IOrganisationRepository
@@ -32,38 +33,33 @@
 
         public async Task<OrganisationQueryViewModel> UpdateOrganisation(OrganisationUpdateDomainModel organisationUpdateDomainModel)
         {
-            var organisationEntity = _assessorDbContext.Organisations.First(q => q.Id == organisationUpdateDomainModel.Id);
+            var organisationEntity = _assessorDbContext.Organisations.FirstOrDefault(q => q.Id == organisationUpdateDomainModel.Id);
 
             organisationEntity.PrimaryContactId = organisationUpdateDomainModel.PrimaryContactId;
             organisationEntity.EndPointAssessorName = organisationUpdateDomainModel.EndPointAssessorName;
             organisationEntity.Status = organisationUpdateDomainModel.Status;
 
-            _assessorDbContext.Entry(organisationEntity).State = EntityState.Modified;
+            // Workaround for Mocking
+            _assessorDbContext.MarkAsModified(organisationEntity);
+
             await _assessorDbContext.SaveChangesAsync();
 
             var organisationQueryViewModel = Mapper.Map<OrganisationQueryViewModel>(organisationEntity);
             return organisationQueryViewModel;
         }
 
-        public async Task DeleteOrganisationByEpaoId(string epaoId)
+        public  async Task<IEnumerable<OrganisationQueryViewModel>> GetAllOrganisations()
         {
-            var organisation = _assessorDbContext.Organisations.Single(o => o.EndPointAssessorOrganisationId == epaoId);
-            organisation.Status = OrganisationStatus.Deleted;
-            await _assessorDbContext.SaveChangesAsync();
-        }
+            var organisations = await _assessorDbContext.Organisations
+                .Select(q => Mapper.Map<OrganisationQueryViewModel>(q)).ToListAsync();
 
-        public async Task<IEnumerable<Organisation>> GetAllOrganisations()
-        {
-            return new List<Organisation>()
-            {
-                new Organisation() { EndPointAssessorOrganisationId = "EPA0001", EndPointAssessorName = "BCS, The Chartered Institute for IT" }
-            }.AsEnumerable();
+            return organisations;
         }
 
         public async Task<OrganisationQueryViewModel> GetByUkPrn(int ukprn)
         {
             var organisation = await _assessorDbContext.Organisations
-                         .FirstOrDefaultAsync(q => q.EndPointAssessorUKPRN == ukprn);
+                         .FirstOrDefaultAsync(q => q.EndPointAssessorUKPRN == ukprn && q.IsDeleted == false);
             if (organisation == null)
                 return null;
 
@@ -74,15 +70,31 @@
         public async Task<bool> CheckIfAlreadyExists(string endPointAssessorOrganisationId)
         {
             var organisation = await _assessorDbContext.Organisations
-                         .FirstOrDefaultAsync(q => q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId);
+                         .FirstOrDefaultAsync(q => q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId && q.IsDeleted == false);
             return organisation == null ? false : true;
         }
 
         public async Task<bool> CheckIfAlreadyExists(Guid id)
         {
             var organisation = await _assessorDbContext.Organisations
-                        .FirstOrDefaultAsync(q => q.Id == id);
+                        .FirstOrDefaultAsync(q => q.Id == id && q.IsDeleted == true);
             return organisation == null ? false : true;
+        }
+
+        public async Task Delete(int ukprn)
+        {
+            var organisationEntity = _assessorDbContext.Organisations
+                      .FirstOrDefault(q => q.EndPointAssessorUKPRN == ukprn);
+
+            if (organisationEntity == null)
+                throw (new NotFound());
+
+            organisationEntity.DeletedAt = DateTime.Now;
+            organisationEntity.IsDeleted = true;
+
+            _assessorDbContext.MarkAsModified(organisationEntity);
+
+            await _assessorDbContext.SaveChangesAsync();
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.OrganisationContoller
+﻿namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.OrganisationContoller.Put
 {
     using FizzWare.NBuilder;
     using FluentAssertions;
@@ -9,9 +9,9 @@
     using System.Threading.Tasks;
 
     [Subject("AssessorService")]
-    public class WhenPostAssessmentProvidersSucceeds : WhenPostAssessmentProvidersTestBase
+    public class WhenPutAssessmentProvidersSucceeds : WhenPutAssessmentProvidersTestBase
     {
-        private static OrganisationCreateViewModel _organisationCreateViewModel;
+        private static OrganisationUpdateViewModel _organisationUpdateViewModel;
         private static OrganisationQueryViewModel _organisationQueryViewModel;
 
         Establish context = () =>
@@ -20,11 +20,10 @@
 
             _organisationQueryViewModel = Builder<OrganisationQueryViewModel>.CreateNew().Build();
 
-            Mediator.Setup(q => q.Send(Moq.It.IsAny<OrganisationCreateViewModel>(), Moq.It.IsAny<CancellationToken>()))
+            Mediator.Setup(q => q.Send(Moq.It.IsAny<OrganisationUpdateViewModel>(), Moq.It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult((_organisationQueryViewModel)));
 
-            _organisationCreateViewModel = Builder<OrganisationCreateViewModel>.CreateNew()
-                    .With(x => x.EndPointAssessorUKPRN = 10000000)
+            _organisationUpdateViewModel = Builder<OrganisationUpdateViewModel>.CreateNew()                   
                     .Build();
 
             OrganisationContoller = new OrganisationController(
@@ -36,12 +35,12 @@
 
         Because of = () =>
         {
-            Result = OrganisationContoller.Create(10000000, _organisationCreateViewModel).Result;
+            Result = OrganisationContoller.Update(10000000, _organisationUpdateViewModel).Result;
         };
 
         Machine.Specifications.It verify_succesfully = () =>
         {
-            var result = Result as Microsoft.AspNetCore.Mvc.CreatedAtRouteResult;
+            var result = Result as Microsoft.AspNetCore.Mvc.NoContentResult;
             result.Should().NotBeNull();
         };
     }

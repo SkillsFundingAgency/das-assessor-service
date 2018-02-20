@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.OrganisationContoller
+﻿namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.OrganisationContoller.Put
 {
     using FizzWare.NBuilder;
     using FluentAssertions;
@@ -8,15 +8,15 @@
     using System.Threading.Tasks;
 
     [Subject("AssessorService")]
-    public class WhenPostAssessmentProvidersFailUkPrnValidation : WhenPostAssessmentProvidersTestBase
+    public class WhenPostAssessmentProvidersFailUkPrnValidation : WhenPutAssessmentProvidersTestBase
     {
-        private static OrganisationCreateViewModel _organisationCreateViewModel;
+        private static OrganisationUpdateViewModel _organisationUpdateViewModel;
 
         Establish context = () =>
         {
             Setup();
 
-            _organisationCreateViewModel = Builder<OrganisationCreateViewModel>.CreateNew().Build();          
+            _organisationUpdateViewModel = Builder<OrganisationUpdateViewModel>.CreateNew().Build();          
 
             OrganisationContoller = new OrganisationController(
                   Mediator.Object,
@@ -27,7 +27,7 @@
 
         Because of = () =>
         {
-            Result = OrganisationContoller.Create(999, _organisationCreateViewModel).Result;
+            Result = OrganisationContoller.Update(999, _organisationUpdateViewModel).Result;
         };
 
         Machine.Specifications.It verify_succesfully = () =>

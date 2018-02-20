@@ -8,14 +8,14 @@
 
     public interface IOrganisationRepository
     {
-        Task<IEnumerable<Organisation>> GetAllOrganisations();
+        Task<IEnumerable<OrganisationQueryViewModel>> GetAllOrganisations();
         Task<OrganisationQueryViewModel> GetByUkPrn(int ukprn);
         Task<bool> CheckIfAlreadyExists(string endPointAssessorOrganisationId);
         Task<bool> CheckIfAlreadyExists(Guid id);
 
         Task<OrganisationQueryViewModel> CreateNewOrganisation(OrganisationCreateDomainModel newOrganisation);
         Task<OrganisationQueryViewModel> UpdateOrganisation(OrganisationUpdateDomainModel organisationUpdateDomainModel);
-        
-        Task DeleteOrganisationByEpaoId(string epaoId);
+
+        Task Delete(int ukprn);
     }
 }
