@@ -55,7 +55,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
                 .WithSecret(_configuration.Api.TokenEncodingKey)
                 .Issuer("sfa.das.assessorservice")
                 .Audience("sfa.das.assessorservice.api")
-                .ExpirationTime(DateTime.Now.AddMinutes(5))
+                .ExpirationTime(DateTime.Now.AddMinutes(30))
                 .AddClaim("ukprn", ukprn)
                 .Build();
 

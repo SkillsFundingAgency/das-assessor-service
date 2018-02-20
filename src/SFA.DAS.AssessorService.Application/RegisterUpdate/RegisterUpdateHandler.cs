@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -28,13 +29,15 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
             //var organisations = await _organisationRepository.GetAllOrganisations();
             foreach (var epaoSummary in epaosOnRegister)
             {
+                var rnd = new Random();
                 if (!organisations.Any(o => o.EndPointAssessorOrganisationId == epaoSummary.Id))
                 {
                     var epao = _registerApiClient.Get(epaoSummary.Id);
 
                     await _internalApiClient.Create("HANDLER",
                         new OrganisationCreateViewModel()
-                        {
+                        { 
+                            EndPointAssessorUKPRN = rnd.Next(77777777, 99999999),
                             EndPointAssessorOrganisationId = epao.Id,
                             EndPointAssessorName = epao.Name
                         });

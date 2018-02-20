@@ -134,7 +134,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
 
         protected async Task PostPutRequest<T>(string userKey, HttpRequestMessage requestMessage, T model)
         {
-            requestMessage.Content = new StringContent(JsonConvert.SerializeObject(model),
+            var serializeObject = JsonConvert.SerializeObject(model);
+            requestMessage.Content = new StringContent(serializeObject,
                 System.Text.Encoding.UTF8, "application/json");
 
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetJwt(userKey));
