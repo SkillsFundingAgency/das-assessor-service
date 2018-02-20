@@ -35,7 +35,7 @@
 
         Because of = () =>
         {
-            Result = OrganisationContoller.Create(_organisationCreateViewModel).Result;
+            Result = OrganisationContoller.CreateOrganisation(_organisationCreateViewModel).Result;
         };
 
         Machine.Specifications.It verify_succesfully = () =>

@@ -7,6 +7,7 @@
     using AutoMapper;
     using Microsoft.EntityFrameworkCore;
     using SFA.DAS.AssessorService.Application.Interfaces;
+    using SFA.DAS.AssessorService.Domain.Entities;
     using SFA.DAS.AssessorService.Domain.Exceptions;
     using SFA.DAS.AssessorService.ViewModel.Models;
 
@@ -30,7 +31,6 @@
             return contacts;
         }
 
-
         public async Task<ContactQueryViewModel> GetContact(string userName, string emailAddress)
         {
             var contact = await _assessorDbContext.Contacts
@@ -47,6 +47,17 @@
             var result = await _assessorDbContext.Contacts
                          .AnyAsync(q => q.EndPointAssessorContactId == contactId && q.IsDeleted == false);
             return result;
+        }
+
+        public async Task<ContactQueryViewModel> CreateNewContact(ContactCreateDomainModel newContact)
+        {
+            var contactEntity = Mapper.Map<Contact>(newContact);
+
+            _assessorDbContext.Contacts.Add(contactEntity);
+            await _assessorDbContext.SaveChangesAsync();
+
+            var organisationQueryViewModel = Mapper.Map<ContactQueryViewModel>(contactEntity);
+            return organisationQueryViewModel;
         }
     }
 }

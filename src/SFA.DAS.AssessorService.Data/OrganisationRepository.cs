@@ -48,7 +48,7 @@
             return organisationQueryViewModel;
         }
 
-        public  async Task<IEnumerable<OrganisationQueryViewModel>> GetAllOrganisations()
+        public async Task<IEnumerable<OrganisationQueryViewModel>> GetAllOrganisations()
         {
             var organisations = await _assessorDbContext.Organisations
                 .Select(q => Mapper.Map<OrganisationQueryViewModel>(q)).ToListAsync();
@@ -67,6 +67,15 @@
             return organisationViewModel;
         }
 
+        public async Task<OrganisationUpdateDomainModel> Get(Guid organisationId)
+        {
+            var organisation = await _assessorDbContext.Organisations
+                      .FirstAsync(q => q.Id == organisationId && q.IsDeleted == false);
+
+            var organisationUpdateDomainModel = Mapper.Map<OrganisationUpdateDomainModel>(organisation);
+            return organisationUpdateDomainModel;
+        }
+
         public async Task<bool> CheckIfAlreadyExists(string endPointAssessorOrganisationId)
         {
             var organisation = await _assessorDbContext.Organisations
@@ -78,6 +87,14 @@
         {
             var organisation = await _assessorDbContext.Organisations
                         .FirstOrDefaultAsync(q => q.Id == id && q.IsDeleted == true);
+            return organisation == null ? false : true;
+        }
+
+        public async Task<bool> CheckIfOrganisationHasContacts(Guid organisationId)
+        {
+            var organisation = await _assessorDbContext.Organisations
+                        .Include(q => q.Contacts)
+                       .FirstOrDefaultAsync(q => q.Id == organisationId && q.IsDeleted == true);
             return organisation == null ? false : true;
         }
 

@@ -25,22 +25,20 @@
         private readonly UkPrnValidator _ukPrnValidator;
         private readonly ILogger<OrganisationController> _logger;
 
-        public ContactController(IMediator mediator,
-            IOrganisationRepository organisationRepository,
+        public ContactController(IMediator mediator,         
             IStringLocalizer<OrganisationController> localizer,
             UkPrnValidator ukPrnValidator,
             ILogger<OrganisationController> logger
             )
         {
-            _mediator = mediator;
-            _organisationRepository = organisationRepository;
+            _mediator = mediator;           
             _localizer = localizer;
             _ukPrnValidator = ukPrnValidator;
             _logger = logger;
         }
 
         //[HttpGet("{ukprn}")]
-        //[SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(OrganisationQueryViewModel))]
+        //[SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ContactQueryViewModel))]
         //[SwaggerResponse((int)HttpStatusCode.BadRequest)]
         //[SwaggerResponse((int)HttpStatusCode.NotFound, Type = typeof(string))]
         //public async Task<IActionResult> Get(int ukprn)
@@ -59,37 +57,33 @@
         //}
 
         //[HttpGet]
-        //[SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(OrganisationQueryViewModel))]
+        //[SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ContactQueryViewModel))]
         //public async Task<IActionResult> Get()
         //{
         //    var organisations = await _organisationRepository.GetAllOrganisations();
         //    return Ok(organisations);
         //}
 
-        //[HttpPost(Name = "Create")]
-        //[ValidateBadRequest]
-        //[SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(OrganisationQueryViewModel))]
-        //[SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(OrganisationQueryViewModel))]
-        //public async Task<IActionResult> Create(int ukprn,
-        //    [FromBody] OrganisationCreateViewModel organisationCreateViewModel)
-        //{
-        //    _logger.LogInformation("Received Create Request");
+        [HttpPost(Name = "CreateContract")]
+        [ValidateBadRequest]
+        [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(ContactQueryViewModel))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ContactQueryViewModel))]
+        public async Task<IActionResult> CreateContract(
+            [FromBody] ContactCreateViewModel contactCreateViewModel)
+        {
+            _logger.LogInformation("Received Create Contact Request");
+        
+            var contactQueryViewModel = await _mediator.Send(contactCreateViewModel);
 
-        //    var result = _ukPrnValidator.Validate(ukprn);
-        //    if (!result.IsValid)
-        //        return BadRequest(result.Errors[0].ErrorMessage);
-
-        //    var organisationQueryViewModel = await _mediator.Send(organisationCreateViewModel);
-
-        //    return CreatedAtRoute("Create",
-        //        new { ukprn = ukprn },
-        //        organisationQueryViewModel);
-        //}
+            return CreatedAtRoute("CreateContract",
+                new { Id = contactQueryViewModel.Id },
+                contactQueryViewModel);
+        }
 
         //[HttpPut(Name = "Update")]
         //[ValidateBadRequest]
-        //[SwaggerResponse((int)HttpStatusCode.NoContent, Type = typeof(OrganisationQueryViewModel))]
-        //[SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(OrganisationQueryViewModel))]
+        //[SwaggerResponse((int)HttpStatusCode.NoContent, Type = typeof(ContactQueryViewModel))]
+        //[SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ContactQueryViewModel))]
         //public async Task<IActionResult> Update(int ukprn,
         //  [FromBody] OrganisationUpdateViewModel organisationUpdateViewModel)
         //{
@@ -99,7 +93,7 @@
         //    if (!result.IsValid)
         //        return BadRequest(result.Errors[0].ErrorMessage);
 
-        //    var organisationQueryViewModel = await _mediator.Send(organisationUpdateViewModel);
+        //    var ContactQueryViewModel = await _mediator.Send(organisationUpdateViewModel);
 
         //    return NoContent();
         //}

@@ -13,7 +13,7 @@
     using SFA.DAS.AssessorService.ViewModel.Models;
     using Swashbuckle.AspNetCore.SwaggerGen;
 
-    //[Authorize]
+    //[Authorize]ContactQueryController
     [Route("api/v1/assessment-users")]
     public class ContactQueryController : Controller
     {

@@ -1,16 +1,13 @@
-﻿namespace SFA.DAS.AssessorService.Domain.Entities
+﻿namespace SFA.DAS.AssessorService.ViewModel.Models
 {
     using System;
 
-    public class Contact : BaseEntity
-    {
-        public Guid Id { get; set; }
-
+    public class ContactCreateDomainModel
+    {      
         public Guid OrganisationId { get; set; }
-        public virtual Organisation Organisation { get; set; }
 
         public int EndPointAssessorContactId { get; set; }
-        public string EndPointAssessorOrganisationId{ get; set; }
+        public string EndPointAssessorOrganisationId { get; set; }
         public int EndPointAssessorUKPRN { get; set; }
 
         public string ContactName { get; set; }

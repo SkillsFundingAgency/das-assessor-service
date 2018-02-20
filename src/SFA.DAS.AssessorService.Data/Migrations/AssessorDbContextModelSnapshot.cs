@@ -183,13 +183,15 @@ namespace SFA.DAS.AssessorService.Data.Migrations
 
                     b.Property<bool>("IsDeleted");
 
-                    b.Property<int?>("PrimaryContactId");
+                    b.Property<Guid?>("PrimaryContactId");
 
                     b.Property<string>("Status");
 
                     b.Property<DateTime>("UpdatedAt");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PrimaryContactId");
 
                     b.ToTable("Organisations");
                 });
@@ -212,10 +214,17 @@ namespace SFA.DAS.AssessorService.Data.Migrations
 
             modelBuilder.Entity("SFA.DAS.AssessorService.Domain.Entities.Contact", b =>
                 {
-                    b.HasOne("SFA.DAS.AssessorService.Domain.Entities.Organisation", "Organisation")
+                    b.HasOne("SFA.DAS.AssessorService.Domain.Entities.Organisation")
                         .WithMany("Contacts")
                         .HasForeignKey("OrganisationId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("SFA.DAS.AssessorService.Domain.Entities.Organisation", b =>
+                {
+                    b.HasOne("SFA.DAS.AssessorService.Domain.Entities.Contact", "PrimaryContact")
+                        .WithMany()
+                        .HasForeignKey("PrimaryContactId");
                 });
 #pragma warning restore 612, 618
         }

@@ -8,7 +8,7 @@
         public Guid Id { get; set; }
 
         public Guid OrganisationId { get; set; }
-        public Organisation Organisation { get; set; }
+        public virtual Organisation Organisation { get; set; }
 
         public int EndPointAssessorCertificateId { get; set; }
         public int EndPointAssessorContactId { get; set; }

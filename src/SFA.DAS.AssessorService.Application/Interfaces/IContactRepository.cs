@@ -11,5 +11,7 @@
 
         Task<IEnumerable<ContactQueryViewModel>> GetContacts(Guid id);
         Task<ContactQueryViewModel> GetContact(string userName, string emailAddress);
+
+        Task<ContactQueryViewModel> CreateNewContact(ContactCreateDomainModel newContact);
     }
 }
