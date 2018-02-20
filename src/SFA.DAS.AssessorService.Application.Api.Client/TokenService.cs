@@ -1,9 +1,8 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client
@@ -11,9 +10,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
     public class TokenService : ITokenService
     {
         private readonly ICache _cache;
-        private readonly IConfiguration _configuration;
+        private readonly IWebConfiguration _configuration;
 
-        public TokenService(ICache cache, IConfiguration configuration)
+        public TokenService(ICache cache, IWebConfiguration configuration)
         {
             _cache = cache;
             _configuration = configuration;
@@ -46,7 +45,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
 
         private string GetNewToken(string ukprn)
         {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["AuthOptions:TokenEncodingKey"]));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.Api.TokenEncodingKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]

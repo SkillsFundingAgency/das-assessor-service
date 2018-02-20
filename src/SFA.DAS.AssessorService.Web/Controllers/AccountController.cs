@@ -1,11 +1,11 @@
-﻿using System.Security.Claims;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.WsFederation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Application.Api.Client;
+using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -34,12 +34,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public async Task<IActionResult> PostSignIn()
         {
             var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn").Value;
-            var organisationExists = await _apiClient.Get(ukprn, ukprn);
-            if (organisationExists != null)
+            try
             {
-                return this.RedirectToAction("Index", "Organisation");
+                await _apiClient.Get(ukprn, ukprn);
             }
-            else return this.RedirectToAction("NotRegistered", "Home");
+            catch (EntityNotFoundException)
+            {
+                return RedirectToAction("NotRegistered", "Home");
+            }
+
+            return RedirectToAction("Index", "Organisation");
         }
 
         [HttpGet]

@@ -1,0 +1,9 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "AzureWebJobsDashboard": "UseDevelopmentStorage=true",
+    "ApiBaseAddress": "http://localhost:59021",
+    "TokenEncodingKey": "Wt+69DPlA9wjXl79V9N67bR4cpn9+3zZmgLJHBXy2aQ="
+  }
+}

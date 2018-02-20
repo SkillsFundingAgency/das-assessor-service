@@ -1,4 +1,5 @@
 ﻿using SFA.DAS.AssessorService.Application.Api.Client;
+using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.TokenServiceTests
 {
@@ -38,11 +39,14 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.TokenServiceTests
                         new Claim("http://schemas.portal.com/ukprn", "12345")
                     }))
                 });
-
-            var configuration = new Mock<IConfiguration>();
-            configuration.Setup(c => c["AuthOptions:TokenEncodingKey"]).Returns(TokenEncodingKey);
-
-            TokenService = new TokenService(Cache.Object, configuration.Object);
+            
+            TokenService = new TokenService(Cache.Object, new WebConfiguration()
+            {
+                Api = new ApiSettings()
+                {
+                    TokenEncodingKey = TokenEncodingKey
+                }
+            });
         }
 
         protected static string GenerateJwt(DateTime? expires = null)

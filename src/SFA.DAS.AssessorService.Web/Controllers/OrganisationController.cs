@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.Client;
+using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
+using SFA.DAS.AssessorService.ViewModel.Models;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -23,14 +25,19 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public async Task<IActionResult> Index()
         {
             var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn").Value;
-            //var orgId = _contextAccessor.HttpContext.User.FindFirst("OrganisationId").Value;
+            
+            OrganisationQueryViewModel organisation;
 
-            var organisation = await _apiClient.Get(ukprn, ukprn);
+            try
+            {
+                organisation = await _apiClient.Get(ukprn, ukprn);
+            }
+            catch (EntityNotFoundException)
+            {
+                return RedirectToAction("NotRegistered", "Home");
+            }
 
-            if (organisation != null)
-                return View(organisation);
-
-            return RedirectToAction("NotRegistered", "Home");
+            return View(organisation);
         }
     }
 }

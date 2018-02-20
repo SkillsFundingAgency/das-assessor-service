@@ -5,6 +5,7 @@ using Microsoft.Azure.WebJobs.Host;
 using SFA.DAS.AssessmentOrgs.Api.Client.Core;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.RegisterUpdate;
+using SFA.DAS.AssessorService.Settings;
 using StructureMap;
 
 namespace SFA.DAS.AssessorService.EpaoImporter
@@ -35,8 +36,16 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                 cfg.For<IMediator>().Use<Mediator>();
                 cfg.For<IAssessmentOrgsApiClient>().Use(() => new AssessmentOrgsApiClient(null));
                 cfg.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>();
-                cfg.For<ICache>().Use<Application.Api.Client.SessionCache>();
+                cfg.For<ICache>().Use<InMemoryCache>();
                 cfg.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(Environment.GetEnvironmentVariable("ApiBaseAddress", EnvironmentVariableTarget.Process));
+                cfg.For<IWebConfiguration>().Use(new WebConfiguration()
+                {
+                    Api = new ApiSettings()
+                    {
+                        TokenEncodingKey =
+                            Environment.GetEnvironmentVariable("TokenEncodingKey", EnvironmentVariableTarget.Process)
+                    }
+                });
             });
 
             var handler = container.GetInstance<IRequestHandler<RegisterUpdateRequest>>();
