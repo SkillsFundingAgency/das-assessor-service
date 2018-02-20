@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                     scan.Assembly("SFA.DAS.AssessmentOrgs.Api.Client.Core");
                     scan.WithDefaultConventions();
 
-                    scan.ConnectImplementationsToTypesClosing(typeof(IRequestHandler<>)); // Handlers with no response
+                    scan.ConnectImplementationsToTypesClosing(typeof(IRequestHandler<>));  // Handlers with no response
                     scan.ConnectImplementationsToTypesClosing(typeof(IRequestHandler<,>)); // Handlers with a response
                     scan.ConnectImplementationsToTypesClosing(typeof(INotificationHandler<>));
                 });
@@ -35,7 +35,8 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                 cfg.For<IMediator>().Use<Mediator>();
                 cfg.For<IAssessmentOrgsApiClient>().Use(() => new AssessmentOrgsApiClient(null));
                 cfg.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>();
-                cfg.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(Environment.GetEnvironmentVariable("Api:ApiBaseAddress", EnvironmentVariableTarget.Process));
+                cfg.For<ICache>().Use<Application.Api.Client.SessionCache>();
+                cfg.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(Environment.GetEnvironmentVariable("ApiBaseAddress", EnvironmentVariableTarget.Process));
             });
 
             var handler = container.GetInstance<IRequestHandler<RegisterUpdateRequest>>();

@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
         {
             var epaosOnRegister = await _registerApiClient.FindAllAsync();
 
-            var organisations = await _internalApiClient.Get();
+            var organisations = await _internalApiClient.Get("HANDLER");
 
             //var organisations = await _organisationRepository.GetAllOrganisations();
             foreach (var epaoSummary in epaosOnRegister)
@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
                 {
                     var epao = _registerApiClient.Get(epaoSummary.Id);
 
-                    await _internalApiClient.Create(epao.UkPrn,
+                    await _internalApiClient.Create("HANDLER",
                         new OrganisationCreateViewModel()
                         {
                             EndPointAssessorOrganisationId = epao.Id,
@@ -45,7 +45,7 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
             {
                 if (!epaosOnRegister.Any(e => e.Id == org.EndPointAssessorOrganisationId))
                 {
-                    await _internalApiClient.Delete(org.EndPointAssessorUKPRN);
+                    await _internalApiClient.Delete("HANDLER", org.Id);
                 }
             }
         }

@@ -51,10 +51,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
                     failedResponse.Content.ReadAsStringAsync().Result));
         }
 
-        protected async Task<T> RequestAndDeserialiseAsync<T>(HttpRequestMessage request, string message = null) where T : class
+        protected async Task<T> RequestAndDeserialiseAsync<T>(string userKey, HttpRequestMessage request, string message = null) where T : class
         {
             request.Headers.Add("Accept", "application/json");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetJwt());
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetJwt(userKey));
 
             using (var response = HttpClient.SendAsync(request))
             {
@@ -120,12 +120,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
         //    return false;
         //}
 
-        protected async Task PostPutRequest<T>(HttpRequestMessage requestMessage, T model)
+        protected async Task PostPutRequest<T>(string userKey, HttpRequestMessage requestMessage, T model)
         {
             requestMessage.Content = new StringContent(JsonConvert.SerializeObject(model),
                 System.Text.Encoding.UTF8, "application/json");
 
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetJwt());
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetJwt(userKey));
 
             var response = await HttpClient.SendAsync(requestMessage);
 
@@ -135,9 +135,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
             }
         }
 
-        protected async Task Delete(HttpRequestMessage requestMessage)
+        protected async Task Delete(string userKey, HttpRequestMessage requestMessage)
         {
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetJwt());
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetJwt(userKey));
 
             var response = await HttpClient.SendAsync(requestMessage);
 

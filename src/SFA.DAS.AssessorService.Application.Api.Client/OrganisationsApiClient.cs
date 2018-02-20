@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using SFA.DAS.AssessorService.ViewModel.Models;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -11,53 +12,62 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
         {
         }
 
-        public async Task<IEnumerable<OrganisationQueryViewModel>> Get()
+        public async Task<IEnumerable<OrganisationQueryViewModel>> Get(string userKey)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/assessment-providers/"))
             {
-                return await RequestAndDeserialiseAsync<IEnumerable<OrganisationQueryViewModel>>(request, $"Could not find the organisations");
+                return await RequestAndDeserialiseAsync<IEnumerable<OrganisationQueryViewModel>>(userKey, request, $"Could not find the organisations");
             }
         }
 
-        public async Task<OrganisationQueryViewModel> Get(int ukprn)
+        public async Task<OrganisationQueryViewModel> Get(string userKey, Guid id)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/assessment-providers/{id}"))
+            {
+                return await RequestAndDeserialiseAsync<OrganisationQueryViewModel>(userKey, request, $"Could not find the organisation {id}");
+            }
+        }
+
+        public async Task<OrganisationQueryViewModel> Get(string userKey, string ukprn)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/assessment-providers/{ukprn}"))
             {
-                return await RequestAndDeserialiseAsync<OrganisationQueryViewModel>(request, $"Could not find the organisation {ukprn}");
+                return await RequestAndDeserialiseAsync<OrganisationQueryViewModel>(userKey, request, $"Could not find the organisation {ukprn}");
             }
         }
 
-        public async Task Create(int ukprn, OrganisationCreateViewModel organisationCreateViewModel)
+        public async Task Create(string userKey, OrganisationCreateViewModel organisationCreateViewModel)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/assessment-providers/{ukprn}"))
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/assessment-providers/"))
             {
-                await PostPutRequest(request, organisationCreateViewModel);
+                await PostPutRequest(userKey, request, organisationCreateViewModel);
             }
         }
 
-        public async Task Update(int ukprn, OrganisationUpdateViewModel organisationUpdateViewModel)
+        public async Task Update(string userKey, OrganisationUpdateViewModel organisationUpdateViewModel)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/assessment-providers/{ukprn}"))
+            using (var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/assessment-providers/"))
             {
-                await PostPutRequest(request, organisationUpdateViewModel);
+                await PostPutRequest(userKey, request, organisationUpdateViewModel);
             }
         }
 
-        public async Task Delete(int ukprn)
+        public async Task Delete(string userKey, Guid id)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Delete, $"/api/v1/assessment-providers/{ukprn}"))
+            using (var request = new HttpRequestMessage(HttpMethod.Delete, $"/api/v1/assessment-providers/"))
             {
-                await Delete(request);
+                await Delete(userKey, request);
             }
         }
     }
 
     public interface IOrganisationsApiClient
     {
-        Task<IEnumerable<OrganisationQueryViewModel>> Get();
-        Task<OrganisationQueryViewModel> Get(int ukprn);
-        Task Create(int ukprn, OrganisationCreateViewModel organisationCreateViewModel);
-        Task Update(int ukprn, OrganisationUpdateViewModel organisationUpdateViewModel);
-        Task Delete(int ukprn);
+        Task<IEnumerable<OrganisationQueryViewModel>> Get(string userKey);
+        Task<OrganisationQueryViewModel> Get(string userKey, Guid id);
+        Task<OrganisationQueryViewModel> Get(string userKey, string ukprn);
+        Task Create(string userKey, OrganisationCreateViewModel organisationCreateViewModel);
+        Task Update(string userKey, OrganisationUpdateViewModel organisationUpdateViewModel);
+        Task Delete(string userKey, Guid id);
     }
 }

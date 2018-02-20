@@ -11,20 +11,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
     public class TokenService : ITokenService
     {
         private readonly ICache _cache;
-        private readonly IHttpContextAccessor _contextAccessor;
         private readonly IConfiguration _configuration;
 
-        public TokenService(ICache cache, IHttpContextAccessor contextAccessor, IConfiguration configuration)
+        public TokenService(ICache cache, IConfiguration configuration)
         {
             _cache = cache;
-            _contextAccessor = contextAccessor;
             _configuration = configuration;
         }
 
-        public string GetJwt()
+        public string GetJwt(string ukprn)
         {
-            var ukprn = _contextAccessor.HttpContext.User
-                .FindFirst("http://schemas.portal.com/ukprn").Value;
+            //var ukprn = _contextAccessor.HttpContext.User
+            //    .FindFirst("http://schemas.portal.com/ukprn").Value;
 
             var result = _cache.GetString(ukprn);
 

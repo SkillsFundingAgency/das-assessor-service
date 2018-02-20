@@ -2,6 +2,6 @@
 {
     public interface ITokenService
     {
-        string GetJwt();
+        string GetJwt(string ukprn);
     }
 }
