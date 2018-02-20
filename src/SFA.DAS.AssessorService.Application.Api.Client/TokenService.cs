@@ -1,9 +1,8 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using Microsoft.IdentityModel.Tokens;
+﻿using System;
+using JWT;
+using JWT.Algorithms;
+using JWT.Builder;
 using SFA.DAS.AssessorService.Settings;
-using SFA.DAS.AssessorService.Web.Infrastructure;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client
 {
@@ -32,12 +31,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
             }
             else
             {
-                var token = new JwtSecurityTokenHandler().ReadToken(result);
-
-                if (token.ValidTo >= SystemTime.UtcNow()) return result;
-
-                result = GetNewToken(userKey);
-                _cache.SetString(userKey, result);
+                try
+                {
+                    new JwtBuilder()
+                        .WithSecret(_configuration.Api.TokenEncodingKey)
+                        .MustVerifySignature()
+                        .Decode(result);
+                }
+                catch (TokenExpiredException expired)
+                {
+                    result = GetNewToken(userKey);
+                    _cache.SetString(userKey, result);
+                    return result;
+                }
             }
             
             return result;
@@ -45,22 +51,32 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
 
         private string GetNewToken(string ukprn)
         {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.Api.TokenEncodingKey));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var token = new JwtBuilder().WithAlgorithm(new HMACSHA256Algorithm())
+                .WithSecret(_configuration.Api.TokenEncodingKey)
+                .Issuer("sfa.das.assessorservice")
+                .Audience("sfa.das.assessorservice.api")
+                .ExpirationTime(DateTime.Now.AddMinutes(5))
+                .AddClaim("ukprn", ukprn)
+                .Build();
 
-            var claims = new[]
-            {
-                new Claim("ukprn", ukprn, ClaimValueTypes.String)
-            };
+            return token;
+            
+            //var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.Api.TokenEncodingKey));
+            //var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var newToken = new JwtSecurityToken(
-                issuer: "sfa.das.assessorservice",
-                audience: "sfa.das.assessorservice.api",
-                claims: claims,
-                expires: SystemTime.UtcNow().AddMinutes(30),
-                signingCredentials: creds);
+            //var claims = new[]
+            //{
+            //    new Claim("ukprn", ukprn, ClaimValueTypes.String)
+            //};
 
-            return new JwtSecurityTokenHandler().WriteToken(newToken);
+            //var newToken = new JwtSecurityToken(
+            //    issuer: "sfa.das.assessorservice",
+            //    audience: "sfa.das.assessorservice.api",
+            //    claims: claims,
+            //    expires: SystemTime.UtcNow().AddMinutes(30),
+            //    signingCredentials: creds);
+
+            //return new JwtSecurityTokenHandler().WriteToken(newToken);
         }
     }
 }

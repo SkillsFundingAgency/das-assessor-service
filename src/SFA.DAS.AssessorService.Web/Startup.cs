@@ -3,6 +3,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using JWT.Algorithms;
+using JWT.Builder;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.WsFederation;
 using Microsoft.AspNetCore.Builder;
@@ -64,32 +66,21 @@ namespace SFA.DAS.AssessorService.Web
         {
             var ukprn = (context.Principal.FindFirst("http://schemas.portal.com/ukprn"))?.Value;
 
-            var claims = new[]
-            {
-                new Claim("ukprn", ukprn, ClaimValueTypes.String)
-            };
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.Api.TokenEncodingKey));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(
-                issuer: "sfa.das.assessorservice",
-                audience: "sfa.das.assessorservice.api",
-                claims: claims,
-                expires: DateTime.Now.AddMinutes(5),
-                signingCredentials: creds);
-
-            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-
+            var jwt = new JwtBuilder().WithAlgorithm(new HMACSHA256Algorithm())
+                .WithSecret(Configuration.Api.TokenEncodingKey)
+                .Issuer("sfa.das.assessorservice")
+                .Audience("sfa.das.assessorservice.api")
+                .ExpirationTime(DateTime.Now.AddMinutes(5))
+                .AddClaim("ukprn", ukprn)
+                .Build();
+            
             context.HttpContext.Session.SetString(ukprn, jwt);
-
-
+            
             //var claimsIdentity = (ClaimsIdentity)context.Principal.Identity;
             ////add your custom claims here
             //claimsIdentity.AddClaim(new Claim("test", "helloworld!!!"));
 
             //((ClaimsIdentity)context.HttpContext.User.Identity).AddClaim(new Claim("OrganisationId", "TEST"));
-
 
             return Task.FromResult(0);
         }
