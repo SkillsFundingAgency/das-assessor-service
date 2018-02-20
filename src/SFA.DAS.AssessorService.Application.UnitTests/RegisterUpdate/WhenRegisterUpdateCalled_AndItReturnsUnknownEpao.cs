@@ -28,10 +28,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
             ApiClient.Setup(c => c.Get("EPA0003")).Returns(new Organisation { Id = "EPA0003", Name = "A New EPAO" });
 
             OrganisationRepository.Setup(r => r.GetAllOrganisations())
-                .Returns(Task.FromResult(new List<Domain.Entities.Organisation>
+                .Returns(Task.FromResult(new List<OrganisationQueryViewModel>
                 {
-                    new Domain.Entities.Organisation() {EndPointAssessorOrganisationId = "EPA0001"},
-                    new Domain.Entities.Organisation() {EndPointAssessorOrganisationId = "EPA0002"}
+                    new OrganisationQueryViewModel() {EndPointAssessorOrganisationId = "EPA0001"},
+                    new OrganisationQueryViewModel() {EndPointAssessorOrganisationId = "EPA0002"}
                 }.AsEnumerable()));
         }
 
