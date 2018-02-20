@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using SFA.DAS.AssessorService.Domain.Entities;
     using SFA.DAS.AssessorService.ViewModel.Models;
 
     public interface IOrganisationRepository
@@ -16,6 +15,6 @@
         Task<OrganisationQueryViewModel> CreateNewOrganisation(OrganisationCreateDomainModel newOrganisation);
         Task<OrganisationQueryViewModel> UpdateOrganisation(OrganisationUpdateDomainModel organisationUpdateDomainModel);
 
-        Task Delete(int ukprn);
+        Task Delete(Guid id);
     }
 }

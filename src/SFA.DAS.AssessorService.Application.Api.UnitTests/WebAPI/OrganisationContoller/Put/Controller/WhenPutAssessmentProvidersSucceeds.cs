@@ -28,14 +28,13 @@
 
             OrganisationContoller = new OrganisationController(
                   Mediator.Object,
-                  StringLocalizer.Object,
-                  UkPrnValidator,
+                  StringLocalizer.Object,                 
                   Logger.Object);
         };
 
         Because of = () =>
         {
-            Result = OrganisationContoller.Update(10000000, _organisationUpdateViewModel).Result;
+            Result = OrganisationContoller.Update(_organisationUpdateViewModel).Result;
         };
 
         Machine.Specifications.It verify_succesfully = () =>

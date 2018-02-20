@@ -6,6 +6,7 @@
     using AutoMapper;
     using Microsoft.EntityFrameworkCore;
     using SFA.DAS.AssessorService.Application.Interfaces;
+    using SFA.DAS.AssessorService.Domain.Exceptions;
     using SFA.DAS.AssessorService.ViewModel.Models;
 
     public class ContactRepository : IContactRepository
@@ -19,21 +20,25 @@
 
         public async Task<IEnumerable<ContactQueryViewModel>> GetContacts(int ukprn)
         {
-            var contacts = await _assessorDbContext.Contacts
-                .Where(q => q.EndPointAssessorUKPRN == ukprn)
-                .Select(q => Mapper.Map<ContactQueryViewModel>(q)).ToListAsync();
+            var contacts = await _assessorDbContext.Organisations
+                .Include(organisation => organisation.Contacts)
+                .Where(organisation => organisation.EndPointAssessorUKPRN == ukprn)
+                .SelectMany(q => q.Contacts).Where(q => q.Status == "Live")
+                .Select(contact => Mapper.Map<ContactQueryViewModel>(contact)).ToListAsync();
 
             return contacts;
         }
 
 
-        public async Task<IEnumerable<ContactQueryViewModel>> GetContacts(string contactName)
+        public async Task<ContactQueryViewModel> GetContact(int ukprn)
         {
-            var contacts = await _assessorDbContext.Contacts
-                .Where(q => q.ContactName == contactName)
-                .Select(q => Mapper.Map<ContactQueryViewModel>(q)).ToListAsync();
+            var contact = await _assessorDbContext.Contacts
+                .FirstOrDefaultAsync();
+            if (contact == null)
+                throw new NotFound();
 
-            return contacts;
+            var contactQueryViewModel = Mapper.Map<ContactQueryViewModel>(contact);
+            return contactQueryViewModel;
         }
 
         public async Task<bool> CheckContactExists(int contactId)

@@ -5,6 +5,6 @@
 
     public class OrganisationDeleteViewModel : IRequest
     {
-        public int UKPrn { get; set; }                  
+        public Guid Id { get; set; }                  
     }
 }

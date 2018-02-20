@@ -16,7 +16,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     Id = Guid.NewGuid(),
                     EndPointAssessorName = "EPAO 1",
                     EndPointAssessorOrganisationId = "1234",
-                    EndPointAssessorUKPRN = 10003375,
+                    EndPointAssessorUKPRN = 10000000,
                     CreatedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now,
                     Status = "Active"
@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     EndPointAssessorContactId = 1,
                     EndPointAssessorOrganisationId = "1234",
                     EndPointAssessorUKPRN = 10000000,
-                    Status = "Active",
+                    Status = "Live",
                     CreatedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now,
                     OrganisationId = organisation.Id
@@ -49,7 +49,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     EndPointAssessorContactId = 1,
                     EndPointAssessorOrganisationId = "1234",
                     EndPointAssessorUKPRN = 10000000,
-                    Status = "Active",
+                    Status = "Live",
                     CreatedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now,
                     OrganisationId = organisation.Id

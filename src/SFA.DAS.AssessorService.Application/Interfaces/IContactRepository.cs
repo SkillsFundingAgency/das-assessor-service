@@ -9,6 +9,6 @@
         Task<bool> CheckContactExists(int contactId);
 
         Task<IEnumerable<ContactQueryViewModel>> GetContacts(int ukprn);
-        Task<IEnumerable<ContactQueryViewModel>> GetContacts(string contactName);
+        Task<ContactQueryViewModel> GetContact(int ukprn);
     }
 }

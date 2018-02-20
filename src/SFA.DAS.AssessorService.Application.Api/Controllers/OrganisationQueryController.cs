@@ -7,11 +7,9 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Localization;
     using Microsoft.Extensions.Logging;
-    using SFA.DAS.AssessorService.Application.Api.Attributes;
     using SFA.DAS.AssessorService.Application.Api.Consts;
     using SFA.DAS.AssessorService.Application.Api.Validators;
     using SFA.DAS.AssessorService.Application.Interfaces;
-    using SFA.DAS.AssessorService.Domain.Exceptions;
     using SFA.DAS.AssessorService.ViewModel.Models;
     using Swashbuckle.AspNetCore.SwaggerGen;
 
