@@ -50,6 +50,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
 
             var handler = container.GetInstance<IRequestHandler<RegisterUpdateRequest>>();
 
+
             var mediator = container.GetInstance<IMediator>();
             mediator.Send(new RegisterUpdateRequest());
         }

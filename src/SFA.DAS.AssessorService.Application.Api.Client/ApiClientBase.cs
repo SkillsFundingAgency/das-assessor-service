@@ -54,7 +54,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
         protected async Task<T> RequestAndDeserialiseAsync<T>(string userKey, HttpRequestMessage request, string message = null) where T : class
         {
             request.Headers.Add("Accept", "application/json");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetJwt(userKey));
+            string jwt;
+            try
+            {
+                jwt = TokenService.GetJwt(userKey);
+            }
+            catch (Exception e)
+            {
+                
+                throw;
+            }
+
+            
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
 
             using (var response = HttpClient.SendAsync(request))
             {
