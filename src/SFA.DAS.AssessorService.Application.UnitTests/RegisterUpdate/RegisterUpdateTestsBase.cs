@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
 
             OrganisationRepository = new Mock<IOrganisationRepository>();
 
-            RegisterUpdateHandler = new RegisterUpdateHandler(ApiClient.Object, OrganisationRepository.Object);
+            //RegisterUpdateHandler = new RegisterUpdateHandler(ApiClient.Object, OrganisationRepository.Object);
         }
     }
 }
