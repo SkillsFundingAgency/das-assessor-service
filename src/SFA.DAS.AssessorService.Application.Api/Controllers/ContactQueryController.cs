@@ -1,5 +1,6 @@
 ﻿namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
+    using System;
     using System.Net;
     using System.Threading.Tasks;
     using MediatR;
@@ -36,27 +37,23 @@
             _logger = logger;
         }
 
-        [HttpGet("{ukprn}", Name = "GetAllContactsForAnOrganisation")]
+        [HttpGet("{organisationId}", Name = "GetAllContactsForAnOrganisation")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(OrganisationQueryViewModel))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest)]
         [SwaggerResponse((int)HttpStatusCode.NotFound, Type = typeof(string))]
-        public async Task<IActionResult> GetAllContactsForAnOrganisation(int ukprn)
-        {
-            var result = _ukPrnValidator.Validate(ukprn);
-            if (!result.IsValid)
-                return BadRequest(result.Errors[0].ErrorMessage);
-
-            var contacts = await _contactRepository.GetContacts(ukprn);
+        public async Task<IActionResult> GetAllContactsForAnOrganisation(Guid organisationId)
+        {           
+            var contacts = await _contactRepository.GetContacts(organisationId);
             return Ok(contacts);
         }
 
-        [HttpGet("user/{ukprn}")]
+        [HttpGet("user/{userName}/{emailAddress}", Name = "GetContactsByUserNameAndEmail")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(OrganisationQueryViewModel))]
-        public async Task<IActionResult> Get(int ukprn)
+        public async Task<IActionResult> GetContactsByUserNameAndEmail(string userName, string emailAddress)
         {
             try
             {
-                var organisation = await _contactRepository.GetContact(ukprn);
+                var organisation = await _contactRepository.GetContact(userName, emailAddress);
                 return Ok(organisation);
             }
             catch (NotFound exception)
