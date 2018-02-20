@@ -18,12 +18,12 @@
     public class ContactController : Controller
     {
         private readonly IMediator _mediator;
-        private readonly IStringLocalizer<OrganisationController> _localizer;
-        private readonly ILogger<OrganisationController> _logger;
+        private readonly IStringLocalizer<ContactController> _localizer;
+        private readonly ILogger<ContactController> _logger;
 
         public ContactController(IMediator mediator,
-            IStringLocalizer<OrganisationController> localizer,
-            ILogger<OrganisationController> logger
+            IStringLocalizer<ContactController> localizer,
+            ILogger<ContactController> logger
             )
         {
             _mediator = mediator;
@@ -35,7 +35,7 @@
         [ValidateBadRequest]
         [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(ContactQueryViewModel))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ContactQueryViewModel))]
-        public async Task<IActionResult> CreateContract(
+        public async Task<IActionResult> CreateContact(
             [FromBody] ContactCreateViewModel contactCreateViewModel)
         {
             _logger.LogInformation("Received Create Contact Request");

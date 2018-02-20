@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.AssessorService.Application.OrganisationHandlers
+﻿namespace SFA.DAS.AssessorService.Application.ContactHandlers
 {
     using System.Threading;
     using System.Threading.Tasks;

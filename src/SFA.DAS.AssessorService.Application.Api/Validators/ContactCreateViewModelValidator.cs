@@ -7,14 +7,14 @@
 
     public class ContactCreateViewModelValidator : AbstractValidator<ContactCreateViewModel>
     {
-        private readonly IStringLocalizer<OrganisationCreateViewModelValidator> _localizer;
+        private readonly IStringLocalizer<ContactCreateViewModelValidator> _localizer;
 
-        public ContactCreateViewModelValidator(IStringLocalizer<OrganisationCreateViewModelValidator> localizer
+        public ContactCreateViewModelValidator(IStringLocalizer<ContactCreateViewModelValidator> localizer
             ) : base()
         {
             _localizer = localizer;
 
-            var organisationCreateViewModel = new OrganisationCreateViewModel();
+            var organisationCreateViewModel = new ContactCreateViewModel();
             RuleFor(organisation => organisation.EndPointAssessorUKPRN).InclusiveBetween(10000000, 99999999).WithMessage(_localizer[ResourceMessageName.InvalidUKPRN, nameof(organisationCreateViewModel.EndPointAssessorUKPRN)].Value);
         }
     }

@@ -15,7 +15,7 @@
     using System.Threading.Tasks;
 
     [Subject("AssessorService")]
-    public class WhenCreatePersistsData
+    public class WhenCreateOrganisationPersistsData
     {
         private static OrganisationRepository _organisationRepository;
         private static Mock<AssessorDbContext> _assessorDbContext;

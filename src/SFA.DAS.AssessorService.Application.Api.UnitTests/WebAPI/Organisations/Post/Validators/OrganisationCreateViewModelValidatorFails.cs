@@ -10,7 +10,7 @@
     using System.Threading.Tasks;
 
     [Subject("AssessorService")]
-    public class OrganisationCreateViewModelValidatorFails : OrganisationCreateViewModelValidatorTestBase
+    public class WhenOrganisationCreateViewModelValidatorFails : OrganisationCreateViewModelValidatorTestBase
     {
         private static ValidationResult _validationResult;
        

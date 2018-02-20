@@ -5,7 +5,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="WebAPI\Contacts\Post\Validators\**" />
+    <EmbeddedResource Remove="WebAPI\Contacts\Post\Validators\**" />
+    <None Remove="WebAPI\Contacts\Post\Validators\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Validators\UkPrnValidator\WhenUkPrnValidatorValidatesSuccess.cs" />
+    <Compile Remove="WebAPI\Contacts\Get\WhenGetAssessmentProvidersGetCannotFindUkPrn.cs" />
+    <Compile Remove="WebAPI\Contacts\Get\WhenGetAssessmentProvidersValidationFails.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="WebAPI\Contacts\Post\Validators\ContactCreateViewModelValidatorTestBase.cs" />
+    <Compile Include="WebAPI\Contacts\Post\Validators\ContactCreateViewModelValidatorFails.cs" />
+    <Compile Include="WebAPI\Contacts\Post\Validators\ContactCreateViewModelValidatorSucceeds.cs" />
   </ItemGroup>
 
   <ItemGroup>
