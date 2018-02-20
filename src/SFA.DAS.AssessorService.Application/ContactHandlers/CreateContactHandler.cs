@@ -3,9 +3,9 @@
     using System.Threading;
     using System.Threading.Tasks;
     using AutoMapper;
-    using MediatR;
-    using SFA.DAS.AssessorService.Application.Api.Consts;
+    using MediatR;  
     using SFA.DAS.AssessorService.Application.Interfaces;
+    using SFA.DAS.AssessorService.Domain.Enums;
     using SFA.DAS.AssessorService.ViewModel.Models;
 
     public class CreateContactHandler : IRequestHandler<ContactCreateViewModel, ContactQueryViewModel>
@@ -22,7 +22,7 @@
         }
 
         public async Task<ContactQueryViewModel> Handle(ContactCreateViewModel contactCreateViewModel, CancellationToken cancellationToken)
-        {            
+        {
             var contactCreateDomainModel = Mapper.Map<ContactCreateDomainModel>(contactCreateViewModel);
             contactCreateDomainModel.Status = "Live"; // Not sure what to be done about this - to be confirmed??
 
@@ -32,10 +32,11 @@
             {
                 var organisationDomainModel = await _organisationRepository.Get(contactCreateViewModel.OrganisationId);
                 organisationDomainModel.PrimaryContactId = contactQueryViewModel.Id;
-                organisationDomainModel.Status = "Live";
+                organisationDomainModel.OrganisationStatus = OrganisationStatus.Live;
+
                 await _organisationRepository.UpdateOrganisation(organisationDomainModel);
             }
-           
+
             return contactQueryViewModel;
         }
     }

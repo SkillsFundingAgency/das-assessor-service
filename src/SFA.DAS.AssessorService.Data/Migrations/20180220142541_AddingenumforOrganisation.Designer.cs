@@ -12,9 +12,10 @@ using System;
 namespace SFA.DAS.AssessorService.Data.Migrations
 {
     [DbContext(typeof(AssessorDbContext))]
-    partial class AssessorDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180220142541_AddingenumforOrganisation")]
+    partial class AddingenumforOrganisation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -59,6 +60,8 @@ namespace SFA.DAS.AssessorService.Data.Migrations
                     b.Property<int>("EndPointAssessorContactId");
 
                     b.Property<string>("EndPointAssessorOrganisationId");
+
+                    b.Property<bool>("IsDeleted");
 
                     b.Property<DateTime>("LearnerDateofBirth");
 
@@ -118,6 +121,8 @@ namespace SFA.DAS.AssessorService.Data.Migrations
 
                     b.Property<DateTime>("EventTime");
 
+                    b.Property<bool>("IsDeleted");
+
                     b.Property<string>("Status");
 
                     b.Property<DateTime>("UpdatedAt");
@@ -138,8 +143,6 @@ namespace SFA.DAS.AssessorService.Data.Migrations
 
                     b.Property<string>("ContactName");
 
-                    b.Property<int>("ContactStatus");
-
                     b.Property<DateTime>("CreatedAt");
 
                     b.Property<DateTime>("DeletedAt");
@@ -150,7 +153,11 @@ namespace SFA.DAS.AssessorService.Data.Migrations
 
                     b.Property<int>("EndPointAssessorUKPRN");
 
+                    b.Property<bool>("IsDeleted");
+
                     b.Property<Guid>("OrganisationId");
+
+                    b.Property<string>("Status");
 
                     b.Property<DateTime>("UpdatedAt");
 
@@ -175,6 +182,8 @@ namespace SFA.DAS.AssessorService.Data.Migrations
                     b.Property<string>("EndPointAssessorOrganisationId");
 
                     b.Property<int>("EndPointAssessorUKPRN");
+
+                    b.Property<bool>("IsDeleted");
 
                     b.Property<int>("OrganisationStatus");
 

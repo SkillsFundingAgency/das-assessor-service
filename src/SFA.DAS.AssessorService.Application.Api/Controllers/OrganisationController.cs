@@ -41,7 +41,7 @@
 
             var organisationQueryViewModel = await _mediator.Send(organisationCreateViewModel);
 
-            return CreatedAtRoute("Create",
+            return CreatedAtRoute("CreateOrganisation",
                 new { id = organisationQueryViewModel.Id },
                 organisationQueryViewModel);
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Enums;
 
 namespace SFA.DAS.AssessorService.Data.TestData
 {
@@ -19,7 +20,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     EndPointAssessorUKPRN = 10000000,
                     CreatedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now,
-                    Status = "Active"
+                    OrganisationStatus = OrganisationStatus.New
                 };
 
                 context.Organisations.Add(organisation);
@@ -33,7 +34,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     EndPointAssessorContactId = 1,
                     EndPointAssessorOrganisationId = "1234",
                     EndPointAssessorUKPRN = 10000000,
-                    Status = "Live",
+                    ContactStatus = ContactStatus.Live,
                     CreatedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now,
                     OrganisationId = organisation.Id
@@ -49,7 +50,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     EndPointAssessorContactId = 1,
                     EndPointAssessorOrganisationId = "1234",
                     EndPointAssessorUKPRN = 10000000,
-                    Status = "Live",
+                    ContactStatus = ContactStatus.Live,
                     CreatedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now,
                     OrganisationId = organisation.Id
