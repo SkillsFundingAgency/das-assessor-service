@@ -96,7 +96,7 @@
             var organisation = await _assessorDbContext.Organisations
                         .Include(q => q.Contacts)
                        .FirstOrDefaultAsync(q => q.Id == organisationId && q.OrganisationStatus != OrganisationStatus.Deleted);
-            return organisation == null ? false : true;
+            return organisation.Contacts.Count() == 0 ? false : true;
         }
 
         public async Task Delete(Guid id)

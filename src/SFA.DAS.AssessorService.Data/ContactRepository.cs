@@ -57,8 +57,37 @@
             _assessorDbContext.Contacts.Add(contactEntity);
             await _assessorDbContext.SaveChangesAsync();
 
-            var organisationQueryViewModel = Mapper.Map<ContactQueryViewModel>(contactEntity);
-            return organisationQueryViewModel;
+            var contactQueryViewModel = Mapper.Map<ContactQueryViewModel>(contactEntity);
+            return contactQueryViewModel;
+        }
+
+        public async Task Update(ContactUpdateViewModel contactUpdateViewModel)
+        {
+            var contactEntity = await _assessorDbContext.Contacts.FirstAsync(q => q.Id == contactUpdateViewModel.Id);
+
+            contactEntity.ContactName = contactUpdateViewModel.ContactName;
+            contactEntity.ContactEmail = contactUpdateViewModel.ContactEmail;
+
+            // Workaround for Mocking
+            _assessorDbContext.MarkAsModified(contactEntity);
+
+            await _assessorDbContext.SaveChangesAsync();
+        }
+
+        public async Task Delete(Guid id)
+        {
+            var contactEntity = _assessorDbContext.Contacts
+                      .FirstOrDefault(q => q.Id == id);
+
+            if (contactEntity == null)
+                throw (new NotFound());
+
+            contactEntity.DeletedAt = DateTime.Now;
+            contactEntity.ContactStatus = ContactStatus.Deleted;
+
+            _assessorDbContext.MarkAsModified(contactEntity);
+
+            await _assessorDbContext.SaveChangesAsync();
         }
     }
 }

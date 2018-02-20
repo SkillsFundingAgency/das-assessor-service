@@ -24,20 +24,25 @@
         public async Task<ContactQueryViewModel> Handle(ContactCreateViewModel contactCreateViewModel, CancellationToken cancellationToken)
         {
             var contactCreateDomainModel = Mapper.Map<ContactCreateDomainModel>(contactCreateViewModel);
-            contactCreateDomainModel.Status = "Live"; // Not sure what to be done about this - to be confirmed??
-
-            var contactQueryViewModel = await _contactRepository.CreateNewContact(contactCreateDomainModel);
+            contactCreateDomainModel.ContactStatus = ContactStatus.Live; // Not sure what to be done about this - to be confirmed??      
 
             if (!(await _organisationRepository.CheckIfOrganisationHasContacts(contactCreateViewModel.OrganisationId)))
             {
+                var contactQueryViewModel = await _contactRepository.CreateNewContact(contactCreateDomainModel);
+
                 var organisationDomainModel = await _organisationRepository.Get(contactCreateViewModel.OrganisationId);
                 organisationDomainModel.PrimaryContactId = contactQueryViewModel.Id;
                 organisationDomainModel.OrganisationStatus = OrganisationStatus.Live;
 
                 await _organisationRepository.UpdateOrganisation(organisationDomainModel);
-            }
 
-            return contactQueryViewModel;
+                return contactQueryViewModel;
+            }
+            else
+            {
+                var contactQueryViewModel = await _contactRepository.CreateNewContact(contactCreateDomainModel);
+                return contactQueryViewModel;
+            }           
         }
     }
 }

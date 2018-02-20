@@ -37,7 +37,7 @@
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(OrganisationQueryViewModel))]
         public async Task<IActionResult> CreateOrganisation([FromBody] OrganisationCreateViewModel organisationCreateViewModel)
         {
-            _logger.LogInformation("Received Create Request");
+            _logger.LogInformation("Received Create Organisation Request");
 
             var organisationQueryViewModel = await _mediator.Send(organisationCreateViewModel);
 
@@ -52,7 +52,7 @@
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(OrganisationQueryViewModel))]
         public async Task<IActionResult> UpdateOrganisation([FromBody] OrganisationUpdateViewModel organisationUpdateViewModel)
         {
-            _logger.LogInformation("Received Update Request");
+            _logger.LogInformation("Received Update Organisation Request");
 
             var organisationQueryViewModel = await _mediator.Send(organisationUpdateViewModel);
 
@@ -68,7 +68,7 @@
         {
             try
             {
-                _logger.LogInformation("Received Update Request");
+                _logger.LogInformation("Received Delete Organisation Request");
 
                 var organisationDeleteViewModel = new OrganisationDeleteViewModel
                 {
@@ -79,7 +79,7 @@
 
                 return NoContent();
             }
-            catch (NotFound exception)
+            catch (NotFound)
             {
                 return NotFound();
             }

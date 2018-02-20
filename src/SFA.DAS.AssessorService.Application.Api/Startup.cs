@@ -164,6 +164,7 @@ namespace SFA.DAS.AssessorService.Application.Api
                 cfg.CreateMap<ContactCreateViewModel, ContactCreateDomainModel>();
                 cfg.CreateMap<ContactCreateDomainModel, Domain.Entities.Contact>();
                 cfg.CreateMap<Domain.Entities.Contact, ContactCreateViewModel>();
+                cfg.CreateMap<Domain.Entities.Contact, ContactQueryViewModel>();
             });
             
             app.UseAuthentication();

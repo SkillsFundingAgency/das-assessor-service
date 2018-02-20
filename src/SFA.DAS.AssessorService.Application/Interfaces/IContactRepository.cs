@@ -13,5 +13,7 @@
         Task<ContactQueryViewModel> GetContact(string userName, string emailAddress);
 
         Task<ContactQueryViewModel> CreateNewContact(ContactCreateDomainModel newContact);
+        Task Update(ContactUpdateViewModel organisationUpdateViewModel);
+        Task Delete(Guid id);
     }
 }
