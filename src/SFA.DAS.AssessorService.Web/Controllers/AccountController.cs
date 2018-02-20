@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public async Task<IActionResult> PostSignIn()
         {
             var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn").Value;
-            var organisationExists = await _apiClient.Get(int.Parse(ukprn));
+            var organisationExists = await _apiClient.Get(ukprn, ukprn);
             return organisationExists != null ? this.RedirectToAction("Index", "Organisation") : this.RedirectToAction("NotRegistered", "Home");
         }
 
