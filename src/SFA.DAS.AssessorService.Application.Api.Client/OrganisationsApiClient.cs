@@ -12,19 +12,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
         {
         }
 
-        public async Task<IEnumerable<OrganisationQueryViewModel>> Get(string userKey)
+        public async Task<IEnumerable<OrganisationQueryViewModel>> GetAll(string userKey)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/assessment-providers/"))
             {
                 return await RequestAndDeserialiseAsync<IEnumerable<OrganisationQueryViewModel>>(userKey, request, $"Could not find the organisations");
-            }
-        }
-
-        public async Task<OrganisationQueryViewModel> Get(string userKey, Guid id)
-        {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/assessment-providers/{id}"))
-            {
-                return await RequestAndDeserialiseAsync<OrganisationQueryViewModel>(userKey, request, $"Could not find the organisation {id}");
             }
         }
 
@@ -63,8 +55,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
 
     public interface IOrganisationsApiClient
     {
-        Task<IEnumerable<OrganisationQueryViewModel>> Get(string userKey);
-        Task<OrganisationQueryViewModel> Get(string userKey, Guid id);
+        Task<IEnumerable<OrganisationQueryViewModel>> GetAll(string userKey);
         Task<OrganisationQueryViewModel> Get(string userKey, string ukprn);
         Task Create(string userKey, OrganisationCreateViewModel organisationCreateViewModel);
         Task Update(string userKey, OrganisationUpdateViewModel organisationUpdateViewModel);

@@ -23,7 +23,7 @@
 
         Because of = () =>
         {           
-            _result = TokenService.GetJwt();
+            _result = TokenService.GetJwt("USERID");
             _expectedToken = GenerateJwt(SystemTime.UtcNow().AddMinutes(30));
         };
       

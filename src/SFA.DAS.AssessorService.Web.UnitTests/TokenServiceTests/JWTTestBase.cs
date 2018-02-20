@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.TokenServiceTests
             var configuration = new Mock<IConfiguration>();
             configuration.Setup(c => c["AuthOptions:TokenEncodingKey"]).Returns(TokenEncodingKey);
 
-            TokenService = new TokenService(Cache.Object, ContextAccessor.Object, configuration.Object);
+            TokenService = new TokenService(Cache.Object, configuration.Object);
         }
 
         protected static string GenerateJwt(DateTime? expires = null)

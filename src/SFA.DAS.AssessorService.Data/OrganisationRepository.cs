@@ -81,10 +81,10 @@
             return organisation == null ? false : true;
         }
 
-        public async Task Delete(int ukprn)
+        public async Task Delete(Guid id)
         {
             var organisationEntity = _assessorDbContext.Organisations
-                      .FirstOrDefault(q => q.EndPointAssessorUKPRN == ukprn);
+                      .FirstOrDefault(q => q.Id == id);
 
             if (organisationEntity == null)
                 throw (new NotFound());

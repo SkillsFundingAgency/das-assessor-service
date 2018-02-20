@@ -23,9 +23,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public async Task<IActionResult> Index()
         {
             var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn").Value;
-            var orgId = _contextAccessor.HttpContext.User.FindFirst("OrganisationId").Value;
+            //var orgId = _contextAccessor.HttpContext.User.FindFirst("OrganisationId").Value;
 
-            var organisation = await _apiClient.Get(ukprn, orgId);
+            var organisation = await _apiClient.Get(ukprn, ukprn);
 
             if (organisation != null)
                 return View(organisation);

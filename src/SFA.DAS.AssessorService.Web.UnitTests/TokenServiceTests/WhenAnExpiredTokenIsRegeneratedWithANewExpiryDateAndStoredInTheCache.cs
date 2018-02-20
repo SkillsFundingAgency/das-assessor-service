@@ -28,7 +28,7 @@
 
         Because of = () =>
         {
-            _result = TokenService.GetJwt();
+            _result = TokenService.GetJwt("USERID");
             _token = new JwtSecurityTokenHandler().ReadToken(_result);
         };
 

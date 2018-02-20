@@ -21,7 +21,7 @@
 
         Because of = () =>
         {
-            _result = TokenService.GetJwt();
+            _result = TokenService.GetJwt("USERID");
         };
 
         Machine.Specifications.It should_return_a_jwt = () =>

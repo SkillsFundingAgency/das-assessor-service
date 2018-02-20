@@ -1,15 +1,12 @@
 ﻿namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
-    using System.Linq;
+    using System;
     using System.Net;
     using System.Threading.Tasks;
     using MediatR;
-    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Localization;
     using Microsoft.Extensions.Logging;
-    using SFA.DAS.AssessorService.Application.Api.Attributes;
-    using SFA.DAS.AssessorService.Application.Api.Consts;
     using SFA.DAS.AssessorService.Application.Api.Validators;
     using SFA.DAS.AssessorService.Application.Interfaces;
     using SFA.DAS.AssessorService.Domain.Exceptions;
@@ -40,26 +37,29 @@
             _logger = logger;
         }
 
-        [HttpGet("{ukprn}")]
+        [HttpGet("{organisationId}", Name = "GetAllContactsForAnOrganisation")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(OrganisationQueryViewModel))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest)]
         [SwaggerResponse((int)HttpStatusCode.NotFound, Type = typeof(string))]
-        public async Task<IActionResult> Get(int ukprn)
-        {
-            var result = _ukPrnValidator.Validate(ukprn);
-            if (!result.IsValid)
-                return BadRequest(result.Errors[0].ErrorMessage);
-
-            var contacts = await _contactRepository.GetContacts(ukprn);
+        public async Task<IActionResult> GetAllContactsForAnOrganisation(Guid organisationId)
+        {           
+            var contacts = await _contactRepository.GetContacts(organisationId);
             return Ok(contacts);
         }
 
-        [HttpGet("user/{userName}")]
+        [HttpGet("user/{userName}/{emailAddress}", Name = "GetContactsByUserNameAndEmail")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(OrganisationQueryViewModel))]
-        public async Task<IActionResult> Get(string userName)
+        public async Task<IActionResult> GetContactsByUserNameAndEmail(string userName, string emailAddress)
         {
-            var organisations = await _contactRepository.GetContacts(userName);
-            return Ok(organisations);
+            try
+            {
+                var organisation = await _contactRepository.GetContact(userName, emailAddress);
+                return Ok(organisation);
+            }
+            catch (NotFound exception)
+            {
+                return NotFound(); 
+            }
         }
 
         //[HttpPost(Name = "Create")]

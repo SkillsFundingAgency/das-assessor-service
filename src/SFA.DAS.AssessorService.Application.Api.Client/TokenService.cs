@@ -19,17 +19,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
             _configuration = configuration;
         }
 
-        public string GetJwt(string ukprn)
+        public string GetJwt(string userKey)
         {
             //var ukprn = _contextAccessor.HttpContext.User
             //    .FindFirst("http://schemas.portal.com/ukprn").Value;
 
-            var result = _cache.GetString(ukprn);
+            var result = _cache.GetString(userKey);
 
             if (result == null)
             {
-                result = GetNewToken(ukprn);
-                _cache.SetString(ukprn, result);
+                result = GetNewToken(userKey);
+                _cache.SetString(userKey, result);
             }
             else
             {
@@ -37,8 +37,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
 
                 if (token.ValidTo >= SystemTime.UtcNow()) return result;
 
-                result = GetNewToken(ukprn);
-                _cache.SetString(ukprn, result);
+                result = GetNewToken(userKey);
+                _cache.SetString(userKey, result);
             }
             
             return result;

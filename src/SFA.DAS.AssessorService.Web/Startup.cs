@@ -83,7 +83,13 @@ namespace SFA.DAS.AssessorService.Web
 
             context.HttpContext.Session.SetString(ukprn, jwt);
 
-            
+
+            //var claimsIdentity = (ClaimsIdentity)context.Principal.Identity;
+            ////add your custom claims here
+            //claimsIdentity.AddClaim(new Claim("test", "helloworld!!!"));
+
+            //((ClaimsIdentity)context.HttpContext.User.Identity).AddClaim(new Claim("OrganisationId", "TEST"));
+
 
             return Task.FromResult(0);
         }

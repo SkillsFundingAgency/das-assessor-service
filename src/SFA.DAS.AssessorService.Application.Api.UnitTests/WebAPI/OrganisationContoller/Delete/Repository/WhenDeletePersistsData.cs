@@ -65,7 +65,7 @@
 
         Because of = () =>
         {
-            _result = _organisationRepository.Delete(10000000);
+            _result = _organisationRepository.Delete(Guid.NewGuid());
         };
 
         Machine.Specifications.It verify_succesfully = () =>

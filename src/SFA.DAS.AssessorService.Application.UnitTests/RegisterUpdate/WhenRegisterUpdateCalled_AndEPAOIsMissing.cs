@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,6 +13,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
     [TestFixture]
     public class WhenRegisterUpdateCalled_AndEPAOIsMissing : RegisterUpdateTestsBase
     {
+        private Guid _organisationId;
+
         [SetUp]
         public void Arrange()
         {
@@ -23,12 +26,13 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
                     new OrganisationSummary {Id = "EPA0001"}
                     
                 }.AsEnumerable()));
-            
+
+            _organisationId = Guid.NewGuid();
             OrganisationRepository.Setup(r => r.GetAllOrganisations())
                 .Returns(Task.FromResult(new List<OrganisationQueryViewModel>
                 {
                     new OrganisationQueryViewModel() {EndPointAssessorOrganisationId = "EPA0001"},
-                    new OrganisationQueryViewModel() {EndPointAssessorOrganisationId = "EPA0002", EndPointAssessorUKPRN = 12345}
+                    new OrganisationQueryViewModel() {EndPointAssessorOrganisationId = "EPA0002", Id = _organisationId}
                 }.AsEnumerable()));
         }
 
@@ -36,7 +40,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
         public void ThenTheRepositoryIsAskedToDeleteTheCorrectOrganisation()
         {
             RegisterUpdateHandler.Handle(new RegisterUpdateRequest(), new CancellationToken()).Wait();
-            OrganisationRepository.Verify(r => r.Delete(12345));//.DeleteOrganisationByEpaoId("EPA0002"));
+            OrganisationRepository.Verify(r => r.Delete(_organisationId));//.DeleteOrganisationByEpaoId("EPA0002"));
         }
     }
 }

@@ -27,13 +27,13 @@ namespace SFA.DAS.AssessorService.Application.MSpec.UnitTests
         Machine.Specifications.It should_call_the_api = () =>
         {
 
-            TokenService.Verify(serv => serv.GetJwt(), Times.AtMostOnce);
+            //TokenService.Verify(serv => serv.GetJwt(), Times.AtMostOnce);
         };
 
         private Machine.Specifications.It should_get_an_organisation = () =>
         {
             //OrganisationService.Verify(serv => serv.GetOrganisation("jwt", 12345));
-            ApiClient.Verify(a => a.Get(12345));
+            ApiClient.Verify(a => a.Get("USERID", "12345"));
         };
 
         Machine.Specifications.It should_return_a_viewresult = () =>

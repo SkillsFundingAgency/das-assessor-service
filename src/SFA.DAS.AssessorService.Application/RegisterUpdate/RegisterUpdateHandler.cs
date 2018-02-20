@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
         {
             var epaosOnRegister = await _registerApiClient.FindAllAsync();
 
-            var organisations = await _internalApiClient.Get("HANDLER");
+            var organisations = await _internalApiClient.GetAll("HANDLER");
 
             //var organisations = await _organisationRepository.GetAllOrganisations();
             foreach (var epaoSummary in epaosOnRegister)

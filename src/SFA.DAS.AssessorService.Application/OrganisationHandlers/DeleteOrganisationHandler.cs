@@ -17,7 +17,7 @@
 
         public async Task Handle(OrganisationDeleteViewModel organisationDeleteViewModel, CancellationToken cancellationToken)
         {
-            await _organisationRepository.Delete(organisationDeleteViewModel.UKPrn);
+            await _organisationRepository.Delete(organisationDeleteViewModel.Id);
         }
     }
 }

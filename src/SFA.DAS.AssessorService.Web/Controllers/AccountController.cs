@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Security.Claims;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.WsFederation;
@@ -34,7 +35,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn").Value;
             var organisationExists = await _apiClient.Get(ukprn, ukprn);
-            return organisationExists != null ? this.RedirectToAction("Index", "Organisation") : this.RedirectToAction("NotRegistered", "Home");
+            if (organisationExists != null)
+            {
+                return this.RedirectToAction("Index", "Organisation");
+            }
+            else return this.RedirectToAction("NotRegistered", "Home");
         }
 
         [HttpGet]
