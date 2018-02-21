@@ -17,9 +17,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     Id = Guid.NewGuid(),
                     EndPointAssessorName = "EPAO 1",
                     EndPointAssessorOrganisationId = "1234",
-                    EndPointAssessorUKPRN = 10000000,
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now,
+                    EndPointAssessorUKPRN = 10000000,               
                     OrganisationStatus = OrganisationStatus.New
                 };
 
@@ -32,9 +30,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     ContactEmail = "blah@blah.com",
                     ContactName = "Fred Jones",
                     EndPointAssessorContactId = 1,                  
-                    ContactStatus = ContactStatus.Live,
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now,
+                    ContactStatus = ContactStatus.Live,                
                     OrganisationId = organisation.Id
                 };
 
@@ -46,9 +42,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     ContactEmail = "jcoxhead@gmail.com",
                     ContactName = "John Coxhead",
                     EndPointAssessorContactId = 1,             
-                    ContactStatus = ContactStatus.Live,
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now,
+                    ContactStatus = ContactStatus.Live,                                     
                     OrganisationId = organisation.Id
                 };
 
@@ -85,9 +79,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     StandardName = "Test",
                     StandardPublicationDate = DateTime.Now,
                     Status = "Active",
-                    ULN = 123456,
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now,
+                    ULN = 123456,                  
                     CreatedBy = firstContact.Id,
                     UpdatedBY = firstContact.Id
 
@@ -124,9 +116,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     StandardName = "Test",
                     StandardPublicationDate = DateTime.Now,
                     Status = "Active",
-                    ULN = 123456,
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now,
+                    ULN = 123456,                  
                     CreatedBy = firstContact.Id,
                     UpdatedBY = firstContact.Id
                 };
@@ -141,10 +131,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     CertificateId = firstCertificate.Id,
                     EndPointAssessorCertificateId = 2222222,
                     EventTime = DateTime.Now,
-                    Status = "Active",
-
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now
+                    Status = "Active",              
                 };
 
                 context.CertificateLogs.Add(firstCertificateLog);
@@ -156,10 +143,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     CertificateId = secondCertificate.Id,
                     EndPointAssessorCertificateId = 2222222,
                     EventTime = DateTime.Now,
-                    Status = "Active",
-
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now
+                    Status = "Active",                
                 };
 
                 context.CertificateLogs.Add(secondCertificateLog);
