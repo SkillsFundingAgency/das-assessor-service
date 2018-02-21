@@ -49,8 +49,8 @@
 
         [HttpPut(Name = "UpdateContact")]
         [ValidateBadRequest]
-        [SwaggerResponse((int)HttpStatusCode.NoContent, Type = typeof(ContactQueryViewModel))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ContactQueryViewModel))]
+        [SwaggerResponse((int)HttpStatusCode.NoContent)]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> UpdateContact([FromBody] ContactUpdateViewModel contactUpdateViewModel)
         {
             _logger.LogInformation("Received Update Contact Request");

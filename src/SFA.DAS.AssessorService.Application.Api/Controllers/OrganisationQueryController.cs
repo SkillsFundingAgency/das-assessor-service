@@ -1,5 +1,6 @@
 ﻿namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
+    using System;
     using System.Net;
     using System.Threading.Tasks;
     using MediatR;
@@ -42,7 +43,7 @@
         [SwaggerResponse((int)HttpStatusCode.BadRequest)]
         [SwaggerResponse((int)HttpStatusCode.NotFound, Type = typeof(string))]
         public async Task<IActionResult> Get(int ukprn)
-        {
+        {         
             var result = _ukPrnValidator.Validate(ukprn);
             if (!result.IsValid)
                 return BadRequest(result.Errors[0].ErrorMessage);
