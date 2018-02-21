@@ -5,15 +5,12 @@
     using Machine.Specifications;
     using Microsoft.EntityFrameworkCore;
     using Moq;
-    using SFA.DAS.AssessorService.Application.OrganisationHandlers;
-    using SFA.DAS.AssessorService.Application.Interfaces;
     using SFA.DAS.AssessorService.Data;
     using SFA.DAS.AssessorService.Domain.Entities;
     using SFA.DAS.AssessorService.ViewModel.Models;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using System;
     using System.Linq;
 
     [Subject("AssessorService")]

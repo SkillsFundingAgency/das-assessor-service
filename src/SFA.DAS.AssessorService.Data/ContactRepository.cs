@@ -27,7 +27,7 @@
                 .Include(organisation => organisation.Contacts)
                 .Where(organisation => organisation.Id == id)
                 .SelectMany(q => q.Contacts).Where(q => q.ContactStatus == ContactStatus.Live)
-                .Select(contact => Mapper.Map<ContactQueryViewModel>(contact)).ToListAsync();
+                .Select(contact => Mapper.Map<ContactQueryViewModel>(contact)).AsNoTracking().ToListAsync();
 
             return contacts;
         }

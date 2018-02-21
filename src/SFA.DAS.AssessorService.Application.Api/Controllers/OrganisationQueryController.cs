@@ -17,21 +17,19 @@
     //[Authorize]
     [Route("api/v1/assessment-providers")]
     public class OrganisationQueryController : Controller
-    {
-        private readonly IMediator _mediator;
+    {       
         private readonly IOrganisationRepository _organisationRepository;
         private readonly IStringLocalizer<OrganisationController> _localizer;
         private readonly UkPrnValidator _ukPrnValidator;
         private readonly ILogger<OrganisationQueryController> _logger;
 
-        public OrganisationQueryController(IMediator mediator,
+        public OrganisationQueryController(
             IOrganisationRepository organisationRepository,
             IStringLocalizer<OrganisationController> localizer,
             UkPrnValidator ukPrnValidator,
             ILogger<OrganisationQueryController> logger
             )
-        {
-            _mediator = mediator;
+        {          
             _organisationRepository = organisationRepository;
             _localizer = localizer;
             _ukPrnValidator = ukPrnValidator;
