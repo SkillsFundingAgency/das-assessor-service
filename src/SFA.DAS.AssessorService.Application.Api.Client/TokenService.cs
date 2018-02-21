@@ -10,9 +10,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
     {
         private readonly ICache _cache;
         private readonly IWebConfiguration _configuration;
+        private IDateTimeProvider _dateTimeProvider;
 
-        public TokenService(ICache cache, IWebConfiguration configuration)
+        public TokenService(ICache cache, IWebConfiguration configuration, IDateTimeProvider dateTimeProvider)
         {
+            _dateTimeProvider = dateTimeProvider;
             _cache = cache;
             _configuration = configuration;
         }
@@ -35,7 +37,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
                 {
                     new JwtBuilder()
                         .WithSecret(_configuration.Api.TokenEncodingKey)
-                        .MustVerifySignature()
+                        .WithDateTimeProvider(_dateTimeProvider)
+                        .MustVerifySignature()                        
                         .Decode(result);
                 }
                 catch (TokenExpiredException expired)
@@ -55,28 +58,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
                 .WithSecret(_configuration.Api.TokenEncodingKey)
                 .Issuer("sfa.das.assessorservice")
                 .Audience("sfa.das.assessorservice.api")
-                .ExpirationTime(DateTime.Now.AddMinutes(30))
+                .ExpirationTime(_dateTimeProvider.GetNow().DateTime.AddMinutes(30))
                 .AddClaim("ukprn", ukprn)
                 .Build();
 
             return token;
-            
-            //var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.Api.TokenEncodingKey));
-            //var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            //var claims = new[]
-            //{
-            //    new Claim("ukprn", ukprn, ClaimValueTypes.String)
-            //};
-
-            //var newToken = new JwtSecurityToken(
-            //    issuer: "sfa.das.assessorservice",
-            //    audience: "sfa.das.assessorservice.api",
-            //    claims: claims,
-            //    expires: SystemTime.UtcNow().AddMinutes(30),
-            //    signingCredentials: creds);
-
-            //return new JwtSecurityTokenHandler().WriteToken(newToken);
         }
     }
 }

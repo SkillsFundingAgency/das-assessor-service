@@ -16,7 +16,7 @@
             Setup();
 
             _jwt = GenerateJwt();
-            Cache.Setup(c => c.GetString("userid1")).Returns(_jwt);
+            Cache.Setup(c => c.GetString("USERID")).Returns(_jwt);
         };
 
         Because of = () =>

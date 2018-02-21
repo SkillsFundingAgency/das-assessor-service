@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Application.MSpec.UnitTests
         private Machine.Specifications.It should_get_an_organisation = () =>
         {
             //OrganisationService.Verify(serv => serv.GetOrganisation("jwt", 12345));
-            ApiClient.Verify(a => a.Get("USERID", "12345"));
+            ApiClient.Verify(a => a.Get("12345", "12345"));
         };
 
         Machine.Specifications.It should_return_a_viewresult = () =>

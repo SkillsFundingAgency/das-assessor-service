@@ -1,4 +1,5 @@
 using System;
+using JWT;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
 using SFA.DAS.AssessorService.Application.Api.Client;
@@ -22,7 +23,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                         TokenEncodingKey = Environment.GetEnvironmentVariable("TokenEncodingKey", EnvironmentVariableTarget.Process),
                         ApiBaseAddress = Environment.GetEnvironmentVariable("ApiBaseAddress", EnvironmentVariableTarget.Process)
                     }
-                });
+                }, new UtcDateTimeProvider());
 
             using (var apiClient = new RegisterImportApiClient(Environment.GetEnvironmentVariable("ApiBaseAddress", EnvironmentVariableTarget.Process), tokenService))
             {

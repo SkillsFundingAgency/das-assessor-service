@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api
+﻿using JWT;
+
+namespace SFA.DAS.AssessorService.Application.Api
 {
     using System;
     using System.Collections.Generic;
@@ -132,6 +134,8 @@
                 option.UseSqlServer(Configuration.SqlConnectionString);
 
                 config.For<AssessorDbContext>().Use(c => new AssessorDbContext(option.Options, _env.IsDevelopment()));
+
+                config.For<IDateTimeProvider>().Use<UtcDateTimeProvider>();
 
                 config.Populate(services);
             });

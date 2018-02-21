@@ -1,4 +1,7 @@
-﻿using SFA.DAS.AssessorService.Application.Api.Client;
+﻿using JWT;
+using JWT.Algorithms;
+using JWT.Builder;
+using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.TokenServiceTests
@@ -21,10 +24,11 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.TokenServiceTests
         protected static Mock<ICache> Cache;
         protected static Mock<IHttpContextAccessor> ContextAccessor;
         protected static TokenService TokenService;
+        public static FakeDateTimeProvider DateService { get; set; }
 
         public static void Setup()
         {
-            SystemTime.UtcNow = () => new DateTime(2018, 02, 15, 13, 0, 0);
+            //SystemTime.UtcNow = () => new DateTime(2018, 02, 15, 13, 0, 0);
 
             Cache = new Mock<ICache>();
 
@@ -40,36 +44,44 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.TokenServiceTests
                     }))
                 });
             
+            DateService = new FakeDateTimeProvider();
+            DateService.SetNow(new DateTime(2018, 02, 15, 13, 0, 0));
             TokenService = new TokenService(Cache.Object, new WebConfiguration()
             {
                 Api = new ApiSettings()
                 {
                     TokenEncodingKey = TokenEncodingKey
                 }
-            });
+            }, DateService);
         }
 
         protected static string GenerateJwt(DateTime? expires = null)
         {
             var expireDateTime = expires ?? new DateTime(2018, 02, 15, 13, 30, 0);
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(TokenEncodingKey));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var claims = new[]
-            {
-                new Claim("ukprn", "12345", ClaimValueTypes.String)
-            };
-
-            var token = new JwtSecurityToken(
-                issuer: "sfa.das.assessorservice",
-                audience: "sfa.das.assessorservice.api",
-                claims: claims,
-                expires: expireDateTime,
-                signingCredentials: creds);
-
-            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+            var jwt = new JwtBuilder().WithAlgorithm(new HMACSHA256Algorithm())
+                .WithSecret(TokenEncodingKey)
+                .Issuer("sfa.das.assessorservice")
+                .Audience("sfa.das.assessorservice.api")
+                .ExpirationTime(expireDateTime)
+                .AddClaim("ukprn", "USERID")
+                .Build();
             return jwt;
+        }
+    }
+
+    public class FakeDateTimeProvider : IDateTimeProvider
+    {
+        private DateTime _now;
+
+        public void SetNow(DateTime now)
+        {
+            _now = now;
+        }
+
+        public DateTimeOffset GetNow()
+        {
+            return _now;
         }
     }
 }

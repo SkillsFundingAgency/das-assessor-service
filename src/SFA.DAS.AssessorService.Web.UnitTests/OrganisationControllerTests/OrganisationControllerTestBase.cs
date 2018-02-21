@@ -47,7 +47,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
             TokenService.Setup(s => s.GetJwt("USERID")).Returns("jwt");
             
             ApiClient = new Mock<IOrganisationsApiClient>();
-            ApiClient.Setup(c => c.Get("USERID", "12345")).ReturnsAsync(new OrganisationQueryViewModel() {});
+            ApiClient.Setup(c => c.Get("12345", "12345")).ReturnsAsync(new OrganisationQueryViewModel() {});
 
             OrganisationController = new OrganisationController(logger.Object, httpContext.Object, ApiClient.Object);
         }

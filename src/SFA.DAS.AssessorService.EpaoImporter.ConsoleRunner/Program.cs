@@ -1,4 +1,5 @@
 ﻿using System;
+using JWT;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Settings;
@@ -19,7 +20,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.ConsoleRunner
                         TokenEncodingKey = "Wt+69DPlA9wjXl79V9N67bR4cpn9+3zZmgLJHBXy2aQ=",
                         ApiBaseAddress = "http://localhost:59021"
                     }
-                });
+                }, new UtcDateTimeProvider());
 
             using (var apiClient = new RegisterImportApiClient(apiBaseUrl, tokenService))
             {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using JWT;
 using JWT.Algorithms;
 using JWT.Builder;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -94,6 +95,8 @@ namespace SFA.DAS.AssessorService.Web
                 config.For<IWebConfiguration>().Use(Configuration);
 
                 config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(Configuration.Api.ApiBaseAddress);
+
+                config.For<IDateTimeProvider>().Use<UtcDateTimeProvider>();
 
                 config.Populate(services);
             });

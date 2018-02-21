@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessmentOrgs.Api.Client.Core.Types;
 using SFA.DAS.AssessorService.Application.RegisterUpdate;
@@ -40,7 +41,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
         public void ThenTheRepositoryIsAskedToDeleteTheCorrectOrganisation()
         {
             RegisterUpdateHandler.Handle(new RegisterUpdateRequest(), new CancellationToken()).Wait();
-            OrganisationRepository.Verify(r => r.Delete(_organisationId));//.DeleteOrganisationByEpaoId("EPA0002"));
+            Mediator.Verify(m => m.Send(It.Is<OrganisationDeleteViewModel>(vm => vm.Id == _organisationId), default(CancellationToken)));
+            //OrganisationRepository.Verify(r => r.Delete(_organisationId));//.DeleteOrganisationByEpaoId("EPA0002"));
         }
     }
 }

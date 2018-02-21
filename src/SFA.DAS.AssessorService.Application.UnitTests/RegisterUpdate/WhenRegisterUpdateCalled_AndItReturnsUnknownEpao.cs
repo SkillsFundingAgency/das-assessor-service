@@ -46,8 +46,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
         public void ThenTheRepositoryIsAskedToCreateANewOrganisation()
         {
             RegisterUpdateHandler.Handle(new RegisterUpdateRequest(), new CancellationToken()).Wait();
-            OrganisationRepository.Verify(r => r.CreateNewOrganisation(It.Is<OrganisationCreateDomainModel>(o =>
-                o.EndPointAssessorOrganisationId == "EPA0003" && o.EndPointAssessorName == "A New EPAO")));
+
+            Mediator.Verify(m =>
+                m.Send(
+                    It.Is<OrganisationCreateViewModel>(vm =>
+                        vm.EndPointAssessorOrganisationId == "EPA0003" && vm.EndPointAssessorName == "A New EPAO"),
+                    default(CancellationToken)));
         }
     }
 }
