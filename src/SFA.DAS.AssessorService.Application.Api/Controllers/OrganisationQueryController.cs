@@ -1,10 +1,7 @@
 ﻿namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
-    using System;
     using System.Net;
     using System.Threading.Tasks;
-    using MediatR;
-    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Localization;
     using Microsoft.Extensions.Logging;
@@ -15,22 +12,22 @@
     using Swashbuckle.AspNetCore.SwaggerGen;
 
     //[Authorize]
-    [Route("api/v1/assessment-providers")]
+    [Route("api/v1/organisations")]
     public class OrganisationQueryController : Controller
     {       
-        private readonly IOrganisationRepository _organisationRepository;
+        private readonly IOrganisationQueryRepository _organisationQueryRepository;
         private readonly IStringLocalizer<OrganisationController> _localizer;
         private readonly UkPrnValidator _ukPrnValidator;
         private readonly ILogger<OrganisationQueryController> _logger;
 
         public OrganisationQueryController(
-            IOrganisationRepository organisationRepository,
+            IOrganisationQueryRepository organisationQueryRepository,
             IStringLocalizer<OrganisationController> localizer,
             UkPrnValidator ukPrnValidator,
             ILogger<OrganisationQueryController> logger
             )
-        {          
-            _organisationRepository = organisationRepository;
+        {
+            _organisationQueryRepository = organisationQueryRepository;
             _localizer = localizer;
             _ukPrnValidator = ukPrnValidator;
             _logger = logger;
@@ -46,7 +43,7 @@
             if (!result.IsValid)
                 return BadRequest(result.Errors[0].ErrorMessage);
 
-            var organisation = await _organisationRepository.GetByUkPrn(ukprn);
+            var organisation = await _organisationQueryRepository.GetByUkPrn(ukprn);
             if (organisation == null)
             {
                 return NotFound(_localizer[ResourceMessageName.NoAssesmentProviderFound, ukprn].Value);
@@ -59,7 +56,7 @@
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(OrganisationQueryViewModel))]
         public async Task<IActionResult> Get()
         {
-            var organisations = await _organisationRepository.GetAllOrganisations();
+            var organisations = await _organisationQueryRepository.GetAllOrganisations();
             return Ok(organisations);
         }
     }

@@ -15,7 +15,6 @@
     {
         private static ValidationResult _validationResult;
        
-
         Establish context = () =>
         {
             Setup();
@@ -28,7 +27,7 @@
             ContactRepositoryMock.Setup(q => q.CheckContactExists(Moq.It.IsAny<int>()))
                 .Returns(Task.FromResult((false)));
 
-            OrganisationRepositoryMock.Setup(q => q.CheckIfAlreadyExists(Moq.It.IsAny<Guid>()))
+            OrganisationQueryRepositoryMock.Setup(q => q.CheckIfAlreadyExists(Moq.It.IsAny<Guid>()))
                 .Returns(Task.FromResult((false)));         
         };
 

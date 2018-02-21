@@ -13,11 +13,11 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
     public class RegisterUpdateHandler : IRequestHandler<RegisterUpdateRequest>
     {
         private readonly IAssessmentOrgsApiClient _registerApiClient;
-        private readonly IOrganisationRepository _organisationRepository;
+        private readonly IOrganisationQueryRepository _organisationRepository;
         private readonly ILogger<RegisterUpdateHandler> _logger;
         private readonly IMediator _mediator;
 
-        public RegisterUpdateHandler(IAssessmentOrgsApiClient registerApiClient, IOrganisationRepository organisationRepository, ILogger<RegisterUpdateHandler> logger, IMediator mediator)
+        public RegisterUpdateHandler(IAssessmentOrgsApiClient registerApiClient, IOrganisationQueryRepository organisationRepository, ILogger<RegisterUpdateHandler> logger, IMediator mediator)
         {
             _registerApiClient = registerApiClient;
             _organisationRepository = organisationRepository;

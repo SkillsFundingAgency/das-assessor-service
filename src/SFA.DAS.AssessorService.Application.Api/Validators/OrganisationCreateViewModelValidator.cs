@@ -10,16 +10,16 @@
     {
         private readonly IStringLocalizer<OrganisationCreateViewModelValidator> _localizer;
         private readonly IContactRepository _contactRepository;
-        private readonly IOrganisationRepository _organisationRepository;
+        private readonly IOrganisationQueryRepository _organisationQueryRepository;
 
         public OrganisationCreateViewModelValidator(IStringLocalizer<OrganisationCreateViewModelValidator> localizer,
               IContactRepository contactRepository,
-              IOrganisationRepository organisationRepository
+              IOrganisationQueryRepository organisationQueryRepository
             ) : base()
         {
             _localizer = localizer;
             _contactRepository = contactRepository;
-            _organisationRepository = organisationRepository;
+            _organisationQueryRepository = organisationQueryRepository;
 
             var organisationCreateViewModel = new OrganisationCreateViewModel();
 
@@ -33,7 +33,7 @@
 
         private bool AlreadyExists(string endPointAssessorOrganisationId)
         {
-            return !_organisationRepository.CheckIfAlreadyExists(endPointAssessorOrganisationId).Result;
+            return !_organisationQueryRepository.CheckIfAlreadyExists(endPointAssessorOrganisationId).Result;
         }
 
         private bool HaveAssociatedPrimaryContactInContacts(int? primaryContactId)

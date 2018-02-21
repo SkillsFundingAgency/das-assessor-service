@@ -11,8 +11,8 @@
     using SFA.DAS.AssessorService.Application.Interfaces;
 
     public class WhenGetAssessmentProvidersTestBase
-    {
-        protected static Mock<IOrganisationRepository> OrganizationRepository;
+    {     
+        protected static Mock<IOrganisationQueryRepository> OrganisationQueryRepositoryMock;
         protected static Mock<IStringLocalizer<OrganisationController>> StringLocalizer;
         protected static IActionResult Result;
         protected static UkPrnValidator UkPrnValidator;
@@ -22,8 +22,8 @@
         protected static OrganisationQueryController OrganisationContoller;
 
         protected static void Setup()
-        {
-            OrganizationRepository = new Mock<IOrganisationRepository>();
+        {          
+            OrganisationQueryRepositoryMock = new Mock<IOrganisationQueryRepository>();
 
             StringLocalizer = new Mock<IStringLocalizer<OrganisationController>>();
             string key = ResourceMessageName.NoAssesmentProviderFound;

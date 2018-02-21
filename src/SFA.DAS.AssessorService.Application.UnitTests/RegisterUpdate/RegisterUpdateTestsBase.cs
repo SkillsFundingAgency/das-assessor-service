@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading;
-using Castle.Core.Logging;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -14,7 +13,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
     public class RegisterUpdateTestsBase
     {
         protected Mock<IAssessmentOrgsApiClient> ApiClient;
-        protected Mock<IOrganisationRepository> OrganisationRepository;
+        protected Mock<IOrganisationQueryRepository> OrganisationRepository;
         protected RegisterUpdateHandler RegisterUpdateHandler;
         protected Mock<ILogger<RegisterUpdateHandler>> Logger;
         protected Mock<IMediator> Mediator;
@@ -23,7 +22,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
         {
             ApiClient = new Mock<IAssessmentOrgsApiClient>();
 
-            OrganisationRepository = new Mock<IOrganisationRepository>();
+            OrganisationRepository = new Mock<IOrganisationQueryRepository>();
 
             Logger = new Mock<ILogger<RegisterUpdateHandler>>();
 

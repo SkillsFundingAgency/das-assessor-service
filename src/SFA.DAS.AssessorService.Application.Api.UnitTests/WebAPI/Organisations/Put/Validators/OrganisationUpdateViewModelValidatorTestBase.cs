@@ -11,7 +11,7 @@
     {
         protected static OrganisationUpdateViewModelValidator OrganisationUpdateViewModelValidator;
         protected static Mock<IContactRepository> ContactRepositoryMock;
-        protected static Mock<IOrganisationRepository> OrganisationRepositoryMock;
+        protected static Mock<IOrganisationQueryRepository> OrganisationQueryRepositoryMock;
         protected static OrganisationUpdateViewModel OrganisationUpdateViewModel;
 
         public static void Setup()
@@ -22,10 +22,10 @@
             stringLocalizerMock.Setup(q => q[Moq.It.IsAny<string>(), Moq.It.IsAny<string>()]).Returns(localizedString);
 
             ContactRepositoryMock = new Mock<IContactRepository>();
-            OrganisationRepositoryMock = new Mock<IOrganisationRepository>();
+            OrganisationQueryRepositoryMock = new Mock<IOrganisationQueryRepository>();
 
             OrganisationUpdateViewModelValidator = new OrganisationUpdateViewModelValidator(stringLocalizerMock.Object,
-                ContactRepositoryMock.Object, OrganisationRepositoryMock.Object);
+                ContactRepositoryMock.Object, OrganisationQueryRepositoryMock.Object);
         }
     }
 }

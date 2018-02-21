@@ -12,8 +12,8 @@
         {
             Setup();
 
-            OrganisationContoller = new OrganisationQueryController(              
-               OrganizationRepository.Object,
+            OrganisationContoller = new OrganisationQueryController(
+               OrganisationQueryRepositoryMock.Object,
                StringLocalizer.Object,
                UkPrnValidator,
                Logger.Object);

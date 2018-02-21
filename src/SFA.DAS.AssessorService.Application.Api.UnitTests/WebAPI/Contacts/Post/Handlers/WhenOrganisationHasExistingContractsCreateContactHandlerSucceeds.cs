@@ -17,6 +17,7 @@
         private static CreateContactHandler CreateContactHandler;
         protected static Mock<IContactRepository> ContactRepositoryMock;
         protected static Mock<IOrganisationRepository> OrganisationRepositoryMock;
+        protected static Mock<IOrganisationQueryRepository> OrganisationQueryRepositoryMock;
         protected static ContactCreateDomainModel ContactCreateDomainModel;
         protected static ContactQueryViewModel ContactQueryViewModel;
         protected static ContactCreateViewModel ContactCreateViewModel;
@@ -28,8 +29,9 @@
 
             ContactRepositoryMock = new Mock<IContactRepository>();
             OrganisationRepositoryMock = new Mock<IOrganisationRepository>();
+            OrganisationQueryRepositoryMock = new Mock<IOrganisationQueryRepository>();
 
-            OrganisationRepositoryMock.Setup(q => q.CheckIfOrganisationHasContacts(Moq.It.IsAny<Guid>()))
+            OrganisationQueryRepositoryMock.Setup(q => q.CheckIfOrganisationHasContacts(Moq.It.IsAny<Guid>()))
                  .Returns(Task.FromResult((true)));
 
             ContactCreateDomainModel = Builder<ContactCreateDomainModel>.CreateNew().Build();
@@ -42,7 +44,7 @@
             ContactRepositoryMock.Setup(q => q.CreateNewContact(Moq.It.IsAny<ContactCreateDomainModel>()))
                 .Returns(Task.FromResult(ContactQueryViewModel));
 
-            CreateContactHandler = new CreateContactHandler(OrganisationRepositoryMock.Object, ContactRepositoryMock.Object);
+            CreateContactHandler = new CreateContactHandler(OrganisationRepositoryMock.Object, OrganisationQueryRepositoryMock.Object, ContactRepositoryMock.Object);
         };
 
         Because of = () =>
