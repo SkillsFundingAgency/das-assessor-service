@@ -14,6 +14,9 @@
     <Compile Remove="Validators\UkPrnValidator\WhenUkPrnValidatorValidatesSuccess.cs" />
     <Compile Remove="WebAPI\Contacts\Get\WhenGetAssessmentProvidersGetCannotFindUkPrn.cs" />
     <Compile Remove="WebAPI\Contacts\Get\WhenGetAssessmentProvidersValidationFails.cs" />
+    <Compile Remove="WebAPI\Contacts\Put\Validators\OrganisationUpdateViewModelValidatorFails.cs" />
+    <Compile Remove="WebAPI\Contacts\Put\Validators\OrganisationUpdateViewModelValidatorSucceeds.cs" />
+    <Compile Remove="WebAPI\Contacts\Put\Validators\OrganisationUpdateViewModelValidatorTestBase.cs" />
   </ItemGroup>
 
   <ItemGroup>

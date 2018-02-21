@@ -40,6 +40,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Resources\Validators\ContactUpdateViewModelValidator.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ContactUpdateViewModelValidator.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
     <EmbeddedResource Update="Resources\Controllers\ContactQueryController.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
@@ -51,6 +59,10 @@
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Controllers\OrganisationQueryController.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Validators\ContactUpdateViewModelValidator.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ContactUpdateViewModelValidator.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Validators\ContactCreateViewModelValidator.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
