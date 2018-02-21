@@ -33,7 +33,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Set
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Application.Api.Client", "SFA.DAS.AssessorService.Application.Api.Client\SFA.DAS.AssessorService.Application.Api.Client.csproj", "{37C0A946-56FB-454D-9D17-5D56B45689EC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.EpaoImporter", "SFA.DAS.AssessorService.EpaoImporter\SFA.DAS.AssessorService.EpaoImporter.csproj", "{9BF85A89-CE68-4668-8CD9-67C3A05F39CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.EpaoImporter", "SFA.DAS.AssessorService.EpaoImporter\SFA.DAS.AssessorService.EpaoImporter.csproj", "{9BF85A89-CE68-4668-8CD9-67C3A05F39CD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.EpaoImporter.ConsoleRunner", "SFA.DAS.AssessorService.EpaoImporter.ConsoleRunner\SFA.DAS.AssessorService.EpaoImporter.ConsoleRunner.csproj", "{08DB2206-68FC-4772-B1AC-C62CFBD38B6B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -97,6 +99,10 @@ Global
 		{9BF85A89-CE68-4668-8CD9-67C3A05F39CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9BF85A89-CE68-4668-8CD9-67C3A05F39CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9BF85A89-CE68-4668-8CD9-67C3A05F39CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08DB2206-68FC-4772-B1AC-C62CFBD38B6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08DB2206-68FC-4772-B1AC-C62CFBD38B6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08DB2206-68FC-4772-B1AC-C62CFBD38B6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08DB2206-68FC-4772-B1AC-C62CFBD38B6B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

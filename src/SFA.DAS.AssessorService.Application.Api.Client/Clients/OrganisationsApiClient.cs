@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using SFA.DAS.AssessorService.ViewModel.Models;
 using System.Net.Http;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.ViewModel.Models;
 
-namespace SFA.DAS.AssessorService.Application.Api.Client
+namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public class OrganisationsApiClient : ApiClientBase, IOrganisationsApiClient
     {

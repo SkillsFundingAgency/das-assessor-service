@@ -1,7 +1,4 @@
 ﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 using JWT.Algorithms;
 using JWT.Builder;
@@ -12,11 +9,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
 using SFA.DAS.AssessorService.Application.Api.Client;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Infrastructure;
-using SFA.DAS.AssessorService.Web.Services;
 using StructureMap;
 using SessionCache = SFA.DAS.AssessorService.Application.Api.Client.SessionCache;
 
@@ -75,12 +71,6 @@ namespace SFA.DAS.AssessorService.Web
                 .Build();
             
             context.HttpContext.Session.SetString(ukprn, jwt);
-            
-            //var claimsIdentity = (ClaimsIdentity)context.Principal.Identity;
-            ////add your custom claims here
-            //claimsIdentity.AddClaim(new Claim("test", "helloworld!!!"));
-
-            //((ClaimsIdentity)context.HttpContext.User.Identity).AddClaim(new Claim("OrganisationId", "TEST"));
 
             return Task.FromResult(0);
         }

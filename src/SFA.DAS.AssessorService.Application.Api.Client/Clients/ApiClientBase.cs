@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
 
-namespace SFA.DAS.AssessorService.Application.Api.Client
+namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public abstract class ApiClientBase : IDisposable
     {
@@ -74,7 +74,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
                 if (result.StatusCode == HttpStatusCode.OK)
                 {
                     var json = await result.Content.ReadAsStringAsync();
-                    return await Task.Factory.StartNew(() => JsonConvert.DeserializeObject<T>(json, _jsonSettings));
+                    return await Task.Factory.StartNew<T>(() => JsonConvert.DeserializeObject<T>(json, _jsonSettings));
                 }
                 if (result.StatusCode == HttpStatusCode.NotFound)
                 {
@@ -138,6 +138,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
             requestMessage.Content = new StringContent(serializeObject,
                 System.Text.Encoding.UTF8, "application/json");
 
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetJwt(userKey));
+
+            var response = await HttpClient.SendAsync(requestMessage);
+
+            if (response.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                throw new HttpRequestException();
+            }
+        }
+
+        protected async Task PostPutRequest(string userKey, HttpRequestMessage requestMessage)
+        {
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetJwt(userKey));
 
             var response = await HttpClient.SendAsync(requestMessage);
