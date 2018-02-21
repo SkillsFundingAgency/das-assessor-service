@@ -1,10 +1,7 @@
 ﻿namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
-    using System;
     using System.Net;
     using System.Threading.Tasks;
-    using MediatR;
-    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Localization;
     using Microsoft.Extensions.Logging;
@@ -15,7 +12,7 @@
     using Swashbuckle.AspNetCore.SwaggerGen;
 
     //[Authorize]
-    [Route("api/v1/assessment-providers")]
+    [Route("api/v1/organisations")]
     public class OrganisationQueryController : Controller
     {       
         private readonly IOrganisationRepository _organisationRepository;

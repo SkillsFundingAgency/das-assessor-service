@@ -14,7 +14,7 @@
     using Swashbuckle.AspNetCore.SwaggerGen;
 
     //[Authorize]
-    [Route("api/v1/organisation")]
+    [Route("api/v1/organisations")]
     public class OrganisationController : Controller
     {
         private readonly IMediator _mediator;
