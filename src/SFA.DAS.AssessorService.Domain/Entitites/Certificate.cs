@@ -11,6 +11,7 @@
         public virtual Organisation Organisation { get; set; }
 
         public int EndPointAssessorCertificateId { get; set; }
+
         public int EndPointAssessorContactId { get; set; }
         public string EndPointAssessorOrganisationId { get; set; }
 
