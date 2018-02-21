@@ -10,7 +10,7 @@
     public class OrganisationUpdateViewModelValidatorTestBase
     {
         protected static OrganisationUpdateViewModelValidator OrganisationUpdateViewModelValidator;
-        protected static Mock<IContactRepository> ContactRepositoryMock;
+        protected static Mock<IContactQueryRepository> ContactQueryRepositoryMock;
         protected static Mock<IOrganisationQueryRepository> OrganisationQueryRepositoryMock;
         protected static OrganisationUpdateViewModel OrganisationUpdateViewModel;
 
@@ -21,11 +21,11 @@
             var localizedString = new LocalizedString(key, "10000000");
             stringLocalizerMock.Setup(q => q[Moq.It.IsAny<string>(), Moq.It.IsAny<string>()]).Returns(localizedString);
 
-            ContactRepositoryMock = new Mock<IContactRepository>();
+            ContactQueryRepositoryMock = new Mock<IContactQueryRepository>();
             OrganisationQueryRepositoryMock = new Mock<IOrganisationQueryRepository>();
 
             OrganisationUpdateViewModelValidator = new OrganisationUpdateViewModelValidator(stringLocalizerMock.Object,
-                ContactRepositoryMock.Object, OrganisationQueryRepositoryMock.Object);
+                ContactQueryRepositoryMock.Object, OrganisationQueryRepositoryMock.Object);
         }
     }
 }

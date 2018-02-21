@@ -10,16 +10,16 @@
     public class OrganisationUpdateViewModelValidator : AbstractValidator<OrganisationUpdateViewModel>
     {
         private readonly IStringLocalizer<OrganisationUpdateViewModelValidator> _localizer;
-        private readonly IContactRepository _contactRepository;
+        private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
 
         public OrganisationUpdateViewModelValidator(IStringLocalizer<OrganisationUpdateViewModelValidator> localizer,
-              IContactRepository contactRepository,
+              IContactQueryRepository contactQueryRepository,
               IOrganisationQueryRepository organisationQueryRepository
             ) : base()
         {
             _localizer = localizer;
-            _contactRepository = contactRepository;
+            _contactQueryRepository = contactQueryRepository;
             _organisationQueryRepository = organisationQueryRepository;
 
             var organisationUpdateViewModel = new OrganisationUpdateViewModel();
@@ -40,7 +40,7 @@
             if (!primaryContactId.HasValue)
                 return true;
 
-            var result = _contactRepository.CheckContactExists(primaryContactId.Value).Result;
+            var result = _contactQueryRepository.CheckContactExists(primaryContactId.Value).Result;
             return result;
         }
     }

@@ -1,7 +1,6 @@
 ﻿namespace SFA.DAS.AssessorService.Data
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
@@ -19,35 +18,6 @@
         public ContactRepository(AssessorDbContext assessorDbContext)
         {
             _assessorDbContext = assessorDbContext;
-        }
-
-        public async Task<IEnumerable<ContactQueryViewModel>> GetContacts(Guid id)
-        {
-            var contacts = await _assessorDbContext.Organisations
-                .Include(organisation => organisation.Contacts)
-                .Where(organisation => organisation.Id == id)
-                .SelectMany(q => q.Contacts).Where(q => q.ContactStatus == ContactStatus.Live)
-                .Select(contact => Mapper.Map<ContactQueryViewModel>(contact)).AsNoTracking().ToListAsync();
-
-            return contacts;
-        }
-
-        public async Task<ContactQueryViewModel> GetContact(string userName, string emailAddress)
-        {
-            var contact = await _assessorDbContext.Contacts
-                .FirstOrDefaultAsync(q => q.ContactName == userName && q.ContactEmail == emailAddress && q.ContactStatus != ContactStatus.Deleted);
-            if (contact == null)
-                throw new NotFound();
-
-            var contactQueryViewModel = Mapper.Map<ContactQueryViewModel>(contact);
-            return contactQueryViewModel;
-        }
-
-        public async Task<bool> CheckContactExists(int contactId)
-        {
-            var result = await _assessorDbContext.Contacts
-                         .AnyAsync(q => q.EndPointAssessorContactId == contactId && q.ContactStatus != ContactStatus.Deleted);
-            return result;
         }
 
         public async Task<ContactQueryViewModel> CreateNewContact(ContactCreateDomainModel newContact)

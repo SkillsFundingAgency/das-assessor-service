@@ -9,16 +9,16 @@
     public class OrganisationCreateViewModelValidator : AbstractValidator<OrganisationCreateViewModel>
     {
         private readonly IStringLocalizer<OrganisationCreateViewModelValidator> _localizer;
-        private readonly IContactRepository _contactRepository;
+        private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
 
         public OrganisationCreateViewModelValidator(IStringLocalizer<OrganisationCreateViewModelValidator> localizer,
-              IContactRepository contactRepository,
+              IContactQueryRepository contactQueryRepository,
               IOrganisationQueryRepository organisationQueryRepository
             ) : base()
         {
             _localizer = localizer;
-            _contactRepository = contactRepository;
+            _contactQueryRepository = contactQueryRepository;
             _organisationQueryRepository = organisationQueryRepository;
 
             var organisationCreateViewModel = new OrganisationCreateViewModel();
@@ -41,7 +41,7 @@
             if (!primaryContactId.HasValue)
                 return true;
 
-            var result = _contactRepository.CheckContactExists(primaryContactId.Value).Result;
+            var result = _contactQueryRepository.CheckContactExists(primaryContactId.Value).Result;
             return result;
         }
     }

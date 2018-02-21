@@ -5,8 +5,6 @@
     using FizzWare.NBuilder;
     using SFA.DAS.AssessorService.ViewModel.Models;
     using System.Threading.Tasks;
-    using Moq;
-    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using FluentAssertions;
@@ -22,12 +20,12 @@
 
             _organisationQueryViewModels = Builder<ContactQueryViewModel>.CreateListOfSize(10).Build();
 
-            ContactRepository.Setup(q => q.GetContacts(Moq.It.IsAny<Guid>()))
+            ContactQueryRepository.Setup(q => q.GetContacts(Moq.It.IsAny<Guid>()))
                 .Returns(Task.FromResult((_organisationQueryViewModels)));
 
             ContactQueryController = new ContactQueryController(
                 Mediator.Object,
-                ContactRepository.Object, 
+                ContactQueryRepository.Object, 
                 StringLocalizer.Object,
                 Logger.Object);
         };

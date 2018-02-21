@@ -12,7 +12,7 @@
 
     public class WhenGetAssessmentUsersTestBase
     {
-        protected static Mock<IContactRepository> ContactRepository;
+        protected static Mock<IContactQueryRepository> ContactQueryRepository;
         protected static Mock<IStringLocalizer<ContactQueryController>> StringLocalizer;
         protected static IActionResult Result;
         protected static UkPrnValidator UkPrnValidator;
@@ -23,7 +23,7 @@
 
         protected static void Setup()
         {
-            ContactRepository = new Mock<IContactRepository>();
+            ContactQueryRepository = new Mock<IContactQueryRepository>();
 
             StringLocalizer = new Mock<IStringLocalizer<ContactQueryController>>();
             string key = ResourceMessageName.NoAssesmentProviderFound;

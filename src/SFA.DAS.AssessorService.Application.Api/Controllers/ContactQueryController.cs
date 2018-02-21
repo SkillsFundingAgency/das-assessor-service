@@ -7,7 +7,6 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Localization;
     using Microsoft.Extensions.Logging;
-    using SFA.DAS.AssessorService.Application.Api.Validators;
     using SFA.DAS.AssessorService.Application.Interfaces;
     using SFA.DAS.AssessorService.Domain.Exceptions;
     using SFA.DAS.AssessorService.ViewModel.Models;
@@ -18,18 +17,18 @@
     public class ContactQueryController : Controller
     {
         private readonly IMediator _mediator;
-        private readonly IContactRepository _contactRepository;
+        private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IStringLocalizer<ContactQueryController> _localizer;        
         private readonly ILogger<ContactQueryController> _logger;
 
         public ContactQueryController(IMediator mediator,
-            IContactRepository contactRepository,
+            IContactQueryRepository contactQueryRepository,
             IStringLocalizer<ContactQueryController> localizer,       
             ILogger<ContactQueryController> logger
             )
         {
             _mediator = mediator;
-            _contactRepository = contactRepository;
+            _contactQueryRepository = contactQueryRepository;
             _localizer = localizer;           
             _logger = logger;
         }
@@ -40,7 +39,7 @@
         [SwaggerResponse((int)HttpStatusCode.NotFound, Type = typeof(string))]
         public async Task<IActionResult> GetAllContactsForAnOrganisation(Guid organisationId)
         {           
-            var contacts = await _contactRepository.GetContacts(organisationId);
+            var contacts = await _contactQueryRepository.GetContacts(organisationId);
             return Ok(contacts);
         }
 
@@ -50,7 +49,7 @@
         {
             try
             {
-                var contact = await _contactRepository.GetContact(userName, emailAddress);
+                var contact = await _contactQueryRepository.GetContact(userName, emailAddress);
                 return Ok(contact);
             }
             catch (NotFound)

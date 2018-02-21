@@ -18,12 +18,12 @@
 
             _organisationQueryViewModels = Builder<ContactQueryViewModel>.CreateNew().Build();
 
-            ContactRepository.Setup(q => q.GetContact(Moq.It.IsAny<string>(), Moq.It.IsAny<string>()))
+            ContactQueryRepository.Setup(q => q.GetContact(Moq.It.IsAny<string>(), Moq.It.IsAny<string>()))
                 .Returns(Task.FromResult((_organisationQueryViewModels)));
 
             ContactQueryController = new ContactQueryController(
                 Mediator.Object,
-                ContactRepository.Object, 
+                ContactQueryRepository.Object, 
                 StringLocalizer.Object,
                 Logger.Object);
         };
