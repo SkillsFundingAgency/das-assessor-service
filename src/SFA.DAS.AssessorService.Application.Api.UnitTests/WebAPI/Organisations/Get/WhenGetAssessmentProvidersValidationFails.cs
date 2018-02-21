@@ -12,8 +12,7 @@
         {
             Setup();
 
-            OrganisationContoller = new OrganisationQueryController(
-               Mediator.Object,
+            OrganisationContoller = new OrganisationQueryController(              
                OrganizationRepository.Object,
                StringLocalizer.Object,
                UkPrnValidator,

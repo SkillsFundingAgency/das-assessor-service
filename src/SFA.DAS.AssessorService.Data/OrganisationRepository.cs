@@ -52,7 +52,7 @@
         public async Task<IEnumerable<OrganisationQueryViewModel>> GetAllOrganisations()
         {
             var organisations = await _assessorDbContext.Organisations
-                .Select(q => Mapper.Map<OrganisationQueryViewModel>(q)).ToListAsync();
+                .Select(q => Mapper.Map<OrganisationQueryViewModel>(q)).AsNoTracking().ToListAsync();
 
             return organisations;
         }

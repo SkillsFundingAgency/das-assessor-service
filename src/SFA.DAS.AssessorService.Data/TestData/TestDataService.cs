@@ -17,9 +17,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     Id = Guid.NewGuid(),
                     EndPointAssessorName = "EPAO 1",
                     EndPointAssessorOrganisationId = "1234",
-                    EndPointAssessorUKPRN = 10000000,
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now,
+                    EndPointAssessorUKPRN = 10000000,               
                     OrganisationStatus = OrganisationStatus.New
                 };
 
@@ -32,9 +30,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     ContactEmail = "blah@blah.com",
                     ContactName = "Fred Jones",
                     EndPointAssessorContactId = 1,                  
-                    ContactStatus = ContactStatus.Live,
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now,
+                    ContactStatus = ContactStatus.Live,                
                     OrganisationId = organisation.Id
                 };
 
@@ -46,9 +42,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     ContactEmail = "jcoxhead@gmail.com",
                     ContactName = "John Coxhead",
                     EndPointAssessorContactId = 1,             
-                    ContactStatus = ContactStatus.Live,
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now,
+                    ContactStatus = ContactStatus.Live,                                     
                     OrganisationId = organisation.Id
                 };
 
