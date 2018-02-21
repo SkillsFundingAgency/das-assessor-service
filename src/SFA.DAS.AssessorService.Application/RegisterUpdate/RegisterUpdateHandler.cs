@@ -72,6 +72,9 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
                     EndPointAssessorName = epaoSummary.Name,
                     Id = organisation.Id
                 });
+
+                _logger.LogInformation(
+                    $"Organisation with ID {organisation.Id} and EPAOgId {epaoSummary.Id} has had it's Name changed from {organisation.EndPointAssessorName} to {epaoSummary.Name}");
             }
         }
 
