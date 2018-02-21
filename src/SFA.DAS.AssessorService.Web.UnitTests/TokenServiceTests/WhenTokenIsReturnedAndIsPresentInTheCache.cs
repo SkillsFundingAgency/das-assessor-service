@@ -16,12 +16,12 @@
             Setup();
 
             _jwt = GenerateJwt();
-            Cache.Setup(c => c.GetString("userid1")).Returns(_jwt);
+            Cache.Setup(c => c.GetString("USERID")).Returns(_jwt);
         };
 
         Because of = () =>
         {
-            _result = TokenService.GetJwt();
+            _result = TokenService.GetJwt("USERID");
         };
 
         Machine.Specifications.It should_return_a_jwt = () =>

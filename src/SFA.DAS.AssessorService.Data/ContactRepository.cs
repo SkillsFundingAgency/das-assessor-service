@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.AssessorService.Data
+﻿using SFA.DAS.AssessorService.Domain.Entities;
+
+namespace SFA.DAS.AssessorService.Data
 {
     using System;
     using System.Linq;

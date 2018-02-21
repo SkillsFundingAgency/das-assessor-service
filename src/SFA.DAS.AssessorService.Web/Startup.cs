@@ -1,8 +1,8 @@
 ﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
+using JWT;
+using JWT.Algorithms;
+using JWT.Builder;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.WsFederation;
 using Microsoft.AspNetCore.Builder;
@@ -10,11 +10,12 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
+using SFA.DAS.AssessorService.Application.Api.Client;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Infrastructure;
-using SFA.DAS.AssessorService.Web.Services;
 using StructureMap;
+using SessionCache = SFA.DAS.AssessorService.Application.Api.Client.SessionCache;
 
 namespace SFA.DAS.AssessorService.Web
 {
@@ -62,26 +63,15 @@ namespace SFA.DAS.AssessorService.Web
         {
             var ukprn = (context.Principal.FindFirst("http://schemas.portal.com/ukprn"))?.Value;
 
-            var claims = new[]
-            {
-                new Claim("ukprn", ukprn, ClaimValueTypes.String)
-            };
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.Api.TokenEncodingKey));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(
-                issuer: "sfa.das.assessorservice",
-                audience: "sfa.das.assessorservice.api",
-                claims: claims,
-                expires: DateTime.Now.AddMinutes(5),
-                signingCredentials: creds);
-
-            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-
-            context.HttpContext.Session.SetString(ukprn, jwt);
-
+            var jwt = new JwtBuilder().WithAlgorithm(new HMACSHA256Algorithm())
+                .WithSecret(Configuration.Api.TokenEncodingKey)
+                .Issuer("sfa.das.assessorservice")
+                .Audience("sfa.das.assessorservice.api")
+                .ExpirationTime(DateTime.Now.AddMinutes(5))
+                .AddClaim("ukprn", ukprn)
+                .Build();
             
+            context.HttpContext.Session.SetString(ukprn, jwt);
 
             return Task.FromResult(0);
         }
@@ -99,10 +89,15 @@ namespace SFA.DAS.AssessorService.Web
                 });
 
                 config.For<IHttpClient>().Use<StandardHttpClient>();
-                config.For<ICache>().Use<Services.SessionCache>();
+                config.For<ICache>().Use<SessionCache>();
+                config.For<ITokenService>().Use<TokenService>();
                 
                 config.For<IWebConfiguration>().Use(Configuration);
-                
+
+                config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(Configuration.Api.ApiBaseAddress);
+
+                config.For<IDateTimeProvider>().Use<UtcDateTimeProvider>();
+
                 config.Populate(services);
             });
             

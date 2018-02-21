@@ -24,11 +24,11 @@
 
         Because of = () =>
         {          
-            _result = TokenService.GetJwt();
+            _result = TokenService.GetJwt("USERID");
             _securityToken = new JwtSecurityTokenHandler().ReadToken(_result);
 
           
-            _result = TokenService.GetJwt();
+            _result = TokenService.GetJwt("USERID");
         };
 
         Machine.Specifications.It should_return_a_jwt = () =>

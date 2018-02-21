@@ -21,5 +21,7 @@ namespace SFA.DAS.AssessmentOrgs.Api.Client.Core.Types
         public List<Link> Links { get; set; }
 
         public string OrganisationType { get; set; }
+
+        public int UkPrn { get; set; }
     }
 }

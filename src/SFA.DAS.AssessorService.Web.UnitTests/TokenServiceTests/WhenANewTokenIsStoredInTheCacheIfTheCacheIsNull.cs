@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.AssessorService.Application.MSpec.UnitTests
+﻿using System;
+
+namespace SFA.DAS.AssessorService.Application.MSpec.UnitTests
 {
     using FluentAssertions;
     using Machine.Specifications;
@@ -18,18 +20,18 @@
             Setup();
 
             _jwt = GenerateJwt();
-            Cache.Setup(c => c.GetString("12345")).Returns(default(string));
+            Cache.Setup(c => c.GetString("USERID")).Returns(default(string));
         };
 
         Because of = () =>
         {           
-            _result = TokenService.GetJwt();
-            _expectedToken = GenerateJwt(SystemTime.UtcNow().AddMinutes(30));
+            _result = TokenService.GetJwt("USERID");
+            _expectedToken = GenerateJwt(DateService.GetNow().DateTime.AddMinutes(30));
         };
       
         Machine.Specifications.It should_call_set_string = () =>
         {
-            Cache.Verify(c => c.SetString("12345", Moq.It.IsAny<string>()));
+            Cache.Verify(c => c.SetString("USERID", Moq.It.IsAny<string>()));
         };
 
         Machine.Specifications.It should_return_expected_token = () =>

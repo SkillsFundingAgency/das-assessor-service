@@ -41,12 +41,23 @@
 
         public string CourseOption { get; set; }
         public string OverallGrade { get; set; }
-        public string Status { get; set; }
+        public CertificateStatus Status { get; set; }
 
         public Guid CreatedBy { get; set; }
-        public Guid UpdatedBY { get; set; }
+        public Guid UpdatedBy { get; set; }
         public Guid DeletedBy { get; set; }
 
         public ICollection<CertificateLog> CertificateLogs { get; set; }
+    }
+
+    public enum CertificateStatus
+    {
+        Draft,
+        Ready,
+        Submitted,
+        Printed,
+        Cancelled,
+        NoCertificate,
+        Deleted
     }
 }

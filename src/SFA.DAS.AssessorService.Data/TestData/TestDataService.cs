@@ -78,10 +78,12 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     StandardLevel = 1,
                     StandardName = "Test",
                     StandardPublicationDate = DateTime.Now,
-                    Status = "Active",
-                    ULN = 123456,                  
+                    Status = CertificateStatus.Ready,
+                    ULN = 123456,
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now,
                     CreatedBy = firstContact.Id,
-                    UpdatedBY = firstContact.Id
+                    UpdatedBy = firstContact.Id
 
                 };
 
@@ -115,10 +117,12 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     StandardLevel = 1,
                     StandardName = "Test",
                     StandardPublicationDate = DateTime.Now,
-                    Status = "Active",
-                    ULN = 123456,                  
+                    Status = CertificateStatus.Ready,
+                    ULN = 123456,
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now,
                     CreatedBy = firstContact.Id,
-                    UpdatedBY = firstContact.Id
+                    UpdatedBy = firstContact.Id
                 };
 
                 context.Certificates.Add(secondCertificate);
@@ -131,7 +135,10 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     CertificateId = firstCertificate.Id,
                     EndPointAssessorCertificateId = 2222222,
                     EventTime = DateTime.Now,
-                    Status = "Active",              
+                    Status = CertificateStatus.Ready,
+
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now
                 };
 
                 context.CertificateLogs.Add(firstCertificateLog);
@@ -143,7 +150,10 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     CertificateId = secondCertificate.Id,
                     EndPointAssessorCertificateId = 2222222,
                     EventTime = DateTime.Now,
-                    Status = "Active",                
+                    Status = CertificateStatus.Ready,
+
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now
                 };
 
                 context.CertificateLogs.Add(secondCertificateLog);

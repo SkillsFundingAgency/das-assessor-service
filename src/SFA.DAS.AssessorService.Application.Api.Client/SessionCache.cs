@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace SFA.DAS.AssessorService.Web.Services
+namespace SFA.DAS.AssessorService.Application.Api.Client
 {
     public class SessionCache : ICache
     {

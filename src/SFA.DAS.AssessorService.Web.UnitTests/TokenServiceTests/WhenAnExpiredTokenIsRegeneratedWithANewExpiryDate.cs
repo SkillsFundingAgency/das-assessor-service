@@ -18,21 +18,20 @@
         Establish context = () =>
         {
             Setup();
-
-            SystemTime.UtcNow = () => new DateTime(2018, 02, 15, 14, 0, 0);
-            _jwt = GenerateJwt();
+            
+            _jwt = GenerateJwt(new DateTime(2018, 02, 15, 10, 00, 0));
             Cache.Setup(c => c.GetString("userid1")).Returns(_jwt);
         };
 
         Because of = () =>
         {
-            _result = TokenService.GetJwt();
+            _result = TokenService.GetJwt("USERID");
             _token = new JwtSecurityTokenHandler().ReadToken(_result);        
         };
 
         Machine.Specifications.It should_be_a_valid_token = () =>
         {
-            _token.ValidTo.Should().Be(new DateTime(2018, 02, 15, 14, 30, 0));
+            _token.ValidTo.Should().Be(new DateTime(2018, 02, 15, 13, 30, 0));
         };
 
         Machine.Specifications.It should_not_be_a_jwt = () =>
