@@ -5,8 +5,6 @@
     using FizzWare.NBuilder;
     using SFA.DAS.AssessorService.ViewModel.Models;
     using System.Threading.Tasks;
-    using Moq;
-    using Microsoft.Extensions.Logging;
 
     [Subject("AssessorService")]
     public class WhenGetAssessmentProvidersGetUkSucceeds : WhenGetAssessmentProvidersTestBase
@@ -19,11 +17,11 @@
 
             _organisationQueryViewModel = Builder<OrganisationQueryViewModel>.CreateNew().Build();
 
-            OrganizationRepository.Setup(q => q.GetByUkPrn(Moq.It.IsAny<int>()))
+            OrganisationQueryRepositoryMock.Setup(q => q.GetByUkPrn(Moq.It.IsAny<int>()))
                 .Returns(Task.FromResult((_organisationQueryViewModel)));
 
-            OrganisationContoller = new OrganisationQueryController(             
-                OrganizationRepository.Object, 
+            OrganisationContoller = new OrganisationQueryController(
+                OrganisationQueryRepositoryMock.Object, 
                 StringLocalizer.Object, 
                 UkPrnValidator,
                 Logger.Object);

@@ -6,7 +6,7 @@
     using FluentAssertions;
 
     [Subject("AssessorService")]
-    public class WhenUkPrnValidatorValidatesSuccess : UkPrnValidatorTestBase
+    public class WhenUkPrnValidatorValidatesSuccesfully : UkPrnValidatorTestBase
     { 
         private static ValidationResult _validationResult;
 

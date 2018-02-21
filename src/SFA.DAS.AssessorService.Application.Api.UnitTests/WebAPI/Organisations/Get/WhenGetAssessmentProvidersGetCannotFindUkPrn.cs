@@ -17,11 +17,11 @@
             Setup();
 
             _organisationQueryViewModel = Builder<OrganisationQueryViewModel>.CreateNew().Build();
-            OrganizationRepository.Setup(q => q.GetByUkPrn(Moq.It.IsAny<int>()))
+            OrganisationQueryRepositoryMock.Setup(q => q.GetByUkPrn(Moq.It.IsAny<int>()))
                 .Returns(Task.FromResult<OrganisationQueryViewModel>(null));
 
-            OrganisationContoller = new OrganisationQueryController(                  
-                  OrganizationRepository.Object,
+            OrganisationContoller = new OrganisationQueryController(
+                  OrganisationQueryRepositoryMock.Object,
                   StringLocalizer.Object,
                   UkPrnValidator,
                   Logger.Object);

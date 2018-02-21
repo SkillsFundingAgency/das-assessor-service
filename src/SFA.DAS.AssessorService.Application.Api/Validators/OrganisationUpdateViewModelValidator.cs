@@ -11,16 +11,16 @@
     {
         private readonly IStringLocalizer<OrganisationUpdateViewModelValidator> _localizer;
         private readonly IContactRepository _contactRepository;
-        private readonly IOrganisationRepository _organisationRepository;
+        private readonly IOrganisationQueryRepository _organisationQueryRepository;
 
         public OrganisationUpdateViewModelValidator(IStringLocalizer<OrganisationUpdateViewModelValidator> localizer,
               IContactRepository contactRepository,
-              IOrganisationRepository organisationRepository
+              IOrganisationQueryRepository organisationQueryRepository
             ) : base()
         {
             _localizer = localizer;
             _contactRepository = contactRepository;
-            _organisationRepository = organisationRepository;
+            _organisationQueryRepository = organisationQueryRepository;
 
             var organisationUpdateViewModel = new OrganisationUpdateViewModel();
           
@@ -31,7 +31,7 @@
 
         private bool AlreadyExist(Guid id)
         {
-            var result = _organisationRepository.CheckIfAlreadyExists(id).Result;
+            var result = _organisationQueryRepository.CheckIfAlreadyExists(id).Result;
             return result;
         }
 
