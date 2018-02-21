@@ -15,7 +15,6 @@
     {
         private static ValidationResult _validationResult;
        
-
         Establish context = () =>
         {
             Setup();
