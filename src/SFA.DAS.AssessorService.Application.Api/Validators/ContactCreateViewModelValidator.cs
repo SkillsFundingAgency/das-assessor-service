@@ -15,7 +15,9 @@
             _localizer = localizer;
 
             var organisationCreateViewModel = new ContactCreateViewModel();
-            RuleFor(organisation => organisation.EndPointAssessorUKPRN).InclusiveBetween(10000000, 99999999).WithMessage(_localizer[ResourceMessageName.InvalidUKPRN, nameof(organisationCreateViewModel.EndPointAssessorUKPRN)].Value);
+            RuleFor(organisation => organisation.ContactEmail).NotEmpty().WithMessage(_localizer[ResourceMessageName.ContactNameMustBeDefined, nameof(organisationCreateViewModel.ContactName)].Value);
+            RuleFor(organisation => organisation.ContactName).NotEmpty().WithMessage(_localizer[ResourceMessageName.ContactEMailMustBeDefined, nameof(organisationCreateViewModel.ContactEmail)].Value);
+            RuleFor(organisation => organisation.EndPointAssessorContactId).NotEmpty().WithMessage(_localizer[ResourceMessageName.EndPointAssessorContactIdMustBeDefined, nameof(organisationCreateViewModel.EndPointAssessorContactId)].Value);
         }
     }
 }

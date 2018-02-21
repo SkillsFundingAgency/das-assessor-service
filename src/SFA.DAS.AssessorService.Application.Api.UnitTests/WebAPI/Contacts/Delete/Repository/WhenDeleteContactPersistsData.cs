@@ -36,8 +36,7 @@
 
             var contacts = new List<Contact>
             {
-                Builder<Contact>.CreateNew()
-                .With(q => q.EndPointAssessorUKPRN = 10000000)
+                Builder<Contact>.CreateNew()              
                 .Build()
             }.AsQueryable();
 

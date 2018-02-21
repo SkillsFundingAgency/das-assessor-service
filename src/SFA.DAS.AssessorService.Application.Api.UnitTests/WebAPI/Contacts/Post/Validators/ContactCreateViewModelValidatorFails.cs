@@ -4,10 +4,8 @@
     using Machine.Specifications;
     using SFA.DAS.AssessorService.Application.Api.Validators;
     using FluentAssertions;
-    using FizzWare.NBuilder;
     using SFA.DAS.AssessorService.ViewModel.Models;
     using System.Linq;
-    using System.Threading.Tasks;
 
     [Subject("AssessorService")]
     public class WhenContactCreateViewModelValidatorFails : ContactCreateViewModelValidatorTestBase
@@ -19,9 +17,7 @@
         {
             Setup();
 
-            ContactCreateViewModel = Builder<ContactCreateViewModel>.CreateNew()                            
-                .With(q => q.EndPointAssessorUKPRN = 12)                
-                .Build();          
+            ContactCreateViewModel = new ContactCreateViewModel();
         };
 
         Because of = () =>
@@ -36,7 +32,19 @@
         
         Machine.Specifications.It errormessage_should_contain_EndPointAssessorUKPRN = () =>
         {
-            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "EndPointAssessorUKPRN" && q.ErrorCode == "InclusiveBetweenValidator");
+            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "ContactEmail" && q.ErrorCode == "NotEmptyValidator");
+            errors.Should().NotBeNull();
+        };
+
+        Machine.Specifications.It errormessage_should_contain_ContactName = () =>
+        {
+            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "ContactName" && q.ErrorCode == "NotEmptyValidator");
+            errors.Should().NotBeNull();
+        };
+
+        Machine.Specifications.It errormessage_should_contain_EndPointOrganisationId = () =>
+        {
+            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "EndPointAssessorContactId" && q.ErrorCode == "NotEmptyValidator");
             errors.Should().NotBeNull();
         };
     }

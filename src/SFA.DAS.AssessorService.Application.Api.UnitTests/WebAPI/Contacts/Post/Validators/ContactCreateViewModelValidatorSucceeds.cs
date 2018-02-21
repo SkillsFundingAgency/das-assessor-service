@@ -19,9 +19,7 @@
         {
             Setup();
 
-            ContactCreateViewModel = Builder<ContactCreateViewModel>.CreateNew()
-                .With(q => q.EndPointAssessorUKPRN = 10000001)
-                .Build();
+            ContactCreateViewModel = Builder<ContactCreateViewModel>.CreateNew().Build();            
         };
 
         Because of = () =>
@@ -34,9 +32,21 @@
             _validationResult.IsValid.Should().BeTrue();
         };
 
-        Machine.Specifications.It errormessage_should_contain_EndPointAssessorUKPRN = () =>
+        Machine.Specifications.It errormessage_should_not_contain_EndPointAssessorUKPRN = () =>
         {
-            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "EndPointAssessorUKPRN" && q.ErrorCode == "InclusiveBetweenValidator");
+            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "ContactEmail" && q.ErrorCode == "NotEmptyValidator");
+            errors.Should().BeNull();
+        };
+
+        Machine.Specifications.It errormessage_should_not_contain_ContactName = () =>
+        {
+            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "ContactName" && q.ErrorCode == "NotEmptyValidator");
+            errors.Should().BeNull();
+        };
+
+        Machine.Specifications.It errormessage_should_not_contain_EndPointOrganisationId = () =>
+        {
+            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "EndPointAssessorContactId" && q.ErrorCode == "NotEmptyValidator");
             errors.Should().BeNull();
         };
     }

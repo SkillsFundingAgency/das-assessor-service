@@ -24,7 +24,7 @@
                 .Returns(Task.FromResult((_ContactQueryViewModel)));
 
             _ContactCreateViewModel = Builder<ContactCreateViewModel>.CreateNew()
-                    .With(x => x.EndPointAssessorUKPRN = 10000000)
+                    //.With(x => x.EndPointAssessorUKPRN = 10000000)
                     .Build();
 
             ContactContoller = new ContactController(
