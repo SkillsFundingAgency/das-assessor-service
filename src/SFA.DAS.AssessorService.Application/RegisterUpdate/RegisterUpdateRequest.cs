@@ -2,8 +2,5 @@
 
 namespace SFA.DAS.AssessorService.Application.RegisterUpdate
 {
-    public class RegisterUpdateRequest : IRequest
-    {
-        
-    }
+    public class RegisterUpdateRequest : IRequest {}
 }

@@ -1,4 +1,4 @@
-﻿using SFA.DAS.AssessorService.Domain.Entities;
+﻿using SFA.DAS.AssessorService.Domain.Enums;
 
 namespace SFA.DAS.AssessorService.ViewModel.Models
 {
@@ -11,7 +11,7 @@ namespace SFA.DAS.AssessorService.ViewModel.Models
         public string EndPointAssessorOrganisationId { get; set; }
         public int EndPointAssessorUKPRN { get; set; }
         public string EndPointAssessorName { get; set; }
-        public int? PrimaryContactId { get; set; }
+        public Guid? PrimaryContactId { get; set; }
 
         public OrganisationStatus Status { get; set; }
     }

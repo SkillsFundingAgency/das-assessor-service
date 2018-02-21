@@ -121,13 +121,13 @@
     <value>Organisation Has Already Been Created</value>
   </data>
   <data name="EndPointAssessorNameMustBeDefined" xml:space="preserve">
-    <value>Post Body must contain EndPointAssessorName</value>
+    <value>Request must contain EndPointAssessorName</value>
   </data>
   <data name="EndPointAssessorOrganisationIdMustBeDefined" xml:space="preserve">
-    <value>Post Body must contain EndPointAssessorOrganisationId</value>
+    <value>Request must contain EndPointAssessorOrganisationId</value>
   </data>
   <data name="InvalidUKPRN" xml:space="preserve">
-    <value>Post Body must contain a valid UKPRN as defined in the UK Register of Learning Providers (UKRLP) is 8 digits in the format 10000000 – 99999999</value>
+    <value>Request must contain a valid UKPRN as defined in the UK Register of Learning Providers (UKRLP) is 8 digits in the format 10000000 – 99999999</value>
   </data>
   <data name="PrimaryContactDoesNotExist" xml:space="preserve">
     <value>Data Error</value>

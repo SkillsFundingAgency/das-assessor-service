@@ -1,30 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Text;
-using FluentValidation.AspNetCore;
-using MediatR;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Localization;
-using Microsoft.AspNetCore.Mvc.Razor;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
-using SFA.DAS.AssessmentOrgs.Api.Client.Core;
-using SFA.DAS.AssessorService.Data;
-using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.ViewModel.Models;
-using StructureMap;
-using Swashbuckle.AspNetCore.Swagger;
-using SFA.DAS.AssessorService.Data.TestData;
-using SFA.DAS.AssessorService.Settings;
-
-namespace SFA.DAS.AssessorService.Application.Api
+﻿namespace SFA.DAS.AssessorService.Application.Api
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.IO;
+    using System.Text;
+    using FluentValidation.AspNetCore;
+    using MediatR;
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Localization;
+    using Microsoft.AspNetCore.Mvc.Razor;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.IdentityModel.Tokens;
+    using SFA.DAS.AssessmentOrgs.Api.Client.Core;
+    using SFA.DAS.AssessorService.Data;
+    using SFA.DAS.AssessorService.Domain.Entities;
+    using SFA.DAS.AssessorService.ViewModel.Models;
+    using StructureMap;
+    using Swashbuckle.AspNetCore.Swagger;
+    using SFA.DAS.AssessorService.Data.TestData;
+    using SFA.DAS.AssessorService.Settings;
+    using SFA.DAS.AssessorService.Application.Api.Middleware;
+
     public class Startup
     {
         private readonly IHostingEnvironment _env;
@@ -160,10 +161,17 @@ namespace SFA.DAS.AssessorService.Application.Api
                 cfg.CreateMap<Organisation, OrganisationQueryViewModel>();
 
                 cfg.CreateMap<OrganisationUpdateViewModel, OrganisationUpdateDomainModel>();
-                cfg.CreateMap<Organisation, OrganisationQueryViewModel>();                
+                cfg.CreateMap<Organisation, OrganisationQueryViewModel>();
+                cfg.CreateMap<ContactCreateViewModel, ContactCreateDomainModel>();
+                cfg.CreateMap<ContactCreateDomainModel, Domain.Entities.Contact>();
+                cfg.CreateMap<Domain.Entities.Contact, ContactCreateViewModel>();
+                cfg.CreateMap<Domain.Entities.Contact, ContactQueryViewModel>();
             });
 
             app.UseAuthentication();
+
+            app.UseMiddleware(typeof(ErrorHandlingMiddleware));
+
             app.UseMvc();
         }
     }

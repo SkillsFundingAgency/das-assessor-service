@@ -31,44 +31,44 @@
             _logger = logger;
         }
 
-        [HttpPost(Name = "Create")]
+        [HttpPost(Name = "CreateOrganisation")]
         [ValidateBadRequest]
         [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(OrganisationQueryViewModel))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(OrganisationQueryViewModel))]
-        public async Task<IActionResult> Create([FromBody] OrganisationCreateViewModel organisationCreateViewModel)
+        public async Task<IActionResult> CreateOrganisation([FromBody] OrganisationCreateViewModel organisationCreateViewModel)
         {
-            _logger.LogInformation("Received Create Request");
+            _logger.LogInformation("Received Create Organisation Request");
 
             var organisationQueryViewModel = await _mediator.Send(organisationCreateViewModel);
 
-            return CreatedAtRoute("Create",
+            return CreatedAtRoute("CreateOrganisation",
                 new { id = organisationQueryViewModel.Id },
                 organisationQueryViewModel);
         }
 
-        [HttpPut(Name = "Update")]
+        [HttpPut(Name = "UpdateOrganisation")]
         [ValidateBadRequest]
         [SwaggerResponse((int)HttpStatusCode.NoContent, Type = typeof(OrganisationQueryViewModel))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(OrganisationQueryViewModel))]
-        public async Task<IActionResult> Update([FromBody] OrganisationUpdateViewModel organisationUpdateViewModel)
+        public async Task<IActionResult> UpdateOrganisation([FromBody] OrganisationUpdateViewModel organisationUpdateViewModel)
         {
-            _logger.LogInformation("Received Update Request");
+            _logger.LogInformation("Received Update Organisation Request");
 
             var organisationQueryViewModel = await _mediator.Send(organisationUpdateViewModel);
 
             return NoContent();
         }
 
-        [HttpDelete(Name = "Delete")]
+        [HttpDelete(Name = "DeleteOrganisation")]
         [ValidateBadRequest]
         [SwaggerResponse((int)HttpStatusCode.NoContent)]
         [SwaggerResponse((int)HttpStatusCode.BadRequest)]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> DeleteOrganisation(Guid id)
         {
             try
             {
-                _logger.LogInformation("Received Update Request");
+                _logger.LogInformation("Received Delete Organisation Request");
 
                 var organisationDeleteViewModel = new OrganisationDeleteViewModel
                 {
@@ -79,7 +79,7 @@
 
                 return NoContent();
             }
-            catch (NotFound exception)
+            catch (NotFound)
             {
                 return NotFound();
             }

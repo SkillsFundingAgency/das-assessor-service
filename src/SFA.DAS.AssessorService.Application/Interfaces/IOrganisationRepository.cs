@@ -9,12 +9,14 @@
     {
         Task<IEnumerable<OrganisationQueryViewModel>> GetAllOrganisations();
         Task<OrganisationQueryViewModel> GetByUkPrn(int ukprn);
+        Task<OrganisationUpdateDomainModel> Get(Guid organisationId);
+
         Task<bool> CheckIfAlreadyExists(string endPointAssessorOrganisationId);
-        Task<bool> CheckIfAlreadyExists(Guid id);
+        Task<bool> CheckIfAlreadyExists(Guid organisationId);
+        Task<bool> CheckIfOrganisationHasContacts(Guid organisationId);
 
         Task<OrganisationQueryViewModel> CreateNewOrganisation(OrganisationCreateDomainModel newOrganisation);
         Task<OrganisationQueryViewModel> UpdateOrganisation(OrganisationUpdateDomainModel organisationUpdateDomainModel);
-
         Task Delete(Guid id);
     }
 }

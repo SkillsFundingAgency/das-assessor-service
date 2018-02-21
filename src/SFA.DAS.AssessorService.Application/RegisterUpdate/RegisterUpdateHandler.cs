@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessmentOrgs.Api.Client.Core;
-using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.ViewModel.Models;
 
@@ -16,12 +15,14 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
         private readonly IAssessmentOrgsApiClient _registerApiClient;
         private readonly IOrganisationRepository _organisationRepository;
         private readonly ILogger<RegisterUpdateHandler> _logger;
+        private readonly IMediator _mediator;
 
-        public RegisterUpdateHandler(IAssessmentOrgsApiClient registerApiClient, IOrganisationRepository organisationRepository, ILogger<RegisterUpdateHandler> logger)
+        public RegisterUpdateHandler(IAssessmentOrgsApiClient registerApiClient, IOrganisationRepository organisationRepository, ILogger<RegisterUpdateHandler> logger, IMediator mediator)
         {
             _registerApiClient = registerApiClient;
             _organisationRepository = organisationRepository;
             _logger = logger;
+            _mediator = mediator;
         }
 
         public async Task Handle(RegisterUpdateRequest message, CancellationToken cancellationToken)
@@ -29,11 +30,11 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
             _logger.LogInformation("Handling EPAO Import Request");
             var epaosOnRegister = (await _registerApiClient.FindAllAsync()).ToList();
 
-            _logger.LogInformation($"Received {epaosOnRegister.Count()} EPAOs from AssessmentOrgs API");
+            _logger.LogInformation($"Received {epaosOnRegister.Count} EPAOs from AssessmentOrgs API");
 
             var organisations = (await _organisationRepository.GetAllOrganisations()).ToList();
 
-            _logger.LogInformation($"Received {organisations.Count()} Organisations from Repository");
+            _logger.LogInformation($"Received {organisations.Count} Organisations from Repository");
 
             foreach (var epaoSummary in epaosOnRegister)
             {
@@ -46,7 +47,7 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
 
                 _logger.LogInformation($"EPAO {epaoSummary.Id} further information received");
 
-                var createdOrg = await _organisationRepository.CreateNewOrganisation(new OrganisationCreateDomainModel()
+                var createdOrg = await _mediator.Send(new OrganisationCreateViewModel 
                 {
                     EndPointAssessorName = epao.Name,
                     EndPointAssessorOrganisationId = epao.Id,
@@ -60,7 +61,7 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
             {
                 if (epaosOnRegister.Any(e => e.Id == org.EndPointAssessorOrganisationId)) continue;
 
-                await _organisationRepository.Delete(org.Id);
+                await _mediator.Send(new OrganisationDeleteViewModel {Id = org.Id});
 
                 _logger.LogInformation($"Organisation with ID {org.Id} and EPAOgId {org.EndPointAssessorOrganisationId} no longer found on Register. Deleting from Repository");
             }

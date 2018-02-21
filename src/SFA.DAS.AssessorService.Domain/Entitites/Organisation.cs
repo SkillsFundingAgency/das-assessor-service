@@ -1,5 +1,6 @@
 ﻿namespace SFA.DAS.AssessorService.Domain.Entities
 {
+    using SFA.DAS.AssessorService.Domain.Enums;
     using System;
     using System.Collections.Generic;
 
@@ -10,19 +11,12 @@
         public string EndPointAssessorOrganisationId { get; set; }
         public int EndPointAssessorUKPRN { get; set; }
         public string EndPointAssessorName { get; set; }
-        public int? PrimaryContactId { get; set; }
 
+        public Guid? PrimaryContactId { get; set; }
 
-        public OrganisationStatus Status { get; set; }
+        public OrganisationStatus OrganisationStatus { get; set; }
 
-        public ICollection<Certificate> Certificates { get; set; } = new List<Certificate>();      
-        public ICollection<Contact> Contacts { get; set; } = new List<Contact>();
-    }
-
-    public enum OrganisationStatus
-    {
-        New,
-        Live,
-        Deleted
+        public virtual ICollection<Certificate> Certificates { get; set; } = new List<Certificate>();      
+        public virtual ICollection<Contact> Contacts { get; set; } = new List<Contact>();
     }
 }

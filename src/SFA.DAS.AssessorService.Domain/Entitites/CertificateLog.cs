@@ -6,7 +6,7 @@
     {
         public Guid Id { get; set; }
         public Guid CertificateId { get; set; }
-        public Certificate Certificate { get; set; }
+        public virtual Certificate Certificate { get; set; }
 
         public int EndPointAssessorCertificateId { get; set; }
         public string Action { get; set; }

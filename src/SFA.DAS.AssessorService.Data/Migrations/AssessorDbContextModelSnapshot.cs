@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.Internal;
 using SFA.DAS.AssessorService.Data;
-using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Enums;
 using System;
 
 namespace SFA.DAS.AssessorService.Data.Migrations
@@ -50,7 +50,7 @@ namespace SFA.DAS.AssessorService.Data.Migrations
 
                     b.Property<Guid>("CreatedBy");
 
-                    b.Property<DateTime>("DeletedAt");
+                    b.Property<DateTime?>("DeletedAt");
 
                     b.Property<Guid>("DeletedBy");
 
@@ -59,8 +59,6 @@ namespace SFA.DAS.AssessorService.Data.Migrations
                     b.Property<int>("EndPointAssessorContactId");
 
                     b.Property<string>("EndPointAssessorOrganisationId");
-
-                    b.Property<bool>("IsDeleted");
 
                     b.Property<DateTime>("LearnerDateofBirth");
 
@@ -88,13 +86,13 @@ namespace SFA.DAS.AssessorService.Data.Migrations
 
                     b.Property<DateTime>("StandardPublicationDate");
 
-                    b.Property<int>("Status");
+                    b.Property<string>("Status");
 
                     b.Property<int>("ULN");
 
-                    b.Property<DateTime>("UpdatedAt");
+                    b.Property<DateTime?>("UpdatedAt");
 
-                    b.Property<Guid>("UpdatedBy");
+                    b.Property<Guid>("UpdatedBY");
 
                     b.HasKey("Id");
 
@@ -114,17 +112,15 @@ namespace SFA.DAS.AssessorService.Data.Migrations
 
                     b.Property<DateTime>("CreatedAt");
 
-                    b.Property<DateTime>("DeletedAt");
+                    b.Property<DateTime?>("DeletedAt");
 
                     b.Property<int>("EndPointAssessorCertificateId");
 
                     b.Property<DateTime>("EventTime");
 
-                    b.Property<bool>("IsDeleted");
+                    b.Property<string>("Status");
 
-                    b.Property<int>("Status");
-
-                    b.Property<DateTime>("UpdatedAt");
+                    b.Property<DateTime?>("UpdatedAt");
 
                     b.HasKey("Id");
 
@@ -142,23 +138,17 @@ namespace SFA.DAS.AssessorService.Data.Migrations
 
                     b.Property<string>("ContactName");
 
+                    b.Property<int>("ContactStatus");
+
                     b.Property<DateTime>("CreatedAt");
 
-                    b.Property<DateTime>("DeletedAt");
+                    b.Property<DateTime?>("DeletedAt");
 
                     b.Property<int>("EndPointAssessorContactId");
 
-                    b.Property<string>("EndPointAssessorOrganisationId");
-
-                    b.Property<int>("EndPointAssessorUKPRN");
-
-                    b.Property<bool>("IsDeleted");
-
                     b.Property<Guid>("OrganisationId");
 
-                    b.Property<int>("Status");
-
-                    b.Property<DateTime>("UpdatedAt");
+                    b.Property<DateTime?>("UpdatedAt");
 
                     b.HasKey("Id");
 
@@ -174,7 +164,7 @@ namespace SFA.DAS.AssessorService.Data.Migrations
 
                     b.Property<DateTime>("CreatedAt");
 
-                    b.Property<DateTime>("DeletedAt");
+                    b.Property<DateTime?>("DeletedAt");
 
                     b.Property<string>("EndPointAssessorName");
 
@@ -182,13 +172,11 @@ namespace SFA.DAS.AssessorService.Data.Migrations
 
                     b.Property<int>("EndPointAssessorUKPRN");
 
-                    b.Property<bool>("IsDeleted");
+                    b.Property<int>("OrganisationStatus");
 
-                    b.Property<int?>("PrimaryContactId");
+                    b.Property<Guid?>("PrimaryContactId");
 
-                    b.Property<int>("Status");
-
-                    b.Property<DateTime>("UpdatedAt");
+                    b.Property<DateTime?>("UpdatedAt");
 
                     b.HasKey("Id");
 

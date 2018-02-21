@@ -3,9 +3,9 @@
     using System.Threading;
     using System.Threading.Tasks;
     using AutoMapper;
-    using MediatR;
-    using SFA.DAS.AssessorService.Application.Api.Consts;
+    using MediatR;    
     using SFA.DAS.AssessorService.Application.Interfaces;
+    using SFA.DAS.AssessorService.Domain.Enums;
     using SFA.DAS.AssessorService.ViewModel.Models;
 
     public class UpdateOrganisationHandler : IRequestHandler<OrganisationUpdateViewModel, OrganisationQueryViewModel>
@@ -22,11 +22,11 @@
             var organisationUpdateDomainModel = Mapper.Map<OrganisationUpdateDomainModel>(organisationUpdateViewModel);
             if (organisationUpdateViewModel.PrimaryContactId.HasValue)
             {
-                organisationUpdateDomainModel.Status = Domain.Entities.OrganisationStatus.Live;
+                organisationUpdateDomainModel.OrganisationStatus = OrganisationStatus.Live;
             }
             else
             {
-                organisationUpdateDomainModel.Status = Domain.Entities.OrganisationStatus.New;
+                organisationUpdateDomainModel.OrganisationStatus = OrganisationStatus.New;
             }
 
             var organisationQueryViewModel = await _organisationRepository.UpdateOrganisation(organisationUpdateDomainModel);
