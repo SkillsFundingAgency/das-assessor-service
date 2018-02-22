@@ -21,8 +21,7 @@
             ContactQueryRepository.Setup(q => q.GetContact(Moq.It.IsAny<string>(), Moq.It.IsAny<string>()))
                 .Returns(Task.FromResult((_organisationQueryViewModels)));
 
-            ContactQueryController = new ContactQueryController(
-                Mediator.Object,
+            ContactQueryController = new ContactQueryController(                
                 ContactQueryRepository.Object, 
                 StringLocalizer.Object,
                 Logger.Object);

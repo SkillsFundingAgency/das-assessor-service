@@ -15,6 +15,7 @@
 
     // [Authorize]
     [Route("api/v1/contacts")]
+    [ValidateBadRequest]
     public class ContactController : Controller
     {
         private readonly IMediator _mediator;
@@ -31,10 +32,10 @@
             _logger = logger;
         }
 
-        [HttpPost(Name = "CreateContract")]
-        [ValidateBadRequest]
+        [HttpPost(Name = "CreateContract")]       
         [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(ContactQueryViewModel))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ContactQueryViewModel))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ContactQueryViewModel))]
         public async Task<IActionResult> CreateContact(
             [FromBody] ContactCreateViewModel contactCreateViewModel)
         {
@@ -47,10 +48,10 @@
                 contactQueryViewModel);
         }
 
-        [HttpPut(Name = "UpdateContact")]
-        [ValidateBadRequest]
+        [HttpPut(Name = "UpdateContact")]      
         [SwaggerResponse((int)HttpStatusCode.NoContent)]
         [SwaggerResponse((int)HttpStatusCode.BadRequest)]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ContactQueryViewModel))]
         public async Task<IActionResult> UpdateContact([FromBody] ContactUpdateViewModel contactUpdateViewModel)
         {
             _logger.LogInformation("Received Update Contact Request");
@@ -60,11 +61,10 @@
             return NoContent();
         }
 
-        [HttpDelete(Name = "Delete")]
-        [ValidateBadRequest]
-        [SwaggerResponse((int)HttpStatusCode.NoContent)]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest)]
+        [HttpDelete(Name = "Delete")]     
+        [SwaggerResponse((int)HttpStatusCode.NoContent)]       
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> Delete(Guid id)
         {
             try
