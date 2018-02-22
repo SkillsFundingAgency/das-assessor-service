@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.Controllers
+﻿using Microsoft.AspNetCore.Authorization;
+
+namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
     using System;
     using System.Collections.Generic;
@@ -13,7 +15,7 @@
     using SFA.DAS.AssessorService.ViewModel.Models;
     using Swashbuckle.AspNetCore.SwaggerGen;
 
-    //[Authorize]
+    [Authorize]
     [Route("api/v1/contacts")]
     public class ContactQueryController : Controller
     {      

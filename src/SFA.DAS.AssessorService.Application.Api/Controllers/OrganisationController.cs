@@ -15,7 +15,7 @@
     using SFA.DAS.AssessorService.ViewModel.Models;
     using Swashbuckle.AspNetCore.SwaggerGen;
 
-    //[Authorize]
+    [Authorize]
     [Route("api/v1/organisations")]
     public class OrganisationController : Controller
     {
