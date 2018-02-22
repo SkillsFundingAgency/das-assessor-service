@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessmentOrgs.Api.Client.Core;
 using SFA.DAS.AssessmentOrgs.Api.Client.Core.Types;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Enums;
 using SFA.DAS.AssessorService.ViewModel.Models;
 
 namespace SFA.DAS.AssessorService.Application.RegisterUpdate
@@ -80,7 +81,7 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
         private async Task CheckAndUpdateOrganisationName(OrganisationSummary epaoSummary)
         {
             if (_organisations.Any(o =>
-                o.EndPointAssessorOrganisationId == epaoSummary.Id && o.EndPointAssessorName != epaoSummary.Name))
+                o.EndPointAssessorOrganisationId == epaoSummary.Id && o.EndPointAssessorName != epaoSummary.Name ))
             {
                 var organisation =
                     _organisations.Single(o => o.EndPointAssessorOrganisationId == epaoSummary.Id);
@@ -93,6 +94,22 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
                 _logger.LogInformation(
                     $"Organisation with ID {organisation.Id} and EPAOgId {epaoSummary.Id} has had it's Name changed from {organisation.EndPointAssessorName} to {epaoSummary.Name}");
             }
+            
+            if (_organisations.Any(o => o.EndPointAssessorOrganisationId == epaoSummary.Id && o.Status == OrganisationStatus.Deleted))
+            {
+                var organisation =
+                    _organisations.Single(o => o.EndPointAssessorOrganisationId == epaoSummary.Id);
+                await _mediator.Send(new OrganisationUpdateViewModel()
+                {
+                    Id = organisation.Id,
+                    EndPointAssessorName = organisation.EndPointAssessorName,
+                    OrganisationStatus = OrganisationStatus.New
+                });
+
+                _logger.LogInformation(
+                    $"Organisation with ID {organisation.Id} and EPAOgId {epaoSummary.Id} has rejoined the Register and has been Undeleted");
+            }
+
         }
 
         private async Task DeleteOrganisation(OrganisationQueryViewModel org)

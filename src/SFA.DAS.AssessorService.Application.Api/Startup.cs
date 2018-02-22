@@ -1,4 +1,7 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
+
+namespace SFA.DAS.AssessorService.Application.Api
 {
     using System;
     using System.Collections.Generic;
@@ -43,8 +46,20 @@
 
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
 
-            services
-                .AddMvc()
+            IMvcBuilder mvcBuilder;
+            if (_env.IsDevelopment())
+            {
+                mvcBuilder = services.AddMvc(opt =>
+                {
+                    opt.Filters.Add(new AllowAnonymousFilter());
+                });
+            }
+            else
+            {
+                mvcBuilder = services.AddMvc();
+            }
+            
+            mvcBuilder
                 .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix,
                     opts => { opts.ResourcesPath = "Resources"; })
                 .AddDataAnnotationsLocalization()

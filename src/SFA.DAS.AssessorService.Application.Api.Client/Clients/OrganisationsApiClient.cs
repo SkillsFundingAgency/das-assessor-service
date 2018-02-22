@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         public async Task<IEnumerable<OrganisationQueryViewModel>> GetAll(string userKey)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/assessment-providers/"))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/organisations/"))
             {
                 return await RequestAndDeserialiseAsync<IEnumerable<OrganisationQueryViewModel>>(userKey, request, $"Could not find the organisations");
             }
@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         public async Task<OrganisationQueryViewModel> Get(string userKey, string ukprn)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/assessment-providers/{ukprn}"))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/organisations/{ukprn}"))
             {
                 return await RequestAndDeserialiseAsync<OrganisationQueryViewModel>(userKey, request, $"Could not find the organisation {ukprn}");
             }
@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         public async Task Create(string userKey, OrganisationCreateViewModel organisationCreateViewModel)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/assessment-providers/"))
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/organisations/"))
             {
                 await PostPutRequest(userKey, request, organisationCreateViewModel);
             }
@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         public async Task Update(string userKey, OrganisationUpdateViewModel organisationUpdateViewModel)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/assessment-providers/"))
+            using (var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/organisations/"))
             {
                 await PostPutRequest(userKey, request, organisationUpdateViewModel);
             }
@@ -46,7 +46,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         public async Task Delete(string userKey, Guid id)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Delete, $"/api/v1/assessment-providers/"))
+            using (var request = new HttpRequestMessage(HttpMethod.Delete, $"/api/v1/organisations/"))
             {
                 await Delete(userKey, request);
             }
