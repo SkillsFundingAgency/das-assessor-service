@@ -15,7 +15,7 @@
     using SFA.DAS.AssessorService.ViewModel.Models;
     using Swashbuckle.AspNetCore.SwaggerGen;
 
-    // [Authorize]
+    [Authorize]
     [Route("api/v1/contacts")]
     [ValidateBadRequest]
     public class ContactController : Controller

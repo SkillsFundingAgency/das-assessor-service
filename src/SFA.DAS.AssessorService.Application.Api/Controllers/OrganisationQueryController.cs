@@ -12,8 +12,9 @@
     using SFA.DAS.AssessorService.Application.Interfaces;
     using SFA.DAS.AssessorService.ViewModel.Models;
     using Swashbuckle.AspNetCore.SwaggerGen;
+    using Microsoft.AspNetCore.Authorization;
 
-    //[Authorize]
+    [Authorize]
     [Route("api/v1/organisations")]
     public class OrganisationQueryController : Controller
     {       
