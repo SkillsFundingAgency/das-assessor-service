@@ -1,10 +1,12 @@
-﻿using System;
-using System.Linq;
-using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.Enums;
-
-namespace SFA.DAS.AssessorService.Data.TestData
+﻿namespace SFA.DAS.AssessorService.Data.TestData
 {
+    using System;
+    using System.Linq;
+    using Newtonsoft.Json;
+    using SFA.DAS.AssessorService.Domain.Entities;
+    using SFA.DAS.AssessorService.Domain.Enums;
+    using SFA.DAS.AssessorService.Domain.JsonData;
+
     public static class TestDataService
     {
         public static void AddTestData(AssessorDbContext context)
@@ -17,7 +19,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     Id = Guid.NewGuid(),
                     EndPointAssessorName = "EPAO 1",
                     EndPointAssessorOrganisationId = "1234",
-                    EndPointAssessorUKPRN = 10000000,               
+                    EndPointAssessorUKPRN = 10000000,
                     OrganisationStatus = OrganisationStatus.New
                 };
 
@@ -29,8 +31,8 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     Id = Guid.NewGuid(),
                     ContactEmail = "blah@blah.com",
                     ContactName = "Fred Jones",
-                    EndPointAssessorContactId = 1,                  
-                    ContactStatus = ContactStatus.Live,                
+                    EndPointAssessorContactId = 1,
+                    ContactStatus = ContactStatus.Live,
                     OrganisationId = organisation.Id
                 };
 
@@ -41,17 +43,16 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     Id = Guid.NewGuid(),
                     ContactEmail = "jcoxhead@gmail.com",
                     ContactName = "John Coxhead",
-                    EndPointAssessorContactId = 1,             
-                    ContactStatus = ContactStatus.Live,                                     
+                    EndPointAssessorContactId = 1,
+                    ContactStatus = ContactStatus.Live,
                     OrganisationId = organisation.Id
                 };
 
                 context.Contacts.Add(secondContact);
                 context.SaveChanges();
 
-                var firstCertificate = new Certificate
+                var firstCertificateData = new CertificateData
                 {
-                    Id = Guid.NewGuid(),
                     AchievementDate = DateTime.Now.AddDays(-1),
                     AchievementOutcome = "Succesfull",
                     ContactName = "David Gouge",
@@ -69,7 +70,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     LearnerFamilyName = "Gouge",
                     LearnerSex = "Male",
                     LearnerGivenNames = "David",
-                    OrganisationId = organisation.Id,
+
                     OverallGrade = "PASS",
                     ProviderUKPRN = 999999,
                     Registration = "Registered",
@@ -78,19 +79,24 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     StandardLevel = 1,
                     StandardName = "Test",
                     StandardPublicationDate = DateTime.Now,
+
+                    ULN = 123456
+                };
+
+                var firstCertificate = new Certificate
+                {
+                    Id = Guid.NewGuid(),
+                    OrganisationId = organisation.Id,
+                    CertificateData = JsonConvert.SerializeObject(firstCertificateData),
                     Status = CertificateStatus.Ready,
-                    ULN = 123456,
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now,
                     CreatedBy = firstContact.Id,
                     UpdatedBy = firstContact.Id
-
                 };
 
                 context.Certificates.Add(firstCertificate);
-                var secondCertificate = new Certificate
+
+                var secondCertificateData = new CertificateData
                 {
-                    Id = Guid.NewGuid(),
                     AchievementDate = DateTime.Now.AddDays(-1),
                     AchievementOutcome = "Succesfull",
                     ContactName = "John Coxhead",
@@ -108,7 +114,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     LearnerFamilyName = "Coxhead",
                     LearnerSex = "Male",
                     LearnerGivenNames = "David",
-                    OrganisationId = organisation.Id,
+
                     OverallGrade = "PASS",
                     ProviderUKPRN = 999999,
                     Registration = "Registered",
@@ -117,12 +123,17 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     StandardLevel = 1,
                     StandardName = "Test",
                     StandardPublicationDate = DateTime.Now,
+                    ULN = 123456
+                };
+
+                var secondCertificate = new Certificate
+                {
+                    Id = Guid.NewGuid(),
+                    OrganisationId = organisation.Id,
+                    CertificateData = JsonConvert.SerializeObject(secondCertificateData),
                     Status = CertificateStatus.Ready,
-                    ULN = 123456,
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now,
-                    CreatedBy = firstContact.Id,
-                    UpdatedBy = firstContact.Id
+                    CreatedBy = secondContact.Id,
+                    UpdatedBy = secondContact.Id
                 };
 
                 context.Certificates.Add(secondCertificate);

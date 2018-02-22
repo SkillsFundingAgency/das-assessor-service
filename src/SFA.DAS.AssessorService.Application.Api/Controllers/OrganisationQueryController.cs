@@ -1,11 +1,13 @@
 ﻿namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
+    using System.Collections.Generic;
     using System.Net;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Localization;
     using Microsoft.Extensions.Logging;
     using SFA.DAS.AssessorService.Application.Api.Consts;
+    using SFA.DAS.AssessorService.Application.Api.Middleware;
     using SFA.DAS.AssessorService.Application.Api.Validators;
     using SFA.DAS.AssessorService.Application.Interfaces;
     using SFA.DAS.AssessorService.ViewModel.Models;
@@ -35,8 +37,9 @@
 
         [HttpGet("{ukprn}")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(OrganisationQueryViewModel))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest)]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.NotFound, Type = typeof(string))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> Get(int ukprn)
         {         
             var result = _ukPrnValidator.Validate(ukprn);
@@ -53,7 +56,8 @@
         }
 
         [HttpGet]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(OrganisationQueryViewModel))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<OrganisationQueryViewModel>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> Get()
         {
             var organisations = await _organisationQueryRepository.GetAllOrganisations();

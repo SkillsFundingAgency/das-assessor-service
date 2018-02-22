@@ -1,6 +1,7 @@
 ﻿namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
     using System;
+    using System.Collections.Generic;
     using System.Net;
     using System.Threading.Tasks;
     using MediatR;
@@ -9,6 +10,7 @@
     using Microsoft.Extensions.Localization;
     using Microsoft.Extensions.Logging;
     using SFA.DAS.AssessorService.Application.Api.Attributes;
+    using SFA.DAS.AssessorService.Application.Api.Middleware;
     using SFA.DAS.AssessorService.Domain.Exceptions;
     using SFA.DAS.AssessorService.ViewModel.Models;
     using Swashbuckle.AspNetCore.SwaggerGen;
@@ -34,7 +36,8 @@
         [HttpPost(Name = "CreateOrganisation")]
         [ValidateBadRequest]
         [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(OrganisationQueryViewModel))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(OrganisationQueryViewModel))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> CreateOrganisation([FromBody] OrganisationCreateViewModel organisationCreateViewModel)
         {
             _logger.LogInformation("Received Create Organisation Request");
@@ -48,8 +51,9 @@
 
         [HttpPut(Name = "UpdateOrganisation")]
         [ValidateBadRequest]
-        [SwaggerResponse((int)HttpStatusCode.NoContent, Type = typeof(OrganisationQueryViewModel))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(OrganisationQueryViewModel))]
+        [SwaggerResponse((int)HttpStatusCode.NoContent)]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> UpdateOrganisation([FromBody] OrganisationUpdateViewModel organisationUpdateViewModel)
         {
             _logger.LogInformation("Received Update Organisation Request");
@@ -62,8 +66,9 @@
         [HttpDelete(Name = "DeleteOrganisation")]
         [ValidateBadRequest]
         [SwaggerResponse((int)HttpStatusCode.NoContent)]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest)]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> DeleteOrganisation(Guid id)
         {
             try

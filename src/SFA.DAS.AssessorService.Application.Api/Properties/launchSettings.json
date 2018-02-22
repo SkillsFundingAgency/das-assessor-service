@@ -10,14 +10,14 @@
   "profiles": {
     "IIS Express": {
       "commandName": "IISExpress",
-      "launchUrl": "api/values",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "launchUrl": "http://localhost:59021/swagger"
     },
     "SFA.DAS.AssessorService.Application.Api": {
       "commandName": "Project",
-      "launchUrl": "api/values",
+      "launchUrl": "http://localhost:59021/swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

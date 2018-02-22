@@ -1,6 +1,7 @@
 ﻿namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
     using System;
+    using System.Collections.Generic;
     using System.Net;
     using System.Threading.Tasks;
     using MediatR;
@@ -9,6 +10,7 @@
     using Microsoft.Extensions.Localization;
     using Microsoft.Extensions.Logging;
     using SFA.DAS.AssessorService.Application.Api.Attributes;
+    using SFA.DAS.AssessorService.Application.Api.Middleware;
     using SFA.DAS.AssessorService.Domain.Exceptions;
     using SFA.DAS.AssessorService.ViewModel.Models;
     using Swashbuckle.AspNetCore.SwaggerGen;
@@ -34,8 +36,8 @@
 
         [HttpPost(Name = "CreateContract")]       
         [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(ContactQueryViewModel))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ContactQueryViewModel))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ContactQueryViewModel))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> CreateContact(
             [FromBody] ContactCreateViewModel contactCreateViewModel)
         {
@@ -50,8 +52,8 @@
 
         [HttpPut(Name = "UpdateContact")]      
         [SwaggerResponse((int)HttpStatusCode.NoContent)]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest)]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ContactQueryViewModel))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> UpdateContact([FromBody] ContactUpdateViewModel contactUpdateViewModel)
         {
             _logger.LogInformation("Received Update Contact Request");
@@ -64,7 +66,7 @@
         [HttpDelete(Name = "Delete")]     
         [SwaggerResponse((int)HttpStatusCode.NoContent)]       
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError)]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> Delete(Guid id)
         {
             try

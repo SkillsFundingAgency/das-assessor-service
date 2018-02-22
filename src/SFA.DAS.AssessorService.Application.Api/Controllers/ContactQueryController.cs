@@ -7,6 +7,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Localization;
     using Microsoft.Extensions.Logging;
+    using SFA.DAS.AssessorService.Application.Api.Middleware;
     using SFA.DAS.AssessorService.Application.Interfaces;
     using SFA.DAS.AssessorService.Domain.Exceptions;
     using SFA.DAS.AssessorService.ViewModel.Models;
@@ -31,8 +32,8 @@
         }
 
         [HttpGet("{organisationId}", Name = "GetAllContactsForAnOrganisation")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(OrganisationQueryViewModel))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(List<ContactQueryViewModel>))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ContactQueryViewModel>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetAllContactsForAnOrganisation(Guid organisationId)
         {           
             var contacts = await _contactQueryRepository.GetContacts(organisationId);
@@ -40,9 +41,9 @@
         }
 
         [HttpGet("user/{userName}/{emailAddress}", Name = "GetContactsByUserNameAndEmail")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(OrganisationQueryViewModel))]
-        [SwaggerResponse((int)HttpStatusCode.NotFound, Type = typeof(OrganisationQueryViewModel))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ContactQueryViewModel))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ContactQueryViewModel>))]
+        [SwaggerResponse((int)HttpStatusCode.NotFound)]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetContactsByUserNameAndEmail(string userName, string emailAddress)
         {
             try
