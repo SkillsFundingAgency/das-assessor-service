@@ -18,6 +18,8 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
         private readonly IOrganisationQueryRepository _organisationRepository;
         private readonly ILogger<RegisterUpdateHandler> _logger;
         private readonly IMediator _mediator;
+        private List<OrganisationSummary> _epaosOnRegister;
+        private List<OrganisationQueryViewModel> _organisations;
 
         public RegisterUpdateHandler(IAssessmentOrgsApiClient registerApiClient, IOrganisationQueryRepository organisationRepository, ILogger<RegisterUpdateHandler> logger, IMediator mediator)
         {
@@ -29,22 +31,15 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
 
         public async Task Handle(RegisterUpdateRequest message, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Handling EPAO Import Request");
-            var epaosOnRegister = (await _registerApiClient.FindAllAsync()).ToList();
-
-            _logger.LogInformation($"Received {epaosOnRegister.Count} EPAOs from AssessmentOrgs API");
-
-            var organisations = (await _organisationRepository.GetAllOrganisations()).ToList();
-
-            _logger.LogInformation($"Received {organisations.Count} Organisations from Repository");
-
             var rnd = new Random();
 
-            foreach (var epaoSummary in epaosOnRegister)
+            await GetEpaosAndOrganisations();
+
+            foreach (var epaoSummary in _epaosOnRegister)
             {
-                if (organisations.Any(o => o.EndPointAssessorOrganisationId == epaoSummary.Id))
+                if (OrganisationExists(epaoSummary))
                 {
-                    await CheckAndUpdateOrganisationName(organisations, epaoSummary);
+                    await CheckAndUpdateOrganisationName(epaoSummary);
                 }
                 else
                 {
@@ -52,21 +47,43 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
                 }
             }
 
-            foreach (var org in organisations)
+            foreach (var org in _organisations)
             {
-                if (epaosOnRegister.Any(e => e.Id == org.EndPointAssessorOrganisationId)) continue;
+                if (EpaoStillPresentOnRegister(org)) continue;
 
                 await DeleteOrganisation(org);
             }
         }
 
-        private async Task CheckAndUpdateOrganisationName(List<OrganisationQueryViewModel> organisations, OrganisationSummary epaoSummary)
+        private async Task GetEpaosAndOrganisations()
         {
-            if (organisations.Any(o =>
+            _logger.LogInformation("Handling EPAO Import Request");
+            _epaosOnRegister = (await _registerApiClient.FindAllAsync()).ToList();
+
+            _logger.LogInformation($"Received {_epaosOnRegister.Count} EPAOs from AssessmentOrgs API");
+
+            _organisations = (await _organisationRepository.GetAllOrganisations()).ToList();
+
+            _logger.LogInformation($"Received {_organisations.Count} Organisations from Repository");
+        }
+
+        private bool EpaoStillPresentOnRegister(OrganisationQueryViewModel org)
+        {
+            return _epaosOnRegister.Any(e => e.Id == org.EndPointAssessorOrganisationId);
+        }
+
+        private bool OrganisationExists(OrganisationSummary epaoSummary)
+        {
+            return _organisations.Any(o => o.EndPointAssessorOrganisationId == epaoSummary.Id);
+        }
+
+        private async Task CheckAndUpdateOrganisationName(OrganisationSummary epaoSummary)
+        {
+            if (_organisations.Any(o =>
                 o.EndPointAssessorOrganisationId == epaoSummary.Id && o.EndPointAssessorName != epaoSummary.Name))
             {
                 var organisation =
-                    organisations.Single(o => o.EndPointAssessorOrganisationId == epaoSummary.Id);
+                    _organisations.Single(o => o.EndPointAssessorOrganisationId == epaoSummary.Id);
                 await _mediator.Send(new OrganisationUpdateViewModel()
                 {
                     EndPointAssessorName = epaoSummary.Name,
