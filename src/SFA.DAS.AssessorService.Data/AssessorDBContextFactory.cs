@@ -3,7 +3,10 @@
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Design;
 
-    public class AssesorDBContextFactory : IDesignTimeDbContextFactory<AssessorDbContext>
+    /// <summary>
+    /// Used for design time migration generation and database update only.
+    /// </summary>
+    public class AssessorDBContextFactory : IDesignTimeDbContextFactory<AssessorDbContext>
     {
         public AssessorDbContext CreateDbContext(string[] args)
         {

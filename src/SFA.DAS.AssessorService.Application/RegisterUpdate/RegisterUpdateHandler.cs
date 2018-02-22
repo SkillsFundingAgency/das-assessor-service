@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessmentOrgs.Api.Client.Core;
+using SFA.DAS.AssessmentOrgs.Api.Client.Core.Types;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.ViewModel.Models;
 
@@ -36,35 +38,70 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
 
             _logger.LogInformation($"Received {organisations.Count} Organisations from Repository");
 
+            var rnd = new Random();
+
             foreach (var epaoSummary in epaosOnRegister)
             {
-                var rnd = new Random();
-                if (organisations.Any(o => o.EndPointAssessorOrganisationId == epaoSummary.Id)) continue;
-
-                _logger.LogInformation($"EPAO {epaoSummary.Id} not found in Repository");
-
-                var epao = _registerApiClient.Get(epaoSummary.Id);
-
-                _logger.LogInformation($"EPAO {epaoSummary.Id} further information received");
-
-                var createdOrg = await _mediator.Send(new OrganisationCreateViewModel 
+                if (organisations.Any(o => o.EndPointAssessorOrganisationId == epaoSummary.Id))
                 {
-                    EndPointAssessorName = epao.Name,
-                    EndPointAssessorOrganisationId = epao.Id,
-                    EndPointAssessorUKPRN = rnd.Next(77777777, 99999999)
-                });
-
-                _logger.LogInformation($"EPAO {epaoSummary.Id} Created in Repository with ID {createdOrg.Id}");
+                    await CheckAndUpdateOrganisationName(organisations, epaoSummary);
+                }
+                else
+                {
+                    await CreateNewOrganisation(epaoSummary, rnd);
+                }
             }
 
             foreach (var org in organisations)
             {
                 if (epaosOnRegister.Any(e => e.Id == org.EndPointAssessorOrganisationId)) continue;
 
-                await _mediator.Send(new OrganisationDeleteViewModel {Id = org.Id});
-
-                _logger.LogInformation($"Organisation with ID {org.Id} and EPAOgId {org.EndPointAssessorOrganisationId} no longer found on Register. Deleting from Repository");
+                await DeleteOrganisation(org);
             }
+        }
+
+        private async Task CheckAndUpdateOrganisationName(List<OrganisationQueryViewModel> organisations, OrganisationSummary epaoSummary)
+        {
+            if (organisations.Any(o =>
+                o.EndPointAssessorOrganisationId == epaoSummary.Id && o.EndPointAssessorName != epaoSummary.Name))
+            {
+                var organisation =
+                    organisations.Single(o => o.EndPointAssessorOrganisationId == epaoSummary.Id);
+                await _mediator.Send(new OrganisationUpdateViewModel()
+                {
+                    EndPointAssessorName = epaoSummary.Name,
+                    Id = organisation.Id
+                });
+
+                _logger.LogInformation(
+                    $"Organisation with ID {organisation.Id} and EPAOgId {epaoSummary.Id} has had it's Name changed from {organisation.EndPointAssessorName} to {epaoSummary.Name}");
+            }
+        }
+
+        private async Task DeleteOrganisation(OrganisationQueryViewModel org)
+        {
+            await _mediator.Send(new OrganisationDeleteViewModel {Id = org.Id});
+
+            _logger.LogInformation(
+                $"Organisation with ID {org.Id} and EPAOgId {org.EndPointAssessorOrganisationId} no longer found on Register. Deleting from Repository");
+        }
+
+        private async Task CreateNewOrganisation(OrganisationSummary epaoSummary, Random rnd)
+        {
+            _logger.LogInformation($"EPAO {epaoSummary.Id} not found in Repository");
+
+            var epao = _registerApiClient.Get(epaoSummary.Id);
+
+            _logger.LogInformation($"EPAO {epaoSummary.Id} further information received");
+
+            var createdOrg = await _mediator.Send(new OrganisationCreateViewModel
+            {
+                EndPointAssessorName = epao.Name,
+                EndPointAssessorOrganisationId = epao.Id,
+                EndPointAssessorUKPRN = rnd.Next(77777777, 99999999)
+            });
+
+            _logger.LogInformation($"EPAO {epaoSummary.Id} Created in Repository with ID {createdOrg.Id}");
         }
     }
 }

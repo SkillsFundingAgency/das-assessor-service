@@ -32,7 +32,7 @@
 
         public override int SaveChanges()
         {
-            DateTime saveTime = DateTime.Now;
+            var saveTime = DateTime.UtcNow;
             foreach (var entry in this.ChangeTracker.Entries()
                 .Where(e => e.State == (EntityState)EntityState.Added))
             {
@@ -53,13 +53,13 @@
             var addedEntities = ChangeTracker.Entries().Where(E => E.State == EntityState.Added).ToList();
             addedEntities.ForEach(E =>
             {
-                E.Property("CreatedAt").CurrentValue = DateTime.Now;
+                E.Property("CreatedAt").CurrentValue = DateTime.UtcNow;
             });
 
             var editedEntities = ChangeTracker.Entries().Where(E => E.State == EntityState.Modified).ToList();
             editedEntities.ForEach(E =>
             {
-                E.Property("UpdatedAt").CurrentValue = DateTime.Now;
+                E.Property("UpdatedAt").CurrentValue = DateTime.UtcNow;
             });
 
             return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
