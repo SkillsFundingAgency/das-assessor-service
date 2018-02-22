@@ -1,9 +1,9 @@
 ﻿namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
     using System;
+    using System.Collections.Generic;
     using System.Net;
     using System.Threading.Tasks;
-    using MediatR;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Localization;
     using Microsoft.Extensions.Logging;
@@ -15,19 +15,16 @@
     //[Authorize]
     [Route("api/v1/contacts")]
     public class ContactQueryController : Controller
-    {
-        private readonly IMediator _mediator;
+    {      
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IStringLocalizer<ContactQueryController> _localizer;        
         private readonly ILogger<ContactQueryController> _logger;
 
-        public ContactQueryController(IMediator mediator,
-            IContactQueryRepository contactQueryRepository,
+        public ContactQueryController(IContactQueryRepository contactQueryRepository,
             IStringLocalizer<ContactQueryController> localizer,       
             ILogger<ContactQueryController> logger
             )
-        {
-            _mediator = mediator;
+        {           
             _contactQueryRepository = contactQueryRepository;
             _localizer = localizer;           
             _logger = logger;
@@ -35,8 +32,7 @@
 
         [HttpGet("{organisationId}", Name = "GetAllContactsForAnOrganisation")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(OrganisationQueryViewModel))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest)]
-        [SwaggerResponse((int)HttpStatusCode.NotFound, Type = typeof(string))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(List<ContactQueryViewModel>))]
         public async Task<IActionResult> GetAllContactsForAnOrganisation(Guid organisationId)
         {           
             var contacts = await _contactQueryRepository.GetContacts(organisationId);
@@ -45,6 +41,8 @@
 
         [HttpGet("user/{userName}/{emailAddress}", Name = "GetContactsByUserNameAndEmail")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(OrganisationQueryViewModel))]
+        [SwaggerResponse((int)HttpStatusCode.NotFound, Type = typeof(OrganisationQueryViewModel))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ContactQueryViewModel))]
         public async Task<IActionResult> GetContactsByUserNameAndEmail(string userName, string emailAddress)
         {
             try
