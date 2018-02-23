@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2027
+VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Application.Api", "SFA.DAS.AssessorService.Application.Api\SFA.DAS.AssessorService.Application.Api.csproj", "{7D3308DD-5535-49B4-BC33-2F8030027592}"
 EndProject
@@ -25,7 +25,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Dat
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExternalApi", "ExternalApi", "{EFD6034B-FA26-4A09-8FDA-D03C3326560C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessmentOrgs.Api.Client.Core", "SFA.DAS.AssessmentOrgs.Api.Client.Core\SFA.DAS.AssessmentOrgs.Api.Client.Core.csproj", "{13718FBC-6B4E-41BE-A23B-2AFF88F42DA3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = ".Client.Core", "SFA.DAS.AssessmentOrgs.Api.Client.Core\.Client.Core.csproj", "{13718FBC-6B4E-41BE-A23B-2AFF88F42DA3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.ViewModel", "SFA.DAS.AssessorService.ViewModel\SFA.DAS.AssessorService.ViewModel.csproj", "{65E918D5-263A-417E-BA96-0326E9260F06}"
 EndProject
