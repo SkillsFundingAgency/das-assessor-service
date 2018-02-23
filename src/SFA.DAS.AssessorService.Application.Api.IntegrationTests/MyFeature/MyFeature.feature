@@ -1,4 +1,5 @@
-﻿Feature: Get blogs  
+﻿@Test
+Feature: Get blogs  
     In order to list the available blogs
     I want to be told the list of blogs
 
@@ -11,7 +12,7 @@ Scenario: Get blogs should be ok
     | http://blog1.io |
     | http://blog2.io |
     When I get the list of blogs
-    Then the result must be the following list
+    Then the result must be the following list with 5 results
     | Url             |
     | http://blog1.io |
     | http://blog2.io |
