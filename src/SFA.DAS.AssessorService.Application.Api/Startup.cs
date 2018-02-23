@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.Extensions.Logging;
 
 namespace SFA.DAS.AssessorService.Application.Api
 {
@@ -32,9 +33,11 @@ namespace SFA.DAS.AssessorService.Application.Api
         private const string ServiceName = "SFA.DAS.AssessorService";
         private const string Version = "1.0";
 
-        public Startup(IHostingEnvironment env, IConfiguration config)
+        public Startup(IHostingEnvironment env, IConfiguration config, ILogger<Startup> logger)
         {
             _env = env;
+            logger.LogInformation($"Environment: {env.EnvironmentName}");
+            logger.LogInformation($"Storage Connection String: {config["ConnectionStrings:Storage"]}");
             Configuration = ConfigurationService.GetConfig(config["Environment"], config["ConnectionStrings:Storage"], Version, ServiceName).Result;
         }
 
@@ -69,9 +72,13 @@ namespace SFA.DAS.AssessorService.Application.Api
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "SFA.DAS.AssessorService.Application.Api", Version = "v1" });
-                var basePath = AppContext.BaseDirectory;
-                var xmlPath = Path.Combine(basePath, "SFA.DAS.AssessorService.Application.Api.xml");
-                c.IncludeXmlComments(xmlPath);
+
+                if (_env.IsDevelopment())
+                {
+                    var basePath = AppContext.BaseDirectory;
+                    var xmlPath = Path.Combine(basePath, "SFA.DAS.AssessorService.Application.Api.xml");
+                    c.IncludeXmlComments(xmlPath);
+                }
             });
 
             services.Configure<RequestLocalizationOptions>(
