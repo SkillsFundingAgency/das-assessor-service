@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.Extensions.Logging;
 
 namespace SFA.DAS.AssessorService.Application.Api
 {
@@ -29,12 +30,14 @@ namespace SFA.DAS.AssessorService.Application.Api
     public class Startup
     {
         private readonly IHostingEnvironment _env;
+        private readonly ILogger<Startup> _logger;
         private const string ServiceName = "SFA.DAS.AssessorService";
         private const string Version = "1.0";
 
-        public Startup(IHostingEnvironment env, IConfiguration config)
+        public Startup(IHostingEnvironment env, IConfiguration config, ILogger<Startup> logger)
         {
             _env = env;
+            _logger = logger;
             Configuration = ConfigurationService.GetConfig(config["Environment"], config["ConnectionStrings:Storage"], Version, ServiceName).Result;
         }
 
@@ -120,6 +123,9 @@ namespace SFA.DAS.AssessorService.Application.Api
 
                 var option = new DbContextOptionsBuilder<AssessorDbContext>();
                 option.UseSqlServer(Configuration.SqlConnectionString);
+
+                _logger.LogInformation($"Connection String in use: {Configuration.SqlConnectionString}");
+
                 config.For<AssessorDbContext>().Use(c => new AssessorDbContext(option.Options, _env.IsDevelopment()));
 
                 config.Populate(services);

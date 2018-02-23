@@ -37,9 +37,7 @@ namespace SFA.DAS.AssessorService.Application.Api
             WebHost.CreateDefaultBuilder(args)
                 .UseKestrel()
                 .UseStartup<Startup>()
-                .UseUrls("http://localhost:44351")
                 .UseNLog()
                 .Build();
     }
 }
-
