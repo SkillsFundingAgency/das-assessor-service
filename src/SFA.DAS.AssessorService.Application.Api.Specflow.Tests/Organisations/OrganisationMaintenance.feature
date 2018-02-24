@@ -9,6 +9,6 @@ Scenario: Create an Organisation
 	When I Create an Organisation
 	Then the response http status should be Created
 	And the Location Header should be set
-	And the the Organisation should be created
+	And the Organisation should be created
 	
 

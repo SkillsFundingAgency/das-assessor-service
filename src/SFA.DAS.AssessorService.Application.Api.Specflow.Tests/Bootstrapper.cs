@@ -1,14 +1,18 @@
 ﻿namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests
 {
+    using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.consts;
     using StructureMap;
+    using System.Configuration;
 
     public class Bootstrapper
     {
         public static void Initialise()
         {
-            Container = new Container(_ =>
+            var connectionString = ConfigurationManager.ConnectionStrings[PersistenceNames.AccessorDBConnectionString].ConnectionString;
+
+            Container = new Container(configure =>
             {
-                _.Scan(x =>
+                configure.Scan(x =>
                 {
                     x.TheCallingAssembly();
                     x.WithDefaultConventions();
@@ -16,6 +20,6 @@
             });
         }
 
-        public static Container Container { get;  private set; }
+        public static Container Container { get; private set; }
     }
 }

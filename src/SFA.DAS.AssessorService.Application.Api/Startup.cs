@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.Extensions.Logging;
-
-namespace SFA.DAS.AssessorService.Application.Api
+﻿namespace SFA.DAS.AssessorService.Application.Api
 {
     using System;
     using System.Collections.Generic;
@@ -26,6 +22,9 @@ namespace SFA.DAS.AssessorService.Application.Api
     using SFA.DAS.AssessorService.Data.TestData;
     using SFA.DAS.AssessorService.Settings;
     using SFA.DAS.AssessorService.Application.Api.Middleware;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.Authorization;
+    using Microsoft.Extensions.Logging;
 
     public class Startup
     {

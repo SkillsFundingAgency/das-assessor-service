@@ -17,10 +17,10 @@
         public AssessorDbContext(DbContextOptions<AssessorDbContext> options, bool migrate)
           : base(options)
         {
-            if (migrate)
-            {
-                Database.Migrate();
-            }
+            //if (migrate)
+            //{
+            //    Database.Migrate();
+            //}
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
