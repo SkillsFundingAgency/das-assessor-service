@@ -78,7 +78,7 @@ this.ScenarioSetup(scenarioInfo);
 #line 9
  testRunner.When("I Request All Organisations to be retrieved", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 10
- testRunner.Then("the response http status should be Ok", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("the response http status should be OK", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 11
  testRunner.And("the API returns all Organisations", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
@@ -97,7 +97,7 @@ this.ScenarioSetup(scenarioInfo);
 #line 15
  testRunner.When("I search for an organisation with its ukprn set to 10000000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 16
- testRunner.Then("the response http status should be Ok", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("the response http status should be OK", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 17
  testRunner.And("the API returns an appropriate Organisation", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
@@ -116,7 +116,7 @@ this.ScenarioSetup(scenarioInfo);
 #line 21
  testRunner.When("I search for an organisation with its ukprn set to 12", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 22
- testRunner.Then("the response http status should be BadRequest", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("the response http status should be Bad Request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 23
  testRunner.And("the response message should contain A valid UKPRN as defined in the UK Register o" +
                     "f Learning Providers (UKRLP) is 8 digits in the format 10000000 – 99999999", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");

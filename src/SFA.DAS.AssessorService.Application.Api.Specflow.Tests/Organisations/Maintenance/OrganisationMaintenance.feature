@@ -29,7 +29,7 @@ Scenario: Create an Organisation With Invalid UkPrn
     When I Create an Organisation
 	| EndPointAssessorName | EndPointAssessorOrganisationId | EndPointAssessorUKPRN |
 	| Test                 | 99999998                       | 14              |
-	Then the response http status should be BadRequest
+	Then the response http status should be Bad Request
 	And the response message should contain Request must contain a valid UKPRN as defined in the UK Register of Learning Providers (UKRLP) is 8 digits in the format 10000000 – 99999999
 	
 Scenario: Create an Organisation Which Already Exists
@@ -40,9 +40,44 @@ Scenario: Create an Organisation Which Already Exists
     When I Create an Organisation
 	| EndPointAssessorName | EndPointAssessorOrganisationId | EndPointAssessorUKPRN |
 	| Test                 | 99999988                       | 10033333              |
-	Then the response http status should be BadRequest
+	Then the response http status should be Bad Request
 	And the response message should contain Organisation Has Already Been Created
 
+Scenario: Update an Organisation Succesfully
+	Given System Has access to the SFA.DAS.AssessmentOrgs.Api	
+	When I Update an Organisation
+	| EndPointAssessorName | EndPointAssessorOrganisationId | EndPointAssessorUKPRN |
+	| Test Name            | 99999999                       | 10000000              |
+	Then the response http status should be No Content
+	And the Update should have occured
                 
+Scenario: Update an Organisation That does Not Exist
+	Given System Has access to the SFA.DAS.AssessmentOrgs.Api	
+	When I Update an Organisation With invalid Id
+	| EndPointAssessorName | EndPointAssessorOrganisationId | EndPointAssessorUKPRN |
+	| Test Name            | 99999999                       | 10005333              |
+	Then the response http status should be Bad Request
 	
+Scenario: Update an Organisation with invalid PrimaryContact
+	Given System Has access to the SFA.DAS.AssessmentOrgs.Api	
+	When I Update an Organisation With Invalid Primary Contact
+	| EndPointAssessorName | EndPointAssessorOrganisationId | EndPointAssessorUKPRN |
+	| Test Name            | 99999999                       | 14              |
+	Then the response http status should be Bad Request
 
+Scenario: Update an Organisation with valid PrimaryContact
+	Given System Has access to the SFA.DAS.AssessmentOrgs.Api	
+	When I Update an Organisation With valid Primary Contact
+	| EndPointAssessorName | EndPointAssessorOrganisationId | EndPointAssessorUKPRN |
+	| Test Name            | 1234                       | 10000000              |
+	Then the response http status should be No Content
+	And the Organisation Status should be persisted as Live
+
+Scenario: Delete an Organisation 
+	Given System Has access to the SFA.DAS.AssessmentOrgs.Api	
+	When I Delete an Organisation
+	| EndPointAssessorName | EndPointAssessorOrganisationId | EndPointAssessorUKPRN |
+	| Test                 | 99999777                       | 10033444              |
+	Then the response http status should be No Content
+	And the Organisation should be deleted
+	

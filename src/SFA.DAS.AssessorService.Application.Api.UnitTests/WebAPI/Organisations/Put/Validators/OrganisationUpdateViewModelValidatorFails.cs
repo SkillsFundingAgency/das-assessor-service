@@ -20,8 +20,7 @@
             Setup();
 
             OrganisationUpdateViewModel = Builder<OrganisationUpdateViewModel>.CreateNew()                
-                .With(q => q.EndPointAssessorName = null)                
-                .With(q => q.PrimaryContactId = 999)                  
+                .With(q => q.EndPointAssessorName = null)                                 
                 .Build();
 
             ContactQueryRepositoryMock.Setup(q => q.CheckContactExists(Moq.It.IsAny<int>()))

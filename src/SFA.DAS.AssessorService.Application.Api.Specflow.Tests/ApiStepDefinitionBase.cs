@@ -54,7 +54,7 @@
         [Then(@"the response http status should be (.*)")]
         public void ThenTheResponseHttpStatusShouldBe(string httpStatusCode)
         {
-            restClient.HttpResponseMessage.ReasonPhrase.Should().Equals(httpStatusCode);
+            restClient.HttpResponseMessage.ReasonPhrase.Should().Be(httpStatusCode);
         }
     }
 }

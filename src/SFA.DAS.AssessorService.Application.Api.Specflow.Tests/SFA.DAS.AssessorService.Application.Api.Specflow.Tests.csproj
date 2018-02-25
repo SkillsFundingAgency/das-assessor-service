@@ -93,6 +93,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>OrganisationMaintenance.feature</DependentUpon>
     </Compile>
+    <Compile Include="Organisations\Maintenance\WhenDeleteOrganisation.cs" />
+    <Compile Include="Organisations\Maintenance\WhenUpdateOrganisation.cs" />
     <Compile Include="Organisations\OrganisationTransforms.cs" />
     <Compile Include="Organisations\Query\OrganisationQuery.feature.cs">
       <AutoGen>True</AutoGen>

@@ -35,7 +35,7 @@
             return result;
         }
 
-        private bool HaveAssociatedPrimaryContactInContacts(int? primaryContactId)
+        private bool HaveAssociatedPrimaryContactInContacts(Guid? primaryContactId)
         {
             if (!primaryContactId.HasValue)
                 return true;

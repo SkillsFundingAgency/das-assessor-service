@@ -18,7 +18,12 @@
         {
             var json = JsonConvert.SerializeObject(model);
             var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
-            return await client.PutAsJsonAsync(requestUrl, stringContent);
+            return await client.PutAsync(requestUrl, stringContent);
+        }
+
+        public static async Task<HttpResponseMessage> DeleteAsJsonAsync(this HttpClient client, string requestUrl)
+        {
+            return await client.DeleteAsync(requestUrl);
         }
     }
 }

@@ -151,7 +151,7 @@ this.ScenarioSetup(scenarioInfo);
 #line 29
     testRunner.When("I Create an Organisation", ((string)(null)), table3, "When ");
 #line 32
- testRunner.Then("the response http status should be BadRequest", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("the response http status should be Bad Request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 33
  testRunner.And("the response message should contain Request must contain a valid UKPRN as defined" +
                     " in the UK Register of Learning Providers (UKRLP) is 8 digits in the format 1000" +
@@ -192,9 +192,145 @@ this.ScenarioSetup(scenarioInfo);
 #line 40
     testRunner.When("I Create an Organisation", ((string)(null)), table5, "When ");
 #line 43
- testRunner.Then("the response http status should be BadRequest", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("the response http status should be Bad Request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 44
  testRunner.And("the response message should contain Organisation Has Already Been Created", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Update an Organisation Succesfully")]
+        public virtual void UpdateAnOrganisationSuccesfully()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Update an Organisation Succesfully", ((string[])(null)));
+#line 46
+this.ScenarioSetup(scenarioInfo);
+#line 47
+ testRunner.Given("System Has access to the SFA.DAS.AssessmentOrgs.Api", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+            TechTalk.SpecFlow.Table table6 = new TechTalk.SpecFlow.Table(new string[] {
+                        "EndPointAssessorName",
+                        "EndPointAssessorOrganisationId",
+                        "EndPointAssessorUKPRN"});
+            table6.AddRow(new string[] {
+                        "Test Name",
+                        "99999999",
+                        "10000000"});
+#line 48
+ testRunner.When("I Update an Organisation", ((string)(null)), table6, "When ");
+#line 51
+ testRunner.Then("the response http status should be No Content", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 52
+ testRunner.And("the Update should have occured", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Update an Organisation That does Not Exist")]
+        public virtual void UpdateAnOrganisationThatDoesNotExist()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Update an Organisation That does Not Exist", ((string[])(null)));
+#line 54
+this.ScenarioSetup(scenarioInfo);
+#line 55
+ testRunner.Given("System Has access to the SFA.DAS.AssessmentOrgs.Api", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+            TechTalk.SpecFlow.Table table7 = new TechTalk.SpecFlow.Table(new string[] {
+                        "EndPointAssessorName",
+                        "EndPointAssessorOrganisationId",
+                        "EndPointAssessorUKPRN"});
+            table7.AddRow(new string[] {
+                        "Test Name",
+                        "99999999",
+                        "10005333"});
+#line 56
+ testRunner.When("I Update an Organisation With invalid Id", ((string)(null)), table7, "When ");
+#line 59
+ testRunner.Then("the response http status should be Bad Request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Update an Organisation with invalid PrimaryContact")]
+        public virtual void UpdateAnOrganisationWithInvalidPrimaryContact()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Update an Organisation with invalid PrimaryContact", ((string[])(null)));
+#line 61
+this.ScenarioSetup(scenarioInfo);
+#line 62
+ testRunner.Given("System Has access to the SFA.DAS.AssessmentOrgs.Api", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+            TechTalk.SpecFlow.Table table8 = new TechTalk.SpecFlow.Table(new string[] {
+                        "EndPointAssessorName",
+                        "EndPointAssessorOrganisationId",
+                        "EndPointAssessorUKPRN"});
+            table8.AddRow(new string[] {
+                        "Test Name",
+                        "99999999",
+                        "14"});
+#line 63
+ testRunner.When("I Update an Organisation With Invalid Primary Contact", ((string)(null)), table8, "When ");
+#line 66
+ testRunner.Then("the response http status should be Bad Request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Update an Organisation with valid PrimaryContact")]
+        public virtual void UpdateAnOrganisationWithValidPrimaryContact()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Update an Organisation with valid PrimaryContact", ((string[])(null)));
+#line 68
+this.ScenarioSetup(scenarioInfo);
+#line 69
+ testRunner.Given("System Has access to the SFA.DAS.AssessmentOrgs.Api", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+            TechTalk.SpecFlow.Table table9 = new TechTalk.SpecFlow.Table(new string[] {
+                        "EndPointAssessorName",
+                        "EndPointAssessorOrganisationId",
+                        "EndPointAssessorUKPRN"});
+            table9.AddRow(new string[] {
+                        "Test Name",
+                        "1234",
+                        "10000000"});
+#line 70
+ testRunner.When("I Update an Organisation With valid Primary Contact", ((string)(null)), table9, "When ");
+#line 73
+ testRunner.Then("the response http status should be No Content", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 74
+ testRunner.And("the Organisation Status should be persisted as Live", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Delete an Organisation")]
+        public virtual void DeleteAnOrganisation()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Delete an Organisation", ((string[])(null)));
+#line 76
+this.ScenarioSetup(scenarioInfo);
+#line 77
+ testRunner.Given("System Has access to the SFA.DAS.AssessmentOrgs.Api", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+            TechTalk.SpecFlow.Table table10 = new TechTalk.SpecFlow.Table(new string[] {
+                        "EndPointAssessorName",
+                        "EndPointAssessorOrganisationId",
+                        "EndPointAssessorUKPRN"});
+            table10.AddRow(new string[] {
+                        "Test",
+                        "99999777",
+                        "10033444"});
+#line 78
+ testRunner.When("I Delete an Organisation", ((string)(null)), table10, "When ");
+#line 81
+ testRunner.Then("the response http status should be No Content", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 82
+ testRunner.And("the Organisation should be deleted", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
         }
