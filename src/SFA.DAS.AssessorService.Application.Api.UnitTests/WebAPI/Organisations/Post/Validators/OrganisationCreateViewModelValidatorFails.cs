@@ -23,7 +23,6 @@
                 .With(q => q.EndPointAssessorOrganisationId = null)
                 .With(q => q.EndPointAssessorName = null)
                 .With(q => q.EndPointAssessorUKPRN = 12)
-                .With(q => q.PrimaryContactId = 999)
                 .Build();
 
             ContactQueryRepositoryMock.Setup(q => q.CheckContactExists(Moq.It.IsAny<int>()))

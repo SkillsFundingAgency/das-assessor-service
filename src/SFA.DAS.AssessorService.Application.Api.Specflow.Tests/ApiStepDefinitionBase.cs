@@ -47,7 +47,8 @@
         [Then(@"the response message should contain (.*)")]
         public void ThenTheResponseMessageShouldContain(string p0)
         {
-            restClient.Result.Should().Equals(p0);
+            restClient.Result.Should().NotBeNull();
+            restClient.Result.Should().Contain(p0);
         }
 
         [Then(@"the response http status should be (.*)")]

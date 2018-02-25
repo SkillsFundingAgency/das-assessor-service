@@ -13,6 +13,6 @@ namespace SFA.DAS.AssessorService.ViewModel.Models
         public string EndPointAssessorName { get; set; }
         public Guid? PrimaryContactId { get; set; }
 
-        public OrganisationStatus Status { get; set; }
+        public OrganisationStatus OrganisationStatus { get; set; }
     }
 }

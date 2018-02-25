@@ -10,7 +10,7 @@
 // ------------------------------------------------------------------------------
 #region Designer generated code
 #pragma warning disable
-namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations
+namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.Query
 {
     using TechTalk.SpecFlow;
     
@@ -130,7 +130,7 @@ this.ScenarioSetup(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Search for an Organisation using a ukprn which does not exist", ((string[])(null)));
 #line 25
- this.ScenarioSetup(scenarioInfo);
+this.ScenarioSetup(scenarioInfo);
 #line 26
  testRunner.Given("System Has access to the SFA.DAS.AssessmentOrgs.Api", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 27

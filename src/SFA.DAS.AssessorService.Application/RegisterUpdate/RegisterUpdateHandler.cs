@@ -95,7 +95,7 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
                     $"Organisation with ID {organisation.Id} and EPAOgId {epaoSummary.Id} has had it's Name changed from {organisation.EndPointAssessorName} to {epaoSummary.Name}");
             }
             
-            if (_organisations.Any(o => o.EndPointAssessorOrganisationId == epaoSummary.Id && o.Status == OrganisationStatus.Deleted))
+            if (_organisations.Any(o => o.EndPointAssessorOrganisationId == epaoSummary.Id && o.OrganisationStatus == OrganisationStatus.Deleted))
             {
                 var organisation =
                     _organisations.Single(o => o.EndPointAssessorOrganisationId == epaoSummary.Id);

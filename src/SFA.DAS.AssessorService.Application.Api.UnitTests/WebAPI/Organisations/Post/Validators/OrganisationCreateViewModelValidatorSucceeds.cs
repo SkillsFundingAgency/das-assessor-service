@@ -8,6 +8,7 @@
     using SFA.DAS.AssessorService.ViewModel.Models;
     using System.Linq;
     using System.Threading.Tasks;
+    using System;
 
     [Subject("AssessorService")]
     public class WhenOrganisationCreateViewModelValidatorSucceeds : OrganisationCreateViewModelValidatorTestBase
@@ -23,10 +24,9 @@
                 .With(q => q.EndPointAssessorOrganisationId = "1234")
                 .With(q => q.EndPointAssessorName = "XXXX")
                 .With(q => q.EndPointAssessorUKPRN = 10000001)
-                .With(q => q.PrimaryContactId = 999)
                 .Build();
 
-            ContactQueryRepositoryMock.Setup(q => q.CheckContactExists(Moq.It.IsAny<int>()))
+            ContactQueryRepositoryMock.Setup(q => q.CheckContactExists(Moq.It.IsAny<Guid>()))
                 .Returns(Task.FromResult((true)));
 
             OrganisationQueryRepositoryMock.Setup(q => q.CheckIfAlreadyExists(Moq.It.IsAny<string>()))

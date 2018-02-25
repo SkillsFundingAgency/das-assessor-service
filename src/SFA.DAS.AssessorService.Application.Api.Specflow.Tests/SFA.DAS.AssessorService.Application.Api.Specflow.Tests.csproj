@@ -42,6 +42,9 @@
     <Reference Include="ImpromptuInterface, Version=6.2.2.0, Culture=neutral, PublicKeyToken=0b1781c923b2975b, processorArchitecture=MSIL">
       <HintPath>..\packages\ImpromptuInterface.6.2.2\lib\net40\ImpromptuInterface.dll</HintPath>
     </Reference>
+    <Reference Include="MediatR, Version=4.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MediatR.4.0.1\lib\net45\MediatR.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -61,10 +64,6 @@
     <Reference Include="System.Net" />
     <Reference Include="System.Net.Http, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Net.Http.2.0.20126.16343\lib\net40\System.Net.Http.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Net.Http.WebRequest">
-      <HintPath>..\packages\System.Net.Http.2.0.20126.16343\lib\net40\System.Net.Http.WebRequest.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.ValueTuple, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -89,22 +88,23 @@
     <Compile Include="DatabaseUtils\DatabaseUtilities.cs" />
     <Compile Include="Extensions\HttpClientExtensions.cs" />
     <Compile Include="Iniltialisation.cs" />
-    <Compile Include="Organisations\OrganisationMaintenance.feature.cs">
+    <Compile Include="Organisations\Maintenance\OrganisationMaintenance.feature.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>OrganisationMaintenance.feature</DependentUpon>
     </Compile>
-    <Compile Include="Organisations\OrganisationQuery.feature.cs">
+    <Compile Include="Organisations\OrganisationTransforms.cs" />
+    <Compile Include="Organisations\Query\OrganisationQuery.feature.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>OrganisationQuery.feature</DependentUpon>
     </Compile>
     <Compile Include="ApiStepDefinitionBase.cs" />
-    <Compile Include="Organisations\OrganisationQueryDefinition.cs" />
-    <Compile Include="Organisations\SpecflowIocRegister.cs" />
-    <Compile Include="Organisations\WhenCreateOrganisation.cs" />
-    <Compile Include="Organisations\WhenSearchOrganisationByUkprn.cs" />
-    <Compile Include="Organisations\WhenRetrieveAllOrganisations.cs" />
+    <Compile Include="Organisations\Query\OrganisationQueryDefinition.cs" />
+    <Compile Include="SpecflowIocRegister.cs" />
+    <Compile Include="Organisations\Maintenance\WhenCreateOrganisation.cs" />
+    <Compile Include="Organisations\Query\WhenSearchOrganisationByUkprn.cs" />
+    <Compile Include="Organisations\Query\WhenRetrieveAllOrganisations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RestClient.cs" />
   </ItemGroup>
@@ -115,11 +115,11 @@
     <None Include="Default.srprofile">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Organisations\OrganisationMaintenance.feature">
+    <None Include="Organisations\Maintenance\OrganisationMaintenance.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>OrganisationMaintenance.feature.cs</LastGenOutput>
     </None>
-    <None Include="Organisations\OrganisationQuery.feature">
+    <None Include="Organisations\Query\OrganisationQuery.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>OrganisationQuery.feature.cs</LastGenOutput>
     </None>

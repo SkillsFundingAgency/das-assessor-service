@@ -88,8 +88,6 @@ namespace SFA.DAS.AssessorService.Data.Migrations
 
                     b.Property<string>("ContactName");
 
-                    b.Property<int>("ContactStatus");
-
                     b.Property<DateTime>("CreatedAt");
 
                     b.Property<DateTime?>("DeletedAt");
@@ -97,6 +95,8 @@ namespace SFA.DAS.AssessorService.Data.Migrations
                     b.Property<int>("EndPointAssessorContactId");
 
                     b.Property<Guid>("OrganisationId");
+
+                    b.Property<int>("Status");
 
                     b.Property<DateTime?>("UpdatedAt");
 
@@ -122,9 +122,9 @@ namespace SFA.DAS.AssessorService.Data.Migrations
 
                     b.Property<int>("EndPointAssessorUKPRN");
 
-                    b.Property<int>("OrganisationStatus");
-
                     b.Property<Guid?>("PrimaryContactId");
+
+                    b.Property<int>("Status");
 
                     b.Property<DateTime?>("UpdatedAt");
 
