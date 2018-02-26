@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.AssessorService.ExternalApis.Types
+﻿namespace SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types
 {
     public class Address
     {

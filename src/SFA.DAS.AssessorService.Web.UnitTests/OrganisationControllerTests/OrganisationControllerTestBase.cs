@@ -1,18 +1,15 @@
 ﻿using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.ViewModel.Models;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using Moq;
+using SFA.DAS.AssessorService.Web.Controllers;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
 {
-    using System.Security.Claims;
-    using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.Extensions.Logging;
-    using Moq;
-    using SFA.DAS.AssessorService.Web.Controllers;
-    using SFA.DAS.AssessorService.Web.Infrastructure;
-    using SFA.DAS.AssessorService.Web.Services;
-    using SFA.DAS.AssessorService.Web.ViewModels;
+
 
     public class OrganisationControllerTestBase
     {
@@ -22,7 +19,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
 
         protected static Mock<IOrganisationsApiClient> ApiClient;
 
-        public static void  Setup()
+        public static void Setup()
         {
             //OrganisationService = new Mock<IOrganisationService>();
             //OrganisationService
@@ -43,11 +40,11 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
 
             var logger = new Mock<ILogger<OrganisationController>>();
 
-            TokenService = new Mock<ITokenService>();            
+            TokenService = new Mock<ITokenService>();
             TokenService.Setup(s => s.GetJwt("USERID")).Returns("jwt");
-            
+
             ApiClient = new Mock<IOrganisationsApiClient>();
-            ApiClient.Setup(c => c.Get("12345", "12345")).ReturnsAsync(new OrganisationQueryViewModel() {});
+            ApiClient.Setup(c => c.Get("12345", "12345")).ReturnsAsync(new OrganisationQueryViewModel() { });
 
             OrganisationController = new OrganisationController(logger.Object, httpContext.Object, ApiClient.Object);
         }

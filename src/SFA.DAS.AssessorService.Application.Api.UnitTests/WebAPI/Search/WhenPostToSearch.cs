@@ -1,38 +1,38 @@
 ﻿using FluentAssertions;
-using Machine.Specifications;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
-using SFA.DAS.AssessorService.ExternalApis;
-using SFA.DAS.AssessorService.ExternalApis.Types;
+using SFA.DAS.AssessorService.ExternalApis.Ilr;
+using SFA.DAS.AssessorService.ExternalApis.Ilr.Types;
 using SFA.DAS.AssessorService.ViewModel.Models;
-using It = Moq.It;
+
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Search
 {
-    [Subject("AssessorService")]
+    [TestFixture]
     public class WhenPostToSearch
     {
-        private Establish context = () =>
+        [SetUp]
+        public void Arrange()
         {
             _ilrApi = new Mock<IIlrApiClient>();
             _controller = new SearchController(_ilrApi.Object);
-        };
+        }
 
-        private Because of = () =>
+        [Test]
+        public void Returns_A_Result()
         {
             _result = _controller.Search(new SearchQueryViewModel()).Result;
-        };
-
-        private Machine.Specifications.It Returns_A_Result = () =>
-        {
             _result.Should().BeAssignableTo<IActionResult>();
-        };
+        }
 
-        private Machine.Specifications.It Calls_The_Ilr_Api = () =>
+        [Test]
+        public void Calls_The_Ilr_Api()
         {
+            _result = _controller.Search(new SearchQueryViewModel()).Result;
             _ilrApi.Verify(api => api.Search(It.IsAny<SearchRequest>()));
-        };
+        }
 
         private static SearchController _controller;
         private static object _result;

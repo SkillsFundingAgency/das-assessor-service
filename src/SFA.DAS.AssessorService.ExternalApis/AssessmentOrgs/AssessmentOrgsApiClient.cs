@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using SFA.DAS.AssessorService.ExternalApis.Types;
+using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
 
-namespace SFA.DAS.AssessorService.ExternalApis
+namespace SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs
 {
     public class AssessmentOrgsApiClient : ApiClientBase, IAssessmentOrgsApiClient
     {
