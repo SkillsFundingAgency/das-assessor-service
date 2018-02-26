@@ -1,27 +1,23 @@
-﻿namespace SFA.DAS.AssessorService.Application.MSpec.UnitTests
-{
-    using FluentAssertions;
-    using Machine.Specifications;
-    using Microsoft.AspNetCore.Authorization;
-    using SFA.DAS.AssessorService.Web.Controllers;
-    using SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests;
+﻿using FluentAssertions;
+using Microsoft.AspNetCore.Authorization;
+using NUnit.Framework;
+using SFA.DAS.AssessorService.Web.Controllers;
 
-    [Subject("OrganisationController")]
+namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
+{
+    [TestFixture]
     public class WhenOrganisationalControllerIsInstantiated : OrganisationControllerTestBase
     {
-        Establish context = () =>
+        [SetUp]
+        public void Arrange()
         {
             Setup();
-        };
-
-        Because of = () =>
-        {
-
-        };
-
-        Machine.Specifications.It should_have_authorize_attribute = () =>
+        }
+        
+        [Test]
+        public void Should_have_authorize_attribute()
         {
             typeof(OrganisationController).Should().BeDecoratedWith<AuthorizeAttribute>();
-        };
+        }
     }
 }

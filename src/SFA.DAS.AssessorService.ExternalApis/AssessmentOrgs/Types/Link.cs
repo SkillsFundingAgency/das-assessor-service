@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.AssessmentOrgs.Api.Client.Core.Types
+﻿namespace SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types
 {
     public class Link
     {

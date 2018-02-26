@@ -9,7 +9,6 @@
     <PackageReference Include="StructureMap" Version="4.6.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SFA.DAS.AssessmentOrgs.Api.Client.Core\.Client.Core.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Application.Api.Client\SFA.DAS.AssessorService.Application.Api.Client.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Application\SFA.DAS.AssessorService.Application.csproj" />
   </ItemGroup>

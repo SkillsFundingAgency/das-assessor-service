@@ -1,50 +1,49 @@
-﻿using SFA.DAS.AssessorService.ViewModel.Models;
+﻿using FluentAssertions;
+using Microsoft.AspNetCore.Mvc;
+using NUnit.Framework;
+using SFA.DAS.AssessorService.ViewModel.Models;
 
-namespace SFA.DAS.AssessorService.Application.MSpec.UnitTests
+namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
 {
-    using FluentAssertions;
-    using Machine.Specifications;
-    using Microsoft.AspNetCore.Mvc;
-    using Moq;
-    using SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests;
-    using SFA.DAS.AssessorService.Web.ViewModels;
-
-    [Subject("OrganisationController")]
+    [TestFixture]
     public class WhenIndexIsCalled : OrganisationControllerTestBase
     {
         private static IActionResult _actionResult;
 
-        Establish context = () =>
-    {
-        Setup();
-    };
-
-        Because of = () =>
+        [SetUp]
+        public void Arrange()
         {
-            _actionResult = OrganisationController.Index().Result;
-        };
+            Setup();
+        }
 
-        Machine.Specifications.It should_call_the_api = () =>
+        [Test]
+        public void Should_Call_The_Api()
         {
 
             //TokenService.Verify(serv => serv.GetJwt(), Times.AtMostOnce);
-        };
+        }
 
-        private Machine.Specifications.It should_get_an_organisation = () =>
+        [Test]
+        public void Should_get_an_organisation()
         {
+            _actionResult = OrganisationController.Index().Result;
             //OrganisationService.Verify(serv => serv.GetOrganisation("jwt", 12345));
             ApiClient.Verify(a => a.Get("12345", "12345"));
-        };
+        }
 
-        Machine.Specifications.It should_return_a_viewresult = () =>
+        [Test]
+        public void Should_return_a_viewresult()
         {
+            _actionResult = OrganisationController.Index().Result;
             _actionResult.Should().BeOfType<ViewResult>();
-        };
+        }
 
-        Machine.Specifications.It should_return_an_organisation = () =>
+        [Test]
+        public void Should_return_an_organisation()
         {
+            _actionResult = OrganisationController.Index().Result;
             var result = _actionResult as ViewResult;
             result.Model.Should().BeOfType<OrganisationQueryViewModel>();
-        };
+        }
     }
 }

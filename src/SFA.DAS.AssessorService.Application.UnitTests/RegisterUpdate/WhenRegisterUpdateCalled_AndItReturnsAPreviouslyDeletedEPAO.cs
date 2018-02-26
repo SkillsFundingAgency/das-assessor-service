@@ -2,12 +2,12 @@
 using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using SFA.DAS.AssessmentOrgs.Api.Client.Core.Types;
 using SFA.DAS.AssessorService.Application.RegisterUpdate;
 using System.Collections.Generic;
 using System.Linq;
 using Moq;
 using SFA.DAS.AssessorService.Domain.Enums;
+using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
 using SFA.DAS.AssessorService.ViewModel.Models;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate

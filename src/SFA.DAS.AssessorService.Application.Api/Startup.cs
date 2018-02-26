@@ -1,42 +1,41 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.IO;
-    using JWT;
-    using SFA.DAS.AssessorService.Application.Api.StartupConfiguration;
-    using FluentValidation.AspNetCore;
-    using MediatR;
-    using Microsoft.AspNetCore.Builder;
-    using Microsoft.AspNetCore.Hosting;
-    using Microsoft.AspNetCore.Localization;
-    using Microsoft.AspNetCore.Mvc.Razor;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.DependencyInjection;
-    using SFA.DAS.AssessmentOrgs.Api.Client.Core;
-    using SFA.DAS.AssessorService.Data;
-    using StructureMap;
-    using Swashbuckle.AspNetCore.Swagger;
-    using SFA.DAS.AssessorService.Data.TestData;
-    using SFA.DAS.AssessorService.Settings;
-    using SFA.DAS.AssessorService.Application.Api.Middleware;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.Authorization;
-    using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using JWT;
+using SFA.DAS.AssessorService.Application.Api.StartupConfiguration;
+using FluentValidation.AspNetCore;
+using MediatR;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using SFA.DAS.AssessorService.Data;
+using StructureMap;
+using Swashbuckle.AspNetCore.Swagger;
+using SFA.DAS.AssessorService.Data.TestData;
+using SFA.DAS.AssessorService.Settings;
+using SFA.DAS.AssessorService.Application.Api.Middleware;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.Extensions.Logging;
 
+namespace SFA.DAS.AssessorService.Application.Api
+{
     public class Startup
     {
         private readonly IHostingEnvironment _env;
+        private readonly ILogger<Startup> _logger;
         private const string ServiceName = "SFA.DAS.AssessorService";
         private const string Version = "1.0";
 
         public Startup(IHostingEnvironment env, IConfiguration config, ILogger<Startup> logger)
         {
             _env = env;
-            logger.LogInformation($"Environment: {env.EnvironmentName}");
-            logger.LogInformation($"Storage Connection String: {config["ConnectionStrings:Storage"]}");
+            _logger = logger;
             Configuration = ConfigurationService.GetConfig(config["Environment"], config["ConnectionStrings:Storage"], Version, ServiceName).Result;
         }
 
@@ -126,6 +125,9 @@
 
                 var option = new DbContextOptionsBuilder<AssessorDbContext>();
                 option.UseSqlServer(Configuration.SqlConnectionString);
+
+                _logger.LogInformation($"Connection String in use: {Configuration.SqlConnectionString}");
+
                 config.For<AssessorDbContext>().Use(c => new AssessorDbContext(option.Options, _env.IsDevelopment()));
 
                 config.Populate(services);
