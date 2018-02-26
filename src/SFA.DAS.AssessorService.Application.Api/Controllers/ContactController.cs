@@ -64,7 +64,6 @@
         }
 
         [HttpDelete(Name = "Delete")]
-        [Route("{id}")]
         [SwaggerResponse((int)HttpStatusCode.NoContent)]       
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]

@@ -85,6 +85,12 @@
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="consts\PersistenceNames.cs" />
     <Compile Include="consts\RestParameters.cs" />
+    <Compile Include="Contacts\ContactsQuery.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ContactsQuery.feature</DependentUpon>
+    </Compile>
+    <Compile Include="Contacts\Query\WhenRetrieveAllContacts.cs" />
     <Compile Include="DatabaseUtils\DatabaseUtilities.cs" />
     <Compile Include="Extensions\HttpClientExtensions.cs" />
     <Compile Include="Iniltialisation.cs" />
@@ -113,6 +119,10 @@
   <ItemGroup>
     <None Include="App.config">
       <SubType>Designer</SubType>
+    </None>
+    <None Include="Contacts\ContactsQuery.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>ContactsQuery.feature.cs</LastGenOutput>
     </None>
     <None Include="Default.srprofile">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
