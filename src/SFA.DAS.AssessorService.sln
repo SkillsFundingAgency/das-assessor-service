@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2027
+VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Application.Api", "SFA.DAS.AssessorService.Application.Api\SFA.DAS.AssessorService.Application.Api.csproj", "{7D3308DD-5535-49B4-BC33-2F8030027592}"
 EndProject
@@ -42,6 +42,20 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.ExternalApis", "SFA.DAS.AssessorService.ExternalApis\SFA.DAS.AssessorService.ExternalApis.csproj", "{F2954FF3-69CA-4C61-995A-59BCC4E94839}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.Application.Api.Specflow.Tests", "SFA.DAS.AssessorService.Application.Api.Specflow.Tests\SFA.DAS.AssessorService.Application.Api.Specflow.Tests.csproj", "{7AC422A2-0183-4D77-AA10-B55198A69F35}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Azure", "Azure", "{F85262CD-4210-4352-B691-30F40D99B4D2}"
+	ProjectSection(SolutionItems) = preProject
+		..\azure\parameters.json = ..\azure\parameters.json
+		..\azure\template.json = ..\azure\template.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deployments", "deployments", "{3B16AB0E-5C83-4E5D-82B0-7021AB4C5B9F}"
+	ProjectSection(SolutionItems) = preProject
+		..\azure\deployments\app-service-resources.json = ..\azure\deployments\app-service-resources.json
+		..\azure\deployments\function-app-resources.json = ..\azure\deployments\function-app-resources.json
+		..\azure\deployments\service-bus-resources.json = ..\azure\deployments\service-bus-resources.json
+		..\azure\deployments\storage-resources.json = ..\azure\deployments\storage-resources.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -132,6 +146,7 @@ Global
 		{25C146EB-E44C-463A-AD78-B77D9BA95355} = {EB54D000-867F-48CA-AE28-BDBE0CCE1322}
 		{F2954FF3-69CA-4C61-995A-59BCC4E94839} = {EFD6034B-FA26-4A09-8FDA-D03C3326560C}
 		{7AC422A2-0183-4D77-AA10-B55198A69F35} = {EB54D000-867F-48CA-AE28-BDBE0CCE1322}
+		{3B16AB0E-5C83-4E5D-82B0-7021AB4C5B9F} = {F85262CD-4210-4352-B691-30F40D99B4D2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C5B677B2-0D72-4629-A5FD-F94B00EC858B}
