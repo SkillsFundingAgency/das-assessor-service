@@ -50,7 +50,6 @@
             }
         }
 
-
         [When(@"I Request All Contacts to be retrieved By an Invalid Organisation")]
         public void WhenIRequestAllContactsToBeRetrievedByAnInvalidOrganisation()
         {

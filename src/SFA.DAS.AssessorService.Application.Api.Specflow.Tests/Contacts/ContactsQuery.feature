@@ -1,4 +1,4 @@
-﻿@queryOrganisations
+﻿@queryContacts
 Feature: Query Contacts through the SFA.DAS.AssessorService.Application.Api
 	In order to be able to get information on Contacts
 	As a System
@@ -10,10 +10,18 @@ Scenario: Retrieve All Contacts for an Organisation
 	Then the response http status should be OK
 	And the API returns all Contacts for an Organisation
 
-Scenario: Retrieve All Contacts for an Invalid Organisation
+Scenario: Retrieve Contacts for an Invalid Organisation
 	Given System Has access to the SFA.DAS.AssessmentOrgs.Api	
 	When I Request All Contacts to be retrieved By an Invalid Organisation
 	Then the response http status should be Not Found
+
+Scenario: Retrieve Contact for an Organisation By Username and EMail Address
+	Given System Has access to the SFA.DAS.AssessmentOrgs.Api	
+	When I Request Contacts to be retrieved By Username and Email Address
+	| username | emailaddress |
+	|John Coxhead|jcoxhead@gmail.com|
+	Then the response http status should be OK
+	And the API returns valid Contact
 
 #Scenario: Search for an Organisation using a ukprn set to 10000000
 #	Given System Has access to the SFA.DAS.AssessmentOrgs.Api	

@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [NUnit.Framework.TestFixtureAttribute()]
     [NUnit.Framework.DescriptionAttribute("Query Contacts through the SFA.DAS.AssessorService.Application.Api")]
-    [NUnit.Framework.CategoryAttribute("queryOrganisations")]
+    [NUnit.Framework.CategoryAttribute("queryContacts")]
     public partial class QueryContactsThroughTheSFA_DAS_AssessorService_Application_ApiFeature
     {
         
@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
             TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Query Contacts through the SFA.DAS.AssessorService.Application.Api", "\tIn order to be able to get information on Contacts\r\n\tAs a System\r\n\tI want to be " +
                     "be able to query Contacts", ProgrammingLanguage.CSharp, new string[] {
-                        "queryOrganisations"});
+                        "queryContacts"});
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -86,10 +86,10 @@ this.ScenarioSetup(scenarioInfo);
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Retrieve All Contacts for an Invalid Organisation")]
-        public virtual void RetrieveAllContactsForAnInvalidOrganisation()
+        [NUnit.Framework.DescriptionAttribute("Retrieve Contacts for an Invalid Organisation")]
+        public virtual void RetrieveContactsForAnInvalidOrganisation()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Retrieve All Contacts for an Invalid Organisation", ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Retrieve Contacts for an Invalid Organisation", ((string[])(null)));
 #line 13
 this.ScenarioSetup(scenarioInfo);
 #line 14
@@ -98,6 +98,32 @@ this.ScenarioSetup(scenarioInfo);
  testRunner.When("I Request All Contacts to be retrieved By an Invalid Organisation", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 16
  testRunner.Then("the response http status should be Not Found", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Retrieve Contact for an Organisation By Username and EMail Address")]
+        public virtual void RetrieveContactForAnOrganisationByUsernameAndEMailAddress()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Retrieve Contact for an Organisation By Username and EMail Address", ((string[])(null)));
+#line 18
+this.ScenarioSetup(scenarioInfo);
+#line 19
+ testRunner.Given("System Has access to the SFA.DAS.AssessmentOrgs.Api", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+            TechTalk.SpecFlow.Table table1 = new TechTalk.SpecFlow.Table(new string[] {
+                        "username",
+                        "emailaddress"});
+            table1.AddRow(new string[] {
+                        "John Coxhead",
+                        "jcoxhead@gmail.com"});
+#line 20
+ testRunner.When("I Request Contacts to be retrieved By Username and Email Address", ((string)(null)), table1, "When ");
+#line 23
+ testRunner.Then("the response http status should be OK", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 24
+ testRunner.And("the API returns valid Contact", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
         }
