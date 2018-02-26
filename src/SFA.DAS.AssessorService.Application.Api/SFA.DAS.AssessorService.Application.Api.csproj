@@ -76,19 +76,5 @@
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
   </ItemGroup>
-  <Target Name="SwaggerFile">
-    <ItemGroup>
-      <_CustomFiles Include="bin\(Configuration)\(Platform)\*.xml" />
-      <FilesForPackagingFromProject Include="%(_CustomFiles.Identity)">
-        <DestinationRelativePath>%(RecursiveDir)%(Filename)%(Extension)</DestinationRelativePath>
-      </FilesForPackagingFromProject>
-    </ItemGroup>
-  </Target>
 
-  <PropertyGroup>
-    <CopyAllFilesToSingleFolderForPackageDependsOn>
-      SwaggerFile;
-      $(CopyAllFilesToSingleFolderForPackageDependsOn);
-    </CopyAllFilesToSingleFolderForPackageDependsOn>
-  </PropertyGroup>
 </Project>
