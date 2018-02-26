@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using JWT.Algorithms;
 using JWT.Builder;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.WsFederation;
 using Microsoft.AspNetCore.Http;
@@ -34,6 +35,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                 })
                 .AddCookie(options => { options.ReturnUrlParameter = "/Account/SignedIn"; });
         }
+
 
         private static Task OnTokenValidated(SecurityTokenValidatedContext context)
         {

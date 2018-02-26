@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace SFA.DAS.AssessmentOrgs.Api.Client.Core
+namespace SFA.DAS.AssessorService.ExternalApis
 {
     public abstract class ApiClientBase : IDisposable
     {

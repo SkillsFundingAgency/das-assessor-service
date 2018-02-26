@@ -1,0 +1,61 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "appServiceName": {
+            "type": "string"
+        },
+        "appServicePlanId": {
+            "type": "string"
+        },
+        "configurationStorageConnectionString": {
+            "type": "string"
+        },
+        "configEnvironmentName": {
+            "type": "string"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "apiVersion": "2015-05-01",
+            "name": "[parameters('appServiceName')]",
+            "type": "Microsoft.Insights/components",
+            "location": "[resourceGroup().location]",
+            "kind": "web",
+            "properties": {
+                "Application_Type": "web"
+            }
+        },
+        {
+            "name": "[parameters('appServiceName')]",
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2016-08-01",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "serverFarmId": "[parameters('appServicePlanId')]",
+                "siteConfig": {
+                    "alwaysOn": true,
+                    "appSettings": [
+                        {
+                            "name": "ApplicationInsights:InstrumentationKey",
+                            "value": "[reference(concat('microsoft.insights/components/', parameters('appServiceName'))).InstrumentationKey]"
+                        },
+                        {
+                            "name": "ConfigurationStorageConnectionString",
+                            "value": "[parameters('configurationStorageConnectionString')]"
+                        },
+                        {
+                            "name": "EnvironmentName",
+                            "value": "[toUpper(parameters('configEnvironmentName'))]"
+                        }
+                    ]
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Insights/components', parameters('appServiceName'))]"
+            ]
+        }
+    ],
+    "outputs": {}
+}

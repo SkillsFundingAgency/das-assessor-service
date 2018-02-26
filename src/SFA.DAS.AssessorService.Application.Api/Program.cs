@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Linq;
-using System.Net;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using NLog.Web;
-using Microsoft.Extensions.DependencyInjection;
-using SFA.DAS.AssessorService.Data;
-using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Api
 {
@@ -37,9 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Api
             WebHost.CreateDefaultBuilder(args)
                 .UseKestrel()
                 .UseStartup<Startup>()
-                .UseUrls("http://localhost:44351")
                 .UseNLog()
                 .Build();
     }
 }
-

@@ -1,0 +1,68 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "serviceBusName": {
+            "type": "string"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "name": "[parameters('serviceBusName')]",
+            "type": "Microsoft.ServiceBus/namespaces",
+            "apiVersion": "2017-04-01",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "Standard"
+            },
+            "properties": {},
+            "resources": [
+                {
+                    "name": "CertificatePrint",
+                    "type": "queues",
+                    "apiVersion": "2017-04-01",
+                    "properties": {
+                        "maxSizeInMegabytes": 1024,
+                        "requiresDuplicateDetection": true,
+                        "deadLetteringOnMessageExpiration": true,
+                        "duplicateDetectionHistoryTimeWindow": "PT5M",
+                        "enablePartitioning": true
+                    },
+                    "dependsOn": [
+                        "[parameters('serviceBusName')]"
+                    ],
+                    "resources": [
+                        {
+                            "name": "Printout",
+                            "type": "authorizationRules",
+                            "apiVersion": "2017-04-01",
+                            "properties": {
+                                "rights": [
+                                    "Send"
+                                ]
+                            },
+                            "dependsOn": [
+                                "[concat('Microsoft.ServiceBus/namespaces/', parameters('serviceBusName'), '/queues/CertificatePrint')]"
+                            ]
+                        },
+                        {
+                            "name": "Printrcv",
+                            "type": "authorizationRules",
+                            "apiVersion": "2017-04-01",
+                            "properties": {
+                                "rights": [
+                                    "Listen"
+                                ]
+                            },
+                            "dependsOn": [
+                                "[concat('Microsoft.ServiceBus/namespaces/', parameters('serviceBusName'), '/queues/CertificatePrint')]"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "outputs": {}
+}

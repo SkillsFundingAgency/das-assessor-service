@@ -39,7 +39,23 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Epa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Application.Api.IntegrationTests", "SFA.DAS.AssessorService.Application.Api.IntegrationTests\SFA.DAS.AssessorService.Application.Api.IntegrationTests.csproj", "{25C146EB-E44C-463A-AD78-B77D9BA95355}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.ExternalApis", "SFA.DAS.AssessorService.ExternalApis\SFA.DAS.AssessorService.ExternalApis.csproj", "{F2954FF3-69CA-4C61-995A-59BCC4E94839}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.Application.Api.Specflow.Tests", "SFA.DAS.AssessorService.Application.Api.Specflow.Tests\SFA.DAS.AssessorService.Application.Api.Specflow.Tests.csproj", "{7AC422A2-0183-4D77-AA10-B55198A69F35}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Azure", "Azure", "{F85262CD-4210-4352-B691-30F40D99B4D2}"
+	ProjectSection(SolutionItems) = preProject
+		..\azure\parameters.json = ..\azure\parameters.json
+		..\azure\template.json = ..\azure\template.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deployments", "deployments", "{3B16AB0E-5C83-4E5D-82B0-7021AB4C5B9F}"
+	ProjectSection(SolutionItems) = preProject
+		..\azure\deployments\app-service-resources.json = ..\azure\deployments\app-service-resources.json
+		..\azure\deployments\function-app-resources.json = ..\azure\deployments\function-app-resources.json
+		..\azure\deployments\service-bus-resources.json = ..\azure\deployments\service-bus-resources.json
+		..\azure\deployments\storage-resources.json = ..\azure\deployments\storage-resources.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -111,6 +127,10 @@ Global
 		{25C146EB-E44C-463A-AD78-B77D9BA95355}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{25C146EB-E44C-463A-AD78-B77D9BA95355}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{25C146EB-E44C-463A-AD78-B77D9BA95355}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2954FF3-69CA-4C61-995A-59BCC4E94839}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2954FF3-69CA-4C61-995A-59BCC4E94839}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2954FF3-69CA-4C61-995A-59BCC4E94839}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2954FF3-69CA-4C61-995A-59BCC4E94839}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7AC422A2-0183-4D77-AA10-B55198A69F35}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7AC422A2-0183-4D77-AA10-B55198A69F35}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7AC422A2-0183-4D77-AA10-B55198A69F35}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -123,9 +143,10 @@ Global
 		{F8E42D52-9A76-4475-92FA-CF8FF286EF4C} = {EB54D000-867F-48CA-AE28-BDBE0CCE1322}
 		{E6E3A82F-A269-42E3-A1C6-0B157CFF4408} = {EB54D000-867F-48CA-AE28-BDBE0CCE1322}
 		{4C41B95D-C9E5-461A-B198-F1F36A61176A} = {EB54D000-867F-48CA-AE28-BDBE0CCE1322}
-		{13718FBC-6B4E-41BE-A23B-2AFF88F42DA3} = {EFD6034B-FA26-4A09-8FDA-D03C3326560C}
 		{25C146EB-E44C-463A-AD78-B77D9BA95355} = {EB54D000-867F-48CA-AE28-BDBE0CCE1322}
+		{F2954FF3-69CA-4C61-995A-59BCC4E94839} = {EFD6034B-FA26-4A09-8FDA-D03C3326560C}
 		{7AC422A2-0183-4D77-AA10-B55198A69F35} = {EB54D000-867F-48CA-AE28-BDBE0CCE1322}
+		{3B16AB0E-5C83-4E5D-82B0-7021AB4C5B9F} = {F85262CD-4210-4352-B691-30F40D99B4D2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C5B677B2-0D72-4629-A5FD-F94B00EC858B}

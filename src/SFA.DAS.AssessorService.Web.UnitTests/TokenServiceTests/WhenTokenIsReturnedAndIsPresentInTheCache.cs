@@ -1,32 +1,28 @@
-﻿namespace SFA.DAS.AssessorService.Application.MSpec.UnitTests
-{
-    using FluentAssertions;
-    using Machine.Specifications;
-    using SFA.DAS.AssessorService.Web.UnitTests.TokenServiceTests;
+﻿using FluentAssertions;
+using NUnit.Framework;
 
-    [Subject("JWTTest")]
-    // WhenANewTokenIsCreatedAndIsInCache
+namespace SFA.DAS.AssessorService.Web.UnitTests.TokenServiceTests
+{
+    [TestFixture]
     public class WhenTokenIsReturnedAndIsPresentInTheCache : JWTTestBase
     {
         private static string _result;
         private static string _jwt;
 
-        Establish context = () =>
+        [SetUp]
+        public void Arrange()
         {
             Setup();
 
             _jwt = GenerateJwt();
             Cache.Setup(c => c.GetString("USERID")).Returns(_jwt);
-        };
-
-        Because of = () =>
+        }
+        
+        [Test]
+        public void Should_return_a_jwt()
         {
             _result = TokenService.GetJwt("USERID");
-        };
-
-        Machine.Specifications.It should_return_a_jwt = () =>
-        {
             _result.Should().Be(_jwt);
-        };
+        }
     }
 }

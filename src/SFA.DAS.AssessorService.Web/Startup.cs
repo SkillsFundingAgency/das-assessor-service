@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Web
             services.AddMvc().AddControllersAsServices().AddSessionStateTempDataProvider();
             services.AddSession();
 
-            return ConfigureIOC(services);
+            return ConfigureIOC(services); 
         }
 
         private IServiceProvider ConfigureIOC(IServiceCollection services)

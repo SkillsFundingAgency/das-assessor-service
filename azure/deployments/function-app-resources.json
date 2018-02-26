@@ -1,0 +1,79 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "functionAppName": {
+            "type": "string"
+        },
+        "appServicePlanId": {
+            "type": "string"
+        },
+        "configurationStorageConnectionString": {
+            "type": "string"
+        },
+        "configEnvironmentName": {
+            "type": "string"
+        },
+        "storageAccountName": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "storageConnectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')),'2015-05-01-preview').key1)]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2015-05-01",
+            "name": "[parameters('functionAppName')]",
+            "type": "Microsoft.Insights/components",
+            "location": "[resourceGroup().location]",
+            "kind": "web",
+            "properties": {
+                "Application_Type": "web"
+            }
+        },
+        {
+            "name": "[parameters('functionAppName')]",
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2016-08-01",
+            "location": "[resourceGroup().location]",
+            "kind": "functionapp",
+            "properties": {
+                "serverFarmId": "[parameters('appServicePlanId')]",
+                "siteConfig": {
+                    "alwaysOn": true,
+                    "appSettings": [
+                        {
+                            "name": "AzureWebJobsStorage",
+                            "value": "[variables('storageConnectionString')]"
+                        },
+                        {
+                            "name": "AzureWebJobsDashboard",
+                            "value": "[variables('storageConnectionString')]"
+                        },
+                        {
+                            "name": "FUNCTIONS_EXTENSION_VERSION",
+                            "value": "~1"
+                        },
+                        {
+                            "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                            "value": "[reference(concat('microsoft.insights/components/', parameters('functionAppName'))).InstrumentationKey]"
+                        },
+                        {
+                            "name": "ConfigurationStorageConnectionString",
+                            "value": "[parameters('configurationStorageConnectionString')]"
+                        },
+                        {
+                            "name": "EnvironmentName",
+                            "value": "[toUpper(parameters('configEnvironmentName'))]"
+                        }
+                    ]
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Insights/components', parameters('functionAppName'))]"
+            ]
+        }
+    ],
+    "outputs": {}
+}
