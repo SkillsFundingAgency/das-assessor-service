@@ -1,33 +1,30 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using JWT;
+using SFA.DAS.AssessorService.Application.Api.StartupConfiguration;
+using FluentValidation.AspNetCore;
+using MediatR;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using SFA.DAS.AssessorService.Data;
+using StructureMap;
+using Swashbuckle.AspNetCore.Swagger;
+using SFA.DAS.AssessorService.Data.TestData;
+using SFA.DAS.AssessorService.Settings;
+using SFA.DAS.AssessorService.Application.Api.Middleware;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.ExternalApis;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 
 namespace SFA.DAS.AssessorService.Application.Api
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.IO;
-    using JWT;
-    using SFA.DAS.AssessorService.Application.Api.StartupConfiguration;
-    using FluentValidation.AspNetCore;
-    using MediatR;
-    using Microsoft.AspNetCore.Builder;
-    using Microsoft.AspNetCore.Hosting;
-    using Microsoft.AspNetCore.Localization;
-    using Microsoft.AspNetCore.Mvc.Razor;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.DependencyInjection;
-    using SFA.DAS.AssessorService.Data;
-    using StructureMap;
-    using Swashbuckle.AspNetCore.Swagger;
-    using SFA.DAS.AssessorService.Data.TestData;
-    using SFA.DAS.AssessorService.Settings;
-    using SFA.DAS.AssessorService.Application.Api.Middleware;
-
     public class Startup
     {
         private readonly IHostingEnvironment _env;
@@ -73,9 +70,13 @@ namespace SFA.DAS.AssessorService.Application.Api
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "SFA.DAS.AssessorService.Application.Api", Version = "v1" });
-                var basePath = AppContext.BaseDirectory;
-                var xmlPath = Path.Combine(basePath, "SFA.DAS.AssessorService.Application.Api.xml");
-                c.IncludeXmlComments(xmlPath);
+
+                if (_env.IsDevelopment())
+                {
+                    var basePath = AppContext.BaseDirectory;
+                    var xmlPath = Path.Combine(basePath, "SFA.DAS.AssessorService.Application.Api.xml");
+                    c.IncludeXmlComments(xmlPath);
+                }
             });
 
             services.Configure<RequestLocalizationOptions>(

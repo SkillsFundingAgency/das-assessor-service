@@ -35,9 +35,9 @@
             return result;
         }
 
-        private bool HaveAssociatedPrimaryContactInContacts(int? primaryContactId)
+        private bool HaveAssociatedPrimaryContactInContacts(Guid? primaryContactId)
         {
-            if (!primaryContactId.HasValue)
+            if (!primaryContactId.HasValue || primaryContactId == Guid.Empty)
                 return true;
 
             var result = _contactQueryRepository.CheckContactExists(primaryContactId.Value).Result;

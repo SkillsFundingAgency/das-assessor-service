@@ -63,7 +63,7 @@
             return NoContent();
         }
 
-        [HttpDelete(Name = "Delete")]     
+        [HttpDelete(Name = "Delete")]
         [SwaggerResponse((int)HttpStatusCode.NoContent)]       
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]

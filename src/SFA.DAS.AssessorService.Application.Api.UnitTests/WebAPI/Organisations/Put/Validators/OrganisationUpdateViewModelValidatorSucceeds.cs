@@ -15,18 +15,14 @@
     {
         private static ValidationResult _validationResult;
        
-
         Establish context = () =>
         {
             Setup();
 
             OrganisationUpdateViewModel = Builder<OrganisationUpdateViewModel>.CreateNew()                
-                .With(q => q.EndPointAssessorName = "Jane")                
-                .With(q => q.PrimaryContactId = 999)                  
+                .With(q => q.EndPointAssessorName = "Jane")   
+                .With(q => q.PrimaryContactId = Guid.Empty)
                 .Build();
-
-            ContactQueryRepositoryMock.Setup(q => q.CheckContactExists(Moq.It.IsAny<int>()))
-                .Returns(Task.FromResult((true)));
 
             OrganisationQueryRepositoryMock.Setup(q => q.CheckIfAlreadyExists(Moq.It.IsAny<Guid>()))
                 .Returns(Task.FromResult((true)));         
@@ -45,13 +41,6 @@
         Machine.Specifications.It errormessage_should_not_contain_EndPointAssessorName = () =>
         {
             var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "EndPointAssessorName" && q.ErrorCode == "NotEmptyValidator");
-            errors.Should().BeNull();
-        };
-
-        
-        Machine.Specifications.It errormessage_should_not_contain_PrimaryContactNotFound = () =>
-        {
-            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "PrimaryContactId" && q.ErrorCode == "PredicateValidator");
             errors.Should().BeNull();
         };
 

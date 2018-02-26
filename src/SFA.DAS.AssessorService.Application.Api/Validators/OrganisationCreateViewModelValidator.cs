@@ -1,5 +1,6 @@
 ﻿namespace SFA.DAS.AssessorService.Application.Api.Validators
 {
+    using System;
     using FluentValidation;
     using Microsoft.Extensions.Localization;
     using SFA.DAS.AssessorService.Application.Api.Consts;
@@ -27,22 +28,22 @@
             RuleFor(organisation => organisation.EndPointAssessorName).NotEmpty().WithMessage(_localizer[ResourceMessageName.EndPointAssessorNameMustBeDefined, nameof(organisationCreateViewModel.EndPointAssessorName)].Value);
             RuleFor(organisation => organisation.EndPointAssessorUKPRN).InclusiveBetween(10000000, 99999999).WithMessage(_localizer[ResourceMessageName.InvalidUKPRN, nameof(organisationCreateViewModel.EndPointAssessorUKPRN)].Value);
 
-            RuleFor(customer => customer.PrimaryContactId).Must(HaveAssociatedPrimaryContactInContacts).WithMessage(_localizer[ResourceMessageName.PrimaryContactDoesNotExist, nameof(organisationCreateViewModel.PrimaryContactId)].Value);
-            RuleFor(customer => customer.EndPointAssessorOrganisationId).Must(AlreadyExists).WithMessage(_localizer[ResourceMessageName.AlreadyExists, nameof(organisationCreateViewModel.EndPointAssessorOrganisationId)].Value);
+            RuleFor(organisation => organisation.PrimaryContactId).Must(HaveAssociatedPrimaryContactInContacts).WithMessage(_localizer[ResourceMessageName.PrimaryContactDoesNotExist, nameof(organisationCreateViewModel.PrimaryContactId)].Value);
+            RuleFor(organisation => organisation.EndPointAssessorOrganisationId).Must(AlreadyExists).WithMessage(_localizer[ResourceMessageName.AlreadyExists, nameof(organisationCreateViewModel.EndPointAssessorOrganisationId)].Value);
         }
 
-        private bool AlreadyExists(string endPointAssessorOrganisationId)
-        {
-            return !_organisationQueryRepository.CheckIfAlreadyExists(endPointAssessorOrganisationId).Result;
-        }
-
-        private bool HaveAssociatedPrimaryContactInContacts(int? primaryContactId)
+        private bool HaveAssociatedPrimaryContactInContacts(Guid? primaryContactId)
         {
             if (!primaryContactId.HasValue)
                 return true;
 
             var result = _contactQueryRepository.CheckContactExists(primaryContactId.Value).Result;
             return result;
+        }
+
+        private bool AlreadyExists(string endPointAssessorOrganisationId)
+        {
+            return !_organisationQueryRepository.CheckIfAlreadyExists(endPointAssessorOrganisationId).Result;
         }
     }
 }

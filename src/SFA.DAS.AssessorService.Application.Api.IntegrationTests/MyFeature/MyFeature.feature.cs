@@ -19,6 +19,7 @@ namespace SpecFlow.GeneratedTests.MyFeature
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [NUnit.Framework.TestFixtureAttribute()]
     [NUnit.Framework.DescriptionAttribute("Get blogs")]
+    [NUnit.Framework.CategoryAttribute("Test")]
     public partial class GetBlogsFeature
     {
         
@@ -32,7 +33,8 @@ namespace SpecFlow.GeneratedTests.MyFeature
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
             TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Get blogs", "    In order to list the available blogs\r\n    I want to be told the list of blogs" +
-                    "", ProgrammingLanguage.CSharp, ((string[])(null)));
+                    "", ProgrammingLanguage.CSharp, new string[] {
+                        "Test"});
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -66,8 +68,8 @@ namespace SpecFlow.GeneratedTests.MyFeature
         
         public virtual void FeatureBackground()
         {
-#line 5
 #line 6
+#line 7
     testRunner.Given("A configured environment", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
         }
@@ -77,9 +79,9 @@ namespace SpecFlow.GeneratedTests.MyFeature
         public virtual void GetBlogsShouldBeOk()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get blogs should be ok", ((string[])(null)));
-#line 8
+#line 9
 this.ScenarioSetup(scenarioInfo);
-#line 5
+#line 6
 this.FeatureBackground();
 #line hidden
             TechTalk.SpecFlow.Table table1 = new TechTalk.SpecFlow.Table(new string[] {
@@ -88,9 +90,9 @@ this.FeatureBackground();
                         "http://blog1.io"});
             table1.AddRow(new string[] {
                         "http://blog2.io"});
-#line 9
+#line 10
     testRunner.Given("the following blogs", ((string)(null)), table1, "Given ");
-#line 13
+#line 14
     testRunner.When("I get the list of blogs", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
             TechTalk.SpecFlow.Table table2 = new TechTalk.SpecFlow.Table(new string[] {
@@ -99,8 +101,8 @@ this.FeatureBackground();
                         "http://blog1.io"});
             table2.AddRow(new string[] {
                         "http://blog2.io"});
-#line 14
-    testRunner.Then("the result must be the following list", ((string)(null)), table2, "Then ");
+#line 15
+    testRunner.Then("the result must be the following list with 5 results", ((string)(null)), table2, "Then ");
 #line hidden
             this.ScenarioCleanup();
         }

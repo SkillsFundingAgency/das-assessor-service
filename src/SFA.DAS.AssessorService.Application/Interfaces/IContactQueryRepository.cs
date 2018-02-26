@@ -8,8 +8,10 @@
     public interface IContactQueryRepository
     {
         Task<bool> CheckContactExists(int contactId);
+        Task<bool> CheckContactExists(Guid value);
 
         Task<IEnumerable<ContactQueryViewModel>> GetContacts(Guid id);
-        Task<ContactQueryViewModel> GetContact(string userName, string emailAddress);    
+        Task<ContactQueryViewModel> GetContact(string userName, string emailAddress);
+      
     }
 }

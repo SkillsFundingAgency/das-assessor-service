@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
             OrganisationRepository.Setup(r => r.GetAllOrganisations())
                 .Returns(Task.FromResult(new List<OrganisationQueryViewModel>
                 {
-                    new OrganisationQueryViewModel() {Id = _organisationId, EndPointAssessorOrganisationId = "EPA0001", Status = OrganisationStatus.Deleted},
+                    new OrganisationQueryViewModel() {Id = _organisationId, EndPointAssessorOrganisationId = "EPA0001", OrganisationStatus = OrganisationStatus.Deleted},
                     new OrganisationQueryViewModel() {EndPointAssessorOrganisationId = "EPA0002"}
                 }.AsEnumerable()));
         }

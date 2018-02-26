@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
-
-namespace SFA.DAS.AssessorService.Application.Api.Controllers
+﻿namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
+    using Microsoft.AspNetCore.Authorization;
     using System;
+    using System.Linq;
     using System.Collections.Generic;
     using System.Net;
     using System.Threading.Tasks;
@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
     using SFA.DAS.AssessorService.Domain.Exceptions;
     using SFA.DAS.AssessorService.ViewModel.Models;
     using Swashbuckle.AspNetCore.SwaggerGen;
-
+  
     [Authorize]
     [Route("api/v1/contacts")]
     public class ContactQueryController : Controller
@@ -39,6 +39,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> GetAllContactsForAnOrganisation(Guid organisationId)
         {           
             var contacts = await _contactQueryRepository.GetContacts(organisationId);
+            if (contacts.Count() == 0)
+                return NotFound();
             return Ok(contacts);
         }
 

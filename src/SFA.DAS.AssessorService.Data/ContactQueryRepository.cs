@@ -34,7 +34,8 @@
         public async Task<ContactQueryViewModel> GetContact(string userName, string emailAddress)
         {
             var contact = await _assessorDbContext.Contacts
-                .FirstOrDefaultAsync(q => q.ContactName == userName && q.ContactEmail == emailAddress && q.ContactStatus != ContactStatus.Deleted);
+                .FirstOrDefaultAsync(q => q.ContactName == userName && q.ContactEmail == emailAddress && q.ContactStatus
+                != ContactStatus.Deleted);
             if (contact == null)
                 throw new NotFound();
 
@@ -47,6 +48,13 @@
             var result = await _assessorDbContext.Contacts
                          .AnyAsync(q => q.EndPointAssessorContactId == contactId && q.ContactStatus != ContactStatus.Deleted);
             return result;
-        }        
+        }
+
+        public async Task<bool> CheckContactExists(Guid contactId)
+        {
+            var result = await _assessorDbContext.Contacts
+                       .AnyAsync(q => q.Id == contactId && q.ContactStatus != ContactStatus.Deleted);
+            return result;
+        }
     }
 }
