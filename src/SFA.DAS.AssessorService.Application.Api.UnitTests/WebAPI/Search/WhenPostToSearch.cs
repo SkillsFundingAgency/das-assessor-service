@@ -2,10 +2,10 @@
 using Machine.Specifications;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
+using SFA.DAS.AssessorService.ExternalApis;
+using SFA.DAS.AssessorService.ExternalApis.Types;
 using SFA.DAS.AssessorService.ViewModel.Models;
-using SFA.DAS.ILR.Api.Client;
 using It = Moq.It;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Search
@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Search
 
         private Machine.Specifications.It Calls_The_Ilr_Api = () =>
         {
-            _ilrApi.Verify(api => api.Search(It.IsAny<SearchQueryViewModel>()));
+            _ilrApi.Verify(api => api.Search(It.IsAny<SearchRequest>()));
         };
 
         private static SearchController _controller;

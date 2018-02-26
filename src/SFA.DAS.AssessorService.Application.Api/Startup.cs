@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.ExternalApis;
 
 namespace SFA.DAS.AssessorService.Application.Api
 {
@@ -19,7 +20,6 @@ namespace SFA.DAS.AssessorService.Application.Api
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using SFA.DAS.AssessmentOrgs.Api.Client.Core;
     using SFA.DAS.AssessorService.Data;
     using StructureMap;
     using Swashbuckle.AspNetCore.Swagger;

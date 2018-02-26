@@ -3,9 +3,9 @@ using System.Threading;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SFA.DAS.AssessmentOrgs.Api.Client.Core;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.RegisterUpdate;
+using SFA.DAS.AssessorService.ExternalApis;
 using SFA.DAS.AssessorService.ViewModel.Models;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate

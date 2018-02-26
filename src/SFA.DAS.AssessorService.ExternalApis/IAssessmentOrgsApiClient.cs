@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SFA.DAS.AssessmentOrgs.Api.Client.Core.Types;
+using SFA.DAS.AssessorService.ExternalApis.Types;
 
-namespace SFA.DAS.AssessmentOrgs.Api.Client.Core
+namespace SFA.DAS.AssessorService.ExternalApis
 {
     public interface IAssessmentOrgsApiClient : IDisposable
     {

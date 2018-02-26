@@ -1,7 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.AssessorService.ExternalApis;
+using SFA.DAS.AssessorService.ExternalApis.Types;
 using SFA.DAS.AssessorService.ViewModel.Models;
-using SFA.DAS.ILR.Api.Client;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -16,7 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         public async Task<IActionResult> Search(SearchQueryViewModel searchQueryViewModel)
         {
-            var result = _ilrApi.Search(searchQueryViewModel);
+            var result = await _ilrApi.Search(new SearchRequest());
 
             return Ok();
         }
