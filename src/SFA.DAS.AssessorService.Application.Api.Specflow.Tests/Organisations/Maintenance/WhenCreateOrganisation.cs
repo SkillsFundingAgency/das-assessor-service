@@ -71,12 +71,6 @@
             _restClient.Result = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
         }
 
-        [Then(@"the Location Header should be set")]
-        public void ThenTheLocationHeaderShouldBeSet()
-        {
-            _restClient.HttpResponseMessage.Headers.Location.Should().NotBeNull();
-        }
-
         [Then(@"the Organisation should be created")]
         public void ThenTheOrganisationShouldBeCreated()
         {

@@ -2,15 +2,12 @@
 {
     using System;
     using System.Configuration;
-    using System.Net;
     using System.Net.Http;
     using System.Net.Http.Headers;
     using FluentAssertions;
     using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.consts;
     using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.DatabaseUtils;
     using TechTalk.SpecFlow;
-    using System.Threading.Tasks;
-    using System.Data;
 
     [Binding]
     public class ApiStepDefinitionBase
@@ -55,6 +52,12 @@
         public void ThenTheResponseHttpStatusShouldBe(string httpStatusCode)
         {
             restClient.HttpResponseMessage.ReasonPhrase.Should().Be(httpStatusCode);
+        }
+
+        [Then(@"the Location Header should be set")]
+        public void ThenTheLocationHeaderShouldBeSet()
+        {
+            restClient.HttpResponseMessage.Headers.Location.Should().NotBeNull();
         }
     }
 }

@@ -23,7 +23,6 @@
 
             ContactQueryController = new ContactQueryController(                
                 ContactQueryRepository.Object, 
-                StringLocalizer.Object,
                 Logger.Object);
         };
 

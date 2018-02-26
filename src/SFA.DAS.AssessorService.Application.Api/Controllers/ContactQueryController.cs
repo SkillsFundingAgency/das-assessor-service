@@ -7,29 +7,25 @@
     using System.Net;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Localization;
     using Microsoft.Extensions.Logging;
     using SFA.DAS.AssessorService.Application.Api.Middleware;
     using SFA.DAS.AssessorService.Application.Interfaces;
     using SFA.DAS.AssessorService.Domain.Exceptions;
     using SFA.DAS.AssessorService.ViewModel.Models;
     using Swashbuckle.AspNetCore.SwaggerGen;
-  
+
     [Authorize]
     [Route("api/v1/contacts")]
     public class ContactQueryController : Controller
     {      
-        private readonly IContactQueryRepository _contactQueryRepository;
-        private readonly IStringLocalizer<ContactQueryController> _localizer;        
+        private readonly IContactQueryRepository _contactQueryRepository;      
         private readonly ILogger<ContactQueryController> _logger;
 
-        public ContactQueryController(IContactQueryRepository contactQueryRepository,
-            IStringLocalizer<ContactQueryController> localizer,       
+        public ContactQueryController(IContactQueryRepository contactQueryRepository,  
             ILogger<ContactQueryController> logger
             )
         {           
-            _contactQueryRepository = contactQueryRepository;
-            _localizer = localizer;           
+            _contactQueryRepository = contactQueryRepository;  
             _logger = logger;
         }
 

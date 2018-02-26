@@ -56,5 +56,12 @@
                        .AnyAsync(q => q.Id == contactId && q.ContactStatus != ContactStatus.Deleted);
             return result;
         }
+
+        public async Task<bool> CheckContactExists(string contactName, string contactEmail)
+        {
+            var result = await _assessorDbContext.Contacts
+                     .AnyAsync(q => q.ContactName == contactName && q.ContactEmail == contactEmail && q.ContactStatus != ContactStatus.Deleted);
+            return result;
+        }
     }
 }

@@ -85,7 +85,14 @@
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="consts\PersistenceNames.cs" />
     <Compile Include="consts\RestParameters.cs" />
-    <Compile Include="Contacts\ContactsQuery.feature.cs">
+    <Compile Include="Contacts\Maintenance\ContactMaintenance.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ContactMaintenance.feature</DependentUpon>
+    </Compile>
+    <Compile Include="Contacts\Maintenance\WhenUpdateContact.cs" />
+    <Compile Include="Contacts\Maintenance\WhenCreateContact.cs" />
+    <Compile Include="Contacts\Query\ContactsQuery.feature.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ContactsQuery.feature</DependentUpon>
@@ -121,7 +128,11 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Contacts\ContactsQuery.feature">
+    <None Include="Contacts\Maintenance\ContactMaintenance.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>ContactMaintenance.feature.cs</LastGenOutput>
+    </None>
+    <None Include="Contacts\Query\ContactsQuery.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>ContactsQuery.feature.cs</LastGenOutput>
     </None>

@@ -12,6 +12,7 @@
         protected static ContactCreateViewModelValidator ContactCreateViewModelValidator;
         protected static Mock<IContactRepository> ContactRepositoryMock;      
         protected static ContactCreateViewModel ContactCreateViewModel;
+        protected static Mock<IContactQueryRepository> ContactQueryRepository;
 
         public static void Setup()
         {
@@ -22,7 +23,9 @@
 
             ContactRepositoryMock = new Mock<IContactRepository>();
 
-            ContactCreateViewModelValidator = new ContactCreateViewModelValidator(stringLocalizerMock.Object);               
+            ContactQueryRepository = new Mock<IContactQueryRepository>();
+
+            ContactCreateViewModelValidator = new ContactCreateViewModelValidator(stringLocalizerMock.Object, ContactQueryRepository.Object);               
         }
     }
 }

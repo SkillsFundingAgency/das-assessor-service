@@ -10,7 +10,7 @@
 // ------------------------------------------------------------------------------
 #region Designer generated code
 #pragma warning disable
-namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts
+namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Query
 {
     using TechTalk.SpecFlow;
     
