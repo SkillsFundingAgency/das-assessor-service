@@ -9,10 +9,4 @@
     <PackageReference Include="WindowsAzure.Storage" Version="9.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="Microsoft.Extensions.Logging.Abstractions">
-      <HintPath>..\..\..\..\..\..\..\..\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.extensions.logging.abstractions\2.0.0\lib\netstandard2.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>
