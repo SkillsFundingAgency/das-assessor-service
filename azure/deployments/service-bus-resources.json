@@ -20,15 +20,18 @@
             "resources": [
                 {
                     "name": "CertificatePrint",
-                    "type": "Microsoft.ServiceBus/namespaces/queues",
+                    "type": "queues",
                     "apiVersion": "2017-04-01",
                     "properties": {
                         "maxSizeInMegabytes": 1024,
                         "requiresDuplicateDetection": true,
                         "deadLetteringOnMessageExpiration": true,
-                        "duplicateDetectionHistoryTimeWindow": "00:05:00",
+                        "duplicateDetectionHistoryTimeWindow": "PT5M",
                         "enablePartitioning": true
                     },
+                    "dependsOn": [
+                        "[parameters('serviceBusName')]"
+                    ],
                     "resources": [
                         {
                             "name": "Printout",
@@ -36,10 +39,12 @@
                             "apiVersion": "2017-04-01",
                             "properties": {
                                 "rights": [
-                                    "Manage",
                                     "Send"
                                 ]
-                            }
+                            },
+                            "dependsOn": [
+                                "[concat('Microsoft.ServiceBus/namespaces/', parameters('serviceBusName'), '/queues/CertificatePrint')]"
+                            ]
                         },
                         {
                             "name": "Printrcv",
@@ -49,7 +54,10 @@
                                 "rights": [
                                     "Listen"
                                 ]
-                            }
+                            },
+                            "dependsOn": [
+                                "[concat('Microsoft.ServiceBus/namespaces/', parameters('serviceBusName'), '/queues/CertificatePrint')]"
+                            ]
                         }
                     ]
                 }
