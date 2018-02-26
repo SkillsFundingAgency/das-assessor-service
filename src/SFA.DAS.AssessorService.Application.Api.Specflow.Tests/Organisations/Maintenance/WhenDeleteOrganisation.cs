@@ -47,14 +47,41 @@
 
             var organisationCreated = JsonConvert.DeserializeObject<OrganisationQueryViewModel>(_restClient.Result);
 
+            _restClient.HttpResponseMessage = _restClient.HttpClient.DeleteAsJsonAsync($"api/v1/organisations?id={organisationCreated.Id}").Result;
+        }
 
+
+        [When(@"I Delete an Organisation Twice")]
+        public void WhenIDeleteAnOrganisationTwice(IEnumerable<dynamic> organisations)
+        {
+            _organisationArguments = organisations.First();
+
+            var organisation = new OrganisationCreateViewModel
+            {
+                EndPointAssessorName = _organisationArguments.EndPointAssessorName,
+                EndPointAssessorOrganisationId = _organisationArguments.EndPointAssessorOrganisationId.ToString(),
+                EndPointAssessorUKPRN = Convert.ToInt32(_organisationArguments.EndPointAssessorUKPRN),
+                PrimaryContactId = null
+            };
+
+            _restClient.HttpResponseMessage = _restClient.HttpClient.PostAsJsonAsync(
+                 "api/v1/organisations", organisation).Result;
+            _restClient.Result = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
+
+            var organisationCreated = JsonConvert.DeserializeObject<OrganisationQueryViewModel>(_restClient.Result);
+
+            _restClient.HttpResponseMessage = _restClient.HttpClient.DeleteAsJsonAsync($"api/v1/organisations?id={organisationCreated.Id}").Result;
             _restClient.HttpResponseMessage = _restClient.HttpClient.DeleteAsJsonAsync($"api/v1/organisations?id={organisationCreated.Id}").Result;
         }
 
         [Then(@"the Organisation should be deleted")]
         public void ThenTheOrganisationShouldBeDeleted()
         {
-            //ScenarioContext.Current.Pending();
+            var organisationsCreated = _dbconnection.Query<OrganisationQueryViewModel>
+            ($"Select EndPointAssessorOrganisationId, EndPointAssessorUKPRN, EndPointAssessorName, OrganisationStatus From Organisations where EndPointAssessorOrganisationId = {_organisationArguments.EndPointAssessorOrganisationId}").ToList();
+            _organisationRetrieved = organisationsCreated.First();
+
+            _organisationRetrieved.OrganisationStatus.Should().Be(OrganisationStatus.Deleted);
         }
     }
 }

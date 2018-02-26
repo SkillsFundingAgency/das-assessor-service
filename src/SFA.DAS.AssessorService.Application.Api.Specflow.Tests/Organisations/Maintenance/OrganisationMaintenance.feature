@@ -80,4 +80,12 @@ Scenario: Delete an Organisation
 	| Test                 | 99999777                       | 10033444              |
 	Then the response http status should be No Content
 	And the Organisation should be deleted
+
+Scenario: Repeat Deleting an Organisation 
+	Given System Has access to the SFA.DAS.AssessmentOrgs.Api	
+	When I Delete an Organisation Twice
+	| EndPointAssessorName | EndPointAssessorOrganisationId | EndPointAssessorUKPRN |
+	| Test                 | 99999778                       | 10033444              |
+	Then the response http status should be Not Found
+	And the Organisation should be deleted
 	

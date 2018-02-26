@@ -50,7 +50,7 @@
         public async Task Delete(Guid id)
         {
             var organisationEntity = _assessorDbContext.Organisations
-                      .FirstOrDefault(q => q.Id == id);
+                      .FirstOrDefault(q => q.Id == id && q.OrganisationStatus != OrganisationStatus.Deleted);
 
             if (organisationEntity == null)
                 throw (new NotFound());
