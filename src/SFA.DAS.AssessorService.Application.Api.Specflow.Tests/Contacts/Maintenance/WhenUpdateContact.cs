@@ -1,22 +1,21 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations
+﻿namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Maintenance
 {
-    using FluentAssertions;
-    using TechTalk.SpecFlow;
-    using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Extensions;
-    using System.Data;
-    using Dapper;
-    using System.Linq;
     using System.Collections.Generic;
-    using Newtonsoft.Json;
-    using SFA.DAS.AssessorService.Domain.Enums;
+    using System.Data;
+    using System.Linq;
     using System.Net.Http;
     using AssessorService.Api.Types.Models;
-    using SFA.DAS.AssessorService.Api.Types;
+    using Dapper;
+    using Domain.Enums;
+    using Extensions;
+    using FluentAssertions;
+    using Newtonsoft.Json;
+    using TechTalk.SpecFlow;
 
     [Binding]
     public sealed class WhenUpdateContact
     {
-        private RestClient _restClient;
+        private readonly RestClient _restClient;
         private readonly IDbConnection _dbconnection;
         private Organisation _organisationQueryViewModel;
         private Contact _contactQueryViewModel;

@@ -14,13 +14,14 @@
         {
             _localizer = localizer;
 
-            var organisationCreateViewModel = new CreateContactRequest();
+            // ReSharper disable once LocalNameCapturedOnly
+            CreateContactRequest createContactRequest;
             RuleFor(organisation => organisation.ContactEmail).NotEmpty().WithMessage(
                 _localizer[ResourceMessageName.ContactNameMustBeDefined,
-                    nameof(organisationCreateViewModel.ContactName)].Value);
+                    nameof(createContactRequest.ContactName)].Value);
             RuleFor(organisation => organisation.ContactName).NotEmpty().WithMessage(
                 _localizer[ResourceMessageName.ContactEMailMustBeDefined,
-                    nameof(organisationCreateViewModel.ContactEmail)].Value);
+                    nameof(createContactRequest.ContactEmail)].Value);
         }
     }
 }

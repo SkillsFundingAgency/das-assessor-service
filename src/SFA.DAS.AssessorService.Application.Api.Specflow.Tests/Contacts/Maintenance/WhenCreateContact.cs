@@ -1,14 +1,13 @@
 ﻿namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations
 {
-    using FluentAssertions;
-    using Newtonsoft.Json;
-    using SFA.DAS.AssessorService.Api.Types;
-    using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Extensions;
-    using SFA.DAS.AssessorService.Domain.Enums;
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
     using AssessorService.Api.Types.Models;
+    using Domain.Enums;
+    using Extensions;
+    using FluentAssertions;
+    using Newtonsoft.Json;
     using TechTalk.SpecFlow;
 
     [Binding]

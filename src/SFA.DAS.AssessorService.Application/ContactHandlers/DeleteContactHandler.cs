@@ -3,8 +3,8 @@
     using System.Threading;
     using System.Threading.Tasks;
     using AssessorService.Api.Types.Models;
+    using Interfaces;
     using MediatR;
-    using SFA.DAS.AssessorService.Application.Interfaces;
 
     public class DeleteContactHandler : IRequestHandler<DeleteContactRequest>
     {

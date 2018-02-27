@@ -18,18 +18,19 @@
             _localizer = localizer;
             _contactQueryRepository = contactQueryRepository;
 
-            var organisationCreateViewModel = new CreateContactRequest();
+            // ReSharper disable once LocalNameCapturedOnly
+            CreateContactRequest createContactRequest;
             RuleFor(contact => contact.ContactEmail).NotEmpty().WithMessage(
                 _localizer[ResourceMessageName.ContactNameMustBeDefined,
-                    nameof(organisationCreateViewModel.ContactName)].Value);
+                    nameof(createContactRequest.ContactName)].Value);
             RuleFor(contact => contact.ContactName).NotEmpty().WithMessage(
                 _localizer[ResourceMessageName.ContactEMailMustBeDefined,
-                    nameof(organisationCreateViewModel.ContactEmail)].Value);
+                    nameof(createContactRequest.ContactEmail)].Value);
             RuleFor(contact => contact.EndPointAssessorContactId).NotEmpty().WithMessage(
                 _localizer[ResourceMessageName.EndPointAssessorContactIdMustBeDefined,
-                    nameof(organisationCreateViewModel.EndPointAssessorContactId)].Value);
+                    nameof(createContactRequest.EndPointAssessorContactId)].Value);
             RuleFor(contact => contact).Must(NotAlreadyExist).WithMessage(_localizer[ResourceMessageName.AlreadyExists,
-                nameof(organisationCreateViewModel)].Value);
+                nameof(createContactRequest)].Value);
         }
 
         private bool NotAlreadyExist(CreateContactRequest contact)

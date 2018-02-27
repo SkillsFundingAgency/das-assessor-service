@@ -22,7 +22,8 @@
             _contactQueryRepository = contactQueryRepository;
             _organisationQueryRepository = organisationQueryRepository;
 
-            var organisationUpdateViewModel = new UpdateOrganisationRequest();
+            // ReSharper disable once LocalNameCapturedOnly
+            UpdateOrganisationRequest organisationUpdateViewModel;
 
             RuleFor(organisation => organisation.EndPointAssessorName).NotEmpty().WithMessage(
                 _localizer[ResourceMessageName.EndPointAssessorNameMustBeDefined,

@@ -1,13 +1,13 @@
 ﻿namespace SFA.DAS.AssessorService.Application.ContactHandlers
 {
-    using System.Threading;
-    using System.Threading.Tasks;
     using AssessorService.Api.Types.Models;
     using AutoMapper;
     using Domain;
-    using MediatR;  
-    using SFA.DAS.AssessorService.Application.Interfaces;
-    using SFA.DAS.AssessorService.Domain.Enums;
+    using MediatR;
+    using Interfaces;
+    using AssessorService.Domain.Enums;
+    using System.Threading;
+    using System.Threading.Tasks;
 
     public class CreateContactHandler : IRequestHandler<CreateContactRequest, Contact>
     {
