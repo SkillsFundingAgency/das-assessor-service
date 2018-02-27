@@ -16,13 +16,13 @@
 
             AutoMapper.Mapper.Initialize(cfg =>
             {
-                cfg.CreateMap<Domain.Entities.Organisation, ViewModel.Models.Organisation>();
+                cfg.CreateMap<Domain.Entities.Organisation, AssessorService.Api.Types.Organisation>();
                 cfg.CreateMap<CreateOrganisationRequest, OrganisationCreateDomainModel>();
                 cfg.CreateMap<OrganisationCreateDomainModel, Domain.Entities.Organisation>();
-                cfg.CreateMap<Domain.Entities.Organisation, ViewModel.Models.Organisation>();
+                cfg.CreateMap<Domain.Entities.Organisation, AssessorService.Api.Types.Organisation>();
 
                 cfg.CreateMap<UpdateOrganisationRequest, OrganisationUpdateDomainModel>();
-                cfg.CreateMap<Domain.Entities.Organisation, ViewModel.Models.Organisation>();
+                cfg.CreateMap<Domain.Entities.Organisation, AssessorService.Api.Types.Organisation>();
                 cfg.CreateMap<CreateContactRequest, ContactCreateDomainModel>();
                 cfg.CreateMap<ContactCreateDomainModel, Domain.Entities.Contact>();
                 cfg.CreateMap<Domain.Entities.Contact, CreateContactRequest>();

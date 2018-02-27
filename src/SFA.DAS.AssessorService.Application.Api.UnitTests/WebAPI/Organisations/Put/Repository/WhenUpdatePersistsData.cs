@@ -19,9 +19,9 @@
         private static OrganisationRepository _organisationRepository;
         private static Mock<AssessorDbContext> _assessorDbContext;
         private static OrganisationUpdateDomainModel _organisationUpdateDomainModel;
-        private static Mock<DbSet<Domain.Entities.Organisation>> _organisationDBSetMock;
+        private static Mock<DbSet<Organisation>> _organisationDBSetMock;
 
-        protected static ViewModel.Models.Organisation _result;
+        protected static AssessorService.Api.Types.Organisation _result;
 
 
         Establish context = () =>
@@ -67,7 +67,7 @@
 
         Machine.Specifications.It verify_succesfully = () =>
         {
-            var result = (_result as ViewModel.Models.Organisation);
+            var result = (_result as AssessorService.Api.Types.Organisation);
             result.Should().NotBeNull();
         };
     }

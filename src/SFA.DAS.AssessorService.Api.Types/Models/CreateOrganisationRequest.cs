@@ -1,6 +1,7 @@
 ﻿namespace SFA.DAS.AssessorService.ViewModel.Models
 {
     using MediatR;
+    using SFA.DAS.AssessorService.Api.Types;
     using System;
 
     public class CreateOrganisationRequest : IRequest<Organisation>

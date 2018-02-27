@@ -9,7 +9,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
         {
             AutoMapper.Mapper.Initialize(cfg =>
             {
-                cfg.CreateMap<Domain.Entities.Organisation, ViewModel.Models.Organisation>();
+                cfg.CreateMap<Domain.Entities.Organisation, AssessorService.Api.Types.Organisation>();
                 cfg.CreateMap<CreateOrganisationRequest, OrganisationCreateDomainModel>();
                 cfg.CreateMap<OrganisationCreateDomainModel, Domain.Entities.Organisation>();
                 cfg.CreateMap<UpdateOrganisationRequest, OrganisationUpdateDomainModel>();

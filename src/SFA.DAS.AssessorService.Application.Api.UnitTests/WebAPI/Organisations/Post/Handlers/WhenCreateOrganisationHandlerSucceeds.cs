@@ -9,6 +9,7 @@
     using SFA.DAS.AssessorService.ViewModel.Models;
     using System.Threading;
     using System.Threading.Tasks;
+    using SFA.DAS.AssessorService.Api.Types;
 
     [Subject("AssessorService")]
     public class WhenCreateOrganisationHandlerSucceeds

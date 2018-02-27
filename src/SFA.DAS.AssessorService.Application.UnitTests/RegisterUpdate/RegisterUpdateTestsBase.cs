@@ -3,6 +3,7 @@ using System.Threading;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
+using SFA.DAS.AssessorService.Api.Types;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.RegisterUpdate;
 using SFA.DAS.AssessorService.ExternalApis;

@@ -12,6 +12,7 @@
     using SFA.DAS.AssessorService.Domain.Enums;
     using System.Net.Http;
     using Newtonsoft.Json;
+    using SFA.DAS.AssessorService.Api.Types;
 
     [Binding]
     public sealed class WhenCreateOrganisation

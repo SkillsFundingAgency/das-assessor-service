@@ -5,6 +5,7 @@
     using System.Data;
     using System.Linq;
     using System.Collections.Generic;
+    using SFA.DAS.AssessorService.Api.Types;
 
     [Binding]
     public sealed class WhenDeleteContact

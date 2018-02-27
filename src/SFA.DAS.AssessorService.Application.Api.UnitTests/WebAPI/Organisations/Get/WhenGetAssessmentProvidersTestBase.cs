@@ -7,6 +7,7 @@
     using Moq;
     using SFA.DAS.AssessorService.Application.Api.Consts;
     using SFA.DAS.AssessorService.Application.Api.Controllers;
+    using SFA.DAS.AssessorService.Application.Api.Orchesrators;
     using SFA.DAS.AssessorService.Application.Api.Validators;
     using SFA.DAS.AssessorService.Application.Interfaces;
 
@@ -18,11 +19,14 @@
         protected static UkPrnValidator UkPrnValidator;
         protected static Mock<ILogger<OrganisationQueryController>> Logger;
         protected static Mock<IMediator> Mediator;
+        protected static Mock<GetOrganisationsOrchestrator> GetOrganisationsOrchestratorMock;
 
         protected static OrganisationQueryController OrganisationContoller;
 
         protected static void Setup()
-        {          
+        {
+            GetOrganisationsOrchestratorMock = new Mock<GetOrganisationsOrchestrator>();
+
             OrganisationQueryRepositoryMock = new Mock<IOrganisationQueryRepository>();
 
             StringLocalizer = new Mock<IStringLocalizer<OrganisationController>>();

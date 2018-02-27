@@ -6,6 +6,7 @@
     using System.Threading.Tasks;
     using AutoMapper;
     using Microsoft.EntityFrameworkCore;
+    using SFA.DAS.AssessorService.Api.Types;
     using SFA.DAS.AssessorService.Application.Interfaces;
     using SFA.DAS.AssessorService.Domain.Enums;
     using SFA.DAS.AssessorService.ViewModel.Models;
