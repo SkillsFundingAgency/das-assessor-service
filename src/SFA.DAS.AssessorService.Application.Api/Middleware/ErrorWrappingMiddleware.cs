@@ -3,9 +3,8 @@
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Logging;
     using Newtonsoft.Json;
+    using SFA.DAS.AssessorService.Application.Exceptions;
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
 
     public class ErrorHandlingMiddleware
@@ -27,15 +26,28 @@
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Unhandled Exeption raised : {ex.Message} : Stack Trace : {ex.StackTrace}");
-                context.Response.StatusCode = 500;
-            }
+                if (ex is ApplicationException || ex is BadRequestException)
+                {
+                    context.Response.StatusCode = (int)System.Net.HttpStatusCode.BadRequest;
+                }
+                else if (ex is ResourceNotFoundException)
+                {
+                    context.Response.StatusCode = (int)System.Net.HttpStatusCode.NotFound;
+                }
+                else if (ex is UnauthorisedException)
+                {
+                    context.Response.StatusCode = (int)System.Net.HttpStatusCode.Unauthorized;
+                }
+                else
+                {
+                    context.Response.StatusCode = 500;
+                }
 
-            if (!context.Response.HasStarted)
-            {
+                _logger.LogError($"Unhandled Exeption raised : {ex.Message} : Stack Trace : {ex.StackTrace}");
+
                 context.Response.ContentType = "application/json";
 
-                var response = new ApiResponse(context.Response.StatusCode);
+                var response = new ApiResponse(context.Response.StatusCode, ex.Message);
                 var json = JsonConvert.SerializeObject(response);
 
                 await context.Response.WriteAsync(json);
