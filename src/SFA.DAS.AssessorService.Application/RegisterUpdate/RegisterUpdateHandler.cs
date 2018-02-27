@@ -7,7 +7,6 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Enums;
-using SFA.DAS.AssessorService.ExternalApis;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
 using SFA.DAS.AssessorService.ViewModel.Models;
