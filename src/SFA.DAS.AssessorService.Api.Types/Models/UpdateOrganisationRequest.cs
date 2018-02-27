@@ -1,9 +1,8 @@
-﻿namespace SFA.DAS.AssessorService.ViewModel.Models
+﻿namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    using MediatR;
     using System;
-    using SFA.DAS.AssessorService.Domain.Enums;
-    using SFA.DAS.AssessorService.Api.Types;
+    using Domain.Enums;
+    using MediatR;
 
     public class UpdateOrganisationRequest : IRequest<Organisation>
     {

@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.AssessorService.ViewModel.Models
+﻿namespace SFA.DAS.AssessorService.Api.Types.Models
 {
     public class SearchResultViewModel
     {

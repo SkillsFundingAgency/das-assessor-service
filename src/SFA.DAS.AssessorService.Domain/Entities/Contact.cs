@@ -1,7 +1,7 @@
 ﻿namespace SFA.DAS.AssessorService.Domain.Entities
 {
-    using SFA.DAS.AssessorService.Domain.Enums;
     using System;
+    using Enums;
 
     public class Contact : BaseEntity
     {

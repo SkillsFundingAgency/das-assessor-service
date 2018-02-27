@@ -2,11 +2,12 @@
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using AssessorService.Api.Types.Models;
     using AutoMapper;
+    using Domain;
     using MediatR;  
     using SFA.DAS.AssessorService.Application.Interfaces;
     using SFA.DAS.AssessorService.Domain.Enums;
-    using SFA.DAS.AssessorService.ViewModel.Models;
 
     public class CreateContactHandler : IRequestHandler<CreateContactRequest, Contact>
     {

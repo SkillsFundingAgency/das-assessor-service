@@ -5,9 +5,9 @@
     using Machine.Specifications;
     using SFA.DAS.AssessorService.Api.Types;
     using SFA.DAS.AssessorService.Application.Api.Controllers;
-    using SFA.DAS.AssessorService.ViewModel.Models;
     using System.Threading;
     using System.Threading.Tasks;
+    using AssessorService.Api.Types.Models;
 
     [Subject("AssessorService")]
     public class WhenPostAssessmentProvidersSucceeds : WhenPostAssessmentProvidersTestBase

@@ -5,10 +5,10 @@
     using SFA.DAS.AssessorService.Api.Types;
     using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Extensions;
     using SFA.DAS.AssessorService.Domain.Enums;
-    using SFA.DAS.AssessorService.ViewModel.Models;
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
+    using AssessorService.Api.Types.Models;
     using TechTalk.SpecFlow;
 
     [Binding]

@@ -5,11 +5,12 @@ using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
 using SFA.DAS.AssessorService.ExternalApis.Ilr;
 using SFA.DAS.AssessorService.ExternalApis.Ilr.Types;
-using SFA.DAS.AssessorService.ViewModel.Models;
 
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Search
 {
+    using AssessorService.Api.Types.Models;
+
     [TestFixture]
     public class WhenPostToSearch
     {

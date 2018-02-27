@@ -1,16 +1,17 @@
 ﻿namespace SFA.DAS.AssessorService.Application.Api.Middleware
 {
+    using System;
+    using System.Net;
+    using System.Threading.Tasks;
+    using Exceptions;
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Logging;
     using Newtonsoft.Json;
-    using SFA.DAS.AssessorService.Application.Exceptions;
-    using System;
-    using System.Threading.Tasks;
 
     public class ErrorHandlingMiddleware
     {
-        private readonly RequestDelegate _next;
         private readonly ILogger<ErrorHandlingMiddleware> _logger;
+        private readonly RequestDelegate _next;
 
         public ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger)
         {
@@ -27,21 +28,13 @@
             catch (Exception ex)
             {
                 if (ex is ApplicationException || ex is BadRequestException)
-                {
-                    context.Response.StatusCode = (int)System.Net.HttpStatusCode.BadRequest;
-                }
+                    context.Response.StatusCode = (int) HttpStatusCode.BadRequest;
                 else if (ex is ResourceNotFoundException)
-                {
-                    context.Response.StatusCode = (int)System.Net.HttpStatusCode.NotFound;
-                }
+                    context.Response.StatusCode = (int) HttpStatusCode.NotFound;
                 else if (ex is UnauthorisedException)
-                {
-                    context.Response.StatusCode = (int)System.Net.HttpStatusCode.Unauthorized;
-                }
+                    context.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
                 else
-                {
                     context.Response.StatusCode = 500;
-                }
 
                 _logger.LogError($"Unhandled Exeption raised : {ex.Message} : Stack Trace : {ex.StackTrace}");
 

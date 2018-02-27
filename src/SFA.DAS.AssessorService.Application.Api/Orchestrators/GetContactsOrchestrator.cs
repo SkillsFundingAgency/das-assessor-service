@@ -1,12 +1,12 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.Orchesrators
+﻿namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
 {
-    using Microsoft.Extensions.Logging;
-    using SFA.DAS.AssessorService.Application.Exceptions;
-    using SFA.DAS.AssessorService.Application.Interfaces;
-    using SFA.DAS.AssessorService.ViewModel.Models;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using AssessorService.Api.Types.Models;
+    using Exceptions;
+    using Interfaces;
+    using Microsoft.Extensions.Logging;
 
     public class GetContactsOrchestrator
     {
@@ -37,5 +37,3 @@
         }
     }
 }
-
-

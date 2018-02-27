@@ -1,11 +1,11 @@
-﻿using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
-using SFA.DAS.AssessorService.Settings;
-
-namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
+﻿namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 {
+    using System.Text;
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.IdentityModel.Tokens;
+    using Settings;
+
     public static class AuthenticationStartup
     {
         public static void AddAndConfigureAuthentication(this IServiceCollection services,

@@ -1,7 +1,7 @@
-﻿namespace SFA.DAS.AssessorService.ViewModel.Models
-{   
-    using SFA.DAS.AssessorService.Domain.Enums;
+﻿namespace SFA.DAS.AssessorService.Application.Domain
+{
     using System;
+    using AssessorService.Domain.Enums;
 
     public class OrganisationCreateDomainModel
     {

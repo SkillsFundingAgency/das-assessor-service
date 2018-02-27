@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace SFA.DAS.AssessmentOrgs.Api.Client.Core.Types
+﻿namespace SFA.DAS.AssessmentOrgs.Api.Client.Core.Types
 {
+    using System.Collections.Generic;
+
     public class OrganisationSummary
     {
         public string Id { get; set; }

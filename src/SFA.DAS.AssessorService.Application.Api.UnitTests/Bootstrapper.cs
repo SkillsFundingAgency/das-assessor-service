@@ -1,8 +1,8 @@
 ﻿namespace SFA.DAS.AssessorService.Application.Api.UnitTests
 {
-    using SFA.DAS.AssessorService.Domain.Entities;
-    using SFA.DAS.AssessorService.ViewModel.Models;
-
+    using AssessorService.Api.Types.Models;
+    using Domain;
+ 
     class Bootstrapper
     {
         public static void Initialize()
@@ -16,17 +16,17 @@
 
             AutoMapper.Mapper.Initialize(cfg =>
             {
-                cfg.CreateMap<Domain.Entities.Organisation, AssessorService.Api.Types.Organisation>();
+                cfg.CreateMap<AssessorService.Domain.Entities.Organisation, Organisation>();
                 cfg.CreateMap<CreateOrganisationRequest, OrganisationCreateDomainModel>();
-                cfg.CreateMap<OrganisationCreateDomainModel, Domain.Entities.Organisation>();
-                cfg.CreateMap<Domain.Entities.Organisation, AssessorService.Api.Types.Organisation>();
+                cfg.CreateMap<OrganisationCreateDomainModel, AssessorService.Domain.Entities.Organisation>();
+                cfg.CreateMap<AssessorService.Domain.Entities.Organisation, Organisation>();
 
                 cfg.CreateMap<UpdateOrganisationRequest, OrganisationUpdateDomainModel>();
-                cfg.CreateMap<Domain.Entities.Organisation, AssessorService.Api.Types.Organisation>();
+                cfg.CreateMap<AssessorService.Domain.Entities.Organisation, Organisation>();
                 cfg.CreateMap<CreateContactRequest, ContactCreateDomainModel>();
-                cfg.CreateMap<ContactCreateDomainModel, Domain.Entities.Contact>();
-                cfg.CreateMap<Domain.Entities.Contact, CreateContactRequest>();
-                cfg.CreateMap<Domain.Entities.Contact, ViewModel.Models.Contact>();
+                cfg.CreateMap<ContactCreateDomainModel, AssessorService.Domain.Entities.Contact>();
+                cfg.CreateMap<AssessorService.Domain.Entities.Contact, CreateContactRequest>();
+                cfg.CreateMap<AssessorService.Domain.Entities.Contact, Contact>();
             });
         }
     }

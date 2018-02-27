@@ -1,8 +1,8 @@
 ﻿namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations
 {
+    using AssessorService.Api.Types.Models;
     using FluentAssertions;
     using SFA.DAS.AssessorService.Api.Types;
-    using SFA.DAS.AssessorService.ViewModel.Models;
     using TechTalk.SpecFlow;
 
     [Binding]

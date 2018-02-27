@@ -7,10 +7,11 @@ using SFA.DAS.AssessorService.Api.Types;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
-using SFA.DAS.AssessorService.ViewModel.Models;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
+    using Api.Types.Models;
+
     [Authorize]
     public class OrganisationController : Controller
     {

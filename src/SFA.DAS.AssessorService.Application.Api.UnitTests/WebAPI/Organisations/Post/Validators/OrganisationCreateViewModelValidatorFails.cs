@@ -5,9 +5,9 @@
     using SFA.DAS.AssessorService.Application.Api.Validators;
     using FluentAssertions;
     using FizzWare.NBuilder;
-    using SFA.DAS.AssessorService.ViewModel.Models;
     using System.Linq;
     using System.Threading.Tasks;
+    using AssessorService.Api.Types.Models;
 
     [Subject("AssessorService")]
     public class WhenOrganisationCreateViewModelValidatorFails : OrganisationCreateViewModelValidatorTestBase

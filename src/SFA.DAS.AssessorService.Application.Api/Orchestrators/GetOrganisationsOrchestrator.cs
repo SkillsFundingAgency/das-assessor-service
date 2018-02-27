@@ -1,22 +1,22 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.Orchesrators
+﻿namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
 {
-    using Microsoft.Extensions.Localization;
-    using Microsoft.Extensions.Logging;
-    using SFA.DAS.AssessorService.Api.Types;
-    using SFA.DAS.AssessorService.Application.Api.Consts;
-    using SFA.DAS.AssessorService.Application.Api.Validators;
-    using SFA.DAS.AssessorService.Application.Exceptions;
-    using SFA.DAS.AssessorService.Application.Interfaces;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using AssessorService.Api.Types.Models;
+    using Consts;
+    using Exceptions;
+    using Interfaces;
+    using Microsoft.Extensions.Localization;
+    using Microsoft.Extensions.Logging;
+    using Validators;
 
     public class GetOrganisationsOrchestrator
     {
-        private readonly IOrganisationQueryRepository _organisationQueryRepository;
         private readonly IStringLocalizer<GetOrganisationsOrchestrator> _localizer;
-        private readonly UkPrnValidator _ukPrnValidator;
         private readonly ILogger<GetOrganisationsOrchestrator> _logger;
+        private readonly IOrganisationQueryRepository _organisationQueryRepository;
+        private readonly UkPrnValidator _ukPrnValidator;
 
         public GetOrganisationsOrchestrator(IOrganisationQueryRepository organisationQueryRepository,
             IStringLocalizer<GetOrganisationsOrchestrator> localizer,
@@ -37,9 +37,8 @@
 
             var organisation = await _organisationQueryRepository.GetByUkPrn(ukprn);
             if (organisation == null)
-            {
-                throw new ResourceNotFoundException(_localizer[ResourceMessageName.NoAssesmentProviderFound, ukprn].Value);
-            }
+                throw new ResourceNotFoundException(_localizer[ResourceMessageName.NoAssesmentProviderFound, ukprn]
+                    .Value);
 
             return organisation;
         }
@@ -51,5 +50,3 @@
         }
     }
 }
-
-

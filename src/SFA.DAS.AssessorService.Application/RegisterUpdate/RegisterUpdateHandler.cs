@@ -9,10 +9,11 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Enums;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
-using SFA.DAS.AssessorService.ViewModel.Models;
 
 namespace SFA.DAS.AssessorService.Application.RegisterUpdate
 {
+    using AssessorService.Api.Types.Models;
+
     public class RegisterUpdateHandler : IRequestHandler<RegisterUpdateRequest>
     {
         private readonly IAssessmentOrgsApiClient _registerApiClient;
@@ -20,7 +21,7 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
         private readonly ILogger<RegisterUpdateHandler> _logger;
         private readonly IMediator _mediator;
         private List<OrganisationSummary> _epaosOnRegister;
-        private List<AssessorService.Api.Types.Organisation> _organisations;
+        private List<Organisation> _organisations;
 
         public RegisterUpdateHandler(IAssessmentOrgsApiClient registerApiClient, IOrganisationQueryRepository organisationRepository, ILogger<RegisterUpdateHandler> logger, IMediator mediator)
         {
@@ -68,7 +69,7 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
             _logger.LogInformation($"Received {_organisations.Count} Organisations from Repository");
         }
 
-        private bool EpaoStillPresentOnRegister(AssessorService.Api.Types.Organisation org)
+        private bool EpaoStillPresentOnRegister(Organisation org)
         {
             return _epaosOnRegister.Any(e => e.Id == org.EndPointAssessorOrganisationId);
         }
@@ -112,7 +113,7 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
 
         }
 
-        private async Task DeleteOrganisation(AssessorService.Api.Types.Organisation org)
+        private async Task DeleteOrganisation(Organisation org)
         {
             await _mediator.Send(new DeleteOrgananisationRequest {Id = org.Id});
 
