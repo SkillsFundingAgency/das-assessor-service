@@ -37,7 +37,7 @@
                 .FirstOrDefaultAsync(q => q.ContactName == userName && q.ContactStatus
                 != ContactStatus.Deleted);
             if (contact == null)
-                throw new NotFound();
+                return null;
 
             var contactQueryViewModel = Mapper.Map<Contact>(contact);
             return contactQueryViewModel;
