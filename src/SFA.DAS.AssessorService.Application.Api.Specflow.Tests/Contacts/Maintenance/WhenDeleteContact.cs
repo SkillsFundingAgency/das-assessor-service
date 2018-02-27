@@ -1,17 +1,10 @@
 ﻿namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations
 {
-    using FluentAssertions;
     using SFA.DAS.AssessorService.ViewModel.Models;
     using TechTalk.SpecFlow;
-    using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Extensions;
     using System.Data;
-    using Dapper;
     using System.Linq;
     using System.Collections.Generic;
-    using System;
-    using SFA.DAS.AssessorService.Domain.Enums;
-    using System.Net.Http;
-    using Newtonsoft.Json;
 
     [Binding]
     public sealed class WhenDeleteContact
@@ -28,11 +21,12 @@
             _dbconnection = dbconnection;
         }
 
-
         [When(@"I Delete a Contact")]
         public void WhenIDeleteAContact(IEnumerable<dynamic> contactArguments)
         {
-            //_contactArguments = contactArguments.First();
+            _contactArguments = contactArguments.First();
+
+            ScenarioContext.Current.Pending();
 
             //var organisationCreateViewModel = new OrganisationCreateViewModel
             //{
@@ -53,6 +47,12 @@
             //_restClient.HttpResponseMessage = _restClient.HttpClient.DeleteAsJsonAsync($"api/v1/organisations?id={organisationCreated.Id}").Result;
         }
 
+        [When(@"I Delete a Contact Twice")]
+        public void WhenIDeleteAContactTwice(Table table)
+        {
+            ScenarioContext.Current.Pending();
+        }
+
         [Then(@"the Contact should be deleted")]
         public void ThenTheContactShouldBeDeleted()
         {
@@ -64,8 +64,12 @@
         }
 
 
+     
 
-       
+
+
+
+
 
         //[When(@"I Delete an Organisation Twice")]
         //public void WhenIDeleteAnOrganisationTwice(IEnumerable<dynamic> organisations)

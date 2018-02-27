@@ -193,10 +193,10 @@ this.ScenarioSetup(scenarioInfo);
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Delete an Contact")]
-        public virtual void DeleteAnContact()
+        [NUnit.Framework.DescriptionAttribute("Delete a Contact")]
+        public virtual void DeleteAContact()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Delete an Contact", ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Delete a Contact", ((string[])(null)));
 #line 44
 this.ScenarioSetup(scenarioInfo);
 #line 45
@@ -211,7 +211,7 @@ this.ScenarioSetup(scenarioInfo);
                         "99999777",
                         "10033444"});
 #line 46
- testRunner.When("I Delete n Contact", ((string)(null)), table5, "When ");
+ testRunner.When("I Delete a Contact", ((string)(null)), table5, "When ");
 #line 49
  testRunner.Then("the response http status should be No Content", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 50
@@ -221,10 +221,10 @@ this.ScenarioSetup(scenarioInfo);
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Repeat Deleting an Contact")]
-        public virtual void RepeatDeletingAnContact()
+        [NUnit.Framework.DescriptionAttribute("Repeat Deleting a Contact")]
+        public virtual void RepeatDeletingAContact()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Repeat Deleting an Contact", ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Repeat Deleting a Contact", ((string[])(null)));
 #line 52
 this.ScenarioSetup(scenarioInfo);
 #line 53
@@ -239,11 +239,11 @@ this.ScenarioSetup(scenarioInfo);
                         "99999778",
                         "10033444"});
 #line 54
- testRunner.When("I Delete an Contact Twice", ((string)(null)), table6, "When ");
+ testRunner.When("I Delete a Contact Twice", ((string)(null)), table6, "When ");
 #line 57
  testRunner.Then("the response http status should be Not Found", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 58
- testRunner.And("the COntact should be deleted", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("the Contact should be deleted", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
         }
