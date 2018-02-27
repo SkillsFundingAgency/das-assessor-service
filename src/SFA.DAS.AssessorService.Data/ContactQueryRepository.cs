@@ -20,11 +20,11 @@
             _assessorDbContext = assessorDbContext;
         }
 
-        public async Task<IEnumerable<Contact>> GetContacts(Guid id)
+        public async Task<IEnumerable<Contact>> GetContacts(string endPointAssessorOrganisationId)
         {
             var contacts = await _assessorDbContext.Organisations
                 .Include(organisation => organisation.Contacts)
-                .Where(organisation => organisation.Id == id)
+                .Where(organisation => organisation.EndPointAssessorOrganisationId == endPointAssessorOrganisationId)
                 .SelectMany(q => q.Contacts).Where(q => q.ContactStatus == ContactStatus.Live)
                 .Select(contact => Mapper.Map<Contact>(contact)).AsNoTracking().ToListAsync();
 

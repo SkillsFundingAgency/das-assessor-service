@@ -38,7 +38,7 @@
                 var organisation = _organisationQueryViewModels.First(q => q.EndPointAssessorUKPRN == 10000000);
 
                 response = _restClient.HttpClient.GetAsync(
-                        $"api/v1/contacts/{organisation.Id}").Result;
+                        $"api/v1/contacts/{organisation.EndPointAssessorOrganisationId}").Result;
 
 
                 _contactQueryViewModels = JsonConvert.DeserializeObject<List<Contact>>(_restClient.Result);

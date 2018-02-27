@@ -13,14 +13,16 @@
     public class WhenGetAssessmentUsersSucceeds : WhenGetAssessmentUsersTestBase
     {
         private static IEnumerable<Contact> _organisationQueryViewModels;
-      
+        const string _endPointAssessorOrganisationId = "1234";
+
+
         Establish context = () =>
         {
             Setup();
 
             _organisationQueryViewModels = Builder<Contact>.CreateListOfSize(10).Build();
 
-            ContactQueryRepository.Setup(q => q.GetContacts(Moq.It.IsAny<Guid>()))
+            ContactQueryRepository.Setup(q => q.GetContacts(Moq.It.IsAny<string>()))
                 .Returns(Task.FromResult((_organisationQueryViewModels)));
 
             ContactQueryController = new ContactQueryController(              
@@ -30,7 +32,7 @@
 
         Because of = () =>
         {
-            Result = ContactQueryController.GetAllContactsForAnOrganisation(Guid.NewGuid()).Result;
+            Result = ContactQueryController.GetAllContactsForAnOrganisation(_endPointAssessorOrganisationId).Result;
         };
 
         Machine.Specifications.It verify_succesfully = () =>

@@ -29,12 +29,12 @@
             _logger = logger;
         }
 
-        [HttpGet("{organisationId}", Name = "GetAllContactsForAnOrganisation")]
+        [HttpGet("{endPointAssessorOrganisationId}", Name = "GetAllContactsForAnOrganisation")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<Contact>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetAllContactsForAnOrganisation(Guid organisationId)
+        public async Task<IActionResult> GetAllContactsForAnOrganisation(string endPointAssessorOrganisationId)
         {           
-            var contacts = await _contactQueryRepository.GetContacts(organisationId);
+            var contacts = await _contactQueryRepository.GetContacts(endPointAssessorOrganisationId);
             if (contacts.Count() == 0)
                 return NotFound();
             return Ok(contacts);
