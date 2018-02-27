@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.AssessorService.ViewModel.Models
+﻿namespace SFA.DAS.AssessorService.Api.Types
 {
     using SFA.DAS.AssessorService.Domain.Enums;
     using System;

@@ -3,6 +3,7 @@
     using MediatR;
     using System;
     using SFA.DAS.AssessorService.Domain.Enums;
+    using SFA.DAS.AssessorService.Api.Types;
 
     public class UpdateOrganisationRequest : IRequest<Organisation>
     {

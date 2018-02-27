@@ -19,18 +19,18 @@
             _assessorDbContext = assessorDbContext;
         }
 
-        public async Task<ViewModel.Models.Organisation> CreateNewOrganisation(OrganisationCreateDomainModel newOrganisation)
+        public async Task<AssessorService.Api.Types.Organisation> CreateNewOrganisation(OrganisationCreateDomainModel newOrganisation)
         {
             var organisation = Mapper.Map<Domain.Entities.Organisation>(newOrganisation);
 
             _assessorDbContext.Organisations.Add(organisation);
             await _assessorDbContext.SaveChangesAsync();
 
-            var organisationQueryViewModel = Mapper.Map<ViewModel.Models.Organisation>(organisation);
+            var organisationQueryViewModel = Mapper.Map<AssessorService.Api.Types.Organisation>(organisation);
             return organisationQueryViewModel;
         }
 
-        public async Task<ViewModel.Models.Organisation> UpdateOrganisation(OrganisationUpdateDomainModel organisationUpdateDomainModel)
+        public async Task<AssessorService.Api.Types.Organisation> UpdateOrganisation(OrganisationUpdateDomainModel organisationUpdateDomainModel)
         {
             var organisationEntity = _assessorDbContext.Organisations.FirstOrDefault(q => q.Id == organisationUpdateDomainModel.Id);
 
@@ -43,7 +43,7 @@
 
             await _assessorDbContext.SaveChangesAsync();
 
-            var organisationQueryViewModel = Mapper.Map<ViewModel.Models.Organisation>(organisationEntity);
+            var organisationQueryViewModel = Mapper.Map<AssessorService.Api.Types.Organisation>(organisationEntity);
             return organisationQueryViewModel;
         }
 

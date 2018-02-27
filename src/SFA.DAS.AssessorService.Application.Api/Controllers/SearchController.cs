@@ -7,6 +7,7 @@ using SFA.DAS.AssessorService.ViewModel.Models;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
+    [Route("api/v1/search")]
     public class SearchController : Controller
     {
         private IIlrApiClient _ilrApi;
@@ -20,7 +21,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             var result = await _ilrApi.Search(new SearchRequest());
 
-            return Ok();
+            return Ok(result);  
         }
     }
 }

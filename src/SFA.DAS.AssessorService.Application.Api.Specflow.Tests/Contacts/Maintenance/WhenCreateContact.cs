@@ -2,6 +2,7 @@
 {
     using FluentAssertions;
     using Newtonsoft.Json;
+    using SFA.DAS.AssessorService.Api.Types;
     using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Extensions;
     using SFA.DAS.AssessorService.Domain.Enums;
     using SFA.DAS.AssessorService.ViewModel.Models;

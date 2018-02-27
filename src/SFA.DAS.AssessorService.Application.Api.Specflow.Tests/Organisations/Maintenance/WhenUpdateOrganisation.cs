@@ -12,6 +12,7 @@
     using Newtonsoft.Json;
     using System;
     using SFA.DAS.AssessorService.Domain.Enums;
+    using SFA.DAS.AssessorService.Api.Types;
 
     [Binding]
     public sealed class WhenUpdateOrganisation
