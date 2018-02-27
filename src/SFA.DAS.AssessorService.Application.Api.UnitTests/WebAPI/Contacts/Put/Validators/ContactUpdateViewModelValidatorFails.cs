@@ -11,13 +11,13 @@
     public class ContactUpdateViewModelValidatorFails : ContactUpdateViewModelValidatorTestBase
     {
         private static ValidationResult _validationResult;
-        private static ContactUpdateViewModel _contactUpdateViewModel;
+        private static UpdateContactRequest _contactUpdateViewModel;
 
         Establish context = () =>
         {
             Setup();
 
-            _contactUpdateViewModel = new ContactUpdateViewModel();
+            _contactUpdateViewModel = new UpdateContactRequest();
         };
 
         Because of = () =>

@@ -8,7 +8,7 @@
     using SFA.DAS.AssessorService.Domain.Enums;
     using SFA.DAS.AssessorService.ViewModel.Models;
 
-    public class UpdateOrganisationHandler : IRequestHandler<OrganisationUpdateViewModel, OrganisationQueryViewModel>
+    public class UpdateOrganisationHandler : IRequestHandler<UpdateOrganisationRequest, Organisation>
     {
         private readonly IOrganisationRepository _organisationRepository;
 
@@ -17,7 +17,7 @@
             _organisationRepository = organisationRepository;
         }
 
-        public async Task<OrganisationQueryViewModel> Handle(OrganisationUpdateViewModel organisationUpdateViewModel, CancellationToken cancellationToken)
+        public async Task<Organisation> Handle(UpdateOrganisationRequest organisationUpdateViewModel, CancellationToken cancellationToken)
         {
             var organisationUpdateDomainModel = Mapper.Map<OrganisationUpdateDomainModel>(organisationUpdateViewModel);
             if (organisationUpdateViewModel.PrimaryContactId.HasValue)

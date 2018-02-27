@@ -10,26 +10,25 @@
     [Subject("AssessorService")]
     public class WhenGetAssessmentUsersByUserNameAndEmailSucceeds : WhenGetAssessmentUsersTestBase
     {
-        private static ContactQueryViewModel _organisationQueryViewModels;
+        private static Contact _organisationQueryViewModels;
       
         Establish context = () =>
         {
             Setup();
 
-            _organisationQueryViewModels = Builder<ContactQueryViewModel>.CreateNew().Build();
+            _organisationQueryViewModels = Builder<Contact>.CreateNew().Build();
 
-            ContactQueryRepository.Setup(q => q.GetContact(Moq.It.IsAny<string>(), Moq.It.IsAny<string>()))
+            ContactQueryRepository.Setup(q => q.GetContact(Moq.It.IsAny<string>()))
                 .Returns(Task.FromResult((_organisationQueryViewModels)));
 
             ContactQueryController = new ContactQueryController(                
                 ContactQueryRepository.Object, 
-                StringLocalizer.Object,
                 Logger.Object);
         };
 
         Because of = () =>
         {
-            Result = ContactQueryController.GetContactsByUserNameAndEmail("TestUser", "xxxxx").Result;
+            Result = ContactQueryController.GetContactsByUserName("TestUser").Result;
         };
 
         Machine.Specifications.It verify_succesfully = () =>
@@ -41,7 +40,7 @@
          Machine.Specifications.It should_be_correct_value  = () =>
          {
              var result = Result as Microsoft.AspNetCore.Mvc.OkObjectResult;
-             (result.Value is ContactQueryViewModel).Should().BeTrue();             
+             (result.Value is Contact).Should().BeTrue();             
          };
     }
 }

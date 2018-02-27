@@ -11,7 +11,7 @@
     public class WhenRetrieveAllOrganisations
     {
         private readonly RestClient _restClient;
-        private List<OrganisationQueryViewModel> _organisationQueryViewModels = new List<OrganisationQueryViewModel>();
+        private List<Organisation> _organisationQueryViewModels = new List<Organisation>();
 
         public WhenRetrieveAllOrganisations(RestClient restClient)
         {
@@ -28,7 +28,7 @@
                 _restClient.Result = response.Content.ReadAsStringAsync().Result;
                 _restClient.HttpResponseMessage = response;
 
-                _organisationQueryViewModels = JsonConvert.DeserializeObject<List<OrganisationQueryViewModel>>(_restClient.Result);
+                _organisationQueryViewModels = JsonConvert.DeserializeObject<List<Organisation>>(_restClient.Result);
             }
         }
 

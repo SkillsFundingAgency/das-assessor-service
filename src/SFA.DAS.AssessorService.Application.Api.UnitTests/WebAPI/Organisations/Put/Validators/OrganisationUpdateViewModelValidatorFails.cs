@@ -19,7 +19,7 @@
         {
             Setup();
 
-            OrganisationUpdateViewModel = Builder<OrganisationUpdateViewModel>.CreateNew()                
+            OrganisationUpdateViewModel = Builder<UpdateOrganisationRequest>.CreateNew()                
                 .With(q => q.EndPointAssessorName = null)                                 
                 .Build();
 

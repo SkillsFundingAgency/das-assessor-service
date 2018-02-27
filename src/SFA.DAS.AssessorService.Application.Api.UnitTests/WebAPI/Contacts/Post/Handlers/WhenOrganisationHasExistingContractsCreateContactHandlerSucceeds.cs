@@ -19,9 +19,9 @@
         protected static Mock<IOrganisationRepository> OrganisationRepositoryMock;
         protected static Mock<IOrganisationQueryRepository> OrganisationQueryRepositoryMock;
         protected static ContactCreateDomainModel ContactCreateDomainModel;
-        protected static ContactQueryViewModel ContactQueryViewModel;
-        protected static ContactCreateViewModel ContactCreateViewModel;
-        protected static ContactQueryViewModel _result;
+        protected static Contact ContactQueryViewModel;
+        protected static CreateContactRequest ContactCreateViewModel;
+        protected static Contact _result;
 
         Establish context = () =>
         {
@@ -35,8 +35,8 @@
                  .Returns(Task.FromResult((true)));
 
             ContactCreateDomainModel = Builder<ContactCreateDomainModel>.CreateNew().Build();
-            ContactQueryViewModel = Builder<ContactQueryViewModel>.CreateNew().Build();
-            ContactCreateViewModel = Builder<ContactCreateViewModel>.CreateNew().Build();
+            ContactQueryViewModel = Builder<Contact>.CreateNew().Build();
+            ContactCreateViewModel = Builder<CreateContactRequest>.CreateNew().Build();
 
             ContactRepositoryMock.Setup(q => q.CreateNewContact(Moq.It.IsAny<ContactCreateDomainModel>()))
                         .Returns(Task.FromResult((ContactQueryViewModel)));
@@ -54,7 +54,7 @@
 
         Machine.Specifications.It verify_succesfully = () =>
         {
-            var result = _result as ContactQueryViewModel;
+            var result = _result as Contact;
             result.Should().NotBeNull();
         };
     }

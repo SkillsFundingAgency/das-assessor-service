@@ -20,7 +20,7 @@
         {
             Setup();
 
-            OrganisationCreateViewModel = Builder<OrganisationCreateViewModel>.CreateNew()
+            OrganisationCreateViewModel = Builder<CreateOrganisationRequest>.CreateNew()
                 .With(q => q.EndPointAssessorOrganisationId = "1234")
                 .With(q => q.EndPointAssessorName = "XXXX")
                 .With(q => q.EndPointAssessorUKPRN = 10000001)

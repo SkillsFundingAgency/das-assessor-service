@@ -20,8 +20,8 @@
         private static ContactRepository _contactRepository;
         private static Mock<AssessorDbContext> _assessorDbContext;
         private static ContactCreateDomainModel _contactCreateDomainModel;
-        private static Mock<DbSet<Contact>> _contactDBSetMock;        
-        protected static ContactQueryViewModel _result;
+        private static Mock<DbSet<Domain.Entities.Contact>> _contactDBSetMock;        
+        protected static ViewModel.Models.Contact _result;
         
         Establish context = () =>
         {
@@ -30,14 +30,14 @@
             _contactCreateDomainModel = Builder<ContactCreateDomainModel>.CreateNew().Build();
 
             _assessorDbContext = new Mock<AssessorDbContext>();
-            _contactDBSetMock = new Mock<DbSet<Contact>>();
+            _contactDBSetMock = new Mock<DbSet<Domain.Entities.Contact>>();
 
-            var mockSet = new Mock<DbSet<Contact>>();
+            var mockSet = new Mock<DbSet<Domain.Entities.Contact>>();
             var mockContext = new Mock<AssessorDbContext>();
 
-            var organisations = new List<Contact>();
+            var organisations = new List<Domain.Entities.Contact>();
 
-            mockSet.Setup(m => m.Add(Moq.It.IsAny<Contact>())).Callback((Contact organisation) => organisations.Add(organisation));
+            mockSet.Setup(m => m.Add(Moq.It.IsAny<Domain.Entities.Contact>())).Callback((Domain.Entities.Contact organisation) => organisations.Add(organisation));
 
             _assessorDbContext.Setup(q => q.Contacts).Returns(mockSet.Object);
             _assessorDbContext.Setup(q => q.SaveChangesAsync(new CancellationToken()))

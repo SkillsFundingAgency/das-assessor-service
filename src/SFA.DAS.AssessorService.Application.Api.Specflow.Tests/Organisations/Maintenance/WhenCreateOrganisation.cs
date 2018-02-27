@@ -18,7 +18,7 @@
     {
         private RestClient _restClient;
         private readonly IDbConnection _dbconnection;
-        private OrganisationQueryViewModel _organisationRetrieved;
+        private Organisation _organisationRetrieved;
         private dynamic _organisationArguments;
 
         public WhenCreateOrganisation(RestClient restClient,
@@ -33,7 +33,7 @@
         {
             _organisationArguments = organisations.First();
 
-            var organisation = new OrganisationCreateViewModel
+            var organisation = new CreateOrganisationRequest
             {
                 EndPointAssessorName = _organisationArguments.EndPointAssessorName,
                 EndPointAssessorOrganisationId = _organisationArguments.EndPointAssessorOrganisationId.ToString(),
@@ -53,12 +53,12 @@
             _organisationArguments = organisations.First();
 
             HttpResponseMessage contactResponse = _restClient.HttpClient.GetAsync(
-              "api/v1/contacts/user/John Coxhead/jcoxhead@gmail.com").Result;
+              "api/v1/contacts/user/John Coxhead").Result;
             var contactResult = contactResponse.Content.ReadAsStringAsync().Result;
 
-            var contact = JsonConvert.DeserializeObject<ContactQueryViewModel>(contactResult);
+            var contact = JsonConvert.DeserializeObject<Contact>(contactResult);
 
-            var organisation = new OrganisationCreateViewModel
+            var organisation = new CreateOrganisationRequest
             {
                 EndPointAssessorName = _organisationArguments.EndPointAssessorName,
                 EndPointAssessorOrganisationId = _organisationArguments.EndPointAssessorOrganisationId.ToString(),
@@ -71,16 +71,10 @@
             _restClient.Result = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
         }
 
-        [Then(@"the Location Header should be set")]
-        public void ThenTheLocationHeaderShouldBeSet()
-        {
-            _restClient.HttpResponseMessage.Headers.Location.Should().NotBeNull();
-        }
-
         [Then(@"the Organisation should be created")]
         public void ThenTheOrganisationShouldBeCreated()
         {
-            var organisationsCreated = _dbconnection.Query<OrganisationQueryViewModel>
+            var organisationsCreated = _dbconnection.Query<Organisation>
               ($"Select EndPointAssessorOrganisationId, EndPointAssessorUKPRN, EndPointAssessorName, OrganisationStatus From Organisations where EndPointAssessorOrganisationId = {_organisationArguments.EndPointAssessorOrganisationId}").ToList();
             _organisationRetrieved = organisationsCreated.First();
 

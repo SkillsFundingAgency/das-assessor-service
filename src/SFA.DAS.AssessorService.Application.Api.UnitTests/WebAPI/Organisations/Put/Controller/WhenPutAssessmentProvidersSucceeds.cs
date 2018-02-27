@@ -11,19 +11,19 @@
     [Subject("AssessorService")]
     public class WhenPutAssessmentProvidersSucceeds : WhenPutAssessmentProvidersTestBase
     {
-        private static OrganisationUpdateViewModel _organisationUpdateViewModel;
-        private static OrganisationQueryViewModel _organisationQueryViewModel;
+        private static UpdateOrganisationRequest _organisationUpdateViewModel;
+        private static Organisation _organisationQueryViewModel;
 
         Establish context = () =>
         {
             Setup();
 
-            _organisationQueryViewModel = Builder<OrganisationQueryViewModel>.CreateNew().Build();
+            _organisationQueryViewModel = Builder<Organisation>.CreateNew().Build();
 
-            Mediator.Setup(q => q.Send(Moq.It.IsAny<OrganisationUpdateViewModel>(), Moq.It.IsAny<CancellationToken>()))
+            Mediator.Setup(q => q.Send(Moq.It.IsAny<UpdateOrganisationRequest>(), Moq.It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult((_organisationQueryViewModel)));
 
-            _organisationUpdateViewModel = Builder<OrganisationUpdateViewModel>.CreateNew()                   
+            _organisationUpdateViewModel = Builder<UpdateOrganisationRequest>.CreateNew()                   
                     .Build();
 
             OrganisationContoller = new OrganisationController(

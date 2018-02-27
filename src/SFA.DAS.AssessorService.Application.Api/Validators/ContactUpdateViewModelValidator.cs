@@ -5,7 +5,7 @@
     using SFA.DAS.AssessorService.Application.Api.Consts;
     using SFA.DAS.AssessorService.ViewModel.Models;
 
-    public class ContactUpdateViewModelValidator : AbstractValidator<ContactUpdateViewModel>
+    public class ContactUpdateViewModelValidator : AbstractValidator<UpdateContactRequest>
     {
         private readonly IStringLocalizer<ContactUpdateViewModelValidator> _localizer;
 
@@ -14,7 +14,7 @@
         {
             _localizer = localizer;
 
-            var organisationCreateViewModel = new ContactCreateViewModel();
+            var organisationCreateViewModel = new CreateContactRequest();
             RuleFor(organisation => organisation.ContactEmail).NotEmpty().WithMessage(_localizer[ResourceMessageName.ContactNameMustBeDefined, nameof(organisationCreateViewModel.ContactName)].Value);
             RuleFor(organisation => organisation.ContactName).NotEmpty().WithMessage(_localizer[ResourceMessageName.ContactEMailMustBeDefined, nameof(organisationCreateViewModel.ContactEmail)].Value);            
         }

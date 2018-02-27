@@ -19,22 +19,22 @@
             _assessorDbContext = assessorDbContext;
         }
        
-        public async Task<IEnumerable<OrganisationQueryViewModel>> GetAllOrganisations()
+        public async Task<IEnumerable<Organisation>> GetAllOrganisations()
         {
             var organisations = await _assessorDbContext.Organisations
-                .Select(q => Mapper.Map<OrganisationQueryViewModel>(q)).AsNoTracking().ToListAsync();
+                .Select(q => Mapper.Map<Organisation>(q)).AsNoTracking().ToListAsync();
 
             return organisations;
         }
 
-        public async Task<OrganisationQueryViewModel> GetByUkPrn(int ukprn)
+        public async Task<Organisation> GetByUkPrn(int ukprn)
         {
             var organisation = await _assessorDbContext.Organisations
                          .FirstOrDefaultAsync(q => q.EndPointAssessorUKPRN == ukprn && q.OrganisationStatus != OrganisationStatus.Deleted);
             if (organisation == null)
                 return null;
 
-            var organisationViewModel = Mapper.Map<OrganisationQueryViewModel>(organisation);
+            var organisationViewModel = Mapper.Map<Organisation>(organisation);
             return organisationViewModel;
         }
 

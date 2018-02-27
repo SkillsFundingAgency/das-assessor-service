@@ -7,7 +7,7 @@
     [Binding]
     public class WhenSearchOrganisationByUkprn
     {
-        private OrganisationQueryViewModel _organisationQueryViewModel = new OrganisationQueryViewModel();
+        private Organisation _organisationQueryViewModel = new Organisation();
         private readonly RestClient _restClient;
 
         public WhenSearchOrganisationByUkprn(RestClient restClient)

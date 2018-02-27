@@ -43,7 +43,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
         {
             _actionResult = OrganisationController.Index().Result;
             var result = _actionResult as ViewResult;
-            result.Model.Should().BeOfType<OrganisationQueryViewModel>();
+            result.Model.Should().BeOfType<Organisation>();
         }
     }
 }

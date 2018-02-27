@@ -11,19 +11,19 @@
     [Subject("AssessorService")]
     public class WhenPostAssessmentProvidersSucceeds : WhenPostAssessmentProvidersTestBase
     {
-        private static OrganisationCreateViewModel _organisationCreateViewModel;
-        private static OrganisationQueryViewModel _organisationQueryViewModel;
+        private static CreateOrganisationRequest _organisationCreateViewModel;
+        private static Organisation _organisationQueryViewModel;
 
         Establish context = () =>
         {
             Setup();
 
-            _organisationQueryViewModel = Builder<OrganisationQueryViewModel>.CreateNew().Build();
+            _organisationQueryViewModel = Builder<Organisation>.CreateNew().Build();
 
-            Mediator.Setup(q => q.Send(Moq.It.IsAny<OrganisationCreateViewModel>(), Moq.It.IsAny<CancellationToken>()))
+            Mediator.Setup(q => q.Send(Moq.It.IsAny<CreateOrganisationRequest>(), Moq.It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult((_organisationQueryViewModel)));
 
-            _organisationCreateViewModel = Builder<OrganisationCreateViewModel>.CreateNew()
+            _organisationCreateViewModel = Builder<CreateOrganisationRequest>.CreateNew()
                     .With(x => x.EndPointAssessorUKPRN = 10000000)
                     .Build();
 

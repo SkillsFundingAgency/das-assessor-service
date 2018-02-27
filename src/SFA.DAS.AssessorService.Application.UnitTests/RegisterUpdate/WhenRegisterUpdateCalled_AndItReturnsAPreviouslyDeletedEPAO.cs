@@ -32,10 +32,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
 
             _organisationId = Guid.NewGuid();
             OrganisationRepository.Setup(r => r.GetAllOrganisations())
-                .Returns(Task.FromResult(new List<OrganisationQueryViewModel>
+                .Returns(Task.FromResult(new List<ViewModel.Models.Organisation>
                 {
-                    new OrganisationQueryViewModel() {Id = _organisationId, EndPointAssessorOrganisationId = "EPA0001", OrganisationStatus = OrganisationStatus.Deleted},
-                    new OrganisationQueryViewModel() {EndPointAssessorOrganisationId = "EPA0002"}
+                    new ViewModel.Models.Organisation() {Id = _organisationId, EndPointAssessorOrganisationId = "EPA0001", OrganisationStatus = OrganisationStatus.Deleted},
+                    new ViewModel.Models.Organisation() {EndPointAssessorOrganisationId = "EPA0002"}
                 }.AsEnumerable()));
         }
 
@@ -46,7 +46,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
 
             Mediator.Verify(m =>
                 m.Send(
-                    It.Is<OrganisationUpdateViewModel>(vm =>
+                    It.Is<UpdateOrganisationRequest>(vm =>
                         vm.Id == _organisationId && vm.OrganisationStatus == OrganisationStatus.New),
                     default(CancellationToken)));
         }

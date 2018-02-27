@@ -29,8 +29,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
 
             Mediator = new Mock<IMediator>();
 
-            Mediator.Setup(m => m.Send(It.IsAny<OrganisationCreateViewModel>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new OrganisationQueryViewModel() {Id = new Guid()});
+            Mediator.Setup(m => m.Send(It.IsAny<CreateOrganisationRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new Organisation() {Id = new Guid()});
 
             RegisterUpdateHandler = new RegisterUpdateHandler(ApiClient.Object, OrganisationRepository.Object, Logger.Object, Mediator.Object);
         }

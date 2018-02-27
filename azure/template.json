@@ -1,0 +1,143 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "templateBaseUrl": {
+            "type": "string"
+        },
+        "environmentName": {
+            "type": "string"
+        },
+        "appServiceNames": {
+            "type": "array"
+        },
+        "functionAppNames": {
+            "type": "array"
+        },
+        "storageAccountName": {
+            "type": "string"
+        },
+        "serviceBusName": {
+            "type": "string"
+        },
+        "sharedAppServicePlanName": {
+            "type": "string"
+        },
+        "sharedAppServicePlanResourceGroup": {
+            "type": "string"
+        },
+        "configurationStorageConnectionString": {
+            "type": "securestring"
+        }
+    },
+    "variables": {
+        "appServiceTemplateUri": "[concat(parameters('templateBaseUrl'), '/deployments/app-service-resources.json')]",
+        "functionAppTemplateUri": "[concat(parameters('templateBaseUrl'), '/deployments/function-app-resources.json')]",
+        "serviceBusTemplateUri": "[concat(parameters('templateBaseUrl'), '/deployments/service-bus-resources.json')]",
+        "storageTemplateUri": "[concat(parameters('templateBaseUrl'), '/deployments/storage-resources.json')]",
+        "sharedAppServicePlanId": "[resourceId(parameters('sharedAppServicePlanResourceGroup'), 'Microsoft.Web/serverfarms', parameters('sharedAppServicePlanName'))]"
+    },
+    "resources": [
+        {
+            "name": "[concat('AppService-', parameters('appServiceNames')[copyIndex()])]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('appServiceTemplateUri')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "appServiceName": {
+                        "value": "[parameters('appServiceNames')[copyIndex()]]"
+                    },
+                    "appServicePlanId": {
+                        "value": "[variables('sharedAppServicePlanId')]"
+                    },
+                    "configurationStorageConnectionString": {
+                        "value": "[parameters('configurationStorageConnectionString')]"
+                    },
+                    "configEnvironmentName": {
+                        "value": "[parameters('environmentName')]"
+                    }
+                }
+            },
+            "copy": {
+                "name": "AppServiceCopy",
+                "count": "[length(parameters('appServiceNames'))]"
+            }
+        },
+        {
+            "name": "StorageAccount",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('storageTemplateUri')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storageAccountName": {
+                        "value": "[parameters('storageAccountName')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "[concat('FunctionApp-', parameters('functionAppNames')[copyIndex()])]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('functionAppTemplateUri')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "functionAppName": {
+                        "value": "[parameters('functionAppNames')[copyIndex()]]"
+                    },
+                    "appServicePlanId": {
+                        "value": "[variables('sharedAppServicePlanId')]"
+                    },
+                    "configurationStorageConnectionString": {
+                        "value": "[parameters('configurationStorageConnectionString')]"
+                    },
+                    "configEnvironmentName": {
+                        "value": "[parameters('environmentName')]"
+                    },
+                    "storageAccountName": {
+                        "value": "[parameters('storageAccountName')]"
+                    }
+                }
+            },
+            "copy": {
+                "name": "FunctionAppCopy",
+                "count": "[length(parameters('functionAppNames'))]"
+            },
+            "dependsOn": [
+                "StorageAccount"
+            ]
+        },
+        {
+            "name": "ServiceBus",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('serviceBusTemplateUri')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "serviceBusName": {
+                        "value": "[parameters('serviceBusName')]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

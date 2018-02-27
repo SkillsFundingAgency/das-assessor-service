@@ -6,7 +6,7 @@
     using SFA.DAS.AssessorService.Application.Interfaces;
     using SFA.DAS.AssessorService.ViewModel.Models;
 
-    public class DeleteContactHandler : IRequestHandler<ContactDeleteViewModel>
+    public class DeleteContactHandler : IRequestHandler<DeleteContactRequest>
     {
         private readonly IContactRepository _contactRepository;
 
@@ -15,7 +15,7 @@
             _contactRepository = contactRepository;
         }
 
-        public async Task Handle(ContactDeleteViewModel contactDeleteViewModel, CancellationToken cancellationToken)
+        public async Task Handle(DeleteContactRequest contactDeleteViewModel, CancellationToken cancellationToken)
         {
             await _contactRepository.Delete(contactDeleteViewModel.Id);
         }

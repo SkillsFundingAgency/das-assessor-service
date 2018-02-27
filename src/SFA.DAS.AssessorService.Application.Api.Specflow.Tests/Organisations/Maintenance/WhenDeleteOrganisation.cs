@@ -18,7 +18,7 @@
     {
         private RestClient _restClient;
         private readonly IDbConnection _dbconnection;
-        private OrganisationQueryViewModel _organisationRetrieved;
+        private Organisation _organisationRetrieved;
         private dynamic _organisationArguments;
 
         public WhenDeleteOrganisation(RestClient restClient,
@@ -33,7 +33,7 @@
         {
             _organisationArguments = organisations.First();
 
-            var organisation = new OrganisationCreateViewModel
+            var organisation = new CreateOrganisationRequest
             {
                 EndPointAssessorName = _organisationArguments.EndPointAssessorName,
                 EndPointAssessorOrganisationId = _organisationArguments.EndPointAssessorOrganisationId.ToString(),
@@ -45,7 +45,7 @@
                  "api/v1/organisations", organisation).Result;
             _restClient.Result = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
 
-            var organisationCreated = JsonConvert.DeserializeObject<OrganisationQueryViewModel>(_restClient.Result);
+            var organisationCreated = JsonConvert.DeserializeObject<Organisation>(_restClient.Result);
 
             _restClient.HttpResponseMessage = _restClient.HttpClient.DeleteAsJsonAsync($"api/v1/organisations?id={organisationCreated.Id}").Result;
         }
@@ -56,7 +56,7 @@
         {
             _organisationArguments = organisations.First();
 
-            var organisation = new OrganisationCreateViewModel
+            var organisation = new CreateOrganisationRequest
             {
                 EndPointAssessorName = _organisationArguments.EndPointAssessorName,
                 EndPointAssessorOrganisationId = _organisationArguments.EndPointAssessorOrganisationId.ToString(),
@@ -68,7 +68,7 @@
                  "api/v1/organisations", organisation).Result;
             _restClient.Result = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
 
-            var organisationCreated = JsonConvert.DeserializeObject<OrganisationQueryViewModel>(_restClient.Result);
+            var organisationCreated = JsonConvert.DeserializeObject<Organisation>(_restClient.Result);
 
             _restClient.HttpResponseMessage = _restClient.HttpClient.DeleteAsJsonAsync($"api/v1/organisations?id={organisationCreated.Id}").Result;
             _restClient.HttpResponseMessage = _restClient.HttpClient.DeleteAsJsonAsync($"api/v1/organisations?id={organisationCreated.Id}").Result;
@@ -77,7 +77,7 @@
         [Then(@"the Organisation should be deleted")]
         public void ThenTheOrganisationShouldBeDeleted()
         {
-            var organisationsCreated = _dbconnection.Query<OrganisationQueryViewModel>
+            var organisationsCreated = _dbconnection.Query<Organisation>
             ($"Select EndPointAssessorOrganisationId, EndPointAssessorUKPRN, EndPointAssessorName, OrganisationStatus From Organisations where EndPointAssessorOrganisationId = {_organisationArguments.EndPointAssessorOrganisationId}").ToList();
             _organisationRetrieved = organisationsCreated.First();
 

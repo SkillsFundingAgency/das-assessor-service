@@ -16,9 +16,9 @@
         private static CreateOrganisationHandler CreateOrganisationHandler;
         protected static Mock<IOrganisationRepository> OrganisationRepositoryMock;
         protected static OrganisationCreateDomainModel _organisationCreateDomainModel;
-        protected static OrganisationQueryViewModel _organisationQueryViewModel;
-        protected static OrganisationCreateViewModel _organisationCreateViewModel;
-        protected static OrganisationQueryViewModel _result;
+        protected static Organisation _organisationQueryViewModel;
+        protected static CreateOrganisationRequest _organisationCreateViewModel;
+        protected static Organisation _result;
 
         Establish context = () =>
         {
@@ -27,8 +27,8 @@
             OrganisationRepositoryMock = new Mock<IOrganisationRepository>();
 
             _organisationCreateDomainModel = Builder<OrganisationCreateDomainModel>.CreateNew().Build();
-            _organisationQueryViewModel = Builder<OrganisationQueryViewModel>.CreateNew().Build();
-            _organisationCreateViewModel = Builder<OrganisationCreateViewModel>.CreateNew().Build();
+            _organisationQueryViewModel = Builder<Organisation>.CreateNew().Build();
+            _organisationCreateViewModel = Builder<CreateOrganisationRequest>.CreateNew().Build();
 
             OrganisationRepositoryMock.Setup(q => q.CreateNewOrganisation(Moq.It.IsAny<OrganisationCreateDomainModel>()))
                         .Returns(Task.FromResult((_organisationQueryViewModel)));
@@ -43,7 +43,7 @@
 
         Machine.Specifications.It verify_succesfully = () =>
         {
-            var result = _result as OrganisationQueryViewModel;
+            var result = _result as Organisation;
             result.Should().NotBeNull();
         };
     }

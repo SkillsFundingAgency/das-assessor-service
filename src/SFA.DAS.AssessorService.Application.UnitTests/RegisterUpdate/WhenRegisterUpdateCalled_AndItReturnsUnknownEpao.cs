@@ -25,13 +25,13 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
                     new OrganisationSummary {Id = "EPA0003"}
                 }.AsEnumerable()));
 
-            ApiClient.Setup(c => c.Get("EPA0003")).Returns(new Organisation { Id = "EPA0003", Name = "A New EPAO" });
+            ApiClient.Setup(c => c.Get("EPA0003")).Returns(new ExternalApis.AssessmentOrgs.Types.Organisation { Id = "EPA0003", Name = "A New EPAO" });
 
             OrganisationRepository.Setup(r => r.GetAllOrganisations())
-                .Returns(Task.FromResult(new List<OrganisationQueryViewModel>
+                .Returns(Task.FromResult(new List<ViewModel.Models.Organisation>
                 {
-                    new OrganisationQueryViewModel() {EndPointAssessorOrganisationId = "EPA0001"},
-                    new OrganisationQueryViewModel() {EndPointAssessorOrganisationId = "EPA0002"}
+                    new ViewModel.Models.Organisation() {EndPointAssessorOrganisationId = "EPA0001"},
+                    new ViewModel.Models.Organisation() {EndPointAssessorOrganisationId = "EPA0002"}
                 }.AsEnumerable()));
         }
 
@@ -49,7 +49,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
 
             Mediator.Verify(m =>
                 m.Send(
-                    It.Is<OrganisationCreateViewModel>(vm =>
+                    It.Is<CreateOrganisationRequest>(vm =>
                         vm.EndPointAssessorOrganisationId == "EPA0003" && vm.EndPointAssessorName == "A New EPAO"),
                     default(CancellationToken)));
         }

@@ -11,19 +11,19 @@
     [Subject("AssessorService")]
     public class WhenCreateAssessmentUsersSucceeds : WhenCreateAssessmentUsersTestBase
     {
-        private static ContactCreateViewModel _ContactCreateViewModel;
-        private static ContactQueryViewModel _ContactQueryViewModel;
+        private static CreateContactRequest _ContactCreateViewModel;
+        private static Contact _ContactQueryViewModel;
 
         Establish context = () =>
         {
             Setup();
 
-            _ContactQueryViewModel = Builder<ContactQueryViewModel>.CreateNew().Build();
+            _ContactQueryViewModel = Builder<Contact>.CreateNew().Build();
 
-            Mediator.Setup(q => q.Send(Moq.It.IsAny<ContactCreateViewModel>(), Moq.It.IsAny<CancellationToken>()))
+            Mediator.Setup(q => q.Send(Moq.It.IsAny<CreateContactRequest>(), Moq.It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult((_ContactQueryViewModel)));
 
-            _ContactCreateViewModel = Builder<ContactCreateViewModel>.CreateNew()
+            _ContactCreateViewModel = Builder<CreateContactRequest>.CreateNew()
                     //.With(x => x.EndPointAssessorUKPRN = 10000000)
                     .Build();
 

@@ -7,19 +7,13 @@
   <ItemGroup>
     <PackageReference Include="Mediatr" Version="4.0.1" />
     <PackageReference Include="AutoMapper" Version="6.2.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\SFA.DAS.AssessorService.Application.Api.Client\SFA.DAS.AssessorService.Application.Api.Client.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Domain\SFA.DAS.AssessorService.Domain.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.ExternalApis\SFA.DAS.AssessorService.ExternalApis.csproj" />
-    <ProjectReference Include="..\SFA.DAS.AssessorService.ViewModel\SFA.DAS.AssessorService.ViewModel.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Microsoft.Extensions.Logging.Abstractions">
-      <HintPath>..\..\..\..\..\..\..\..\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.extensions.logging.abstractions\2.0.0\lib\netstandard2.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>

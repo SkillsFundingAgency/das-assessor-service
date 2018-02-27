@@ -12,7 +12,7 @@
         protected static OrganisationCreateViewModelValidator OrganisationCreateViewModelValidator;
         protected static Mock<IContactQueryRepository> ContactQueryRepositoryMock;
         protected static Mock<IOrganisationQueryRepository> OrganisationQueryRepositoryMock;
-        protected static OrganisationCreateViewModel OrganisationCreateViewModel;
+        protected static CreateOrganisationRequest OrganisationCreateViewModel;
 
         public static void Setup()
         {

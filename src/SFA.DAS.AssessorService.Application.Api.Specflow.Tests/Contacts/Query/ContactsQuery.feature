@@ -15,9 +15,9 @@ Scenario: Retrieve Contacts for an Invalid Organisation
 	When I Request All Contacts to be retrieved By an Invalid Organisation
 	Then the response http status should be Not Found
 
-Scenario: Retrieve Contact for an Organisation By Username and EMail Address
+Scenario: Retrieve Contact for an Organisation By Username
 	Given System Has access to the SFA.DAS.AssessmentOrgs.Api	
-	When I Request Contacts to be retrieved By Username and Email Address
+	When I Request Contacts to be retrieved By Username
 	| username | emailaddress |
 	|John Coxhead|jcoxhead@gmail.com|
 	Then the response http status should be OK

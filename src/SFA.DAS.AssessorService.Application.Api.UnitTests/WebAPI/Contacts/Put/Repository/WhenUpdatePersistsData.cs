@@ -17,39 +17,39 @@
     {
         private static ContactRepository _contactRepository;
         private static Mock<AssessorDbContext> _assessorDbContext;
-        private static ContactUpdateViewModel _contactUpdateViewModel;
-        private static Mock<DbSet<Contact>> _contactDBSetMock;
+        private static UpdateContactRequest _contactUpdateViewModel;
+        private static Mock<DbSet<Domain.Entities.Contact>> _contactDBSetMock;
 
-        protected static ContactQueryViewModel _result;
+        protected static ViewModel.Models.Contact _result;
 
 
         Establish context = () =>
         {
             Bootstrapper.Initialize();
 
-            _contactUpdateViewModel = Builder<ContactUpdateViewModel>.CreateNew().Build();
+            _contactUpdateViewModel = Builder<UpdateContactRequest>.CreateNew().Build();
 
             _assessorDbContext = new Mock<AssessorDbContext>();
-            _contactDBSetMock = new Mock<DbSet<Contact>>();
+            _contactDBSetMock = new Mock<DbSet<Domain.Entities.Contact>>();
 
-            var mockSet = new Mock<DbSet<Contact>>();
+            var mockSet = new Mock<DbSet<Domain.Entities.Contact>>();
             var mockContext = new Mock<AssessorDbContext>();
 
 
-            var contacts = new List<Contact>
+            var contacts = new List<Domain.Entities.Contact>
             {
-                Builder<Contact>.CreateNew().Build()
+                Builder<Domain.Entities.Contact>.CreateNew().Build()
             }.AsQueryable();
 
-            mockSet.As<IQueryable<Contact>>().Setup(m => m.Provider).Returns(contacts.Provider);
-            mockSet.As<IQueryable<Contact>>().Setup(m => m.Expression).Returns(contacts.Expression);
-            mockSet.As<IQueryable<Contact>>().Setup(m => m.ElementType).Returns(contacts.ElementType);
-            mockSet.As<IQueryable<Contact>>().Setup(m => m.GetEnumerator()).Returns(contacts.GetEnumerator());
+            mockSet.As<IQueryable<Domain.Entities.Contact>>().Setup(m => m.Provider).Returns(contacts.Provider);
+            mockSet.As<IQueryable<Domain.Entities.Contact>>().Setup(m => m.Expression).Returns(contacts.Expression);
+            mockSet.As<IQueryable<Domain.Entities.Contact>>().Setup(m => m.ElementType).Returns(contacts.ElementType);
+            mockSet.As<IQueryable<Domain.Entities.Contact>>().Setup(m => m.GetEnumerator()).Returns(contacts.GetEnumerator());
 
             mockContext.Setup(c => c.Contacts).Returns(mockSet.Object);
 
             _assessorDbContext.Setup(q => q.Contacts).Returns(mockSet.Object);
-            _assessorDbContext.Setup(x => x.MarkAsModified(Moq.It.IsAny<Contact>()));
+            _assessorDbContext.Setup(x => x.MarkAsModified(Moq.It.IsAny<Domain.Entities.Contact>()));
 
 
             _assessorDbContext.Setup(q => q.SaveChangesAsync(new CancellationToken()))

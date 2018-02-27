@@ -35,10 +35,10 @@
 
         [HttpPost(Name = "CreateOrganisation")]
         [ValidateBadRequest]
-        [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(OrganisationQueryViewModel))]
+        [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(Organisation))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> CreateOrganisation([FromBody] OrganisationCreateViewModel organisationCreateViewModel)
+        public async Task<IActionResult> CreateOrganisation([FromBody] CreateOrganisationRequest organisationCreateViewModel)
         {
             _logger.LogInformation("Received Create Organisation Request");
 
@@ -54,7 +54,7 @@
         [SwaggerResponse((int)HttpStatusCode.NoContent)]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> UpdateOrganisation([FromBody] OrganisationUpdateViewModel organisationUpdateViewModel)
+        public async Task<IActionResult> UpdateOrganisation([FromBody] UpdateOrganisationRequest organisationUpdateViewModel)
         {
             _logger.LogInformation("Received Update Organisation Request");
 
@@ -75,7 +75,7 @@
             {
                 _logger.LogInformation("Received Delete Organisation Request");
 
-                var organisationDeleteViewModel = new OrganisationDeleteViewModel
+                var organisationDeleteViewModel = new DeleteOrgananisationRequest
                 {
                     Id = id
                 };

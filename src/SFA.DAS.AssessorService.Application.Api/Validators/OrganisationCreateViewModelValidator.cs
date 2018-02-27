@@ -7,7 +7,7 @@
     using SFA.DAS.AssessorService.Application.Interfaces;
     using SFA.DAS.AssessorService.ViewModel.Models;
 
-    public class OrganisationCreateViewModelValidator : AbstractValidator<OrganisationCreateViewModel>
+    public class OrganisationCreateViewModelValidator : AbstractValidator<CreateOrganisationRequest>
     {
         private readonly IStringLocalizer<OrganisationCreateViewModelValidator> _localizer;
         private readonly IContactQueryRepository _contactQueryRepository;
@@ -22,7 +22,7 @@
             _contactQueryRepository = contactQueryRepository;
             _organisationQueryRepository = organisationQueryRepository;
 
-            var organisationCreateViewModel = new OrganisationCreateViewModel();
+            var organisationCreateViewModel = new CreateOrganisationRequest();
 
             RuleFor(organisation => organisation.EndPointAssessorOrganisationId).NotEmpty().WithMessage(_localizer[ResourceMessageName.EndPointAssessorOrganisationIdMustBeDefined, nameof(organisationCreateViewModel.EndPointAssessorOrganisationId)].Value);
             RuleFor(organisation => organisation.EndPointAssessorName).NotEmpty().WithMessage(_localizer[ResourceMessageName.EndPointAssessorNameMustBeDefined, nameof(organisationCreateViewModel.EndPointAssessorName)].Value);
