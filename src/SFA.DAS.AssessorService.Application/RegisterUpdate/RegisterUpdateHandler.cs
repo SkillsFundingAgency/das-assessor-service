@@ -21,7 +21,7 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
         private readonly ILogger<RegisterUpdateHandler> _logger;
         private readonly IMediator _mediator;
         private List<OrganisationSummary> _epaosOnRegister;
-        private List<OrganisationQueryViewModel> _organisations;
+        private List<ViewModel.Models.Organisation> _organisations;
 
         public RegisterUpdateHandler(IAssessmentOrgsApiClient registerApiClient, IOrganisationQueryRepository organisationRepository, ILogger<RegisterUpdateHandler> logger, IMediator mediator)
         {
@@ -69,7 +69,7 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
             _logger.LogInformation($"Received {_organisations.Count} Organisations from Repository");
         }
 
-        private bool EpaoStillPresentOnRegister(OrganisationQueryViewModel org)
+        private bool EpaoStillPresentOnRegister(ViewModel.Models.Organisation org)
         {
             return _epaosOnRegister.Any(e => e.Id == org.EndPointAssessorOrganisationId);
         }
@@ -86,7 +86,7 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
             {
                 var organisation =
                     _organisations.Single(o => o.EndPointAssessorOrganisationId == epaoSummary.Id);
-                await _mediator.Send(new OrganisationUpdateViewModel()
+                await _mediator.Send(new UpdateOrganisationRequest()
                 {
                     EndPointAssessorName = epaoSummary.Name,
                     Id = organisation.Id
@@ -100,7 +100,7 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
             {
                 var organisation =
                     _organisations.Single(o => o.EndPointAssessorOrganisationId == epaoSummary.Id);
-                await _mediator.Send(new OrganisationUpdateViewModel()
+                await _mediator.Send(new UpdateOrganisationRequest()
                 {
                     Id = organisation.Id,
                     EndPointAssessorName = organisation.EndPointAssessorName,
@@ -113,9 +113,9 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
 
         }
 
-        private async Task DeleteOrganisation(OrganisationQueryViewModel org)
+        private async Task DeleteOrganisation(ViewModel.Models.Organisation org)
         {
-            await _mediator.Send(new OrganisationDeleteViewModel {Id = org.Id});
+            await _mediator.Send(new DeleteOrgananisationRequest {Id = org.Id});
 
             _logger.LogInformation(
                 $"Organisation with ID {org.Id} and EPAOgId {org.EndPointAssessorOrganisationId} no longer found on Register. Deleting from Repository");
@@ -129,7 +129,7 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
 
             _logger.LogInformation($"EPAO {epaoSummary.Id} further information received");
 
-            var createdOrg = await _mediator.Send(new OrganisationCreateViewModel
+            var createdOrg = await _mediator.Send(new CreateOrganisationRequest
             {
                 EndPointAssessorName = epao.Name,
                 EndPointAssessorOrganisationId = epao.Id,

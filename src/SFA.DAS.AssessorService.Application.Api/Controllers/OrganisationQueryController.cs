@@ -37,7 +37,7 @@
         }
 
         [HttpGet("{ukprn}")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(OrganisationQueryViewModel))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Organisation))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.NotFound, Type = typeof(string))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
@@ -57,7 +57,7 @@
         }
 
         [HttpGet]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<OrganisationQueryViewModel>))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<Organisation>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> Get()
         {

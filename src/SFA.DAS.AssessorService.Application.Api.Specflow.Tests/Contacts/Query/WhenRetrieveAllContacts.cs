@@ -13,8 +13,8 @@
     public class WhenRetrieveAllContacts
     {
         private readonly RestClient _restClient;
-        private List<OrganisationQueryViewModel> _organisationQueryViewModels = new List<OrganisationQueryViewModel>();
-        private List<ContactQueryViewModel> _contactQueryViewModels = new List<ContactQueryViewModel>();
+        private List<Organisation> _organisationQueryViewModels = new List<Organisation>();
+        private List<Contactl> _contactQueryViewModels = new List<Contactl>();
 
         public WhenRetrieveAllContacts(RestClient restClient)
         {
@@ -32,7 +32,7 @@
                 _restClient.Result = response.Content.ReadAsStringAsync().Result;
                 _restClient.HttpResponseMessage = response;
 
-                _organisationQueryViewModels = JsonConvert.DeserializeObject<List<OrganisationQueryViewModel>>(_restClient.Result);
+                _organisationQueryViewModels = JsonConvert.DeserializeObject<List<Organisation>>(_restClient.Result);
 
                 var organisation = _organisationQueryViewModels.First(q => q.EndPointAssessorUKPRN == 10000000);
 
@@ -40,7 +40,7 @@
                         $"api/v1/contacts/{organisation.Id}").Result;
 
 
-                _contactQueryViewModels = JsonConvert.DeserializeObject<List<ContactQueryViewModel>>(_restClient.Result);
+                _contactQueryViewModels = JsonConvert.DeserializeObject<List<Contactl>>(_restClient.Result);
 
                 _restClient.HttpResponseMessage = response;
             }

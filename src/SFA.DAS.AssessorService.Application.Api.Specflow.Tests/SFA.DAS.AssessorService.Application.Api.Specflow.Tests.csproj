@@ -90,6 +90,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ContactMaintenance.feature</DependentUpon>
     </Compile>
+    <Compile Include="Contacts\Maintenance\WhenDeleteContact.cs" />
     <Compile Include="Contacts\Maintenance\WhenUpdateContact.cs" />
     <Compile Include="Contacts\Maintenance\WhenCreateContact.cs" />
     <Compile Include="Contacts\Query\ContactsQuery.feature.cs">
@@ -154,13 +155,13 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\SFA.DAS.AssessorService.Api.Types\SFA.DAS.AssessorService.Api.Types.csproj">
+      <Project>{c6d53d77-b520-426f-b5d5-00aedc0fe4e0}</Project>
+      <Name>SFA.DAS.AssessorService.Api.Types</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SFA.DAS.AssessorService.Domain\SFA.DAS.AssessorService.Domain.csproj">
       <Project>{95283279-6151-4580-a781-93903696a1a2}</Project>
       <Name>SFA.DAS.AssessorService.Domain</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SFA.DAS.AssessorService.ViewModel\SFA.DAS.AssessorService.ViewModel.csproj">
-      <Project>{65e918d5-263a-417e-ba96-0326e9260f06}</Project>
-      <Name>SFA.DAS.AssessorService.ViewModel</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

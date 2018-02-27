@@ -11,19 +11,19 @@
     [Subject("AssessorService")]
     public class WhenUpdateAssessmentUserSucceeds : WhenUpdateAssessmentUserTestBase
     {
-        private static ContactUpdateViewModel _contactUpdateViewModel;
-        private static ContactQueryViewModel _contactQueryViewModel;
+        private static UpdateContactRequest _contactUpdateViewModel;
+        private static Contactl _contactQueryViewModel;
 
         Establish context = () =>
         {
             Setup();
 
-            _contactQueryViewModel = Builder<ContactQueryViewModel>.CreateNew().Build();
+            _contactQueryViewModel = Builder<Contactl>.CreateNew().Build();
 
-            Mediator.Setup(q => q.Send(Moq.It.IsAny<ContactUpdateViewModel>(), Moq.It.IsAny<CancellationToken>()))
+            Mediator.Setup(q => q.Send(Moq.It.IsAny<UpdateContactRequest>(), Moq.It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult((_contactQueryViewModel)));
 
-            _contactUpdateViewModel = Builder<ContactUpdateViewModel>.CreateNew()                   
+            _contactUpdateViewModel = Builder<UpdateContactRequest>.CreateNew()                   
                     .Build();
 
             ContactContoller = new ContactController(

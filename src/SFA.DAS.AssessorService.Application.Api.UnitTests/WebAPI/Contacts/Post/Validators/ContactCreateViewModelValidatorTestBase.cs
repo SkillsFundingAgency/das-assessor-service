@@ -11,7 +11,7 @@
     {
         protected static ContactCreateViewModelValidator ContactCreateViewModelValidator;
         protected static Mock<IContactRepository> ContactRepositoryMock;      
-        protected static ContactCreateViewModel ContactCreateViewModel;
+        protected static CreateContactRequest ContactCreateViewModel;
         protected static Mock<IContactQueryRepository> ContactQueryRepository;
 
         public static void Setup()

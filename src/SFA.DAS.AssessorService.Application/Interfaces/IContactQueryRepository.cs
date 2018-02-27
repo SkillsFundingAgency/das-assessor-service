@@ -11,8 +11,8 @@
         Task<bool> CheckContactExists(Guid value);
         Task<bool> CheckContactExists(string userName, string emailAddress);
 
-        Task<IEnumerable<ContactQueryViewModel>> GetContacts(Guid id);
-        Task<ContactQueryViewModel> GetContact(string userName, string emailAddress);
+        Task<IEnumerable<Contactl>> GetContacts(Guid id);
+        Task<Contactl> GetContact(string userName, string emailAddress);
       
     }
 }

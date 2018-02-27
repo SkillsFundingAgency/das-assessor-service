@@ -7,8 +7,8 @@
 
     public interface IOrganisationQueryRepository
     {
-        Task<IEnumerable<OrganisationQueryViewModel>> GetAllOrganisations();
-        Task<OrganisationQueryViewModel> GetByUkPrn(int ukprn);
+        Task<IEnumerable<Organisation>> GetAllOrganisations();
+        Task<Organisation> GetByUkPrn(int ukprn);
         Task<OrganisationUpdateDomainModel> Get(Guid organisationId);
 
         Task<bool> CheckIfAlreadyExists(string endPointAssessorOrganisationId);

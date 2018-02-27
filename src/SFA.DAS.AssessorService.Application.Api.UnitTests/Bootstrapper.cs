@@ -16,17 +16,17 @@
 
             AutoMapper.Mapper.Initialize(cfg =>
             {
-                cfg.CreateMap<Organisation, OrganisationQueryViewModel>();
-                cfg.CreateMap<OrganisationCreateViewModel, OrganisationCreateDomainModel>();
-                cfg.CreateMap<OrganisationCreateDomainModel, Organisation>();
-                cfg.CreateMap<Organisation, OrganisationQueryViewModel>();
+                cfg.CreateMap<Domain.Entities.Organisation, ViewModel.Models.Organisation>();
+                cfg.CreateMap<CreateOrganisationRequest, OrganisationCreateDomainModel>();
+                cfg.CreateMap<OrganisationCreateDomainModel, Domain.Entities.Organisation>();
+                cfg.CreateMap<Domain.Entities.Organisation, ViewModel.Models.Organisation>();
 
-                cfg.CreateMap<OrganisationUpdateViewModel, OrganisationUpdateDomainModel>();
-                cfg.CreateMap<Organisation, OrganisationQueryViewModel>();
-                cfg.CreateMap<ContactCreateViewModel, ContactCreateDomainModel>();
+                cfg.CreateMap<UpdateOrganisationRequest, OrganisationUpdateDomainModel>();
+                cfg.CreateMap<Domain.Entities.Organisation, ViewModel.Models.Organisation>();
+                cfg.CreateMap<CreateContactRequest, ContactCreateDomainModel>();
                 cfg.CreateMap<ContactCreateDomainModel, Domain.Entities.Contact>();
-                cfg.CreateMap<Domain.Entities.Contact, ContactCreateViewModel>();
-                cfg.CreateMap<Domain.Entities.Contact, ContactQueryViewModel>();
+                cfg.CreateMap<Domain.Entities.Contact, CreateContactRequest>();
+                cfg.CreateMap<Domain.Entities.Contact, Contactl>();
             });
         }
     }

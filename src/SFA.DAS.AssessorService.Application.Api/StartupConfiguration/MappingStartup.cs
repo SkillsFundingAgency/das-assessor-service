@@ -9,14 +9,14 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
         {
             AutoMapper.Mapper.Initialize(cfg =>
             {
-                cfg.CreateMap<Organisation, OrganisationQueryViewModel>();
-                cfg.CreateMap<OrganisationCreateViewModel, OrganisationCreateDomainModel>();
-                cfg.CreateMap<OrganisationCreateDomainModel, Organisation>();
-                cfg.CreateMap<OrganisationUpdateViewModel, OrganisationUpdateDomainModel>();
-                cfg.CreateMap<ContactCreateViewModel, ContactCreateDomainModel>();
+                cfg.CreateMap<Domain.Entities.Organisation, ViewModel.Models.Organisation>();
+                cfg.CreateMap<CreateOrganisationRequest, OrganisationCreateDomainModel>();
+                cfg.CreateMap<OrganisationCreateDomainModel, Domain.Entities.Organisation>();
+                cfg.CreateMap<UpdateOrganisationRequest, OrganisationUpdateDomainModel>();
+                cfg.CreateMap<CreateContactRequest, ContactCreateDomainModel>();
                 cfg.CreateMap<ContactCreateDomainModel, Contact>();
-                cfg.CreateMap<Contact, ContactCreateViewModel>();
-                cfg.CreateMap<Contact, ContactQueryViewModel>();
+                cfg.CreateMap<Contact, CreateContactRequest>();
+                cfg.CreateMap<Contact, Contactl>();
             });
         }
     }

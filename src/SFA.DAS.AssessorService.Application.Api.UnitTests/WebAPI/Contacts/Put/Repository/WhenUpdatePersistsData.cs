@@ -17,17 +17,17 @@
     {
         private static ContactRepository _contactRepository;
         private static Mock<AssessorDbContext> _assessorDbContext;
-        private static ContactUpdateViewModel _contactUpdateViewModel;
+        private static UpdateContactRequest _contactUpdateViewModel;
         private static Mock<DbSet<Contact>> _contactDBSetMock;
 
-        protected static ContactQueryViewModel _result;
+        protected static Contactl _result;
 
 
         Establish context = () =>
         {
             Bootstrapper.Initialize();
 
-            _contactUpdateViewModel = Builder<ContactUpdateViewModel>.CreateNew().Build();
+            _contactUpdateViewModel = Builder<UpdateContactRequest>.CreateNew().Build();
 
             _assessorDbContext = new Mock<AssessorDbContext>();
             _contactDBSetMock = new Mock<DbSet<Contact>>();

@@ -20,11 +20,11 @@
         private static OrganisationRepository _organisationRepository;
         private static Mock<AssessorDbContext> _assessorDbContext;
         private static OrganisationCreateDomainModel _organisationCreateDomainModel;
-        private static Mock<DbSet<Organisation>> _organisationDBSetMock;
+        private static Mock<DbSet<Domain.Entities.Organisation>> _organisationDBSetMock;
         //private static CreateOrganisationHandler CreateOrganisationHandler;
         //protected static Mock<IOrganisationRepository> OrganisationRepositoryMock;
         //protected static OrganisationCreateDomainModel _organisationCreateDomainModel;
-        protected static OrganisationQueryViewModel _result;
+        protected static ViewModel.Models.Organisation _result;
         //protected static OrganisationCreateViewModel _organisationCreateViewModel;
         //protected static OrganisationQueryViewModel _result;
 
@@ -35,14 +35,14 @@
             _organisationCreateDomainModel = Builder<OrganisationCreateDomainModel>.CreateNew().Build();
 
             _assessorDbContext = new Mock<AssessorDbContext>();
-            _organisationDBSetMock = new Mock<DbSet<Organisation>>();
+            _organisationDBSetMock = new Mock<DbSet<Domain.Entities.Organisation>>();
 
-            var mockSet = new Mock<DbSet<Organisation>>();
+            var mockSet = new Mock<DbSet<Domain.Entities.Organisation>>();
             var mockContext = new Mock<AssessorDbContext>();
 
-            var organisations = new List<Organisation>();
+            var organisations = new List<Domain.Entities.Organisation>();
 
-            mockSet.Setup(m => m.Add(Moq.It.IsAny<Organisation>())).Callback((Organisation organisation) => organisations.Add(organisation));
+            mockSet.Setup(m => m.Add(Moq.It.IsAny<Domain.Entities.Organisation>())).Callback((Domain.Entities.Organisation organisation) => organisations.Add(organisation));
 
             _assessorDbContext.Setup(q => q.Organisations).Returns(mockSet.Object);
             _assessorDbContext.Setup(q => q.SaveChangesAsync(new CancellationToken()))

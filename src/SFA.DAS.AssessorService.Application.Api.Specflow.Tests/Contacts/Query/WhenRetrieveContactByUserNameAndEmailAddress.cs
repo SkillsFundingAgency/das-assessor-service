@@ -12,7 +12,7 @@
     public class WhenRetrieveContactByUserNameAndEmailAddress
     {
         private readonly RestClient _restClient;
-        private ContactQueryViewModel _contactQueryViewModel;
+        private Contactl _contactQueryViewModel;
 
         private dynamic _contactArgument;
 
@@ -34,7 +34,7 @@
             _restClient.Result = response.Content.ReadAsStringAsync().Result;
             _restClient.HttpResponseMessage = response;
 
-            _contactQueryViewModel = JsonConvert.DeserializeObject<ContactQueryViewModel>(_restClient.Result);
+            _contactQueryViewModel = JsonConvert.DeserializeObject<Contactl>(_restClient.Result);
         }
 
         [Then(@"the API returns valid Contact")]

@@ -191,6 +191,62 @@ this.ScenarioSetup(scenarioInfo);
 #line hidden
             this.ScenarioCleanup();
         }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Delete an Contact")]
+        public virtual void DeleteAnContact()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Delete an Contact", ((string[])(null)));
+#line 44
+this.ScenarioSetup(scenarioInfo);
+#line 45
+ testRunner.Given("System Has access to the SFA.DAS.AssessmentOrgs.Api", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+            TechTalk.SpecFlow.Table table5 = new TechTalk.SpecFlow.Table(new string[] {
+                        "EndPointAssessorName",
+                        "EndPointAssessorOrganisationId",
+                        "EndPointAssessorUKPRN"});
+            table5.AddRow(new string[] {
+                        "Test",
+                        "99999777",
+                        "10033444"});
+#line 46
+ testRunner.When("I Delete n Contact", ((string)(null)), table5, "When ");
+#line 49
+ testRunner.Then("the response http status should be No Content", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 50
+ testRunner.And("the Contact should be deleted", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Repeat Deleting an Contact")]
+        public virtual void RepeatDeletingAnContact()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Repeat Deleting an Contact", ((string[])(null)));
+#line 52
+this.ScenarioSetup(scenarioInfo);
+#line 53
+ testRunner.Given("System Has access to the SFA.DAS.AssessmentOrgs.Api", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+            TechTalk.SpecFlow.Table table6 = new TechTalk.SpecFlow.Table(new string[] {
+                        "EndPointAssessorName",
+                        "EndPointAssessorOrganisationId",
+                        "EndPointAssessorUKPRN"});
+            table6.AddRow(new string[] {
+                        "Test",
+                        "99999778",
+                        "10033444"});
+#line 54
+ testRunner.When("I Delete an Contact Twice", ((string)(null)), table6, "When ");
+#line 57
+ testRunner.Then("the response http status should be Not Found", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 58
+ testRunner.And("the COntact should be deleted", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            this.ScenarioCleanup();
+        }
     }
 }
 #pragma warning restore

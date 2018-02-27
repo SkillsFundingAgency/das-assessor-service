@@ -21,7 +21,7 @@
         private static Mock<AssessorDbContext> _assessorDbContext;
         private static ContactCreateDomainModel _contactCreateDomainModel;
         private static Mock<DbSet<Contact>> _contactDBSetMock;        
-        protected static ContactQueryViewModel _result;
+        protected static Contactl _result;
         
         Establish context = () =>
         {

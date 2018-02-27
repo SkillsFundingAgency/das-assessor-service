@@ -30,7 +30,7 @@
         }
 
         [HttpGet("{organisationId}", Name = "GetAllContactsForAnOrganisation")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ContactQueryViewModel>))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<Contactl>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetAllContactsForAnOrganisation(Guid organisationId)
         {           
@@ -41,7 +41,7 @@
         }
 
         [HttpGet("user/{userName}/{emailAddress}", Name = "GetContactsByUserNameAndEmail")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ContactQueryViewModel>))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<Contactl>))]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetContactsByUserNameAndEmail(string userName, string emailAddress)

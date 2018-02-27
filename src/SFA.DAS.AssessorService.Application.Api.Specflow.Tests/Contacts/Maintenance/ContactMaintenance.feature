@@ -40,4 +40,20 @@ Scenario: Update a Contact succesfully
 	| Test        | jane1289@gmail.com             |
 	Then the response http status should be No Content
 	And the Contact Update should have occured
+
+Scenario: Delete an Contact 
+	Given System Has access to the SFA.DAS.AssessmentOrgs.Api	
+	When I Delete n Contact
+	| EndPointAssessorName | EndPointAssessorOrganisationId | EndPointAssessorUKPRN |
+	| Test                 | 99999777                       | 10033444              |
+	Then the response http status should be No Content
+	And the Contact should be deleted
+
+Scenario: Repeat Deleting an Contact 
+	Given System Has access to the SFA.DAS.AssessmentOrgs.Api	
+	When I Delete an Contact Twice
+	| EndPointAssessorName | EndPointAssessorOrganisationId | EndPointAssessorUKPRN |
+	| Test                 | 99999778                       | 10033444              |
+	Then the response http status should be Not Found
+	And the COntact should be deleted
 	

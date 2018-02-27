@@ -20,18 +20,18 @@
             _assessorDbContext = assessorDbContext;
         }
 
-        public async Task<IEnumerable<ContactQueryViewModel>> GetContacts(Guid id)
+        public async Task<IEnumerable<Contactl>> GetContacts(Guid id)
         {
             var contacts = await _assessorDbContext.Organisations
                 .Include(organisation => organisation.Contacts)
                 .Where(organisation => organisation.Id == id)
                 .SelectMany(q => q.Contacts).Where(q => q.ContactStatus == ContactStatus.Live)
-                .Select(contact => Mapper.Map<ContactQueryViewModel>(contact)).AsNoTracking().ToListAsync();
+                .Select(contact => Mapper.Map<Contactl>(contact)).AsNoTracking().ToListAsync();
 
             return contacts;
         }
 
-        public async Task<ContactQueryViewModel> GetContact(string userName, string emailAddress)
+        public async Task<Contactl> GetContact(string userName, string emailAddress)
         {
             var contact = await _assessorDbContext.Contacts
                 .FirstOrDefaultAsync(q => q.ContactName == userName && q.ContactEmail == emailAddress && q.ContactStatus
@@ -39,7 +39,7 @@
             if (contact == null)
                 throw new NotFound();
 
-            var contactQueryViewModel = Mapper.Map<ContactQueryViewModel>(contact);
+            var contactQueryViewModel = Mapper.Map<Contactl>(contact);
             return contactQueryViewModel;
         }
 

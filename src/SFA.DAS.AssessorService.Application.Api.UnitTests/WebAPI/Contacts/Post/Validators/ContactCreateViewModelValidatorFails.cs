@@ -17,7 +17,7 @@
         {
             Setup();
 
-            ContactCreateViewModel = new ContactCreateViewModel();
+            ContactCreateViewModel = new CreateContactRequest();
         };
 
         Because of = () =>

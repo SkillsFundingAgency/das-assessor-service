@@ -12,13 +12,13 @@
     public class WhenContactCreateViewModelValidatorSuccceeds : ContactUpdateViewModelValidatorTestBase
     {
         private static ValidationResult _validationResult;
-        private static ContactUpdateViewModel _contactUpdateViewModel;
+        private static UpdateContactRequest _contactUpdateViewModel;
 
         Establish context = () =>
         {
             Setup();
 
-            _contactUpdateViewModel = Builder<ContactUpdateViewModel>.CreateNew().Build();            
+            _contactUpdateViewModel = Builder<UpdateContactRequest>.CreateNew().Build();            
         };
 
         Because of = () =>

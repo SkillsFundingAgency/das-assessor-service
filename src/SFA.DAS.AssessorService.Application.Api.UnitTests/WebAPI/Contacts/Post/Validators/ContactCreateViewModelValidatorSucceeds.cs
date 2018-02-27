@@ -19,7 +19,7 @@
         {
             Setup();
 
-            ContactCreateViewModel = Builder<ContactCreateViewModel>.CreateNew().Build();            
+            ContactCreateViewModel = Builder<CreateContactRequest>.CreateNew().Build();            
         };
 
         Because of = () =>

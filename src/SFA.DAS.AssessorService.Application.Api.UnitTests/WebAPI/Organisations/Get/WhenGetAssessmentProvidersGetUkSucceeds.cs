@@ -9,13 +9,13 @@
     [Subject("AssessorService")]
     public class WhenGetAssessmentProvidersGetUkSucceeds : WhenGetAssessmentProvidersTestBase
     {
-        private static OrganisationQueryViewModel _organisationQueryViewModel;
+        private static Organisation _organisationQueryViewModel;
       
         Establish context = () =>
         {
             Setup();
 
-            _organisationQueryViewModel = Builder<OrganisationQueryViewModel>.CreateNew().Build();
+            _organisationQueryViewModel = Builder<Organisation>.CreateNew().Build();
 
             OrganisationQueryRepositoryMock.Setup(q => q.GetByUkPrn(Moq.It.IsAny<int>()))
                 .Returns(Task.FromResult((_organisationQueryViewModel)));

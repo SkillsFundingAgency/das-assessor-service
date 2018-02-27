@@ -35,11 +35,11 @@
         }
 
         [HttpPost(Name = "CreateContract")]       
-        [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(ContactQueryViewModel))]
+        [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(Contactl))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> CreateContact(
-            [FromBody] ContactCreateViewModel contactCreateViewModel)
+            [FromBody] CreateContactRequest contactCreateViewModel)
         {
             _logger.LogInformation("Received Create Contact Request");
 
@@ -54,7 +54,7 @@
         [SwaggerResponse((int)HttpStatusCode.NoContent)]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> UpdateContact([FromBody] ContactUpdateViewModel contactUpdateViewModel)
+        public async Task<IActionResult> UpdateContact([FromBody] UpdateContactRequest contactUpdateViewModel)
         {
             _logger.LogInformation("Received Update Contact Request");
 
@@ -73,7 +73,7 @@
             {
                 _logger.LogInformation("Received Delete Contact Request");
 
-                var contactDeleteViewModel = new ContactDeleteViewModel
+                var contactDeleteViewModel = new DeleteContactRequest
                 {
                     Id = id
                 };

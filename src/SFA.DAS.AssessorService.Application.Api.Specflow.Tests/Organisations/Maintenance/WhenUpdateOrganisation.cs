@@ -18,7 +18,7 @@
     {
         private RestClient _restClient;
         private readonly IDbConnection _dbconnection;
-        private OrganisationQueryViewModel _organisationRetrieved;
+        private Organisation _organisationRetrieved;
         private dynamic _organisationArguments;
 
         public WhenUpdateOrganisation(RestClient restClient,
@@ -36,9 +36,9 @@
             HttpResponseMessage organisationResponse = _restClient.HttpClient.GetAsync(
             "api/v1/organisations/10000000").Result;
             var organisationResult = organisationResponse.Content.ReadAsStringAsync().Result;
-            var organisationQueryViewModel = JsonConvert.DeserializeObject<OrganisationQueryViewModel>(organisationResult);
+            var organisationQueryViewModel = JsonConvert.DeserializeObject<Organisation>(organisationResult);
 
-            var organisation = new OrganisationUpdateViewModel
+            var organisation = new UpdateOrganisationRequest
             {
                 Id = organisationQueryViewModel.Id,
                 PrimaryContactId = organisationQueryViewModel.PrimaryContactId,
@@ -54,7 +54,7 @@
         [Then(@"the Update should have occured")]
         public void ThenTheUpdateShouldHaveOccured()
         {
-            var organisationsCreated = _dbconnection.Query<OrganisationQueryViewModel>
+            var organisationsCreated = _dbconnection.Query<Organisation>
               ($"Select EndPointAssessorOrganisationId, EndPointAssessorUKPRN, EndPointAssessorName, OrganisationStatus From Organisations where EndPointAssessorUKPRN = {_organisationArguments.EndPointAssessorUKPRN}").ToList();
             _organisationRetrieved = organisationsCreated.First();
 
@@ -67,7 +67,7 @@
         [When(@"I Update an Organisation With invalid Id")]
         public void WhenIUpdateAnOrganisationWithInvalidId(IEnumerable<dynamic> organisations)
         {
-            var organisation = new OrganisationUpdateViewModel
+            var organisation = new UpdateOrganisationRequest
             {
                 Id = Guid.NewGuid(),
                 PrimaryContactId = null,
@@ -88,9 +88,9 @@
             HttpResponseMessage organisationResponse = _restClient.HttpClient.GetAsync(
             "api/v1/organisations/10000000").Result;
             var organisationResult = organisationResponse.Content.ReadAsStringAsync().Result;
-            var organisationQueryViewModel = JsonConvert.DeserializeObject<OrganisationQueryViewModel>(organisationResult);
+            var organisationQueryViewModel = JsonConvert.DeserializeObject<Organisation>(organisationResult);
 
-            var organisation = new OrganisationUpdateViewModel
+            var organisation = new UpdateOrganisationRequest
             {
                 Id = organisationQueryViewModel.Id,
                 PrimaryContactId = Guid.NewGuid(),
@@ -113,14 +113,14 @@
            "api/v1/contacts/user/John Coxhead/jcoxhead@gmail.com").Result;
             var contactResult = contactResponse.Content.ReadAsStringAsync().Result;
 
-            var contact = JsonConvert.DeserializeObject<ContactQueryViewModel>(contactResult);
+            var contact = JsonConvert.DeserializeObject<Contactl>(contactResult);
 
             HttpResponseMessage organisationResponse = _restClient.HttpClient.GetAsync(
             "api/v1/organisations/10000000").Result;
             var organisationResult = organisationResponse.Content.ReadAsStringAsync().Result;
-            var organisationQueryViewModel = JsonConvert.DeserializeObject<OrganisationQueryViewModel>(organisationResult);
+            var organisationQueryViewModel = JsonConvert.DeserializeObject<Organisation>(organisationResult);
 
-            var organisation = new OrganisationUpdateViewModel
+            var organisation = new UpdateOrganisationRequest
             {
                 Id = organisationQueryViewModel.Id,
                 PrimaryContactId = contact.Id,
@@ -136,7 +136,7 @@
         [Then(@"the Organisation Status should be persisted as Live")]
         public void ThenTheOrganisationStatusShouldBePersistedAsLive()
         {
-            var organisationUpdated = _dbconnection.Query<OrganisationQueryViewModel>
+            var organisationUpdated = _dbconnection.Query<Organisation>
               ($"Select EndPointAssessorOrganisationId, EndPointAssessorUKPRN, EndPointAssessorName, OrganisationStatus From Organisations where EndPointAssessorOrganisationId = {_organisationArguments.EndPointAssessorOrganisationId}").ToList();
             _organisationRetrieved = organisationUpdated.First();
 

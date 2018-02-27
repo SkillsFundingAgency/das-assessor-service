@@ -15,9 +15,9 @@
     {
         private RestClient _restClient;
         private readonly IDbConnection _dbconnection;
-        private OrganisationQueryViewModel _organisationQueryViewModel,
+        private Organisation _organisationQueryViewModel,
             _organisaionRetrieved;
-        private ContactQueryViewModel _contactQueryViewModel;
+        private Contactl _contactQueryViewModel;
         private dynamic _contactArguments;
 
         public WhenCreateContact(RestClient restClient,
@@ -32,7 +32,7 @@
         {
             _contactArguments = contactArguments.First();
 
-            var organisationCreateViewModel = new OrganisationCreateViewModel
+            var organisationCreateViewModel = new CreateOrganisationRequest
             {
                 EndPointAssessorName = "Test User",
                 EndPointAssessorOrganisationId = "9999999994432",
@@ -42,7 +42,7 @@
 
             CreateOrganisation(organisationCreateViewModel);
 
-            var contactCreateViewModel = new ContactCreateViewModel
+            var contactCreateViewModel = new CreateContactRequest
             {
                 ContactName = _contactArguments.ContactName,
                 ContactEmail = _contactArguments.ContactEmail,
@@ -55,22 +55,22 @@
             RetrieveOrganisation(organisationCreateViewModel);
         }
 
-        private void CreateContact(ContactCreateViewModel contactCreateViewModel)
+        private void CreateContact(CreateContactRequest contactCreateViewModel)
         {
             _restClient.HttpResponseMessage = _restClient.HttpClient.PostAsJsonAsync(
                "api/v1/contacts", contactCreateViewModel).Result;
 
             _restClient.Result = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
-            _contactQueryViewModel = JsonConvert.DeserializeObject<ContactQueryViewModel>(_restClient.Result);
+            _contactQueryViewModel = JsonConvert.DeserializeObject<Contactl>(_restClient.Result);
         }
 
-        private void CreateOrganisation(OrganisationCreateViewModel organisationCreateViewModel)
+        private void CreateOrganisation(CreateOrganisationRequest organisationCreateViewModel)
         {
             _restClient.HttpResponseMessage = _restClient.HttpClient.PostAsJsonAsync(
                  "api/v1/organisations", organisationCreateViewModel).Result;
             _restClient.Result = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
 
-            _organisationQueryViewModel = JsonConvert.DeserializeObject<OrganisationQueryViewModel>(_restClient.Result);
+            _organisationQueryViewModel = JsonConvert.DeserializeObject<Organisation>(_restClient.Result);
         }
 
         [When(@"I Create a Contact as another User for Organisation")]
@@ -78,7 +78,7 @@
         {
             _contactArguments = contactArguments.First();
 
-            var organisationCreateViewModel = new OrganisationCreateViewModel
+            var organisationCreateViewModel = new CreateOrganisationRequest
             {
                 EndPointAssessorName = "Test User",
                 EndPointAssessorOrganisationId = "99944",
@@ -88,7 +88,7 @@
 
             CreateOrganisation(organisationCreateViewModel);
 
-            var contactCreateViewModel = new ContactCreateViewModel
+            var contactCreateViewModel = new CreateContactRequest
             {
                 ContactName = _contactArguments.ContactName + "XXX",
                 ContactEmail = _contactArguments.ContactEmail + "XXX",
@@ -98,7 +98,7 @@
 
             CreateContact(contactCreateViewModel);
 
-            contactCreateViewModel = new ContactCreateViewModel
+            contactCreateViewModel = new CreateContactRequest
             {
                 ContactName = _contactArguments.ContactName,
                 ContactEmail = _contactArguments.ContactEmail,
@@ -129,12 +129,12 @@
             _organisaionRetrieved.OrganisationStatus.Should().Be(OrganisationStatus.Live);
         }
 
-        private void RetrieveOrganisation(OrganisationCreateViewModel organisationCreateViewModel)
+        private void RetrieveOrganisation(CreateOrganisationRequest organisationCreateViewModel)
         {
             var organisationResponseMessage = _restClient.HttpClient.GetAsync(
               $"api/v1/organisations/{organisationCreateViewModel.EndPointAssessorUKPRN}").Result;
             var result = organisationResponseMessage.Content.ReadAsStringAsync().Result;
-            _organisaionRetrieved = JsonConvert.DeserializeObject<OrganisationQueryViewModel>(result);
+            _organisaionRetrieved = JsonConvert.DeserializeObject<Organisation>(result);
         }
 
 
@@ -143,7 +143,7 @@
         {
             _contactArguments = contactArguments.First();
 
-            var organisationCreateViewModel = new OrganisationCreateViewModel
+            var organisationCreateViewModel = new CreateOrganisationRequest
             {
                 EndPointAssessorName = "Test User",
                 EndPointAssessorOrganisationId = "9999999994433",
@@ -153,7 +153,7 @@
 
             CreateOrganisation(organisationCreateViewModel);
 
-            var contactCreateViewModel = new ContactCreateViewModel
+            var contactCreateViewModel = new CreateContactRequest
             {
                 ContactName = _contactArguments.ContactName,
                 ContactEmail = _contactArguments.ContactEmail,
@@ -163,7 +163,7 @@
 
             CreateContact(contactCreateViewModel);
 
-            contactCreateViewModel = new ContactCreateViewModel
+            contactCreateViewModel = new CreateContactRequest
             {
                 ContactName = _contactArguments.ContactName,
                 ContactEmail = _contactArguments.ContactEmail,

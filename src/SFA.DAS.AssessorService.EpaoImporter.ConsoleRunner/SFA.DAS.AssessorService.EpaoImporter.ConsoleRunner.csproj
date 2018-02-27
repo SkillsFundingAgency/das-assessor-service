@@ -7,7 +7,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SFA.DAS.AssessorService.Application.Api.Client\SFA.DAS.AssessorService.Application.Api.Client.csproj" />
-    <ProjectReference Include="..\SFA.DAS.AssessorService.ViewModel\SFA.DAS.AssessorService.ViewModel.csproj" />
   </ItemGroup>
 
 </Project>

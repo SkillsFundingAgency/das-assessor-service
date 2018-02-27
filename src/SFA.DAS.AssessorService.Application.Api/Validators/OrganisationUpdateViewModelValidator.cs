@@ -7,7 +7,7 @@
     using SFA.DAS.AssessorService.ViewModel.Models;
     using System;
 
-    public class OrganisationUpdateViewModelValidator : AbstractValidator<OrganisationUpdateViewModel>
+    public class OrganisationUpdateViewModelValidator : AbstractValidator<UpdateOrganisationRequest>
     {
         private readonly IStringLocalizer<OrganisationUpdateViewModelValidator> _localizer;
         private readonly IContactQueryRepository _contactQueryRepository;
@@ -22,7 +22,7 @@
             _contactQueryRepository = contactQueryRepository;
             _organisationQueryRepository = organisationQueryRepository;
 
-            var organisationUpdateViewModel = new OrganisationUpdateViewModel();
+            var organisationUpdateViewModel = new UpdateOrganisationRequest();
           
             RuleFor(organisation => organisation.EndPointAssessorName).NotEmpty().WithMessage(_localizer[ResourceMessageName.EndPointAssessorNameMustBeDefined, nameof(organisationUpdateViewModel.EndPointAssessorName)].Value);
             RuleFor(organisation => organisation.PrimaryContactId).Must(HaveAssociatedPrimaryContactInContacts).WithMessage(_localizer[ResourceMessageName.PrimaryContactDoesNotExist, nameof(organisationUpdateViewModel.PrimaryContactId)].Value);     

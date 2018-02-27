@@ -6,8 +6,8 @@
 
     public interface IOrganisationRepository
     {     
-        Task<OrganisationQueryViewModel> CreateNewOrganisation(OrganisationCreateDomainModel newOrganisation);
-        Task<OrganisationQueryViewModel> UpdateOrganisation(OrganisationUpdateDomainModel organisationUpdateDomainModel);
+        Task<Organisation> CreateNewOrganisation(OrganisationCreateDomainModel newOrganisation);
+        Task<Organisation> UpdateOrganisation(OrganisationUpdateDomainModel organisationUpdateDomainModel);
         Task Delete(Guid id);
     }
 }

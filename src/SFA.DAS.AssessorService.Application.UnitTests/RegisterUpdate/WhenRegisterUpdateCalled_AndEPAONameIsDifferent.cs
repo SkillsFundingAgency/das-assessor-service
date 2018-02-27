@@ -30,12 +30,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
 
                 }.AsEnumerable()));
 
-            
+
             OrganisationRepository.Setup(r => r.GetAllOrganisations())
-                .Returns(Task.FromResult(new List<OrganisationQueryViewModel>
+                .Returns(Task.FromResult(new List<ViewModel.Models.Organisation>
                 {
-                    new OrganisationQueryViewModel() {EndPointAssessorOrganisationId = "EPA0001", EndPointAssessorName = "OLD NAME", Id = _organisationId},
-                    new OrganisationQueryViewModel() {EndPointAssessorOrganisationId = "EPA0002", EndPointAssessorName = "Another EPAO"}
+                    new ViewModel.Models.Organisation() {EndPointAssessorOrganisationId = "EPA0001", EndPointAssessorName = "OLD NAME", Id = _organisationId},
+                    new ViewModel.Models.Organisation() {EndPointAssessorOrganisationId = "EPA0002", EndPointAssessorName = "Another EPAO"}
                 }.AsEnumerable()));
         }
 
@@ -45,7 +45,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
             RegisterUpdateHandler.Handle(new RegisterUpdateRequest(), new CancellationToken()).Wait();
             Mediator.Verify(m =>
                 m.Send(
-                    It.Is<OrganisationUpdateViewModel>(vm =>
+                    It.Is<UpdateOrganisationRequest>(vm =>
                         vm.Id == _organisationId && vm.EndPointAssessorName == "The New EPAO Name"),
                     new CancellationToken()));
         }
