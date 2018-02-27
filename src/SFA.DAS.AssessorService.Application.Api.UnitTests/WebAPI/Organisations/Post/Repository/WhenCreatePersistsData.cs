@@ -24,7 +24,7 @@
         //private static CreateOrganisationHandler CreateOrganisationHandler;
         //protected static Mock<IOrganisationRepository> OrganisationRepositoryMock;
         //protected static OrganisationCreateDomainModel _organisationCreateDomainModel;
-        protected static ViewModel.Models.Organisation _result;
+        protected static AssessorService.Api.Types.Organisation _result;
         //protected static OrganisationCreateViewModel _organisationCreateViewModel;
         //protected static OrganisationQueryViewModel _result;
 

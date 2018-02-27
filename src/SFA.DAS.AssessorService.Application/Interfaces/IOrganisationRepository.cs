@@ -2,6 +2,7 @@
 {
     using System;
     using System.Threading.Tasks;
+    using SFA.DAS.AssessorService.Api.Types;
     using SFA.DAS.AssessorService.ViewModel.Models;
 
     public interface IOrganisationRepository

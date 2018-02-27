@@ -30,10 +30,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
 
             _organisationId = Guid.NewGuid();
             OrganisationRepository.Setup(r => r.GetAllOrganisations())
-                .Returns(Task.FromResult(new List<ViewModel.Models.Organisation>
+                .Returns(Task.FromResult(new List<AssessorService.Api.Types.Organisation>
                 {
-                    new ViewModel.Models.Organisation() {EndPointAssessorOrganisationId = "EPA0001"},
-                    new ViewModel.Models.Organisation() {EndPointAssessorOrganisationId = "EPA0002", Id = _organisationId}
+                    new AssessorService.Api.Types.Organisation() {EndPointAssessorOrganisationId = "EPA0001"},
+                    new AssessorService.Api.Types.Organisation() {EndPointAssessorOrganisationId = "EPA0002", Id = _organisationId}
                 }.AsEnumerable()));
         }
 

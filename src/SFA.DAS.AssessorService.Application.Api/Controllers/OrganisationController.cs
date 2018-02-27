@@ -9,6 +9,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Localization;
     using Microsoft.Extensions.Logging;
+    using SFA.DAS.AssessorService.Api.Types;
     using SFA.DAS.AssessorService.Application.Api.Attributes;
     using SFA.DAS.AssessorService.Application.Api.Middleware;
     using SFA.DAS.AssessorService.Domain.Exceptions;
