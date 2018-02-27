@@ -3,7 +3,7 @@
     using SFA.DAS.AssessorService.Domain.Enums;
     using System;
 
-    public class Contactl
+    public class Contact
     {
         public Guid Id { get; set; }
         public Guid OrganisationId { get; set; }

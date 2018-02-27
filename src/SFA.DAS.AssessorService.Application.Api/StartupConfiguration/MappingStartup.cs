@@ -14,9 +14,9 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 cfg.CreateMap<OrganisationCreateDomainModel, Domain.Entities.Organisation>();
                 cfg.CreateMap<UpdateOrganisationRequest, OrganisationUpdateDomainModel>();
                 cfg.CreateMap<CreateContactRequest, ContactCreateDomainModel>();
-                cfg.CreateMap<ContactCreateDomainModel, Contact>();
-                cfg.CreateMap<Contact, CreateContactRequest>();
-                cfg.CreateMap<Contact, Contactl>();
+                cfg.CreateMap<ContactCreateDomainModel, Domain.Entities.Contact>();
+                cfg.CreateMap<Domain.Entities.Contact, CreateContactRequest>();
+                cfg.CreateMap<Domain.Entities.Contact, ViewModel.Models.Contact>();
             });
         }
     }

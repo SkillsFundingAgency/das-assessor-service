@@ -17,7 +17,7 @@
         private readonly IDbConnection _dbconnection;
         private Organisation _organisationQueryViewModel,
             _organisaionRetrieved;
-        private Contactl _contactQueryViewModel;
+        private Contact _contactQueryViewModel;
         private dynamic _contactArguments;
 
         public WhenCreateContact(RestClient restClient,
@@ -61,7 +61,7 @@
                "api/v1/contacts", contactCreateViewModel).Result;
 
             _restClient.Result = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
-            _contactQueryViewModel = JsonConvert.DeserializeObject<Contactl>(_restClient.Result);
+            _contactQueryViewModel = JsonConvert.DeserializeObject<Contact>(_restClient.Result);
         }
 
         private void CreateOrganisation(CreateOrganisationRequest organisationCreateViewModel)

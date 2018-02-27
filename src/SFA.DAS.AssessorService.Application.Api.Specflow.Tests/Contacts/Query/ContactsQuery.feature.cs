@@ -103,10 +103,10 @@ this.ScenarioSetup(scenarioInfo);
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Retrieve Contact for an Organisation By Username and EMail Address")]
-        public virtual void RetrieveContactForAnOrganisationByUsernameAndEMailAddress()
+        [NUnit.Framework.DescriptionAttribute("Retrieve Contact for an Organisation By Username")]
+        public virtual void RetrieveContactForAnOrganisationByUsername()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Retrieve Contact for an Organisation By Username and EMail Address", ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Retrieve Contact for an Organisation By Username", ((string[])(null)));
 #line 18
 this.ScenarioSetup(scenarioInfo);
 #line 19
@@ -119,7 +119,7 @@ this.ScenarioSetup(scenarioInfo);
                         "John Coxhead",
                         "jcoxhead@gmail.com"});
 #line 20
- testRunner.When("I Request Contacts to be retrieved By Username and Email Address", ((string)(null)), table1, "When ");
+ testRunner.When("I Request Contacts to be retrieved By Username", ((string)(null)), table1, "When ");
 #line 23
  testRunner.Then("the response http status should be OK", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 24

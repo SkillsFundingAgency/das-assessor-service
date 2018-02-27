@@ -12,13 +12,13 @@
     [Subject("AssessorService")]
     public class WhenGetAssessmentUsersSucceeds : WhenGetAssessmentUsersTestBase
     {
-        private static IEnumerable<Contactl> _organisationQueryViewModels;
+        private static IEnumerable<Contact> _organisationQueryViewModels;
       
         Establish context = () =>
         {
             Setup();
 
-            _organisationQueryViewModels = Builder<Contactl>.CreateListOfSize(10).Build();
+            _organisationQueryViewModels = Builder<Contact>.CreateListOfSize(10).Build();
 
             ContactQueryRepository.Setup(q => q.GetContacts(Moq.It.IsAny<Guid>()))
                 .Returns(Task.FromResult((_organisationQueryViewModels)));

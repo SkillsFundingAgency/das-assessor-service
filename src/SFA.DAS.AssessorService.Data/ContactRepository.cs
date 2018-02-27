@@ -22,14 +22,14 @@ namespace SFA.DAS.AssessorService.Data
             _assessorDbContext = assessorDbContext;
         }
 
-        public async Task<Contactl> CreateNewContact(ContactCreateDomainModel newContact)
+        public async Task<ViewModel.Models.Contact> CreateNewContact(ContactCreateDomainModel newContact)
         {
-            var contactEntity = Mapper.Map<Contact>(newContact);
+            var contactEntity = Mapper.Map<Domain.Entities.Contact>(newContact);
 
             _assessorDbContext.Contacts.Add(contactEntity);
             await _assessorDbContext.SaveChangesAsync();
 
-            var contactQueryViewModel = Mapper.Map<Contactl>(contactEntity);
+            var contactQueryViewModel = Mapper.Map<ViewModel.Models.Contact>(contactEntity);
             return contactQueryViewModel;
         }
 

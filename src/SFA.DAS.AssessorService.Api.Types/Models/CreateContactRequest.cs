@@ -3,7 +3,7 @@
     using MediatR;
     using System;
 
-    public class CreateContactRequest : IRequest<Contactl>
+    public class CreateContactRequest : IRequest<Contact>
     {
         public Guid OrganisationId { get; set; }
 

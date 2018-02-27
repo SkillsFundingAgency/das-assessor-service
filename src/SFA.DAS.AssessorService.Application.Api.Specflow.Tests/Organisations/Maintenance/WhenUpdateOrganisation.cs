@@ -113,7 +113,7 @@
            "api/v1/contacts/user/John Coxhead/jcoxhead@gmail.com").Result;
             var contactResult = contactResponse.Content.ReadAsStringAsync().Result;
 
-            var contact = JsonConvert.DeserializeObject<Contactl>(contactResult);
+            var contact = JsonConvert.DeserializeObject<Contact>(contactResult);
 
             HttpResponseMessage organisationResponse = _restClient.HttpClient.GetAsync(
             "api/v1/organisations/10000000").Result;

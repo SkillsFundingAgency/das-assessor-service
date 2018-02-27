@@ -98,7 +98,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ContactsQuery.feature</DependentUpon>
     </Compile>
-    <Compile Include="Contacts\Query\WhenRetrieveContactByUserNameAndEmailAddress.cs" />
+    <Compile Include="Contacts\Query\WhenRetrieveContactByUserName.cs" />
     <Compile Include="Contacts\Query\WhenRetrieveAllContacts.cs" />
     <Compile Include="DatabaseUtils\DatabaseUtilities.cs" />
     <Compile Include="Extensions\HttpClientExtensions.cs" />

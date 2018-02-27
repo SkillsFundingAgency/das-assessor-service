@@ -12,13 +12,13 @@
     public class WhenUpdateAssessmentUserSucceeds : WhenUpdateAssessmentUserTestBase
     {
         private static UpdateContactRequest _contactUpdateViewModel;
-        private static Contactl _contactQueryViewModel;
+        private static Contact _contactQueryViewModel;
 
         Establish context = () =>
         {
             Setup();
 
-            _contactQueryViewModel = Builder<Contactl>.CreateNew().Build();
+            _contactQueryViewModel = Builder<Contact>.CreateNew().Build();
 
             Mediator.Setup(q => q.Send(Moq.It.IsAny<UpdateContactRequest>(), Moq.It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult((_contactQueryViewModel)));

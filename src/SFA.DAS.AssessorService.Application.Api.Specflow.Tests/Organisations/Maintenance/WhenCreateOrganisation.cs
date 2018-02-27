@@ -53,10 +53,10 @@
             _organisationArguments = organisations.First();
 
             HttpResponseMessage contactResponse = _restClient.HttpClient.GetAsync(
-              "api/v1/contacts/user/John Coxhead/jcoxhead@gmail.com").Result;
+              "api/v1/contacts/user/John Coxhead").Result;
             var contactResult = contactResponse.Content.ReadAsStringAsync().Result;
 
-            var contact = JsonConvert.DeserializeObject<Contactl>(contactResult);
+            var contact = JsonConvert.DeserializeObject<Contact>(contactResult);
 
             var organisation = new CreateOrganisationRequest
             {

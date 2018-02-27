@@ -9,32 +9,31 @@
     using TechTalk.SpecFlow;
 
     [Binding]
-    public class WhenRetrieveContactByUserNameAndEmailAddress
+    public class WhenRetrieveContactByUserName
     {
         private readonly RestClient _restClient;
-        private Contactl _contactQueryViewModel;
+        private Contact _contactQueryViewModel;
 
         private dynamic _contactArgument;
 
-        public WhenRetrieveContactByUserNameAndEmailAddress(RestClient restClient)
+        public WhenRetrieveContactByUserName(RestClient restClient)
         {
             _restClient = restClient;
         }
 
-        [When(@"I Request Contacts to be retrieved By Username and Email Address")]
-        public void WhenIRequestContactsToBeRetrievedByUsernameAndEmailAddress(IEnumerable<dynamic> contacts)
+        [When(@"I Request Contacts to be retrieved By Username")]
+        public void WhenIRequestContactsToBeRetrievedByUsername(IEnumerable<dynamic> contacts)
         {
             _contactArgument = contacts.First();
             var userName = _contactArgument.username;
-            var emailAddress = _contactArgument.emailaddress;
 
             HttpResponseMessage response = _restClient.HttpClient.GetAsync(
-                        $"api/v1/contacts/user/{userName}/{emailAddress}").Result;
+                        $"api/v1/contacts/user/{userName}").Result;
 
             _restClient.Result = response.Content.ReadAsStringAsync().Result;
             _restClient.HttpResponseMessage = response;
 
-            _contactQueryViewModel = JsonConvert.DeserializeObject<Contactl>(_restClient.Result);
+            _contactQueryViewModel = JsonConvert.DeserializeObject<Contact>(_restClient.Result);
         }
 
         [Then(@"the API returns valid Contact")]

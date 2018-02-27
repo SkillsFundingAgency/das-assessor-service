@@ -8,7 +8,7 @@
     using SFA.DAS.AssessorService.Domain.Enums;
     using SFA.DAS.AssessorService.ViewModel.Models;
 
-    public class CreateContactHandler : IRequestHandler<CreateContactRequest, Contactl>
+    public class CreateContactHandler : IRequestHandler<CreateContactRequest, Contact>
     {
         private readonly IOrganisationRepository _organisationRepository;
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
@@ -24,7 +24,7 @@
             _organisationQueryRepository = organisationQueryRepository;
         }
 
-        public async Task<Contactl> Handle(CreateContactRequest contactCreateViewModel, CancellationToken cancellationToken)
+        public async Task<Contact> Handle(CreateContactRequest contactCreateViewModel, CancellationToken cancellationToken)
         {
             var contactCreateDomainModel = Mapper.Map<ContactCreateDomainModel>(contactCreateViewModel);
             contactCreateDomainModel.ContactStatus = ContactStatus.Live; // Not sure what to be done about this - to be confirmed??      

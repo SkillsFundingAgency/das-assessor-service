@@ -26,7 +26,7 @@
                 cfg.CreateMap<CreateContactRequest, ContactCreateDomainModel>();
                 cfg.CreateMap<ContactCreateDomainModel, Domain.Entities.Contact>();
                 cfg.CreateMap<Domain.Entities.Contact, CreateContactRequest>();
-                cfg.CreateMap<Domain.Entities.Contact, Contactl>();
+                cfg.CreateMap<Domain.Entities.Contact, ViewModel.Models.Contact>();
             });
         }
     }

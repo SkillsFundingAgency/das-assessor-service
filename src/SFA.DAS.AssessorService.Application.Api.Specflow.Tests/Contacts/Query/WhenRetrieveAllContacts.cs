@@ -14,7 +14,7 @@
     {
         private readonly RestClient _restClient;
         private List<Organisation> _organisationQueryViewModels = new List<Organisation>();
-        private List<Contactl> _contactQueryViewModels = new List<Contactl>();
+        private List<Contact> _contactQueryViewModels = new List<Contact>();
 
         public WhenRetrieveAllContacts(RestClient restClient)
         {
@@ -40,7 +40,7 @@
                         $"api/v1/contacts/{organisation.Id}").Result;
 
 
-                _contactQueryViewModels = JsonConvert.DeserializeObject<List<Contactl>>(_restClient.Result);
+                _contactQueryViewModels = JsonConvert.DeserializeObject<List<Contact>>(_restClient.Result);
 
                 _restClient.HttpResponseMessage = response;
             }

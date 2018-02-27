@@ -30,7 +30,7 @@
         }
 
         [HttpGet("{organisationId}", Name = "GetAllContactsForAnOrganisation")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<Contactl>))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<Contact>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetAllContactsForAnOrganisation(Guid organisationId)
         {           
@@ -40,15 +40,15 @@
             return Ok(contacts);
         }
 
-        [HttpGet("user/{userName}/{emailAddress}", Name = "GetContactsByUserNameAndEmail")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<Contactl>))]
+        [HttpGet("user/{userName}", Name = "GetContactsByUserName")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<Contact>))]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetContactsByUserNameAndEmail(string userName, string emailAddress)
+        public async Task<IActionResult> GetContactsByUserName(string userName)
         {
             try
             {
-                var contact = await _contactQueryRepository.GetContact(userName, emailAddress);
+                var contact = await _contactQueryRepository.GetContact(userName);
                 return Ok(contact);
             }
             catch (NotFound)

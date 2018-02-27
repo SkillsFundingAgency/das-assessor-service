@@ -7,7 +7,7 @@
 
     public interface IContactRepository
     {       
-        Task<Contactl> CreateNewContact(ContactCreateDomainModel newContact);
+        Task<Contact> CreateNewContact(ContactCreateDomainModel newContact);
         Task Update(UpdateContactRequest organisationUpdateViewModel);
         Task Delete(Guid id);
     }
