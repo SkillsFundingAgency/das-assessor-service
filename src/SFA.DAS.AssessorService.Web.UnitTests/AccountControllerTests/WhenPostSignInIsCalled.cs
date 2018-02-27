@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
             var redirectResult = result as RedirectToActionResult;
             redirectResult.ControllerName.Should().Be("Home");
             redirectResult.ActionName.Should().Be("InvalidRole");
-        }
+        } 
         
     }
 }
