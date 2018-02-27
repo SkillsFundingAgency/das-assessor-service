@@ -35,6 +35,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public async Task<IActionResult> PostSignIn()
         {
             var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn").Value;
+
+            // Validate role (service) claim.
+            if (!_contextAccessor.HttpContext.User.HasClaim("http://schemas.portal.com/service", "EPA"))
+            {
+                return RedirectToAction("InvalidRole", "Home");
+            }
+
             try
             {
                 await _apiClient.Get(ukprn, ukprn);
