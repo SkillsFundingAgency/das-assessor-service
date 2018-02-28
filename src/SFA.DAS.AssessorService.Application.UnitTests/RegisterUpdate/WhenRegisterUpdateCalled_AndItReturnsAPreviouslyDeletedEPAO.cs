@@ -16,8 +16,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
     [TestFixture]
     public class WhenRegisterUpdateCalledAndItReturnsAPreviouslyDeletedEpao : RegisterUpdateTestsBase
     {
-        private string _endPointAssessorOrganisationId;
-
         [SetUp]
         public void Arrange()
         {
@@ -31,11 +29,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
 
             //ApiClient.Setup(c => c.Get("EPA0003")).Returns(new Organisation { Id = "EPA0003", Name = "A New EPAO" });
 
-            _endPointAssessorOrganisationId = "1234";
             OrganisationRepository.Setup(r => r.GetAllOrganisations())
                 .Returns(Task.FromResult(new List<Organisation>
                 {
-                    new Organisation() { EndPointAssessorOrganisationId = _endPointAssessorOrganisationId,  OrganisationStatus = OrganisationStatus.Deleted},
+                    new Organisation() { EndPointAssessorOrganisationId = "EPA0001",  OrganisationStatus = OrganisationStatus.Deleted},
                     new Organisation() { EndPointAssessorOrganisationId = "EPA0002"}
                 }.AsEnumerable()));
         }
@@ -48,7 +45,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
             Mediator.Verify(m =>
                 m.Send(
                     It.Is<UpdateOrganisationRequest>(vm =>
-                        vm.EndPointAssessorOrganisationId == _endPointAssessorOrganisationId && vm.OrganisationStatus == OrganisationStatus.New),
+                        vm.EndPointAssessorOrganisationId == "EPA0001" && vm.OrganisationStatus == OrganisationStatus.New),
                     default(CancellationToken)));
         }
     }

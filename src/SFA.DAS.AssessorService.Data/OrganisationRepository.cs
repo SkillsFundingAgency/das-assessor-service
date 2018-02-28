@@ -48,10 +48,10 @@
             return organisationQueryViewModel;
         }
 
-        public async Task Delete(Guid id)
+        public async Task Delete(string endPointAssessorOrganisationId)
         {
             var organisationEntity = _assessorDbContext.Organisations
-                      .FirstOrDefault(q => q.Id == id && q.OrganisationStatus != OrganisationStatus.Deleted);
+                      .FirstOrDefault(q => q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId && q.OrganisationStatus != OrganisationStatus.Deleted);
 
             if (organisationEntity == null)
                 throw (new NotFound());

@@ -35,16 +35,16 @@
             var organisation = await _mediator.Send(organisationUpdateViewModel);
         }
 
-        public async Task DeleteOrganisation(Guid id)
+        public async Task DeleteOrganisation(string endPointAssessorOrganisationId)
         {
             try
             {
-                var deleteViewModel = new DeleteOrgananisationRequest
+                var deleteOrgananisationRequest = new DeleteOrgananisationRequest
                 {
-                    Id = id
+                    EndPointAssessorOrganisationId = endPointAssessorOrganisationId
                 };
 
-                await _mediator.Send(deleteViewModel);
+                await _mediator.Send(deleteOrgananisationRequest);
             }
             catch (NotFound)
             {

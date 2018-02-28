@@ -68,11 +68,11 @@
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> DeleteOrganisation(Guid id)
+        public async Task<IActionResult> DeleteOrganisation(string endPointAssessorOrganisationId)
         {
             _logger.LogInformation("Received Delete Organisation Request");
 
-            await _organisationOrchestrator.DeleteOrganisation(id);
+            await _organisationOrchestrator.DeleteOrganisation(endPointAssessorOrganisationId);
 
             return NoContent();
         }

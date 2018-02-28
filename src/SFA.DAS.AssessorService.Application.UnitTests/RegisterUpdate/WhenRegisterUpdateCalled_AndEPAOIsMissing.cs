@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
     [TestFixture]
     public class WhenRegisterUpdateCalled_AndEPAOIsMissing : RegisterUpdateTestsBase
     {
-        private Guid _organisationId;
+        private string _endPointAssessorOrganisationId;
 
         [SetUp]
         public void Arrange()
@@ -29,12 +29,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
                     
                 }.AsEnumerable()));
 
-            _organisationId = Guid.NewGuid();
+            _endPointAssessorOrganisationId = "EPA0002";
             OrganisationRepository.Setup(r => r.GetAllOrganisations())
                 .Returns(Task.FromResult(new List<Organisation>
                 {
                     new Organisation() {EndPointAssessorOrganisationId = "EPA0001"},
-                    new Organisation() {EndPointAssessorOrganisationId = "EPA0002", Id = _organisationId}
+                    new Organisation() {EndPointAssessorOrganisationId = "EPA0002" }
                 }.AsEnumerable()));
         }
 
@@ -42,8 +42,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
         public void ThenTheRepositoryIsAskedToDeleteTheCorrectOrganisation()
         {
             RegisterUpdateHandler.Handle(new RegisterUpdateRequest(), new CancellationToken()).Wait();
-            Mediator.Verify(m => m.Send(It.Is<DeleteOrgananisationRequest>(vm => vm.Id == _organisationId), default(CancellationToken)));
-            //OrganisationRepository.Verify(r => r.Delete(_organisationId));//.DeleteOrganisationByEpaoId("EPA0002"));
+            Mediator.Verify(m => m.Send(It.Is<DeleteOrgananisationRequest>(vm => vm.EndPointAssessorOrganisationId == _endPointAssessorOrganisationId), default(CancellationToken)));
+            //OrganisationRepository.Verify(r => r.Delete(_endPointAssessorOrganisationId));//.DeleteOrganisationByEpaoId("EPA0002"));
         }
     }
 }
