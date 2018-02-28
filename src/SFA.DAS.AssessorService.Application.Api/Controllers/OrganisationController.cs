@@ -4,14 +4,13 @@
     using Attributes;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Logging;
     using Middleware;
     using Orchestrators;
     using Swashbuckle.AspNetCore.SwaggerGen;
-    using System;
     using System.Collections.Generic;
     using System.Net;
     using System.Threading.Tasks;
-    using Microsoft.Extensions.Logging;
 
     [Authorize]
     [Route("api/v1/organisations")]

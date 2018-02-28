@@ -2,7 +2,7 @@
 {
     using MediatR;
 
-    public class DeleteOrgananisationRequest : IRequest
+    public class DeleteOrganisationRequest : IRequest
     {
         public string EndPointAssessorOrganisationId { get; set; }                  
     }

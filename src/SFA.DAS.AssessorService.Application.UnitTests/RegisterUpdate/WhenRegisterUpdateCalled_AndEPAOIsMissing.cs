@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
         public void ThenTheRepositoryIsAskedToDeleteTheCorrectOrganisation()
         {
             RegisterUpdateHandler.Handle(new RegisterUpdateRequest(), new CancellationToken()).Wait();
-            Mediator.Verify(m => m.Send(It.Is<DeleteOrgananisationRequest>(vm => vm.EndPointAssessorOrganisationId == _endPointAssessorOrganisationId), default(CancellationToken)));
+            Mediator.Verify(m => m.Send(It.Is<DeleteOrganisationRequest>(vm => vm.EndPointAssessorOrganisationId == _endPointAssessorOrganisationId), default(CancellationToken)));
             //OrganisationRepository.Verify(r => r.Delete(_endPointAssessorOrganisationId));//.DeleteOrganisationByEpaoId("EPA0002"));
         }
     }

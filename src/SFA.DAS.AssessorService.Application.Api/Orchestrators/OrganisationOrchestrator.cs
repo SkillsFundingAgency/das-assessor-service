@@ -39,12 +39,12 @@
         {
             try
             {
-                var deleteOrgananisationRequest = new DeleteOrgananisationRequest
+                var deleteOrganisationRequest = new DeleteOrganisationRequest
                 {
                     EndPointAssessorOrganisationId = endPointAssessorOrganisationId
                 };
 
-                await _mediator.Send(deleteOrgananisationRequest);
+                await _mediator.Send(deleteOrganisationRequest);
             }
             catch (NotFound)
             {

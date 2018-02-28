@@ -115,7 +115,7 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
 
         private async Task DeleteOrganisation(Organisation org)
         {
-            await _mediator.Send(new DeleteOrgananisationRequest { EndPointAssessorOrganisationId = org.EndPointAssessorOrganisationId });
+            await _mediator.Send(new DeleteOrganisationRequest { EndPointAssessorOrganisationId = org.EndPointAssessorOrganisationId });
 
             _logger.LogInformation(
                 $"Organisation with ID {org.Id} and EPAOgId {org.Id} no longer found on Register. Deleting from Repository");
