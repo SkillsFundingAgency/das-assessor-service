@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Controllers;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
@@ -14,8 +15,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
     public class WhenPostSignInIsCalled
     {
         private Mock<IHttpContextAccessor> _contextAccessor;
-        private Mock<IOrganisationsApiClient> _apiClient;
+        private Mock<IOrganisationsApiClient> _organisationsApiClient;
         private AccountController _accountController;
+        private Mock<IContactsApiClient> _contactsApiClient;
+        private Mock<IWebConfiguration> _config;
 
         [SetUp]
         public void Arrange()
@@ -25,8 +28,13 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
             _contextAccessor.Setup(a => a.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn"))
                 .Returns(new Claim("http://schemas.portal.com/ukprn", "12345"));
 
-            _apiClient = new Mock<IOrganisationsApiClient>();
-            _accountController = new AccountController(_contextAccessor.Object, _apiClient.Object);
+            _organisationsApiClient = new Mock<IOrganisationsApiClient>();
+            _contactsApiClient = new Mock<IContactsApiClient>();
+
+            _config = new Mock<IWebConfiguration>();
+
+            _accountController = new AccountController(_contextAccessor.Object, _organisationsApiClient.Object,
+                _config.Object, _contactsApiClient.Object);
         }
 
         [Test]

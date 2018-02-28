@@ -6,11 +6,11 @@ using Microsoft.AspNetCore.Authentication.WsFederation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
 using SFA.DAS.AssessorService.Settings;
-using SFA.DAS.AssessorService.ViewModel.Models;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -46,6 +46,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var username = _contextAccessor.HttpContext.User
                 .FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn").Value;
             var email = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/mail").Value;
+            var displayName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/displayname")
+                .Value;
 
             if (!_contextAccessor.HttpContext.User.HasClaim("http://schemas.portal.com/service",
                 _config.Authentication.Role))
@@ -72,7 +74,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 catch (EntityNotFoundException )
                 {
                     // Contact not found in db, post a new one.
-                    contact = await _contactsApiClient.Create(new Contact() {ContactEmail = email, })
+                    contact = await _contactsApiClient.Create(ukprn,
+                        new CreateContactRequest()
+                        {
+                            ContactEmail = email,
+                            OrganisationId = organisation.Id,
+                            ContactName = displayName,
+                            Username = username,
+                            EndPointAssessorContactId = 1
+                        });
                 }
 
                 return RedirectToAction("Index", "Organisation");

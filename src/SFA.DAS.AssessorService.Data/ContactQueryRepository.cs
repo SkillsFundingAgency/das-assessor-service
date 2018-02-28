@@ -34,7 +34,7 @@
         public async Task<Contact> GetContact(string userName)
         {
             var contact = await _assessorDbContext.Contacts
-                .FirstOrDefaultAsync(q => q.ContactName == userName && q.ContactStatus
+                .FirstOrDefaultAsync(q => q.Username == userName && q.ContactStatus
                 != ContactStatus.Deleted);
             if (contact == null)
                 return null;

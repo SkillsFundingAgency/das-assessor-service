@@ -12,9 +12,10 @@ using System;
 namespace SFA.DAS.AssessorService.Data.Migrations
 {
     [DbContext(typeof(AssessorDbContext))]
-    partial class AssessorDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180228091751_Contacts_Username")]
+    partial class Contacts_Username
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

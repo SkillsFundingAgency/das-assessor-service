@@ -92,6 +92,32 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             return null;
         }
 
+        protected async Task<U> PostPutRequestWithResponse<T, U>(string userKey, HttpRequestMessage requestMessage, T model)
+        {
+            var serializeObject = JsonConvert.SerializeObject(model);
+            requestMessage.Content = new StringContent(serializeObject,
+                System.Text.Encoding.UTF8, "application/json");
+
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetJwt(userKey));
+
+            using (var response = HttpClient.SendAsync(requestMessage))
+            {
+                var result = await response;
+                if (result.StatusCode == HttpStatusCode.OK 
+                    || result.StatusCode == HttpStatusCode.Created 
+                    || result.StatusCode == HttpStatusCode.NoContent)
+                {
+                    var json = await result.Content.ReadAsStringAsync();
+                    return await Task.Factory.StartNew<U>(() => JsonConvert.DeserializeObject<U>(json, _jsonSettings));
+                }
+                else
+                {
+                    throw new HttpRequestException();
+                }
+            }
+        }
+
+
         //protected bool Exists(HttpRequestMessage request)
         //{
         //    using (var response = HttpClient.SendAsync(request))

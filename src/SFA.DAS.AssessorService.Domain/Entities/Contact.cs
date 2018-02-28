@@ -14,6 +14,7 @@
 
         public string ContactName { get; set; }
         public string ContactEmail { get; set; }
+        public string Username { get; set; }
         public ContactStatus ContactStatus { get; set; }
     }
 }

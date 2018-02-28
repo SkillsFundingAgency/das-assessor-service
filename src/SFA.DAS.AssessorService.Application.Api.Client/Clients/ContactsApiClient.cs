@@ -1,6 +1,6 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
-using SFA.DAS.AssessorService.ViewModel.Models;
+using SFA.DAS.AssessorService.Api.Types.Models;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
@@ -15,6 +15,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/user/{username}"))
             {
                 return await RequestAndDeserialiseAsync<Contact>(userKey, request, $"Could not find the contact");
+            }
+        }
+
+        public async Task<Contact> Create(string userKey, CreateContactRequest contact)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/contacts/"))
+            {
+                return await PostPutRequestWithResponse<CreateContactRequest, Contact>(userKey, request, contact);
             }
         }
 
@@ -60,5 +68,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         //Task Create(string userKey, CreateOrganisationRequest organisationCreateViewModel);
         //Task Update(string userKey, UpdateOrganisationRequest organisationUpdateViewModel);
         //Task Delete(string userKey, Guid id);
+        Task<Contact> Create(string userKey, CreateContactRequest contact);
     }
 }
