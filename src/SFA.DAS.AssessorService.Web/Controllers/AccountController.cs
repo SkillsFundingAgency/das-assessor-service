@@ -5,12 +5,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.WsFederation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.AssessorService.Api.Types;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Application.Api.Client;
-using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
-using SFA.DAS.AssessorService.Settings;
+using SFA.DAS.AssessorService.Web.Orchestrators;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -18,16 +13,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     public class AccountController : Controller
     {
         private readonly IHttpContextAccessor _contextAccessor;
-        private readonly IOrganisationsApiClient _organisationsApiClient;
-        private readonly IWebConfiguration _config;
-        private readonly IContactsApiClient _contactsApiClient;
+        private readonly ILoginOrchestrator _loginOrchestrator;
 
-        public AccountController(IHttpContextAccessor contextAccessor, IOrganisationsApiClient organisationsApiClient, IWebConfiguration config, IContactsApiClient contactsApiClient)
+        public AccountController(IHttpContextAccessor contextAccessor, ILoginOrchestrator loginOrchestrator)
         {
             _contextAccessor = contextAccessor;
-            _organisationsApiClient = organisationsApiClient;
-            _config = config;
-            _contactsApiClient = contactsApiClient;
+            _loginOrchestrator = loginOrchestrator;
         }
 
         [HttpGet]
@@ -42,50 +33,17 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> PostSignIn()
         {
-            var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn").Value;
-            var username = _contextAccessor.HttpContext.User
-                .FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn").Value;
-            var email = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/mail").Value;
-            var displayName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/displayname")
-                .Value;
-
-            if (!_contextAccessor.HttpContext.User.HasClaim("http://schemas.portal.com/service",
-                _config.Authentication.Role))
+            var loginResult = await _loginOrchestrator.Login(_contextAccessor.HttpContext.User);
+            switch (loginResult)
             {
-                return RedirectToAction("InvalidRole", "Home");
-            }
-            else
-            {
-                Organisation organisation;
-                try
-                {
-                    organisation = await _organisationsApiClient.Get(ukprn, ukprn);
-                }
-                catch (EntityNotFoundException)
-                {
+                case LoginResult.Valid:
+                    return RedirectToAction("Index", "Organisation");
+                case LoginResult.NotRegistered:
                     return RedirectToAction("NotRegistered", "Home");
-                }
-
-                Contact contact;
-                try
-                {
-                    contact = await _contactsApiClient.GetByUsername(ukprn, username);
-                }
-                catch (EntityNotFoundException )
-                {
-                    // Contact not found in db, post a new one.
-                    contact = await _contactsApiClient.Create(ukprn,
-                        new CreateContactRequest()
-                        {
-                            ContactEmail = email,
-                            OrganisationId = organisation.Id,
-                            ContactName = displayName,
-                            Username = username,
-                            EndPointAssessorContactId = 1
-                        });
-                }
-
-                return RedirectToAction("Index", "Organisation");
+                case LoginResult.InvalidRole:
+                    return RedirectToAction("InvalidRole", "Home");
+                default:
+                    throw new ApplicationException();
             }
         }
 

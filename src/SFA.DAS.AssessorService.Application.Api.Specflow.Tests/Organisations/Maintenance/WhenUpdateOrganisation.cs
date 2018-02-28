@@ -44,7 +44,6 @@
                 EndPointAssessorOrganisationId = organisationQueryViewModel.EndPointAssessorOrganisationId,
                 PrimaryContactId = organisationQueryViewModel.PrimaryContactId,
                 EndPointAssessorName = _organisationArguments.EndPointAssessorName,
-                OrganisationStatus = organisationQueryViewModel.OrganisationStatus
             };
 
             _restClient.HttpResponseMessage = _restClient.HttpClient.PutAsJsonAsync(
@@ -72,8 +71,7 @@
             {
                 EndPointAssessorOrganisationId ="9999999999",
                 PrimaryContactId = null,
-                EndPointAssessorName = "XXX",
-                OrganisationStatus = OrganisationStatus.New
+                EndPointAssessorName = "XXX"
             };
 
             _restClient.HttpResponseMessage = _restClient.HttpClient.PutAsJsonAsync(
@@ -95,8 +93,7 @@
             {
                 EndPointAssessorOrganisationId = organisationQueryViewModel.EndPointAssessorOrganisationId,
                 PrimaryContactId = Guid.NewGuid(),
-                EndPointAssessorName = _organisationArguments.EndPointAssessorName,
-                OrganisationStatus = organisationQueryViewModel.OrganisationStatus
+                EndPointAssessorName = _organisationArguments.EndPointAssessorName
             };
 
             _restClient.HttpResponseMessage = _restClient.HttpClient.PutAsJsonAsync(
@@ -125,8 +122,7 @@
             {
                 EndPointAssessorOrganisationId = organisationQueryViewModel.EndPointAssessorOrganisationId,
                 PrimaryContactId = contact.Id,
-                EndPointAssessorName = _organisationArguments.EndPointAssessorName,
-                OrganisationStatus = organisationQueryViewModel.OrganisationStatus
+                EndPointAssessorName = _organisationArguments.EndPointAssessorName
             };
 
             _restClient.HttpResponseMessage = _restClient.HttpClient.PutAsJsonAsync(

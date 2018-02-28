@@ -26,48 +26,21 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        //public async Task<Organisation> Get(string userKey, string ukprn)
-        //{
-        //    using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/{ukprn}"))
-        //    {
-        //        return await RequestAndDeserialiseAsync<Organisation>(userKey, request, $"Could not find the organisation {ukprn}");
-        //    }
-        //}
-
-        //public async Task Create(string userKey, CreateOrganisationRequest organisationCreateViewModel)
-        //{
-        //    using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/contacts/"))
-        //    {
-        //        await PostPutRequest(userKey, request, organisationCreateViewModel);
-        //    }
-        //}
-
-        //public async Task Update(string userKey, UpdateOrganisationRequest organisationUpdateViewModel)
-        //{
-        //    using (var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/contacts/"))
-        //    {
-        //        await PostPutRequest(userKey, request, organisationUpdateViewModel);
-        //    }
-        //}
-
-        //public async Task Delete(string userKey, Guid id)
-        //{
-        //    using (var request = new HttpRequestMessage(HttpMethod.Delete, $"/api/v1/contacts/"))
-        //    {
-        //        await Delete(userKey, request);
-        //    }
-        //}
+        public async Task<Contact> Update(string userKey, UpdateContactRequest updateContactRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/contacts/"))
+            {
+                return await PostPutRequestWithResponse<UpdateContactRequest, Contact>(userKey, request, updateContactRequest);
+            }
+        }
     }
 
     public interface IContactsApiClient
     {
         Task<Contact> GetByUsername(string userKey, string username);
 
-        //Task<IEnumerable<Organisation>> GetAll(string userKey);
-        //Task<Organisation> Get(string userKey, string ukprn);
-        //Task Create(string userKey, CreateOrganisationRequest organisationCreateViewModel);
-        //Task Update(string userKey, UpdateOrganisationRequest organisationUpdateViewModel);
-        //Task Delete(string userKey, Guid id);
         Task<Contact> Create(string userKey, CreateContactRequest contact);
+
+        Task<Contact> Update(string userKey, UpdateContactRequest updateContactRequest);
     }
 }

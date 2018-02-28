@@ -8,6 +8,7 @@ using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Controllers;
+using SFA.DAS.AssessorService.Web.Orchestrators;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
 {
@@ -19,6 +20,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
         private AccountController _accountController;
         private Mock<IContactsApiClient> _contactsApiClient;
         private Mock<IWebConfiguration> _config;
+        private Mock<ILoginOrchestrator> _loginOrchestrator;
 
         [SetUp]
         public void Arrange()
@@ -33,15 +35,16 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
 
             _config = new Mock<IWebConfiguration>();
 
-            _accountController = new AccountController(_contextAccessor.Object, _organisationsApiClient.Object,
-                _config.Object, _contactsApiClient.Object);
+            _loginOrchestrator = new Mock<ILoginOrchestrator>();
+
+            _accountController = new AccountController(_contextAccessor.Object, _loginOrchestrator.Object);
         }
 
         [Test]
         public void RoleNotFoundReturnsRedirectToInvalidRolePage()
         {
-            _contextAccessor.Setup(a => a.HttpContext.User.HasClaim("http://schemas.portal.com/service", "EPA")).Returns(false);
-
+            _loginOrchestrator.Setup(o => o.Login(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(LoginResult.InvalidRole);
+            
             var result = _accountController.PostSignIn().Result;
 
             result.Should().BeOfType<RedirectToActionResult>();
