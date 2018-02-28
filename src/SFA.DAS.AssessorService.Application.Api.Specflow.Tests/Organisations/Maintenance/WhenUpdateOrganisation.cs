@@ -41,7 +41,7 @@
 
             var organisation = new UpdateOrganisationRequest
             {
-                Id = organisationQueryViewModel.Id,
+                EndPointAssessorOrganisationId = organisationQueryViewModel.EndPointAssessorOrganisationId,
                 PrimaryContactId = organisationQueryViewModel.PrimaryContactId,
                 EndPointAssessorName = _organisationArguments.EndPointAssessorName,
                 OrganisationStatus = organisationQueryViewModel.OrganisationStatus
@@ -70,7 +70,7 @@
         {
             var organisation = new UpdateOrganisationRequest
             {
-                Id = Guid.NewGuid(),
+                EndPointAssessorOrganisationId ="9999999999",
                 PrimaryContactId = null,
                 EndPointAssessorName = "XXX",
                 OrganisationStatus = OrganisationStatus.New
@@ -93,7 +93,7 @@
 
             var organisation = new UpdateOrganisationRequest
             {
-                Id = organisationQueryViewModel.Id,
+                EndPointAssessorOrganisationId = organisationQueryViewModel.EndPointAssessorOrganisationId,
                 PrimaryContactId = Guid.NewGuid(),
                 EndPointAssessorName = _organisationArguments.EndPointAssessorName,
                 OrganisationStatus = organisationQueryViewModel.OrganisationStatus
@@ -123,7 +123,7 @@
 
             var organisation = new UpdateOrganisationRequest
             {
-                Id = organisationQueryViewModel.Id,
+                EndPointAssessorOrganisationId = organisationQueryViewModel.EndPointAssessorOrganisationId,
                 PrimaryContactId = contact.Id,
                 EndPointAssessorName = _organisationArguments.EndPointAssessorName,
                 OrganisationStatus = organisationQueryViewModel.OrganisationStatus

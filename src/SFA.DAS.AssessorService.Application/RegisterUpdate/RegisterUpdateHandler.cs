@@ -71,63 +71,63 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
 
         private bool EpaoStillPresentOnRegister(Organisation org)
         {
-            return _epaosOnRegister.Any(e => e.Id == org.EndPointAssessorOrganisationId);
+            return _epaosOnRegister.Any(e => e.EndPointAssessorOrganisationId == org.EndPointAssessorOrganisationId);
         }
 
         private bool OrganisationExists(OrganisationSummary epaoSummary)
         {
-            return _organisations.Any(o => o.EndPointAssessorOrganisationId == epaoSummary.Id);
+            return _organisations.Any(o => o.EndPointAssessorOrganisationId == epaoSummary.EndPointAssessorOrganisationId);
         }
 
         private async Task CheckAndUpdateOrganisationName(OrganisationSummary epaoSummary)
         {
             if (_organisations.Any(o =>
-                o.EndPointAssessorOrganisationId == epaoSummary.Id && o.EndPointAssessorName != epaoSummary.Name ))
+                o.EndPointAssessorOrganisationId == epaoSummary.EndPointAssessorOrganisationId && o.EndPointAssessorName != epaoSummary.Name ))
             {
                 var organisation =
-                    _organisations.Single(o => o.EndPointAssessorOrganisationId == epaoSummary.Id);
+                    _organisations.Single(o => o.EndPointAssessorOrganisationId == epaoSummary.EndPointAssessorOrganisationId);
                 await _mediator.Send(new UpdateOrganisationRequest()
                 {
                     EndPointAssessorName = epaoSummary.Name,
-                    Id = organisation.Id
+                    EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId
                 });
 
                 _logger.LogInformation(
-                    $"Organisation with ID {organisation.Id} and EPAOgId {epaoSummary.Id} has had it's Name changed from {organisation.EndPointAssessorName} to {epaoSummary.Name}");
+                    $"Organisation with ID {organisation.Id} and EPAOgId {epaoSummary.EndPointAssessorOrganisationId} has had it's Name changed from {organisation.EndPointAssessorName} to {epaoSummary.Name}");
             }
             
-            if (_organisations.Any(o => o.EndPointAssessorOrganisationId == epaoSummary.Id && o.OrganisationStatus == OrganisationStatus.Deleted))
+            if (_organisations.Any(o => o.EndPointAssessorOrganisationId == epaoSummary.EndPointAssessorOrganisationId && o.OrganisationStatus == OrganisationStatus.Deleted))
             {
                 var organisation =
-                    _organisations.Single(o => o.EndPointAssessorOrganisationId == epaoSummary.Id);
+                    _organisations.Single(o => o.EndPointAssessorOrganisationId == epaoSummary.EndPointAssessorOrganisationId);
                 await _mediator.Send(new UpdateOrganisationRequest()
                 {
-                    Id = organisation.Id,
+                    EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
                     EndPointAssessorName = organisation.EndPointAssessorName,
                     OrganisationStatus = OrganisationStatus.New
                 });
 
                 _logger.LogInformation(
-                    $"Organisation with ID {organisation.Id} and EPAOgId {epaoSummary.Id} has rejoined the Register and has been Undeleted");
+                    $"Organisation with ID {organisation.Id} and EPAOgId {epaoSummary.EndPointAssessorOrganisationId} has rejoined the Register and has been Undeleted");
             }
 
         }
 
         private async Task DeleteOrganisation(Organisation org)
         {
-            await _mediator.Send(new DeleteOrgananisationRequest {Id = org.Id});
+            await _mediator.Send(new DeleteOrganisationRequest { EndPointAssessorOrganisationId = org.EndPointAssessorOrganisationId });
 
             _logger.LogInformation(
-                $"Organisation with ID {org.Id} and EPAOgId {org.EndPointAssessorOrganisationId} no longer found on Register. Deleting from Repository");
+                $"Organisation with ID {org.Id} and EPAOgId {org.Id} no longer found on Register. Deleting from Repository");
         }
 
         private async Task CreateNewOrganisation(OrganisationSummary epaoSummary, Random rnd)
         {
-            _logger.LogInformation($"EPAO {epaoSummary.Id} not found in Repository");
+            _logger.LogInformation($"EPAO {epaoSummary.EndPointAssessorOrganisationId} not found in Repository");
 
-            var epao = _registerApiClient.Get(epaoSummary.Id);
+            var epao = _registerApiClient.Get(epaoSummary.EndPointAssessorOrganisationId);
 
-            _logger.LogInformation($"EPAO {epaoSummary.Id} further information received");
+            _logger.LogInformation($"EPAO {epaoSummary.EndPointAssessorOrganisationId} further information received");
 
             var createdOrg = await _mediator.Send(new CreateOrganisationRequest
             {
@@ -136,7 +136,7 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
                 EndPointAssessorUKPRN = rnd.Next(77777777, 99999999)
             });
 
-            _logger.LogInformation($"EPAO {epaoSummary.Id} Created in Repository with ID {createdOrg.Id}");
+            _logger.LogInformation($"EPAO {epaoSummary.EndPointAssessorOrganisationId} Created in Repository with ID {createdOrg.Id}");
         }
     }
 }

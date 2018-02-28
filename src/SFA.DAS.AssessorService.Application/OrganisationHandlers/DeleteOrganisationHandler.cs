@@ -6,7 +6,7 @@
     using Interfaces;
     using MediatR;
 
-    public class DeleteOrganisationHandler : IRequestHandler<DeleteOrgananisationRequest>
+    public class DeleteOrganisationHandler : IRequestHandler<DeleteOrganisationRequest>
     {
         private readonly IOrganisationRepository _organisationRepository;
 
@@ -15,9 +15,9 @@
             _organisationRepository = organisationRepository;
         }
 
-        public async Task Handle(DeleteOrgananisationRequest organisationDeleteViewModel, CancellationToken cancellationToken)
+        public async Task Handle(DeleteOrganisationRequest organisationDeleteViewModel, CancellationToken cancellationToken)
         {
-            await _organisationRepository.Delete(organisationDeleteViewModel.Id);
+            await _organisationRepository.Delete(organisationDeleteViewModel.EndPointAssessorOrganisationId);
         }
     }
 }

@@ -1,23 +1,21 @@
 ﻿namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations
 {
-    using FluentAssertions;
-    using TechTalk.SpecFlow;
-    using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Extensions;
-    using System.Data;
-    using Dapper;
-    using System.Linq;
-    using System.Collections.Generic;
     using System;
-    using SFA.DAS.AssessorService.Domain.Enums;
-    using System.Net.Http;
+    using System.Collections.Generic;
+    using System.Data;
+    using System.Linq;
     using AssessorService.Api.Types.Models;
+    using Dapper;
+    using Domain.Enums;
+    using Extensions;
+    using FluentAssertions;
     using Newtonsoft.Json;
-    using SFA.DAS.AssessorService.Api.Types;
+    using TechTalk.SpecFlow;
 
     [Binding]
     public sealed class WhenDeleteOrganisation
     {
-        private RestClient _restClient;
+        private readonly RestClient _restClient;
         private readonly IDbConnection _dbconnection;
         private Organisation _organisationRetrieved;
         private dynamic _organisationArguments;
@@ -48,7 +46,7 @@
 
             var organisationCreated = JsonConvert.DeserializeObject<Organisation>(_restClient.Result);
 
-            _restClient.HttpResponseMessage = _restClient.HttpClient.DeleteAsJsonAsync($"api/v1/organisations?id={organisationCreated.Id}").Result;
+            _restClient.HttpResponseMessage = _restClient.HttpClient.DeleteAsJsonAsync($"api/v1/organisations?endPointAssessorOrganisationId={organisationCreated.EndPointAssessorOrganisationId}").Result;
         }
 
 
@@ -71,8 +69,8 @@
 
             var organisationCreated = JsonConvert.DeserializeObject<Organisation>(_restClient.Result);
 
-            _restClient.HttpResponseMessage = _restClient.HttpClient.DeleteAsJsonAsync($"api/v1/organisations?id={organisationCreated.Id}").Result;
-            _restClient.HttpResponseMessage = _restClient.HttpClient.DeleteAsJsonAsync($"api/v1/organisations?id={organisationCreated.Id}").Result;
+            _restClient.HttpResponseMessage = _restClient.HttpClient.DeleteAsJsonAsync($"api/v1/organisations?endPointAssessorOrganisationId={organisationCreated.EndPointAssessorOrganisationId}").Result;
+            _restClient.HttpResponseMessage = _restClient.HttpClient.DeleteAsJsonAsync($"api/v1/organisations?endPointAssessorOrganisationId={organisationCreated.EndPointAssessorOrganisationId}").Result;
         }
 
         [Then(@"the Organisation should be deleted")]
