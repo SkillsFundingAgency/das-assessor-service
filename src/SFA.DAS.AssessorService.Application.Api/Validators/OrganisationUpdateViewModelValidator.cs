@@ -31,13 +31,13 @@
             RuleFor(organisation => organisation.PrimaryContactId).Must(HaveAssociatedPrimaryContactInContacts)
                 .WithMessage(_localizer[ResourceMessageName.PrimaryContactDoesNotExist,
                     nameof(organisationUpdateViewModel.PrimaryContactId)].Value);
-            RuleFor(organisation => organisation.Id).Must(AlreadyExist).WithMessage(
-                _localizer[ResourceMessageName.DoesNotExist, nameof(organisationUpdateViewModel.Id)].Value);
+            RuleFor(organisation => organisation.EndPointAssessorOrganisationId).Must(AlreadyExist).WithMessage(
+                _localizer[ResourceMessageName.DoesNotExist, nameof(organisationUpdateViewModel.EndPointAssessorOrganisationId)].Value);
         }
 
-        private bool AlreadyExist(Guid id)
+        private bool AlreadyExist(string endPointAssessorOrganisationId)
         {
-            var result = _organisationQueryRepository.CheckIfAlreadyExists(id).Result;
+            var result = _organisationQueryRepository.CheckIfAlreadyExists(endPointAssessorOrganisationId).Result;
             return result;
         }
 

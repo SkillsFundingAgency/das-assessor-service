@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
             ApiClient.Setup(c => c.FindAllAsync())
                 .Returns(Task.FromResult(new List<OrganisationSummary>()
                 {
-                    new OrganisationSummary {Id = "EPA0001"}
+                    new OrganisationSummary {EndPointAssessorOrganisationId = "EPA0001"}
                     
                 }.AsEnumerable()));
 

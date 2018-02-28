@@ -33,7 +33,7 @@
 
         public async Task<Organisation> UpdateOrganisation(OrganisationUpdateDomainModel organisationUpdateDomainModel)
         {
-            var organisationEntity = _assessorDbContext.Organisations.FirstOrDefault(q => q.Id == organisationUpdateDomainModel.Id);
+            var organisationEntity = _assessorDbContext.Organisations.First(q => q.EndPointAssessorOrganisationId == organisationUpdateDomainModel.EndPointAssessorOrganisationId);
 
             organisationEntity.PrimaryContactId = organisationUpdateDomainModel.PrimaryContactId;
             organisationEntity.EndPointAssessorName = organisationUpdateDomainModel.EndPointAssessorName;
