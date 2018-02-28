@@ -6,9 +6,10 @@
     using Moq;
     using SFA.DAS.AssessorService.Application.OrganisationHandlers;
     using SFA.DAS.AssessorService.Application.Interfaces;
-    using SFA.DAS.AssessorService.ViewModel.Models;
     using System.Threading;
     using System.Threading.Tasks;
+    using AssessorService.Api.Types.Models;
+    using Domain;
     using SFA.DAS.AssessorService.Api.Types;
 
     [Subject("AssessorService")]

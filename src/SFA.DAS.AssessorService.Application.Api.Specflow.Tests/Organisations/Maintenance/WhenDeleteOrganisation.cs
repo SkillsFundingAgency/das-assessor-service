@@ -1,7 +1,6 @@
 ﻿namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations
 {
     using FluentAssertions;
-    using SFA.DAS.AssessorService.ViewModel.Models;
     using TechTalk.SpecFlow;
     using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Extensions;
     using System.Data;
@@ -11,6 +10,7 @@
     using System;
     using SFA.DAS.AssessorService.Domain.Enums;
     using System.Net.Http;
+    using AssessorService.Api.Types.Models;
     using Newtonsoft.Json;
     using SFA.DAS.AssessorService.Api.Types;
 

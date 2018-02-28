@@ -1,7 +1,7 @@
-﻿namespace SFA.DAS.AssessorService.Api.Types
+﻿namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    using SFA.DAS.AssessorService.Domain.Enums;
     using System;
+    using Domain.Enums;
 
     public class Organisation
     {

@@ -3,9 +3,9 @@
     using FluentAssertions;
     using Newtonsoft.Json;
     using SFA.DAS.AssessorService.Api.Types;
-    using SFA.DAS.AssessorService.ViewModel.Models;
     using System.Collections.Generic;
     using System.Net.Http;
+    using AssessorService.Api.Types.Models;
     using TechTalk.SpecFlow;
 
     [Binding]

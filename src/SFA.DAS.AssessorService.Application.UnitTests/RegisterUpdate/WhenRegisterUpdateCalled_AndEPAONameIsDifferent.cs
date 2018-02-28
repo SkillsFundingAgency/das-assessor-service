@@ -7,10 +7,11 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.RegisterUpdate;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
-using SFA.DAS.AssessorService.ViewModel.Models;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
 {
+    using AssessorService.Api.Types.Models;
+
     public class WhenRegisterUpdateCalled_AndEPAONameIsDifferent : RegisterUpdateTestsBase
     {
         private Guid _organisationId;
@@ -32,10 +33,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
 
 
             OrganisationRepository.Setup(r => r.GetAllOrganisations())
-                .Returns(Task.FromResult(new List<AssessorService.Api.Types.Organisation>
+                .Returns(Task.FromResult(new List<Organisation>
                 {
-                    new AssessorService.Api.Types.Organisation() {EndPointAssessorOrganisationId = "EPA0001", EndPointAssessorName = "OLD NAME", Id = _organisationId},
-                    new AssessorService.Api.Types.Organisation() {EndPointAssessorOrganisationId = "EPA0002", EndPointAssessorName = "Another EPAO"}
+                    new Organisation() {EndPointAssessorOrganisationId = "EPA0001", EndPointAssessorName = "OLD NAME", Id = _organisationId},
+                    new Organisation() {EndPointAssessorOrganisationId = "EPA0002", EndPointAssessorName = "Another EPAO"}
                 }.AsEnumerable()));
         }
 

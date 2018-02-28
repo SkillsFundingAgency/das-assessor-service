@@ -7,11 +7,11 @@
     using Moq;
     using SFA.DAS.AssessorService.Data;
     using SFA.DAS.AssessorService.Domain.Entities;
-    using SFA.DAS.AssessorService.ViewModel.Models;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Linq;
+    using Domain;
 
     [Subject("AssessorService")]
     public class WhenUpdatePersistsData
@@ -21,7 +21,7 @@
         private static OrganisationUpdateDomainModel _organisationUpdateDomainModel;
         private static Mock<DbSet<Organisation>> _organisationDBSetMock;
 
-        protected static AssessorService.Api.Types.Organisation _result;
+        protected static AssessorService.Api.Types.Models.Organisation _result;
 
 
         Establish context = () =>
@@ -31,26 +31,26 @@
             _organisationUpdateDomainModel = Builder<OrganisationUpdateDomainModel>.CreateNew().Build();
 
             _assessorDbContext = new Mock<AssessorDbContext>();
-            _organisationDBSetMock = new Mock<DbSet<Domain.Entities.Organisation>>();
+            _organisationDBSetMock = new Mock<DbSet<AssessorService.Domain.Entities.Organisation>>();
 
-            var mockSet = new Mock<DbSet<Domain.Entities.Organisation>>();
+            var mockSet = new Mock<DbSet<AssessorService.Domain.Entities.Organisation>>();
             var mockContext = new Mock<AssessorDbContext>();
 
 
-            var organisations = new List<Domain.Entities.Organisation>
+            var organisations = new List<AssessorService.Domain.Entities.Organisation>
             {
-                Builder<Domain.Entities.Organisation>.CreateNew().Build()
+                Builder<AssessorService.Domain.Entities.Organisation>.CreateNew().Build()
             }.AsQueryable();
 
-            mockSet.As<IQueryable<Domain.Entities.Organisation>>().Setup(m => m.Provider).Returns(organisations.Provider);
-            mockSet.As<IQueryable<Domain.Entities.Organisation>>().Setup(m => m.Expression).Returns(organisations.Expression);
-            mockSet.As<IQueryable<Domain.Entities.Organisation>>().Setup(m => m.ElementType).Returns(organisations.ElementType);
-            mockSet.As<IQueryable<Domain.Entities.Organisation>>().Setup(m => m.GetEnumerator()).Returns(organisations.GetEnumerator());
+            mockSet.As<IQueryable<AssessorService.Domain.Entities.Organisation>>().Setup(m => m.Provider).Returns(organisations.Provider);
+            mockSet.As<IQueryable<AssessorService.Domain.Entities.Organisation>>().Setup(m => m.Expression).Returns(organisations.Expression);
+            mockSet.As<IQueryable<AssessorService.Domain.Entities.Organisation>>().Setup(m => m.ElementType).Returns(organisations.ElementType);
+            mockSet.As<IQueryable<AssessorService.Domain.Entities.Organisation>>().Setup(m => m.GetEnumerator()).Returns(organisations.GetEnumerator());
 
             mockContext.Setup(c => c.Organisations).Returns(mockSet.Object);
 
             _assessorDbContext.Setup(q => q.Organisations).Returns(mockSet.Object);
-            _assessorDbContext.Setup(x => x.MarkAsModified(Moq.It.IsAny<Domain.Entities.Organisation>()));
+            _assessorDbContext.Setup(x => x.MarkAsModified(Moq.It.IsAny<AssessorService.Domain.Entities.Organisation>()));
 
 
             _assessorDbContext.Setup(q => q.SaveChangesAsync(new CancellationToken()))
@@ -67,7 +67,7 @@
 
         Machine.Specifications.It verify_succesfully = () =>
         {
-            var result = (_result as AssessorService.Api.Types.Organisation);
+            var result = (_result as AssessorService.Api.Types.Models.Organisation);
             result.Should().NotBeNull();
         };
     }

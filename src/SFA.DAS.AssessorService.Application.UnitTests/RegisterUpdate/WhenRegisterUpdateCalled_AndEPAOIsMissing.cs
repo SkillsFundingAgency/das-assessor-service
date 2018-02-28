@@ -7,10 +7,11 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.RegisterUpdate;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
-using SFA.DAS.AssessorService.ViewModel.Models;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
 {
+    using AssessorService.Api.Types.Models;
+
     [TestFixture]
     public class WhenRegisterUpdateCalled_AndEPAOIsMissing : RegisterUpdateTestsBase
     {
@@ -30,10 +31,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
 
             _organisationId = Guid.NewGuid();
             OrganisationRepository.Setup(r => r.GetAllOrganisations())
-                .Returns(Task.FromResult(new List<AssessorService.Api.Types.Organisation>
+                .Returns(Task.FromResult(new List<Organisation>
                 {
-                    new AssessorService.Api.Types.Organisation() {EndPointAssessorOrganisationId = "EPA0001"},
-                    new AssessorService.Api.Types.Organisation() {EndPointAssessorOrganisationId = "EPA0002", Id = _organisationId}
+                    new Organisation() {EndPointAssessorOrganisationId = "EPA0001"},
+                    new Organisation() {EndPointAssessorOrganisationId = "EPA0002", Id = _organisationId}
                 }.AsEnumerable()));
         }
 

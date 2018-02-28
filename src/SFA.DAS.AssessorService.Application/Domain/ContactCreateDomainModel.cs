@@ -1,7 +1,7 @@
-﻿namespace SFA.DAS.AssessorService.ViewModel.Models
+﻿namespace SFA.DAS.AssessorService.Application.Domain
 {
-    using SFA.DAS.AssessorService.Domain.Enums;
     using System;
+    using AssessorService.Domain.Enums;
 
     public class ContactCreateDomainModel
     {      
@@ -9,7 +9,7 @@
 
         public int EndPointAssessorContactId { get; set; }
         public string EndPointAssessorOrganisationId { get; set; }
-        public int EndPointAssessorUKPRN { get; set; }
+        public int EndPointAssessorUkprn { get; set; }
 
         public string ContactName { get; set; }
         public string ContactEmail { get; set; }
