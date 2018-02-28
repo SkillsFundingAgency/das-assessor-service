@@ -3,11 +3,11 @@
     using FluentAssertions;
     using Newtonsoft.Json;
     using SFA.DAS.AssessorService.Api.Types;
-    using SFA.DAS.AssessorService.ViewModel.Models;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Net.Http;
+    using AssessorService.Api.Types.Models;
     using TechTalk.SpecFlow;
 
     [Binding]
@@ -38,7 +38,7 @@
                 var organisation = _organisationQueryViewModels.First(q => q.EndPointAssessorUKPRN == 10000000);
 
                 response = _restClient.HttpClient.GetAsync(
-                        $"api/v1/contacts/{organisation.Id}").Result;
+                        $"api/v1/contacts/{organisation.EndPointAssessorOrganisationId}").Result;
 
 
                 _contactQueryViewModels = JsonConvert.DeserializeObject<List<Contact>>(_restClient.Result);

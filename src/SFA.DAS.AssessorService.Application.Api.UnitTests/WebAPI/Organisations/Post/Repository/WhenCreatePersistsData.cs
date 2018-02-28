@@ -9,10 +9,11 @@
     using SFA.DAS.AssessorService.Application.Interfaces;
     using SFA.DAS.AssessorService.Data;
     using SFA.DAS.AssessorService.Domain.Entities;
-    using SFA.DAS.AssessorService.ViewModel.Models;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Domain;
+    using Organisation = AssessorService.Api.Types.Models.Organisation;
 
     [Subject("AssessorService")]
     public class WhenCreateOrganisationPersistsData
@@ -20,11 +21,11 @@
         private static OrganisationRepository _organisationRepository;
         private static Mock<AssessorDbContext> _assessorDbContext;
         private static OrganisationCreateDomainModel _organisationCreateDomainModel;
-        private static Mock<DbSet<Domain.Entities.Organisation>> _organisationDBSetMock;
+        private static Mock<DbSet<AssessorService.Domain.Entities.Organisation>> _organisationDBSetMock;
         //private static CreateOrganisationHandler CreateOrganisationHandler;
         //protected static Mock<IOrganisationRepository> OrganisationRepositoryMock;
         //protected static OrganisationCreateDomainModel _organisationCreateDomainModel;
-        protected static AssessorService.Api.Types.Organisation _result;
+        protected static Organisation _result;
         //protected static OrganisationCreateViewModel _organisationCreateViewModel;
         //protected static OrganisationQueryViewModel _result;
 
@@ -35,14 +36,14 @@
             _organisationCreateDomainModel = Builder<OrganisationCreateDomainModel>.CreateNew().Build();
 
             _assessorDbContext = new Mock<AssessorDbContext>();
-            _organisationDBSetMock = new Mock<DbSet<Domain.Entities.Organisation>>();
+            _organisationDBSetMock = new Mock<DbSet<AssessorService.Domain.Entities.Organisation>>();
 
-            var mockSet = new Mock<DbSet<Domain.Entities.Organisation>>();
+            var mockSet = new Mock<DbSet<AssessorService.Domain.Entities.Organisation>>();
             var mockContext = new Mock<AssessorDbContext>();
 
-            var organisations = new List<Domain.Entities.Organisation>();
+            var organisations = new List<AssessorService.Domain.Entities.Organisation>();
 
-            mockSet.Setup(m => m.Add(Moq.It.IsAny<Domain.Entities.Organisation>())).Callback((Domain.Entities.Organisation organisation) => organisations.Add(organisation));
+            mockSet.Setup(m => m.Add(Moq.It.IsAny<AssessorService.Domain.Entities.Organisation>())).Callback((AssessorService.Domain.Entities.Organisation organisation) => organisations.Add(organisation));
 
             _assessorDbContext.Setup(q => q.Organisations).Returns(mockSet.Object);
             _assessorDbContext.Setup(q => q.SaveChangesAsync(new CancellationToken()))

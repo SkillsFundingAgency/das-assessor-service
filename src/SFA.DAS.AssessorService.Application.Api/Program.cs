@@ -1,10 +1,10 @@
-﻿using System;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using NLog.Web;
-
-namespace SFA.DAS.AssessorService.Application.Api
+﻿namespace SFA.DAS.AssessorService.Application.Api
 {
+    using System;
+    using global::NLog.Web;
+    using Microsoft.AspNetCore;
+    using Microsoft.AspNetCore.Hosting;
+
     public class Program
     {
         public static void Main(string[] args)
@@ -18,7 +18,6 @@ namespace SFA.DAS.AssessorService.Application.Api
                 var host = BuildWebHost(args);
 
                 host.Run();
-
             }
             catch (Exception ex)
             {
@@ -28,11 +27,13 @@ namespace SFA.DAS.AssessorService.Application.Api
             }
         }
 
-        public static IWebHost BuildWebHost(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
+        public static IWebHost BuildWebHost(string[] args)
+        {
+            return WebHost.CreateDefaultBuilder(args)
                 .UseKestrel()
                 .UseStartup<Startup>()
                 .UseNLog()
                 .Build();
+        }
     }
 }

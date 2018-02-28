@@ -5,13 +5,15 @@ namespace SFA.DAS.AssessorService.Data
     using System;
     using System.Linq;
     using System.Threading.Tasks;
+    using Api.Types.Models;
+    using Application.Domain;
     using AutoMapper;
     using Microsoft.EntityFrameworkCore;
     using SFA.DAS.AssessorService.Application.Interfaces;
     using SFA.DAS.AssessorService.Domain.Entities;
     using SFA.DAS.AssessorService.Domain.Enums;
     using SFA.DAS.AssessorService.Domain.Exceptions;
-    using SFA.DAS.AssessorService.ViewModel.Models;
+    using Contact = Api.Types.Models.Contact;
 
     public class ContactRepository : IContactRepository
     {
@@ -22,14 +24,14 @@ namespace SFA.DAS.AssessorService.Data
             _assessorDbContext = assessorDbContext;
         }
 
-        public async Task<ViewModel.Models.Contact> CreateNewContact(ContactCreateDomainModel newContact)
+        public async Task<Contact> CreateNewContact(ContactCreateDomainModel newContact)
         {
             var contactEntity = Mapper.Map<Domain.Entities.Contact>(newContact);
 
             _assessorDbContext.Contacts.Add(contactEntity);
             await _assessorDbContext.SaveChangesAsync();
 
-            var contactQueryViewModel = Mapper.Map<ViewModel.Models.Contact>(contactEntity);
+            var contactQueryViewModel = Mapper.Map<Contact>(contactEntity);
             return contactQueryViewModel;
         }
 

@@ -4,8 +4,8 @@
     using Machine.Specifications;
     using SFA.DAS.AssessorService.Application.Api.Validators;
     using FluentAssertions;
-    using SFA.DAS.AssessorService.ViewModel.Models;
     using System.Linq;
+    using AssessorService.Api.Types.Models;
 
     [Subject("AssessorService")]
     public class ContactUpdateViewModelValidatorFails : ContactUpdateViewModelValidatorTestBase

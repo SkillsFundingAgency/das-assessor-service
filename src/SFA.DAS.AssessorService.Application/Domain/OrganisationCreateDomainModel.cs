@@ -1,12 +1,12 @@
-﻿namespace SFA.DAS.AssessorService.ViewModel.Models
-{   
-    using SFA.DAS.AssessorService.Domain.Enums;
+﻿namespace SFA.DAS.AssessorService.Application.Domain
+{
     using System;
+    using AssessorService.Domain.Enums;
 
     public class OrganisationCreateDomainModel
     {
         public string EndPointAssessorOrganisationId { get; set; }
-        public int EndPointAssessorUKPRN { get; set; }
+        public int EndPointAssessorUkprn { get; set; }
         public string EndPointAssessorName { get; set; }
         public Guid? PrimaryContactId { get; set; }
 

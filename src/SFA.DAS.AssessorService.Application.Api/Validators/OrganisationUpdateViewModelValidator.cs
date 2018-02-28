@@ -1,32 +1,38 @@
 ﻿namespace SFA.DAS.AssessorService.Application.Api.Validators
 {
-    using FluentValidation;
-    using Microsoft.Extensions.Localization;
-    using SFA.DAS.AssessorService.Application.Api.Consts;
-    using SFA.DAS.AssessorService.Application.Interfaces;
-    using SFA.DAS.AssessorService.ViewModel.Models;
     using System;
+    using AssessorService.Api.Types.Models;
+    using Consts;
+    using FluentValidation;
+    using Interfaces;
+    using Microsoft.Extensions.Localization;
 
     public class OrganisationUpdateViewModelValidator : AbstractValidator<UpdateOrganisationRequest>
     {
-        private readonly IStringLocalizer<OrganisationUpdateViewModelValidator> _localizer;
         private readonly IContactQueryRepository _contactQueryRepository;
+        private readonly IStringLocalizer<OrganisationUpdateViewModelValidator> _localizer;
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
 
         public OrganisationUpdateViewModelValidator(IStringLocalizer<OrganisationUpdateViewModelValidator> localizer,
-              IContactQueryRepository contactQueryRepository,
-              IOrganisationQueryRepository organisationQueryRepository
-            ) : base()
+            IContactQueryRepository contactQueryRepository,
+            IOrganisationQueryRepository organisationQueryRepository
+        )
         {
             _localizer = localizer;
             _contactQueryRepository = contactQueryRepository;
             _organisationQueryRepository = organisationQueryRepository;
 
-            var organisationUpdateViewModel = new UpdateOrganisationRequest();
-          
-            RuleFor(organisation => organisation.EndPointAssessorName).NotEmpty().WithMessage(_localizer[ResourceMessageName.EndPointAssessorNameMustBeDefined, nameof(organisationUpdateViewModel.EndPointAssessorName)].Value);
-            RuleFor(organisation => organisation.PrimaryContactId).Must(HaveAssociatedPrimaryContactInContacts).WithMessage(_localizer[ResourceMessageName.PrimaryContactDoesNotExist, nameof(organisationUpdateViewModel.PrimaryContactId)].Value);     
-            RuleFor(organisation => organisation.Id).Must(AlreadyExist).WithMessage(_localizer[ResourceMessageName.DoesNotExist, nameof(organisationUpdateViewModel.Id)].Value);
+            // ReSharper disable once LocalNameCapturedOnly
+            UpdateOrganisationRequest organisationUpdateViewModel;
+
+            RuleFor(organisation => organisation.EndPointAssessorName).NotEmpty().WithMessage(
+                _localizer[ResourceMessageName.EndPointAssessorNameMustBeDefined,
+                    nameof(organisationUpdateViewModel.EndPointAssessorName)].Value);
+            RuleFor(organisation => organisation.PrimaryContactId).Must(HaveAssociatedPrimaryContactInContacts)
+                .WithMessage(_localizer[ResourceMessageName.PrimaryContactDoesNotExist,
+                    nameof(organisationUpdateViewModel.PrimaryContactId)].Value);
+            RuleFor(organisation => organisation.Id).Must(AlreadyExist).WithMessage(
+                _localizer[ResourceMessageName.DoesNotExist, nameof(organisationUpdateViewModel.Id)].Value);
         }
 
         private bool AlreadyExist(Guid id)

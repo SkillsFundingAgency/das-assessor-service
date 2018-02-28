@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Api.Types;
-using SFA.DAS.AssessorService.ViewModel.Models;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
+    using AssessorService.Api.Types.Models;
+
     public class OrganisationsApiClient : ApiClientBase, IOrganisationsApiClient
     {
         public OrganisationsApiClient(string baseUri, ITokenService tokenService) : base(baseUri, tokenService)

@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.ViewModel.Models;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.SearchRequestValidator
 {

@@ -6,10 +6,11 @@
     using Moq;
     using SFA.DAS.AssessorService.Application.ContactHandlers;
     using SFA.DAS.AssessorService.Application.Interfaces;
-    using SFA.DAS.AssessorService.ViewModel.Models;
     using System;
     using System.Threading;
     using System.Threading.Tasks;
+    using AssessorService.Api.Types.Models;
+    using Domain;
 
     [Subject("AssessorService")]
     public class WhenOrganisationHasExistingContractsCreateContactHandlerSucceeds

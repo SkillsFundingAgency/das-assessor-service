@@ -2,9 +2,9 @@
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using AssessorService.Api.Types.Models;
+    using Interfaces;
     using MediatR;
-    using SFA.DAS.AssessorService.Application.Interfaces;
-    using SFA.DAS.AssessorService.ViewModel.Models;
 
     public class DeleteOrganisationHandler : IRequestHandler<DeleteOrgananisationRequest>
     {

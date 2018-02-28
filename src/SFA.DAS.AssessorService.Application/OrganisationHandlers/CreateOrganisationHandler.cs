@@ -2,12 +2,12 @@
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using AssessorService.Api.Types.Models;
+    using AssessorService.Domain.Enums;
     using AutoMapper;
+    using Domain;
+    using Interfaces;
     using MediatR;
-    using SFA.DAS.AssessorService.Api.Types;
-    using SFA.DAS.AssessorService.Application.Interfaces;
-    using SFA.DAS.AssessorService.Domain.Enums;
-    using SFA.DAS.AssessorService.ViewModel.Models;
 
     public class CreateOrganisationHandler : IRequestHandler<CreateOrganisationRequest, Organisation>
     {      
@@ -21,14 +21,7 @@
         public async Task<Organisation> Handle(CreateOrganisationRequest organisationCreateViewModel, CancellationToken cancellationToken)
         {
             var organisationCreateDomainModel = Mapper.Map<OrganisationCreateDomainModel>(organisationCreateViewModel);
-            if (organisationCreateViewModel.PrimaryContactId.HasValue)
-            {
-                organisationCreateDomainModel.OrganisationStatus = OrganisationStatus.Live;
-            }
-            else
-            {
-                organisationCreateDomainModel.OrganisationStatus = OrganisationStatus.New;
-            }
+            organisationCreateDomainModel.OrganisationStatus = organisationCreateViewModel.PrimaryContactId.HasValue ? OrganisationStatus.Live : OrganisationStatus.New;
 
             var organisationQueryViewModel = await _organisationRepository.CreateNewOrganisation(organisationCreateDomainModel);
             return organisationQueryViewModel;            

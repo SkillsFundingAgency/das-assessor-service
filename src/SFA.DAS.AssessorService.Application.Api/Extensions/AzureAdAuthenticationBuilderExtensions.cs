@@ -1,17 +1,20 @@
-﻿using System;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-
-namespace SFA.DAS.AssessorService.Application.Api.Extensions
+﻿namespace SFA.DAS.AssessorService.Application.Api.Extensions
 {
+    using System;
+    using Microsoft.AspNetCore.Authentication;
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Options;
+
     public static class AzureAdAuthenticationBuilderExtensions
     {
         public static AuthenticationBuilder AddAzureAdBearer(this AuthenticationBuilder builder)
-            => builder.AddAzureAdBearer(_ => { });
+        {
+            return builder.AddAzureAdBearer(_ => { });
+        }
 
-        public static AuthenticationBuilder AddAzureAdBearer(this AuthenticationBuilder builder, Action<AzureAdOptions> configureOptions)
+        public static AuthenticationBuilder AddAzureAdBearer(this AuthenticationBuilder builder,
+            Action<AzureAdOptions> configureOptions)
         {
             builder.Services.Configure(configureOptions);
             builder.Services.AddSingleton<IConfigureOptions<JwtBearerOptions>, ConfigureAzureOptions>();

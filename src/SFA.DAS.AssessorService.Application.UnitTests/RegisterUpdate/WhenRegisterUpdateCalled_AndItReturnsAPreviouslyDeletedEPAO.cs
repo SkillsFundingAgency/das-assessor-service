@@ -8,10 +8,11 @@ using System.Linq;
 using Moq;
 using SFA.DAS.AssessorService.Domain.Enums;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
-using SFA.DAS.AssessorService.ViewModel.Models;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
 {
+    using AssessorService.Api.Types.Models;
+
     [TestFixture]
     public class WhenRegisterUpdateCalledAndItReturnsAPreviouslyDeletedEpao : RegisterUpdateTestsBase
     {
@@ -32,10 +33,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
 
             _organisationId = Guid.NewGuid();
             OrganisationRepository.Setup(r => r.GetAllOrganisations())
-                .Returns(Task.FromResult(new List<AssessorService.Api.Types.Organisation>
+                .Returns(Task.FromResult(new List<Organisation>
                 {
-                    new AssessorService.Api.Types.Organisation() { Id = _organisationId, EndPointAssessorOrganisationId = "EPA0001", OrganisationStatus = OrganisationStatus.Deleted},
-                    new AssessorService.Api.Types.Organisation() { EndPointAssessorOrganisationId = "EPA0002"}
+                    new Organisation() { Id = _organisationId, EndPointAssessorOrganisationId = "EPA0001", OrganisationStatus = OrganisationStatus.Deleted},
+                    new Organisation() { EndPointAssessorOrganisationId = "EPA0002"}
                 }.AsEnumerable()));
         }
 

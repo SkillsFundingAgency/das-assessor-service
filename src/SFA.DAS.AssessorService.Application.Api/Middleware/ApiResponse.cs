@@ -4,15 +4,15 @@
 
     public class ApiResponse
     {
-        public int StatusCode { get; }
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public string Message { get; }
-
         public ApiResponse(int statusCode, string message = null)
         {
             StatusCode = statusCode;
             Message = message;
         }
+
+        public int StatusCode { get; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public string Message { get; }
     }
 }

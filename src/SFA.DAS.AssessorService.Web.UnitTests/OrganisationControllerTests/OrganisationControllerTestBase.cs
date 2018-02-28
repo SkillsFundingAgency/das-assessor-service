@@ -1,6 +1,5 @@
 ﻿using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.ViewModel.Models;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -10,6 +9,7 @@ using SFA.DAS.AssessorService.Api.Types;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
 {
+    using Api.Types.Models;
 
 
     public class OrganisationControllerTestBase

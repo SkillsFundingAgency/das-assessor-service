@@ -1,20 +1,20 @@
-﻿using System.Net;
-using System.Threading.Tasks;
-using MediatR;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Application.RegisterUpdate;
-using Swashbuckle.AspNetCore.SwaggerGen;
-
-namespace SFA.DAS.AssessorService.Application.Api.Controllers
+﻿namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
+    using System.Net;
+    using System.Threading.Tasks;
+    using MediatR;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Logging;
+    using RegisterUpdate;
+    using Swashbuckle.AspNetCore.SwaggerGen;
+
     [Authorize]
     [Route("api/v1/register-import")]
     public class RegisterImportController : Controller
     {
-        private readonly IMediator _mediator;
         private readonly ILogger<RegisterImportController> _logger;
+        private readonly IMediator _mediator;
 
         public RegisterImportController(IMediator mediator,
             ILogger<RegisterImportController> logger
@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpPost(Name = "Import")]
-        [SwaggerResponse((int)HttpStatusCode.OK)]
+        [SwaggerResponse((int) HttpStatusCode.OK)]
         public async Task<IActionResult> Import()
         {
             _logger.LogInformation("Received Update Request");

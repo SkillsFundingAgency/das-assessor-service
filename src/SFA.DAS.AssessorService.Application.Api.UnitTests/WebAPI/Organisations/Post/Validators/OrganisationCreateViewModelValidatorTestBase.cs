@@ -1,11 +1,11 @@
 ﻿namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.UkPrnValidator
 {
+    using AssessorService.Api.Types.Models;
     using Microsoft.Extensions.Localization;
     using Moq;
     using SFA.DAS.AssessorService.Application.Api.Consts;
     using SFA.DAS.AssessorService.Application.Api.Validators;
     using SFA.DAS.AssessorService.Application.Interfaces;
-    using SFA.DAS.AssessorService.ViewModel.Models;
 
     public class OrganisationCreateViewModelValidatorTestBase
     {
