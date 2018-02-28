@@ -26,7 +26,7 @@
             ContactQueryRepositoryMock.Setup(q => q.CheckContactExists(Moq.It.IsAny<int>()))
                 .Returns(Task.FromResult((false)));
 
-            OrganisationQueryRepositoryMock.Setup(q => q.CheckIfAlreadyExists(Moq.It.IsAny<Guid>()))
+            OrganisationQueryRepositoryMock.Setup(q => q.CheckIfAlreadyExists(Moq.It.IsAny<string>()))
                 .Returns(Task.FromResult((false)));         
         };
 
@@ -55,7 +55,7 @@
 
         Machine.Specifications.It errormessage_should_contain_DoesNotExist = () =>
         {
-            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "Id" && q.ErrorCode == "PredicateValidator");
+            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "EndPointAssessorOrganisationId" && q.ErrorCode == "PredicateValidator");
             errors.Should().NotBeNull();
         };
     }

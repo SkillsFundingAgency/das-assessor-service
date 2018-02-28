@@ -22,9 +22,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
             ApiClient.Setup(c => c.FindAllAsync())
                 .Returns(Task.FromResult(new List<OrganisationSummary>()
                 {
-                    new OrganisationSummary {Id = "EPA0001"},
-                    new OrganisationSummary {Id = "EPA0002"},
-                    new OrganisationSummary {Id = "EPA0003"}
+                    new OrganisationSummary {EndPointAssessorOrganisationId = "EPA0001"},
+                    new OrganisationSummary {EndPointAssessorOrganisationId = "EPA0002"},
+                    new OrganisationSummary {EndPointAssessorOrganisationId = "EPA0003"}
                 }.AsEnumerable()));
 
             ApiClient.Setup(c => c.Get("EPA0003")).Returns(new ExternalApis.AssessmentOrgs.Types.Organisation { Id = "EPA0003", Name = "A New EPAO" });

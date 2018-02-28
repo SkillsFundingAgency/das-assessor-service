@@ -16,6 +16,7 @@
             _ilrApi = ilrApi;
         }
 
+        [HttpGet(Name = "Search")]
         public async Task<IActionResult> Search(SearchQueryViewModel searchQueryViewModel)
         {
             var result = await _ilrApi.Search(new SearchRequest());

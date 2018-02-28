@@ -24,7 +24,7 @@
                 .With(q => q.PrimaryContactId = Guid.Empty)
                 .Build();
 
-            OrganisationQueryRepositoryMock.Setup(q => q.CheckIfAlreadyExists(Moq.It.IsAny<Guid>()))
+            OrganisationQueryRepositoryMock.Setup(q => q.CheckIfAlreadyExists(Moq.It.IsAny<string>()))
                 .Returns(Task.FromResult((true)));         
         };
 
@@ -46,7 +46,7 @@
 
         Machine.Specifications.It errormessage_should_not_contain_DoesNotExist = () =>
         {
-            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "Id" && q.ErrorCode == "PredicateValidator");
+            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "EndPointAssessorOrganisationId" && q.ErrorCode == "PredicateValidator");
             errors.Should().BeNull();
         };
     }

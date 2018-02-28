@@ -4,7 +4,7 @@ namespace SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types
 {
     public class OrganisationSummary
     {
-        public string Id { get; set; }
+        public string EndPointAssessorOrganisationId { get; set; }
 
         public string Uri { get; set; }
 

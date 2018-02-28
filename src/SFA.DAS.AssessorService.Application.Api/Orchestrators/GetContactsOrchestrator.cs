@@ -22,8 +22,8 @@
 
         public async Task<IEnumerable<Contact>> SearchContactsForAnOrganisation(string endPointAssessorOrganisationId)
         {
-            var contacts = await _contactQueryRepository.GetContacts(endPointAssessorOrganisationId);
-            if (contacts.Count() == 0)
+            var contacts = (await _contactQueryRepository.GetContacts(endPointAssessorOrganisationId)).ToList();
+            if (!contacts.Any())
                 throw new ResourceNotFoundException();
             return contacts;
         }

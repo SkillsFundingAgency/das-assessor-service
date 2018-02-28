@@ -5,7 +5,7 @@
 
     public class OrganisationUpdateDomainModel
     {
-        public Guid Id { get; set; }
+        public string EndPointAssessorOrganisationId { get; set; }
      
         public string EndPointAssessorName { get; set; }
         public Guid? PrimaryContactId { get; set; }
