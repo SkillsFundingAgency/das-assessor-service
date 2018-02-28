@@ -8,5 +8,7 @@ namespace SFA.DAS.AssessorService.Settings
         public string WtRealm { get; set; }
         [JsonRequired]
         public string MetadataAddress { get; set; }
+        [JsonRequired]
+        public string Role { get; set; }
     }
 }
