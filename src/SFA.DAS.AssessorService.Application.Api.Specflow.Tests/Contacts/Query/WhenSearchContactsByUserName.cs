@@ -9,20 +9,20 @@
     using TechTalk.SpecFlow;
 
     [Binding]
-    public class WhenRetrieveContactByUserName
+    public class WhenSearchContactsByUserName
     {
         private readonly RestClient _restClient;
         private Contact _contactQueryViewModel;
 
         private dynamic _contactArgument;
 
-        public WhenRetrieveContactByUserName(RestClient restClient)
+        public WhenSearchContactsByUserName(RestClient restClient)
         {
             _restClient = restClient;
         }
 
-        [When(@"I Request Contacts to be retrieved By Username")]
-        public void WhenIRequestContactsToBeRetrievedByUsername(IEnumerable<dynamic> contacts)
+        [When(@"Client Searches Contacts By Username")]
+        public void WhenClientSearchesContactsByUsername(IEnumerable<dynamic> contacts)
         {
             _contactArgument = contacts.First();
             var userName = _contactArgument.username;
@@ -36,11 +36,11 @@
             _contactQueryViewModel = JsonConvert.DeserializeObject<Contact>(_restClient.Result);
         }
 
-        [Then(@"the API returns valid Contact")]
-        public void ThenTheAPIReturnsValidContact()
+        [Then(@"the API returns a valid Contact")]
+        public void ThenTheAPIReturnsaValidContact()
         {
-            _contactQueryViewModel.ContactName.Should().Be(_contactArgument.username);
-            _contactQueryViewModel.ContactEmail.Should().Be(_contactArgument.emailaddress);
+            _contactQueryViewModel.Username.Should().Be(_contactArgument.username);
+            _contactQueryViewModel.Email.Should().Be(_contactArgument.emailaddress);
         }
     }
 }

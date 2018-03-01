@@ -1,6 +1,6 @@
 ﻿namespace SFA.DAS.AssessorService.Domain.Entities
 {
-    using SFA.DAS.AssessorService.Domain.Enums;
+    using Enums;
     using System;
 
     public class Certificate : BaseEntity

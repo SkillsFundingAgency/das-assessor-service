@@ -120,13 +120,16 @@
   <data name="AlreadyExists" xml:space="preserve">
     <value>Contact Has Already Been Created</value>
   </data>
-  <data name="ContactEMailMustBeDefined" xml:space="preserve">
-    <value>Request must contain ContactEmail</value>
+  <data name="DisplayNameMustBeDefined" xml:space="preserve">
+    <value>Request must contain DisplayName</value>
   </data>
-  <data name="ContactNameMustBeDefined" xml:space="preserve">
-    <value>Request must contain ContactName</value>
+  <data name="EMailMustBeDefined" xml:space="preserve">
+    <value>Request must contain Email</value>
   </data>
   <data name="EndPointAssessorContactIdMustBeDefined" xml:space="preserve">
     <value>Request must contain  EndPointAssessorContactId</value>
+  </data>
+  <data name="UserNameMustBeDefined" xml:space="preserve">
+    <value>Request must contain UserName</value>
   </data>
 </root>

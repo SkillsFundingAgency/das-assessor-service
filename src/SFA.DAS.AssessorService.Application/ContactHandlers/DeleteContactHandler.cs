@@ -17,7 +17,7 @@
 
         public async Task Handle(DeleteContactRequest contactDeleteViewModel, CancellationToken cancellationToken)
         {
-            await _contactRepository.Delete(contactDeleteViewModel.Id);
+            await _contactRepository.Delete(contactDeleteViewModel.UserName);
         }
     }
 }

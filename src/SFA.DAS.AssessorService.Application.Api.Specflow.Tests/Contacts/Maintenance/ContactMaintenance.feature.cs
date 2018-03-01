@@ -77,11 +77,13 @@ this.ScenarioSetup(scenarioInfo);
  testRunner.Given("System Has access to the SFA.DAS.AssessmentOrgs.Api", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
             TechTalk.SpecFlow.Table table1 = new TechTalk.SpecFlow.Table(new string[] {
-                        "ContactName",
-                        "ContactEmail",
+                        "UserName",
+                        "DisplayName",
+                        "Email",
                         "EndPointAssessorOrganisationId",
                         "EndPointAssessorUKPRN"});
             table1.AddRow(new string[] {
+                        "testuser",
                         "Test",
                         "jane128@gmail.com",
                         "99998888",
@@ -113,11 +115,13 @@ this.ScenarioSetup(scenarioInfo);
  testRunner.Given("System Has access to the SFA.DAS.AssessmentOrgs.Api", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
             TechTalk.SpecFlow.Table table2 = new TechTalk.SpecFlow.Table(new string[] {
-                        "ContactName",
-                        "ContactEmail",
+                        "UserName",
+                        "DisplayName",
+                        "Email",
                         "EndPointAssessorOrganisationId",
                         "EndPointAssessorUKPRN"});
             table2.AddRow(new string[] {
+                        "testuser",
                         "Test",
                         "jane1289@gmail.com",
                         "9999887",
@@ -149,11 +153,13 @@ this.ScenarioSetup(scenarioInfo);
  testRunner.Given("System Has access to the SFA.DAS.AssessmentOrgs.Api", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
             TechTalk.SpecFlow.Table table3 = new TechTalk.SpecFlow.Table(new string[] {
-                        "ContactName",
-                        "ContactEmail",
+                        "UserName",
+                        "DisplayName",
+                        "Email",
                         "EndPointAssessorOrganisationId",
                         "EndPointAssessorUKPRN"});
             table3.AddRow(new string[] {
+                        "testuser",
                         "Jean Brodie",
                         "jbrodie@gmail.com",
                         "99998899",
@@ -177,9 +183,11 @@ this.ScenarioSetup(scenarioInfo);
  testRunner.Given("System Has access to the SFA.DAS.AssessmentOrgs.Api", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
             TechTalk.SpecFlow.Table table4 = new TechTalk.SpecFlow.Table(new string[] {
-                        "ContactName",
-                        "ContactEmail"});
+                        "UserName",
+                        "DisplayName",
+                        "Email"});
             table4.AddRow(new string[] {
+                        "testuser",
                         "Test",
                         "jane1289@gmail.com"});
 #line 38
@@ -203,10 +211,12 @@ this.ScenarioSetup(scenarioInfo);
  testRunner.Given("System Has access to the SFA.DAS.AssessmentOrgs.Api", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
             TechTalk.SpecFlow.Table table5 = new TechTalk.SpecFlow.Table(new string[] {
+                        "UserName",
                         "EndPointAssessorName",
                         "EndPointAssessorOrganisationId",
                         "EndPointAssessorUKPRN"});
             table5.AddRow(new string[] {
+                        "testuser",
                         "Test",
                         "99999777",
                         "10033444"});
@@ -231,10 +241,12 @@ this.ScenarioSetup(scenarioInfo);
  testRunner.Given("System Has access to the SFA.DAS.AssessmentOrgs.Api", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
             TechTalk.SpecFlow.Table table6 = new TechTalk.SpecFlow.Table(new string[] {
+                        "UserName",
                         "EndPointAssessorName",
                         "EndPointAssessorOrganisationId",
                         "EndPointAssessorUKPRN"});
             table6.AddRow(new string[] {
+                        "testuser",
                         "Test",
                         "99999778",
                         "10033444"});

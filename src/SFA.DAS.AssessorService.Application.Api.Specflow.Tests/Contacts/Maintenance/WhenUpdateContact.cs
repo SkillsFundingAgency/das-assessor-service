@@ -37,24 +37,24 @@
             {
                 EndPointAssessorName = "Test User",
                 EndPointAssessorOrganisationId = "9999",
-                EndPointAssessorUKPRN = 99953456,
-                PrimaryContactId = null
+                EndPointAssessorUkprn = 99953456,
+                PrimaryContact = null
             };
 
             CreateOrganisation(organisationCreateViewModel);
 
             var contactCreateViewModel = new CreateContactRequest
             {
-                ContactName = _contactArgument.ContactName + "XXX",
-                ContactEmail = _contactArgument.ContactEmail + "XXX",
-                EndPointAssessorContactId = 99953456,
-                OrganisationId = _organisationQueryViewModel.Id
+                DisplayName = _contactArgument.UserName + "XXX",
+                Email = _contactArgument.Email + "XXX",
+                EndPointAssessorOrganisationId = organisationCreateViewModel.EndPointAssessorOrganisationId,
+                Username = _contactArgument.UserName
             };
 
             CreateContact(contactCreateViewModel);
 
             HttpResponseMessage response = _restClient.HttpClient.GetAsync(
-                     $"api/v1/contacts/user/{contactCreateViewModel.ContactName}").Result;
+                     $"api/v1/contacts/user/{contactCreateViewModel.DisplayName}").Result;
 
             _restClient.Result = response.Content.ReadAsStringAsync().Result;
             _restClient.HttpResponseMessage = response;
@@ -63,9 +63,9 @@
 
             var contactUpdateViewModel = new UpdateContactRequest
             {
-                ContactName = _contactArgument.ContactName,
-                ContactEmail = _contactArgument.ContactEmail,
-                Id = _contactQueryViewModel.Id
+                DisplayName = _contactArgument.DisplayName,
+                Email = _contactArgument.Email,
+                Username = _contactArgument.UserName
             };
 
             _restClient.HttpResponseMessage = _restClient.HttpClient.PutAsJsonAsync(
@@ -74,9 +74,9 @@
 
             _contactQueryViewModel = new Contact
             {
-                ContactName = _contactArgument.ContactName,
-                ContactEmail = _contactArgument.ContactEmail,
-                Id = _contactQueryViewModel.Id
+                DisplayName = _contactArgument.DisplayName,
+                Email = _contactArgument.Email,
+                Username = _contactArgument.UserName
             };
         }
 
@@ -84,11 +84,12 @@
         public void ThenTheContactUpdateShouldHaveOccured()
         {
             var contactEntities = _dbconnection.Query<Contact>
-             ($"Select Id, ContactName, ContactEMail, ContactStatus From Contacts where Id = '{_contactQueryViewModel.Id}'").ToList();
+             ($"Select Id, UserName, DisplayName, EMail, ContactStatus From Contacts where UserName = '{_contactQueryViewModel.Username}'").ToList();
             var contact = contactEntities.First();
 
-            contact.ContactName.Should().Be(_contactQueryViewModel.ContactName);
-            contact.ContactEmail.Should().Be(_contactQueryViewModel.ContactEmail);
+            contact.DisplayName.Should().Be(_contactQueryViewModel.DisplayName);
+            contact.Email.Should().Be(_contactQueryViewModel.Email);
+            contact.Username.Should().Be(_contactQueryViewModel.Username);
 
             contact.ContactStatus.Should().Be(ContactStatus.Live);
         }

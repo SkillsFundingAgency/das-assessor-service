@@ -38,7 +38,7 @@
             var organisations = new List<Organisation>
             {
                 Builder<Organisation>.CreateNew()
-                .With(q => q.EndPointAssessorUKPRN = 10000000)
+                .With(q => q.EndPointAssessorUkprn = 10000000)
                 .Build()
             }.AsQueryable();
 

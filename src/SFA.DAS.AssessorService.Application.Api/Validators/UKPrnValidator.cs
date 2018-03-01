@@ -22,7 +22,7 @@
                 validationResult = new ValidationResult();
             else
                 validationResult.Errors.Add(new ValidationFailure(nameof(ukprn),
-                    _localizer[ResourceMessageName.InvalidUKPRN, nameof(ukprn)].Value));
+                    _localizer[ResourceMessageName.InvalidUkprn, nameof(ukprn)].Value));
 
             return validationResult;
         }

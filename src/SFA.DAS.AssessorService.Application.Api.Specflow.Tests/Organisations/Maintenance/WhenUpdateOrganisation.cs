@@ -42,7 +42,7 @@
             var organisation = new UpdateOrganisationRequest
             {
                 EndPointAssessorOrganisationId = organisationQueryViewModel.EndPointAssessorOrganisationId,
-                PrimaryContactId = organisationQueryViewModel.PrimaryContactId,
+                PrimaryContact = organisationQueryViewModel.PrimaryContact,
                 EndPointAssessorName = _organisationArguments.EndPointAssessorName,
             };
 
@@ -70,7 +70,7 @@
             var organisation = new UpdateOrganisationRequest
             {
                 EndPointAssessorOrganisationId ="9999999999",
-                PrimaryContactId = null,
+                PrimaryContact = null,
                 EndPointAssessorName = "XXX"
             };
 
@@ -92,7 +92,7 @@
             var organisation = new UpdateOrganisationRequest
             {
                 EndPointAssessorOrganisationId = organisationQueryViewModel.EndPointAssessorOrganisationId,
-                PrimaryContactId = Guid.NewGuid(),
+                PrimaryContact = "12323",
                 EndPointAssessorName = _organisationArguments.EndPointAssessorName
             };
 
@@ -108,7 +108,7 @@
             _organisationArguments = organisations.First();
 
             HttpResponseMessage contactResponse = _restClient.HttpClient.GetAsync(
-           "api/v1/contacts/user/John Coxhead").Result;
+           "api/v1/contacts/user/jcoxhead").Result;
             var contactResult = contactResponse.Content.ReadAsStringAsync().Result;
 
             var contact = JsonConvert.DeserializeObject<Contact>(contactResult);
@@ -121,7 +121,7 @@
             var organisation = new UpdateOrganisationRequest
             {
                 EndPointAssessorOrganisationId = organisationQueryViewModel.EndPointAssessorOrganisationId,
-                PrimaryContactId = contact.Id,
+                PrimaryContact = contact.Username,
                 EndPointAssessorName = _organisationArguments.EndPointAssessorName
             };
 

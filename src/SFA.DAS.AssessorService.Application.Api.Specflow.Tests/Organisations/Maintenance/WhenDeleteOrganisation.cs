@@ -36,8 +36,8 @@
             {
                 EndPointAssessorName = _organisationArguments.EndPointAssessorName,
                 EndPointAssessorOrganisationId = _organisationArguments.EndPointAssessorOrganisationId.ToString(),
-                EndPointAssessorUKPRN = Convert.ToInt32(_organisationArguments.EndPointAssessorUKPRN),
-                PrimaryContactId = null
+                EndPointAssessorUkprn = Convert.ToInt32(_organisationArguments.EndPointAssessorUKPRN),
+                PrimaryContact = null
             };
 
             _restClient.HttpResponseMessage = _restClient.HttpClient.PostAsJsonAsync(
@@ -59,8 +59,8 @@
             {
                 EndPointAssessorName = _organisationArguments.EndPointAssessorName,
                 EndPointAssessorOrganisationId = _organisationArguments.EndPointAssessorOrganisationId.ToString(),
-                EndPointAssessorUKPRN = Convert.ToInt32(_organisationArguments.EndPointAssessorUKPRN),
-                PrimaryContactId = null
+                EndPointAssessorUkprn = Convert.ToInt32(_organisationArguments.EndPointAssessorUKPRN),
+                PrimaryContact = null
             };
 
             _restClient.HttpResponseMessage = _restClient.HttpClient.PostAsJsonAsync(
