@@ -15,20 +15,20 @@ namespace SFA.DAS.AssessorService.EpaoImporter
         {
             log.Info($"C# Timer trigger function executed at: {DateTime.Now}");
 
-            var tokenService = new TokenService(new InMemoryCache(),
-                new WebConfiguration()
-                {
-                    Api = new ApiSettings()
-                    {
-                        TokenEncodingKey = Environment.GetEnvironmentVariable("TokenEncodingKey", EnvironmentVariableTarget.Process),
-                        ApiBaseAddress = Environment.GetEnvironmentVariable("ApiBaseAddress", EnvironmentVariableTarget.Process)
-                    }
-                }, new UtcDateTimeProvider());
+            //var tokenService = new TokenService(new InMemoryCache(),
+            //    new WebConfiguration()
+            //    {
+            //        ApiAuthentication = new ApiAuthentication()
+            //        {
+            //            TokenEncodingKey = Environment.GetEnvironmentVariable("TokenEncodingKey", EnvironmentVariableTarget.Process),
+            //            ApiBaseAddress = Environment.GetEnvironmentVariable("ApiBaseAddress", EnvironmentVariableTarget.Process)
+            //        }
+            //    }, new UtcDateTimeProvider());
 
-            using (var apiClient = new RegisterImportApiClient(Environment.GetEnvironmentVariable("ApiBaseAddress", EnvironmentVariableTarget.Process), tokenService))
-            {
-                apiClient.Import("IMPORTER").Wait();
-            }
+            //using (var apiClient = new RegisterImportApiClient(Environment.GetEnvironmentVariable("ApiBaseAddress", EnvironmentVariableTarget.Process), tokenService))
+            //{
+            //    apiClient.Import("IMPORTER").Wait();
+            //}
         }
     }
 }

@@ -26,43 +26,43 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
 
             var result = _cache.GetString(userKey);
 
-            if (result == null)
-            {
-                result = GetNewToken(userKey);
-                _cache.SetString(userKey, result);
-            }
-            else
-            {
-                try
-                {
-                    new JwtBuilder()
-                        .WithSecret(_configuration.Api.TokenEncodingKey)
-                        .WithDateTimeProvider(_dateTimeProvider)
-                        .MustVerifySignature()                        
-                        .Decode(result);
-                }
-                catch (TokenExpiredException expired)
-                {
-                    result = GetNewToken(userKey);
-                    _cache.SetString(userKey, result);
-                    return result;
-                }
-            }
+            //if (result == null)
+            //{
+            //    result = GetNewToken(userKey);
+            //    _cache.SetString(userKey, result);
+            //}
+            //else
+            //{
+            //    try
+            //    {
+            //        new JwtBuilder()
+            //            .WithSecret(_configuration.Api.TokenEncodingKey)
+            //            .WithDateTimeProvider(_dateTimeProvider)
+            //            .MustVerifySignature()                        
+            //            .Decode(result);
+            //    }
+            //    catch (TokenExpiredException expired)
+            //    {
+            //        result = GetNewToken(userKey);
+            //        _cache.SetString(userKey, result);
+            //        return result;
+            //    }
+            //}
             
             return result;
         }
 
-        private string GetNewToken(string ukprn)
-        {
-            var token = new JwtBuilder().WithAlgorithm(new HMACSHA256Algorithm())
-                .WithSecret(_configuration.Api.TokenEncodingKey)
-                .Issuer("sfa.das.assessorservice")
-                .Audience("sfa.das.assessorservice.api")
-                .ExpirationTime(_dateTimeProvider.GetNow().DateTime.AddMinutes(30))
-                .AddClaim("ukprn", ukprn)
-                .Build();
+        //private string GetNewToken(string ukprn)
+        //{
+        //    var token = new JwtBuilder().WithAlgorithm(new HMACSHA256Algorithm())
+        //        .WithSecret(_configuration.Api.TokenEncodingKey)
+        //        .Issuer("sfa.das.assessorservice")
+        //        .Audience("sfa.das.assessorservice.api")
+        //        .ExpirationTime(_dateTimeProvider.GetNow().DateTime.AddMinutes(30))
+        //        .AddClaim("ukprn", ukprn)
+        //        .Build();
 
-            return token;
-        }
+        //    return token;
+        //}
     }
 }

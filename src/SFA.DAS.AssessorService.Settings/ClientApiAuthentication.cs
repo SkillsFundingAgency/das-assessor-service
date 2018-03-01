@@ -1,0 +1,20 @@
+﻿using Newtonsoft.Json;
+
+namespace SFA.DAS.AssessorService.Settings
+{
+    public class ClientApiAuthentication : IClientApiAuthentication
+    {
+        [JsonRequired]
+        public string Instance { get; set; }
+        [JsonRequired]
+        public string Domain { get; set; }
+        [JsonRequired]
+        public string TenantId { get; set; }
+        [JsonRequired]
+        public string ClientId { get; set; }
+        [JsonRequired]
+        public string ClientSecret { get; set; }
+        [JsonRequired]
+        public string ResourceId { get; set; }
+    }
+}

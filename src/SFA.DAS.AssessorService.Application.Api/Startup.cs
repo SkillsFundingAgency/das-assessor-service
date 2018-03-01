@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using SFA.DAS.AssessorService.Application.Api.Extensions;
+
 namespace SFA.DAS.AssessorService.Application.Api
 {
     using System;
@@ -44,14 +47,26 @@ namespace SFA.DAS.AssessorService.Application.Api
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddAndConfigureAuthentication(Configuration);
+            //services.AddAndConfigureAuthentication(Configuration);
+
+            services.AddAuthentication(sharedOptions =>
+                {
+                    sharedOptions.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddAzureAdBearer(options =>
+                {
+                    options.ClientId = Configuration.ApiAuthentication.ClientId;
+                    options.Domain = Configuration.ApiAuthentication.Domain;
+                    options.Instance = Configuration.ApiAuthentication.Instance;
+                    options.TenantId = Configuration.ApiAuthentication.TenantId;
+                });
 
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
 
             IMvcBuilder mvcBuilder;
-            if (_env.IsDevelopment())
-                mvcBuilder = services.AddMvc(opt => { opt.Filters.Add(new AllowAnonymousFilter()); });
-            else
+            //if (_env.IsDevelopment())
+            //    mvcBuilder = services.AddMvc(opt => { opt.Filters.Add(new AllowAnonymousFilter()); });
+            //else
                 mvcBuilder = services.AddMvc();
 
             mvcBuilder
