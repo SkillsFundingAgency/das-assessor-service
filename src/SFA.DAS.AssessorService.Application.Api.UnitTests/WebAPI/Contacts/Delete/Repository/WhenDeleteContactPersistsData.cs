@@ -25,7 +25,7 @@
 
         Establish context = () =>
         {
-            Bootstrapper.Initialize();
+            MappingBootstrapper.Initialize();
 
             _assessorDbContext = new Mock<AssessorDbContext>();
             _contactDBSetMock = new Mock<DbSet<Contact>>();

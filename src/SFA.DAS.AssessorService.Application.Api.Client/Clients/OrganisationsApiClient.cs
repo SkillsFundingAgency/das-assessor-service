@@ -30,11 +30,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task Create(string userKey, CreateOrganisationRequest organisationCreateViewModel)
+        public async Task<Organisation> Create(string userKey, CreateOrganisationRequest organisationCreateViewModel)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/organisations/"))
             {
-                await PostPutRequest(userKey, request, organisationCreateViewModel);
+                return await PostPutRequestWithResponse<CreateOrganisationRequest, Organisation>(userKey, request, organisationCreateViewModel);
             }
         }
 
@@ -59,7 +59,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
     {
         Task<IEnumerable<Organisation>> GetAll(string userKey);
         Task<Organisation> Get(string userKey, string ukprn);
-        Task Create(string userKey, CreateOrganisationRequest organisationCreateViewModel);
+        Task<Organisation> Create(string userKey, CreateOrganisationRequest organisationCreateViewModel);
         Task Update(string userKey, UpdateOrganisationRequest organisationUpdateViewModel);
         Task Delete(string userKey, Guid id);
     }

@@ -26,7 +26,7 @@
 
         Establish context = () =>
         {
-            Bootstrapper.Initialize();
+            MappingBootstrapper.Initialize();
 
             ContactRepositoryMock = new Mock<IContactRepository>();
             OrganisationRepositoryMock = new Mock<IOrganisationRepository>();

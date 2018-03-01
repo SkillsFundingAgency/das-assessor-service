@@ -103,8 +103,7 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
                 await _mediator.Send(new UpdateOrganisationRequest()
                 {
                     EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
-                    EndPointAssessorName = organisation.EndPointAssessorName,
-                    OrganisationStatus = OrganisationStatus.New
+                    EndPointAssessorName = organisation.EndPointAssessorName
                 });
 
                 _logger.LogInformation(
