@@ -31,7 +31,7 @@
 
         Establish context = () =>
         {
-            Bootstrapper.Initialize();
+            MappingBootstrapper.Initialize();
 
             _organisationCreateDomainModel = Builder<OrganisationCreateDomainModel>.CreateNew().Build();
 

@@ -3,7 +3,7 @@
     using AssessorService.Api.Types.Models;
     using Domain;
  
-    class Bootstrapper
+    class MappingBootstrapper
     {
         public static void Initialize()
         {

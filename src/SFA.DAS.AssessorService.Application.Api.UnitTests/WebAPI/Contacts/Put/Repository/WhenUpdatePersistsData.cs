@@ -26,7 +26,7 @@
 
         Establish context = () =>
         {
-            Bootstrapper.Initialize();
+            MappingBootstrapper.Initialize();
 
             _contactUpdateViewModel = Builder<UpdateContactRequest>.CreateNew().Build();
 

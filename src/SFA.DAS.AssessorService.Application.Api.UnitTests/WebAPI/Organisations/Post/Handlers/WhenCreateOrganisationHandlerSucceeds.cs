@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
 
         private Establish context = () =>
         {
-            Bootstrapper.Initialize();
+            MappingBootstrapper.Initialize();
 
             OrganisationRepositoryMock = new Mock<IOrganisationRepository>();
 

@@ -26,7 +26,7 @@
         
         Establish context = () =>
         {
-            Bootstrapper.Initialize();
+            MappingBootstrapper.Initialize();
 
             _contactCreateDomainModel = Builder<ContactCreateDomainModel>.CreateNew().Build();
 

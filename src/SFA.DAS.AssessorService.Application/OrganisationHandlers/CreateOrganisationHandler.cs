@@ -44,7 +44,10 @@ namespace SFA.DAS.AssessorService.Application.OrganisationHandlers
             var existingOrganisation =
                 await _organisationQueryRepository.GetByUkPrn(createOrganisationRequest.EndPointAssessorUKPRN);
 
-            if (existingOrganisation != null)
+            if (existingOrganisation != null
+                && existingOrganisation.EndPointAssessorOrganisationId == createOrganisationRequest.EndPointAssessorOrganisationId
+                && existingOrganisation.OrganisationStatus == OrganisationStatus.Deleted)
+            {
                 return await _organisationRepository.UpdateOrganisation(new OrganisationUpdateDomainModel
                 {
                     EndPointAssessorName = createOrganisationRequest.EndPointAssessorName,
@@ -54,6 +57,7 @@ namespace SFA.DAS.AssessorService.Application.OrganisationHandlers
                         ? OrganisationStatus.Live
                         : OrganisationStatus.New
                 });
+            }
 
             return null;
         }
