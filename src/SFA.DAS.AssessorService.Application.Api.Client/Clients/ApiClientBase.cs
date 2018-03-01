@@ -51,22 +51,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                     failedResponse.Content.ReadAsStringAsync().Result));
         }
 
-        protected async Task<T> RequestAndDeserialiseAsync<T>(string userKey, HttpRequestMessage request, string message = null) where T : class
+        protected async Task<T> RequestAndDeserialiseAsync<T>(HttpRequestMessage request, string message = null) where T : class
         {
             request.Headers.Add("Accept", "application/json");
-            string jwt;
-            try
-            {
-                jwt = TokenService.GetJwt(userKey);
-            }
-            catch (Exception e)
-            {
-                
-                throw;
-            }
-
             
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
 
             using (var response = HttpClient.SendAsync(request))
             {
@@ -132,13 +121,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         //    return false;
         //}
 
-        protected async Task PostPutRequest<T>(string userKey, HttpRequestMessage requestMessage, T model)
+        protected async Task PostPutRequest<T>(HttpRequestMessage requestMessage, T model)
         {
             var serializeObject = JsonConvert.SerializeObject(model);
             requestMessage.Content = new StringContent(serializeObject,
                 System.Text.Encoding.UTF8, "application/json");
 
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetJwt(userKey));
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
 
             var response = await HttpClient.SendAsync(requestMessage);
 
@@ -148,9 +137,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        protected async Task PostPutRequest(string userKey, HttpRequestMessage requestMessage)
+        protected async Task PostPutRequest(HttpRequestMessage requestMessage)
         {
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetJwt(userKey));
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
 
             var response = await HttpClient.SendAsync(requestMessage);
 
@@ -160,9 +149,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        protected async Task Delete(string userKey, HttpRequestMessage requestMessage)
+        protected async Task Delete(HttpRequestMessage requestMessage)
         {
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetJwt(userKey));
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
 
             var response = await HttpClient.SendAsync(requestMessage);
 

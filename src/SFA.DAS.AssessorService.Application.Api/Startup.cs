@@ -59,6 +59,7 @@ namespace SFA.DAS.AssessorService.Application.Api
                     options.Domain = Configuration.ApiAuthentication.Domain;
                     options.Instance = Configuration.ApiAuthentication.Instance;
                     options.TenantId = Configuration.ApiAuthentication.TenantId;
+                    options.Audience = Configuration.ApiAuthentication.Audience;
                 });
 
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });

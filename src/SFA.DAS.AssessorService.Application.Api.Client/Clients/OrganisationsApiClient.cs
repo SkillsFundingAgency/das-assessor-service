@@ -14,53 +14,53 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
         }
 
-        public async Task<IEnumerable<Organisation>> GetAll(string userKey)
+        public async Task<IEnumerable<Organisation>> GetAll()
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/organisations/"))
             {
-                return await RequestAndDeserialiseAsync<IEnumerable<Organisation>>(userKey, request, $"Could not find the organisations");
+                return await RequestAndDeserialiseAsync<IEnumerable<Organisation>>(request, $"Could not find the organisations");
             }
         }
 
-        public async Task<Organisation> Get(string userKey, string ukprn)
+        public async Task<Organisation> Get(string ukprn)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/organisations/{ukprn}"))
             {
-                return await RequestAndDeserialiseAsync<Organisation>(userKey, request, $"Could not find the organisation {ukprn}");
+                return await RequestAndDeserialiseAsync<Organisation>(request, $"Could not find the organisation {ukprn}");
             }
         }
 
-        public async Task Create(string userKey, CreateOrganisationRequest organisationCreateViewModel)
+        public async Task Create(CreateOrganisationRequest organisationCreateViewModel)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/organisations/"))
             {
-                await PostPutRequest(userKey, request, organisationCreateViewModel);
+                await PostPutRequest(request, organisationCreateViewModel);
             }
         }
 
-        public async Task Update(string userKey, UpdateOrganisationRequest organisationUpdateViewModel)
+        public async Task Update(UpdateOrganisationRequest organisationUpdateViewModel)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/organisations/"))
             {
-                await PostPutRequest(userKey, request, organisationUpdateViewModel);
+                await PostPutRequest(request, organisationUpdateViewModel);
             }
         }
 
-        public async Task Delete(string userKey, Guid id)
+        public async Task Delete(Guid id)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Delete, $"/api/v1/organisations/"))
             {
-                await Delete(userKey, request);
+                await Delete(request);
             }
         }
     }
 
     public interface IOrganisationsApiClient
     {
-        Task<IEnumerable<Organisation>> GetAll(string userKey);
-        Task<Organisation> Get(string userKey, string ukprn);
-        Task Create(string userKey, CreateOrganisationRequest organisationCreateViewModel);
-        Task Update(string userKey, UpdateOrganisationRequest organisationUpdateViewModel);
-        Task Delete(string userKey, Guid id);
+        Task<IEnumerable<Organisation>> GetAll();
+        Task<Organisation> Get(string ukprn);
+        Task Create(CreateOrganisationRequest organisationCreateViewModel);
+        Task Update(UpdateOrganisationRequest organisationUpdateViewModel);
+        Task Delete(Guid id);
     }
 }

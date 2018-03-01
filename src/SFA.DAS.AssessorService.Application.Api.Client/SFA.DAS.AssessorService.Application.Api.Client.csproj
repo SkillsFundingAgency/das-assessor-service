@@ -8,6 +8,7 @@
     <PackageReference Include="JWT" Version="4.0.0-beta3" />
     <PackageReference Include="microsoft.aspnetcore.http.extensions" Version="2.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="2.0.1" />
+    <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="3.16.0" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
   </ItemGroup>
 

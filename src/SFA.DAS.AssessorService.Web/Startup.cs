@@ -1,5 +1,4 @@
 ﻿using System;
-using JWT;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -51,8 +50,7 @@ namespace SFA.DAS.AssessorService.Web
                 config.For<ICache>().Use<SessionCache>();
                 config.For<ITokenService>().Use<TokenService>();
                 config.For<IWebConfiguration>().Use(Configuration);
-                //config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(Configuration.Api.ApiBaseAddress);
-                config.For<IDateTimeProvider>().Use<UtcDateTimeProvider>();
+                config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
 
                 config.Populate(services);
             });

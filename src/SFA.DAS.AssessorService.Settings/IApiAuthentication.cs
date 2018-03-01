@@ -6,5 +6,6 @@
         string Instance { get; set; }
         string Domain { get; set; }
         string TenantId { get; set; }
+        string Audience { get; set; }
     }
 }

@@ -14,5 +14,6 @@ namespace SFA.DAS.AssessorService.Settings
         public string TenantId { get; set; }
         [JsonRequired]
         public string Audience { get; set; }
+
     }
 }

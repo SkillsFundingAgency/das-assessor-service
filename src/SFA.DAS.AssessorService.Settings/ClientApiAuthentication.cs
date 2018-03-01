@@ -16,5 +16,7 @@ namespace SFA.DAS.AssessorService.Settings
         public string ClientSecret { get; set; }
         [JsonRequired]
         public string ResourceId { get; set; }
+        [JsonRequired]
+        public string ApiBaseAddress { get; set; }
     }
 }
