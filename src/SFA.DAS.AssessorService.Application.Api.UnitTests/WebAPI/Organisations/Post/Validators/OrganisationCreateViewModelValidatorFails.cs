@@ -1,13 +1,13 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.UkPrnValidator
+﻿namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations.Post.Validators
 {
-    using FluentValidation.Results;
-    using Machine.Specifications;
-    using SFA.DAS.AssessorService.Application.Api.Validators;
-    using FluentAssertions;
-    using FizzWare.NBuilder;
     using System.Linq;
     using System.Threading.Tasks;
     using AssessorService.Api.Types.Models;
+    using FizzWare.NBuilder;
+    using FluentAssertions;
+    using FluentValidation.Results;
+    using Machine.Specifications;
+    using UnitTests.Validators.UkPrnValidator;
 
     [Subject("AssessorService")]
     public class WhenOrganisationCreateViewModelValidatorFails : OrganisationCreateViewModelValidatorTestBase
@@ -22,10 +22,11 @@
             OrganisationCreateViewModel = Builder<CreateOrganisationRequest>.CreateNew()
                 .With(q => q.EndPointAssessorOrganisationId = null)
                 .With(q => q.EndPointAssessorName = null)
-                .With(q => q.EndPointAssessorUKPRN = 12)
+                .With(q => q.EndPointAssessorUkprn = 12)
+                .With(q => q.PrimaryContact = "1234")
                 .Build();
 
-            ContactQueryRepositoryMock.Setup(q => q.CheckContactExists(Moq.It.IsAny<int>()))
+            ContactQueryRepositoryMock.Setup(q => q.CheckContactExists(Moq.It.IsAny<string>()))
                 .Returns(Task.FromResult((false)));
 
             OrganisationQueryRepositoryMock.Setup(q => q.CheckIfAlreadyExists(Moq.It.IsAny<string>()))
@@ -56,13 +57,13 @@
 
         Machine.Specifications.It errormessage_should_contain_EndPointAssessorUKPRN = () =>
         {
-            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "EndPointAssessorUKPRN" && q.ErrorCode == "InclusiveBetweenValidator");
+            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "EndPointAssessorUkprn" && q.ErrorCode == "InclusiveBetweenValidator");
             errors.Should().NotBeNull();
         };
 
         Machine.Specifications.It errormessage_should_contain_PrimaryContactNotFound = () =>
         {
-            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "PrimaryContactId" && q.ErrorCode == "PredicateValidator");
+            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "PrimaryContact" && q.ErrorCode == "PredicateValidator");
             errors.Should().NotBeNull();
         };
 

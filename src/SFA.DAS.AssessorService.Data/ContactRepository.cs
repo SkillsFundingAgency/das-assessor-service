@@ -1,19 +1,15 @@
-﻿using SFA.DAS.AssessorService.Domain.Entities;
-
-namespace SFA.DAS.AssessorService.Data
+﻿namespace SFA.DAS.AssessorService.Data
 {
     using System;
     using System.Linq;
     using System.Threading.Tasks;
     using Api.Types.Models;
     using Application.Domain;
+    using Application.Interfaces;
     using AutoMapper;
+    using Domain.Enums;
+    using Domain.Exceptions;
     using Microsoft.EntityFrameworkCore;
-    using SFA.DAS.AssessorService.Application.Interfaces;
-    using SFA.DAS.AssessorService.Domain.Entities;
-    using SFA.DAS.AssessorService.Domain.Enums;
-    using SFA.DAS.AssessorService.Domain.Exceptions;
-    using Contact = Api.Types.Models.Contact;
 
     public class ContactRepository : IContactRepository
     {
@@ -37,10 +33,10 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task Update(UpdateContactRequest contactUpdateViewModel)
         {
-            var contactEntity = await _assessorDbContext.Contacts.FirstAsync(q => q.Id == contactUpdateViewModel.Id);
+            var contactEntity = await _assessorDbContext.Contacts.FirstAsync(q => q.Username == contactUpdateViewModel.Username);
 
-            contactEntity.ContactName = contactUpdateViewModel.ContactName;
-            contactEntity.ContactEmail = contactUpdateViewModel.ContactEmail;
+            contactEntity.DisplayName = contactUpdateViewModel.DisplayName;
+            contactEntity.Email = contactUpdateViewModel.Email;
 
             // Workaround for Mocking
             _assessorDbContext.MarkAsModified(contactEntity);
@@ -48,10 +44,10 @@ namespace SFA.DAS.AssessorService.Data
             await _assessorDbContext.SaveChangesAsync();
         }
 
-        public async Task Delete(Guid id)
+        public async Task Delete(string userName)
         {
             var contactEntity = _assessorDbContext.Contacts
-                      .FirstOrDefault(q => q.Id == id);
+                      .FirstOrDefault(q => q.Username == userName);
 
             if (contactEntity == null)
                 throw (new NotFound());

@@ -32,9 +32,9 @@ namespace SFA.DAS.AssessorService.Application.OrganisationHandlers
         {
             var organisationCreateDomainModel = Mapper.Map<OrganisationCreateDomainModel>(createOrganisationRequest);
 
-            organisationCreateDomainModel.OrganisationStatus = createOrganisationRequest.PrimaryContactId.HasValue
-                ? OrganisationStatus.Live
-                : OrganisationStatus.New;
+            organisationCreateDomainModel.OrganisationStatus = string.IsNullOrEmpty(createOrganisationRequest.PrimaryContact)
+                ? OrganisationStatus.New
+                : OrganisationStatus.Live;
 
             return await _organisationRepository.CreateNewOrganisation(organisationCreateDomainModel);
         }
@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Application.OrganisationHandlers
         private async Task<Organisation> UpdateOrganisationIfExists(CreateOrganisationRequest createOrganisationRequest)
         {
             var existingOrganisation =
-                await _organisationQueryRepository.GetByUkPrn(createOrganisationRequest.EndPointAssessorUKPRN);
+                await _organisationQueryRepository.GetByUkPrn(createOrganisationRequest.EndPointAssessorUkprn);
 
             if (existingOrganisation != null
                 && existingOrganisation.EndPointAssessorOrganisationId == createOrganisationRequest.EndPointAssessorOrganisationId
@@ -52,10 +52,10 @@ namespace SFA.DAS.AssessorService.Application.OrganisationHandlers
                 {
                     EndPointAssessorName = createOrganisationRequest.EndPointAssessorName,
                     EndPointAssessorOrganisationId = existingOrganisation.EndPointAssessorOrganisationId,
-                    PrimaryContactId = existingOrganisation.PrimaryContactId,
-                    OrganisationStatus = existingOrganisation.PrimaryContactId.HasValue
-                        ? OrganisationStatus.Live
-                        : OrganisationStatus.New
+                    PrimaryContact = existingOrganisation.PrimaryContact,
+                    OrganisationStatus = string.IsNullOrEmpty(createOrganisationRequest.PrimaryContact)
+                        ? OrganisationStatus.New
+                        : OrganisationStatus.Live
                 });
             }
 

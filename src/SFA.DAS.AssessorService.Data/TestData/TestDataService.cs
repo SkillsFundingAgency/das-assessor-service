@@ -19,7 +19,7 @@
                     Id = Guid.NewGuid(),
                     EndPointAssessorName = "EPAO 1",
                     EndPointAssessorOrganisationId = "1234",
-                    EndPointAssessorUKPRN = 10000000,
+                    EndPointAssessorUkprn = 10000000,
                     OrganisationStatus = OrganisationStatus.New
                 };
 
@@ -29,9 +29,10 @@
                 var firstContact = new Contact
                 {
                     Id = Guid.NewGuid(),
-                    ContactEmail = "blah@blah.com",
-                    ContactName = "Fred Jones",
-                    EndPointAssessorContactId = 1,
+                    Username = "fredjones",
+                    Email = "blah@blah.com",
+                    DisplayName = "Fred Jones",
+                    EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
                     ContactStatus = ContactStatus.Live,
                     OrganisationId = organisation.Id
                 };
@@ -41,9 +42,10 @@
                 var secondContact = new Contact
                 {
                     Id = Guid.NewGuid(),
-                    ContactEmail = "jcoxhead@gmail.com",
-                    ContactName = "John Coxhead",
-                    EndPointAssessorContactId = 1,
+                    Username = "jcoxhead",
+                    Email = "jcoxhead@gmail.com",
+                    DisplayName = "John Coxhead",
+                    EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
                     ContactStatus = ContactStatus.Live,
                     OrganisationId = organisation.Id
                 };
@@ -64,7 +66,6 @@
                     ContactPostCode = "B60 2TY",
                     CourseOption = "French",
                     EndPointAssessorCertificateId = 2222222,
-                    EndPointAssessorContactId = firstContact.EndPointAssessorContactId,
                     EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
                     LearnerDateofBirth = DateTime.Now.AddYears(-22),
                     LearnerFamilyName = "Gouge",
@@ -108,7 +109,6 @@
                     ContactPostCode = "B60 2TY",
                     CourseOption = "French",
                     EndPointAssessorCertificateId = 2222222,
-                    EndPointAssessorContactId = firstContact.EndPointAssessorContactId,
                     EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
                     LearnerDateofBirth = DateTime.Now.AddYears(-22),
                     LearnerFamilyName = "Coxhead",

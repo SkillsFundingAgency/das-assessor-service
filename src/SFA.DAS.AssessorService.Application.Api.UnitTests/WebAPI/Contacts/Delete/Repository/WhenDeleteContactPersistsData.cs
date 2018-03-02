@@ -60,7 +60,7 @@
 
         Because of = () =>
         {
-            _result = _contactRepository.Delete(Guid.NewGuid());
+            _result = _contactRepository.Delete("1234");
         };
 
         Machine.Specifications.It verify_succesfully = () =>

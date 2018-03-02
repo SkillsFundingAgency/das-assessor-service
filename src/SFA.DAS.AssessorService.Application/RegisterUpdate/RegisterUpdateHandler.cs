@@ -132,7 +132,7 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
             {
                 EndPointAssessorName = epao.Name,
                 EndPointAssessorOrganisationId = epao.Id,
-                EndPointAssessorUKPRN = rnd.Next(77777777, 99999999)
+                EndPointAssessorUkprn = rnd.Next(77777777, 99999999)
             });
 
             _logger.LogInformation($"EPAO {epaoSummary.EndPointAssessorOrganisationId} Created in Repository with ID {createdOrg.Id}");

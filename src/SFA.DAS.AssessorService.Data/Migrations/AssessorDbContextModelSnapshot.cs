@@ -84,25 +84,28 @@ namespace SFA.DAS.AssessorService.Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("ContactEmail");
-
-                    b.Property<string>("ContactName");
-
                     b.Property<int>("ContactStatus");
 
                     b.Property<DateTime>("CreatedAt");
 
                     b.Property<DateTime?>("DeletedAt");
 
-                    b.Property<int>("EndPointAssessorContactId");
+                    b.Property<string>("DisplayName");
+
+                    b.Property<string>("Email");
+
+                    b.Property<string>("EndPointAssessorOrganisationId");
 
                     b.Property<Guid>("OrganisationId");
 
                     b.Property<DateTime?>("UpdatedAt");
 
-                    b.Property<string>("Username");
+                    b.Property<string>("Username")
+                        .IsRequired();
 
                     b.HasKey("Id");
+
+                    b.HasAlternateKey("Username");
 
                     b.HasIndex("OrganisationId");
 
@@ -122,7 +125,7 @@ namespace SFA.DAS.AssessorService.Data.Migrations
 
                     b.Property<string>("EndPointAssessorOrganisationId");
 
-                    b.Property<int>("EndPointAssessorUKPRN");
+                    b.Property<int>("EndPointAssessorUkprn");
 
                     b.Property<int>("OrganisationStatus");
 

@@ -1,13 +1,13 @@
-﻿using System.Security.Claims;
-using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
-using SFA.DAS.AssessorService.Domain.Enums;
-using SFA.DAS.AssessorService.Settings;
-
-namespace SFA.DAS.AssessorService.Web.Orchestrators
+﻿namespace SFA.DAS.AssessorService.Web.Orchestrators
 {
+    using System.Security.Claims;
+    using System.Threading.Tasks;
+    using Api.Types.Models;
+    using Application.Api.Client.Clients;
+    using Application.Api.Client.Exceptions;
+    using Domain.Enums;
+    using Settings;
+
     public class LoginOrchestrator : ILoginOrchestrator
     {
         private readonly IWebConfiguration _config;
@@ -63,18 +63,18 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators
         {
             var contact = await _contactsApiClient.GetByUsername(ukprn, username);
 
-            await CheckStoredUserDetailsForUpdate(ukprn, email, displayName, contact);
+            await CheckStoredUserDetailsForUpdate(contact.Username, ukprn, email, displayName, contact);
         }
 
-        private async Task CheckStoredUserDetailsForUpdate(string ukprn, string email, string displayName, Contact contact)
+        private async Task CheckStoredUserDetailsForUpdate(string userName, string ukprn, string email, string displayName, Contact contact)
         {
-            if (contact.ContactEmail != email || contact.ContactName != displayName)
+            if (contact.Email != email || contact.DisplayName != displayName)
             {
-                await _contactsApiClient.Update(ukprn, new UpdateContactRequest()
+                await _contactsApiClient.Update(ukprn, new UpdateContactRequest
                 {
-                    ContactEmail = email,
-                    ContactName = displayName,
-                    Id = contact.Id
+                    Email = email,
+                    DisplayName = displayName,
+                    Username = userName
                 });
             }
         }
@@ -83,13 +83,12 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators
             string username)
         {
             var contact = await _contactsApiClient.Create(ukprn,
-                new CreateContactRequest()
+                new CreateContactRequest
                 {
-                    ContactEmail = email,
-                    OrganisationId = organisation.Id,
-                    ContactName = displayName,
+                    Email = email,
+                    DisplayName = displayName,
                     Username = username,
-                    EndPointAssessorContactId = 1
+                    EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId
                 });
 
             await SetNewOrganisationPrimaryContact(ukprn, organisation, contact);
@@ -99,11 +98,11 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators
         {
             if (organisation.OrganisationStatus == OrganisationStatus.New)
             {
-                await _organisationsApiClient.Update(ukprn, new UpdateOrganisationRequest()
+                await _organisationsApiClient.Update(ukprn, new UpdateOrganisationRequest
                 {
                     EndPointAssessorName = organisation.EndPointAssessorName,
                     EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
-                    PrimaryContactId = contact.Id
+                    PrimaryContact = contact.Username
                 });
             }
         }

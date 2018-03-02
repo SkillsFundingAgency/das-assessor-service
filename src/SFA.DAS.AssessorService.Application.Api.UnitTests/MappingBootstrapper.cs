@@ -27,6 +27,8 @@
                 cfg.CreateMap<ContactCreateDomainModel, AssessorService.Domain.Entities.Contact>();
                 cfg.CreateMap<AssessorService.Domain.Entities.Contact, CreateContactRequest>();
                 cfg.CreateMap<AssessorService.Domain.Entities.Contact, Contact>();
+                cfg.CreateMap<AssessorService.Domain.Entities.Contact, OrganisationQueryDomainModel>();
+                cfg.CreateMap<OrganisationQueryDomainModel, OrganisationUpdateDomainModel>();
             });
         }
     }

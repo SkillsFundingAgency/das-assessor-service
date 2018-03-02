@@ -30,21 +30,27 @@
             _validationResult.IsValid.Should().BeFalse();
         };
         
-        Machine.Specifications.It errormessage_should_contain_EndPointAssessorUKPRN = () =>
+        Machine.Specifications.It errormessage_should_contain_email = () =>
         {
-            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "ContactEmail" && q.ErrorCode == "NotEmptyValidator");
+            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "Email" && q.ErrorCode == "NotEmptyValidator");
             errors.Should().NotBeNull();
         };
 
-        Machine.Specifications.It errormessage_should_contain_ContactName = () =>
+        Machine.Specifications.It errormessage_should_contain_displayname = () =>
         {
-            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "ContactName" && q.ErrorCode == "NotEmptyValidator");
+            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "DisplayName" && q.ErrorCode == "NotEmptyValidator");
             errors.Should().NotBeNull();
         };
 
         Machine.Specifications.It errormessage_should_contain_EndPointOrganisationId = () =>
         {
-            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "EndPointAssessorContactId" && q.ErrorCode == "NotEmptyValidator");
+            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "EndPointAssessorOrganisationId" && q.ErrorCode == "NotEmptyValidator");
+            errors.Should().NotBeNull();
+        };
+
+        Machine.Specifications.It errormessage_should_contain_username = () =>
+        {
+            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "Username" && q.ErrorCode == "NotEmptyValidator");
             errors.Should().NotBeNull();
         };
     }

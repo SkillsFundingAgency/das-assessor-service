@@ -20,22 +20,25 @@
 
             // ReSharper disable once LocalNameCapturedOnly
             CreateContactRequest createContactRequest;
-            RuleFor(contact => contact.ContactEmail).NotEmpty().WithMessage(
-                _localizer[ResourceMessageName.ContactNameMustBeDefined,
-                    nameof(createContactRequest.ContactName)].Value);
-            RuleFor(contact => contact.ContactName).NotEmpty().WithMessage(
-                _localizer[ResourceMessageName.ContactEMailMustBeDefined,
-                    nameof(createContactRequest.ContactEmail)].Value);
-            RuleFor(contact => contact.EndPointAssessorContactId).NotEmpty().WithMessage(
-                _localizer[ResourceMessageName.EndPointAssessorContactIdMustBeDefined,
-                    nameof(createContactRequest.EndPointAssessorContactId)].Value);
+            RuleFor(contact => contact.Email).NotEmpty().WithMessage(
+                _localizer[ResourceMessageName.DisplayNameMustBeDefined,
+                    nameof(createContactRequest.DisplayName)].Value);
+            RuleFor(contact => contact.DisplayName).NotEmpty().WithMessage(
+                _localizer[ResourceMessageName.EMailMustBeDefined,
+                    nameof(createContactRequest.Email)].Value);
+            RuleFor(contact => contact.EndPointAssessorOrganisationId).NotEmpty().WithMessage(
+                _localizer[ResourceMessageName.EndPointAssessorOrganisationIdMustBeDefined,
+                    nameof(createContactRequest.EndPointAssessorOrganisationId)].Value);
+            RuleFor(contact => contact.Username).NotEmpty().WithMessage(
+                _localizer[ResourceMessageName.UserNameMustBeDefined,
+                    nameof(createContactRequest.Username)].Value);
             RuleFor(contact => contact).Must(NotAlreadyExist).WithMessage(_localizer[ResourceMessageName.AlreadyExists,
                 nameof(createContactRequest)].Value);
         }
 
         private bool NotAlreadyExist(CreateContactRequest contact)
         {
-            var result = _contactQueryRepository.CheckContactExists(contact.ContactName).Result;
+            var result = _contactQueryRepository.CheckContactExists(contact.Username).Result;
             return !result;
         }
     }

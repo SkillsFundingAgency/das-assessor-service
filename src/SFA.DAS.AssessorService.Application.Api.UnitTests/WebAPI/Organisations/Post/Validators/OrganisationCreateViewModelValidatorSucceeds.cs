@@ -23,7 +23,8 @@
             OrganisationCreateViewModel = Builder<CreateOrganisationRequest>.CreateNew()
                 .With(q => q.EndPointAssessorOrganisationId = "1234")
                 .With(q => q.EndPointAssessorName = "XXXX")
-                .With(q => q.EndPointAssessorUKPRN = 10000001)
+                .With(q => q.EndPointAssessorUkprn = 10000001)
+                .With(q =>  q.PrimaryContact = null)
                 .Build();
 
             ContactQueryRepositoryMock.Setup(q => q.CheckContactExists(Moq.It.IsAny<Guid>()))
@@ -63,7 +64,7 @@
 
         Machine.Specifications.It errormessage_should_not_contain_PrimaryContactNotFound = () =>
         {
-            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "PrimaryContactId" && q.ErrorCode == "PredicateValidator");
+            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "PrimaryContact" && q.ErrorCode == "PredicateValidator");
             errors.Should().BeNull();
         };
 

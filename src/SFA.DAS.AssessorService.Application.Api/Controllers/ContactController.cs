@@ -46,7 +46,7 @@
             var contactQueryViewModel = await _mediator.Send(contactCreateViewModel);
 
             return CreatedAtRoute("CreateContract",
-                new {contactQueryViewModel.Id},
+                new {contactQueryViewModel.Username},
                 contactQueryViewModel);
         }
 
@@ -67,7 +67,7 @@
         [SwaggerResponse((int) HttpStatusCode.NoContent)]
         [SwaggerResponse((int) HttpStatusCode.NotFound)]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> Delete(string username)
         {
             try
             {
@@ -75,7 +75,7 @@
 
                 var contactDeleteViewModel = new DeleteContactRequest
                 {
-                    Id = id
+                    UserName = username
                 };
 
                 await _mediator.Send(contactDeleteViewModel);

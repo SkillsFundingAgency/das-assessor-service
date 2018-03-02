@@ -28,9 +28,9 @@
             RuleFor(organisation => organisation.EndPointAssessorName).NotEmpty().WithMessage(
                 _localizer[ResourceMessageName.EndPointAssessorNameMustBeDefined,
                     nameof(organisationUpdateViewModel.EndPointAssessorName)].Value);
-            RuleFor(organisation => organisation.PrimaryContactId).Must(HaveAssociatedPrimaryContactInContacts)
+            RuleFor(organisation => organisation.PrimaryContact).Must(HaveAssociatedPrimaryContactInContacts)
                 .WithMessage(_localizer[ResourceMessageName.PrimaryContactDoesNotExist,
-                    nameof(organisationUpdateViewModel.PrimaryContactId)].Value);
+                    nameof(organisationUpdateViewModel.PrimaryContact)].Value);
             RuleFor(organisation => organisation.EndPointAssessorOrganisationId).Must(AlreadyExist).WithMessage(
                 _localizer[ResourceMessageName.DoesNotExist, nameof(organisationUpdateViewModel.EndPointAssessorOrganisationId)].Value);
         }
@@ -41,12 +41,12 @@
             return result;
         }
 
-        private bool HaveAssociatedPrimaryContactInContacts(Guid? primaryContactId)
+        private bool HaveAssociatedPrimaryContactInContacts(string primaryContact)
         {
-            if (!primaryContactId.HasValue || primaryContactId == Guid.Empty)
+            if (string.IsNullOrEmpty(primaryContact))
                 return true;
 
-            var result = _contactQueryRepository.CheckContactExists(primaryContactId.Value).Result;
+            var result = _contactQueryRepository.CheckContactExists(primaryContact).Result;
             return result;
         }
     }
