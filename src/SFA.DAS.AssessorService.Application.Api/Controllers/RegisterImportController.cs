@@ -29,9 +29,9 @@
         public async Task<IActionResult> Import()
         {
             _logger.LogInformation("Received Update Request");
-            await _mediator.Send(new RegisterUpdateRequest());
+            var response = await _mediator.Send(new RegisterUpdateRequest());
 
-            return Ok();
+            return Ok(response);
         }
     }
 }

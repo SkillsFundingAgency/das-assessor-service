@@ -65,9 +65,9 @@ namespace SFA.DAS.AssessorService.Application.Api
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
 
             IMvcBuilder mvcBuilder;
-            //if (_env.IsDevelopment())
-            //    mvcBuilder = services.AddMvc(opt => { opt.Filters.Add(new AllowAnonymousFilter()); });
-            //else
+            if (_env.IsDevelopment())
+                mvcBuilder = services.AddMvc(opt => { opt.Filters.Add(new AllowAnonymousFilter()); });
+            else
                 mvcBuilder = services.AddMvc();
 
             mvcBuilder
