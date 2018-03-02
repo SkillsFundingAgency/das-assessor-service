@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using SFA.DAS.AssessorService.EpaoImporter.Settings;
 
 namespace SFA.DAS.AssessorService.Settings
 {
@@ -6,8 +7,6 @@ namespace SFA.DAS.AssessorService.Settings
     {
         [JsonRequired]
         public string Instance { get; set; }
-        [JsonRequired]
-        public string Domain { get; set; }
         [JsonRequired]
         public string TenantId { get; set; }
         [JsonRequired]
