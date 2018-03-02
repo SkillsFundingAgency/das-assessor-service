@@ -36,18 +36,18 @@
             {
                 EndPointAssessorName = "Test User",
                 EndPointAssessorOrganisationId = "9999999994432",
-                EndPointAssessorUKPRN = 99953456,
-                PrimaryContactId = null
+                EndPointAssessorUkprn = 99953456,
+                PrimaryContact = null
             };
 
             CreateOrganisation(organisationCreateViewModel);
 
             var contactCreateViewModel = new CreateContactRequest
             {
-                ContactName = _contactArguments.ContactName,
-                ContactEmail = _contactArguments.ContactEmail,
-                EndPointAssessorContactId = 99953456,
-                OrganisationId = _organisationQueryViewModel.Id
+                Username = _contactArguments.UserName,
+                DisplayName = _contactArguments.DisplayName,
+                Email = _contactArguments.Email,
+                EndPointAssessorOrganisationId = organisationCreateViewModel.EndPointAssessorOrganisationId
             };
 
             CreateContact(contactCreateViewModel);
@@ -82,28 +82,28 @@
             {
                 EndPointAssessorName = "Test User",
                 EndPointAssessorOrganisationId = "99944",
-                EndPointAssessorUKPRN = 99953456,
-                PrimaryContactId = null
+                EndPointAssessorUkprn = 99953456,
+                PrimaryContact = null
             };
 
             CreateOrganisation(organisationCreateViewModel);
 
             var contactCreateViewModel = new CreateContactRequest
             {
-                ContactName = _contactArguments.ContactName + "XXX",
-                ContactEmail = _contactArguments.ContactEmail + "XXX",
-                EndPointAssessorContactId = 99953457,
-                OrganisationId = _organisationQueryViewModel.Id
+                DisplayName = _contactArguments.DisplayName + "XXX",
+                Email = _contactArguments.Email + "XXX",
+                EndPointAssessorOrganisationId = organisationCreateViewModel.EndPointAssessorOrganisationId,
+                Username = "DummyUser123"
             };
 
             CreateContact(contactCreateViewModel);
 
             contactCreateViewModel = new CreateContactRequest
             {
-                ContactName = _contactArguments.ContactName,
-                ContactEmail = _contactArguments.ContactEmail,
-                EndPointAssessorContactId = 99953456,
-                OrganisationId = _organisationQueryViewModel.Id
+                DisplayName = _contactArguments.DisplayName,
+                Email = _contactArguments.Email,
+                EndPointAssessorOrganisationId = organisationCreateViewModel.EndPointAssessorOrganisationId,
+                Username = _contactArguments.UserName
             };
             CreateContact(contactCreateViewModel);
 
@@ -113,8 +113,8 @@
         [Then(@"the Contact should be created")]
         public void ThenTheContactShouldBeCreated()
         {
-            _contactQueryViewModel.ContactName.Should().Be(_contactArguments.ContactName);
-            _contactQueryViewModel.ContactEmail.Should().Be(_contactArguments.ContactEmail);
+            _contactQueryViewModel.DisplayName.Should().Be(_contactArguments.DisplayName);
+            _contactQueryViewModel.Email.Should().Be(_contactArguments.Email);
         }
 
         [Then(@"the Contact Status should be set to Live")]
@@ -132,7 +132,7 @@
         private void RetrieveOrganisation(CreateOrganisationRequest organisationCreateViewModel)
         {
             var organisationResponseMessage = _restClient.HttpClient.GetAsync(
-              $"api/v1/organisations/{organisationCreateViewModel.EndPointAssessorUKPRN}").Result;
+              $"api/v1/organisations/{organisationCreateViewModel.EndPointAssessorUkprn}").Result;
             var result = organisationResponseMessage.Content.ReadAsStringAsync().Result;
             _organisaionRetrieved = JsonConvert.DeserializeObject<Organisation>(result);
         }
@@ -147,28 +147,28 @@
             {
                 EndPointAssessorName = "Test User",
                 EndPointAssessorOrganisationId = "9999999994433",
-                EndPointAssessorUKPRN = 99953456,
-                PrimaryContactId = null
+                EndPointAssessorUkprn = 99953456,
+                PrimaryContact = null
             };
 
             CreateOrganisation(organisationCreateViewModel);
 
             var contactCreateViewModel = new CreateContactRequest
             {
-                ContactName = _contactArguments.ContactName,
-                ContactEmail = _contactArguments.ContactEmail,
-                EndPointAssessorContactId = 99953456,
-                OrganisationId = _organisationQueryViewModel.Id
+                DisplayName = _contactArguments.DisplayName,
+                Email = _contactArguments.Email,
+                EndPointAssessorOrganisationId = organisationCreateViewModel.EndPointAssessorOrganisationId,
+                Username = _contactArguments.UserName
             };
 
             CreateContact(contactCreateViewModel);
 
             contactCreateViewModel = new CreateContactRequest
             {
-                ContactName = _contactArguments.ContactName,
-                ContactEmail = _contactArguments.ContactEmail,
-                EndPointAssessorContactId = 99953456,
-                OrganisationId = _organisationQueryViewModel.Id
+                DisplayName = _contactArguments.DisplayName,
+                Email = _contactArguments.Email,
+                EndPointAssessorOrganisationId = organisationCreateViewModel.EndPointAssessorOrganisationId,
+                Username = _contactArguments.UserName
             };
             CreateContact(contactCreateViewModel);
         }

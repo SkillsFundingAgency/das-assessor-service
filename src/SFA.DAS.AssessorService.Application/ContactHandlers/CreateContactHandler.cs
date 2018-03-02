@@ -25,20 +25,29 @@
             _organisationQueryRepository = organisationQueryRepository;
         }
 
-        public async Task<Contact> Handle(CreateContactRequest contactCreateViewModel, CancellationToken cancellationToken)
+        public async Task<Contact> Handle(CreateContactRequest createContactRequest, CancellationToken cancellationToken)
         {
-            var contactCreateDomainModel = Mapper.Map<ContactCreateDomainModel>(contactCreateViewModel);
-            contactCreateDomainModel.ContactStatus = ContactStatus.Live; // Not sure what to be done about this - to be confirmed??      
+            var organisation = await _organisationQueryRepository.Get(createContactRequest.EndPointAssessorOrganisationId);
+                
 
-            if (!(await _organisationQueryRepository.CheckIfOrganisationHasContacts(contactCreateViewModel.OrganisationId)))
+            var contactCreateDomainModel = Mapper.Map<ContactCreateDomainModel>(createContactRequest);                
+            contactCreateDomainModel.OrganisationId = organisation.Id;
+
+            if (!(await _organisationQueryRepository.CheckIfOrganisationHasContacts(createContactRequest.EndPointAssessorOrganisationId)))
             {
+                contactCreateDomainModel.ContactStatus = ContactStatus.Live; // Not sure what to be done about this - to be confirmed?? 
+
                 var contactQueryViewModel = await _contactRepository.CreateNewContact(contactCreateDomainModel);
 
-                var organisationDomainModel = await _organisationQueryRepository.Get(contactCreateViewModel.OrganisationId);
-                organisationDomainModel.PrimaryContactId = contactQueryViewModel.Id;
-                organisationDomainModel.OrganisationStatus = OrganisationStatus.Live;
+                var organisationQueryDomainModel = await _organisationQueryRepository.Get(createContactRequest.EndPointAssessorOrganisationId);
 
-                await _organisationRepository.UpdateOrganisation(organisationDomainModel);
+                var organisationUpdateDomainModel =
+                    Mapper.Map<OrganisationUpdateDomainModel>(organisationQueryDomainModel);
+
+                organisationUpdateDomainModel.PrimaryContact = contactQueryViewModel.Username;
+                organisationUpdateDomainModel.OrganisationStatus = OrganisationStatus.Live;
+
+                await _organisationRepository.UpdateOrganisation(organisationUpdateDomainModel);
 
                 return contactQueryViewModel;
             }

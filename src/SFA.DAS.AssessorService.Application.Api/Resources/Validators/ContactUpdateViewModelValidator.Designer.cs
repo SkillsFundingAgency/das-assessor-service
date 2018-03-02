@@ -62,20 +62,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Resources.Validators {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Request must contain ContactEmail.
+        ///   Looks up a localized string similar to Request must contain DisplayName.
         /// </summary>
-        internal static string ContactEMailMustBeDefined {
+        internal static string DisplayNameMustBeDefined {
             get {
-                return ResourceManager.GetString("ContactEMailMustBeDefined", resourceCulture);
+                return ResourceManager.GetString("DisplayNameMustBeDefined", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Request must contain ContactName.
+        ///   Looks up a localized string similar to Request must contain Email.
         /// </summary>
-        internal static string ContactNameMustBeDefined {
+        internal static string EMailMustBeDefined {
             get {
-                return ResourceManager.GetString("ContactNameMustBeDefined", resourceCulture);
+                return ResourceManager.GetString("EMailMustBeDefined", resourceCulture);
             }
         }
         
@@ -85,6 +85,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Resources.Validators {
         internal static string EndPointAssessorContactIdMustBeDefined {
             get {
                 return ResourceManager.GetString("EndPointAssessorContactIdMustBeDefined", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Request must contain UserName.
+        /// </summary>
+        internal static string UserNameMustBeDefined {
+            get {
+                return ResourceManager.GetString("UserNameMustBeDefined", resourceCulture);
             }
         }
     }

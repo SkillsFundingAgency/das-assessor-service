@@ -21,7 +21,7 @@
         public async Task<Organisation> Handle(UpdateOrganisationRequest organisationUpdateViewModel, CancellationToken cancellationToken)
         {
             var organisationUpdateDomainModel = Mapper.Map<OrganisationUpdateDomainModel>(organisationUpdateViewModel);
-            organisationUpdateDomainModel.OrganisationStatus = organisationUpdateViewModel.PrimaryContactId.HasValue ? OrganisationStatus.Live : OrganisationStatus.New;
+            organisationUpdateDomainModel.OrganisationStatus = string.IsNullOrEmpty(organisationUpdateViewModel.PrimaryContact) ? OrganisationStatus.New : OrganisationStatus.Live;
 
             var organisationQueryViewModel = await _organisationRepository.UpdateOrganisation(organisationUpdateDomainModel);
             return organisationQueryViewModel;

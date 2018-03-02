@@ -34,8 +34,15 @@
         public async Task<Organisation> UpdateOrganisation(OrganisationUpdateDomainModel organisationUpdateDomainModel)
         {
             var organisationEntity = _assessorDbContext.Organisations.First(q => q.EndPointAssessorOrganisationId == organisationUpdateDomainModel.EndPointAssessorOrganisationId);
+            if (string.IsNullOrEmpty(organisationUpdateDomainModel.PrimaryContact))
+                organisationEntity.PrimaryContactId = null;
+            else
+            {
+                var contact =
+                    _assessorDbContext.Contacts.First(q => q.Username == organisationUpdateDomainModel.PrimaryContact);
+                organisationEntity.PrimaryContactId = contact.Id;
+            }
 
-            organisationEntity.PrimaryContactId = organisationUpdateDomainModel.PrimaryContactId;
             organisationEntity.EndPointAssessorName = organisationUpdateDomainModel.EndPointAssessorName;
             organisationEntity.OrganisationStatus = organisationUpdateDomainModel.OrganisationStatus;
 

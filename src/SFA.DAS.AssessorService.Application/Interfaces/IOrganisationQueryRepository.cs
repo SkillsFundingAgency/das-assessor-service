@@ -5,16 +5,15 @@
     using System.Threading.Tasks;
     using AssessorService.Api.Types.Models;
     using Domain;
-    using SFA.DAS.AssessorService.Api.Types;
 
     public interface IOrganisationQueryRepository
     {
         Task<IEnumerable<Organisation>> GetAllOrganisations();
         Task<Organisation> GetByUkPrn(int ukprn);
-        Task<OrganisationUpdateDomainModel> Get(Guid organisationId);
+        Task<OrganisationQueryDomainModel> Get(string endPointAssessorOrganisationId);
 
         Task<bool> CheckIfAlreadyExists(string endPointAssessorOrganisationId);
         Task<bool> CheckIfAlreadyExists(Guid organisationId);
-        Task<bool> CheckIfOrganisationHasContacts(Guid organisationId);
+        Task<bool> CheckIfOrganisationHasContacts(string endPointAssessorOrganisationId);
     }
 }

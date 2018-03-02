@@ -38,8 +38,8 @@
             {
                 EndPointAssessorName = _organisationArguments.EndPointAssessorName,
                 EndPointAssessorOrganisationId = _organisationArguments.EndPointAssessorOrganisationId.ToString(),
-                EndPointAssessorUKPRN = Convert.ToInt32(_organisationArguments.EndPointAssessorUKPRN),
-                PrimaryContactId = null
+                EndPointAssessorUkprn = Convert.ToInt32(_organisationArguments.EndPointAssessorUKPRN),
+                PrimaryContact = null
             };
 
             _restClient.HttpResponseMessage = _restClient.HttpClient.PostAsJsonAsync(
@@ -54,7 +54,7 @@
             _organisationArguments = organisations.First();
 
             HttpResponseMessage contactResponse = _restClient.HttpClient.GetAsync(
-              "api/v1/contacts/user/John Coxhead").Result;
+              "api/v1/contacts/user/jcoxhead").Result;
             var contactResult = contactResponse.Content.ReadAsStringAsync().Result;
 
             var contact = JsonConvert.DeserializeObject<Contact>(contactResult);
@@ -63,8 +63,8 @@
             {
                 EndPointAssessorName = _organisationArguments.EndPointAssessorName,
                 EndPointAssessorOrganisationId = _organisationArguments.EndPointAssessorOrganisationId.ToString(),
-                EndPointAssessorUKPRN = Convert.ToInt32(_organisationArguments.EndPointAssessorUKPRN),
-                PrimaryContactId = contact.Id
+                EndPointAssessorUkprn = Convert.ToInt32(_organisationArguments.EndPointAssessorUKPRN),
+                PrimaryContact = contact.Username
             };
 
             _restClient.HttpResponseMessage = _restClient.HttpClient.PostAsJsonAsync(
@@ -82,7 +82,7 @@
             organisationsCreated.Count.Should().Equals(1);
 
             _organisationRetrieved.EndPointAssessorOrganisationId.Should().Equals(_organisationArguments.EndPointAssessorOrganisationId);
-            _organisationRetrieved.EndPointAssessorUKPRN.Should().Equals(_organisationArguments.EndPointAssessorUKPRN);
+            _organisationRetrieved.EndPointAssessorUkprn.Should().Equals(_organisationArguments.EndPointAssessorUKPRN);
             _organisationRetrieved.EndPointAssessorName.Should().Equals(_organisationArguments.EndPointAssessorName);
         }
 

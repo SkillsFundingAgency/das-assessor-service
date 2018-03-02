@@ -23,7 +23,7 @@
                 .With(q => q.EndPointAssessorName = null)                                 
                 .Build();
 
-            ContactQueryRepositoryMock.Setup(q => q.CheckContactExists(Moq.It.IsAny<int>()))
+            ContactQueryRepositoryMock.Setup(q => q.CheckContactExists(Moq.It.IsAny<string>()))
                 .Returns(Task.FromResult((false)));
 
             OrganisationQueryRepositoryMock.Setup(q => q.CheckIfAlreadyExists(Moq.It.IsAny<string>()))
@@ -49,7 +49,7 @@
         
         Machine.Specifications.It errormessage_should_contain_PrimaryContactNotFound = () =>
         {
-            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "PrimaryContactId" && q.ErrorCode == "PredicateValidator");
+            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "PrimaryContact" && q.ErrorCode == "PredicateValidator");
             errors.Should().NotBeNull();
         };
 

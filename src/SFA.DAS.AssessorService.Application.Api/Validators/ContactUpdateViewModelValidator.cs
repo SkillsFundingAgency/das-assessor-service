@@ -16,12 +16,15 @@
 
             // ReSharper disable once LocalNameCapturedOnly
             CreateContactRequest createContactRequest;
-            RuleFor(organisation => organisation.ContactEmail).NotEmpty().WithMessage(
-                _localizer[ResourceMessageName.ContactNameMustBeDefined,
-                    nameof(createContactRequest.ContactName)].Value);
-            RuleFor(organisation => organisation.ContactName).NotEmpty().WithMessage(
-                _localizer[ResourceMessageName.ContactEMailMustBeDefined,
-                    nameof(createContactRequest.ContactEmail)].Value);
+            RuleFor(organisation => organisation.Email).NotEmpty().WithMessage(
+                _localizer[ResourceMessageName.DisplayNameMustBeDefined,
+                    nameof(createContactRequest.DisplayName)].Value);
+            RuleFor(organisation => organisation.DisplayName).NotEmpty().WithMessage(
+                _localizer[ResourceMessageName.EMailMustBeDefined,
+                    nameof(createContactRequest.Email)].Value);
+            RuleFor(organisation => organisation.Username).NotEmpty().WithMessage(
+                _localizer[ResourceMessageName.UserNameMustBeDefined,
+                    nameof(createContactRequest.Username)].Value);
         }
     }
 }

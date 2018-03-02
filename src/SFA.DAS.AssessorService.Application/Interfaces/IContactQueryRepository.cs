@@ -7,7 +7,7 @@
 
     public interface IContactQueryRepository
     {
-        Task<bool> CheckContactExists(int contactId);
+        //Task<bool> CheckContactExists(int contactId);
         Task<bool> CheckContactExists(Guid value);
         Task<bool> CheckContactExists(string userName);
 

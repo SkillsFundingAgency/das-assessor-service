@@ -6,14 +6,12 @@
     public class ContactCreateDomainModel
     {      
         public Guid OrganisationId { get; set; }
-
-        public int EndPointAssessorContactId { get; set; }
         public string EndPointAssessorOrganisationId { get; set; }
-        public int EndPointAssessorUkprn { get; set; }
 
-        public string ContactName { get; set; }
-        public string ContactEmail { get; set; }
         public string Username { get; set; }
+        public string DisplayName { get; set; }
+        public string Email { get; set; }
+    
         public ContactStatus ContactStatus { get; set; }
     }
 }

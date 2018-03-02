@@ -1,6 +1,6 @@
 ﻿namespace SFA.DAS.AssessorService.Domain.Entities
 {
-    using SFA.DAS.AssessorService.Domain.Enums;
+    using Enums;
     using System;
     using System.Collections.Generic;
 
@@ -9,7 +9,7 @@
         public Guid Id { get; set; }
 
         public string EndPointAssessorOrganisationId { get; set; }
-        public int EndPointAssessorUKPRN { get; set; }
+        public int EndPointAssessorUkprn { get; set; }
         public string EndPointAssessorName { get; set; }
 
         public Guid? PrimaryContactId { get; set; }

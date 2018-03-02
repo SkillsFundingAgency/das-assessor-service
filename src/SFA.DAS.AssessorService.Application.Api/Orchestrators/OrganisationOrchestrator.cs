@@ -6,7 +6,6 @@
     using MediatR;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Localization;
-    using System;
     using System.Threading.Tasks;
 
     public class OrganisationOrchestrator

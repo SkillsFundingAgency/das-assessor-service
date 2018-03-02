@@ -12,8 +12,8 @@ using System;
 namespace SFA.DAS.AssessorService.Data.Migrations
 {
     [DbContext(typeof(AssessorDbContext))]
-    [Migration("20180220144944_ChangeStausToEnums")]
-    partial class ChangeStausToEnums
+    [Migration("20180301213020_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -27,73 +27,23 @@ namespace SFA.DAS.AssessorService.Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<DateTime>("AchievementDate");
-
-                    b.Property<string>("AchievementOutcome");
-
-                    b.Property<string>("ContactAddLine1");
-
-                    b.Property<string>("ContactAddLine2");
-
-                    b.Property<string>("ContactAddLine3");
-
-                    b.Property<string>("ContactAddLine4");
-
-                    b.Property<string>("ContactName");
-
-                    b.Property<string>("ContactOrganisation");
-
-                    b.Property<string>("ContactPostCode");
-
-                    b.Property<string>("CourseOption");
+                    b.Property<string>("CertificateData");
 
                     b.Property<DateTime>("CreatedAt");
 
                     b.Property<Guid>("CreatedBy");
 
-                    b.Property<DateTime>("DeletedAt");
+                    b.Property<DateTime?>("DeletedAt");
 
                     b.Property<Guid>("DeletedBy");
 
-                    b.Property<int>("EndPointAssessorCertificateId");
-
-                    b.Property<int>("EndPointAssessorContactId");
-
-                    b.Property<string>("EndPointAssessorOrganisationId");
-
-                    b.Property<DateTime>("LearnerDateofBirth");
-
-                    b.Property<string>("LearnerFamilyName");
-
-                    b.Property<string>("LearnerGivenNames");
-
-                    b.Property<string>("LearnerSex");
-
-                    b.Property<DateTime>("LearningStartDate");
-
                     b.Property<Guid>("OrganisationId");
 
-                    b.Property<string>("OverallGrade");
+                    b.Property<int>("Status");
 
-                    b.Property<int>("ProviderUKPRN");
+                    b.Property<DateTime?>("UpdatedAt");
 
-                    b.Property<string>("Registration");
-
-                    b.Property<int>("StandardCode");
-
-                    b.Property<int>("StandardLevel");
-
-                    b.Property<string>("StandardName");
-
-                    b.Property<DateTime>("StandardPublicationDate");
-
-                    b.Property<string>("Status");
-
-                    b.Property<int>("ULN");
-
-                    b.Property<DateTime>("UpdatedAt");
-
-                    b.Property<Guid>("UpdatedBY");
+                    b.Property<Guid>("UpdatedBy");
 
                     b.HasKey("Id");
 
@@ -113,15 +63,15 @@ namespace SFA.DAS.AssessorService.Data.Migrations
 
                     b.Property<DateTime>("CreatedAt");
 
-                    b.Property<DateTime>("DeletedAt");
+                    b.Property<DateTime?>("DeletedAt");
 
                     b.Property<int>("EndPointAssessorCertificateId");
 
                     b.Property<DateTime>("EventTime");
 
-                    b.Property<string>("Status");
+                    b.Property<int>("Status");
 
-                    b.Property<DateTime>("UpdatedAt");
+                    b.Property<DateTime?>("UpdatedAt");
 
                     b.HasKey("Id");
 
@@ -135,27 +85,28 @@ namespace SFA.DAS.AssessorService.Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("ContactEmail");
-
-                    b.Property<string>("ContactName");
-
                     b.Property<int>("ContactStatus");
 
                     b.Property<DateTime>("CreatedAt");
 
-                    b.Property<DateTime>("DeletedAt");
+                    b.Property<DateTime?>("DeletedAt");
 
-                    b.Property<int>("EndPointAssessorContactId");
+                    b.Property<string>("DisplayName");
+
+                    b.Property<string>("Email");
 
                     b.Property<string>("EndPointAssessorOrganisationId");
 
-                    b.Property<int>("EndPointAssessorUKPRN");
-
                     b.Property<Guid>("OrganisationId");
 
-                    b.Property<DateTime>("UpdatedAt");
+                    b.Property<DateTime?>("UpdatedAt");
+
+                    b.Property<string>("Username")
+                        .IsRequired();
 
                     b.HasKey("Id");
+
+                    b.HasAlternateKey("Username");
 
                     b.HasIndex("OrganisationId");
 
@@ -169,19 +120,19 @@ namespace SFA.DAS.AssessorService.Data.Migrations
 
                     b.Property<DateTime>("CreatedAt");
 
-                    b.Property<DateTime>("DeletedAt");
+                    b.Property<DateTime?>("DeletedAt");
 
                     b.Property<string>("EndPointAssessorName");
 
                     b.Property<string>("EndPointAssessorOrganisationId");
 
-                    b.Property<int>("EndPointAssessorUKPRN");
+                    b.Property<int>("EndPointAssessorUkprn");
 
                     b.Property<int>("OrganisationStatus");
 
                     b.Property<Guid?>("PrimaryContactId");
 
-                    b.Property<DateTime>("UpdatedAt");
+                    b.Property<DateTime?>("UpdatedAt");
 
                     b.HasKey("Id");
 
@@ -199,7 +150,7 @@ namespace SFA.DAS.AssessorService.Data.Migrations
             modelBuilder.Entity("SFA.DAS.AssessorService.Domain.Entities.CertificateLog", b =>
                 {
                     b.HasOne("SFA.DAS.AssessorService.Domain.Entities.Certificate", "Certificate")
-                        .WithMany("CertificateLogs")
+                        .WithMany()
                         .HasForeignKey("CertificateId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

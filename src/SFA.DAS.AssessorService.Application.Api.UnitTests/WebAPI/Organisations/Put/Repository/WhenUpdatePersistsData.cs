@@ -12,6 +12,7 @@
     using System.Threading.Tasks;
     using System.Linq;
     using Domain;
+    using System;
 
     [Subject("AssessorService")]
     public class WhenUpdatePersistsData
@@ -24,34 +25,56 @@
         protected static AssessorService.Api.Types.Models.Organisation _result;
 
 
-        Establish context = () =>
+        private Establish context = () =>
         {
             MappingBootstrapper.Initialize();
 
-            _organisationUpdateDomainModel = Builder<OrganisationUpdateDomainModel>.CreateNew().Build();
+            _organisationUpdateDomainModel = Builder<OrganisationUpdateDomainModel>
+                .CreateNew()
+                .With(q => q.PrimaryContact = "TestUser")
+                .Build();
 
             _assessorDbContext = new Mock<AssessorDbContext>();
             _organisationDBSetMock = new Mock<DbSet<AssessorService.Domain.Entities.Organisation>>();
 
-            var mockSet = new Mock<DbSet<AssessorService.Domain.Entities.Organisation>>();
+            var organisationMockDbSet = new Mock<DbSet<AssessorService.Domain.Entities.Organisation>>();
+            var contactsMockDbSet = new Mock<DbSet<AssessorService.Domain.Entities.Contact>>();
+
             var mockContext = new Mock<AssessorDbContext>();
 
+            var primaryContactId = Guid.NewGuid();
 
             var organisations = new List<AssessorService.Domain.Entities.Organisation>
             {
-                Builder<AssessorService.Domain.Entities.Organisation>.CreateNew().Build()
+                Builder<AssessorService.Domain.Entities.Organisation>.CreateNew()
+                    .With(q => q.PrimaryContactId = primaryContactId)
+                    .Build()
             }.AsQueryable();
 
-            mockSet.As<IQueryable<AssessorService.Domain.Entities.Organisation>>().Setup(m => m.Provider).Returns(organisations.Provider);
-            mockSet.As<IQueryable<AssessorService.Domain.Entities.Organisation>>().Setup(m => m.Expression).Returns(organisations.Expression);
-            mockSet.As<IQueryable<AssessorService.Domain.Entities.Organisation>>().Setup(m => m.ElementType).Returns(organisations.ElementType);
-            mockSet.As<IQueryable<AssessorService.Domain.Entities.Organisation>>().Setup(m => m.GetEnumerator()).Returns(organisations.GetEnumerator());
+            var contacts = new List<AssessorService.Domain.Entities.Contact>
+            {
+                Builder<AssessorService.Domain.Entities.Contact>.CreateNew()
+                    .With(q => q.Id = primaryContactId)
+                    .With(q => q.Username="TestUser")
+                    .Build()
+            }.AsQueryable();
 
-            mockContext.Setup(c => c.Organisations).Returns(mockSet.Object);
+            organisationMockDbSet.As<IQueryable<AssessorService.Domain.Entities.Organisation>>().Setup(m => m.Provider).Returns(organisations.Provider);
+            organisationMockDbSet.As<IQueryable<AssessorService.Domain.Entities.Organisation>>().Setup(m => m.Expression).Returns(organisations.Expression);
+            organisationMockDbSet.As<IQueryable<AssessorService.Domain.Entities.Organisation>>().Setup(m => m.ElementType).Returns(organisations.ElementType);
+            organisationMockDbSet.As<IQueryable<AssessorService.Domain.Entities.Organisation>>().Setup(m => m.GetEnumerator()).Returns(organisations.GetEnumerator());
 
-            _assessorDbContext.Setup(q => q.Organisations).Returns(mockSet.Object);
+            contactsMockDbSet.As<IQueryable<AssessorService.Domain.Entities.Contact>>().Setup(m => m.Provider).Returns(contacts.Provider);
+            contactsMockDbSet.As<IQueryable<AssessorService.Domain.Entities.Contact>>().Setup(m => m.Expression).Returns(contacts.Expression);
+            contactsMockDbSet.As<IQueryable<AssessorService.Domain.Entities.Contact>>().Setup(m => m.ElementType).Returns(contacts.ElementType);
+            contactsMockDbSet.As<IQueryable<AssessorService.Domain.Entities.Contact>>().Setup(m => m.GetEnumerator()).Returns(contacts.GetEnumerator());
+
+            mockContext.Setup(c => c.Organisations).Returns(organisationMockDbSet.Object);
+            mockContext.Setup(c => c.Contacts).Returns(contactsMockDbSet.Object);
+
+            _assessorDbContext.Setup(q => q.Organisations).Returns(organisationMockDbSet.Object);
+            _assessorDbContext.Setup(q => q.Contacts).Returns(contactsMockDbSet.Object);
             _assessorDbContext.Setup(x => x.MarkAsModified(Moq.It.IsAny<AssessorService.Domain.Entities.Organisation>()));
-
 
             _assessorDbContext.Setup(q => q.SaveChangesAsync(new CancellationToken()))
                 .Returns(Task.FromResult((Moq.It.IsAny<int>())));

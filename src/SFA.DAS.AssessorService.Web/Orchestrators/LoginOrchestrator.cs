@@ -63,18 +63,18 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators
         {
             var contact = await _contactsApiClient.GetByUsername(username);
 
-            await CheckStoredUserDetailsForUpdate(email, displayName, contact);
+            await CheckStoredUserDetailsForUpdate(contact.Username, email, displayName, contact);
         }
 
-        private async Task CheckStoredUserDetailsForUpdate(string email, string displayName, Contact contact)
+        private async Task CheckStoredUserDetailsForUpdate(string userName, string email, string displayName, Contact contact)
         {
-            if (contact.ContactEmail != email || contact.ContactName != displayName)
+            if (contact.Email != email || contact.DisplayName != displayName)
             {
                 await _contactsApiClient.Update(new UpdateContactRequest()
                 {
-                    ContactEmail = email,
-                    ContactName = displayName,
-                    Id = contact.Id
+                    Email = email,
+                    DisplayName = displayName,
+                    Username = userName
                 });
             }
         }
@@ -85,11 +85,10 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators
             var contact = await _contactsApiClient.Create(
                 new CreateContactRequest()
                 {
-                    ContactEmail = email,
-                    OrganisationId = organisation.Id,
-                    ContactName = displayName,
+                    Email = email,
+                    DisplayName = displayName,
                     Username = username,
-                    EndPointAssessorContactId = 1
+                    EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId
                 });
 
             await SetNewOrganisationPrimaryContact(organisation, contact);
@@ -103,7 +102,7 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators
                 {
                     EndPointAssessorName = organisation.EndPointAssessorName,
                     EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
-                    PrimaryContactId = contact.Id
+                    PrimaryContact = contact.Username
                 });
             }
         }
