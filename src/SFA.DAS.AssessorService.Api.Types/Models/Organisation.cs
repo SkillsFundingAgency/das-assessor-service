@@ -1,7 +1,6 @@
 ﻿namespace SFA.DAS.AssessorService.Api.Types.Models
 {
     using System;
-    using Domain.Enums;
 
     public class Organisation
     {
@@ -12,6 +11,6 @@
         public string EndPointAssessorName { get; set; }
         public string PrimaryContact { get; set; }
 
-        public OrganisationStatus OrganisationStatus { get; set; }
+        public string Status { get; set; }
     }
 }

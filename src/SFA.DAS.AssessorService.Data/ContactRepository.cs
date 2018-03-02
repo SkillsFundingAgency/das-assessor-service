@@ -7,7 +7,7 @@
     using Application.Domain;
     using Application.Interfaces;
     using AutoMapper;
-    using Domain.Enums;
+    using Domain.Consts;
     using Domain.Exceptions;
     using Microsoft.EntityFrameworkCore;
 
@@ -53,7 +53,7 @@
                 throw (new NotFound());
 
             contactEntity.DeletedAt = DateTime.Now;
-            contactEntity.ContactStatus = ContactStatus.Deleted;
+            contactEntity.Status = ContactStatus.Deleted;
 
             _assessorDbContext.MarkAsModified(contactEntity);
 

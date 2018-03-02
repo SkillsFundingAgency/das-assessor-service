@@ -1,7 +1,7 @@
 ﻿namespace SFA.DAS.AssessorService.Application.Domain
 {
     using System;
-    using AssessorService.Domain.Enums;
+    using AssessorService.Domain.Consts;
 
     public class OrganisationQueryDomainModel
     {

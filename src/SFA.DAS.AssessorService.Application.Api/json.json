@@ -1,0 +1,25 @@
+﻿{
+  "Authentication": {
+    "WtRealm": "https://vacancyservicepoc",
+    "MetadataAddress": "https://adfs.preprod.skillsfunding.service.gov.uk/FederationMetadata/2007-06/FederationMetadata.xml",
+    "Role": "EPA"
+  },
+  "ApiAuthentication": {
+    "Instance": "https://login.microsoftonline.com/",
+    "Domain": "davegougegmail.onmicrosoft.com",
+    "TenantId": "45009c1d-fca9-4573-bd77-7bbf46a85d11",
+    "ClientId": "9c16bbb6-2d60-4e09-b723-9cdb85523175",
+    "Audience": "https://davegougegmail.onmicrosoft.com/SFA.DAS.AssessorService.Api"
+  },
+  "ClientApiAuthentication": {
+    "Instance": "https://login.microsoftonline.com/",
+    "Domain": "davegougegmail.onmicrosoft.com",
+    "TenantId": "45009c1d-fca9-4573-bd77-7bbf46a85d11",
+    "ClientId": "c2e6b5dc-b446-4cf5-afb6-d9491efdab68",
+    "ClientSecret": "rr6Ew5ynMPeqP/HGj/cYpJZq4/2gTdhAB8KTONbHZus=",
+    "ResourceId": "https://davegougegmail.onmicrosoft.com/SFA.DAS.AssessorService.Api",
+    "ApiBaseAddress": "http://localhost:59022"
+
+  },
+  "SqlConnectionstring": "Data Source=.\\SQLEXPRESS;Initial Catalog=AssessorDB;Integrated Security=True; MultipleActiveResultSets=True;"
+}

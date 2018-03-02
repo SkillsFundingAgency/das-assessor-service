@@ -8,7 +8,7 @@
     using Application.Domain;
     using Application.Interfaces;
     using AutoMapper;
-    using Domain.Enums;
+    using Domain.Consts;
     using Microsoft.EntityFrameworkCore;
 
     public class OrganisationQueryRepository : IOrganisationQueryRepository
@@ -23,7 +23,7 @@
         public async Task<IEnumerable<Organisation>> GetAllOrganisations()
         {
             var organisations = await _assessorDbContext.Organisations
-                .Select(q => Mapper.Map<Organisation>(q)).AsNoTracking().ToListAsync();
+                .Select(q => Mapper.Map<Organisation>(q)).Where(q => q.Status != OrganisationStatus.Deleted).AsNoTracking().ToListAsync();
 
             return organisations;
         }
@@ -31,7 +31,7 @@
         public async Task<Organisation> GetByUkPrn(int ukprn)
         {
             var organisation = await _assessorDbContext.Organisations
-                         .FirstOrDefaultAsync(q => q.EndPointAssessorUkprn == ukprn && q.OrganisationStatus != OrganisationStatus.Deleted);
+                         .FirstOrDefaultAsync(q => q.EndPointAssessorUkprn == ukprn && q.Status != OrganisationStatus.Deleted);
             if (organisation == null)
                 return null;
 
@@ -42,7 +42,7 @@
         public async Task<OrganisationQueryDomainModel> Get(string endPointAssessorOrganisationId)
         {
             var organisation = await _assessorDbContext.Organisations
-                      .FirstAsync(q => q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId && q.OrganisationStatus != OrganisationStatus.Deleted);
+                      .FirstAsync(q => q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId && q.Status != OrganisationStatus.Deleted);
 
             var organisationUpdateDomainModel = Mapper.Map<OrganisationQueryDomainModel>(organisation);
             return organisationUpdateDomainModel;
@@ -51,14 +51,14 @@
         public async Task<bool> CheckIfAlreadyExists(string endPointAssessorOrganisationId)
         {
             var organisation = await _assessorDbContext.Organisations
-                         .FirstOrDefaultAsync(q => q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId && q.OrganisationStatus != OrganisationStatus.Deleted);
+                         .FirstOrDefaultAsync(q => q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId && q.Status != OrganisationStatus.Deleted);
             return organisation != null;
         }
 
         public async Task<bool> CheckIfAlreadyExists(Guid id)
         {
             var organisation = await _assessorDbContext.Organisations
-                        .FirstOrDefaultAsync(q => q.Id == id && q.OrganisationStatus != OrganisationStatus.Deleted);
+                        .FirstOrDefaultAsync(q => q.Id == id && q.Status != OrganisationStatus.Deleted);
             return organisation != null;
         }
 
@@ -66,7 +66,7 @@
         {
             var organisation = await _assessorDbContext.Organisations
                         .Include(q => q.Contacts)
-                       .FirstOrDefaultAsync(q => q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId && q.OrganisationStatus != OrganisationStatus.Deleted);
+                       .FirstOrDefaultAsync(q => q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId && q.Status != OrganisationStatus.Deleted);
             return organisation.Contacts.Count() != 0;
         }
     }

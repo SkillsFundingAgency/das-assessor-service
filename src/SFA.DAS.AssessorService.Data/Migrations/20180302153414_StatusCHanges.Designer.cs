@@ -11,8 +11,8 @@ using System;
 namespace SFA.DAS.AssessorService.Data.Migrations
 {
     [DbContext(typeof(AssessorDbContext))]
-    [Migration("20180301213020_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20180302153414_StatusCHanges")]
+    partial class StatusCHanges
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Data.Migrations
 
                     b.Property<Guid>("OrganisationId");
 
-                    b.Property<int>("Status");
+                    b.Property<string>("Status");
 
                     b.Property<DateTime?>("UpdatedAt");
 
@@ -68,7 +68,7 @@ namespace SFA.DAS.AssessorService.Data.Migrations
 
                     b.Property<DateTime>("EventTime");
 
-                    b.Property<int>("Status");
+                    b.Property<string>("Status");
 
                     b.Property<DateTime?>("UpdatedAt");
 
@@ -84,8 +84,6 @@ namespace SFA.DAS.AssessorService.Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("ContactStatus");
-
                     b.Property<DateTime>("CreatedAt");
 
                     b.Property<DateTime?>("DeletedAt");
@@ -97,6 +95,8 @@ namespace SFA.DAS.AssessorService.Data.Migrations
                     b.Property<string>("EndPointAssessorOrganisationId");
 
                     b.Property<Guid>("OrganisationId");
+
+                    b.Property<string>("Status");
 
                     b.Property<DateTime?>("UpdatedAt");
 
@@ -127,9 +127,9 @@ namespace SFA.DAS.AssessorService.Data.Migrations
 
                     b.Property<int>("EndPointAssessorUkprn");
 
-                    b.Property<int>("OrganisationStatus");
-
                     b.Property<Guid?>("PrimaryContactId");
+
+                    b.Property<string>("Status");
 
                     b.Property<DateTime?>("UpdatedAt");
 

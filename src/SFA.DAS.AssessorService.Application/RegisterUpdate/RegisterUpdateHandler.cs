@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.Enums;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
 
 namespace SFA.DAS.AssessorService.Application.RegisterUpdate
 {
     using AssessorService.Api.Types.Models;
+    using AssessorService.Domain.Consts;
 
     public class RegisterUpdateHandler : IRequestHandler<RegisterUpdateRequest, RegisterUpdateResponse>
     {
@@ -73,9 +72,9 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
 
             _response.EpaosOnRegister = _epaosOnRegister.Count;
             _response.OrganisationsInDatabase =
-                _organisations.Count(org => org.OrganisationStatus != OrganisationStatus.Deleted);
+                _organisations.Count(org => org.Status != OrganisationStatus.Deleted);
             _response.DeletedOrganisationsInDatabase =
-                _organisations.Count(org => org.OrganisationStatus == OrganisationStatus.Deleted);
+                _organisations.Count(org => org.Status == OrganisationStatus.Deleted);
         }
 
         private bool EpaoStillPresentOnRegister(Organisation org)
@@ -107,7 +106,7 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
                     $"Organisation with ID {organisation.Id} and EPAOgId {epaoSummary.Id} has had it's Name changed from {organisation.EndPointAssessorName} to {epaoSummary.Name}");
             }
 
-            if (_organisations.Any(o => o.EndPointAssessorOrganisationId == epaoSummary.Id && o.OrganisationStatus == OrganisationStatus.Deleted))
+            if (_organisations.Any(o => o.EndPointAssessorOrganisationId == epaoSummary.Id && o.Status == OrganisationStatus.Deleted))
             {
                 var organisation =
                     _organisations.Single(o => o.EndPointAssessorOrganisationId == epaoSummary.Id);
@@ -127,7 +126,7 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
 
         private async Task DeleteOrganisation(Organisation org)
         {
-            if (org.OrganisationStatus == OrganisationStatus.Deleted)
+            if (org.Status == OrganisationStatus.Deleted)
             {
                 _logger.LogInformation(
                     $"Organisation with ID {org.Id} and EPAOgId {org.Id} no longer found on Register and has previously been deleted.");

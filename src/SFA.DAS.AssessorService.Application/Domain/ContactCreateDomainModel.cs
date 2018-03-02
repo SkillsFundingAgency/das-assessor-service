@@ -1,7 +1,6 @@
 ﻿namespace SFA.DAS.AssessorService.Application.Domain
 {
     using System;
-    using AssessorService.Domain.Enums;
 
     public class ContactCreateDomainModel
     {      
@@ -12,6 +11,6 @@
         public string DisplayName { get; set; }
         public string Email { get; set; }
     
-        public ContactStatus ContactStatus { get; set; }
+        public string Status { get; set; }
     }
 }

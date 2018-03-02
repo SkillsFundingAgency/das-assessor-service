@@ -2,15 +2,16 @@
 using System.Threading;
 using Moq;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Domain;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.OrganisationHandlers;
-using SFA.DAS.AssessorService.Domain.Enums;
+
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations.Post.Handlers
 {
+    using AssessorService.Domain.Consts;
+
     [TestFixture]
     public class WhenDeletedOrganisationExists
     {
@@ -27,7 +28,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
             var orgQueryRepos = new Mock<IOrganisationQueryRepository>();
             orgQueryRepos.Setup(r => r.GetByUkPrn(It.IsAny<int>())).ReturnsAsync(new Organisation()
             {
-                OrganisationStatus = OrganisationStatus.Deleted,
+                Status = OrganisationStatus.Deleted,
                 EndPointAssessorOrganisationId = "12345"
             });
 

@@ -6,7 +6,7 @@
     using System.Net.Http;
     using AssessorService.Api.Types.Models;
     using Dapper;
-    using Domain.Enums;
+    using Domain.Consts;  
     using Extensions;
     using FluentAssertions;
     using Newtonsoft.Json;
@@ -91,7 +91,7 @@
             contact.Email.Should().Be(_contactQueryViewModel.Email);
             contact.Username.Should().Be(_contactQueryViewModel.Username);
 
-            contact.ContactStatus.Should().Be(ContactStatus.Live);
+            contact.Status.Should().Be(ContactStatus.Live);
         }
 
         private void CreateOrganisation(CreateOrganisationRequest organisationCreateViewModel)

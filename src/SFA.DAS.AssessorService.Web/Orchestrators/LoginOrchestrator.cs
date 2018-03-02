@@ -3,11 +3,12 @@ using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
-using SFA.DAS.AssessorService.Domain.Enums;
 using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Web.Orchestrators
 {
+    using Domain.Consts;
+
     public class LoginOrchestrator : ILoginOrchestrator
     {
         private readonly IWebConfiguration _config;
@@ -96,7 +97,7 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators
 
         private async Task SetNewOrganisationPrimaryContact(Organisation organisation, Contact contact)
         {
-            if (organisation.OrganisationStatus == OrganisationStatus.New)
+            if (organisation.Status == OrganisationStatus.New)
             {
                 await _organisationsApiClient.Update(new UpdateOrganisationRequest()
                 {

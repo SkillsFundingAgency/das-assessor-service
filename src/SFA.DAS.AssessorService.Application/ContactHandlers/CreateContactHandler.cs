@@ -4,10 +4,10 @@
     using AutoMapper;
     using Domain;
     using MediatR;
-    using Interfaces;
-    using AssessorService.Domain.Enums;
+    using Interfaces;   
     using System.Threading;
     using System.Threading.Tasks;
+    using AssessorService.Domain.Consts;
 
     public class CreateContactHandler : IRequestHandler<CreateContactRequest, Contact>
     {
@@ -35,7 +35,7 @@
 
             if (!(await _organisationQueryRepository.CheckIfOrganisationHasContacts(createContactRequest.EndPointAssessorOrganisationId)))
             {
-                contactCreateDomainModel.ContactStatus = ContactStatus.Live; // Not sure what to be done about this - to be confirmed?? 
+                contactCreateDomainModel.Status = ContactStatus.Live; // Not sure what to be done about this - to be confirmed?? 
 
                 var contactQueryViewModel = await _contactRepository.CreateNewContact(contactCreateDomainModel);
 
@@ -45,7 +45,7 @@
                     Mapper.Map<OrganisationUpdateDomainModel>(organisationQueryDomainModel);
 
                 organisationUpdateDomainModel.PrimaryContact = contactQueryViewModel.Username;
-                organisationUpdateDomainModel.OrganisationStatus = OrganisationStatus.Live;
+                organisationUpdateDomainModel.Status = OrganisationStatus.Live;
 
                 await _organisationRepository.UpdateOrganisation(organisationUpdateDomainModel);
 

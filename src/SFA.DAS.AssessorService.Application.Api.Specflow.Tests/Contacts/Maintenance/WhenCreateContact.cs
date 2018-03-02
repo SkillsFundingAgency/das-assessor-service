@@ -1,10 +1,10 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations
+﻿namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Maintenance
 {
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
     using AssessorService.Api.Types.Models;
-    using Domain.Enums;
+    using Domain.Consts;
     using Extensions;
     using FluentAssertions;
     using Newtonsoft.Json;
@@ -120,13 +120,13 @@
         [Then(@"the Contact Status should be set to Live")]
         public void ThenTheContactStatusShouldBeSetToLive()
         {
-            _contactQueryViewModel.ContactStatus.Should().Be(ContactStatus.Live);
+            _contactQueryViewModel.Status.Should().Be(ContactStatus.Live);
         }
 
         [Then(@"the Contact Organisation Status should be set to (.*)")]
         public void ThenTheContactOrganisationStatusShouldBeSetTo(string p0)
         {
-            _organisaionRetrieved.OrganisationStatus.Should().Be(OrganisationStatus.Live);
+            _organisaionRetrieved.Status.Should().Be(OrganisationStatus.Live);
         }
 
         private void RetrieveOrganisation(CreateOrganisationRequest organisationCreateViewModel)

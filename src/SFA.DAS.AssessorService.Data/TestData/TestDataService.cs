@@ -2,10 +2,10 @@
 {
     using System;
     using System.Linq;
+    using Domain.Consts;
+    using Domain.Entities;
+    using Domain.JsonData;
     using Newtonsoft.Json;
-    using SFA.DAS.AssessorService.Domain.Entities;
-    using SFA.DAS.AssessorService.Domain.Enums;
-    using SFA.DAS.AssessorService.Domain.JsonData;
 
     public static class TestDataService
     {
@@ -20,7 +20,7 @@
                     EndPointAssessorName = "EPAO 1",
                     EndPointAssessorOrganisationId = "1234",
                     EndPointAssessorUkprn = 10000000,
-                    OrganisationStatus = OrganisationStatus.New
+                    Status = OrganisationStatus.New
                 };
 
                 context.Organisations.Add(organisation);
@@ -33,7 +33,7 @@
                     Email = "blah@blah.com",
                     DisplayName = "Fred Jones",
                     EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
-                    ContactStatus = ContactStatus.Live,
+                    Status = ContactStatus.Live,
                     OrganisationId = organisation.Id
                 };
 
@@ -46,7 +46,7 @@
                     Email = "jcoxhead@gmail.com",
                     DisplayName = "John Coxhead",
                     EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
-                    ContactStatus = ContactStatus.Live,
+                    Status = ContactStatus.Live,
                     OrganisationId = organisation.Id
                 };
 

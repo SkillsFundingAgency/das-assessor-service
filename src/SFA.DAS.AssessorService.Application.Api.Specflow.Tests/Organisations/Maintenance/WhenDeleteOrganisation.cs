@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations
+﻿namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.Maintenance
 {
     using System;
     using System.Collections.Generic;
@@ -6,7 +6,7 @@
     using System.Linq;
     using AssessorService.Api.Types.Models;
     using Dapper;
-    using Domain.Enums;
+    using Domain.Consts;
     using Extensions;
     using FluentAssertions;
     using Newtonsoft.Json;
@@ -77,10 +77,10 @@
         public void ThenTheOrganisationShouldBeDeleted()
         {
             var organisationsCreated = _dbconnection.Query<Organisation>
-            ($"Select EndPointAssessorOrganisationId, EndPointAssessorUKPRN, EndPointAssessorName, OrganisationStatus From Organisations where EndPointAssessorOrganisationId = {_organisationArguments.EndPointAssessorOrganisationId}").ToList();
+            ($"Select EndPointAssessorOrganisationId, EndPointAssessorUKPRN, EndPointAssessorName, Status From Organisations where EndPointAssessorOrganisationId = {_organisationArguments.EndPointAssessorOrganisationId}").ToList();
             _organisationRetrieved = organisationsCreated.First();
 
-            _organisationRetrieved.OrganisationStatus.Should().Be(OrganisationStatus.Deleted);
+            _organisationRetrieved.Status.Should().Be(OrganisationStatus.Deleted);
         }
     }
 }

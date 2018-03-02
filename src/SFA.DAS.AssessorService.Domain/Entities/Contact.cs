@@ -1,7 +1,6 @@
 ﻿namespace SFA.DAS.AssessorService.Domain.Entities
 {
     using System;
-    using Enums;
 
     public class Contact : BaseEntity
     {
@@ -16,6 +15,6 @@
         public string DisplayName { get; set; }
         public string Email { get; set; }
      
-        public ContactStatus ContactStatus { get; set; }
+        public string Status { get; set; }
     }
 }

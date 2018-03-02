@@ -1,7 +1,6 @@
 ﻿namespace SFA.DAS.AssessorService.Domain.Entities
 {
     using System;
-    using Enums;
 
     public class CertificateLog : BaseEntity
     {
@@ -11,7 +10,7 @@
 
         public int EndPointAssessorCertificateId { get; set; }
         public string Action { get; set; }
-        public CertificateStatus Status { get; set; }
+        public string Status { get; set; }
         public DateTime EventTime { get; set; }
     }
 }

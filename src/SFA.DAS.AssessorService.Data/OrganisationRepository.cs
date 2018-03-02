@@ -3,13 +3,12 @@
     using System;
     using System.Linq;
     using System.Threading.Tasks;
+    using Api.Types.Models;
     using Application.Domain;
+    using Application.Interfaces;
     using AutoMapper;
-    using SFA.DAS.AssessorService.Application.Interfaces;
-    using SFA.DAS.AssessorService.Domain.Entities;
-    using SFA.DAS.AssessorService.Domain.Enums;
-    using SFA.DAS.AssessorService.Domain.Exceptions;
-    using Organisation = Api.Types.Models.Organisation;
+    using Domain.Consts;
+    using Domain.Exceptions;
 
     public class OrganisationRepository : IOrganisationRepository
     {
@@ -44,7 +43,7 @@
             }
 
             organisationEntity.EndPointAssessorName = organisationUpdateDomainModel.EndPointAssessorName;
-            organisationEntity.OrganisationStatus = organisationUpdateDomainModel.OrganisationStatus;
+            organisationEntity.Status = organisationUpdateDomainModel.Status;
 
             // Workaround for Mocking
             _assessorDbContext.MarkAsModified(organisationEntity);
@@ -58,13 +57,13 @@
         public async Task Delete(string endPointAssessorOrganisationId)
         {
             var organisationEntity = _assessorDbContext.Organisations
-                      .FirstOrDefault(q => q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId && q.OrganisationStatus != OrganisationStatus.Deleted);
+                      .FirstOrDefault(q => q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId && q.Status != OrganisationStatus.Deleted);
 
             if (organisationEntity == null)
                 throw (new NotFound());
 
             organisationEntity.DeletedAt = DateTime.Now;
-            organisationEntity.OrganisationStatus = OrganisationStatus.Deleted;
+            organisationEntity.Status = OrganisationStatus.Deleted;
 
             _assessorDbContext.MarkAsModified(organisationEntity);
 

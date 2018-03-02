@@ -3,7 +3,7 @@
     using System.Threading;
     using System.Threading.Tasks;
     using AssessorService.Api.Types.Models;
-    using AssessorService.Domain.Enums;
+    using AssessorService.Domain.Consts;
     using AutoMapper;
     using Domain;
     using Interfaces;
@@ -21,7 +21,7 @@
         public async Task<Organisation> Handle(UpdateOrganisationRequest organisationUpdateViewModel, CancellationToken cancellationToken)
         {
             var organisationUpdateDomainModel = Mapper.Map<OrganisationUpdateDomainModel>(organisationUpdateViewModel);
-            organisationUpdateDomainModel.OrganisationStatus = string.IsNullOrEmpty(organisationUpdateViewModel.PrimaryContact) ? OrganisationStatus.New : OrganisationStatus.Live;
+            organisationUpdateDomainModel.Status = string.IsNullOrEmpty(organisationUpdateViewModel.PrimaryContact) ? OrganisationStatus.New : OrganisationStatus.Live;
 
             var organisationQueryViewModel = await _organisationRepository.UpdateOrganisation(organisationUpdateDomainModel);
             return organisationQueryViewModel;
