@@ -56,7 +56,6 @@ namespace SFA.DAS.AssessorService.Application.Api
                 .AddAzureAdBearer(options =>
                 {
                     options.ClientId = Configuration.ApiAuthentication.ClientId;
-                    options.Domain = Configuration.ApiAuthentication.Domain;
                     options.Instance = Configuration.ApiAuthentication.Instance;
                     options.TenantId = Configuration.ApiAuthentication.TenantId;
                     options.Audience = Configuration.ApiAuthentication.Audience;

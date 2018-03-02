@@ -4,5 +4,6 @@
     {
         string WtRealm { get; set; }
         string MetadataAddress { get; set; }
+        string Role { get; set; }
     }
 }
