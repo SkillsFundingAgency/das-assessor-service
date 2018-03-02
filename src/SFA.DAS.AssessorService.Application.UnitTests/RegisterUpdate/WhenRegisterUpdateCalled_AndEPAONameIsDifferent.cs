@@ -26,8 +26,8 @@
             ApiClient.Setup(c => c.FindAllAsync())
                 .Returns(Task.FromResult(new List<OrganisationSummary>()
                 {
-                    new OrganisationSummary { EndPointAssessorOrganisationId = _endPointAssessorOrganisationId, Name = "The New EPAO Name"},
-                    new OrganisationSummary { EndPointAssessorOrganisationId = "EPA0002", Name = "Another EPAO"}
+                    new OrganisationSummary { Id = _endPointAssessorOrganisationId, Name = "The New EPAO Name"},
+                    new OrganisationSummary { Id = "EPA0002", Name = "Another EPAO"}
 
                 }.AsEnumerable()));
 

@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
         {
             _actionResult = OrganisationController.Index().Result;
             //OrganisationService.Verify(serv => serv.GetOrganisation("jwt", 12345));
-            ApiClient.Verify(a => a.Get("12345", "12345"));
+            ApiClient.Verify(a => a.Get("12345"));
         }
 
         [Test]

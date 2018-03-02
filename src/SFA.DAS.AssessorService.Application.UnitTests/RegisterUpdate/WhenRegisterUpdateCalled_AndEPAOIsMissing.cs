@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.RegisterUpdate;
+using SFA.DAS.AssessorService.Domain.Enums;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
@@ -25,7 +26,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
             ApiClient.Setup(c => c.FindAllAsync())
                 .Returns(Task.FromResult(new List<OrganisationSummary>()
                 {
-                    new OrganisationSummary {EndPointAssessorOrganisationId = "EPA0001"}
+                    new OrganisationSummary {Id = "EPA0001"}
                     
                 }.AsEnumerable()));
 
@@ -34,7 +35,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
                 .Returns(Task.FromResult(new List<Organisation>
                 {
                     new Organisation() {EndPointAssessorOrganisationId = "EPA0001"},
-                    new Organisation() {EndPointAssessorOrganisationId = "EPA0002" }
+                    new Organisation() {EndPointAssessorOrganisationId = "EPA0002", OrganisationStatus = OrganisationStatus.Live}
                 }.AsEnumerable()));
         }
 

@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.AssessorService.Settings
+﻿namespace SFA.DAS.AssessorService.EpaoImporter.Settings
 {
     public interface IWebConfiguration
     {

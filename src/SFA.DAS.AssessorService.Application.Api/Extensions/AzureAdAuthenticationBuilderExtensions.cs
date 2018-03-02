@@ -1,20 +1,19 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.Extensions
-{
-    using System;
-    using Microsoft.AspNetCore.Authentication;
-    using Microsoft.AspNetCore.Authentication.JwtBearer;
-    using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Options;
+﻿using System;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
-    public static class AzureAdAuthenticationBuilderExtensions
+
+namespace SFA.DAS.AssessorService.Application.Api.Extensions
+{
+
+    public static class AzureAdServiceCollectionExtensions
     {
         public static AuthenticationBuilder AddAzureAdBearer(this AuthenticationBuilder builder)
-        {
-            return builder.AddAzureAdBearer(_ => { });
-        }
+            => builder.AddAzureAdBearer(_ => { });
 
-        public static AuthenticationBuilder AddAzureAdBearer(this AuthenticationBuilder builder,
-            Action<AzureAdOptions> configureOptions)
+        public static AuthenticationBuilder AddAzureAdBearer(this AuthenticationBuilder builder, Action<AzureAdOptions> configureOptions)
         {
             builder.Services.Configure(configureOptions);
             builder.Services.AddSingleton<IConfigureOptions<JwtBearerOptions>, ConfigureAzureOptions>();
@@ -33,7 +32,7 @@
 
             public void Configure(string name, JwtBearerOptions options)
             {
-                options.Audience = _azureOptions.ClientId;
+                options.Audience = _azureOptions.Audience;
                 options.Authority = $"{_azureOptions.Instance}{_azureOptions.TenantId}";
             }
 

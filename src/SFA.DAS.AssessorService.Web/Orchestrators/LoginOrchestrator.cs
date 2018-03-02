@@ -1,13 +1,13 @@
-﻿namespace SFA.DAS.AssessorService.Web.Orchestrators
-{
-    using System.Security.Claims;
-    using System.Threading.Tasks;
-    using Api.Types.Models;
-    using Application.Api.Client.Clients;
-    using Application.Api.Client.Exceptions;
-    using Domain.Enums;
-    using Settings;
+﻿using System.Security.Claims;
+using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
+using SFA.DAS.AssessorService.Domain.Enums;
+using SFA.DAS.AssessorService.Settings;
 
+namespace SFA.DAS.AssessorService.Web.Orchestrators
+{
     public class LoginOrchestrator : ILoginOrchestrator
     {
         private readonly IWebConfiguration _config;
@@ -36,7 +36,7 @@
             Organisation organisation;
             try
             {
-                organisation = await _organisationsApiClient.Get(ukprn, ukprn);
+                organisation = await _organisationsApiClient.Get(ukprn);
             }
             catch (EntityNotFoundException)
             {
@@ -45,11 +45,11 @@
                 
             try
             {
-                await GetContact(ukprn, username, email, displayName);
+                await GetContact(username, email, displayName);
             }
             catch (EntityNotFoundException)
             {
-                await CreateNewContact(ukprn, email, organisation, displayName, username);
+                await CreateNewContact(email, organisation, displayName, username);
             }
             return LoginResult.Valid;
         }
@@ -59,18 +59,18 @@
             return !principal.HasClaim("http://schemas.portal.com/service", _config.Authentication.Role);
         }
 
-        private async Task GetContact(string ukprn, string username, string email, string displayName)
+        private async Task GetContact(string username, string email, string displayName)
         {
-            var contact = await _contactsApiClient.GetByUsername(ukprn, username);
+            var contact = await _contactsApiClient.GetByUsername(username);
 
-            await CheckStoredUserDetailsForUpdate(contact.Username, ukprn, email, displayName, contact);
+            await CheckStoredUserDetailsForUpdate(contact.Username, email, displayName, contact);
         }
 
-        private async Task CheckStoredUserDetailsForUpdate(string userName, string ukprn, string email, string displayName, Contact contact)
+        private async Task CheckStoredUserDetailsForUpdate(string userName, string email, string displayName, Contact contact)
         {
             if (contact.Email != email || contact.DisplayName != displayName)
             {
-                await _contactsApiClient.Update(ukprn, new UpdateContactRequest
+                await _contactsApiClient.Update(new UpdateContactRequest()
                 {
                     Email = email,
                     DisplayName = displayName,
@@ -79,11 +79,11 @@
             }
         }
 
-        private async Task CreateNewContact(string ukprn, string email, Organisation organisation, string displayName,
+        private async Task CreateNewContact(string email, Organisation organisation, string displayName,
             string username)
         {
-            var contact = await _contactsApiClient.Create(ukprn,
-                new CreateContactRequest
+            var contact = await _contactsApiClient.Create(
+                new CreateContactRequest()
                 {
                     Email = email,
                     DisplayName = displayName,
@@ -91,14 +91,14 @@
                     EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId
                 });
 
-            await SetNewOrganisationPrimaryContact(ukprn, organisation, contact);
+            await SetNewOrganisationPrimaryContact(organisation, contact);
         }
 
-        private async Task SetNewOrganisationPrimaryContact(string ukprn, Organisation organisation, Contact contact)
+        private async Task SetNewOrganisationPrimaryContact(Organisation organisation, Contact contact)
         {
             if (organisation.OrganisationStatus == OrganisationStatus.New)
             {
-                await _organisationsApiClient.Update(ukprn, new UpdateOrganisationRequest
+                await _organisationsApiClient.Update(new UpdateOrganisationRequest()
                 {
                     EndPointAssessorName = organisation.EndPointAssessorName,
                     EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,

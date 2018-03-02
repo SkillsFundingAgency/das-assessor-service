@@ -10,37 +10,37 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
         }
 
-        public async Task<Contact> GetByUsername(string userKey, string username)
+        public async Task<Contact> GetByUsername(string username)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/user/{username}"))
             {
-                return await RequestAndDeserialiseAsync<Contact>(userKey, request, $"Could not find the contact");
+                return await RequestAndDeserialiseAsync<Contact>(request, $"Could not find the contact");
             }
         }
 
-        public async Task<Contact> Create(string userKey, CreateContactRequest contact)
+        public async Task<Contact> Create(CreateContactRequest contact)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/contacts/"))
             {
-                return await PostPutRequestWithResponse<CreateContactRequest, Contact>(userKey, request, contact);
+                return await PostPutRequestWithResponse<CreateContactRequest, Contact>(request, contact);
             }
         }
 
-        public async Task<Contact> Update(string userKey, UpdateContactRequest updateContactRequest)
+        public async Task<Contact> Update(UpdateContactRequest updateContactRequest)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/contacts/"))
             {
-                return await PostPutRequestWithResponse<UpdateContactRequest, Contact>(userKey, request, updateContactRequest);
+                return await PostPutRequestWithResponse<UpdateContactRequest, Contact>(request, updateContactRequest);
             }
         }
     }
 
     public interface IContactsApiClient
     {
-        Task<Contact> GetByUsername(string userKey, string username);
+        Task<Contact> GetByUsername(string username);
 
-        Task<Contact> Create(string userKey, CreateContactRequest contact);
+        Task<Contact> Create(CreateContactRequest contact);
 
-        Task<Contact> Update(string userKey, UpdateContactRequest updateContactRequest);
+        Task<Contact> Update(UpdateContactRequest updateContactRequest);
     }
 }

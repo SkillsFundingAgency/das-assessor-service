@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             try
             {
-                organisation = await _apiClient.Get(ukprn, ukprn);
+                organisation = await _apiClient.Get(ukprn);
             }
             catch (EntityNotFoundException)
             {

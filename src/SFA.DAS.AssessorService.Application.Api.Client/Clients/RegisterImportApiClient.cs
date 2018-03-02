@@ -9,11 +9,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
         }
 
-        public async Task Import(string userKey)
+        public async Task Import()
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/register-import/"))
             {
-                await PostPutRequest(userKey, request);
+                await PostPutRequest(request);
             }
         }
     }

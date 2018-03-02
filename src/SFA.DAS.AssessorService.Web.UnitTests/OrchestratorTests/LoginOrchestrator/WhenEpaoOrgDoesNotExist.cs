@@ -21,7 +21,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrchestratorTests.LoginOrchestra
                 new ClaimsIdentity(new List<Claim> {new Claim("http://schemas.portal.com/ukprn", "12345")})
             });
 
-            OrganisationsApiClient.Setup(c => c.Get("12345", "12345")).Throws<EntityNotFoundException>();
+            OrganisationsApiClient.Setup(c => c.Get("12345")).Throws<EntityNotFoundException>();
 
             var result = LoginOrchestrator.Login(claimsPrincipal).Result;
 

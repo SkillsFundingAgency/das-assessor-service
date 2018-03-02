@@ -2,6 +2,6 @@
 {
     public interface ITokenService
     {
-        string GetJwt(string userKey);
+        string GetToken();
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace SFA.DAS.AssessorService.Settings
+namespace SFA.DAS.AssessorService.EpaoImporter.Settings
 {
     public class WebConfiguration : IWebConfiguration
     {

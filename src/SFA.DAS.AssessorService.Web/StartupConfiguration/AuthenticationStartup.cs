@@ -39,17 +39,17 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 
         private static Task OnTokenValidated(SecurityTokenValidatedContext context)
         {
-            var ukprn = (context.Principal.FindFirst("http://schemas.portal.com/ukprn"))?.Value;
+            //var ukprn = (context.Principal.FindFirst("http://schemas.portal.com/ukprn"))?.Value;
 
-            var jwt = new JwtBuilder().WithAlgorithm(new HMACSHA256Algorithm())
-                .WithSecret(_configuration.Api.TokenEncodingKey)
-                .Issuer("sfa.das.assessorservice")
-                .Audience("sfa.das.assessorservice.api")
-                .ExpirationTime(DateTime.Now.AddMinutes(5))
-                .AddClaim("ukprn", ukprn)
-                .Build();
+            //var jwt = new JwtBuilder().WithAlgorithm(new HMACSHA256Algorithm())
+            //    .WithSecret(_configuration.Api.TokenEncodingKey)
+            //    .Issuer("sfa.das.assessorservice")
+            //    .Audience("sfa.das.assessorservice.api")
+            //    .ExpirationTime(DateTime.Now.AddMinutes(5))
+            //    .AddClaim("ukprn", ukprn)
+            //    .Build();
 
-            context.HttpContext.Session.SetString(ukprn, jwt);
+            //context.HttpContext.Session.SetString(ukprn, jwt);
 
             return Task.FromResult(0);
         }
