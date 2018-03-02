@@ -41,12 +41,12 @@ namespace SFA.DAS.AssessorService.EpaoImporter
 
         private static string GetToken(WebConfiguration webConfig)
         {
-            var tenant = webConfig.ClientApiAuthentication.Domain;
+            var tenantId = webConfig.ClientApiAuthentication.TenantId;
             var clientId = webConfig.ClientApiAuthentication.ClientId; 
             var appKey = webConfig.ClientApiAuthentication.ClientSecret; 
             var resourceId = webConfig.ClientApiAuthentication.ResourceId; 
 
-            var authority = $"https://login.microsoftonline.com/{tenant}";
+            var authority = $"https://login.microsoftonline.com/{tenantId}";
             var clientCredential = new ClientCredential(clientId, appKey);
             var context = new AuthenticationContext(authority, true);
             var tokenResult = context.AcquireTokenAsync(resourceId, clientCredential).Result;
