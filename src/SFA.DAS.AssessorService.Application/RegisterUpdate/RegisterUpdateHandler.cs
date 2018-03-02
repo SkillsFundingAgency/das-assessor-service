@@ -36,8 +36,7 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
         {
             _response = new RegisterUpdateResponse();
 
-            var rnd = new Random();
-
+            
             await GetEpaosAndOrganisations();
 
             foreach (var epaoSummary in _epaosOnRegister)
@@ -48,7 +47,7 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
                 }
                 else
                 {
-                    await CreateNewOrganisation(epaoSummary, rnd);
+                    await CreateNewOrganisation(epaoSummary);
                 }
             }
 
@@ -143,7 +142,7 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
                 $"Organisation with ID {org.Id} and EPAOgId {org.Id} no longer found on Register. Deleting from Repository");
         }
 
-        private async Task CreateNewOrganisation(OrganisationSummary epaoSummary, Random rnd)
+        private async Task CreateNewOrganisation(OrganisationSummary epaoSummary)
         {
             _logger.LogInformation($"EPAO {epaoSummary.Id} not found in Repository");
 
@@ -155,7 +154,7 @@ namespace SFA.DAS.AssessorService.Application.RegisterUpdate
             {
                 EndPointAssessorName = epao.Name,
                 EndPointAssessorOrganisationId = epao.Id,
-                EndPointAssessorUKPRN = rnd.Next(77777777, 99999999)
+                EndPointAssessorUKPRN = int.Parse(epao.Id.Replace("EPA", "1111"))
             });
 
             _response.OrganisationsCreated++;

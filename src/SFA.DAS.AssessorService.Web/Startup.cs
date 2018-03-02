@@ -51,6 +51,7 @@ namespace SFA.DAS.AssessorService.Web
                 config.For<ITokenService>().Use<TokenService>();
                 config.For<IWebConfiguration>().Use(Configuration);
                 config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
+                config.For<IContactsApiClient>().Use<ContactsApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
 
                 config.Populate(services);
             });

@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
     public static class EpaoImporterFunction
     {
         [FunctionName("EpaoImporterFunction")]
-        public static void Run([TimerTrigger("0 */1 * * * *")]TimerInfo myTimer, TraceWriter log)
+        public static void Run([TimerTrigger("0 */5 * * * *")]TimerInfo myTimer, TraceWriter log)
         {
             var webConfig = GetConfig();
 
