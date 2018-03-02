@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.AssessorService.EpaoImporter.Settings
+﻿namespace SFA.DAS.AssessorService.Settings
 {
     public interface IClientApiAuthentication
     {

@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using SFA.DAS.AssessorService.EpaoImporter.Settings;
 
 namespace SFA.DAS.AssessorService.Settings
 {
