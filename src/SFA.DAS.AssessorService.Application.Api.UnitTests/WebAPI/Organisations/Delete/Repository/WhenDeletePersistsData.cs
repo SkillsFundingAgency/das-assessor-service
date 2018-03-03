@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.OrganisationContoller.Put.Repository
+﻿using SFA.DAS.AssessorService.Domain.DomainModels;
+
+namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.OrganisationContoller.Put.Repository
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -6,7 +8,6 @@
     using System.Threading.Tasks;
     using AssessorService.Domain.Entities;
     using Data;
-    using Domain;
     using FizzWare.NBuilder;
     using FluentAssertions;
     using Machine.Specifications;

@@ -1,16 +1,16 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using AssessorService.Api.Types.Models;
-    using Consts;
-    using Exceptions;
-    using Interfaces;
-    using Microsoft.Extensions.Localization;
-    using Microsoft.Extensions.Logging;
-    using Validators;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Application.Api.Consts;
+using SFA.DAS.AssessorService.Application.Api.Validators;
+using SFA.DAS.AssessorService.Application.Exceptions;
+using SFA.DAS.AssessorService.Application.Interfaces;
 
+namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
+{
     public class GetOrganisationsOrchestrator
     {
         private readonly IStringLocalizer<GetOrganisationsOrchestrator> _localizer;

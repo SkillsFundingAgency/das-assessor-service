@@ -1,11 +1,12 @@
-﻿namespace SFA.DAS.AssessorService.Data
+﻿using SFA.DAS.AssessorService.Domain.DomainModels;
+
+namespace SFA.DAS.AssessorService.Data
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using Api.Types.Models;
-    using Application.Domain;
     using Application.Interfaces;
     using AutoMapper;
     using Domain.Consts;

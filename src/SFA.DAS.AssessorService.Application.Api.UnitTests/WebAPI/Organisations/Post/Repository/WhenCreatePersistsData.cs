@@ -1,18 +1,18 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.OrganisationContoller.Post.Handlers
+﻿using SFA.DAS.AssessorService.Domain.DomainModels;
+
+namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.OrganisationContoller.Post.Handlers
 {
     using FizzWare.NBuilder;
     using FluentAssertions;
     using Machine.Specifications;
     using Microsoft.EntityFrameworkCore;
     using Moq;
-    using SFA.DAS.AssessorService.Application.OrganisationHandlers;
     using SFA.DAS.AssessorService.Application.Interfaces;
     using SFA.DAS.AssessorService.Data;
     using SFA.DAS.AssessorService.Domain.Entities;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Domain;
     using Organisation = AssessorService.Api.Types.Models.Organisation;
 
     [Subject("AssessorService")]

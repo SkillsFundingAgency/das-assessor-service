@@ -1,13 +1,13 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
-{
-    using AssessorService.Api.Types.Models;
-    using AssessorService.Domain.Exceptions;
-    using Exceptions;
-    using MediatR;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Localization;
-    using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Application.Exceptions;
+using SFA.DAS.AssessorService.Domain.Exceptions;
 
+namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
+{
     public class OrganisationOrchestrator
     {
         private readonly IStringLocalizer<OrganisationOrchestrator> _localizer;
@@ -21,7 +21,7 @@
         }
 
         public async Task<Organisation> CreateOrganisation(
-           [FromBody] CreateOrganisationRequest organisationCreateViewModel)
+            [FromBody] CreateOrganisationRequest organisationCreateViewModel)
         {
             var organisation = await _mediator.Send(organisationCreateViewModel);
             return organisation;

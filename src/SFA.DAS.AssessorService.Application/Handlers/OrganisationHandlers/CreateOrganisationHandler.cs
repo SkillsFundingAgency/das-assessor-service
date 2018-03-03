@@ -1,15 +1,15 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Api.Types.Models;
+
 using AutoMapper;
-using SFA.DAS.AssessorService.Application.Domain;
-using SFA.DAS.AssessorService.Application.Interfaces;
 using MediatR;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.DomainModels;
 
-namespace SFA.DAS.AssessorService.Application.OrganisationHandlers
+namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers
 {
-    using AssessorService.Domain.Consts;
-
     public class CreateOrganisationHandler : IRequestHandler<CreateOrganisationRequest, Organisation>
     {      
         private readonly IOrganisationRepository _organisationRepository;

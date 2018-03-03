@@ -1,29 +1,24 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.Validators
-{
-    using AssessorService.Api.Types.Models;
-    using Consts;
-    using FluentValidation;
-    using Microsoft.Extensions.Localization;
+﻿using FluentValidation;
+using Microsoft.Extensions.Localization;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Application.Api.Consts;
 
+namespace SFA.DAS.AssessorService.Application.Api.Validators
+{
     public class ContactUpdateViewModelValidator : AbstractValidator<UpdateContactRequest>
     {
-        private readonly IStringLocalizer<ContactUpdateViewModelValidator> _localizer;
-
-        public ContactUpdateViewModelValidator(IStringLocalizer<ContactUpdateViewModelValidator> localizer
-        )
+        public ContactUpdateViewModelValidator(IStringLocalizer<ContactUpdateViewModelValidator> localiser)
         {
-            _localizer = localizer;
-
             // ReSharper disable once LocalNameCapturedOnly
             CreateContactRequest createContactRequest;
             RuleFor(organisation => organisation.Email).NotEmpty().WithMessage(
-                _localizer[ResourceMessageName.DisplayNameMustBeDefined,
+                localiser[ResourceMessageName.DisplayNameMustBeDefined,
                     nameof(createContactRequest.DisplayName)].Value);
             RuleFor(organisation => organisation.DisplayName).NotEmpty().WithMessage(
-                _localizer[ResourceMessageName.EMailMustBeDefined,
+                localiser[ResourceMessageName.EMailMustBeDefined,
                     nameof(createContactRequest.Email)].Value);
             RuleFor(organisation => organisation.Username).NotEmpty().WithMessage(
-                _localizer[ResourceMessageName.UserNameMustBeDefined,
+                localiser[ResourceMessageName.UserNameMustBeDefined,
                     nameof(createContactRequest.Username)].Value);
         }
     }

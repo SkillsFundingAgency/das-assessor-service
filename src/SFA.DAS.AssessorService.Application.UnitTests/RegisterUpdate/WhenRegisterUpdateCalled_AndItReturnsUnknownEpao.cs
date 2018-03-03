@@ -1,10 +1,10 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Application.RegisterUpdate;
 using System.Collections.Generic;
 using System.Linq;
 using Moq;
+using SFA.DAS.AssessorService.Application.Handlers.RegisterUpdate;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
 

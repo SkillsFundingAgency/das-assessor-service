@@ -73,7 +73,7 @@
                     LearnerGivenNames = "David",
 
                     OverallGrade = "PASS",
-                    ProviderUKPRN = 999999,
+                    ProviderUkprn = 999999,
                     Registration = "Registered",
                     LearningStartDate = DateTime.Now.AddDays(10),
                     StandardCode = 100,
@@ -81,7 +81,7 @@
                     StandardName = "Test",
                     StandardPublicationDate = DateTime.Now,
 
-                    ULN = 123456
+                    Uln = 123456
                 };
 
                 var firstCertificate = new Certificate
@@ -116,14 +116,14 @@
                     LearnerGivenNames = "David",
 
                     OverallGrade = "PASS",
-                    ProviderUKPRN = 999999,
+                    ProviderUkprn = 999999,
                     Registration = "Registered",
                     LearningStartDate = DateTime.Now.AddDays(10),
                     StandardCode = 100,
                     StandardLevel = 1,
                     StandardName = "Test",
                     StandardPublicationDate = DateTime.Now,
-                    ULN = 123456
+                    Uln = 123456
                 };
 
                 var secondCertificate = new Certificate

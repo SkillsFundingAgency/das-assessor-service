@@ -1,7 +1,7 @@
-﻿namespace SFA.DAS.AssessorService.Domain.Entities
-{
-    using System;
+﻿using System;
 
+namespace SFA.DAS.AssessorService.Domain.Entities
+{
     public class Contact : BaseEntity
     {
         public Guid Id { get; set; }
@@ -14,7 +14,7 @@
         public string Username { get; set; }
         public string DisplayName { get; set; }
         public string Email { get; set; }
-     
+
         public string Status { get; set; }
     }
 }

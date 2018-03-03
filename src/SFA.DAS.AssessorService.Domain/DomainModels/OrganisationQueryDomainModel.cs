@@ -1,8 +1,8 @@
-﻿namespace SFA.DAS.AssessorService.Application.Domain
-{
-    using System;
-    using AssessorService.Domain.Consts;
+﻿using System;
+using SFA.DAS.AssessorService.Domain.Consts;
 
+namespace SFA.DAS.AssessorService.Domain.DomainModels
+{
     public class OrganisationQueryDomainModel
     {
         public Guid Id { get; set; }

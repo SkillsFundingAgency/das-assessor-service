@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
-using SFA.DAS.AssessorService.Application.RegisterUpdate;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Application.Handlers.RegisterUpdate;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.RegisterImport
 {

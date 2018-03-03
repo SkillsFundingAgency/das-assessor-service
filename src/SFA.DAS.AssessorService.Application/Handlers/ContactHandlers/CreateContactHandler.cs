@@ -1,14 +1,16 @@
-﻿namespace SFA.DAS.AssessorService.Application.ContactHandlers
-{
-    using AssessorService.Api.Types.Models;
-    using AutoMapper;
-    using Domain;
-    using MediatR;
-    using Interfaces;   
-    using System.Threading;
-    using System.Threading.Tasks;
-    using AssessorService.Domain.Consts;
+﻿using System.Threading;
+using System.Threading.Tasks;
 
+using AutoMapper;
+using MediatR;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.DomainModels;
+
+namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
+{
+  
     public class CreateContactHandler : IRequestHandler<CreateContactRequest, Contact>
     {
         private readonly IOrganisationRepository _organisationRepository;
@@ -29,33 +31,34 @@
         {
             var organisation = await _organisationQueryRepository.Get(createContactRequest.EndPointAssessorOrganisationId);
                 
-
-            var contactCreateDomainModel = Mapper.Map<ContactCreateDomainModel>(createContactRequest);
-            contactCreateDomainModel.Status = ContactStatus.Live;
+            var contactCreateDomainModel = Mapper.Map<ContactCreateDomainModel>(createContactRequest);           
             contactCreateDomainModel.OrganisationId = organisation.Id;
 
             if (!(await _organisationQueryRepository.CheckIfOrganisationHasContacts(createContactRequest.EndPointAssessorOrganisationId)))
             {
                 var contactQueryViewModel = await _contactRepository.CreateNewContact(contactCreateDomainModel);
 
-                var organisationQueryDomainModel = await _organisationQueryRepository.Get(createContactRequest.EndPointAssessorOrganisationId);
-
-                var organisationUpdateDomainModel =
-                    Mapper.Map<OrganisationUpdateDomainModel>(organisationQueryDomainModel);
-
-                organisationUpdateDomainModel.PrimaryContact = contactQueryViewModel.Username;
-                organisationUpdateDomainModel.Status = OrganisationStatus.Live;
-
-                await _organisationRepository.UpdateOrganisation(organisationUpdateDomainModel);
+                await SetOrganisationStatusToLiveAndSetPrimaryContact(createContactRequest, contactQueryViewModel);
 
                 return contactQueryViewModel;
             }
             else
             {
-            
                 var contactQueryViewModel = await _contactRepository.CreateNewContact(contactCreateDomainModel);
                 return contactQueryViewModel;
             }           
+        }
+
+        private async Task SetOrganisationStatusToLiveAndSetPrimaryContact(CreateContactRequest createContactRequest, Contact contactQueryViewModel)
+        {
+            var organisationQueryDomainModel =
+                await _organisationQueryRepository.Get(createContactRequest.EndPointAssessorOrganisationId);
+            var organisationUpdateDomainModel =
+                Mapper.Map<OrganisationUpdateDomainModel>(organisationQueryDomainModel);
+            organisationUpdateDomainModel.PrimaryContact = contactQueryViewModel.Username;
+            organisationUpdateDomainModel.Status = OrganisationStatus.Live;
+
+            await _organisationRepository.UpdateOrganisation(organisationUpdateDomainModel);
         }
     }
 }

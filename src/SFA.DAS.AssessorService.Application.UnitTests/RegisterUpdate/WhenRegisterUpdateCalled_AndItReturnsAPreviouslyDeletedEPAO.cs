@@ -1,9 +1,9 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Application.RegisterUpdate;
 using System.Collections.Generic;
 using System.Linq;
+using SFA.DAS.AssessorService.Application.Handlers.RegisterUpdate;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate

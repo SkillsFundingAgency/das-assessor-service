@@ -1,18 +1,18 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.ContactContoller.Post.Handlers
+﻿using SFA.DAS.AssessorService.Domain.DomainModels;
+
+namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.ContactContoller.Post.Handlers
 {
     using FizzWare.NBuilder;
     using FluentAssertions;
     using Machine.Specifications;
     using Microsoft.EntityFrameworkCore;
     using Moq;
-    using SFA.DAS.AssessorService.Application.ContactHandlers;
     using SFA.DAS.AssessorService.Application.Interfaces;
     using SFA.DAS.AssessorService.Data;
     using SFA.DAS.AssessorService.Domain.Entities;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Domain;
     using Contact = AssessorService.Api.Types.Models.Contact;
 
     [Subject("AssessorService")]

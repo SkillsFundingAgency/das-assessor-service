@@ -1,11 +1,12 @@
-﻿namespace SFA.DAS.AssessorService.Application.Interfaces
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using AssessorService.Api.Types.Models;
-    using Domain;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Domain.DomainModels;
+
+namespace SFA.DAS.AssessorService.Application.Interfaces
+{
     public interface IOrganisationQueryRepository
     {
         Task<IEnumerable<Organisation>> GetAllOrganisations();

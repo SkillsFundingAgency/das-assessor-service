@@ -1,7 +1,7 @@
-﻿namespace SFA.DAS.AssessorService.Domain.Entities
-{
-    using System;
+﻿using System;
 
+namespace SFA.DAS.AssessorService.Domain.Entities
+{
     public class CertificateLog : BaseEntity
     {
         public Guid Id { get; set; }

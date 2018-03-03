@@ -1,13 +1,13 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.Middleware
-{
-    using System;
-    using System.Net;
-    using System.Threading.Tasks;
-    using Exceptions;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.Extensions.Logging;
-    using Newtonsoft.Json;
+﻿using System;
+using System.Net;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Application.Exceptions;
 
+namespace SFA.DAS.AssessorService.Application.Api.Middleware
+{
     public class ErrorHandlingMiddleware
     {
         private readonly ILogger<ErrorHandlingMiddleware> _logger;

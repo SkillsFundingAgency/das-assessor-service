@@ -3,9 +3,9 @@ using System.Threading;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Application.Domain;
+using SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Application.OrganisationHandlers;
+using SFA.DAS.AssessorService.Domain.DomainModels;
 
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations.Post.Handlers
