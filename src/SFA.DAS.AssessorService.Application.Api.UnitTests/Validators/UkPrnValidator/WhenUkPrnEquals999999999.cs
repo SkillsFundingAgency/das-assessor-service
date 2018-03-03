@@ -1,28 +1,27 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.UkPrnValidator
-{
-    using FluentValidation.Results;
-    using Machine.Specifications;
-    using SFA.DAS.AssessorService.Application.Api.Validators;
-    using FluentAssertions;
+﻿using FluentAssertions;
+using FluentValidation.Results;
+using Machine.Specifications;
+using NUnit.Framework;
 
+namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.UkPrnValidator
+{
     [Subject("AssessorService")]
     public class WhenUkPrnValidatorValidatorUkPrnEquals99999999 : UkPrnValidatorTestBase
     {
         private static ValidationResult _validationResult;
 
-        Establish context = () =>
+        [SetUp]
+        public void Arrange()
         {
             Setup();
-        };
 
-        Because of = () =>
-        {
             _validationResult = UkPrnValidator.Validate(99999999);
-        };
+        }
 
-        Machine.Specifications.It verify_succesfully = () =>
+        [Test]
+        public void ThenTheRepositoryIsAskedToDeleteTheCorrectOrganisation()
         {
             _validationResult.IsValid.Should().BeTrue();
-        };
+        }
     }
 }

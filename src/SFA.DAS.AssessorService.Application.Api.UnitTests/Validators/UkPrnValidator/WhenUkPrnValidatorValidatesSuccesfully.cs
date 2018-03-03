@@ -2,27 +2,26 @@
 {
     using FluentValidation.Results;
     using Machine.Specifications;
-    using SFA.DAS.AssessorService.Application.Api.Validators;
     using FluentAssertions;
+    using NUnit.Framework;
 
     [Subject("AssessorService")]
     public class WhenUkPrnValidatorValidatesSuccesfully : UkPrnValidatorTestBase
     { 
         private static ValidationResult _validationResult;
 
-        Establish context = () =>
+        [SetUp]
+        public void Arrange()
         {
             Setup();
-        };
 
-        Because of = () =>
-        {
-            _validationResult = UkPrnValidator.Validate(10000001);
-        };
+            _validationResult = UkPrnValidator.Validate(99999999);
+        }
 
-        Machine.Specifications.It verify_succesfully = () =>
+        [Test]
+        public void ThenTheRepositoryIsAskedToDeleteTheCorrectOrganisation()
         {
             _validationResult.IsValid.Should().BeTrue();
-        };
+        }
     }
 }
