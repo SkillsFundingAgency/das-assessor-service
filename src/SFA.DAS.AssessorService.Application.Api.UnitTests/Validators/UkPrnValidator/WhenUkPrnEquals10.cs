@@ -5,7 +5,6 @@ using NUnit.Framework;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.UkPrnValidator
 {
-    [Subject("AssessorService")]
     public class WhenUkPrnEquals10 : UkPrnValidatorTestBase
     {
         private static ValidationResult _validationResult;

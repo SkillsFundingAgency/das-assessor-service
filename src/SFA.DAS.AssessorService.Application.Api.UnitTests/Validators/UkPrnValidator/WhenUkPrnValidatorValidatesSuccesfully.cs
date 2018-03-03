@@ -1,13 +1,12 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.UkPrnValidator
-{
-    using FluentValidation.Results;
-    using Machine.Specifications;
-    using FluentAssertions;
-    using NUnit.Framework;
+﻿using FluentAssertions;
+using FluentValidation.Results;
+using Machine.Specifications;
+using NUnit.Framework;
 
-    [Subject("AssessorService")]
+namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.UkPrnValidator
+{
     public class WhenUkPrnValidatorValidatesSuccesfully : UkPrnValidatorTestBase
-    { 
+    {
         private static ValidationResult _validationResult;
 
         [SetUp]
