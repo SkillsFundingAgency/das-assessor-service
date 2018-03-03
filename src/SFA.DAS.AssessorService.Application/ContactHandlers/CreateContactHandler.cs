@@ -30,13 +30,12 @@
             var organisation = await _organisationQueryRepository.Get(createContactRequest.EndPointAssessorOrganisationId);
                 
 
-            var contactCreateDomainModel = Mapper.Map<ContactCreateDomainModel>(createContactRequest);                
+            var contactCreateDomainModel = Mapper.Map<ContactCreateDomainModel>(createContactRequest);
+            contactCreateDomainModel.Status = ContactStatus.Live;
             contactCreateDomainModel.OrganisationId = organisation.Id;
 
             if (!(await _organisationQueryRepository.CheckIfOrganisationHasContacts(createContactRequest.EndPointAssessorOrganisationId)))
             {
-                contactCreateDomainModel.Status = ContactStatus.Live; // Not sure what to be done about this - to be confirmed?? 
-
                 var contactQueryViewModel = await _contactRepository.CreateNewContact(contactCreateDomainModel);
 
                 var organisationQueryDomainModel = await _organisationQueryRepository.Get(createContactRequest.EndPointAssessorOrganisationId);
@@ -53,6 +52,7 @@
             }
             else
             {
+            
                 var contactQueryViewModel = await _contactRepository.CreateNewContact(contactCreateDomainModel);
                 return contactQueryViewModel;
             }           

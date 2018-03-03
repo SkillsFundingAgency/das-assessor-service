@@ -27,8 +27,8 @@
             _assessorDbContext.Contacts.Add(contactEntity);
             await _assessorDbContext.SaveChangesAsync();
 
-            var contactQueryViewModel = Mapper.Map<Contact>(contactEntity);
-            return contactQueryViewModel;
+            var contact = Mapper.Map<Contact>(contactEntity);
+            return contact;
         }
 
         public async Task Update(UpdateContactRequest contactUpdateViewModel)
@@ -47,7 +47,7 @@
         public async Task Delete(string userName)
         {
             var contactEntity = _assessorDbContext.Contacts
-                      .FirstOrDefault(q => q.Username == userName);
+                      .FirstOrDefault(q => q.Username == userName && q.Status != ContactStatus.Deleted);
 
             if (contactEntity == null)
                 throw (new NotFound());

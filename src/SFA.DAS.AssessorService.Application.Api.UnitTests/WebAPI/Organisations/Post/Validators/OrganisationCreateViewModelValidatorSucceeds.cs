@@ -27,7 +27,7 @@
                 .With(q =>  q.PrimaryContact = null)
                 .Build();
 
-            ContactQueryRepositoryMock.Setup(q => q.CheckContactExists(Moq.It.IsAny<Guid>()))
+            ContactQueryRepositoryMock.Setup(q => q.CheckContactExists(Moq.It.IsAny<string>()))
                 .Returns(Task.FromResult((true)));
 
             OrganisationQueryRepositoryMock.Setup(q => q.CheckIfAlreadyExists(Moq.It.IsAny<string>()))

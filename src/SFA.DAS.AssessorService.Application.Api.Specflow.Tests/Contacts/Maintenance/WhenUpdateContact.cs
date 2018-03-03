@@ -84,7 +84,7 @@
         public void ThenTheContactUpdateShouldHaveOccured()
         {
             var contactEntities = _dbconnection.Query<Contact>
-             ($"Select Id, UserName, DisplayName, EMail, ContactStatus From Contacts where UserName = '{_contactQueryViewModel.Username}'").ToList();
+             ($"Select Id, UserName, DisplayName, EMail, Status From Contacts where UserName = '{_contactQueryViewModel.Username}'").ToList();
             var contact = contactEntities.First();
 
             contact.DisplayName.Should().Be(_contactQueryViewModel.DisplayName);

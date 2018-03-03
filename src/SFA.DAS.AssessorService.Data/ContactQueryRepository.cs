@@ -42,20 +42,6 @@
             return contactQueryViewModel;
         }
 
-        //public async Task<bool> CheckContactExists(int contactId)
-        //{
-        //    var result = await _assessorDbContext.Contacts
-        //                 .AnyAsync(q => q.EndPointAssessorContactId == contactId && q.Status != Status.Deleted);
-        //    return result;
-        //}
-
-        public async Task<bool> CheckContactExists(Guid contactId)
-        {
-            var result = await _assessorDbContext.Contacts
-                       .AnyAsync(q => q.Id == contactId && q.Status != ContactStatus.Deleted);
-            return result;
-        }
-
         public async Task<bool> CheckContactExists(string userName)
         {
             var result = await _assessorDbContext.Contacts
