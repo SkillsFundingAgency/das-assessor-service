@@ -1,21 +1,19 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations.Post.Validators
-{
-    using System.Linq;
-    using System.Threading.Tasks;
-    using AssessorService.Api.Types.Models;
-    using FizzWare.NBuilder;
-    using FluentAssertions;
-    using FluentValidation.Results;
-    using Machine.Specifications;
-    using UnitTests.Validators.UkPrnValidator;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using FizzWare.NBuilder;
+using FluentAssertions;
+using FluentValidation.Results;
+using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models;
 
-    [Subject("AssessorService")]
+namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations.Maintenence.Post.Validators
+{ 
     public class WhenOrganisationCreateViewModelValidatorFails : OrganisationCreateViewModelValidatorTestBase
     {
-        private static ValidationResult _validationResult;
-       
+        private ValidationResult _validationResult;
 
-        Establish context = () =>
+        [SetUp]
+        public void Arrange()
         {
             Setup();
 
@@ -30,48 +28,50 @@
                 .Returns(Task.FromResult((false)));
 
             OrganisationQueryRepositoryMock.Setup(q => q.CheckIfAlreadyExists(Moq.It.IsAny<string>()))
-                .Returns(Task.FromResult((true)));         
-        };
+                .Returns(Task.FromResult((true)));
 
-        Because of = () =>
-        {
             _validationResult = OrganisationCreateViewModelValidator.Validate(OrganisationCreateViewModel);
-        };
-
-        Machine.Specifications.It should_fail = () =>
-        {
+        }
+        [Test]
+        public void ThenItShouldFail()
+        {        
             _validationResult.IsValid.Should().BeFalse();
-        };
+        }
 
-        Machine.Specifications.It errormessage_should_contain_EndPointAssessorOrganisationId = () =>
+        [Test]
+        public void ErrorMessageShouldContain_EndPointAssessorOrganisation()       
         {
             var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "EndPointAssessorOrganisationId" && q.ErrorCode == "NotEmptyValidator");
             errors.Should().NotBeNull();
-        };
+        }
 
-        Machine.Specifications.It errormessage_should_contain_EndPointAssessorName = () =>
-        {
+        [Test]
+        public void ErrorMessageShouldContainEndPointAssessorNam()
+        {            
             var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "EndPointAssessorName" && q.ErrorCode == "NotEmptyValidator");
             errors.Should().NotBeNull();
-        };
+        }
 
-        Machine.Specifications.It errormessage_should_contain_EndPointAssessorUKPRN = () =>
+        [Test]
+        public void ErrorMessageShouldContainEndPointAssessorUkprn()    
         {
             var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "EndPointAssessorUkprn" && q.ErrorCode == "InclusiveBetweenValidator");
             errors.Should().NotBeNull();
-        };
+        }
 
-        Machine.Specifications.It errormessage_should_contain_PrimaryContactNotFound = () =>
+        [Test]
+        public void ErrorMessageShouldContainPrimaryContactNotFound()      
         {
             var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "PrimaryContact" && q.ErrorCode == "PredicateValidator");
             errors.Should().NotBeNull();
-        };
+        }
 
-        Machine.Specifications.It errormessage_should_contain_AlreadyExists = () =>
+        [Test]
+        public void ErrorMessageShouldContainAlreadyExists()       
         {
             var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "EndPointAssessorOrganisationId" && q.ErrorCode == "PredicateValidator");
             errors.Should().NotBeNull();
-        };
+        }
     }
 }
 

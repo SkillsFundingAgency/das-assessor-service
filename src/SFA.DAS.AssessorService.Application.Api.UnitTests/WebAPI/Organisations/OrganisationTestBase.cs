@@ -1,40 +1,52 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.AssessorService.Application.Api.Consts;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
+using SFA.DAS.AssessorService.Application.Api.Orchestrators;
 using SFA.DAS.AssessorService.Application.Api.UnitTests.Helpers;
-using SFA.DAS.AssessorService.Application.Api.Validators;
-using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
 {
     public class OrganisationTestBase
-    {        
-        protected static Mock<IOrganisationRepository> OrganizationRepository;
-        protected static Mock<IStringLocalizer<OrganisationController>> OrganisationControllerLocaliser;
-        protected static UkPrnValidator UkPrnValidator;
-        protected static IActionResult Result;
-     
-        protected static Mock<ILogger<OrganisationController>> Logger;
-        protected static Mock<IMediator> Mediator;
-        protected static OrganisationController OrganisationContoller;
-
-        private MockStringLocaliserBuilder _mockStringLocaliserBuilder;
-
-        protected  void Setup()
+    {               
+        protected Mock<IStringLocalizer<OrganisationOrchestrator>> OrganisationsOrchestratorLocaliserMock;
+        protected Mock<ILogger<OrganisationController>> ControllerLoggerMock;  
+        protected Mock<IMediator> Mediator;
+        
+        protected OrganisationController OrganisationController;
+        private OrganisationOrchestrator _organisationOrchestrator;
+      
+        protected void Setup()
         {
-            OrganizationRepository = new Mock<IOrganisationRepository>();
-            Logger = new Mock<ILogger<OrganisationController>>();
+            SetupOrchestratorMocks();
+
+            SetupControllerMocks();
+
+            OrganisationController = new OrganisationController(
+                _organisationOrchestrator, ControllerLoggerMock.Object);           
+        }
+
+        private void SetupOrchestratorMocks()
+        {         
+            var mockStringLocaliserBuilder = new MockStringLocaliserBuilder();
+
+            OrganisationsOrchestratorLocaliserMock = mockStringLocaliserBuilder
+                .WithKey(ResourceMessageName.NoAssesmentProviderFound)
+                .WithKeyValue("100000000")
+                .Build<OrganisationOrchestrator>();
+
             Mediator = new Mock<IMediator>();
 
-            _mockStringLocaliserBuilder = new MockStringLocaliserBuilder();
-            OrganisationControllerLocaliser = _mockStringLocaliserBuilder.Build<OrganisationController>();
+            _organisationOrchestrator = new OrganisationOrchestrator(
+                Mediator.Object,
+                OrganisationsOrchestratorLocaliserMock.Object);
+        }
 
-            var ukPrnStringLocalizer = _mockStringLocaliserBuilder.Build<UkPrnValidator>();     
-            UkPrnValidator = new UkPrnValidator(ukPrnStringLocalizer.Object);
+        private void SetupControllerMocks()
+        {          
+            ControllerLoggerMock = new Mock<ILogger<OrganisationController>>();
         }
     }
 }
