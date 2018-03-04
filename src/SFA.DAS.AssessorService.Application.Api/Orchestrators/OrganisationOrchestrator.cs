@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Exceptions;
-using SFA.DAS.AssessorService.Domain.Exceptions;
+using NotFound = SFA.DAS.AssessorService.Domain.Exceptions.NotFound;
 
 namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
 {

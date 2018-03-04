@@ -32,18 +32,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.NotFound, Type = typeof(string))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetOrganisation(int ukprn)
+        public async Task<IActionResult> SearchOrganisation(int ukprn)
         {
             _logger.LogInformation($"Received Search for an Organisation Request using ukprn {ukprn}");
 
-            var organisation = await _getOrganisationsOrchestrator.GetOrganisation(ukprn);
+            var organisation = await _getOrganisationsOrchestrator.SearchOrganisation(ukprn);
             return Ok(organisation);
         }
 
-        [HttpGet]
+        [HttpGet(Name="GetAllOrganisations")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<Organisation>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> GetAllOrganisations()
         {
             _logger.LogInformation("Received request to retrieve All Organisations");
 

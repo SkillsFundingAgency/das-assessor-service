@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Application.Exceptions;
+using SFA.DAS.AssessorService.Domain.Exceptions;
 
 namespace SFA.DAS.AssessorService.Application.Api.Middleware
 {
