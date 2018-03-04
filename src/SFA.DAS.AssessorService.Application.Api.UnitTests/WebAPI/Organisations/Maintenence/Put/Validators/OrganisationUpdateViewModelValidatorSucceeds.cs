@@ -1,21 +1,19 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.UkPrnValidator.Put
-{
-    using FluentValidation.Results;
-    using Machine.Specifications;
-    using SFA.DAS.AssessorService.Application.Api.Validators;
-    using FluentAssertions;
-    using FizzWare.NBuilder;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using System;
-    using AssessorService.Api.Types.Models;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using FizzWare.NBuilder;
+using FluentAssertions;
+using FluentValidation.Results;
+using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models;
 
-    [Subject("AssessorService")]
+namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations.Maintenence.Put.Validators
+{
     public class WhenOrganisationUpdateViewModelValidatorSucceeds : OrganisationUpdateViewModelValidatorTestBase
     {
         private static ValidationResult _validationResult;
-       
-        Establish context = () =>
+
+        [SetUp]
+        public void Arrange()
         {
             Setup();
 
@@ -25,30 +23,30 @@
                 .Build();
 
             OrganisationQueryRepositoryMock.Setup(q => q.CheckIfAlreadyExists(Moq.It.IsAny<string>()))
-                .Returns(Task.FromResult((true)));         
-        };
+                .Returns(Task.FromResult((true)));
 
-        Because of = () =>
-        {
             _validationResult = OrganisationUpdateViewModelValidator.Validate(OrganisationUpdateViewModel);
-        };
+        }
 
-        Machine.Specifications.It should_succeed = () =>
+        [Test]
+        public void ThenItShouldSucceed()
         {
             _validationResult.IsValid.Should().BeTrue();
-        };
+        }
 
-        Machine.Specifications.It errormessage_should_not_contain_EndPointAssessorName = () =>
+        [Test]
+        public void ErrormessageShouldNotContainEndPointAssessorName()        
         {
             var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "EndPointAssessorName" && q.ErrorCode == "NotEmptyValidator");
             errors.Should().BeNull();
-        };
+        }
 
-        Machine.Specifications.It errormessage_should_not_contain_DoesNotExist = () =>
-        {
+        [Test]
+        public void ErrorMessageShouldNotContainDoesNotExist()
+        {       
             var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "EndPointAssessorOrganisationId" && q.ErrorCode == "PredicateValidator");
             errors.Should().BeNull();
-        };
+        }
     }
 }
 

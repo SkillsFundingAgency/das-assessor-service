@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.UkPrnValidator
+﻿using SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Post.Validators;
+
+namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.UkPrnValidator
 {
     using FluentValidation.Results;
     using Machine.Specifications;

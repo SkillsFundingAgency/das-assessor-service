@@ -32,6 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
 
             _validationResult = OrganisationCreateViewModelValidator.Validate(OrganisationCreateViewModel);
         }
+
         [Test]
         public void ThenItShouldFail()
         {        
