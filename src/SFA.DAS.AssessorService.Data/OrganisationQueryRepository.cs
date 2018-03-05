@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<IEnumerable<Organisation>> GetAllOrganisations()
         {
             var organisations = await _assessorDbContext.Organisations
-                .Select(q => Mapper.Map<Organisation>(q)).Where(q => q.Status != OrganisationStatus.Deleted).AsNoTracking().ToListAsync();
+                .Select(q => Mapper.Map<Organisation>(q)).AsNoTracking().ToListAsync();
 
             return organisations;
         }
