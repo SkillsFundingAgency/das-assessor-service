@@ -8,14 +8,14 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations.Maintenence.Post.Validators
 {
-    public class OrganisationCreateViewModelValidatorTestBase
+    public class OrganisationCreateRequestValidatorTestBase
     {
-        protected OrganisationCreateViewModelValidator OrganisationCreateViewModelValidator;
+        protected CreateOrganisationRequestValidator CreateOrganisationRequestValidator;
         protected Mock<IContactQueryRepository> ContactQueryRepositoryMock;
         protected Mock<IOrganisationQueryRepository> OrganisationQueryRepositoryMock;
         protected CreateOrganisationRequest OrganisationCreateViewModel;
 
-        private Mock<IStringLocalizer<OrganisationCreateViewModelValidator>> organisationCreateViewModelValidatorStringLocaliser;
+        private Mock<IStringLocalizer<CreateOrganisationRequestValidator>> organisationCreateViewModelValidatorStringLocaliser;
 
         private MockStringLocaliserBuilder _mockStringLocaliserBuilder;
 
@@ -26,12 +26,12 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
             organisationCreateViewModelValidatorStringLocaliser = _mockStringLocaliserBuilder
                 .WithKey(ResourceMessageName.NoAssesmentProviderFound)
                 .WithKeyValue("100000000")
-                .Build<OrganisationCreateViewModelValidator>();
+                .Build<CreateOrganisationRequestValidator>();
 
             ContactQueryRepositoryMock = new Mock<IContactQueryRepository>();
             OrganisationQueryRepositoryMock = new Mock<IOrganisationQueryRepository>();
 
-            OrganisationCreateViewModelValidator = new OrganisationCreateViewModelValidator(organisationCreateViewModelValidatorStringLocaliser.Object,
+            CreateOrganisationRequestValidator = new CreateOrganisationRequestValidator(organisationCreateViewModelValidatorStringLocaliser.Object,
                 ContactQueryRepositoryMock.Object, OrganisationQueryRepositoryMock.Object);
         }
     }

@@ -6,35 +6,32 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Api.Validators
 {
-    public class ContactCreateViewModelValidator : AbstractValidator<CreateContactRequest>
+    public class UpdateContactRequestValidator : AbstractValidator<UpdateContactRequest>
     {
         private readonly IContactQueryRepository _contactQueryRepository;
  
-        public ContactCreateViewModelValidator(IStringLocalizer<ContactCreateViewModelValidator> localiser,
+        public UpdateContactRequestValidator(IStringLocalizer<UpdateContactRequestValidator> localiser,
             IContactQueryRepository contactQueryRepository
         )
         {            
             _contactQueryRepository = contactQueryRepository;
 
             // ReSharper disable once LocalNameCapturedOnly
-            CreateContactRequest createContactRequest;
+            UpdateContactRequest updateContactRequest;
             RuleFor(contact => contact.Email).NotEmpty().WithMessage(
                 localiser[ResourceMessageName.DisplayNameMustBeDefined,
-                    nameof(createContactRequest.DisplayName)].Value);
+                    nameof(updateContactRequest.DisplayName)].Value);
             RuleFor(contact => contact.DisplayName).NotEmpty().WithMessage(
                 localiser[ResourceMessageName.EMailMustBeDefined,
-                    nameof(createContactRequest.Email)].Value);
-            RuleFor(contact => contact.EndPointAssessorOrganisationId).NotEmpty().WithMessage(
-                localiser[ResourceMessageName.EndPointAssessorOrganisationIdMustBeDefined,
-                    nameof(createContactRequest.EndPointAssessorOrganisationId)].Value);
+                    nameof(updateContactRequest.Email)].Value);
             RuleFor(contact => contact.Username).NotEmpty().WithMessage(
                 localiser[ResourceMessageName.UserNameMustBeDefined,
-                    nameof(createContactRequest.Username)].Value);
-            RuleFor(contact => contact).Must(NotAlreadyExist).WithMessage(localiser[ResourceMessageName.AlreadyExists,
-                nameof(createContactRequest)].Value);
+                    nameof(updateContactRequest.Username)].Value);
+            RuleFor(contact => contact).Must(AlreadyExist).WithMessage(localiser[ResourceMessageName.AlreadyExists,
+                nameof(updateContactRequest)].Value);
         }
 
-        private bool NotAlreadyExist(CreateContactRequest contact)
+        private bool AlreadyExist(UpdateContactRequest contact)
         {
             var result = _contactQueryRepository.CheckContactExists(contact.Username).Result;
             return !result;
