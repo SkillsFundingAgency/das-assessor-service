@@ -6,12 +6,12 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Api.Validators
 {
-    public class OrganisationUpdateViewModelValidator : AbstractValidator<UpdateOrganisationRequest>
+    public class UpdateOrganisationRequestValidator : AbstractValidator<UpdateOrganisationRequest>
     {
         private readonly IContactQueryRepository _contactQueryRepository;       
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
 
-        public OrganisationUpdateViewModelValidator(IStringLocalizer<OrganisationUpdateViewModelValidator> localiser,
+        public UpdateOrganisationRequestValidator(IStringLocalizer<UpdateOrganisationRequestValidator> localiser,
             IContactQueryRepository contactQueryRepository,
             IOrganisationQueryRepository organisationQueryRepository
         )
