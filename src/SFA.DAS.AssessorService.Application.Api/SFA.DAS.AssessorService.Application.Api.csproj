@@ -57,10 +57,10 @@
     <EmbeddedResource Update="Resources\Controllers\ContactQueryController.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Resources\Controllers\ContractController.en.resx">
+    <EmbeddedResource Update="Resources\Orchestrators\ContractOrchestrator.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Resources\Controllers\OrganisationController.en.resx">
+    <EmbeddedResource Update="Resources\Orchestrators\OrganisationOrchestrator.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Controllers\OrganisationQueryController.en.resx">
