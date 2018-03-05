@@ -1,22 +1,22 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.Controllers
-{
-    using System.Collections.Generic;
-    using System.Net;
-    using System.Threading.Tasks;
-    using AssessorService.Api.Types.Models;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
-    using Middleware;
-    using Orchestrators;
-    using Swashbuckle.AspNetCore.SwaggerGen;
+﻿using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Application.Api.Middleware;
+using SFA.DAS.AssessorService.Application.Api.Orchestrators;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
+namespace SFA.DAS.AssessorService.Application.Api.Controllers
+{
     [Authorize]
     [Route("api/v1/contacts")]
     public class ContactQueryController : Controller
     {
         private readonly GetContactsOrchestrator _getContactsOrchestrator;
-        private ILogger<ContactQueryController> _logger;
+        private readonly ILogger<ContactQueryController> _logger;
 
         public ContactQueryController(GetContactsOrchestrator getContactsOrchestrator,
             ILogger<ContactQueryController> logger)
@@ -30,7 +30,8 @@
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> SearchContactsForAnOrganisation(string endPointAssessorOrganisationId)
         {
-            _logger.LogInformation($"Received Search for Contacts using endPointAssessorOrganisationId = {endPointAssessorOrganisationId}");
+            _logger.LogInformation(
+                $"Received Search for Contacts using endPointAssessorOrganisationId = {endPointAssessorOrganisationId}");
 
             var contacts =
                 await _getContactsOrchestrator.SearchContactsForAnOrganisation(endPointAssessorOrganisationId);

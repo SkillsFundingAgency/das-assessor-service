@@ -1,23 +1,21 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.Validators
-{
-    using AssessorService.Api.Types.Models;
-    using Consts;
-    using FluentValidation;
-    using Interfaces;
-    using Microsoft.Extensions.Localization;
+﻿using FluentValidation;
+using Microsoft.Extensions.Localization;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Application.Api.Consts;
+using SFA.DAS.AssessorService.Application.Interfaces;
 
+namespace SFA.DAS.AssessorService.Application.Api.Validators
+{
     public class OrganisationCreateViewModelValidator : AbstractValidator<CreateOrganisationRequest>
     {
-        private readonly IContactQueryRepository _contactQueryRepository;
-        private readonly IStringLocalizer<OrganisationCreateViewModelValidator> _localizer;
+        private readonly IContactQueryRepository _contactQueryRepository;     
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
 
-        public OrganisationCreateViewModelValidator(IStringLocalizer<OrganisationCreateViewModelValidator> localizer,
+        public OrganisationCreateViewModelValidator(IStringLocalizer<OrganisationCreateViewModelValidator> localiser,
             IContactQueryRepository contactQueryRepository,
             IOrganisationQueryRepository organisationQueryRepository
         )
-        {
-            _localizer = localizer;
+        {            
             _contactQueryRepository = contactQueryRepository;
             _organisationQueryRepository = organisationQueryRepository;
 
@@ -25,20 +23,20 @@
             CreateOrganisationRequest organisationCreateViewModel;
 
             RuleFor(organisation => organisation.EndPointAssessorOrganisationId).NotEmpty().WithMessage(
-                _localizer[ResourceMessageName.EndPointAssessorOrganisationIdMustBeDefined,
+                localiser[ResourceMessageName.EndPointAssessorOrganisationIdMustBeDefined,
                     nameof(organisationCreateViewModel.EndPointAssessorOrganisationId)].Value);
             RuleFor(organisation => organisation.EndPointAssessorName).NotEmpty().WithMessage(
-                _localizer[ResourceMessageName.EndPointAssessorNameMustBeDefined,
+                localiser[ResourceMessageName.EndPointAssessorNameMustBeDefined,
                     nameof(organisationCreateViewModel.EndPointAssessorName)].Value);
             RuleFor(organisation => organisation.EndPointAssessorUkprn).InclusiveBetween(10000000, 99999999)
-                .WithMessage(_localizer[ResourceMessageName.InvalidUkprn,
+                .WithMessage(localiser[ResourceMessageName.InvalidUkprn,
                     nameof(organisationCreateViewModel.EndPointAssessorUkprn)].Value);
 
             RuleFor(organisation => organisation.PrimaryContact).Must(HaveAssociatedPrimaryContactInContacts)
-                .WithMessage(_localizer[ResourceMessageName.PrimaryContactDoesNotExist,
+                .WithMessage(localiser[ResourceMessageName.PrimaryContactDoesNotExist,
                     nameof(organisationCreateViewModel.PrimaryContact)].Value);
             RuleFor(organisation => organisation.EndPointAssessorOrganisationId).Must(AlreadyExists).WithMessage(
-                _localizer[ResourceMessageName.AlreadyExists,
+                localiser[ResourceMessageName.AlreadyExists,
                     nameof(organisationCreateViewModel.EndPointAssessorOrganisationId)].Value);
         }
 

@@ -1,7 +1,7 @@
-﻿namespace SFA.DAS.AssessorService.Application.Exceptions
-{
-    using System;
+﻿using System;
 
+namespace SFA.DAS.AssessorService.Application.Exceptions
+{
     public sealed class BadRequestException : Exception
     {
         public BadRequestException() : base("") { }

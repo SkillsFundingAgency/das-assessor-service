@@ -1,13 +1,14 @@
-﻿namespace SFA.DAS.AssessorService.Data
+﻿using SFA.DAS.AssessorService.Domain.DomainModels;
+
+namespace SFA.DAS.AssessorService.Data
 {
     using System;
     using System.Linq;
     using System.Threading.Tasks;
     using Api.Types.Models;
-    using Application.Domain;
     using Application.Interfaces;
     using AutoMapper;
-    using Domain.Enums;
+    using Domain.Consts;
     using Domain.Exceptions;
     using Microsoft.EntityFrameworkCore;
 
@@ -27,8 +28,8 @@
             _assessorDbContext.Contacts.Add(contactEntity);
             await _assessorDbContext.SaveChangesAsync();
 
-            var contactQueryViewModel = Mapper.Map<Contact>(contactEntity);
-            return contactQueryViewModel;
+            var contact = Mapper.Map<Contact>(contactEntity);
+            return contact;
         }
 
         public async Task Update(UpdateContactRequest contactUpdateViewModel)
@@ -47,13 +48,13 @@
         public async Task Delete(string userName)
         {
             var contactEntity = _assessorDbContext.Contacts
-                      .FirstOrDefault(q => q.Username == userName);
+                      .FirstOrDefault(q => q.Username == userName && q.Status != ContactStatus.Deleted);
 
             if (contactEntity == null)
                 throw (new NotFound());
 
             contactEntity.DeletedAt = DateTime.Now;
-            contactEntity.ContactStatus = ContactStatus.Deleted;
+            contactEntity.Status = ContactStatus.Deleted;
 
             _assessorDbContext.MarkAsModified(contactEntity);
 

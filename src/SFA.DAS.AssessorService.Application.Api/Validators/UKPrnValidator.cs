@@ -1,9 +1,9 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.Validators
-{
-    using Consts;
-    using FluentValidation.Results;
-    using Microsoft.Extensions.Localization;
+﻿using FluentValidation.Results;
+using Microsoft.Extensions.Localization;
+using SFA.DAS.AssessorService.Application.Api.Consts;
 
+namespace SFA.DAS.AssessorService.Application.Api.Validators
+{
     public class UkPrnValidator
     {
         private readonly IStringLocalizer<UkPrnValidator> _localizer;

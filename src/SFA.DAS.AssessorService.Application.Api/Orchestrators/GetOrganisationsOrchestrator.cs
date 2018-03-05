@@ -1,23 +1,24 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using AssessorService.Api.Types.Models;
-    using Consts;
-    using Exceptions;
-    using Interfaces;
-    using Microsoft.Extensions.Localization;
-    using Microsoft.Extensions.Logging;
-    using Validators;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Application.Api.Consts;
+using SFA.DAS.AssessorService.Application.Api.Validators;
+using SFA.DAS.AssessorService.Application.Exceptions;
+using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Exceptions;
 
+namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
+{
     public class GetOrganisationsOrchestrator
     {
         private readonly IStringLocalizer<GetOrganisationsOrchestrator> _localizer;
         private readonly ILogger<GetOrganisationsOrchestrator> _logger;
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
         private readonly UkPrnValidator _ukPrnValidator;
-
+      
         public GetOrganisationsOrchestrator(IOrganisationQueryRepository organisationQueryRepository,
             IStringLocalizer<GetOrganisationsOrchestrator> localizer,
             UkPrnValidator ukPrnValidator,
@@ -29,16 +30,20 @@
             _logger = logger;
         }
 
-        public async Task<Organisation> GetOrganisation(int ukprn)
+        public async Task<Organisation> SearchOrganisation(int ukprn)
         {
             var result = _ukPrnValidator.Validate(ukprn);
             if (!result.IsValid)
-                throw new ApplicationException(result.Errors[0].ErrorMessage);
+                throw new BadRequestException(result.Errors[0].ErrorMessage);
 
             var organisation = await _organisationQueryRepository.GetByUkPrn(ukprn);
             if (organisation == null)
-                throw new ResourceNotFoundException(_localizer[ResourceMessageName.NoAssesmentProviderFound, ukprn]
-                    .Value);
+            {
+                var ex = new ResourceNotFoundException(
+                    _localizer[ResourceMessageName.NoAssesmentProviderFound, nameof(ukprn)]
+                        .Value);
+                throw ex;
+            }
 
             return organisation;
         }

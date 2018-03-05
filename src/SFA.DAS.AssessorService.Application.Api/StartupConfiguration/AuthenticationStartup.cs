@@ -10,9 +10,6 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
         public static void AddAndConfigureAuthentication(this IServiceCollection services,
             IWebConfiguration configuration)
         {
-
-            
-
             //services.AddAuthentication(sharedOptions =>
             //    {
             //        sharedOptions.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;

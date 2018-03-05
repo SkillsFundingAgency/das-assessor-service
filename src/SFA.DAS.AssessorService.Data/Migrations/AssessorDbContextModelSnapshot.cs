@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.Internal;
 using SFA.DAS.AssessorService.Data;
-using SFA.DAS.AssessorService.Domain.Enums;
 using System;
 
 namespace SFA.DAS.AssessorService.Data.Migrations
@@ -38,7 +37,7 @@ namespace SFA.DAS.AssessorService.Data.Migrations
 
                     b.Property<Guid>("OrganisationId");
 
-                    b.Property<int>("Status");
+                    b.Property<string>("Status");
 
                     b.Property<DateTime?>("UpdatedAt");
 
@@ -68,7 +67,7 @@ namespace SFA.DAS.AssessorService.Data.Migrations
 
                     b.Property<DateTime>("EventTime");
 
-                    b.Property<int>("Status");
+                    b.Property<string>("Status");
 
                     b.Property<DateTime?>("UpdatedAt");
 
@@ -84,8 +83,6 @@ namespace SFA.DAS.AssessorService.Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("ContactStatus");
-
                     b.Property<DateTime>("CreatedAt");
 
                     b.Property<DateTime?>("DeletedAt");
@@ -97,6 +94,8 @@ namespace SFA.DAS.AssessorService.Data.Migrations
                     b.Property<string>("EndPointAssessorOrganisationId");
 
                     b.Property<Guid>("OrganisationId");
+
+                    b.Property<string>("Status");
 
                     b.Property<DateTime?>("UpdatedAt");
 
@@ -127,9 +126,9 @@ namespace SFA.DAS.AssessorService.Data.Migrations
 
                     b.Property<int>("EndPointAssessorUkprn");
 
-                    b.Property<int>("OrganisationStatus");
-
                     b.Property<Guid?>("PrimaryContactId");
+
+                    b.Property<string>("Status");
 
                     b.Property<DateTime?>("UpdatedAt");
 

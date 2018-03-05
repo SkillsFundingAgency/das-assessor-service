@@ -121,7 +121,7 @@ this.ScenarioSetup(scenarioInfo);
                         "EndPointAssessorOrganisationId",
                         "EndPointAssessorUKPRN"});
             table2.AddRow(new string[] {
-                        "testuser",
+                        "testuser140",
                         "Test",
                         "jane1289@gmail.com",
                         "9999887",
@@ -212,14 +212,16 @@ this.ScenarioSetup(scenarioInfo);
 #line hidden
             TechTalk.SpecFlow.Table table5 = new TechTalk.SpecFlow.Table(new string[] {
                         "UserName",
-                        "EndPointAssessorName",
+                        "DisplayName",
+                        "Email",
                         "EndPointAssessorOrganisationId",
                         "EndPointAssessorUKPRN"});
             table5.AddRow(new string[] {
-                        "testuser",
-                        "Test",
-                        "99999777",
-                        "10033444"});
+                        "testuser123",
+                        "Jean Brodie",
+                        "jbrodie@gmail.com",
+                        "99998899",
+                        "10038887"});
 #line 46
  testRunner.When("I Delete a Contact", ((string)(null)), table5, "When ");
 #line 49
@@ -242,14 +244,16 @@ this.ScenarioSetup(scenarioInfo);
 #line hidden
             TechTalk.SpecFlow.Table table6 = new TechTalk.SpecFlow.Table(new string[] {
                         "UserName",
-                        "EndPointAssessorName",
+                        "DisplayName",
+                        "Email",
                         "EndPointAssessorOrganisationId",
                         "EndPointAssessorUKPRN"});
             table6.AddRow(new string[] {
-                        "testuser",
-                        "Test",
-                        "99999778",
-                        "10033444"});
+                        "testuser127",
+                        "Jean Brodie",
+                        "jbrodie@gmail.com",
+                        "99998899",
+                        "10038887"});
 #line 54
  testRunner.When("I Delete a Contact Twice", ((string)(null)), table6, "When ");
 #line 57

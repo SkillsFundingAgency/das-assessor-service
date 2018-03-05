@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
+﻿using SFA.DAS.AssessorService.Application.Handlers.RegisterUpdate;
+
+namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
 {
     using System;
     using System.Collections.Generic;
@@ -7,7 +9,6 @@
     using System.Threading.Tasks;
     using Moq;
     using NUnit.Framework;
-    using SFA.DAS.AssessorService.Application.RegisterUpdate;
     using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
 
     using AssessorService.Api.Types.Models;
