@@ -1,4 +1,6 @@
-﻿@model object
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model SFA.DAS.AssessorService.Api.Types.Models.SearchQueryViewModel
 
 @{
     ViewBag.Title = "title";
@@ -6,3 +8,13 @@
 }
 
 <h2>Search</h2>
+
+<form method="post">
+    <label for="Uln">@Localizer["Uln"]</label>
+    <input asp-for="Uln" /> <span asp-validation-for="Uln"></span> <br />
+
+    <label for="surname">@Localizer["Lastname"]</label>
+    <input asp-for="Surname" /> <span asp-validation-for="Surname"></span> <br />
+    
+    <button class="button">@Localizer["SearchButton"]</button>
+</form>
