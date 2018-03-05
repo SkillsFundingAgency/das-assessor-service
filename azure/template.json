@@ -108,8 +108,8 @@
                     "configEnvironmentName": {
                         "value": "[parameters('environmentName')]"
                     },
-                    "storageAccountName": {
-                        "value": "[parameters('storageAccountName')]"
+                    "storageConnectionString": {
+                        "value": "[reference('StorageAccount').outputs.StorageConnectionString.value]"
                     }
                 }
             },
