@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Web
 
         public Startup(IConfiguration config)
         {
-            Configuration = ConfigurationService.GetConfig(config["Environment"], config["ConnectionStrings:Storage"], Version, ServiceName).Result;
+            Configuration = ConfigurationService.GetConfig(config["EnvironmentName"], config["ConnectionStrings:Storage"], Version, ServiceName).Result;
         }
 
         public IWebConfiguration Configuration { get; }
@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Web
             services.AddMvc().AddControllersAsServices().AddSessionStateTempDataProvider();
             services.AddSession();
 
-            return ConfigureIOC(services); 
+            return ConfigureIOC(services);
         }
 
         private IServiceProvider ConfigureIOC(IServiceCollection services)
@@ -70,7 +70,7 @@ namespace SFA.DAS.AssessorService.Web
             {
                 app.UseExceptionHandler("/Home/Error");
             }
-            
+
             app.UseStaticFiles()
                 .UseSession()
                 .UseAuthentication()
