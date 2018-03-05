@@ -4,7 +4,7 @@
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "AzureWebJobsDashboard": "UseDevelopmentStorage=true",
 
-    "Environment": "LOCAL",
+    "EnvironmentName": "LOCAL",
     "Storage": "UseDevelopmentStorage=true"
   }
 }

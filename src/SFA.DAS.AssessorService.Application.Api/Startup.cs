@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Application.Api
             _env = env;
             _logger = logger;
             Configuration = ConfigurationService
-                .GetConfig(config["Environment"], config["ConnectionStrings:Storage"], Version, ServiceName).Result;
+                .GetConfig(config["EnvironmentName"], config["ConnectionStrings:Storage"], Version, ServiceName).Result;
         }
 
         public IWebConfiguration Configuration { get; }

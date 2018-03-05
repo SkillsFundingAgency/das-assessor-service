@@ -42,9 +42,9 @@ namespace SFA.DAS.AssessorService.EpaoImporter
         private static string GetToken(WebConfiguration webConfig)
         {
             var tenantId = webConfig.ClientApiAuthentication.TenantId;
-            var clientId = webConfig.ClientApiAuthentication.ClientId; 
-            var appKey = webConfig.ClientApiAuthentication.ClientSecret; 
-            var resourceId = webConfig.ClientApiAuthentication.ResourceId; 
+            var clientId = webConfig.ClientApiAuthentication.ClientId;
+            var appKey = webConfig.ClientApiAuthentication.ClientSecret;
+            var resourceId = webConfig.ClientApiAuthentication.ResourceId;
 
             var authority = $"https://login.microsoftonline.com/{tenantId}";
             var clientCredential = new ClientCredential(clientId, appKey);
@@ -59,7 +59,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
             string Version = "1.0";
 
             //var configuration = ConfigurationService
-            //        .GetConfig(Environment.GetEnvironmentVariable("Environment", EnvironmentVariableTarget.Process),
+            //        .GetConfig(Environment.GetEnvironmentVariable("EnvironmentName", EnvironmentVariableTarget.Process),
             //        Environment.GetEnvironmentVariable("Storage", EnvironmentVariableTarget.Process), Version, ServiceName).Result;
 
             var conn = CloudStorageAccount.Parse(

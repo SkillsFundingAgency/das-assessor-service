@@ -16,6 +16,9 @@
         },
         "storageConnectionString": {
             "type": "string"
+        },
+        "loggingRedisConnectionString": {
+            "type": "string"
         }
     },
     "variables": {},
@@ -64,6 +67,13 @@
                         {
                             "name": "EnvironmentName",
                             "value": "[toUpper(parameters('configEnvironmentName'))]"
+                        }
+                    ],
+                    "connectionStrings": [
+                        {
+                            "name": "Redis",
+                            "connectionString": "[parameters('loggingRedisConnectionString')]",
+                            "type": "Custom"
                         }
                     ]
                 }
