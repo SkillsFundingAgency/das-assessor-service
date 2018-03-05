@@ -1,14 +1,14 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.Controllers
-{
-    using System.Net;
-    using System.Threading.Tasks;
-    using MediatR;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
-    using RegisterUpdate;
-    using Swashbuckle.AspNetCore.SwaggerGen;
+﻿using System.Net;
+using System.Threading.Tasks;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Application.Handlers.RegisterUpdate;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
+namespace SFA.DAS.AssessorService.Application.Api.Controllers
+{
     [Authorize]
     [Route("api/v1/register-import")]
     public class RegisterImportController : Controller

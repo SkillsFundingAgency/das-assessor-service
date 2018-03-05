@@ -1,10 +1,10 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations
+﻿namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Maintenance
 {
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
     using AssessorService.Api.Types.Models;
-    using Domain.Enums;
+    using Domain.Consts;
     using Extensions;
     using FluentAssertions;
     using Newtonsoft.Json;
@@ -55,24 +55,6 @@
             RetrieveOrganisation(organisationCreateViewModel);
         }
 
-        private void CreateContact(CreateContactRequest contactCreateViewModel)
-        {
-            _restClient.HttpResponseMessage = _restClient.HttpClient.PostAsJsonAsync(
-               "api/v1/contacts", contactCreateViewModel).Result;
-
-            _restClient.Result = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
-            _contactQueryViewModel = JsonConvert.DeserializeObject<Contact>(_restClient.Result);
-        }
-
-        private void CreateOrganisation(CreateOrganisationRequest organisationCreateViewModel)
-        {
-            _restClient.HttpResponseMessage = _restClient.HttpClient.PostAsJsonAsync(
-                 "api/v1/organisations", organisationCreateViewModel).Result;
-            _restClient.Result = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
-
-            _organisationQueryViewModel = JsonConvert.DeserializeObject<Organisation>(_restClient.Result);
-        }
-
         [When(@"I Create a Contact as another User for Organisation")]
         public void WhenICreateAContactAsAnotherUserForOrganisation(IEnumerable<dynamic> contactArguments)
         {
@@ -105,6 +87,7 @@
                 EndPointAssessorOrganisationId = organisationCreateViewModel.EndPointAssessorOrganisationId,
                 Username = _contactArguments.UserName
             };
+
             CreateContact(contactCreateViewModel);
 
             RetrieveOrganisation(organisationCreateViewModel);
@@ -120,13 +103,13 @@
         [Then(@"the Contact Status should be set to Live")]
         public void ThenTheContactStatusShouldBeSetToLive()
         {
-            _contactQueryViewModel.ContactStatus.Should().Be(ContactStatus.Live);
+            _contactQueryViewModel.Status.Should().Be(ContactStatus.Live);
         }
 
         [Then(@"the Contact Organisation Status should be set to (.*)")]
         public void ThenTheContactOrganisationStatusShouldBeSetTo(string p0)
         {
-            _organisaionRetrieved.OrganisationStatus.Should().Be(OrganisationStatus.Live);
+            _organisaionRetrieved.Status.Should().Be(OrganisationStatus.Live);
         }
 
         private void RetrieveOrganisation(CreateOrganisationRequest organisationCreateViewModel)
@@ -136,7 +119,6 @@
             var result = organisationResponseMessage.Content.ReadAsStringAsync().Result;
             _organisaionRetrieved = JsonConvert.DeserializeObject<Organisation>(result);
         }
-
 
         [When(@"I Create a Contact That already exists")]
         public void WhenICreateAContactThatAlreadyExists(IEnumerable<dynamic> contactArguments)
@@ -170,7 +152,26 @@
                 EndPointAssessorOrganisationId = organisationCreateViewModel.EndPointAssessorOrganisationId,
                 Username = _contactArguments.UserName
             };
+
             CreateContact(contactCreateViewModel);
+        }
+
+        private void CreateContact(CreateContactRequest contactCreateViewModel)
+        {
+            _restClient.HttpResponseMessage = _restClient.HttpClient.PostAsJsonAsync(
+                "api/v1/contacts", contactCreateViewModel).Result;
+
+            _restClient.Result = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
+            _contactQueryViewModel = JsonConvert.DeserializeObject<Contact>(_restClient.Result);
+        }
+
+        private void CreateOrganisation(CreateOrganisationRequest organisationCreateViewModel)
+        {
+            _restClient.HttpResponseMessage = _restClient.HttpClient.PostAsJsonAsync(
+                "api/v1/organisations", organisationCreateViewModel).Result;
+            _restClient.Result = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
+
+            _organisationQueryViewModel = JsonConvert.DeserializeObject<Organisation>(_restClient.Result);
         }
     }
 }

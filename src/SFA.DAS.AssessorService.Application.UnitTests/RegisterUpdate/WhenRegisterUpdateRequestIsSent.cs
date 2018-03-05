@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Application.RegisterUpdate;
+using SFA.DAS.AssessorService.Application.Handlers.RegisterUpdate;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
 {

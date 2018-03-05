@@ -19,7 +19,7 @@ Scenario: Create a Contact when other Contact Exist for Organisation
 	Given System Has access to the SFA.DAS.AssessmentOrgs.Api	
 	When I Create a Contact as another User for Organisation
 	| UserName | DisplayName | Email | EndPointAssessorOrganisationId | EndPointAssessorUKPRN |
-	| testuser | Test        | jane1289@gmail.com             | 9999887      | 10038887              |
+	| testuser140 | Test        | jane1289@gmail.com             | 9999887      | 10038887              |
 	Then the response http status should be Created
 	And the Location Header should be set
 	And the Contact should be created
@@ -44,16 +44,16 @@ Scenario: Update a Contact succesfully
 Scenario: Delete a Contact 
 	Given System Has access to the SFA.DAS.AssessmentOrgs.Api	
 	When I Delete a Contact
-	| UserName | EndPointAssessorName | EndPointAssessorOrganisationId | EndPointAssessorUKPRN |
-	| testuser | Test                 | 99999777                       | 10033444              |
+	| UserName | DisplayName | Email | EndPointAssessorOrganisationId | EndPointAssessorUKPRN |
+	| testuser123 | Jean Brodie | jbrodie@gmail.com | 99998899      | 10038887              |
 	Then the response http status should be No Content
 	And the Contact should be deleted
 
 Scenario: Repeat Deleting a Contact 
 	Given System Has access to the SFA.DAS.AssessmentOrgs.Api	
 	When I Delete a Contact Twice
-	| UserName | EndPointAssessorName | EndPointAssessorOrganisationId | EndPointAssessorUKPRN |
-	| testuser | Test                 | 99999778                       | 10033444              |
+	| UserName | DisplayName | Email | EndPointAssessorOrganisationId | EndPointAssessorUKPRN |
+	| testuser127 | Jean Brodie | jbrodie@gmail.com | 99998899      | 10038887              |
 	Then the response http status should be Not Found
 	And the Contact should be deleted
 	

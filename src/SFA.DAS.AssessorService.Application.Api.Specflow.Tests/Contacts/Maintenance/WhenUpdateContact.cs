@@ -6,7 +6,7 @@
     using System.Net.Http;
     using AssessorService.Api.Types.Models;
     using Dapper;
-    using Domain.Enums;
+    using Domain.Consts;  
     using Extensions;
     using FluentAssertions;
     using Newtonsoft.Json;
@@ -84,14 +84,14 @@
         public void ThenTheContactUpdateShouldHaveOccured()
         {
             var contactEntities = _dbconnection.Query<Contact>
-             ($"Select Id, UserName, DisplayName, EMail, ContactStatus From Contacts where UserName = '{_contactQueryViewModel.Username}'").ToList();
+             ($"Select Id, UserName, DisplayName, EMail, Status From Contacts where UserName = '{_contactQueryViewModel.Username}'").ToList();
             var contact = contactEntities.First();
 
             contact.DisplayName.Should().Be(_contactQueryViewModel.DisplayName);
             contact.Email.Should().Be(_contactQueryViewModel.Email);
             contact.Username.Should().Be(_contactQueryViewModel.Username);
 
-            contact.ContactStatus.Should().Be(ContactStatus.Live);
+            contact.Status.Should().Be(ContactStatus.Live);
         }
 
         private void CreateOrganisation(CreateOrganisationRequest organisationCreateViewModel)

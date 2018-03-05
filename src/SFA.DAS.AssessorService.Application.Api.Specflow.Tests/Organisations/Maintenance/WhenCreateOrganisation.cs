@@ -8,9 +8,9 @@
     using System.Linq;
     using System.Collections.Generic;
     using System;
-    using SFA.DAS.AssessorService.Domain.Enums;
     using System.Net.Http;
     using AssessorService.Api.Types.Models;
+    using Domain.Consts;
     using Newtonsoft.Json;
     using SFA.DAS.AssessorService.Api.Types;
 
@@ -76,7 +76,7 @@
         public void ThenTheOrganisationShouldBeCreated()
         {
             var organisationsCreated = _dbconnection.Query<Organisation>
-              ($"Select EndPointAssessorOrganisationId, EndPointAssessorUKPRN, EndPointAssessorName, OrganisationStatus From Organisations where EndPointAssessorOrganisationId = {_organisationArguments.EndPointAssessorOrganisationId}").ToList();
+              ($"Select EndPointAssessorOrganisationId, EndPointAssessorUKPRN, EndPointAssessorName, Status From Organisations where EndPointAssessorOrganisationId = {_organisationArguments.EndPointAssessorOrganisationId}").ToList();
             _organisationRetrieved = organisationsCreated.First();
 
             organisationsCreated.Count.Should().Equals(1);
@@ -91,11 +91,11 @@
         {
             if (p0 == "Live")
             {
-                _organisationRetrieved.OrganisationStatus.Should().Be(OrganisationStatus.Live);
+                _organisationRetrieved.Status.Should().Be(OrganisationStatus.Live);
             }
             else if (p0 == "New")
             {
-                _organisationRetrieved.OrganisationStatus.Should().Be(OrganisationStatus.New);
+                _organisationRetrieved.Status.Should().Be(OrganisationStatus.New);
             }
             else
             {

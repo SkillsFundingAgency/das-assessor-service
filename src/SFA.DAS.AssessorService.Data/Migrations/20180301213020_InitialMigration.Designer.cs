@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.Internal;
 using SFA.DAS.AssessorService.Data;
-using SFA.DAS.AssessorService.Domain.Enums;
 using System;
 
 namespace SFA.DAS.AssessorService.Data.Migrations

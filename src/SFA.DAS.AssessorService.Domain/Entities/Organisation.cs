@@ -1,9 +1,8 @@
-﻿namespace SFA.DAS.AssessorService.Domain.Entities
-{
-    using Enums;
-    using System;
-    using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
+namespace SFA.DAS.AssessorService.Domain.Entities
+{
     public class Organisation : BaseEntity
     {
         public Guid Id { get; set; }
@@ -14,9 +13,9 @@
 
         public Guid? PrimaryContactId { get; set; }
 
-        public OrganisationStatus OrganisationStatus { get; set; }
+        public string Status { get; set; }
 
-        public virtual ICollection<Certificate> Certificates { get; set; } = new List<Certificate>();      
+        public virtual ICollection<Certificate> Certificates { get; set; } = new List<Certificate>();
         public virtual ICollection<Contact> Contacts { get; set; } = new List<Contact>();
     }
 }

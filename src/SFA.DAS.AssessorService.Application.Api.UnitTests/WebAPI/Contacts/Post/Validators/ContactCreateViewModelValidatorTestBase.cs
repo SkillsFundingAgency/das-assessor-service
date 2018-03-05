@@ -1,12 +1,12 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.UkPrnValidator
-{
-    using AssessorService.Api.Types.Models;
-    using Microsoft.Extensions.Localization;
-    using Moq;
-    using SFA.DAS.AssessorService.Application.Api.Consts;
-    using SFA.DAS.AssessorService.Application.Api.Validators;
-    using SFA.DAS.AssessorService.Application.Interfaces;
+﻿using Microsoft.Extensions.Localization;
+using Moq;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Application.Api.Consts;
+using SFA.DAS.AssessorService.Application.Api.Validators;
+using SFA.DAS.AssessorService.Application.Interfaces;
 
+namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Post.Validators
+{
     public class ContactCreateViewModelValidatorTestBase
     {
         protected static ContactCreateViewModelValidator ContactCreateViewModelValidator;
@@ -17,9 +17,9 @@
         public static void Setup()
         {
             var stringLocalizerMock = new Mock<IStringLocalizer<ContactCreateViewModelValidator>>();
-            string key = ResourceMessageName.NoAssesmentProviderFound;
+            var key = ResourceMessageName.NoAssesmentProviderFound;
             var localizedString = new LocalizedString(key, "10000000");
-            stringLocalizerMock.Setup(q => q[Moq.It.IsAny<string>(), Moq.It.IsAny<string>()]).Returns(localizedString);
+            stringLocalizerMock.Setup(q => q[It.IsAny<string>(), It.IsAny<string>()]).Returns(localizedString);
 
             ContactRepositoryMock = new Mock<IContactRepository>();
 

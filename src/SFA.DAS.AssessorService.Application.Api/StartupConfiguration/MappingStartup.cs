@@ -1,23 +1,26 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
-{
-    using AssessorService.Api.Types.Models;
-    using Domain;
+﻿using AutoMapper;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Domain.DomainModels;
+using Contact = SFA.DAS.AssessorService.Domain.Entities.Contact;
+using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
+namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
+{
     public static class MappingStartup
     {
         public static void AddMappings()
         {
-            AutoMapper.Mapper.Initialize(cfg =>
+            Mapper.Initialize(cfg =>
             {
-                cfg.CreateMap<AssessorService.Domain.Entities.Organisation, Organisation>();
+                cfg.CreateMap<Organisation, AssessorService.Api.Types.Models.Organisation>();
                 cfg.CreateMap<CreateOrganisationRequest, OrganisationCreateDomainModel>();
-                cfg.CreateMap<OrganisationCreateDomainModel, AssessorService.Domain.Entities.Organisation>();
+                cfg.CreateMap<OrganisationCreateDomainModel, Organisation>();
                 cfg.CreateMap<UpdateOrganisationRequest, OrganisationUpdateDomainModel>();
                 cfg.CreateMap<CreateContactRequest, ContactCreateDomainModel>();
-                cfg.CreateMap<ContactCreateDomainModel, AssessorService.Domain.Entities.Contact>();
-                cfg.CreateMap<AssessorService.Domain.Entities.Contact, CreateContactRequest>();
-                cfg.CreateMap<AssessorService.Domain.Entities.Contact, Contact>();
-                cfg.CreateMap<AssessorService.Domain.Entities.Organisation, OrganisationQueryDomainModel>();
+                cfg.CreateMap<ContactCreateDomainModel, Contact>();
+                cfg.CreateMap<Contact, CreateContactRequest>();
+                cfg.CreateMap<Contact, AssessorService.Api.Types.Models.Contact>();
+                cfg.CreateMap<Organisation, OrganisationQueryDomainModel>();
                 cfg.CreateMap<OrganisationQueryDomainModel, OrganisationUpdateDomainModel>();
             });
         }

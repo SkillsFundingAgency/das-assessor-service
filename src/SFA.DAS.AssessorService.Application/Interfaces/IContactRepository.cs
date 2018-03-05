@@ -1,9 +1,10 @@
-﻿namespace SFA.DAS.AssessorService.Application.Interfaces
-{
-    using System.Threading.Tasks;
-    using AssessorService.Api.Types.Models;
-    using Domain;
+﻿using System.Threading.Tasks;
 
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Domain.DomainModels;
+
+namespace SFA.DAS.AssessorService.Application.Interfaces
+{ 
     public interface IContactRepository
     {       
         Task<Contact> CreateNewContact(ContactCreateDomainModel newContact);

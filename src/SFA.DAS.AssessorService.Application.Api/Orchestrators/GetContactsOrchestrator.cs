@@ -1,13 +1,14 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
-{
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using AssessorService.Api.Types.Models;
-    using Exceptions;
-    using Interfaces;
-    using Microsoft.Extensions.Logging;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Application.Exceptions;
+using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Exceptions;
 
+namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
+{
     public class GetContactsOrchestrator
     {
         private readonly IContactQueryRepository _contactQueryRepository;

@@ -1,11 +1,11 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.Controllers
-{
-    using System.Threading.Tasks;
-    using AssessorService.Api.Types.Models;
-    using ExternalApis.Ilr;
-    using ExternalApis.Ilr.Types;
-    using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.ExternalApis.Ilr;
+using SFA.DAS.AssessorService.ExternalApis.Ilr.Types;
 
+namespace SFA.DAS.AssessorService.Application.Api.Controllers
+{
     [Route("api/v1/search")]
     public class SearchController : Controller
     {

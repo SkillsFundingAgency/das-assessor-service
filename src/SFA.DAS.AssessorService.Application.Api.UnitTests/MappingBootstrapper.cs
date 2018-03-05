@@ -1,8 +1,9 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.UnitTests
+﻿using SFA.DAS.AssessorService.Domain.DomainModels;
+
+namespace SFA.DAS.AssessorService.Application.Api.UnitTests
 {
     using AssessorService.Api.Types.Models;
-    using Domain;
- 
+
     class MappingBootstrapper
     {
         public static void Initialize()

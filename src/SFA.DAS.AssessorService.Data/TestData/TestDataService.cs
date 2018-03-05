@@ -2,10 +2,10 @@
 {
     using System;
     using System.Linq;
+    using Domain.Consts;
+    using Domain.Entities;
+    using Domain.JsonData;
     using Newtonsoft.Json;
-    using SFA.DAS.AssessorService.Domain.Entities;
-    using SFA.DAS.AssessorService.Domain.Enums;
-    using SFA.DAS.AssessorService.Domain.JsonData;
 
     public static class TestDataService
     {
@@ -20,7 +20,7 @@
                     EndPointAssessorName = "EPAO 1",
                     EndPointAssessorOrganisationId = "1234",
                     EndPointAssessorUkprn = 10000000,
-                    OrganisationStatus = OrganisationStatus.New
+                    Status = OrganisationStatus.New
                 };
 
                 context.Organisations.Add(organisation);
@@ -33,7 +33,7 @@
                     Email = "blah@blah.com",
                     DisplayName = "Fred Jones",
                     EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
-                    ContactStatus = ContactStatus.Live,
+                    Status = ContactStatus.Live,
                     OrganisationId = organisation.Id
                 };
 
@@ -46,7 +46,7 @@
                     Email = "jcoxhead@gmail.com",
                     DisplayName = "John Coxhead",
                     EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
-                    ContactStatus = ContactStatus.Live,
+                    Status = ContactStatus.Live,
                     OrganisationId = organisation.Id
                 };
 
@@ -73,7 +73,7 @@
                     LearnerGivenNames = "David",
 
                     OverallGrade = "PASS",
-                    ProviderUKPRN = 999999,
+                    ProviderUkprn = 999999,
                     Registration = "Registered",
                     LearningStartDate = DateTime.Now.AddDays(10),
                     StandardCode = 100,
@@ -81,7 +81,7 @@
                     StandardName = "Test",
                     StandardPublicationDate = DateTime.Now,
 
-                    ULN = 123456
+                    Uln = 123456
                 };
 
                 var firstCertificate = new Certificate
@@ -116,14 +116,14 @@
                     LearnerGivenNames = "David",
 
                     OverallGrade = "PASS",
-                    ProviderUKPRN = 999999,
+                    ProviderUkprn = 999999,
                     Registration = "Registered",
                     LearningStartDate = DateTime.Now.AddDays(10),
                     StandardCode = 100,
                     StandardLevel = 1,
                     StandardName = "Test",
                     StandardPublicationDate = DateTime.Now,
-                    ULN = 123456
+                    Uln = 123456
                 };
 
                 var secondCertificate = new Certificate

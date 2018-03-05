@@ -11,7 +11,7 @@
     using Newtonsoft.Json;
     using System;
     using AssessorService.Api.Types.Models;
-    using SFA.DAS.AssessorService.Domain.Enums;
+    using Domain.Consts;
     using SFA.DAS.AssessorService.Api.Types;
 
     [Binding]
@@ -55,7 +55,7 @@
         public void ThenTheUpdateShouldHaveOccured()
         {
             var organisationsCreated = _dbconnection.Query<Organisation>
-              ($"Select EndPointAssessorOrganisationId, EndPointAssessorUKPRN, EndPointAssessorName, OrganisationStatus From Organisations where EndPointAssessorUKPRN = {_organisationArguments.EndPointAssessorUKPRN}").ToList();
+              ($"Select EndPointAssessorOrganisationId, EndPointAssessorUKPRN, EndPointAssessorName, Status From Organisations where EndPointAssessorUKPRN = {_organisationArguments.EndPointAssessorUKPRN}").ToList();
             _organisationRetrieved = organisationsCreated.First();
 
             organisationsCreated.Count.Should().Equals(1);
@@ -134,10 +134,10 @@
         public void ThenTheOrganisationStatusShouldBePersistedAsLive()
         {
             var organisationUpdated = _dbconnection.Query<Organisation>
-              ($"Select EndPointAssessorOrganisationId, EndPointAssessorUKPRN, EndPointAssessorName, OrganisationStatus From Organisations where EndPointAssessorOrganisationId = {_organisationArguments.EndPointAssessorOrganisationId}").ToList();
+              ($"Select EndPointAssessorOrganisationId, EndPointAssessorUKPRN, EndPointAssessorName, Status From Organisations where EndPointAssessorOrganisationId = {_organisationArguments.EndPointAssessorOrganisationId}").ToList();
             _organisationRetrieved = organisationUpdated.First();
 
-            _organisationRetrieved.OrganisationStatus.Should().Be(OrganisationStatus.Live);
+            _organisationRetrieved.Status.Should().Be(OrganisationStatus.Live);
         }
     }
 }
