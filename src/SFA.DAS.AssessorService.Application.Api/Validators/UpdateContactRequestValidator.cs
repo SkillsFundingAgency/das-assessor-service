@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         private bool AlreadyExist(UpdateContactRequest contact)
         {
             var result = _contactQueryRepository.CheckContactExists(contact.Username).Result;
-            return !result;
+            return result;
         }
     }
 }
