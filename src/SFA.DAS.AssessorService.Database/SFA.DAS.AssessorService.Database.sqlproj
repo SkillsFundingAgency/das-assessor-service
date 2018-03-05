@@ -59,4 +59,10 @@
     <Folder Include="Properties" />
     <Folder Include="Tables" />
   </ItemGroup>
+  <ItemGroup>
+    <Build Include="Tables\CertificateLogs.sql" />
+    <Build Include="Tables\Certificates.sql" />
+    <Build Include="Tables\Contacts.sql" />
+    <Build Include="Tables\Organisations.sql" />
+  </ItemGroup>
 </Project>
