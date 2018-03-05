@@ -103,10 +103,10 @@ this.ScenarioSetup(scenarioInfo);
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Retrieve Contact for an Organisation By Username")]
-        public virtual void RetrieveContactForAnOrganisationByUsername()
+        [NUnit.Framework.DescriptionAttribute("Search Contact for an Organisation By Username")]
+        public virtual void SearchContactForAnOrganisationByUsername()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Retrieve Contact for an Organisation By Username", ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Search Contact for an Organisation By Username", ((string[])(null)));
 #line 18
 this.ScenarioSetup(scenarioInfo);
 #line 19
@@ -116,14 +116,14 @@ this.ScenarioSetup(scenarioInfo);
                         "username",
                         "emailaddress"});
             table1.AddRow(new string[] {
-                        "John Coxhead",
+                        "jcoxhead",
                         "jcoxhead@gmail.com"});
 #line 20
- testRunner.When("I Request Contacts to be retrieved By Username", ((string)(null)), table1, "When ");
+ testRunner.When("Client Searches Contacts By Username", ((string)(null)), table1, "When ");
 #line 23
  testRunner.Then("the response http status should be OK", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 24
- testRunner.And("the API returns valid Contact", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("the API returns a valid Contact", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
         }

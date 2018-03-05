@@ -2,10 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types;
-using SFA.DAS.AssessorService.ViewModel.Models;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
 {
+    using Api.Types.Models;
+
     [TestFixture]
     public class WhenIndexIsCalled : OrganisationControllerTestBase
     {
@@ -29,7 +30,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
         {
             _actionResult = OrganisationController.Index().Result;
             //OrganisationService.Verify(serv => serv.GetOrganisation("jwt", 12345));
-            ApiClient.Verify(a => a.Get("12345", "12345"));
+            ApiClient.Verify(a => a.Get("12345"));
         }
 
         [Test]

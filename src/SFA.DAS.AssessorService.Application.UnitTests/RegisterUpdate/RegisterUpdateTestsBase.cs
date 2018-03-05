@@ -4,14 +4,15 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.AssessorService.Api.Types;
+using SFA.DAS.AssessorService.Application.Handlers.RegisterUpdate;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Application.RegisterUpdate;
 using SFA.DAS.AssessorService.ExternalApis;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
-using SFA.DAS.AssessorService.ViewModel.Models;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
 {
+    using AssessorService.Api.Types.Models;
+
     public class RegisterUpdateTestsBase
     {
         protected Mock<IAssessmentOrgsApiClient> ApiClient;

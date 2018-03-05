@@ -1,17 +1,17 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Application.RegisterUpdate;
 using System.Collections.Generic;
 using System.Linq;
 using Moq;
-
-using SFA.DAS.AssessorService.ViewModel.Models;
+using SFA.DAS.AssessorService.Application.Handlers.RegisterUpdate;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
 {
+    using AssessorService.Api.Types.Models;
+
     [TestFixture]
     public class WhenRegisterUpdateCalled_AndItReturnsUnknownEpao : RegisterUpdateTestsBase
     {
@@ -30,10 +30,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
             ApiClient.Setup(c => c.Get("EPA0003")).Returns(new ExternalApis.AssessmentOrgs.Types.Organisation { Id = "EPA0003", Name = "A New EPAO" });
 
             OrganisationRepository.Setup(r => r.GetAllOrganisations())
-                .Returns(Task.FromResult(new List<AssessorService.Api.Types.Organisation>
+                .Returns(Task.FromResult(new List<Organisation>
                 {
-                    new AssessorService.Api.Types.Organisation() { EndPointAssessorOrganisationId = "EPA0001" },
-                    new AssessorService.Api.Types.Organisation() { EndPointAssessorOrganisationId = "EPA0002"}
+                    new Organisation() { EndPointAssessorOrganisationId = "EPA0001" },
+                    new Organisation() { EndPointAssessorOrganisationId = "EPA0002"}
                 }.AsEnumerable()));
         }
 

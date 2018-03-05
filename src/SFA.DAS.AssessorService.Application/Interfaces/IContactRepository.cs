@@ -1,14 +1,14 @@
-﻿namespace SFA.DAS.AssessorService.Application.Interfaces
-{
-    using SFA.DAS.AssessorService.ViewModel.Models;
-    using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Domain.DomainModels;
+
+namespace SFA.DAS.AssessorService.Application.Interfaces
+{ 
     public interface IContactRepository
     {       
         Task<Contact> CreateNewContact(ContactCreateDomainModel newContact);
         Task Update(UpdateContactRequest organisationUpdateViewModel);
-        Task Delete(Guid id);
+        Task Delete(string userName);
     }
 }

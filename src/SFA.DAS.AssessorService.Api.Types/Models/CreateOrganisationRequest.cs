@@ -1,14 +1,12 @@
-﻿namespace SFA.DAS.AssessorService.ViewModel.Models
+﻿namespace SFA.DAS.AssessorService.Api.Types.Models
 {
     using MediatR;
-    using SFA.DAS.AssessorService.Api.Types;
-    using System;
 
     public class CreateOrganisationRequest : IRequest<Organisation>
     {
         public string EndPointAssessorOrganisationId { get; set; }
-        public int EndPointAssessorUKPRN { get; set; }
+        public int EndPointAssessorUkprn { get; set; }
         public string EndPointAssessorName { get; set; }
-        public Guid? PrimaryContactId { get; set; }
+        public string PrimaryContact { get; set; }
     }
 }

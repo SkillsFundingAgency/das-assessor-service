@@ -1,15 +1,16 @@
-﻿namespace SFA.DAS.AssessorService.Data
+﻿using SFA.DAS.AssessorService.Domain.DomainModels;
+
+namespace SFA.DAS.AssessorService.Data
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using Api.Types.Models;
+    using Application.Interfaces;
     using AutoMapper;
+    using Domain.Consts;
     using Microsoft.EntityFrameworkCore;
-    using SFA.DAS.AssessorService.Api.Types;
-    using SFA.DAS.AssessorService.Application.Interfaces;
-    using SFA.DAS.AssessorService.Domain.Enums;
-    using SFA.DAS.AssessorService.ViewModel.Models;
 
     public class OrganisationQueryRepository : IOrganisationQueryRepository
     {
@@ -31,7 +32,7 @@
         public async Task<Organisation> GetByUkPrn(int ukprn)
         {
             var organisation = await _assessorDbContext.Organisations
-                         .FirstOrDefaultAsync(q => q.EndPointAssessorUKPRN == ukprn && q.OrganisationStatus != OrganisationStatus.Deleted);
+                         .FirstOrDefaultAsync(q => q.EndPointAssessorUkprn == ukprn && q.Status != OrganisationStatus.Deleted);
             if (organisation == null)
                 return null;
 
@@ -39,35 +40,35 @@
             return organisationViewModel;
         }
 
-        public async Task<OrganisationUpdateDomainModel> Get(Guid organisationId)
+        public async Task<OrganisationQueryDomainModel> Get(string endPointAssessorOrganisationId)
         {
             var organisation = await _assessorDbContext.Organisations
-                      .FirstAsync(q => q.Id == organisationId && q.OrganisationStatus != OrganisationStatus.Deleted);
+                      .FirstAsync(q => q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId && q.Status != OrganisationStatus.Deleted);
 
-            var organisationUpdateDomainModel = Mapper.Map<OrganisationUpdateDomainModel>(organisation);
+            var organisationUpdateDomainModel = Mapper.Map<OrganisationQueryDomainModel>(organisation);
             return organisationUpdateDomainModel;
         }
 
         public async Task<bool> CheckIfAlreadyExists(string endPointAssessorOrganisationId)
         {
             var organisation = await _assessorDbContext.Organisations
-                         .FirstOrDefaultAsync(q => q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId && q.OrganisationStatus != OrganisationStatus.Deleted);
-            return organisation == null ? false : true;
+                         .FirstOrDefaultAsync(q => q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId && q.Status != OrganisationStatus.Deleted);
+            return organisation != null;
         }
 
         public async Task<bool> CheckIfAlreadyExists(Guid id)
         {
             var organisation = await _assessorDbContext.Organisations
-                        .FirstOrDefaultAsync(q => q.Id == id && q.OrganisationStatus != OrganisationStatus.Deleted);
-            return organisation == null ? false : true;
+                        .FirstOrDefaultAsync(q => q.Id == id && q.Status != OrganisationStatus.Deleted);
+            return organisation != null;
         }
 
-        public async Task<bool> CheckIfOrganisationHasContacts(Guid organisationId)
+        public async Task<bool> CheckIfOrganisationHasContacts(string endPointAssessorOrganisationId)
         {
             var organisation = await _assessorDbContext.Organisations
                         .Include(q => q.Contacts)
-                       .FirstOrDefaultAsync(q => q.Id == organisationId && q.OrganisationStatus != OrganisationStatus.Deleted);
-            return organisation.Contacts.Count() == 0 ? false : true;
+                       .FirstOrDefaultAsync(q => q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId && q.Status != OrganisationStatus.Deleted);
+            return organisation.Contacts.Count() != 0;
         }
     }
 }

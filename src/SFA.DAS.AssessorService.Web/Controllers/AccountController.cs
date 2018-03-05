@@ -1,12 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.WsFederation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.AssessorService.Application.Api.Client;
-using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
+using SFA.DAS.AssessorService.Web.Orchestrators;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -14,12 +13,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     public class AccountController : Controller
     {
         private readonly IHttpContextAccessor _contextAccessor;
-        private readonly IOrganisationsApiClient _apiClient;
+        private readonly ILoginOrchestrator _loginOrchestrator;
 
-        public AccountController(IHttpContextAccessor contextAccessor, IOrganisationsApiClient apiClient)
+        public AccountController(IHttpContextAccessor contextAccessor, ILoginOrchestrator loginOrchestrator)
         {
             _contextAccessor = contextAccessor;
-            _apiClient = apiClient;
+            _loginOrchestrator = loginOrchestrator;
         }
 
         [HttpGet]
@@ -34,24 +33,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> PostSignIn()
         {
-            var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn").Value;
-
-            // Validate role (service) claim.
-            if (!_contextAccessor.HttpContext.User.HasClaim("http://schemas.portal.com/service", "EPA"))
+            var loginResult = await _loginOrchestrator.Login(_contextAccessor.HttpContext.User);
+            switch (loginResult)
             {
-                return RedirectToAction("InvalidRole", "Home");
+                case LoginResult.Valid:
+                    return RedirectToAction("Index", "Organisation");
+                case LoginResult.NotRegistered:
+                    return RedirectToAction("NotRegistered", "Home");
+                case LoginResult.InvalidRole:
+                    return RedirectToAction("InvalidRole", "Home");
+                default:
+                    throw new ApplicationException();
             }
-
-            try
-            {
-                await _apiClient.Get(ukprn, ukprn);
-            }
-            catch (EntityNotFoundException)
-            {
-                return RedirectToAction("NotRegistered", "Home");
-            }
-
-            return RedirectToAction("Index", "Organisation");
         }
 
         [HttpGet]

@@ -1,6 +1,5 @@
 ﻿using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.ViewModel.Models;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -10,6 +9,7 @@ using SFA.DAS.AssessorService.Api.Types;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
 {
+    using Api.Types.Models;
 
 
     public class OrganisationControllerTestBase
@@ -42,10 +42,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
             var logger = new Mock<ILogger<OrganisationController>>();
 
             TokenService = new Mock<ITokenService>();
-            TokenService.Setup(s => s.GetJwt("USERID")).Returns("jwt");
+            TokenService.Setup(s => s.GetToken()).Returns("jwt");
 
             ApiClient = new Mock<IOrganisationsApiClient>();
-            ApiClient.Setup(c => c.Get("12345", "12345")).ReturnsAsync(new Organisation() { });
+            ApiClient.Setup(c => c.Get("12345")).ReturnsAsync(new Organisation() { });
 
             OrganisationController = new OrganisationController(logger.Object, httpContext.Object, ApiClient.Object);
         }

@@ -16,8 +16,8 @@ namespace SFA.DAS.AssessorService.Web.Services
         {
             _httpClient = httpClient;
             _config = config;
-            var apiServiceHost = _config.Api.ApiBaseAddress;
-            _remoteServiceBaseUrl = $"{apiServiceHost}/api/v1/assessment-providers";
+            //var apiServiceHost = _config.Api.ApiBaseAddress;
+            //_remoteServiceBaseUrl = $"{apiServiceHost}/api/v1/assessment-providers";
         }
 
         public async Task<Organisation> GetOrganisation(string token, int ukprn)

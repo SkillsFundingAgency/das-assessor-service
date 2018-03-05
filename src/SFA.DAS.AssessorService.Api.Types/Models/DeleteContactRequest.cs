@@ -1,10 +1,9 @@
-﻿namespace SFA.DAS.AssessorService.ViewModel.Models
+﻿namespace SFA.DAS.AssessorService.Api.Types.Models
 {
     using MediatR;
-    using System;
 
     public class DeleteContactRequest : IRequest
     {
-        public Guid Id { get; set; }                  
+        public string UserName { get; set; }                  
     }
 }

@@ -1,26 +1,23 @@
-﻿namespace SFA.DAS.AssessorService.Domain.JsonData
-{
-    using SFA.DAS.AssessorService.Domain.Entities;
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
+﻿using System;
+using System.Collections.Generic;
+using SFA.DAS.AssessorService.Domain.Entities;
 
+namespace SFA.DAS.AssessorService.Domain.JsonData
+{
     public class CertificateData
     {
         public virtual Organisation Organisation { get; set; }
 
         public int EndPointAssessorCertificateId { get; set; }
-
-        public int EndPointAssessorContactId { get; set; }
         public string EndPointAssessorOrganisationId { get; set; }
 
-        public int ULN { get; set; }
+        public int Uln { get; set; }
 
         public string LearnerGivenNames { get; set; }
         public string LearnerFamilyName { get; set; }
         public DateTime LearnerDateofBirth { get; set; }
         public string LearnerSex { get; set; }
-        public int ProviderUKPRN { get; set; }
+        public int ProviderUkprn { get; set; }
         public int StandardCode { get; set; }
         public string StandardName { get; set; }
         public int StandardLevel { get; set; }

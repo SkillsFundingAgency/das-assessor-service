@@ -1,7 +1,6 @@
 ﻿namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations
 {
     using FluentAssertions;
-    using SFA.DAS.AssessorService.ViewModel.Models;
     using TechTalk.SpecFlow;
     using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Extensions;
     using System.Data;
@@ -11,7 +10,8 @@
     using System.Net.Http;
     using Newtonsoft.Json;
     using System;
-    using SFA.DAS.AssessorService.Domain.Enums;
+    using AssessorService.Api.Types.Models;
+    using Domain.Consts;
     using SFA.DAS.AssessorService.Api.Types;
 
     [Binding]
@@ -41,10 +41,9 @@
 
             var organisation = new UpdateOrganisationRequest
             {
-                Id = organisationQueryViewModel.Id,
-                PrimaryContactId = organisationQueryViewModel.PrimaryContactId,
+                EndPointAssessorOrganisationId = organisationQueryViewModel.EndPointAssessorOrganisationId,
+                PrimaryContact = organisationQueryViewModel.PrimaryContact,
                 EndPointAssessorName = _organisationArguments.EndPointAssessorName,
-                OrganisationStatus = organisationQueryViewModel.OrganisationStatus
             };
 
             _restClient.HttpResponseMessage = _restClient.HttpClient.PutAsJsonAsync(
@@ -56,7 +55,7 @@
         public void ThenTheUpdateShouldHaveOccured()
         {
             var organisationsCreated = _dbconnection.Query<Organisation>
-              ($"Select EndPointAssessorOrganisationId, EndPointAssessorUKPRN, EndPointAssessorName, OrganisationStatus From Organisations where EndPointAssessorUKPRN = {_organisationArguments.EndPointAssessorUKPRN}").ToList();
+              ($"Select EndPointAssessorOrganisationId, EndPointAssessorUKPRN, EndPointAssessorName, Status From Organisations where EndPointAssessorUKPRN = {_organisationArguments.EndPointAssessorUKPRN}").ToList();
             _organisationRetrieved = organisationsCreated.First();
 
             organisationsCreated.Count.Should().Equals(1);
@@ -70,10 +69,9 @@
         {
             var organisation = new UpdateOrganisationRequest
             {
-                Id = Guid.NewGuid(),
-                PrimaryContactId = null,
-                EndPointAssessorName = "XXX",
-                OrganisationStatus = OrganisationStatus.New
+                EndPointAssessorOrganisationId ="9999999999",
+                PrimaryContact = null,
+                EndPointAssessorName = "XXX"
             };
 
             _restClient.HttpResponseMessage = _restClient.HttpClient.PutAsJsonAsync(
@@ -93,10 +91,9 @@
 
             var organisation = new UpdateOrganisationRequest
             {
-                Id = organisationQueryViewModel.Id,
-                PrimaryContactId = Guid.NewGuid(),
-                EndPointAssessorName = _organisationArguments.EndPointAssessorName,
-                OrganisationStatus = organisationQueryViewModel.OrganisationStatus
+                EndPointAssessorOrganisationId = organisationQueryViewModel.EndPointAssessorOrganisationId,
+                PrimaryContact = "12323",
+                EndPointAssessorName = _organisationArguments.EndPointAssessorName
             };
 
             _restClient.HttpResponseMessage = _restClient.HttpClient.PutAsJsonAsync(
@@ -111,7 +108,7 @@
             _organisationArguments = organisations.First();
 
             HttpResponseMessage contactResponse = _restClient.HttpClient.GetAsync(
-           "api/v1/contacts/user/John Coxhead").Result;
+           "api/v1/contacts/user/jcoxhead").Result;
             var contactResult = contactResponse.Content.ReadAsStringAsync().Result;
 
             var contact = JsonConvert.DeserializeObject<Contact>(contactResult);
@@ -123,10 +120,9 @@
 
             var organisation = new UpdateOrganisationRequest
             {
-                Id = organisationQueryViewModel.Id,
-                PrimaryContactId = contact.Id,
-                EndPointAssessorName = _organisationArguments.EndPointAssessorName,
-                OrganisationStatus = organisationQueryViewModel.OrganisationStatus
+                EndPointAssessorOrganisationId = organisationQueryViewModel.EndPointAssessorOrganisationId,
+                PrimaryContact = contact.Username,
+                EndPointAssessorName = _organisationArguments.EndPointAssessorName
             };
 
             _restClient.HttpResponseMessage = _restClient.HttpClient.PutAsJsonAsync(
@@ -138,10 +134,10 @@
         public void ThenTheOrganisationStatusShouldBePersistedAsLive()
         {
             var organisationUpdated = _dbconnection.Query<Organisation>
-              ($"Select EndPointAssessorOrganisationId, EndPointAssessorUKPRN, EndPointAssessorName, OrganisationStatus From Organisations where EndPointAssessorOrganisationId = {_organisationArguments.EndPointAssessorOrganisationId}").ToList();
+              ($"Select EndPointAssessorOrganisationId, EndPointAssessorUKPRN, EndPointAssessorName, Status From Organisations where EndPointAssessorOrganisationId = {_organisationArguments.EndPointAssessorOrganisationId}").ToList();
             _organisationRetrieved = organisationUpdated.First();
 
-            _organisationRetrieved.OrganisationStatus.Should().Be(OrganisationStatus.Live);
+            _organisationRetrieved.Status.Should().Be(OrganisationStatus.Live);
         }
     }
 }

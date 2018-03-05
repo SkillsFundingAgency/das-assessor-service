@@ -1,22 +1,21 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations
+﻿namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Maintenance
 {
-    using FluentAssertions;
-    using SFA.DAS.AssessorService.ViewModel.Models;
-    using TechTalk.SpecFlow;
-    using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Extensions;
-    using System.Data;
-    using Dapper;
-    using System.Linq;
     using System.Collections.Generic;
-    using Newtonsoft.Json;
-    using SFA.DAS.AssessorService.Domain.Enums;
+    using System.Data;
+    using System.Linq;
     using System.Net.Http;
-    using SFA.DAS.AssessorService.Api.Types;
+    using AssessorService.Api.Types.Models;
+    using Dapper;
+    using Domain.Consts;  
+    using Extensions;
+    using FluentAssertions;
+    using Newtonsoft.Json;
+    using TechTalk.SpecFlow;
 
     [Binding]
     public sealed class WhenUpdateContact
     {
-        private RestClient _restClient;
+        private readonly RestClient _restClient;
         private readonly IDbConnection _dbconnection;
         private Organisation _organisationQueryViewModel;
         private Contact _contactQueryViewModel;
@@ -38,24 +37,24 @@
             {
                 EndPointAssessorName = "Test User",
                 EndPointAssessorOrganisationId = "9999",
-                EndPointAssessorUKPRN = 99953456,
-                PrimaryContactId = null
+                EndPointAssessorUkprn = 99953456,
+                PrimaryContact = null
             };
 
             CreateOrganisation(organisationCreateViewModel);
 
             var contactCreateViewModel = new CreateContactRequest
             {
-                ContactName = _contactArgument.ContactName + "XXX",
-                ContactEmail = _contactArgument.ContactEmail + "XXX",
-                EndPointAssessorContactId = 99953456,
-                OrganisationId = _organisationQueryViewModel.Id
+                DisplayName = _contactArgument.UserName + "XXX",
+                Email = _contactArgument.Email + "XXX",
+                EndPointAssessorOrganisationId = organisationCreateViewModel.EndPointAssessorOrganisationId,
+                Username = _contactArgument.UserName
             };
 
             CreateContact(contactCreateViewModel);
 
             HttpResponseMessage response = _restClient.HttpClient.GetAsync(
-                     $"api/v1/contacts/user/{contactCreateViewModel.ContactName}").Result;
+                     $"api/v1/contacts/user/{contactCreateViewModel.DisplayName}").Result;
 
             _restClient.Result = response.Content.ReadAsStringAsync().Result;
             _restClient.HttpResponseMessage = response;
@@ -64,9 +63,9 @@
 
             var contactUpdateViewModel = new UpdateContactRequest
             {
-                ContactName = _contactArgument.ContactName,
-                ContactEmail = _contactArgument.ContactEmail,
-                Id = _contactQueryViewModel.Id
+                DisplayName = _contactArgument.DisplayName,
+                Email = _contactArgument.Email,
+                Username = _contactArgument.UserName
             };
 
             _restClient.HttpResponseMessage = _restClient.HttpClient.PutAsJsonAsync(
@@ -75,9 +74,9 @@
 
             _contactQueryViewModel = new Contact
             {
-                ContactName = _contactArgument.ContactName,
-                ContactEmail = _contactArgument.ContactEmail,
-                Id = _contactQueryViewModel.Id
+                DisplayName = _contactArgument.DisplayName,
+                Email = _contactArgument.Email,
+                Username = _contactArgument.UserName
             };
         }
 
@@ -85,13 +84,14 @@
         public void ThenTheContactUpdateShouldHaveOccured()
         {
             var contactEntities = _dbconnection.Query<Contact>
-             ($"Select Id, ContactName, ContactEMail, ContactStatus From Contacts where Id = '{_contactQueryViewModel.Id}'").ToList();
+             ($"Select Id, UserName, DisplayName, EMail, Status From Contacts where UserName = '{_contactQueryViewModel.Username}'").ToList();
             var contact = contactEntities.First();
 
-            contact.ContactName.Should().Be(_contactQueryViewModel.ContactName);
-            contact.ContactEmail.Should().Be(_contactQueryViewModel.ContactEmail);
+            contact.DisplayName.Should().Be(_contactQueryViewModel.DisplayName);
+            contact.Email.Should().Be(_contactQueryViewModel.Email);
+            contact.Username.Should().Be(_contactQueryViewModel.Username);
 
-            contact.ContactStatus.Should().Be(ContactStatus.Live);
+            contact.Status.Should().Be(ContactStatus.Live);
         }
 
         private void CreateOrganisation(CreateOrganisationRequest organisationCreateViewModel)

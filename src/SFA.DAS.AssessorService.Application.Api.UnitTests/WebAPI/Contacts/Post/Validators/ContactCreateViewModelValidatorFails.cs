@@ -1,11 +1,13 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.UkPrnValidator
+﻿using SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Post.Validators;
+
+namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.UkPrnValidator
 {
     using FluentValidation.Results;
     using Machine.Specifications;
     using SFA.DAS.AssessorService.Application.Api.Validators;
     using FluentAssertions;
-    using SFA.DAS.AssessorService.ViewModel.Models;
     using System.Linq;
+    using AssessorService.Api.Types.Models;
 
     [Subject("AssessorService")]
     public class WhenContactCreateViewModelValidatorFails : ContactCreateViewModelValidatorTestBase
@@ -30,21 +32,27 @@
             _validationResult.IsValid.Should().BeFalse();
         };
         
-        Machine.Specifications.It errormessage_should_contain_EndPointAssessorUKPRN = () =>
+        Machine.Specifications.It errormessage_should_contain_email = () =>
         {
-            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "ContactEmail" && q.ErrorCode == "NotEmptyValidator");
+            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "Email" && q.ErrorCode == "NotEmptyValidator");
             errors.Should().NotBeNull();
         };
 
-        Machine.Specifications.It errormessage_should_contain_ContactName = () =>
+        Machine.Specifications.It errormessage_should_contain_displayname = () =>
         {
-            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "ContactName" && q.ErrorCode == "NotEmptyValidator");
+            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "DisplayName" && q.ErrorCode == "NotEmptyValidator");
             errors.Should().NotBeNull();
         };
 
         Machine.Specifications.It errormessage_should_contain_EndPointOrganisationId = () =>
         {
-            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "EndPointAssessorContactId" && q.ErrorCode == "NotEmptyValidator");
+            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "EndPointAssessorOrganisationId" && q.ErrorCode == "NotEmptyValidator");
+            errors.Should().NotBeNull();
+        };
+
+        Machine.Specifications.It errormessage_should_contain_username = () =>
+        {
+            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "Username" && q.ErrorCode == "NotEmptyValidator");
             errors.Should().NotBeNull();
         };
     }

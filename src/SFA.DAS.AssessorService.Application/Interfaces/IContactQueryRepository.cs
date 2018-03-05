@@ -1,18 +1,14 @@
-﻿namespace SFA.DAS.AssessorService.Application.Interfaces
-{
-    using SFA.DAS.AssessorService.ViewModel.Models;
-    using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Api.Types.Models;
 
+namespace SFA.DAS.AssessorService.Application.Interfaces
+{ 
     public interface IContactQueryRepository
     {
-        Task<bool> CheckContactExists(int contactId);
-        Task<bool> CheckContactExists(Guid value);
-        Task<bool> CheckContactExists(string userName, string emailAddress);
+        Task<bool> CheckContactExists(string userName);
 
-        Task<IEnumerable<Contact>> GetContacts(Guid id);
-        Task<Contact> GetContact(string userName);
-      
+        Task<IEnumerable<Contact>> GetContacts(string endPointAssessorOrganisationId);
+        Task<Contact> GetContact(string userName); 
     }
 }

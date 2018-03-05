@@ -1,14 +1,15 @@
-﻿namespace SFA.DAS.AssessorService.Data
+﻿using SFA.DAS.AssessorService.Domain.DomainModels;
+
+namespace SFA.DAS.AssessorService.Data
 {
     using System;
     using System.Linq;
     using System.Threading.Tasks;
+    using Api.Types.Models;
+    using Application.Interfaces;
     using AutoMapper;
-    using SFA.DAS.AssessorService.Application.Interfaces;
-    using SFA.DAS.AssessorService.Domain.Entities;
-    using SFA.DAS.AssessorService.Domain.Enums;
-    using SFA.DAS.AssessorService.Domain.Exceptions;
-    using SFA.DAS.AssessorService.ViewModel.Models;
+    using Domain.Consts;
+    using Domain.Exceptions;
 
     public class OrganisationRepository : IOrganisationRepository
     {
@@ -19,44 +20,51 @@
             _assessorDbContext = assessorDbContext;
         }
 
-        public async Task<AssessorService.Api.Types.Organisation> CreateNewOrganisation(OrganisationCreateDomainModel newOrganisation)
+        public async Task<Organisation> CreateNewOrganisation(OrganisationCreateDomainModel newOrganisation)
         {
             var organisation = Mapper.Map<Domain.Entities.Organisation>(newOrganisation);
 
             _assessorDbContext.Organisations.Add(organisation);
             await _assessorDbContext.SaveChangesAsync();
 
-            var organisationQueryViewModel = Mapper.Map<AssessorService.Api.Types.Organisation>(organisation);
+            var organisationQueryViewModel = Mapper.Map<Organisation>(organisation);
             return organisationQueryViewModel;
         }
 
-        public async Task<AssessorService.Api.Types.Organisation> UpdateOrganisation(OrganisationUpdateDomainModel organisationUpdateDomainModel)
+        public async Task<Organisation> UpdateOrganisation(OrganisationUpdateDomainModel organisationUpdateDomainModel)
         {
-            var organisationEntity = _assessorDbContext.Organisations.FirstOrDefault(q => q.Id == organisationUpdateDomainModel.Id);
+            var organisationEntity = _assessorDbContext.Organisations.First(q => q.EndPointAssessorOrganisationId == organisationUpdateDomainModel.EndPointAssessorOrganisationId);
+            if (string.IsNullOrEmpty(organisationUpdateDomainModel.PrimaryContact))
+                organisationEntity.PrimaryContactId = null;
+            else
+            {
+                var contact =
+                    _assessorDbContext.Contacts.First(q => q.Username == organisationUpdateDomainModel.PrimaryContact);
+                organisationEntity.PrimaryContactId = contact.Id;
+            }
 
-            organisationEntity.PrimaryContactId = organisationUpdateDomainModel.PrimaryContactId;
             organisationEntity.EndPointAssessorName = organisationUpdateDomainModel.EndPointAssessorName;
-            organisationEntity.OrganisationStatus = organisationUpdateDomainModel.OrganisationStatus;
+            organisationEntity.Status = organisationUpdateDomainModel.Status;
 
             // Workaround for Mocking
             _assessorDbContext.MarkAsModified(organisationEntity);
 
             await _assessorDbContext.SaveChangesAsync();
 
-            var organisationQueryViewModel = Mapper.Map<AssessorService.Api.Types.Organisation>(organisationEntity);
+            var organisationQueryViewModel = Mapper.Map<Organisation>(organisationEntity);
             return organisationQueryViewModel;
         }
 
-        public async Task Delete(Guid id)
+        public async Task Delete(string endPointAssessorOrganisationId)
         {
             var organisationEntity = _assessorDbContext.Organisations
-                      .FirstOrDefault(q => q.Id == id && q.OrganisationStatus != OrganisationStatus.Deleted);
+                      .FirstOrDefault(q => q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId && q.Status != OrganisationStatus.Deleted);
 
             if (organisationEntity == null)
                 throw (new NotFound());
 
             organisationEntity.DeletedAt = DateTime.Now;
-            organisationEntity.OrganisationStatus = OrganisationStatus.Deleted;
+            organisationEntity.Status = OrganisationStatus.Deleted;
 
             _assessorDbContext.MarkAsModified(organisationEntity);
 

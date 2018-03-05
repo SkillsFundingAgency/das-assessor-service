@@ -1,6 +1,5 @@
-﻿namespace SFA.DAS.AssessorService.Api.Types
+﻿namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    using SFA.DAS.AssessorService.Domain.Enums;
     using System;
 
     public class Organisation
@@ -8,10 +7,10 @@
         public Guid Id { get; set; }
 
         public string EndPointAssessorOrganisationId { get; set; }
-        public int EndPointAssessorUKPRN { get; set; }
+        public int EndPointAssessorUkprn { get; set; }
         public string EndPointAssessorName { get; set; }
-        public Guid? PrimaryContactId { get; set; }
+        public string PrimaryContact { get; set; }
 
-        public OrganisationStatus OrganisationStatus { get; set; }
+        public string Status { get; set; }
     }
 }

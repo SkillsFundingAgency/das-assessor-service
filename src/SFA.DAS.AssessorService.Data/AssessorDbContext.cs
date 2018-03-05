@@ -28,6 +28,10 @@
             modelBuilder.Entity<Organisation>()
                 .HasMany(c => c.Contacts)
                 .WithOne(e => e.Organisation);
+
+            modelBuilder.Entity<Contact>()
+                .HasAlternateKey(q => q.Username);
+
         }
 
         public override int SaveChanges()

@@ -4,9 +4,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
+
 namespace SFA.DAS.AssessorService.Application.Api.Extensions
 {
-    public static class AzureAdAuthenticationBuilderExtensions
+
+    public static class AzureAdServiceCollectionExtensions
     {
         public static AuthenticationBuilder AddAzureAdBearer(this AuthenticationBuilder builder)
             => builder.AddAzureAdBearer(_ => { });
@@ -30,7 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Extensions
 
             public void Configure(string name, JwtBearerOptions options)
             {
-                options.Audience = _azureOptions.ClientId;
+                options.Audience = _azureOptions.Audience;
                 options.Authority = $"{_azureOptions.Instance}{_azureOptions.TenantId}";
             }
 

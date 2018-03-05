@@ -2,10 +2,10 @@
 {
     using System;
     using System.Linq;
+    using Domain.Consts;
+    using Domain.Entities;
+    using Domain.JsonData;
     using Newtonsoft.Json;
-    using SFA.DAS.AssessorService.Domain.Entities;
-    using SFA.DAS.AssessorService.Domain.Enums;
-    using SFA.DAS.AssessorService.Domain.JsonData;
 
     public static class TestDataService
     {
@@ -19,8 +19,8 @@
                     Id = Guid.NewGuid(),
                     EndPointAssessorName = "EPAO 1",
                     EndPointAssessorOrganisationId = "1234",
-                    EndPointAssessorUKPRN = 10000000,
-                    OrganisationStatus = OrganisationStatus.New
+                    EndPointAssessorUkprn = 10000000,
+                    Status = OrganisationStatus.New
                 };
 
                 context.Organisations.Add(organisation);
@@ -29,10 +29,11 @@
                 var firstContact = new Contact
                 {
                     Id = Guid.NewGuid(),
-                    ContactEmail = "blah@blah.com",
-                    ContactName = "Fred Jones",
-                    EndPointAssessorContactId = 1,
-                    ContactStatus = ContactStatus.Live,
+                    Username = "fredjones",
+                    Email = "blah@blah.com",
+                    DisplayName = "Fred Jones",
+                    EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
+                    Status = ContactStatus.Live,
                     OrganisationId = organisation.Id
                 };
 
@@ -41,10 +42,11 @@
                 var secondContact = new Contact
                 {
                     Id = Guid.NewGuid(),
-                    ContactEmail = "jcoxhead@gmail.com",
-                    ContactName = "John Coxhead",
-                    EndPointAssessorContactId = 1,
-                    ContactStatus = ContactStatus.Live,
+                    Username = "jcoxhead",
+                    Email = "jcoxhead@gmail.com",
+                    DisplayName = "John Coxhead",
+                    EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
+                    Status = ContactStatus.Live,
                     OrganisationId = organisation.Id
                 };
 
@@ -64,7 +66,6 @@
                     ContactPostCode = "B60 2TY",
                     CourseOption = "French",
                     EndPointAssessorCertificateId = 2222222,
-                    EndPointAssessorContactId = firstContact.EndPointAssessorContactId,
                     EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
                     LearnerDateofBirth = DateTime.Now.AddYears(-22),
                     LearnerFamilyName = "Gouge",
@@ -72,7 +73,7 @@
                     LearnerGivenNames = "David",
 
                     OverallGrade = "PASS",
-                    ProviderUKPRN = 999999,
+                    ProviderUkprn = 999999,
                     Registration = "Registered",
                     LearningStartDate = DateTime.Now.AddDays(10),
                     StandardCode = 100,
@@ -80,7 +81,7 @@
                     StandardName = "Test",
                     StandardPublicationDate = DateTime.Now,
 
-                    ULN = 123456
+                    Uln = 123456
                 };
 
                 var firstCertificate = new Certificate
@@ -108,7 +109,6 @@
                     ContactPostCode = "B60 2TY",
                     CourseOption = "French",
                     EndPointAssessorCertificateId = 2222222,
-                    EndPointAssessorContactId = firstContact.EndPointAssessorContactId,
                     EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
                     LearnerDateofBirth = DateTime.Now.AddYears(-22),
                     LearnerFamilyName = "Coxhead",
@@ -116,14 +116,14 @@
                     LearnerGivenNames = "David",
 
                     OverallGrade = "PASS",
-                    ProviderUKPRN = 999999,
+                    ProviderUkprn = 999999,
                     Registration = "Registered",
                     LearningStartDate = DateTime.Now.AddDays(10),
                     StandardCode = 100,
                     StandardLevel = 1,
                     StandardName = "Test",
                     StandardPublicationDate = DateTime.Now,
-                    ULN = 123456
+                    Uln = 123456
                 };
 
                 var secondCertificate = new Certificate

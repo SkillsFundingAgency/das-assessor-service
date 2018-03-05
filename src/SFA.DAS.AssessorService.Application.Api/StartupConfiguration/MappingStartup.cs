@@ -1,5 +1,8 @@
-﻿using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.ViewModel.Models;
+﻿using AutoMapper;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Domain.DomainModels;
+using Contact = SFA.DAS.AssessorService.Domain.Entities.Contact;
+using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 {
@@ -7,16 +10,18 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
     {
         public static void AddMappings()
         {
-            AutoMapper.Mapper.Initialize(cfg =>
+            Mapper.Initialize(cfg =>
             {
-                cfg.CreateMap<Domain.Entities.Organisation, AssessorService.Api.Types.Organisation>();
+                cfg.CreateMap<Organisation, AssessorService.Api.Types.Models.Organisation>();
                 cfg.CreateMap<CreateOrganisationRequest, OrganisationCreateDomainModel>();
-                cfg.CreateMap<OrganisationCreateDomainModel, Domain.Entities.Organisation>();
+                cfg.CreateMap<OrganisationCreateDomainModel, Organisation>();
                 cfg.CreateMap<UpdateOrganisationRequest, OrganisationUpdateDomainModel>();
                 cfg.CreateMap<CreateContactRequest, ContactCreateDomainModel>();
-                cfg.CreateMap<ContactCreateDomainModel, Domain.Entities.Contact>();
-                cfg.CreateMap<Domain.Entities.Contact, CreateContactRequest>();
-                cfg.CreateMap<Domain.Entities.Contact, ViewModel.Models.Contact>();
+                cfg.CreateMap<ContactCreateDomainModel, Contact>();
+                cfg.CreateMap<Contact, CreateContactRequest>();
+                cfg.CreateMap<Contact, AssessorService.Api.Types.Models.Contact>();
+                cfg.CreateMap<Organisation, OrganisationQueryDomainModel>();
+                cfg.CreateMap<OrganisationQueryDomainModel, OrganisationUpdateDomainModel>();
             });
         }
     }

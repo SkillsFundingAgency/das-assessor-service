@@ -1,13 +1,11 @@
-﻿namespace SFA.DAS.AssessorService.ViewModel.Models
+﻿namespace SFA.DAS.AssessorService.Api.Types.Models
 {
     using MediatR;
-    using System;
 
     public class UpdateContactRequest : IRequest
     {
-        public Guid Id { get; set; }
-      
-        public string ContactName { get; set; }
-        public string ContactEmail { get; set; }        
+        public string Username { get; set; }
+        public string DisplayName { get; set; }
+        public string Email { get; set; }
     }
 }

@@ -1,68 +1,30 @@
-﻿using System;
-using JWT;
-using JWT.Algorithms;
-using JWT.Builder;
+﻿using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client
 {
     public class TokenService : ITokenService
     {
-        private readonly ICache _cache;
         private readonly IWebConfiguration _configuration;
-        private IDateTimeProvider _dateTimeProvider;
 
-        public TokenService(ICache cache, IWebConfiguration configuration, IDateTimeProvider dateTimeProvider)
+        public TokenService(IWebConfiguration configuration)
         {
-            _dateTimeProvider = dateTimeProvider;
-            _cache = cache;
             _configuration = configuration;
         }
 
-        public string GetJwt(string userKey)
+        public string GetToken()
         {
-            //var ukprn = _contextAccessor.HttpContext.User
-            //    .FindFirst("http://schemas.portal.com/ukprn").Value;
+            var tenantId = _configuration.ClientApiAuthentication.TenantId;// 
+            var clientId = _configuration.ClientApiAuthentication.ClientId;// 
+            var appKey = _configuration.ClientApiAuthentication.ClientSecret;// 
+            var resourceId = _configuration.ClientApiAuthentication.ResourceId;// 
 
-            var result = _cache.GetString(userKey);
+            var authority = $"https://login.microsoftonline.com/{tenantId}";
+            var clientCredential = new ClientCredential(clientId, appKey);
+            var context = new AuthenticationContext(authority, true);
+            var result = context.AcquireTokenAsync(resourceId, clientCredential).Result;
 
-            if (result == null)
-            {
-                result = GetNewToken(userKey);
-                _cache.SetString(userKey, result);
-            }
-            else
-            {
-                try
-                {
-                    new JwtBuilder()
-                        .WithSecret(_configuration.Api.TokenEncodingKey)
-                        .WithDateTimeProvider(_dateTimeProvider)
-                        .MustVerifySignature()                        
-                        .Decode(result);
-                }
-                catch (TokenExpiredException expired)
-                {
-                    result = GetNewToken(userKey);
-                    _cache.SetString(userKey, result);
-                    return result;
-                }
-            }
-            
-            return result;
-        }
-
-        private string GetNewToken(string ukprn)
-        {
-            var token = new JwtBuilder().WithAlgorithm(new HMACSHA256Algorithm())
-                .WithSecret(_configuration.Api.TokenEncodingKey)
-                .Issuer("sfa.das.assessorservice")
-                .Audience("sfa.das.assessorservice.api")
-                .ExpirationTime(_dateTimeProvider.GetNow().DateTime.AddMinutes(30))
-                .AddClaim("ukprn", ukprn)
-                .Build();
-
-            return token;
+            return result.AccessToken;
         }
     }
 }

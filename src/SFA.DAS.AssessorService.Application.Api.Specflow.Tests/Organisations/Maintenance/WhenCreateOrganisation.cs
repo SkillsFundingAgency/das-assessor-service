@@ -1,7 +1,6 @@
 ﻿namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations
 {
     using FluentAssertions;
-    using SFA.DAS.AssessorService.ViewModel.Models;
     using TechTalk.SpecFlow;
     using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Extensions;
     using System.Data;
@@ -9,8 +8,9 @@
     using System.Linq;
     using System.Collections.Generic;
     using System;
-    using SFA.DAS.AssessorService.Domain.Enums;
     using System.Net.Http;
+    using AssessorService.Api.Types.Models;
+    using Domain.Consts;
     using Newtonsoft.Json;
     using SFA.DAS.AssessorService.Api.Types;
 
@@ -38,8 +38,8 @@
             {
                 EndPointAssessorName = _organisationArguments.EndPointAssessorName,
                 EndPointAssessorOrganisationId = _organisationArguments.EndPointAssessorOrganisationId.ToString(),
-                EndPointAssessorUKPRN = Convert.ToInt32(_organisationArguments.EndPointAssessorUKPRN),
-                PrimaryContactId = null
+                EndPointAssessorUkprn = Convert.ToInt32(_organisationArguments.EndPointAssessorUKPRN),
+                PrimaryContact = null
             };
 
             _restClient.HttpResponseMessage = _restClient.HttpClient.PostAsJsonAsync(
@@ -54,7 +54,7 @@
             _organisationArguments = organisations.First();
 
             HttpResponseMessage contactResponse = _restClient.HttpClient.GetAsync(
-              "api/v1/contacts/user/John Coxhead").Result;
+              "api/v1/contacts/user/jcoxhead").Result;
             var contactResult = contactResponse.Content.ReadAsStringAsync().Result;
 
             var contact = JsonConvert.DeserializeObject<Contact>(contactResult);
@@ -63,8 +63,8 @@
             {
                 EndPointAssessorName = _organisationArguments.EndPointAssessorName,
                 EndPointAssessorOrganisationId = _organisationArguments.EndPointAssessorOrganisationId.ToString(),
-                EndPointAssessorUKPRN = Convert.ToInt32(_organisationArguments.EndPointAssessorUKPRN),
-                PrimaryContactId = contact.Id
+                EndPointAssessorUkprn = Convert.ToInt32(_organisationArguments.EndPointAssessorUKPRN),
+                PrimaryContact = contact.Username
             };
 
             _restClient.HttpResponseMessage = _restClient.HttpClient.PostAsJsonAsync(
@@ -76,13 +76,13 @@
         public void ThenTheOrganisationShouldBeCreated()
         {
             var organisationsCreated = _dbconnection.Query<Organisation>
-              ($"Select EndPointAssessorOrganisationId, EndPointAssessorUKPRN, EndPointAssessorName, OrganisationStatus From Organisations where EndPointAssessorOrganisationId = {_organisationArguments.EndPointAssessorOrganisationId}").ToList();
+              ($"Select EndPointAssessorOrganisationId, EndPointAssessorUKPRN, EndPointAssessorName, Status From Organisations where EndPointAssessorOrganisationId = {_organisationArguments.EndPointAssessorOrganisationId}").ToList();
             _organisationRetrieved = organisationsCreated.First();
 
             organisationsCreated.Count.Should().Equals(1);
 
             _organisationRetrieved.EndPointAssessorOrganisationId.Should().Equals(_organisationArguments.EndPointAssessorOrganisationId);
-            _organisationRetrieved.EndPointAssessorUKPRN.Should().Equals(_organisationArguments.EndPointAssessorUKPRN);
+            _organisationRetrieved.EndPointAssessorUkprn.Should().Equals(_organisationArguments.EndPointAssessorUKPRN);
             _organisationRetrieved.EndPointAssessorName.Should().Equals(_organisationArguments.EndPointAssessorName);
         }
 
@@ -91,11 +91,11 @@
         {
             if (p0 == "Live")
             {
-                _organisationRetrieved.OrganisationStatus.Should().Be(OrganisationStatus.Live);
+                _organisationRetrieved.Status.Should().Be(OrganisationStatus.Live);
             }
             else if (p0 == "New")
             {
-                _organisationRetrieved.OrganisationStatus.Should().Be(OrganisationStatus.New);
+                _organisationRetrieved.Status.Should().Be(OrganisationStatus.New);
             }
             else
             {
