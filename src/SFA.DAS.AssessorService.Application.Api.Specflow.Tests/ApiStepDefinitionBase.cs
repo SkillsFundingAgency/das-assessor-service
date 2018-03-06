@@ -31,16 +31,7 @@
         [Given(@"System Has access to the SFA\.DAS\.AssessmentOrgs\.Api")]
         public void GivenSystemHasAccessToTheSFA_DAS_AssessmentOrgs_Api()
         {
-            //var baseAddress = ConfigurationManager.AppSettings[RestParameters.BaseAddress];
-
-            //_restClientResult.HttpClient = new HttpClient
-            //{
-            //    BaseAddress = new Uri(baseAddress)
-            //};
-
-            //_restClientResult.HttpClient.DefaultRequestHeaders.Accept.Clear();
-            //_restClientResult.HttpClient.DefaultRequestHeaders.Accept.Add(
-            //    new MediaTypeWithQualityHeaderValue("application/json"));
+           
         }
 
         [Then(@"the response message should contain (.*)")]

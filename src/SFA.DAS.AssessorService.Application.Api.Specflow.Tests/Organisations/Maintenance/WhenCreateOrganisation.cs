@@ -8,6 +8,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Query;
 using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Extensions;
 using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.Helpers;
+using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.Maintenance.Services;
 using SFA.DAS.AssessorService.Domain.Consts;
 using TechTalk.SpecFlow;
 

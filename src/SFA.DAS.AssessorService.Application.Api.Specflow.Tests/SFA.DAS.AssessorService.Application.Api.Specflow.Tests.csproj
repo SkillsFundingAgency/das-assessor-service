@@ -106,13 +106,14 @@
     <Compile Include="Extensions\HttpClientExtensions.cs" />
     <Compile Include="Extensions\RestClientResultExtensions.cs" />
     <Compile Include="Iniltialisation.cs" />
+    <Compile Include="Organisations\Helpers\UpdateOrganisationBuilder.cs" />
     <Compile Include="Organisations\Helpers\CreateOrganisationBuilder.cs" />
     <Compile Include="Organisations\Maintenance\OrganisationMaintenance.feature.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>OrganisationMaintenance.feature</DependentUpon>
     </Compile>
-    <Compile Include="Organisations\Maintenance\OrganisationService.cs" />
+    <Compile Include="Organisations\Maintenance\Services\OrganisationService.cs" />
     <Compile Include="Organisations\Maintenance\WhenDeleteOrganisation.cs" />
     <Compile Include="Organisations\Maintenance\WhenUpdateOrganisation.cs" />
     <Compile Include="Organisations\OrganisationTransforms.cs" />
