@@ -1,9 +1,9 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests
-{
-    using FluentAssertions;
-    using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.DatabaseUtils;
-    using TechTalk.SpecFlow;
+﻿using FluentAssertions;
+using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.DatabaseUtils;
+using TechTalk.SpecFlow;
 
+namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests
+{
     [Binding]
     public class ApiStepDefinitionBase
     {
@@ -12,7 +12,7 @@
         public ApiStepDefinitionBase(RestClientResult restClientResult)
         {
             _restClientResult = restClientResult;
-        } 
+        }
 
         [BeforeFeature]
         public static void Setup()
@@ -26,7 +26,6 @@
         [Given(@"System Has access to the SFA\.DAS\.AssessmentOrgs\.Api")]
         public void GivenSystemHasAccessToTheSFA_DAS_AssessmentOrgs_Api()
         {
-           
         }
 
         [Then(@"the response message should contain (.*)")]

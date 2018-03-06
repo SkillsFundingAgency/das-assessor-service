@@ -23,7 +23,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
         private readonly OrganisationService _organisationService;
         private dynamic _contactArgument;
         private Contact _contactArguments;
-        private Organisation _organisation;
         private RestClientResult _restClient;
 
         public WhenUpdateContact(RestClientResult restClient,

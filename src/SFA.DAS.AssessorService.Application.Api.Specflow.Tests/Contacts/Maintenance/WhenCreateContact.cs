@@ -27,10 +27,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
         private Contact _contact;
         private CreateOrganisationRequest _createOrganisationRequest;
 
-        private int _ukpn;
-
-        private Organisation _organisationQueryViewModel,
-            _organisaionRetrieved;
+        private Organisation _organisaionRetrieved;
 
         private RestClientResult _restClient;
 

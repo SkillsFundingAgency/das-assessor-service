@@ -1,24 +1,20 @@
-﻿using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Query;
+﻿using System.Collections.Generic;
+using System.Linq;
+using FluentAssertions;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Extensions;
+using TechTalk.SpecFlow;
 
-namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations
+namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Query
 {
-    using FluentAssertions;
-    using Newtonsoft.Json;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Net.Http;
-    using AssessorService.Api.Types.Models;
-    using TechTalk.SpecFlow;
-
     [Binding]
     public class WhenSearchContactsByUserName
     {
         private readonly ContactQueryService _contactQueryService;
-        private RestClientResult _restClientResult;
-        private Contact _contactQueryViewModel;
 
         private dynamic _contactArgument;
+        private Contact _contactQueryViewModel;
+        private RestClientResult _restClientResult;
 
         public WhenSearchContactsByUserName(
             ContactQueryService contactQueryService,

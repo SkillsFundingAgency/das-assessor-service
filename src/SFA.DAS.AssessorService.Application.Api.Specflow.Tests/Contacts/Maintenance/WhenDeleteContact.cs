@@ -86,7 +86,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
             contact.Status.Should().Be(OrganisationStatus.Deleted);
         }
 
-
         private void CreateOrganisation(CreateOrganisationRequest organisationCreateViewModel)
         {
             _restClient.HttpResponseMessage = _restClient.HttpClient.PostAsJsonAsync(

@@ -118,7 +118,6 @@
     <Compile Include="Organisations\Maintenance\Services\OrganisationService.cs" />
     <Compile Include="Organisations\Maintenance\WhenDeleteOrganisation.cs" />
     <Compile Include="Organisations\Maintenance\WhenUpdateOrganisation.cs" />
-    <Compile Include="Organisations\OrganisationTransforms.cs" />
     <Compile Include="Organisations\Query\OrganisationQuery.feature.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
