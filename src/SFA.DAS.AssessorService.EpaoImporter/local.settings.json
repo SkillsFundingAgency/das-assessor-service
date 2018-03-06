@@ -4,7 +4,8 @@
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "AzureWebJobsDashboard": "UseDevelopmentStorage=true",
 
-    "Environment": "LOCAL",
-    "Storage": "UseDevelopmentStorage=true"
+    "EnvironmentName": "LOCAL",
+    "ConfigurationStorageConnectionString": "UseDevelopmentStorage=true",
+    "Redis": "localhost:6379"
   }
 }
