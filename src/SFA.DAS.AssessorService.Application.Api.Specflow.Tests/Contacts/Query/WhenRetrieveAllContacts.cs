@@ -1,19 +1,13 @@
-﻿using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Query;
+﻿using System.Collections.Generic;
+using System.Linq;
+using FluentAssertions;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Extensions;
 using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.Query.Services;
+using TechTalk.SpecFlow;
 
-namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations
+namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Query
 {
-    using FluentAssertions;
-    using Newtonsoft.Json;
-    using SFA.DAS.AssessorService.Api.Types;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Net.Http;
-    using AssessorService.Api.Types.Models;
-    using TechTalk.SpecFlow;
-
     [Binding]
     public class WhenRetrieveAllContacts
     {
@@ -32,7 +26,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations
             _contactQueryService = contactQueryService;
         }
 
-
         [When(@"I Request All Contacts to be retrieved BY Organisation")]
         public void WhenIRequestAllContactsToBeRetrievedBYOrganisation()
         {
@@ -44,7 +37,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations
 
             _contacts = _restClientResult.Deserialise<List<Contact>>().ToList();
         }
-
 
         [Then(@"the API returns all Contacts for an Organisation")]
         public void ThenTheAPIReturnsAllContactsForAnOrganisation()
