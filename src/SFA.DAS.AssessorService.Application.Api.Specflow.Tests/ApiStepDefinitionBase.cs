@@ -1,11 +1,6 @@
 ﻿namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests
 {
-    using System;
-    using System.Configuration;
-    using System.Net.Http;
-    using System.Net.Http.Headers;
     using FluentAssertions;
-    using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.consts;
     using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.DatabaseUtils;
     using TechTalk.SpecFlow;
 

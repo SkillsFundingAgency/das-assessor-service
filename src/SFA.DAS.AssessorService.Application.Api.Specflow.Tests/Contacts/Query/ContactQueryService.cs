@@ -17,5 +17,15 @@
 
             return _restClientResult;
         }
+
+        public RestClientResult SearchForContactByOrganisationId(string endPointAssessorOrganisationId)
+        {
+            _restClientResult.HttpResponseMessage = HttpClient.GetAsync(
+                $"api/v1/contacts/{endPointAssessorOrganisationId}").Result;
+
+            _restClientResult.JsonResult = _restClientResult.HttpResponseMessage.Content.ReadAsStringAsync().Result;
+
+            return _restClientResult;
+        }
     }
 }

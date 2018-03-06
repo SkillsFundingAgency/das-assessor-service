@@ -1,4 +1,7 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations
+﻿using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Query;
+using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Extensions;
+
+namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations
 {
     using FluentAssertions;
     using Newtonsoft.Json;
@@ -11,14 +14,18 @@
     [Binding]
     public class WhenSearchContactsByUserName
     {
-        private readonly RestClientResult _restClient;
+        private readonly ContactQueryService _contactQueryService;
+        private RestClientResult _restClientResult;
         private Contact _contactQueryViewModel;
 
         private dynamic _contactArgument;
 
-        public WhenSearchContactsByUserName(RestClientResult restClient)
+        public WhenSearchContactsByUserName(
+            ContactQueryService contactQueryService,
+            RestClientResult restClientResult)
         {
-            _restClient = restClient;
+            _contactQueryService = contactQueryService;
+            _restClientResult = restClientResult;
         }
 
         [When(@"Client Searches Contacts By Username")]
@@ -27,13 +34,9 @@
             _contactArgument = contacts.First();
             var userName = _contactArgument.username;
 
-            HttpResponseMessage response = _restClient.HttpClient.GetAsync(
-                        $"api/v1/contacts/user/{userName}").Result;
+            _restClientResult = _contactQueryService.SearchForContactByUserName(userName);
 
-            _restClient.JsonResult = response.Content.ReadAsStringAsync().Result;
-            _restClient.HttpResponseMessage = response;
-
-            _contactQueryViewModel = JsonConvert.DeserializeObject<Contact>(_restClient.JsonResult);
+            _contactQueryViewModel = _restClientResult.Deserialise<Contact>();
         }
 
         [Then(@"the API returns a valid Contact")]

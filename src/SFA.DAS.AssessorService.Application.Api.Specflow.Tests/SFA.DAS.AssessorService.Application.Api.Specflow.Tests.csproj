@@ -91,6 +91,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ContactMaintenance.feature</DependentUpon>
     </Compile>
+    <Compile Include="Contacts\Maintenance\Services\ContactService.cs" />
     <Compile Include="Contacts\Maintenance\WhenDeleteContact.cs" />
     <Compile Include="Contacts\Maintenance\WhenUpdateContact.cs" />
     <Compile Include="Contacts\Maintenance\WhenCreateContact.cs" />
@@ -106,6 +107,7 @@
     <Compile Include="Extensions\HttpClientExtensions.cs" />
     <Compile Include="Extensions\RestClientResultExtensions.cs" />
     <Compile Include="Iniltialisation.cs" />
+    <Compile Include="Organisations\Helpers\CreateContactBuilder.cs" />
     <Compile Include="Organisations\Helpers\UpdateOrganisationBuilder.cs" />
     <Compile Include="Organisations\Helpers\CreateOrganisationBuilder.cs" />
     <Compile Include="Organisations\Maintenance\OrganisationMaintenance.feature.cs">
