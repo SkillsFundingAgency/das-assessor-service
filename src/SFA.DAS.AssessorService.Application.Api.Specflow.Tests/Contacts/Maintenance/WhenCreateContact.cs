@@ -13,14 +13,14 @@
     [Binding]
     public sealed class WhenCreateContact
     {
-        private RestClient _restClient;
+        private RestClientResult _restClient;
         private readonly IDbConnection _dbconnection;
         private Organisation _organisationQueryViewModel,
             _organisaionRetrieved;
         private Contact _contactQueryViewModel;
         private dynamic _contactArguments;
 
-        public WhenCreateContact(RestClient restClient,
+        public WhenCreateContact(RestClientResult restClient,
           IDbConnection dbconnection)
         {
             _restClient = restClient;
@@ -161,17 +161,17 @@
             _restClient.HttpResponseMessage = _restClient.HttpClient.PostAsJsonAsync(
                 "api/v1/contacts", contactCreateViewModel).Result;
 
-            _restClient.Result = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
-            _contactQueryViewModel = JsonConvert.DeserializeObject<Contact>(_restClient.Result);
+            _restClient.JsonResult = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
+            _contactQueryViewModel = JsonConvert.DeserializeObject<Contact>(_restClient.JsonResult);
         }
 
         private void CreateOrganisation(CreateOrganisationRequest organisationCreateViewModel)
         {
             _restClient.HttpResponseMessage = _restClient.HttpClient.PostAsJsonAsync(
                 "api/v1/organisations", organisationCreateViewModel).Result;
-            _restClient.Result = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
+            _restClient.JsonResult = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
 
-            _organisationQueryViewModel = JsonConvert.DeserializeObject<Organisation>(_restClient.Result);
+            _organisationQueryViewModel = JsonConvert.DeserializeObject<Organisation>(_restClient.JsonResult);
         }
     }
 }

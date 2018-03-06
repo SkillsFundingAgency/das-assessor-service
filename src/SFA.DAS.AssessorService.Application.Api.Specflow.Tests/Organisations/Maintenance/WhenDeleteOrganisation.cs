@@ -15,12 +15,12 @@
     [Binding]
     public sealed class WhenDeleteOrganisation
     {
-        private readonly RestClient _restClient;
+        private readonly RestClientResult _restClient;
         private readonly IDbConnection _dbconnection;
         private Organisation _organisationRetrieved;
         private dynamic _organisationArguments;
 
-        public WhenDeleteOrganisation(RestClient restClient,
+        public WhenDeleteOrganisation(RestClientResult restClient,
             IDbConnection dbconnection)
         {
             _restClient = restClient;
@@ -42,9 +42,9 @@
 
             _restClient.HttpResponseMessage = _restClient.HttpClient.PostAsJsonAsync(
                  "api/v1/organisations", organisation).Result;
-            _restClient.Result = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
+            _restClient.JsonResult = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
 
-            var organisationCreated = JsonConvert.DeserializeObject<Organisation>(_restClient.Result);
+            var organisationCreated = JsonConvert.DeserializeObject<Organisation>(_restClient.JsonResult);
 
             _restClient.HttpResponseMessage = _restClient.HttpClient.DeleteAsJsonAsync($"api/v1/organisations?endPointAssessorOrganisationId={organisationCreated.EndPointAssessorOrganisationId}").Result;
         }
@@ -65,9 +65,9 @@
 
             _restClient.HttpResponseMessage = _restClient.HttpClient.PostAsJsonAsync(
                  "api/v1/organisations", organisation).Result;
-            _restClient.Result = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
+            _restClient.JsonResult = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
 
-            var organisationCreated = JsonConvert.DeserializeObject<Organisation>(_restClient.Result);
+            var organisationCreated = JsonConvert.DeserializeObject<Organisation>(_restClient.JsonResult);
 
             _restClient.HttpResponseMessage = _restClient.HttpClient.DeleteAsJsonAsync($"api/v1/organisations?endPointAssessorOrganisationId={organisationCreated.EndPointAssessorOrganisationId}").Result;
             _restClient.HttpResponseMessage = _restClient.HttpClient.DeleteAsJsonAsync($"api/v1/organisations?endPointAssessorOrganisationId={organisationCreated.EndPointAssessorOrganisationId}").Result;

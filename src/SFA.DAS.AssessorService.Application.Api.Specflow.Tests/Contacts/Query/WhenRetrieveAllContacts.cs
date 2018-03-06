@@ -13,11 +13,11 @@
     [Binding]
     public class WhenRetrieveAllContacts
     {
-        private readonly RestClient _restClient;
+        private readonly RestClientResult _restClient;
         private List<Organisation> _organisationQueryViewModels = new List<Organisation>();
         private List<Contact> _contactQueryViewModels = new List<Contact>();
 
-        public WhenRetrieveAllContacts(RestClient restClient)
+        public WhenRetrieveAllContacts(RestClientResult restClient)
         {
             _restClient = restClient;
         }
@@ -30,10 +30,10 @@
                "api/v1/organisations").Result;
             if (response.IsSuccessStatusCode)
             {
-                _restClient.Result = response.Content.ReadAsStringAsync().Result;
+                _restClient.JsonResult = response.Content.ReadAsStringAsync().Result;
                 _restClient.HttpResponseMessage = response;
 
-                _organisationQueryViewModels = JsonConvert.DeserializeObject<List<Organisation>>(_restClient.Result);
+                _organisationQueryViewModels = JsonConvert.DeserializeObject<List<Organisation>>(_restClient.JsonResult);
 
                 var organisation = _organisationQueryViewModels.First(q => q.EndPointAssessorUkprn == 10000000);
 
@@ -41,7 +41,7 @@
                         $"api/v1/contacts/{organisation.EndPointAssessorOrganisationId}").Result;
 
 
-                _contactQueryViewModels = JsonConvert.DeserializeObject<List<Contact>>(_restClient.Result);
+                _contactQueryViewModels = JsonConvert.DeserializeObject<List<Contact>>(_restClient.JsonResult);
 
                 _restClient.HttpResponseMessage = response;
             }

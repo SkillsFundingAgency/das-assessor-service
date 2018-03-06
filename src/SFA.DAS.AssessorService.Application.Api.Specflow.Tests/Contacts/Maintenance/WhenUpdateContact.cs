@@ -15,13 +15,13 @@
     [Binding]
     public sealed class WhenUpdateContact
     {
-        private readonly RestClient _restClient;
+        private readonly RestClientResult _restClient;
         private readonly IDbConnection _dbconnection;
         private Organisation _organisationQueryViewModel;
         private Contact _contactQueryViewModel;
         private dynamic _contactArgument;
 
-        public WhenUpdateContact(RestClient restClient,
+        public WhenUpdateContact(RestClientResult restClient,
           IDbConnection dbconnection)
         {
             _restClient = restClient;
@@ -56,10 +56,10 @@
             HttpResponseMessage response = _restClient.HttpClient.GetAsync(
                      $"api/v1/contacts/user/{contactCreateViewModel.DisplayName}").Result;
 
-            _restClient.Result = response.Content.ReadAsStringAsync().Result;
+            _restClient.JsonResult = response.Content.ReadAsStringAsync().Result;
             _restClient.HttpResponseMessage = response;
 
-            _contactQueryViewModel = JsonConvert.DeserializeObject<Contact>(_restClient.Result);
+            _contactQueryViewModel = JsonConvert.DeserializeObject<Contact>(_restClient.JsonResult);
 
             var contactUpdateViewModel = new UpdateContactRequest
             {
@@ -70,7 +70,7 @@
 
             _restClient.HttpResponseMessage = _restClient.HttpClient.PutAsJsonAsync(
             "api/v1/contacts", contactUpdateViewModel).Result;
-            _restClient.Result = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
+            _restClient.JsonResult = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
 
             _contactQueryViewModel = new Contact
             {
@@ -98,9 +98,9 @@
         {
             _restClient.HttpResponseMessage = _restClient.HttpClient.PostAsJsonAsync(
                  "api/v1/organisations", organisationCreateViewModel).Result;
-            _restClient.Result = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
+            _restClient.JsonResult = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
 
-            _organisationQueryViewModel = JsonConvert.DeserializeObject<Organisation>(_restClient.Result);
+            _organisationQueryViewModel = JsonConvert.DeserializeObject<Organisation>(_restClient.JsonResult);
         }
 
         private void CreateContact(CreateContactRequest contactCreateViewModel)
@@ -108,8 +108,8 @@
             _restClient.HttpResponseMessage = _restClient.HttpClient.PostAsJsonAsync(
                "api/v1/contacts", contactCreateViewModel).Result;
 
-            _restClient.Result = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
-            _contactQueryViewModel = JsonConvert.DeserializeObject<Contact>(_restClient.Result);
+            _restClient.JsonResult = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
+            _contactQueryViewModel = JsonConvert.DeserializeObject<Contact>(_restClient.JsonResult);
         }
     }
 }

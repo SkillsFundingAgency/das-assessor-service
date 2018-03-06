@@ -15,14 +15,14 @@
     [Binding]
     public sealed class WhenDeleteContact
     {
-        private RestClient _restClient;
+        private RestClientResult _restClient;
         private readonly IDbConnection _dbconnection;
         private Organisation _organisationRetrieved;
         private dynamic _contactArguments;
 
         private List<Organisation> _organisations = new List<Organisation>();
 
-        public WhenDeleteContact(RestClient restClient,
+        public WhenDeleteContact(RestClientResult restClient,
             IDbConnection dbconnection)
         {
             _restClient = restClient;
@@ -37,10 +37,10 @@
             HttpResponseMessage response = _restClient.HttpClient.GetAsync(
                 "api/v1/organisations").Result;
 
-            _restClient.Result = response.Content.ReadAsStringAsync().Result;
+            _restClient.JsonResult = response.Content.ReadAsStringAsync().Result;
             _restClient.HttpResponseMessage = response;
 
-            _organisations = JsonConvert.DeserializeObject<List<Organisation>>(_restClient.Result);
+            _organisations = JsonConvert.DeserializeObject<List<Organisation>>(_restClient.JsonResult);
 
             var createContactRequest = new CreateContactRequest
             {
@@ -52,7 +52,7 @@
 
             _restClient.HttpResponseMessage = _restClient.HttpClient.PostAsJsonAsync(
                  "api/v1/contacts", createContactRequest).Result;
-            _restClient.Result = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
+            _restClient.JsonResult = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
 
             _restClient.HttpResponseMessage = _restClient.HttpClient.DeleteAsJsonAsync($"api/v1/contacts?username={createContactRequest.Username}").Result;
         }
@@ -65,10 +65,10 @@
             HttpResponseMessage response = _restClient.HttpClient.GetAsync(
                 "api/v1/organisations").Result;
 
-            _restClient.Result = response.Content.ReadAsStringAsync().Result;
+            _restClient.JsonResult = response.Content.ReadAsStringAsync().Result;
             _restClient.HttpResponseMessage = response;
 
-            _organisations = JsonConvert.DeserializeObject<List<Organisation>>(_restClient.Result);
+            _organisations = JsonConvert.DeserializeObject<List<Organisation>>(_restClient.JsonResult);
 
             var createContactRequest = new CreateContactRequest
             {
@@ -80,7 +80,7 @@
 
             _restClient.HttpResponseMessage = _restClient.HttpClient.PostAsJsonAsync(
                 "api/v1/contacts", createContactRequest).Result;
-            _restClient.Result = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
+            _restClient.JsonResult = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
 
             _restClient.HttpResponseMessage = _restClient.HttpClient.DeleteAsJsonAsync($"api/v1/contacts?username={createContactRequest.Username}").Result;
             _restClient.HttpResponseMessage = _restClient.HttpClient.DeleteAsJsonAsync($"api/v1/contacts?username={createContactRequest.Username}").Result;
@@ -133,9 +133,9 @@
         {
             _restClient.HttpResponseMessage = _restClient.HttpClient.PostAsJsonAsync(
                 "api/v1/organisations", organisationCreateViewModel).Result;
-            _restClient.Result = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
+            _restClient.JsonResult = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
 
-            _organisationRetrieved = JsonConvert.DeserializeObject<Organisation>(_restClient.Result);
+            _organisationRetrieved = JsonConvert.DeserializeObject<Organisation>(_restClient.JsonResult);
         }
     }
 }

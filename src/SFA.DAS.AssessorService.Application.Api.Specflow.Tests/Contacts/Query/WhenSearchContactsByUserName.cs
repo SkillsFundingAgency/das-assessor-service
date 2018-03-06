@@ -11,12 +11,12 @@
     [Binding]
     public class WhenSearchContactsByUserName
     {
-        private readonly RestClient _restClient;
+        private readonly RestClientResult _restClient;
         private Contact _contactQueryViewModel;
 
         private dynamic _contactArgument;
 
-        public WhenSearchContactsByUserName(RestClient restClient)
+        public WhenSearchContactsByUserName(RestClientResult restClient)
         {
             _restClient = restClient;
         }
@@ -30,10 +30,10 @@
             HttpResponseMessage response = _restClient.HttpClient.GetAsync(
                         $"api/v1/contacts/user/{userName}").Result;
 
-            _restClient.Result = response.Content.ReadAsStringAsync().Result;
+            _restClient.JsonResult = response.Content.ReadAsStringAsync().Result;
             _restClient.HttpResponseMessage = response;
 
-            _contactQueryViewModel = JsonConvert.DeserializeObject<Contact>(_restClient.Result);
+            _contactQueryViewModel = JsonConvert.DeserializeObject<Contact>(_restClient.JsonResult);
         }
 
         [Then(@"the API returns a valid Contact")]

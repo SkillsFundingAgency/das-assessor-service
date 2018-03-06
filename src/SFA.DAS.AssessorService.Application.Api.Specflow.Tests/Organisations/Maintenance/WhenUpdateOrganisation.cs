@@ -17,12 +17,12 @@
     [Binding]
     public sealed class WhenUpdateOrganisation
     {
-        private RestClient _restClient;
+        private RestClientResult _restClient;
         private readonly IDbConnection _dbconnection;
         private Organisation _organisationRetrieved;
         private dynamic _organisationArguments;
 
-        public WhenUpdateOrganisation(RestClient restClient,
+        public WhenUpdateOrganisation(RestClientResult restClient,
             IDbConnection dbconnection)
         {
             _restClient = restClient;
@@ -48,7 +48,7 @@
 
             _restClient.HttpResponseMessage = _restClient.HttpClient.PutAsJsonAsync(
                  "api/v1/organisations", organisation).Result;
-            _restClient.Result = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
+            _restClient.JsonResult = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
         }
 
         [Then(@"the Update should have occured")]
@@ -76,7 +76,7 @@
 
             _restClient.HttpResponseMessage = _restClient.HttpClient.PutAsJsonAsync(
                  "api/v1/organisations", organisation).Result;
-            _restClient.Result = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
+            _restClient.JsonResult = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
         }
 
         [When(@"I Update an Organisation With Invalid Primary Contact")]
@@ -98,7 +98,7 @@
 
             _restClient.HttpResponseMessage = _restClient.HttpClient.PutAsJsonAsync(
                  "api/v1/organisations", organisation).Result;
-            _restClient.Result = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
+            _restClient.JsonResult = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
         }
 
 
@@ -127,7 +127,7 @@
 
             _restClient.HttpResponseMessage = _restClient.HttpClient.PutAsJsonAsync(
                  "api/v1/organisations", organisation).Result;
-            _restClient.Result = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
+            _restClient.JsonResult = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
         }
 
         [Then(@"the Organisation Status should be persisted as Live")]
