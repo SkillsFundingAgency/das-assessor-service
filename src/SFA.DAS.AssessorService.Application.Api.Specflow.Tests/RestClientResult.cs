@@ -2,10 +2,10 @@
 {
     using System.Net.Http;
 
-    public class RestClient
+    public class RestClientResult
     {
         public HttpClient HttpClient { get; set; }
         public HttpResponseMessage HttpResponseMessage { get; set; }
-        public string Result { get; set; }
+        public string JsonResult { get; set; }
     }
 }

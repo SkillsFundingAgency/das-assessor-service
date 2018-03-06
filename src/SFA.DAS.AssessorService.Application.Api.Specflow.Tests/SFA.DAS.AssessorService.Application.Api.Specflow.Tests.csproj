@@ -82,6 +82,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseRestServce.cs" />
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="consts\PersistenceNames.cs" />
     <Compile Include="consts\RestParameters.cs" />
@@ -90,9 +91,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ContactMaintenance.feature</DependentUpon>
     </Compile>
+    <Compile Include="Contacts\Maintenance\Services\ContactService.cs" />
     <Compile Include="Contacts\Maintenance\WhenDeleteContact.cs" />
     <Compile Include="Contacts\Maintenance\WhenUpdateContact.cs" />
     <Compile Include="Contacts\Maintenance\WhenCreateContact.cs" />
+    <Compile Include="Contacts\Query\ContactQueryService.cs" />
     <Compile Include="Contacts\Query\ContactsQuery.feature.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -102,12 +105,17 @@
     <Compile Include="Contacts\Query\WhenRetrieveAllContacts.cs" />
     <Compile Include="DatabaseUtils\DatabaseUtilities.cs" />
     <Compile Include="Extensions\HttpClientExtensions.cs" />
+    <Compile Include="Extensions\RestClientResultExtensions.cs" />
     <Compile Include="Iniltialisation.cs" />
+    <Compile Include="Organisations\Helpers\CreateContactBuilder.cs" />
+    <Compile Include="Organisations\Helpers\UpdateOrganisationBuilder.cs" />
+    <Compile Include="Organisations\Helpers\CreateOrganisationBuilder.cs" />
     <Compile Include="Organisations\Maintenance\OrganisationMaintenance.feature.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>OrganisationMaintenance.feature</DependentUpon>
     </Compile>
+    <Compile Include="Organisations\Maintenance\Services\OrganisationService.cs" />
     <Compile Include="Organisations\Maintenance\WhenDeleteOrganisation.cs" />
     <Compile Include="Organisations\Maintenance\WhenUpdateOrganisation.cs" />
     <Compile Include="Organisations\OrganisationTransforms.cs" />
@@ -117,13 +125,13 @@
       <DependentUpon>OrganisationQuery.feature</DependentUpon>
     </Compile>
     <Compile Include="ApiStepDefinitionBase.cs" />
-    <Compile Include="Organisations\Query\OrganisationQueryDefinition.cs" />
+    <Compile Include="Organisations\Query\Services\OrganisationQueryService.cs" />
     <Compile Include="SpecflowIocRegister.cs" />
     <Compile Include="Organisations\Maintenance\WhenCreateOrganisation.cs" />
     <Compile Include="Organisations\Query\WhenSearchOrganisationByUkprn.cs" />
     <Compile Include="Organisations\Query\WhenRetrieveAllOrganisations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RestClient.cs" />
+    <Compile Include="RestClientResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
