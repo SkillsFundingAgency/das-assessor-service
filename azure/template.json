@@ -28,6 +28,9 @@
         },
         "configurationStorageConnectionString": {
             "type": "securestring"
+        },
+        "loggingRedisConnectionString": {
+            "type": "securestring"
         }
     },
     "variables": {
@@ -60,6 +63,9 @@
                     },
                     "configEnvironmentName": {
                         "value": "[parameters('environmentName')]"
+                    },
+                    "loggingRedisConnectionString": {
+                        "value": "[parameters('loggingRedisConnectionString')]"
                     }
                 }
             },
@@ -108,8 +114,11 @@
                     "configEnvironmentName": {
                         "value": "[parameters('environmentName')]"
                     },
-                    "storageAccountName": {
-                        "value": "[parameters('storageAccountName')]"
+                    "storageConnectionString": {
+                        "value": "[reference('StorageAccount').outputs.StorageConnectionString.value]"
+                    },
+                    "loggingRedisConnectionString": {
+                        "value": "[parameters('loggingRedisConnectionString')]"
                     }
                 }
             },
