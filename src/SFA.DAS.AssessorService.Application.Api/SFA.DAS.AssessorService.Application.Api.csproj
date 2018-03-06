@@ -41,15 +41,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Resources\Validators\UpdateContactRequestValidator.Designer.cs">
+    <Compile Update="Resources\Validators\ContactUpdateViewModelValidator.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>UpdateContactRequestValidator.resx</DependentUpon>
-    </Compile>
-    <Compile Update="Resources\Validators\UpdateOrganisationRequestValidator.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>UpdateOrganisationRequestValidator.resx</DependentUpon>
+      <DependentUpon>ContactUpdateViewModelValidator.resx</DependentUpon>
     </Compile>
   </ItemGroup>
 
@@ -57,10 +52,10 @@
     <EmbeddedResource Update="Resources\Controllers\ContactQueryController.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Resources\Orchestrators\ContractOrchestrator.en.resx">
+    <EmbeddedResource Update="Resources\Controllers\ContractController.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Resources\Orchestrators\OrganisationOrchestrator.en.resx">
+    <EmbeddedResource Update="Resources\Controllers\OrganisationController.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Controllers\OrganisationQueryController.en.resx">
@@ -69,18 +64,17 @@
     <EmbeddedResource Update="Resources\Orchestrators\GetOrganisationsOrchestrator.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Resources\Validators\UpdateContactRequestValidator.resx">
+    <EmbeddedResource Update="Resources\Validators\ContactUpdateViewModelValidator.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>UpdateContactRequestValidator.Designer.cs</LastGenOutput>
+      <LastGenOutput>ContactUpdateViewModelValidator.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Update="Resources\Validators\CreateContactRequestValidator.en.resx">
+    <EmbeddedResource Update="Resources\Validators\ContactCreateViewModelValidator.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Resources\Validators\UpdateOrganisationRequestValidator.resx">
+    <EmbeddedResource Update="Resources\Validators\OrganisationUpdateViewModelValidator.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>UpdateOrganisationRequestValidator.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Update="Resources\Validators\CreateOrganisationRequestValidator.en.resx">
+    <EmbeddedResource Update="Resources\Validators\OrganisationCreateViewModelValidator.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Validators\UKPrnValidator.en.resx">

@@ -14,7 +14,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Main
     public class WhenDeleteContactPersistsData
     {
         private Mock<AssessorDbContext> _mockDbContext = new Mock<AssessorDbContext>();
-        private static ContactRepository _contactRepository;         
 
         [SetUp]
         public async Task Arrange()
@@ -37,9 +36,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Main
             _mockDbContext.Setup(q => q.SaveChangesAsync(new CancellationToken()))
                 .Returns(Task.FromResult((Moq.It.IsAny<int>())));
 
-            _contactRepository = new ContactRepository(_mockDbContext.Object);
+            var contactRepository = new ContactRepository(_mockDbContext.Object);
 
-            await _contactRepository.Delete("1234");
+            await contactRepository.Delete("1234");
         }
 
         [Test]

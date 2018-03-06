@@ -17,7 +17,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Main
 {  
     public class WhenDeletePersistsDataAndIsNotFound
     {
-        private ContactRepository _contactRepository;       
         private Exception _exception;
 
         [SetUp]
@@ -37,11 +36,11 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Main
             var mockSet = contacts.CreateMockSet(contacts);
             var mockDbContext = CreateMockDbContext(mockSet);
 
-            _contactRepository = new ContactRepository(mockDbContext.Object);
+            var contactRepository = new ContactRepository(mockDbContext.Object);
 
             try
             {
-               await _contactRepository.Delete("testuser");
+               await contactRepository.Delete("testuser");
             }
             catch (Exception exception)
             {
