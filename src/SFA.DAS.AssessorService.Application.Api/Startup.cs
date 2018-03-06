@@ -135,8 +135,6 @@ namespace SFA.DAS.AssessorService.Application.Api
                 var option = new DbContextOptionsBuilder<AssessorDbContext>();
                 option.UseSqlServer(Configuration.SqlConnectionString);
 
-                _logger.LogInformation($"Connection String in use: {Configuration.SqlConnectionString}");
-
                 config.For<AssessorDbContext>().Use(c => new AssessorDbContext(option.Options, _env.IsDevelopment()));
 
                 config.Populate(services);
