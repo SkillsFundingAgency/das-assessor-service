@@ -1,4 +1,5 @@
-﻿using SFA.DAS.AssessorService.Api.Types.Models;
+﻿using System;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Extensions;
 
 namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.Maintenance
@@ -20,6 +21,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.M
 
             _restClientResult.HttpResponseMessage = responseMessage;
             _restClientResult.JsonResult = jsonResult;
+
+            return _restClientResult;
+        }
+
+        public RestClientResult DeleteOrganisation(string id)
+        {
+            _restClientResult.HttpResponseMessage = HttpClient.DeleteAsJsonAsync($"api/v1/organisations?endPointAssessorOrganisationId={id}").Result;
+            _restClientResult.JsonResult = String.Empty;
 
             return _restClientResult;
         }

@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.Maintenance
+﻿using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.Helpers;
+
+namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.Maintenance
 {
     using System;
     using System.Collections.Generic;
@@ -15,69 +17,57 @@
     [Binding]
     public sealed class WhenDeleteOrganisation
     {
-        private readonly RestClientResult _restClient;
+        private RestClientResult _restClientResult;
+        private readonly CreateOrganisationBuilder _createOrganisationBuilder;
+        private readonly OrganisationService _organisationService;
         private readonly IDbConnection _dbconnection;
         private Organisation _organisationRetrieved;
-        private dynamic _organisationArguments;
+        private dynamic _organisationArgument;
 
-        public WhenDeleteOrganisation(RestClientResult restClient,
+        public WhenDeleteOrganisation(RestClientResult restClientResult,
+            CreateOrganisationBuilder createOrganisationBuilder,
+            OrganisationService organisationService,
             IDbConnection dbconnection)
         {
-            _restClient = restClient;
+            _restClientResult = restClientResult;
+            _createOrganisationBuilder = createOrganisationBuilder;
+            _organisationService = organisationService;
             _dbconnection = dbconnection;
         }
 
         [When(@"I Delete an Organisation")]
         public void WhenIDeleteAnOrganisation(IEnumerable<dynamic> organisations)
         {
-            _organisationArguments = organisations.First();
+            _organisationArgument = organisations.First();
 
-            var organisation = new CreateOrganisationRequest
-            {
-                EndPointAssessorName = _organisationArguments.EndPointAssessorName,
-                EndPointAssessorOrganisationId = _organisationArguments.EndPointAssessorOrganisationId.ToString(),
-                EndPointAssessorUkprn = Convert.ToInt32(_organisationArguments.EndPointAssessorUKPRN),
-                PrimaryContact = null
-            };
+            var organisation = _createOrganisationBuilder.Build(_organisationArgument);
+            _restClientResult = _organisationService.PostOrganisation(organisation);
 
-            _restClient.HttpResponseMessage = _restClient.HttpClient.PostAsJsonAsync(
-                 "api/v1/organisations", organisation).Result;
-            _restClient.JsonResult = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
+            var organisationCreated = _restClientResult.Deserialise<Organisation>();
 
-            var organisationCreated = JsonConvert.DeserializeObject<Organisation>(_restClient.JsonResult);
-
-            _restClient.HttpResponseMessage = _restClient.HttpClient.DeleteAsJsonAsync($"api/v1/organisations?endPointAssessorOrganisationId={organisationCreated.EndPointAssessorOrganisationId}").Result;
+            _restClientResult = _organisationService.DeleteOrganisation(organisationCreated.EndPointAssessorOrganisationId);
         }
-
 
         [When(@"I Delete an Organisation Twice")]
         public void WhenIDeleteAnOrganisationTwice(IEnumerable<dynamic> organisations)
         {
-            _organisationArguments = organisations.First();
+            _organisationArgument = organisations.First();
 
-            var organisation = new CreateOrganisationRequest
-            {
-                EndPointAssessorName = _organisationArguments.EndPointAssessorName,
-                EndPointAssessorOrganisationId = _organisationArguments.EndPointAssessorOrganisationId.ToString(),
-                EndPointAssessorUkprn = Convert.ToInt32(_organisationArguments.EndPointAssessorUKPRN),
-                PrimaryContact = null
-            };
 
-            _restClient.HttpResponseMessage = _restClient.HttpClient.PostAsJsonAsync(
-                 "api/v1/organisations", organisation).Result;
-            _restClient.JsonResult = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
+            var organisation = _createOrganisationBuilder.Build(_organisationArgument);
+            _restClientResult = _organisationService.PostOrganisation(organisation);
 
-            var organisationCreated = JsonConvert.DeserializeObject<Organisation>(_restClient.JsonResult);
+            var organisationCreated = _restClientResult.Deserialise<Organisation>();
 
-            _restClient.HttpResponseMessage = _restClient.HttpClient.DeleteAsJsonAsync($"api/v1/organisations?endPointAssessorOrganisationId={organisationCreated.EndPointAssessorOrganisationId}").Result;
-            _restClient.HttpResponseMessage = _restClient.HttpClient.DeleteAsJsonAsync($"api/v1/organisations?endPointAssessorOrganisationId={organisationCreated.EndPointAssessorOrganisationId}").Result;
+            _restClientResult = _organisationService.DeleteOrganisation(organisationCreated.EndPointAssessorOrganisationId);
+            _restClientResult = _organisationService.DeleteOrganisation(organisationCreated.EndPointAssessorOrganisationId);
         }
 
         [Then(@"the Organisation should be deleted")]
         public void ThenTheOrganisationShouldBeDeleted()
         {
             var organisationsCreated = _dbconnection.Query<Organisation>
-            ($"Select EndPointAssessorOrganisationId, EndPointAssessorUKPRN, EndPointAssessorName, Status From Organisations where EndPointAssessorOrganisationId = {_organisationArguments.EndPointAssessorOrganisationId}").ToList();
+            ($"Select EndPointAssessorOrganisationId, EndPointAssessorUKPRN, EndPointAssessorName, Status From Organisations where EndPointAssessorOrganisationId = {_organisationArgument.EndPointAssessorOrganisationId}").ToList();
             _organisationRetrieved = organisationsCreated.First();
 
             _organisationRetrieved.Status.Should().Be(OrganisationStatus.Deleted);
