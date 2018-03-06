@@ -31,8 +31,6 @@ namespace SFA.DAS.AssessorService.Web
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            _logger.LogError($"dasass_config: {_config["EnvironmentName"]}, {_config["ConfigurationStorageConnectionString"]}");
-            
             Configuration = ConfigurationService.GetConfig(_config["EnvironmentName"], _config["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
             services.AddAndConfigureAuthentication(Configuration);
             services.AddMvc().AddControllersAsServices().AddSessionStateTempDataProvider();
