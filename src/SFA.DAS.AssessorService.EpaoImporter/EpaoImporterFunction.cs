@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
     public static class EpaoImporterFunction
     {
         [FunctionName("EpaoImporterFunction")]
-        public static void Run([TimerTrigger("0 */5 * * * *")]TimerInfo myTimer, TraceWriter log)
+        public static void Run([TimerTrigger("0 */20 * * * *")]TimerInfo myTimer, TraceWriter log)
         {
             var webConfig = GetConfig();
 
@@ -63,12 +63,12 @@ namespace SFA.DAS.AssessorService.EpaoImporter
             //        Environment.GetEnvironmentVariable("Storage", EnvironmentVariableTarget.Process), Version, ServiceName).Result;
 
             var conn = CloudStorageAccount.Parse(
-                Environment.GetEnvironmentVariable("Storage", EnvironmentVariableTarget.Process));
+                Environment.GetEnvironmentVariable("ConfigurationStorageConnectionString", EnvironmentVariableTarget.Process));
             var tableClient = conn.CreateCloudTableClient();
             var table = tableClient.GetTableReference("Configuration");
 
             var operation = TableOperation.Retrieve(
-                Environment.GetEnvironmentVariable("Environment", EnvironmentVariableTarget.Process),
+                Environment.GetEnvironmentVariable("EnvironmentName", EnvironmentVariableTarget.Process),
                 $"{ServiceName}_{Version}");
             var result = table.ExecuteAsync(operation).Result;
 
