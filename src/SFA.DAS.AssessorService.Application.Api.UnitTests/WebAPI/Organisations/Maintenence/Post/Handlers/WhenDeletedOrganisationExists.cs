@@ -24,22 +24,23 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
             _orgRepos = new Mock<IOrganisationRepository>();
             
             var orgQueryRepos = new Mock<IOrganisationQueryRepository>();
-            orgQueryRepos.Setup(r => r.GetByUkPrn(It.IsAny<int>())).ReturnsAsync(new Organisation()
+            orgQueryRepos.Setup(r => r.GetByUkPrn(It.IsAny<int>())).ReturnsAsync(new OrganisationResponse()
             {
                 Status = OrganisationStatus.Deleted,
                 EndPointAssessorOrganisationId = "12345"
             });
 
-            _orgRepos.Setup(r => r.UpdateOrganisation(It.IsAny<OrganisationUpdateDomainModel>()))
-                .ReturnsAsync(new Organisation());
+            _orgRepos.Setup(r => r.UpdateOrganisation(It.IsAny<UpdateOrganisationDomainModel>()))
+                .ReturnsAsync(new OrganisationResponse());
 
-            _handler = new CreateOrganisationHandler(_orgRepos.Object, orgQueryRepos.Object);
+            _handler = new CreateOrganisationHandler(_orgRepos.Object, 
+                orgQueryRepos.Object);
         }
 
         [Test]
         public void ThenNewOrgIsNotCreated()
         {
-            _orgRepos.Setup(r => r.CreateNewOrganisation(It.IsAny<OrganisationCreateDomainModel>()))
+            _orgRepos.Setup(r => r.CreateNewOrganisation(It.IsAny<CreateOrganisationDomainModel>()))
                 .Throws(new Exception("Should not be called"));
             _handler.Handle(new CreateOrganisationRequest(){EndPointAssessorOrganisationId = "12345"}, new CancellationToken()).Wait();
         }
@@ -50,7 +51,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
             _handler.Handle(new CreateOrganisationRequest(){ EndPointAssessorOrganisationId = "12345" }, new CancellationToken()).Wait();
             _orgRepos.Verify(r =>
                 r.UpdateOrganisation(
-                    It.Is<OrganisationUpdateDomainModel>(m => m.EndPointAssessorOrganisationId == "12345")));
+                    It.Is<UpdateOrganisationDomainModel>(m => m.EndPointAssessorOrganisationId == "12345")));
         }
     }
 }

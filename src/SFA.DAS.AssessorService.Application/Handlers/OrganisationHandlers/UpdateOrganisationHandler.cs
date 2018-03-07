@@ -10,7 +10,7 @@ using SFA.DAS.AssessorService.Domain.DomainModels;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers
 {
-    public class UpdateOrganisationHandler : IRequestHandler<UpdateOrganisationRequest, Organisation>
+    public class UpdateOrganisationHandler : IRequestHandler<UpdateOrganisationRequest, OrganisationResponse>
     {
         private readonly IOrganisationRepository _organisationRepository;
 
@@ -19,9 +19,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers
             _organisationRepository = organisationRepository;
         }
 
-        public async Task<Organisation> Handle(UpdateOrganisationRequest updateOrganisationRequest, CancellationToken cancellationToken)
+        public async Task<OrganisationResponse> Handle(UpdateOrganisationRequest updateOrganisationRequest, CancellationToken cancellationToken)
         {
-            var organisationUpdateDomainModel = Mapper.Map<OrganisationUpdateDomainModel>(updateOrganisationRequest);
+            var organisationUpdateDomainModel = Mapper.Map<UpdateOrganisationDomainModel>(updateOrganisationRequest);
             organisationUpdateDomainModel.Status = string.IsNullOrEmpty(updateOrganisationRequest.PrimaryContact) ? OrganisationStatus.New : OrganisationStatus.Live;
 
             var organisationQueryViewModel = await _organisationRepository.UpdateOrganisation(organisationUpdateDomainModel);

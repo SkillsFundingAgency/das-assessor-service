@@ -5,8 +5,8 @@
 	[EndPointAssessorName] [nvarchar](100) NOT NULL,
 	[EndPointAssessorOrganisationId] [nvarchar](12) NOT NULL,
 	[EndPointAssessorUkprn] [int] NOT NULL,
-	[PrimaryContact] [uniqueidentifier] NULL,
-	[Status] [nvarchar](max) NOT NULL,
+	[PrimaryContact] [nvarchar](30) NOT NULL,
+	[Status] [nvarchar](10) NOT NULL,
 	[UpdatedAt] [datetime2](7) NULL,
  CONSTRAINT [PK_Organisations] PRIMARY KEY CLUSTERED 
 (
@@ -17,3 +17,4 @@
 	[EndPointAssessorOrganisationId] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO

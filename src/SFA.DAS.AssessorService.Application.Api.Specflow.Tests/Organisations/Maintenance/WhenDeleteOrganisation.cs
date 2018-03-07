@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.M
         private readonly IDbConnection _dbconnection;
         private readonly OrganisationService _organisationService;
         private dynamic _organisationArgument;
-        private Organisation _organisationRetrieved;
+        private OrganisationResponse _organisationResponse;
         private RestClientResult _restClientResult;
 
         public WhenDeleteOrganisation(RestClientResult restClientResult,
@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.M
             var organisation = _createOrganisationBuilder.Build(_organisationArgument);
             _restClientResult = _organisationService.PostOrganisation(organisation);
 
-            var organisationCreated = _restClientResult.Deserialise<Organisation>();
+            var organisationCreated = _restClientResult.Deserialise<OrganisationResponse>();
 
             _restClientResult =
                 _organisationService.DeleteOrganisation(organisationCreated.EndPointAssessorOrganisationId);
@@ -56,7 +56,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.M
             var organisation = _createOrganisationBuilder.Build(_organisationArgument);
             _restClientResult = _organisationService.PostOrganisation(organisation);
 
-            var organisationCreated = _restClientResult.Deserialise<Organisation>();
+            var organisationCreated = _restClientResult.Deserialise<OrganisationResponse>();
 
             _restClientResult =
                 _organisationService.DeleteOrganisation(organisationCreated.EndPointAssessorOrganisationId);
@@ -67,12 +67,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.M
         [Then(@"the Organisation should be deleted")]
         public void ThenTheOrganisationShouldBeDeleted()
         {
-            var organisationsCreated = _dbconnection.Query<Organisation>
+            var organisationsCreated = _dbconnection.Query<OrganisationResponse>
                     ($"Select EndPointAssessorOrganisationId, EndPointAssessorUKPRN, EndPointAssessorName, Status From Organisations where EndPointAssessorOrganisationId = {_organisationArgument.EndPointAssessorOrganisationId}")
                 .ToList();
-            _organisationRetrieved = organisationsCreated.First();
+            _organisationResponse = organisationsCreated.First();
 
-            _organisationRetrieved.Status.Should().Be(OrganisationStatus.Deleted);
+            _organisationResponse.Status.Should().Be(OrganisationStatus.Deleted);
         }
     }
 }

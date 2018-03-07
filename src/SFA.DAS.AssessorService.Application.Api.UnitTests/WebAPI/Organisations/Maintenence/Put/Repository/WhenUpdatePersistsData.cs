@@ -15,18 +15,19 @@ using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations.Maintenence.Put.Repository
 {
-    public class WhenUpdatePersistsData
+    public class WhenUpdateOrganisationPersistsData
     {                
-        private static AssessorService.Api.Types.Models.Organisation _result;
+        private static AssessorService.Api.Types.Models.OrganisationResponse _result;
+        private string _primaryContact = "TestUser";
 
         [SetUp]
         public void Arrange()
         {
             MappingBootstrapper.Initialize();
 
-            var organisationUpdateDomainModel = Builder<OrganisationUpdateDomainModel>
+            var organisationUpdateDomainModel = Builder<UpdateOrganisationDomainModel>
                 .CreateNew()
-                .With(q => q.PrimaryContact = "TestUser")
+                .With(q => q.PrimaryContact = _primaryContact)
                 .Build();
                                 
 
@@ -43,7 +44,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
         [Test]
         public void ItShouldReturnResult()
         {
-            var result = (_result as AssessorService.Api.Types.Models.Organisation);
+            var result = (_result as AssessorService.Api.Types.Models.OrganisationResponse);
             result.Should().NotBeNull();
         }
 
@@ -53,7 +54,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
             {
                 Builder<AssessorService.Domain.Entities.Contact>.CreateNew()
                     .With(q => q.Id = primaryContactId)
-                    .With(q => q.Username = "TestUser")
+                    .With(q => q.Username = _primaryContact)
                     .Build()
             }.AsQueryable();
 
@@ -66,7 +67,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
             var organisations = new List<AssessorService.Domain.Entities.Organisation>
             {
                 Builder<AssessorService.Domain.Entities.Organisation>.CreateNew()
-                    .With(q => q.PrimaryContact = primaryContactId)
+                    .With(q => q.PrimaryContact = _primaryContact)
                     .Build()
             }.AsQueryable();
 

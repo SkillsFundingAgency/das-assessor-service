@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
@@ -8,7 +7,6 @@ using SFA.DAS.AssessorService.Application.Api.Consts;
 using SFA.DAS.AssessorService.Application.Api.Validators;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.Exceptions;
 
 namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
 {
@@ -30,7 +28,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
             _logger = logger;
         }
 
-        public async Task<Organisation> SearchOrganisation(int ukprn)
+        public async Task<OrganisationResponse> SearchOrganisation(int ukprn)
         {
             var result = _ukPrnValidator.Validate(ukprn);
             if (!result.IsValid)
@@ -48,7 +46,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
             return organisation;
         }
 
-        public async Task<IEnumerable<Organisation>> GetOrganisations()
+        public async Task<IEnumerable<OrganisationResponse>> GetOrganisations()
         {
             var organisations = await _organisationQueryRepository.GetAllOrganisations();
             return organisations;

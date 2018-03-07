@@ -24,9 +24,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
         private readonly IDbConnection _dbconnection;
         private readonly OrganisationQueryService _organisationQueryService;
         private dynamic _contactArgument;
-        private Organisation _organisationRetrieved;
+        private OrganisationResponse _organisationRetrieved;
 
-        private List<Organisation> _organisations = new List<Organisation>();
+        private List<OrganisationResponse> _organisations = new List<OrganisationResponse>();
         private RestClientResult _restClient;
 
         public WhenDeleteContact(RestClientResult restClient,
@@ -50,7 +50,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
             _contactArgument = contactArguments.First();
 
             _restClient = _organisationQueryService.GetOrganisations();
-            _organisations = _restClient.Deserialise<List<Organisation>>().ToList();
+            _organisations = _restClient.Deserialise<List<OrganisationResponse>>().ToList();
 
             var createContactRequest = _createContactBuilder.Build(_contactArgument,
                 _organisations.First().EndPointAssessorOrganisationId);
@@ -66,7 +66,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
             _contactArgument = contactArguments.First();
 
             _restClient = _organisationQueryService.GetOrganisations();
-            _organisations = _restClient.Deserialise<List<Organisation>>().ToList();
+            _organisations = _restClient.Deserialise<List<OrganisationResponse>>().ToList();
 
             var createContactRequest = _createContactBuilder.Build(_contactArgument,
                 _organisations.First().EndPointAssessorOrganisationId);
@@ -79,7 +79,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
         [Then(@"the Contact should be deleted")]
         public void ThenTheContactShouldBeDeleted()
         {
-            var contacts = _dbconnection.Query<Contact>
+            var contacts = _dbconnection.Query<ContactResponse>
                 ($"Select Status From Contacts where Username = '{_contactArgument.UserName}'").ToList();
             var contact = contacts.First();
 
@@ -92,7 +92,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
                 "api/v1/organisations", organisationCreateViewModel).Result;
             _restClient.JsonResult = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
 
-            _organisationRetrieved = JsonConvert.DeserializeObject<Organisation>(_restClient.JsonResult);
+            _organisationRetrieved = JsonConvert.DeserializeObject<OrganisationResponse>(_restClient.JsonResult);
         }
     }
 }

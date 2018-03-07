@@ -1,6 +1,6 @@
 ﻿namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    public class Contact
+    public class ContactResponse
     {
         public string EndPointAssessorOrganisationId { get; set; }
 

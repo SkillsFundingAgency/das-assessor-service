@@ -9,7 +9,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Quer
 {
     public class WhenSearchByUserNameSucceeds : ContactsQueryBase
     {
-        private static Contact _organisationQueryViewModels;
+        private static ContactResponse _organisationQueryViewModels;
         private IActionResult _result;
 
         [SetUp]
@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Quer
         {
             Setup();
 
-            _organisationQueryViewModels = Builder<Contact>.CreateNew().Build();
+            _organisationQueryViewModels = Builder<ContactResponse>.CreateNew().Build();
 
             ContactQueryRepositoryMock.Setup(q => q.GetContact(Moq.It.IsAny<string>()))
                 .Returns(Task.FromResult((_organisationQueryViewModels)));
@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Quer
         public void ThenTheResultReturnsValidData()
         {
             var result = _result as Microsoft.AspNetCore.Mvc.OkObjectResult;
-            (result.Value is Contact).Should().BeTrue();
+            (result.Value is ContactResponse).Should().BeTrue();
         }
     }
 }

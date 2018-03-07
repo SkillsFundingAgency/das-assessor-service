@@ -11,20 +11,20 @@ using SFA.DAS.AssessorService.Domain.DomainModels;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations.Maintenence.Post.Repository
 {
-    using Organisation = AssessorService.Api.Types.Models.Organisation;
+    using OrganisationResponse = AssessorService.Api.Types.Models.OrganisationResponse;
    
     public class WhenCreateOrganisationPersistsData
     {
         private  OrganisationRepository _organisationRepository;
         private Mock<AssessorDbContext> _mockDbContext;
-        private  Organisation _result;
+        private  OrganisationResponse _result;
         
         [SetUp]
         public void Arrange()
         { 
             MappingBootstrapper.Initialize();
 
-            var organisationCreateDomainModel = Builder<OrganisationCreateDomainModel>.CreateNew().Build();           
+            var organisationCreateDomainModel = Builder<CreateOrganisationDomainModel>.CreateNew().Build();           
                        
             var mockSet = CreateMockDbSet();
             _mockDbContext = CreateMockDbContext(mockSet);
@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
         [Test]
         public void ItShouldReturnAnOrganisation()
         {
-            _result.Should().BeOfType<Organisation>();
+            _result.Should().BeOfType<OrganisationResponse>();
         }
 
         [Test]

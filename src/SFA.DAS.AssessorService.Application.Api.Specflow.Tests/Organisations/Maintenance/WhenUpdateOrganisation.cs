@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.M
         private readonly ContactQueryService _contactQueryService;
         private readonly UpdateOrganisationRequestBuilder _updateOrganisationRequestBuilder;
         private readonly IDbConnection _dbconnection;
-        private Organisation _organisationRetrieved;
+        private OrganisationResponse _organisationResponse;
         private dynamic _organisationArguments;
 
         public WhenUpdateOrganisation(RestClientResult restClient,
@@ -47,7 +47,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.M
             _organisationArguments = organisations.First();
 
             var restClient = _organisationQueryService.SearchOrganisationByUkPrn(10000000);
-            var organisation = restClient.Deserialise<Organisation>();
+            var organisation = restClient.Deserialise<OrganisationResponse>();
             organisation.EndPointAssessorName = _organisationArguments.EndPointAssessorName;
 
             var updateOrganisationRequest = _updateOrganisationRequestBuilder.Build(organisation);
@@ -74,7 +74,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.M
         {
             _organisationArguments = organisations.First();
             var restClient = _organisationQueryService.SearchOrganisationByUkPrn(10000000);
-            var organisation = restClient.Deserialise<Organisation>();
+            var organisation = restClient.Deserialise<OrganisationResponse>();
 
             var updateOrganisationRequest = _updateOrganisationRequestBuilder.Build(organisation);
             updateOrganisationRequest.PrimaryContact = "12323";
@@ -89,10 +89,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.M
             _organisationArguments = organisations.First();
 
             var contactResult = _contactQueryService.SearchForContactByUserName("jcoxhead");
-            var contact = contactResult.Deserialise<Contact>();
+            var contact = contactResult.Deserialise<ContactResponse>();
 
             var restClient = _organisationQueryService.SearchOrganisationByUkPrn(10000000);
-            var organisation = restClient.Deserialise<Organisation>();
+            var organisation = restClient.Deserialise<OrganisationResponse>();
             organisation.PrimaryContact = contact.Username;
 
             var updateOrganisationRequest = _updateOrganisationRequestBuilder.Build(organisation);
@@ -103,23 +103,23 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.M
         public void ThenTheUpdateShouldHaveOccured()
         {
             var organisations
-                = _dbconnection.Query<Organisation>
+                = _dbconnection.Query<OrganisationResponse>
                     ($"Select EndPointAssessorOrganisationId, EndPointAssessorUKPRN, EndPointAssessorName, Status From Organisations where EndPointAssessorUKPRN = {_organisationArguments.EndPointAssessorUKPRN}").ToList();
-            _organisationRetrieved = organisations.First();
+            _organisationResponse = organisations.First();
 
             organisations.Count.Should().Equals(1);
 
-            _organisationRetrieved.EndPointAssessorName.Should().Be(_organisationArguments.EndPointAssessorName);
+            _organisationResponse.EndPointAssessorName.Should().Be(_organisationArguments.EndPointAssessorName);
         }
 
         [Then(@"the Organisation Status should be persisted as Live")]
         public void ThenTheOrganisationStatusShouldBePersistedAsLive()
         {
-            var organisationUpdated = _dbconnection.Query<Organisation>
+            var organisationUpdated = _dbconnection.Query<OrganisationResponse>
               ($"Select EndPointAssessorOrganisationId, EndPointAssessorUKPRN, EndPointAssessorName, Status From Organisations where EndPointAssessorOrganisationId = {_organisationArguments.EndPointAssessorOrganisationId}").ToList();
-            _organisationRetrieved = organisationUpdated.First();
+            _organisationResponse = organisationUpdated.First();
 
-            _organisationRetrieved.Status.Should().Be(OrganisationStatus.Live);
+            _organisationResponse.Status.Should().Be(OrganisationStatus.Live);
         }
     }
 }

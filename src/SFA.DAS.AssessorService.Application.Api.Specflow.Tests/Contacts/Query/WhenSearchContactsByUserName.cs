@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Query
         private readonly ContactQueryService _contactQueryService;
 
         private dynamic _contactArgument;
-        private Contact _contactQueryViewModel;
+        private ContactResponse _contactResponse;
         private RestClientResult _restClientResult;
 
         public WhenSearchContactsByUserName(
@@ -32,14 +32,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Query
 
             _restClientResult = _contactQueryService.SearchForContactByUserName(userName);
 
-            _contactQueryViewModel = _restClientResult.Deserialise<Contact>();
+            _contactResponse = _restClientResult.Deserialise<ContactResponse>();
         }
 
         [Then(@"the API returns a valid Contact")]
         public void ThenTheAPIReturnsaValidContact()
         {
-            _contactQueryViewModel.Username.Should().Be(_contactArgument.username);
-            _contactQueryViewModel.Email.Should().Be(_contactArgument.emailaddress);
+            _contactResponse.Username.Should().Be(_contactArgument.username);
+            _contactResponse.Email.Should().Be(_contactArgument.emailaddress);
         }
     }
 }

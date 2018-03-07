@@ -10,37 +10,44 @@ using SFA.DAS.AssessorService.Domain.DomainModels;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers
 {
-    public class CreateOrganisationHandler : IRequestHandler<CreateOrganisationRequest, Organisation>
-    {      
+    public class CreateOrganisationHandler : IRequestHandler<CreateOrganisationRequest, OrganisationResponse>
+    {
         private readonly IOrganisationRepository _organisationRepository;
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
 
-        public CreateOrganisationHandler(IOrganisationRepository organisationRepository, IOrganisationQueryRepository organisationQueryRepository)
+        public CreateOrganisationHandler(IOrganisationRepository organisationRepository,
+            IOrganisationQueryRepository organisationQueryRepository)
         {
             _organisationRepository = organisationRepository;
             _organisationQueryRepository = organisationQueryRepository;
         }
 
-        public async Task<Organisation> Handle(CreateOrganisationRequest createOrganisationRequest, CancellationToken cancellationToken)
+        public async Task<OrganisationResponse> Handle(CreateOrganisationRequest createOrganisationRequest, CancellationToken cancellationToken)
         {
-            var organisation = await UpdateOrganisationIfExists(createOrganisationRequest) 
+            var organisation = await UpdateOrganisationIfExists(createOrganisationRequest)
                                              ?? await CreateNewOrganisation(createOrganisationRequest);
 
             return organisation;
         }
 
-        private async Task<Organisation> CreateNewOrganisation(CreateOrganisationRequest createOrganisationRequest)
+        private async Task<OrganisationResponse> CreateNewOrganisation(CreateOrganisationRequest createOrganisationRequest)
         {
-            var organisationCreateDomainModel = Mapper.Map<OrganisationCreateDomainModel>(createOrganisationRequest);
+            var createOrganisationDomainModel = Mapper.Map<CreateOrganisationDomainModel>(createOrganisationRequest);
 
-            organisationCreateDomainModel.Status = string.IsNullOrEmpty(createOrganisationRequest.PrimaryContact)
-                ? OrganisationStatus.New
-                : OrganisationStatus.Live;
+            if (string.IsNullOrEmpty(createOrganisationRequest.PrimaryContact))
+            {
+                createOrganisationDomainModel.Status = OrganisationStatus.New;
+            }
+            else
+            {
+                createOrganisationDomainModel.Status = OrganisationStatus.Live;
+                createOrganisationDomainModel.PrimaryContact = createOrganisationRequest.PrimaryContact;
+            }
 
-            return await _organisationRepository.CreateNewOrganisation(organisationCreateDomainModel);
+            return await _organisationRepository.CreateNewOrganisation(createOrganisationDomainModel);
         }
 
-        private async Task<Organisation> UpdateOrganisationIfExists(CreateOrganisationRequest createOrganisationRequest)
+        private async Task<OrganisationResponse> UpdateOrganisationIfExists(CreateOrganisationRequest createOrganisationRequest)
         {
             var existingOrganisation =
                 await _organisationQueryRepository.GetByUkPrn(createOrganisationRequest.EndPointAssessorUkprn);
@@ -49,7 +56,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers
                 && existingOrganisation.EndPointAssessorOrganisationId == createOrganisationRequest.EndPointAssessorOrganisationId
                 && existingOrganisation.Status == OrganisationStatus.Deleted)
             {
-                return await _organisationRepository.UpdateOrganisation(new OrganisationUpdateDomainModel
+                return await _organisationRepository.UpdateOrganisation(new UpdateOrganisationDomainModel
                 {
                     EndPointAssessorName = createOrganisationRequest.EndPointAssessorName,
                     EndPointAssessorOrganisationId = existingOrganisation.EndPointAssessorOrganisationId,

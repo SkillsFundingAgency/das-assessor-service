@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.M
         private readonly ContactQueryService _contactQueryService;
         private readonly CreateOrganisationBuilder _createOrganisationBuilder;
         private readonly IDbConnection _dbconnection;
-        private Organisation _organisationRetrieved;
+        private OrganisationResponse _organisationResponse;
         private dynamic _organisationArgument;
 
         public WhenCreateOrganisation(RestClientResult restClientResult,
@@ -61,15 +61,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.M
         [Then(@"the Organisation should be created")]
         public void ThenTheOrganisationShouldBeCreated()
         {
-            var organisationsCreated = _dbconnection.Query<Organisation>
+            var organisationsCreated = _dbconnection.Query<OrganisationResponse>
               ($"Select EndPointAssessorOrganisationId, EndPointAssessorUKPRN, EndPointAssessorName, Status From Organisations where EndPointAssessorOrganisationId = {_organisationArgument.EndPointAssessorOrganisationId}").ToList();
-            _organisationRetrieved = organisationsCreated.First();
+            _organisationResponse = organisationsCreated.First();
 
             organisationsCreated.Count.Should().Be(1);
 
-            _organisationRetrieved.EndPointAssessorOrganisationId.Should().Equals(_organisationArgument.EndPointAssessorOrganisationId);
-            _organisationRetrieved.EndPointAssessorUkprn.Should().Equals(_organisationArgument.EndPointAssessorUKPRN);
-            _organisationRetrieved.EndPointAssessorName.Should().Equals(_organisationArgument.EndPointAssessorName);
+            _organisationResponse.EndPointAssessorOrganisationId.Should().Equals(_organisationArgument.EndPointAssessorOrganisationId);
+            _organisationResponse.EndPointAssessorUkprn.Should().Equals(_organisationArgument.EndPointAssessorUKPRN);
+            _organisationResponse.EndPointAssessorName.Should().Equals(_organisationArgument.EndPointAssessorName);
         }
 
         [Then(@"the Organisation Status should be set to (.*)")]
@@ -78,20 +78,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.M
             switch (p0)
             {
                 case "Live":
-                    _organisationRetrieved.Status.Should().Be(OrganisationStatus.Live);
+                    _organisationResponse.Status.Should().Be(OrganisationStatus.Live);
                     break;
                 case "New":
-                    _organisationRetrieved.Status.Should().Be(OrganisationStatus.New);
+                    _organisationResponse.Status.Should().Be(OrganisationStatus.New);
                     break;
                 default:
                     throw new ApplicationException("Uknown OrganisationStatus");
             }
         }
 
-        private Contact CreateContact()
+        private ContactResponse CreateContact()
         {
             var contactResult = _contactQueryService.SearchForContactByUserName("jcoxhead");
-            var contact = contactResult.Deserialise<Contact>();
+            var contact = contactResult.Deserialise<ContactResponse>();
             return contact;
         }
     }

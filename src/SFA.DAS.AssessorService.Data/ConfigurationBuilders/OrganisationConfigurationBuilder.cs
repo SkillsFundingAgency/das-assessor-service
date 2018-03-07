@@ -27,6 +27,7 @@ namespace SFA.DAS.AssessorService.Data.ConfigurationBuilders
 
             _modelBuilder.Entity<Organisation>()
                 .Property(q => q.Status)
+                .HasMaxLength(10)
                 .IsRequired();
 
             _modelBuilder.Entity<Organisation>()
@@ -36,7 +37,8 @@ namespace SFA.DAS.AssessorService.Data.ConfigurationBuilders
 
             _modelBuilder.Entity<Organisation>()
                 .Property(c => c.PrimaryContact)
-                .HasMaxLength(30);
+                .HasMaxLength(30)
+                .IsRequired(false);
         }
     }
 }

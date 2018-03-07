@@ -11,7 +11,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
 {
     public class WhenSearchOrganisationCannotFindUkPrn : OrganisationQueryBase
     {
-        private static Organisation _organisation;
+        private static OrganisationResponse _organisation;
         private Exception _result;
 
         [SetUp]
@@ -19,10 +19,10 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
         {
             Setup();
 
-            _organisation = Builder<Organisation>.CreateNew().Build();
+            _organisation = Builder<OrganisationResponse>.CreateNew().Build();
 
             OrganisationQueryRepositoryMock.Setup(q => q.GetByUkPrn(Moq.It.IsAny<int>()))
-                .Returns(Task.FromResult<Organisation>(null));
+                .Returns(Task.FromResult<OrganisationResponse>(null));
 
             try
             {

@@ -3,7 +3,7 @@ using SFA.DAS.AssessorService.Domain.Consts;
 
 namespace SFA.DAS.AssessorService.Domain.DomainModels
 {
-    public class OrganisationQueryDomainModel
+    public class OrganisationDomainModel
     {
         public Guid Id { get; set; }
         public string EndPointAssessorOrganisationId { get; set; }
