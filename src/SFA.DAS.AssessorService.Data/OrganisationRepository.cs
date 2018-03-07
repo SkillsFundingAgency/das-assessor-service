@@ -35,12 +35,12 @@ namespace SFA.DAS.AssessorService.Data
         {
             var organisationEntity = _assessorDbContext.Organisations.First(q => q.EndPointAssessorOrganisationId == organisationUpdateDomainModel.EndPointAssessorOrganisationId);
             if (string.IsNullOrEmpty(organisationUpdateDomainModel.PrimaryContact))
-                organisationEntity.PrimaryContactId = null;
+                organisationEntity.PrimaryContact = null;
             else
             {
                 var contact =
                     _assessorDbContext.Contacts.First(q => q.Username == organisationUpdateDomainModel.PrimaryContact);
-                organisationEntity.PrimaryContactId = contact.Id;
+                organisationEntity.PrimaryContact = contact.Id;
             }
 
             organisationEntity.EndPointAssessorName = organisationUpdateDomainModel.EndPointAssessorName;

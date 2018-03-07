@@ -66,7 +66,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
             var organisations = new List<AssessorService.Domain.Entities.Organisation>
             {
                 Builder<AssessorService.Domain.Entities.Organisation>.CreateNew()
-                    .With(q => q.PrimaryContactId = primaryContactId)
+                    .With(q => q.PrimaryContact = primaryContactId)
                     .Build()
             }.AsQueryable();
 

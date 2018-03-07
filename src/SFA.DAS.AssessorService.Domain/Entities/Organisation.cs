@@ -11,7 +11,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public int EndPointAssessorUkprn { get; set; }
         public string EndPointAssessorName { get; set; }
 
-        public Guid? PrimaryContactId { get; set; }
+        public Guid? PrimaryContact { get; set; }
 
         public string Status { get; set; }
 
