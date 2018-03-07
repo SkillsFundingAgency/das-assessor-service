@@ -1,42 +1,34 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations
-{
-    using FluentAssertions;
-    using Newtonsoft.Json;
-    using SFA.DAS.AssessorService.Api.Types;
-    using System.Collections.Generic;
-    using System.Net.Http;
-    using AssessorService.Api.Types.Models;
-    using TechTalk.SpecFlow;
+﻿using System.Collections.Generic;
+using FluentAssertions;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Extensions;
+using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.Query.Services;
+using TechTalk.SpecFlow;
 
+namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.Query
+{
     [Binding]
     public class WhenRetrieveAllOrganisations
     {
-        private readonly RestClient _restClient;
-        private List<Organisation> _organisationQueryViewModels = new List<Organisation>();
+        private readonly OrganisationQueryService _organisationQueryService;
+        private List<Organisation> _organisations = new List<Organisation>();
 
-        public WhenRetrieveAllOrganisations(RestClient restClient)
+        public WhenRetrieveAllOrganisations(OrganisationQueryService organisationQueryService)
         {
-            _restClient = restClient;
+            _organisationQueryService = organisationQueryService;
         }
 
         [When(@"I Request All Organisations to be retrieved")]
         public void WhenIRequestAllOrganisationsToBeRetrieved()
         {
-            HttpResponseMessage response =  _restClient.HttpClient.GetAsync(
-               "api/v1/organisations").Result;
-            if (response.IsSuccessStatusCode)
-            {
-                _restClient.Result = response.Content.ReadAsStringAsync().Result;
-                _restClient.HttpResponseMessage = response;
-
-                _organisationQueryViewModels = JsonConvert.DeserializeObject<List<Organisation>>(_restClient.Result);
-            }
+            var result = _organisationQueryService.GetOrganisations();
+            _organisations = result.Deserialise<List<Organisation>>();
         }
 
         [Then(@"the API returns all Organisations")]
-        public void ThenTheAPIReturnsAllOrganisations()
+        public void ThenTheApiReturnsAllOrganisations()
         {
-            _organisationQueryViewModels.Count.Should().BeGreaterOrEqualTo(1);
+            _organisations.Count.Should().BeGreaterOrEqualTo(1);
         }
     }
 }

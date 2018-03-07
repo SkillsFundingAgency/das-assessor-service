@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Application.Api
             _env = env;
             _logger = logger;
             Configuration = ConfigurationService
-                .GetConfig(config["Environment"], config["ConnectionStrings:Storage"], Version, ServiceName).Result;
+                .GetConfig(config["EnvironmentName"], config["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
         }
 
         public IWebConfiguration Configuration { get; }
@@ -134,8 +134,6 @@ namespace SFA.DAS.AssessorService.Application.Api
 
                 var option = new DbContextOptionsBuilder<AssessorDbContext>();
                 option.UseSqlServer(Configuration.SqlConnectionString);
-
-                _logger.LogInformation($"Connection String in use: {Configuration.SqlConnectionString}");
 
                 config.For<AssessorDbContext>().Use(c => new AssessorDbContext(option.Options, _env.IsDevelopment()));
 

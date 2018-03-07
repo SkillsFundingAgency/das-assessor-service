@@ -1,9 +1,9 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests
-{
-    using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.consts;
-    using StructureMap;
-    using System.Configuration;
+﻿using System.Configuration;
+using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.consts;
+using StructureMap;
 
+namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests
+{
     public class Bootstrapper
     {
         public static void Initialise()

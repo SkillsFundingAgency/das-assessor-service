@@ -1,71 +1,47 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations
-{
-    using FluentAssertions;
-    using Newtonsoft.Json;
-    using SFA.DAS.AssessorService.Api.Types;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Net.Http;
-    using AssessorService.Api.Types.Models;
-    using TechTalk.SpecFlow;
+﻿using System.Collections.Generic;
+using System.Linq;
+using FluentAssertions;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Extensions;
+using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.Query.Services;
+using TechTalk.SpecFlow;
 
+namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Query
+{
     [Binding]
     public class WhenRetrieveAllContacts
     {
-        private readonly RestClient _restClient;
+        private RestClientResult _restClientResult;
+        private readonly OrganisationQueryService _organisationQueryService;
+        private readonly ContactQueryService _contactQueryService;
         private List<Organisation> _organisationQueryViewModels = new List<Organisation>();
-        private List<Contact> _contactQueryViewModels = new List<Contact>();
+        private List<Contact> _contacts = new List<Contact>();
 
-        public WhenRetrieveAllContacts(RestClient restClient)
+        public WhenRetrieveAllContacts(RestClientResult restClientResult,
+            OrganisationQueryService organisationQueryService,
+            ContactQueryService contactQueryService)
         {
-            _restClient = restClient;
+            _restClientResult = restClientResult;
+            _organisationQueryService = organisationQueryService;
+            _contactQueryService = contactQueryService;
         }
-
 
         [When(@"I Request All Contacts to be retrieved BY Organisation")]
         public void WhenIRequestAllContactsToBeRetrievedBYOrganisation()
         {
-            HttpResponseMessage response = _restClient.HttpClient.GetAsync(
-               "api/v1/organisations").Result;
-            if (response.IsSuccessStatusCode)
-            {
-                _restClient.Result = response.Content.ReadAsStringAsync().Result;
-                _restClient.HttpResponseMessage = response;
+            _restClientResult = _organisationQueryService.SearchOrganisationByUkPrn(10000000);
+            var organisation = _restClientResult.Deserialise<Organisation>();
 
-                _organisationQueryViewModels = JsonConvert.DeserializeObject<List<Organisation>>(_restClient.Result);
+            _restClientResult =
+                _contactQueryService.SearchForContactByOrganisationId(organisation.EndPointAssessorOrganisationId);
 
-                var organisation = _organisationQueryViewModels.First(q => q.EndPointAssessorUkprn == 10000000);
-
-                response = _restClient.HttpClient.GetAsync(
-                        $"api/v1/contacts/{organisation.EndPointAssessorOrganisationId}").Result;
-
-
-                _contactQueryViewModels = JsonConvert.DeserializeObject<List<Contact>>(_restClient.Result);
-
-                _restClient.HttpResponseMessage = response;
-            }
-            else
-            {
-                throw new ApplicationException("Cannot find any organisations in database");
-            }
-        }
-
-        [When(@"I Request All Contacts to be retrieved By an Invalid Organisation")]
-        public void WhenIRequestAllContactsToBeRetrievedByAnInvalidOrganisation()
-        {
-            var id = Guid.NewGuid();
-
-            HttpResponseMessage response = _restClient.HttpClient.GetAsync(
-                        $"api/v1/contacts/{id}").Result;
-
-            _restClient.HttpResponseMessage = response;
+            _contacts = _restClientResult.Deserialise<List<Contact>>().ToList();
         }
 
         [Then(@"the API returns all Contacts for an Organisation")]
         public void ThenTheAPIReturnsAllContactsForAnOrganisation()
         {
-            _contactQueryViewModels.Count.Should().BeGreaterOrEqualTo(1);
+            _contacts.Count.Should().BeGreaterOrEqualTo(1);
         }
     }
 }

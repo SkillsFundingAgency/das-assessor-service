@@ -35,6 +35,8 @@ namespace SFA.DAS.AssessorService.Data.Migrations
 
                     b.Property<Guid>("DeletedBy");
 
+                    b.Property<int>("EndPointAssessorCertificateId");
+
                     b.Property<Guid>("OrganisationId");
 
                     b.Property<string>("Status");
@@ -62,8 +64,6 @@ namespace SFA.DAS.AssessorService.Data.Migrations
                     b.Property<DateTime>("CreatedAt");
 
                     b.Property<DateTime?>("DeletedAt");
-
-                    b.Property<int>("EndPointAssessorCertificateId");
 
                     b.Property<DateTime>("EventTime");
 
