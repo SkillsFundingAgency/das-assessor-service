@@ -120,11 +120,11 @@
   <data name="DisplayNameMustBeDefined" xml:space="preserve">
     <value>Request must contain DisplayName</value>
   </data>
+  <data name="DoesNotExist" xml:space="preserve">
+    <value>Contact does not exist</value>
+  </data>
   <data name="EMailMustBeDefined" xml:space="preserve">
     <value>Request must contain Email</value>
-  </data>
-  <data name="EndPointAssessorContactIdMustBeDefined" xml:space="preserve">
-    <value>Request must contain  EndPointAssessorContactId</value>
   </data>
   <data name="UserNameMustBeDefined" xml:space="preserve">
     <value>Request must contain UserName</value>
