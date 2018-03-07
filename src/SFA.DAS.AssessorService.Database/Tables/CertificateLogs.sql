@@ -4,7 +4,6 @@
 	[CertificateId] [uniqueidentifier] NOT NULL,
 	[CreatedAt] [datetime2](7) NOT NULL,
 	[DeletedAt] [datetime2](7) NULL,
-	[EndPointAssessorCertificateId] [int] NOT NULL,
 	[EventTime] [datetime2](7) NOT NULL,
 	[Status] [nvarchar](max) NULL,
 	[UpdatedAt] [datetime2](7) NULL,

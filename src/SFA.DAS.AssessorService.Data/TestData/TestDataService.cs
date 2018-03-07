@@ -88,6 +88,7 @@
                 {
                     Id = Guid.NewGuid(),
                     OrganisationId = organisation.Id,
+                      EndPointAssessorCertificateId = 2222222,
                     CertificateData = JsonConvert.SerializeObject(firstCertificateData),
                     Status = CertificateStatus.Ready,
                     CreatedBy = firstContact.Id,
@@ -129,6 +130,7 @@
                 var secondCertificate = new Certificate
                 {
                     Id = Guid.NewGuid(),
+                    EndPointAssessorCertificateId = 2222222,
                     OrganisationId = organisation.Id,
                     CertificateData = JsonConvert.SerializeObject(secondCertificateData),
                     Status = CertificateStatus.Ready,
@@ -144,7 +146,7 @@
                     Id = Guid.NewGuid(),
                     Action = "Action",
                     CertificateId = firstCertificate.Id,
-                    EndPointAssessorCertificateId = 2222222,
+                  
                     EventTime = DateTime.Now,
                     Status = CertificateStatus.Ready,
 
@@ -159,7 +161,7 @@
                     Id = Guid.NewGuid(),
                     Action = "Action",
                     CertificateId = secondCertificate.Id,
-                    EndPointAssessorCertificateId = 2222222,
+                 
                     EventTime = DateTime.Now,
                     Status = CertificateStatus.Ready,
 
