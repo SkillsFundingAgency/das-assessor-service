@@ -1,5 +1,6 @@
 ﻿CREATE TABLE [dbo].[Certificates](
 	[Id] [uniqueidentifier] NOT NULL,
+	[EndPointAssessorCertificateId] [int] NOT NULL,
 	[CertificateData] [nvarchar](max) NULL,
 	[CreatedAt] [datetime2](7) NOT NULL,
 	[CreatedBy] [uniqueidentifier] NOT NULL,
