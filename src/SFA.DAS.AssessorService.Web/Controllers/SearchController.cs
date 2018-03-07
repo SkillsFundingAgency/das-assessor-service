@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -24,9 +25,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View();
+            return View("Index");
         }
 
         [HttpPost]
@@ -40,10 +41,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
             var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
-            var results = _searchApiClient.Search(new SearchQuery() {Surname = vm.Surname, Uln = vm.Uln, });
+            var result = await _searchApiClient.Search(new SearchQuery() {Surname = vm.Surname, Uln = vm.Uln, UkPrn = ukprn, Username = username});
+            vm.SearchResults = result.Results;
 
+            if (result.Results.Any())
+            {                
+                return View("Results", vm);
+            }
 
-            return View();
+            return View("Index", vm);
         }
     }
 }

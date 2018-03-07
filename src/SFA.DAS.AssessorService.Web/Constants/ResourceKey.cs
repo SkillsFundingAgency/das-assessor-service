@@ -4,5 +4,6 @@
     {
         public const string LastNameShouldNotBeEmpty = "LastNameShouldNotBeEmpty";
         public const string UlnShouldNotBeEmpty = "UlnShouldNotBeEmpty";
+        public const string UlnShouldBeTenChars = "UlnShouldBeTenChars";
     }
 }

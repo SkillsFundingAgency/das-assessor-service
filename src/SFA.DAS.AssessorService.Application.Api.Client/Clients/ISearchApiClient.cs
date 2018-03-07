@@ -6,6 +6,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public interface ISearchApiClient
     {
-        Task<IEnumerable<SearchResult>> Search(SearchQuery searchQuery);
+        Task<SearchResult> Search(SearchQuery searchQuery);
     }
 }

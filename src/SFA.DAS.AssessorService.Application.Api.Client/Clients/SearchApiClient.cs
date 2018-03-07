@@ -11,11 +11,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
         }
 
-        public Task<IEnumerable<SearchResult>> Search(SearchQuery searchQuery)
+        public async Task<SearchResult> Search(SearchQuery searchQuery)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, "/api/v1/search"))
+            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/search"))
             {
-                return PostPutRequestWithResponse<SearchQuery, IEnumerable<SearchResult>>(request, searchQuery);
+                return await PostPutRequestWithResponse<SearchQuery, SearchResult>(request, searchQuery);
             }
         }
     }
