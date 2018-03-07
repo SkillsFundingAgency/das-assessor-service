@@ -187,7 +187,7 @@ this.ScenarioSetup(scenarioInfo);
                         "DisplayName",
                         "Email"});
             table4.AddRow(new string[] {
-                        "testuser",
+                        "testuser1789",
                         "Test",
                         "jane1289@gmail.com"});
 #line 38

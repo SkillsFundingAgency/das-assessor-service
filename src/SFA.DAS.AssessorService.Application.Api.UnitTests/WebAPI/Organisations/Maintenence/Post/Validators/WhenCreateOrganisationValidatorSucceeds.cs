@@ -8,7 +8,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations.Maintenence.Post.Validators
 { 
-    public class WhenOrganisationCreateViewModelValidatorSucceeds : OrganisationCreateViewModelValidatorTestBase
+    public class WhenOrganisationCreateViewModelValidatorSucceeds : OrganisationCreateRequestValidatorTestBase
     {
         private ValidationResult _validationResult;
 
@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
             OrganisationQueryRepositoryMock.Setup(q => q.CheckIfAlreadyExists(Moq.It.IsAny<string>()))
                 .Returns(Task.FromResult((false)));
 
-            _validationResult = OrganisationCreateViewModelValidator.Validate(OrganisationCreateViewModel);
+            _validationResult = CreateOrganisationRequestValidator.Validate(OrganisationCreateViewModel);
         }
 
         [Test]

@@ -5,14 +5,14 @@ using SFA.DAS.AssessorService.Application.Api.UnitTests.Helpers;
 using SFA.DAS.AssessorService.Application.Api.Validators;
 using SFA.DAS.AssessorService.Application.Interfaces;
 
-namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations.Maintenence.Put.Validators
+namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Maintenence.Put.Validators
 {
-    public class OrganisationUpdateViewModelValidatorTestBase
+    public class WhenUpdateContactRequestValidatorTestBase
     {
-        protected static OrganisationUpdateViewModelValidator OrganisationUpdateViewModelValidator;
+        protected static UpdateContactRequestValidator UpdateContactRequestValidator;
         protected static Mock<IContactQueryRepository> ContactQueryRepositoryMock;
         protected static Mock<IOrganisationQueryRepository> OrganisationQueryRepositoryMock;
-        protected static UpdateOrganisationRequest OrganisationUpdateViewModel;        
+        protected static UpdateOrganisationRequest OrganisationUpdateViewModel;
 
         public static void Setup()
         {
@@ -22,13 +22,13 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
             var stringLocalizerMock = mockStringLocaliserBuilder
                 .WithKey(ResourceMessageName.NoAssesmentProviderFound)
                 .WithKeyValue("100000000")
-                .Build<OrganisationUpdateViewModelValidator>();
+                .Build<UpdateContactRequestValidator>();
 
             ContactQueryRepositoryMock = new Mock<IContactQueryRepository>();
             OrganisationQueryRepositoryMock = new Mock<IOrganisationQueryRepository>();
 
-            OrganisationUpdateViewModelValidator = new OrganisationUpdateViewModelValidator(stringLocalizerMock.Object,
-                ContactQueryRepositoryMock.Object, OrganisationQueryRepositoryMock.Object);
+            UpdateContactRequestValidator = new UpdateContactRequestValidator(stringLocalizerMock.Object,
+                ContactQueryRepositoryMock.Object);
         }
     }
 }

@@ -37,7 +37,7 @@ Scenario: Update a Contact succesfully
 	Given System Has access to the SFA.DAS.AssessmentOrgs.Api	
 	When I Update a Contact succesfully
 	| UserName | DisplayName | Email |
-	| testuser | Test        | jane1289@gmail.com             |
+	| testuser1789 | Test        | jane1289@gmail.com             |
 	Then the response http status should be No Content
 	And the Contact Update should have occured
 
