@@ -38,8 +38,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
             if (organisation == null)
             {
                 var ex = new ResourceNotFoundException(
-                    _localizer[ResourceMessageName.NoAssesmentProviderFound, ukprn]
-                        .Value);
+                        string.Format(_localizer[ResourceMessageName.NoAssesmentProviderFound].Value, ukprn));                        
                 throw ex;
             }
 

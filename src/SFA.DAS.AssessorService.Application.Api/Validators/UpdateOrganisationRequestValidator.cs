@@ -23,14 +23,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             UpdateOrganisationRequest organisationUpdateViewModel;
 
             RuleFor(organisation => organisation.EndPointAssessorName).NotEmpty().WithMessage(
-                localiser[ResourceMessageName.EndPointAssessorNameMustBeDefined,
-                    nameof(organisationUpdateViewModel.EndPointAssessorName)].Value);
+                localiser[ResourceMessageName.EndPointAssessorNameMustBeDefined].Value);
             RuleFor(organisation => organisation.PrimaryContact).Must(HaveAssociatedPrimaryContactInContacts)
-                .WithMessage(localiser[ResourceMessageName.PrimaryContactDoesNotExist,
-                    nameof(organisationUpdateViewModel.PrimaryContact)].Value);
+                .WithMessage(localiser[ResourceMessageName.PrimaryContactDoesNotExist].Value);
             RuleFor(organisation => organisation.EndPointAssessorOrganisationId).Must(AlreadyExist).WithMessage(
-                localiser[ResourceMessageName.DoesNotExist,
-                    nameof(organisationUpdateViewModel.EndPointAssessorOrganisationId)].Value);
+                localiser[ResourceMessageName.DoesNotExist].Value);
         }
 
         private bool AlreadyExist(string endPointAssessorOrganisationId)

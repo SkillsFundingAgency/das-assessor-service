@@ -17,11 +17,11 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
 
         private Mock<IStringLocalizer<CreateOrganisationRequestValidator>> organisationCreateViewModelValidatorStringLocaliser;
 
-        private MockStringLocaliserWithoutParamsBuilder _mockStringLocaliserBuilder;
+        private MockStringLocaliserBuilder _mockStringLocaliserBuilder;
 
         public void Setup()
         {
-            _mockStringLocaliserBuilder = new MockStringLocaliserWithoutParamsBuilder();
+            _mockStringLocaliserBuilder = new MockStringLocaliserBuilder();
 
             organisationCreateViewModelValidatorStringLocaliser = _mockStringLocaliserBuilder
                 .WithKey(ResourceMessageName.NoAssesmentProviderFound)
