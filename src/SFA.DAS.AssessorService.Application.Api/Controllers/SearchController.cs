@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpGet(Name = "Search")]
-        public async Task<IActionResult> Search(SearchQueryViewModel searchQueryViewModel)
+        public async Task<IActionResult> Search(SearchQuery searchQuery)
         {
             var result = await _ilrApi.Search(new SearchRequest());
 

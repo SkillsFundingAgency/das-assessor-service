@@ -24,14 +24,14 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Search
         [Test]
         public void Returns_A_Result()
         {
-            _result = _controller.Search(new SearchQueryViewModel()).Result;
+            _result = _controller.Search(new SearchQuery()).Result;
             _result.Should().BeAssignableTo<IActionResult>();
         }
 
         [Test]
         public void Calls_The_Ilr_Api()
         {
-            _result = _controller.Search(new SearchQueryViewModel()).Result;
+            _result = _controller.Search(new SearchQuery()).Result;
             _ilrApi.Verify(api => api.Search(It.IsAny<SearchRequest>()));
         }
 
