@@ -18,29 +18,34 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         {            
             _contactQueryRepository = contactQueryRepository;
             _organisationQueryRepository = organisationQueryRepository;
-
+          
             // ReSharper disable once LocalNameCapturedOnly
-            CreateOrganisationRequest organisationCreateViewModel;
+            CreateOrganisationRequest organisationCreateViewModel;         
 
-            RuleFor(organisation => organisation.EndPointAssessorOrganisationId).NotEmpty().WithMessage(
-                localiser[ResourceMessageName.EndPointAssessorOrganisationIdMustBeDefined,
-                    nameof(organisationCreateViewModel.EndPointAssessorOrganisationId)].Value);
+            RuleFor(organisation => organisation.EndPointAssessorOrganisationId)
+                .NotEmpty()
+                .WithMessage(
+                    localiser[ResourceMessageName.EndPointAssessorOrganisationIdMustBeDefined].Value)
+                .MaximumLength(12)
+                // Please note we have to string.Format this due to limitation in Moq not handling Optional
+                // Params
+                .WithMessage(string.Format(localiser[ResourceMessageName.MaxLengthError].Value,
+                    nameof(organisationCreateViewModel.EndPointAssessorOrganisationId), 12));
+
             RuleFor(organisation => organisation.EndPointAssessorName).NotEmpty().WithMessage(
-                localiser[ResourceMessageName.EndPointAssessorNameMustBeDefined,
-                    nameof(organisationCreateViewModel.EndPointAssessorName)].Value);
-            RuleFor(organisation => organisation.EndPointAssessorUkprn).InclusiveBetween(10000000, 99999999)
-                .WithMessage(localiser[ResourceMessageName.InvalidUkprn,
-                    nameof(organisationCreateViewModel.EndPointAssessorUkprn)].Value);
+                localiser[ResourceMessageName.EndPointAssessorNameMustBeDefined].Value);
 
-            RuleFor(organisation => organisation.PrimaryContact).Must(HaveAssociatedPrimaryContactInContacts)
-                .WithMessage(localiser[ResourceMessageName.PrimaryContactDoesNotExist,
-                    nameof(organisationCreateViewModel.PrimaryContact)].Value);
-            RuleFor(organisation => organisation.EndPointAssessorOrganisationId).Must(AlreadyExists).WithMessage(
-                localiser[ResourceMessageName.AlreadyExists,
-                    nameof(organisationCreateViewModel.EndPointAssessorOrganisationId)].Value);
+            RuleFor(organisation => organisation.EndPointAssessorUkprn).InclusiveBetween(10000000, 99999999)
+                .WithMessage(localiser[ResourceMessageName.InvalidUkprn].Value);
+
+            RuleFor(organisation => organisation.PrimaryContact).Must(PrimaryContactMustExist)
+                .WithMessage(localiser[ResourceMessageName.PrimaryContactDoesNotExist].Value);              
+           
+            RuleFor(organisation => organisation.EndPointAssessorOrganisationId).Must(NotAlreadyExist).WithMessage(
+                localiser[ResourceMessageName.AlreadyExists].Value);
         }
 
-        private bool HaveAssociatedPrimaryContactInContacts(string primaryContact)
+        private bool PrimaryContactMustExist(string primaryContact)
         {
             if (string.IsNullOrEmpty(primaryContact))
                 return true;
@@ -49,7 +54,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             return result;
         }
 
-        private bool AlreadyExists(string endPointAssessorOrganisationId)
+        private bool NotAlreadyExist(string endPointAssessorOrganisationId)
         {
             return !_organisationQueryRepository.CheckIfAlreadyExists(endPointAssessorOrganisationId).Result;
         }
