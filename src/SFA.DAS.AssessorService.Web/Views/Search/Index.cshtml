@@ -1,8 +1,29 @@
-﻿@model object
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model SFA.DAS.AssessorService.Web.ViewModels.Search.SearchViewModel
 
 @{
     ViewBag.Title = "title";
-    Layout = "_Layout";
+    Layout = "_AuthLayout";
 }
 
 <h2>Search</h2>
+
+<form method="post">
+    <label for="Uln">@Localizer["Uln"]</label>
+    <input asp-for="Uln" /> <span asp-validation-for="Uln"></span> <br />
+
+    <label for="surname">@Localizer["Lastname"]</label>
+    <input asp-for="Surname" /> <span asp-validation-for="Surname"></span> <br />
+
+    <button class="button">@Localizer["SearchButton"]</button>
+</form>
+
+
+@if (Model?.SearchResults != null)
+{
+    if (!Model.SearchResults.Any())
+    {
+        <span>No results</span>
+    }
+}
