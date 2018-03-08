@@ -1,8 +1,52 @@
-﻿@model object
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model SFA.DAS.AssessorService.Web.ViewModels.Search.SearchViewModel
 
 @{
-    ViewBag.Title = "title";
-    Layout = "_Layout";
+    ViewBag.Title = "Search";
+    Layout = "_AuthLayout";
 }
 
-<h2>Search</h2>
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <h1 class="heading-large">Search for an apprentice</h1>
+        <div class="info-summary">
+            <h3 class="heading-medium">Only record successful assessments</h3>
+            <p>You don't need to record failed assessments. Please search for the apprentice again once they have passed.</p>
+        </div>
+        <form method="post">
+            <div class="form-group">
+                <label class="form-label" for="Uln">@Localizer["Uln"]</label>
+                <input class="form-control" asp-for="Uln" type="number" /> <span asp-validation-for="Uln"></span>
+                @*<label class="form-label" for="unique-learner-number">Unique learner number (ULN)</label>
+                <input class="form-control" id="unique-learner-number" type="number" name="unique-learner-number">*@
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="surname">@Localizer["Lastname"]</label>
+                <input class="form-control" asp-for="Surname" type="text" /> <span asp-validation-for="Surname"></span>
+
+                @*<label class="form-label" for="learner-last-name">Last name</label>
+                <input class="form-control" id="learner-last-name" type="text" name="learner-last-name">*@
+            </div>
+            <details role="group">
+                <summary role="button" aria-controls="what-is-a-unique-learner-number" aria-expanded="false"><span class="summary">What is a unique learner number (ULN)?</span></summary>
+                <div class="text" id="what-is-a-unique-learner-number" aria-hidden="true">
+                    <p>
+                        Each apprentice has a unique learner number (ULN) that is used to identify them. It is ten digits long and contains only numbers.
+                    </p>
+                </div>
+            </details>
+            <div class="form-group">
+                <input class="button" id="button-search" type="submit" value="Continue">
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (Model?.SearchResults != null)
+{
+    if (!Model.SearchResults.Any())
+    {
+<span>No results</span>
+    }
+}

@@ -170,5 +170,13 @@ namespace SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs
                 return await RequestAndDeserialiseAsync<IEnumerable<StandardOrganisationSummary>>(request);
             }
         }
+
+        public async Task<Standard> GetStandard(string standardId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/standards/{standardId}"))
+            {
+                return await RequestAndDeserialiseAsync<Standard>(request);
+            }
+        }
     }
 }

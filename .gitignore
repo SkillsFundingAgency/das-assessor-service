@@ -266,3 +266,6 @@ src/Tools/PhantomJS/tools/phantomjs/ChangeLog
 /src/SFA.DAS.EmployerApprenticeshipsService.Infrastructure/Services/ReferenceDataService.cs.LOCAL
 /src/SFA.DAS.EmployerApprenticeshipsService.Domain/Interfaces/IReferenceDataService.cs.REMOTE
 *-nlog.txt
+
+# vscode project files
+.vscode/

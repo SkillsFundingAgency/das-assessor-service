@@ -1,4 +1,5 @@
 ﻿using System;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -32,8 +33,10 @@ namespace SFA.DAS.AssessorService.Web
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             Configuration = ConfigurationService.GetConfig(_config["EnvironmentName"], _config["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
+            services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
             services.AddAndConfigureAuthentication(Configuration);
-            services.AddMvc().AddControllersAsServices().AddSessionStateTempDataProvider();
+            services.AddMvc().AddControllersAsServices().AddSessionStateTempDataProvider().AddViewLocalization(opts => { opts.ResourcesPath = "Resources"; })
+                .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
             services.AddSession();
 
             return ConfigureIOC(services);
@@ -57,6 +60,7 @@ namespace SFA.DAS.AssessorService.Web
                 config.For<IWebConfiguration>().Use(Configuration);
                 config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<IContactsApiClient>().Use<ContactsApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
+                config.For<ISearchApiClient>().Use<SearchApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
 
                 config.Populate(services);
             });
