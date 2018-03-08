@@ -8,7 +8,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations.Maintenence.Post.Validators
 { 
-    public class WhenOrganisationCreateViewModelValidatorSucceeds : OrganisationCreateRequestValidatorTestBase
+    public class WhenCreateOrganisationRequestValidatorSucceeds : OrganisationCreateRequestValidatorTestBase
     {
         private ValidationResult _validationResult;
 
@@ -17,7 +17,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
         { 
             Setup();
 
-            OrganisationCreateViewModel = Builder<CreateOrganisationRequest>.CreateNew()             
+            CreateOrganisationRequest = Builder<CreateOrganisationRequest>.CreateNew()  
+                .With(q => q.EndPointAssessorOrganisationId = "123456")
                 .With(q => q.EndPointAssessorUkprn = 10000001)
                 .With(q =>  q.PrimaryContact = null)
                 .Build();
@@ -28,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
             OrganisationQueryRepositoryMock.Setup(q => q.CheckIfAlreadyExists(Moq.It.IsAny<string>()))
                 .Returns(Task.FromResult((false)));
 
-            _validationResult = CreateOrganisationRequestValidator.Validate(OrganisationCreateViewModel);
+            _validationResult = CreateOrganisationRequestValidator.Validate(CreateOrganisationRequest);
         }
 
         [Test]
@@ -41,6 +42,13 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
         public void ErrorMessageShouldNotContainEndPointAssessorOrganisationId()      
         {
             var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "EndPointAssessorOrganisationId" && q.ErrorCode == "NotEmptyValidator");
+            errors.Should().BeNull();
+        }
+
+        [Test]
+        public void ErrorMessageShouldNotMaxLengthErrorForEndPointAssessorOrganisationIdMustBeDefined()
+        {
+            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "EndPointAssessorOrganisationId" && q.ErrorCode == "NMaximumLengthValidator");
             errors.Should().BeNull();
         }
 

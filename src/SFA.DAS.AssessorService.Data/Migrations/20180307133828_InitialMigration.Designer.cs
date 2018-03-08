@@ -11,7 +11,7 @@ using System;
 namespace SFA.DAS.AssessorService.Data.Migrations
 {
     [DbContext(typeof(AssessorDbContext))]
-    [Migration("20180301213020_InitialMigration")]
+    [Migration("20180307133828_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,23 +26,32 @@ namespace SFA.DAS.AssessorService.Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("CertificateData");
+                    b.Property<string>("CertificateData")
+                        .IsRequired();
 
                     b.Property<DateTime>("CreatedAt");
 
-                    b.Property<Guid>("CreatedBy");
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(30);
 
                     b.Property<DateTime?>("DeletedAt");
 
-                    b.Property<Guid>("DeletedBy");
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(30);
+
+                    b.Property<int>("EndPointAssessorCertificateId");
 
                     b.Property<Guid>("OrganisationId");
 
-                    b.Property<int>("Status");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20);
 
                     b.Property<DateTime?>("UpdatedAt");
 
-                    b.Property<Guid>("UpdatedBy");
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(30);
 
                     b.HasKey("Id");
 
@@ -56,7 +65,9 @@ namespace SFA.DAS.AssessorService.Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Action");
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(400);
 
                     b.Property<Guid>("CertificateId");
 
@@ -64,15 +75,17 @@ namespace SFA.DAS.AssessorService.Data.Migrations
 
                     b.Property<DateTime?>("DeletedAt");
 
-                    b.Property<int>("EndPointAssessorCertificateId");
-
                     b.Property<DateTime>("EventTime");
 
-                    b.Property<int>("Status");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(12);
 
                     b.Property<DateTime?>("UpdatedAt");
 
                     b.HasKey("Id");
+
+                    b.HasAlternateKey("EventTime");
 
                     b.HasIndex("CertificateId");
 
@@ -84,24 +97,33 @@ namespace SFA.DAS.AssessorService.Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("ContactStatus");
-
                     b.Property<DateTime>("CreatedAt");
 
                     b.Property<DateTime?>("DeletedAt");
 
-                    b.Property<string>("DisplayName");
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(120);
 
-                    b.Property<string>("Email");
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(120);
 
-                    b.Property<string>("EndPointAssessorOrganisationId");
+                    b.Property<string>("EndPointAssessorOrganisationId")
+                        .IsRequired()
+                        .HasMaxLength(12);
 
                     b.Property<Guid>("OrganisationId");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(10);
 
                     b.Property<DateTime?>("UpdatedAt");
 
                     b.Property<string>("Username")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasMaxLength(30);
 
                     b.HasKey("Id");
 
@@ -121,19 +143,27 @@ namespace SFA.DAS.AssessorService.Data.Migrations
 
                     b.Property<DateTime?>("DeletedAt");
 
-                    b.Property<string>("EndPointAssessorName");
+                    b.Property<string>("EndPointAssessorName")
+                        .IsRequired()
+                        .HasMaxLength(100);
 
-                    b.Property<string>("EndPointAssessorOrganisationId");
+                    b.Property<string>("EndPointAssessorOrganisationId")
+                        .IsRequired()
+                        .HasMaxLength(12);
 
                     b.Property<int>("EndPointAssessorUkprn");
 
-                    b.Property<int>("OrganisationStatus");
+                    b.Property<Guid?>("PrimaryContact")
+                        .HasMaxLength(30);
 
-                    b.Property<Guid?>("PrimaryContactId");
+                    b.Property<string>("Status")
+                        .IsRequired();
 
                     b.Property<DateTime?>("UpdatedAt");
 
                     b.HasKey("Id");
+
+                    b.HasAlternateKey("EndPointAssessorOrganisationId");
 
                     b.ToTable("Organisations");
                 });

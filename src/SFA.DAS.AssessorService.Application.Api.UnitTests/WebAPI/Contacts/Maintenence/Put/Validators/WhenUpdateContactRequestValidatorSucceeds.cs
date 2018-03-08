@@ -8,7 +8,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Maintenence.Put.Validators
 {
-    public class WhenContactCreateViewModelValidatorSuccceeds : WhenUpdateContactRequestValidatorTestBase
+    public class WhenUpdateContactRequestValidatorSuccceeds : WhenUpdateContactRequestValidatorTestBase
     {
         private static ValidationResult _validationResult;
         private static UpdateContactRequest _updateContactRequest;

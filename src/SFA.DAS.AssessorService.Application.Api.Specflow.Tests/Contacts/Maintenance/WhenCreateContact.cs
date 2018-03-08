@@ -24,10 +24,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
         private readonly OrganisationService _organisationService;
         private readonly OrganisationQueryService _organisationQueryService;
         private dynamic _contactArgument;
-        private Contact _contact;
+        private ContactResponse _contactResponse;
         private CreateOrganisationRequest _createOrganisationRequest;
 
-        private Organisation _organisaionRetrieved;
+        private OrganisationResponse _organisaionRetrieved;
 
         private RestClientResult _restClient;
 
@@ -67,7 +67,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
 
             _restClient = _contactService.PostContact(contact);
 
-            _contact = _restClient.Deserialise<Contact>();
+            _contactResponse = _restClient.Deserialise<ContactResponse>();
         }
 
         [When(@"I Create a Contact as another User for Organisation")]
@@ -98,7 +98,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
             contactRequest = _createContactBuilder.Build(_contactArgument, _createOrganisationRequest.EndPointAssessorOrganisationId);
             _restClient = _contactService.PostContact(contactRequest);
 
-            _contact = _restClient.Deserialise<Contact>();
+            _contactResponse = _restClient.Deserialise<ContactResponse>();
         }
 
 
@@ -122,21 +122,21 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
 
             contactRequest = _createContactBuilder.Build(_contactArgument, _createOrganisationRequest.EndPointAssessorOrganisationId);
             _restClient = _contactService.PostContact(contactRequest);
-            _contact = _restClient.Deserialise<Contact>();
+            _contactResponse = _restClient.Deserialise<ContactResponse>();
 
         }
 
         [Then(@"the Contact should be created")]
         public void ThenTheContactShouldBeCreated()
         {
-            _contact.DisplayName.Should().Be(_contactArgument.DisplayName);
-            _contact.Email.Should().Be(_contactArgument.Email);
+            _contactResponse.DisplayName.Should().Be(_contactArgument.DisplayName);
+            _contactResponse.Email.Should().Be(_contactArgument.Email);
         }
 
         [Then(@"the Contact Status should be set to Live")]
         public void ThenTheContactStatusShouldBeSetToLive()
         {
-            _contact.Status.Should().Be(ContactStatus.Live);
+            _contactResponse.Status.Should().Be(ContactStatus.Live);
         }
 
         [Then(@"the Contact Organisation Status should be set to (.*)")]
@@ -151,7 +151,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
         {
             var result =
                 _organisationQueryService.SearchOrganisationByUkPrn(createOrganisationRequest.EndPointAssessorUkprn);
-            _organisaionRetrieved = result.Deserialise<Organisation>();
+            _organisaionRetrieved = result.Deserialise<OrganisationResponse>();
         }
 
         private void CreateContact(CreateContactRequest contactCreateViewModel)
@@ -160,7 +160,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
                 "api/v1/contacts", contactCreateViewModel).Result;
 
             _restClient.JsonResult = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
-            _contact = JsonConvert.DeserializeObject<Contact>(_restClient.JsonResult);
+            _contactResponse = JsonConvert.DeserializeObject<ContactResponse>(_restClient.JsonResult);
         }
     }
 }

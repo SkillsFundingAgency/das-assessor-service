@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn").Value;
             
-            Organisation organisation;
+            OrganisationResponse organisation;
 
             try
             {

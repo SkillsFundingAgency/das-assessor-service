@@ -10,7 +10,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
-using Organisation = SFA.DAS.AssessorService.Api.Types.Models.Organisation;
+using OrganisationResponse = SFA.DAS.AssessorService.Api.Types.Models.OrganisationResponse;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.RegisterUpdate
 {
@@ -21,7 +21,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.RegisterUpdate
         private readonly ILogger<RegisterUpdateHandler> _logger;
         private readonly IMediator _mediator;
         private List<OrganisationSummary> _epaosOnRegister;
-        private List<Organisation> _organisations;
+        private List<OrganisationResponse> _organisations;
         private RegisterUpdateResponse _response;
 
         public RegisterUpdateHandler(IAssessmentOrgsApiClient registerApiClient, IOrganisationQueryRepository organisationRepository, ILogger<RegisterUpdateHandler> logger, IMediator mediator)
@@ -78,7 +78,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.RegisterUpdate
                 _organisations.Count(org => org.Status == OrganisationStatus.Deleted);
         }
 
-        private bool EpaoStillPresentOnRegister(Organisation org)
+        private bool EpaoStillPresentOnRegister(OrganisationResponse org)
         {
             return _epaosOnRegister.Any(e => e.Id == org.EndPointAssessorOrganisationId);
         }
@@ -104,7 +104,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.RegisterUpdate
                 _response.OrganisationsUpdated++;
 
                 _logger.LogInformation(
-                    $"Organisation with ID {organisation.Id} and EPAOgId {epaoSummary.Id} has had it's Name changed from {organisation.EndPointAssessorName} to {epaoSummary.Name}");
+                    $"Organisation with ID {organisation.EndPointAssessorOrganisationId } and EPAOgId {epaoSummary.Id} has had it's Name changed from {organisation.EndPointAssessorName} to {epaoSummary.Name}");
             }
 
             if (_organisations.Any(o => o.EndPointAssessorOrganisationId == epaoSummary.Id && o.Status == OrganisationStatus.Deleted))
@@ -120,17 +120,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.RegisterUpdate
                 _response.OrganisationsUnDeleted++;
 
                 _logger.LogInformation(
-                    $"Organisation with ID {organisation.Id} and EPAOgId {epaoSummary.Id} has rejoined the Register and has been Undeleted");
+                    $"Organisation with ID {organisation.EndPointAssessorOrganisationId } and EPAOgId {epaoSummary.Id} has rejoined the Register and has been Undeleted");
             }
 
         }
 
-        private async Task DeleteOrganisation(Organisation org)
+        private async Task DeleteOrganisation(OrganisationResponse org)
         {
             if (org.Status == OrganisationStatus.Deleted)
             {
                 _logger.LogInformation(
-                    $"Organisation with ID {org.Id} and EPAOgId {org.Id} no longer found on Register and has previously been deleted.");
+                    $"Organisation with ID {org.EndPointAssessorOrganisationId } and EPAOgId {org.EndPointAssessorOrganisationId } no longer found on Register and has previously been deleted.");
 
                 return;
             }
@@ -139,7 +139,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.RegisterUpdate
             _response.OrganisationsDeleted++;
 
             _logger.LogInformation(
-                $"Organisation with ID {org.Id} and EPAOgId {org.Id} no longer found on Register. Deleting from Repository");
+                $"Organisation with ID {org.EndPointAssessorOrganisationId } and EPAOgId {org.EndPointAssessorOrganisationId } no longer found on Register. Deleting from Repository");
         }
 
         private async Task CreateNewOrganisation(OrganisationSummary epaoSummary)
@@ -159,7 +159,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.RegisterUpdate
 
             _response.OrganisationsCreated++;
 
-            _logger.LogInformation($"EPAO {epaoSummary.Id} Created in Repository with ID {createdOrg.Id}");
+            _logger.LogInformation($"EPAO {epaoSummary.Id} Created in Repository with ID {createdOrg.EndPointAssessorOrganisationId }");
         }
 
         

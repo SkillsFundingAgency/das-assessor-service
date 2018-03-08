@@ -15,16 +15,17 @@ namespace SFA.DAS.AssessorService.Data.Migrations
                     Id = table.Column<Guid>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     DeletedAt = table.Column<DateTime>(nullable: true),
-                    EndPointAssessorName = table.Column<string>(nullable: true),
-                    EndPointAssessorOrganisationId = table.Column<string>(nullable: true),
+                    EndPointAssessorName = table.Column<string>(maxLength: 100, nullable: false),
+                    EndPointAssessorOrganisationId = table.Column<string>(maxLength: 12, nullable: false),
                     EndPointAssessorUkprn = table.Column<int>(nullable: false),
-                    OrganisationStatus = table.Column<int>(nullable: false),
-                    PrimaryContactId = table.Column<Guid>(nullable: true),
+                    PrimaryContact = table.Column<Guid>(maxLength: 30, nullable: true),
+                    Status = table.Column<string>(nullable: false),
                     UpdatedAt = table.Column<DateTime>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Organisations", x => x.Id);
+                    table.UniqueConstraint("AK_Organisations_EndPointAssessorOrganisationId", x => x.EndPointAssessorOrganisationId);
                 });
 
             migrationBuilder.CreateTable(
@@ -32,15 +33,16 @@ namespace SFA.DAS.AssessorService.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    CertificateData = table.Column<string>(nullable: true),
+                    CertificateData = table.Column<string>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
-                    CreatedBy = table.Column<Guid>(nullable: false),
+                    CreatedBy = table.Column<string>(maxLength: 30, nullable: false),
                     DeletedAt = table.Column<DateTime>(nullable: true),
-                    DeletedBy = table.Column<Guid>(nullable: false),
+                    DeletedBy = table.Column<string>(maxLength: 30, nullable: true),
+                    EndPointAssessorCertificateId = table.Column<int>(nullable: false),
                     OrganisationId = table.Column<Guid>(nullable: false),
-                    Status = table.Column<int>(nullable: false),
+                    Status = table.Column<string>(maxLength: 20, nullable: false),
                     UpdatedAt = table.Column<DateTime>(nullable: true),
-                    UpdatedBy = table.Column<Guid>(nullable: false)
+                    UpdatedBy = table.Column<string>(maxLength: 30, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -58,15 +60,15 @@ namespace SFA.DAS.AssessorService.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    ContactStatus = table.Column<int>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     DeletedAt = table.Column<DateTime>(nullable: true),
-                    DisplayName = table.Column<string>(nullable: true),
-                    Email = table.Column<string>(nullable: true),
-                    EndPointAssessorOrganisationId = table.Column<string>(nullable: true),
+                    DisplayName = table.Column<string>(maxLength: 120, nullable: false),
+                    Email = table.Column<string>(maxLength: 120, nullable: false),
+                    EndPointAssessorOrganisationId = table.Column<string>(maxLength: 12, nullable: false),
                     OrganisationId = table.Column<Guid>(nullable: false),
+                    Status = table.Column<string>(maxLength: 10, nullable: false),
                     UpdatedAt = table.Column<DateTime>(nullable: true),
-                    Username = table.Column<string>(nullable: false)
+                    Username = table.Column<string>(maxLength: 30, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -85,18 +87,18 @@ namespace SFA.DAS.AssessorService.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    Action = table.Column<string>(nullable: true),
+                    Action = table.Column<string>(maxLength: 400, nullable: false),
                     CertificateId = table.Column<Guid>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false),
                     DeletedAt = table.Column<DateTime>(nullable: true),
-                    EndPointAssessorCertificateId = table.Column<int>(nullable: false),
                     EventTime = table.Column<DateTime>(nullable: false),
-                    Status = table.Column<int>(nullable: false),
+                    Status = table.Column<string>(maxLength: 12, nullable: false),
                     UpdatedAt = table.Column<DateTime>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CertificateLogs", x => x.Id);
+                    table.UniqueConstraint("AK_CertificateLogs_EventTime", x => x.EventTime);
                     table.ForeignKey(
                         name: "FK_CertificateLogs_Certificates_CertificateId",
                         column: x => x.CertificateId,

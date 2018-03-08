@@ -12,16 +12,16 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
         {
             Mapper.Initialize(cfg =>
             {
-                cfg.CreateMap<Organisation, AssessorService.Api.Types.Models.Organisation>();
-                cfg.CreateMap<CreateOrganisationRequest, OrganisationCreateDomainModel>();
-                cfg.CreateMap<OrganisationCreateDomainModel, Organisation>();
-                cfg.CreateMap<UpdateOrganisationRequest, OrganisationUpdateDomainModel>();
-                cfg.CreateMap<CreateContactRequest, ContactCreateDomainModel>();
-                cfg.CreateMap<ContactCreateDomainModel, Contact>();
+                cfg.CreateMap<Organisation, OrganisationResponse>();
+                cfg.CreateMap<CreateOrganisationRequest, CreateOrganisationDomainModel>();
+                cfg.CreateMap<CreateOrganisationDomainModel, Organisation>();
+                cfg.CreateMap<UpdateOrganisationRequest, UpdateOrganisationDomainModel>();
+                cfg.CreateMap<CreateContactRequest, CreateContactDomainModel>();
+                cfg.CreateMap<CreateContactDomainModel, Contact>();
                 cfg.CreateMap<Contact, CreateContactRequest>();
-                cfg.CreateMap<Contact, AssessorService.Api.Types.Models.Contact>();
-                cfg.CreateMap<Organisation, OrganisationQueryDomainModel>();
-                cfg.CreateMap<OrganisationQueryDomainModel, OrganisationUpdateDomainModel>();
+                cfg.CreateMap<Contact, ContactResponse>();
+                cfg.CreateMap<Organisation, OrganisationDomainModel>();
+                cfg.CreateMap<OrganisationDomainModel, UpdateOrganisationDomainModel>();
             });
         }
     }

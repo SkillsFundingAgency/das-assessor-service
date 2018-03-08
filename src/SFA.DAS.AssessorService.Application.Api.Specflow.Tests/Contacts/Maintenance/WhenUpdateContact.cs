@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
         private readonly IDbConnection _dbconnection;
         private readonly OrganisationService _organisationService;
         private dynamic _contactArgument;
-        private Contact _contactArguments;
+        private ContactResponse _contactResponseArguments;
         private RestClientResult _restClient;
 
         public WhenUpdateContact(RestClientResult restClient,
@@ -75,7 +75,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
 
             _contactService.PutContact(updateContactRequest);
 
-            _contactArguments = new Contact
+            _contactResponseArguments = new ContactResponse
             {
                 DisplayName = _contactArgument.DisplayName,
                 Email = _contactArgument.Email,
@@ -86,14 +86,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
         [Then(@"the Contact Update should have occured")]
         public void ThenTheContactUpdateShouldHaveOccured()
         {
-            var contactEntities = _dbconnection.Query<Contact>
-                    ($"Select Id, UserName, DisplayName, EMail, Status From Contacts where UserName = '{_contactArguments.Username}'")
+            var contactEntities = _dbconnection.Query<ContactResponse>
+                    ($"Select Id, UserName, DisplayName, EMail, Status From Contacts where UserName = '{_contactResponseArguments.Username}'")
                 .ToList();
             var contact = contactEntities.First();
 
-            contact.DisplayName.Should().Be(_contactArguments.DisplayName);
-            contact.Email.Should().Be(_contactArguments.Email);
-            contact.Username.Should().Be(_contactArguments.Username);
+            contact.DisplayName.Should().Be(_contactResponseArguments.DisplayName);
+            contact.Email.Should().Be(_contactResponseArguments.Email);
+            contact.Username.Should().Be(_contactResponseArguments.Username);
 
             contact.Status.Should().Be(ContactStatus.Live);
         }

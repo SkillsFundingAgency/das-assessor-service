@@ -11,7 +11,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.Q
     public class WhenRetrieveAllOrganisations
     {
         private readonly OrganisationQueryService _organisationQueryService;
-        private List<Organisation> _organisations = new List<Organisation>();
+        private List<OrganisationResponse> _organisationResponses = new List<OrganisationResponse>();
 
         public WhenRetrieveAllOrganisations(OrganisationQueryService organisationQueryService)
         {
@@ -22,13 +22,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.Q
         public void WhenIRequestAllOrganisationsToBeRetrieved()
         {
             var result = _organisationQueryService.GetOrganisations();
-            _organisations = result.Deserialise<List<Organisation>>();
+            _organisationResponses = result.Deserialise<List<OrganisationResponse>>();
         }
 
         [Then(@"the API returns all Organisations")]
         public void ThenTheApiReturnsAllOrganisations()
         {
-            _organisations.Count.Should().BeGreaterOrEqualTo(1);
+            _organisationResponses.Count.Should().BeGreaterOrEqualTo(1);
         }
     }
 }

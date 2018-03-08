@@ -11,7 +11,7 @@ using SFA.DAS.AssessorService.Domain.DomainModels;
 namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
 {
   
-    public class CreateContactHandler : IRequestHandler<CreateContactRequest, Contact>
+    public class CreateContactHandler : IRequestHandler<CreateContactRequest, ContactResponse>
     {
         private readonly IOrganisationRepository _organisationRepository;
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
@@ -27,11 +27,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
             _organisationQueryRepository = organisationQueryRepository;
         }
 
-        public async Task<Contact> Handle(CreateContactRequest createContactRequest, CancellationToken cancellationToken)
+        public async Task<ContactResponse> Handle(CreateContactRequest createContactRequest, CancellationToken cancellationToken)
         {
             var organisation = await _organisationQueryRepository.Get(createContactRequest.EndPointAssessorOrganisationId);
                 
-            var contactCreateDomainModel = Mapper.Map<ContactCreateDomainModel>(createContactRequest);           
+            var contactCreateDomainModel = Mapper.Map<CreateContactDomainModel>(createContactRequest);           
             contactCreateDomainModel.OrganisationId = organisation.Id;
 
             if (!(await _organisationQueryRepository.CheckIfOrganisationHasContacts(createContactRequest.EndPointAssessorOrganisationId)))
@@ -49,13 +49,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
             }           
         }
 
-        private async Task SetOrganisationStatusToLiveAndSetPrimaryContact(CreateContactRequest createContactRequest, Contact contactQueryViewModel)
+        private async Task SetOrganisationStatusToLiveAndSetPrimaryContact(CreateContactRequest createContactRequest, ContactResponse contactResponseQueryViewModel)
         {
             var organisationQueryDomainModel =
                 await _organisationQueryRepository.Get(createContactRequest.EndPointAssessorOrganisationId);
             var organisationUpdateDomainModel =
-                Mapper.Map<OrganisationUpdateDomainModel>(organisationQueryDomainModel);
-            organisationUpdateDomainModel.PrimaryContact = contactQueryViewModel.Username;
+                Mapper.Map<UpdateOrganisationDomainModel>(organisationQueryDomainModel);
+            organisationUpdateDomainModel.PrimaryContact = contactResponseQueryViewModel.Username;
             organisationUpdateDomainModel.Status = OrganisationStatus.Live;
 
             await _organisationRepository.UpdateOrganisation(organisationUpdateDomainModel);

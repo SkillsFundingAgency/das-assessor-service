@@ -91,8 +91,7 @@
                       EndPointAssessorCertificateId = 2222222,
                     CertificateData = JsonConvert.SerializeObject(firstCertificateData),
                     Status = CertificateStatus.Ready,
-                    CreatedBy = firstContact.Id,
-                    UpdatedBy = firstContact.Id
+                    CreatedBy = "jcoxhead"
                 };
 
                 context.Certificates.Add(firstCertificate);
@@ -134,8 +133,7 @@
                     OrganisationId = organisation.Id,
                     CertificateData = JsonConvert.SerializeObject(secondCertificateData),
                     Status = CertificateStatus.Ready,
-                    CreatedBy = secondContact.Id,
-                    UpdatedBy = secondContact.Id
+                    CreatedBy = "jcoxhead"
                 };
 
                 context.Certificates.Add(secondCertificate);

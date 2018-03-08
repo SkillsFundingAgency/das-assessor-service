@@ -129,6 +129,9 @@
   <data name="InvalidUKPRN" xml:space="preserve">
     <value>Request must contain a valid UKPRN as defined in the UK Register of Learning Providers (UKRLP) is 8 digits in the format 10000000 – 99999999</value>
   </data>
+  <data name="MaxLengthError" xml:space="preserve">
+    <value>{0} should have {1} characters at most</value>
+  </data>
   <data name="PrimaryContactDoesNotExist" xml:space="preserve">
     <value>Data Error</value>
   </data>

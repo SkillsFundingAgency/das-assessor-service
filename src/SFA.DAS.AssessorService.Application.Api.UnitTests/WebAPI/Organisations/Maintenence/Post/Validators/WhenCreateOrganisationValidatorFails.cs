@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
         {
             Setup();
 
-            OrganisationCreateViewModel = Builder<CreateOrganisationRequest>.CreateNew()
+            CreateOrganisationRequest = Builder<CreateOrganisationRequest>.CreateNew()
                 .With(q => q.EndPointAssessorOrganisationId = null)
                 .With(q => q.EndPointAssessorName = null)
                 .With(q => q.EndPointAssessorUkprn = 12)
@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
             OrganisationQueryRepositoryMock.Setup(q => q.CheckIfAlreadyExists(Moq.It.IsAny<string>()))
                 .Returns(Task.FromResult((true)));
 
-            _validationResult = CreateOrganisationRequestValidator.Validate(OrganisationCreateViewModel);
+            _validationResult = CreateOrganisationRequestValidator.Validate(CreateOrganisationRequest);
         }
 
         [Test]

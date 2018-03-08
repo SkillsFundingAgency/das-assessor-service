@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Main
         {
             Setup();
 
-            var contact = Builder<Contact>.CreateNew().Build();
+            var contact = Builder<ContactResponse>.CreateNew().Build();
 
             Mediator.Setup(q => q.Send(Moq.It.IsAny<CreateContactRequest>(), Moq.It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult((contact)));

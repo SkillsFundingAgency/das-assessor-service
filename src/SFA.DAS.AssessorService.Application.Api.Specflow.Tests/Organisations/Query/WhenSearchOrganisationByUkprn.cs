@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.Q
     public class WhenSearchOrganisationByUkprn
     {
         private readonly OrganisationQueryService _organisationQueryService;
-        private Organisation _organisation = new Organisation();
+        private OrganisationResponse _organisationResponse = new OrganisationResponse();
     
         public WhenSearchOrganisationByUkprn(OrganisationQueryService organisationQueryService)
         {
@@ -23,13 +23,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.Q
             var ukprn = p0;
 
             var result = _organisationQueryService.SearchOrganisationByUkPrn(ukprn);
-            _organisation = result.Deserialise<Organisation>();
+            _organisationResponse = result.Deserialise<OrganisationResponse>();
         }
 
         [Then(@"the API returns an appropriate Organisation")]
         public void ThenTheAPIReturnsAnAppropriateOrganisation()
         {
-            _organisation.Should().NotBeNull();
+            _organisationResponse.Should().NotBeNull();
         }
     }
 }

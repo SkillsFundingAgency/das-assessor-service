@@ -21,7 +21,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
             _logger = logger;
         }
 
-        public async Task<IEnumerable<Contact>> SearchContactsForAnOrganisation(string endPointAssessorOrganisationId)
+        public async Task<IEnumerable<ContactResponse>> SearchContactsForAnOrganisation(string endPointAssessorOrganisationId)
         {
             var contacts = (await _contactQueryRepository.GetContacts(endPointAssessorOrganisationId)).ToList();
             if (!contacts.Any())
@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
             return contacts;
         }
 
-        public async Task<Contact> SearchContactByUserName(string userName)
+        public async Task<ContactResponse> SearchContactByUserName(string userName)
         {
             var contact = await _contactQueryRepository.GetContact(userName);
             if (contact == null)

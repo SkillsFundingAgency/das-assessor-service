@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpPost(Name = "CreateContract")]
-        [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(Contact))]
+        [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(ContactResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> CreateContact(

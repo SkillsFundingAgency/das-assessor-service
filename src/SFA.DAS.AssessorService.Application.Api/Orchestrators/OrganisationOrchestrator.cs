@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
             _localizer = localizer;
         }
 
-        public async Task<Organisation> CreateOrganisation(
+        public async Task<OrganisationResponse> CreateOrganisation(
             [FromBody] CreateOrganisationRequest organisationCreateViewModel)
         {
             var organisation = await _mediator.Send(organisationCreateViewModel);
