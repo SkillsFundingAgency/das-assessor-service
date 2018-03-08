@@ -37,9 +37,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 .WithMessage(string.Format(localiser[ResourceMessageName.MaxLengthError].Value,
                     nameof(createContactRequest.DisplayName), 120));
 
-            RuleFor(contact => contact.EndPointAssessorOrganisationId).NotEmpty().WithMessage(
-                localiser[ResourceMessageName.EndPointAssessorOrganisationIdMustBeDefined].Value);
-
             RuleFor(contact => contact.Username)
                 .NotEmpty()
                 .WithMessage(
@@ -49,6 +46,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                // Params
                .WithMessage(string.Format(localiser[ResourceMessageName.MaxLengthError].Value,
                     nameof(createContactRequest.Username), 30));
+
+            RuleFor(contact => contact.EndPointAssessorOrganisationId).NotEmpty().WithMessage(
+                localiser[ResourceMessageName.EndPointAssessorOrganisationIdMustBeDefined].Value);
 
             RuleFor(contact => contact).Must(NotAlreadyExist).WithMessage(localiser[ResourceMessageName.AlreadyExists].Value);
 
