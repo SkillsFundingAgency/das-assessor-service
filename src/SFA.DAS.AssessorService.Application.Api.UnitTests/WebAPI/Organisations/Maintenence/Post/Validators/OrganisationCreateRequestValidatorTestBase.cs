@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
         protected Mock<IOrganisationQueryRepository> OrganisationQueryRepositoryMock;
         protected CreateOrganisationRequest CreateOrganisationRequest;
 
-        private Mock<IStringLocalizer<CreateOrganisationRequestValidator>> organisationCreateViewModelValidatorStringLocaliser;
+        private Mock<IStringLocalizer<CreateOrganisationRequestValidator>> createOrganisationRequestModelValidatorStringLocaliser;
 
         private MockStringLocaliserBuilder _mockStringLocaliserBuilder;
 
@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
         {
             _mockStringLocaliserBuilder = new MockStringLocaliserBuilder();
 
-            organisationCreateViewModelValidatorStringLocaliser = _mockStringLocaliserBuilder
+            createOrganisationRequestModelValidatorStringLocaliser = _mockStringLocaliserBuilder
                 .WithKey(ResourceMessageName.NoAssesmentProviderFound)
                 .WithKeyValue("100000000")
                 .Build<CreateOrganisationRequestValidator>();
@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
             ContactQueryRepositoryMock = new Mock<IContactQueryRepository>();
             OrganisationQueryRepositoryMock = new Mock<IOrganisationQueryRepository>();
 
-            CreateOrganisationRequestValidator = new CreateOrganisationRequestValidator(organisationCreateViewModelValidatorStringLocaliser.Object,
+            CreateOrganisationRequestValidator = new CreateOrganisationRequestValidator(createOrganisationRequestModelValidatorStringLocaliser.Object,
                 ContactQueryRepositoryMock.Object, OrganisationQueryRepositoryMock.Object);
         }
     }

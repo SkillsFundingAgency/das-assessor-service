@@ -56,8 +56,9 @@ namespace SFA.DAS.AssessorService.Data
 
             await _assessorDbContext.SaveChangesAsync();
 
-            var organisationQueryViewModel = Mapper.Map<OrganisationResponse>(organisationEntity);
-            return organisationQueryViewModel;
+            var organisationResponse
+                = Mapper.Map<OrganisationResponse>(organisationEntity);
+            return organisationResponse;
         }
 
         public async Task Delete(string endPointAssessorOrganisationId)

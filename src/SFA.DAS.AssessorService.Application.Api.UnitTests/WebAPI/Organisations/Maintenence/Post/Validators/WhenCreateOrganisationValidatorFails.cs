@@ -8,7 +8,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations.Maintenence.Post.Validators
 { 
-    public class WhenOrganisationCreateViewModelValidatorFails : OrganisationCreateRequestValidatorTestBase
+    public class WhenCreateOrganisationRequestModelValidatorFails : OrganisationCreateRequestValidatorTestBase
     {
         private ValidationResult _validationResult;
 

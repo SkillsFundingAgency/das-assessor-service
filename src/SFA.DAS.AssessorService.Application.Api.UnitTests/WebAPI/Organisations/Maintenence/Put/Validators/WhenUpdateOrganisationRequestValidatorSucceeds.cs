@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
         {
             Setup();
 
-            OrganisationUpdateViewModel = Builder<UpdateOrganisationRequest>.CreateNew()                
+            UpdateOrganisationRequest = Builder<UpdateOrganisationRequest>.CreateNew()                
                 .With(q => q.EndPointAssessorName = "Jane")   
                 .With(q => q.PrimaryContact = null)
                 .Build();
@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
             OrganisationQueryRepositoryMock.Setup(q => q.CheckIfAlreadyExists(Moq.It.IsAny<string>()))
                 .Returns(Task.FromResult((true)));
 
-            _validationResult = UpdateOrganisationRequestValidator.Validate(OrganisationUpdateViewModel);
+            _validationResult = UpdateOrganisationRequestValidator.Validate(UpdateOrganisationRequest);
         }
 
         [Test]
