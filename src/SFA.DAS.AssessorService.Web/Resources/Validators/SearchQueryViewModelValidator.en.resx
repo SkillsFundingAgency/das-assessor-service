@@ -120,7 +120,7 @@
   <data name="LastNameShouldNotBeEmpty" xml:space="preserve">
     <value>Last Name should not be empty</value>
   </data>
-  <data name="UlnShouldNotBeEmpty" xml:space="preserve">
-    <value>ULN Should not be empty</value>
+  <data name="UlnFormatInvalid" xml:space="preserve">
+    <value>ULN format is invalid.  Should be 10 numbers.</value>
   </data>
 </root>

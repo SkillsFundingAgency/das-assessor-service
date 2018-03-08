@@ -22,20 +22,7 @@
 
 @if (Model?.SearchResults != null)
 {
-    if (Model.SearchResults.Any())
-    {
-        foreach (var result in Model.SearchResults)
-        {
-            <b>@result.Surname</b><br />
-            <span>@result.Firstname</span><br />
-            <span>@result.DateOfBirth</span><br />
-            <span>@result.LearningStartDate</span><br />
-            <span>@result.Provider</span><br />
-            <span>@result.Standard</span><br />
-            <br />
-        }
-    }
-    else
+    if (!Model.SearchResults.Any())
     {
         <span>No results</span>
     }

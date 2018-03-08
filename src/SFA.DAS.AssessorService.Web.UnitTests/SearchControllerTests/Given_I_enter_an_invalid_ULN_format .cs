@@ -20,13 +20,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.SearchControllerTests
 
             localizer.Setup(l => l[ResourceKey.LastNameShouldNotBeEmpty])
                 .Returns(new LocalizedString(ResourceKey.LastNameShouldNotBeEmpty, "Last name should not be empty"));
-            localizer.Setup(l => l[ResourceKey.UlnShouldNotBeEmpty])
-                .Returns(new LocalizedString(ResourceKey.UlnShouldNotBeEmpty, "Uln format invalid"));
+            localizer.Setup(l => l[ResourceKey.UlnFormatInvalid])
+                .Returns(new LocalizedString(ResourceKey.UlnFormatInvalid, "Uln format invalid"));
 
             var validator = new SearchQueryViewModelValidator(localizer.Object);
             var result = validator.Validate(new SearchViewModel() {Surname = "Smith", Uln = invalidUln});
             result.IsValid.Should().BeFalse();
         }
-        
     }
 }
