@@ -5,7 +5,7 @@
 	[EndPointAssessorName] [nvarchar](100) NOT NULL,
 	[EndPointAssessorOrganisationId] [nvarchar](12) NOT NULL,
 	[EndPointAssessorUkprn] [int] NOT NULL,
-	[PrimaryContact] [nvarchar](30) NOT NULL,
+	[PrimaryContact] [nvarchar](30) NULL,
 	[Status] [nvarchar](10) NOT NULL,
 	[UpdatedAt] [datetime2](7) NULL,
  CONSTRAINT [PK_Organisations] PRIMARY KEY CLUSTERED 

@@ -19,7 +19,7 @@
                     Id = Guid.NewGuid(),
                     EndPointAssessorName = "EPAO 1",
                     EndPointAssessorOrganisationId = "1234",
-                    EndPointAssessorUkprn = 10000000,
+                    EndPointAssessorUkprn = 10033670,
                     Status = OrganisationStatus.New
                 };
 
