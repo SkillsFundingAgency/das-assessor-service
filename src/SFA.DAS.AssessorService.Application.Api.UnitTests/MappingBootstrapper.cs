@@ -17,19 +17,19 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests
 
             AutoMapper.Mapper.Initialize(cfg =>
             {
-                cfg.CreateMap<AssessorService.Domain.Entities.Organisation, Organisation>();
-                cfg.CreateMap<CreateOrganisationRequest, OrganisationCreateDomainModel>();
-                cfg.CreateMap<OrganisationCreateDomainModel, AssessorService.Domain.Entities.Organisation>();
-                cfg.CreateMap<AssessorService.Domain.Entities.Organisation, Organisation>();
+                cfg.CreateMap<AssessorService.Domain.Entities.Organisation, OrganisationResponse>();
+                cfg.CreateMap<CreateOrganisationRequest, CreateOrganisationDomainModel>();
+                cfg.CreateMap<CreateOrganisationDomainModel, AssessorService.Domain.Entities.Organisation>();
+                cfg.CreateMap<AssessorService.Domain.Entities.Organisation, OrganisationResponse>();
 
-                cfg.CreateMap<UpdateOrganisationRequest, OrganisationUpdateDomainModel>();
-                cfg.CreateMap<AssessorService.Domain.Entities.Organisation, Organisation>();
-                cfg.CreateMap<CreateContactRequest, ContactCreateDomainModel>();
-                cfg.CreateMap<ContactCreateDomainModel, AssessorService.Domain.Entities.Contact>();
+                cfg.CreateMap<UpdateOrganisationRequest, UpdateOrganisationDomainModel>();
+                cfg.CreateMap<AssessorService.Domain.Entities.Organisation, OrganisationResponse>();
+                cfg.CreateMap<CreateContactRequest, CreateContactDomainModel>();
+                cfg.CreateMap<CreateContactDomainModel, AssessorService.Domain.Entities.Contact>();
                 cfg.CreateMap<AssessorService.Domain.Entities.Contact, CreateContactRequest>();
-                cfg.CreateMap<AssessorService.Domain.Entities.Contact, Contact>();
-                cfg.CreateMap<AssessorService.Domain.Entities.Contact, OrganisationQueryDomainModel>();
-                cfg.CreateMap<OrganisationQueryDomainModel, OrganisationUpdateDomainModel>();
+                cfg.CreateMap<AssessorService.Domain.Entities.Contact, ContactResponse>();
+                cfg.CreateMap<AssessorService.Domain.Entities.Contact, OrganisationDomainModel>();
+                cfg.CreateMap<OrganisationDomainModel, UpdateOrganisationDomainModel>();
             });
         }
     }

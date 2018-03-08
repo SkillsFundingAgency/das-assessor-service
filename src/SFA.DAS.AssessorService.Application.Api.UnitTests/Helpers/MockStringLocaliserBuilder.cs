@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Helpers
         {
             var localiser = new Mock<IStringLocalizer<TResourceType>>();
             var localizedString = new LocalizedString(_key, _keyValue);
-            localiser.Setup(q => q[Moq.It.IsAny<string>(), Moq.It.IsAny<object>()]).Returns(localizedString);
+            localiser.Setup(q => q[Moq.It.IsAny<string>()]).Returns(localizedString);
 
             return localiser;
         }

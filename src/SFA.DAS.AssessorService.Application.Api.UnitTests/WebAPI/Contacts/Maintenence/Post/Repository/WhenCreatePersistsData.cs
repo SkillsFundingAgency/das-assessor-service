@@ -6,25 +6,24 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Data;
 using SFA.DAS.AssessorService.Domain.DomainModels;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Maintenence.Post.Repository
 {
-    using Contact = AssessorService.Api.Types.Models.Contact;
-
     public class WhenCreateContactPersistsData
     {
         private ContactRepository _contactRepository;
         private Mock<AssessorDbContext> _assessorDbContext;
-        private Contact _result;
+        private ContactResponse _result;
 
         [SetUp]
         public void Arrange()
         {
             MappingBootstrapper.Initialize();
 
-            var contactCreateDomainModel = Builder<ContactCreateDomainModel>.CreateNew().Build();
+            var contactCreateDomainModel = Builder<CreateContactDomainModel>.CreateNew().Build();
 
             var mockSet = CreateMockSet();
             CreateMockDbCOntext(mockSet);

@@ -32,10 +32,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
 
             _endPointAssessorOrganisationId = "EPA0002";
             OrganisationRepository.Setup(r => r.GetAllOrganisations())
-                .Returns(Task.FromResult(new List<Organisation>
+                .Returns(Task.FromResult(new List<OrganisationResponse>
                 {
-                    new Organisation() {EndPointAssessorOrganisationId = "EPA0001"},
-                    new Organisation() {EndPointAssessorOrganisationId = "EPA0002", Status = OrganisationStatus.Live}
+                    new OrganisationResponse() {EndPointAssessorOrganisationId = "EPA0001"},
+                    new OrganisationResponse() {EndPointAssessorOrganisationId = "EPA0002", Status = OrganisationStatus.Live}
                 }.AsEnumerable()));
         }
 

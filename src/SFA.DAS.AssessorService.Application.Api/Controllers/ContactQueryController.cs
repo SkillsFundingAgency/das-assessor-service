@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpGet("{endPointAssessorOrganisationId}", Name = "SearchContactsForAnOrganisation")]
-        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<Contact>))]
+        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<ContactResponse>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> SearchContactsForAnOrganisation(string endPointAssessorOrganisationId)
         {
@@ -39,7 +39,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpGet("user/{userName}", Name = "SearchContactByUserName")]
-        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<Contact>))]
+        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<ContactResponse>))]
         [SwaggerResponse((int) HttpStatusCode.NotFound)]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> SearchContactByUserName(string userName)

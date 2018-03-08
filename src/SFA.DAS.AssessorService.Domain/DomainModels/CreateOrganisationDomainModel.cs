@@ -1,6 +1,8 @@
-﻿namespace SFA.DAS.AssessorService.Domain.DomainModels
+﻿using System;
+
+namespace SFA.DAS.AssessorService.Domain.DomainModels
 {
-    public class OrganisationCreateDomainModel
+    public class CreateOrganisationDomainModel
     {
         public string EndPointAssessorOrganisationId { get; set; }
         public int EndPointAssessorUkprn { get; set; }

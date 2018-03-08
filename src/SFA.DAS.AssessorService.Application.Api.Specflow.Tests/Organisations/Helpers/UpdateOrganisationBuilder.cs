@@ -4,7 +4,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.H
 {
     public class UpdateOrganisationRequestBuilder
     {
-        public UpdateOrganisationRequest Build(Organisation organisationl)
+        public UpdateOrganisationRequest Build(OrganisationResponse organisationl)
         {
             var organisation = new UpdateOrganisationRequest
             {

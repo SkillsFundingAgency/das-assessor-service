@@ -34,10 +34,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
 
 
             OrganisationRepository.Setup(r => r.GetAllOrganisations())
-                .Returns(Task.FromResult(new List<AssessorService.Api.Types.Models.Organisation>
+                .Returns(Task.FromResult(new List<AssessorService.Api.Types.Models.OrganisationResponse>
                 {
-                    new AssessorService.Api.Types.Models.Organisation() { EndPointAssessorOrganisationId = _endPointAssessorOrganisationId, EndPointAssessorName = "OLD NAME" },
-                    new AssessorService.Api.Types.Models.Organisation() { EndPointAssessorOrganisationId = "EPA0002", EndPointAssessorName = "Another EPAO"}
+                    new AssessorService.Api.Types.Models.OrganisationResponse() { EndPointAssessorOrganisationId = _endPointAssessorOrganisationId, EndPointAssessorName = "OLD NAME" },
+                    new AssessorService.Api.Types.Models.OrganisationResponse() { EndPointAssessorOrganisationId = "EPA0002", EndPointAssessorName = "Another EPAO"}
                 }.AsEnumerable()));
         }
 

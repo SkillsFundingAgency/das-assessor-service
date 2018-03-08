@@ -18,8 +18,8 @@ namespace SFA.DAS.AssessorService.Domain.Entities
 
         public string Status { get; set; }
 
-        public Guid CreatedBy { get; set; }
-        public Guid UpdatedBy { get; set; }
-        public Guid DeletedBy { get; set; }
+        public string CreatedBy { get; set; }
+        public string UpdatedBy { get; set; }
+        public string DeletedBy { get; set; }
     }
 }

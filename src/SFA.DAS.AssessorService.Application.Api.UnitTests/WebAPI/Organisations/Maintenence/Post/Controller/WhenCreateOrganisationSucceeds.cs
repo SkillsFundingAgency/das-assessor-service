@@ -11,7 +11,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
     public class WhenCreateOrganisation : OrganisationTestBase
     {
         private static CreateOrganisationRequest _organisationCreateViewModel;
-        private static Organisation _organisationQueryViewModel;
+        private static OrganisationResponse _organisationQueryViewModel;
         private IActionResult _result;
 
         [SetUp]
@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
         {
             Setup();
 
-            _organisationQueryViewModel = Builder<Organisation>.CreateNew().Build();
+            _organisationQueryViewModel = Builder<OrganisationResponse>.CreateNew().Build();
 
             Mediator.Setup(q => q.Send(Moq.It.IsAny<CreateOrganisationRequest>(), Moq.It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult((_organisationQueryViewModel)));

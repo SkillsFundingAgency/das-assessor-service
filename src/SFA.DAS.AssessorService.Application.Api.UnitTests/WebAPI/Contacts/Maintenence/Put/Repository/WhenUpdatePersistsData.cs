@@ -11,7 +11,6 @@
     using System.Threading;
     using System.Threading.Tasks;
     using AssessorService.Api.Types.Models;
-    using Contact = AssessorService.Api.Types.Models.Contact;
 
     [Subject("AssessorService")]
     public class WhenUpdateContactPersistsData
@@ -21,7 +20,7 @@
         private static UpdateContactRequest _contactUpdateViewModel;
         private static Mock<DbSet<AssessorService.Domain.Entities.Contact>> _contactDBSetMock;
 
-        protected static Contact _result;
+        protected static ContactResponse _result;
 
 
         Establish context = () =>

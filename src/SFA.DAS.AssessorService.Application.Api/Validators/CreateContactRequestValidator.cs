@@ -19,19 +19,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             // ReSharper disable once LocalNameCapturedOnly
             CreateContactRequest createContactRequest;
             RuleFor(contact => contact.Email).NotEmpty().WithMessage(
-                localiser[ResourceMessageName.DisplayNameMustBeDefined,
-                    nameof(createContactRequest.DisplayName)].Value);
+                localiser[ResourceMessageName.DisplayNameMustBeDefined].Value);
             RuleFor(contact => contact.DisplayName).NotEmpty().WithMessage(
-                localiser[ResourceMessageName.EMailMustBeDefined,
-                    nameof(createContactRequest.Email)].Value);
+                localiser[ResourceMessageName.EMailMustBeDefined].Value);
             RuleFor(contact => contact.EndPointAssessorOrganisationId).NotEmpty().WithMessage(
-                localiser[ResourceMessageName.EndPointAssessorOrganisationIdMustBeDefined,
-                    nameof(createContactRequest.EndPointAssessorOrganisationId)].Value);
+                localiser[ResourceMessageName.EndPointAssessorOrganisationIdMustBeDefined].Value);
             RuleFor(contact => contact.Username).NotEmpty().WithMessage(
-                localiser[ResourceMessageName.UserNameMustBeDefined,
-                    nameof(createContactRequest.Username)].Value);
-            RuleFor(contact => contact).Must(NotAlreadyExist).WithMessage(localiser[ResourceMessageName.AlreadyExists,
-                nameof(createContactRequest)].Value);
+                localiser[ResourceMessageName.UserNameMustBeDefined].Value);
+            RuleFor(contact => contact).Must(NotAlreadyExist).WithMessage(localiser[ResourceMessageName.AlreadyExists].Value);
         }
 
         private bool NotAlreadyExist(CreateContactRequest contact)
