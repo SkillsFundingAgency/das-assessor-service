@@ -11,6 +11,5 @@ namespace SFA.DAS.AssessorService.ExternalApis.Ilr.Types
         }
 
         public IEnumerable<IlrRecord> Results { get; set; }
-        public int Count => Results.Count();
     }
 }
