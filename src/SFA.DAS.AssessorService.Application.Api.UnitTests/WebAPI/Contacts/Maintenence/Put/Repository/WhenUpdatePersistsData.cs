@@ -17,7 +17,7 @@
     {
         private static ContactRepository _contactRepository;
         private static Mock<AssessorDbContext> _assessorDbContext;
-        private static UpdateContactRequest _contactUpdateViewModel;
+        private static UpdateContactRequest _updateContactRequest;
         private static Mock<DbSet<AssessorService.Domain.Entities.Contact>> _contactDBSetMock;
 
         protected static ContactResponse _result;
@@ -27,7 +27,7 @@
         {
             MappingBootstrapper.Initialize();
 
-            _contactUpdateViewModel = Builder<UpdateContactRequest>.CreateNew().Build();
+            _updateContactRequest = Builder<UpdateContactRequest>.CreateNew().Build();
 
             _assessorDbContext = new Mock<AssessorDbContext>();
             _contactDBSetMock = new Mock<DbSet<AssessorService.Domain.Entities.Contact>>();
@@ -60,7 +60,7 @@
 
         Because of = () =>
         {
-            _contactRepository.Update(_contactUpdateViewModel);
+            _contactRepository.Update(_updateContactRequest);
         };
 
         Machine.Specifications.It verify_succesfully = () =>

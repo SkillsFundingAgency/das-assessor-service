@@ -110,7 +110,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
             _createOrganisationRequest = new CreateOrganisationRequest
             {
                 EndPointAssessorName = "Test User",
-                EndPointAssessorOrganisationId = "9999999994433",
+                EndPointAssessorOrganisationId = "994433",
                 EndPointAssessorUkprn = 99953456,
                 PrimaryContact = null
             };
@@ -154,10 +154,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
             _organisaionRetrieved = result.Deserialise<OrganisationResponse>();
         }
 
-        private void CreateContact(CreateContactRequest contactCreateViewModel)
+        private void CreateContact(CreateContactRequest createContactRequest)
         {
             _restClient.HttpResponseMessage = _restClient.HttpClient.PostAsJsonAsync(
-                "api/v1/contacts", contactCreateViewModel).Result;
+                "api/v1/contacts", createContactRequest).Result;
 
             _restClient.JsonResult = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
             _contactResponse = JsonConvert.DeserializeObject<ContactResponse>(_restClient.JsonResult);

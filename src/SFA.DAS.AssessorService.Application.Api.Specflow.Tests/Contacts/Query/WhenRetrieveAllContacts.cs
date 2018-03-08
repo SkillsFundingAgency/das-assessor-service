@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Query
         private RestClientResult _restClientResult;
         private readonly OrganisationQueryService _organisationQueryService;
         private readonly ContactQueryService _contactQueryService;
-        private List<OrganisationResponse> _organisationQueryViewModels = new List<OrganisationResponse>();
+        private List<OrganisationResponse> _organisationResponses = new List<OrganisationResponse>();
         private List<ContactResponse> _contactResponses = new List<ContactResponse>();
 
         public WhenRetrieveAllContacts(RestClientResult restClientResult,

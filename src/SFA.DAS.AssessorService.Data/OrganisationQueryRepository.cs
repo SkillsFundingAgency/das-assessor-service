@@ -35,8 +35,8 @@ namespace SFA.DAS.AssessorService.Data
             if (organisation == null)
                 return null;
 
-            var organisationViewModel = Mapper.Map<OrganisationResponse>(organisation);
-            return organisationViewModel;
+            var organisationResponse = Mapper.Map<OrganisationResponse>(organisation);
+            return organisationResponse;
         }
 
         public async Task<OrganisationDomainModel> Get(string endPointAssessorOrganisationId)

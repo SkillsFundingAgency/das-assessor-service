@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
     public interface IContactRepository
     {       
         Task<ContactResponse> CreateNewContact(CreateContactDomainModel newContact);
-        Task Update(UpdateContactRequest organisationUpdateViewModel);
+        Task Update(UpdateContactRequest updateContactRequest);
         Task Delete(string userName);
     }
 }

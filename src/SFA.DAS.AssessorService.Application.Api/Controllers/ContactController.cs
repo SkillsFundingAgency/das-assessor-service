@@ -37,26 +37,26 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> CreateContact(
-            [FromBody] CreateContactRequest contactCreateViewModel)
+            [FromBody] CreateContactRequest createContactRequest)
         {
             _logger.LogInformation("Received Create Contact Request");
 
-            var contactQueryViewModel = await _contactOrchestrator.CreateContact(contactCreateViewModel);
+            var contactResponse = await _contactOrchestrator.CreateContact(createContactRequest);
 
             return CreatedAtRoute("CreateContract",
-                new { contactQueryViewModel.Username },
-                contactQueryViewModel);
+                new { contactResponse.Username },
+                contactResponse);
         }
 
         [HttpPut(Name = "UpdateContact")]
         [SwaggerResponse((int)HttpStatusCode.NoContent)]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> UpdateContact([FromBody] UpdateContactRequest contactUpdateViewModel)
+        public async Task<IActionResult> UpdateContact([FromBody] UpdateContactRequest updateContactRequest)
         {
             _logger.LogInformation("Received Update Contact Request");
 
-            await _contactOrchestrator.UpdateContact(contactUpdateViewModel);
+            await _contactOrchestrator.UpdateContact(updateContactRequest);
 
             return NoContent();
         }
