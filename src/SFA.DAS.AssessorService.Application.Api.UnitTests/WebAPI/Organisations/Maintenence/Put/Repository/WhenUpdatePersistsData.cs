@@ -16,7 +16,7 @@ using SFA.DAS.AssessorService.Domain.Entities;
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations.Maintenence.Put.Repository
 {
     public class WhenUpdateOrganisationPersistsData
-    {                
+    {
         private static AssessorService.Api.Types.Models.OrganisationResponse _result;
         private string _primaryContact = "TestUser";
 
@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
                 .CreateNew()
                 .With(q => q.PrimaryContact = _primaryContact)
                 .Build();
-                                
+
 
             var primaryContactId = Guid.NewGuid();
             var organisationMockDbSet = CreateOrganisationMockDbSet(primaryContactId);
@@ -39,7 +39,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
 
             var organisationRepository = new OrganisationRepository(mockDbContext.Object);
             _result = organisationRepository.UpdateOrganisation(organisationUpdateDomainModel).Result;
-        }      
+        }
 
         [Test]
         public void ItShouldReturnResult()
