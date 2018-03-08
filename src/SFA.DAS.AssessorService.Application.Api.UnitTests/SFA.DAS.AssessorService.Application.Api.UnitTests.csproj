@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="WebAPI\Contacts\Maintenence\Post\Validators\WhenCreateContactRequestValidatorFailsOnInvalidFieldLengths.cs" />
     <Compile Include="WebAPI\Contacts\Maintenence\Post\Validators\WhenCreateContactRequestValidatorFails.cs" />
     <Compile Include="WebAPI\Contacts\Maintenence\Post\Validators\WhenCreateContactRequestlValidatorSucceeds.cs" />
     <Compile Include="WebAPI\Contacts\Maintenence\Post\Validators\CreateContactRequestValidatorTestBase.cs" />
