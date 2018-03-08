@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Main
 {
     public class WhenOrganisationHasExistingContractsCreateContactHandlerSucceeds
     { 
-        private Contact _result;
+        private ContactResponse _result;
 
         [SetUp]
         public void Arrange()
@@ -21,10 +21,10 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Main
             MappingBootstrapper.Initialize();
 
             var organisationRepositoryMock = new Mock<IOrganisationRepository>();
-            var organisation = Builder<OrganisationQueryDomainModel>.CreateNew().Build();
+            var organisation = Builder<OrganisationDomainModel>.CreateNew().Build();
             var organisationQueryRepositoryMock = CreateOrganisationQueryRepositoryMock(organisation);
 
-            var contactQueryViewModel = Builder<Contact>.CreateNew().Build();
+            var contactQueryViewModel = Builder<ContactResponse>.CreateNew().Build();
             var createContactRequest = Builder<CreateContactRequest>.CreateNew().Build();
             var contactRepositoryMock = CreateContactRepositoryMock(contactQueryViewModel);
 
@@ -36,21 +36,21 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Main
         [Test]
         public void ItShouldReturnResult()
         {
-            var result = _result as Contact;
+            var result = _result as ContactResponse;
             result.Should().NotBeNull();
         }
 
-        private static Mock<IContactRepository> CreateContactRepositoryMock(Contact contactQueryViewModel)
+        private static Mock<IContactRepository> CreateContactRepositoryMock(ContactResponse contactResponseQueryViewModel)
         {
             var contactRepositoryMock = new Mock<IContactRepository>();
-            contactRepositoryMock.Setup(q => q.CreateNewContact(Moq.It.IsAny<ContactCreateDomainModel>()))
-                .Returns(Task.FromResult((contactQueryViewModel)));
-            contactRepositoryMock.Setup(q => q.CreateNewContact(Moq.It.IsAny<ContactCreateDomainModel>()))
-                .Returns(Task.FromResult(contactQueryViewModel));
+            contactRepositoryMock.Setup(q => q.CreateNewContact(Moq.It.IsAny<CreateContactDomainModel>()))
+                .Returns(Task.FromResult((contactResponseQueryViewModel)));
+            contactRepositoryMock.Setup(q => q.CreateNewContact(Moq.It.IsAny<CreateContactDomainModel>()))
+                .Returns(Task.FromResult(contactResponseQueryViewModel));
             return contactRepositoryMock;
         }
 
-        private static Mock<IOrganisationQueryRepository> CreateOrganisationQueryRepositoryMock(OrganisationQueryDomainModel organisation)
+        private static Mock<IOrganisationQueryRepository> CreateOrganisationQueryRepositoryMock(OrganisationDomainModel organisation)
         {
             var organisationQueryRepositoryMock = new Mock<IOrganisationQueryRepository>();
             organisationQueryRepositoryMock.Setup(q => q.Get(It.IsAny<string>()))

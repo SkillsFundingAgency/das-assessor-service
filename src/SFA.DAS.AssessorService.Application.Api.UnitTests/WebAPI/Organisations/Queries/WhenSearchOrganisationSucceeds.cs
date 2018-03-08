@@ -9,7 +9,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
 {
     public class WhenSearchOrganisationSucceeds : OrganisationQueryBase
     {
-        private Organisation _organisation;
+        private OrganisationResponse _organisation;
         private IActionResult _result;
       
         [SetUp]
@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
         {
             Setup();
 
-            _organisation = Builder<Organisation>.CreateNew().Build();
+            _organisation = Builder<OrganisationResponse>.CreateNew().Build();
 
             OrganisationQueryRepositoryMock.Setup(q => q.GetByUkPrn(Moq.It.IsAny<int>()))
                 .Returns(Task.FromResult((_organisation)));

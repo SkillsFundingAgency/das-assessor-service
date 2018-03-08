@@ -49,6 +49,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="nlog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <EmbeddedResource Update="Resources\Controllers\ContactQueryController.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>

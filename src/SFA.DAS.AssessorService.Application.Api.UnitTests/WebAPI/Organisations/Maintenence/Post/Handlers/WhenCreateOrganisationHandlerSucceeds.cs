@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
  public class WhenCreateOrganisationHandlerSucceeds
     {
         private Mock<IOrganisationRepository> _organisationRepositoryMock;
-        private Organisation _result;
+        private OrganisationResponse _result;
 
         [SetUp]
         public void Arrange()
@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
         [Test]
         public void ItShouldReturnAResult()
         { 
-            var result = _result as Organisation;
+            var result = _result as OrganisationResponse;
             result.Should().NotBeNull();
         }
 
@@ -41,27 +41,27 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
         [Test]
         public void ItShouldReturnAnOrganisation()
         {
-            _result.Should().BeOfType<Organisation>();
+            _result.Should().BeOfType<OrganisationResponse>();
         }
 
         [Test]
         public void ItShouldPersistTheData()
         {
-            _organisationRepositoryMock.Verify(q => q.CreateNewOrganisation(Moq.It.IsAny<OrganisationCreateDomainModel>()), Times.Once);
+            _organisationRepositoryMock.Verify(q => q.CreateNewOrganisation(Moq.It.IsAny<CreateOrganisationDomainModel>()), Times.Once);
         }
 
         private static Mock<IOrganisationQueryRepository> CreateOrganisationQueryRepository()
         {
             var organisationQueryRepository = new Mock<IOrganisationQueryRepository>();
-            organisationQueryRepository.Setup(r => r.GetByUkPrn(Moq.It.IsAny<int>())).ReturnsAsync(default(Organisation));
+            organisationQueryRepository.Setup(r => r.GetByUkPrn(Moq.It.IsAny<int>())).ReturnsAsync(default(OrganisationResponse));
             return organisationQueryRepository;
         }
 
         private void CreateOrganisationRepositoryMock()
         {
             _organisationRepositoryMock = new Mock<IOrganisationRepository>();
-            var organisation = Builder<Organisation>.CreateNew().Build();
-            _organisationRepositoryMock.Setup(q => q.CreateNewOrganisation(Moq.It.IsAny<OrganisationCreateDomainModel>()))
+            var organisation = Builder<OrganisationResponse>.CreateNew().Build();
+            _organisationRepositoryMock.Setup(q => q.CreateNewOrganisation(Moq.It.IsAny<CreateOrganisationDomainModel>()))
                 .Returns(Task.FromResult((organisation)));
         }
     }

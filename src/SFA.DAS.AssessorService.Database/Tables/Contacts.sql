@@ -2,13 +2,13 @@
 	[Id] [uniqueidentifier] NOT NULL,
 	[CreatedAt] [datetime2](7) NOT NULL,
 	[DeletedAt] [datetime2](7) NULL,
-	[DisplayName] [nvarchar](max) NULL,
-	[Email] [nvarchar](max) NULL,
-	[EndPointAssessorOrganisationId] [nvarchar](max) NULL,
+	[DisplayName] [nvarchar](120) NOT NULL,
+	[Email] [nvarchar](120) NOT NULL,
+	[EndPointAssessorOrganisationId] [nvarchar](12) NOT NULL,
 	[OrganisationId] [uniqueidentifier] NOT NULL,
+	[Status] [nvarchar](10) NOT NULL,
 	[UpdatedAt] [datetime2](7) NULL,
-	[Username] [nvarchar](450) NOT NULL,
-	[Status] [nvarchar](max) NULL,
+	[Username] [nvarchar](30) NOT NULL,
  CONSTRAINT [PK_Contacts] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
@@ -16,6 +16,14 @@
  CONSTRAINT [AK_Contacts_Username] UNIQUE NONCLUSTERED 
 (
 	[Username] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY],
-	CONSTRAINT [FK_Contacts_Organisations_OrganisationId] FOREIGN KEY(OrganisationId) REFERENCES [dbo].[Organisations] ([Id])
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[Contacts]  WITH CHECK ADD  CONSTRAINT [FK_Contacts_Organisations_OrganisationId] FOREIGN KEY([OrganisationId])
+REFERENCES [dbo].[Organisations] ([Id])
+ON DELETE CASCADE
+GO
+
+ALTER TABLE [dbo].[Contacts] CHECK CONSTRAINT [FK_Contacts_Organisations_OrganisationId]
+GO

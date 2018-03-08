@@ -1,16 +1,11 @@
-﻿namespace SFA.DAS.AssessorService.Api.Types.Models
+﻿namespace SFA.DAS.AssessorService.Domain.DomainModels
 {
-    using System;
-
-    public class Organisation
+    public class UpdateOrganisationDomainModel
     {
-        public Guid Id { get; set; }
-
         public string EndPointAssessorOrganisationId { get; set; }
-        public int EndPointAssessorUkprn { get; set; }
+     
         public string EndPointAssessorName { get; set; }
         public string PrimaryContact { get; set; }
-
         public string Status { get; set; }
     }
 }

@@ -28,6 +28,9 @@
         },
         "configurationStorageConnectionString": {
             "value": ""
+        },
+        "loggingRedisConnectionString" : {
+            "value": ""
         }
     }
 }

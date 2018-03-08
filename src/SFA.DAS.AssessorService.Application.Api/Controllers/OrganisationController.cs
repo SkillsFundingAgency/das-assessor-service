@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpPost(Name = "CreateOrganisation")]
         [ValidateBadRequest]
-        [SwaggerResponse((int) HttpStatusCode.Created, Type = typeof(Organisation))]
+        [SwaggerResponse((int) HttpStatusCode.Created, Type = typeof(OrganisationResponse))]
         [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> CreateOrganisation(
@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             var organisation = await _organisationOrchestrator.CreateOrganisation(createOrganisationRequest);
 
             return CreatedAtRoute("CreateOrganisation",
-                new {id = organisation.Id},
+                new {id = organisation.EndPointAssessorOrganisationId},
                 organisation);
         }
 

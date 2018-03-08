@@ -14,13 +14,14 @@
         "configEnvironmentName": {
             "type": "string"
         },
-        "storageAccountName": {
+        "storageConnectionString": {
+            "type": "string"
+        },
+        "loggingRedisConnectionString": {
             "type": "string"
         }
     },
-    "variables": {
-        "storageConnectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')),'2015-05-01-preview').key1)]"
-    },
+    "variables": {},
     "resources": [
         {
             "apiVersion": "2015-05-01",
@@ -45,11 +46,11 @@
                     "appSettings": [
                         {
                             "name": "AzureWebJobsStorage",
-                            "value": "[variables('storageConnectionString')]"
+                            "value": "[parameters('storageConnectionString')]"
                         },
                         {
                             "name": "AzureWebJobsDashboard",
-                            "value": "[variables('storageConnectionString')]"
+                            "value": "[parameters('storageConnectionString')]"
                         },
                         {
                             "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -66,6 +67,13 @@
                         {
                             "name": "EnvironmentName",
                             "value": "[toUpper(parameters('configEnvironmentName'))]"
+                        }
+                    ],
+                    "connectionStrings": [
+                        {
+                            "name": "Redis",
+                            "connectionString": "[parameters('loggingRedisConnectionString')]",
+                            "type": "Custom"
                         }
                     ]
                 }

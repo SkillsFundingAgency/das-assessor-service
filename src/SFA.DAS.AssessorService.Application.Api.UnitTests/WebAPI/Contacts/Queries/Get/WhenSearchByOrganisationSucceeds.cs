@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Quer
         {
             Setup();
 
-            var contacts = Builder<Contact>.CreateListOfSize(10).Build().AsEnumerable();
+            var contacts = Builder<ContactResponse>.CreateListOfSize(10).Build().AsEnumerable();
 
             ContactQueryRepositoryMock.Setup(q => q.GetContacts(Moq.It.IsAny<string>()))
                 .Returns(Task.FromResult((contacts)));

@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
             _localizer = localizer;
         }
 
-        public async Task<Contact> CreateContact(
+        public async Task<ContactResponse> CreateContact(
             [FromBody] CreateContactRequest createContactRequest)
         {
             var contact = await _mediator.Send(createContactRequest);

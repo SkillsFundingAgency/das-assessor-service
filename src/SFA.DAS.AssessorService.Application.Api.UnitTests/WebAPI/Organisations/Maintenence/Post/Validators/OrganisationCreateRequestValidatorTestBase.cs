@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
         protected CreateOrganisationRequestValidator CreateOrganisationRequestValidator;
         protected Mock<IContactQueryRepository> ContactQueryRepositoryMock;
         protected Mock<IOrganisationQueryRepository> OrganisationQueryRepositoryMock;
-        protected CreateOrganisationRequest OrganisationCreateViewModel;
+        protected CreateOrganisationRequest CreateOrganisationRequest;
 
         private Mock<IStringLocalizer<CreateOrganisationRequestValidator>> organisationCreateViewModelValidatorStringLocaliser;
 

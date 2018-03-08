@@ -7,8 +7,8 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 {
     public interface IOrganisationRepository
     {     
-        Task<Organisation> CreateNewOrganisation(OrganisationCreateDomainModel newOrganisation);
-        Task<Organisation> UpdateOrganisation(OrganisationUpdateDomainModel organisationUpdateDomainModel);
+        Task<OrganisationResponse> CreateNewOrganisation(CreateOrganisationDomainModel createOrganisationDomainModel);
+        Task<OrganisationResponse> UpdateOrganisation(UpdateOrganisationDomainModel updateOrganisationDomainModel);
         Task Delete(string endPointAssessorOrganisationId);
     }
 }

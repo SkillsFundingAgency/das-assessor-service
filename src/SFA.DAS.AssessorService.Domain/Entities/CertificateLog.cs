@@ -8,7 +8,6 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public Guid CertificateId { get; set; }
         public virtual Certificate Certificate { get; set; }
 
-        public int EndPointAssessorCertificateId { get; set; }
         public string Action { get; set; }
         public string Status { get; set; }
         public DateTime EventTime { get; set; }
