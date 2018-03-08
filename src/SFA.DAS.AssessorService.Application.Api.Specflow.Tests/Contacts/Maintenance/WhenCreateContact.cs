@@ -110,7 +110,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
             _createOrganisationRequest = new CreateOrganisationRequest
             {
                 EndPointAssessorName = "Test User",
-                EndPointAssessorOrganisationId = "9999999994433",
+                EndPointAssessorOrganisationId = "994433",
                 EndPointAssessorUkprn = 99953456,
                 PrimaryContact = null
             };
