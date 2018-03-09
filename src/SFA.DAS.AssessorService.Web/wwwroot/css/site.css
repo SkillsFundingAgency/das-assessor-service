@@ -2,6 +2,22 @@
   margin-bottom: 30px;
 }
 
+.govuk-related-items {
+  margin-top: 30px;
+  border-top: 10px solid #005ea5;
+  padding-top: 5px;
+}
+
+.govuk-related-items .heading-medium {
+  margin-top: 0.3em;
+  margin-bottom: 0.5em;
+}
+
+.govuk-related-items li {
+  margin-bottom: 10px;
+  list-style-type: none;
+}
+
 .global-header-bar--white {
   background-color: #004274 !important;
 }
@@ -87,6 +103,10 @@
 #header-user--nav nav#user-nav > ul li {
   border-top: 1px solid #0085ea;
   padding: 7.5px 0;
+}
+
+#header-user--nav nav#user-nav > ul li:last-child {
+  padding-bottom: 0;
 }
 
 #header-user--nav nav#user-nav > ul li.current a {
