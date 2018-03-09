@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             _organisationQueryRepository = organisationQueryRepository;
           
             // ReSharper disable once LocalNameCapturedOnly
-            CreateOrganisationRequest organisationCreateViewModel;         
+            CreateOrganisationRequest createOrganisationRequest;         
 
             RuleFor(organisation => organisation.EndPointAssessorOrganisationId)
                 .NotEmpty()
@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 // Please note we have to string.Format this due to limitation in Moq not handling Optional
                 // Params
                 .WithMessage(string.Format(localiser[ResourceMessageName.MaxLengthError].Value,
-                    nameof(organisationCreateViewModel.EndPointAssessorOrganisationId), 12));
+                    nameof(createOrganisationRequest.EndPointAssessorOrganisationId), 12));
 
             RuleFor(organisation => organisation.EndPointAssessorName).NotEmpty().WithMessage(
                 localiser[ResourceMessageName.EndPointAssessorNameMustBeDefined].Value);

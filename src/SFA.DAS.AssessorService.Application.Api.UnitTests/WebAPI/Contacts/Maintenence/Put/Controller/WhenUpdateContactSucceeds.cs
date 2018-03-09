@@ -11,7 +11,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Main
     public class WhenUpdateContactSucceeds : ContactTestBase
     {
         private static UpdateContactRequest _updateContactRequest;
-        private static ContactResponse _contactResponseQueryViewModel;
+        private static ContactResponse _contactResponse;
         private ActionResult _result;
 
         [SetUp]
@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Main
         {
             Setup();
 
-            _contactResponseQueryViewModel = Builder<ContactResponse>.CreateNew().Build();
+            _contactResponse = Builder<ContactResponse>.CreateNew().Build();
 
             _updateContactRequest = Builder<UpdateContactRequest>.CreateNew()
                 .Build();

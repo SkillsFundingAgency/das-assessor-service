@@ -32,13 +32,13 @@ namespace SFA.DAS.AssessorService.Data
             return contact;
         }
 
-        public async Task Update(UpdateContactRequest contactUpdateViewModel)
+        public async Task Update(UpdateContactRequest updateContactRequest)
         {
             var contactEntity =
-                await _assessorDbContext.Contacts.FirstAsync(q => q.Username == contactUpdateViewModel.Username);
+                await _assessorDbContext.Contacts.FirstAsync(q => q.Username == updateContactRequest.Username);
 
-            contactEntity.DisplayName = contactUpdateViewModel.DisplayName;
-            contactEntity.Email = contactUpdateViewModel.Email;
+            contactEntity.DisplayName = updateContactRequest.DisplayName;
+            contactEntity.Email = updateContactRequest.Email;
 
             // Workaround for Mocking
             _assessorDbContext.MarkAsModified(contactEntity);

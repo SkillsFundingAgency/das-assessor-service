@@ -24,8 +24,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers
             var organisationUpdateDomainModel = Mapper.Map<UpdateOrganisationDomainModel>(updateOrganisationRequest);
             organisationUpdateDomainModel.Status = string.IsNullOrEmpty(updateOrganisationRequest.PrimaryContact) ? OrganisationStatus.New : OrganisationStatus.Live;
 
-            var organisationQueryViewModel = await _organisationRepository.UpdateOrganisation(organisationUpdateDomainModel);
-            return organisationQueryViewModel;
+            var organisationRespone = await _organisationRepository.UpdateOrganisation(organisationUpdateDomainModel);
+            return organisationRespone;
         }
     }
 }

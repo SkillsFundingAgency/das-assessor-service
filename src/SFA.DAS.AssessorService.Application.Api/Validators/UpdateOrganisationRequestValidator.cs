@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             _organisationQueryRepository = organisationQueryRepository;
 
             // ReSharper disable once LocalNameCapturedOnly
-            UpdateOrganisationRequest organisationUpdateViewModel;
+            UpdateOrganisationRequest updateOrganisationRequest;
 
             RuleFor(organisation => organisation.EndPointAssessorName).NotEmpty().WithMessage(
                 localiser[ResourceMessageName.EndPointAssessorNameMustBeDefined].Value);

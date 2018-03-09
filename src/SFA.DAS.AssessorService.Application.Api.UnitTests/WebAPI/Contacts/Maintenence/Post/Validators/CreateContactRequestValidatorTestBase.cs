@@ -12,6 +12,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Main
     {
         protected CreateContactRequestValidator CreateContactRequestValidator;
         protected Mock<IContactQueryRepository> ContactQueryRepositoryMock;
+        protected Mock<IOrganisationQueryRepository> OrganisationQueryRepositoryMock;
 
         protected CreateContactRequest ContactRequest;
 
@@ -29,9 +30,11 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Main
                 .Build<CreateContactRequestValidator>();
 
             ContactQueryRepositoryMock = new Mock<IContactQueryRepository>();
+            OrganisationQueryRepositoryMock = new Mock<IOrganisationQueryRepository>();
 
             CreateContactRequestValidator = new CreateContactRequestValidator(
                 _contactCreateRequestValidatorLocaliser.Object,
+                OrganisationQueryRepositoryMock.Object,
                 ContactQueryRepositoryMock.Object);
         }
     }

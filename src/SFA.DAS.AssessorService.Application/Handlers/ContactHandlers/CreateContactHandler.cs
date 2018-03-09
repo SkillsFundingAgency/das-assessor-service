@@ -36,26 +36,26 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
 
             if (!(await _organisationQueryRepository.CheckIfOrganisationHasContacts(createContactRequest.EndPointAssessorOrganisationId)))
             {
-                var contactQueryViewModel = await _contactRepository.CreateNewContact(contactCreateDomainModel);
+                var contactResponse = await _contactRepository.CreateNewContact(contactCreateDomainModel);
 
-                await SetOrganisationStatusToLiveAndSetPrimaryContact(createContactRequest, contactQueryViewModel);
+                await SetOrganisationStatusToLiveAndSetPrimaryContact(createContactRequest, contactResponse);
 
-                return contactQueryViewModel;
+                return contactResponse;
             }
             else
             {
-                var contactQueryViewModel = await _contactRepository.CreateNewContact(contactCreateDomainModel);
-                return contactQueryViewModel;
+                var contactResponse = await _contactRepository.CreateNewContact(contactCreateDomainModel);
+                return contactResponse;
             }           
         }
 
-        private async Task SetOrganisationStatusToLiveAndSetPrimaryContact(CreateContactRequest createContactRequest, ContactResponse contactResponseQueryViewModel)
+        private async Task SetOrganisationStatusToLiveAndSetPrimaryContact(CreateContactRequest createContactRequest, ContactResponse contactResponse)
         {
             var organisationQueryDomainModel =
                 await _organisationQueryRepository.Get(createContactRequest.EndPointAssessorOrganisationId);
             var organisationUpdateDomainModel =
                 Mapper.Map<UpdateOrganisationDomainModel>(organisationQueryDomainModel);
-            organisationUpdateDomainModel.PrimaryContact = contactResponseQueryViewModel.Username;
+            organisationUpdateDomainModel.PrimaryContact = contactResponse.Username;
             organisationUpdateDomainModel.Status = OrganisationStatus.Live;
 
             await _organisationRepository.UpdateOrganisation(organisationUpdateDomainModel);
