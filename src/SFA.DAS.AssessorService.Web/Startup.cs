@@ -42,19 +42,19 @@ namespace SFA.DAS.AssessorService.Web
                 .AddSessionStateTempDataProvider()
                 .AddViewLocalization(opts => { opts.ResourcesPath = "Resources"; })
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
-            
 
-            //if (_env.IsDevelopment())
-            //{
-            //    services.AddDistributedMemoryCache();
-            //}
-            //else
-            //{
+
+            if (_env.IsDevelopment())
+            {
+                services.AddDistributedMemoryCache();
+            }
+            else
+            {
                 services.AddDistributedRedisCache(options =>
                 {
                     options.Configuration = "localhost";
                 });
-            //}
+            }
 
             services.AddSession();
 
