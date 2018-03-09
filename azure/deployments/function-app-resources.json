@@ -54,7 +54,7 @@
                         },
                         {
                             "name": "FUNCTIONS_EXTENSION_VERSION",
-                            "value": "~1"
+                            "value": "beta"
                         },
                         {
                             "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
