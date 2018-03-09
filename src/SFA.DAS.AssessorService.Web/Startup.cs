@@ -19,13 +19,15 @@ namespace SFA.DAS.AssessorService.Web
     {
         private readonly IConfiguration _config;
         private readonly ILogger<Startup> _logger;
+        private readonly IHostingEnvironment _env;
         private const string ServiceName = "SFA.DAS.AssessorService";
         private const string Version = "1.0";
 
-        public Startup(IConfiguration config, ILogger<Startup> logger)
+        public Startup(IConfiguration config, ILogger<Startup> logger, IHostingEnvironment env)
         {
             _config = config;
             _logger = logger;
+            _env = env;
         }
 
         public IWebConfiguration Configuration { get; set; }
@@ -35,8 +37,25 @@ namespace SFA.DAS.AssessorService.Web
             Configuration = ConfigurationService.GetConfig(_config["EnvironmentName"], _config["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
             services.AddAndConfigureAuthentication(Configuration);
-            services.AddMvc().AddControllersAsServices().AddSessionStateTempDataProvider().AddViewLocalization(opts => { opts.ResourcesPath = "Resources"; })
+            services.AddMvc()
+                .AddControllersAsServices()
+                .AddSessionStateTempDataProvider()
+                .AddViewLocalization(opts => { opts.ResourcesPath = "Resources"; })
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
+
+
+            if (_env.IsDevelopment())
+            {
+                services.AddDistributedMemoryCache();
+            }
+            else
+            {
+                services.AddDistributedRedisCache(options =>
+                {
+                    options.Configuration = "localhost";
+                });
+            }
+
             services.AddSession();
 
             return ConfigureIOC(services);
