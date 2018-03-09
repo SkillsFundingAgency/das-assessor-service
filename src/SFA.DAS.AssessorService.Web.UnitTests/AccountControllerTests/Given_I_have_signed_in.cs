@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
         [Test]
         public void And_I_do_not_have_correct_role_Then_redirect_to_InvalidRole_page()
         {
-            _loginOrchestrator.Setup(o => o.Login(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(LoginResult.InvalidRole);
+            _loginOrchestrator.Setup(o => o.Login(It.IsAny<HttpContext>())).ReturnsAsync(LoginResult.InvalidRole);
             
             var result = _accountController.PostSignIn().Result;
 
@@ -46,7 +46,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
         [Test]
         public void And_I_am_not_registered_Then_redirect_to_NotRegistered_page()
         {
-            _loginOrchestrator.Setup(o => o.Login(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(LoginResult.NotRegistered);
+            _loginOrchestrator.Setup(o => o.Login(It.IsAny<HttpContext>())).ReturnsAsync(LoginResult.NotRegistered);
 
             var result = _accountController.PostSignIn().Result;
 
@@ -60,7 +60,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
         [Test]
         public void And_I_am_valid_Then_redirect_to_Organisation_page()
         {
-            _loginOrchestrator.Setup(o => o.Login(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(LoginResult.Valid);
+            _loginOrchestrator.Setup(o => o.Login(It.IsAny<HttpContext>())).ReturnsAsync(LoginResult.Valid);
 
             var result = _accountController.PostSignIn().Result;
 
