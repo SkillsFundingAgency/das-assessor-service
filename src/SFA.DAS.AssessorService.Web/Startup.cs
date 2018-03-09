@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Web
                 .AddSessionStateTempDataProvider()
                 .AddViewLocalization(opts => { opts.ResourcesPath = "Resources"; })
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
-            services.AddSession();
+            
 
             //if (_env.IsDevelopment())
             //{
@@ -55,6 +55,8 @@ namespace SFA.DAS.AssessorService.Web
                     options.Configuration = "localhost";
                 });
             //}
+
+            services.AddSession();
 
             return ConfigureIOC(services);
         }

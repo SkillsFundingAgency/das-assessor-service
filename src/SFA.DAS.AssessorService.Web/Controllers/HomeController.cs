@@ -15,7 +15,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
         public IActionResult Index()
         {
-            _cache.SetString("Hello", "Dave");
             return View();
         }
 
