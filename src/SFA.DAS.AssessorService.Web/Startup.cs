@@ -44,17 +44,17 @@ namespace SFA.DAS.AssessorService.Web
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
 
 
-            if (_env.IsDevelopment())
-            {
+            //if (_env.IsDevelopment())
+            //{
                 services.AddDistributedMemoryCache();
-            }
-            else
-            {
-                services.AddDistributedRedisCache(options =>
-                {
-                    options.Configuration = "localhost";
-                });
-            }
+        //}
+        //    else
+        //    {
+        //        services.AddDistributedRedisCache(options =>
+        //        {
+        //            options.Configuration = "localhost";
+        //        });
+        //    }
 
             services.AddSession();
 
