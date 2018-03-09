@@ -80,7 +80,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
         public void ThenTheContactShouldBeDeleted()
         {
             var contacts = _dbconnection.Query<ContactResponse>
-                ($"Select Status From Contacts where Username = '{_contactArgument.UserName}'").ToList();
+                ($"Select Status From Contacts where UserName = '{_contactArgument.UserName}'").ToList();
             var contact = contacts.First();
 
             contact.Status.Should().Be(OrganisationStatus.Deleted);

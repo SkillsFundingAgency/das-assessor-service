@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Query
             _restClientResult = restClientResult;
         }
 
-        [When(@"Client Searches Contacts By Username")]
+        [When(@"Client Searches Contacts By UserName")]
         public void WhenClientSearchesContactsByUsername(IEnumerable<dynamic> contacts)
         {
             _contactArgument = contacts.First();

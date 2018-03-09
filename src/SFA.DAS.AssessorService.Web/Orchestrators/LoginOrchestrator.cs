@@ -88,7 +88,7 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators
                 {
                     Email = email,
                     DisplayName = displayName,
-                    Username = username,
+                    UserName = username,
                     EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId
                 });
 

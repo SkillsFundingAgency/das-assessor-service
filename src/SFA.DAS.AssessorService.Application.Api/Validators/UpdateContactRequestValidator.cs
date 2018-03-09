@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             UpdateContactRequest updateContactRequest;
             // ReSharper disable once LocalNameCapturedOnly
             RuleFor(contact => contact.Email).NotEmpty().WithMessage(
-                    localiser[ResourceMessageName.EMailMustBeDefined].Value)
+                string.Format(localiser[ResourceMessageName.MustBeDefined].Value, nameof(updateContactRequest.Email)))
                 .MaximumLength(120)
                 // Please note we have to string.Format this due to limitation in Moq not handling Optional
                 // Params
@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                     nameof(updateContactRequest.Email), 120));
 
             RuleFor(contact => contact.DisplayName).NotEmpty().WithMessage(
-                    localiser[ResourceMessageName.DisplayNameMustBeDefined].Value)
+                    string.Format(localiser[ResourceMessageName.MustBeDefined].Value, nameof(updateContactRequest.DisplayName)))
                 .MaximumLength(120)
                 // Please note we have to string.Format this due to limitation in Moq not handling Optional
                 // Params
@@ -37,7 +37,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             RuleFor(contact => contact.Username)
                 .NotEmpty()
                 .WithMessage(
-                    localiser[ResourceMessageName.UserNameMustBeDefined].Value)
+                    string.Format(localiser[ResourceMessageName.MustBeDefined].Value, nameof(updateContactRequest.Username)))
                 .MaximumLength(12)
                 // Please note we have to string.Format this due to limitation in Moq not handling Optional
                 // Params

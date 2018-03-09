@@ -86,10 +86,10 @@ this.ScenarioSetup(scenarioInfo);
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Search Contact for an Organisation By Username")]
+        [NUnit.Framework.DescriptionAttribute("Search Contact for an Organisation By UserName")]
         public virtual void SearchContactForAnOrganisationByUsername()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Search Contact for an Organisation By Username", ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Search Contact for an Organisation By UserName", ((string[])(null)));
 #line 13
 this.ScenarioSetup(scenarioInfo);
 #line 14
@@ -102,7 +102,7 @@ this.ScenarioSetup(scenarioInfo);
                         "jcoxhead",
                         "jcoxhead@gmail.com"});
 #line 15
- testRunner.When("Client Searches Contacts By Username", ((string)(null)), table1, "When ");
+ testRunner.When("Client Searches Contacts By UserName", ((string)(null)), table1, "When ");
 #line 18
  testRunner.Then("the response http status should be OK", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 19

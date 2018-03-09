@@ -57,7 +57,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Main
         [Test]
         public void ThenErrorMessageShouldContainInvalidUserNameLength()
         {
-            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "Username" && q.ErrorCode == "MaximumLengthValidator");
+            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "UserName" && q.ErrorCode == "MaximumLengthValidator");
             errors.Should().NotBeNull();
         }
     }

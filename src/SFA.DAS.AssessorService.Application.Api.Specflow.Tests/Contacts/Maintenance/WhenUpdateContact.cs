@@ -59,12 +59,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
                 DisplayName = _contactArgument.UserName + "XXX",
                 Email = _contactArgument.Email + "XXX",
                 EndPointAssessorOrganisationId = createOrganisationRequest.EndPointAssessorOrganisationId,
-                Username = _contactArgument.UserName
+                UserName = _contactArgument.UserName
             };
 
             _contactService.PostContact(contactRequest);
 
-            _restClient = _contactQueryService.SearchForContactByUserName(contactRequest.Username);
+            _restClient = _contactQueryService.SearchForContactByUserName(contactRequest.UserName);
 
             var updateContactRequest = new UpdateContactRequest
             {
