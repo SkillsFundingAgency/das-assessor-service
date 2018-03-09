@@ -72,7 +72,8 @@
                             "type": "Custom"
                         }
                     ]
-                }
+                },
+                "httpsOnly" : true
             },
             "dependsOn": [
                 "[resourceId('Microsoft.Insights/components', parameters('appServiceName'))]"
