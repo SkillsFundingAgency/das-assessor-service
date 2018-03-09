@@ -1,24 +1,27 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations
-{
-    using FluentAssertions;
-    using Newtonsoft.Json;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Net.Http;
-    using AssessorService.Api.Types.Models;
-    using TechTalk.SpecFlow;
+﻿using System.Collections.Generic;
+using System.Linq;
+using FluentAssertions;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Extensions;
+using TechTalk.SpecFlow;
 
+namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Query
+{
     [Binding]
     public class WhenSearchContactsByUserName
     {
-        private readonly RestClient _restClient;
-        private Contact _contactQueryViewModel;
+        private readonly ContactQueryService _contactQueryService;
 
         private dynamic _contactArgument;
+        private ContactResponse _contactResponse;
+        private RestClientResult _restClientResult;
 
-        public WhenSearchContactsByUserName(RestClient restClient)
+        public WhenSearchContactsByUserName(
+            ContactQueryService contactQueryService,
+            RestClientResult restClientResult)
         {
-            _restClient = restClient;
+            _contactQueryService = contactQueryService;
+            _restClientResult = restClientResult;
         }
 
         [When(@"Client Searches Contacts By Username")]
@@ -27,20 +30,16 @@
             _contactArgument = contacts.First();
             var userName = _contactArgument.username;
 
-            HttpResponseMessage response = _restClient.HttpClient.GetAsync(
-                        $"api/v1/contacts/user/{userName}").Result;
+            _restClientResult = _contactQueryService.SearchForContactByUserName(userName);
 
-            _restClient.Result = response.Content.ReadAsStringAsync().Result;
-            _restClient.HttpResponseMessage = response;
-
-            _contactQueryViewModel = JsonConvert.DeserializeObject<Contact>(_restClient.Result);
+            _contactResponse = _restClientResult.Deserialise<ContactResponse>();
         }
 
         [Then(@"the API returns a valid Contact")]
         public void ThenTheAPIReturnsaValidContact()
         {
-            _contactQueryViewModel.Username.Should().Be(_contactArgument.username);
-            _contactQueryViewModel.Email.Should().Be(_contactArgument.emailaddress);
+            _contactResponse.Username.Should().Be(_contactArgument.username);
+            _contactResponse.Email.Should().Be(_contactArgument.emailaddress);
         }
     }
 }

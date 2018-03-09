@@ -1,15 +1,15 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.OrganisationContoller.Put
-{
-    using MediatR;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Localization;
-    using Microsoft.Extensions.Logging;
-    using Moq;
-    using SFA.DAS.AssessorService.Application.Api.Consts;
-    using SFA.DAS.AssessorService.Application.Api.Controllers;
-    using SFA.DAS.AssessorService.Application.Api.Validators;
-    using SFA.DAS.AssessorService.Application.Interfaces;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
+using Moq;
+using SFA.DAS.AssessorService.Application.Api.Consts;
+using SFA.DAS.AssessorService.Application.Api.Controllers;
+using SFA.DAS.AssessorService.Application.Api.Validators;
+using SFA.DAS.AssessorService.Application.Interfaces;
 
+namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations.Maintenence.Delete.Controller
+{
     public class WhenDeleteAssessmentProvidersTestBase
     {
         protected static Mock<IOrganisationRepository> OrganizationRepository;

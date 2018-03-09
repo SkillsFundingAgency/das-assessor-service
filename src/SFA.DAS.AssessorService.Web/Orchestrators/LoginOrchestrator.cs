@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
@@ -22,22 +23,23 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators
             _contactsApiClient = contactsApiClient;
         }
 
-        public async Task<LoginResult> Login(ClaimsPrincipal principal)
+        public async Task<LoginResult> Login(HttpContext context)
         {
-            var ukprn = principal.FindFirst("http://schemas.portal.com/ukprn")?.Value;
-            var username = principal.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
-            var email = principal.FindFirst("http://schemas.portal.com/mail")?.Value;
-            var displayName = principal.FindFirst("http://schemas.portal.com/displayname")?.Value;
+            var ukprn = context.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
+            var username = context.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
+            var email = context.User.FindFirst("http://schemas.portal.com/mail")?.Value;
+            var displayName = context.User.FindFirst("http://schemas.portal.com/displayname")?.Value;
 
-            if (UserDoesNotHaveAcceptableRole(principal))
+            if (UserDoesNotHaveAcceptableRole(context.User))
             {
                 return LoginResult.InvalidRole;
             }
 
-            Organisation organisation;
+            OrganisationResponse organisation;
             try
             {
                 organisation = await _organisationsApiClient.Get(ukprn);
+                context.Session.SetString("OrganisationName", organisation.EndPointAssessorName);
             }
             catch (EntityNotFoundException)
             {
@@ -67,9 +69,9 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators
             await CheckStoredUserDetailsForUpdate(contact.Username, email, displayName, contact);
         }
 
-        private async Task CheckStoredUserDetailsForUpdate(string userName, string email, string displayName, Contact contact)
+        private async Task CheckStoredUserDetailsForUpdate(string userName, string email, string displayName, ContactResponse contactResponse)
         {
-            if (contact.Email != email || contact.DisplayName != displayName)
+            if (contactResponse.Email != email || contactResponse.DisplayName != displayName)
             {
                 await _contactsApiClient.Update(new UpdateContactRequest()
                 {
@@ -80,7 +82,7 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators
             }
         }
 
-        private async Task CreateNewContact(string email, Organisation organisation, string displayName,
+        private async Task CreateNewContact(string email, OrganisationResponse organisation, string displayName,
             string username)
         {
             var contact = await _contactsApiClient.Create(
@@ -95,7 +97,7 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators
             await SetNewOrganisationPrimaryContact(organisation, contact);
         }
 
-        private async Task SetNewOrganisationPrimaryContact(Organisation organisation, Contact contact)
+        private async Task SetNewOrganisationPrimaryContact(OrganisationResponse organisation, ContactResponse contactResponse)
         {
             if (organisation.Status == OrganisationStatus.New)
             {
@@ -103,7 +105,7 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators
                 {
                     EndPointAssessorName = organisation.EndPointAssessorName,
                     EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
-                    PrimaryContact = contact.Username
+                    PrimaryContact = contactResponse.Username
                 });
             }
         }

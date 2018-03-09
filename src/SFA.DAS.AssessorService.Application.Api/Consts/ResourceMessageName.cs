@@ -14,5 +14,7 @@
         public const string DisplayNameMustBeDefined = "DisplayNameMustBeDefined";
         public const string EMailMustBeDefined = "EMailMustBeDefined";
         public const string UserNameMustBeDefined = "UserNameMustBeDefined";
+        public const string MaxLengthError = "MaxLengthError";
+        public const string HaveExistingOrganisation = "HaveExistingOrganisation";
     }
 }

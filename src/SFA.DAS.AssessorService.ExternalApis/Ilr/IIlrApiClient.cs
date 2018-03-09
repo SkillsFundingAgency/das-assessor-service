@@ -5,6 +5,6 @@ namespace SFA.DAS.AssessorService.ExternalApis.Ilr
 {
     public interface IIlrApiClient
     {
-        Task<SearchResponse> Search(SearchRequest request);
+        Task<SearchResponse> Search(IlrSearchRequest request);
     }
 }

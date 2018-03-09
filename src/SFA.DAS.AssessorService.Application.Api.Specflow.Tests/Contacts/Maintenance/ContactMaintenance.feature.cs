@@ -187,8 +187,8 @@ this.ScenarioSetup(scenarioInfo);
                         "DisplayName",
                         "Email"});
             table4.AddRow(new string[] {
-                        "testuser",
-                        "Test",
+                        "fredjones",
+                        "wonder@w.com",
                         "jane1289@gmail.com"});
 #line 38
  testRunner.When("I Update a Contact succesfully", ((string)(null)), table4, "When ");

@@ -19,7 +19,7 @@
                     Id = Guid.NewGuid(),
                     EndPointAssessorName = "EPAO 1",
                     EndPointAssessorOrganisationId = "1234",
-                    EndPointAssessorUkprn = 10000000,
+                    EndPointAssessorUkprn = 10033670,
                     Status = OrganisationStatus.New
                 };
 
@@ -88,10 +88,10 @@
                 {
                     Id = Guid.NewGuid(),
                     OrganisationId = organisation.Id,
+                      EndPointAssessorCertificateId = 2222222,
                     CertificateData = JsonConvert.SerializeObject(firstCertificateData),
                     Status = CertificateStatus.Ready,
-                    CreatedBy = firstContact.Id,
-                    UpdatedBy = firstContact.Id
+                    CreatedBy = "jcoxhead"
                 };
 
                 context.Certificates.Add(firstCertificate);
@@ -129,11 +129,11 @@
                 var secondCertificate = new Certificate
                 {
                     Id = Guid.NewGuid(),
+                    EndPointAssessorCertificateId = 2222222,
                     OrganisationId = organisation.Id,
                     CertificateData = JsonConvert.SerializeObject(secondCertificateData),
                     Status = CertificateStatus.Ready,
-                    CreatedBy = secondContact.Id,
-                    UpdatedBy = secondContact.Id
+                    CreatedBy = "jcoxhead"
                 };
 
                 context.Certificates.Add(secondCertificate);
@@ -144,7 +144,7 @@
                     Id = Guid.NewGuid(),
                     Action = "Action",
                     CertificateId = firstCertificate.Id,
-                    EndPointAssessorCertificateId = 2222222,
+                  
                     EventTime = DateTime.Now,
                     Status = CertificateStatus.Ready,
 
@@ -159,7 +159,7 @@
                     Id = Guid.NewGuid(),
                     Action = "Action",
                     CertificateId = secondCertificate.Id,
-                    EndPointAssessorCertificateId = 2222222,
+                 
                     EventTime = DateTime.Now,
                     Status = CertificateStatus.Ready,
 

@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> PostSignIn()
         {
-            var loginResult = await _loginOrchestrator.Login(_contextAccessor.HttpContext.User);
+            var loginResult = await _loginOrchestrator.Login(_contextAccessor.HttpContext);
             switch (loginResult)
             {
                 case LoginResult.Valid:
@@ -67,12 +67,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return RedirectToAction(nameof(HomeController.Index), "Home");
             }
 
-            return View();
-        }
-
-        [HttpGet]
-        public IActionResult AccessDenied()
-        {
             return View();
         }
     }

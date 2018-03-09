@@ -5,24 +5,25 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="WebAPI\Contacts\Post\Validators\**" />
-    <EmbeddedResource Remove="WebAPI\Contacts\Post\Validators\**" />
-    <None Remove="WebAPI\Contacts\Post\Validators\**" />
+    <Compile Remove="WebAPI\Contacts\Maintenence\Post\Validators\**" />
+    <EmbeddedResource Remove="WebAPI\Contacts\Maintenence\Post\Validators\**" />
+    <None Remove="WebAPI\Contacts\Maintenence\Post\Validators\**" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="Validators\UkPrnValidator\WhenUkPrnValidatorValidatesSuccess.cs" />
     <Compile Remove="WebAPI\Contacts\Queries\Get\WhenGetAssessmentProvidersGetCannotFindUkPrn.cs" />
     <Compile Remove="WebAPI\Contacts\Queries\Get\WhenGetAssessmentProvidersValidationFails.cs" />
-    <Compile Remove="WebAPI\Contacts\Put\Validators\OrganisationUpdateViewModelValidatorFails.cs" />
-    <Compile Remove="WebAPI\Contacts\Put\Validators\OrganisationUpdateViewModelValidatorSucceeds.cs" />
-    <Compile Remove="WebAPI\Contacts\Put\Validators\OrganisationUpdateViewModelValidatorTestBase.cs" />
+    <Compile Remove="WebAPI\Contacts\Maintenence\Put\Validators\OrganisationUpdateViewModelValidatorFails.cs" />
+    <Compile Remove="WebAPI\Contacts\Maintenence\Put\Validators\OrganisationUpdateViewModelValidatorSucceeds.cs" />
+    <Compile Remove="WebAPI\Contacts\Maintenence\Put\Validators\OrganisationUpdateViewModelValidatorTestBase.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="WebAPI\Contacts\Post\Validators\ContactCreateViewModelValidatorTestBase.cs" />
-    <Compile Include="WebAPI\Contacts\Post\Validators\ContactCreateViewModelValidatorFails.cs" />
-    <Compile Include="WebAPI\Contacts\Post\Validators\ContactCreateViewModelValidatorSucceeds.cs" />
+    <Compile Include="WebAPI\Contacts\Maintenence\Post\Validators\WhenCreateContactRequestValidatorFailsOnInvalidFieldLengths.cs" />
+    <Compile Include="WebAPI\Contacts\Maintenence\Post\Validators\WhenCreateContactRequestValidatorFails.cs" />
+    <Compile Include="WebAPI\Contacts\Maintenence\Post\Validators\WhenCreateContactRequestlValidatorSucceeds.cs" />
+    <Compile Include="WebAPI\Contacts\Maintenence\Post\Validators\CreateContactRequestValidatorTestBase.cs" />
   </ItemGroup>
 
   <ItemGroup>

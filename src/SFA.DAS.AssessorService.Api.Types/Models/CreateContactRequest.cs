@@ -2,7 +2,7 @@
 {
     using MediatR;
 
-    public class CreateContactRequest : IRequest<Contact>
+    public class CreateContactRequest : IRequest<ContactResponse>
     {
         public string EndPointAssessorOrganisationId { get; set; }
 

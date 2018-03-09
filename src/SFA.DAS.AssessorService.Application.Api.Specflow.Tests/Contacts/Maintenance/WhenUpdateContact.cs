@@ -1,30 +1,42 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Maintenance
-{
-    using System.Collections.Generic;
-    using System.Data;
-    using System.Linq;
-    using System.Net.Http;
-    using AssessorService.Api.Types.Models;
-    using Dapper;
-    using Domain.Consts;  
-    using Extensions;
-    using FluentAssertions;
-    using Newtonsoft.Json;
-    using TechTalk.SpecFlow;
+﻿using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using Dapper;
+using FluentAssertions;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Maintenance.Services;
+using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Query;
+using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.Helpers;
+using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.Maintenance.Services;
+using SFA.DAS.AssessorService.Domain.Consts;
+using TechTalk.SpecFlow;
 
+namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Maintenance
+{
     [Binding]
     public sealed class WhenUpdateContact
     {
-        private readonly RestClient _restClient;
+        private readonly ContactQueryService _contactQueryService;
+        private readonly ContactService _contactService;
+        private readonly CreateOrganisationBuilder _createOrganisationBuilder;
         private readonly IDbConnection _dbconnection;
-        private Organisation _organisationQueryViewModel;
-        private Contact _contactQueryViewModel;
+        private readonly OrganisationService _organisationService;
         private dynamic _contactArgument;
+        private ContactResponse _contactResponseArguments;
+        private RestClientResult _restClient;
 
-        public WhenUpdateContact(RestClient restClient,
-          IDbConnection dbconnection)
+        public WhenUpdateContact(RestClientResult restClient,
+            OrganisationService organisationService,
+            CreateOrganisationBuilder createOrganisationBuilder,
+            ContactService contactService,
+            ContactQueryService contactQueryService,
+            IDbConnection dbconnection)
         {
             _restClient = restClient;
+            _organisationService = organisationService;
+            _createOrganisationBuilder = createOrganisationBuilder;
+            _contactService = contactService;
+            _contactQueryService = contactQueryService;
             _dbconnection = dbconnection;
         }
 
@@ -33,46 +45,37 @@
         {
             _contactArgument = contactArguments.First();
 
-            var organisationCreateViewModel = new CreateOrganisationRequest
+            var createOrganisationRequest = new CreateOrganisationRequest
             {
                 EndPointAssessorName = "Test User",
                 EndPointAssessorOrganisationId = "9999",
                 EndPointAssessorUkprn = 99953456,
                 PrimaryContact = null
             };
+            _organisationService.PostOrganisation(createOrganisationRequest);
 
-            CreateOrganisation(organisationCreateViewModel);
-
-            var contactCreateViewModel = new CreateContactRequest
+            var contactRequest = new CreateContactRequest
             {
                 DisplayName = _contactArgument.UserName + "XXX",
                 Email = _contactArgument.Email + "XXX",
-                EndPointAssessorOrganisationId = organisationCreateViewModel.EndPointAssessorOrganisationId,
+                EndPointAssessorOrganisationId = createOrganisationRequest.EndPointAssessorOrganisationId,
                 Username = _contactArgument.UserName
             };
 
-            CreateContact(contactCreateViewModel);
+            _contactService.PostContact(contactRequest);
 
-            HttpResponseMessage response = _restClient.HttpClient.GetAsync(
-                     $"api/v1/contacts/user/{contactCreateViewModel.DisplayName}").Result;
+            _restClient = _contactQueryService.SearchForContactByUserName(contactRequest.Username);
 
-            _restClient.Result = response.Content.ReadAsStringAsync().Result;
-            _restClient.HttpResponseMessage = response;
-
-            _contactQueryViewModel = JsonConvert.DeserializeObject<Contact>(_restClient.Result);
-
-            var contactUpdateViewModel = new UpdateContactRequest
+            var updateContactRequest = new UpdateContactRequest
             {
                 DisplayName = _contactArgument.DisplayName,
                 Email = _contactArgument.Email,
                 Username = _contactArgument.UserName
             };
 
-            _restClient.HttpResponseMessage = _restClient.HttpClient.PutAsJsonAsync(
-            "api/v1/contacts", contactUpdateViewModel).Result;
-            _restClient.Result = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
+            _contactService.PutContact(updateContactRequest);
 
-            _contactQueryViewModel = new Contact
+            _contactResponseArguments = new ContactResponse
             {
                 DisplayName = _contactArgument.DisplayName,
                 Email = _contactArgument.Email,
@@ -83,33 +86,16 @@
         [Then(@"the Contact Update should have occured")]
         public void ThenTheContactUpdateShouldHaveOccured()
         {
-            var contactEntities = _dbconnection.Query<Contact>
-             ($"Select Id, UserName, DisplayName, EMail, Status From Contacts where UserName = '{_contactQueryViewModel.Username}'").ToList();
+            var contactEntities = _dbconnection.Query<ContactResponse>
+                    ($"Select Id, UserName, DisplayName, EMail, Status From Contacts where UserName = '{_contactResponseArguments.Username}'")
+                .ToList();
             var contact = contactEntities.First();
 
-            contact.DisplayName.Should().Be(_contactQueryViewModel.DisplayName);
-            contact.Email.Should().Be(_contactQueryViewModel.Email);
-            contact.Username.Should().Be(_contactQueryViewModel.Username);
+            contact.DisplayName.Should().Be(_contactResponseArguments.DisplayName);
+            contact.Email.Should().Be(_contactResponseArguments.Email);
+            contact.Username.Should().Be(_contactResponseArguments.Username);
 
             contact.Status.Should().Be(ContactStatus.Live);
-        }
-
-        private void CreateOrganisation(CreateOrganisationRequest organisationCreateViewModel)
-        {
-            _restClient.HttpResponseMessage = _restClient.HttpClient.PostAsJsonAsync(
-                 "api/v1/organisations", organisationCreateViewModel).Result;
-            _restClient.Result = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
-
-            _organisationQueryViewModel = JsonConvert.DeserializeObject<Organisation>(_restClient.Result);
-        }
-
-        private void CreateContact(CreateContactRequest contactCreateViewModel)
-        {
-            _restClient.HttpResponseMessage = _restClient.HttpClient.PostAsJsonAsync(
-               "api/v1/contacts", contactCreateViewModel).Result;
-
-            _restClient.Result = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
-            _contactQueryViewModel = JsonConvert.DeserializeObject<Contact>(_restClient.Result);
         }
     }
 }

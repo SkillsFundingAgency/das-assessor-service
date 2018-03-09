@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpGet("{ukprn}", Name = "GetOrganisation")]
-        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(Organisation))]
+        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(OrganisationResponse))]
         [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.NotFound, Type = typeof(string))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpGet(Name="GetAllOrganisations")]
-        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<Organisation>))]
+        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<OrganisationResponse>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetAllOrganisations()
         {

@@ -20,18 +20,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
             _localizer = localizer;
         }
 
-        public async Task<Organisation> CreateOrganisation(
-            [FromBody] CreateOrganisationRequest organisationCreateViewModel)
+        public async Task<OrganisationResponse> CreateOrganisation(
+            [FromBody] CreateOrganisationRequest createOrganisationRequest)
         {
-            var organisation = await _mediator.Send(organisationCreateViewModel);
+            var organisation = await _mediator.Send(createOrganisationRequest);
             return organisation;
         }
 
 
         public async Task UpdateOrganisation(
-            [FromBody] UpdateOrganisationRequest organisationUpdateViewModel)
+            [FromBody] UpdateOrganisationRequest updateOrganisationRequest)
         {
-            var organisation = await _mediator.Send(organisationUpdateViewModel);
+            var organisation = await _mediator.Send(updateOrganisationRequest);
         }
 
         public async Task DeleteOrganisation(string endPointAssessorOrganisationId)

@@ -9,9 +9,9 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 {
     public interface IOrganisationQueryRepository
     {
-        Task<IEnumerable<Organisation>> GetAllOrganisations();
-        Task<Organisation> GetByUkPrn(int ukprn);
-        Task<OrganisationQueryDomainModel> Get(string endPointAssessorOrganisationId);
+        Task<IEnumerable<OrganisationResponse>> GetAllOrganisations();
+        Task<OrganisationResponse> GetByUkPrn(int ukprn);
+        Task<OrganisationDomainModel> Get(string endPointAssessorOrganisationId);
 
         Task<bool> CheckIfAlreadyExists(string endPointAssessorOrganisationId);
         Task<bool> CheckIfAlreadyExists(Guid organisationId);
