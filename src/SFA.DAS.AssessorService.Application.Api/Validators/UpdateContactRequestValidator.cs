@@ -1,7 +1,9 @@
 ﻿using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Consts;
+using SFA.DAS.AssessorService.Application.Api.Extensions;
 using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Api.Validators
@@ -19,7 +21,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             UpdateContactRequest updateContactRequest;
             // ReSharper disable once LocalNameCapturedOnly
             RuleFor(contact => contact.Email).NotEmpty().WithMessage(
-                string.Format(localiser[ResourceMessageName.MustBeDefined].Value, nameof(updateContactRequest.Email)))
+                    string.Format(localiser[ResourceMessageName.MustBeDefined].Value, nameof(updateContactRequest.Email).ToCamelCase()))
                 .MaximumLength(120)
                 // Please note we have to string.Format this due to limitation in Moq not handling Optional
                 // Params
@@ -27,31 +29,34 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                     nameof(updateContactRequest.Email), 120));
 
             RuleFor(contact => contact.DisplayName).NotEmpty().WithMessage(
-                    string.Format(localiser[ResourceMessageName.MustBeDefined].Value, nameof(updateContactRequest.DisplayName)))
+                    string.Format(localiser[ResourceMessageName.MustBeDefined].Value, nameof(updateContactRequest.DisplayName).ToCamelCase()))
                 .MaximumLength(120)
                 // Please note we have to string.Format this due to limitation in Moq not handling Optional
                 // Params
                 .WithMessage(string.Format(localiser[ResourceMessageName.MaxLengthError].Value,
                     nameof(updateContactRequest.DisplayName), 120));
 
-            RuleFor(contact => contact.Username)
+            RuleFor(contact => contact.UserName)
                 .NotEmpty()
                 .WithMessage(
-                    string.Format(localiser[ResourceMessageName.MustBeDefined].Value, nameof(updateContactRequest.Username)))
-                .MaximumLength(12)
+                    string.Format(localiser[ResourceMessageName.MustBeDefined].Value, nameof(updateContactRequest.UserName).ToCamelCase()))
+                .MaximumLength(30)
                 // Please note we have to string.Format this due to limitation in Moq not handling Optional
                 // Params
                 .WithMessage(string.Format(localiser[ResourceMessageName.MaxLengthError].Value,
-                    nameof(updateContactRequest.Username), 30));
+                    nameof(updateContactRequest.UserName), 30));
 
 
-            RuleFor(contact => contact.Username).Must(AlreadyExist).WithMessage(localiser[ResourceMessageName.DoesNotExist].Value);
-        }
-
-        private bool AlreadyExist(string userName)
-        {
-            var result = _contactQueryRepository.CheckContactExists(userName).Result;
-            return result;
-        }
+            RuleFor(contact => contact)
+                .Custom((contact, context) =>
+                {
+                    var result = contactQueryRepository.CheckContactExists(contact.UserName).Result;
+                    if (!result)
+                    {
+                        context.AddFailure(new ValidationFailure("Contact",
+                            string.Format(localiser[ResourceMessageName.DoesNotExist].Value, "Contact", contact.UserName)));
+                    }
+                });
+        }        
     }
 }

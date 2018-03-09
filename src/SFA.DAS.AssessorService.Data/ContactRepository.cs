@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Data
         public async Task Update(UpdateContactRequest updateContactRequest)
         {
             var contactEntity =
-                await _assessorDbContext.Contacts.FirstAsync(q => q.Username == updateContactRequest.Username);
+                await _assessorDbContext.Contacts.FirstAsync(q => q.Username == updateContactRequest.UserName);
 
             contactEntity.DisplayName = updateContactRequest.DisplayName;
             contactEntity.Email = updateContactRequest.Email;

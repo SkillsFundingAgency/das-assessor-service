@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Main
 
             var contactRequest = Builder<UpdateContactRequest>
                 .CreateNew()
-                .With(q => q.Username = q.Username.PadLeft(40, 'x'))
+                .With(q => q.UserName = q.UserName.PadLeft(40, 'x'))
                 .With(q => q.DisplayName =  q.DisplayName.PadLeft(140, 'x'))
                 .With(q => q.Email = q.Email.PadLeft(140, 'x'))
                 .Build();

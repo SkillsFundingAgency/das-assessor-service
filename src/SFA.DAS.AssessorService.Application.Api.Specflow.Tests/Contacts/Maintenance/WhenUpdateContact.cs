@@ -70,7 +70,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
             {
                 DisplayName = _contactArgument.DisplayName,
                 Email = _contactArgument.Email,
-                Username = _contactArgument.UserName
+                UserName = _contactArgument.UserName
             };
 
             _contactService.PutContact(updateContactRequest);

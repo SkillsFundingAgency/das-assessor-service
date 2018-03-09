@@ -121,13 +121,13 @@ namespace SFA.DAS.AssessorService.Data.Migrations
 
                     b.Property<DateTime?>("UpdatedAt");
 
-                    b.Property<string>("Username")
+                    b.Property<string>("UserName")
                         .IsRequired()
                         .HasMaxLength(30);
 
                     b.HasKey("Id");
 
-                    b.HasAlternateKey("Username");
+                    b.HasAlternateKey("UserName");
 
                     b.HasIndex("OrganisationId");
 
