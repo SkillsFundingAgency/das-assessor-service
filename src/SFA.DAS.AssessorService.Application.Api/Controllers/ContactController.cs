@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Attributes;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
+using SFA.DAS.AssessorService.Application.Api.Orchestrators;
 using SFA.DAS.AssessorService.Domain.Exceptions;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -19,72 +20,58 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
     [ValidateBadRequest]
     public class ContactController : Controller
     {
-        private readonly IStringLocalizer<ContactController> _localizer;
         private readonly ILogger<ContactController> _logger;
-        private readonly IMediator _mediator;
+        private readonly ContactOrchestrator _contactOrchestrator;
 
-        public ContactController(IMediator mediator,
-            IStringLocalizer<ContactController> localizer,
+        public ContactController(
+            ContactOrchestrator contactOrchestrator,
             ILogger<ContactController> logger
         )
         {
-            _mediator = mediator;
-            _localizer = localizer;
+            _contactOrchestrator = contactOrchestrator;
             _logger = logger;
         }
 
         [HttpPost(Name = "CreateContract")]
-        [SwaggerResponse((int) HttpStatusCode.Created, Type = typeof(Contact))]
-        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(ContactResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> CreateContact(
-            [FromBody] CreateContactRequest contactCreateViewModel)
+            [FromBody] CreateContactRequest createContactRequest)
         {
             _logger.LogInformation("Received Create Contact Request");
 
-            var contactQueryViewModel = await _mediator.Send(contactCreateViewModel);
+            var contactResponse = await _contactOrchestrator.CreateContact(createContactRequest);
 
             return CreatedAtRoute("CreateContract",
-                new {contactQueryViewModel.Username},
-                contactQueryViewModel);
+                new { Username = contactResponse.UserName },
+                contactResponse);
         }
 
         [HttpPut(Name = "UpdateContact")]
-        [SwaggerResponse((int) HttpStatusCode.NoContent)]
-        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> UpdateContact([FromBody] UpdateContactRequest contactUpdateViewModel)
+        [SwaggerResponse((int)HttpStatusCode.NoContent)]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> UpdateContact([FromBody] UpdateContactRequest updateContactRequest)
         {
             _logger.LogInformation("Received Update Contact Request");
 
-            await _mediator.Send(contactUpdateViewModel);
+            await _contactOrchestrator.UpdateContact(updateContactRequest);
 
             return NoContent();
         }
 
         [HttpDelete(Name = "Delete")]
-        [SwaggerResponse((int) HttpStatusCode.NoContent)]
-        [SwaggerResponse((int) HttpStatusCode.NotFound)]
-        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> Delete(string username)
+        [SwaggerResponse((int)HttpStatusCode.NoContent)]
+        [SwaggerResponse((int)HttpStatusCode.NotFound)]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> Delete(string userName)
         {
-            try
-            {
-                _logger.LogInformation("Received Delete Contact Request");
+            _logger.LogInformation("Received Delete Contact Request");
 
-                var contactDeleteViewModel = new DeleteContactRequest
-                {
-                    UserName = username
-                };
+            await _contactOrchestrator.DeleteContact(userName);
 
-                await _mediator.Send(contactDeleteViewModel);
-
-                return NoContent();
-            }
-            catch (NotFound)
-            {
-                return NotFound();
-            }
+            return NoContent();
         }
     }
 }

@@ -1,17 +1,17 @@
-﻿using SFA.DAS.AssessorService.Domain.DomainModels;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.DomainModels;
+using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Exceptions;
 
 namespace SFA.DAS.AssessorService.Data
 {
-    using System;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Api.Types.Models;
-    using Application.Interfaces;
-    using AutoMapper;
-    using Domain.Consts;
-    using Domain.Exceptions;
-    using Microsoft.EntityFrameworkCore;
-
     public class ContactRepository : IContactRepository
     {
         private readonly AssessorDbContext _assessorDbContext;
@@ -21,23 +21,24 @@ namespace SFA.DAS.AssessorService.Data
             _assessorDbContext = assessorDbContext;
         }
 
-        public async Task<Contact> CreateNewContact(ContactCreateDomainModel newContact)
+        public async Task<ContactResponse> CreateNewContact(CreateContactDomainModel newContact)
         {
-            var contactEntity = Mapper.Map<Domain.Entities.Contact>(newContact);
+            var contactEntity = Mapper.Map<Contact>(newContact);
 
             _assessorDbContext.Contacts.Add(contactEntity);
             await _assessorDbContext.SaveChangesAsync();
 
-            var contact = Mapper.Map<Contact>(contactEntity);
+            var contact = Mapper.Map<ContactResponse>(contactEntity);
             return contact;
         }
 
-        public async Task Update(UpdateContactRequest contactUpdateViewModel)
+        public async Task Update(UpdateContactRequest updateContactRequest)
         {
-            var contactEntity = await _assessorDbContext.Contacts.FirstAsync(q => q.Username == contactUpdateViewModel.Username);
+            var contactEntity =
+                await _assessorDbContext.Contacts.FirstAsync(q => q.Username == updateContactRequest.UserName);
 
-            contactEntity.DisplayName = contactUpdateViewModel.DisplayName;
-            contactEntity.Email = contactUpdateViewModel.Email;
+            contactEntity.DisplayName = updateContactRequest.DisplayName;
+            contactEntity.Email = updateContactRequest.Email;
 
             // Workaround for Mocking
             _assessorDbContext.MarkAsModified(contactEntity);
@@ -48,10 +49,10 @@ namespace SFA.DAS.AssessorService.Data
         public async Task Delete(string userName)
         {
             var contactEntity = _assessorDbContext.Contacts
-                      .FirstOrDefault(q => q.Username == userName && q.Status != ContactStatus.Deleted);
+                .FirstOrDefault(q => q.Username == userName && q.Status != ContactStatus.Deleted);
 
             if (contactEntity == null)
-                throw (new NotFound());
+                throw new NotFound();
 
             contactEntity.DeletedAt = DateTime.Now;
             contactEntity.Status = ContactStatus.Deleted;

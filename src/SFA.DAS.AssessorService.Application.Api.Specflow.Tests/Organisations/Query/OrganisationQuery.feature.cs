@@ -138,7 +138,7 @@ this.ScenarioSetup(scenarioInfo);
 #line 28
  testRunner.Then("the response http status should be Not Found", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 29
- testRunner.And("the response message should contain No provider with ukprn 10029999 found", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("the response message should contain No organisation with ukprn 10029999 found", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
         }

@@ -45,7 +45,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
             TokenService.Setup(s => s.GetToken()).Returns("jwt");
 
             ApiClient = new Mock<IOrganisationsApiClient>();
-            ApiClient.Setup(c => c.Get("12345")).ReturnsAsync(new Organisation() { });
+            ApiClient.Setup(c => c.Get("12345")).ReturnsAsync(new OrganisationResponse() { });
 
             OrganisationController = new OrganisationController(logger.Object, httpContext.Object, ApiClient.Object);
         }

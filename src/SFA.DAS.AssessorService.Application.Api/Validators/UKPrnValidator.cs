@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 validationResult = new ValidationResult();
             else
                 validationResult.Errors.Add(new ValidationFailure(nameof(ukprn),
-                    _localizer[ResourceMessageName.InvalidUkprn, nameof(ukprn)].Value));
+                    _localizer[ResourceMessageName.InvalidUkprn]));
 
             return validationResult;
         }

@@ -89,14 +89,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
 
-            using (var response = HttpClient.SendAsync(requestMessage))
+            using (var response = await HttpClient.SendAsync(requestMessage))
             {
-                var result = await response;
-                if (result.StatusCode == HttpStatusCode.OK 
-                    || result.StatusCode == HttpStatusCode.Created 
-                    || result.StatusCode == HttpStatusCode.NoContent)
+                //var result = await response;
+                if (response.StatusCode == HttpStatusCode.OK 
+                    || response.StatusCode == HttpStatusCode.Created 
+                    || response.StatusCode == HttpStatusCode.NoContent)
                 {
-                    var json = await result.Content.ReadAsStringAsync();
+                    var json = await response.Content.ReadAsStringAsync();
                     return await Task.Factory.StartNew<U>(() => JsonConvert.DeserializeObject<U>(json, _jsonSettings));
                 }
                 else

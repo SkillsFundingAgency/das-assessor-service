@@ -86,30 +86,13 @@ this.ScenarioSetup(scenarioInfo);
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Retrieve Contacts for an Invalid Organisation")]
-        public virtual void RetrieveContactsForAnInvalidOrganisation()
+        [NUnit.Framework.DescriptionAttribute("Search Contact for an Organisation By UserName")]
+        public virtual void SearchContactForAnOrganisationByUsername()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Retrieve Contacts for an Invalid Organisation", ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Search Contact for an Organisation By UserName", ((string[])(null)));
 #line 13
 this.ScenarioSetup(scenarioInfo);
 #line 14
- testRunner.Given("System Has access to the SFA.DAS.AssessmentOrgs.Api", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 15
- testRunner.When("I Request All Contacts to be retrieved By an Invalid Organisation", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 16
- testRunner.Then("the response http status should be Not Found", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line hidden
-            this.ScenarioCleanup();
-        }
-        
-        [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Search Contact for an Organisation By Username")]
-        public virtual void SearchContactForAnOrganisationByUsername()
-        {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Search Contact for an Organisation By Username", ((string[])(null)));
-#line 18
-this.ScenarioSetup(scenarioInfo);
-#line 19
  testRunner.Given("System Has access to the SFA.DAS.AssessmentOrgs.Api", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
             TechTalk.SpecFlow.Table table1 = new TechTalk.SpecFlow.Table(new string[] {
@@ -118,11 +101,11 @@ this.ScenarioSetup(scenarioInfo);
             table1.AddRow(new string[] {
                         "jcoxhead",
                         "jcoxhead@gmail.com"});
-#line 20
- testRunner.When("Client Searches Contacts By Username", ((string)(null)), table1, "When ");
-#line 23
+#line 15
+ testRunner.When("Client Searches Contacts By UserName", ((string)(null)), table1, "When ");
+#line 18
  testRunner.Then("the response http status should be OK", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 24
+#line 19
  testRunner.And("the API returns a valid Contact", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();

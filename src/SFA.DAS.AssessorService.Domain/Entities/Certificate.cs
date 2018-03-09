@@ -9,6 +9,8 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public Guid OrganisationId { get; set; }
         public virtual Organisation Organisation { get; set; }
 
+        public int EndPointAssessorCertificateId { get; set; }
+
         // Will hold json representation for data - change made
         // as per alans request 22-02-2018 JC
         // Data ot serialised using structure defined in CertificateData class.
@@ -16,8 +18,8 @@ namespace SFA.DAS.AssessorService.Domain.Entities
 
         public string Status { get; set; }
 
-        public Guid CreatedBy { get; set; }
-        public Guid UpdatedBy { get; set; }
-        public Guid DeletedBy { get; set; }
+        public string CreatedBy { get; set; }
+        public string UpdatedBy { get; set; }
+        public string DeletedBy { get; set; }
     }
 }

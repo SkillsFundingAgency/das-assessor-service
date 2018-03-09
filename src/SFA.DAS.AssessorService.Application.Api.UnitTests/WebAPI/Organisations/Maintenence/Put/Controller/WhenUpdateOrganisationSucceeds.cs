@@ -10,8 +10,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
 {
     public class WhenUpdateOrganisationSucceeds : OrganisationTestBase
     {
-        private UpdateOrganisationRequest _organisationUpdateViewModel;
-        private  Organisation _organisationQueryViewModel;
+        private UpdateOrganisationRequest _updateOrganisationRequest;
+        private  OrganisationResponse _organisationResponse;
         private IActionResult _result;
 
         [SetUp]
@@ -19,14 +19,14 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
         {
             Setup();
 
-            _organisationQueryViewModel = Builder<Organisation>.CreateNew().Build();
+            _organisationResponse = Builder<OrganisationResponse>.CreateNew().Build();
 
             Mediator.Setup(q => q.Send(Moq.It.IsAny<UpdateOrganisationRequest>(), Moq.It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult((_organisationQueryViewModel)));
+                .Returns(Task.FromResult((_organisationResponse)));
 
-            _organisationUpdateViewModel = Builder<UpdateOrganisationRequest>.CreateNew()
+            _updateOrganisationRequest = Builder<UpdateOrganisationRequest>.CreateNew()
                     .Build();
-            _result = OrganisationController.UpdateOrganisation(_organisationUpdateViewModel).Result;
+            _result = OrganisationController.UpdateOrganisation(_updateOrganisationRequest).Result;
         }
 
         [Test]

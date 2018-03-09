@@ -1,8 +1,91 @@
-﻿@model object
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model SFA.DAS.AssessorService.Web.ViewModels.Search.SearchViewModel
 
 @{
-    ViewBag.Title = "title";
+    ViewBag.Title = (ViewData.ModelState.IsValid ? "" : "Error: ") + "Search for an apprentice";
     Layout = "_Layout";
 }
 
-<h2>Search</h2>
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <h1 class="heading-large">Search for an apprentice</h1>
+
+        <form method="post">
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                        There are errors with your search
+                    </h2>
+                    <p>
+                        
+                    </p>
+                    <ul class="error-summary-list">
+                        <li><span asp-validation-for="Uln"></span></li>
+                        <li><span asp-validation-for="Surname"></span></li>
+                        
+                        <li>
+                        <a href="#example-name">Descriptive link to the question with an error</a>
+                        </li>
+                        
+                    </ul>
+                </div>
+            }
+
+            <div class="info-summary">
+                <h3 class="heading-medium">Only record successful assessments</h3>
+                <p>You don't need to record failed assessments. Please search for the apprentice again once they have passed.</p>
+            </div>
+
+            <fieldset>
+
+                @* 
+                    Not in error state
+                *@
+                <div class="form-group">
+                    <label class="form-label" for="Uln">
+                        <span class="form-label-bold">@Localizer["Uln"]</span>
+                        <span class="form-hint">A ULN is made up of exactly 10 numbers</span>
+                        <span class="error-message" asp-validation-for="Uln"></span>
+                    </label>
+                    <input class="form-control" asp-for="Uln" type="text" />
+                </div>
+
+                @*
+                    In error state:
+                    form-group-error & form-control-error classes added
+                *@
+                <div class="form-group form-group-error">
+                    <label class="form-label" for="surname">
+                        <span class="form-label-bold">@Localizer["Lastname"]</span>
+                        <span class="error-message" asp-validation-for="Surname"></span>
+                    </label>
+                    <input class="form-control form-control-error" asp-for="Surname" type="text" />
+                </div>
+
+                <details role="group">
+                    <summary role="button" aria-controls="what-is-a-unique-learner-number" aria-expanded="false"><span class="summary">What is a unique learner number (ULN)?</span></summary>
+                    <div class="text" id="what-is-a-unique-learner-number" aria-hidden="true">
+                        <p>
+                            Each apprentice has a unique learner number (ULN) that is used to identify them. It is ten digits long and contains only numbers.
+                        </p>
+                    </div>
+                </details>
+
+                <div class="form-group">
+                    <input class="button" id="button-search" type="submit" value="Continue">
+                </div>
+            </fieldset>
+            
+        </form>
+    </div>
+</div>
+
+@if (Model?.SearchResults != null)
+{
+    if (!Model.SearchResults.Any())
+    {
+        <p>No results</p>
+    }
+}

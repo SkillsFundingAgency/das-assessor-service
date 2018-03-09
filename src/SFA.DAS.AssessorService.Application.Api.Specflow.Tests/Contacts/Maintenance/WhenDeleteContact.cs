@@ -1,141 +1,98 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Maintenance
-{
-    using System.Collections.Generic;
-    using System.Data;
-    using System.Linq;
-    using System.Net.Http;
-    using AssessorService.Api.Types.Models;
-    using Dapper;
-    using Domain.Consts;
-    using Extensions;
-    using FluentAssertions;
-    using Newtonsoft.Json;
-    using TechTalk.SpecFlow;
+﻿using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using Dapper;
+using FluentAssertions;
+using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Maintenance.Services;
+using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Query;
+using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Extensions;
+using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.Helpers;
+using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.Query.Services;
+using SFA.DAS.AssessorService.Domain.Consts;
+using TechTalk.SpecFlow;
 
+namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Maintenance
+{
     [Binding]
     public sealed class WhenDeleteContact
     {
-        private RestClient _restClient;
+        private readonly ContactQueryService _contactQueryService;
+        private readonly ContactService _contactService;
+        private readonly CreateContactBuilder _createContactBuilder;
         private readonly IDbConnection _dbconnection;
-        private Organisation _organisationRetrieved;
-        private dynamic _contactArguments;
+        private readonly OrganisationQueryService _organisationQueryService;
+        private dynamic _contactArgument;
+        private OrganisationResponse _organisationRetrieved;
 
-        private List<Organisation> _organisations = new List<Organisation>();
+        private List<OrganisationResponse> _organisations = new List<OrganisationResponse>();
+        private RestClientResult _restClient;
 
-        public WhenDeleteContact(RestClient restClient,
+        public WhenDeleteContact(RestClientResult restClient,
+            OrganisationQueryService organisationQueryService,
+            ContactService contactService,
+            ContactQueryService contactQueryService,
+            CreateContactBuilder createContactBuilder,
             IDbConnection dbconnection)
         {
             _restClient = restClient;
+            _organisationQueryService = organisationQueryService;
+            _contactService = contactService;
+            _contactQueryService = contactQueryService;
+            _createContactBuilder = createContactBuilder;
             _dbconnection = dbconnection;
         }
 
         [When(@"I Delete a Contact")]
         public void WhenIDeleteAContact(IEnumerable<dynamic> contactArguments)
         {
-            _contactArguments = contactArguments.First();
+            _contactArgument = contactArguments.First();
 
-            HttpResponseMessage response = _restClient.HttpClient.GetAsync(
-                "api/v1/organisations").Result;
+            _restClient = _organisationQueryService.GetOrganisations();
+            _organisations = _restClient.Deserialise<List<OrganisationResponse>>().ToList();
 
-            _restClient.Result = response.Content.ReadAsStringAsync().Result;
-            _restClient.HttpResponseMessage = response;
+            var createContactRequest = _createContactBuilder.Build(_contactArgument,
+                _organisations.First().EndPointAssessorOrganisationId);
+            _contactService.PostContact(createContactRequest);
 
-            _organisations = JsonConvert.DeserializeObject<List<Organisation>>(_restClient.Result);
-
-            var createContactRequest = new CreateContactRequest
-            {
-                Username = _contactArguments.UserName,
-                DisplayName = _contactArguments.DisplayName,
-                Email = _contactArguments.Email,
-                EndPointAssessorOrganisationId = _organisations.First().EndPointAssessorOrganisationId
-            };
-
-            _restClient.HttpResponseMessage = _restClient.HttpClient.PostAsJsonAsync(
-                 "api/v1/contacts", createContactRequest).Result;
-            _restClient.Result = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
-
-            _restClient.HttpResponseMessage = _restClient.HttpClient.DeleteAsJsonAsync($"api/v1/contacts?username={createContactRequest.Username}").Result;
+            _contactService.DeleteContact(createContactRequest.UserName);
         }
 
         [When(@"I Delete a Contact Twice")]
-        public void WhenIDeleteAContactTwice(IEnumerable<dynamic> contactArguments)
+        public void WhenIDeleteAContactTwice(IEnumerable<
+            dynamic> contactArguments)
         {
-            _contactArguments = contactArguments.First();
+            _contactArgument = contactArguments.First();
 
-            HttpResponseMessage response = _restClient.HttpClient.GetAsync(
-                "api/v1/organisations").Result;
+            _restClient = _organisationQueryService.GetOrganisations();
+            _organisations = _restClient.Deserialise<List<OrganisationResponse>>().ToList();
 
-            _restClient.Result = response.Content.ReadAsStringAsync().Result;
-            _restClient.HttpResponseMessage = response;
+            var createContactRequest = _createContactBuilder.Build(_contactArgument,
+                _organisations.First().EndPointAssessorOrganisationId);
+            _contactService.PostContact(createContactRequest);
 
-            _organisations = JsonConvert.DeserializeObject<List<Organisation>>(_restClient.Result);
-
-            var createContactRequest = new CreateContactRequest
-            {
-                Username = _contactArguments.UserName,
-                DisplayName = _contactArguments.DisplayName,
-                Email = _contactArguments.Email,
-                EndPointAssessorOrganisationId = _organisations.First().EndPointAssessorOrganisationId
-            };
-
-            _restClient.HttpResponseMessage = _restClient.HttpClient.PostAsJsonAsync(
-                "api/v1/contacts", createContactRequest).Result;
-            _restClient.Result = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
-
-            _restClient.HttpResponseMessage = _restClient.HttpClient.DeleteAsJsonAsync($"api/v1/contacts?username={createContactRequest.Username}").Result;
-            _restClient.HttpResponseMessage = _restClient.HttpClient.DeleteAsJsonAsync($"api/v1/contacts?username={createContactRequest.Username}").Result;
+            _contactService.DeleteContact(createContactRequest.UserName);
+            _contactService.DeleteContact(createContactRequest.UserName);
         }
 
         [Then(@"the Contact should be deleted")]
         public void ThenTheContactShouldBeDeleted()
         {
-            var contacts = _dbconnection.Query<Contact>
-            ($"Select Status From Contacts where Username = '{_contactArguments.UserName}'").ToList();
+            var contacts = _dbconnection.Query<ContactResponse>
+                ($"Select Status From Contacts where UserName = '{_contactArgument.UserName}'").ToList();
             var contact = contacts.First();
 
             contact.Status.Should().Be(OrganisationStatus.Deleted);
         }
 
-        //[When(@"I Delete an Organisation Twice")]
-        //public void WhenIDeleteAnOrganisationTwice(IEnumerable<dynamic> organisations)
-        //{
-        //    _organisationArguments = organisations.First();
-
-        //    var organisation = new OrganisationCreateViewModel
-        //    {
-        //        EndPointAssessorName = _organisationArguments.EndPointAssessorName,
-        //        EndPointAssessorOrganisationId = _organisationArguments.EndPointAssessorOrganisationId.ToString(),
-        //        EndPointAssessorUKPRN = Convert.ToInt32(_organisationArguments.EndPointAssessorUKPRN),
-        //        PrimaryContactId = null
-        //    };
-
-        //    _restClient.HttpResponseMessage = _restClient.HttpClient.PostAsJsonAsync(
-        //         "api/v1/organisations", organisation).Result;
-        //    _restClient.Result = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
-
-        //    var organisationCreated = JsonConvert.DeserializeObject<OrganisationQueryViewModel>(_restClient.Result);
-
-        //    _restClient.HttpResponseMessage = _restClient.HttpClient.DeleteAsJsonAsync($"api/v1/organisations?id={organisationCreated.Id}").Result;
-        //    _restClient.HttpResponseMessage = _restClient.HttpClient.DeleteAsJsonAsync($"api/v1/organisations?id={organisationCreated.Id}").Result;
-        //}
-
-        //[Then(@"the Organisation should be deleted")]
-        //public void ThenTheOrganisationShouldBeDeleted()
-        //{
-        //    var organisationsCreated = _dbconnection.Query<OrganisationQueryViewModel>
-        //    ($"Select EndPointAssessorOrganisationId, EndPointAssessorUKPRN, EndPointAssessorName, OrganisationStatus From Organisations where EndPointAssessorOrganisationId = {_organisationArguments.EndPointAssessorOrganisationId}").ToList();
-        //    _organisationRetrieved = organisationsCreated.First();
-
-        //    _organisationRetrieved.OrganisationStatus.Should().Be(OrganisationStatus.Deleted);
-        //}
-
-        private void CreateOrganisation(CreateOrganisationRequest organisationCreateViewModel)
+        private void CreateOrganisation(CreateOrganisationRequest createOrganisationRequest)
         {
             _restClient.HttpResponseMessage = _restClient.HttpClient.PostAsJsonAsync(
-                "api/v1/organisations", organisationCreateViewModel).Result;
-            _restClient.Result = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
+                "api/v1/organisations", createOrganisationRequest).Result;
+            _restClient.JsonResult = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
 
-            _organisationRetrieved = JsonConvert.DeserializeObject<Organisation>(_restClient.Result);
+            _organisationRetrieved = JsonConvert.DeserializeObject<OrganisationResponse>(_restClient.JsonResult);
         }
     }
 }

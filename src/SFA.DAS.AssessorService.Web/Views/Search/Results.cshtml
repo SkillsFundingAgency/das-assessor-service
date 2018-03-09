@@ -1,0 +1,31 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model SFA.DAS.AssessorService.Web.ViewModels.Search.SearchViewModel
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<a asp-controlle="Search" asp-action="Index">< Back</a>
+
+@foreach (var result in Model.SearchResults)
+{
+    <fieldset>
+        <ul>
+            <li>
+                <p><span class="bold">Name:</span> @result.Firstname @result.Surname</p>
+            </li>
+            <li>
+                <p><span class="bold">ULN:</span> @result.Uln</p>
+            </li>
+            <li>
+                <p><span class="bold">Standard:</span> @result.Standard</p>
+            </li>
+        </ul>
+
+        <div class="form-group" style="margin-top:25px;">
+            <a href="/grade" class="button button-white">Start recording assessment</a>
+        </div>
+    </fieldset>
+}
