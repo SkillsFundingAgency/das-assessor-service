@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             var contactResponse = await _contactOrchestrator.CreateContact(createContactRequest);
 
             return CreatedAtRoute("CreateContract",
-                new { contactResponse.Username },
+                new { Username = contactResponse.UserName },
                 contactResponse);
         }
 

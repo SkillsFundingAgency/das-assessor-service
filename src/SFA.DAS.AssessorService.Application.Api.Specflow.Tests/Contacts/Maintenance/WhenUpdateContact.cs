@@ -79,7 +79,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
             {
                 DisplayName = _contactArgument.DisplayName,
                 Email = _contactArgument.Email,
-                Username = _contactArgument.UserName
+                UserName = _contactArgument.UserName
             };
         }
 
@@ -87,13 +87,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
         public void ThenTheContactUpdateShouldHaveOccured()
         {
             var contactEntities = _dbconnection.Query<ContactResponse>
-                    ($"Select Id, UserName, DisplayName, EMail, Status From Contacts where UserName = '{_contactResponseArguments.Username}'")
+                    ($"Select Id, UserName, DisplayName, EMail, Status From Contacts where UserName = '{_contactResponseArguments.UserName}'")
                 .ToList();
             var contact = contactEntities.First();
 
             contact.DisplayName.Should().Be(_contactResponseArguments.DisplayName);
             contact.Email.Should().Be(_contactResponseArguments.Email);
-            contact.Username.Should().Be(_contactResponseArguments.Username);
+            contact.UserName.Should().Be(_contactResponseArguments.UserName);
 
             contact.Status.Should().Be(ContactStatus.Live);
         }

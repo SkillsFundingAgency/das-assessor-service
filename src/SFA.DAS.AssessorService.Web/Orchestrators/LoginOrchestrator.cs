@@ -64,7 +64,7 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators
         {
             var contact = await _contactsApiClient.GetByUsername(username);
 
-            await CheckStoredUserDetailsForUpdate(contact.Username, email, displayName, contact);
+            await CheckStoredUserDetailsForUpdate(contact.UserName, email, displayName, contact);
         }
 
         private async Task CheckStoredUserDetailsForUpdate(string userName, string email, string displayName, ContactResponse contactResponse)
@@ -103,7 +103,7 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators
                 {
                     EndPointAssessorName = organisation.EndPointAssessorName,
                     EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
-                    PrimaryContact = contactResponse.Username
+                    PrimaryContact = contactResponse.UserName
                 });
             }
         }

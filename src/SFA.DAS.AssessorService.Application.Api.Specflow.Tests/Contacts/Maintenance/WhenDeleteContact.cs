@@ -56,7 +56,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
                 _organisations.First().EndPointAssessorOrganisationId);
             _contactService.PostContact(createContactRequest);
 
-            _contactService.DeleteContact(createContactRequest.Username);
+            _contactService.DeleteContact(createContactRequest.UserName);
         }
 
         [When(@"I Delete a Contact Twice")]
@@ -72,8 +72,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
                 _organisations.First().EndPointAssessorOrganisationId);
             _contactService.PostContact(createContactRequest);
 
-            _contactService.DeleteContact(createContactRequest.Username);
-            _contactService.DeleteContact(createContactRequest.Username);
+            _contactService.DeleteContact(createContactRequest.UserName);
+            _contactService.DeleteContact(createContactRequest.UserName);
         }
 
         [Then(@"the Contact should be deleted")]
