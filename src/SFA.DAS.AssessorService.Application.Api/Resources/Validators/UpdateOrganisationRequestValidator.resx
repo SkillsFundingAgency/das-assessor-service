@@ -117,22 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AlreadyExists" xml:space="preserve">
+    <value>{0} Has Already Been Created</value>
+  </data>
   <data name="DoesNotExist" xml:space="preserve">
-    <value>Cannot update a record that does not exists in the database</value>
-  </data>
-  <data name="EndPointAssessorNameMustBeDefined" xml:space="preserve">
-    <value>Request must contain EndPointAssessorName</value>
-  </data>
-  <data name="EndPointAssessorOrganisationIdMustBeDefined" xml:space="preserve">
-    <value>Request must contain EndPointAssessorOrganisationId</value>
-  </data>
-  <data name="IdMustExist" xml:space="preserve">
-    <value>Request must contain an ID</value>
+    <value>{0} {1} does not exist</value>
   </data>
   <data name="InvalidUKPRN" xml:space="preserve">
     <value>Reqest must contain a valid UKPRN as defined in the UK Register of Learning Providers (UKRLP) is 8 digits in the format 10000000 – 99999999</value>
   </data>
-  <data name="PrimaryContactDoesNotExist" xml:space="preserve">
-    <value>Data Error</value>
+  <data name="MaxLengthError" xml:space="preserve">
+    <value>Maximum request length for {0} exceeded</value>
+  </data>
+  <data name="MustBeDefined" xml:space="preserve">
+    <value>Request must contain {0}</value>
   </data>
 </root>
