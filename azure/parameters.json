@@ -8,8 +8,23 @@
         "environmentName": {
             "value": ""
         },
-        "appServiceNames": {
-            "value": []
+        "uiAppServiceName": {
+            "value": ""
+        },
+        "apiAppServiceName": {
+            "value": ""
+        },
+        "uiKeyvaultCertificateName": {
+            "value": ""
+        },
+        "apiKeyvaultCertificateName": {
+            "value": ""
+        },
+        "uiCustomHostname": {
+            "value": ""
+        },
+        "apiCustomHostname": {
+            "value": ""
         },
         "functionAppNames": {
             "value": []
@@ -29,7 +44,13 @@
         "configurationStorageConnectionString": {
             "value": ""
         },
-        "loggingRedisConnectionString" : {
+        "loggingRedisConnectionString": {
+            "value": ""
+        },
+        "sharedKeyVaultName": {
+            "value": ""
+        },
+        "sharedManagementResourceGroup": {
             "value": ""
         }
     }
