@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Security.Claims;
 using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
@@ -15,15 +16,18 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrchestratorTests.LoginOrchestra
         [Test]
         public void ThenNotRegisteredResponseIsReturned()
         {
-            var claimsPrincipal = new ClaimsPrincipal(new List<ClaimsIdentity>()
+            var context = new DefaultHttpContext
             {
-                new ClaimsIdentity(new List<Claim> {new Claim("http://schemas.portal.com/service", "EPA")}),
-                new ClaimsIdentity(new List<Claim> {new Claim("http://schemas.portal.com/ukprn", "12345")})
-            });
+                User = new ClaimsPrincipal(new List<ClaimsIdentity>()
+                {
+                    new ClaimsIdentity(new List<Claim> {new Claim("http://schemas.portal.com/service", "EPA")}),
+                    new ClaimsIdentity(new List<Claim> {new Claim("http://schemas.portal.com/ukprn", "12345")})
+                })
+            };
 
             OrganisationsApiClient.Setup(c => c.Get("12345")).Throws<EntityNotFoundException>();
 
-            var result = LoginOrchestrator.Login(claimsPrincipal).Result;
+            var result = LoginOrchestrator.Login(context).Result;
 
             result.Should().Be(LoginResult.NotRegistered);
         }

@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
@@ -22,14 +23,14 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators
             _contactsApiClient = contactsApiClient;
         }
 
-        public async Task<LoginResult> Login(ClaimsPrincipal principal)
+        public async Task<LoginResult> Login(HttpContext context)
         {
-            var ukprn = principal.FindFirst("http://schemas.portal.com/ukprn")?.Value;
-            var username = principal.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
-            var email = principal.FindFirst("http://schemas.portal.com/mail")?.Value;
-            var displayName = principal.FindFirst("http://schemas.portal.com/displayname")?.Value;
+            var ukprn = context.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
+            var username = context.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
+            var email = context.User.FindFirst("http://schemas.portal.com/mail")?.Value;
+            var displayName = context.User.FindFirst("http://schemas.portal.com/displayname")?.Value;
 
-            if (UserDoesNotHaveAcceptableRole(principal))
+            if (UserDoesNotHaveAcceptableRole(context.User))
             {
                 return LoginResult.InvalidRole;
             }
@@ -38,6 +39,7 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators
             try
             {
                 organisation = await _organisationsApiClient.Get(ukprn);
+                context.Session.SetString("OrganisationName", organisation.EndPointAssessorName);
             }
             catch (EntityNotFoundException)
             {

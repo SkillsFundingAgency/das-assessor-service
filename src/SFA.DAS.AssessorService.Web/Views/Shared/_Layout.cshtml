@@ -1,59 +1,58 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - SFA.DAS.AssessorService.Web</title>
 
-<environment include="Development">
-    <!-- TEMPLATE STYLES - START -->
-    <!--[if gt IE 8]><!--><link rel="stylesheet" media="screen" href="/assets/stylesheets/govuk-template.css?0.23.0" /><!--<![endif]-->
-    <!--[if IE 6]><link rel="stylesheet" media="screen" href="/assets/stylesheets/govuk-template-ie6.css?0.23.0" /><![endif]-->
-    <!--[if IE 7]><link rel="stylesheet" media="screen" href="/assets/stylesheets/govuk-template-ie7.css?0.23.0" /><![endif]-->
-    <!--[if IE 8]><link rel="stylesheet" media="screen" href="/assets/stylesheets/govuk-template-ie8.css?0.23.0" /><![endif]-->
-    <link rel="stylesheet" media="print" href="/assets/stylesheets/govuk-template-print.css?0.23.0" />
-    <!--[if IE 8]><link rel="stylesheet" media="all" href="/assets/stylesheets/fonts-ie8.css?0.23.0" /><![endif]-->
-    <!--[if gte IE 9]><!--><link rel="stylesheet" media="all" href="/assets/stylesheets/fonts.css?0.23.0" /><!--<![endif]-->
-    <!-- TEMPLATE STYLES - END -->
+    <environment include="Development">
+        <!-- TEMPLATE STYLES - START -->
+        <!--[if gt IE 8]><!--><link rel="stylesheet" media="screen" href="/assets/stylesheets/govuk-template.css?0.23.0" /><!--<![endif]-->
+        <!--[if IE 6]><link rel="stylesheet" media="screen" href="/assets/stylesheets/govuk-template-ie6.css?0.23.0" /><![endif]-->
+        <!--[if IE 7]><link rel="stylesheet" media="screen" href="/assets/stylesheets/govuk-template-ie7.css?0.23.0" /><![endif]-->
+        <!--[if IE 8]><link rel="stylesheet" media="screen" href="/assets/stylesheets/govuk-template-ie8.css?0.23.0" /><![endif]-->
+        <link rel="stylesheet" media="print" href="/assets/stylesheets/govuk-template-print.css?0.23.0" />
+        <!--[if IE 8]><link rel="stylesheet" media="all" href="/assets/stylesheets/fonts-ie8.css?0.23.0" /><![endif]-->
+        <!--[if gte IE 9]><!--><link rel="stylesheet" media="all" href="/assets/stylesheets/fonts.css?0.23.0" /><!--<![endif]-->
+        <!-- TEMPLATE STYLES - END -->
+        <!-- ELEMENTS AND TOOLKIT STYLES - START -->
+        <!--[if gt IE 8]><!--><link rel="stylesheet" media="screen" href="/assets/stylesheets/esfa-govuk-base.css?3.1.2" /><!--<![endif]-->
+        <!--[if IE 6]><link rel="stylesheet" media="screen" href="/assets/stylesheets/esfa-govuk-ie6.css?3.1.2" /><![endif]-->
+        <!--[if IE 7]><link rel="stylesheet" media="screen" href="/assets/stylesheets/esfa-govuk-ie7.css?3.1.2" /><![endif]-->
+        <!--[if IE 8]><link rel="stylesheet" media="screen" href="/assets/stylesheets/esfa-govuk-ie8.css?3.1.2" /><![endif]-->
+        <!-- ELEMENTS AND TOOLKIT STYLES - END -->
+        <link rel="stylesheet" href="~/css/site.css" />
+    </environment>
 
-    <!-- ELEMENTS AND TOOLKIT STYLES - START -->
-    <!--[if gt IE 8]><!--><link rel="stylesheet" media="screen" href="/assets/stylesheets/esfa-govuk-base.css?3.1.2" /><!--<![endif]-->
-    <!--[if IE 6]><link rel="stylesheet" media="screen" href="/assets/stylesheets/esfa-govuk-ie6.css?3.1.2" /><![endif]-->
-    <!--[if IE 7]><link rel="stylesheet" media="screen" href="/assets/stylesheets/esfa-govuk-ie7.css?3.1.2" /><![endif]-->
-    <!--[if IE 8]><link rel="stylesheet" media="screen" href="/assets/stylesheets/esfa-govuk-ie8.css?3.1.2" /><![endif]-->
-    <!-- ELEMENTS AND TOOLKIT STYLES - END -->
-    <link rel="stylesheet" href="~/css/site.css" />
-</environment>
-
-<environment exclude="Development">
-    <!-- TEMPLATE STYLES - START -->
-    <!--[if gt IE 8]><!--><link rel="stylesheet" media="screen" href="/assets/stylesheets/govuk-template.min.css?0.23.0" /><!--<![endif]-->
-    <!--[if IE 6]><link rel="stylesheet" media="screen" href="/assets/stylesheets/govuk-template-ie6.min.css?0.23.0" /><![endif]-->
-    <!--[if IE 7]><link rel="stylesheet" media="screen" href="/assets/stylesheets/govuk-template-ie7.min.css?0.23.0" /><![endif]-->
-    <!--[if IE 8]><link rel="stylesheet" media="screen" href="/assets/stylesheets/govuk-template-ie8.min.css?0.23.0" /><![endif]-->
-    <link rel="stylesheet" media="print" href="/assets/stylesheets/govuk-template-print.min.css?0.23.0" />
-    <!--[if IE 8]><link rel="stylesheet" media="all" href="/assets/stylesheets/fonts-ie8.min.css?0.23.0" /><![endif]-->
-    <!--[if gte IE 9]><!--><link rel="stylesheet" media="all" href="/assets/stylesheets/fonts.min.css?0.23.0" /><!--<![endif]-->
-    <!-- TEMPLATE STYLES - END -->
-
-    <!-- ELEMENTS AND TOOLKIT STYLES - START -->
-    <!--[if gt IE 8]><!--><link rel="stylesheet" media="screen" href="/assets/stylesheets/esfa-govuk-base.min.css?3.1.2" /><!--<![endif]-->
-    <!--[if IE 6]><link rel="stylesheet" media="screen" href="/assets/stylesheets/esfa-govuk-ie6.min.css?3.1.2" /><![endif]-->
-    <!--[if IE 7]><link rel="stylesheet" media="screen" href="/assets/stylesheets/esfa-govuk-ie7.min.css?3.1.2" /><![endif]-->
-    <!--[if IE 8]><link rel="stylesheet" media="screen" href="/assets/stylesheets/esfa-govuk-ie8.min.css?3.1.2" /><![endif]-->
-    <!-- ELEMENTS AND TOOLKIT STYLES - END -->
-</environment>
+    <environment exclude="Development">
+        <!-- TEMPLATE STYLES - START -->
+        <!--[if gt IE 8]><!--><link rel="stylesheet" media="screen" href="/assets/stylesheets/govuk-template.min.css?0.23.0" /><!--<![endif]-->
+        <!--[if IE 6]><link rel="stylesheet" media="screen" href="/assets/stylesheets/govuk-template-ie6.min.css?0.23.0" /><![endif]-->
+        <!--[if IE 7]><link rel="stylesheet" media="screen" href="/assets/stylesheets/govuk-template-ie7.min.css?0.23.0" /><![endif]-->
+        <!--[if IE 8]><link rel="stylesheet" media="screen" href="/assets/stylesheets/govuk-template-ie8.min.css?0.23.0" /><![endif]-->
+        <link rel="stylesheet" media="print" href="/assets/stylesheets/govuk-template-print.min.css?0.23.0" />
+        <!--[if IE 8]><link rel="stylesheet" media="all" href="/assets/stylesheets/fonts-ie8.min.css?0.23.0" /><![endif]-->
+        <!--[if gte IE 9]><!--><link rel="stylesheet" media="all" href="/assets/stylesheets/fonts.min.css?0.23.0" /><!--<![endif]-->
+        <!-- TEMPLATE STYLES - END -->
+        <!-- ELEMENTS AND TOOLKIT STYLES - START -->
+        <!--[if gt IE 8]><!--><link rel="stylesheet" media="screen" href="/assets/stylesheets/esfa-govuk-base.min.css?3.1.2" /><!--<![endif]-->
+        <!--[if IE 6]><link rel="stylesheet" media="screen" href="/assets/stylesheets/esfa-govuk-ie6.min.css?3.1.2" /><![endif]-->
+        <!--[if IE 7]><link rel="stylesheet" media="screen" href="/assets/stylesheets/esfa-govuk-ie7.min.css?3.1.2" /><![endif]-->
+        <!--[if IE 8]><link rel="stylesheet" media="screen" href="/assets/stylesheets/esfa-govuk-ie8.min.css?3.1.2" /><![endif]-->
+        <!-- ELEMENTS AND TOOLKIT STYLES - END -->
+    </environment>
 
     <!--[if lt IE 9]><script src="/assets/javascripts/ie.js?0.23.0"></script><![endif]-->
-    
+
     <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/x-icon" />
-    
+
     <link rel="mask-icon" href="/assets/images/gov.uk_logotype_crown.svg" color="#0b0c0c">
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon-180x180.png">
     <link rel="apple-touch-icon" sizes="167x167" href="/assets/images/apple-touch-icon-167x167.png">
     <link rel="apple-touch-icon" sizes="152x152" href="/assets/images/apple-touch-icon-152x152.png">
     <link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
-    
+
     <meta name="theme-color" content="#0b0c0c" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta property="og:image" content="/assets/images/opengraph-image.png">
@@ -98,10 +97,37 @@
 
 
     <div id="global-header-bar"></div>
-    
-    <!-- Page content goes here -->
-    @RenderBody()
 
+    @if (User.Identity.IsAuthenticated)
+    {
+
+        <div class="header-user">
+            <!-- <div id="global-header-bar" class="global-header-bar--white"></div> -->
+            <div class="header-inner">
+                <div id="header-user--nav" class="grid-row">
+                    <div class="column-one-third">
+                        <h2 class="heading-small">
+                            <a href="#">@Context.Session.GetString("OrganisationName")</a>
+                            <span class="heading-secondary">
+                                <span class="visuallyhidden">Logged in as </span>@User.Identity.Name
+                            </span>
+                        </h2>
+                    </div>
+                    <div class="column-two-thirds">
+                        <nav id="user-nav" class="js-hidden-mobile">
+                            <ul>
+                                <li><a href="/help">Help</a></li>
+                                <li><a asp-controller="Account" asp-action="SignOut">Sign out</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    <main id="content" role="main">
+        @RenderBody()
+    </main>
     <footer class="group js-footer" id="footer" role="contentinfo">
 
         <div class="footer-wrapper">
