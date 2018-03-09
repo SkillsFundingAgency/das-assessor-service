@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Main
 
             var contactRequest = Builder<UpdateContactRequest>
                 .CreateNew()
-                .With(q => q.Username = q.Username.PadLeft(40, 'x'))
+                .With(q => q.UserName = q.UserName.PadLeft(40, 'x'))
                 .With(q => q.DisplayName =  q.DisplayName.PadLeft(140, 'x'))
                 .With(q => q.Email = q.Email.PadLeft(140, 'x'))
                 .Build();
@@ -57,7 +57,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Main
         [Test]
         public void ThenErrorMessageShouldContainInvalidUserNameLength()
         {
-            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "Username" && q.ErrorCode == "MaximumLengthValidator");
+            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "UserName" && q.ErrorCode == "MaximumLengthValidator");
             errors.Should().NotBeNull();
         }
     }

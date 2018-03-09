@@ -1,28 +1,24 @@
 ﻿using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Consts;
+using SFA.DAS.AssessorService.Application.Api.Extensions;
 using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Api.Validators
 {
     public class CreateContactRequestValidator : AbstractValidator<CreateContactRequest>
     {
-        private readonly IOrganisationQueryRepository _organisationQueryRepository;
-        private readonly IContactQueryRepository _contactQueryRepository;
- 
         public CreateContactRequestValidator(IStringLocalizer<CreateContactRequestValidator> localiser,
             IOrganisationQueryRepository organisationQueryRepository,
             IContactQueryRepository contactQueryRepository
         )
         {
-            _organisationQueryRepository = organisationQueryRepository;
-            _contactQueryRepository = contactQueryRepository;
-
             // ReSharper disable once LocalNameCapturedOnly
             CreateContactRequest createContactRequest;
             RuleFor(contact => contact.Email).NotEmpty().WithMessage(
-                   localiser[ResourceMessageName.DisplayNameMustBeDefined].Value)
+                    string.Format(localiser[ResourceMessageName.MustBeDefined].Value, nameof(createContactRequest.Email).ToCamelCase()))
                 .MaximumLength(120)
                 // Please note we have to string.Format this due to limitation in Moq not handling Optional
                 // Params
@@ -30,42 +26,52 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                     nameof(createContactRequest.Email), 120));
 
             RuleFor(contact => contact.DisplayName).NotEmpty().WithMessage(
-                localiser[ResourceMessageName.EMailMustBeDefined].Value)
+                    string.Format(localiser[ResourceMessageName.MustBeDefined].Value, nameof(createContactRequest.DisplayName).ToCamelCase()))
                 .MaximumLength(120)
                 // Please note we have to string.Format this due to limitation in Moq not handling Optional
                 // Params
                 .WithMessage(string.Format(localiser[ResourceMessageName.MaxLengthError].Value,
                     nameof(createContactRequest.DisplayName), 120));
 
-            RuleFor(contact => contact.Username)
+            RuleFor(contact => contact.UserName)
                 .NotEmpty()
                 .WithMessage(
-                       localiser[ResourceMessageName.UserNameMustBeDefined].Value)
-               .MaximumLength(12)
-               // Please note we have to string.Format this due to limitation in Moq not handling Optional
-               // Params
-               .WithMessage(string.Format(localiser[ResourceMessageName.MaxLengthError].Value,
-                    nameof(createContactRequest.Username), 30));
+                    string.Format(localiser[ResourceMessageName.MustBeDefined].Value, nameof(createContactRequest.UserName).ToCamelCase()))
+                .MaximumLength(30)
+                // Please note we have to string.Format this due to limitation in Moq not handling Optional
+                // Params
+                .WithMessage(string.Format(localiser[ResourceMessageName.MaxLengthError].Value,
+                    nameof(createContactRequest.UserName), 30));
 
-            RuleFor(contact => contact.EndPointAssessorOrganisationId).NotEmpty().WithMessage(
-                localiser[ResourceMessageName.EndPointAssessorOrganisationIdMustBeDefined].Value);
+            RuleFor(contact => contact)
+                .Custom((contact, context) =>
+                {
+                    var result = contactQueryRepository.CheckContactExists(contact.UserName).Result;
+                    if (result)
+                    {
+                        context.AddFailure(new ValidationFailure("Contact",
+                            string.Format(localiser[ResourceMessageName.AlreadyExists].Value, "Contact")));
+                    }
+                });
 
-            RuleFor(contact => contact).Must(NotAlreadyExist).WithMessage(localiser[ResourceMessageName.AlreadyExists].Value);
+            RuleFor(contact => contact.EndPointAssessorOrganisationId)              
+                .Custom((endPointAssessorOrganisationId, context) =>
+                {
+                    if (string.IsNullOrEmpty(endPointAssessorOrganisationId))
+                    {
+                        context.AddFailure(new ValidationFailure(nameof(endPointAssessorOrganisationId),
+                            string.Format(localiser[ResourceMessageName.MustBeDefined].Value,
+                                nameof(createContactRequest.EndPointAssessorOrganisationId))));
+                        return;
+                    }
 
-            RuleFor(contact => contact.EndPointAssessorOrganisationId).Must(HaveExistingOrganisation).WithMessage(
-                localiser[ResourceMessageName.HaveExistingOrganisation].Value);
-        }
-
-        private bool NotAlreadyExist(CreateContactRequest contact)
-        {
-            var result = _contactQueryRepository.CheckContactExists(contact.Username).Result;
-            return !result;
-        }
-
-        private bool HaveExistingOrganisation(string endPointAssessorOrganisationId)
-        {
-            var result = _organisationQueryRepository.CheckIfAlreadyExists(endPointAssessorOrganisationId).Result;
-            return result;
-        }
+                    var result = organisationQueryRepository.CheckIfAlreadyExists(endPointAssessorOrganisationId).Result;
+                    if (!result)
+                    {
+                        context.AddFailure(new ValidationFailure("EndPointAssessorOrganisationId",
+                           string.Format(localiser[ResourceMessageName.DoesNotExist].Value, nameof(endPointAssessorOrganisationId), endPointAssessorOrganisationId)));
+                    }
+                });
+        }        
     }
 }

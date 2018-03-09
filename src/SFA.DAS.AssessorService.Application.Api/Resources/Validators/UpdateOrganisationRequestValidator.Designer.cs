@@ -98,7 +98,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Resources.Validators {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reqest must contain a valid UKPRN as defined in the UK Register of Learning Providers (UKRLP) is 8 digits in the format 10000000 – 99999999.
+        ///   Looks up a localized string similar to Request must contain a valid UKPRN as defined in the UK Register of Learning Providers (UKRLP) is 8 digits in the format 10000000 – 99999999.
         /// </summary>
         internal static string InvalidUKPRN {
             get {

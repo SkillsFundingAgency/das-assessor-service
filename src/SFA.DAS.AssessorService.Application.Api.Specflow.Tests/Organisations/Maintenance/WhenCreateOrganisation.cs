@@ -53,7 +53,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.M
             _organisationArgument = organisations.First();
 
             var contact = CreateContact();
-            var organisation = _createOrganisationBuilder.Build(_organisationArgument, contact.Username);
+            var organisation = _createOrganisationBuilder.Build(_organisationArgument, contact.UserName);
 
             _restClientResult = _organisationService.PostOrganisation(organisation);
         }

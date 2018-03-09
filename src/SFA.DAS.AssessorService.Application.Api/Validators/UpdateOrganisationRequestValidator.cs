@@ -1,7 +1,9 @@
 ﻿using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Consts;
+using SFA.DAS.AssessorService.Application.Api.Extensions;
 using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Api.Validators
@@ -23,26 +25,33 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             UpdateOrganisationRequest updateOrganisationRequest;
 
             RuleFor(organisation => organisation.EndPointAssessorName).NotEmpty().WithMessage(
-                localiser[ResourceMessageName.EndPointAssessorNameMustBeDefined].Value);
-            RuleFor(organisation => organisation.PrimaryContact).Must(HaveAssociatedPrimaryContactInContacts)
-                .WithMessage(localiser[ResourceMessageName.PrimaryContactDoesNotExist].Value);
-            RuleFor(organisation => organisation.EndPointAssessorOrganisationId).Must(AlreadyExist).WithMessage(
-                localiser[ResourceMessageName.DoesNotExist].Value);
-        }
+                string.Format(localiser[ResourceMessageName.MustBeDefined].Value,
+                    nameof(updateOrganisationRequest.EndPointAssessorName).ToCamelCase()));
 
-        private bool AlreadyExist(string endPointAssessorOrganisationId)
-        {
-            var result = _organisationQueryRepository.CheckIfAlreadyExists(endPointAssessorOrganisationId).Result;
-            return result;
-        }
+            RuleFor(organisation => organisation.PrimaryContact)
+                .Custom((primaryContact, context) =>
+                {
+                    if (string.IsNullOrEmpty(primaryContact))
+                        return;
 
-        private bool HaveAssociatedPrimaryContactInContacts(string primaryContact)
-        {
-            if (string.IsNullOrEmpty(primaryContact))
-                return true;
+                    var result = contactQueryRepository.CheckContactExists(primaryContact).Result;
+                    if (!result)
+                    {
+                        context.AddFailure(new ValidationFailure("PrimaryContact",
+                            string.Format(localiser[ResourceMessageName.DoesNotExist].Value, "PrimaryContact", primaryContact)));
+                    }
+                });
 
-            var result = _contactQueryRepository.CheckContactExists(primaryContact).Result;
-            return result;
-        }
+            RuleFor(organisation => organisation.EndPointAssessorOrganisationId)
+                .Custom((endPointAssessorOrganisationId, context) =>
+                {
+                    var result = organisationQueryRepository.CheckIfAlreadyExists(endPointAssessorOrganisationId).Result;
+                    if (!result)
+                    {
+                        context.AddFailure(new ValidationFailure("Organisation",
+                            string.Format(localiser[ResourceMessageName.DoesNotExist].Value, "Organisation", endPointAssessorOrganisationId)));
+                    }
+                });
+        }          
     }
 }

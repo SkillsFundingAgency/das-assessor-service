@@ -69,14 +69,14 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
         [Test]
         public void ErrorMessageShouldNotContainPrimaryContactNotFound()       
         {
-            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "PrimaryContact" && q.ErrorCode == "PredicateValidator");
+            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "PrimaryContact");
             errors.Should().BeNull();
         }
 
         [Test]
         public void ErrorMessageShouldNotContainAlreadyExists()        
         {
-            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "EndPointAssessorOrganisationId" && q.ErrorCode == "PredicateValidator");
+            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "Organisation");
             errors.Should().BeNull();
         }
     }

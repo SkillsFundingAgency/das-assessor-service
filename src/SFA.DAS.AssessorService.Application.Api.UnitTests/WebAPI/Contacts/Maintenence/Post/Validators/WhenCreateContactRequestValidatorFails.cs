@@ -43,14 +43,14 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Main
         [Test]
         public void ThenErrorMessageShouldContainEndPointOrganisationId()
         {
-            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "EndPointAssessorOrganisationId" && q.ErrorCode == "NotEmptyValidator");
+            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "endPointAssessorOrganisationId");
             errors.Should().NotBeNull();
         }
 
         [Test]
         public void ThenErrorMessageShouldContaUsername()
         {
-            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "Username" && q.ErrorCode == "NotEmptyValidator");
+            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "UserName" && q.ErrorCode == "NotEmptyValidator");
             errors.Should().NotBeNull();
         }
     }

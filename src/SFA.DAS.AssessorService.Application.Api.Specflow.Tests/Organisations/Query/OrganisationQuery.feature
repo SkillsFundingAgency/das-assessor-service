@@ -26,4 +26,4 @@ Scenario: Search for an Organisation using a ukprn which does not exist
 	Given System Has access to the SFA.DAS.AssessmentOrgs.Api	
 	When I search for an organisation with its ukprn set to 10029999
 	Then the response http status should be Not Found
-	And the response message should contain No provider with ukprn 10029999 found
+	And the response message should contain No organisation with ukprn 10029999 found

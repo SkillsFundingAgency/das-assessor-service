@@ -8,7 +8,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations.Maintenence.Put.Validators
 {
-    public class WhenUpdateOrganisayionRequestValidatorFails : WhenUpdateOrganisationRequestValidatorTestBase
+    public class WhenUpdateOrganisationRequestValidatorFails : WhenUpdateOrganisationRequestValidatorTestBase
     {
         private static ValidationResult _validationResult;
 
@@ -46,14 +46,14 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
         [Test]
         public void ErrormessageShouldContainPrimaryContactNotFound()                        
         {
-            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "PrimaryContact" && q.ErrorCode == "PredicateValidator");
+            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "PrimaryContact");
             errors.Should().NotBeNull();
         }
 
         [Test]
         public void ErrorMessageShouldContainDoesNotExist()       
         {
-            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "EndPointAssessorOrganisationId" && q.ErrorCode == "PredicateValidator");
+            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "Organisation");
             errors.Should().NotBeNull();
         }
     }

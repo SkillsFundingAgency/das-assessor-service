@@ -36,7 +36,7 @@
 //            var contacts = new List<Contact>
 //            {
 //                Builder<Contact>.CreateNew()
-//                    .With(x => x.Username = _updateContactRequest.Username)
+//                    .With(x => x.UserName = _updateContactRequest.UserName)
 //                    .Build()
 //            }.AsQueryable();
 

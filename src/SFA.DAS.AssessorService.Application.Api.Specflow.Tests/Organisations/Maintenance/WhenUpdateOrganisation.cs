@@ -93,7 +93,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.M
 
             var restClient = _organisationQueryService.SearchOrganisationByUkPrn(10000000);
             var organisation = restClient.Deserialise<OrganisationResponse>();
-            organisation.PrimaryContact = contact.Username;
+            organisation.PrimaryContact = contact.UserName;
 
             var updateOrganisationRequest = _updateOrganisationRequestBuilder.Build(organisation);
             _organisationService.PutOrganisation(updateOrganisationRequest);
