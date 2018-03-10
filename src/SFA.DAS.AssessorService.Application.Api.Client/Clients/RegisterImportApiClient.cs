@@ -1,11 +1,12 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public class RegisterImportApiClient : ApiClientBase
     {
-        public RegisterImportApiClient(string baseUri, ITokenService tokenService) : base(baseUri, tokenService)
+        public RegisterImportApiClient(string baseUri, ITokenService tokenService, ILogger<RegisterImportApiClient> logger) : base(baseUri, tokenService, logger)
         {
         }
 

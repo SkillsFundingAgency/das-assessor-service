@@ -103,7 +103,8 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators
         private async Task CreateNewContact(string email, OrganisationResponse organisation, string displayName,
             string username)
         {
-            _logger.LogInformation($"Creating new contact.  Email: {email}, Username: {username}");
+            _logger.LogInformation(
+                $"Creating new contact.  Email: {email}, DisplayName: {displayName}, Username: {username}, EndPointAssessorOrganisationId: {organisation.EndPointAssessorOrganisationId}");
             var contact = await _contactsApiClient.Create(
                 new CreateContactRequest()
                 {
