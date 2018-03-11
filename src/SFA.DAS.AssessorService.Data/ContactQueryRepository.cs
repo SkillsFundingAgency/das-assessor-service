@@ -32,8 +32,7 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<ContactResponse> GetContact(string userName)
         {
             var contact = await _assessorDbContext.Contacts
-                .FirstOrDefaultAsync(q => q.Username == userName && q.Status
-                                          != ContactStatus.Deleted);
+                .FirstOrDefaultAsync(q => q.Username == userName);
             if (contact == null)
                 return null;
 
@@ -44,7 +43,7 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<bool> CheckContactExists(string userName)
         {
             var result = await _assessorDbContext.Contacts
-                .AnyAsync(q => q.Username == userName && q.Status != ContactStatus.Deleted);
+                .AnyAsync(q => q.Username == userName);
             return result;
         }
     }
