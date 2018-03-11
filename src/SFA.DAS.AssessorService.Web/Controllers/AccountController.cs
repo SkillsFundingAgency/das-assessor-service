@@ -37,6 +37,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> PostSignIn()
         {
+            var claims = _contextAccessor.HttpContext.User.Claims;
+            foreach (var claim in claims)
+            {
+                _logger.LogInformation($"Claim received: {claim.Type} Value: {claim.Value}");
+            }
+
             _logger.LogInformation("Start of PostSignIn");
             var loginResult = await _loginOrchestrator.Login(_contextAccessor.HttpContext);
             switch (loginResult)
