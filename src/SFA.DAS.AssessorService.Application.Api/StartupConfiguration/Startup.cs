@@ -1,3 +1,4 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using SFA.DAS.AssessorService.Application.Api.Extensions;
 
@@ -62,7 +63,7 @@ namespace SFA.DAS.AssessorService.Application.Api
                 });
 
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
-
+         
             IMvcBuilder mvcBuilder;
             if (_env.IsDevelopment())
                 mvcBuilder = services.AddMvc(opt => { opt.Filters.Add(new AllowAnonymousFilter()); });
@@ -104,6 +105,8 @@ namespace SFA.DAS.AssessorService.Application.Api
             var serviceProvider = ConfigureIOC(services);
 
             TestDataService.AddTestData(serviceProvider.GetService<AssessorDbContext>());
+
+            ValidatorOptions.PropertyNameResolver = CamelCasePropertyNameResolver.ResolvePropertyName;
 
             return serviceProvider;
         }
