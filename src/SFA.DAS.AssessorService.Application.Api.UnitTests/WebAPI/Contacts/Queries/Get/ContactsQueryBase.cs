@@ -28,13 +28,17 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Quer
         private MockStringLocaliserBuilder _mockStringLocaliserBuilder;
         private GetContactsOrchestrator _getContactsOrchestrator;
 
+        private SearchOrganisationForContactsValidator _searchOrganisationForContactsValidator;
+
         protected void Setup()
         {
             SetupOrchestratorMocks();
             SetupControllerMocks();
 
             ContactQueryController = new ContactQueryController(
-                _getContactsOrchestrator, ControllerLoggerMock.Object);
+                _getContactsOrchestrator,
+                _searchOrganisationForContactsValidator,
+                ControllerLoggerMock.Object);
         }
 
         private void SetupControllerMocks()

@@ -22,8 +22,9 @@ namespace SFA.DAS.AssessorService.Data
         {
             var contacts = await _assessorDbContext.Organisations
                 .Include(organisation => organisation.Contacts)
-                .Where(organisation => organisation.EndPointAssessorOrganisationId == endPointAssessorOrganisationId)
-                .SelectMany(q => q.Contacts).Where(q => q.Status == ContactStatus.Live)
+                .Where(organisation => organisation.EndPointAssessorOrganisationId == endPointAssessorOrganisationId
+                                       && organisation.Status != OrganisationStatus.Deleted)
+                .SelectMany(q => q.Contacts)
                 .Select(contact => Mapper.Map<ContactResponse>(contact)).AsNoTracking().ToListAsync();
 
             return contacts;
@@ -31,10 +32,13 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<ContactResponse> GetContact(string userName)
         {
-            var contact = await _assessorDbContext.Contacts
-                .FirstOrDefaultAsync(q => q.Username == userName);
-            if (contact == null)
-                return null;
+            var contact = await _assessorDbContext.Organisations
+                .Include(organisation => organisation.Contacts)     
+                .Where(q => q.Status != OrganisationStatus.Deleted)
+                .SelectMany(q => q.Contacts)
+                .Where(q => q.Username == userName)
+                .Select(q => Mapper.Map<ContactResponse>(q)).AsNoTracking()
+                .FirstOrDefaultAsync();          
 
             var contactRessponse = Mapper.Map<ContactResponse>(contact);
             return contactRessponse;

@@ -46,6 +46,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>ContactUpdateViewModelValidator.resx</DependentUpon>
     </Compile>
+    <Compile Update="Resources\Validators\SearchOrganisationForContactsValidator.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SearchOrganisationForContactsValidator.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -82,6 +87,10 @@
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Validators\OrganisationCreateViewModelValidator.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Validators\SearchOrganisationForContactsValidator.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SearchOrganisationForContactsValidator.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Validators\UKPrnValidator.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
