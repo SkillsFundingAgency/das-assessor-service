@@ -257,7 +257,7 @@ this.ScenarioSetup(scenarioInfo);
 #line 54
  testRunner.When("I Delete a Contact Twice", ((string)(null)), table6, "When ");
 #line 57
- testRunner.Then("the response http status should be Not Found", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("the response http status should be No Content", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 58
  testRunner.And("the Contact should be deleted", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
