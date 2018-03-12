@@ -19,16 +19,11 @@
                         There are errors with your search
                     </h2>
                     <p>
-                        
+
                     </p>
                     <ul class="error-summary-list">
-                        <li><span asp-validation-for="Uln"></span></li>
-                        <li><span asp-validation-for="Surname"></span></li>
-                        
-                        <li>
-                        <a href="#example-name">Descriptive link to the question with an error</a>
-                        </li>
-                        
+                        <li><a sfa-validation-for="Uln"></a></li>
+                        <li><a sfa-validation-for="Surname"></a></li>
                     </ul>
                 </div>
             }
@@ -40,28 +35,21 @@
 
             <fieldset>
 
-                @* 
-                    Not in error state
-                *@
-                <div class="form-group">
+                <div class="form-group" sfa-validation-for="Uln" sfa-validationerror-class="form-group-error">
                     <label class="form-label" for="Uln">
                         <span class="form-label-bold">@Localizer["Uln"]</span>
                         <span class="form-hint">A ULN is made up of exactly 10 numbers</span>
                         <span class="error-message" asp-validation-for="Uln"></span>
                     </label>
-                    <input class="form-control" asp-for="Uln" type="text" maxlength="10" />
+                    <input class="form-control" asp-for="Uln" type="text" sfa-validation-for="Uln" sfa-validationerror-class="form-control-error" maxlength="10"/>
                 </div>
 
-                @*
-                    In error state:
-                    form-group-error & form-control-error classes added
-                *@
-                <div class="form-group form-group-error">
+                <div class="form-group" sfa-validation-for="Surname" sfa-validationerror-class="form-group-error">
                     <label class="form-label" for="surname">
                         <span class="form-label-bold">@Localizer["Lastname"]</span>
                         <span class="error-message" asp-validation-for="Surname"></span>
                     </label>
-                    <input class="form-control form-control-error" asp-for="Surname" type="text" />
+                    <input class="form-control"  sfa-validation-for="Surname" sfa-validationerror-class="form-control-error" asp-for="Surname" type="text" />
                 </div>
 
                 <details role="group">
@@ -77,7 +65,7 @@
                     <input class="button" id="button-search" type="submit" value="Continue">
                 </div>
             </fieldset>
-            
+
         </form>
     </div>
 </div>
