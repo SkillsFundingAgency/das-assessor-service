@@ -18,12 +18,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             // ReSharper disable once LocalNameCapturedOnly
             CreateContactRequest createContactRequest;
             RuleFor(contact => contact.Email).NotEmpty().WithMessage(
-                    string.Format(localiser[ResourceMessageName.MustBeDefined].Value, nameof(createContactRequest.Email).ToCamelCase()))
+                    string.Format(localiser[ResourceMessageName.MustBeDefined].Value,
+                        nameof(createContactRequest.Email).ToCamelCase()))
                 .MaximumLength(120)
                 // Please note we have to string.Format this due to limitation in Moq not handling Optional
                 // Params
                 .WithMessage(string.Format(localiser[ResourceMessageName.MaxLengthError].Value,
-                    nameof(createContactRequest.Email), 120));
+                    nameof(createContactRequest.Email), 120))
+                .EmailAddress()
+                .WithMessage(string.Format(localiser[ResourceMessageName.MustBeValidEmailAddress].Value));
 
             RuleFor(contact => contact.DisplayName).NotEmpty().WithMessage(
                     string.Format(localiser[ResourceMessageName.MustBeDefined].Value, nameof(createContactRequest.DisplayName).ToCamelCase()))
@@ -54,7 +57,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                     }
                 });
 
-            RuleFor(contact => contact.EndPointAssessorOrganisationId)              
+            RuleFor(contact => contact.EndPointAssessorOrganisationId)
                 .Custom((endPointAssessorOrganisationId, context) =>
                 {
                     if (string.IsNullOrEmpty(endPointAssessorOrganisationId))
@@ -72,6 +75,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                            string.Format(localiser[ResourceMessageName.DoesNotExist].Value, "Organisation", endPointAssessorOrganisationId)));
                     }
                 });
-        }        
+        }
     }
 }
