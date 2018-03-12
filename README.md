@@ -63,7 +63,9 @@ project app.config
 where:
 
 RestoreDatabase = database backup location.
+
 DatabaseName = The Database currently in use by the SFA.DAS.AssessorService.Application.Api project.
+
 BaseAddress = Base url address for the SFA.DAS.AssessorService.Application.Api project.
 
 
