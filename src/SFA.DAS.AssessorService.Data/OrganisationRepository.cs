@@ -70,6 +70,10 @@ namespace SFA.DAS.AssessorService.Data
             if (organisationEntity == null)
                 throw new NotFound();
 
+            // If already deleted ignore
+            if (organisationEntity.Status == OrganisationStatus.Deleted)
+                return;
+
             organisationEntity.DeletedAt = DateTime.Now;
             organisationEntity.Status = OrganisationStatus.Deleted;
 
