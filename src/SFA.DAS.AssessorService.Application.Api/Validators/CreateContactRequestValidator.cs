@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using System.Text.RegularExpressions;
+using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
 using SFA.DAS.AssessorService.Api.Types.Models;
@@ -17,16 +18,26 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         {
             // ReSharper disable once LocalNameCapturedOnly
             CreateContactRequest createContactRequest;
-            //RuleFor(contact => contact.Email).NotEmpty().WithMessage(
-            //        string.Format(localiser[ResourceMessageName.MustBeDefined].Value,
-            //            nameof(createContactRequest.Email).ToCamelCase()))
-            //    .MaximumLength(120)
-            //    // Please note we have to string.Format this due to limitation in Moq not handling Optional
-            //    // Params
-            //    .WithMessage(string.Format(localiser[ResourceMessageName.MaxLengthError].Value,
-            //        nameof(createContactRequest.Email), 120))
-            //    .EmailAddress()
-            //    .WithMessage(string.Format(localiser[ResourceMessageName.MustBeValidEmailAddress].Value));
+            RuleFor(contact => contact.Email)
+                .Custom((email, context) =>
+                {
+                    if (string.IsNullOrEmpty(email))
+                        return;
+
+                    if (email.Length > 120)
+                    {
+                        context.AddFailure(string.Format(localiser[ResourceMessageName.MaxLengthError].Value,
+                            nameof(createContactRequest.Email).ToCamelCase(), 120));
+                    }
+
+                    var regex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
+                    var match = regex.Match(email);
+                    if (!match.Success)
+                    {
+                        context.AddFailure(string.Format(localiser[ResourceMessageName.MustBeValidEmailAddress]
+                            .Value));
+                    }
+                });
 
             RuleFor(contact => contact.DisplayName).NotEmpty().WithMessage(
                     string.Format(localiser[ResourceMessageName.MustBeDefined].Value, nameof(createContactRequest.DisplayName).ToCamelCase()))
