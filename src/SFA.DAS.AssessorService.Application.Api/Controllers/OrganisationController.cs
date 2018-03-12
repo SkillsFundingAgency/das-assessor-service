@@ -63,7 +63,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [HttpDelete(Name = "DeleteOrganisation")]
         [ValidateBadRequest]
         [SwaggerResponse((int) HttpStatusCode.NoContent)]
-        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.NotFound)]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> DeleteOrganisation(string endPointAssessorOrganisationId)

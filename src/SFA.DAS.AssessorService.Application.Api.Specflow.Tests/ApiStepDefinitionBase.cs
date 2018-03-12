@@ -14,12 +14,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests
             _restClientResult = restClientResult;
         }
 
-        [BeforeFeature]
-        public static void Setup()
+        [BeforeTestRun]
+        public static void SetupBeforeTestRun()
         {
-            var container = Bootstrapper.Container;
-            var database = container.GetInstance<DatabaseUtilities>();
+            var database = GetDatabaseInstance();
+            database.Backup();
+        }
 
+        [BeforeFeature]
+        public static void SetupBeforeFeature()
+        {
+            var database = GetDatabaseInstance();
             database.Restore();
         }
 
@@ -45,6 +50,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests
         public void ThenTheLocationHeaderShouldBeSet()
         {
             _restClientResult.HttpResponseMessage.Headers.Location.Should().NotBeNull();
+        }
+
+        private static DatabaseUtilities GetDatabaseInstance()
+        {
+            var container = Bootstrapper.Container;
+            var database = container.GetInstance<DatabaseUtilities>();
+
+            return database;
         }
     }
 }

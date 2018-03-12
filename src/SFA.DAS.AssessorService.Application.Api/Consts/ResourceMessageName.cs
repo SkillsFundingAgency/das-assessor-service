@@ -14,5 +14,6 @@
         //public const string UserNameMustBeDefined = "UserNameMustBeDefined";
         public const string MaxLengthError = "MaxLengthError";
         public const string HaveExistingOrganisation = "HaveExistingOrganisation";
+        public const string MustBeValidEmailAddress = "MustBeValidEmailAddress";
     }
 }

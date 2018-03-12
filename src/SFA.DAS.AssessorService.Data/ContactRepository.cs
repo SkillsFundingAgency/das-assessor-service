@@ -54,6 +54,10 @@ namespace SFA.DAS.AssessorService.Data
             if (contactEntity == null)
                 throw new NotFound();
 
+            // Ignore if already deleted
+            if (contactEntity.Status == ContactStatus.Deleted)
+                return;
+
             contactEntity.DeletedAt = DateTime.Now;
             contactEntity.Status = ContactStatus.Deleted;
 
