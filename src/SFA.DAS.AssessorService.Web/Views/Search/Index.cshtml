@@ -41,7 +41,7 @@
                         <span class="form-hint">A ULN is made up of exactly 10 numbers</span>
                         <span class="error-message" asp-validation-for="Uln"></span>
                     </label>
-                    <input class="form-control" asp-for="Uln" type="text" sfa-validation-for="Uln" sfa-validationerror-class="form-control-error"/>
+                    <input class="form-control" asp-for="Uln" type="text" sfa-validation-for="Uln" sfa-validationerror-class="form-control-error" maxlength="10"/>
                 </div>
 
                 <div class="form-group" sfa-validation-for="Surname" sfa-validationerror-class="form-group-error">
@@ -74,6 +74,7 @@
 {
     if (!Model.SearchResults.Any())
     {
-        <p>No results</p>
+        <h3 class="heading-medium">Your search returned no results</h3>
+        <p>Please check the information submitted above.</p>
     }
 }

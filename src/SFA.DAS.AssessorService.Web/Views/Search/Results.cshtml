@@ -3,29 +3,65 @@
 @model SFA.DAS.AssessorService.Web.ViewModels.Search.SearchViewModel
 
 @{
-    ViewBag.Title = "title";
+    ViewBag.Title = "Search results";
     Layout = "_Layout";
 }
 
-<a asp-controlle="Search" asp-action="Index">< Back</a>
+<a class="link-back" asp-controller="Search" asp-action="Index">Back</a>
 
-@foreach (var result in Model.SearchResults)
-{
-    <fieldset>
-        <ul>
-            <li>
-                <p><span class="bold">Name:</span> @result.Firstname @result.Surname</p>
-            </li>
-            <li>
-                <p><span class="bold">ULN:</span> @result.Uln</p>
-            </li>
-            <li>
-                <p><span class="bold">Standard:</span> @result.Standard</p>
-            </li>
-        </ul>
-
+<div class="grid-row">
+    <div class="column-two-thirds">
+        @if(Model.SearchResults.Count() < 2 ) {
+            <hr>
+                <p>Single result</p>
+            <hr>
+            <h1 class="heading-large">Confirm apprentice</h1>
+            <div class="form-group">
+                <fieldset>
+                    <ul>
+                        <li>
+                            <p><span class="bold">Name:</span> @Model.SearchResults.First().Firstname @Model.SearchResults.First().Surname</p>
+                        </li>
+                        <li>
+                            <p><span class="bold">ULN:</span> @Model.SearchResults.First().Uln</p>
+                        </li>
+                        <li>
+                            <p><span class="bold">Standard:</span> @Model.SearchResults.First().Standard</p>
+                        </li>
+                    </ul>
+                </fieldset>
+            </div>
+        }
+        else
+        {
+            <hr>
+                <p>Multiple results</p>
+            <hr>
+            <h1 class="heading-large">The apprentice is enrolled on more than one apprenticeship</h1>
+            <p>Select the standard that you would like to record an assessment for.</p>
+            <div class="form-group">
+                <fieldset>
+                    <ul>
+                        <li>
+                            <p><span class="bold">Name:</span> @Model.SearchResults.First().Firstname @Model.SearchResults.First().Surname</p>
+                        </li>
+                        <li>
+                            <p><span class="bold">ULN:</span> @Model.SearchResults.First().Uln</p>
+                        </li>
+                    </ul>
+                    @foreach (var result in Model.SearchResults)
+                    {
+                        <div class="multiple-choice">
+                            <input id=@("standard_" + result.Standard) type="radio" name="radio-group" value="@result.Standard">
+                            <label for=@("standard_" + result.Standard)>@result.Standard</label>
+                        </div>
+                    }
+                </fieldset>
+            </div>
+        }
         <div class="form-group" style="margin-top:25px;">
             <a href="/grade" class="button button-white">Start recording assessment</a>
-        </div>
-    </fieldset>
-}
+        </div>    
+    </div>
+</div>
+
