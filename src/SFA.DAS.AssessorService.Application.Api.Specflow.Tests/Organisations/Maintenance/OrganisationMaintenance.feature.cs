@@ -356,7 +356,7 @@ this.ScenarioSetup(scenarioInfo);
 #line 86
  testRunner.When("I Delete an Organisation Twice", ((string)(null)), table11, "When ");
 #line 89
- testRunner.Then("the response http status should be Not Found", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("the response http status should be No Content", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 90
  testRunner.And("the Organisation should be deleted", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden

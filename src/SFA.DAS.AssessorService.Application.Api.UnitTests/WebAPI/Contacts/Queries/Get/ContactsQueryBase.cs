@@ -18,9 +18,15 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Quer
         protected Mock<GetContactsOrchestrator> GetContactsOrchestratorMock;
 
         protected Mock<IContactQueryRepository> ContactQueryRepositoryMock;
+        protected Mock<IOrganisationQueryRepository> OrganisationQueryRepositoryMock;
 
         protected Mock<IStringLocalizer<ContactQueryController>> ContactControllerLocaliserMock;
         protected Mock<IStringLocalizer<GetContactsOrchestrator>> GetContactsOrchestratorLocaliserMock;
+
+        protected Mock<IStringLocalizer<SearchOrganisationForContactsValidator>>
+            SearchOrganisationForContactsValidatorLocaliserMock;
+
+
 
         protected Mock<ILogger<ContactQueryController>> ControllerLoggerMock;
         protected Mock<ILogger<GetContactsOrchestrator>> OrchestratorLoggerMock;
@@ -28,13 +34,17 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Quer
         private MockStringLocaliserBuilder _mockStringLocaliserBuilder;
         private GetContactsOrchestrator _getContactsOrchestrator;
 
+        private SearchOrganisationForContactsValidator _searchOrganisationForContactsValidator;
+
         protected void Setup()
         {
             SetupOrchestratorMocks();
             SetupControllerMocks();
-
+         
             ContactQueryController = new ContactQueryController(
-                _getContactsOrchestrator, ControllerLoggerMock.Object);
+                _getContactsOrchestrator,
+                _searchOrganisationForContactsValidator,
+                ControllerLoggerMock.Object);
         }
 
         private void SetupControllerMocks()
@@ -70,6 +80,15 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Quer
             _getContactsOrchestrator = new GetContactsOrchestrator(
                 ContactQueryRepositoryMock.Object,
                 OrchestratorLoggerMock.Object);
+
+            OrganisationQueryRepositoryMock = new Mock<IOrganisationQueryRepository>();
+            SearchOrganisationForContactsValidatorLocaliserMock = new Mock<IStringLocalizer<SearchOrganisationForContactsValidator>>();
+
+            _searchOrganisationForContactsValidator = new SearchOrganisationForContactsValidator(
+                OrganisationQueryRepositoryMock.Object,
+                SearchOrganisationForContactsValidatorLocaliserMock.Object
+            );
+
         }
     }
 }

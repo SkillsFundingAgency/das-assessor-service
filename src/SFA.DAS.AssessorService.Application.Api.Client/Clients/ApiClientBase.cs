@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
@@ -12,6 +13,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
     public abstract class ApiClientBase : IDisposable
     {
         protected readonly ITokenService TokenService;
+        private readonly ILogger<ApiClientBase> _logger;
         protected readonly HttpClient HttpClient;
 
         protected readonly JsonSerializerSettings _jsonSettings = new JsonSerializerSettings
@@ -20,9 +22,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             NullValueHandling = NullValueHandling.Ignore
         };
 
-        protected ApiClientBase(string baseUri, ITokenService tokenService)
+        protected ApiClientBase(string baseUri, ITokenService tokenService, ILogger<ApiClientBase> logger)
         {
             TokenService = tokenService;
+            _logger = logger;
             HttpClient = new HttpClient { BaseAddress = new Uri($"{baseUri}") };
         }
 
@@ -91,16 +94,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
             using (var response = await HttpClient.SendAsync(requestMessage))
             {
+                var json = await response.Content.ReadAsStringAsync();
                 //var result = await response;
                 if (response.StatusCode == HttpStatusCode.OK 
                     || response.StatusCode == HttpStatusCode.Created 
                     || response.StatusCode == HttpStatusCode.NoContent)
                 {
-                    var json = await response.Content.ReadAsStringAsync();
                     return await Task.Factory.StartNew<U>(() => JsonConvert.DeserializeObject<U>(json, _jsonSettings));
                 }
                 else
                 {
+                    _logger.LogInformation($"HttpRequestException: Status COde: {response.StatusCode} Body: {json}");
                     throw new HttpRequestException();
                 }
             }

@@ -1,3 +1,4 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using SFA.DAS.AssessorService.Application.Api.Extensions;
 
@@ -39,17 +40,21 @@ namespace SFA.DAS.AssessorService.Application.Api
         {
             _env = env;
             _logger = logger;
+            _logger.LogInformation("In startup constructor.  Before GetConfig");
             Configuration = ConfigurationService
                 .GetConfig(config["EnvironmentName"], config["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
+            _logger.LogInformation("In startup constructor.  After GetConfig");
         }
 
         public IWebConfiguration Configuration { get; }
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            IServiceProvider serviceProvider;
             //services.AddAndConfigureAuthentication(Configuration);
-
-            services.AddAuthentication(sharedOptions =>
+            try
+            {
+                services.AddAuthentication(sharedOptions =>
                 {
                     sharedOptions.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                 })
@@ -61,50 +66,57 @@ namespace SFA.DAS.AssessorService.Application.Api
                     options.Audience = Configuration.ApiAuthentication.Audience;
                 });
 
-            services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
+                services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
 
-            IMvcBuilder mvcBuilder;
-            if (_env.IsDevelopment())
-                mvcBuilder = services.AddMvc(opt => { opt.Filters.Add(new AllowAnonymousFilter()); });
-            else
-                mvcBuilder = services.AddMvc();
-
-            mvcBuilder
-                .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix,
-                    opts => { opts.ResourcesPath = "Resources"; })
-                .AddDataAnnotationsLocalization()
-                .AddControllersAsServices()
-                .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
-
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new Info {Title = "SFA.DAS.AssessorService.Application.Api", Version = "v1"});
-
+                IMvcBuilder mvcBuilder;
                 if (_env.IsDevelopment())
-                {
-                    var basePath = AppContext.BaseDirectory;
-                    var xmlPath = Path.Combine(basePath, "SFA.DAS.AssessorService.Application.Api.xml");
-                    c.IncludeXmlComments(xmlPath);
-                }
-            });
+                    mvcBuilder = services.AddMvc(opt => { opt.Filters.Add(new AllowAnonymousFilter()); });
+                else
+                    mvcBuilder = services.AddMvc();
 
-            services.Configure<RequestLocalizationOptions>(
-                opts =>
+                mvcBuilder
+                    .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix,
+                        opts => { opts.ResourcesPath = "Resources"; })
+                    .AddDataAnnotationsLocalization()
+                    .AddControllersAsServices()
+                    .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
+
+                services.AddSwaggerGen(c =>
                 {
-                    var supportedCultures = new List<CultureInfo>
+                    c.SwaggerDoc("v1", new Info { Title = "SFA.DAS.AssessorService.Application.Api", Version = "v1" });
+
+                    if (_env.IsDevelopment())
                     {
-                        new CultureInfo("en-GB")
-                    };
-
-                    opts.DefaultRequestCulture = new RequestCulture("en-GB");
-                    opts.SupportedCultures = supportedCultures;
-                    opts.SupportedUICultures = supportedCultures;
+                        var basePath = AppContext.BaseDirectory;
+                        var xmlPath = Path.Combine(basePath, "SFA.DAS.AssessorService.Application.Api.xml");
+                        c.IncludeXmlComments(xmlPath);
+                    }
                 });
 
-            var serviceProvider = ConfigureIOC(services);
+                services.Configure<RequestLocalizationOptions>(
+                    opts =>
+                    {
+                        var supportedCultures = new List<CultureInfo>
+                        {
+                        new CultureInfo("en-GB")
+                        };
 
-            TestDataService.AddTestData(serviceProvider.GetService<AssessorDbContext>());
+                        opts.DefaultRequestCulture = new RequestCulture("en-GB");
+                        opts.SupportedCultures = supportedCultures;
+                        opts.SupportedUICultures = supportedCultures;
+                    });
 
+                serviceProvider = ConfigureIOC(services);
+
+                TestDataService.AddTestData(serviceProvider.GetService<AssessorDbContext>());
+
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error during Startup Configure Services");
+                throw;
+            }
+            
             return serviceProvider;
         }
 
@@ -145,18 +157,27 @@ namespace SFA.DAS.AssessorService.Application.Api
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            MappingStartup.AddMappings();
+            try
+            {
+                MappingStartup.AddMappings();
 
-            if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
+                if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
-            app.UseSwagger()
-                .UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "SFA.DAS.AssessorService.Application.Api v1");
-                })
-                .UseAuthentication()
-                .UseMiddleware(typeof(ErrorHandlingMiddleware))
-                .UseMvc();
+                app.UseSwagger()
+                    .UseSwaggerUI(c =>
+                    {
+                        c.SwaggerEndpoint("/swagger/v1/swagger.json", "SFA.DAS.AssessorService.Application.Api v1");
+                    })
+                    .UseAuthentication()
+                    .UseMiddleware(typeof(ErrorHandlingMiddleware))
+                    .UseMvc();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error during Startup Configure");
+                throw;
+            }
+            
         }
     }
 }
