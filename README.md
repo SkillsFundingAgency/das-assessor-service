@@ -14,6 +14,7 @@
 - Install [SQL Management Studio](https://docs.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms)
 - Install [Azure Storage Emulator](https://go.microsoft.com/fwlink/?linkid=717179&clcid=0x409) (Make sure you are on v5.3)
 - Install [Azure Storage Explorer](http://storageexplorer.com/)
+- Install [Specflow](http://http://specflow.org/documentation/Installation/)
 - Administrator Access
 
 #### Setup
