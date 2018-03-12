@@ -1,13 +1,17 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public class ContactsApiClient : ApiClientBase, IContactsApiClient
     {
-        public ContactsApiClient(string baseUri, ITokenService tokenService) : base(baseUri, tokenService)
+        private readonly ILogger<ContactsApiClient> _logger;
+
+        public ContactsApiClient(string baseUri, ITokenService tokenService, ILogger<ContactsApiClient> logger) : base(baseUri, tokenService, logger)
         {
+            _logger = logger;
         }
 
         public async Task<ContactResponse> GetByUsername(string username)

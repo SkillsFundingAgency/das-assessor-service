@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
@@ -10,7 +11,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
     public class OrganisationsApiClient : ApiClientBase, IOrganisationsApiClient
     {
-        public OrganisationsApiClient(string baseUri, ITokenService tokenService) : base(baseUri, tokenService)
+        public OrganisationsApiClient(string baseUri, ITokenService tokenService, ILogger<OrganisationsApiClient> logger) : base(baseUri, tokenService, logger)
         {
         }
 

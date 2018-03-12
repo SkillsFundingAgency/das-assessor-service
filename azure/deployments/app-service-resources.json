@@ -16,6 +16,18 @@
         },
         "loggingRedisConnectionString": {
             "type": "string"
+        },
+        "keyvaultCertificateName": {
+            "type": "string"
+        },
+        "sharedKeyVaultName": {
+            "type": "string"
+        },
+        "sharedManagementResourceGroup": {
+            "type": "string"
+        },
+        "customHostname": {
+            "type": "string"
         }
     },
     "variables": {},
@@ -60,10 +72,38 @@
                             "type": "Custom"
                         }
                     ]
-                }
+                },
+                "httpsOnly" : true
             },
             "dependsOn": [
                 "[resourceId('Microsoft.Insights/components', parameters('appServiceName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/certificates",
+            "name": "[parameters('keyvaultCertificateName')]",
+            "apiVersion": "2016-03-01",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "keyVaultId": "[resourceId(parameters('sharedManagementResourceGroup'), 'Microsoft.KeyVault/vaults/', parameters('sharedKeyVaultName'))]",
+                "keyVaultSecretName": "[parameters('keyvaultCertificateName')]",
+                "serverFarmId": "[parameters('appServicePlanId')]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Web/sites/',parameters('appServiceName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/hostnameBindings",
+            "name": "[concat(parameters('appServiceName'), '/', parameters('customHostname'))]",
+            "apiVersion": "2016-03-01",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "sslState": "SniEnabled",
+                "thumbprint": "[reference(resourceId('Microsoft.Web/certificates', parameters('keyvaultCertificateName'))).Thumbprint]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Web/certificates/',parameters('keyvaultCertificateName'))]"
             ]
         }
     ],

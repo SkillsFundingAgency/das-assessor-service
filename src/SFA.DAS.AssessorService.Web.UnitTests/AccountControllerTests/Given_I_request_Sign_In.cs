@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Web.Controllers;
@@ -28,7 +29,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
                 .Verifiable();
 
             _accountController = new AccountController(new Mock<IHttpContextAccessor>().Object,
-                new Mock<ILoginOrchestrator>().Object);
+                new Mock<ILoginOrchestrator>().Object, new Mock<ILogger<AccountController>>().Object);
 
             _accountController.Url = mockUrlHelper.Object;
         }

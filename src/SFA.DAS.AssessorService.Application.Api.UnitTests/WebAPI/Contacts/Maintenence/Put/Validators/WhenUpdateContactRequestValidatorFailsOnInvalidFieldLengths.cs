@@ -41,6 +41,21 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Main
         }
 
         [Test]
+        [Ignore("Ignored until issue with email address not in claims is resolved")]
+        public void ThenErrorMessageShouldContainInvalidEmailLength()
+        {
+            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "Email" && q.ErrorCode == "MaximumLengthValidator");
+            errors.Should().NotBeNull();
+        }
+
+        [Test]
+        public void ThenErrorMessageShouldContainInvalidDisplayNameLength()
+        {
+            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "DisplayName" && q.ErrorCode == "MaximumLengthValidator");
+            errors.Should().NotBeNull();
+        }
+
+        [Test]
         public void ThenErrorMessageShouldContainInvalidUserNameLength()
         {
             var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "UserName" && q.ErrorCode == "MaximumLengthValidator");
