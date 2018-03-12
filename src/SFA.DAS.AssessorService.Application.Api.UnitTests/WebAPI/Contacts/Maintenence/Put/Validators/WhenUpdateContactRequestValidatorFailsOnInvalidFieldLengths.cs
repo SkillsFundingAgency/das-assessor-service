@@ -41,20 +41,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Main
         }
 
         [Test]
-        public void ThenErrorMessageShouldContainInvalidEmailLength()
-        {
-            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "Email" && q.ErrorCode == "MaximumLengthValidator");
-            errors.Should().NotBeNull();
-        }
-
-        [Test]
-        public void ThenErrorMessageShouldContainInvalidDisplayNameLength()
-        {
-            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "DisplayName" && q.ErrorCode == "MaximumLengthValidator");
-            errors.Should().NotBeNull();
-        }
-
-        [Test]
         public void ThenErrorMessageShouldContainInvalidUserNameLength()
         {
             var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "UserName" && q.ErrorCode == "MaximumLengthValidator");

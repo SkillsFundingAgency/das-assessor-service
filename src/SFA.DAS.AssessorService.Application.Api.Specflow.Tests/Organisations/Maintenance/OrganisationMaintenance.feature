@@ -86,6 +86,6 @@ Scenario: Repeat Deleting an Organisation
 	When I Delete an Organisation Twice
 	| EndPointAssessorName | EndPointAssessorOrganisationId | EndPointAssessorUKPRN |
 	| Test                 | 99999778                       | 10033444              |
-	Then the response http status should be Not Found
+	Then the response http status should be No Content
 	And the Organisation should be deleted
 	

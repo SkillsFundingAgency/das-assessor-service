@@ -18,23 +18,34 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         {
             _contactQueryRepository = contactQueryRepository;
 
-            UpdateContactRequest updateContactRequest;
-            // ReSharper disable once LocalNameCapturedOnly
-            RuleFor(contact => contact.Email).NotEmpty().WithMessage(
-                    string.Format(localiser[ResourceMessageName.MustBeDefined].Value, nameof(updateContactRequest.Email).ToCamelCase()))
-                .MaximumLength(120)
-                // Please note we have to string.Format this due to limitation in Moq not handling Optional
-                // Params
-                .WithMessage(string.Format(localiser[ResourceMessageName.MaxLengthError].Value,
-                    nameof(updateContactRequest.Email), 120));
+            UpdateContactRequest updateContactRequest;           
 
-            RuleFor(contact => contact.DisplayName).NotEmpty().WithMessage(
-                    string.Format(localiser[ResourceMessageName.MustBeDefined].Value, nameof(updateContactRequest.DisplayName).ToCamelCase()))
-                .MaximumLength(120)
-                // Please note we have to string.Format this due to limitation in Moq not handling Optional
-                // Params
-                .WithMessage(string.Format(localiser[ResourceMessageName.MaxLengthError].Value,
-                    nameof(updateContactRequest.DisplayName), 120));
+            RuleFor(contact => contact.Email)
+                .Custom((email, context) =>
+                {
+                    if (string.IsNullOrEmpty(email))
+                        return;
+
+                    if (email.Length > 120)
+                    {
+                        context.AddFailure(string.Format(localiser[ResourceMessageName.MaxLengthError].Value,
+                            nameof(updateContactRequest.Email).ToCamelCase(), 120));
+                    }                   
+                });
+
+            RuleFor(contact => contact.DisplayName)
+                .Custom((displayName, context) =>
+                {
+                    if (string.IsNullOrEmpty(displayName))
+                        return;
+
+                    if (displayName.Length > 120)
+                    {
+                        context.AddFailure(string.Format(localiser[ResourceMessageName.MaxLengthError].Value,
+                            nameof(updateContactRequest.DisplayName).ToCamelCase(), 120));
+                    }
+                });
+         
 
             RuleFor(contact => contact.UserName)
                 .NotEmpty()
@@ -50,11 +61,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             RuleFor(contact => contact)
                 .Custom((contact, context) =>
                 {
+                    if (string.IsNullOrEmpty(contact.UserName))
+                        return;
+
                     var result = contactQueryRepository.CheckContactExists(contact.UserName).Result;
                     if (!result)
                     {
                         context.AddFailure(new ValidationFailure("Contact",
-                            string.Format(localiser[ResourceMessageName.DoesNotExist].Value, "Contact", contact.UserName)));
+                            string.Format(localiser[ResourceMessageName.DoesNotExist].Value, "Contact",
+                                contact.UserName)));
                     }
                 });
         }        

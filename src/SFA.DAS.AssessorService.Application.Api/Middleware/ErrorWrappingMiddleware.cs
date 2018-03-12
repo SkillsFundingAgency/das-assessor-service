@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Domain.Exceptions;
 
@@ -42,7 +43,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Middleware
                 context.Response.ContentType = "application/json";
 
                 var response = new ApiResponse(context.Response.StatusCode, ex.Message);
-                var json = JsonConvert.SerializeObject(response);
+                var json = JsonConvert.SerializeObject(response,
+                    new JsonSerializerSettings
+                    {
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    });
 
                 await context.Response.WriteAsync(json);
             }

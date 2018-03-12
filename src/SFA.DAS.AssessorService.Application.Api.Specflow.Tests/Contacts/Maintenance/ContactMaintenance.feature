@@ -54,6 +54,6 @@ Scenario: Repeat Deleting a Contact
 	When I Delete a Contact Twice
 	| UserName | DisplayName | Email | EndPointAssessorOrganisationId | EndPointAssessorUKPRN |
 	| testuser127 | Jean Brodie | jbrodie@gmail.com | 99998899      | 10038887              |
-	Then the response http status should be Not Found
+	Then the response http status should be No Content
 	And the Contact should be deleted
 	
