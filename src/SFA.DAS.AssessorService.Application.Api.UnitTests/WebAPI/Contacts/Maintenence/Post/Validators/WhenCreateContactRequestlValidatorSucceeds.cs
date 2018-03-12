@@ -24,7 +24,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Main
             OrganisationQueryRepositoryMock.Setup(q => q.CheckIfAlreadyExists(Moq.It.IsAny<string>()))
                 .Returns(Task.FromResult((true)));
 
-            ContactRequest = Builder<CreateContactRequest>.CreateNew().Build();
+            ContactRequest = Builder<CreateContactRequest>.CreateNew()
+                .With(q => q.Email = "jcames@hotmail.com")
+                .Build();
 
             _validationResult = CreateContactRequestValidator.Validate(ContactRequest);
         }

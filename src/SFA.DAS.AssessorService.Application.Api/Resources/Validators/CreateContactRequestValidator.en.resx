@@ -132,4 +132,7 @@
   <data name="MustBeDefined" xml:space="preserve">
     <value>Request must contain {0}</value>
   </data>
+  <data name="MustBeValidEmailAddress" xml:space="preserve">
+    <value>A valid email address is required.</value>
+  </data>
 </root>

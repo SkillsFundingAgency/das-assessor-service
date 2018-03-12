@@ -18,7 +18,10 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Main
         {
             Setup();
 
-            _updateContactRequest = Builder<UpdateContactRequest>.CreateNew().Build();
+            _updateContactRequest = Builder<UpdateContactRequest>
+                .CreateNew()
+                .With(q => q.Email = "james@gmail.com")
+                .Build();
 
             ContactQueryRepositoryMock.Setup(q => q.CheckContactExists(Moq.It.IsAny<string>()))
                 .Returns(Task.FromResult(true));
