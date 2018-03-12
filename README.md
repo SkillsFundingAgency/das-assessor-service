@@ -46,9 +46,11 @@ to the the backup copy location.
 A clean database can be created by 
 
 1). Deleting the AssessorDB database currently pointed to by the  SFA.DAS.AssessorService.Application.Api project.
+
 2). Running update-database from the package manager console window.
 (Make sure the current startup project is set to SFA.DAS.AssessorService.Data an also 
 Defaut project in the Package Manager Console is set to SFA.DAS.AssessorService.Data).
+
 3). Running the SFA.DAS.AssessorService.Application.Api project to populate the database.
 
 The folowing variables are configurable in the SFA.DAS.AssessorService.Application.Api.Specflow.Tests
