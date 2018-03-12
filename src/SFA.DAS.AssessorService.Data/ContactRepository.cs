@@ -49,7 +49,7 @@ namespace SFA.DAS.AssessorService.Data
         public async Task Delete(string userName)
         {
             var contactEntity = _assessorDbContext.Contacts
-                .FirstOrDefault(q => q.Username == userName && q.Status != ContactStatus.Deleted);
+                .FirstOrDefault(q => q.Username == userName);
 
             if (contactEntity == null)
                 throw new NotFound();

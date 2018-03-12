@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.Exceptions;
 
 namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
 {
@@ -23,9 +22,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Orchestrators
 
         public async Task<IEnumerable<ContactResponse>> SearchContactsForAnOrganisation(string endPointAssessorOrganisationId)
         {
-            var contacts = (await _contactQueryRepository.GetContacts(endPointAssessorOrganisationId)).ToList();
-            if (!contacts.Any())
-                throw new ResourceNotFoundException();
+            var contacts = (await _contactQueryRepository.GetContacts(endPointAssessorOrganisationId)).ToList();          
             return contacts;
         }
 

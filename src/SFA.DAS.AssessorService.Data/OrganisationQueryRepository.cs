@@ -6,7 +6,6 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.DomainModels;
 
 namespace SFA.DAS.AssessorService.Data
@@ -31,7 +30,7 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<OrganisationResponse> GetByUkPrn(int ukprn)
         {
             var organisation = await _assessorDbContext.Organisations
-                .FirstOrDefaultAsync(q => q.EndPointAssessorUkprn == ukprn && q.Status != OrganisationStatus.Deleted);
+                .FirstOrDefaultAsync(q => q.EndPointAssessorUkprn == ukprn);
             if (organisation == null)
                 return null;
 
@@ -43,8 +42,7 @@ namespace SFA.DAS.AssessorService.Data
         {
             var organisation = await _assessorDbContext.Organisations
                 .FirstAsync(q =>
-                    q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId &&
-                    q.Status != OrganisationStatus.Deleted);
+                    q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId);
 
             var organisationUpdateDomainModel = Mapper.Map<OrganisationDomainModel>(organisation);
             return organisationUpdateDomainModel;
@@ -54,15 +52,14 @@ namespace SFA.DAS.AssessorService.Data
         {
             var organisation = await _assessorDbContext.Organisations
                 .FirstOrDefaultAsync(q =>
-                    q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId &&
-                    q.Status != OrganisationStatus.Deleted);
+                    q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId);
             return organisation != null;
         }
 
         public async Task<bool> CheckIfAlreadyExists(Guid id)
         {
             var organisation = await _assessorDbContext.Organisations
-                .FirstOrDefaultAsync(q => q.Id == id && q.Status != OrganisationStatus.Deleted);
+                .FirstOrDefaultAsync(q => q.Id == id);
             return organisation != null;
         }
 
@@ -71,8 +68,7 @@ namespace SFA.DAS.AssessorService.Data
             var organisation = await _assessorDbContext.Organisations
                 .Include(q => q.Contacts)
                 .FirstOrDefaultAsync(q =>
-                    q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId &&
-                    q.Status != OrganisationStatus.Deleted);
+                    q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId);
             return organisation.Contacts.Count() != 0;
         }
     }

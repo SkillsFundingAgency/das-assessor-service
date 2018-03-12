@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FizzWare.NBuilder;
 using FluentAssertions;
+using FluentAssertions.Collections;
 using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
@@ -10,7 +11,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Queries.Get
 {
     public class WhenSearchByOrganisationSucceeds : ContactsQueryBase
-    {      
+    {
         private IActionResult _result;
 
         [SetUp]
@@ -22,6 +23,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Quer
 
             ContactQueryRepositoryMock.Setup(q => q.GetContacts(Moq.It.IsAny<string>()))
                 .Returns(Task.FromResult((contacts)));
+
+            OrganisationQueryRepositoryMock.Setup(q => q.CheckIfAlreadyExists(Moq.It.IsAny<string>()))
+                .Returns(Task.FromResult<bool>(true));
 
             var endPointAssessorOrganisationId = "1234";
             _result = ContactQueryController.SearchContactsForAnOrganisation(endPointAssessorOrganisationId).Result;

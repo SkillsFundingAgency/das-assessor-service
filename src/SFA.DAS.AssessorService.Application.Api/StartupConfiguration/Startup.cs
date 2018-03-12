@@ -1,3 +1,4 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using SFA.DAS.AssessorService.Application.Api.Extensions;
 

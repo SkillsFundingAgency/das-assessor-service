@@ -68,8 +68,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                     var result = organisationQueryRepository.CheckIfAlreadyExists(endPointAssessorOrganisationId).Result;
                     if (!result)
                     {
-                        context.AddFailure(new ValidationFailure("EndPointAssessorOrganisationId",
-                           string.Format(localiser[ResourceMessageName.DoesNotExist].Value, nameof(endPointAssessorOrganisationId), endPointAssessorOrganisationId)));
+                        context.AddFailure(new ValidationFailure("Organisation",
+                           string.Format(localiser[ResourceMessageName.DoesNotExist].Value, "Organisation", endPointAssessorOrganisationId)));
                     }
                 });
         }        

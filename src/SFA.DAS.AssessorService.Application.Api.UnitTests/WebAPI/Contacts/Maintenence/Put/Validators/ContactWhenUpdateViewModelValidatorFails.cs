@@ -28,20 +28,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Main
         }
 
         [Test]
-        public void ErrormMssageShouldContainEMail()
-        {
-            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "Email" && q.ErrorCode == "NotEmptyValidator");
-            errors.Should().NotBeNull();
-        }
-
-        [Test]
-        public void ErrorMessageShouldContainDisplayName()
-        {
-            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "DisplayName" && q.ErrorCode == "NotEmptyValidator");
-            errors.Should().NotBeNull();
-        }
-
-        [Test]
         public void ErrorMessageShouldContainUserName()
         {
             var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "UserName" && q.ErrorCode == "NotEmptyValidator");

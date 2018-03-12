@@ -65,8 +65,7 @@ namespace SFA.DAS.AssessorService.Data
         {
             var organisationEntity = _assessorDbContext.Organisations
                 .FirstOrDefault(q =>
-                    q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId &&
-                    q.Status != OrganisationStatus.Deleted);
+                    q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId);
 
             if (organisationEntity == null)
                 throw new NotFound();
