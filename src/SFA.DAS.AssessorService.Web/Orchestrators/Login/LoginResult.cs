@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.AssessorService.Web.Orchestrators
+﻿namespace SFA.DAS.AssessorService.Web.Orchestrators.Login
 {
     public enum LoginResult
     {

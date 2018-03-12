@@ -1,8 +1,7 @@
-﻿using System.Security.Claims;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
-namespace SFA.DAS.AssessorService.Web.Orchestrators
+namespace SFA.DAS.AssessorService.Web.Orchestrators.Login
 {
     public interface ILoginOrchestrator
     {
