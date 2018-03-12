@@ -3,7 +3,7 @@
 	[CreatedAt] [datetime2](7) NOT NULL,
 	[DeletedAt] [datetime2](7) NULL,
 	[DisplayName] [nvarchar](120) NOT NULL,
-	[Email] [nvarchar](120) NOT NULL,
+	[Email] [nvarchar](120) NULL,
 	[EndPointAssessorOrganisationId] [nvarchar](12) NOT NULL,
 	[OrganisationId] [uniqueidentifier] NOT NULL,
 	[Status] [nvarchar](10) NOT NULL,

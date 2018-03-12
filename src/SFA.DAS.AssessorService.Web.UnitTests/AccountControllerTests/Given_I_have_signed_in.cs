@@ -2,6 +2,7 @@
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Web.Controllers;
@@ -26,7 +27,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
 
             _loginOrchestrator = new Mock<ILoginOrchestrator>();
 
-            _accountController = new AccountController(_contextAccessor.Object, _loginOrchestrator.Object);
+            _accountController = new AccountController(_contextAccessor.Object, _loginOrchestrator.Object,
+                new Mock<ILogger<AccountController>>().Object);
         }
 
         [Test]
