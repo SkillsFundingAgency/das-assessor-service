@@ -67,6 +67,10 @@
                         {
                             "name": "EnvironmentName",
                             "value": "[toUpper(parameters('configEnvironmentName'))]"
+                        },
+                        {
+                            "name": "MSDEPLOY_RENAME_LOCKED_FILES",
+                            "value": "1"
                         }
                     ],
                     "connectionStrings": [

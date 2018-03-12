@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using Microsoft.Extensions.Logging;
+using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Settings;
@@ -17,7 +18,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrchestratorTests.LoginOrchestra
 
             OrganisationsApiClient = new Mock<IOrganisationsApiClient>();
             LoginOrchestrator = new Orchestrators.LoginOrchestrator(config,
-                OrganisationsApiClient.Object, new Mock<IContactsApiClient>().Object);
+                OrganisationsApiClient.Object, new Mock<IContactsApiClient>().Object, new Mock<ILogger<Orchestrators.LoginOrchestrator>>().Object);
         }
     }
 }
