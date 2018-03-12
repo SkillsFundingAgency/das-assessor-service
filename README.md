@@ -53,7 +53,7 @@ Defaut project in the Package Manager Console is set to SFA.DAS.AssessorService.
 
 3). Running the SFA.DAS.AssessorService.Application.Api project to populate the database.
 
-The folowing variables are configurable in the SFA.DAS.AssessorService.Application.Api.Specflow.Tests
+Please Note:- The folowing variables are configurable in the SFA.DAS.AssessorService.Application.Api.Specflow.Tests
 project app.config
 
 <add key="RestoreDatabase" value="c:\backup\SFA.DAS.AssessorService.Application.Api.bak" />
