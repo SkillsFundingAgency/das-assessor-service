@@ -6,7 +6,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
-using SFA.DAS.AssessorService.Web.Orchestrators;
+using SFA.DAS.AssessorService.Web.Orchestrators.Login;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.OrchestratorTests.LoginOrchestrator
 {

@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Web.Orchestrators.Search;
+using SFA.DAS.AssessorService.Web.Utils;
 using SFA.DAS.AssessorService.Web.ViewModels.Search;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
@@ -13,15 +15,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     [Authorize]
     public class SearchController : Controller
     {
-        private readonly ILogger<SearchController> _logger;
-        private readonly ISearchApiClient _searchApiClient;
-        private readonly IHttpContextAccessor _contextAccessor;
+        private readonly ISearchOrchestrator _searchOrchestrator;
 
-        public SearchController(ILogger<SearchController> logger, ISearchApiClient searchApiClient, IHttpContextAccessor contextAccessor)
+        public SearchController(ISearchOrchestrator searchOrchestrator)
         {
-            _logger = logger;
-            _searchApiClient = searchApiClient;
-            _contextAccessor = contextAccessor;
+            _searchOrchestrator = searchOrchestrator;
         }
 
         [HttpGet]
@@ -38,18 +36,24 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return View(vm);
             }
 
-            var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
-            var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
+            var result = await _searchOrchestrator.Search(vm);
 
-            var result = await _searchApiClient.Search(new SearchQuery() {Surname = vm.Surname, Uln = vm.Uln, UkPrn = ukprn, Username = username});
-            vm.SearchResults = result.Results;
+            if (!result.SearchResults.Any()) return View("Index", vm);
 
-            if (result.Results.Any())
-            {                
-                return View("Results", vm);
+            TempData.Put("Results", result);
+            return RedirectToAction("Results");
+        }
+
+        [HttpGet]
+        public IActionResult Results()
+        {
+            var vm = TempData.Get<SearchViewModel>("Results");
+            if (vm == null)
+            {
+                return RedirectToAction("Index");
             }
 
-            return View("Index", vm);
+            return View("Results", vm);
         }
     }
 }

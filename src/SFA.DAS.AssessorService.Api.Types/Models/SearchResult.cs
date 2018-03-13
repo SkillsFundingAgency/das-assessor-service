@@ -14,6 +14,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public string Uln { get; set; }
         public string DateOfBirth { get; set; }
         public string Standard { get; set; }
+        public string StandardId { get; set; }
         public string LearningStartDate { get; set; }
         public string Provider { get; set; }
     }

@@ -8,6 +8,7 @@ using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Web.Controllers;
+using SFA.DAS.AssessorService.Web.Orchestrators.Search;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.SearchControllerTests
 {
@@ -29,8 +30,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.SearchControllerTests
             searchApiClient.Setup(api => api.Search(It.Is<SearchQuery>(query => query.Surname == "Smith" && query.Uln == "7777777777")))
                 .ReturnsAsync(new SearchResult() { Results = new List<Result>() { }.AsEnumerable() });
 
-            SearchController = new SearchController(new Mock<ILogger<SearchController>>().Object,
-                searchApiClient.Object, contextAccessor.Object);
+            var orchestrator = new SearchOrchestrator(new Mock<ILogger<SearchController>>().Object, searchApiClient.Object,
+                contextAccessor.Object);
+
+            SearchController = new SearchController(orchestrator);
         }
     }
 }
