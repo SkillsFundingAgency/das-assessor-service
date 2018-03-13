@@ -10,7 +10,9 @@ namespace SFA.DAS.AssessorService.Web.Validators
         public SearchQueryViewModelValidator(IStringLocalizer<SearchQueryViewModelValidator> localizer)
         {
             RuleFor(x => x.Surname).NotEmpty().WithMessage(localizer[ResourceKey.LastNameShouldNotBeEmpty]);
-            RuleFor(x => x.Uln).NotEmpty().Matches(@"^\d{10}$").WithMessage(localizer[ResourceKey.UlnFormatInvalid]);
+            RuleFor(x => x.Uln)
+                .NotEmpty().WithMessage(localizer[ResourceKey.UlnShouldNotBeEmpty])
+                .Matches(@"^\d{10}$").WithMessage(localizer[ResourceKey.UlnFormatInvalid]);
         }
     }
 }
