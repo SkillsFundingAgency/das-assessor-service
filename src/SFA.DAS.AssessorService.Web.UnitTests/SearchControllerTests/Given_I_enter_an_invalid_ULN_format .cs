@@ -14,6 +14,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.SearchControllerTests
         [TestCase("ABC1234567")]
         [TestCase("123456789")]
         [TestCase("12345678901")]
+        [TestCase("")]
         public void Then_search_validation_should_fail(string invalidUln)
         {
             var localizer = new Mock<IStringLocalizer<SearchQueryViewModelValidator>>();
@@ -22,6 +23,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.SearchControllerTests
                 .Returns(new LocalizedString(ResourceKey.LastNameShouldNotBeEmpty, "Last name should not be empty"));
             localizer.Setup(l => l[ResourceKey.UlnFormatInvalid])
                 .Returns(new LocalizedString(ResourceKey.UlnFormatInvalid, "Uln format invalid"));
+            localizer.Setup(l => l[ResourceKey.UlnShouldNotBeEmpty])
+                .Returns(new LocalizedString(ResourceKey.UlnShouldNotBeEmpty, "ULN should not be empty"));
 
             var validator = new SearchQueryViewModelValidator(localizer.Object);
             var result = validator.Validate(new SearchViewModel() {Surname = "Smith", Uln = invalidUln});
