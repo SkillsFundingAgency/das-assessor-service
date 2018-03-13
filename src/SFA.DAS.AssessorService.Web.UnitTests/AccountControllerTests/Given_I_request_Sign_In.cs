@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Web.Controllers;
-using SFA.DAS.AssessorService.Web.Orchestrators;
+using SFA.DAS.AssessorService.Web.Orchestrators.Login;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
 {
