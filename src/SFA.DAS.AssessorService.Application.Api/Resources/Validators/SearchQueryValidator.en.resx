@@ -117,13 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="LastNameShouldNotBeEmpty" xml:space="preserve">
-    <value>The last name field should not be empty</value>
+  <data name="InvalidUkPrn" xml:space="preserve">
+    <value>UKPrn must be valid</value>
   </data>
-  <data name="UlnFormatInvalid" xml:space="preserve">
-    <value>A ULN should contain exactly 10 numbers</value>
+  <data name="InvalidUln" xml:space="preserve">
+    <value>ULN must be valid</value>
   </data>
-  <data name="UlnShouldNotBeEmpty" xml:space="preserve">
-    <value>ULN should not be empty</value>
+  <data name="MustHaveSurname" xml:space="preserve">
+    <value>Surname must be provided</value>
+  </data>
+  <data name="MustHaveUsername" xml:space="preserve">
+    <value>Username must be provided</value>
   </data>
 </root>

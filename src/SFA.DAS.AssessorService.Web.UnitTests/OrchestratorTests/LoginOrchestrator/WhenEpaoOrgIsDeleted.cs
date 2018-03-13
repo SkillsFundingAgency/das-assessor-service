@@ -2,14 +2,16 @@
 using System.Security.Claims;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
+using Moq;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.Orchestrators.Login;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.OrchestratorTests.LoginOrchestrator
 {
     [TestFixture]
-    public class WhenEpaoOrgDoesNotExist : LoginOrchestratorTestBase
+    public class WhenEpaoOrgIsDeleted : LoginOrchestratorTestBase
     {
         [Test]
         public void ThenNotRegisteredResponseIsReturned()
@@ -23,7 +25,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrchestratorTests.LoginOrchestra
                 })
             };
 
-            OrganisationsApiClient.Setup(c => c.Get("12345")).Throws<EntityNotFoundException>();
+            OrganisationsApiClient.Setup(c => c.Get("12345"))
+                .ReturnsAsync(new OrganisationResponse() {Status = OrganisationStatus.Deleted});
 
             var result = LoginOrchestrator.Login(context).Result;
 

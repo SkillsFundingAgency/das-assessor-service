@@ -14,19 +14,16 @@ namespace SFA.DAS.AssessorService.Data
         {
         }
 
-        public AssessorDbContext(DbContextOptions<AssessorDbContext> options, bool migrate)
+        public AssessorDbContext(DbContextOptions<AssessorDbContext> options)
             : base(options)
         {
-            //if (migrate)
-            //{
-            //    Database.Migrate();
-            //}
         }
 
         public virtual DbSet<Certificate> Certificates { get; set; }
         public virtual DbSet<CertificateLog> CertificateLogs { get; set; }
         public virtual DbSet<Contact> Contacts { get; set; }
         public virtual DbSet<Organisation> Organisations { get; set; }
+        public virtual DbSet<Ilr> Ilrs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -40,13 +37,13 @@ namespace SFA.DAS.AssessorService.Data
         {
             var saveTime = DateTime.UtcNow;
             foreach (var entry in ChangeTracker.Entries()
-                .Where(e => e.State == EntityState.Added))
+                .Where(e => e.State == EntityState.Added && e.Entity is BaseEntity))
                 if (entry.Property("CreatedAt").CurrentValue == null ||
                     (DateTime) entry.Property("CreatedAt").CurrentValue == DateTime.MinValue)
                     entry.Property("CreatedAt").CurrentValue = saveTime;
 
             foreach (var entry in ChangeTracker.Entries()
-                .Where(e => e.State == EntityState.Modified))
+                .Where(e => e.State == EntityState.Modified && e.Entity is BaseEntity))
                 entry.Property("UpdatedAt").CurrentValue = saveTime;
             return base.SaveChanges();
         }
@@ -54,11 +51,11 @@ namespace SFA.DAS.AssessorService.Data
         public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            var addedEntities = ChangeTracker.Entries().Where(E => E.State == EntityState.Added).ToList();
-            addedEntities.ForEach(E => { E.Property("CreatedAt").CurrentValue = DateTime.UtcNow; });
+            var addedEntities = ChangeTracker.Entries().Where(e => e.State == EntityState.Added && e.Entity is BaseEntity).ToList();
+            addedEntities.ForEach(e => { e.Property("CreatedAt").CurrentValue = DateTime.UtcNow; });
 
-            var editedEntities = ChangeTracker.Entries().Where(E => E.State == EntityState.Modified).ToList();
-            editedEntities.ForEach(E => { E.Property("UpdatedAt").CurrentValue = DateTime.UtcNow; });
+            var editedEntities = ChangeTracker.Entries().Where(e => e.State == EntityState.Modified && e.Entity is BaseEntity).ToList();
+            editedEntities.ForEach(e => { e.Property("UpdatedAt").CurrentValue = DateTime.UtcNow; });
 
             return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
         }

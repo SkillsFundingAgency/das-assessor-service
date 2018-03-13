@@ -28,35 +28,42 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators.Login
 
         public async Task<LoginResult> Login(HttpContext context)
         {
-            LoggerExtensions.LogInformation(_logger, "Start of Login");
+            _logger.LogInformation("Start of Login");
 
             var ukprn = context.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
             var username = context.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
             var email = context.User.FindFirst("http://schemas.portal.com/mail")?.Value;
             var displayName = context.User.FindFirst("http://schemas.portal.com/displayname")?.Value;
 
-            LoggerExtensions.LogInformation(_logger, $"Claims: ukprn: {ukprn}, username: {username}, email : {email}, displayName: {displayName}");
+            _logger.LogInformation($"Claims: ukprn: {ukprn}, username: {username}, email : {email}, displayName: {displayName}");
 
             if (UserDoesNotHaveAcceptableRole(context.User))
             {
-                LoggerExtensions.LogInformation(_logger, "Invalid Role");
+                _logger.LogInformation("Invalid Role");
                 return LoginResult.InvalidRole;
             }
             
-            LoggerExtensions.LogInformation(_logger, "Role is good");
+            _logger.LogInformation("Role is good");
 
             OrganisationResponse organisation;
             try
             {
-                LoggerExtensions.LogInformation(_logger, $"Getting Org with ukprn: {ukprn}");
+                _logger.LogInformation($"Getting Org with ukprn: {ukprn}");
                 organisation = await _organisationsApiClient.Get(ukprn);
-                LoggerExtensions.LogInformation(_logger, $"Got Org with ukprn: {ukprn}, Id: {organisation.EndPointAssessorOrganisationId}");
+
+                if (organisation.Status == OrganisationStatus.Deleted)
+                {
+                    _logger.LogInformation($"Org found, but Deleted");
+                    return LoginResult.NotRegistered;
+                }
+
+                _logger.LogInformation($"Got Org with ukprn: {ukprn}, Id: {organisation.EndPointAssessorOrganisationId}");
                 context.Session.SetString("OrganisationName", organisation.EndPointAssessorName);
-                LoggerExtensions.LogInformation(_logger, $"Set Org name in Session");
+                _logger.LogInformation($"Set Org name in Session");
             }
             catch (EntityNotFoundException)
             {
-                LoggerExtensions.LogInformation(_logger, $"Org not registered");
+                _logger.LogInformation($"Org not registered");
                 return LoginResult.NotRegistered;
             }
                 
@@ -79,9 +86,9 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators.Login
 
         private async Task GetContact(string username, string email, string displayName)
         {
-            LoggerExtensions.LogInformation(_logger, $"Getting Contact with username: {username}");
+            _logger.LogInformation($"Getting Contact with username: {username}");
             var contact = await _contactsApiClient.GetByUsername(username);
-            LoggerExtensions.LogInformation(_logger, $"Got Existing Contact");
+            _logger.LogInformation($"Got Existing Contact");
             await CheckStoredUserDetailsForUpdate(contact.UserName, email, displayName, contact);
         }
 
@@ -89,7 +96,7 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators.Login
         {
             if (contactResponse.Email != email || contactResponse.DisplayName != displayName)
             {
-                LoggerExtensions.LogInformation(_logger, $"Existing contact has updated details.  Updating");
+                _logger.LogInformation($"Existing contact has updated details.  Updating");
                 await _contactsApiClient.Update(new UpdateContactRequest()
                 {
                     Email = email,
@@ -102,7 +109,7 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators.Login
         private async Task CreateNewContact(string email, OrganisationResponse organisation, string displayName,
             string username)
         {
-            LoggerExtensions.LogInformation(_logger, $"Creating new contact.  Email: {email}, DisplayName: {displayName}, Username: {username}, EndPointAssessorOrganisationId: {organisation.EndPointAssessorOrganisationId}");
+            _logger.LogInformation($"Creating new contact.  Email: {email}, DisplayName: {displayName}, Username: {username}, EndPointAssessorOrganisationId: {organisation.EndPointAssessorOrganisationId}");
             var contact = await _contactsApiClient.Create(
                 new CreateContactRequest()
                 {
@@ -112,7 +119,7 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators.Login
                     EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId
                 });
 
-            LoggerExtensions.LogInformation(_logger, $"New contact created");
+            _logger.LogInformation($"New contact created");
 
             await SetNewOrganisationPrimaryContact(organisation, contact);
         }
@@ -121,7 +128,7 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators.Login
         {
             if (organisation.Status == OrganisationStatus.New)
             {
-                LoggerExtensions.LogInformation(_logger, $"Org status is New. Setting Org {organisation.EndPointAssessorUkprn} with primary contact of {contactResponse.UserName}");
+                _logger.LogInformation($"Org status is New. Setting Org {organisation.EndPointAssessorUkprn} with primary contact of {contactResponse.UserName}");
                 await _organisationsApiClient.Update(new UpdateOrganisationRequest()
                 {
                     EndPointAssessorName = organisation.EndPointAssessorName,

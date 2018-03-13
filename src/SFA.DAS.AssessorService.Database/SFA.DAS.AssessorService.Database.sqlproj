@@ -65,5 +65,6 @@
     <Build Include="Tables\Certificates.sql" />
     <Build Include="Tables\Contacts.sql" />
     <Build Include="Tables\Organisations.sql" />
+    <Build Include="Tables\Ilrs.sql" />
   </ItemGroup>
 </Project>
