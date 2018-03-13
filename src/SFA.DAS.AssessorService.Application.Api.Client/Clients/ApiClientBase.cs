@@ -105,7 +105,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 else
                 {
                     _logger.LogInformation($"HttpRequestException: Status COde: {response.StatusCode} Body: {json}");
-                    throw new HttpRequestException();
+                    throw new HttpRequestException(json);
                 }
             }
         }

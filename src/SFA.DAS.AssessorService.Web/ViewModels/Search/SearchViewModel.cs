@@ -7,6 +7,6 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Search
     {
         public string Uln { get; set; }
         public string Surname { get; set; }
-        public IEnumerable<Result> SearchResults { get; set; }
+        public IEnumerable<ResultViewModel> SearchResults { get; set; }
     }
 }

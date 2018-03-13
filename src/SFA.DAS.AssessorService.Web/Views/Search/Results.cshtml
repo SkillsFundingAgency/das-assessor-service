@@ -20,7 +20,7 @@
                 <fieldset>
                     <ul>
                         <li>
-                            <p><span class="bold">Name:</span> @Model.SearchResults.First().Firstname @Model.SearchResults.First().Surname</p>
+                            <p><span class="bold">Name:</span> @Model.SearchResults.First().GivenNames @Model.SearchResults.First().FamilyName</p>
                         </li>
                         <li>
                             <p><span class="bold">ULN:</span> @Model.SearchResults.First().Uln</p>
@@ -43,7 +43,7 @@
                 <fieldset>
                     <ul>
                         <li>
-                            <p><span class="bold">Name:</span> @Model.SearchResults.First().Firstname @Model.SearchResults.First().Surname</p>
+                            <p><span class="bold">Name:</span> @Model.SearchResults.First().GivenNames @Model.SearchResults.First().FamilyName</p>
                         </li>
                         <li>
                             <p><span class="bold">ULN:</span> @Model.SearchResults.First().Uln</p>
@@ -52,8 +52,8 @@
                     @foreach (var result in Model.SearchResults)
                     {
                         <div class="multiple-choice">
-                            <input id=@("standard_" + result.StandardId) type="radio" name="radio-group" value="@result.StandardId">
-                            <label for=@("standard_" + result.StandardId)>@result.Standard</label>
+                            <input id=@("standard_" + result.StdCode) type="radio" name="radio-group" value="@result.StdCode">
+                            <label for=@("standard_" + result.StdCode)>@result.Standard</label>
                         </div>
                     }
                 </fieldset>

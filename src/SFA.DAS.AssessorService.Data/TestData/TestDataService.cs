@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.AssessorService.Data.TestData
+﻿using System.Collections.Generic;
+
+namespace SFA.DAS.AssessorService.Data.TestData
 {
     using System;
     using System.Linq;
@@ -168,6 +170,53 @@
                 };
 
                 context.CertificateLogs.Add(secondCertificateLog);
+                context.SaveChanges();
+            }
+
+            var existingIlrData = context.Ilrs.FirstOrDefault();
+            if (existingIlrData == null)
+            {
+                var ilrs = new List<Ilr>
+                {
+                    new Ilr()
+                    {
+                        Uln = 1111111111,
+                        GivenNames = "Karla",
+                        FamilyName = "Hawkins",
+                        DateOfBirth = new DateTime(2002, 4, 15),
+                        Sex = "Female",
+                        UkPrn = 10009931,
+                        StdCode = "90",
+                        LearnStartDate = new DateTime(2015, 8, 9),
+                        EpaOrgId = "EPA000011"
+                    },
+                    new Ilr()
+                    {
+                        Uln = 1111111111,
+                        GivenNames = "Karla",
+                        FamilyName = "Hawkins",
+                        DateOfBirth = new DateTime(2002, 4, 15),
+                        Sex = "Female",
+                        UkPrn = 10009931,
+                        StdCode = "93",
+                        LearnStartDate = new DateTime(2015, 3, 2),
+                        EpaOrgId = "EPA000011"
+                    },
+                    new Ilr()
+                    {
+                        Uln = 2222222222,
+                        GivenNames = "Karla",
+                        FamilyName = "Hawkins",
+                        DateOfBirth = new DateTime(2002, 4, 15),
+                        Sex = "Male",
+                        UkPrn = 10009931,
+                        StdCode = "33",
+                        LearnStartDate = new DateTime(2015, 8, 9),
+                        EpaOrgId = "EPA000011"
+                    }
+
+                };
+                context.Ilrs.AddRange(ilrs);
                 context.SaveChanges();
             }
         }
