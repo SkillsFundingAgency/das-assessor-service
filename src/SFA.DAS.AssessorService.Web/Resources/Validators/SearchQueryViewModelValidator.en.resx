@@ -123,4 +123,7 @@
   <data name="UlnFormatInvalid" xml:space="preserve">
     <value>ULN format is invalid. Should be 10 numbers.</value>
   </data>
+  <data name="UlnShouldNotBeEmpty" xml:space="preserve">
+    <value>ULN should not be empty</value>
+  </data>
 </root>
