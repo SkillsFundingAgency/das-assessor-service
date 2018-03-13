@@ -89,6 +89,7 @@ namespace SFA.DAS.AssessorService.Web
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            MappingStartup.AddMappings();
             if (env.IsDevelopment())
             {
                 app.UseBrowserLink();

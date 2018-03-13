@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
@@ -26,8 +28,15 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators.Search
             var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
             var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
-            var result = await _searchApiClient.Search(new SearchQuery() { Surname = vm.Surname, Uln = long.Parse(vm.Uln), UkPrn = ukprn, Username = username });
-            vm.SearchResults = result.Results;
+            var results = await _searchApiClient.Search(new SearchQuery()
+            {
+                Surname = vm.Surname,
+                Uln = long.Parse(vm.Uln),
+                UkPrn = long.Parse(ukprn),
+                Username = username
+            });
+
+            vm.SearchResults = Mapper.Map<List<ResultViewModel>>(results);
 
             return vm;
         }

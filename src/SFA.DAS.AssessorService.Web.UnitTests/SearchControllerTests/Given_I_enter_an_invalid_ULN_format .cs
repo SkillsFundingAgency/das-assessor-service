@@ -11,7 +11,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.SearchControllerTests
     [TestFixture]
     public class Given_I_enter_an_invalid_ULN_format 
     {
-        [TestCase("ABC1234567")]
         [TestCase("123456789")]
         [TestCase("12345678901")]
         public void Then_search_validation_should_fail(string invalidUln)

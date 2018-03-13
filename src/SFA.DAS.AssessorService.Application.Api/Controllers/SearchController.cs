@@ -39,7 +39,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> Search([FromBody]SearchQuery searchQuery)
         {
-            var epaOrgId = await _organisationRepository.GetByUkPrn(int.Parse(searchQuery.UkPrn));
+            var epaOrgId = await _organisationRepository.GetByUkPrn(searchQuery.UkPrn);
 
             var standards = await _assessmentOrgsApiClient.FindAllStandardsByOrganisationIdAsync(epaOrgId
                     .EndPointAssessorOrganisationId);
