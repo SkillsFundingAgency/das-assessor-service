@@ -15,5 +15,8 @@
         public const string MaxLengthError = "MaxLengthError";
         public const string HaveExistingOrganisation = "HaveExistingOrganisation";
         public const string MustBeValidEmailAddress = "MustBeValidEmailAddress";
+        public const string MustHaveSurname = "MustHaveSurname";
+        public const string InvalidUln = "InvalidUln";
+        public const string MustHaveUsername = "MustHaveUsername";
     }
 }

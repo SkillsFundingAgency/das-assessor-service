@@ -10,9 +10,8 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string FamilyName { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string Sex { get; set; }
-        public int UkPrn { get; set; }
+        public long UkPrn { get; set; }
         public string StdCode { get; set; }
-        public string Standard { get; set; }
         public DateTime LearnStartDate { get; set; }
         public string EpaOrgId { get; set; }
         public string Outcome { get; set; }

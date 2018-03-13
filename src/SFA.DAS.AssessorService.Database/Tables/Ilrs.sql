@@ -4,13 +4,13 @@
     [Uln] BIGINT NULL, 
     [GivenNames] NVARCHAR(MAX) NULL, 
     [FamilyName] NVARCHAR(MAX) NULL, 
-    [DateOfBirth] DATETIME NULL, 
+    [DateOfBirth] DATETIME2 NULL, 
     [Sex] NVARCHAR(50) NULL, 
-    [UkPrn] INT NULL, 
+    [UkPrn] BIGINT NULL, 
     [StdCode] NVARCHAR(50) NULL, 
-    [LearnStartDate] DATETIME NULL, 
+    [LearnStartDate] DATETIME2 NULL, 
     [EpaOrgId] NVARCHAR(50) NULL, 
     [Outcome] NVARCHAR(50) NULL, 
-    [AchDate] DATETIME NULL, 
+    [AchDate] DATETIME2 NULL, 
     [OutGrade] NVARCHAR(50) NULL
 )

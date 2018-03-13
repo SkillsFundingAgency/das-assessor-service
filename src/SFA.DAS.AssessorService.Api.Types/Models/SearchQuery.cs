@@ -4,7 +4,7 @@
     {
         public long Uln { get; set; }
         public string Surname { get; set; }
-        public string UkPrn { get; set; }
+        public long UkPrn { get; set; }
         public string Username { get; set; }
     }
 }

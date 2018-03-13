@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Data
         public IEnumerable<Ilr> Search(SearchRequest searchRequest)
         {
             var response = _context.Ilrs.Where(r =>
-                string.Equals(r.GivenNames.Trim(), searchRequest.FamilyName.Trim(), StringComparison.CurrentCultureIgnoreCase)
+                string.Equals(r.FamilyName.Trim(), searchRequest.FamilyName.Trim(), StringComparison.CurrentCultureIgnoreCase)
                 && r.Uln == searchRequest.Uln
                 && searchRequest.StandardIds.Contains(r.StdCode));
 
