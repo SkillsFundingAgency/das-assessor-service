@@ -15,12 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20180307190916_PrimaryContactChange.cs" />
-    <Compile Remove="Migrations\20180307191306_PrimaryContactChange.cs" />
-    <Compile Remove="Migrations\20180307192010_PrimaryContactChange.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\SFA.DAS.AssessorService.Application\SFA.DAS.AssessorService.Application.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Domain\SFA.DAS.AssessorService.Domain.csproj" />
   </ItemGroup>

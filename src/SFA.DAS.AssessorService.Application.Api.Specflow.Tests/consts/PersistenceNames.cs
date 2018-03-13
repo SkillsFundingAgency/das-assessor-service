@@ -4,5 +4,6 @@
     {
         public const string AccessorDBConnectionString = "AccessorDBConnectionString";
         public const string RestoreDatabase = "RestoreDatabase";
+        public const string DatabaseName = "DatabaseName";
     }
 }
