@@ -14,13 +14,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests
             _restClientResult = restClientResult;
         }
 
-        [BeforeTestRun]
-        public static void SetupBeforeTestRun()
-        {
-            var database = GetDatabaseInstance();
-            database.Backup();
-        }
-
         [BeforeFeature]
         public static void SetupBeforeFeature()
         {

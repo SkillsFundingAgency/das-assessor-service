@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrchestratorTests.LoginOrchestra
 {
     public class LoginOrchestratorTestBase
     {
-        protected Orchestrators.LoginOrchestrator LoginOrchestrator;
+        protected Orchestrators.Login.LoginOrchestrator LoginOrchestrator;
         protected Mock<IOrganisationsApiClient> OrganisationsApiClient;
 
         [SetUp]
@@ -17,8 +17,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrchestratorTests.LoginOrchestra
             var config = new WebConfiguration() { Authentication = new AuthSettings() { Role = "EPA" } };
 
             OrganisationsApiClient = new Mock<IOrganisationsApiClient>();
-            LoginOrchestrator = new Orchestrators.LoginOrchestrator(config,
-                OrganisationsApiClient.Object, new Mock<IContactsApiClient>().Object, new Mock<ILogger<Orchestrators.LoginOrchestrator>>().Object);
+            LoginOrchestrator = new Orchestrators.Login.LoginOrchestrator(config,
+                OrganisationsApiClient.Object, new Mock<IContactsApiClient>().Object, new Mock<ILogger<Orchestrators.Login.LoginOrchestrator>>().Object);
         }
     }
 }

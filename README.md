@@ -14,6 +14,7 @@
 - Install [SQL Management Studio](https://docs.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms)
 - Install [Azure Storage Emulator](https://go.microsoft.com/fwlink/?linkid=717179&clcid=0x409) (Make sure you are on v5.3)
 - Install [Azure Storage Explorer](http://storageexplorer.com/)
+- Install [Specflow](http://specflow.org/documentation/Installation/)
 - Administrator Access
 
 #### Setup
@@ -34,3 +35,41 @@
 - run `dotnet restore`
 - run `dotnet run`
 - Open https://localhost:5015
+
+Running Specflow
+
+Specflow is currently used for integrations testing the Internal API.
+In order to run it you should take a backup copy of a clean database.
+and configure the app.config file in the SFA.DAS.AssessorService.Application.Api.Specflow.Tests project to point 
+to the the backup copy location.
+
+A clean database can be created by 
+
+1). Deleting the AssessorDB database currently pointed to by the  SFA.DAS.AssessorService.Application.Api project.
+
+2). Running update-database from the package manager console window.
+(Make sure the current startup project is set to SFA.DAS.AssessorService.Data an also 
+Defaut project in the Package Manager Console is set to SFA.DAS.AssessorService.Data).
+
+3). Running the SFA.DAS.AssessorService.Application.Api project to populate the database.
+
+Please Note:- The folowing variables are configurable in the SFA.DAS.AssessorService.Application.Api.Specflow.Tests
+project app.config
+
+<add key="RestoreDatabase" value="c:\backup\SFA.DAS.AssessorService.Application.Api.bak" />
+<add key="DatabaseName" value="AssessorDB" />
+<add key="BaseAddress" value="http://localhost:59021/" />
+
+where:
+
+RestoreDatabase = database backup location.
+
+DatabaseName = The Database currently in use by the SFA.DAS.AssessorService.Application.Api project.
+
+BaseAddress = Base url address for the SFA.DAS.AssessorService.Application.Api project.
+
+
+    
+    
+
+

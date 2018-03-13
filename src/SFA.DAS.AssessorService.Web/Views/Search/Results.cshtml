@@ -11,7 +11,7 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        @if(Model.SearchResults.Count() < 2 ) {
+        @if(Model.SearchResults.Count() == 1) {
             <hr>
                 <p>Single result</p>
             <hr>
@@ -52,8 +52,8 @@
                     @foreach (var result in Model.SearchResults)
                     {
                         <div class="multiple-choice">
-                            <input id=@("standard_" + result.Standard) type="radio" name="radio-group" value="@result.Standard">
-                            <label for=@("standard_" + result.Standard)>@result.Standard</label>
+                            <input id=@("standard_" + result.StandardId) type="radio" name="radio-group" value="@result.StandardId">
+                            <label for=@("standard_" + result.StandardId)>@result.Standard</label>
                         </div>
                     }
                 </fieldset>
