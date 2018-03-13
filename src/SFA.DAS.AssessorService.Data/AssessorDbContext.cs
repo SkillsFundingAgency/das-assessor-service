@@ -17,10 +17,7 @@ namespace SFA.DAS.AssessorService.Data
         public AssessorDbContext(DbContextOptions<AssessorDbContext> options, bool migrate)
             : base(options)
         {
-            //if (migrate)
-            //{
-            //    Database.Migrate();
-            //}
+          
         }
 
         public virtual DbSet<Certificate> Certificates { get; set; }
