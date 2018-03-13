@@ -12,15 +12,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
     [Route("api/v1/search")]
     public class SearchController : Controller
     {
-        private readonly IIlrApiClient _ilrApi;
         private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
         private readonly IOrganisationQueryRepository _organisationRepository;
+        private readonly IIlrRepository _ilrRepository;
 
-        public SearchController(IIlrApiClient ilrApi, IAssessmentOrgsApiClient assessmentOrgsApiClient, IOrganisationQueryRepository organisationRepository)
+        public SearchController(IAssessmentOrgsApiClient assessmentOrgsApiClient, IOrganisationQueryRepository organisationRepository, IIlrRepository ilrRepository)
         {
-            _ilrApi = ilrApi;
             _assessmentOrgsApiClient = assessmentOrgsApiClient;
             _organisationRepository = organisationRepository;
+            _ilrRepository = ilrRepository;
         }
 
         [HttpPost(Name = "Search")]
@@ -31,19 +31,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             var standards = await _assessmentOrgsApiClient.FindAllStandardsByOrganisationIdAsync(epaOrgId
                     .EndPointAssessorOrganisationId);
 
-            var result = await _ilrApi.Search(new IlrSearchRequest()
+            var searchResult = _ilrRepository.Search(new SearchRequest()
             {
-                Surname = searchQuery.Surname,
+                FamilyName = searchQuery.Surname,
                 Uln = searchQuery.Uln,
-                StandardIds = standards.Select(s => s.StandardCode)
+                StandardIds = standards.Select(s => s.StandardCode).ToList()
             });
-
-            foreach (var ilrResult in result.Results)
+            
+            foreach (var ilrResult in searchResult)
             {
-                ilrResult.Standard = (await _assessmentOrgsApiClient.GetStandard(ilrResult.StandardId)).Title;
+                ilrResult.Standard = (await _assessmentOrgsApiClient.GetStandard(ilrResult.StdCode)).Title;
             }
 
-            return Ok(result);
+            return Ok(searchResult);
         }
     }
 }

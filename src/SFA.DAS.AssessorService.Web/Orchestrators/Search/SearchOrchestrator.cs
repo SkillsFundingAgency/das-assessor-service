@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators.Search
             var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
             var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
-            var result = await _searchApiClient.Search(new SearchQuery() { Surname = vm.Surname, Uln = vm.Uln, UkPrn = ukprn, Username = username });
+            var result = await _searchApiClient.Search(new SearchQuery() { Surname = vm.Surname, Uln = long.Parse(vm.Uln), UkPrn = ukprn, Username = username });
             vm.SearchResults = result.Results;
 
             return vm;

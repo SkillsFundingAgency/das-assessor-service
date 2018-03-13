@@ -147,7 +147,7 @@ namespace SFA.DAS.AssessorService.Application.Api
                 var option = new DbContextOptionsBuilder<AssessorDbContext>();
                 option.UseSqlServer(Configuration.SqlConnectionString);
 
-                config.For<AssessorDbContext>().Use(c => new AssessorDbContext(option.Options, _env.IsDevelopment()));
+                config.For<AssessorDbContext>().Use(c => new AssessorDbContext(option.Options));
 
                 config.Populate(services);
             });
@@ -168,9 +168,14 @@ namespace SFA.DAS.AssessorService.Application.Api
                     {
                         c.SwaggerEndpoint("/swagger/v1/swagger.json", "SFA.DAS.AssessorService.Application.Api v1");
                     })
-                    .UseAuthentication()
-                    .UseMiddleware(typeof(ErrorHandlingMiddleware))
-                    .UseMvc();
+                    .UseAuthentication();
+
+                if (!env.IsDevelopment())
+                {
+                    app.UseMiddleware(typeof(ErrorHandlingMiddleware));
+                }
+                    
+                app.UseMvc();
             }
             catch (Exception e)
             {

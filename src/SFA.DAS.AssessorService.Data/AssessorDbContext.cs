@@ -14,19 +14,16 @@ namespace SFA.DAS.AssessorService.Data
         {
         }
 
-        public AssessorDbContext(DbContextOptions<AssessorDbContext> options, bool migrate)
+        public AssessorDbContext(DbContextOptions<AssessorDbContext> options)
             : base(options)
         {
-            //if (migrate)
-            //{
-            //    Database.Migrate();
-            //}
         }
 
         public virtual DbSet<Certificate> Certificates { get; set; }
         public virtual DbSet<CertificateLog> CertificateLogs { get; set; }
         public virtual DbSet<Contact> Contacts { get; set; }
         public virtual DbSet<Organisation> Organisations { get; set; }
+        public virtual DbSet<Ilr> Ilrs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

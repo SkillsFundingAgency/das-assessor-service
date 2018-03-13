@@ -24,10 +24,10 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.SearchControllerTests
             contextAccessor.Setup(ca => ca.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")).Returns(new Claim("", "12345"));
             contextAccessor.Setup(ca => ca.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")).Returns(new Claim("", "username"));
 
-            searchApiClient.Setup(api => api.Search(It.Is<SearchQuery>(query => query.Surname == "Gouge" && query.Uln == "1234567890")))
+            searchApiClient.Setup(api => api.Search(It.Is<SearchQuery>(query => query.Surname == "Gouge" && query.Uln == 1234567890)))
                 .ReturnsAsync(new SearchResult() { Results = new List<Result>() { new Result() { Surname = "Gouge", Uln = "1234567890" } }.AsEnumerable() });
 
-            searchApiClient.Setup(api => api.Search(It.Is<SearchQuery>(query => query.Surname == "Smith" && query.Uln == "7777777777")))
+            searchApiClient.Setup(api => api.Search(It.Is<SearchQuery>(query => query.Surname == "Smith" && query.Uln == 7777777777)))
                 .ReturnsAsync(new SearchResult() { Results = new List<Result>() { }.AsEnumerable() });
 
             var orchestrator = new SearchOrchestrator(new Mock<ILogger<SearchController>>().Object, searchApiClient.Object,

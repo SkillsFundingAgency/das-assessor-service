@@ -13,7 +13,7 @@
             var optionsBuilder = new DbContextOptionsBuilder<AssessorDbContext>();
             // We'll have to find a way to either inject the connection string into here or grab it.
             optionsBuilder.UseSqlServer("Data Source=.\\SQLEXPRESS;Initial Catalog=AssessorDB;Integrated Security=True; MultipleActiveResultSets=True;");
-            return new AssessorDbContext(optionsBuilder.Options, true);
+            return new AssessorDbContext(optionsBuilder.Options);
         }
     }
 }
