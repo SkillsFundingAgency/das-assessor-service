@@ -116,7 +116,7 @@ namespace SFA.DAS.AssessorService.Application.Api
                 _logger.LogError(e, "Error during Startup Configure Services");
                 throw;
             }
-            
+
             return serviceProvider;
         }
 
@@ -170,11 +170,7 @@ namespace SFA.DAS.AssessorService.Application.Api
                     })
                     .UseAuthentication();
 
-                if (!env.IsDevelopment())
-                {
-                    app.UseMiddleware(typeof(ErrorHandlingMiddleware));
-                }
-                    
+                app.UseMiddleware(typeof(ErrorHandlingMiddleware));
                 app.UseMvc();
             }
             catch (Exception e)
@@ -182,7 +178,7 @@ namespace SFA.DAS.AssessorService.Application.Api
                 _logger.LogError(e, "Error during Startup Configure");
                 throw;
             }
-            
+
         }
     }
 }
