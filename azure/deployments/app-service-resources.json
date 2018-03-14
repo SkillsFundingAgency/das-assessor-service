@@ -84,7 +84,10 @@
             "properties": {
                 "sslState": "SniEnabled",
                 "thumbprint": "[reference(resourceId(parameters('sharedAppServicePlanResourceGroup'), 'Microsoft.Web/certificates', parameters('keyvaultCertificateName')), '2016-03-01').Thumbprint]"
-            }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"
+            ]
         }
     ],
     "outputs": {}
