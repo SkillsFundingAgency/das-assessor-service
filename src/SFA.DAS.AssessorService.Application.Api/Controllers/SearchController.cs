@@ -10,8 +10,6 @@ using SFA.DAS.AssessorService.Application.Api.Attributes;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
-using SFA.DAS.AssessorService.ExternalApis.Ilr;
-using SFA.DAS.AssessorService.ExternalApis.Ilr.Types;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
@@ -39,21 +37,26 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> Search([FromBody]SearchQuery searchQuery)
         {
-            var epaOrgId = await _organisationRepository.GetByUkPrn(searchQuery.UkPrn);
+            var thisEpao = await _organisationRepository.GetByUkPrn(searchQuery.UkPrn);
 
-            var standards = await _assessmentOrgsApiClient.FindAllStandardsByOrganisationIdAsync(epaOrgId
+            var theStandardsThisEpaoProvides = await _assessmentOrgsApiClient.FindAllStandardsByOrganisationIdAsync(thisEpao
                     .EndPointAssessorOrganisationId);
 
-            var searchResult =
-                Mapper.Map<List<SearchResult>>(_ilrRepository.Search(new SearchRequest()
-                {
-                    FamilyName = searchQuery.Surname,
-                    Uln = searchQuery.Uln,
-                    StandardIds = standards.Select(s => s.StandardCode).ToList()
-                }));
+            var ilrResults = _ilrRepository.Search(new SearchRequest
+            {
+                FamilyName = searchQuery.Surname,
+                Uln = searchQuery.Uln,
+                StandardIds = theStandardsThisEpaoProvides.Select(s => s.StandardCode).ToList()
+            });
+
+
+
+            var searchResult = Mapper.Map<List<SearchResult>>(ilrResults);
 
             foreach (var ilrResult in searchResult)
             {
+                // Yes, I know this is calling out to an API in a tight loop, but there will be very few searchResults.  Usually only one.
+                // Obviously if this does become a perf issue, then it'll need changing.
                 ilrResult.Standard = (await _assessmentOrgsApiClient.GetStandard(ilrResult.StdCode)).Title;
             }
 
