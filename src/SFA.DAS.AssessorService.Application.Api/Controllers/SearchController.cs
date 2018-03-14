@@ -33,7 +33,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [HttpPost(Name = "Search")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<SearchResult>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int)HttpStatusCode.NotFound, Type = typeof(string))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> Search([FromBody]SearchQuery searchQuery)
         {
