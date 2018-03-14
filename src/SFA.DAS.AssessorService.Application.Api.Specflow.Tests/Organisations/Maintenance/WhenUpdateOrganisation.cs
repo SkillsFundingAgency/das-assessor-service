@@ -46,7 +46,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.M
         {
             _organisationArguments = organisations.First();
 
-            var restClient = _organisationQueryService.SearchOrganisationByUkPrn(10000000);
+            int ukprn = _organisationArguments.EndPointAssessorUKPRN;
+            var restClient = _organisationQueryService.SearchOrganisationByUkPrn(ukprn);
             var organisation = restClient.Deserialise<OrganisationResponse>();
             organisation.EndPointAssessorName = _organisationArguments.EndPointAssessorName;
 
@@ -54,7 +55,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.M
 
             _organisationService.PutOrganisation(updateOrganisationRequest);
         }
-
 
         [When(@"I Update an Organisation With invalid Id")]
         public void WhenIUpdateAnOrganisationWithInvalidId(IEnumerable<dynamic> organisations)
@@ -73,7 +73,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.M
         public void WhenIUpdateAnOrganisationWithInvalidPrimaryContact(IEnumerable<dynamic> organisations)
         {
             _organisationArguments = organisations.First();
-            var restClient = _organisationQueryService.SearchOrganisationByUkPrn(10000000);
+
+            int ukprn = _organisationArguments.EndPointAssessorUKPRN;
+            var restClient = _organisationQueryService.SearchOrganisationByUkPrn(ukprn);
             var organisation = restClient.Deserialise<OrganisationResponse>();
 
             var updateOrganisationRequest = _updateOrganisationRequestBuilder.Build(organisation);
@@ -91,7 +93,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.M
             var contactResult = _contactQueryService.SearchForContactByUserName("jcoxhead");
             var contact = contactResult.Deserialise<ContactResponse>();
 
-            var restClient = _organisationQueryService.SearchOrganisationByUkPrn(10000000);
+            int ukprn = _organisationArguments.EndPointAssessorUKPRN;
+            var restClient = _organisationQueryService.SearchOrganisationByUkPrn(ukprn);
             var organisation = restClient.Deserialise<OrganisationResponse>();
             organisation.PrimaryContact = contact.UserName;
 

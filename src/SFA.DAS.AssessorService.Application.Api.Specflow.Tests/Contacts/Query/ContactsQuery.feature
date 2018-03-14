@@ -6,7 +6,7 @@ Feature: Query Contacts through the SFA.DAS.AssessorService.Application.Api
 
 Scenario: Retrieve All Contacts for an Organisation
 	Given System Has access to the SFA.DAS.AssessmentOrgs.Api	
-	When I Request All Contacts to be retrieved BY Organisation
+	When I Request All Contacts to be retrieved BY Organisation with Id 10033670
 	Then the response http status should be OK
 	And the API returns all Contacts for an Organisation
 

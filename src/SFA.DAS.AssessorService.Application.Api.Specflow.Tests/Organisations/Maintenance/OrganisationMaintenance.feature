@@ -47,7 +47,7 @@ Scenario: Update an Organisation Succesfully
 	Given System Has access to the SFA.DAS.AssessmentOrgs.Api	
 	When I Update an Organisation
 	| EndPointAssessorName | EndPointAssessorOrganisationId | EndPointAssessorUKPRN |
-	| Test Name            | 99999999                       | 10000000              |
+	| Test Name            | 99999999                       | 10033670              |
 	Then the response http status should be No Content
 	And the Update should have occured
                 
@@ -69,7 +69,7 @@ Scenario: Update an Organisation with valid PrimaryContact
 	Given System Has access to the SFA.DAS.AssessmentOrgs.Api	
 	When I Update an Organisation With valid Primary Contact
 	| EndPointAssessorName | EndPointAssessorOrganisationId | EndPointAssessorUKPRN |
-	| Test Name            | 1234                       | 10000000              |
+	| Test Name            | 1234                       | 10033670              |
 	Then the response http status should be No Content
 	And the Organisation Status should be persisted as Live
 
