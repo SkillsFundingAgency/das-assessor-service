@@ -91,11 +91,8 @@
                     "keyvaultCertificateName": {
                         "value": "[parameters('uiKeyvaultCertificateName')]"
                     },
-                    "sharedKeyVaultName": {
-                        "value": "[parameters('sharedKeyVaultName')]"
-                    },
-                    "sharedManagementResourceGroup": {
-                        "value": "[parameters('sharedManagementResourceGroup')]"
+                    "sharedAppServicePlanResourceGroup": {
+                        "value": "[parameters('sharedAppServicePlanResourceGroup')]"
                     },
                     "customHostname": {
                         "value": "[parameters('uiCustomHostname')]"
