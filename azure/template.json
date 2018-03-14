@@ -130,7 +130,7 @@
                         "value": "[parameters('apiKeyvaultCertificateName')]"
                     },
                     "sharedAppServicePlanResourceGroup": {
-                        "value": "[parameters('sharedManagementResourceGroup')]"
+                        "value": "[parameters('sharedAppServicePlanResourceGroup')]"
                     },
                     "customHostname": {
                         "value": "[parameters('apiCustomHostname')]"
