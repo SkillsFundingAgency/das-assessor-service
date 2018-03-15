@@ -3,13 +3,27 @@
 @model SFA.DAS.AssessorService.Web.ViewModels.Search.SearchViewModel
 
 @{
-    ViewBag.Title = (ViewData.ModelState.IsValid ? "" : "Error: ") + "Search for an apprentice";
+    ViewBag.Title = (Model?.SearchResults != null ? "0 results found: " : ViewData.ModelState.IsValid ? "" : "Error: ") + "Search for an apprentice";
     Layout = "_Layout";
 }
 
 <div class="grid-row">
     <div class="column-two-thirds">
         <h1 class="heading-large">Search for an apprentice</h1>
+
+        @if (Model?.SearchResults != null)
+        {
+            if (!Model.SearchResults.Any())
+            {
+                <h2 class="heading-medium">0 results found</h2>
+
+                <p class="heading-medium">Please try:</p>
+                <ul class="list list-bullet">
+                    <li>checking the spelling of the last name</li>
+                    <li>make sure the ULN is correct for the apprentice</li>
+                </ul>
+            }
+        }
 
         <form method="post">
             @if (!ViewData.ModelState.IsValid)
@@ -18,22 +32,26 @@
                     <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
                         There are errors with your search
                     </h2>
-                    <p>
-
-                    </p>
                     <ul class="error-summary-list">
-                        <li><a sfa-validation-for="Uln"></a></li>
                         <li><a sfa-validation-for="Surname"></a></li>
+                        <li><a sfa-validation-for="Uln"></a></li>
                     </ul>
                 </div>
             }
 
             <div class="info-summary">
                 <h3 class="heading-medium">Only record successful assessments</h3>
-                <p>You don't need to record failed assessments. Please search for the apprentice again once they have passed.</p>
             </div>
 
             <fieldset>
+
+                <div class="form-group" sfa-validation-for="Surname" sfa-validationerror-class="form-group-error">
+                    <label class="form-label" for="surname">
+                        <span class="form-label-bold">@Localizer["Lastname"]</span>
+                        <span class="error-message" asp-validation-for="Surname"></span>
+                    </label>
+                    <input class="form-control"  sfa-validation-for="Surname" sfa-validationerror-class="form-control-error" asp-for="Surname" type="text" maxlength="10" />
+                </div>
 
                 <div class="form-group" sfa-validation-for="Uln" sfa-validationerror-class="form-group-error">
                     <label class="form-label" for="Uln">
@@ -41,20 +59,12 @@
                         <span class="form-hint">A ULN is made up of exactly 10 numbers</span>
                         <span class="error-message" asp-validation-for="Uln"></span>
                     </label>
-                    <input class="form-control" asp-for="Uln" type="text" sfa-validation-for="Uln" sfa-validationerror-class="form-control-error" maxlength="10"/>
-                </div>
-
-                <div class="form-group" sfa-validation-for="Surname" sfa-validationerror-class="form-group-error">
-                    <label class="form-label" for="surname">
-                        <span class="form-label-bold">@Localizer["Lastname"]</span>
-                        <span class="error-message" asp-validation-for="Surname"></span>
-                    </label>
-                    <input class="form-control"  sfa-validation-for="Surname" sfa-validationerror-class="form-control-error" asp-for="Surname" type="text" />
+                    <input class="form-control" asp-for="Uln" type="text" sfa-validation-for="Uln" sfa-validationerror-class="form-control-error" maxlength="10" />
                 </div>
 
                 <details role="group">
                     <summary role="button" aria-controls="what-is-a-unique-learner-number" aria-expanded="false"><span class="summary">What is a unique learner number (ULN)?</span></summary>
-                    <div class="text" id="what-is-a-unique-learner-number" aria-hidden="true">
+                    <div class="text panel panel-border-narrow" id="what-is-a-unique-learner-number" aria-hidden="true">
                         <p>
                             Each apprentice has a unique learner number (ULN) that is used to identify them. It is ten digits long and contains only numbers.
                         </p>
@@ -69,12 +79,3 @@
         </form>
     </div>
 </div>
-
-@if (Model?.SearchResults != null)
-{
-    if (!Model.SearchResults.Any())
-    {
-        <h3 class="heading-medium">Your search returned no results</h3>
-        <p>Please check the information submitted above.</p>
-    }
-}

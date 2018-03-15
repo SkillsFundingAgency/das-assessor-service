@@ -12,9 +12,6 @@
 <div class="grid-row">
     <div class="column-two-thirds">
         @if(Model.SearchResults.Count() == 1) {
-            <hr>
-                <p>Single result</p>
-            <hr>
             <h1 class="heading-large">Confirm apprentice</h1>
             <div class="form-group">
                 <fieldset>
@@ -34,9 +31,6 @@
         }
         else
         {
-            <hr>
-                <p>Multiple results</p>
-            <hr>
             <h1 class="heading-large">The apprentice is enrolled on more than one apprenticeship</h1>
             <p>Select the standard that you would like to record an assessment for.</p>
             <div class="form-group">
