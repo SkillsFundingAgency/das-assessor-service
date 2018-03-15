@@ -10,9 +10,9 @@ Scenario: Retrieve All Organisations
 	Then the response http status should be OK
 	And the API returns all Organisations
 
-Scenario: Search for an Organisation using a ukprn set to 10000000
+Scenario: Search for an Organisation using a ukprn set to 10033670
 	Given System Has access to the SFA.DAS.AssessmentOrgs.Api	
-	When I search for an organisation with its ukprn set to 10000000
+	When I search for an organisation with its ukprn set to 10033670
 	Then the response http status should be OK
 	And the API returns an appropriate Organisation
 

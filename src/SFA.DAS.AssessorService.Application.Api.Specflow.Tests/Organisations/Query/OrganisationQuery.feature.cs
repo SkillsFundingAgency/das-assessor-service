@@ -86,16 +86,16 @@ this.ScenarioSetup(scenarioInfo);
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Search for an Organisation using a ukprn set to 10000000")]
-        public virtual void SearchForAnOrganisationUsingAUkprnSetTo10000000()
+        [NUnit.Framework.DescriptionAttribute("Search for an Organisation using a ukprn set to 10033670")]
+        public virtual void SearchForAnOrganisationUsingAUkprnSetTo10033670()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Search for an Organisation using a ukprn set to 10000000", ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Search for an Organisation using a ukprn set to 10033670", ((string[])(null)));
 #line 13
 this.ScenarioSetup(scenarioInfo);
 #line 14
  testRunner.Given("System Has access to the SFA.DAS.AssessmentOrgs.Api", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 15
- testRunner.When("I search for an organisation with its ukprn set to 10000000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("I search for an organisation with its ukprn set to 10033670", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 16
  testRunner.Then("the response http status should be OK", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 17

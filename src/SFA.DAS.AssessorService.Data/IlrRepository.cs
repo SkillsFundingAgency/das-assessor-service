@@ -18,14 +18,14 @@ namespace SFA.DAS.AssessorService.Data
 
         public IEnumerable<Ilr> Search(SearchRequest searchRequest)
         {
-            var response = _context.Ilrs.Where(r =>
+            var learnerRecords = _context.Ilrs.Where(r =>
                 string.Equals(r.FamilyName.Trim(), searchRequest.FamilyName.Trim(), StringComparison.CurrentCultureIgnoreCase)
                 && r.Uln == searchRequest.Uln
-                && searchRequest.StandardIds.Contains(r.StdCode));
+                && searchRequest.StandardIds.Contains(r.StdCode)).ToList();
+
+            var response = learnerRecords.OrderByDescending(ilr => ilr.LearnStartDate).Take(1);
 
             return response;
         }
     }
-
-    
 }

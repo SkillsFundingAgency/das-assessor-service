@@ -26,10 +26,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Query
             _contactQueryService = contactQueryService;
         }
 
-        [When(@"I Request All Contacts to be retrieved BY Organisation")]
-        public void WhenIRequestAllContactsToBeRetrievedBYOrganisation()
-        {
-            _restClientResult = _organisationQueryService.SearchOrganisationByUkPrn(10000000);
+        [When(@"I Request All Contacts to be retrieved BY Organisation with Id (.*)")]
+        public void WhenIRequestAllContactsToBeRetrievedBYOrganisationWithId(int p0)
+        { 
+            _restClientResult = _organisationQueryService.SearchOrganisationByUkPrn(p0);
             var organisation = _restClientResult.Deserialise<OrganisationResponse>();
 
             _restClientResult =

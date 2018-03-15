@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public DateTime LearnStartDate { get; set; }
         public string EpaOrgId { get; set; }
         public string Outcome { get; set; }
-        public DateTime AchDate { get; set; }
+        public DateTime? AchDate { get; set; }
         public string OutGrade { get; set; }
     }
 }

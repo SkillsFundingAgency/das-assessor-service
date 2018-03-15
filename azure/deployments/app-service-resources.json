@@ -20,10 +20,7 @@
         "keyvaultCertificateName": {
             "type": "string"
         },
-        "sharedKeyVaultName": {
-            "type": "string"
-        },
-        "sharedManagementResourceGroup": {
+        "sharedAppServicePlanResourceGroup": {
             "type": "string"
         },
         "customHostname": {
@@ -73,24 +70,10 @@
                         }
                     ]
                 },
-                "httpsOnly" : true
+                "httpsOnly": true
             },
             "dependsOn": [
                 "[resourceId('Microsoft.Insights/components', parameters('appServiceName'))]"
-            ]
-        },
-        {
-            "type": "Microsoft.Web/certificates",
-            "name": "[parameters('keyvaultCertificateName')]",
-            "apiVersion": "2016-03-01",
-            "location": "[resourceGroup().location]",
-            "properties": {
-                "keyVaultId": "[resourceId(parameters('sharedManagementResourceGroup'), 'Microsoft.KeyVault/vaults/', parameters('sharedKeyVaultName'))]",
-                "keyVaultSecretName": "[parameters('keyvaultCertificateName')]",
-                "serverFarmId": "[parameters('appServicePlanId')]"
-            },
-            "dependsOn": [
-                "[concat('Microsoft.Web/sites/',parameters('appServiceName'))]"
             ]
         },
         {
@@ -100,10 +83,10 @@
             "location": "[resourceGroup().location]",
             "properties": {
                 "sslState": "SniEnabled",
-                "thumbprint": "[reference(resourceId('Microsoft.Web/certificates', parameters('keyvaultCertificateName'))).Thumbprint]"
+                "thumbprint": "[reference(resourceId(parameters('sharedAppServicePlanResourceGroup'), 'Microsoft.Web/certificates', parameters('keyvaultCertificateName')), '2016-03-01').Thumbprint]"
             },
             "dependsOn": [
-                "[concat('Microsoft.Web/certificates/',parameters('keyvaultCertificateName'))]"
+                "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"
             ]
         }
     ],
