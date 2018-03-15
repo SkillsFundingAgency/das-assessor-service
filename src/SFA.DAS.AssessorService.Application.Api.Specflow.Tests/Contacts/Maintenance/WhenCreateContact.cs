@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
     {
         private readonly ContactService _contactService;
         private readonly CreateContactBuilder _createContactBuilder;
-        private readonly CreateOrganisationBuilder _createOrganisationBuilder;
+        private readonly CreateOrganisationRequestBuilder _createOrganisationBuilder;
         private readonly IDbConnection _dbconnection;
         private readonly OrganisationService _organisationService;
         private readonly OrganisationQueryService _organisationQueryService;
@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
             OrganisationService organisationService,
             OrganisationQueryService organisationQueryService,
             ContactService contactService,
-            CreateOrganisationBuilder createOrganisationBuilder,
+            CreateOrganisationRequestBuilder createOrganisationBuilder,
             CreateContactBuilder createContactBuilder,
             IDbConnection dbconnection)
         {

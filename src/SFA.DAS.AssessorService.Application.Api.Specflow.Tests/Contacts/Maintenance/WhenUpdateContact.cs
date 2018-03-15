@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
     {
         private readonly ContactQueryService _contactQueryService;
         private readonly ContactService _contactService;
-        private readonly CreateOrganisationBuilder _createOrganisationBuilder;
+        private readonly CreateOrganisationRequestBuilder _createOrganisationBuilder;
         private readonly IDbConnection _dbconnection;
         private readonly OrganisationService _organisationService;
         private dynamic _contactArgument;
@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
 
         public WhenUpdateContact(RestClientResult restClient,
             OrganisationService organisationService,
-            CreateOrganisationBuilder createOrganisationBuilder,
+            CreateOrganisationRequestBuilder createOrganisationBuilder,
             ContactService contactService,
             ContactQueryService contactQueryService,
             IDbConnection dbconnection)

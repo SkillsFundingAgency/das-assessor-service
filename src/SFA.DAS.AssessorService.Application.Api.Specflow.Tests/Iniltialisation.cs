@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests
+﻿using AutoMapper;
+
+namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests
 {
     using TechTalk.SpecFlow;
 
@@ -6,9 +8,14 @@
     public class Initialisation
     {
         [BeforeTestRun]
-        public static void Setip()
+        public static void Setup()
         {
             Bootstrapper.Initialise();
+
+            Mapper.Initialize(cfg =>
+            {
+              
+            });
         }
     }
 }

@@ -13,12 +13,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers
     public class CreateOrganisationHandler : IRequestHandler<CreateOrganisationRequest, OrganisationResponse>
     {
         private readonly IOrganisationRepository _organisationRepository;
+        private readonly IContactRepository _contactRepository;    
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
 
-        public CreateOrganisationHandler(IOrganisationRepository organisationRepository,
-            IOrganisationQueryRepository organisationQueryRepository)
+        public CreateOrganisationHandler(IOrganisationRepository organisationRepository,                   
+            IOrganisationQueryRepository organisationQueryRepository,
+            IContactRepository contactRepository)
         {
             _organisationRepository = organisationRepository;
+            _contactRepository = contactRepository;          
             _organisationQueryRepository = organisationQueryRepository;
         }
 
@@ -37,14 +40,21 @@ namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers
             if (string.IsNullOrEmpty(createOrganisationRequest.PrimaryContact))
             {
                 createOrganisationDomainModel.Status = OrganisationStatus.New;
+
+                return await _organisationRepository.CreateNewOrganisation(createOrganisationDomainModel);
             }
             else
             {
                 createOrganisationDomainModel.Status = OrganisationStatus.Live;
                 createOrganisationDomainModel.PrimaryContact = createOrganisationRequest.PrimaryContact;
-            }
 
-            return await _organisationRepository.CreateNewOrganisation(createOrganisationDomainModel);
+                var result = await _organisationRepository.CreateNewOrganisation(createOrganisationDomainModel);
+
+                await _contactRepository.LinkOrganisation(createOrganisationDomainModel.EndPointAssessorOrganisationId,
+                    createOrganisationDomainModel.PrimaryContact);
+
+                return result;
+            }          
         }
 
         private async Task<OrganisationResponse> UpdateOrganisationIfExists(CreateOrganisationRequest createOrganisationRequest)
