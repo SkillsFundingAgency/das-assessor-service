@@ -1,19 +1,19 @@
 ﻿CREATE TABLE [dbo].[Certificates](
-	[Id] [uniqueidentifier] NOT NULL,
+	[Id] [uniqueidentifier] NOT NULL DEFAULT NEWID(),
 	[CertificateData] [nvarchar](max) NOT NULL,
 	[CreatedAt] [datetime2](7) NOT NULL,
 	[CreatedBy] [nvarchar](30) NOT NULL,
 	[DeletedAt] [datetime2](7) NULL,
 	[DeletedBy] [nvarchar](30) NULL,
-	[EndPointAssessorCertificateId] [int] NOT NULL,
+	[CertificateReference] VARCHAR(50) NOT NULL,
 	[OrganisationId] [uniqueidentifier] NOT NULL,
 	[Status] [nvarchar](20) NOT NULL,
 	[UpdatedAt] [datetime2](7) NULL,
-	[UpdatedBy] [nvarchar](30) NULL,
- CONSTRAINT [PK_Certificates] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	[UpdatedBy] [nvarchar](30) NULL, 
+    [Uln] BIGINT NOT NULL, 
+    [StandardCode] NVARCHAR(4) NOT NULL, 
+    [ProviderUkPrn] INT NOT NULL, 
+    CONSTRAINT [PK_Certificates] PRIMARY KEY ([Id]),
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 
