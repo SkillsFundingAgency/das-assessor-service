@@ -3,14 +3,14 @@
 @model SFA.DAS.AssessorService.Web.ViewModels.Search.SearchViewModel
 
 @{
-    ViewBag.Title = "Search results";
+    ViewBag.Title = "Confirm apprentice";
     Layout = "_Layout";
 }
 
-<a class="link-back" asp-controller="Search" asp-action="Index">Back</a>
 
 <div class="grid-row">
     <div class="column-two-thirds">
+        <a class="link-back" asp-controller="Search" asp-action="Index">Back</a>
         @if(Model.SearchResults.Count() == 1) {
             <h1 class="heading-large">Confirm apprentice</h1>
             <div class="form-group">
@@ -21,7 +21,7 @@
                         </li>
                         <li>
                             <p><span class="bold">ULN:</span> @Model.SearchResults.First().Uln</p>
-                        </li>
+                         </li>
                         <li>
                             <p><span class="bold">Standard:</span> @Model.SearchResults.First().Standard</p>
                         </li>
