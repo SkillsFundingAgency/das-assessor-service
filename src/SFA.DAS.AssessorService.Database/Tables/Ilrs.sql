@@ -6,7 +6,7 @@
     [FamilyName] NVARCHAR(MAX) NULL, 
     [DateOfBirth] DATETIME2 NULL, 
     [Sex] NVARCHAR(50) NULL, 
-    [UkPrn] BIGINT NULL, 
+    [UkPrn] INT NULL, 
     [StdCode] NVARCHAR(50) NULL, 
     [LearnStartDate] DATETIME2 NULL, 
     [EpaOrgId] NVARCHAR(50) NULL, 

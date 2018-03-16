@@ -1,4 +1,4 @@
-﻿@model SFA.DAS.AssessorService.Web.Controllers.CertificateViewModel
+﻿@model SFA.DAS.AssessorService.Web.Controllers.CertificateGradeViewModel
 
 @{
     ViewBag.Title = "title";
@@ -10,25 +10,26 @@
         <h1 class="heading-large">What grade did the apprentice achieve?</h1>
         <form type="post" asp-controller="Certificate" asp-method="Grade">
             @Html.HiddenFor(c => c.Id)
-            <div class="form-group">
+            <div class="form-group" sfa-validation-for="SelectedGrade" sfa-validationerror-class="form-group-error">
                 <fieldset>
                     @foreach (var grade in Model.Grades)
                     {
                         <div class="multiple-choice">
-                            <input asp-for="SelectedGrade" id="@grade.Text.Replace(" ","_")" type="radio" value="@grade.Text" />
-                            <label for="@grade.Text.Replace(" ","_")">
+                            <input asp-for="SelectedGrade" id="@grade.Text.Replace(" ", "_")" type="radio" value="@grade.Text" />
+                            <label for="@grade.Text.Replace(" ", "_")">
                                 @grade.Text
                             </label>
                         </div>
                     }
                 </fieldset>
+                <span class="error-message" asp-validation-for="SelectedGrade"></span>
             </div>
 
             <details role="group">
                 <summary role="button" aria-controls="details-content-0" aria-expanded="false"><span class="summary">Information about grades</span></summary>
                 <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
                     <p>
-                        A grade is awarded for completion of the standard.  For some standards there will be no grade awarded.  In these cases please select "Not applicable".
+                        A grade is awarded for completion of the standard. For some standards there will be no grade awarded. In these cases please select "Not applicable".
                     </p>
                 </div>
             </details>
