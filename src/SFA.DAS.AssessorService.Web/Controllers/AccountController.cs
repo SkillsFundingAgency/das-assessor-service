@@ -48,7 +48,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             switch (loginResult)
             {
                 case LoginResult.Valid:
-                    return RedirectToAction("Index", "Organisation");
+                    return RedirectToAction("Index", "Search");
                 case LoginResult.NotRegistered:
                     return RedirectToAction("NotRegistered", "Home");
                 case LoginResult.InvalidRole:

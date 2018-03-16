@@ -56,7 +56,7 @@ namespace SFA.DAS.AssessorService.Web
         //        });
         //    }
 
-            services.AddSession();
+            services.AddSession(opt => {opt.IdleTimeout = TimeSpan.FromHours(1);});
 
             return ConfigureIOC(services);
         }
