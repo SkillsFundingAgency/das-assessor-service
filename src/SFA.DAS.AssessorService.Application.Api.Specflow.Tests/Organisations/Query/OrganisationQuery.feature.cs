@@ -87,18 +87,20 @@ this.ScenarioSetup(scenarioInfo);
         
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Search for an Organisation using a ukprn set to 10033670")]
+        [NUnit.Framework.CategoryAttribute("OrganisationSetToValidValue")]
         public virtual void SearchForAnOrganisationUsingAUkprnSetTo10033670()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Search for an Organisation using a ukprn set to 10033670", ((string[])(null)));
-#line 13
-this.ScenarioSetup(scenarioInfo);
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Search for an Organisation using a ukprn set to 10033670", new string[] {
+                        "OrganisationSetToValidValue"});
 #line 14
- testRunner.Given("System Has access to the SFA.DAS.AssessmentOrgs.Api", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+this.ScenarioSetup(scenarioInfo);
 #line 15
- testRunner.When("I search for an organisation with its ukprn set to 10033670", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.Given("System Has access to the SFA.DAS.AssessmentOrgs.Api", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 16
- testRunner.Then("the response http status should be OK", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.When("I search for an organisation with its ukprn set to 10033670", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 17
+ testRunner.Then("the response http status should be OK", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 18
  testRunner.And("the API returns an appropriate Organisation", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
@@ -109,15 +111,15 @@ this.ScenarioSetup(scenarioInfo);
         public virtual void SearchForAnOrganisationUsingAUkprnSetTo12()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Search for an Organisation using a ukprn set to 12", ((string[])(null)));
-#line 19
-this.ScenarioSetup(scenarioInfo);
 #line 20
- testRunner.Given("System Has access to the SFA.DAS.AssessmentOrgs.Api", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+this.ScenarioSetup(scenarioInfo);
 #line 21
- testRunner.When("I search for an organisation with its ukprn set to 12", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.Given("System Has access to the SFA.DAS.AssessmentOrgs.Api", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 22
- testRunner.Then("the response http status should be Bad Request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.When("I search for an organisation with its ukprn set to 12", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 23
+ testRunner.Then("the response http status should be Bad Request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 24
  testRunner.And("the response message should contain A valid UKPRN as defined in the UK Register o" +
                     "f Learning Providers (UKRLP) is 8 digits in the format 10000000 – 99999999", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
@@ -129,15 +131,15 @@ this.ScenarioSetup(scenarioInfo);
         public virtual void SearchForAnOrganisationUsingAUkprnWhichDoesNotExist()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Search for an Organisation using a ukprn which does not exist", ((string[])(null)));
-#line 25
-this.ScenarioSetup(scenarioInfo);
 #line 26
- testRunner.Given("System Has access to the SFA.DAS.AssessmentOrgs.Api", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+this.ScenarioSetup(scenarioInfo);
 #line 27
- testRunner.When("I search for an organisation with its ukprn set to 10029999", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.Given("System Has access to the SFA.DAS.AssessmentOrgs.Api", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 28
- testRunner.Then("the response http status should be Not Found", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.When("I search for an organisation with its ukprn set to invalid organisation 10029999", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 29
+ testRunner.Then("the response http status should be Not Found", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 30
  testRunner.And("the response message should contain No organisation with ukprn 10029999 found", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();

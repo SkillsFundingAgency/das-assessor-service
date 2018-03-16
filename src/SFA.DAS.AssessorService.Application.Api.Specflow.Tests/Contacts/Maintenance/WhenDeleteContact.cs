@@ -3,13 +3,10 @@ using System.Data;
 using System.Linq;
 using Dapper;
 using FluentAssertions;
-using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Maintenance.Services;
-using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Query;
-using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Extensions;
 using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.Helpers;
-using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.Query.Services;
+using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.Maintenance.Services;
 using SFA.DAS.AssessorService.Domain.Consts;
 using TechTalk.SpecFlow;
 
@@ -17,29 +14,25 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
 {
     [Binding]
     public sealed class WhenDeleteContact
-    {
-        private readonly ContactQueryService _contactQueryService;
+    {       
         private readonly ContactService _contactService;
         private readonly CreateContactBuilder _createContactBuilder;
-        private readonly IDbConnection _dbconnection;
-        private readonly OrganisationQueryService _organisationQueryService;
-        private dynamic _contactArgument;
-        private OrganisationResponse _organisationRetrieved;
+        private readonly IDbConnection _dbconnection;        
+        private readonly OrganisationService _organisationService;
+        private dynamic _contactArgument;     
 
         private List<OrganisationResponse> _organisations = new List<OrganisationResponse>();
         private RestClientResult _restClient;
 
-        public WhenDeleteContact(RestClientResult restClient,
-            OrganisationQueryService organisationQueryService,
-            ContactService contactService,
-            ContactQueryService contactQueryService,
+        public WhenDeleteContact(RestClientResult restClient,          
+            OrganisationService organisationService,
+            ContactService contactService,            
             CreateContactBuilder createContactBuilder,
             IDbConnection dbconnection)
         {
-            _restClient = restClient;
-            _organisationQueryService = organisationQueryService;
-            _contactService = contactService;
-            _contactQueryService = contactQueryService;
+            _restClient = restClient;         
+            _organisationService = organisationService;
+            _contactService = contactService;            
             _createContactBuilder = createContactBuilder;
             _dbconnection = dbconnection;
         }
@@ -49,12 +42,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
         {
             _contactArgument = contactArguments.First();
 
-            _restClient = _organisationQueryService.GetOrganisations();
-            _organisations = _restClient.Deserialise<List<OrganisationResponse>>().ToList();
-
-            var createContactRequest = _createContactBuilder.Build(_contactArgument,
-                _organisations.First().EndPointAssessorOrganisationId);
-            _contactService.PostContact(createContactRequest);
+            CreateOrganisation();
+            CreateContactRequest createContactRequest = CreateContact();
 
             _contactService.DeleteContact(createContactRequest.UserName);
         }
@@ -65,12 +54,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
         {
             _contactArgument = contactArguments.First();
 
-            _restClient = _organisationQueryService.GetOrganisations();
-            _organisations = _restClient.Deserialise<List<OrganisationResponse>>().ToList();
-
-            var createContactRequest = _createContactBuilder.Build(_contactArgument,
-                _organisations.First().EndPointAssessorOrganisationId);
-            _contactService.PostContact(createContactRequest);
+            CreateOrganisation();
+            CreateContactRequest createContactRequest = CreateContact();
 
             _contactService.DeleteContact(createContactRequest.UserName);
             _contactService.DeleteContact(createContactRequest.UserName);
@@ -86,13 +71,27 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
             contact.Status.Should().Be(OrganisationStatus.Deleted);
         }
 
-        private void CreateOrganisation(CreateOrganisationRequest createOrganisationRequest)
+        private void CreateOrganisation()
         {
-            _restClient.HttpResponseMessage = _restClient.HttpClient.PostAsJsonAsync(
-                "api/v1/organisations", createOrganisationRequest).Result;
-            _restClient.JsonResult = _restClient.HttpResponseMessage.Content.ReadAsStringAsync().Result;
+            var createOrganisationRequest = new CreateOrganisationRequest
+            {
+                EndPointAssessorName = "Test User",
+                EndPointAssessorOrganisationId = _contactArgument.EndPointAssessorOrganisationId.ToString(),
+                EndPointAssessorUkprn = 99953456,
+                PrimaryContact = null
+            };
 
-            _organisationRetrieved = JsonConvert.DeserializeObject<OrganisationResponse>(_restClient.JsonResult);
+            _restClient = _organisationService.PostOrganisation(createOrganisationRequest);
         }
+
+
+        private CreateContactRequest CreateContact()
+        {
+            var createContactRequest = _createContactBuilder.Build(_contactArgument,
+                _contactArgument.EndPointAssessorOrganisationId.ToString());
+            _contactService.PostContact(createContactRequest);
+            return createContactRequest;
+        }
+
     }
 }
