@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.M
     [Binding]
     public sealed class WhenDeleteOrganisation
     {
-        private readonly CreateOrganisationBuilder _createOrganisationBuilder;
+        private readonly CreateOrganisationRequestBuilder _createOrganisationBuilder;
         private readonly IDbConnection _dbconnection;
         private readonly OrganisationService _organisationService;
         private dynamic _organisationArgument;
@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.M
         private RestClientResult _restClientResult;
 
         public WhenDeleteOrganisation(RestClientResult restClientResult,
-            CreateOrganisationBuilder createOrganisationBuilder,
+            CreateOrganisationRequestBuilder createOrganisationBuilder,
             OrganisationService organisationService,
             IDbConnection dbconnection)
         {

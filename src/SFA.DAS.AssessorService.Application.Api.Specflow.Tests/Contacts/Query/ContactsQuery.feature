@@ -13,8 +13,8 @@ Scenario: Retrieve All Contacts for an Organisation
 Scenario: Search Contact for an Organisation By Username
 	Given System Has access to the SFA.DAS.AssessmentOrgs.Api	
 	When Client Searches Contacts By Username
-	| username | emailaddress |
-	|jcoxhead|jcoxhead@gmail.com|
+	| EndPointAssessorOrganisationId | UserName | EmailAddress |
+	| 10033670                       |jcoxhead | jcoxhead@gmail.com|
 	Then the response http status should be OK
 	And the API returns a valid Contact
 

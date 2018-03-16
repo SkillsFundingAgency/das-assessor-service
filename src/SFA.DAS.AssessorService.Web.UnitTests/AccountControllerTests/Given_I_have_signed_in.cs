@@ -60,7 +60,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
         }
 
         [Test]
-        public void And_I_am_valid_Then_redirect_to_Organisation_page()
+        public void And_I_am_valid_Then_redirect_to_Search_page()
         {
             _loginOrchestrator.Setup(o => o.Login(It.IsAny<HttpContext>())).ReturnsAsync(LoginResult.Valid);
 
@@ -69,7 +69,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
             result.Should().BeOfType<RedirectToActionResult>();
 
             var redirectResult = result as RedirectToActionResult;
-            redirectResult.ControllerName.Should().Be("Organisation");
+            redirectResult.ControllerName.Should().Be("Search");
             redirectResult.ActionName.Should().Be("Index");
         }
 

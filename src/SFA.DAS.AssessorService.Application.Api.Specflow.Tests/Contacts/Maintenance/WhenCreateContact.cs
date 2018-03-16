@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
     {
         private readonly ContactService _contactService;
         private readonly CreateContactBuilder _createContactBuilder;
-        private readonly CreateOrganisationBuilder _createOrganisationBuilder;
+        private readonly CreateOrganisationRequestBuilder _createOrganisationBuilder;
         private readonly IDbConnection _dbconnection;
         private readonly OrganisationService _organisationService;
         private readonly OrganisationQueryService _organisationQueryService;
@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
             OrganisationService organisationService,
             OrganisationQueryService organisationQueryService,
             ContactService contactService,
-            CreateOrganisationBuilder createOrganisationBuilder,
+            CreateOrganisationRequestBuilder createOrganisationBuilder,
             CreateContactBuilder createContactBuilder,
             IDbConnection dbconnection)
         {
@@ -118,9 +118,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
             _restClient = _organisationService.PostOrganisation(_createOrganisationRequest);
 
             var contactRequest = _createContactBuilder.Build(_contactArgument, _createOrganisationRequest.EndPointAssessorOrganisationId);
-            _restClient = _contactService.PostContact(contactRequest);
-
-            contactRequest = _createContactBuilder.Build(_contactArgument, _createOrganisationRequest.EndPointAssessorOrganisationId);
+            _restClient = _contactService.PostContact(contactRequest);        
             _restClient = _contactService.PostContact(contactRequest);
             _contactResponse = _restClient.Deserialise<ContactResponse>();
 

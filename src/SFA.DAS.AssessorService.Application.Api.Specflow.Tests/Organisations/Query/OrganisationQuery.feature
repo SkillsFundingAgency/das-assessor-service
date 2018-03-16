@@ -10,6 +10,7 @@ Scenario: Retrieve All Organisations
 	Then the response http status should be OK
 	And the API returns all Organisations
 
+@OrganisationSetToValidValue
 Scenario: Search for an Organisation using a ukprn set to 10033670
 	Given System Has access to the SFA.DAS.AssessmentOrgs.Api	
 	When I search for an organisation with its ukprn set to 10033670
@@ -24,6 +25,6 @@ Scenario: Search for an Organisation using a ukprn set to 12
 
 Scenario: Search for an Organisation using a ukprn which does not exist 
 	Given System Has access to the SFA.DAS.AssessmentOrgs.Api	
-	When I search for an organisation with its ukprn set to 10029999
+	When I search for an organisation with its ukprn set to invalid organisation 10029999
 	Then the response http status should be Not Found
 	And the response message should contain No organisation with ukprn 10029999 found

@@ -1,24 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Domain.JsonData
 {
     public class CertificateData
     {
-        public virtual Organisation Organisation { get; set; }
-
-        public int EndPointAssessorCertificateId { get; set; }
-        public string EndPointAssessorOrganisationId { get; set; }
-
-        public int Uln { get; set; }
-
         public string LearnerGivenNames { get; set; }
         public string LearnerFamilyName { get; set; }
         public DateTime LearnerDateofBirth { get; set; }
         public string LearnerSex { get; set; }
-        public int ProviderUkprn { get; set; }
-        public int StandardCode { get; set; }
         public string StandardName { get; set; }
         public int StandardLevel { get; set; }
         public DateTime StandardPublicationDate { get; set; }
@@ -31,13 +20,9 @@ namespace SFA.DAS.AssessorService.Domain.JsonData
         public string ContactPostCode { get; set; }
         public string Registration { get; set; }
         public DateTime LearningStartDate { get; set; }
-
         public string AchievementOutcome { get; set; }
         public DateTime AchievementDate { get; set; }
-
         public string CourseOption { get; set; }
         public string OverallGrade { get; set; }
-
-        public ICollection<CertificateLog> CertificateLogs { get; set; }
     }
 }
