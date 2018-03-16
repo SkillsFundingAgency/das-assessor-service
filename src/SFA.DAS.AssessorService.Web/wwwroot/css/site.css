@@ -2,6 +2,10 @@
   margin-bottom: 30px;
 }
 
+.button:focus {
+  position: inherit;
+}
+
 .govuk-related-items {
   margin-top: 30px;
   border-top: 10px solid #005ea5;
@@ -71,6 +75,7 @@
   color: #bae1ff;
   font-weight: normal;
   font-size: 16px;
+  padding-left: 5px;
 }
 
 #header-user--nav a {

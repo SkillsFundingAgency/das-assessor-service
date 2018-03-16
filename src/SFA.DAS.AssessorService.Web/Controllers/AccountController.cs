@@ -48,7 +48,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             switch (loginResult)
             {
                 case LoginResult.Valid:
-                    return RedirectToAction("Index", "Organisation");
+                    return RedirectToAction("Index", "Search");
                 case LoginResult.NotRegistered:
                     return RedirectToAction("NotRegistered", "Home");
                 case LoginResult.InvalidRole:
@@ -63,6 +63,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             var callbackUrl = Url.Action(nameof(SignedOut), "Account", values: null, protocol: Request.Scheme);
 
+            foreach (var cookie in Request.Cookies.Keys)
+            {
+                Response.Cookies.Delete(cookie);
+            }
+            
             return SignOut(
                 new AuthenticationProperties { RedirectUri = callbackUrl },
                 CookieAuthenticationDefaults.AuthenticationScheme,

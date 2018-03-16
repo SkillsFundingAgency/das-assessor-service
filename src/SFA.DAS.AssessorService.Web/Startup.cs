@@ -37,7 +37,7 @@ namespace SFA.DAS.AssessorService.Web
             Configuration = ConfigurationService.GetConfig(_config["EnvironmentName"], _config["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
             services.AddAndConfigureAuthentication(Configuration);
-            services.AddMvc()
+            services.AddMvc(options => { options.Filters.Add<CheckSessionFilter>(); })
                 .AddControllersAsServices()
                 .AddSessionStateTempDataProvider()
                 .AddViewLocalization(opts => { opts.ResourcesPath = "Resources"; })
@@ -56,7 +56,7 @@ namespace SFA.DAS.AssessorService.Web
         //        });
         //    }
 
-            services.AddSession();
+            services.AddSession(opt => {opt.IdleTimeout = TimeSpan.FromHours(1);});
 
             return ConfigureIOC(services);
         }
@@ -73,8 +73,7 @@ namespace SFA.DAS.AssessorService.Web
                     _.WithDefaultConventions();
                 });
 
-                config.For<IHttpClient>().Use<StandardHttpClient>();
-                config.For<ICache>().Use<SessionCache>();
+                //config.For<ICache>().Use<SessionCache>();
                 config.For<ITokenService>().Use<TokenService>();
                 config.For<IWebConfiguration>().Use(Configuration);
                 config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);

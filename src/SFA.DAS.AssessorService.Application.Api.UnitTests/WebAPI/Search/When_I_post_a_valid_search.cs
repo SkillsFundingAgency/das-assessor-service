@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Search
             });
 
             var organisationQueryRepository = new Mock<IOrganisationQueryRepository>();
-            organisationQueryRepository.Setup(r => r.GetByUkPrn(It.IsAny<long>()))
+            organisationQueryRepository.Setup(r => r.GetByUkPrn(It.IsAny<int>()))
                 .ReturnsAsync(new OrganisationResponse() { EndPointAssessorOrganisationId = "1" });
 
             var assessmentOrgsApiClient = new Mock<IAssessmentOrgsApiClient>();
@@ -52,7 +52,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Search
             _result = controller.Search(new SearchQuery
             {
                 Surname = "Smith",
-                UkPrn = 8888888888,
+                UkPrn = 88888888,
                 Uln = 1111111111,
                 Username = "user"
             }).Result;

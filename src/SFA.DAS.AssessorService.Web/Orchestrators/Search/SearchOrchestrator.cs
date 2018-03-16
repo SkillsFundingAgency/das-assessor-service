@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators.Search
             {
                 Surname = vm.Surname,
                 Uln = long.Parse(vm.Uln),
-                UkPrn = long.Parse(ukprn),
+                UkPrn = int.Parse(ukprn),
                 Username = username
             });
 

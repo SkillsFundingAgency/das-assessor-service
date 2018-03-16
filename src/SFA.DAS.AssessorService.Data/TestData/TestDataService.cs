@@ -58,7 +58,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                 var firstCertificateData = new CertificateData
                 {
                     AchievementDate = DateTime.Now.AddDays(-1),
-                    AchievementOutcome = "Succesfull",
+                    AchievementOutcome = "Succesful",
                     ContactName = "David Gouge",
                     ContactOrganisation = "1234",
                     ContactAddLine1 = "1 Alpha Drive",
@@ -67,33 +67,32 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     ContactAddLine4 = "Worcs",
                     ContactPostCode = "B60 2TY",
                     CourseOption = "French",
-                    EndPointAssessorCertificateId = 2222222,
-                    EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
                     LearnerDateofBirth = DateTime.Now.AddYears(-22),
                     LearnerFamilyName = "Gouge",
                     LearnerSex = "Male",
                     LearnerGivenNames = "David",
 
                     OverallGrade = "PASS",
-                    ProviderUkprn = 999999,
+                    
                     Registration = "Registered",
                     LearningStartDate = DateTime.Now.AddDays(10),
-                    StandardCode = 100,
+                    
                     StandardLevel = 1,
                     StandardName = "Test",
-                    StandardPublicationDate = DateTime.Now,
-
-                    Uln = 123456
+                    StandardPublicationDate = DateTime.Now
                 };
 
                 var firstCertificate = new Certificate
                 {
                     Id = Guid.NewGuid(),
                     OrganisationId = organisation.Id,
-                      EndPointAssessorCertificateId = 2222222,
                     CertificateData = JsonConvert.SerializeObject(firstCertificateData),
                     Status = CertificateStatus.Ready,
-                    CreatedBy = "jcoxhead"
+                    CreatedBy = "jcoxhead", 
+                    CertificateReference = "ABC123",
+                    Uln = 1234567890,
+                    StandardCode = 93,
+                    ProviderUkPrn = 12345678
                 };
 
                 context.Certificates.Add(firstCertificate);
@@ -101,7 +100,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                 var secondCertificateData = new CertificateData
                 {
                     AchievementDate = DateTime.Now.AddDays(-1),
-                    AchievementOutcome = "Succesfull",
+                    AchievementOutcome = "Succesful",
                     ContactName = "John Coxhead",
                     ContactOrganisation = "1234",
                     ContactAddLine1 = "1 Beta Drive",
@@ -110,32 +109,29 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     ContactAddLine4 = "Worcs",
                     ContactPostCode = "B60 2TY",
                     CourseOption = "French",
-                    EndPointAssessorCertificateId = 2222222,
-                    EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
                     LearnerDateofBirth = DateTime.Now.AddYears(-22),
                     LearnerFamilyName = "Coxhead",
                     LearnerSex = "Male",
                     LearnerGivenNames = "David",
-
                     OverallGrade = "PASS",
-                    ProviderUkprn = 999999,
                     Registration = "Registered",
                     LearningStartDate = DateTime.Now.AddDays(10),
-                    StandardCode = 100,
                     StandardLevel = 1,
                     StandardName = "Test",
                     StandardPublicationDate = DateTime.Now,
-                    Uln = 123456
                 };
 
                 var secondCertificate = new Certificate
                 {
                     Id = Guid.NewGuid(),
-                    EndPointAssessorCertificateId = 2222222,
                     OrganisationId = organisation.Id,
                     CertificateData = JsonConvert.SerializeObject(secondCertificateData),
                     Status = CertificateStatus.Ready,
-                    CreatedBy = "jcoxhead"
+                    CreatedBy = "jcoxhead",
+                    CertificateReference = "DEF456",
+                    Uln = 1234567890,
+                    StandardCode = 94,
+                    ProviderUkPrn = 12345678
                 };
 
                 context.Certificates.Add(secondCertificate);
