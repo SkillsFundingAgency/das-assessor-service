@@ -118,9 +118,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
             _restClient = _organisationService.PostOrganisation(_createOrganisationRequest);
 
             var contactRequest = _createContactBuilder.Build(_contactArgument, _createOrganisationRequest.EndPointAssessorOrganisationId);
-            _restClient = _contactService.PostContact(contactRequest);
-
-            contactRequest = _createContactBuilder.Build(_contactArgument, _createOrganisationRequest.EndPointAssessorOrganisationId);
+            _restClient = _contactService.PostContact(contactRequest);        
             _restClient = _contactService.PostContact(contactRequest);
             _contactResponse = _restClient.Deserialise<ContactResponse>();
 

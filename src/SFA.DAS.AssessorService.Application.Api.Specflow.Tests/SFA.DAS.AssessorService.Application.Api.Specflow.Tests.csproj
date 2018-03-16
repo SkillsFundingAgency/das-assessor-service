@@ -113,9 +113,10 @@
     </Compile>
     <Compile Include="Contacts\Query\WhenSearchContactsByUserName.cs" />
     <Compile Include="Contacts\Query\WhenRetrieveAllContacts.cs" />
-    <Compile Include="DatabaseUtils\DatabaseUtilities.cs" />
-    <Compile Include="DatabaseUtils\ContactData.cs" />
-    <Compile Include="DatabaseUtils\OrganisationData.cs" />
+    <Compile Include="Contacts\Query\WhenRetrieveContactBase.cs" />
+    <Compile Include="Contacts\Query\DatabaseUtils\DatabaseUtilities.cs" />
+    <Compile Include="Contacts\Query\DatabaseUtils\ContactData.cs" />
+    <Compile Include="Contacts\Query\DatabaseUtils\OrganisationData.cs" />
     <Compile Include="Extensions\HttpClientExtensions.cs" />
     <Compile Include="Extensions\RestClientResultExtensions.cs" />
     <Compile Include="Iniltialisation.cs" />

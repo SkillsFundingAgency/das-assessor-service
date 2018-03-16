@@ -1,5 +1,8 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
+using System.Linq;
 using Dapper;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.DatabaseUtils
@@ -38,6 +41,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.DatabaseUtils
 
             var result = _dbConnection.Execute(command, organisation);
             return result;
+        }
+
+        public Guid GetId(string endPointAssessorOrganisationId)
+        {
+            var ids = _dbConnection.Query<Guid>
+                ($"Select Id From Organisations where EndPointAssessorOrganisationId = {endPointAssessorOrganisationId}").ToList();
+            return ids.First();
         }
     }
 }
