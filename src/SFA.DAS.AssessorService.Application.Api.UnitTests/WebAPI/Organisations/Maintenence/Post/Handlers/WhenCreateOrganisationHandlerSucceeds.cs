@@ -14,6 +14,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
  public class WhenCreateOrganisationHandlerSucceeds
     {
         private Mock<IOrganisationRepository> _organisationRepositoryMock;
+        private Mock<IContactRepository> _contactRepositoryMock;
         private OrganisationResponse _result;
 
         [SetUp]
@@ -21,14 +22,22 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
         {
             MappingBootstrapper.Initialize();
 
+            CreateContractRepositoryMock();
             CreateOrganisationRepositoryMock();
 
             var createOrganisationRequest = Builder<CreateOrganisationRequest>.CreateNew().Build();        
             var organisationQueryRepository = CreateOrganisationQueryRepository();
 
-            var createOrganisationHandler = new CreateOrganisationHandler(_organisationRepositoryMock.Object, organisationQueryRepository.Object);
+            var createOrganisationHandler = new CreateOrganisationHandler(_organisationRepositoryMock.Object, 
+                organisationQueryRepository.Object,
+                _contactRepositoryMock.Object);
             _result = createOrganisationHandler.Handle(createOrganisationRequest, new CancellationToken()).Result;
-        }        
+        }
+
+        private void CreateContractRepositoryMock()
+        {
+            _contactRepositoryMock = new Mock<IContactRepository>();
+        }
 
         [Test]
         public void ItShouldReturnAResult()

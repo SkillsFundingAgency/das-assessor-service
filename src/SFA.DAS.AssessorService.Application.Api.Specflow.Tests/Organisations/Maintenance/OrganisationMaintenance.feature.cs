@@ -79,11 +79,13 @@ this.ScenarioSetup(scenarioInfo);
             TechTalk.SpecFlow.Table table1 = new TechTalk.SpecFlow.Table(new string[] {
                         "EndPointAssessorName",
                         "EndPointAssessorOrganisationId",
-                        "EndPointAssessorUKPRN"});
+                        "EndPointAssessorUkprn",
+                        "PrimaryContact"});
             table1.AddRow(new string[] {
                         "Test",
                         "99999999",
-                        "10033333"});
+                        "10033333",
+                        "james1234"});
 #line 9
  testRunner.When("I Create an Organisation", ((string)(null)), table1, "When ");
 #line 12
@@ -111,11 +113,13 @@ this.ScenarioSetup(scenarioInfo);
             TechTalk.SpecFlow.Table table2 = new TechTalk.SpecFlow.Table(new string[] {
                         "EndPointAssessorName",
                         "EndPointAssessorOrganisationId",
-                        "EndPointAssessorUKPRN"});
+                        "EndPointAssessorUkprn",
+                        "PrimaryContact"});
             table2.AddRow(new string[] {
                         "Test",
                         "99999987",
-                        "10033333"});
+                        "10033333",
+                        "james1234"});
 #line 19
   testRunner.When("I Create an Organisation With Existing Primary Contact", ((string)(null)), table2, "When ");
 #line 22
@@ -143,11 +147,13 @@ this.ScenarioSetup(scenarioInfo);
             TechTalk.SpecFlow.Table table3 = new TechTalk.SpecFlow.Table(new string[] {
                         "EndPointAssessorName",
                         "EndPointAssessorOrganisationId",
-                        "EndPointAssessorUKPRN"});
+                        "EndPointAssessorUkprn",
+                        "PrimaryContact"});
             table3.AddRow(new string[] {
                         "Test",
                         "99999998",
-                        "14"});
+                        "14",
+                        "james1234"});
 #line 29
     testRunner.When("I Create an Organisation", ((string)(null)), table3, "When ");
 #line 32
@@ -173,22 +179,26 @@ this.ScenarioSetup(scenarioInfo);
             TechTalk.SpecFlow.Table table4 = new TechTalk.SpecFlow.Table(new string[] {
                         "EndPointAssessorName",
                         "EndPointAssessorOrganisationId",
-                        "EndPointAssessorUKPRN"});
+                        "EndPointAssessorUkprn",
+                        "PrimaryContact"});
             table4.AddRow(new string[] {
                         "Test",
                         "99999988",
-                        "10033333"});
+                        "10033333",
+                        "james1234"});
 #line 37
   testRunner.When("I Create an Organisation", ((string)(null)), table4, "When ");
 #line hidden
             TechTalk.SpecFlow.Table table5 = new TechTalk.SpecFlow.Table(new string[] {
                         "EndPointAssessorName",
                         "EndPointAssessorOrganisationId",
-                        "EndPointAssessorUKPRN"});
+                        "EndPointAssessorUkprn",
+                        "PrimaryContact"});
             table5.AddRow(new string[] {
                         "Test",
                         "99999988",
-                        "10033333"});
+                        "10033333",
+                        "james1234"});
 #line 40
     testRunner.When("I Create an Organisation", ((string)(null)), table5, "When ");
 #line 43
@@ -212,11 +222,13 @@ this.ScenarioSetup(scenarioInfo);
             TechTalk.SpecFlow.Table table6 = new TechTalk.SpecFlow.Table(new string[] {
                         "EndPointAssessorName",
                         "EndPointAssessorOrganisationId",
-                        "EndPointAssessorUKPRN"});
+                        "EndPointAssessorUkprn",
+                        "PrimaryContact"});
             table6.AddRow(new string[] {
                         "Test Name",
                         "99999999",
-                        "10033670"});
+                        "10033670",
+                        ""});
 #line 48
  testRunner.When("I Update an Organisation", ((string)(null)), table6, "When ");
 #line 51
@@ -240,11 +252,13 @@ this.ScenarioSetup(scenarioInfo);
             TechTalk.SpecFlow.Table table7 = new TechTalk.SpecFlow.Table(new string[] {
                         "EndPointAssessorName",
                         "EndPointAssessorOrganisationId",
-                        "EndPointAssessorUKPRN"});
+                        "EndPointAssessorUkprn",
+                        "PrimaryContact"});
             table7.AddRow(new string[] {
                         "Test Name",
                         "99999999",
-                        "10005333"});
+                        "10005333",
+                        "james1234"});
 #line 56
  testRunner.When("I Update an Organisation With invalid Id", ((string)(null)), table7, "When ");
 #line 59
@@ -266,11 +280,13 @@ this.ScenarioSetup(scenarioInfo);
             TechTalk.SpecFlow.Table table8 = new TechTalk.SpecFlow.Table(new string[] {
                         "EndPointAssessorName",
                         "EndPointAssessorOrganisationId",
-                        "EndPointAssessorUKPRN"});
+                        "EndPointAssessorUkprn",
+                        "PrimaryContact"});
             table8.AddRow(new string[] {
                         "Test Name",
                         "99999999",
-                        "14"});
+                        "14",
+                        "james1234"});
 #line 63
  testRunner.When("I Update an Organisation With Invalid Primary Contact", ((string)(null)), table8, "When ");
 #line 66
@@ -292,11 +308,13 @@ this.ScenarioSetup(scenarioInfo);
             TechTalk.SpecFlow.Table table9 = new TechTalk.SpecFlow.Table(new string[] {
                         "EndPointAssessorName",
                         "EndPointAssessorOrganisationId",
-                        "EndPointAssessorUKPRN"});
+                        "EndPointAssessorUkprn",
+                        "PrimaryContact"});
             table9.AddRow(new string[] {
                         "Test Name",
                         "1234",
-                        "10033670"});
+                        "10033670",
+                        "james1234"});
 #line 70
  testRunner.When("I Update an Organisation With valid Primary Contact", ((string)(null)), table9, "When ");
 #line 73
@@ -320,11 +338,13 @@ this.ScenarioSetup(scenarioInfo);
             TechTalk.SpecFlow.Table table10 = new TechTalk.SpecFlow.Table(new string[] {
                         "EndPointAssessorName",
                         "EndPointAssessorOrganisationId",
-                        "EndPointAssessorUKPRN"});
+                        "EndPointAssessorUkprn",
+                        "PrimaryContact"});
             table10.AddRow(new string[] {
                         "Test",
                         "99999777",
-                        "10033444"});
+                        "10033444",
+                        "james1234"});
 #line 78
  testRunner.When("I Delete an Organisation", ((string)(null)), table10, "When ");
 #line 81
@@ -348,11 +368,13 @@ this.ScenarioSetup(scenarioInfo);
             TechTalk.SpecFlow.Table table11 = new TechTalk.SpecFlow.Table(new string[] {
                         "EndPointAssessorName",
                         "EndPointAssessorOrganisationId",
-                        "EndPointAssessorUKPRN"});
+                        "EndPointAssessorUkprn",
+                        "PrimaryContact"});
             table11.AddRow(new string[] {
                         "Test",
                         "99999778",
-                        "10033444"});
+                        "10033444",
+                        "james1234"});
 #line 86
  testRunner.When("I Delete an Organisation Twice", ((string)(null)), table11, "When ");
 #line 89

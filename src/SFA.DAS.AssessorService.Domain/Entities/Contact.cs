@@ -6,7 +6,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
     {
         public Guid Id { get; set; }
 
-        public Guid OrganisationId { get; set; }
+        public Guid? OrganisationId { get; set; }
         public virtual Organisation Organisation { get; set; }
 
         public string EndPointAssessorOrganisationId { get; set; }

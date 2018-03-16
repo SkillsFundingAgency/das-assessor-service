@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Dapper;
+using FizzWare.NBuilder;
 using FluentAssertions;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Query;
-using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Extensions;
+using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.DatabaseUtils;
 using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.Helpers;
 using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.Maintenance.Services;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Entities;
 using TechTalk.SpecFlow;
 
 namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.Maintenance
@@ -20,7 +22,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.M
         private RestClientResult _restClientResult;
         private readonly OrganisationService _organisationService;
         private readonly ContactQueryService _contactQueryService;
-        private readonly CreateOrganisationBuilder _createOrganisationBuilder;
+        private readonly CreateOrganisationRequestBuilder _createOrganisationRequestBuilder;
+        private readonly OrganisationData _organisationData;
+        private readonly ContactData _contactData;
         private readonly IDbConnection _dbconnection;
         private OrganisationResponse _organisationResponse;
         private dynamic _organisationArgument;
@@ -28,13 +32,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.M
         public WhenCreateOrganisation(RestClientResult restClientResult,
             OrganisationService organisationService,
             ContactQueryService contactQueryService,
-            CreateOrganisationBuilder createOrganisationBuilder,
+            CreateOrganisationRequestBuilder createOrganisationRequestBuilder,
+            OrganisationData organisationData,
+            ContactData contactData,
             IDbConnection dbconnection)
         {
             _restClientResult = restClientResult;
             _organisationService = organisationService;
             _contactQueryService = contactQueryService;
-            _createOrganisationBuilder = createOrganisationBuilder;
+            _createOrganisationRequestBuilder = createOrganisationRequestBuilder;
+            _organisationData = organisationData;
+            _contactData = contactData;
             _dbconnection = dbconnection;
         }
 
@@ -43,8 +51,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.M
         {
             _organisationArgument = organisations.First();
 
-            var organisation = _createOrganisationBuilder.Build(_organisationArgument);
-            _restClientResult = _organisationService.PostOrganisation(organisation);
+            var createOrganisationRequest = _createOrganisationRequestBuilder.Build(_organisationArgument);
+            _restClientResult = _organisationService.PostOrganisation(createOrganisationRequest);
         }
 
         [When(@"I Create an Organisation With Existing Primary Contact")]
@@ -52,10 +60,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.M
         {
             _organisationArgument = organisations.First();
 
-            var contact = CreateContact();
-            var organisation = _createOrganisationBuilder.Build(_organisationArgument, contact.UserName);
+            Contact contact = CreateContact(_organisationArgument.PrimaryContact);
 
-            _restClientResult = _organisationService.PostOrganisation(organisation);
+            var createOrganisationRequest = _createOrganisationRequestBuilder.Build(_organisationArgument, contact.Username);
+            _restClientResult = _organisationService.PostOrganisation(createOrganisationRequest);
         }
 
         [Then(@"the Organisation should be created")]
@@ -68,7 +76,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.M
             organisationsCreated.Count.Should().Be(1);
 
             _organisationResponse.EndPointAssessorOrganisationId.Should().Equals(_organisationArgument.EndPointAssessorOrganisationId);
-            _organisationResponse.EndPointAssessorUkprn.Should().Equals(_organisationArgument.EndPointAssessorUKPRN);
+            _organisationResponse.EndPointAssessorUkprn.Should().Equals(_organisationArgument.EndPointAssessorUkprn);
             _organisationResponse.EndPointAssessorName.Should().Equals(_organisationArgument.EndPointAssessorName);
         }
 
@@ -88,10 +96,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.M
             }
         }
 
-        private ContactResponse CreateContact()
+        private Contact CreateContact(string userName)
         {
-            var contactResult = _contactQueryService.SearchForContactByUserName("jcoxhead");
-            var contact = contactResult.Deserialise<ContactResponse>();
+            var contact = Builder<Contact>.CreateNew()
+                .With(q => q.EndPointAssessorOrganisationId = "")
+                .With(q => q.OrganisationId = null)
+                .With(q => q.Username = userName)
+                .Build();
+
+            _contactData.Insert(contact);
+
             return contact;
         }
     }

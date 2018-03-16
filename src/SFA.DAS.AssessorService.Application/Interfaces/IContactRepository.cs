@@ -10,5 +10,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<ContactResponse> CreateNewContact(CreateContactDomainModel newContact);
         Task Update(UpdateContactRequest updateContactRequest);
         Task Delete(string userName);
+        Task LinkOrganisation(string endPointAssessorOrganisationId, string userName);
     }
 }

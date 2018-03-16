@@ -33,8 +33,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Dapper, Version=1.12.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Dapper-Async.1.03\lib\net45\Dapper.dll</HintPath>
+    <Reference Include="AutoMapper, Version=6.2.2.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.6.2.2\lib\net45\AutoMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="Dapper, Version=1.50.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dapper.1.50.4\lib\net451\Dapper.dll</HintPath>
+    </Reference>
+    <Reference Include="DapperExtensions, Version=1.6.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DapperExtensions.1.6.3\lib\net45\DapperExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="FizzWare.NBuilder, Version=5.0.0.138, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NBuilder.5.0.0\lib\net40\FizzWare.NBuilder.dll</HintPath>
     </Reference>
     <Reference Include="FluentAssertions, Version=5.1.2.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
       <HintPath>..\packages\FluentAssertions.5.1.2\lib\net45\FluentAssertions.dll</HintPath>
@@ -66,6 +75,7 @@
       <HintPath>..\packages\System.Net.Http.2.0.20126.16343\lib\net40\System.Net.Http.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ValueTuple, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.3.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
     </Reference>
@@ -104,12 +114,14 @@
     <Compile Include="Contacts\Query\WhenSearchContactsByUserName.cs" />
     <Compile Include="Contacts\Query\WhenRetrieveAllContacts.cs" />
     <Compile Include="DatabaseUtils\DatabaseUtilities.cs" />
+    <Compile Include="DatabaseUtils\ContactData.cs" />
+    <Compile Include="DatabaseUtils\OrganisationData.cs" />
     <Compile Include="Extensions\HttpClientExtensions.cs" />
     <Compile Include="Extensions\RestClientResultExtensions.cs" />
     <Compile Include="Iniltialisation.cs" />
     <Compile Include="Organisations\Helpers\CreateContactBuilder.cs" />
     <Compile Include="Organisations\Helpers\UpdateOrganisationBuilder.cs" />
-    <Compile Include="Organisations\Helpers\CreateOrganisationBuilder.cs" />
+    <Compile Include="Organisations\Helpers\CreateOrganisationRequestBuilder.cs" />
     <Compile Include="Organisations\Maintenance\OrganisationMaintenance.feature.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
