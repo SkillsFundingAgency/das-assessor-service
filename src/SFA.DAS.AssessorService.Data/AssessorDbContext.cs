@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using SFA.DAS.AssessorService.Data.ConfigurationBuilders;
 using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Data
@@ -24,14 +23,6 @@ namespace SFA.DAS.AssessorService.Data
         public virtual DbSet<Contact> Contacts { get; set; }
         public virtual DbSet<Organisation> Organisations { get; set; }
         public virtual DbSet<Ilr> Ilrs { get; set; }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            new OrganisationConfigurationBuilder(modelBuilder).Build();
-            new ContactConfigurationBuilder(modelBuilder).Build();
-            new CertificateConfigurationBuilder(modelBuilder).Build();
-            new CertificateLogConfigurationBuilder(modelBuilder).Build();
-        }
 
         public override int SaveChanges()
         {

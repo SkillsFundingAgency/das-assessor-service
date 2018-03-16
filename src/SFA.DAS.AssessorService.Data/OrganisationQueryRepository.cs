@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Data
             return organisations;
         }
 
-        public async Task<OrganisationResponse> GetByUkPrn(long ukprn)
+        public async Task<OrganisationResponse> GetByUkPrn(int ukprn)
         {
             var organisation = await _assessorDbContext.Organisations
                 .FirstOrDefaultAsync(q => q.EndPointAssessorUkprn == ukprn);

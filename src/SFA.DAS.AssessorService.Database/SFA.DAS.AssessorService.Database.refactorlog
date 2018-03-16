@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="0a24120e-a792-4e1b-b2ee-13406836bbe0" ChangeDateTime="03/15/2018 11:40:38">
+    <Property Name="ElementName" Value="[dbo].[Certificates].[EndPointAssessorCertificateId]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Certificates]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="CertificateReference" />
+  </Operation>
+</Operations>

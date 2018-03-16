@@ -1,11 +1,8 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Orchestrators.Search;
 using SFA.DAS.AssessorService.Web.Utils;
 using SFA.DAS.AssessorService.Web.ViewModels.Search;
@@ -13,6 +10,7 @@ using SFA.DAS.AssessorService.Web.ViewModels.Search;
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
     [Authorize]
+    [CheckSession]
     public class SearchController : Controller
     {
         private readonly ISearchOrchestrator _searchOrchestrator;
