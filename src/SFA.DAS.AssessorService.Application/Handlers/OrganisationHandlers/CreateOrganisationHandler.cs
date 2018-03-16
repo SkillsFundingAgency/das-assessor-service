@@ -45,6 +45,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers
             }
             else
             {
+                // Am leaving this code in for now - but according to Alan a Contact cannot be creates unless an organisation
+                // exists - in this case the primary contact cannot be created on creation of an organisaion as 
+                // the contact cannot exist prior to the creation of an organisation
+                // To be clarified ??
                 createOrganisationDomainModel.Status = OrganisationStatus.Live;
                 createOrganisationDomainModel.PrimaryContact = createOrganisationRequest.PrimaryContact;
 

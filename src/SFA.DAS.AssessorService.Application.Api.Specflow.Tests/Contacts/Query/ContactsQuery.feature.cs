@@ -96,9 +96,11 @@ this.ScenarioSetup(scenarioInfo);
  testRunner.Given("System Has access to the SFA.DAS.AssessmentOrgs.Api", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
             TechTalk.SpecFlow.Table table1 = new TechTalk.SpecFlow.Table(new string[] {
-                        "username",
-                        "emailaddress"});
+                        "EndPointAssessorOrganisationId",
+                        "UserName",
+                        "EmailAddress"});
             table1.AddRow(new string[] {
+                        "10033670",
                         "jcoxhead",
                         "jcoxhead@gmail.com"});
 #line 15
