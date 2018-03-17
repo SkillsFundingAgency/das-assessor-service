@@ -7,7 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Utils;
 
@@ -19,27 +23,36 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     {
         private readonly ILogger<CertificateController> _logger;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly ICertificateApiClient _certificateApiClient;
 
-        public CertificateController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor)
+        public CertificateController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor, ICertificateApiClient certificateApiClient)
         {
             _logger = logger;
             _contextAccessor = contextAccessor;
+            _certificateApiClient = certificateApiClient;
         }
 
         [HttpPost]
         public async Task<IActionResult> Start(CertificateStartViewModel vm)
         {
             _contextAccessor.HttpContext.Session.Remove("CertificateSession");
+            var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
+            var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
-            // Call API to create or return current certificate
-            var certificateIdFromTheApi = Guid.NewGuid();
+            var cert = await _certificateApiClient.Start(new StartCertificateRequest()
+            {
+                UkPrn = int.Parse(ukprn),
+                StandardCode = vm.StdCode,
+                Uln = vm.Uln,
+                Username = username
+            });
 
-            _contextAccessor.HttpContext.Session.SetString("CertificateSession",
+           _contextAccessor.HttpContext.Session.SetString("CertificateSession",
                 JsonConvert.SerializeObject(new CertificateSession()
                 {
-                    CertificateId = certificateIdFromTheApi,
+                    CertificateId = cert.Id,
                     Uln = vm.Uln,
-                    StandardCode = vm.StandardCode
+                    StandardCode = vm.StdCode
                 }));
 
             return RedirectToAction("Grade", "Certificate");
@@ -48,7 +61,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Grade()
         {
-            var sessionString = _contextAccessor.HttpContext.Session.GetString("CertificateId");
+            var sessionString = _contextAccessor.HttpContext.Session.GetString("CertificateSession");
             var certSession = JsonConvert.DeserializeObject<CertificateSession>(sessionString);
 
             if (sessionString == null)
@@ -56,16 +69,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return RedirectToAction("Index", "Search");
             }
 
-            // Call API to get certificate for this ID.
+            var certificate = await _certificateApiClient.GetCertificate(certSession.CertificateId);
+
+            var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData); 
 
             var certificateGradeViewModel = new CertificateGradeViewModel();
 
             certificateGradeViewModel.SetUpGrades();
             certificateGradeViewModel.Id = certSession.CertificateId;
-            certificateGradeViewModel.SelectedGrade = "Credit";
-            certificateGradeViewModel.GivenNames = "Tony";
-            certificateGradeViewModel.FamilyName = "Stark";
-            certificateGradeViewModel.Standard = "Robotics";
+            certificateGradeViewModel.SelectedGrade = certData.OverallGrade;
+            certificateGradeViewModel.GivenNames = certData.LearnerGivenNames;
+            certificateGradeViewModel.FamilyName = certData.LearnerFamilyName;
+            certificateGradeViewModel.Standard = certData.StandardName;
 
             return View(certificateGradeViewModel);
         }
@@ -78,7 +93,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 vm.SetUpGrades();
                 return View(vm);
             }
-            // Send the grade to the API for this cert.  Returns the current Cert
+
+            var certificate = await _certificateApiClient.GetCertificate(vm.Id);
+
+            var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+
+            certData.OverallGrade = vm.SelectedGrade;
+
+            certificate.CertificateData = JsonConvert.SerializeObject(certData);
+
+            certificate = await _certificateApiClient.UpdateCertificate(certificate);
 
 
             TempData.Put("Certificate", vm);
@@ -109,7 +133,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     public class CertificateStartViewModel
     {
         public long Uln { get; set; }
-        public int StandardCode { get; set; }
+        public int StdCode { get; set; }
     }
 
 

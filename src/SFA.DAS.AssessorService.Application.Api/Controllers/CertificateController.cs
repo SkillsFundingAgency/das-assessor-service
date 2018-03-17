@@ -1,8 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.AssessorService.Application.Handlers.Certificates;
+using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -17,10 +19,22 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpPost(Name = "start")]
-        public async Task<IActionResult> Start([FromBody] GetCertificateRequest request)
+        [HttpPost(Name = "Start")]
+        public async Task<IActionResult> Start([FromBody] StartCertificateRequest request)
         {
             return Ok(await _mediator.Send(request));
+        }
+
+        [HttpGet("{id}", Name = "GetCertificate")]
+        public async Task<IActionResult> GetCertificate(Guid id)
+        {
+            return Ok(await _mediator.Send(new GetCertificateRequest(id)));
+        }
+
+        [HttpPut(Name = "Update")]
+        public async Task<IActionResult> Update(Certificate certificate)
+        {
+            return Ok(await _mediator.Send(new UpdateCertificateRequest(certificate)));
         }
     }
 }
