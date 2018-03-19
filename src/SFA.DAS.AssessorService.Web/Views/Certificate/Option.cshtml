@@ -7,13 +7,14 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
+        <h1 class="heading-large">@Model.GivenNames @Model.FamilyName</h1>
         <h1 class="heading-large">What grade did the apprentice achieve?</h1>
         <form type="post" asp-controller="Certificate" asp-method="Options">
             @Html.HiddenFor(c => c.Id)
             <div class="form-group" sfa-validation-for="HasAdditionalLearningOption" sfa-validationerror-class="form-group-error">
                 <div class="form-group" sfa-validation-for="Option" sfa-validationerror-class="form-group-error">
                     <div class="multiple-choice">
-                        <input asp-for="HasAdditionalLearningOption" id="options_yes" type="radio" value="True" />
+                        <input asp-for="HasAdditionalLearningOption" id="options_yes" type="radio" value="True"/>
                         <label for="options_yes">
                             Yes
                         </label>
@@ -24,11 +25,11 @@
                             <span class="form-label-bold">What was the option?</span>
                             <span class="error-message" asp-validation-for="Option"></span>
                         </label>
-                        <input class="form-control" sfa-validation-for="Option" sfa-validationerror-class="form-control-error" asp-for="Option" type="text" />
+                        <input class="form-control" sfa-validation-for="Option" sfa-validationerror-class="form-control-error" asp-for="Option" type="text"/>
                     </div>
                 </div>
                 <div class="multiple-choice">
-                    <input asp-for="HasAdditionalLearningOption" id="options_no" type="radio" value="False" />
+                    <input asp-for="HasAdditionalLearningOption" id="options_no" type="radio" value="False"/>
                     <label for="options_no">
                         No
                     </label>
