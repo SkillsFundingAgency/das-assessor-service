@@ -354,3 +354,7 @@ nav.global-nav ul li.sa-stacker.sa-open ul li {
 .info-summary .info-dismiss {
   color: #2e358b;
 }
+
+.js-error-summary {
+  display: none;
+}

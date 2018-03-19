@@ -3,32 +3,33 @@
 @model SFA.DAS.AssessorService.Web.ViewModels.Search.SearchViewModel
 
 @{
-    ViewBag.Title = "Search results";
+    ViewBag.Title = "Confirm apprentice";
     Layout = "_Layout";
 }
 
-<a class="link-back" asp-controller="Search" asp-action="Index">Back</a>
 
 <div class="grid-row">
     <div class="column-two-thirds">
+        <a class="link-back" asp-controller="Search" asp-action="Index">Back</a>
         @*@if(Model.SearchResults.Count() == 1) {*@
         <h1 class="heading-large">Confirm apprentice</h1>
-        <div class="form-group">
-            <fieldset>
-                <ul>
-                    <li>
-                        <p><span class="bold">Name:</span> @Model.SearchResults.First().GivenNames @Model.SearchResults.First().FamilyName</p>
-                    </li>
-                    <li>
-                        <p><span class="bold">ULN:</span> @Model.SearchResults.First().Uln</p>
-                    </li>
-                    <li>
-                        <p><span class="bold">Standard:</span> @Model.SearchResults.First().Standard</p>
-                    </li>
-                </ul>
-            </fieldset>
-        </div>
-        @*}
+        <form asp-controller="Certificate" asp-action="Start" method="post">
+            <div class="form-group">
+                <fieldset>
+                    <ul>
+                        <li>
+                            <p><span class="bold">Name:</span> @Model.SearchResults.First().GivenNames @Model.SearchResults.First().FamilyName</p>
+                        </li>
+                        <li>
+                            <p><span class="bold">ULN:</span> @Model.SearchResults.First().Uln</p>
+                        </li>
+                        <li>
+                            <p><span class="bold">Standard:</span> @Model.SearchResults.First().Standard</p>
+                        </li>
+                    </ul>
+                </fieldset>
+            </div>
+            @*}
             else
             {
                 <h1 class="heading-large">The apprentice is enrolled on more than one apprenticeship</h1>
@@ -53,13 +54,14 @@
                     </fieldset>
                 </div>
             }*@
-        <form asp-controller="Certificate" asp-action="Start" method="post">
             @Html.HiddenFor(m => m.Uln)
             @Html.HiddenFor(m => m.SearchResults.First().StdCode)
-            <div class="form-group" style="margin-top: 25px;">
-                <button class="button button-white" type="submit">Start recording assessment</button>
+            <div class="form-group">
+                <button class="button" type="submit">Start recording assessment</button>
             </div>
         </form>
+
+        <p>This is not the right apprentice. <a asp-controller="Search" asp-action="Index">Search again</a></p>
     </div>
 </div>
 

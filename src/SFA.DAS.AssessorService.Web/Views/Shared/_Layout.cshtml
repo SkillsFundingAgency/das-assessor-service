@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - SFA.DAS.AssessorService.Web</title>
+    <title>@ViewData["Title"]</title>
 
     <environment include="Development">
         <!-- TEMPLATE STYLES - START -->
@@ -22,6 +22,8 @@
         <!--[if IE 7]><link rel="stylesheet" media="screen" href="/assets/stylesheets/esfa-govuk-ie7.css?3.1.2" /><![endif]-->
         <!--[if IE 8]><link rel="stylesheet" media="screen" href="/assets/stylesheets/esfa-govuk-ie8.css?3.1.2" /><![endif]-->
         <!-- ELEMENTS AND TOOLKIT STYLES - END -->
+
+        <link rel="stylesheet" href="~/css/site.css" />
     </environment>
 
     <environment exclude="Development">
@@ -40,9 +42,10 @@
         <!--[if IE 7]><link rel="stylesheet" media="screen" href="/assets/stylesheets/esfa-govuk-ie7.min.css?3.1.2" /><![endif]-->
         <!--[if IE 8]><link rel="stylesheet" media="screen" href="/assets/stylesheets/esfa-govuk-ie8.min.css?3.1.2" /><![endif]-->
         <!-- ELEMENTS AND TOOLKIT STYLES - END -->
+
+        <link rel="stylesheet" href="~/css/site.min.css" />
     </environment>
 
-    <link rel="stylesheet" href="~/css/site.css" />
     <!--[if lt IE 9]><script src="/assets/javascripts/ie.js?0.23.0"></script><![endif]-->
 
     <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/x-icon" />
@@ -148,18 +151,19 @@
     <div id="global-app-error" class="app-error hidden"></div>
 
     <environment include="Development">
-        <!-- <script src="~/lib/jquery/dist/jquery.js"></script> -->
+        <script src="~/lib/jquery/dist/jquery.js"></script>
         <script src="/assets/javascripts/govuk-template.js?0.23.0"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
     </environment>
 
     <environment exclude="Development">
-        <!-- <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
+        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
                 asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
                 asp-fallback-test="window.jQuery"
                 crossorigin="anonymous"
                 integrity="sha384-K+ctZQ+LL8q6tP7I94W+qzQsfRV2a+AfHIi9k8z8l9ggpc8X+Ytst4yBo/hH+8Fk">
-        </script> -->
+        </script>
+        <script src="/assets/javascripts/govuk-template.js?0.23.0"></script>
         <script src="~/js/site.min.js" asp-append-version="true"></script>
     </environment>
 
