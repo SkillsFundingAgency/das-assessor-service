@@ -82,11 +82,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
                 return null;
             }
             _logger.LogInformation($"Got Existing Contact");
-            await CheckStoredUserDetailsForUpdate(contact.UserName, email, displayName, contact);
+            await CheckStoredUserDetailsForUpdate(contact.Username, email, displayName, contact);
             return contact;
         }
 
-        private async Task CheckStoredUserDetailsForUpdate(string userName, string email, string displayName, ContactResponse contactResponse)
+        private async Task CheckStoredUserDetailsForUpdate(string username, string email, string displayName, ContactResponse contactResponse)
         {
             if (contactResponse.Email != email || contactResponse.DisplayName != displayName)
             {
@@ -96,7 +96,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
                 {
                     Email = email,
                     DisplayName = displayName,
-                    UserName = userName
+                    UserName = username
                 });
             }
         }
@@ -109,7 +109,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
             var contact = await _mediator.Send(new CreateContactRequest(){
                 Email = email,
                 DisplayName = displayName,
-                UserName = username,
+                Username = username,
                 EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId
             });
 
@@ -122,13 +122,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
         {
             if (organisation.Status == OrganisationStatus.New)
             {
-                _logger.LogInformation($"Org status is New. Setting Org {organisation.EndPointAssessorUkprn} with primary contact of {contactResponse.UserName}");
+                _logger.LogInformation($"Org status is New. Setting Org {organisation.EndPointAssessorUkprn} with primary contact of {contactResponse.Username}");
 
                 await _mediator.Send(new UpdateOrganisationRequest()
                 {
                     EndPointAssessorName = organisation.EndPointAssessorName,
                     EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
-                    PrimaryContact = contactResponse.UserName
+                    PrimaryContact = contactResponse.Username
                 });
             }
         }

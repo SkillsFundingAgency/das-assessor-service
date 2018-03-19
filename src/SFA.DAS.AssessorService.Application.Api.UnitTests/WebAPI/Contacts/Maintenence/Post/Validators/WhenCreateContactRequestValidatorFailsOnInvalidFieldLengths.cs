@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Main
 
             ContactRequest = Builder<CreateContactRequest>
                 .CreateNew()
-                .With(q => q.UserName = q.UserName.PadLeft(40, 'x'))
+                .With(q => q.Username = q.Username.PadLeft(40, 'x'))
                 .With(q => q.DisplayName =  q.DisplayName.PadLeft(140, 'x'))
                 .With(q => q.Email = q.Email.PadLeft(140, 'x'))
                 .Build();
@@ -41,7 +41,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Main
         }
 
         [Test]
-        [Ignore("Ignored until issue with email address not in claims is resolved")]
         public void ThenErrorMessageShouldContainInvalidEmailLength()
         {
             var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "Email" && q.ErrorCode == "MaximumLengthValidator");
@@ -56,9 +55,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Contacts.Main
         }
 
         [Test]
-        public void ThenErrorMessageShouldContainInvalidUserNameLength()
+        public void ThenErrorMessageShouldContainInvalidUsernameLength()
         {
-            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "UserName" && q.ErrorCode == "MaximumLengthValidator");
+            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "Username" && q.ErrorCode == "MaximumLengthValidator");
             errors.Should().NotBeNull();
         }
     }

@@ -37,20 +37,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 .WithMessage(string.Format(localiser[ResourceMessageName.MaxLengthError].Value,
                     nameof(createContactRequest.DisplayName), 120));
 
-            RuleFor(contact => contact.UserName)
+            RuleFor(contact => contact.Username)
                 .NotEmpty()
                 .WithMessage(
-                    string.Format(localiser[ResourceMessageName.MustBeDefined].Value, nameof(createContactRequest.UserName).ToCamelCase()))
+                    string.Format(localiser[ResourceMessageName.MustBeDefined].Value, nameof(createContactRequest.Username).ToCamelCase()))
                 .MaximumLength(30)
                 // Please note we have to string.Format this due to limitation in Moq not handling Optional
                 // Params
                 .WithMessage(string.Format(localiser[ResourceMessageName.MaxLengthError].Value,
-                    nameof(createContactRequest.UserName), 30));
+                    nameof(createContactRequest.Username), 30));
 
             RuleFor(contact => contact)
                 .Custom((contact, context) =>
                 {
-                    var result = contactQueryRepository.CheckContactExists(contact.UserName).Result;
+                    var result = contactQueryRepository.CheckContactExists(contact.Username).Result;
                     if (result)
                     {
                         context.AddFailure(new ValidationFailure("Contact",
