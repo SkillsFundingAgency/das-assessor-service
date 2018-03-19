@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             var theStandardsThisEpaoProvides = await _assessmentOrgsApiClient.FindAllStandardsByOrganisationIdAsync(thisEpao
                     .EndPointAssessorOrganisationId);
 
-            var ilrResults = _ilrRepository.Search(new SearchRequest
+            var ilrResults = await _ilrRepository.Search(new SearchRequest
             {
                 FamilyName = searchQuery.Surname,
                 Uln = searchQuery.Uln,
