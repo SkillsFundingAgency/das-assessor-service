@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
@@ -60,7 +61,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             certificate.CertificateData = JsonConvert.SerializeObject(certData);
 
-            await _certificateApiClient.UpdateCertificate(certificate);
+            var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
+
+            await _certificateApiClient.UpdateCertificate(new UpdateCertificateRequest(certificate){Username = username});
             
             return RedirectToAction("Option", "CertificateOption");
         }

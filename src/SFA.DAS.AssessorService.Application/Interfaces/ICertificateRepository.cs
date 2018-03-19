@@ -9,6 +9,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<Certificate> New(Certificate certificate);
         Task<Certificate> GetCertificate(Guid id);
         Task<Certificate> GetCertificate(long uln, int standardCode);
-        Task<Certificate> Update(Certificate certificate);
+        Task<Certificate> Update(Certificate certificate, string username);
     }
 }

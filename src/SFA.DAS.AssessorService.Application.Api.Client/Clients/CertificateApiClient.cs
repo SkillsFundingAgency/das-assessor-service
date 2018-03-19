@@ -29,11 +29,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<Certificate> UpdateCertificate(Certificate certificate)
+        public async Task<Certificate> UpdateCertificate(UpdateCertificateRequest certificateRequest)
         {
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Put, "api/v1/certificate"))
             {
-                return await PostPutRequestWithResponse<Certificate, Certificate>(httpRequest,certificate);
+                return await PostPutRequestWithResponse<UpdateCertificateRequest, Certificate >(httpRequest, certificateRequest);
             }
         }
     }

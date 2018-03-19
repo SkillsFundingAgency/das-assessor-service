@@ -33,11 +33,12 @@ namespace SFA.DAS.AssessorService.Data
             return await _context.Certificates.SingleOrDefaultAsync(c => c.Uln == uln && c.StandardCode == standardCode);
         }
 
-        public async Task<Certificate> Update(Certificate certificate)
+        public async Task<Certificate> Update(Certificate certificate, string username)
         {
             var cert = await GetCertificate(certificate.Id);
 
             cert.CertificateData = certificate.CertificateData;
+            cert.UpdatedBy = username;
 
             await _context.SaveChangesAsync();
 
