@@ -1,12 +1,15 @@
-﻿using Microsoft.Extensions.Localization;
+﻿using AutoMapper;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Moq;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Consts;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
 using SFA.DAS.AssessorService.Application.Api.Orchestrators;
 using SFA.DAS.AssessorService.Application.Api.UnitTests.Helpers;
 using SFA.DAS.AssessorService.Application.Api.Validators;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations.Queries
 {
@@ -30,6 +33,13 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
 
         protected  void Setup()
         {
+            Mapper.Reset();
+            Mapper.Initialize(cfg =>
+            {
+                cfg.CreateMap<Organisation, OrganisationResponse>();
+            });
+           
+
             //SetupOrchestratorMocks();
             SetupControllerMocks();
 
@@ -38,6 +48,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
 
         private void SetupControllerMocks()
         {
+            _mockStringLocaliserBuilder = new MockStringLocaliserBuilder();
+
             OrganisationControllerLocaliserMock = _mockStringLocaliserBuilder
                 .WithKey(ResourceMessageName.NoAssesmentProviderFound)
                 .WithKeyValue("100000000")

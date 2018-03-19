@@ -18,6 +18,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
         [SetUp]
         public void Arrange()
         {
+
+
             Setup();
 
             _organisation = Builder<Organisation>.CreateNew().Build();

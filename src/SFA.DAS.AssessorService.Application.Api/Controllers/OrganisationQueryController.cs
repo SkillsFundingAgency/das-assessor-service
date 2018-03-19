@@ -10,6 +10,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Consts;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Validators;
+using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -45,13 +46,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             var result = _ukPrnValidator.Validate(ukprn);
             if (!result.IsValid)
-                return BadRequest(result.Errors[0].ErrorMessage);
+                throw new BadRequestException(result.Errors[0].ErrorMessage);
 
             var organisation = Mapper.Map<OrganisationResponse>(await _organisationQueryRepository.GetByUkPrn(ukprn));
             if (organisation == null)
             {
-                return NotFound(
+                var ex = new ResourceNotFoundException(
                     string.Format(_localizer[ResourceMessageName.NoAssesmentProviderFound].Value, ukprn));
+                throw ex;
             }
 
             return Ok(organisation);

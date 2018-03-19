@@ -3,6 +3,7 @@ using FizzWare.NBuilder;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations.Queries
@@ -38,7 +39,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
             if(!(_result is OkObjectResult result))
                 ((OkObjectResult) null).Should().NotBeNull();
             else 
-                result.Value.Should().Be(_organisation);
+                result.Value.Should().BeOfType<OrganisationResponse>();
 
         }  
     }
