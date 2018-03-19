@@ -90,7 +90,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
                 DisplayName = _contactArgument.DisplayName + "XXX",
                 Email = _contactArgument.Email + "XXX",
                 EndPointAssessorOrganisationId = _createOrganisationRequest.EndPointAssessorOrganisationId,
-                UserName = "DummyUser123"
+                Username = "DummyUser123"
             };
 
             _restClient = _contactService.PostContact(contactRequest);

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.WsFederation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Web.Orchestrators.Login;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
@@ -14,14 +15,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     public class AccountController : Controller
     {
         private readonly IHttpContextAccessor _contextAccessor;
-        private readonly ILoginOrchestrator _loginOrchestrator;
         private readonly ILogger<AccountController> _logger;
+        private readonly ILoginOrchestrator _loginOrchestrator;
 
-        public AccountController(IHttpContextAccessor contextAccessor, ILoginOrchestrator loginOrchestrator, ILogger<AccountController> logger)
+        public AccountController(IHttpContextAccessor contextAccessor, ILogger<AccountController> logger, ILoginOrchestrator loginOrchestrator)
         {
             _contextAccessor = contextAccessor;
-            _loginOrchestrator = loginOrchestrator;
             _logger = logger;
+            _loginOrchestrator = loginOrchestrator;
         }
 
         [HttpGet]
@@ -37,17 +38,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> PostSignIn()
         {
-            var claims = _contextAccessor.HttpContext.User.Claims;
-            foreach (var claim in claims)
-            {
-                _logger.LogInformation($"Claim received: {claim.Type} Value: {claim.Value}");
-            }
-
-            _logger.LogInformation("Start of PostSignIn");
-            var loginResult = await _loginOrchestrator.Login(_contextAccessor.HttpContext);
-            switch (loginResult)
+            var loginResult = await _loginOrchestrator.Login();
+            switch (loginResult.Result)
             {
                 case LoginResult.Valid:
+                    _contextAccessor.HttpContext.Session.SetString("OrganisationName", loginResult.OrganisationName);
                     return RedirectToAction("Index", "Search");
                 case LoginResult.NotRegistered:
                     return RedirectToAction("NotRegistered", "Home");

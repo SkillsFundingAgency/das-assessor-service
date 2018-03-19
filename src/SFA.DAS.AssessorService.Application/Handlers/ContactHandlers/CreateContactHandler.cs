@@ -55,7 +55,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
                 await _organisationQueryRepository.Get(createContactRequest.EndPointAssessorOrganisationId);
             var organisationUpdateDomainModel =
                 Mapper.Map<UpdateOrganisationDomainModel>(organisationQueryDomainModel);
-            organisationUpdateDomainModel.PrimaryContact = contactResponse.UserName;
+            organisationUpdateDomainModel.PrimaryContact = contactResponse.Username;
             organisationUpdateDomainModel.Status = OrganisationStatus.Live;
 
             await _organisationRepository.UpdateOrganisation(organisationUpdateDomainModel);

@@ -18,7 +18,15 @@ namespace SFA.DAS.AssessorService.Settings
             var table = tableClient.GetTableReference("Configuration");
 
             var operation = TableOperation.Retrieve(environment, $"{serviceName}_{version}");
-            var result = await table.ExecuteAsync(operation);
+            TableResult result;
+            try
+            {
+                result = await table.ExecuteAsync(operation);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Could not connect to Storage to retrieve settings.", e);
+            }
 
             var dynResult = result.Result as DynamicTableEntity;
             var data = dynResult.Properties["Data"].StringValue;

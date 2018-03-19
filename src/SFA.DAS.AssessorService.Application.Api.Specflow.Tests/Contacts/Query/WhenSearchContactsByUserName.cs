@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Query
         [Then(@"the API returns a valid Contact")]
         public void ThenTheAPIReturnsaValidContact()
         {
-            _contactResponse.UserName.Should().Be(_contactArgument.UserName);
+            _contactResponse.Username.Should().Be(_contactArgument.UserName);
             _contactResponse.Email.Should().Be(_contactArgument.EmailAddress);
         }
     }

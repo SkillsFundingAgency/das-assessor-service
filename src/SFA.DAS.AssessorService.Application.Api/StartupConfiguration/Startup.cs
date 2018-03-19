@@ -1,34 +1,32 @@
-using FluentValidation;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using FluentValidation.AspNetCore;
+using JWT;
+using MediatR;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using StructureMap;
+using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using SFA.DAS.AssessorService.Application.Api.Extensions;
+using SFA.DAS.AssessorService.Application.Api.Middleware;
+using SFA.DAS.AssessorService.Application.Api.StartupConfiguration;
+using SFA.DAS.AssessorService.Data;
+using SFA.DAS.AssessorService.Data.TestData;
+using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
+using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Application.Api
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.IO;
-    using Data;
-    using Data.TestData;
-    using ExternalApis.AssessmentOrgs;
-    using FluentValidation.AspNetCore;
-    using JWT;
-    using MediatR;
-    using Microsoft.AspNetCore.Builder;
-    using Microsoft.AspNetCore.Hosting;
-    using Microsoft.AspNetCore.Localization;
-    using Microsoft.AspNetCore.Mvc.Authorization;
-    using Microsoft.AspNetCore.Mvc.Razor;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Logging;
-    using Middleware;
-    using Settings;
-    using StartupConfiguration;
-    using StructureMap;
-    using Swashbuckle.AspNetCore.Swagger;
-
     public class Startup
     {
         private const string ServiceName = "SFA.DAS.AssessorService";
