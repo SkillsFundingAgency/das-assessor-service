@@ -1,0 +1,29 @@
+<script>
+var epaoSearchFormElement = $('.apprentice-search-form');
+var epaoSearchValidationRulesObject = {
+  onkeyup: false,
+  rules: {
+    Surname: {
+      required: true,
+      maxlength: 100
+    },
+    Uln: {
+      required: true,
+      number: true,
+      minlength: 10,
+      maxlength: 10
+    }
+  },
+  messages: {
+    Surname: 'The last name field should not be empty',
+    Uln: {
+      required: 'The ULN field should not be empty',
+      number: 'A ULN should contain exactly 10 numbers',
+      minlength: 'A ULN should contain exactly 10 numbers',
+      maxlength: 'A ULN should contain exactly 10 numbers'
+    }
+  }
+};
+
+GOVUK.epaoValidate(epaoSearchFormElement, epaoSearchValidationRulesObject);
+</script>

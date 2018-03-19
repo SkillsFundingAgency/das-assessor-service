@@ -26,14 +26,18 @@
             }
         }
 
-        <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-            <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                There are errors with your search
-            </h2>
-            <ul class="js-error-summary-list error-summary-list"></ul>
-        </div>
+        
 
         <form class="apprentice-search-form" method="post">
+            
+            @* hidden with css by default *@
+            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                    There are errors with your search
+                </h2>
+                <ul class="js-error-summary-list error-summary-list"></ul>
+            </div>
+
             @if (!ViewData.ModelState.IsValid)
             {
                 <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
@@ -90,4 +94,5 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    @{await Html.RenderPartialAsync("_SearchScriptsPartial"); }
 }
