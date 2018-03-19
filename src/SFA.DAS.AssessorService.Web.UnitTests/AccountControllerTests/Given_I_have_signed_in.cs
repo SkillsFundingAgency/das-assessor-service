@@ -1,10 +1,14 @@
-﻿using System.Security.Claims;
+﻿using System.Collections.Generic;
+using System.Security.Claims;
+using System.Threading;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Web.Controllers;
 using SFA.DAS.AssessorService.Web.Orchestrators.Login;
 
@@ -25,17 +29,21 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
             _contextAccessor.Setup(a => a.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn"))
                 .Returns(new Claim("http://schemas.portal.com/ukprn", "12345"));
 
+            var mockSession = new Mock<ISession>();
+
+            _contextAccessor.SetupGet(a => a.HttpContext.Session).Returns(mockSession.Object);
+
             _loginOrchestrator = new Mock<ILoginOrchestrator>();
 
-            _accountController = new AccountController(_contextAccessor.Object, _loginOrchestrator.Object,
-                new Mock<ILogger<AccountController>>().Object);
+            _accountController = new AccountController(_contextAccessor.Object, new Mock<ILogger<AccountController>>().Object, _loginOrchestrator.Object);
         }
 
         [Test]
         public void And_I_do_not_have_correct_role_Then_redirect_to_InvalidRole_page()
         {
-            _loginOrchestrator.Setup(o => o.Login(It.IsAny<HttpContext>())).ReturnsAsync(LoginResult.InvalidRole);
-            
+            _loginOrchestrator.Setup(o => o.Login())
+                .ReturnsAsync(new LoginResponse() {Result = LoginResult.InvalidRole});
+
             var result = _accountController.PostSignIn().Result;
 
             result.Should().BeOfType<RedirectToActionResult>();
@@ -48,7 +56,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
         [Test]
         public void And_I_am_not_registered_Then_redirect_to_NotRegistered_page()
         {
-            _loginOrchestrator.Setup(o => o.Login(It.IsAny<HttpContext>())).ReturnsAsync(LoginResult.NotRegistered);
+            _loginOrchestrator.Setup(o => o.Login())
+                .ReturnsAsync(new LoginResponse() { Result = LoginResult.NotRegistered });
 
             var result = _accountController.PostSignIn().Result;
 
@@ -62,7 +71,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
         [Test]
         public void And_I_am_valid_Then_redirect_to_Search_page()
         {
-            _loginOrchestrator.Setup(o => o.Login(It.IsAny<HttpContext>())).ReturnsAsync(LoginResult.Valid);
+            _loginOrchestrator.Setup(o => o.Login())
+                .ReturnsAsync(new LoginResponse() { Result = LoginResult.Valid, OrganisationName = "EPA01"});
 
             var result = _accountController.PostSignIn().Result;
 
@@ -72,6 +82,5 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
             redirectResult.ControllerName.Should().Be("Search");
             redirectResult.ActionName.Should().Be("Index");
         }
-
     }
 }
