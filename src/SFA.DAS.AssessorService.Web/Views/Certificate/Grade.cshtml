@@ -7,15 +7,16 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
+        <h1 class="heading-large">@Model.GivenNames @Model.FamilyName</h1>
         <h1 class="heading-large">What grade did the apprentice achieve?</h1>
-        <form type="post" asp-controller="Certificate" asp-method="Grade">
+        <form type="post" asp-controller="CertificateGrade">
             @Html.HiddenFor(c => c.Id)
             <div class="form-group" sfa-validation-for="SelectedGrade" sfa-validationerror-class="form-group-error">
                 <fieldset>
                     @foreach (var grade in Model.Grades)
                     {
                         <div class="multiple-choice">
-                            <input asp-for="SelectedGrade" id="@grade.Text.Replace(" ", "_")" type="radio" value="@grade.Text" />
+                            <input asp-for="SelectedGrade" id="@grade.Text.Replace(" ", "_")" type="radio" value="@grade.Text"/>
                             <label for="@grade.Text.Replace(" ", "_")">
                                 @grade.Text
                             </label>

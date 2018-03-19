@@ -7,18 +7,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Web.Infrastructure;
-using SFA.DAS.AssessorService.Web.Utils;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
     [Authorize]
     [CheckSession]
+    [Route("certificate")]
     public class CertificateController : Controller
     {
         private readonly ILogger<CertificateController> _logger;
@@ -55,111 +53,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     StandardCode = vm.StdCode
                 }));
 
-            return RedirectToAction("Grade", "Certificate");
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Grade()
-        {
-            var sessionString = _contextAccessor.HttpContext.Session.GetString("CertificateSession");
-            var certSession = JsonConvert.DeserializeObject<CertificateSession>(sessionString);
-
-            if (sessionString == null)
-            {
-                return RedirectToAction("Index", "Search");
-            }
-
-            var certificate = await _certificateApiClient.GetCertificate(certSession.CertificateId);
-
-            var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData); 
-
-            var certificateGradeViewModel = new CertificateGradeViewModel();
-
-            certificateGradeViewModel.SetUpGrades();
-            certificateGradeViewModel.Id = certSession.CertificateId;
-            certificateGradeViewModel.SelectedGrade = certData.OverallGrade;
-            certificateGradeViewModel.GivenNames = certData.LearnerGivenNames;
-            certificateGradeViewModel.FamilyName = certData.LearnerFamilyName;
-            certificateGradeViewModel.Standard = certData.StandardName;
-
-            return View(certificateGradeViewModel);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Grade(CertificateGradeViewModel vm)
-        {
-            if (!ModelState.IsValid)
-            {
-                vm.SetUpGrades();
-                return View(vm);
-            }
-
-            var certificate = await _certificateApiClient.GetCertificate(vm.Id);
-
-            var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-
-            certData.OverallGrade = vm.SelectedGrade;
-
-            certificate.CertificateData = JsonConvert.SerializeObject(certData);
-
-            certificate = await _certificateApiClient.UpdateCertificate(certificate);
-
-
-            TempData.Put("Certificate", vm);
-            return RedirectToAction("Options");
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Options()
-        {
-            var vm = TempData.Get<CertificateViewModel>("Certificate");
-
-            if (vm == null)
-            {
-                return RedirectToAction("Index", "Search");
-            }
-
-            return View();
+            return RedirectToAction("Grade", "CertificateGrade");
         }
     }
-
-    public class CertificateSession
-    {
-        public Guid CertificateId { get; set; }
-        public long Uln { get; set; }
-        public int StandardCode { get; set; }
-    }
-
-    public class CertificateStartViewModel
-    {
-        public long Uln { get; set; }
-        public int StdCode { get; set; }
-    }
-
-
-    public class CertificateGradeViewModel
-    {
-        public void SetUpGrades()
-        {
-            Grades = new List<SelectListItem>
-            {
-                new SelectListItem {Text = "Pass", Value = "Pass"},
-                new SelectListItem {Text = "Credit", Value = "Credit"},
-                new SelectListItem {Text = "Merit", Value = "Merit"},
-                new SelectListItem {Text = "Distinction", Value = "Distinction"},
-                new SelectListItem {Text = "Pass with excellence", Value = "Pass with excellence"},
-                new SelectListItem {Text = "No grade awarded", Value = "No grade awarded"}
-            };
-        }
-
-        public Guid Id { get; set; }
-        public string FamilyName { get; set; }
-        public string GivenNames { get; set; }
-        public string SelectedGrade { get; set; }
-        public List<SelectListItem> Grades { get; set; }
-        public string Standard { get; set; }
-    }
-
 
 
     public class CertificateViewModel

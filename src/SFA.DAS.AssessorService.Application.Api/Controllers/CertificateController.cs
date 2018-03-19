@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpPut(Name = "Update")]
-        public async Task<IActionResult> Update(Certificate certificate)
+        public async Task<IActionResult> Update([FromBody] Certificate certificate)
         {
             return Ok(await _mediator.Send(new UpdateCertificateRequest(certificate)));
         }
