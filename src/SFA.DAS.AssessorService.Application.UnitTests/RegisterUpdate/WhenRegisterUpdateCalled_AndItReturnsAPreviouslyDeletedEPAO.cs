@@ -4,12 +4,13 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
 using SFA.DAS.AssessorService.Application.Handlers.RegisterUpdate;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
+using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
 {
-    using AssessorService.Api.Types.Models;
-    using AssessorService.Domain.Consts;
+    
 
     [TestFixture]
     public class WhenRegisterUpdateCalledAndItReturnsAPreviouslyDeletedEpao : RegisterUpdateTestsBase
@@ -28,10 +29,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
             //ApiClient.Setup(c => c.Get("EPA0003")).Returns(new Organisation { Id = "EPA0003", Name = "A New EPAO" });
 
             OrganisationRepository.Setup(r => r.GetAllOrganisations())
-                .Returns(Task.FromResult(new List<OrganisationResponse>
+                .Returns(Task.FromResult(new List<Organisation>
                 {
-                    new OrganisationResponse() { EndPointAssessorOrganisationId = "EPA0001",  Status = OrganisationStatus.Deleted},
-                    new OrganisationResponse() { EndPointAssessorOrganisationId = "EPA0002"}
+                    new Organisation() { EndPointAssessorOrganisationId = "EPA0001",  Status = OrganisationStatus.Deleted},
+                    new Organisation() { EndPointAssessorOrganisationId = "EPA0002"}
                 }.AsEnumerable()));
         }
 

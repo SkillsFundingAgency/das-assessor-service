@@ -8,6 +8,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.DomainModels;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations.Maintenence.Post.Handlers
 {
@@ -62,7 +63,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
         private static Mock<IOrganisationQueryRepository> CreateOrganisationQueryRepository()
         {
             var organisationQueryRepository = new Mock<IOrganisationQueryRepository>();
-            organisationQueryRepository.Setup(r => r.GetByUkPrn(Moq.It.IsAny<int>())).ReturnsAsync(default(OrganisationResponse));
+            organisationQueryRepository.Setup(r => r.GetByUkPrn(Moq.It.IsAny<int>())).ReturnsAsync(default(Organisation));
             return organisationQueryRepository;
         }
 

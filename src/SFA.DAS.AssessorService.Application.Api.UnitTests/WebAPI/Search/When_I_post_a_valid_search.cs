@@ -11,6 +11,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
+using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Search
 {
@@ -30,7 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Search
 
             var organisationQueryRepository = new Mock<IOrganisationQueryRepository>();
             organisationQueryRepository.Setup(r => r.GetByUkPrn(It.IsAny<int>()))
-                .ReturnsAsync(new OrganisationResponse() { EndPointAssessorOrganisationId = "1" });
+                .ReturnsAsync(new Organisation() { EndPointAssessorOrganisationId = "1" });
 
             var assessmentOrgsApiClient = new Mock<IAssessmentOrgsApiClient>();
             assessmentOrgsApiClient.Setup(c => c.FindAllStandardsByOrganisationIdAsync("1"))

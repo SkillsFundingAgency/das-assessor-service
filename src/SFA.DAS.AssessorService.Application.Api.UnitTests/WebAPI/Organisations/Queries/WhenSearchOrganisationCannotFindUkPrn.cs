@@ -5,13 +5,14 @@ using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Exceptions;
+using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Exceptions;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations.Queries
 {
     public class WhenSearchOrganisationCannotFindUkPrn : OrganisationQueryBase
     {
-        private static OrganisationResponse _organisation;
+        private static Organisation _organisation;
         private Exception _result;
 
         [SetUp]
@@ -19,10 +20,10 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
         {
             Setup();
 
-            _organisation = Builder<OrganisationResponse>.CreateNew().Build();
+            _organisation = Builder<Organisation>.CreateNew().Build();
 
             OrganisationQueryRepositoryMock.Setup(q => q.GetByUkPrn(Moq.It.IsAny<int>()))
-                .Returns(Task.FromResult<OrganisationResponse>(null));
+                .Returns(Task.FromResult<Organisation>(null));
 
             try
             {

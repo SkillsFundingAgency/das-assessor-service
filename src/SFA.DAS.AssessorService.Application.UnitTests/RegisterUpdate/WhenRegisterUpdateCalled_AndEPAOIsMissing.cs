@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Handlers.RegisterUpdate;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
+using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
 {
-    using AssessorService.Api.Types.Models;
-    using AssessorService.Domain.Consts;
+
 
     [TestFixture]
     public class WhenRegisterUpdateCalled_AndEPAOIsMissing : RegisterUpdateTestsBase
@@ -32,10 +34,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
 
             _endPointAssessorOrganisationId = "EPA0002";
             OrganisationRepository.Setup(r => r.GetAllOrganisations())
-                .Returns(Task.FromResult(new List<OrganisationResponse>
+                .Returns(Task.FromResult(new List<Organisation>
                 {
-                    new OrganisationResponse() {EndPointAssessorOrganisationId = "EPA0001"},
-                    new OrganisationResponse() {EndPointAssessorOrganisationId = "EPA0002", Status = OrganisationStatus.Live}
+                    new Organisation() {EndPointAssessorOrganisationId = "EPA0001"},
+                    new Organisation() {EndPointAssessorOrganisationId = "EPA0002", Status = OrganisationStatus.Live}
                 }.AsEnumerable()));
         }
 

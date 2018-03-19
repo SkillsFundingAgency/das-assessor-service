@@ -7,6 +7,7 @@ using Moq;
 using SFA.DAS.AssessorService.Application.Handlers.RegisterUpdate;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
+using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
 {
@@ -30,10 +31,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
             ApiClient.Setup(c => c.Get("EPA0003")).Returns(new ExternalApis.AssessmentOrgs.Types.Organisation { Id = "EPA0003", Name = "A New EPAO" });
 
             OrganisationRepository.Setup(r => r.GetAllOrganisations())
-                .Returns(Task.FromResult(new List<OrganisationResponse>
+                .Returns(Task.FromResult(new List<Organisation>
                 {
-                    new OrganisationResponse() { EndPointAssessorOrganisationId = "EPA0001" },
-                    new OrganisationResponse() { EndPointAssessorOrganisationId = "EPA0002"}
+                    new Organisation() { EndPointAssessorOrganisationId = "EPA0001" },
+                    new Organisation() { EndPointAssessorOrganisationId = "EPA0002"}
                 }.AsEnumerable()));
         }
 
