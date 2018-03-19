@@ -29,10 +29,10 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators.Login
 
             _logger.LogInformation("Start of PostSignIn");
 
-            var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
-            var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
-            var email = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/mail")?.Value;
-            var displayName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/displayname")?.Value;
+            var ukprn = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "http://schemas.portal.com/ukprn")?.Value;
+            var username = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
+            var email = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "http://schemas.portal.com/mail")?.Value;
+            var displayName = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "http://schemas.portal.com/displayname")?.Value;
 
             var roles = _contextAccessor.HttpContext.User.Claims.Where(c => c.Type == "http://schemas.portal.com/service")
                 .Select(c => c.Value).ToList();
