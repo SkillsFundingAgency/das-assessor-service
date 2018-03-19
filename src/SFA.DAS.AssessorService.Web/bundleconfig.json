@@ -16,5 +16,12 @@
     },
     // Optionally generate .map file
     "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/js/epao-validation.min.js",
+    "inputFiles": ["wwwroot/js/epao-validation.js"],
+    "minify": {
+      "renameLocals": true
+    }
   }
 ]
