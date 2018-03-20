@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.AssessorService.Web.Controllers
+﻿namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 {
     public class CertificateStartViewModel
     {
