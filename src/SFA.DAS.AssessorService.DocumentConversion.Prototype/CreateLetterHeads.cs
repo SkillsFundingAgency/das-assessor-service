@@ -1,16 +1,36 @@
 ﻿using System;
 using System.IO;
-using SFA.DAS.AssessorService.Domain.JsonData;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
+using SFA.DAS.AssessorService.DocumentConversion.Prototype.Data;
 using Spire.Doc;
+using CertificateData = SFA.DAS.AssessorService.Domain.JsonData.CertificateData;
 
 namespace SFA.DAS.AssessorService.DocumentConversion.Prototype
 {
-    public class LetterHead
+    public class CreateLetterHeads
     {
-        public void Create(CertificateData certificateData, MemoryStream documentTemplateStream)
+        private readonly DocumentTemplateDataStream _documentTemplateDataStream;
+
+        public CreateLetterHeads(DocumentTemplateDataStream documentTemplateDataStream)
         {
-            var pdfStream = CreatePdfStream(certificateData, documentTemplateStream);
-            PersistCopyOfLetterHead(pdfStream);
+            _documentTemplateDataStream = documentTemplateDataStream;
+        }
+
+        public async Task Create()
+        {
+            var documentTemplateDataStream = await _documentTemplateDataStream.Get();
+
+            foreach (var certificate in CertificatesRepository.GetData())
+            {
+                Console.WriteLine($"Processing Certificate - {certificate.Id}");
+                var certificateData = JsonConvert.DeserializeObject<Domain.JsonData.CertificateData>(certificate.CertificateData);
+
+                var pdfStream = CreatePdfStream(certificateData, documentTemplateDataStream);
+                PersistCopyOfLetterHead(pdfStream);
+            }
+
+            documentTemplateDataStream.Close();
         }
 
         private static MemoryStream CreatePdfStream(CertificateData certificateData, MemoryStream documentTemplateStream)
