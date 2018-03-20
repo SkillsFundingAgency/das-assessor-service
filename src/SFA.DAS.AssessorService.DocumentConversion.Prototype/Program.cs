@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace SFA.DAS.AssessorService.DocumentConversion.Prototype
+﻿namespace SFA.DAS.AssessorService.DocumentConversion.Prototype
 {
     public class AppMain
     {
