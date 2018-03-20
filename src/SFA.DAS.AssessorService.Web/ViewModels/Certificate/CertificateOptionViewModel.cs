@@ -1,6 +1,6 @@
 using SFA.DAS.AssessorService.Domain.Entities;
 
-namespace SFA.DAS.AssessorService.Web.Controllers
+namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 {
     public class CertificateOptionViewModel : CertificateBaseViewModel
     {
@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             
         }
-        public CertificateOptionViewModel(Certificate certificate) : base(certificate)
+        public CertificateOptionViewModel(Domain.Entities.Certificate certificate) : base(certificate)
         {
             Option = CertificateData.CourseOption;
 

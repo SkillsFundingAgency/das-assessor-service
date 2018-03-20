@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.JsonData;
+using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -47,15 +48,17 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpPost(Name="Grade")]
         public async Task<IActionResult> Grade(CertificateGradeViewModel vm)
         {
-            if (!ModelState.IsValid)
-            {
-                vm.SetUpGrades();
-                return View("~/Views/Certificate/Grade.cshtml", vm);
-            }
-
             var certificate = await _certificateApiClient.GetCertificate(vm.Id);
 
             var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+
+            if (!ModelState.IsValid)
+            {
+                vm.FamilyName = certData.LearnerFamilyName;
+                vm.GivenNames = certData.LearnerGivenNames;
+                vm.SetUpGrades();
+                return View("~/Views/Certificate/Grade.cshtml", vm);
+            }
 
             certData.OverallGrade = vm.SelectedGrade;
 

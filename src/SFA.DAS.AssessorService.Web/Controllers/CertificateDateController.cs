@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -6,22 +7,20 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.JsonData;
-using SFA.DAS.AssessorService.Web.Utils;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
     [Authorize]
-    [Route("certificate/option")]
-    public class CertificateOptionController : Controller
+    [Route("certificate/date")]
+    public class CertificateDateController : Controller
     {
         private readonly ILogger<CertificateController> _logger;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly ICertificateApiClient _certificateApiClient;
 
-        public CertificateOptionController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor, ICertificateApiClient certificateApiClient)
+        public CertificateDateController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor, ICertificateApiClient certificateApiClient)
         {
             _logger = logger;
             _contextAccessor = contextAccessor;
@@ -29,7 +28,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Option()
+        public async Task<IActionResult> Date()
         {
             var sessionString = _contextAccessor.HttpContext.Session.GetString("CertificateSession");
             if (sessionString == null)
@@ -40,13 +39,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             var certificate = await _certificateApiClient.GetCertificate(certSession.CertificateId);
 
-            var certificateGradeViewModel = new CertificateOptionViewModel(certificate);
+            var certificateDateViewModel = new CertificateDateViewModel(certificate);
 
-            return View("~/Views/Certificate/Option.cshtml", certificateGradeViewModel);
+            return View("~/Views/Certificate/Date.cshtml", certificateDateViewModel);
         }
 
-        [HttpPost(Name = "Option")]
-        public async Task<IActionResult> Option(CertificateOptionViewModel vm)
+        [HttpPost(Name = "Date")]
+        public async Task<IActionResult> Date(CertificateDateViewModel vm)
         {
             var certificate = await _certificateApiClient.GetCertificate(vm.Id);
 
@@ -56,13 +55,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             {
                 vm.FamilyName = certData.LearnerFamilyName;
                 vm.GivenNames = certData.LearnerGivenNames;
-
-                return View("~/Views/Certificate/Option.cshtml", vm);
+                return View("~/Views/Certificate/Date.cshtml", vm);
             }
 
-          
-
-            certData.CourseOption = vm.HasAdditionalLearningOption.Value ? vm.Option : "";
+            certData.AchievementDate = new DateTime(int.Parse(vm.Year), int.Parse(vm.Month), int.Parse(vm.Day));
 
             certificate.CertificateData = JsonConvert.SerializeObject(certData);
 
@@ -71,7 +67,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             await _certificateApiClient.UpdateCertificate(new UpdateCertificateRequest(certificate) { Username = username });
 
             
-            return RedirectToAction("Date", "CertificateDate");
+            return RedirectToAction("Options");
         }
     }
 }

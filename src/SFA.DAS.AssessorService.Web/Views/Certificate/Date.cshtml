@@ -1,0 +1,75 @@
+﻿@model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateDateViewModel
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <h1 class="heading-large">@Model.GivenNames @Model.FamilyName</h1>
+        <h1 class="heading-large">What is the apprenticeship achievement date?</h1>
+        <form type="post" asp-controller="CertificateDate">
+            @Html.HiddenFor(c => c.Id)
+
+
+            <div class="form-group">
+                <span class="form-hint">
+                    For example, 15 10 2017
+                </span>
+
+                <div class="form-date">
+                    <div class="form-group form-group-day">
+                        <label for="Day">Day</label>
+                        <input class="form-control" sfa-validation-for="Date" sfa-validationerror-class="form-control-error" asp-for="Day" type="number" pattern="[0-9]*" min="0" max="31">
+                    </div>
+
+                    <div class="form-group form-group-month">
+                        <label for="Month">Month</label>
+                        <input class="form-control" sfa-validation-for="Date" sfa-validationerror-class="form-control-error" asp-for="Month" type="number" pattern="[0-9]*" min="0" max="12">
+                    </div>
+
+                    <div class="form-group form-group-year">
+                        <label for="Year">Year</label>
+                        <input class="form-control" sfa-validation-for="Date" sfa-validationerror-class="form-control-error" asp-for="Year" type="number" pattern="[0-9]*" min="0" max="2118">
+                    </div>
+                </div>
+                <span class="error-message" asp-validation-for="Date"></span>
+            </div>
+
+            <details role="group">
+                <summary role="button" aria-controls="details-content-0" aria-expanded="false"><span class="summary">What is an achievement date?</span></summary>
+                <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
+                    <p>
+                        The achievement date is when the end-point assessment organisation confirms when the apprentice has passed the apprenticeship.
+                    </p>
+                </div>
+            </details>
+            <button type="submit" class="button">Continue</button>
+        </form>
+    </div>
+</div>
+@*<div class="form-group" sfa-validation-for="HasAdditionalLearningOption" sfa-validationerror-class="form-group-error">
+    <div class="form-group" sfa-validation-for="Option" sfa-validationerror-class="form-group-error">
+        <div class="multiple-choice">
+            <input asp-for="HasAdditionalLearningOption" id="options_yes" type="radio" value="True"/>
+            <label for="options_yes">
+                Yes
+            </label>
+        </div>
+
+        <div class="panel panel-border-narrow" aria-hidden="false">
+            <label class="form-label" for="surname">
+                <span class="form-label-bold">What was the option?</span>
+                <span class="error-message" asp-validation-for="Option"></span>
+            </label>
+            <input class="form-control" sfa-validation-for="Option" sfa-validationerror-class="form-control-error" asp-for="Option" type="text"/>
+        </div>
+    </div>
+    <div class="multiple-choice">
+        <input asp-for="HasAdditionalLearningOption" id="options_no" type="radio" value="False"/>
+        <label for="options_no">
+            No
+        </label>
+    </div>*@
+
