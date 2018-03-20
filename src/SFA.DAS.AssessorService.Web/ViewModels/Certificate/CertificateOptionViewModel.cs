@@ -1,15 +1,14 @@
-using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 {
-    public class CertificateOptionViewModel : CertificateBaseViewModel
+    public class CertificateOptionViewModel : CertificateBaseViewModel, ICertificateViewModel
     {
-        public CertificateOptionViewModel()
+        public bool? HasAdditionalLearningOption { get; set; }
+        public string Option { get; set; }
+        public void FromCertificate(Domain.Entities.Certificate cert)
         {
-            
-        }
-        public CertificateOptionViewModel(Domain.Entities.Certificate certificate) : base(certificate)
-        {
+            BaseFromCertificate(cert);
             Option = CertificateData.CourseOption;
 
             if (CertificateData.CourseOption == null)
@@ -22,7 +21,10 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             }
         }
 
-        public bool? HasAdditionalLearningOption { get; set; }
-        public string Option { get; set; }
+        public CertificateData GetCertificateDataFromViewModel(CertificateData data)
+        {
+            data.CourseOption = HasAdditionalLearningOption.Value ? Option : "";
+            return data;
+        }
     }
 }

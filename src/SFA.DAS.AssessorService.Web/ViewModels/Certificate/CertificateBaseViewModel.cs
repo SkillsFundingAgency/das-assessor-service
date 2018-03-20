@@ -7,10 +7,8 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
     public class CertificateBaseViewModel
     {
         protected CertificateData CertificateData;
-
-        public CertificateBaseViewModel() { }
-
-        public CertificateBaseViewModel(Domain.Entities.Certificate cert)
+        
+        protected void BaseFromCertificate(Domain.Entities.Certificate cert)
         {
             CertificateData = JsonConvert.DeserializeObject<CertificateData>(cert.CertificateData);
             Id = cert.Id;

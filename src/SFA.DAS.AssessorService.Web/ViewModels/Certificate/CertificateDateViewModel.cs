@@ -1,25 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 {
-    public class CertificateDateViewModel : CertificateBaseViewModel
+    public class CertificateDateViewModel : CertificateBaseViewModel, ICertificateViewModel
     {
-        public CertificateDateViewModel(){}
+        public DateTime Date { get; set; }
+        public string Day { get; set; }
+        public string Month { get; set; }
+        public string Year { get; set; }
 
-        public CertificateDateViewModel(Domain.Entities.Certificate cert) : base(cert)
+        public void FromCertificate(Domain.Entities.Certificate cert)
         {
+            BaseFromCertificate(cert);
             Day = CertificateData.AchievementDate?.Day.ToString();
             Month = CertificateData.AchievementDate?.Month.ToString();
             Year = CertificateData.AchievementDate?.Year.ToString();
         }
 
-        public DateTime Date { get; set; }
-
-        public string Day { get; set; }
-        public string Month { get; set; }
-        public string Year { get; set; }
+        public CertificateData GetCertificateDataFromViewModel(CertificateData data)
+        {
+            data.AchievementDate = new DateTime(int.Parse(Year), int.Parse(Month), int.Parse(Day));
+            return data;
+        }
     }
 }
