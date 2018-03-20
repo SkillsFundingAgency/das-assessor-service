@@ -106,8 +106,10 @@ namespace SFA.DAS.AssessorService.Application.Api
 
                 serviceProvider = ConfigureIOC(services);
 
-                TestDataService.AddTestData(serviceProvider.GetService<AssessorDbContext>());
-
+                if (_env.IsDevelopment())
+                {
+                    TestDataService.AddTestData(serviceProvider.GetService<AssessorDbContext>());
+                }
             }
             catch (Exception e)
             {
