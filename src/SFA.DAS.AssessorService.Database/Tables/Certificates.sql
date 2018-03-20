@@ -11,7 +11,7 @@
 	[UpdatedAt] [datetime2](7) NULL,
 	[UpdatedBy] [nvarchar](30) NULL, 
     [Uln] BIGINT NOT NULL, 
-    [StandardCode] NVARCHAR(4) NOT NULL, 
+    [StandardCode] INT NOT NULL, 
     [ProviderUkPrn] INT NOT NULL, 
     CONSTRAINT [PK_Certificates] PRIMARY KEY ([Id]),
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]

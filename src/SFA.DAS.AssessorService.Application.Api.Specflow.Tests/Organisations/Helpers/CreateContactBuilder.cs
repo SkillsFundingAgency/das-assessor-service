@@ -9,7 +9,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.H
 
             var createContactRequest = new CreateContactRequest
             {
-                UserName = _contactArgument.UserName,
+                Username = _contactArgument.UserName,
                 DisplayName = _contactArgument.DisplayName,
                 Email = _contactArgument.Email,
                 EndPointAssessorOrganisationId = endPointAssessorOrganisationId

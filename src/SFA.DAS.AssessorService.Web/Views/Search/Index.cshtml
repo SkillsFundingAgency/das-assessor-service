@@ -3,12 +3,13 @@
 @model SFA.DAS.AssessorService.Web.ViewModels.Search.SearchViewModel
 
 @{
-    ViewBag.Title = (Model?.SearchResults != null ? "0 results found: " : ViewData.ModelState.IsValid ? "" : "Error: ") + "Search for an apprentice";
+    ViewBag.Title = (Model?.SearchResults != null && !Model.SearchResults.Any() ? "0 results found: " : !ViewData.ModelState.IsValid ? "Error: " : "") + "Search for an apprentice";
     Layout = "_Layout";
 }
 
 <div class="grid-row">
     <div class="column-two-thirds">
+        <!-- <a class="link-back" asp-controller="Search" asp-action="Index">Back</a> -->
         <h1 class="heading-large">Search for an apprentice</h1>
 
         @if (Model?.SearchResults != null)
@@ -20,12 +21,23 @@
                 <p class="heading-medium">Please try:</p>
                 <ul class="list list-bullet">
                     <li>checking the spelling of the last name</li>
-                    <li>make sure the ULN is correct for the apprentice</li>
+                    <li>making sure the ULN is correct for the apprentice</li>
                 </ul>
             }
         }
 
-        <form method="post">
+        
+
+        <form class="apprentice-search-form" method="post">
+            
+            @* hidden with css by default *@
+            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                    There are errors with your search
+                </h2>
+                <ul class="js-error-summary-list error-summary-list"></ul>
+            </div>
+
             @if (!ViewData.ModelState.IsValid)
             {
                 <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
@@ -46,11 +58,11 @@
             <fieldset>
 
                 <div class="form-group" sfa-validation-for="Surname" sfa-validationerror-class="form-group-error">
-                    <label class="form-label" for="surname">
+                    <label class="form-label" for="Surname">
                         <span class="form-label-bold">@Localizer["Lastname"]</span>
                         <span class="error-message" asp-validation-for="Surname"></span>
                     </label>
-                    <input class="form-control"  sfa-validation-for="Surname" sfa-validationerror-class="form-control-error" asp-for="Surname" type="text" maxlength="10" />
+                    <input class="form-control" name="Surname" sfa-validation-for="Surname" sfa-validationerror-class="form-control-error" asp-for="Surname" type="text" maxlength="100" />
                 </div>
 
                 <div class="form-group" sfa-validation-for="Uln" sfa-validationerror-class="form-group-error">
@@ -59,7 +71,7 @@
                         <span class="form-hint">A ULN is made up of exactly 10 numbers</span>
                         <span class="error-message" asp-validation-for="Uln"></span>
                     </label>
-                    <input class="form-control" asp-for="Uln" type="text" sfa-validation-for="Uln" sfa-validationerror-class="form-control-error" maxlength="10" />
+                    <input class="form-control" name="Uln" asp-for="Uln" type="text" sfa-validation-for="Uln" sfa-validationerror-class="form-control-error" maxlength="10" />
                 </div>
 
                 <details role="group">
@@ -79,3 +91,8 @@
         </form>
     </div>
 </div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    @{await Html.RenderPartialAsync("_SearchScriptsPartial"); }
+}

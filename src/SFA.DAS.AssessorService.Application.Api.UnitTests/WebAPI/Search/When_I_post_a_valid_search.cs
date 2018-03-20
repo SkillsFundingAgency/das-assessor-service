@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Search
                 .ReturnsAsync(new Standard { Title = "Standard Name 20" });
 
             var ilrRepo = new Mock<IIlrRepository>();
-            ilrRepo.Setup(r => r.Search(It.IsAny<SearchRequest>())).Returns(new List<Ilr> { new Ilr() { FamilyName = "Smith", StdCode = "20" } });
+            ilrRepo.Setup(r => r.Search(It.IsAny<SearchRequest>())).ReturnsAsync(new List<Ilr> { new Ilr() { FamilyName = "Smith", StdCode = "20" } });
 
             var controller = new SearchController(assessmentOrgsApiClient.Object,
                 organisationQueryRepository.Object, ilrRepo.Object);
