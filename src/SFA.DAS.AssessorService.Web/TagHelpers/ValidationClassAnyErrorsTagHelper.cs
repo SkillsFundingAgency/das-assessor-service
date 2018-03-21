@@ -7,16 +7,11 @@ using Microsoft.AspNetCore.Razor.TagHelpers;
 
 namespace SFA.DAS.AssessorService.Web.TagHelpers
 {
-    [HtmlTargetElement("div", Attributes = ValidationForAttributeName + "," + ValidationErrorClassName)]
-    [HtmlTargetElement("input", Attributes = ValidationForAttributeName + "," + ValidationErrorClassName)]
-    public class ValidationClassTagHelper : TagHelper
+    [HtmlTargetElement("div", Attributes = ValidationErrorClassName)]
+    [HtmlTargetElement("input", Attributes = ValidationErrorClassName)]
+    public class ValidationClassAnyErrorsTagHelper : TagHelper
     {
-        public const string ValidationErrorClassName = "sfa-validationerror-class";
-
-        public const string ValidationForAttributeName = "sfa-validation-for";
-
-        [HtmlAttributeName(ValidationForAttributeName)]
-        public ModelExpression For { get; set; }
+        public const string ValidationErrorClassName = "sfa-anyvalidationerror-class";
 
         [HtmlAttributeName(ValidationErrorClassName)]
         public string ValidationErrorClass { get; set; }
@@ -27,13 +22,12 @@ namespace SFA.DAS.AssessorService.Web.TagHelpers
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
-            ModelStateEntry entry;
-            ViewContext.ViewData.ModelState.TryGetValue(For.Name, out entry);
-            if (entry == null || !entry.Errors.Any()) return;
-            
+            if (ViewContext.ViewData.ModelState.IsValid) return;
+
             var tagBuilder = new TagBuilder(context.TagName);
             tagBuilder.AddCssClass(ValidationErrorClass);
             output.MergeAttributes(tagBuilder);
         }
     }
+
 }
