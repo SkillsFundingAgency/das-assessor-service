@@ -1,0 +1,185 @@
+﻿@model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateCheckViewModel
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <h1 class="heading-large">Check and approve the assessment details</h1>
+        <div class="info-summary">
+            <h2 class="heading-medium">Check carefully before approving</h2>
+            <p>The personal details and apprenticeship details below will be printed on the certificate.</p>
+            <p>You must ask the apprentice's training provider to update their Individualised Learner Record (ILR) if the name, ULN, standard or level are wrong. </p>
+        </div>
+
+
+
+        <!-- only add a heading for a list if there is more than one list -->
+        <h2 class="heading-medium">
+            Personal details
+        </h2>
+
+        <!-- use additional modifier class to  column widths for multiple groups of questions and answers: -->
+        <!--   * `cya-questions-short` for short questions -->
+        <!--   * `cya-questions-long` for long questions -->
+        <!--   * none for single group of q&a -->
+        <dl class="govuk-check-your-answers cya-questions-short">
+            <div>
+                <dt class="cya-question">
+                    Name
+                </dt>
+                <dd class="cya-answer">
+                    @Model.GivenNames @Model.FamilyName
+                </dd>
+            </div>
+            <div>
+                <dt class="cya-question">
+                    ULN
+                </dt>
+                <dd class="cya-answer">
+                    @Model.Uln
+                </dd>
+            </div>
+        </dl>
+
+
+        <h2 class="heading-medium">
+            Apprenticeship details
+        </h2>
+
+        <dl class="govuk-check-your-answers cya-questions-short">
+            <div>
+                <dt class="cya-question">
+                    Standard
+                </dt>
+                <dd class="cya-answer">
+                    @Model.Standard
+                </dd>
+                <dd class="cya-change">
+
+                </dd>
+            </div>
+            <div>
+                <dt class="cya-question">
+                    Level
+                </dt>
+                <dd class="cya-answer">
+                    @Model.Level
+                </dd>
+                <dd class="cya-change">
+
+                </dd>
+            </div>
+            <div>
+                <dt class="cya-question">
+                    Option
+                </dt>
+                <dd class="cya-answer">
+                    @Model.Option
+                </dd>
+                <dd class="cya-change">
+                    <a asp-controller="CertificateOption" asp-action="Option" asp-route-redirecttocheck="true">
+                        Change<span class="visually-hidden"> name</span>
+                    </a>
+                </dd>
+            </div>
+            <div>
+                <dt class="cya-question">
+                    Grade
+                </dt>
+                <dd class="cya-answer">
+                    @Model.SelectedGrade
+                </dd>
+                <dd class="cya-change">
+                    <a asp-controller="CertificateGrade" asp-action="Grade" asp-route-redirecttocheck="true">
+                        Change<span class="visually-hidden"> name</span>
+                    </a>
+                </dd>
+            </div>
+            <div>
+                <dt class="cya-question">
+                    Apprenticeship achievement date
+                </dt>
+                <dd class="cya-answer">
+                    @Model.AchievementDate.ToShortDateString()
+                </dd>
+                <dd class="cya-change">
+                    <a asp-controller="CertificateDate" asp-action="Date" asp-route-redirecttocheck="true">
+                        Change<span class="visually-hidden"> name</span>
+                    </a>
+                </dd>
+            </div>
+        </dl>
+
+
+        <h2 class="heading-medium">
+            Employer details
+        </h2>
+
+        <dl class="govuk-check-your-answers cya-questions-short">
+            <div>
+                <dt class="cya-question">
+                    Name
+                </dt>
+                <dd class="cya-answer">
+                    @Model.Name
+                </dd>
+                <dd class="cya-change">
+                    <a asp-controller="CertificateAddress" asp-action="Address" asp-route-redirecttocheck="true">
+                        Change<span class="visually-hidden"> name</span>
+                    </a>
+                </dd>
+            </div>
+            <div>
+                <dt class="cya-question">
+                    Department (optional)
+                </dt>
+                <dd class="cya-answer">
+                    @Model.Dept
+                </dd>
+                <dd class="cya-change">
+                    <a asp-controller="CertificateAddress" asp-action="Address" asp-route-redirecttocheck="true">
+                        Change<span class="visually-hidden"> name</span>
+                    </a>
+                </dd>
+            </div>
+            <div>
+                <dt class="cya-question">
+                    Employer
+                </dt>
+                <dd class="cya-answer">
+                    @Model.Employer
+                </dd>
+                <dd class="cya-change">
+                    <a asp-controller="CertificateAddress" asp-action="Address" asp-route-redirecttocheck="true">
+                        Change<span class="visually-hidden"> name</span>
+                    </a>
+                </dd>
+            </div>
+            <div>
+                <dt class="cya-question">
+                    Address
+                </dt>
+                <dd class="cya-answer">
+                    @Model.AddressLine1<br />
+                    @Model.AddressLine2<br />
+                    @Model.AddressLine3<br />
+                    @Model.City<br />
+                    @Model.Postcode
+                </dd>
+                <dd class="cya-change">
+                    <a asp-controller="CertificateAddress" asp-action="Address" asp-route-redirecttocheck="true">
+                        Change<span class="visually-hidden"> name</span>
+                    </a>
+                </dd>
+            </div>
+
+        </dl>
+        <form type="post" asp-controller="CertificateCheck">
+            @Html.HiddenFor(c => c.Id)
+            <button type="submit" class="button">Continue</button>
+        </form>
+    </div>
+</div>
