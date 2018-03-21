@@ -13,10 +13,13 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.Services
     public class IFACertificateService
     {
         private readonly IConfiguration _configuration;
+        private readonly CertificatesRepository _certificatesRepository;
 
-        public IFACertificateService(IConfiguration configuration)
+        public IFACertificateService(IConfiguration configuration,
+            CertificatesRepository certificatesRepository)
         {
             _configuration = configuration;
+            _certificatesRepository = certificatesRepository;
         }
 
         public void Create()
@@ -84,18 +87,19 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.Services
                 worksheet.Cells[2, 2].Value = "Apprentice Name";
                 worksheet.Cells[2, 3].Value = "Standard Title";
                 worksheet.Cells[2, 4].Value = "Option";
-                worksheet.Cells[2, 5].Value = "acheiving a";
-                worksheet.Cells[2, 6].Value = "Grade";
-                worksheet.Cells[2, 7].Value = "Certificate Number";
-                worksheet.Cells[2, 8].Value = "Chair Name";
-                worksheet.Cells[2, 9].Value = "Chair Title";
-                worksheet.Cells[2, 10].Value = "Employer Contact";
-                worksheet.Cells[2, 11].Value = "Employer Name";
-                worksheet.Cells[2, 12].Value = "Address Line 1";
-                worksheet.Cells[2, 13].Value = "Address Line 2";
-                worksheet.Cells[2, 14].Value = "Address Line 3";
-                worksheet.Cells[2, 15].Value = "Address Line 4";
-                worksheet.Cells[2, 16].Value = "Post Code";
+                worksheet.Cells[2, 5].Value = "Level";
+                worksheet.Cells[2, 6].Value = "acheiving a";
+                worksheet.Cells[2, 7].Value = "Grade";
+                worksheet.Cells[2, 8].Value = "Certificate Number";
+                worksheet.Cells[2, 9].Value = "Ch8ir Name";
+                worksheet.Cells[2, 10].Value = "Chair Title";
+                worksheet.Cells[2, 11].Value = "Employer Contact";
+                worksheet.Cells[2, 12].Value = "Employer Name";
+                worksheet.Cells[2, 13].Value = "Address Line 1";
+                worksheet.Cells[2, 14].Value = "Address Line 2";
+                worksheet.Cells[2, 15].Value = "Address Line 3";
+                worksheet.Cells[2, 16].Value = "Address Line 4";
+                worksheet.Cells[2, 17].Value = "Post Code";
 
                 using (var range = worksheet.Cells[2, 1, 2, 17])
                 {
@@ -212,7 +216,7 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.Services
                 int ColCount = worksheet.Dimension.Columns;
                 bool bHeaderRow = true;
 
-                var certificates = CertificatesRepository.GetData().ToList();
+                var certificates = _certificatesRepository.GetData().ToList();
 
                 int row = 3;
 

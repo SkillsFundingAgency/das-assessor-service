@@ -15,14 +15,17 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.Services
         private readonly IConfiguration _configuration;
         private readonly DocumentTemplateDataStream _documentTemplateDataStream;
         private readonly FileUtilities _fileUtilities;
+        private readonly CertificatesRepository _certificatesRepository;
 
         public CoverLetterTemplateService(IConfiguration configuration,
             DocumentTemplateDataStream documentTemplateDataStream,
-            FileUtilities fileUtilities)
+            FileUtilities fileUtilities,
+            CertificatesRepository certificatesRepository)
         {
             _configuration = configuration;
             _documentTemplateDataStream = documentTemplateDataStream;
             _fileUtilities = fileUtilities;
+            _certificatesRepository = certificatesRepository;
         }
 
         public async Task Create()
@@ -31,7 +34,7 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.Services
 
             CleanUpLastRun();
 
-            foreach (var certificate in CertificatesRepository.GetData())
+            foreach (var certificate in _certificatesRepository.GetData())
             {
                 var uuid = Guid.NewGuid();
 

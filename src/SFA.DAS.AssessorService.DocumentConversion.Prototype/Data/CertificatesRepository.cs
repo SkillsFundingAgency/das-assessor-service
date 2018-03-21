@@ -1,13 +1,23 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using FizzWare.NBuilder;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.Data
 {
     public class CertificatesRepository
     {
+        private readonly IConfiguration _configuration;
+
+        public CertificatesRepository(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         public IEnumerable<Certificate> GetData()
         {
             //var mergedList = list1.Union(list2).ToList();
@@ -21,7 +31,193 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.Data
                 );
             }
 
-            var dummyCertificates = Builder<Certificate>.CreateListOfSize(2)
+            certificates[0].CertificateData = JsonConvert.SerializeObject(
+                new CertificateData
+                {
+                    AchievementDate = DateTime.Now,
+                    LearnerGivenNames = "ZACHARY",
+                    LearnerFamilyName = "QUIRK",
+                    StandardName = "FIRE EMERGENCY & SECURITY SYSTEMS TECHNICIAN",
+                    CourseOption = "SPECIFIC OPTION",
+                    StandardLevel = 2,
+                    AchievementOutcome = "acheiving a",
+                    OverallGrade = "MERIT",
+                    ContactName = "Mr James Green",
+                    ContactOrganisation = "Employer 1",
+                    ContactAddLine1 = "The Qaudrant",
+                    ContactAddLine2 = "123 Scotts Road",
+                    ContactAddLine3 = "Selly Oak",
+                    ContactAddLine4 = "Birmingham",
+                    ContactPostCode = "B34 1JK"
+                }
+            );
+
+
+            certificates[1].CertificateData = JsonConvert.SerializeObject(
+                new CertificateData
+                {
+                    AchievementDate = DateTime.Now,
+                    LearnerGivenNames = "ZACHARY",
+                    LearnerFamilyName = "QUIRK",
+                    StandardName = "FIRE EMERGENCY & SECURITY SYSTEMS TECHNICIAN",
+                    CourseOption = "SPECIFIC OPTION",
+                    StandardLevel = 2,
+                    AchievementOutcome = "acheiving a",
+                    OverallGrade = "MERIT",
+                    ContactName = "Mr James Green",
+                    ContactOrganisation = "Employer 1",
+                    ContactAddLine1 = "The Qaudrant",
+                    ContactAddLine2 = "123 Scotts Road",
+                    ContactAddLine3 = "Selly Oak",
+                    ContactAddLine4 = "Birmingham",
+                    ContactPostCode = "B34 1JK"
+                }
+            );
+
+
+
+            certificates[2].CertificateData = JsonConvert.SerializeObject(
+                new CertificateData
+                {
+                    AchievementDate = DateTime.Now,
+                    LearnerGivenNames = "ZACHARY",
+                    LearnerFamilyName = "QUIRK",
+                    StandardName = "FIRE EMERGENCY & SECURITY SYSTEMS TECHNICIAN",
+                    CourseOption = "",
+                    StandardLevel = 2,
+                    AchievementOutcome = "acheiving a",
+                    OverallGrade = "MERIT",
+                    ContactName = "Mr James Green",
+                    ContactOrganisation = "Employer 1",
+                    ContactAddLine1 = "The Qaudrant",
+                    ContactAddLine2 = "123 Scotts Road",
+                    ContactAddLine3 = "Selly Oak",
+                    ContactAddLine4 = "Birmingham",
+                    ContactPostCode = "B34 1JK"
+                }
+            );
+
+
+            certificates[3].CertificateData = JsonConvert.SerializeObject(
+                new CertificateData
+                {
+                    AchievementDate = DateTime.Now,
+                    LearnerGivenNames = "ZACHARY",
+                    LearnerFamilyName = "QUIRK",
+                    StandardName = "FIRE EMERGENCY & SECURITY SYSTEMS TECHNICIAN",
+                    CourseOption = "",
+                    StandardLevel = 2,
+                    AchievementOutcome = "acheiving a",
+                    OverallGrade = "MERIT",
+                    ContactName = "Mr James Green",
+                    ContactOrganisation = "Employer 1",
+                    ContactAddLine1 = "The Qaudrant",
+                    ContactAddLine2 = "123 Scotts Road",
+                    ContactAddLine3 = "Selly Oak",
+                    ContactAddLine4 = "Birmingham",
+                    ContactPostCode = "B34 1JK"
+                }
+            );
+
+            certificates[4].CertificateData = JsonConvert.SerializeObject(
+                new CertificateData
+                {
+                    AchievementDate = DateTime.Now,
+                    LearnerGivenNames = "ZACHARY",
+                    LearnerFamilyName = "QUIRK",
+                    StandardName = "FIRE EMERGENCY & SECURITY SYSTEMS TECHNICIAN",
+                    CourseOption = "",
+                    StandardLevel = 2,
+                    AchievementOutcome = "acheiving a",
+                    OverallGrade = "MERIT",
+                    ContactName = "Susan Smith",
+                    ContactOrganisation = "Employer 1",
+                    ContactAddLine1 = "The Qaudrant",
+                    ContactAddLine2 = "123 Scotts Road",
+                    ContactAddLine3 = "Selly Oak",
+                    ContactAddLine4 = "Birmingham",
+                    ContactPostCode = "B34 1JK"
+                }
+            );
+
+            certificates[5].CertificateData = JsonConvert.SerializeObject(
+                new CertificateData
+                {
+                    AchievementDate = DateTime.Now,
+                    LearnerGivenNames = "JANE",
+                    LearnerFamilyName = "CLARKE",
+                    StandardName = "FIRE EMERGENCY & SECURITY SYSTEMS TECHNICIAN",
+                    CourseOption = "SPECIFIC OPTION",
+                    StandardLevel = 3,
+                    AchievementOutcome = "acheiving a",
+                    OverallGrade = "DISTINCTION",
+                    ContactName = "Alan Bold",
+                    ContactOrganisation = "Employer 1",
+                    ContactAddLine1 = "The Qaudrant",
+                    ContactAddLine2 = "123 Scotts Road",
+                    ContactAddLine3 = "Selly Oak",
+                    ContactAddLine4 = "Birmingham",
+                    ContactPostCode = "B34 1JK"
+                }
+            );
+
+            certificates[6].CertificateData = JsonConvert.SerializeObject(
+                new CertificateData
+                {
+                    AchievementDate = DateTime.Now,
+                    LearnerGivenNames = "JOHN",
+                    LearnerFamilyName = "SMITH",
+                    StandardName = "FIRE EMERGENCY & SECURITY SYSTEMS TECHNICIAN",
+                    CourseOption = "",
+                    StandardLevel = 4,
+                    AchievementOutcome = "acheiving a",
+                    OverallGrade = "MERIT",
+                    ContactName = "Mr Stephen Long",
+                    ContactOrganisation = "Employer 1",
+                    ContactAddLine1 = "The Qaudrant",
+                    ContactAddLine2 = "123 Scotts Road",
+                    ContactAddLine3 = "Selly Oak",
+                    ContactAddLine4 = "Birmingham",
+                    ContactPostCode = "B34 1JK"
+                }
+            );
+
+            certificates[7].CertificateData = JsonConvert.SerializeObject(
+                new CertificateData
+                {
+                    AchievementDate = DateTime.Now,
+                    LearnerGivenNames = "ANNE",
+                    LearnerFamilyName = "JENKINS",
+                    StandardName = "FIRE EMERGENCY & SECURITY SYSTEMS TECHNICIAN",
+                    CourseOption = "",
+                    StandardLevel = 2,
+                    AchievementOutcome = "acheiving a",
+                    OverallGrade = "MERIT",
+                    ContactName = "Mary Green Ward",
+                    ContactOrganisation = "Employer 1",
+                    ContactAddLine1 = "The Qaudrant",
+                    ContactAddLine2 = "123 Scotts Road",
+                    ContactAddLine3 = "Selly Oak",
+                    ContactAddLine4 = "Birmingham",
+                    ContactPostCode = "B34 1JK"
+                }
+            );
+
+            var generateDummyData = _configuration["GenerateDummyData:Generate"];
+            if (generateDummyData == "true")
+            {
+                return certificates.Union(GenerateDummyData());
+            }
+            else
+            {
+                return certificates;
+            }
+        }
+
+        private IEnumerable<Certificate> GenerateDummyData()
+        {
+            var size = Convert.ToInt32(_configuration["GenerateDummyData:Size"]);
+            var dummyCertificates = Builder<Certificate>.CreateListOfSize(size)
                 .All()
                 .With(
                     q => q.CertificateData =
@@ -34,7 +230,7 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.Data
                         ))
                 .Build();
 
-            return certificates.Union(dummyCertificates);
+            return dummyCertificates;
         }
     }
 }
