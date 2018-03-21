@@ -1,29 +1,61 @@
 ﻿@model SFA.DAS.AssessorService.Web.Controllers.CertificateGradeViewModel
 
 @{
-    ViewBag.Title = "title";
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Grade achieved";
     Layout = "_Layout";
 }
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <h1 class="heading-large">@Model.GivenNames @Model.FamilyName</h1>
-        <h1 class="heading-large">What grade did the apprentice achieve?</h1>
-        <form type="post" asp-controller="CertificateGrade">
+        <a class="link-back" asp-controller="Search" asp-action="Results">Back</a>
+        
+        <form class="apprentice-grade-form" type="post" asp-controller="CertificateGrade">
             @Html.HiddenFor(c => c.Id)
-            <div class="form-group" sfa-validation-for="SelectedGrade" sfa-validationerror-class="form-group-error">
-                <fieldset>
-                    @foreach (var grade in Model.Grades)
-                    {
-                        <div class="multiple-choice">
-                            <input asp-for="SelectedGrade" id="@grade.Text.Replace(" ", "_")" type="radio" value="@grade.Text"/>
-                            <label for="@grade.Text.Replace(" ", "_")">
-                                @grade.Text
-                            </label>
-                        </div>
-                    }
+
+            @* hidden with css by default *@
+            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                    There are errors with your search
+                </h2>
+                <ul class="js-error-summary-list error-summary-list"></ul>
+            </div>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                        There are errors with your search
+                    </h2>
+                    <ul class="error-summary-list">
+                        <li><a sfa-validation-for="SelectedGrade"></a></li>
+                        @*<li><a href="#Pass">You need to specify an achievement grade for this apprentice</a></li>*@
+                    </ul>
+                </div>
+            }
+            
+            
+            <div class="form-group-compound">
+                <fieldset sfa-anyvalidationerror-class="after-error-summary">
+                    <legend id="SelectedGrade">
+                        <h1 class="heading-large">
+                            <span class="heading-secondary">@Model.GivenNames @Model.FamilyName</span>
+                            What grade did the apprentice achieve?</h1>
+                            <div class="error-message-container" sfa-validation-for="SelectedGrade" sfa-validationerror-class="form-group-error">
+                                <span class="error-message" asp-validation-for="SelectedGrade"></span>
+                            </div>
+                    </legend>
+                    <div class="form-group" sfa-validation-for="SelectedGrade" sfa-validationerror-class="form-group-error">
+                        @foreach (var grade in Model.Grades)
+                        {
+                            <div class="multiple-choice">
+                                <input asp-for="SelectedGrade" id="@grade.Text.Replace(" ", "_")" type="radio" value="@grade.Text"/>
+                                <label for="@grade.Text.Replace(" ", "_")">
+                                    @grade.Text
+                                </label>
+                            </div>
+                        }
+                    </div>
                 </fieldset>
-                <span class="error-message" asp-validation-for="SelectedGrade"></span>
             </div>
 
             <details role="group">
@@ -38,3 +70,8 @@
         </form>
     </div>
 </div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    @{await Html.RenderPartialAsync("~/Views/Certificate/_GradeScriptsPartial.cshtml"); }
+}

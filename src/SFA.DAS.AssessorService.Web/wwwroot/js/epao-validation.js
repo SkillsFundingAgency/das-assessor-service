@@ -2,18 +2,29 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
   var documentTitle = $(document).attr('title');
   var validator = formElement
     .bind('invalid-form.validate', function() {
-      // Skip if no summary box in dom (single question)
-      if ($('.js-error-summary-list').length === 0) return false;
-      $('.js-error-summary-list').empty();
       $(document).attr('title', 'Error: ' + documentTitle);
-      validator.errorList.forEach(function(error) {
-        $('.js-error-summary-list').append(
-          '<li><a href="#' + error.element.id + '">' + error.message + '</a></li>'
-        );
-      });
-      $('.js-error-summary').show();
+      if ($('.js-error-summary').length) {
+        $('.js-error-summary-list').empty();
+        validator.errorList.forEach(function(error) {
+          $('.js-error-summary-list').append(
+            '<li><a href="#' + error.element.id + '">' + error.message + '</a></li>'
+          );
+        });
+        $('.js-error-summary')
+          .show()
+          .focus();
+        $('.js-error-summary a').click(function(e) {
+          e.preventDefault();
+          var href = $(this).attr('href');
+          $(href).focus();
+        });
+      } else {
+        // Otherwise, set focus to the field with the error
+        $('.error input:first').focus();
+      }
     })
     .validate({
+      focusInvalid: false,
       onkeyup: false,
       onclick: false,
       onfocusout: false,
@@ -23,14 +34,36 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
         $(element)
           .closest('.form-group')
           .addClass('form-group-error');
+
+        if ($(element).attr('type') === 'radio') {
+          $(element)
+            .closest('fieldset')
+            .addClass('after-error-summary');
+        }
       },
       unhighlight: function(element) {
         $(element)
           .closest('.form-group')
           .removeClass('form-group-error');
+
+        if ($(element).attr('type') === 'radio') {
+          $(element)
+            .closest('fieldset')
+            .removeClass('after-error-summary');
+        }
       },
       rules: validationRulesObject.rules,
       messages: validationRulesObject.messages,
+      errorPlacement: function(error, element) {
+        if (element.attr('type') == 'radio') {
+          $('.error-message-container')
+            .addClass('form-group-error')
+            .show()
+            .append(error);
+        } else {
+          error.insertAfter(element);
+        }
+      },
       submitHandler: function(form) {
         form.submit();
       }

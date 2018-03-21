@@ -297,6 +297,16 @@ nav.global-nav ul li.sa-stacker.sa-open ul li {
   border-top: 1px solid #bfc1c3;
 }
 
+fieldset.after-error-summary {
+  margin-top: -15px;
+}
+
+@media (min-width: 641px) {
+  fieldset.after-error-summary {
+    margin-top: -30px;
+  }
+}
+
 .error-summary,
 .info-summary,
 .success-summary,

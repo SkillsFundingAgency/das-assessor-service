@@ -7,61 +7,63 @@ using Microsoft.AspNetCore.Razor.TagHelpers;
 
 namespace SFA.DAS.AssessorService.Web.TagHelpers
 {
-    [HtmlTargetElement("div", Attributes = ValidationForAttributeName + "," + ValidationErrorClassName)]
-    [HtmlTargetElement("input", Attributes = ValidationForAttributeName + "," + ValidationErrorClassName)]
-    public class ValidationClassTagHelper : TagHelper
+  [HtmlTargetElement("div", Attributes = ValidationForAttributeName + "," + ValidationErrorClassName)]
+  [HtmlTargetElement("input", Attributes = ValidationForAttributeName + "," + ValidationErrorClassName)]
+  [HtmlTargetElement("fieldset", Attributes = ValidationForAttributeName + "," + ValidationErrorClassName)]
+
+  public class ValidationClassTagHelper : TagHelper
+  {
+    public const string ValidationErrorClassName = "sfa-validationerror-class";
+
+    public const string ValidationForAttributeName = "sfa-validation-for";
+
+    [HtmlAttributeName(ValidationForAttributeName)]
+    public ModelExpression For { get; set; }
+
+    [HtmlAttributeName(ValidationErrorClassName)]
+    public string ValidationErrorClass { get; set; }
+
+    [HtmlAttributeNotBound]
+    [ViewContext]
+    public ViewContext ViewContext { get; set; }
+
+    public override void Process(TagHelperContext context, TagHelperOutput output)
     {
-        public const string ValidationErrorClassName = "sfa-validationerror-class";
+      ModelStateEntry entry;
+      ViewContext.ViewData.ModelState.TryGetValue(For.Name, out entry);
+      if (entry == null || !entry.Errors.Any()) return;
 
-        public const string ValidationForAttributeName = "sfa-validation-for";
-
-        [HtmlAttributeName(ValidationForAttributeName)]
-        public ModelExpression For { get; set; }
-
-        [HtmlAttributeName(ValidationErrorClassName)]
-        public string ValidationErrorClass { get; set; }
-
-        [HtmlAttributeNotBound]
-        [ViewContext]
-        public ViewContext ViewContext { get; set; }
-
-        public override void Process(TagHelperContext context, TagHelperOutput output)
-        {
-            ModelStateEntry entry;
-            ViewContext.ViewData.ModelState.TryGetValue(For.Name, out entry);
-            if (entry == null || !entry.Errors.Any()) return;
-            
-            var tagBuilder = new TagBuilder(context.TagName);
-            tagBuilder.AddCssClass(ValidationErrorClass);
-            output.MergeAttributes(tagBuilder);
-        }
+      var tagBuilder = new TagBuilder(context.TagName);
+      tagBuilder.AddCssClass(ValidationErrorClass);
+      output.MergeAttributes(tagBuilder);
     }
+  }
 
-    [HtmlTargetElement("a", Attributes = ValidationForAttributeName)]
-    public class ValidationLinkTagHelper : TagHelper
+  [HtmlTargetElement("a", Attributes = ValidationForAttributeName)]
+  public class ValidationLinkTagHelper : TagHelper
+  {
+    public const string ValidationForAttributeName = "sfa-validation-for";
+
+    [HtmlAttributeName(ValidationForAttributeName)]
+    public ModelExpression For { get; set; }
+
+    [HtmlAttributeNotBound]
+    [ViewContext]
+    public ViewContext ViewContext { get; set; }
+
+    public override void Process(TagHelperContext context, TagHelperOutput output)
     {
-        public const string ValidationForAttributeName = "sfa-validation-for";
+      ModelStateEntry entry;
+      ViewContext.ViewData.ModelState.TryGetValue(For.Name, out entry);
+      if (entry == null || !entry.Errors.Any()) return;
 
-        [HtmlAttributeName(ValidationForAttributeName)]
-        public ModelExpression For { get; set; }
+      var tagBuilder = new TagBuilder("a");
 
-        [HtmlAttributeNotBound]
-        [ViewContext]
-        public ViewContext ViewContext { get; set; }
+      tagBuilder.Attributes.Add("href", $"#{For.Name}");
+      output.MergeAttributes(tagBuilder);
 
-        public override void Process(TagHelperContext context, TagHelperOutput output)
-        {
-            ModelStateEntry entry;
-            ViewContext.ViewData.ModelState.TryGetValue(For.Name, out entry);
-            if (entry == null || !entry.Errors.Any()) return;
-
-            var tagBuilder = new TagBuilder("a");
-
-            tagBuilder.Attributes.Add("href", $"#{For.Name}");
-            output.MergeAttributes(tagBuilder);
-
-            output.Content.SetContent(entry.Errors[0].ErrorMessage);
-        }
+      output.Content.SetContent(entry.Errors[0].ErrorMessage);
     }
+  }
 
 }

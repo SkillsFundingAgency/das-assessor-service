@@ -1,53 +1,83 @@
 ﻿@model SFA.DAS.AssessorService.Web.Controllers.CertificateOptionViewModel
 
 @{
-    ViewBag.Title = "title";
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Learning options";
     Layout = "_Layout";
 }
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <h1 class="heading-large">@Model.GivenNames @Model.FamilyName</h1>
-        <h1 class="heading-large">What grade did the apprentice achieve?</h1>
+        <a class="link-back" asp-controller="Certificate" asp-action="Grade">Back</a>
+        
         <form type="post" asp-controller="Certificate" asp-method="Options">
             @Html.HiddenFor(c => c.Id)
-            <div class="form-group" sfa-validation-for="HasAdditionalLearningOption" sfa-validationerror-class="form-group-error">
-                <div class="form-group" sfa-validation-for="Option" sfa-validationerror-class="form-group-error">
-                    <div class="multiple-choice">
-                        <input asp-for="HasAdditionalLearningOption" id="options_yes" type="radio" value="True"/>
-                        <label for="options_yes">
-                            Yes
-                        </label>
-                    </div>
 
-                    <div class="panel panel-border-narrow" aria-hidden="false">
-                        <label class="form-label" for="surname">
-                            <span class="form-label-bold">What was the option?</span>
-                            <span class="error-message" asp-validation-for="Option"></span>
-                        </label>
-                        <input class="form-control" sfa-validation-for="Option" sfa-validationerror-class="form-control-error" asp-for="Option" type="text"/>
-                    </div>
-                </div>
-                <div class="multiple-choice">
-                    <input asp-for="HasAdditionalLearningOption" id="options_no" type="radio" value="False"/>
-                    <label for="options_no">
-                        No
-                    </label>
-                </div>
-
-                <span class="error-message" asp-validation-for="HasAdditionalLearningOption"></span>
-
-                <details role="group">
-                    <summary role="button" aria-controls="details-content-0" aria-expanded="false"><span class="summary">What is a learning option?</span></summary>
-                    <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
-                        <p>
-                            For some standards, the learner can take different options. For example, the standard for Professional Accounting Technician has an Accounting or Tax option. If applicable, enter the option the learner has achieved. The option will appear on the certificate. You may know options as "pathways" or "specialisms".
-                        </p>
-                    </div>
-                </details>
-                <button type="submit" class="button">Continue</button>
-
+            @* hidden with css by default *@
+            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                    There are errors with your search
+                </h2>
+                <ul class="js-error-summary-list error-summary-list"></ul>
             </div>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                        There are errors with your search
+                    </h2>
+                    <ul class="error-summary-list">
+                        <li><a sfa-validation-for="HasAdditionalLearningOption"></a></li>
+                        <li><a sfa-validation-for="Option"></a></li>
+                        @*<li><a href="#Pass">You need to specify an achievement grade for this apprentice</a></li>*@
+                    </ul>
+                </div>
+            }
+
+            <div class="form-group-compound">
+                <fieldset sfa-anyvalidationerror-class="after-error-summary">
+                    <legend id="HasAdditionalLearningOption">
+                        <h1 class="heading-large">
+                            <span class="heading-secondary">@Model.GivenNames @Model.FamilyName</span>
+                            Did the apprentice do any additional learning options?</h1>
+                            <div class="error-message-container" sfa-validation-for="HasAdditionalLearningOption" sfa-validationerror-class="form-group-error">
+                                <span class="error-message" asp-validation-for="HasAdditionalLearningOption"></span>
+                            </div>
+                    </legend>
+                    <div class="form-group" sfa-anyvalidationerror-class="form-group-error">
+                        <div class="multiple-choice" data-target="show-option-input">
+                            <input asp-for="HasAdditionalLearningOption" id="options_yes" type="radio" value="True" />
+                            <label for="options_yes">
+                                Yes
+                            </label>
+                        </div>
+                        <div class="panel panel-border-narrow js-hidden" id="show-option-input">
+                            <label class="form-label" for="surname">
+                                <span class="form-label">What was the option?</span>
+                                <span class="error-message" asp-validation-for="Option"></span>
+                            </label>
+                            <input class="form-control" sfa-validation-for="Option" sfa-validationerror-class="form-control-error" asp-for="Option" type="text"/>
+                        </div>
+
+                        <div class="multiple-choice">
+                            <input asp-for="HasAdditionalLearningOption" id="options_no" type="radio" value="False"/>
+                            <label for="options_no">
+                                No
+                            </label>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+
+            <details role="group">
+                <summary role="button" aria-controls="details-content-0" aria-expanded="false"><span class="summary">What is a learning option?</span></summary>
+                <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
+                    <p>
+                        For some standards, the learner can take different options. For example, the standard for Professional Accounting Technician has an Accounting or Tax option. If applicable, enter the option the learner has achieved. The option will appear on the certificate. You may know options as "pathways" or "specialisms".
+                    </p>
+                </div>
+            </details>
+            <button type="submit" class="button">Continue</button>
         </form>
     </div>
 </div>
