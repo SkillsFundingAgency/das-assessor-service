@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {}
 
         [HttpGet]
-        public async Task<IActionResult> Date()
+        public async Task<IActionResult> Date(bool? redirectToCheck = false)
         {
             return await LoadViewModel<CertificateDateViewModel>("~/Views/Certificate/Date.cshtml");
         }
@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             return await SaveViewModel(vm, 
                 returnToIfModelNotValid: "~/Views/Certificate/Date.cshtml",
-                nextAction: RedirectToAction("Options"));
+                nextAction: RedirectToAction("Address", "CertificateAddress"));
         }
     }
 }
