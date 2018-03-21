@@ -20,17 +20,36 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.Data
 
         public IEnumerable<Certificate> GetData()
         {
-            //var mergedList = list1.Union(list2).ToList();
-            // Merge in data from example ....
+            var certificates = CreateDefaultData();
+
+            // Optionally create Dummy Data for Performance Testing
+            var generateDummyData = _configuration["GenerateDummyData:Generate"];
+            return generateDummyData == "true" ? certificates.Union(GenerateDummyData()) : certificates;
+        }
+
+        private static List<Certificate> CreateDefaultData()
+        {
+            var certificates = CreateCertificates();
+            return AddCertificateData(certificates);
+        }
+
+        private static List<Certificate> CreateCertificates()
+        {
             var certificates = new List<Certificate>();
             for (var sequenceNumber = 1; sequenceNumber <= 8; sequenceNumber++)
             {
                 var number = sequenceNumber;
                 certificates.Add(
-                    Builder<Certificate>.CreateNew().With(q => q.CertificateReference = number.ToString().PadLeft(8, '0')).Build()
+                    Builder<Certificate>.CreateNew().With(q => q.CertificateReference = number.ToString().PadLeft(8, '0'))
+                        .Build()
                 );
             }
 
+            return certificates;
+        }
+
+        private static List<Certificate> AddCertificateData(List<Certificate> certificates)
+        {
             certificates[0].CertificateData = JsonConvert.SerializeObject(
                 new CertificateData
                 {
@@ -73,7 +92,6 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.Data
                     ContactPostCode = "B34 1JK"
                 }
             );
-
 
 
             certificates[2].CertificateData = JsonConvert.SerializeObject(
@@ -203,15 +221,7 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.Data
                 }
             );
 
-            var generateDummyData = _configuration["GenerateDummyData:Generate"];
-            if (generateDummyData == "true")
-            {
-                return certificates.Union(GenerateDummyData());
-            }
-            else
-            {
-                return certificates;
-            }
+            return certificates;
         }
 
         private IEnumerable<Certificate> GenerateDummyData()

@@ -38,21 +38,32 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.Services
             {
                 var uuid = Guid.NewGuid();
 
-                Console.WriteLine($"Processing Certificate - {certificate.Id} - {uuid}");
+                Console.WriteLine($"Processing Certificate for Cover Letter - {certificate.Id} - {uuid}");
                 var certificateData = JsonConvert.DeserializeObject<Domain.JsonData.CertificateData>(certificate.CertificateData);
 
                 var pdfStream = CreatePdfStream(certificateData, documentTemplateDataStream);
-                PersistCopyOfLetterHead(uuid, pdfStream);
+                SaveCopyOfLetterHead(uuid, pdfStream);
             }
 
             documentTemplateDataStream.Close();
         }
 
+        private void CleanUpLastRun()
+        {
+            var outputDirectory = _configuration["OutputDirectory"];
+            var archiveDirectory = outputDirectory + "\\Archive";
+            _fileUtilities.MoveDirectory(outputDirectory, archiveDirectory);
+        }
+
         private MemoryStream CreatePdfStream(CertificateData certificateData, MemoryStream documentTemplateStream)
         {
-            //Load Document
+            var document = MergeFieldsInDocument(certificateData, documentTemplateStream);
+            return ConvertDocumentToPdf(document);
+        }
+
+        private static Document MergeFieldsInDocument(CertificateData certificateData, MemoryStream documentTemplateStream)
+        {
             var document = new Document();
-            //document.LoadFromFile(@"ReadTest.docx");
             document.LoadFromStream(documentTemplateStream, FileFormat.Docx);
 
             document.Replace("[Addressee Name]", certificateData.ContactName, false, true);
@@ -63,14 +74,17 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.Services
             document.Replace("[Address Line 5]", certificateData.ContactPostCode, false, true);
 
             document.Replace("[Inset employer name?]", certificateData.ContactName, false, true);
+            return document;
+        }
 
-            //Convert Word to PDF
+        private static MemoryStream ConvertDocumentToPdf(Document document)
+        {
             MemoryStream pdfStream = new MemoryStream();
             document.SaveToStream(pdfStream, FileFormat.PDF);
             return pdfStream;
         }
 
-        private void PersistCopyOfLetterHead(Guid uuid, MemoryStream ms)
+        private void SaveCopyOfLetterHead(Guid uuid, MemoryStream ms)
         {
             var outputDirectory = _configuration["OutputDirectory"];
             var fileName = $"{outputDirectory}\\sample-{uuid}.pdf";
@@ -88,13 +102,6 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.Services
             var launchDocument = _configuration["LaunchDocument"];
             if (launchDocument == "true")
                 System.Diagnostics.Process.Start(fileName);
-        }
-
-        private void CleanUpLastRun()
-        {
-            var outputDirectory = _configuration["OutputDirectory"];
-            var archiveDirectory = outputDirectory + "\\Archive";
-            _fileUtilities.MoveDirectory(outputDirectory, archiveDirectory);
         }
     }
 }
