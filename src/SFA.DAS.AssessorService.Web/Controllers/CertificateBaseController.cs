@@ -59,13 +59,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return View(returnToIfModelNotValid, vm);
             }
 
-            certData = vm.GetCertificateDataFromViewModel(certData);
-
-            certificate.CertificateData = JsonConvert.SerializeObject(certData);
+            var updatedCertificate = vm.GetCertificateFromViewModel(certificate, certData);
 
             var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
-            await _certificateApiClient.UpdateCertificate(new UpdateCertificateRequest(certificate) { Username = username });
+            await _certificateApiClient.UpdateCertificate(new UpdateCertificateRequest(updatedCertificate) { Username = username });
 
             var session = _contextAccessor.HttpContext.Session;
             if (session.Keys.Any(k => k == "redirecttocheck") && bool.Parse(session.GetString("redirecttocheck")))

@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
@@ -18,10 +19,13 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             Year = CertificateData.AchievementDate?.Year.ToString();
         }
 
-        public CertificateData GetCertificateDataFromViewModel(CertificateData data)
+        public Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData data)
         {
             data.AchievementDate = new DateTime(int.Parse(Year), int.Parse(Month), int.Parse(Day));
-            return data;
+
+            certificate.CertificateData = JsonConvert.SerializeObject(data);
+
+            return certificate;
         }
     }
 }
