@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using SFA.DAS.AssessorService.DocumentConversion.Prototype.Services;
 
 namespace SFA.DAS.AssessorService.DocumentConversion.Prototype
 {

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
+using System.Linq;
+using Newtonsoft.Json;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using SFA.DAS.AssessorService.DocumentConversion.Prototype.Data;
 
-namespace SFA.DAS.AssessorService.DocumentConversion.Prototype
+namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.Services
 {
     public class PrintDataSpreadsheet
     {
@@ -24,7 +26,7 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype
 
             using (ExcelPackage package = new ExcelPackage(file))
             {
-             
+
                 var workbook = package.Workbook;
                 workbook.Protection.LockWindows = true;
                 workbook.Protection.LockStructure = true;
@@ -74,18 +76,18 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype
                 worksheet.Cells[2, 2].Value = "Apprentice Name";
                 worksheet.Cells[2, 3].Value = "Standard Title";
                 worksheet.Cells[2, 4].Value = "Option";
-                worksheet.Cells[2, 6].Value = "acheiving a";
-                worksheet.Cells[2, 7].Value = "Grade";
-                worksheet.Cells[2, 8].Value = "Certificate Number";
-                worksheet.Cells[2, 9].Value = "Chair Name";
-                worksheet.Cells[2, 10].Value = "Chair Title";
-                worksheet.Cells[2, 11].Value = "Employer Contact";
-                worksheet.Cells[2, 12].Value = "Employer Name";
-                worksheet.Cells[2, 13].Value = "Address Line 1";
-                worksheet.Cells[2, 14].Value = "Address Line 2";
-                worksheet.Cells[2, 15].Value = "Address Line 3";
-                worksheet.Cells[2, 16].Value = "Address Line 4";
-                worksheet.Cells[2, 17].Value = "Post Code";
+                worksheet.Cells[2, 5].Value = "acheiving a";
+                worksheet.Cells[2, 6].Value = "Grade";
+                worksheet.Cells[2, 7].Value = "Certificate Number";
+                worksheet.Cells[2, 8].Value = "Chair Name";
+                worksheet.Cells[2, 9].Value = "Chair Title";
+                worksheet.Cells[2, 10].Value = "Employer Contact";
+                worksheet.Cells[2, 11].Value = "Employer Name";
+                worksheet.Cells[2, 12].Value = "Address Line 1";
+                worksheet.Cells[2, 13].Value = "Address Line 2";
+                worksheet.Cells[2, 14].Value = "Address Line 3";
+                worksheet.Cells[2, 15].Value = "Address Line 4";
+                worksheet.Cells[2, 16].Value = "Post Code";
 
                 using (var range = worksheet.Cells[2, 1, 2, 17])
                 {
@@ -108,7 +110,7 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype
                 // add the file path to the footer
                 worksheet.HeaderFooter.OddFooter.LeftAlignedText = ExcelHeaderFooter.FilePath + ExcelHeaderFooter.FileName;
 
-                worksheet.View.PageLayoutView = false;                
+                worksheet.View.PageLayoutView = false;
 
                 // set some document properties
                 package.Workbook.Properties.Title = "Invertory";
@@ -198,12 +200,70 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype
                 //package.Workbook.Properties.SetCustomPropertyValue("Checked by", "Jan Källman");
                 //package.Workbook.Properties.SetCustomPropertyValue("AssemblyName", "EPPlus");
                 // save our new workbook and we are done!
-                package.Save();
-            }
+                int rowCount = worksheet.Dimension.Rows;
+                int ColCount = worksheet.Dimension.Columns;
+                bool bHeaderRow = true;
 
-            foreach (var certificate in CertificatesRepository.GetData())
-            {
-                Console.WriteLine($"Processing Certificate For Spread Sheet - {certificate.Id}");
+                var certificates = CertificatesRepository.GetData().ToList();
+
+                int row = 3;
+
+                foreach (var certificate in certificates)
+                {
+                    var certificateData = JsonConvert.DeserializeObject<Domain.JsonData.CertificateData>(certificate.CertificateData);
+                    if (certificateData.AchievementDate != null)
+                        worksheet.Cells[row, 1].Value = certificateData.AchievementDate;
+
+                    if (certificateData.ContactName != null)
+                        worksheet.Cells[row, 2].Value = certificateData.ContactName;
+
+                    if (certificateData.StandardName != null)
+                        worksheet.Cells[row, 3].Value = certificateData.StandardName;
+
+                    if (certificateData.CourseOption != null)
+                        worksheet.Cells[row, 4].Value = certificateData.CourseOption;
+
+                    worksheet.Cells[row, 5].Value = $"Level{certificateData.StandardLevel}";
+
+                    if (certificateData.AchievementOutcome != null)
+                        worksheet.Cells[row, 6].Value = certificateData.AchievementOutcome;
+
+                    if (certificateData.OverallGrade != null)
+                        worksheet.Cells[row, 7].Value = certificateData.OverallGrade;
+
+                    if (certificateData.Registration != null)
+                        worksheet.Cells[row, 8].Value = certificateData.Registration;
+
+                    worksheet.Cells[row, 9].Value = "Chair Name";
+                    worksheet.Cells[row, 10].Value = "Chair Title";
+
+                    if (certificateData.ContactName != null)
+                        worksheet.Cells[row, 11].Value = certificateData.ContactName;
+
+                    if (certificateData.ContactOrganisation != null)
+                        worksheet.Cells[row, 12].Value = certificateData.ContactOrganisation;
+
+                    if (certificateData.ContactAddLine1 != null)
+                        worksheet.Cells[row, 13].Value = certificateData.ContactAddLine1;
+
+                    if (certificateData.ContactAddLine2 != null)
+                        worksheet.Cells[row, 14].Value = certificateData.ContactAddLine2;
+
+                    if (certificateData.ContactAddLine3 != null)
+                        worksheet.Cells[row, 15].Value = certificateData.ContactAddLine3;
+
+                    if (certificateData.ContactAddLine4 != null)
+                        worksheet.Cells[row, 16].Value = certificateData.ContactAddLine4;
+
+                    if (certificateData.ContactPostCode != null)
+                        worksheet.Cells[row, 17].Value = certificateData.ContactPostCode;
+
+                    Console.WriteLine($"Processing Certificate For Spread Sheet - {certificate.Id}");
+
+                    row++;
+                }
+
+                package.Save();
             }
         }
     }
