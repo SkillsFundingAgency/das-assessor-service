@@ -6,7 +6,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="appsettings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="appsettings.json">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EPPlus" Version="4.5.0.3-rc" />
     <PackageReference Include="FreeSpire.Doc" Version="5.7.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.0-preview1-final" />
     <PackageReference Include="Microsoft.WindowsAzure.Common" Version="1.4.1" />
     <PackageReference Include="Microsoft.WindowsAzure.Common.Dependencies" Version="1.1.1" />
     <PackageReference Include="Microsoft.WindowsAzure.ConfigurationManager" Version="3.2.3" />

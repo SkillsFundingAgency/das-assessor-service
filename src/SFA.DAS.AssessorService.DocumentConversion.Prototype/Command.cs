@@ -1,34 +1,24 @@
-﻿using System;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using SFA.DAS.AssessorService.DocumentConversion.Prototype.Data;
+﻿using System.Threading.Tasks;
+using SFA.DAS.AssessorService.DocumentConversion.Prototype.Services;
 
 namespace SFA.DAS.AssessorService.DocumentConversion.Prototype
 {
     public class Command
     {
-        private readonly DocumentTemplateDataStream _documentTemplateDataStream;
-        private readonly LetterHead _letterHead;
+        private readonly CoverLetterTemplateService _coverLetterTemplateService;
+        private readonly IFACertificateService _ifaCertificateService;
 
-        public Command(DocumentTemplateDataStream documentTemplateDataStream,
-            LetterHead letterHead)
+        public Command(CoverLetterTemplateService coverLetterTemplateService,
+            IFACertificateService ifaCertificateService)
         {
-            _documentTemplateDataStream = documentTemplateDataStream;
-            _letterHead = letterHead;
+            _coverLetterTemplateService = coverLetterTemplateService;
+            _ifaCertificateService = ifaCertificateService;
         }
 
         public async Task Execute()
         {
-            var documentTemplateDataStream = await _documentTemplateDataStream.Get();
-
-            foreach (var certificate in CertificateData.GetData())
-            {
-                Console.WriteLine($"Processing Certificate - {certificate.Id}");
-                var certificateData = JsonConvert.DeserializeObject<Domain.JsonData.CertificateData>(certificate.CertificateData);
-                _letterHead.Create(certificateData, documentTemplateDataStream);
-            }
-
-            documentTemplateDataStream.Close();
+            await _coverLetterTemplateService.Create();
+            _ifaCertificateService.Create();
         }
     }
 }
