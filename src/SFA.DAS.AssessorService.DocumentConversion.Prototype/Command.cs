@@ -5,11 +5,11 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype
 {
     public class Command
     {
-        private readonly CreateLetterHeads _createLetterHeads;
-        private readonly PrintDataSpreadsheet _printDataSpreadsheet;
+        private readonly CoverLetterTemplateService _createLetterHeads;
+        private readonly IFACertificateService _printDataSpreadsheet;
 
-        public Command(CreateLetterHeads createLetterHeads,
-            PrintDataSpreadsheet printDataSpreadsheet)
+        public Command(CoverLetterTemplateService createLetterHeads,
+            IFACertificateService printDataSpreadsheet)
         {
             _createLetterHeads = createLetterHeads;
             _printDataSpreadsheet = printDataSpreadsheet;
@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype
         public async Task Execute()
         {
             await _createLetterHeads.Create();
-            _printDataSpreadsheet.Execute();
+            _printDataSpreadsheet.Create();
         }
     }
 }

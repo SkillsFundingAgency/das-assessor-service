@@ -10,13 +10,13 @@ using CertificateData = SFA.DAS.AssessorService.Domain.JsonData.CertificateData;
 
 namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.Services
 {
-    public class CreateLetterHeads
+    public class CoverLetterTemplateService
     {
         private readonly IConfiguration _configuration;
         private readonly DocumentTemplateDataStream _documentTemplateDataStream;
         private readonly FileUtilities _fileUtilities;
 
-        public CreateLetterHeads(IConfiguration configuration,
+        public CoverLetterTemplateService(IConfiguration configuration,
             DocumentTemplateDataStream documentTemplateDataStream,
             FileUtilities fileUtilities)
         {
