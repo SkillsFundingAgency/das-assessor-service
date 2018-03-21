@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
@@ -9,9 +10,16 @@ using SFA.DAS.AssessorService.DocumentConversion.Prototype.Data;
 
 namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.Services
 {
-    public class PrintDataSpreadsheet
+    public class IFACertificateService
     {
-        public void Execute()
+        private readonly IConfiguration _configuration;
+
+        public IFACertificateService(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
+        public void Create()
         {
             var directoryName = @"C:\\OutputDirectory\\Excel";
             if (!Directory.Exists(directoryName))
@@ -212,10 +220,11 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.Services
                 {
                     var certificateData = JsonConvert.DeserializeObject<Domain.JsonData.CertificateData>(certificate.CertificateData);
                     if (certificateData.AchievementDate != null)
-                        worksheet.Cells[row, 1].Value = certificateData.AchievementDate;
+                        worksheet.Cells[row, 1].Value = certificateData.AchievementDate.ToString();
 
+                    var learnerName = $"{certificateData.LearnerGivenNames} {certificateData.LearnerFamilyName}";
                     if (certificateData.ContactName != null)
-                        worksheet.Cells[row, 2].Value = certificateData.ContactName;
+                        worksheet.Cells[row, 2].Value = learnerName;
 
                     if (certificateData.StandardName != null)
                         worksheet.Cells[row, 3].Value = certificateData.StandardName;
@@ -231,11 +240,11 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.Services
                     if (certificateData.OverallGrade != null)
                         worksheet.Cells[row, 7].Value = certificateData.OverallGrade;
 
-                    if (certificateData.Registration != null)
-                        worksheet.Cells[row, 8].Value = certificateData.Registration;
+                    if (certificate.CertificateReference != null)
+                        worksheet.Cells[row, 8].Value = certificate.CertificateReference;
 
-                    worksheet.Cells[row, 9].Value = "Chair Name";
-                    worksheet.Cells[row, 10].Value = "Chair Title";
+                    worksheet.Cells[row, 9].Value = _configuration["ChairDetails:ChairName"];
+                    worksheet.Cells[row, 10].Value = _configuration["ChairDetails:ChairTitle"];
 
                     if (certificateData.ContactName != null)
                         worksheet.Cells[row, 11].Value = certificateData.ContactName;
