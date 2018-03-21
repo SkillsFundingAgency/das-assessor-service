@@ -36,6 +36,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="Resources\Validators\CertificateDateViewModelValidator.en.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Validators\CertificateOptionViewModelValidator.en.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Validators\CertificateGradeViewModelValidator.en.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="Resources\Validators\SearchQueryViewModelValidator.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>

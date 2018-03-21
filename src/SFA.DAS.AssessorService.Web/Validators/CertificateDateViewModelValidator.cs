@@ -1,5 +1,6 @@
 ﻿using System;
 using FluentValidation;
+using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.JsonData;
@@ -12,7 +13,7 @@ namespace SFA.DAS.AssessorService.Web.Validators
     {
         private readonly ICertificateApiClient _certApiClient;
 
-        public CertificateDateViewModelValidator(ICertificateApiClient certApiClient)
+        public CertificateDateViewModelValidator(ICertificateApiClient certApiClient, IStringLocalizer<CertificateDateViewModelValidator> localizer)
         {
             _certApiClient = certApiClient;
             RuleFor(vm => vm).Custom((vm, context) =>
@@ -25,7 +26,7 @@ namespace SFA.DAS.AssessorService.Web.Validators
 
                         if (achievementDate > SystemTime.UtcNow())
                         {
-                            context.AddFailure("Date", "Achievement Date cannot be in the future.");
+                            context.AddFailure("Date", localizer["DateMustNotBeInFuture"]);
                         }
                         else
                         {
@@ -33,18 +34,18 @@ namespace SFA.DAS.AssessorService.Web.Validators
                             var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
                             if (achievementDate < certData.LearningStartDate.AddMonths(12))
                             {
-                                context.AddFailure("Date", $"Achievement Date must be at least 12 months from Learner Start Date of {certData.LearningStartDate}.");
+                                context.AddFailure("Date", localizer["DateMustBeAtLeastTwelveMonthsFromStartDate"]);
                             }
                         }
                     }
                     catch (ArgumentOutOfRangeException e)
                     {
-                        context.AddFailure("Date", "Date is not in correct format.");
+                        context.AddFailure("Date", localizer["IncorrectFormat"]);
                     }
                 }
                 else
                 {
-                    context.AddFailure("Date", "Date is not in correct format.");
+                    context.AddFailure("Date", localizer["IncorrectFormat"]);
                 }
             });
         }
