@@ -24,5 +24,6 @@ namespace SFA.DAS.AssessorService.Domain.JsonData
         public DateTime? AchievementDate { get; set; }
         public string CourseOption { get; set; }
         public string OverallGrade { get; set; }
+        public string Department { get; set; }
     }
 }

@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {}
 
         [HttpGet]
-        public async Task<IActionResult> Grade()
+        public async Task<IActionResult> Grade(bool? redirectToCheck = false)
         {
             return await LoadViewModel<CertificateGradeViewModel>("~/Views/Certificate/Grade.cshtml");
         }

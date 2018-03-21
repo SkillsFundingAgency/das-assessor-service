@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {}
 
         [HttpGet]
-        public async Task<IActionResult> Option()
+        public async Task<IActionResult> Option(bool? redirectToCheck = false)
         {
             return await LoadViewModel<CertificateOptionViewModel>("~/Views/Certificate/Option.cshtml");
         }

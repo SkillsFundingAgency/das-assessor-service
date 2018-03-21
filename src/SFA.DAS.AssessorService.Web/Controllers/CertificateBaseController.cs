@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -24,6 +25,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
         protected async Task<IActionResult> LoadViewModel<T>(string view) where T : ICertificateViewModel, new()
         {
+            var query = _contextAccessor.HttpContext.Request.Query;
+            if (query.ContainsKey("redirecttocheck") && bool.Parse(query["redirecttocheck"]))
+                _contextAccessor.HttpContext.Session.SetString("redirecttocheck", "true");
+            else
+                _contextAccessor.HttpContext.Session.Remove("redirecttocheck");
+
             var sessionString = _contextAccessor.HttpContext.Session.GetString("CertificateSession");
             if (sessionString == null)
             {
@@ -53,13 +60,17 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
 
             certData = vm.GetCertificateDataFromViewModel(certData);
-            
+
             certificate.CertificateData = JsonConvert.SerializeObject(certData);
 
             var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
             await _certificateApiClient.UpdateCertificate(new UpdateCertificateRequest(certificate) { Username = username });
 
+            var session = _contextAccessor.HttpContext.Session;
+            if (session.Keys.Any(k => k == "redirecttocheck") && bool.Parse(session.GetString("redirecttocheck")))
+                return new RedirectToActionResult("Check", "CertificateCheck", null);
+            
             return nextAction;
         }
     }
