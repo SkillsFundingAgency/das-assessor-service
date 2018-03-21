@@ -8,7 +8,7 @@ using SFA.DAS.AssessorService.DocumentConversion.Prototype.Utilities;
 using Spire.Doc;
 using CertificateData = SFA.DAS.AssessorService.Domain.JsonData.CertificateData;
 
-namespace SFA.DAS.AssessorService.DocumentConversion.Prototype
+namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.Services
 {
     public class CreateLetterHeads
     {
