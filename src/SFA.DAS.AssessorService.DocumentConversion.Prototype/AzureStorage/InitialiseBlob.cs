@@ -8,14 +8,20 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.AzureStorage
 {
     public class InitialiseBlob
     {
+        private readonly Common _common;
         private const string ContainerPrefix = "sample";
+
+        public InitialiseBlob(Common common)
+        {
+            _common = common;
+        }
 
         public async Task<CloudBlobContainer> Execute()
         {
             string containerName = ContainerPrefix; //+ Guid.NewGuid();
 
             //StorageCredentials creds = new StorageCredentials(accountName, accountKey);
-            CloudStorageAccount storageAccount = Common.CreateStorageAccountFromConnectionString();
+            CloudStorageAccount storageAccount = _common.CreateStorageAccountFromConnectionString();
 
             CloudBlobClient client = storageAccount.CreateCloudBlobClient();
 
