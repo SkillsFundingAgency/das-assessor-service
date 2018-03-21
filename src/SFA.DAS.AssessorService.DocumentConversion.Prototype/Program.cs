@@ -1,5 +1,4 @@
-﻿using System.IO;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 
 namespace SFA.DAS.AssessorService.DocumentConversion.Prototype
 {

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.WindowsAzure.Storage;
+﻿using System.Threading.Tasks;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.Storage.RetryPolicies;
 
@@ -9,7 +7,6 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.AzureStorage
     public class InitialiseBlob
     {
         private readonly Common _common;
-        private const string ContainerPrefix = "sample";
 
         public InitialiseBlob(Common common)
         {
@@ -18,18 +15,14 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.AzureStorage
 
         public async Task<CloudBlobContainer> Execute()
         {
-            string containerName = ContainerPrefix; //+ Guid.NewGuid();
+            var containerName = "printfunction-prototype";
 
-            //StorageCredentials creds = new StorageCredentials(accountName, accountKey);
-            CloudStorageAccount storageAccount = _common.CreateStorageAccountFromConnectionString();
+            var storageAccount = _common.CreateStorageAccountFromConnectionString();
+            var client = storageAccount.CreateCloudBlobClient();
 
-            CloudBlobClient client = storageAccount.CreateCloudBlobClient();
+            var sampleContainer = client.GetContainerReference(containerName);
 
-            // Create a container for organizing blobs within the storage account.
-            Console.WriteLine("1. Creating Container");
-            CloudBlobContainer sampleContainer = client.GetContainerReference(containerName);
-
-            BlobRequestOptions requestOptions = new BlobRequestOptions() { RetryPolicy = new NoRetry() };
+            var requestOptions = new BlobRequestOptions() { RetryPolicy = new NoRetry() };
             await sampleContainer.CreateIfNotExistsAsync(requestOptions, null);
 
             return sampleContainer;
