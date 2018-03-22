@@ -31,22 +31,34 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
       errorElement: 'span',
       errorClass: 'error-message',
       highlight: function(element) {
+        console.log('h', element.id);
         $(element)
           .closest('.form-group')
           .addClass('form-group-error');
 
-        if ($(element).attr('type') === 'radio') {
+        if (
+          $(element)
+            .closest('fieldset')
+            .prev()
+            .hasClass('js-error-summary')
+        ) {
           $(element)
             .closest('fieldset')
             .addClass('after-error-summary');
         }
       },
       unhighlight: function(element) {
+        console.log('u', element.id);
         $(element)
           .closest('.form-group')
           .removeClass('form-group-error');
 
-        if ($(element).attr('type') === 'radio') {
+        if (
+          $(element)
+            .closest('fieldset')
+            .prev()
+            .hasClass('js-error-summary')
+        ) {
           $(element)
             .closest('fieldset')
             .removeClass('after-error-summary');
@@ -61,7 +73,7 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
             .show()
             .append(error);
         } else {
-          error.insertAfter(element);
+          error.insertBefore(element);
         }
       },
       submitHandler: function(form) {
