@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Data
                 && r.Uln == searchRequest.Uln
                 && searchRequest.StandardIds.Contains(r.StdCode)).ToList();
 
-            var response = learnerRecords.OrderByDescending(ilr => ilr.LearnStartDate).Take(1);
+            var response = learnerRecords;
 
             return response;
         }
