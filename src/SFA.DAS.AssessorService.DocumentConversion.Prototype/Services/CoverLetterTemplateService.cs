@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.DocumentConversion.Prototype.Data;
-using SFA.DAS.AssessorService.DocumentConversion.Prototype.Utilities;
 using Spire.Doc;
 using CertificateData = SFA.DAS.AssessorService.Domain.JsonData.CertificateData;
 
@@ -14,25 +13,20 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.Services
     {
         private readonly IConfiguration _configuration;
         private readonly DocumentTemplateDataStream _documentTemplateDataStream;
-        private readonly FileUtilities _fileUtilities;
         private readonly CertificatesRepository _certificatesRepository;
 
         public CoverLetterTemplateService(IConfiguration configuration,
             DocumentTemplateDataStream documentTemplateDataStream,
-            FileUtilities fileUtilities,
             CertificatesRepository certificatesRepository)
         {
             _configuration = configuration;
             _documentTemplateDataStream = documentTemplateDataStream;
-            _fileUtilities = fileUtilities;
             _certificatesRepository = certificatesRepository;
         }
 
         public async Task Create()
         {
             var documentTemplateDataStream = await _documentTemplateDataStream.Get();
-
-            CleanUpLastRun();
 
             foreach (var certificate in _certificatesRepository.GetData())
             {
@@ -48,12 +42,6 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.Services
             documentTemplateDataStream.Close();
         }
 
-        private void CleanUpLastRun()
-        {
-            var outputDirectory = _configuration["OutputDirectory"];
-            var archiveDirectory = outputDirectory + "\\Archive";
-            _fileUtilities.MoveDirectory(outputDirectory, archiveDirectory);
-        }
 
         private MemoryStream CreatePdfStream(CertificateData certificateData, MemoryStream documentTemplateStream)
         {

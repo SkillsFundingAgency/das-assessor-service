@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using Microsoft.Extensions.Configuration;
+using Renci.SshNet;
 using StructureMap;
 
 namespace SFA.DAS.AssessorService.DocumentConversion.Prototype
@@ -23,6 +24,8 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype
                 });
 
                 configure.For<IConfiguration>().Use(configuration);
+                configure.For<SftpClient>().Use<SftpClient>(
+                    c => new SftpClient("localhost", 2222, "foo", "pass")).Singleton();
             });
         }
 

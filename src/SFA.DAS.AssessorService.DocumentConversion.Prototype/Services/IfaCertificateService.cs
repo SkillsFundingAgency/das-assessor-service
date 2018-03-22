@@ -2,37 +2,52 @@
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using SFA.DAS.AssessorService.DocumentConversion.Prototype.Data;
+using SFA.DAS.AssessorService.DocumentConversion.Prototype.Sftp;
 
 namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.Services
 {
     public class IFACertificateService
     {
         private readonly IConfiguration _configuration;
+        private readonly FileTransferClient _fileTransferClient;
         private readonly CertificatesRepository _certificatesRepository;
 
         public IFACertificateService(IConfiguration configuration,
+            FileTransferClient fileTransferClient,
             CertificatesRepository certificatesRepository)
         {
             _configuration = configuration;
+            _fileTransferClient = fileTransferClient;
             _certificatesRepository = certificatesRepository;
         }
 
-        public void Create()
-        {
-            var file = CreateOutputFile();
+        public async Task Create()
+        {           
+            var memoryStream = new MemoryStream();
 
-            using (ExcelPackage package = new ExcelPackage(file))
+            var uuid = Guid.NewGuid();
+            var fileName = $"output-{uuid}.xlsx";
+
+            using (var package = new ExcelPackage(memoryStream))
             {
                 CreateWorkBook(package);
                 CreateWorkSheet(package);
 
                 package.Save();
-            }
+
+                memoryStream.Position = 0;
+                await _fileTransferClient.Send(memoryStream, fileName);
+
+                CreateOutputFile(memoryStream, fileName);
+
+                memoryStream.Close();
+            }            
         }
 
         private static void CreateWorkBook(ExcelPackage package)
@@ -192,19 +207,22 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.Services
             }
         }
 
-        private FileInfo CreateOutputFile()
+        private void CreateOutputFile(MemoryStream memoryStream, string fileName)
         {
-            var directoryName = _configuration["OutputDirectory"] + "\\Excel";
+            var directoryName = _configuration["OutputDirectory"] + "\\Excel\\";
             if (!Directory.Exists(directoryName))
             {
                 Directory.CreateDirectory(directoryName);
             }
+         
+            var fullFileName = directoryName + fileName;
 
-            var uuid = Guid.NewGuid();
-            var fileName = directoryName + $"\\output-{uuid}.xlsx";
-
-            var file = new FileInfo(fileName);
-            return file;
+            using (FileStream file = new FileStream(fullFileName, FileMode.OpenOrCreate, System.IO.FileAccess.ReadWrite))
+            {
+                var bytes = new byte[memoryStream.Length];
+                memoryStream.Read(bytes, 0, (int)memoryStream.Length);
+                file.Write(bytes, 0, bytes.Length);        
+            }
         }
     }
 }
