@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.Utilities
 {
@@ -8,28 +9,26 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.Utilities
         {
             if (!Directory.Exists(destFolder))
                 Directory.CreateDirectory(destFolder);
-
-            // Get Files & Copy
-            string[] files = Directory.GetFiles(sourceFolder);
-            foreach (string file in files)
+           
+            var files = Directory.GetFiles(sourceFolder);
+            foreach (var file in files)
             {
-                string name = Path.GetFileName(file);
-
-                // ADD Unique File Name Check to Below!!!!
-                string dest = Path.Combine(destFolder, name);
+                var name = Path.GetFileName(file);
+             
+                var dest = Path.Combine(destFolder, name);
                 File.Move(file, dest);
             }
-
-            // Get dirs recursively and copy files
-            string[] folders = Directory.GetDirectories(sourceFolder);
-            foreach (string folder in folders)
+        
+            var folders = Directory.GetDirectories(sourceFolder);
+            foreach (var folder in folders)
             {
-                if (folder != destFolder)
-                {
-                    string name = Path.GetFileName(folder);
-                    string dest = Path.Combine(destFolder, name);
-                    MoveDirectory(folder, dest);
-                }
+                if (folder == destFolder)
+                    continue;
+
+                var name = Path.GetFileName(folder);
+                var dest = Path.Combine(destFolder, name ?? throw new InvalidOperationException());
+
+                MoveDirectory(folder, dest);
             }
         }
     }
