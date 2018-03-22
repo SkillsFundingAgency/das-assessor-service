@@ -47,16 +47,17 @@ namespace SFA.DAS.AssessorService.Web
             //if (_env.IsDevelopment())
             //{
                 services.AddDistributedMemoryCache();
-        //}
-        //    else
-        //    {
-        //        services.AddDistributedRedisCache(options =>
-        //        {
-        //            options.Configuration = "localhost";
-        //        });
-        //    }
+            //}
+            //    else
+            //    {
+            //        services.AddDistributedRedisCache(options =>
+            //        {
+            //            options.Configuration = "localhost";
+            //        });
+            //    }
 
-            services.AddSession(opt => {opt.IdleTimeout = TimeSpan.FromHours(1);});
+            //services.AddSession(opt => {opt.IdleTimeout = TimeSpan.FromHours(1);});
+            services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromMinutes(10); });
 
             return ConfigureIOC(services);
         }
