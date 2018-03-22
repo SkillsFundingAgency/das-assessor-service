@@ -72,9 +72,6 @@
     <EmbeddedResource Update="Resources\Controllers\OrganisationQueryController.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Resources\Orchestrators\GetOrganisationsOrchestrator.en.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-    </EmbeddedResource>
     <EmbeddedResource Update="Resources\Validators\ContactUpdateViewModelValidator.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ContactUpdateViewModelValidator.Designer.cs</LastGenOutput>

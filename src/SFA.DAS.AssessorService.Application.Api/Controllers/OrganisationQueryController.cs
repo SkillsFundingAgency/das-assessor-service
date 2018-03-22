@@ -1,12 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Application.Api.Consts;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
-using SFA.DAS.AssessorService.Application.Api.Orchestrators;
+using SFA.DAS.AssessorService.Application.Api.Validators;
+using SFA.DAS.AssessorService.Application.Exceptions;
+using SFA.DAS.AssessorService.Application.Interfaces;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
@@ -15,16 +20,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
     [Route("api/v1/organisations")]
     public class OrganisationQueryController : Controller
     {
-        private readonly GetOrganisationsOrchestrator _getOrganisationsOrchestrator;
         private readonly ILogger<OrganisationQueryController> _logger;
+        private readonly IOrganisationQueryRepository _organisationQueryRepository;
+        private readonly UkPrnValidator _ukPrnValidator;
+        private readonly IStringLocalizer<OrganisationQueryController> _localizer;
 
         public OrganisationQueryController(
-            GetOrganisationsOrchestrator getOrganisationsOrchestrator,
-            ILogger<OrganisationQueryController> logger
+            ILogger<OrganisationQueryController> logger, IOrganisationQueryRepository organisationQueryRepository, UkPrnValidator ukPrnValidator, IStringLocalizer<OrganisationQueryController> localizer
         )
         {
             _logger = logger;
-            _getOrganisationsOrchestrator = getOrganisationsOrchestrator;
+            _organisationQueryRepository = organisationQueryRepository;
+            _ukPrnValidator = ukPrnValidator;
+            _localizer = localizer;
         }
 
         [HttpGet("{ukprn}", Name = "GetOrganisation")]
@@ -36,7 +44,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             _logger.LogInformation($"Received Search for an Organisation Request using ukprn {ukprn}");
 
-            var organisation = await _getOrganisationsOrchestrator.SearchOrganisation(ukprn);
+            var result = _ukPrnValidator.Validate(ukprn);
+            if (!result.IsValid)
+                throw new BadRequestException(result.Errors[0].ErrorMessage);
+
+            var organisation = Mapper.Map<OrganisationResponse>(await _organisationQueryRepository.GetByUkPrn(ukprn));
+            if (organisation == null)
+            {
+                var ex = new ResourceNotFoundException(
+                    string.Format(_localizer[ResourceMessageName.NoAssesmentProviderFound].Value, ukprn));
+                throw ex;
+            }
+
             return Ok(organisation);
         }
 
@@ -47,7 +66,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             _logger.LogInformation("Received request to retrieve All Organisations");
 
-            var organisations = await _getOrganisationsOrchestrator.GetOrganisations();
+            var organisations =
+                Mapper.Map<List<OrganisationResponse>>(await _organisationQueryRepository.GetAllOrganisations());
+                
             return Ok(organisations);
         }
     }

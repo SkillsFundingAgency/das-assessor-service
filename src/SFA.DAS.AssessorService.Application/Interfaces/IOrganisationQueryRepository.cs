@@ -4,13 +4,14 @@ using System.Threading.Tasks;
 
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.DomainModels;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Interfaces
 {
     public interface IOrganisationQueryRepository
     {
-        Task<IEnumerable<OrganisationResponse>> GetAllOrganisations();
-        Task<OrganisationResponse> GetByUkPrn(int ukprn);
+        Task<IEnumerable<Organisation>> GetAllOrganisations();
+        Task<Organisation> GetByUkPrn(int ukprn);
         Task<OrganisationDomainModel> Get(string endPointAssessorOrganisationId);
 
         Task<bool> CheckIfAlreadyExists(string endPointAssessorOrganisationId);
