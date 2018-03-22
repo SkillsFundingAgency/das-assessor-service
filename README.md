@@ -39,7 +39,9 @@
 Running Specflow
 
 Specflow is currently used for integrations testing the Internal API.
-It is configured to run using the NUnit Test runner. As such it requires
+It is configured to run using the NUnit Test runner. 
+
+As such it requires
 
 1). To be ran using the NUnit Test Runner.
 
