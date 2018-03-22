@@ -124,7 +124,7 @@
     <value>What grade did the apprentice achieve?</value>
   </data>
   <data name="InfoBody" xml:space="preserve">
-    <value>A grade is awarded for completion of the standard. For some standards there will be no grade awarded. In these cases please select "Not applicable".</value>
+    <value>A grade is awarded for completion of the standard. For some standards there will be no grade awarded. In these cases please select "No grade awarded".</value>
   </data>
   <data name="InfoHeader" xml:space="preserve">
     <value>Information about grades</value>

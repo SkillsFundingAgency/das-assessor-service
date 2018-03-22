@@ -13,16 +13,11 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.AzureStorage
         {
             _configuration = configuration;
         }
-
-        /// <summary>
-        /// Validates the connection string information in app.config and throws an exception if it looks like 
-        /// the user hasn't updated this to valid values. 
-        /// </summary>
-        /// <returns>CloudStorageAccount object</returns>
+       
         public  CloudStorageAccount CreateStorageAccountFromConnectionString()
         {
             CloudStorageAccount storageAccount;
-            const string Message = "Invalid storage account information provided. Please confirm the AccountName and AccountKey are valid in the app.config file - then restart the sample.";
+            const string message = "Invalid storage account information provided. Please confirm the AccountName and AccountKey are valid in the app.config file - then restart the sample.";
 
             try
             {
@@ -31,13 +26,13 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.AzureStorage
             }
             catch (FormatException)
             {
-                Console.WriteLine(Message);
+                Console.WriteLine(message);
                 Console.ReadLine();
                 throw;
             }
             catch (ArgumentException)
             {
-                Console.WriteLine(Message);
+                Console.WriteLine(message);
                 Console.ReadLine();
                 throw;
             }

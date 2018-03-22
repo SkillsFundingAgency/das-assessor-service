@@ -1,5 +1,7 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Microsoft.Extensions.Configuration;
+using Renci.SshNet;
 using StructureMap;
 
 namespace SFA.DAS.AssessorService.DocumentConversion.Prototype
@@ -12,7 +14,7 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json");
 
-            var configuration = builder.Build();
+            var configuration = builder.Build();       
 
             Container = new Container(configure =>
             {
@@ -23,6 +25,8 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype
                 });
 
                 configure.For<IConfiguration>().Use(configuration);
+                configure.For<SftpClient>().Use<SftpClient>("Build ISession from ISessionFactory",
+                    c => new SftpClient(configuration["Sftp:RemoteHost"], Convert.ToInt32(configuration["Sftp:Port"]), configuration["Sftp:Username"], configuration["Sftp:Password"]));
             });
         }
 

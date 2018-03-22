@@ -3,42 +3,68 @@
 @model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateDateViewModel
 
 @{
-    ViewBag.Title = "title";
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Achievement date";
     Layout = "_Layout";
 }
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <a asp-controller="CertificateOption" asp-action="Option" class="link-back">Back</a>
-        @*<h1 class="heading-large">@Model.GivenNames @Model.FamilyName</h1>*@
-        <h1 class="heading-large">@Localizer["Heading"]</h1>
-        <form type="post" asp-controller="CertificateDate">
+        <a class="link-back" asp-controller="CertificateOption" asp-action="Option">Back</a>
+        
+        <form class="apprentice-date-form" type="post" asp-controller="CertificateDate">
             @Html.HiddenFor(c => c.Id)
 
+            @* hidden with css by default *@
+            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                    There are errors with your submission
+                </h2>
+                <ul class="js-error-summary-list error-summary-list"></ul>
+            </div>
 
-            <div class="form-group">
-                <span class="form-hint">
-                    @Localizer["DateHint"]
-                </span>
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                        There are errors with your submission
+                    </h2>
+                    <ul class="error-summary-list">
+                        <li><a sfa-validation-for="Date"></a></li>
+                    </ul>
+                </div>
+            }
 
-                <div class="form-date">
-                    <div class="form-group form-group-day">
-                        <label for="Day">Day</label>
-                        <input class="form-control" sfa-validation-for="Date" sfa-validationerror-class="form-control-error" asp-for="Day" type="number" pattern="[0-9]*" min="0" max="31">
-                    </div>
+            <fieldset sfa-anyvalidationerror-class="after-error-summary">
+                <legend id="Date">
+                    <h1 class="heading-medium">
+                        @*<span class="heading-secondary">@Model.GivenNames @Model.FamilyName</span>*@
+                        @Localizer["Heading"]
+                    </h1>
+                </legend>
+                
+                <div class="form-group" sfa-anyvalidationerror-class="form-group-error">
+                    <span class="form-hint">
+                        @Localizer["DateHint"]
+                    </span>
+                    <span class="error-message" asp-validation-for="Date"></span>
+                    <div class="form-date">
+                        <div class="form-group form-group-day">
+                            <label for="Day">Day</label>
+                            <input class="form-control" sfa-validation-for="Date" sfa-validationerror-class="form-control-error" asp-for="Day" type="number">
+                        </div>
 
-                    <div class="form-group form-group-month">
-                        <label for="Month">Month</label>
-                        <input class="form-control" sfa-validation-for="Date" sfa-validationerror-class="form-control-error" asp-for="Month" type="number" pattern="[0-9]*" min="0" max="12">
-                    </div>
+                        <div class="form-group form-group-month">
+                            <label for="Month">Month</label>
+                            <input class="form-control" sfa-validation-for="Date" sfa-validationerror-class="form-control-error" asp-for="Month" type="number">
+                        </div>
 
-                    <div class="form-group form-group-year">
-                        <label for="Year">Year</label>
-                        <input class="form-control" sfa-validation-for="Date" sfa-validationerror-class="form-control-error" asp-for="Year" type="number" pattern="[0-9]*" min="0" max="2118">
+                        <div class="form-group form-group-year">
+                            <label for="Year">Year</label>
+                            <input class="form-control" sfa-validation-for="Date" sfa-validationerror-class="form-control-error" asp-for="Year" type="number">
+                        </div>
                     </div>
                 </div>
-                <span class="error-message" asp-validation-for="Date"></span>
-            </div>
+            </fieldset>
 
             <details role="group">
                 <summary role="button" aria-controls="details-content-0" aria-expanded="false"><span class="summary">@Localizer["InfoHeader"]</span></summary>

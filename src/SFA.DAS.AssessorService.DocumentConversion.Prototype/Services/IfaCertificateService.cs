@@ -2,36 +2,48 @@
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using SFA.DAS.AssessorService.DocumentConversion.Prototype.Data;
+using SFA.DAS.AssessorService.DocumentConversion.Prototype.Sftp;
 
 namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.Services
 {
     public class IFACertificateService
     {
         private readonly IConfiguration _configuration;
+        private readonly FileTransferClient _fileTransferClient;
         private readonly CertificatesRepository _certificatesRepository;
 
         public IFACertificateService(IConfiguration configuration,
+            FileTransferClient fileTransferClient,
             CertificatesRepository certificatesRepository)
         {
             _configuration = configuration;
+            _fileTransferClient = fileTransferClient;
             _certificatesRepository = certificatesRepository;
         }
 
-        public void Create()
+        public async Task Create()
         {
-            var file = CreateOutputFile();
+            var memoryStream = new MemoryStream();
 
-            using (ExcelPackage package = new ExcelPackage(file))
+            var uuid = Guid.NewGuid();
+            var fileName = $"output-{uuid}.xlsx";
+
+            using (var package = new ExcelPackage(memoryStream))
             {
                 CreateWorkBook(package);
                 CreateWorkSheet(package);
 
                 package.Save();
+
+                await _fileTransferClient.Send(memoryStream, fileName);
+
+                memoryStream.Close();
             }
         }
 
@@ -54,7 +66,7 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.Services
 
             CreateWorksheetHeader(worksheet);
             CreateWorksheetTableHeader(worksheet);
-         
+
             CreateWorksheetData(worksheet);
 
             ResetColumnWidth(worksheet);
@@ -190,21 +202,6 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.Services
 
                 row++;
             }
-        }
-
-        private FileInfo CreateOutputFile()
-        {
-            var directoryName = _configuration["OutputDirectory"] + "\\Excel";
-            if (!Directory.Exists(directoryName))
-            {
-                Directory.CreateDirectory(directoryName);
-            }
-
-            var uuid = Guid.NewGuid();
-            var fileName = directoryName + $"\\output-{uuid}.xlsx";
-
-            var file = new FileInfo(fileName);
-            return file;
         }
     }
 }

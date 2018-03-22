@@ -1,0 +1,15 @@
+<script>
+var epaoGradeFormElement = $('.apprentice-grade-form');
+var epaoGradeValidationRulesObject = {
+  rules: {
+    SelectedGrade: {
+      required: true
+    },
+  },
+  messages: {
+    SelectedGrade: 'A grade should be selected',
+  }
+};
+
+GOVUK.epaoValidate(epaoGradeFormElement, epaoGradeValidationRulesObject);
+</script>
