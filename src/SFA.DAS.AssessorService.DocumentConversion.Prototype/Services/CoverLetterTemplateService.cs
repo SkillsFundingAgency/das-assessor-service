@@ -1,9 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.DocumentConversion.Prototype.Data;
+using SFA.DAS.AssessorService.DocumentConversion.Prototype.Sftp;
+using SFA.DAS.AssessorService.DocumentConversion.Prototype.Utilities;
 using Spire.Doc;
 using CertificateData = SFA.DAS.AssessorService.Domain.JsonData.CertificateData;
 
@@ -11,15 +12,18 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.Services
 {
     public class CoverLetterTemplateService
     {
-        private readonly IConfiguration _configuration;
+        private readonly FilePerister _filePerister;
+        private readonly FileTransferClient _fileTransferClient;
         private readonly DocumentTemplateDataStream _documentTemplateDataStream;
         private readonly CertificatesRepository _certificatesRepository;
 
-        public CoverLetterTemplateService(IConfiguration configuration,
+        public CoverLetterTemplateService(FilePerister filePerister,
+            FileTransferClient fileTransferClient,
             DocumentTemplateDataStream documentTemplateDataStream,
             CertificatesRepository certificatesRepository)
         {
-            _configuration = configuration;
+            _filePerister = filePerister;
+            _fileTransferClient = fileTransferClient;
             _documentTemplateDataStream = documentTemplateDataStream;
             _certificatesRepository = certificatesRepository;
         }
@@ -31,12 +35,16 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.Services
             foreach (var certificate in _certificatesRepository.GetData())
             {
                 var uuid = Guid.NewGuid();
+                var fileName = $"output-{uuid}.pdf";
 
                 Console.WriteLine($"Processing Certificate for Cover Letter - {certificate.Id} - {uuid}");
                 var certificateData = JsonConvert.DeserializeObject<Domain.JsonData.CertificateData>(certificate.CertificateData);
 
                 var pdfStream = CreatePdfStream(certificateData, documentTemplateDataStream);
-                SaveCopyOfLetterHead(uuid, pdfStream);
+              
+                await _fileTransferClient.Send(pdfStream, fileName);
+                
+                pdfStream.Close();
             }
 
             documentTemplateDataStream.Close();
@@ -67,29 +75,9 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.Services
 
         private static MemoryStream ConvertDocumentToPdf(Document document)
         {
-            MemoryStream pdfStream = new MemoryStream();
+            var pdfStream = new MemoryStream();
             document.SaveToStream(pdfStream, FileFormat.PDF);
             return pdfStream;
-        }
-
-        private void SaveCopyOfLetterHead(Guid uuid, MemoryStream ms)
-        {
-            var outputDirectory = _configuration["OutputDirectory"];
-            var fileName = $"{outputDirectory}\\sample-{uuid}.pdf";
-
-            var file = new FileStream(fileName, FileMode.Create, FileAccess.Write);
-            ms.WriteTo(file);
-            file.Close();
-            ms.Close();
-
-            LaunchDocument(fileName);
-        }
-
-        private void LaunchDocument(string fileName)
-        {
-            var launchDocument = _configuration["LaunchDocument"];
-            if (launchDocument == "true")
-                System.Diagnostics.Process.Start(fileName);
         }
     }
 }

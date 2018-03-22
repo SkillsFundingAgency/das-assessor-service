@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.Services
         }
 
         public async Task Create()
-        {           
+        {
             var memoryStream = new MemoryStream();
 
             var uuid = Guid.NewGuid();
@@ -41,13 +41,10 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.Services
 
                 package.Save();
 
-                memoryStream.Position = 0;
                 await _fileTransferClient.Send(memoryStream, fileName);
 
-                CreateOutputFile(memoryStream, fileName);
-
                 memoryStream.Close();
-            }            
+            }
         }
 
         private static void CreateWorkBook(ExcelPackage package)
@@ -69,7 +66,7 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.Services
 
             CreateWorksheetHeader(worksheet);
             CreateWorksheetTableHeader(worksheet);
-         
+
             CreateWorksheetData(worksheet);
 
             ResetColumnWidth(worksheet);
@@ -204,24 +201,6 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.Services
                 Console.WriteLine($"Processing Certificate For IFA Certificate - {certificate.Id}");
 
                 row++;
-            }
-        }
-
-        private void CreateOutputFile(MemoryStream memoryStream, string fileName)
-        {
-            var directoryName = _configuration["OutputDirectory"] + "\\Excel\\";
-            if (!Directory.Exists(directoryName))
-            {
-                Directory.CreateDirectory(directoryName);
-            }
-         
-            var fullFileName = directoryName + fileName;
-
-            using (FileStream file = new FileStream(fullFileName, FileMode.OpenOrCreate, System.IO.FileAccess.ReadWrite))
-            {
-                var bytes = new byte[memoryStream.Length];
-                memoryStream.Read(bytes, 0, (int)memoryStream.Length);
-                file.Write(bytes, 0, bytes.Length);        
             }
         }
     }
