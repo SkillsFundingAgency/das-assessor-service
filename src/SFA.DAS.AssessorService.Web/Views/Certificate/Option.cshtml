@@ -1,4 +1,6 @@
-﻿@model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateOptionViewModel
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateOptionViewModel
 
 @{
     ViewBag.Title = "title";
@@ -7,8 +9,9 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <h1 class="heading-large">@Model.GivenNames @Model.FamilyName</h1>
-        <h1 class="heading-large">What grade did the apprentice achieve?</h1>
+        <a asp-controller="CertificateGrade" asp-action="Grade" class="link-back">Back</a>
+        @*<h1 class="heading-large">@Model.GivenNames @Model.FamilyName</h1>*@
+        <h1 class="heading-large">@Localizer["Heading"]</h1>
         <form type="post" asp-controller="Certificate" asp-method="Options">
             @Html.HiddenFor(c => c.Id)
             <div class="form-group" sfa-validation-for="HasAdditionalLearningOption" sfa-validationerror-class="form-group-error">
@@ -38,14 +41,14 @@
                 <span class="error-message" asp-validation-for="HasAdditionalLearningOption"></span>
 
                 <details role="group">
-                    <summary role="button" aria-controls="details-content-0" aria-expanded="false"><span class="summary">What is a learning option?</span></summary>
+                    <summary role="button" aria-controls="details-content-0" aria-expanded="false"><span class="summary">@Localizer["InfoHeader"]</span></summary>
                     <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
                         <p>
-                            For some standards, the learner can take different options. For example, the standard for Professional Accounting Technician has an Accounting or Tax option. If applicable, enter the option the learner has achieved. The option will appear on the certificate. You may know options as "pathways" or "specialisms".
+                            @Localizer["InfoBody"]
                         </p>
                     </div>
                 </details>
-                <button type="submit" class="button">Continue</button>
+                <button type="submit" class="button">@Localizer["ContinueButton"]</button>
 
             </div>
         </form>

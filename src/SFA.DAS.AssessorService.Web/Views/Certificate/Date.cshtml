@@ -1,4 +1,6 @@
-﻿@model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateDateViewModel
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateDateViewModel
 
 @{
     ViewBag.Title = "title";
@@ -7,15 +9,16 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <h1 class="heading-large">@Model.GivenNames @Model.FamilyName</h1>
-        <h1 class="heading-large">What is the apprenticeship achievement date?</h1>
+        <a asp-controller="CertificateOption" asp-action="Option" class="link-back">Back</a>
+        @*<h1 class="heading-large">@Model.GivenNames @Model.FamilyName</h1>*@
+        <h1 class="heading-large">@Localizer["Heading"]</h1>
         <form type="post" asp-controller="CertificateDate">
             @Html.HiddenFor(c => c.Id)
 
 
             <div class="form-group">
                 <span class="form-hint">
-                    For example, 15 10 2017
+                    @Localizer["DateHint"]
                 </span>
 
                 <div class="form-date">
@@ -38,14 +41,14 @@
             </div>
 
             <details role="group">
-                <summary role="button" aria-controls="details-content-0" aria-expanded="false"><span class="summary">What is an achievement date?</span></summary>
+                <summary role="button" aria-controls="details-content-0" aria-expanded="false"><span class="summary">@Localizer["InfoHeader"]</span></summary>
                 <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
                     <p>
-                        The achievement date is when the end-point assessment organisation confirms when the apprentice has passed the apprenticeship.
+                        @Localizer["InfoBody"]
                     </p>
                 </div>
             </details>
-            <button type="submit" class="button">Continue</button>
+            <button type="submit" class="button">@Localizer["ContinueButton"]</button>
         </form>
     </div>
 </div>

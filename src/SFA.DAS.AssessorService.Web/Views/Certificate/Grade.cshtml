@@ -1,4 +1,6 @@
-﻿@model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateGradeViewModel
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateGradeViewModel
 
 @{
     ViewBag.Title = "title";
@@ -7,8 +9,9 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <h1 class="heading-large">@Model.GivenNames @Model.FamilyName</h1>
-        <h1 class="heading-large">What grade did the apprentice achieve?</h1>
+        <a asp-controller="Search" asp-action="Index" class="link-back">Back</a>
+        @*<h1 class="heading-large">@Model.GivenNames @Model.FamilyName</h1>*@
+        <h1 class="heading-large">@Localizer["Heading"]</h1>
         <form type="post" asp-controller="CertificateGrade">
             @Html.HiddenFor(c => c.Id)
             <div class="form-group" sfa-validation-for="SelectedGrade" sfa-validationerror-class="form-group-error">
@@ -27,14 +30,14 @@
             </div>
 
             <details role="group">
-                <summary role="button" aria-controls="details-content-0" aria-expanded="false"><span class="summary">Information about grades</span></summary>
+                <summary role="button" aria-controls="details-content-0" aria-expanded="false"><span class="summary">@Localizer["InfoHeader"]</span></summary>
                 <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
                     <p>
-                        A grade is awarded for completion of the standard. For some standards there will be no grade awarded. In these cases please select "Not applicable".
+                        @Localizer["InfoBody"]
                     </p>
                 </div>
             </details>
-            <button type="submit" class="button">Continue</button>
+            <button type="submit" class="button">@Localizer["ContinueButton"]</button>
         </form>
     </div>
 </div>
