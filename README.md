@@ -39,32 +39,12 @@
 Running Specflow
 
 Specflow is currently used for integrations testing the Internal API.
-In order to run it you should take a backup copy of a clean database.
-and configure the app.config file in the SFA.DAS.AssessorService.Application.Api.Specflow.Tests project to point 
-to the the backup copy location.
+It is configured to run using teh NUnit Test runner and as such requires
 
-A clean database can be created by 
-
-1). Deleting the AssessorDB database currently pointed to by the  SFA.DAS.AssessorService.Application.Api project.
-
-2). Running update-database from the package manager console window.
-(Make sure the current startup project is set to SFA.DAS.AssessorService.Data an also 
-Defaut project in the Package Manager Console is set to SFA.DAS.AssessorService.Data).
-
-3). Running the SFA.DAS.AssessorService.Application.Api project to populate the database.
-
-Please Note:- The folowing variables are configurable in the SFA.DAS.AssessorService.Application.Api.Specflow.Tests
-project app.config
-
-<add key="RestoreDatabase" value="c:\backup\SFA.DAS.AssessorService.Application.Api.bak" />
-<add key="DatabaseName" value="AssessorDB" />
-<add key="BaseAddress" value="http://localhost:59021/" />
-
-where:
-
-RestoreDatabase = database backup location.
-
-DatabaseName = The Database currently in use by the SFA.DAS.AssessorService.Application.Api project.
+1). To be ran using teh NUnit Test Runner.
+2). The SFA.DAS.AssessorService.Application.Api project to be runninf in advance.
+3). The BaseAddress in the app.config to be set to the base address of the running 
+SFA.DAS.AssessorService.Application.Api project.
 
 BaseAddress = Base url address for the SFA.DAS.AssessorService.Application.Api project.
 
