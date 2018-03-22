@@ -1,0 +1,34 @@
+﻿@model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateConfirmationViewModel
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+
+        <div class="govuk-box-highlight">
+            <h1 class="heading-xlarge">
+                Assessment recorded
+            </h1>
+            <p class="font-large">
+                The certificate number is <br>
+                <strong class="bold">@Model.Reference</strong>
+            </p>
+        </div>
+
+        <p>
+            We have sent you a confirmation email.
+        </p>
+
+        <h2 class="heading-medium">What do you want to do next?</h2>
+        <ul class="list list-bullet">
+            <li><a asp-controller="Search" asp-action="Index">Search for another apprentice</a></li>
+            <li><a href="#">Leave feedback</a></li>
+            <li><a asp-controller="Account" asp-action="SignOut">Sign out</a></li>
+        </ul>
+
+
+    </div>
+</div>

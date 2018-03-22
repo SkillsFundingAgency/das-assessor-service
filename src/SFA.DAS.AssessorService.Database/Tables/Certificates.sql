@@ -13,6 +13,7 @@
     [Uln] BIGINT NOT NULL, 
     [StandardCode] INT NOT NULL, 
     [ProviderUkPrn] INT NOT NULL, 
+    [CertificateReferenceId] INT NOT NULL IDENTITY(10001,1), 
     CONSTRAINT [PK_Certificates] PRIMARY KEY ([Id]),
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO

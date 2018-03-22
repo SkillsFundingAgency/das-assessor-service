@@ -1,0 +1,30 @@
+﻿@model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateDeclarationViewModel
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <a asp-controller="CertificateCheck" class="link-back">Back</a>
+
+        <h1 class="heading-medium">
+            Declaration
+        </h1>
+
+        <p>By applying for this apprenticeship certificate you are confirming that:</p>
+
+        <ul class="list list-bullet">
+            <li>the apprentice has given permission for you to apply for a certificate on their behalf</li>
+            <li>the assessment was independent of both the provider and employer</li>
+            <li>the apprentice has achieved all the requirements of the assessment plan, including the end-point assessment</li>
+            <li>the apprentice has met the minimum duration of the apprenticeship</li>
+        </ul>
+
+        <form type="post" asp-controller="CertificateDeclaration">
+            @Html.HiddenFor(c => c.Id)
+            <button type="submit" class="button">Confirm and apply for certificate</button>
+        </form>
+    </div>
+</div>
