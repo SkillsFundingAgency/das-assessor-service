@@ -39,14 +39,15 @@
 Running Specflow
 
 Specflow is currently used for integrations testing the Internal API.
-It is configured to run using teh NUnit Test runner and as such requires
+It is configured to run using the NUnit Test runner. As such it requires
 
-1). To be ran using teh NUnit Test Runner.
-2). The SFA.DAS.AssessorService.Application.Api project to be runninf in advance.
+1). To be ran using the NUnit Test Runner.
+
+2). The SFA.DAS.AssessorService.Application.Api project to be running in advance.
+
 3). The BaseAddress in the app.config to be set to the base address of the running 
 SFA.DAS.AssessorService.Application.Api project.
 
-BaseAddress = Base url address for the SFA.DAS.AssessorService.Application.Api project.
 
 
     
