@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Data
@@ -20,6 +22,11 @@ namespace SFA.DAS.AssessorService.Data
         {
             await _context.Certificates.AddAsync(certificate);
             await _context.SaveChangesAsync();
+
+            certificate.CertificateReference = certificate.CertificateReferenceId.ToString();
+
+            await _context.SaveChangesAsync();
+
             return certificate;
         }
 
@@ -33,12 +40,18 @@ namespace SFA.DAS.AssessorService.Data
             return await _context.Certificates.SingleOrDefaultAsync(c => c.Uln == uln && c.StandardCode == standardCode);
         }
 
+        public async Task<List<Certificate>> GetCompletedCertificatesFor(long uln)
+        {
+            return await _context.Certificates.Where(c => c.Uln == uln && (c.Status == CertificateStatus.Printed || c.Status == CertificateStatus.Submitted)).ToListAsync();
+        }
+
         public async Task<Certificate> Update(Certificate certificate, string username)
         {
             var cert = await GetCertificate(certificate.Id);
 
             cert.CertificateData = certificate.CertificateData;
             cert.UpdatedBy = username;
+            cert.Status = certificate.Status;
 
             await _context.SaveChangesAsync();
 

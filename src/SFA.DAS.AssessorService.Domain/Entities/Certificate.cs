@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SFA.DAS.AssessorService.Domain.Entities
 {
@@ -11,6 +12,9 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public Guid OrganisationId { get; set; }
 
         public string CertificateReference { get; set; }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int? CertificateReferenceId { get; set; }
 
         public string CertificateData { get; set; }
 

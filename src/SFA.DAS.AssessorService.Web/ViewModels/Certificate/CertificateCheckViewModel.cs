@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
@@ -40,18 +41,10 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             Postcode = CertificateData.ContactPostCode;
         }
 
-        public CertificateData GetCertificateDataFromViewModel(CertificateData data)
+        public Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData data)
         {
-        //    data.ContactName = Name;
-        //    data.Department = Dept;
-        //    data.ContactOrganisation = Employer;
-        //    data.ContactAddLine1 = AddressLine1;
-        //    data.ContactAddLine2 = AddressLine2;
-        //    data.ContactAddLine3 = AddressLine3;
-        //    data.ContactAddLine4 = City;
-        //    data.ContactPostCode = Postcode;
-
-            return data;
+            certificate.CertificateData = JsonConvert.SerializeObject(data);
+            return certificate;
         }
     }
 }

@@ -8,6 +8,6 @@
         public const string Printed = "Printed";
         public const string Cancelled = "Cancelled";
         public const string NoCertificate = "NoCertificate";
-        public const string Deleted = "Draft";
+        public const string Deleted = "Deleted";
     }
 }

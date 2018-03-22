@@ -9,6 +9,6 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         string FamilyName { get; set; }
         string GivenNames { get; set; }
         void FromCertificate(Domain.Entities.Certificate cert);
-        CertificateData GetCertificateDataFromViewModel(CertificateData data);
+        Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData certData);
     }
 }
