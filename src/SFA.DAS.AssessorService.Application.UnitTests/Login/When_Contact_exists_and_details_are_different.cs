@@ -4,6 +4,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Login
 {
@@ -13,7 +14,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Login
         [Test]
         public void Then_contact_is_Updated()
         {
-            OrgQueryRepository.Setup(r => r.GetByUkPrn(12345)).ReturnsAsync(new OrganisationResponse
+            OrgQueryRepository.Setup(r => r.GetByUkPrn(12345)).ReturnsAsync(new Organisation
             {
                 Status = OrganisationStatus.New,
                 EndPointAssessorOrganisationId = "EPA001",

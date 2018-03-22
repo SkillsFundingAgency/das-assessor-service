@@ -4,12 +4,13 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations.Queries
 {
     public class WhenSearchOrganisationSucceeds : OrganisationQueryBase
     {
-        private OrganisationResponse _organisation;
+        private Organisation _organisation;
         private IActionResult _result;
       
         [SetUp]
@@ -17,7 +18,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
         {
             Setup();
 
-            _organisation = Builder<OrganisationResponse>.CreateNew().Build();
+            _organisation = Builder<Organisation>.CreateNew().Build();
 
             OrganisationQueryRepositoryMock.Setup(q => q.GetByUkPrn(Moq.It.IsAny<int>()))
                 .Returns(Task.FromResult((_organisation)));
@@ -38,7 +39,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
             if(!(_result is OkObjectResult result))
                 ((OkObjectResult) null).Should().NotBeNull();
             else 
-                result.Value.Should().Be(_organisation);
+                result.Value.Should().BeOfType<OrganisationResponse>();
 
         }  
     }

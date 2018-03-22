@@ -1,4 +1,6 @@
-﻿@model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateConfirmationViewModel
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateConfirmationViewModel
 
 @{
     ViewBag.Title = "title";
@@ -10,25 +12,23 @@
 
         <div class="govuk-box-highlight">
             <h1 class="heading-xlarge">
-                Assessment recorded
+                @Localizer["Heading"]
             </h1>
             <p class="font-large">
-                The certificate number is <br>
+                @Localizer["CertificateNumberIs"] <br>
                 <strong class="bold">@Model.Reference</strong>
             </p>
         </div>
 
         <p>
-            We have sent you a confirmation email.
+            @Localizer["ConfirmationEmail"]
         </p>
 
-        <h2 class="heading-medium">What do you want to do next?</h2>
+        <h2 class="heading-medium">@Localizer["DoNextHeader"]</h2>
         <ul class="list list-bullet">
-            <li><a asp-controller="Search" asp-action="Index">Search for another apprentice</a></li>
-            <li><a href="#">Leave feedback</a></li>
-            <li><a asp-controller="Account" asp-action="SignOut">Sign out</a></li>
+            <li><a asp-controller="Search" asp-action="Index">@Localizer["DoNextSearch"]</a></li>
+            <li><a href="#">@Localizer["DoNextFeedback"]</a></li>
+            <li><a asp-controller="Account" asp-action="SignOut">@Localizer["DoNextSignOut"]</a></li>
         </ul>
-
-
     </div>
 </div>

@@ -34,6 +34,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
             var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
+            _logger.LogInformation($"Start of Certificate Start for ULN {vm.Uln} and Standard Code: {vm.StdCode} by user {username}");
+
             var cert = await _certificateApiClient.Start(new StartCertificateRequest()
             {
                 UkPrn = int.Parse(ukprn),
@@ -42,13 +44,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 Username = username
             });
 
-           _contextAccessor.HttpContext.Session.SetString("CertificateSession",
-                JsonConvert.SerializeObject(new CertificateSession()
-                {
-                    CertificateId = cert.Id,
-                    Uln = vm.Uln,
-                    StandardCode = vm.StdCode
-                }));
+            _contextAccessor.HttpContext.Session.SetString("CertificateSession",
+                 JsonConvert.SerializeObject(new CertificateSession()
+                 {
+                     CertificateId = cert.Id,
+                     Uln = vm.Uln,
+                     StandardCode = vm.StdCode
+                 }));
+
+            _logger.LogInformation($"New Certificate received for ULN {vm.Uln} and Standard Code: {vm.StdCode} with ID {cert.Id}");
 
             return RedirectToAction("Grade", "CertificateGrade");
         }

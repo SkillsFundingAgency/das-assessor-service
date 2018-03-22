@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Login
@@ -101,7 +102,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
             }
         }
 
-        private async Task CreateNewContact(string email, OrganisationResponse organisation, string displayName,
+        private async Task CreateNewContact(string email, Organisation organisation, string displayName,
             string username)
         {
             _logger.LogInformation($"Creating new contact.  Email: {email}, DisplayName: {displayName}, Username: {username}, EndPointAssessorOrganisationId: {organisation.EndPointAssessorOrganisationId}");
@@ -118,7 +119,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
             await SetNewOrganisationPrimaryContact(organisation, contact);
         }
 
-        private async Task SetNewOrganisationPrimaryContact(OrganisationResponse organisation, ContactResponse contactResponse)
+        private async Task SetNewOrganisationPrimaryContact(Organisation organisation, ContactResponse contactResponse)
         {
             if (organisation.Status == OrganisationStatus.New)
             {

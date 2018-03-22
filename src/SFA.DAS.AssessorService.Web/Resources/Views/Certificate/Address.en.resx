@@ -117,7 +117,52 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="NoAssesmentProviderFound" xml:space="preserve">
-    <value>No organisation with ukprn {0} found</value>
+  <data name="Address" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="AddressLine2" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AddressLine3" xml:space="preserve">
+    <value />
+  </data>
+  <data name="City" xml:space="preserve">
+    <value>City</value>
+  </data>
+  <data name="ContinueButton" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="Dept" xml:space="preserve">
+    <value>Department</value>
+  </data>
+  <data name="DeptHint" xml:space="preserve">
+    <value>Department Hint</value>
+  </data>
+  <data name="Employer" xml:space="preserve">
+    <value>Employer</value>
+  </data>
+  <data name="Heading" xml:space="preserve">
+    <value>Where will the certificate be sent?</value>
+  </data>
+  <data name="LoadingAddress" xml:space="preserve">
+    <value>Loading address...</value>
+  </data>
+  <data name="ManualAddressLink" xml:space="preserve">
+    <value>Or enter address manually</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="NameHint" xml:space="preserve">
+    <value>Name Hint</value>
+  </data>
+  <data name="Postcode" xml:space="preserve">
+    <value>Postcode</value>
+  </data>
+  <data name="PostcodeLookup" xml:space="preserve">
+    <value>Enter the employer's postcode or start typing their address</value>
+  </data>
+  <data name="ServiceUnavailable" xml:space="preserve">
+    <value>Service is currently unavailable, please enter address manually</value>
   </data>
 </root>

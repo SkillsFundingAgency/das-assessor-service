@@ -117,7 +117,25 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="NoAssesmentProviderFound" xml:space="preserve">
-    <value>No organisation with ukprn {0} found</value>
+  <data name="ContinueButton" xml:space="preserve">
+    <value>Confirm and apply for certificate</value>
+  </data>
+  <data name="Heading" xml:space="preserve">
+    <value>Declaration</value>
+  </data>
+  <data name="InfoHeader" xml:space="preserve">
+    <value>By applying for this apprenticeship certificate you are confirming that:</value>
+  </data>
+  <data name="InfoLine1" xml:space="preserve">
+    <value>the apprentice has given permission for you to apply for a certificate on their behalf</value>
+  </data>
+  <data name="InfoLine2" xml:space="preserve">
+    <value>the assessment was independent of both the provider and employer</value>
+  </data>
+  <data name="InfoLine3" xml:space="preserve">
+    <value>the apprentice has achieved all the requirements of the assessment plan, including the end-point assessment</value>
+  </data>
+  <data name="InfoLine4" xml:space="preserve">
+    <value>the apprentice has met the minimum duration of the apprenticeship</value>
   </data>
 </root>

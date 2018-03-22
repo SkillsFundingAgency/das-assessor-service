@@ -28,15 +28,18 @@ namespace SFA.DAS.AssessorService.Web.Validators
                         {
                             context.AddFailure("Date", localizer["DateMustNotBeInFuture"]);
                         }
-                        else
-                        {
-                            var certificate = _certApiClient.GetCertificate(vm.Id).Result;
-                            var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-                            if (achievementDate < certData.LearningStartDate.AddMonths(12))
-                            {
-                                context.AddFailure("Date", localizer["DateMustBeAtLeastTwelveMonthsFromStartDate"]);
-                            }
-                        }
+                        // 
+                        // The following commented out after a conversation with Deen.
+                        //
+                        //else
+                        //{
+                        //    var certificate = _certApiClient.GetCertificate(vm.Id).Result;
+                        //    var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+                        //    if (achievementDate < certData.LearningStartDate.AddMonths(12))
+                        //    {
+                        //        context.AddFailure("Date", localizer["DateMustBeAtLeastTwelveMonthsFromStartDate"]);
+                        //    }
+                        //}
                     }
                     catch (ArgumentOutOfRangeException e)
                     {

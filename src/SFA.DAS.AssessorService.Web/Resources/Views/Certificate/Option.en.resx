@@ -117,7 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="NoAssesmentProviderFound" xml:space="preserve">
-    <value>No organisation with ukprn {0} found</value>
+  <data name="ContinueButton" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="Heading" xml:space="preserve">
+    <value>Did the apprentice do any additional learning options?</value>
+  </data>
+  <data name="InfoBody" xml:space="preserve">
+    <value>For some standards, the learner can take different options. For example, the standard for Professional Accounting Technician has an Accounting or Tax option. If applicable, enter the option the learner has achieved. The option will appear on the certificate. You may know options as "pathways" or "specialisms".</value>
+  </data>
+  <data name="InfoHeader" xml:space="preserve">
+    <value>What is a learning option?</value>
   </data>
 </root>

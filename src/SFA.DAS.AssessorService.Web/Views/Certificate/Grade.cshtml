@@ -1,4 +1,6 @@
-﻿@model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateGradeViewModel
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateGradeViewModel
 
 @{
     ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Grade achieved";
@@ -8,7 +10,7 @@
 <div class="grid-row">
     <div class="column-two-thirds">
         <a class="link-back" asp-controller="Search" asp-action="Results">Back</a>
-        
+
         <form class="apprentice-grade-form" type="post" asp-controller="CertificateGrade">
             @Html.HiddenFor(c => c.Id)
 
@@ -37,16 +39,17 @@
                 <legend id="SelectedGrade">
                     <h1 class="heading-medium">
                         @*<span class="heading-secondary">@Model.GivenNames @Model.FamilyName</span>*@
-                        What grade did the apprentice achieve?</h1>
-                        <div class="error-message-container" sfa-validation-for="SelectedGrade" sfa-validationerror-class="form-group-error">
-                            <span class="error-message" asp-validation-for="SelectedGrade"></span>
-                        </div>
+                        @Localizer["Heading"]
+                    </h1>
+                    <div class="error-message-container" sfa-validation-for="SelectedGrade" sfa-validationerror-class="form-group-error">
+                        <span class="error-message" asp-validation-for="SelectedGrade"></span>
+                    </div>
                 </legend>
                 <div class="form-group" sfa-validation-for="SelectedGrade" sfa-validationerror-class="form-group-error">
                     @foreach (var grade in Model.Grades)
                     {
                         <div class="multiple-choice">
-                            <input asp-for="SelectedGrade" id="@grade.Text.Replace(" ", "_")" type="radio" value="@grade.Text"/>
+                            <input asp-for="SelectedGrade" id="@grade.Text.Replace(" ", "_")" type="radio" value="@grade.Text" />
                             <label for="@grade.Text.Replace(" ", "_")">
                                 @grade.Text
                             </label>
@@ -57,14 +60,14 @@
 
 
             <details role="group">
-                <summary role="button" aria-controls="details-content-0" aria-expanded="false"><span class="summary">Information about grades</span></summary>
+                <summary role="button" aria-controls="details-content-0" aria-expanded="false"><span class="summary">@Localizer["InfoHeader"]</span></summary>
                 <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
                     <p>
-                        A grade is awarded for completion of the standard. For some standards there will be no grade awarded. In these cases please select "No grade awarded".
+                        @Localizer["InfoBody"]
                     </p>
                 </div>
             </details>
-            <button type="submit" class="button">Continue</button>
+            <button type="submit" class="button">@Localizer["ContinueButton"]</button>
         </form>
     </div>
 </div>

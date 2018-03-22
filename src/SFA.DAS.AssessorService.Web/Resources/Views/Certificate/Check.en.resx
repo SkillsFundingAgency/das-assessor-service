@@ -117,7 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="NoAssesmentProviderFound" xml:space="preserve">
-    <value>No organisation with ukprn {0} found</value>
+  <data name="ContinueButton" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="Heading" xml:space="preserve">
+    <value>Check and approve the assessment details</value>
+  </data>
+  <data name="InfoHeader" xml:space="preserve">
+    <value>Check carefully before approving</value>
+  </data>
+  <data name="InfoLine1" xml:space="preserve">
+    <value>The personal details and apprenticeship details below will be printed on the certificate.</value>
+  </data>
+  <data name="InfoLine2" xml:space="preserve">
+    <value>You must ask the apprentice's training provider to update their Individualised Learner Record (ILR) if the name, ULN, standard or level are wrong.</value>
   </data>
 </root>

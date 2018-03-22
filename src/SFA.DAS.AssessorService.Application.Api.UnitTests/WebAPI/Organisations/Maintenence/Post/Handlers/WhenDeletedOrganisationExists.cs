@@ -7,6 +7,7 @@ using SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.DomainModels;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations.Maintenence.Post.Handlers
 {
@@ -26,7 +27,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.WebAPI.Organisations
             _contactRepository = new Mock<IContactRepository>();
 
             var orgQueryRepos = new Mock<IOrganisationQueryRepository>();
-            orgQueryRepos.Setup(r => r.GetByUkPrn(It.IsAny<int>())).ReturnsAsync(new OrganisationResponse()
+            orgQueryRepos.Setup(r => r.GetByUkPrn(It.IsAny<int>())).ReturnsAsync(new Organisation()
             {
                 Status = OrganisationStatus.Deleted,
                 EndPointAssessorOrganisationId = "12345"

@@ -117,7 +117,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="NoAssesmentProviderFound" xml:space="preserve">
-    <value>No organisation with ukprn {0} found</value>
+  <data name="CertificateNumberIs" xml:space="preserve">
+    <value>The certificate number is</value>
+  </data>
+  <data name="ConfirmationEmail" xml:space="preserve">
+    <value>We have sent you a confirmation email.</value>
+  </data>
+  <data name="ContinueButton" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="DoNextFeedback" xml:space="preserve">
+    <value>Leave feedback</value>
+  </data>
+  <data name="DoNextHeader" xml:space="preserve">
+    <value>What do you want to do next?</value>
+  </data>
+  <data name="DoNextSearch" xml:space="preserve">
+    <value>Search for another apprentice</value>
+  </data>
+  <data name="DoNextSignOut" xml:space="preserve">
+    <value>Sign out</value>
+  </data>
+  <data name="Heading" xml:space="preserve">
+    <value>Assessment recorded</value>
   </data>
 </root>

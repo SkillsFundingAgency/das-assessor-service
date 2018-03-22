@@ -1,17 +1,19 @@
-﻿using SFA.DAS.AssessorService.Application.Handlers.RegisterUpdate;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Moq;
+using NUnit.Framework;
+
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Application.Handlers.RegisterUpdate;
+using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
+using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Moq;
-    using NUnit.Framework;
-    using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
 
-    using AssessorService.Api.Types.Models;
 
     public class WhenRegisterUpdateCalled_AndEPAONameIsDifferent : RegisterUpdateTestsBase
     {
@@ -34,10 +36,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.RegisterUpdate
 
 
             OrganisationRepository.Setup(r => r.GetAllOrganisations())
-                .Returns(Task.FromResult(new List<AssessorService.Api.Types.Models.OrganisationResponse>
+                .Returns(Task.FromResult(new List<Organisation>
                 {
-                    new AssessorService.Api.Types.Models.OrganisationResponse() { EndPointAssessorOrganisationId = _endPointAssessorOrganisationId, EndPointAssessorName = "OLD NAME" },
-                    new AssessorService.Api.Types.Models.OrganisationResponse() { EndPointAssessorOrganisationId = "EPA0002", EndPointAssessorName = "Another EPAO"}
+                    new Organisation() { EndPointAssessorOrganisationId = _endPointAssessorOrganisationId, EndPointAssessorName = "OLD NAME" },
+                    new Organisation() { EndPointAssessorOrganisationId = "EPA0002", EndPointAssessorName = "Another EPAO"}
                 }.AsEnumerable()));
         }
 
