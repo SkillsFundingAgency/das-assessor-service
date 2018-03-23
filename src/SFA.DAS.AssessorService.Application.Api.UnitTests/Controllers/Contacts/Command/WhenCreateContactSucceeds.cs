@@ -5,6 +5,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts.Command
 {
@@ -17,7 +18,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts
         {
             Setup();
 
-            var contact = Builder<ContactResponse>.CreateNew().Build();
+            MappingBootstrapper.Initialize();
+
+            var contact = Builder<Contact>.CreateNew().Build();
 
             Mediator.Setup(q => q.Send(Moq.It.IsAny<CreateContactRequest>(), Moq.It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult((contact)));
@@ -31,7 +34,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts
         [Test]
         public void ThenItShouldSucceed()
         {
-            var result = _result as Microsoft.AspNetCore.Mvc.CreatedAtRouteResult;
+            var result = _result as CreatedAtRouteResult;
             result.Should().NotBeNull();
         }
     }

@@ -20,9 +20,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Login
                 EndPointAssessorOrganisationId = "EPA001",
                 EndPointAssessorUkprn = 12345,
             });
-            ContactQueryRepository.Setup(r => r.GetContact("username")).ReturnsAsync(default(ContactResponse));
+            ContactQueryRepository.Setup(r => r.GetContact("username")).ReturnsAsync(default(Contact));
             Mediator.Setup(m => m.Send(It.IsAny<CreateContactRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(
-                new ContactResponse()
+                new Contact()
                 {
                     Username = "username",
                     DisplayName = "Display Name",

@@ -5,13 +5,14 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisations.Command
 {
     public class WhenUpdateOrganisationSucceeds : OrganisationTestBase
     {
         private UpdateOrganisationRequest _updateOrganisationRequest;
-        private  OrganisationResponse _organisationResponse;
+        private  Organisation _organisationResponse;
         private IActionResult _result;
 
         [SetUp]
@@ -19,7 +20,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
         {
             Setup();
 
-            _organisationResponse = Builder<OrganisationResponse>.CreateNew().Build();
+            _organisationResponse = Builder<Organisation>.CreateNew().Build();
 
             Mediator.Setup(q => q.Send(Moq.It.IsAny<UpdateOrganisationRequest>(), Moq.It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult((_organisationResponse)));
@@ -32,7 +33,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
         [Test]
         public void ThenAResultShouldBeReturned()
         {
-            var result = _result as Microsoft.AspNetCore.Mvc.NoContentResult;
+            var result = _result as NoContentResult;
             result.Should().NotBeNull();
         }
     }

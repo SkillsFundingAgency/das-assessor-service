@@ -6,8 +6,7 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Domain.DomainModels;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Data.UnitTests.Contacts
 {
@@ -15,14 +14,14 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Contacts
     {
         private ContactRepository _contactRepository;
         private Mock<AssessorDbContext> _assessorDbContext;
-        private ContactResponse _result;
+        private Contact _result;
 
         [SetUp]
         public void Arrange()
         {
             MappingBootstrapper.Initialize();
 
-            var contactCreateDomainModel = Builder<CreateContactDomainModel>.CreateNew().Build();
+            var contactCreateDomainModel = Builder<Contact>.CreateNew().Build();
 
             var mockSet = CreateMockSet();
             CreateMockDbCOntext(mockSet);
@@ -38,20 +37,20 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Contacts
             _result.Should().NotBeNull();
         }
 
-        private void CreateMockDbCOntext(Mock<DbSet<Domain.Entities.Contact>> mockSet)
+        private void CreateMockDbCOntext(Mock<DbSet<Contact>> mockSet)
         {
             _assessorDbContext = new Mock<AssessorDbContext>();
             _assessorDbContext.Setup(q => q.Contacts).Returns(mockSet.Object);
             _assessorDbContext.Setup(q => q.SaveChangesAsync(new CancellationToken()))
-                .Returns(Task.FromResult((Moq.It.IsAny<int>())));
+                .Returns(Task.FromResult((It.IsAny<int>())));
         }
 
-        private Mock<DbSet<Domain.Entities.Contact>> CreateMockSet()
+        private Mock<DbSet<Contact>> CreateMockSet()
         {
-            var mockSet = new Mock<DbSet<AssessorService.Domain.Entities.Contact>>();
-            var organisations = new List<AssessorService.Domain.Entities.Contact>();
-            mockSet.Setup(m => m.Add(Moq.It.IsAny<AssessorService.Domain.Entities.Contact>()))
-                .Callback((AssessorService.Domain.Entities.Contact organisation) => organisations.Add(organisation));
+            var mockSet = new Mock<DbSet<Contact>>();
+            var organisations = new List<Contact>();
+            mockSet.Setup(m => m.Add(It.IsAny<Contact>()))
+                .Callback((Contact organisation) => organisations.Add(organisation));
             return mockSet;
         }
     }

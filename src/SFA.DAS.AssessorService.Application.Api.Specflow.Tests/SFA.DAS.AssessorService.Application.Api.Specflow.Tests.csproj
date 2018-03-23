@@ -119,7 +119,7 @@
     <Compile Include="Contacts\Query\DatabaseUtils\OrganisationData.cs" />
     <Compile Include="Extensions\HttpClientExtensions.cs" />
     <Compile Include="Extensions\RestClientResultExtensions.cs" />
-    <Compile Include="Iniltialisation.cs" />
+    <Compile Include="Initialisation.cs" />
     <Compile Include="Organisations\Helpers\CreateContactBuilder.cs" />
     <Compile Include="Organisations\Helpers\UpdateOrganisationBuilder.cs" />
     <Compile Include="Organisations\Helpers\CreateOrganisationRequestBuilder.cs" />
@@ -184,11 +184,14 @@
       <Name>SFA.DAS.AssessorService.Domain</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>    
+    </PropertyGroup>
     <Error Condition="!Exists('..\packages\SpecFlow.2.3.0\build\SpecFlow.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SpecFlow.2.3.0\build\SpecFlow.targets'))" />
   </Target>
   <Import Project="..\packages\SpecFlow.2.3.0\build\SpecFlow.targets" Condition="Exists('..\packages\SpecFlow.2.3.0\build\SpecFlow.targets')" />

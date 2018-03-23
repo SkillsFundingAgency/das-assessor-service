@@ -8,14 +8,13 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Domain.DomainModels;
 using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Data.UnitTests.Organisations
 {
     public class WhenUpdateOrganisationPersistsData
     {
-        private static AssessorService.Api.Types.Models.OrganisationResponse _result;
+        private static Organisation _result;
         private string _primaryContact = "TestUser";
 
         [SetUp]
@@ -23,7 +22,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Organisations
         {
             MappingBootstrapper.Initialize();
 
-            var organisationUpdateDomainModel = Builder<UpdateOrganisationDomainModel>
+            var organisationUpdateDomainModel = Builder<Organisation>
                 .CreateNew()
                 .With(q => q.PrimaryContact = _primaryContact)
                 .Build();
@@ -42,15 +41,15 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Organisations
         [Test]
         public void ItShouldReturnResult()
         {
-            var result = (_result as AssessorService.Api.Types.Models.OrganisationResponse);
+            var result = (_result as Organisation);
             result.Should().NotBeNull();
         }
 
         private Mock<DbSet<Contact>> CreateContactsMockDbSet(Guid primaryContactId)
         {
-            var contacts = new List<AssessorService.Domain.Entities.Contact>
+            var contacts = new List<Contact>
             {
-                Builder<AssessorService.Domain.Entities.Contact>.CreateNew()
+                Builder<Contact>.CreateNew()
                     .With(q => q.Id = primaryContactId)
                     .With(q => q.Username = _primaryContact)
                     .Build()
@@ -62,9 +61,9 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Organisations
 
         private Mock<DbSet<Organisation>> CreateOrganisationMockDbSet(Guid primaryContactId)
         {
-            var organisations = new List<AssessorService.Domain.Entities.Organisation>
+            var organisations = new List<Organisation>
             {
-                Builder<AssessorService.Domain.Entities.Organisation>.CreateNew()
+                Builder<Organisation>.CreateNew()
                     .With(q => q.PrimaryContact = _primaryContact)
                     .Build()
             }.AsQueryable();
@@ -81,10 +80,10 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Organisations
 
             mockDbContext.Setup(q => q.Organisations).Returns(organisationMockDbSet.Object);
             mockDbContext.Setup(q => q.Contacts).Returns(contactsMockDbSet.Object);
-            mockDbContext.Setup(x => x.MarkAsModified(Moq.It.IsAny<AssessorService.Domain.Entities.Organisation>()));
+            mockDbContext.Setup(x => x.MarkAsModified(It.IsAny<Organisation>()));
 
             mockDbContext.Setup(q => q.SaveChangesAsync(new CancellationToken()))
-                .Returns(Task.FromResult((Moq.It.IsAny<int>())));
+                .Returns(Task.FromResult((It.IsAny<int>())));
             return mockDbContext;
         }
     }

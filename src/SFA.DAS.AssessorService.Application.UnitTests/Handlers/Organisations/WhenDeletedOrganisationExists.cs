@@ -6,7 +6,6 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.DomainModels;
 using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations
@@ -33,8 +32,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations
                 EndPointAssessorOrganisationId = "12345"
             });
 
-            _orgRepos.Setup(r => r.UpdateOrganisation(It.IsAny<UpdateOrganisationDomainModel>()))
-                .ReturnsAsync(new OrganisationResponse());
+            _orgRepos.Setup(r => r.UpdateOrganisation(It.IsAny<Organisation>()))
+                .ReturnsAsync(new Organisation());
 
             _handler = new CreateOrganisationHandler(_orgRepos.Object,             
                 orgQueryRepos.Object,
@@ -44,7 +43,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations
         [Test]
         public void ThenNewOrgIsNotCreated()
         {
-            _orgRepos.Setup(r => r.CreateNewOrganisation(It.IsAny<CreateOrganisationDomainModel>()))
+            _orgRepos.Setup(r => r.CreateNewOrganisation(It.IsAny<Organisation>()))
                 .Throws(new Exception("Should not be called"));
             _handler.Handle(new CreateOrganisationRequest(){EndPointAssessorOrganisationId = "12345"}, new CancellationToken()).Wait();
         }
@@ -55,7 +54,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations
             _handler.Handle(new CreateOrganisationRequest(){ EndPointAssessorOrganisationId = "12345" }, new CancellationToken()).Wait();
             _orgRepos.Verify(r =>
                 r.UpdateOrganisation(
-                    It.Is<UpdateOrganisationDomainModel>(m => m.EndPointAssessorOrganisationId == "12345")));
+                    It.Is<Organisation>(m => m.EndPointAssessorOrganisationId == "12345")));
         }
     }
 }
