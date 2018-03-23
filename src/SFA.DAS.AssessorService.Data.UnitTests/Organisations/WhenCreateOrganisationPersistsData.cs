@@ -6,7 +6,7 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Domain.DomainModels;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Data.UnitTests.Organisations
 {
@@ -16,20 +16,20 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Organisations
     {
         private  OrganisationRepository _organisationRepository;
         private Mock<AssessorDbContext> _mockDbContext;
-        private  OrganisationResponse _result;
+        private  Organisation _result;
         
         [SetUp]
         public void Arrange()
         { 
             MappingBootstrapper.Initialize();
 
-            var organisationCreateDomainModel = Builder<CreateOrganisationDomainModel>.CreateNew().Build();           
+            var organisation = Builder<Organisation>.CreateNew().Build();           
                        
             var mockSet = CreateMockDbSet();
             _mockDbContext = CreateMockDbContext(mockSet);
 
             _organisationRepository = new OrganisationRepository(_mockDbContext.Object);
-            _result = _organisationRepository.CreateNewOrganisation(organisationCreateDomainModel).Result;
+            _result = _organisationRepository.CreateNewOrganisation(organisation).Result;
         }     
 
         [Test]
@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Organisations
         [Test]
         public void ItShouldReturnAnOrganisation()
         {
-            _result.Should().BeOfType<OrganisationResponse>();
+            _result.Should().BeOfType<Organisation>();
         }
 
         [Test]
@@ -50,21 +50,21 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Organisations
             _mockDbContext.Verify(q => q.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
-        private static Mock<AssessorDbContext> CreateMockDbContext(Mock<DbSet<Domain.Entities.Organisation>> mockSet)
+        private static Mock<AssessorDbContext> CreateMockDbContext(Mock<DbSet<Organisation>> mockSet)
         {
             var mockContext = new Mock<AssessorDbContext>();
             mockContext.Setup(q => q.Organisations).Returns(mockSet.Object);
             mockContext.Setup(q => q.SaveChangesAsync(new CancellationToken()))
-                .Returns(Task.FromResult((Moq.It.IsAny<int>())));
+                .Returns(Task.FromResult((It.IsAny<int>())));
             return mockContext;
         }
 
-        private static Mock<DbSet<Domain.Entities.Organisation>> CreateMockDbSet()
+        private static Mock<DbSet<Organisation>> CreateMockDbSet()
         {
-            var mockSet = new Mock<DbSet<Domain.Entities.Organisation>>();
-            var organisations = new List<Domain.Entities.Organisation>();
-            mockSet.Setup(m => m.Add(Moq.It.IsAny<Domain.Entities.Organisation>()))
-                .Callback((Domain.Entities.Organisation organisation) => organisations.Add(organisation));
+            var mockSet = new Mock<DbSet<Organisation>>();
+            var organisations = new List<Organisation>();
+            mockSet.Setup(m => m.Add(It.IsAny<Organisation>()))
+                .Callback((Organisation organisation) => organisations.Add(organisation));
             return mockSet;
         }
     }

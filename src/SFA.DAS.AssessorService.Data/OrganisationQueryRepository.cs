@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.DomainModels;
 using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Data
@@ -31,14 +28,14 @@ namespace SFA.DAS.AssessorService.Data
                 .FirstOrDefaultAsync(q => q.EndPointAssessorUkprn == ukprn);
         }
 
-        public async Task<OrganisationDomainModel> Get(string endPointAssessorOrganisationId)
+        public async Task<Organisation> Get(string endPointAssessorOrganisationId)
         {
             var organisation = await _assessorDbContext.Organisations
                 .FirstAsync(q =>
                     q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId);
 
-            var organisationUpdateDomainModel = Mapper.Map<OrganisationDomainModel>(organisation);
-            return organisationUpdateDomainModel;
+            //var organisationUpdateDomainModel = Mapper.Map<OrganisationDomainModel>(organisation);
+            return organisation;
         }
 
         public async Task<bool> CheckIfAlreadyExists(string endPointAssessorOrganisationId)

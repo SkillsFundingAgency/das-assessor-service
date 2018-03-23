@@ -1,17 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Attributes;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
-using SFA.DAS.AssessorService.Application.Api.Orchestrators;
-using SFA.DAS.AssessorService.Domain.Exceptions;
+using SFA.DAS.AssessorService.Application.Exceptions;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using NotFound = SFA.DAS.AssessorService.Domain.Exceptions.NotFound;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -21,15 +21,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
     public class ContactController : Controller
     {
         private readonly ILogger<ContactController> _logger;
-        private readonly ContactOrchestrator _contactOrchestrator;
+        private readonly IMediator _mediator;
 
-        public ContactController(
-            ContactOrchestrator contactOrchestrator,
-            ILogger<ContactController> logger
+        public ContactController(ILogger<ContactController> logger, IMediator mediator
         )
         {
-            _contactOrchestrator = contactOrchestrator;
             _logger = logger;
+            _mediator = mediator;
         }
 
         [HttpPost(Name = "CreateContract")]
@@ -41,7 +39,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             _logger.LogInformation("Received Create Contact Request");
 
-            var contactResponse = await _contactOrchestrator.CreateContact(createContactRequest);
+            var contactResponse = Mapper.Map<ContactResponse>(await _mediator.Send(createContactRequest));
 
             return CreatedAtRoute("CreateContract",
                 new { Username = contactResponse.Username },
@@ -56,7 +54,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             _logger.LogInformation("Received Update Contact Request");
 
-            await _contactOrchestrator.UpdateContact(updateContactRequest);
+            await _mediator.Send(updateContactRequest);
 
             return NoContent();
         }
@@ -69,7 +67,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             _logger.LogInformation("Received Delete Contact Request");
 
-            await _contactOrchestrator.DeleteContact(userName);
+            try
+            {
+                var deleteContactRequest = new DeleteContactRequest()
+                {
+                    UserName = userName
+                };
+
+                await _mediator.Send(deleteContactRequest);
+            }
+            catch (NotFound)
+            {
+                throw new ResourceNotFoundException();
+            }
 
             return NoContent();
         }

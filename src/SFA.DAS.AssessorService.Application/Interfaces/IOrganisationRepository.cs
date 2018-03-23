@@ -1,14 +1,12 @@
 ﻿using System.Threading.Tasks;
-
-using SFA.DAS.AssessorService.Domain.DomainModels;
-using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Interfaces
 {
     public interface IOrganisationRepository
     {     
-        Task<OrganisationResponse> CreateNewOrganisation(CreateOrganisationDomainModel createOrganisationDomainModel);
-        Task<OrganisationResponse> UpdateOrganisation(UpdateOrganisationDomainModel updateOrganisationDomainModel);
+        Task<Organisation> CreateNewOrganisation(Organisation organisation);
+        Task<Organisation> UpdateOrganisation(Organisation updateOrganisationDomainModel);
         Task Delete(string endPointAssessorOrganisationId);
     }
 }

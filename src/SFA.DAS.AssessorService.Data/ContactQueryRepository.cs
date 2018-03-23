@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -18,30 +17,27 @@ namespace SFA.DAS.AssessorService.Data
             _assessorDbContext = assessorDbContext;
         }
 
-        public async Task<IEnumerable<ContactResponse>> GetContacts(string endPointAssessorOrganisationId)
+        public async Task<IEnumerable<Contact>> GetContacts(string endPointAssessorOrganisationId)
         {
             var contacts = await _assessorDbContext.Organisations
                 .Include(organisation => organisation.Contacts)
                 .Where(organisation => organisation.EndPointAssessorOrganisationId == endPointAssessorOrganisationId
                                        && organisation.Status != OrganisationStatus.Deleted)
-                .SelectMany(q => q.Contacts)
-                .Select(contact => Mapper.Map<ContactResponse>(contact)).AsNoTracking().ToListAsync();
+                .SelectMany(q => q.Contacts).ToListAsync();
 
             return contacts;
         }
 
-        public async Task<ContactResponse> GetContact(string userName)
+        public async Task<Contact> GetContact(string userName)
         {
             var contact = await _assessorDbContext.Organisations
                 .Include(organisation => organisation.Contacts)     
                 .Where(q => q.Status != OrganisationStatus.Deleted)
                 .SelectMany(q => q.Contacts)
                 .Where(q => q.Username == userName)
-                .Select(q => Mapper.Map<ContactResponse>(q)).AsNoTracking()
                 .FirstOrDefaultAsync();          
-
-            var contactRessponse = Mapper.Map<ContactResponse>(contact);
-            return contactRessponse;
+            
+            return contact;
         }
 
         public async Task<bool> CheckContactExists(string userName)

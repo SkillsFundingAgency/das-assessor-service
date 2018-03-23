@@ -1,8 +1,10 @@
-﻿namespace SFA.DAS.AssessorService.Api.Types.Models
+﻿using SFA.DAS.AssessorService.Domain.Entities;
+
+namespace SFA.DAS.AssessorService.Api.Types.Models
 {
     using MediatR;
 
-    public class CreateContactRequest : IRequest<ContactResponse>
+    public class CreateContactRequest : IRequest<Contact>
     {
         public string EndPointAssessorOrganisationId { get; set; }
 

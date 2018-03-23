@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Login
                 EndPointAssessorOrganisationId = "EPA001",
                 EndPointAssessorUkprn = 12345,
             });
-            ContactQueryRepository.Setup(r => r.GetContact("username")).ReturnsAsync(new ContactResponse
+            ContactQueryRepository.Setup(r => r.GetContact("username")).ReturnsAsync(new Contact
             {
                 DisplayName = "Display Name", 
                 Email = "email@domain.com",

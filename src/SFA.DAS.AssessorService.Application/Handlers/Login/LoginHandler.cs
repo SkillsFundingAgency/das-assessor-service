@@ -74,7 +74,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
             return !roles.Contains(_config.Authentication.Role);
         }
 
-        private async Task<ContactResponse> GetContact(string username, string email, string displayName)
+        private async Task<Contact> GetContact(string username, string email, string displayName)
         {
             _logger.LogInformation($"Getting Contact with username: {username}");
             var contact = await _contactQueryRepository.GetContact(username);
@@ -87,9 +87,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
             return contact;
         }
 
-        private async Task CheckStoredUserDetailsForUpdate(string username, string email, string displayName, ContactResponse contactResponse)
+        private async Task CheckStoredUserDetailsForUpdate(string username, string email, string displayName, Contact contact)
         {
-            if (contactResponse.Email != email || contactResponse.DisplayName != displayName)
+            if (contact.Email != email || contact.DisplayName != displayName)
             {
                 _logger.LogInformation($"Existing contact has updated details.  Updating");
 
@@ -119,17 +119,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
             await SetNewOrganisationPrimaryContact(organisation, contact);
         }
 
-        private async Task SetNewOrganisationPrimaryContact(Organisation organisation, ContactResponse contactResponse)
+        private async Task SetNewOrganisationPrimaryContact(Organisation organisation, Contact contact)
         {
             if (organisation.Status == OrganisationStatus.New)
             {
-                _logger.LogInformation($"Org status is New. Setting Org {organisation.EndPointAssessorUkprn} with primary contact of {contactResponse.Username}");
+                _logger.LogInformation($"Org status is New. Setting Org {organisation.EndPointAssessorUkprn} with primary contact of {contact.Username}");
 
                 await _mediator.Send(new UpdateOrganisationRequest()
                 {
                     EndPointAssessorName = organisation.EndPointAssessorName,
                     EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
-                    PrimaryContact = contactResponse.Username
+                    PrimaryContact = contact.Username
                 });
             }
         }
