@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2005
+VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Application.Api", "SFA.DAS.AssessorService.Application.Api\SFA.DAS.AssessorService.Application.Api.csproj", "{7D3308DD-5535-49B4-BC33-2F8030027592}"
 EndProject
@@ -61,7 +61,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Specflow", "Specflow", "{5D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.Web.Specflow.Tests", "SFA.DAS.AssessorService.Web.Specflow.Tests\SFA.DAS.AssessorService.Web.Specflow.Tests.csproj", "{E76F24FB-FDBF-4139-BBC7-B87FBC1453C2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.Data.UnitTests", "SFA.DAS.AssessorService.Data.UnitTests\SFA.DAS.AssessorService.Data.UnitTests.csproj", "{C6966220-9CF5-41CA-92CD-DF428AD66AB5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Data.UnitTests", "SFA.DAS.AssessorService.Data.UnitTests\SFA.DAS.AssessorService.Data.UnitTests.csproj", "{C6966220-9CF5-41CA-92CD-DF428AD66AB5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -139,6 +139,10 @@ Global
 		{5872082F-19E6-4BD6-9023-2686C8AE9A99}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5872082F-19E6-4BD6-9023-2686C8AE9A99}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5872082F-19E6-4BD6-9023-2686C8AE9A99}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E76F24FB-FDBF-4139-BBC7-B87FBC1453C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E76F24FB-FDBF-4139-BBC7-B87FBC1453C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E76F24FB-FDBF-4139-BBC7-B87FBC1453C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E76F24FB-FDBF-4139-BBC7-B87FBC1453C2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C6966220-9CF5-41CA-92CD-DF428AD66AB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C6966220-9CF5-41CA-92CD-DF428AD66AB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C6966220-9CF5-41CA-92CD-DF428AD66AB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -155,9 +159,9 @@ Global
 		{7AC422A2-0183-4D77-AA10-B55198A69F35} = {5DC896DC-AB7E-4018-BB8C-F0757E9B309F}
 		{3B16AB0E-5C83-4E5D-82B0-7021AB4C5B9F} = {F85262CD-4210-4352-B691-30F40D99B4D2}
 		{5872082F-19E6-4BD6-9023-2686C8AE9A99} = {2FD518B4-499E-433B-A61A-BD6AC4EEE75B}
-		{C6966220-9CF5-41CA-92CD-DF428AD66AB5} = {EB54D000-867F-48CA-AE28-BDBE0CCE1322}
 		{5DC896DC-AB7E-4018-BB8C-F0757E9B309F} = {EB54D000-867F-48CA-AE28-BDBE0CCE1322}
 		{E76F24FB-FDBF-4139-BBC7-B87FBC1453C2} = {5DC896DC-AB7E-4018-BB8C-F0757E9B309F}
+		{C6966220-9CF5-41CA-92CD-DF428AD66AB5} = {EB54D000-867F-48CA-AE28-BDBE0CCE1322}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C5B677B2-0D72-4629-A5FD-F94B00EC858B}
