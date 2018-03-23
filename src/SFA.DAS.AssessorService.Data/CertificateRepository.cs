@@ -23,10 +23,6 @@ namespace SFA.DAS.AssessorService.Data
             await _context.Certificates.AddAsync(certificate);
             await _context.SaveChangesAsync();
 
-            certificate.CertificateReference = certificate.CertificateReferenceId.ToString();
-
-            await _context.SaveChangesAsync();
-
             return certificate;
         }
 

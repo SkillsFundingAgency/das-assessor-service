@@ -61,6 +61,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                     CertificateReference = ""
                 });
 
+            newCertificate.CertificateReference = newCertificate.CertificateReferenceId.ToString().PadLeft(8,'0');
+
+            await _certificateRepository.Update(newCertificate, request.Username);
+
             return newCertificate;
         }
     }
