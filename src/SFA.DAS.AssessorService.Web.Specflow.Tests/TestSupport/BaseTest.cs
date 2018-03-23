@@ -5,6 +5,7 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.IE;
 using OpenQA.Selenium.PhantomJS;
+using OpenQA.Selenium.Remote;
 using SFA.DAS.AssessorService.Web.Specflow.Tests.Framework.Helpers;
 using TechTalk.SpecFlow;
 
@@ -27,7 +28,11 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.TestSupport
                     break;
 
                 case "chrome" :
-                    webDriver = new ChromeDriver();
+                    // JC - checkthis out to see if works
+                    ChromeOptions options = new ChromeOptions();
+                    options.AcceptInsecureCertificates = true;
+                    options.UnhandledPromptBehavior = UnhandledPromptBehavior.Accept;
+                    webDriver = new ChromeDriver(options);
                     break;
 
                 case "ie":
