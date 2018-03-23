@@ -1,4 +1,6 @@
-﻿@model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateOptionViewModel
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateOptionViewModel
 
 @{
     ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Learning options";
@@ -7,7 +9,7 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <a class="link-back" asp-controller="Certificate" asp-action="Grade">Back</a>
+        <a class="link-back" asp-controller="CertificateGrade" asp-action="Grade">Back</a>
         
         <form type="post" asp-controller="Certificate" asp-method="Options" class="apprentice-option-form">
             @Html.HiddenFor(c => c.Id)
@@ -38,7 +40,8 @@
                 <legend id="HasAdditionalLearningOption">
                     <h1 class="heading-medium">
                         @*<span class="heading-secondary">@Model.GivenNames @Model.FamilyName</span>*@
-                        Did the apprentice do any additional learning options?</h1>
+                        @Localizer["Heading"]
+                    </h1>
                         <div class="error-message-container" sfa-validation-for="HasAdditionalLearningOption" sfa-validationerror-class="form-group-error">
                             <span class="error-message" asp-validation-for="HasAdditionalLearningOption"></span>
                         </div>
@@ -67,15 +70,15 @@
                 </div>
             </fieldset>
 
-            <details role="group">
-                <summary role="button" aria-controls="details-content-0" aria-expanded="false"><span class="summary">What is a learning option?</span></summary>
-                <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
-                    <p>
-                        For some standards, the learner can take different options. For example, the standard for Professional Accounting Technician has an Accounting or Tax option. If applicable, enter the option the learner has achieved. The option will appear on the certificate. You may know options as "pathways" or "specialisms".
-                    </p>
-                </div>
-            </details>
-            <button type="submit" class="button">Continue</button>
+                <details role="group">
+                    <summary role="button" aria-controls="details-content-0" aria-expanded="false"><span class="summary">@Localizer["InfoHeader"]</span></summary>
+                    <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
+                        <p>
+                            @Localizer["InfoBody"]
+                        </p>
+                    </div>
+                </details>
+                <button type="submit" class="button">@Localizer["ContinueButton"]</button>
         </form>
     </div>
 </div>

@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.DomainModels;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -19,23 +20,15 @@ namespace SFA.DAS.AssessorService.Data
             _assessorDbContext = assessorDbContext;
         }
 
-        public async Task<IEnumerable<OrganisationResponse>> GetAllOrganisations()
+        public async Task<IEnumerable<Organisation>> GetAllOrganisations()
         {
-            var organisations = await _assessorDbContext.Organisations
-                .Select(q => Mapper.Map<OrganisationResponse>(q)).AsNoTracking().ToListAsync();
-
-            return organisations;
+            return await _assessorDbContext.Organisations.ToListAsync();
         }
 
-        public async Task<OrganisationResponse> GetByUkPrn(int ukprn)
+        public async Task<Organisation> GetByUkPrn(int ukprn)
         {
-            var organisation = await _assessorDbContext.Organisations
+            return await _assessorDbContext.Organisations
                 .FirstOrDefaultAsync(q => q.EndPointAssessorUkprn == ukprn);
-            if (organisation == null)
-                return null;
-
-            var organisationResponse = Mapper.Map<OrganisationResponse>(organisation);
-            return organisationResponse;
         }
 
         public async Task<OrganisationDomainModel> Get(string endPointAssessorOrganisationId)

@@ -1,4 +1,6 @@
-﻿@model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateCheckViewModel
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateCheckViewModel
 
 @{
     ViewBag.Title = "title";
@@ -7,11 +9,11 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <h1 class="heading-large">Check and approve the assessment details</h1>
+        <h1 class="heading-large">@Localizer["Heading"]</h1>
         <div class="info-summary">
-            <h2 class="heading-medium">Check carefully before approving</h2>
-            <p>The personal details and apprenticeship details below will be printed on the certificate.</p>
-            <p>You must ask the apprentice's training provider to update their Individualised Learner Record (ILR) if the name, ULN, standard or level are wrong. </p>
+            <h2 class="heading-medium">@Localizer["InfoHeader"]</h2>
+            <p>@Localizer["InfoLine1"]</p>
+            <p>@Localizer["InfoLine2"]</p>
         </div>
 
 
@@ -179,7 +181,7 @@
         </dl>
         <form type="post" asp-controller="CertificateCheck">
             @Html.HiddenFor(c => c.Id)
-            <button type="submit" class="button">Continue</button>
+            <button type="submit" class="button">@Localizer["ContinueButton"]</button>
         </form>
     </div>
 </div>
