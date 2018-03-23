@@ -5,6 +5,7 @@ using Moq;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Handlers.RegisterUpdate;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.RegisterUpdate
@@ -28,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.RegisterUpdate
             Mediator = new Mock<IMediator>();
 
             Mediator.Setup(m => m.Send(It.IsAny<CreateOrganisationRequest>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new OrganisationResponse() { EndPointAssessorOrganisationId = "123456" });
+                .ReturnsAsync(new Organisation() { EndPointAssessorOrganisationId = "123456" });
 
             RegisterUpdateHandler = new RegisterUpdateHandler(ApiClient.Object, OrganisationRepository.Object, Logger.Object, Mediator.Object);
         }

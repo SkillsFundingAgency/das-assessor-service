@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.DomainModels;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Exceptions;
 
@@ -21,15 +19,12 @@ namespace SFA.DAS.AssessorService.Data
             _assessorDbContext = assessorDbContext;
         }
 
-        public async Task<ContactResponse> CreateNewContact(CreateContactDomainModel newContact)
+        public async Task<Contact> CreateNewContact(Contact newContact)
         {
-            var contactEntity = Mapper.Map<Contact>(newContact);
-
-            _assessorDbContext.Contacts.Add(contactEntity);
+            _assessorDbContext.Contacts.Add(newContact);
             await _assessorDbContext.SaveChangesAsync();
 
-            var contact = Mapper.Map<ContactResponse>(contactEntity);
-            return contact;
+            return newContact;
         }
 
         public async Task Update(UpdateContactRequest updateContactRequest)

@@ -100,39 +100,39 @@ this.ScenarioSetup(scenarioInfo);
             this.ScenarioCleanup();
         }
         
-        [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Create an Organisation With Primary Contact that exists")]
-        public virtual void CreateAnOrganisationWithPrimaryContactThatExists()
-        {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Create an Organisation With Primary Contact that exists", ((string[])(null)));
-#line 17
-this.ScenarioSetup(scenarioInfo);
-#line 18
- testRunner.Given("System Has access to the SFA.DAS.AssessmentOrgs.Api", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line hidden
-            TechTalk.SpecFlow.Table table2 = new TechTalk.SpecFlow.Table(new string[] {
-                        "EndPointAssessorName",
-                        "EndPointAssessorOrganisationId",
-                        "EndPointAssessorUkprn",
-                        "PrimaryContact"});
-            table2.AddRow(new string[] {
-                        "Test",
-                        "99999987",
-                        "10033333",
-                        "james1234"});
-#line 19
-  testRunner.When("I Create an Organisation With Existing Primary Contact", ((string)(null)), table2, "When ");
-#line 22
- testRunner.Then("the response http status should be Created", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 23
- testRunner.And("the Location Header should be set", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 24
- testRunner.And("the Organisation should be created", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 25
- testRunner.And("the Organisation Status should be set to Live", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line hidden
-            this.ScenarioCleanup();
-        }
+//        [NUnit.Framework.TestAttribute()]
+//        [NUnit.Framework.DescriptionAttribute("Create an Organisation With Primary Contact that exists")]
+//        public virtual void CreateAnOrganisationWithPrimaryContactThatExists()
+//        {
+//            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Create an Organisation With Primary Contact that exists", ((string[])(null)));
+//#line 17
+//this.ScenarioSetup(scenarioInfo);
+//#line 18
+// testRunner.Given("System Has access to the SFA.DAS.AssessmentOrgs.Api", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+//#line hidden
+//            TechTalk.SpecFlow.Table table2 = new TechTalk.SpecFlow.Table(new string[] {
+//                        "EndPointAssessorName",
+//                        "EndPointAssessorOrganisationId",
+//                        "EndPointAssessorUkprn",
+//                        "PrimaryContact"});
+//            table2.AddRow(new string[] {
+//                        "Test",
+//                        "99999987",
+//                        "10033333",
+//                        "james1234"});
+//#line 19
+//  testRunner.When("I Create an Organisation With Existing Primary Contact", ((string)(null)), table2, "When ");
+//#line 22
+// testRunner.Then("the response http status should be Created", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+//#line 23
+// testRunner.And("the Location Header should be set", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+//#line 24
+// testRunner.And("the Organisation should be created", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+//#line 25
+// testRunner.And("the Organisation Status should be set to Live", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+//#line hidden
+//            this.ScenarioCleanup();
+//        }
         
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Create an Organisation With Invalid UkPrn")]

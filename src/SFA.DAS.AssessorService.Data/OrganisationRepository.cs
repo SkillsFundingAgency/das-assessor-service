@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
-using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.DomainModels;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Exceptions;
 
@@ -20,45 +17,39 @@ namespace SFA.DAS.AssessorService.Data
             _assessorDbContext = assessorDbContext;
         }
 
-        public async Task<OrganisationResponse> CreateNewOrganisation(
-            CreateOrganisationDomainModel createOrganisationDomainModel)
+        public async Task<Organisation> CreateNewOrganisation(Organisation organisation)
         {
-            var organisation = Mapper.Map<Organisation>(createOrganisationDomainModel);
-
             _assessorDbContext.Organisations.Add(organisation);
             await _assessorDbContext.SaveChangesAsync();
 
-            var organisationResponse = Mapper.Map<OrganisationResponse>(organisation);
-            return organisationResponse;
+            return organisation;
         }
 
-        public async Task<OrganisationResponse> UpdateOrganisation(
-            UpdateOrganisationDomainModel updateOrganisationDomainModel)
+        public async Task<Organisation> UpdateOrganisation(
+            Organisation organisation)
         {
             var organisationEntity = _assessorDbContext.Organisations.First(q =>
-                q.EndPointAssessorOrganisationId == updateOrganisationDomainModel.EndPointAssessorOrganisationId);
-            if (string.IsNullOrEmpty(updateOrganisationDomainModel.PrimaryContact))
+                q.EndPointAssessorOrganisationId == organisation.EndPointAssessorOrganisationId);
+            if (string.IsNullOrEmpty(organisation.PrimaryContact))
             {
                 organisationEntity.PrimaryContact = null;
             }
             else
             {
                 var contact =
-                    _assessorDbContext.Contacts.First(q => q.Username == updateOrganisationDomainModel.PrimaryContact);
+                    _assessorDbContext.Contacts.First(q => q.Username == organisation.PrimaryContact);
                 organisationEntity.PrimaryContact = contact.Username;
             }
 
-            organisationEntity.EndPointAssessorName = updateOrganisationDomainModel.EndPointAssessorName;
-            organisationEntity.Status = updateOrganisationDomainModel.Status;
+            organisationEntity.EndPointAssessorName = organisation.EndPointAssessorName;
+            organisationEntity.Status = organisation.Status;
 
             // Workaround for Mocking
             _assessorDbContext.MarkAsModified(organisationEntity);
 
             await _assessorDbContext.SaveChangesAsync();
-
-            var organisationResponse
-                = Mapper.Map<OrganisationResponse>(organisationEntity);
-            return organisationResponse;
+            
+            return organisationEntity;
         }
 
         public async Task Delete(string endPointAssessorOrganisationId)

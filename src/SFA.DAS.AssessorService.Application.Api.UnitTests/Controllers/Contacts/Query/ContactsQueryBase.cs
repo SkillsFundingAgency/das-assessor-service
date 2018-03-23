@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.AssessorService.Application.Api.Consts;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
-using SFA.DAS.AssessorService.Application.Api.Orchestrators;
 using SFA.DAS.AssessorService.Application.Api.UnitTests.Helpers;
 using SFA.DAS.AssessorService.Application.Api.Validators;
 using SFA.DAS.AssessorService.Application.Interfaces;
@@ -15,13 +14,13 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts
         protected ContactQueryController ContactQueryController;
         protected UkPrnValidator UkPrnValidator;
 
-        protected Mock<GetContactsOrchestrator> GetContactsOrchestratorMock;
+        
 
         protected Mock<IContactQueryRepository> ContactQueryRepositoryMock;
         protected Mock<IOrganisationQueryRepository> OrganisationQueryRepositoryMock;
 
         protected Mock<IStringLocalizer<ContactQueryController>> ContactControllerLocaliserMock;
-        protected Mock<IStringLocalizer<GetContactsOrchestrator>> GetContactsOrchestratorLocaliserMock;
+        
 
         protected Mock<IStringLocalizer<SearchOrganisationForContactsValidator>>
             SearchOrganisationForContactsValidatorLocaliserMock;
@@ -29,10 +28,10 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts
 
 
         protected Mock<ILogger<ContactQueryController>> ControllerLoggerMock;
-        protected Mock<ILogger<GetContactsOrchestrator>> OrchestratorLoggerMock;
+        
 
         private MockStringLocaliserBuilder _mockStringLocaliserBuilder;
-        private GetContactsOrchestrator _getContactsOrchestrator;
+        
 
         private SearchOrganisationForContactsValidator _searchOrganisationForContactsValidator;
 
@@ -40,9 +39,10 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts
         {
             SetupOrchestratorMocks();
             SetupControllerMocks();
-         
+
+            
             ContactQueryController = new ContactQueryController(
-                _getContactsOrchestrator,
+                ContactQueryRepositoryMock.Object,
                 _searchOrganisationForContactsValidator,
                 ControllerLoggerMock.Object);
         }
@@ -70,16 +70,16 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts
 
             UkPrnValidator = new UkPrnValidator(ukPrnStringLocalizer.Object);
 
-            GetContactsOrchestratorLocaliserMock = _mockStringLocaliserBuilder
-                .WithKey(ResourceMessageName.NoAssesmentProviderFound)
-                .WithKeyValue("100000000")
-                .Build<GetContactsOrchestrator>();
+            //GetContactsOrchestratorLocaliserMock = _mockStringLocaliserBuilder
+            //    .WithKey(ResourceMessageName.NoAssesmentProviderFound)
+            //    .WithKeyValue("100000000")
+            //    .Build<GetContactsOrchestrator>();
 
-            OrchestratorLoggerMock = new Mock<ILogger<GetContactsOrchestrator>>();
+            //OrchestratorLoggerMock = new Mock<ILogger<GetContactsOrchestrator>>();
 
-            _getContactsOrchestrator = new GetContactsOrchestrator(
-                ContactQueryRepositoryMock.Object,
-                OrchestratorLoggerMock.Object);
+            //_getContactsOrchestrator = new GetContactsOrchestrator(
+            //    ContactQueryRepositoryMock.Object,
+            //    OrchestratorLoggerMock.Object);
 
             OrganisationQueryRepositoryMock = new Mock<IOrganisationQueryRepository>();
             SearchOrganisationForContactsValidatorLocaliserMock = new Mock<IStringLocalizer<SearchOrganisationForContactsValidator>>();

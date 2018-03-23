@@ -1,14 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Attributes;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
-using SFA.DAS.AssessorService.Application.Api.Orchestrators;
+using SFA.DAS.AssessorService.Application.Exceptions;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using NotFound = SFA.DAS.AssessorService.Domain.Exceptions.NotFound;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -17,15 +19,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
     public class OrganisationController : Controller
     {
         private readonly ILogger<OrganisationController> _logger;
-        private readonly OrganisationOrchestrator _organisationOrchestrator;
+        private readonly IMediator _mediator;
 
         public OrganisationController(
-            OrganisationOrchestrator organisationOrchestrator,
-            ILogger<OrganisationController> logger
+            ILogger<OrganisationController> logger,
+            IMediator mediator
         )
         {
-            _organisationOrchestrator = organisationOrchestrator;
             _logger = logger;
+            _mediator = mediator;
         }
 
         [HttpPost(Name = "CreateOrganisation")]
@@ -38,7 +40,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             _logger.LogInformation("Received Create Organisation Request");
 
-            var organisation = await _organisationOrchestrator.CreateOrganisation(createOrganisationRequest);
+            var organisation = await _mediator.Send(createOrganisationRequest);
 
             return CreatedAtRoute("CreateOrganisation",
                 new {id = organisation.EndPointAssessorOrganisationId},
@@ -55,7 +57,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             _logger.LogInformation("Received Update Organisation Request");
 
-            await _organisationOrchestrator.UpdateOrganisation(updateOrganisationRequest);
+            await _mediator.Send(updateOrganisationRequest);
 
             return NoContent();
         }
@@ -69,7 +71,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             _logger.LogInformation("Received Delete Organisation Request");
 
-            await _organisationOrchestrator.DeleteOrganisation(endPointAssessorOrganisationId);
+            try
+            {
+                var deleteOrganisationRequest = new DeleteOrganisationRequest
+                {
+                    EndPointAssessorOrganisationId = endPointAssessorOrganisationId
+                };
+
+                await _mediator.Send(deleteOrganisationRequest);
+            }
+            catch (NotFound)
+            {
+                throw new ResourceNotFoundException();
+            }
 
             return NoContent();
         }

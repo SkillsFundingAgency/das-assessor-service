@@ -13,17 +13,7 @@ Scenario: Create an Organisation With No Primary Contact
 	And the Location Header should be set
 	And the Organisation should be created
 	And the Organisation Status should be set to New
-
-Scenario: Create an Organisation With Primary Contact that exists
-	Given System Has access to the SFA.DAS.AssessmentOrgs.Api	
-	 When I Create an Organisation With Existing Primary Contact
-	| EndPointAssessorName | EndPointAssessorOrganisationId | EndPointAssessorUkprn | PrimaryContact |
-	| Test                 | 99999987                      | 10033333              | james1234          |
-	Then the response http status should be Created
-	And the Location Header should be set
-	And the Organisation should be created
-	And the Organisation Status should be set to Live
-                
+               
 Scenario: Create an Organisation With Invalid UkPrn
 	Given System Has access to the SFA.DAS.AssessmentOrgs.Api	
     When I Create an Organisation
