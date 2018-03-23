@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Domain.DomainModels;
+
 using SFA.DAS.AssessorService.Domain.Entities;
 using Contact = SFA.DAS.AssessorService.Domain.Entities.Contact;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
@@ -14,17 +14,10 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             Mapper.Initialize(cfg =>
             {
                 cfg.CreateMap<Organisation, OrganisationResponse>();
-                cfg.CreateMap<CreateOrganisationRequest, CreateOrganisationDomainModel>();
-                cfg.CreateMap<CreateOrganisationDomainModel, Organisation>();
+                cfg.CreateMap<CreateOrganisationRequest, Organisation>();
                 cfg.CreateMap<UpdateOrganisationRequest, Organisation>();
-
-                cfg.CreateMap<CreateContactRequest, Contact>();
-                cfg.CreateMap<CreateContactDomainModel, Contact>();
-                cfg.CreateMap<Contact, CreateContactRequest>();
+                cfg.CreateMap<CreateContactRequest, Contact>().ReverseMap();                
                 cfg.CreateMap<Contact, ContactResponse>();
-                cfg.CreateMap<Organisation, OrganisationDomainModel>();
-                cfg.CreateMap<OrganisationDomainModel, UpdateOrganisationDomainModel>();
-
                 cfg.CreateMap<Ilr, SearchResult>();
             });
         }

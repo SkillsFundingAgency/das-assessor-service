@@ -6,7 +6,6 @@ using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.DomainModels;
 using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers
@@ -36,12 +35,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers
 
         private async Task<Organisation> CreateNewOrganisation(CreateOrganisationRequest createOrganisationRequest)
         {
-            var createOrganisationDomainModel = Mapper.Map<CreateOrganisationDomainModel>(createOrganisationRequest);
+            var organisation = Mapper.Map<Organisation>(createOrganisationRequest);
+            
+            organisation.Status = OrganisationStatus.New;
 
-
-            createOrganisationDomainModel.Status = OrganisationStatus.New;
-
-            return await _organisationRepository.CreateNewOrganisation(Mapper.Map<Organisation>(createOrganisationDomainModel));
+            return await _organisationRepository.CreateNewOrganisation(organisation);
         }
 
         private async Task<Organisation> UpdateOrganisationIfExists(CreateOrganisationRequest createOrganisationRequest)
