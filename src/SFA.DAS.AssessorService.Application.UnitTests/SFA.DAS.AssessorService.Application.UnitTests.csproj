@@ -12,7 +12,8 @@
     <PackageReference Include="MSTest.TestFramework" Version="1.2.0" />
     <PackageReference Include="NBuilder" Version="5.0.0" />
     <PackageReference Include="nunit" Version="3.9.0" /> 
-    <PackageReference Include="nunit3testadapter" Version="3.9.0" /> 
+    <PackageReference Include="nunit3testadapter" Version="3.9.0" />
+    <PackageReference Include="nbuilder" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
