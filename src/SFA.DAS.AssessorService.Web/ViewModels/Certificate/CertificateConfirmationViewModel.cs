@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         public void FromCertificate(Domain.Entities.Certificate cert)
         {
             BaseFromCertificate(cert);
-            Reference = cert.CertificateReferenceId.ToString();
+            Reference = cert.CertificateReference;
         }
 
         public Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData data)
