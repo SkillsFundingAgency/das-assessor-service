@@ -1,15 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\xunit.core.2.0.0\build\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.core.props" Condition="Exists('..\packages\xunit.core.2.0.0\build\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.core.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{7AC422A2-0183-4D77-AA10-B55198A69F35}</ProjectGuid>
+    <ProjectGuid>{E76F24FB-FDBF-4139-BBC7-B87FBC1453C2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SFA.DAS.AssessorService.Application.Api.Specflow.Tests</RootNamespace>
-    <AssemblyName>SFA.DAS.AssessorService.Application.Api.Specflow.Tests</AssemblyName>
+    <RootNamespace>SFA.DAS.AssessorService.Web.Specflow.Tests</RootNamespace>
+    <AssemblyName>SFA.DAS.AssessorService.Web.Specflow.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
@@ -54,8 +53,8 @@
     <Reference Include="MediatR, Version=4.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MediatR.4.0.1\lib\net45\MediatR.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework, Version=3.0.5797.27534, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\packages\NUnit.3.0.0\lib\net45\nunit.framework.dll</HintPath>
@@ -70,6 +69,7 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Net" />
     <Reference Include="System.Net.Http, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Net.Http.2.0.20126.16343\lib\net40\System.Net.Http.dll</HintPath>
@@ -90,83 +90,50 @@
     <Reference Include="TechTalk.SpecRun, Version=1.7.0.0, Culture=neutral, PublicKeyToken=d0fc5cc18b3b389b, processorArchitecture=MSIL">
       <HintPath>..\packages\SpecRun.NUnit.1.7.0\lib\net40\TechTalk.SpecRun.dll</HintPath>
     </Reference>
+    <Reference Include="WebDriver, Version=3.11.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Selenium.WebDriver.3.11.0\lib\net45\WebDriver.dll</HintPath>
+    </Reference>
+    <Reference Include="WebDriver.Support, Version=3.11.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Selenium.Support.3.11.0\lib\net45\WebDriver.Support.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BaseRestServce.cs" />
-    <Compile Include="Bootstrapper.cs" />
-    <Compile Include="consts\PersistenceNames.cs" />
-    <Compile Include="consts\RestParameters.cs" />
-    <Compile Include="Contacts\Maintenance\ContactMaintenance.feature.cs">
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Features\Example1.feature.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>ContactMaintenance.feature</DependentUpon>
+      <DependentUpon>Example.feature</DependentUpon>
     </Compile>
-    <Compile Include="Contacts\Maintenance\Services\ContactService.cs" />
-    <Compile Include="Contacts\Maintenance\WhenDeleteContact.cs" />
-    <Compile Include="Contacts\Maintenance\WhenUpdateContact.cs" />
-    <Compile Include="Contacts\Maintenance\WhenCreateContact.cs" />
-    <Compile Include="Contacts\Query\ContactQueryService.cs" />
-    <Compile Include="Contacts\Query\ContactsQuery.feature.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ContactsQuery.feature</DependentUpon>
-    </Compile>
-    <Compile Include="Contacts\Query\WhenSearchContactsByUserName.cs" />
-    <Compile Include="Contacts\Query\WhenRetrieveAllContacts.cs" />
-    <Compile Include="Contacts\Query\WhenRetrieveContactBase.cs" />
-    <Compile Include="Contacts\Query\DatabaseUtils\DatabaseUtilities.cs" />
-    <Compile Include="Contacts\Query\DatabaseUtils\ContactData.cs" />
-    <Compile Include="Contacts\Query\DatabaseUtils\OrganisationData.cs" />
-    <Compile Include="Extensions\HttpClientExtensions.cs" />
-    <Compile Include="Extensions\RestClientResultExtensions.cs" />
-    <Compile Include="Iniltialisation.cs" />
-    <Compile Include="Organisations\Helpers\CreateContactBuilder.cs" />
-    <Compile Include="Organisations\Helpers\UpdateOrganisationBuilder.cs" />
-    <Compile Include="Organisations\Helpers\CreateOrganisationRequestBuilder.cs" />
-    <Compile Include="Organisations\Maintenance\OrganisationMaintenance.feature.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>OrganisationMaintenance.feature</DependentUpon>
-    </Compile>
-    <Compile Include="Organisations\Maintenance\Services\OrganisationService.cs" />
-    <Compile Include="Organisations\Maintenance\WhenDeleteOrganisation.cs" />
-    <Compile Include="Organisations\Maintenance\WhenUpdateOrganisation.cs" />
-    <Compile Include="Organisations\Query\OrganisationQuery.feature.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>OrganisationQuery.feature</DependentUpon>
-    </Compile>
-    <Compile Include="ApiStepDefinitionBase.cs" />
-    <Compile Include="Organisations\Query\Services\OrganisationQueryService.cs" />
-    <Compile Include="SpecflowIocRegister.cs" />
-    <Compile Include="Organisations\Maintenance\WhenCreateOrganisation.cs" />
-    <Compile Include="Organisations\Query\WhenSearchOrganisationByUkprn.cs" />
-    <Compile Include="Organisations\Query\WhenRetrieveAllOrganisations.cs" />
+    <Compile Include="Framework\Helpers\FormCompletionHelper.cs" />
+    <Compile Include="Framework\Helpers\HttpClientRequestHelper.cs" />
+    <Compile Include="Framework\Helpers\PageInteractionHelper.cs" />
+    <Compile Include="Framework\Helpers\RandomDataGenerator.cs" />
+    <Compile Include="Framework\Helpers\SqlDatabaseConnectionHelper.cs" />
+    <Compile Include="Pages\DepartmentForEducationHomePage.cs" />
+    <Compile Include="Pages\SearchResultsPage.cs" />
+    <Compile Include="Pages\WelcomeToGovUkPage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RestClientResult.cs" />
+    <Compile Include="StepDefinitions\ExampleSteps.cs" />
+    <Compile Include="TestSupport\BasePage.cs" />
+    <Compile Include="TestSupport\BaseTest.cs" />
+    <Compile Include="TestSupport\Configurator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Contacts\Maintenance\ContactMaintenance.feature">
+    <None Include="Features\Example.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>ContactMaintenance.feature.cs</LastGenOutput>
-    </None>
-    <None Include="Contacts\Query\ContactsQuery.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>ContactsQuery.feature.cs</LastGenOutput>
-    </None>
-    <None Include="Default.srprofile">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Organisations\Maintenance\OrganisationMaintenance.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>OrganisationMaintenance.feature.cs</LastGenOutput>
-    </None>
-    <None Include="Organisations\Query\OrganisationQuery.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>OrganisationQuery.feature.cs</LastGenOutput>
+      <LastGenOutput>Example1.feature.cs</LastGenOutput>
     </None>
     <None Include="packages.config" />
     <None Include="runtests.cmd" />
@@ -174,22 +141,22 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SFA.DAS.AssessorService.Api.Types\SFA.DAS.AssessorService.Api.Types.csproj">
-      <Project>{c6d53d77-b520-426f-b5d5-00aedc0fe4e0}</Project>
-      <Name>SFA.DAS.AssessorService.Api.Types</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SFA.DAS.AssessorService.Domain\SFA.DAS.AssessorService.Domain.csproj">
-      <Project>{95283279-6151-4580-a781-93903696a1a2}</Project>
-      <Name>SFA.DAS.AssessorService.Domain</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>    
+    </PropertyGroup>
     <Error Condition="!Exists('..\packages\SpecFlow.2.3.0\build\SpecFlow.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SpecFlow.2.3.0\build\SpecFlow.targets'))" />
+    <Error Condition="!Exists('..\packages\Selenium.WebDriver.ChromeDriver.2.37.0\build\Selenium.WebDriver.ChromeDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.WebDriver.ChromeDriver.2.37.0\build\Selenium.WebDriver.ChromeDriver.targets'))" />
+    <Error Condition="!Exists('..\packages\Selenium.WebDriver.GeckoDriver.0.20.0\build\Selenium.WebDriver.GeckoDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.WebDriver.GeckoDriver.0.20.0\build\Selenium.WebDriver.GeckoDriver.targets'))" />
+    <Error Condition="!Exists('..\packages\Selenium.WebDriver.GeckoDriver.Win64.0.20.0\build\Selenium.WebDriver.GeckoDriver.Win64.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.WebDriver.GeckoDriver.Win64.0.20.0\build\Selenium.WebDriver.GeckoDriver.Win64.targets'))" />
+    <Error Condition="!Exists('..\packages\Selenium.WebDriver.IEDriver.3.11.1\build\Selenium.WebDriver.IEDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.WebDriver.IEDriver.3.11.1\build\Selenium.WebDriver.IEDriver.targets'))" />
+    <Error Condition="!Exists('..\packages\Selenium.WebDriver.PhantomJS.1.0.0.0\build\Selenium.WebDriver.PhantomJS.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.WebDriver.PhantomJS.1.0.0.0\build\Selenium.WebDriver.PhantomJS.targets'))" />
   </Target>
   <Import Project="..\packages\SpecFlow.2.3.0\build\SpecFlow.targets" Condition="Exists('..\packages\SpecFlow.2.3.0\build\SpecFlow.targets')" />
+  <Import Project="..\packages\Selenium.WebDriver.ChromeDriver.2.37.0\build\Selenium.WebDriver.ChromeDriver.targets" Condition="Exists('..\packages\Selenium.WebDriver.ChromeDriver.2.37.0\build\Selenium.WebDriver.ChromeDriver.targets')" />
+  <Import Project="..\packages\Selenium.WebDriver.GeckoDriver.0.20.0\build\Selenium.WebDriver.GeckoDriver.targets" Condition="Exists('..\packages\Selenium.WebDriver.GeckoDriver.0.20.0\build\Selenium.WebDriver.GeckoDriver.targets')" />
+  <Import Project="..\packages\Selenium.WebDriver.GeckoDriver.Win64.0.20.0\build\Selenium.WebDriver.GeckoDriver.Win64.targets" Condition="Exists('..\packages\Selenium.WebDriver.GeckoDriver.Win64.0.20.0\build\Selenium.WebDriver.GeckoDriver.Win64.targets')" />
+  <Import Project="..\packages\Selenium.WebDriver.IEDriver.3.11.1\build\Selenium.WebDriver.IEDriver.targets" Condition="Exists('..\packages\Selenium.WebDriver.IEDriver.3.11.1\build\Selenium.WebDriver.IEDriver.targets')" />
+  <Import Project="..\packages\Selenium.WebDriver.PhantomJS.1.0.0.0\build\Selenium.WebDriver.PhantomJS.targets" Condition="Exists('..\packages\Selenium.WebDriver.PhantomJS.1.0.0.0\build\Selenium.WebDriver.PhantomJS.targets')" />
 </Project>
