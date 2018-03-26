@@ -5,34 +5,41 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.TestSupport
 {
     public class Configurator
     {
-        private static Configurator configuratorInstance = null;
+        private static Configurator _configuratorInstance = null;
 
-        private String browser;
-        private String baseUrl;
+        private readonly string _browser;
+        private readonly string _baseUrl;
+        private readonly string _baseGovUkUrl;
 
         private Configurator()
         {
-            browser = ConfigurationManager.AppSettings["Browser"];
-            baseUrl = ConfigurationManager.AppSettings["BaseUrl"];
+            _browser = ConfigurationManager.AppSettings["Browser"];
+            _baseUrl = ConfigurationManager.AppSettings["BaseUrl"];
+            _baseGovUkUrl = ConfigurationManager.AppSettings["BaseGovUkUrl"];
         }
 
         public static Configurator GetConfiguratorInstance()
         {
-            if (configuratorInstance == null)
+            if (_configuratorInstance == null)
             {
-                configuratorInstance = new Configurator();
+                _configuratorInstance = new Configurator();
             }
-            return configuratorInstance;
+            return _configuratorInstance;
         }
 
-        public String GetBrowser()
+        public string GetBrowser()
         {
-            return browser;
+            return _browser;
         }
 
-        public String GetBaseUrl()
+        public string GetBaseGovUkUrl()
         {
-            return baseUrl;
+            return _baseGovUkUrl;
+        }
+
+        public string GetBaseUrl()
+        {
+            return _baseUrl;
         }
     }
 }
