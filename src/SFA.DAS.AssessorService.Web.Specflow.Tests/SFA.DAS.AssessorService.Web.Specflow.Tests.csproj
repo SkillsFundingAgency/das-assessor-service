@@ -120,7 +120,9 @@
     <Compile Include="Framework\Helpers\RandomDataGenerator.cs" />
     <Compile Include="Framework\Helpers\SqlDatabaseConnectionHelper.cs" />
     <Compile Include="Pages\DepartmentForEducationHomePage.cs" />
+    <Compile Include="Pages\DontHaveAnAccountPage.cs" />
     <Compile Include="Pages\IdamsLogonPage.cs" />
+    <Compile Include="Pages\ForgottenPaswordPage.cs" />
     <Compile Include="Pages\SkillsFundingSearchResultsPage.cs" />
     <Compile Include="Pages\SearchResultsPage.cs" />
     <Compile Include="Pages\RecordEndPointAssessmentOutcomePage.cs" />
@@ -129,7 +131,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StepDefinitions\ExampleSteps.cs" />
     <Compile Include="StepDefinitions\UserLogsInSuccesfully.cs" />
+    <Compile Include="StepDefinitions\WhenUserDoesNotHaveAnAccountIsRedirectedToDoesNotHaveAccountPage.cs" />
     <Compile Include="StepDefinitions\WhenUserLogsInWithValidCredentialsandRedirectedToSearchForApprenticePage.cs" />
+    <Compile Include="StepDefinitions\WhenUserForgetsPasswordandIsRedirectedToForgetPasswordPage.cs" />
     <Compile Include="StepDefinitions\WhenUserClicksOnStartButtonAndIsTaketoTheIdamsPage.cs" />
     <Compile Include="TestSupport\BasePage.cs" />
     <Compile Include="TestSupport\BaseTest.cs" />

@@ -16,3 +16,13 @@ And User enters valid credentials
 When Clicks on sign in button
 Then User should be navigated to search for an apprentice page on EPAO service
 
+Scenario:  ON-83 Test .3 Scenario 2 User Cannot remember Password
+Given User Logs on through idams
+When User Selects forgot my password
+Then User should be navigated to forgotten password screen
+
+Scenario:  ON-83 Test .4 Scenario 2 User Does not have an account
+Given User Logs on through idams
+When User Selects dont have an account
+Then User should be navigated to dont have an account screen
+
