@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.StepDefinitions
         [Given(@"I navigate to GOV.UK home page")]
         public void NavigateToGovUkHomePage()
         {
-            webDriver.Url = Configurator.GetConfiguratorInstance().GetBaseUrl();
+            webDriver.Url = Configurator.GetConfiguratorInstance().GetBaseGovUkUrl();
         }
 
         [When(@"I search for (.*)")]
