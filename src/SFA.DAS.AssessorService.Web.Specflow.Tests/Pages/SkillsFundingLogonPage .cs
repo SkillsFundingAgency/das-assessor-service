@@ -35,8 +35,24 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
             parent.Click();
 
             Thread.Sleep(5000);
-      
+
             return new SkillsFundingSearchResultsPage(webDriver);
+        }
+
+        public ForgottenPaswordPage SelectForgotMyPassword()
+        {
+            var element = webDriver.FindElement(By.XPath("//a[contains(text(),'I forgot my password')]"));
+            element.Click();
+
+            return new ForgottenPaswordPage(webDriver);
+        }
+
+        public DontHaveAnAccountPage SelectDontHaveAnAccount()
+        {
+            var element = webDriver.FindElement(By.XPath("//a[contains(text(),'have an account')]"));
+            element.Click();
+
+            return new DontHaveAnAccountPage(webDriver);
         }
     }
 }
