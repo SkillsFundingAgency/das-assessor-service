@@ -16,6 +16,7 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
 
         protected override bool SelfVerify()
         {
+            PageInteractionHelper.WaitForPageToLoad();
             return PageInteractionHelper.VerifyPageHeading(this.GetPageHeading(), PAGE_TITLE);
         }
 

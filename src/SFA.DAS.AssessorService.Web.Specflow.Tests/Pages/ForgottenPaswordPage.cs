@@ -11,6 +11,8 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
 
         public ForgottenPaswordPage(IWebDriver webDriver) : base(webDriver)
         {
+            PageInteractionHelper.WaitForPageToLoad();
+
             SelfVerify();
         }
 

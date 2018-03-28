@@ -12,6 +12,8 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
 
         public SkillsFundingLogonPage(IWebDriver webDriver) : base(webDriver)
         {
+            PageInteractionHelper.WaitForPageToLoad();
+
             SelfVerify();
         }
 

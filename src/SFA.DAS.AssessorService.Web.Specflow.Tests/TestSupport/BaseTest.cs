@@ -5,7 +5,6 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.IE;
 using OpenQA.Selenium.PhantomJS;
-using OpenQA.Selenium.Remote;
 using SFA.DAS.AssessorService.Web.Specflow.Tests.Framework.Helpers;
 using TechTalk.SpecFlow;
 
