@@ -21,7 +21,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Organisat
                 .With(q => q.EndPointAssessorOrganisationId = null)
                 .With(q => q.EndPointAssessorName = null)
                 .With(q => q.EndPointAssessorUkprn = 12)
-                .With(q => q.PrimaryContact = "1234")
                 .Build();
 
             ContactQueryRepositoryMock.Setup(q => q.CheckContactExists(Moq.It.IsAny<string>()))
@@ -57,13 +56,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Organisat
         public void ErrorMessageShouldContainEndPointAssessorUkprn()    
         {
             var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "EndPointAssessorUkprn" && q.ErrorCode == "InclusiveBetweenValidator");
-            errors.Should().NotBeNull();
-        }
-
-        [Test]
-        public void ErrorMessageShouldContainPrimaryContactNotFound()      
-        {
-            var errors = _validationResult.Errors.FirstOrDefault(q => q.PropertyName == "PrimaryContact");
             errors.Should().NotBeNull();
         }
 

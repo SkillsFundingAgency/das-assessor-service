@@ -39,20 +39,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             RuleFor(organisation => organisation.EndPointAssessorUkprn).InclusiveBetween(10000000, 99999999)
                 .WithMessage(localiser[ResourceMessageName.InvalidUkprn].Value);
 
-            RuleFor(organisation => organisation.PrimaryContact)
-                .Custom((primaryContact, context) =>
-                {
-                    if (string.IsNullOrEmpty(primaryContact))
-                        return;
-
-                    var result = contactQueryRepository.CheckContactExists(primaryContact).Result;
-                    if (!result)
-                    {
-                        context.AddFailure(new ValidationFailure("PrimaryContact",
-                            string.Format(localiser[ResourceMessageName.DoesNotExist].Value, "PrimaryContact", primaryContact)));
-                    }
-                });
-
             RuleFor(organisation => organisation.EndPointAssessorOrganisationId)
                 .Custom((endPointAssessorOrganisationId, context) =>
                 {
