@@ -46,6 +46,8 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.TestSupport
                 //    break;
 
                 case "phantomjs":
+                //http://executeautomation.com/blog/running-chrome-in-headless-mode-with-selenium-c/
+                //https://stackoverflow.com/questions/48887128/running-selenium-tests-in-chrome-headless-mode-on-a-vsts-hosted-agent
                     webDriver = new PhantomJSDriver();
                     break;
 
