@@ -57,8 +57,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
             {
                 EndPointAssessorName = "Test User",
                 EndPointAssessorOrganisationId = "994432",
-                EndPointAssessorUkprn = 99953456,
-                PrimaryContact = null
+                EndPointAssessorUkprn = 99953456
             };
 
             _restClient = _organisationService.PostOrganisation(_createOrganisationRequest);
@@ -79,8 +78,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
             {
                 EndPointAssessorName = "Test User",
                 EndPointAssessorOrganisationId = "99944",
-                EndPointAssessorUkprn = 99953456,
-                PrimaryContact = null
+                EndPointAssessorUkprn = 99953456
             };
 
             _restClient = _organisationService.PostOrganisation(_createOrganisationRequest);
@@ -111,8 +109,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
             {
                 EndPointAssessorName = "Test User",
                 EndPointAssessorOrganisationId = "994433",
-                EndPointAssessorUkprn = 99953456,
-                PrimaryContact = null
+                EndPointAssessorUkprn = 99953456
             };
 
             _restClient = _organisationService.PostOrganisation(_createOrganisationRequest);
