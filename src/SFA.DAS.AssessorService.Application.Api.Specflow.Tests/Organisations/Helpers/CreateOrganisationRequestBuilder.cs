@@ -11,8 +11,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.H
             {
                 EndPointAssessorName = _organisationArgument.EndPointAssessorName,
                 EndPointAssessorOrganisationId = _organisationArgument.EndPointAssessorOrganisationId.ToString(),
-                EndPointAssessorUkprn = Convert.ToInt32(_organisationArgument.EndPointAssessorUkprn),
-                PrimaryContact = primaryContact
+                EndPointAssessorUkprn = Convert.ToInt32(_organisationArgument.EndPointAssessorUkprn)
             };
 
             return organisation;

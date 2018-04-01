@@ -49,8 +49,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
             {
                 EndPointAssessorName = "Test User",
                 EndPointAssessorOrganisationId = "9999",
-                EndPointAssessorUkprn = 99953456,
-                PrimaryContact = null
+                EndPointAssessorUkprn = 99953456
             };
             _organisationService.PostOrganisation(createOrganisationRequest);
 

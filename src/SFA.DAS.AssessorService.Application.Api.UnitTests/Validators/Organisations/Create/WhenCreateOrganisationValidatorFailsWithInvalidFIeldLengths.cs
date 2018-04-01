@@ -20,7 +20,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Organisat
             CreateOrganisationRequest = Builder<CreateOrganisationRequest>.CreateNew()
                 .With(q => q.EndPointAssessorOrganisationId = "1234567890123456")
                 .With(q => q.EndPointAssessorUkprn = 10000001)
-                .With(q => q.PrimaryContact = null)
                 .Build();
 
             ContactQueryRepositoryMock.Setup(q => q.CheckContactExists(Moq.It.IsAny<string>()))

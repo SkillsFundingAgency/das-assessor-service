@@ -26,7 +26,7 @@
     }
 
     <div class="info-summary">
-        <h3 class="heading-medium">Only record successful assessments</h3>
+        <h3 class="heading-medium">@Localizer["SearchInfoSummary"]</h3>
     </div>
 
     <fieldset>
@@ -42,23 +42,23 @@
         <div class="form-group" sfa-validation-for="Uln" sfa-validationerror-class="form-group-error">
             <label class="form-label" for="Uln">
                 <span class="form-label-bold">@Localizer["Uln"]</span>
-                <span class="form-hint">A ULN is made up of exactly 10 numbers</span>
+                <span class="form-hint">@Localizer["UlnHint"]</span>
                 <span class="error-message" asp-validation-for="Uln"></span>
             </label>
             <input class="form-control" name="Uln" asp-for="Uln" type="text" sfa-validation-for="Uln" sfa-validationerror-class="form-control-error" maxlength="10" />
         </div>
 
         <details role="group">
-            <summary role="button" aria-controls="what-is-a-unique-learner-number" aria-expanded="false"><span class="summary">What is a unique learner number (ULN)?</span></summary>
+            <summary role="button" aria-controls="what-is-a-unique-learner-number" aria-expanded="false"><span class="summary">@Localizer["InfoHeader"]</span></summary>
             <div class="text panel panel-border-narrow" id="what-is-a-unique-learner-number" aria-hidden="true">
                 <p>
-                    Each apprentice has a unique learner number (ULN) that is used to identify them. It is ten digits long and contains only numbers.
+                    @Localizer["InfoBody"]
                 </p>
             </div>
         </details>
 
         <div class="form-group">
-            <input class="button" id="button-search" type="submit" value="Continue">
+            <input class="button" id="button-search" type="submit" value="@Localizer["SearchButton"]">
         </div>
     </fieldset>
 

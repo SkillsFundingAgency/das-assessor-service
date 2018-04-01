@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Web.Validators
                         //    }
                         //}
                     }
-                    catch (ArgumentOutOfRangeException e)
+                    catch (ArgumentOutOfRangeException)
                     {
                         context.AddFailure("Date", localizer["IncorrectFormat"]);
                     }

@@ -56,9 +56,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers
                     EndPointAssessorName = createOrganisationRequest.EndPointAssessorName,
                     EndPointAssessorOrganisationId = existingOrganisation.EndPointAssessorOrganisationId,
                     PrimaryContact = existingOrganisation.PrimaryContact,
-                    Status = string.IsNullOrEmpty(createOrganisationRequest.PrimaryContact)
-                        ? OrganisationStatus.New
-                        : OrganisationStatus.Live
+                    Status = OrganisationStatus.New
+                     
                 });
             }
 
