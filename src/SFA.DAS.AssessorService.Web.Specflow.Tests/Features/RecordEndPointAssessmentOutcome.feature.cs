@@ -82,10 +82,12 @@ testRunner.And("User should be navigated to search for an apprentice page on EPA
                         "lastname",
                         "ULN"});
             table1.AddRow(new string[] {
-                        "Hawkins",
-                        "1111111111"});
+                        "Taylor",
+                        "2222222222"});
 #line 12
 testRunner.And("User enters valid search criteria", ((string)(null)), table1, "And ");
+#line 15
+testRunner.And("Clicks On Search Apprentice Button", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
         }
         
@@ -94,16 +96,39 @@ testRunner.And("User enters valid search criteria", ((string)(null)), table1, "A
         public virtual void ON_161_1Scenario1_StartRecordingAssessmentButton()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("ON- 161.1 Scenario 1 - start recording assessment button", ((string[])(null)));
-#line 17
+#line 18
 this.ScenarioSetup(scenarioInfo);
 #line 7
 this.FeatureBackground();
-#line 18
-testRunner.Given("I\'m on the \"Confirm apprentice\" page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 19
-testRunner.When("I click on the \"start recording assessment\" button", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+testRunner.Given("I\'m on the Confirm Apprentice Page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 20
-testRunner.Then("I should be taken to the \"what grade did the apprentice achieve?\" page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+testRunner.When("I click on the Start Recording Assessment Button", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 21
+testRunner.Then("I should be taken to the What Grade did the Apprentice Achieve page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 22
+testRunner.When("The User Selects Grade", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 23
+testRunner.And("User Clicks On Continue With What Grade", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 24
+testRunner.Then("User should be navigated to did the apprentice do any additional learning options" +
+                    " page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 25
+testRunner.When("User Clicks On Continue With Addtional Options", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 26
+testRunner.Then("User Is on the Apprentice Achievement Date Page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 27
+testRunner.When("The User Enters Detials Achievement Date", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 28
+testRunner.And("Clicks On Continue with Apprentice Detials Achievement Date", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 29
+testRunner.Then("I should be taken to the Where will the certificate be Sent Page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 30
+testRunner.When("I have entered Details for where to send the Certificate", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 31
+testRunner.And("User Clicks on Continue with rge Certificate to be Sent Details", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 32
+testRunner.Then("I should be navigated to the Check and Approve the Assessment Details Page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }

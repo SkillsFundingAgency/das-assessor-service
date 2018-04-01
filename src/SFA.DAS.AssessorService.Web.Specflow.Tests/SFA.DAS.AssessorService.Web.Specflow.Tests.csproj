@@ -119,10 +119,17 @@
     <Compile Include="Framework\Helpers\PageInteractionHelper.cs" />
     <Compile Include="Framework\Helpers\RandomDataGenerator.cs" />
     <Compile Include="Framework\Helpers\SqlDatabaseConnectionHelper.cs" />
+    <Compile Include="Pages\CheckAndApproveAssessmentDetails.cs" />
+    <Compile Include="Pages\WhereWillTheCertificateBeSentPage.cs" />
+    <Compile Include="Pages\ApprenticeAchievementDatePage.cs" />
+    <Compile Include="Pages\AddiitionalLearningOptionsPage.cs" />
+    <Compile Include="Pages\WhatGradeDidApprenticeAchievePage.cs" />
     <Compile Include="Pages\DepartmentForEducationHomePage.cs" />
     <Compile Include="Pages\DontHaveAnAccountPage.cs" />
     <Compile Include="Pages\IdamsLogonPage.cs" />
     <Compile Include="Pages\ForgottenPaswordPage.cs" />
+    <Compile Include="Pages\ConfirmApprenticePage.cs" />
+    <Compile Include="Pages\SearchForAnApprenticePage.cs" />
     <Compile Include="Pages\SkillsFundingSearchResultsPage.cs" />
     <Compile Include="Pages\SearchResultsPage.cs" />
     <Compile Include="Pages\RecordEndPointAssessmentOutcomePage.cs" />
