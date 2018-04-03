@@ -24,6 +24,9 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.SearchControllerTests
             contextAccessor.Setup(ca => ca.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")).Returns(new Claim("", "12345"));
             contextAccessor.Setup(ca => ca.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")).Returns(new Claim("", "username"));
 
+            var mock = new Mock<ISession>();
+            contextAccessor.SetupGet(ca => ca.HttpContext.Session).Returns(mock.Object);
+
             searchApiClient.Setup(api =>
                     api.Search(It.Is<SearchQuery>(query => query.Surname == "Gouge" && query.Uln == 1234567890)))
                 .ReturnsAsync(new List<SearchResult>() {new SearchResult() {FamilyName = "Gouge", Uln = 1234567890}});
@@ -34,7 +37,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.SearchControllerTests
             var orchestrator = new SearchOrchestrator(new Mock<ILogger<SearchController>>().Object, searchApiClient.Object,
                 contextAccessor.Object);
 
-            SearchController = new SearchController(orchestrator);
+            SearchController = new SearchController(orchestrator, contextAccessor.Object);
         }
     }
 }

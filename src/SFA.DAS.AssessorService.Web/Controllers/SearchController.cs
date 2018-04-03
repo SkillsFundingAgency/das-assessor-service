@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Orchestrators.Search;
@@ -14,15 +15,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     public class SearchController : Controller
     {
         private readonly ISearchOrchestrator _searchOrchestrator;
+        private readonly IHttpContextAccessor _contextAccessor;
 
-        public SearchController(ISearchOrchestrator searchOrchestrator)
+        public SearchController(ISearchOrchestrator searchOrchestrator, IHttpContextAccessor contextAccessor)
         {
             _searchOrchestrator = searchOrchestrator;
+            _contextAccessor = contextAccessor;
         }
 
         [HttpGet]
         public IActionResult Index()
         {
+            _contextAccessor.HttpContext.Session.Remove("SearchResults");
             return View("Index");
         }
 
@@ -38,14 +42,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             if (!result.SearchResults.Any()) return View("Index", vm);
 
-            TempData.Put("Results", result);
+            _contextAccessor.HttpContext.Session.Put("SearchResults", result);
+            //TempData.Put("Results", result);
             return RedirectToAction("Results");
         }
 
         [HttpGet]
         public IActionResult Results()
         {
-            var vm = TempData.Get<SearchViewModel>("Results");
+            var vm = _contextAccessor.HttpContext.Session.Get<SearchViewModel>("SearchResults");
+            //var vm = TempData.Get<SearchViewModel>("Results");
             if (vm == null)
             {
                 return RedirectToAction("Index");

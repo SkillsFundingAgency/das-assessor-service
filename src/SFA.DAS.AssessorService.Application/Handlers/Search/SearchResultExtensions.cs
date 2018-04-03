@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 var certificate = completedCertificates.Single(s => s.StandardCode.ToString() == searchResult.StdCode);
                 var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
                 searchResult.CertificateReference = certificate.CertificateReference;
-                searchResult.Outcome = certificateData.AchievementOutcome;
+                searchResult.OverallGrade = certificateData.OverallGrade;
             }
 
             return searchResults;

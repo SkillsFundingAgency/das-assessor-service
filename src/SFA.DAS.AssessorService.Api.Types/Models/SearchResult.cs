@@ -11,7 +11,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public string StdCode { get; set; }
         public string Standard { get; set; }
         public DateTime LearnStartDate { get; set; }
-        public string Outcome { get; set; }
+        public string OverallGrade { get; set; }
         public DateTime AchDate { get; set; }
         public string OutGrade { get; set; }
         public string CertificateReference { get; set; }
