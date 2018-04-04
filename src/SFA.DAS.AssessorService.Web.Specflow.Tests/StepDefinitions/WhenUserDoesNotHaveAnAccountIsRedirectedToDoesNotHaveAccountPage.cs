@@ -1,9 +1,8 @@
-﻿using System;
-using SFA.DAS.AssessorService.Web.Specflow.Tests.Pages;
+﻿using SFA.DAS.AssessorService.Web.Specflow.Tests.Pages;
 using SFA.DAS.AssessorService.Web.Specflow.Tests.TestSupport;
 using TechTalk.SpecFlow;
 
-namespace MyNamespace
+namespace SFA.DAS.AssessorService.Web.Specflow.Tests.StepDefinitions
 {
     [Binding]
     public class WhenUserDoesNotHaveAnAccountIsRedirectedToDoesNotHaveAccountPage : BaseTest

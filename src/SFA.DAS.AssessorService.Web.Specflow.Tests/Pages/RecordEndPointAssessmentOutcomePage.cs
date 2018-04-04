@@ -1,5 +1,4 @@
-﻿using System;
-using OpenQA.Selenium;
+﻿using OpenQA.Selenium;
 using SFA.DAS.AssessorService.Web.Specflow.Tests.Framework.Helpers;
 using SFA.DAS.AssessorService.Web.Specflow.Tests.TestSupport;
 
@@ -7,7 +6,7 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
 {
     public class RecordEndPointAssessmentOutcomePage : BasePage
     {
-        private static String PAGE_TITLE = "Record end-point assessment outcome";
+        private static string PAGE_TITLE = "Record apprentice end-point assessment grades";
 
         public RecordEndPointAssessmentOutcomePage(IWebDriver webDriver) : base(webDriver)
         {
@@ -21,10 +20,9 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
 
         private readonly By _startNowButton = By.CssSelector(".button-start");
 
-        internal IdamsLogonPage ClickStartNowButton()
+        internal void ClickStartNowButton()
         {
             FormCompletionHelper.ClickElement(_startNowButton);
-            return new IdamsLogonPage(webDriver);
         }
     }
 }
