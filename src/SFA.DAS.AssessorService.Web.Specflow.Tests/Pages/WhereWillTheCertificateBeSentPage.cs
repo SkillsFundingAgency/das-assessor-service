@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
         private By _addressLine2By = By.Name("AddressLine2");
         private By _addressLine3By = By.Name("AddressLine3");
         private By _cityBy = By.Name("City");
-        private By _addresspostCode = By.Name("PostCode");
+        private By _addresspostCode = By.Name("Postcode");
 
         private By _continueButton = By.XPath("//*[@id=\"content\"]/div/div/form/button");
 
@@ -47,9 +47,9 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
             FormCompletionHelper.EnterText(_addresspostCode, "B50 3DE");
         }
 
-        internal CheckAndApproveAssessmentDetails ClickContinue()
+        internal void ClickContinue()
         {
-            return new CheckAndApproveAssessmentDetails(webDriver);
+            FormCompletionHelper.ClickElement(_continueButton);
         }
     }
 }

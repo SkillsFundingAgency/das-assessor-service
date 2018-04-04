@@ -34,10 +34,12 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.StepDefinitions
             _skillsFundingLogonPage.EnterUserDetails(_userName, _password);
         }
 
-        //[Then(@"User should be navigated to search for an apprentice page on EPAO service")]
-        //public void ThenUserShouldBeNavigatedToSearchForAnApprenticePageOnEPAOService()
-        //{
-        //}
+        [Then(@"User should be navigated to search for an apprentice page on EPAO service")]
+        public void ThenUserShouldBeNavigatedToSearchForAnApprenticePageOnEPAOService()
+        {
+           
+        }
+
     }
 }
 

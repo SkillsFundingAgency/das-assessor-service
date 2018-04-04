@@ -18,6 +18,8 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.StepDefinitions
         private AddiitionalLearningOptionsPage _addiitionalLearningOptionsPage;
         private ApprenticeAchievementDatePage _apprenticeAchievementDatePage;
         private WhereWillTheCertificateBeSentPage _whereWillTheCertificateBeSentPage;
+        private DeclarationtPage _declarationPage;
+        private AssessmentRecodedPage _assessmentRecordedPage;
 
         private By _surNameBy = By.Name("Surname");
         private By _ulnBy = By.Name("Uln");
@@ -86,12 +88,11 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.StepDefinitions
             _addiitionalLearningOptionsPage = new AddiitionalLearningOptionsPage(webDriver);
         }
 
-        //[Then(@"User Clicks On Continue With Addtional Options")]
-        //public void ThenUserClicksOnContinueWithAddtionalOptions()
-        //{
-        //    _addiitionalLearningOptionsPage.ClickContinue();
-        //}
-
+        [When(@"User Selects No Option")]
+        public void WhenUserSelectsNoOption()
+        {
+            _addiitionalLearningOptionsPage.SelectsNoOption();
+        }
 
         [When(@"User Clicks On Continue With Addtional Options")]
         public void WhenUserClicksOnContinueWithAddtionalOptions()
@@ -129,7 +130,7 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.StepDefinitions
             _whereWillTheCertificateBeSentPage.EnterDetails();
         }
 
-        [When(@"User Clicks on Continue with rge Certificate to be Sent Details")]
+        [When(@"User Clicks on Continue with the Certificate to be Sent Details")]
         public void WhenUserClicksOnContinueWithRgeCertificateToBeSentDetails()
         {
             _whereWillTheCertificateBeSentPage.ClickContinue();
@@ -139,6 +140,33 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.StepDefinitions
         public void ThenIShouldBeNavigatedToTheCheckAndApproveTheAssessmentDetailsPage()
         {
             _checkAndApproveAssessmentDetails = new CheckAndApproveAssessmentDetails(webDriver);
+        }
+
+
+        [When(@"User Confirms Check And Approve Details")]
+        public void WhenUserConfirmsCheckAndApproveDetails()
+        {
+            _checkAndApproveAssessmentDetails.ClickContinue();
+        }
+
+        [Then(@"The User is taken to the Declaraton Page")]
+        public void ThenTheUserIsTakenToTheDeclaratonPage()
+        {
+            _declarationPage = new DeclarationtPage(webDriver);
+        }
+
+        [When(@"The User Conforms And Applys for a Certificate")]
+        public void ThenTheUserConformsAndApplysForACertificate()
+        {
+            _declarationPage.ClickConfirmAndAccept();
+        }
+
+        [Then(@"Assessment Is Recorded")]
+        public void ThenAssessmentIsRecorded()
+        {
+            _assessmentRecordedPage = new AssessmentRecodedPage(webDriver);
+
+            _assessmentRecordedPage.ClickSignOut();
         }
     }
 }

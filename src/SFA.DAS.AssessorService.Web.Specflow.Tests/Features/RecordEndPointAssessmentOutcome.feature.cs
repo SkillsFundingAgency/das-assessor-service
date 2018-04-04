@@ -92,10 +92,10 @@ testRunner.And("Clicks On Search Apprentice Button", ((string)(null)), ((TechTal
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("ON- 161.1 Scenario 1 - start recording assessment button")]
-        public virtual void ON_161_1Scenario1_StartRecordingAssessmentButton()
+        [NUnit.Framework.DescriptionAttribute("ON - 161.1 Scenario 1 - succesfully recording assessment")]
+        public virtual void ON_161_1Scenario1_SuccesfullyRecordingAssessment()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("ON- 161.1 Scenario 1 - start recording assessment button", ((string[])(null)));
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("ON - 161.1 Scenario 1 - succesfully recording assessment", ((string[])(null)));
 #line 18
 this.ScenarioSetup(scenarioInfo);
 #line 7
@@ -114,21 +114,31 @@ testRunner.And("User Clicks On Continue With What Grade", ((string)(null)), ((Te
 testRunner.Then("User should be navigated to did the apprentice do any additional learning options" +
                     " page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 25
-testRunner.When("User Clicks On Continue With Addtional Options", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+testRunner.When("User Selects No Option", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 26
-testRunner.Then("User Is on the Apprentice Achievement Date Page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+testRunner.And("User Clicks On Continue With Addtional Options", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 27
-testRunner.When("The User Enters Detials Achievement Date", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+testRunner.Then("User Is on the Apprentice Achievement Date Page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 28
-testRunner.And("Clicks On Continue with Apprentice Detials Achievement Date", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+testRunner.When("The User Enters Detials Achievement Date", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 29
-testRunner.Then("I should be taken to the Where will the certificate be Sent Page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+testRunner.And("Clicks On Continue with Apprentice Detials Achievement Date", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 30
-testRunner.When("I have entered Details for where to send the Certificate", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+testRunner.Then("I should be taken to the Where will the certificate be Sent Page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 31
-testRunner.And("User Clicks on Continue with rge Certificate to be Sent Details", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+testRunner.When("I have entered Details for where to send the Certificate", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 32
+testRunner.And("User Clicks on Continue with the Certificate to be Sent Details", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 33
 testRunner.Then("I should be navigated to the Check and Approve the Assessment Details Page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 34
+testRunner.When("User Confirms Check And Approve Details", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 35
+testRunner.Then("The User is taken to the Declaraton Page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 36
+testRunner.When("The User Conforms And Applys for a Certificate", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 37
+testRunner.Then("Assessment Is Recorded", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }
