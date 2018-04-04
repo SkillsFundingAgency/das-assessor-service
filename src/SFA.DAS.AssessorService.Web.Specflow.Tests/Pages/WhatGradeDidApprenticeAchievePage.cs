@@ -27,10 +27,9 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
             FormCompletionHelper.ClickElement(selectedItem);
         }
 
-        internal AddiitionalLearningOptionsPage ClicksContinue()
+        internal void ClicksContinue()
         {
             FormCompletionHelper.ClickElement(_continueButton);
-            return  new AddiitionalLearningOptionsPage(webDriver);
         }
     }
 }

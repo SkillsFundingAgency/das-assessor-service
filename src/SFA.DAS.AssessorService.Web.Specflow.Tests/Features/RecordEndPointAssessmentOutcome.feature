@@ -15,25 +15,25 @@ And User enters valid search criteria
 And Clicks On Search Apprentice Button
 
 
-Scenario: ON- 161.1 Scenario 1 - start recording assessment button
+Scenario: ON - 161.1 Scenario 1 - succesfully recording assessment
 Given I'm on the Confirm Apprentice Page 
 When I click on the Start Recording Assessment Button
 Then I should be taken to the What Grade did the Apprentice Achieve page
 When The User Selects Grade
 And User Clicks On Continue With What Grade
 Then User should be navigated to did the apprentice do any additional learning options page
-When User Clicks On Continue With Addtional Options
+When User Selects No Option
+And User Clicks On Continue With Addtional Options
 Then User Is on the Apprentice Achievement Date Page
 When The User Enters Detials Achievement Date
 And Clicks On Continue with Apprentice Detials Achievement Date
 Then I should be taken to the Where will the certificate be Sent Page
 When I have entered Details for where to send the Certificate
-And User Clicks on Continue with rge Certificate to be Sent Details
+And User Clicks on Continue with the Certificate to be Sent Details
 Then I should be navigated to the Check and Approve the Assessment Details Page
-
-#And User is on the approved apprenticeship standard list
-#When User clicks on continue button
-#Then User should be navigated to confirm apprentice page 
-#When User clicks on start recording assessment
+When User Confirms Check And Approve Details
+Then The User is taken to the Declaraton Page
+When The User Conforms And Applys for a Certificate
+Then Assessment Is Recorded
 
 
