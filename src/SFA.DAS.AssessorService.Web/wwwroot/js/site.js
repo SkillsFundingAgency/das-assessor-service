@@ -18,18 +18,3 @@ $(document).ready(function() {
   // Details/summary polyfill from frontend toolkit
   // GOVUK.details.init();
 });
-
-$(window).load(function() {
-  // If there is an error summary, set focus to the summary
-  if ($('.error-summary').length) {
-    $('.error-summary').focus();
-    $('.error-summary a').click(function(e) {
-      e.preventDefault();
-      var href = $(this).attr('href');
-      $(href).focus();
-    });
-  } else {
-    // Otherwise, set focus to the field with the error
-    $('.error input:first').focus();
-  }
-});

@@ -16,14 +16,15 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
         $('.js-error-summary a').click(function(e) {
           e.preventDefault();
           var href = $(this).attr('href');
-          $(href).focus();
+          $(href).is(':visible') ? $(href).focus() : $('input.form-control:first').focus();
         });
       } else {
         // Otherwise, set focus to the field with the error
-        $('.error input:first').focus();
+        $('input.form-control:first').focus();
       }
     })
     .validate({
+      ignore: validationRulesObject.ignore,
       focusInvalid: false,
       onkeyup: false,
       onclick: false,
@@ -32,6 +33,9 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
       errorClass: 'error-message',
       highlight: function(element) {
         console.log('h', element.id);
+
+        if ($(element).hasClass('date-input')) return;
+
         $(element)
           .closest('.form-group')
           .addClass('form-group-error');
@@ -49,6 +53,9 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
       },
       unhighlight: function(element) {
         console.log('u', element.id);
+
+        if ($(element).hasClass('date-input')) return;
+
         $(element)
           .closest('.form-group')
           .removeClass('form-group-error');
@@ -72,6 +79,12 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
             .addClass('form-group-error')
             .show()
             .append(error);
+        } else if (element.hasClass('date-input')) {
+          $('.error-message-container')
+            .addClass('form-group-error')
+            .show()
+            .find('.form-date')
+            .before(error);
         } else {
           error.insertBefore(element);
         }
@@ -80,4 +93,37 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
         form.submit();
       }
     });
+
+  // date only future
+  jQuery.validator.addMethod(
+    'noFutureDate',
+    function(value, element) {
+      var now = new Date();
+      var userDate = new Date(value);
+      if (
+        Object.prototype.toString.call(userDate) === '[object Date]' &&
+        !isNaN(userDate.getTime())
+      ) {
+        return this.optional(element) || userDate < now;
+      } else {
+        return true;
+      }
+    },
+    'Please enter a date in the past'
+  );
+
+  $(window).load(function() {
+    // If there is an error summary, set focus to the summary
+    if ($('.error-summary').length) {
+      $('.error-summary').focus();
+      $('.error-summary a').click(function(e) {
+        e.preventDefault();
+        var href = $(this).attr('href');
+        $(href).is(':visible') ? $(href).focus() : $('input.form-control:first').focus();
+      });
+    } else {
+      // Otherwise, set focus to the field with the error
+      $('input.form-control:first').focus();
+    }
+  });
 };
