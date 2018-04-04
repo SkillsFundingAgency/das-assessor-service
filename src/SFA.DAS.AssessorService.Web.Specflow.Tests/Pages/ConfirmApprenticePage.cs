@@ -21,10 +21,9 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
 
         private By submitButton = By.XPath("//*[@id=\"content\"]/div/div/form/div[2]/button");
 
-        internal WhatGradeDidApprenticeAchievePage ClickStartRecordingAssessment()
+        internal void ClickStartRecordingAssessment()
         {
             FormCompletionHelper.ClickElement(submitButton);
-            return new WhatGradeDidApprenticeAchievePage(webDriver);
         }
     }
 }

@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
             return PageInteractionHelper.VerifyPageHeading(this.GetPageHeading(), PAGE_TITLE);
         }
 
-        private By startNowButton = By.Id("bySelection");
+        private By _startNowButton = By.Id("bySelection");
 
         internal void SelectProvider()
         {

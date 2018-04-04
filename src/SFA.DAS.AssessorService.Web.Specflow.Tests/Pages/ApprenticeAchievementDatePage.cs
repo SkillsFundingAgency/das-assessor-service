@@ -32,10 +32,9 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
             FormCompletionHelper.EnterText(_yearBy, "2018");
         }
 
-        internal WhereWillTheCertificateBeSentPage ClickContinue()
+        internal void ClickContinue()
         {
             FormCompletionHelper.ClickElement(_continueButton);
-            return new WhereWillTheCertificateBeSentPage(webDriver);
         }
     }
 }

@@ -7,7 +7,7 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
 {
     class DepartmentForEducationHomePage : BasePage
     {
-        private static String PAGE_TITLE = "Department\r\nfor Education";
+        private static string PAGE_TITLE = "Department\r\nfor Education";
 
         public DepartmentForEducationHomePage(IWebDriver webDriver) : base(webDriver)
         {

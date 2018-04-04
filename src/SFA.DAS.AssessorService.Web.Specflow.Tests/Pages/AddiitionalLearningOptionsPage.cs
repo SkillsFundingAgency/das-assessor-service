@@ -28,10 +28,9 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
 
         private By _continueButton = By.XPath("//*[@id=\"content\"]/div/div/form/button");
 
-        internal ApprenticeAchievementDatePage ClickContinue()
+        internal void ClickContinue()
         {
             FormCompletionHelper.ClickElement(_continueButton);
-            return new ApprenticeAchievementDatePage(webDriver);
         }
     }
 }

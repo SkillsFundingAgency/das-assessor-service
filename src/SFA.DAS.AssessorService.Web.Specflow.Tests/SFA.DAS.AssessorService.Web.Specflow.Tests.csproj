@@ -149,7 +149,14 @@
     <Compile Include="StepDefinitions\WhenUserLogsInWithValidCredentialsandRedirectedToSearchForApprenticePage.cs" />
     <Compile Include="StepDefinitions\WhenUserForgetsPasswordandIsRedirectedToForgetPasswordPage.cs" />
     <Compile Include="StepDefinitions\WhenUserClicksOnStartButtonAndIsTaketoTheIdamsPage.cs" />
-    <Compile Include="StepDefinitions\WhenUserRecordsAssessment.cs" />
+    <Compile Include="StepDefinitions\WhenUserConfirmsApprentice.cs" />
+    <Compile Include="StepDefinitions\WhenUserEntersGradeAcheivement.cs" />
+    <Compile Include="StepDefinitions\WhenUserEntersAchievementDate.cs" />
+    <Compile Include="StepDefinitions\WhenUserEntersWhereCertificateWillBeSent.cs" />
+    <Compile Include="StepDefinitions\WhenUserConfirmsDetails.cs" />
+    <Compile Include="StepDefinitions\WhenUserSelectsAdditionalLearningOptions.cs" />
+    <Compile Include="StepDefinitions\WhenUserSearchesForAnApprentice.cs" />
+    <Compile Include="StepDefinitions\WhenConfirmsAndAcceptsCertificate.cs" />
     <Compile Include="TestSupport\BasePage.cs" />
     <Compile Include="TestSupport\BaseTest.cs" />
     <Compile Include="TestSupport\Configurator.cs" />
