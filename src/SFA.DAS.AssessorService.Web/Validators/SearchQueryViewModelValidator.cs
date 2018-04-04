@@ -5,7 +5,7 @@ using SFA.DAS.AssessorService.Web.ViewModels.Search;
 
 namespace SFA.DAS.AssessorService.Web.Validators
 {
-    public class SearchQueryViewModelValidator : AbstractValidator<SearchViewModel>
+    public class SearchQueryViewModelValidator : AbstractValidator<SearchRequestViewModel>
     {
         public SearchQueryViewModelValidator(IStringLocalizer<SearchQueryViewModelValidator> localizer)
         {

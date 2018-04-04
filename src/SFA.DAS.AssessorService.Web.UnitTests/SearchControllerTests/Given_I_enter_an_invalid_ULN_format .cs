@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.SearchControllerTests
                 .Returns(new LocalizedString(ResourceKey.UlnShouldNotBeEmpty, "ULN should not be empty"));
 
             var validator = new SearchQueryViewModelValidator(localizer.Object);
-            var result = validator.Validate(new SearchViewModel() {Surname = "Smith", Uln = invalidUln});
+            var result = validator.Validate(new SearchRequestViewModel() {Surname = "Smith", Uln = invalidUln});
             result.IsValid.Should().BeFalse();
         }
     }

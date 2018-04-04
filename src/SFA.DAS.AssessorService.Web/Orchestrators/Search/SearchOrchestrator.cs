@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators.Search
             _contextAccessor = contextAccessor;
         }
 
-        public async Task<SearchViewModel> Search(SearchViewModel vm)
+        public async Task<SearchRequestViewModel> Search(SearchRequestViewModel vm)
         {
             var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
             var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;

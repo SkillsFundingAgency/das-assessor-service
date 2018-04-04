@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.SearchControllerTests
         [Ignore("")]
         public void Then_I_should_be_redirected_to_the_Search_Results_page()
         {
-            var result = SearchController.Index(new SearchViewModel() {Surname = "Gouge", Uln = "1234567890"}).Result;
+            var result = SearchController.Index(new SearchRequestViewModel() {Surname = "Gouge", Uln = "1234567890"}).Result;
             result.Should().BeOfType<ViewResult>();
 
             var viewResult = result as ViewResult;
@@ -24,12 +24,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.SearchControllerTests
         [Ignore("")]
         public void Then_the_Search_Page_should_contain_apprentice_details()
         {
-            var result = SearchController.Index(new SearchViewModel() { Surname = "Gouge", Uln = "1234567890" }).Result;
+            var result = SearchController.Index(new SearchRequestViewModel() { Surname = "Gouge", Uln = "1234567890" }).Result;
             
             var viewResult = result as ViewResult;
             viewResult.Model.Should().NotBeNull();
 
-            var results = viewResult.Model as SearchViewModel;
+            var results = viewResult.Model as SearchRequestViewModel;
 
             results.SearchResults.Should().NotBeNull();
             results.SearchResults.Count().Should().Be(1);
