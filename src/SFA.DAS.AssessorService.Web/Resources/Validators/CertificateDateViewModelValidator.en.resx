@@ -118,12 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DateMustBeAtLeastTwelveMonthsFromStartDate" xml:space="preserve">
-    <value>Achievement Date must be at least 12 months from Learner Start Date.</value>
+    <value>The achievement date must be at least 12 months from the learner start date</value>
   </data>
   <data name="DateMustNotBeInFuture" xml:space="preserve">
-    <value>Achievement Date cannot be in the future.</value>
+    <value>Achievement date cannot be in the future</value>
   </data>
   <data name="IncorrectFormat" xml:space="preserve">
-    <value>Date is not valid</value>
+    <value>The achievement date is not a valid format</value>
   </data>
 </root>
