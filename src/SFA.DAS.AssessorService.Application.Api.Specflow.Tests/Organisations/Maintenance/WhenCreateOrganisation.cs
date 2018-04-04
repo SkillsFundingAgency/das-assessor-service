@@ -55,17 +55,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.M
             _restClientResult = _organisationService.PostOrganisation(createOrganisationRequest);
         }
 
-        //[When(@"I Create an Organisation With Existing Primary Contact")]
-        //public void WhenICreateAnOrganisationWithExistingPrimaryContact(IEnumerable<dynamic> organisations)
-        //{
-        //    _organisationArgument = organisations.First();
-
-        //    Contact contact = CreateContact(_organisationArgument.PrimaryContact);
-
-        //    var createOrganisationRequest = _createOrganisationRequestBuilder.Build(_organisationArgument, contact.Username);
-        //    _restClientResult = _organisationService.PostOrganisation(createOrganisationRequest);
-        //}
-
         [Then(@"the Organisation should be created")]
         public void ThenTheOrganisationShouldBeCreated()
         {
