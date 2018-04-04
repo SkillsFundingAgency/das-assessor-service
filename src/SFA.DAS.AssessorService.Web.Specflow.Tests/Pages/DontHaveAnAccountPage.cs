@@ -7,7 +7,7 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
 {
     public class DontHaveAnAccountPage : BasePage
     {
-        private static String PAGE_TITLE = "Registration";
+        private static string PAGE_TITLE = "Registration";
 
         public DontHaveAnAccountPage(IWebDriver webDriver) : base(webDriver)
         {

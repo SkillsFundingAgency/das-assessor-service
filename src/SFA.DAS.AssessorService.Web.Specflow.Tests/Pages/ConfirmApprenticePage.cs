@@ -19,12 +19,11 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
             return PageInteractionHelper.VerifyPageHeading(this.GetPageHeading(), PAGE_TITLE);
         }
 
-        private By submitButton = By.XPath("//*[@id=\"content\"]/div/div/form/div[2]/button");
+        private readonly By _submitButton = By.XPath("//*[@id=\"content\"]/div/div/form/div[2]/button");
 
-        internal WhatGradeDidApprenticeAchievePage ClickStartRecordingAssessment()
+        internal void ClickStartRecordingAssessment()
         {
-            FormCompletionHelper.ClickElement(submitButton);
-            return new WhatGradeDidApprenticeAchievePage(webDriver);
+            FormCompletionHelper.ClickElement(_submitButton);
         }
     }
 }

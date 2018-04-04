@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
             return PageInteractionHelper.VerifyPageHeading(this.GetPageHeading(), PAGE_TITLE);
         }
 
-        private By _signOff = By.XPath("//*[@id=\"content\"]/div/div/ul/li[3]/a");
+        private readonly By _signOff = By.XPath("//*[@id=\"content\"]/div/div/ul/li[3]/a");
 
         internal void ClickSignOut()
         {

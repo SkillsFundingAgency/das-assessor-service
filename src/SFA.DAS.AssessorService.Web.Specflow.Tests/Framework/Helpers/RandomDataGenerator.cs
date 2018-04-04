@@ -5,34 +5,34 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Framework.Helpers
 {
     public class RandomDataGenerator
     {
-        const String alphabets = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        const String numbers = "0123456789";
-        const String specialChars = "!@£$%^&*()_+{}:<>?-=[];',./";
+        const string Alphabets = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const string Numbers = "0123456789";
+        const string SpecialChars = "!@£$%^&*()_+{}:<>?-=[];',./";
 
-        public static String GenerateRandomAlphabeticString(int length)
+        public static string GenerateRandomAlphabeticstring(int length)
         {
-            return GenerateRandomString(alphabets, length);
+            return GenerateRandomstring(Alphabets, length);
         }
 
-        public static String GenerateRandomNumber(int length)
+        public static string GenerateRandomNumber(int length)
         {
-            return GenerateRandomString(numbers, length);
+            return GenerateRandomstring(Numbers, length);
         }
 
-        public static String GenerateRandomAlphanumericString(int length)
+        public static string GenerateRandomAlphanumericstring(int length)
         {
-            return GenerateRandomString(alphabets + numbers, length);
+            return GenerateRandomstring(Alphabets + Numbers, length);
         }
 
-        public static String GenerateRandomAlphanumericStringWithSpecialCharacters(int length)
+        public static string GenerateRandomAlphanumericstringWithSpecialCharacters(int length)
         {
-            return GenerateRandomString(alphabets + numbers + specialChars, length);
+            return GenerateRandomstring(Alphabets + Numbers + SpecialChars, length);
         }
 
-        public static String GenerateRandomEmail()
+        public static string GenerateRandomEmail()
         {
-            String emailDomain = "@example.com";
-            return GenerateRandomAlphanumericString(10) + DateTime.Now.Millisecond + emailDomain;
+            string emailDomain = "@example.com";
+            return GenerateRandomAlphanumericstring(10) + DateTime.Now.Millisecond + emailDomain;
         }
 
         public static int GenerateRandomDateOfMonth()
@@ -51,7 +51,7 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Framework.Helpers
             return rand.Next(min, max);
         }
 
-        private static String GenerateRandomString(String characters, int length)
+        private static string GenerateRandomstring(string characters, int length)
         {
             Random random = new Random();
             return new string(Enumerable.Repeat(characters, length)

@@ -19,18 +19,18 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
             return PageInteractionHelper.VerifyPageHeading(this.GetPageHeading(), PAGE_TITLE);
         }
 
-        private By _nameBy = By.Name("Name");
-        private By _departmentBy = By.Name("Dept");
-        private By _employerBy = By.Name("Employer");
-        private By _postCodeBy = By.Id("postcode-search");
+        private readonly By _nameBy = By.Name("Name");
+        private readonly By _departmentBy = By.Name("Dept");
+        private readonly By _employerBy = By.Name("Employer");
+        private readonly By _postCodeBy = By.Id("postcode-search");
 
-        private By _addressLine1By = By.Name("AddressLine1");
-        private By _addressLine2By = By.Name("AddressLine2");
-        private By _addressLine3By = By.Name("AddressLine3");
-        private By _cityBy = By.Name("City");
-        private By _addresspostCode = By.Name("Postcode");
+        private readonly By _addressLine1By = By.Name("AddressLine1");
+        private readonly By _addressLine2By = By.Name("AddressLine2");
+        private readonly By _addressLine3By = By.Name("AddressLine3");
+        private readonly By _cityBy = By.Name("City");
+        private readonly By _addresspostCode = By.Name("Postcode");
 
-        private By _continueButton = By.XPath("//*[@id=\"content\"]/div/div/form/button");
+        private readonly By _continueButton = By.XPath("//*[@id=\"content\"]/div/div/form/button");
 
         internal void EnterDetails()
         {
