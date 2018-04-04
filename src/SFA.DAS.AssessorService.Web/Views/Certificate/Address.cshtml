@@ -3,7 +3,7 @@
 @model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateAddressViewModel
 
 @{
-    ViewBag.Title = "title";
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Certificate destination";
     Layout = "_Layout";
 }
 

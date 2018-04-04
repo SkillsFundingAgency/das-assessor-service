@@ -32,7 +32,7 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
       errorElement: 'span',
       errorClass: 'error-message',
       highlight: function(element) {
-        console.log('h', element.id);
+        // console.log('h', element.id);
 
         if ($(element).hasClass('date-input')) return;
 
@@ -52,7 +52,7 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
         }
       },
       unhighlight: function(element) {
-        console.log('u', element.id);
+        // console.log('u', element.id);
 
         if ($(element).hasClass('date-input')) return;
 
