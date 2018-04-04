@@ -8,8 +8,7 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.StepDefinitions
     public class WhenUserEntersGradeAcheivement : BaseTest
     {
         private WhatGradeDidApprenticeAchievePage _whatGradeDidApprenticeAchievePage;
-        private AddiitionalLearningOptionsPage _addiitionalLearningOptionsPage;
-
+       
         [Then(@"I should be taken to the What Grade did the Apprentice Achieve page")]
         public void ThenIShouldBeTakenToTheWhatGradeDidTheApprenticeAchievePage()
         {

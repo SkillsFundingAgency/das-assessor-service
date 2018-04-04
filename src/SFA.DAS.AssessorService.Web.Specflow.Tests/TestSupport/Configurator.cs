@@ -1,5 +1,4 @@
-﻿using System;
-using System.Configuration;
+﻿using System.Configuration;
 
 namespace SFA.DAS.AssessorService.Web.Specflow.Tests.TestSupport
 {
@@ -20,11 +19,7 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.TestSupport
 
         public static Configurator GetConfiguratorInstance()
         {
-            if (_configuratorInstance == null)
-            {
-                _configuratorInstance = new Configurator();
-            }
-            return _configuratorInstance;
+            return _configuratorInstance ?? (_configuratorInstance = new Configurator());
         }
 
         public string GetBrowser()

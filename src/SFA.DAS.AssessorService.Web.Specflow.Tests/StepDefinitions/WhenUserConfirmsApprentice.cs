@@ -8,8 +8,6 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.StepDefinitions
     public class WhenUserConfirmsApprentice : BaseTest
     {
         private ConfirmApprenticePage _confirmApprenticePage;
-        private WhatGradeDidApprenticeAchievePage _whatGradeDidApprenticeAchievePage;
-     
 
         [Given(@"I'm on the Confirm Apprentice Page")]
         public void GivenImOnTheConfirmApprenticeage()

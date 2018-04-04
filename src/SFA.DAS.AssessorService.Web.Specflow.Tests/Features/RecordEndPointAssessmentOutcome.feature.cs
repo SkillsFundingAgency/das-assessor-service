@@ -136,7 +136,7 @@ testRunner.When("User Confirms Check And Approve Details", ((string)(null)), ((T
 #line 35
 testRunner.Then("The User is taken to the Declaraton Page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 36
-testRunner.When("The User Conforms And Applys for a Certificate", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+testRunner.When("The User Conforms And Applies for a Certificate", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 37
 testRunner.Then("Assessment Is Recorded", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden

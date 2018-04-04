@@ -19,11 +19,11 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
             return PageInteractionHelper.VerifyPageHeading(this.GetPageHeading(), PAGE_TITLE);
         }
 
-        private By _dayBy = By.Id("Day");
-        private By _monthy = By.Id("Month");
-        private By _yearBy = By.Id("Year");
+        private readonly By _dayBy = By.Id("Day");
+        private readonly By _monthy = By.Id("Month");
+        private readonly By _yearBy = By.Id("Year");
 
-        private By _continueButton = By.XPath("//*[@id=\"content\"]/div/div/form/button");
+        private readonly By _continueButton = By.XPath("//*[@id=\"content\"]/div/div/form/button");
 
         internal void EnterDetails()
         {

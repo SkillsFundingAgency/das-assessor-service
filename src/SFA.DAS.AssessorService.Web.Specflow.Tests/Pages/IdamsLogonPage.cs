@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
 
         internal void SelectProvider()
         {
-            var element = webDriver.FindElement(By.XPath("//span[contains(@class,'largeTextNoWrap')]  [contains(text(),'Pirean Preprod')]"));
+            var element = WebDriver.FindElement(By.XPath("//span[contains(@class,'largeTextNoWrap')]  [contains(text(),'Pirean Preprod')]"));
             element.Click();
         }
     }

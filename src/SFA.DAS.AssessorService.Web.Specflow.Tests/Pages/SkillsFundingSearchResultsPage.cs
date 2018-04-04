@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
             return PageInteractionHelper.VerifyPageHeading(this.GetPageHeading(), PAGE_TITLE);
         }
 
-        private By _dfeLink = By.LinkText("Department for Education");
+        private readonly By _dfeLink = By.LinkText("Department for Education");
 
         internal void ClickDfeLink()
         {

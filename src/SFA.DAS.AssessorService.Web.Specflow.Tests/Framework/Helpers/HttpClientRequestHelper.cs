@@ -9,7 +9,7 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Framework.Helpers
 {
     class HttpClientRequestHelper
     {
-        private static readonly HttpClient client = new HttpClient();
+        private static readonly HttpClient _client = new HttpClient();
 
         public static async Task<String> ExecuteHttpPostRequest(String requestUri, String postData, String accessToken = "")
         {
@@ -18,9 +18,9 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Framework.Helpers
                 Content = new StringContent(postData, Encoding.UTF8, "application/json")
             };
 
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
-            HttpResponseMessage postRequestResponse = await client.SendAsync(requestMessage);
+            HttpResponseMessage postRequestResponse = await _client.SendAsync(requestMessage);
             String content = await postRequestResponse.Content.ReadAsStringAsync();
             postRequestResponse.EnsureSuccessStatusCode();
             return content;
@@ -28,10 +28,10 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Framework.Helpers
 
         public static async Task<String> ExecuteHttpGetRequest(String requestUri, String accessToken = "")
         {
-            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-            HttpResponseMessage getRequestResponse = await client.SendAsync(requestMessage);
-            String content = await getRequestResponse.Content.ReadAsStringAsync();
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            var getRequestResponse = await _client.SendAsync(requestMessage);
+            var content = await getRequestResponse.Content.ReadAsStringAsync();
             getRequestResponse.EnsureSuccessStatusCode();
             return content;
         }
@@ -43,10 +43,10 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Framework.Helpers
                 Content = new StringContent(putData, Encoding.UTF8, "application/json")
             };
 
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
-            HttpResponseMessage putRequestResponse = await client.SendAsync(requestMessage);
-            String content = await putRequestResponse.Content.ReadAsStringAsync();
+            var putRequestResponse = await _client.SendAsync(requestMessage);
+            var content = await putRequestResponse.Content.ReadAsStringAsync();
             putRequestResponse.EnsureSuccessStatusCode();
             return content;
         }
@@ -65,8 +65,8 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Framework.Helpers
                     Content = new StringContent(deleteData, Encoding.UTF8, "application/json")
                 };
 
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                HttpResponseMessage deleteRequestResponse = await client.SendAsync(requestMessage);
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                var deleteRequestResponse = await _client.SendAsync(requestMessage);
                 deleteRequestResponse.EnsureSuccessStatusCode();
             }
         }
@@ -78,10 +78,10 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Framework.Helpers
                 Content = new StringContent(patchData, Encoding.UTF8, "application/json")
             };
 
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
-            HttpResponseMessage patchRequestResponse = await client.SendAsync(requestMessage);
-            String content = await patchRequestResponse.Content.ReadAsStringAsync();
+            var patchRequestResponse = await _client.SendAsync(requestMessage);
+            var content = await patchRequestResponse.Content.ReadAsStringAsync();
             patchRequestResponse.EnsureSuccessStatusCode();
             return content;
         }

@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.TestSupport
 
                 //--- This driver is not supported at this moment. This will be revisited in future ---
                 //case "htmlunit" :
-                //    webDriver = new RemoteWebDriver(DesiredCapabilities.HtmlUnitWithJavaScript());
+                //    WebDriver = new RemoteWebDriver(DesiredCapabilities.HtmlUnitWithJavaScript());
                 //    break;
 
                 case "phantomjs":
@@ -56,7 +56,7 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.TestSupport
                     break;
 
                 default:
-                    throw new Exception("Driver name does not match OR this framework does not support the webDriver specified");
+                    throw new Exception("Driver name does not match OR this framework does not support the WebDriver specified");
             }
             
             webDriver.Manage().Window.Maximize();

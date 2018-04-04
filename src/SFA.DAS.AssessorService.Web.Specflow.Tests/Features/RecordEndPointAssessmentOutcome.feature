@@ -33,7 +33,7 @@ And User Clicks on Continue with the Certificate to be Sent Details
 Then I should be navigated to the Check and Approve the Assessment Details Page
 When User Confirms Check And Approve Details
 Then The User is taken to the Declaraton Page
-When The User Conforms And Applys for a Certificate
+When The User Conforms And Applies for a Certificate
 Then Assessment Is Recorded
 
 

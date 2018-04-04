@@ -1,5 +1,4 @@
-﻿using OpenQA.Selenium;
-using SFA.DAS.AssessorService.Web.Specflow.Tests.Pages;
+﻿using SFA.DAS.AssessorService.Web.Specflow.Tests.Pages;
 using SFA.DAS.AssessorService.Web.Specflow.Tests.TestSupport;
 using TechTalk.SpecFlow;
 
@@ -17,8 +16,8 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.StepDefinitions
             _declarationPage = new DeclarationtPage(webDriver);
         }
 
-        [When(@"The User Conforms And Applys for a Certificate")]
-        public void ThenTheUserConformsAndApplysForACertificate()
+        [When(@"The User Conforms And Applies for a Certificate")]
+        public void ThenTheUserConformsAndAppliesForACertificate()
         {
             _declarationPage.ClickConfirmAndAccept();
         }

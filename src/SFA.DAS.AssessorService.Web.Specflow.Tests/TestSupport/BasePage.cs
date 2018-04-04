@@ -6,12 +6,12 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.TestSupport
 {
     public abstract class BasePage
     {
-        protected IWebDriver webDriver;
-        private By pageHeading = By.CssSelector("h1");
+        protected IWebDriver WebDriver;
+        private By _pageHeading = By.CssSelector("h1");
 
         public BasePage(IWebDriver webDriver)
         {
-            this.webDriver = webDriver;
+            this.WebDriver = webDriver;
             PageFactory.InitElements(webDriver, this);
         }
 
@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.TestSupport
 
         protected String GetPageHeading()
         {
-            return webDriver.FindElement(pageHeading).Text;
+            return WebDriver.FindElement(_pageHeading).Text;
         }
     }
 }

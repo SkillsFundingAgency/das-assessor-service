@@ -9,7 +9,6 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.StepDefinitions
     public class WhenUserSelectsAdditionalLearningOptions : BaseTest
     {
         private AddiitionalLearningOptionsPage _addiitionalLearningOptionsPage;
-        private ApprenticeAchievementDatePage _apprenticeAchievementDatePage;
 
         [Then(@"User should be navigated to did the apprentice do any additional learning options page")]
         public void ThenUserShouldBeNavigatedToDidTheApprenticeDoAnyAdditionalLearningOptionsPage()
