@@ -7,7 +7,7 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
 {
     public class CheckAndApproveAssessmentDetails : BasePage
     {
-        private static String PAGE_TITLE = "Where will the certificate be sent?";
+        private static String PAGE_TITLE = "Check and approve the assessment details";
 
         public CheckAndApproveAssessmentDetails(IWebDriver webDriver) : base(webDriver)
         {
@@ -47,10 +47,9 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
             //FormCompletionHelper.EnterText(_addresspostCode, "B50 3DE");
         }
 
-        internal DepartmentForEducationHomePage ClickContinue()
+        internal void ClickContinue()
         {
             FormCompletionHelper.ClickElement(_continueButton);
-            return null;
         }
     }
 
