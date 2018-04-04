@@ -1,6 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
 @inject IViewLocalizer Localizer
-@model SFA.DAS.AssessorService.Web.ViewModels.Search.SearchViewModel
+@model SFA.DAS.AssessorService.Web.ViewModels.Search.SearchRequestViewModel
 
 @{
     ViewBag.Title = (Model?.SearchResults != null && !Model.SearchResults.Any() ? "0 results found: " : !ViewData.ModelState.IsValid ? "Error: " : "") + "Search for an apprentice";
