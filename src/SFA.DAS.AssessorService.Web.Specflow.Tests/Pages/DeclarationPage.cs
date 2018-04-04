@@ -5,11 +5,11 @@ using SFA.DAS.AssessorService.Web.Specflow.Tests.TestSupport;
 
 namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
 {
-    class DepartmentForEducationHomePage : BasePage
+    public class DeclarationtPage : BasePage
     {
-        private static string PAGE_TITLE = "Department\r\nfor Education";
+        private static string PAGE_TITLE = "Declaration";
 
-        public DepartmentForEducationHomePage(IWebDriver webDriver) : base(webDriver)
+        public DeclarationtPage(IWebDriver webDriver) : base(webDriver)
         {
             SelfVerify();
         }
@@ -17,6 +17,13 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
         protected override bool SelfVerify()
         {
             return PageInteractionHelper.VerifyPageHeading(this.GetPageHeading(), PAGE_TITLE);
+        }
+
+        private readonly By _confirmAndAccept = By.XPath("//*[@id=\"content\"]/div/div/form/button");
+
+        internal void ClickConfirmAndAccept()
+        {
+            FormCompletionHelper.ClickElement(_confirmAndAccept);
         }
     }
 }

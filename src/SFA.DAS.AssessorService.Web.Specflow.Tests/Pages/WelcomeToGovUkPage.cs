@@ -19,14 +19,14 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
             return PageInteractionHelper.VerifyPageHeading(this.GetPageHeading(), PAGE_TITLE);
         }
 
-        private By searchField = By.Name("q");
-        private By searchButton = By.CssSelector(".search-submit");
+        private readonly By _searchField = By.Name("q");
+        private readonly By _searchButton = By.CssSelector(".search-submit");
 
         internal SearchResultsPage EnterSearchTextAndSubmit(String searchText)
         {
-            FormCompletionHelper.EnterText(searchField, searchText);
-            FormCompletionHelper.ClickElement(searchButton);
-            return new SearchResultsPage(webDriver);
+            FormCompletionHelper.EnterText(_searchField, searchText);
+            FormCompletionHelper.ClickElement(_searchButton);
+            return new SearchResultsPage(WebDriver);
         }
     }
 }

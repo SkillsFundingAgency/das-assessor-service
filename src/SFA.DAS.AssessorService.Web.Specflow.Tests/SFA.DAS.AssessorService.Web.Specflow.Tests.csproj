@@ -104,6 +104,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="consts\PersistenceNames.cs" />
     <Compile Include="Features\EndpointAssessorSignInJourney.feature.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -119,22 +120,45 @@
     <Compile Include="Framework\Helpers\PageInteractionHelper.cs" />
     <Compile Include="Framework\Helpers\RandomDataGenerator.cs" />
     <Compile Include="Framework\Helpers\SqlDatabaseConnectionHelper.cs" />
+    <Compile Include="Pages\AssessmentRecordedPage.cs" />
+    <Compile Include="Pages\CheckAndApproveAssessmentDetails.cs" />
+    <Compile Include="Pages\DeclarationPage.cs" />
+    <Compile Include="Pages\WhereWillTheCertificateBeSentPage.cs" />
+    <Compile Include="Pages\ApprenticeAchievementDatePage.cs" />
+    <Compile Include="Pages\AddiitionalLearningOptionsPage.cs" />
+    <Compile Include="Pages\WhatGradeDidApprenticeAchievePage.cs" />
     <Compile Include="Pages\DepartmentForEducationHomePage.cs" />
     <Compile Include="Pages\DontHaveAnAccountPage.cs" />
     <Compile Include="Pages\IdamsLogonPage.cs" />
     <Compile Include="Pages\ForgottenPaswordPage.cs" />
+    <Compile Include="Pages\ConfirmApprenticePage.cs" />
+    <Compile Include="Pages\SearchForAnApprenticePage.cs" />
     <Compile Include="Pages\SkillsFundingSearchResultsPage.cs" />
     <Compile Include="Pages\SearchResultsPage.cs" />
     <Compile Include="Pages\RecordEndPointAssessmentOutcomePage.cs" />
     <Compile Include="Pages\SkillsFundingLogonPage .cs" />
     <Compile Include="Pages\WelcomeToGovUkPage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Features\RecordEndPointAssessmentOutcome.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>RecordEndPointAssessmentOutcome.feature</DependentUpon>
+    </Compile>
+    <Compile Include="SpecflowIocRegister.cs" />
     <Compile Include="StepDefinitions\ExampleSteps.cs" />
     <Compile Include="StepDefinitions\UserLogsInSuccesfully.cs" />
     <Compile Include="StepDefinitions\WhenUserDoesNotHaveAnAccountIsRedirectedToDoesNotHaveAccountPage.cs" />
     <Compile Include="StepDefinitions\WhenUserLogsInWithValidCredentialsandRedirectedToSearchForApprenticePage.cs" />
     <Compile Include="StepDefinitions\WhenUserForgetsPasswordandIsRedirectedToForgetPasswordPage.cs" />
     <Compile Include="StepDefinitions\WhenUserClicksOnStartButtonAndIsTaketoTheIdamsPage.cs" />
+    <Compile Include="StepDefinitions\WhenUserConfirmsApprentice.cs" />
+    <Compile Include="StepDefinitions\WhenUserEntersGradeAcheivement.cs" />
+    <Compile Include="StepDefinitions\WhenUserEntersAchievementDate.cs" />
+    <Compile Include="StepDefinitions\WhenUserEntersWhereCertificateWillBeSent.cs" />
+    <Compile Include="StepDefinitions\WhenUserConfirmsDetails.cs" />
+    <Compile Include="StepDefinitions\WhenUserSelectsAdditionalLearningOptions.cs" />
+    <Compile Include="StepDefinitions\WhenUserSearchesForAnApprentice.cs" />
+    <Compile Include="StepDefinitions\WhenConfirmsAndAcceptsCertificate.cs" />
     <Compile Include="TestSupport\BasePage.cs" />
     <Compile Include="TestSupport\BaseTest.cs" />
     <Compile Include="TestSupport\Configurator.cs" />
@@ -152,6 +176,10 @@
       <LastGenOutput>Example1.feature.cs</LastGenOutput>
     </None>
     <None Include="packages.config" />
+    <None Include="Features\RecordEndPointAssessmentOutcome.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>RecordEndPointAssessmentOutcome.feature.cs</LastGenOutput>
+    </None>
     <None Include="runtests.cmd" />
     <None Include="SpecRunTestProfile.xsd">
       <SubType>Designer</SubType>

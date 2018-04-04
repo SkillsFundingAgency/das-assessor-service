@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Framework.Helpers
 
         public static void ClickElement(By locator)
         {
-            webDriver.FindElement(locator).Click();
+            WebDriver.FindElement(locator).Click();
         }
 
         public static void EnterText(IWebElement element, String text)
@@ -26,8 +26,8 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Framework.Helpers
 
         public static void EnterText(By locator, String text)
         {
-            webDriver.FindElement(locator).Clear();
-            webDriver.FindElement(locator).SendKeys(text);
+            WebDriver.FindElement(locator).Clear();
+            WebDriver.FindElement(locator).SendKeys(text);
         }
 
         public static void EnterText(IWebElement element, int value)
@@ -58,7 +58,7 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Framework.Helpers
 
         public static void SelectRadioOptionByForAttribute(By locator, String forAttribute)
         {
-            IList<IWebElement> radios = webDriver.FindElements(locator);
+            IList<IWebElement> radios = WebDriver.FindElements(locator);
             var radioToSelect = radios.FirstOrDefault(radio => radio.GetAttribute("for") == forAttribute);
 
             if (radioToSelect != null)

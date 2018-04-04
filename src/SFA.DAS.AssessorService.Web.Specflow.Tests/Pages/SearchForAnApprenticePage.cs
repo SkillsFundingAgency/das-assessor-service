@@ -5,11 +5,11 @@ using SFA.DAS.AssessorService.Web.Specflow.Tests.TestSupport;
 
 namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
 {
-    public class SkillsFundingSearchResultsPage : BasePage
+    public class SearchForAnApprenticePage : BasePage
     {
         private static String PAGE_TITLE = "Search for an apprentice";
 
-        public SkillsFundingSearchResultsPage(IWebDriver webDriver) : base(webDriver)
+        public SearchForAnApprenticePage(IWebDriver webDriver) : base(webDriver)
         {
             SelfVerify();
         }
@@ -21,9 +21,10 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
 
         private readonly By _dfeLink = By.LinkText("Department for Education");
 
-        internal void ClickDfeLink()
+        internal DepartmentForEducationHomePage ClickDfeLink()
         {
             FormCompletionHelper.ClickElement(_dfeLink);
+            return new DepartmentForEducationHomePage(WebDriver);
         }
     }
 }
