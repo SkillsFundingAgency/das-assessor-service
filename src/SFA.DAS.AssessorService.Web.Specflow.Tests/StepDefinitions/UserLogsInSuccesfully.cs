@@ -12,7 +12,9 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.StepDefinitions
         {
             webDriver.Url = Configurator.GetConfiguratorInstance().GetBaseUrl();
             var recordEndPointAssessmentOutcomePage = new RecordEndPointAssessmentOutcomePage(webDriver);
-            var idamsLogonPage = recordEndPointAssessmentOutcomePage.ClickStartNowButton();
+            recordEndPointAssessmentOutcomePage.ClickStartNowButton();
+
+            var idamsLogonPage = new IdamsLogonPage(webDriver);
             idamsLogonPage.SelectProvider();
         }
     }
