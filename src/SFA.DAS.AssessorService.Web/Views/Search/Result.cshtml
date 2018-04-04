@@ -1,0 +1,59 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model SFA.DAS.AssessorService.Web.ViewModels.Search.SelectedStandardViewModel
+
+@{
+    ViewBag.Title = "Confirm apprentice";
+    Layout = "_Layout";
+}
+
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <a class="link-back" asp-controller="Search" asp-action="Index">Back</a>
+
+        @if (Model.CertificateReference == null)
+        {
+
+            <h1 class="heading-large">Confirm apprentice</h1>
+            <form asp-controller="Certificate" asp-action="Start" method="post">
+                <div class="form-group">
+                    <fieldset>
+                        <ul>
+                            <li>
+                                <p><span class="bold">Name:</span> @Model.GivenNames @Model.FamilyName</p>
+                            </li>
+                            <li>
+                                <p><span class="bold">ULN:</span> @Model.Uln</p>
+                            </li>
+                            <li>
+                                <p><span class="bold">Standard:</span> @Model.Standard</p>
+                            </li>
+                        </ul>
+                    </fieldset>
+                </div>
+
+                @Html.HiddenFor(m => m.Uln)
+                @Html.HiddenFor(m => m.StdCode)
+                <div class="form-group">
+                    <button class="button" type="submit">Start recording assessment</button>
+                </div>
+            </form>
+        }
+        else
+        {
+
+            <h1 class="heading-large">An assessment has already been recorded against this apprentice</h1>
+            <b>Name: </b> @Model.GivenNames @Model.GivenNames<br />
+            <b>Uln: </b> @Model.Uln<br />
+            <b>Standard: </b> @Model.Standard<br />
+            <b>Grade: </b> @Model.OverallGrade<br />
+
+        }
+
+
+
+        <p>This is not the right apprentice. <a asp-controller="Search" asp-action="Index">Search again</a></p>
+    </div>
+</div>
+

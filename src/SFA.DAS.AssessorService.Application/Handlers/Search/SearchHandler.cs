@@ -6,7 +6,6 @@ using AutoMapper;
 using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Search
@@ -39,28 +38,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 StandardIds = theStandardsThisEpaoProvides.Select(s => s.StandardCode).ToList()
             });
 
-            ilrResults = await RemoveCompletedStandards(request, ilrResults);
+            var searchResults = Mapper.Map<List<SearchResult>>(ilrResults)
+                .MatchUpExistingCompletedStandards(request, _certificateRepository)
+                .PopulateStandards(_assessmentOrgsApiClient);
 
-            ilrResults = ilrResults.OrderByDescending(ilr => ilr.LearnStartDate).Take(1);
-
-            var searchResult = Mapper.Map<List<SearchResult>>(ilrResults);
-
-            foreach (var ilrResult in searchResult)
-            {
-                // Yes, I know this is calling out to an API in a tight loop, but there will be very few searchResults.  Usually only one.
-                // Obviously if this does become a perf issue, then it'll need changing.
-                ilrResult.Standard = (await _assessmentOrgsApiClient.GetStandard(ilrResult.StdCode)).Title;
-            }
-
-            return searchResult;
-        }
-
-        private async Task<IEnumerable<Ilr>> RemoveCompletedStandards(SearchQuery request, IEnumerable<Ilr> ilrResults)
-        {
-            var completedStandards = (await _certificateRepository.GetCompletedCertificatesFor(request.Uln))
-                .Select(c => c.StandardCode.ToString()).ToList();
-
-            return ilrResults.Where(r => !completedStandards.Contains(r.StdCode));
+            return searchResults;
         }
     }
 }

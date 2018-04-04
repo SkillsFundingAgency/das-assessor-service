@@ -104,6 +104,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="consts\PersistenceNames.cs" />
     <Compile Include="Features\EndpointAssessorSignInJourney.feature.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -143,6 +144,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>RecordEndPointAssessmentOutcome.feature</DependentUpon>
     </Compile>
+    <Compile Include="SpecflowIocRegister.cs" />
     <Compile Include="StepDefinitions\ExampleSteps.cs" />
     <Compile Include="StepDefinitions\UserLogsInSuccesfully.cs" />
     <Compile Include="StepDefinitions\WhenUserDoesNotHaveAnAccountIsRedirectedToDoesNotHaveAccountPage.cs" />

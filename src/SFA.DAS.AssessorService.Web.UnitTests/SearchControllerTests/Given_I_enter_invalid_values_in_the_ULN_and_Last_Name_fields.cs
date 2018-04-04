@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.SearchControllerTests
                 cfg.CreateMap<ResultViewModel, SearchResult>();
             });
 
-            var result = SearchController.Index(new SearchViewModel() { Surname = "Smith", Uln = "7777777777" }).Result;
+            var result = SearchController.Index(new SearchRequestViewModel() { Surname = "Smith", Uln = "7777777777" }).Result;
             result.Should().BeOfType<ViewResult>();
 
             var viewResult = result as ViewResult;
