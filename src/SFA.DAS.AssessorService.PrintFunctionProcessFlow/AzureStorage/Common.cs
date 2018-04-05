@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.AzureStorage
 
             try
             {
-                var storageAccountName = _configuration["StorageConnectionString"];
+                var storageAccountName = _configuration["Values:ConfigurationStorageConnectionString"];
                 storageAccount = CloudStorageAccount.Parse(storageAccountName);
             }
             catch (FormatException)
