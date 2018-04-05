@@ -9,13 +9,13 @@ using CertificateData = SFA.DAS.AssessorService.Domain.JsonData.CertificateData;
 
 namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Services
 {
-    public class CoverLetterTemplateService
+    public class CoverLetterService
     { 
         private readonly FileTransferClient _fileTransferClient;
         private readonly DocumentTemplateDataStream _documentTemplateDataStream;
         private readonly CertificatesRepository _certificatesRepository;
 
-        public CoverLetterTemplateService(
+        public CoverLetterService(
             FileTransferClient fileTransferClient,
             DocumentTemplateDataStream documentTemplateDataStream,
             CertificatesRepository certificatesRepository)

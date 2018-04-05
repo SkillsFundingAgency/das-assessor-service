@@ -6,22 +6,22 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow
 {
     public class Command
     {
-        private readonly CoverLetterTemplateService _coverLetterTemplateService;
+        private readonly CoverLetterService _coverLetterService;
         private readonly IFACertificateService _ifaCertificateService;
         private readonly IConfiguration _configuration;
 
-        public Command(CoverLetterTemplateService coverLetterTemplateService,
+        public Command(CoverLetterService coverLetterService,
             IFACertificateService ifaCertificateService,
             IConfiguration configuration)
         {
-            _coverLetterTemplateService = coverLetterTemplateService;
+            _coverLetterService = coverLetterService;
             _ifaCertificateService = ifaCertificateService;
             _configuration = configuration;
         }
 
         public async Task Execute()
         {
-            await _coverLetterTemplateService.Create();
+            await _coverLetterService.Create();
             await _ifaCertificateService.Create();
         }
     }
