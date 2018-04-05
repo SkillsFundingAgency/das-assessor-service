@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Configuration;
-using System;
 
 namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Console
 {
