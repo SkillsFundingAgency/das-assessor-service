@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -59,7 +60,9 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Services
 
         private void CreateWorkSheet(ExcelPackage package)
         {
-            var worksheet = package.Workbook.Worksheets.Add("DEC 2017");
+            var monthYear = GetMonthYear("MMM");
+
+            var worksheet = package.Workbook.Worksheets.Add(monthYear);
 
             CreateWorksheetDefaults(worksheet);
             CreateWorkbookProperties(package);
@@ -136,8 +139,9 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Services
                 range.Style.Font.Size = 20;
             }
 
+            var monthYear = GetMonthYear("MMMM");
             worksheet.Cells["A1:J1"].Merge = true;
-            worksheet.Cells["A1:J1"].Value = "December 2017 Print Data";
+            worksheet.Cells["A1:J1"].Value = monthYear + " Print Data";
         }
 
         private void CreateWorksheetData(ExcelWorksheet worksheet)
@@ -202,6 +206,15 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Services
 
                 row++;
             }
+        }
+
+        private static string GetMonthYear(string monthFormat)
+        {
+            var month = DateTime.Today.ToString(monthFormat, new CultureInfo("en-GB"));
+
+            var year = DateTime.Now.Year;
+            var monthYear = month + " " + year;
+            return monthYear;
         }
     }
 }

@@ -1,41 +1,28 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Services;
-using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Utilities;
 
 namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow
 {
     public class Command
     {
-        private readonly CoverLetterTemplateService _coverLetterTemplateService;
+        private readonly CoverLetterService _coverLetterService;
         private readonly IFACertificateService _ifaCertificateService;
         private readonly IConfiguration _configuration;
-        private readonly FileUtilities _fileUtilities;
 
-        public Command(CoverLetterTemplateService coverLetterTemplateService,
+        public Command(CoverLetterService coverLetterService,
             IFACertificateService ifaCertificateService,
-            IConfiguration configuration,
-            FileUtilities fileUtilities)
+            IConfiguration configuration)
         {
-            _coverLetterTemplateService = coverLetterTemplateService;
+            _coverLetterService = coverLetterService;
             _ifaCertificateService = ifaCertificateService;
             _configuration = configuration;
-            _fileUtilities = fileUtilities;
         }
 
         public async Task Execute()
         {
-            CleanUpLastRun();
-
-            await _coverLetterTemplateService.Create();
+            await _coverLetterService.Create();
             await _ifaCertificateService.Create();
-        }
-
-        private void CleanUpLastRun()
-        {
-            var outputDirectory = _configuration["OutputDirectory"];
-            var archiveDirectory = outputDirectory + "\\Archive";
-            _fileUtilities.MoveDirectory(outputDirectory, archiveDirectory);
         }
     }
 }
