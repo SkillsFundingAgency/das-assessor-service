@@ -1,0 +1,7 @@
+﻿{
+  "IsEncrypted": false,
+  "EnvironmentName": "LOCAL",
+  "Values": {
+    "ConfigurationStorageConnectionString": "UseDevelopmentStorage=true"
+  }
+}

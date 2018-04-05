@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Console
 
         static void Main(string[] args)
         {
-            Bootstrapper.Initialise();
+            new Bootstrapper().Initialise();
 
             var command = Bootstrapper.Container.GetInstance<Command>();
             command.Execute().GetAwaiter().GetResult();
