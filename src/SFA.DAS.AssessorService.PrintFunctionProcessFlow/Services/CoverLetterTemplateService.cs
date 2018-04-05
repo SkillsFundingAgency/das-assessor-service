@@ -4,25 +4,22 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Data;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Sftp;
-using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Utilities;
 using Spire.Doc;
 using CertificateData = SFA.DAS.AssessorService.Domain.JsonData.CertificateData;
 
 namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Services
 {
     public class CoverLetterTemplateService
-    {
-        private readonly FilePerister _filePerister;
+    { 
         private readonly FileTransferClient _fileTransferClient;
         private readonly DocumentTemplateDataStream _documentTemplateDataStream;
         private readonly CertificatesRepository _certificatesRepository;
 
-        public CoverLetterTemplateService(FilePerister filePerister,
+        public CoverLetterTemplateService(
             FileTransferClient fileTransferClient,
             DocumentTemplateDataStream documentTemplateDataStream,
             CertificatesRepository certificatesRepository)
         {
-            _filePerister = filePerister;
             _fileTransferClient = fileTransferClient;
             _documentTemplateDataStream = documentTemplateDataStream;
             _certificatesRepository = certificatesRepository;

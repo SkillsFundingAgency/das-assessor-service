@@ -2,20 +2,16 @@
 using System.Threading.Tasks;
 using Renci.SshNet;
 using Renci.SshNet.Async;
-using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Utilities;
 
 namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Sftp
 {
     public class FileTransferClient
     {
         private readonly SftpClient _sftpClient;
-        private readonly FilePerister _filePerister;
 
-        public FileTransferClient(SftpClient sftpClient,
-            FilePerister filePerister)
+        public FileTransferClient(SftpClient sftpClient)
         {
             _sftpClient = sftpClient;
-            _filePerister = filePerister;
         }
 
         public async Task Send(MemoryStream memoryStream, string fileName)
@@ -25,8 +21,6 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Sftp
             memoryStream.Position = 0; // ensure memory stream is set to begining of stream
             await _sftpClient.UploadAsync(memoryStream, $"/upload/{fileName}");
             _sftpClient.Disconnect();
-
-            _filePerister.SaveCopy(fileName, memoryStream);
         }
     }
 }
