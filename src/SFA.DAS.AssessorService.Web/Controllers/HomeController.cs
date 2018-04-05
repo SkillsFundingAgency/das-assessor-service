@@ -13,6 +13,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             _cache = cache;
         }
+
+        [Route("/")]
         public IActionResult Index()
         {
             return View();

@@ -11,54 +11,67 @@
 <div class="grid-row">
     <div class="column-two-thirds">
         <a class="link-back" asp-controller="Search" asp-action="Index">Back</a>
-        <h1 class="heading-large">The apprentice is enrolled on more than one apprenticeship</h1>
-        <p>Select the standard that you would like to record an assessment for.</p>
+        <h1 class="heading-large">@Localizer["PageHeading"]</h1>
+        <p>@Localizer["PageDescription"]</p>
         <form asp-controller="Search" asp-action="ChooseStandard" method="post">
 
-            <div class="form-group">
-                <fieldset>
-                    <ul>
-                        <li>
-                            <p><span class="bold">Name:</span> @Model.SearchResults.First().GivenNames @Model.SearchResults.First().FamilyName</p>
-                        </li>
-                        <li>
-                            <p><span class="bold">ULN:</span> @Model.SearchResults.First().Uln</p>
-                        </li>
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                        @Localizer["ErrorsWithSubmission"]
+                    </h2>
+                    <ul class="error-summary-list">
+                        <li><a sfa-validation-for="SelectedStandardCode"></a></li>
                     </ul>
-                    @if (Model.SearchResults.Any(sr => sr.CertificateReference == null))
-                    {
-                        <h1 class="heading-large">Assessments not recorded yet:</h1>
-                        foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference == null))
+                </div>
+            }
+            <fieldset sfa-anyvalidationerror-class="after-error-summary">
+                <div class="form-group" sfa-validation-for="SelectedStandardCode" sfa-validationerror-class="form-group-error">
+                    <fieldset>
+                        <ul>
+                            <li>
+                                <p><span class="bold">Name:</span> @Model.SearchResults.First().GivenNames @Model.SearchResults.First().FamilyName</p>
+                            </li>
+                            <li>
+                                <p><span class="bold">ULN:</span> @Model.SearchResults.First().Uln</p>
+                            </li>
+                        </ul>
+                        @if (Model.SearchResults.Any(sr => sr.CertificateReference == null))
                         {
-                            <div class="multiple-choice">
-                                <input id=@("standard_" + result.StdCode) type="radio" name="SelectedStandardCode" value="@result.StdCode">
-                                <label for=@("standard_" + result.StdCode)>
-                                    @result.Standard
-                                </label>
-                            </div>
+                            <h1 class="heading-large">@Localizer["AssessmentsNotRecordedYet"]</h1>
+                            foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference == null))
+                            {
+                                <div class="multiple-choice">
+                                    <input id=@("standard_" + result.StdCode) type="radio" name="SelectedStandardCode" value="@result.StdCode">
+                                    <label for=@("standard_" + result.StdCode)>
+                                        @result.Standard
+                                    </label>
+                                </div>
+                            }
                         }
-                    }
-                    @*This is why I shouldn't be allowed near Front-End dev. ;)*@
-                    <br />
-                    <br />
-                    <br />
-                    @if (Model.SearchResults.Any(sr => sr.CertificateReference != null))
-                    {
-                        <h1 class="heading-large">Previously recorded assessments:</h1>
-                        foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference != null))
+                        @*This is why I shouldn't be allowed near Front-End dev. ;)*@
+                        <br />
+                        <br />
+                        <br />
+                        @if (Model.SearchResults.Any(sr => sr.CertificateReference != null))
                         {
-                            <div class="multiple-choice">
-                                <input id=@("standard_" + result.StdCode) type="radio" name="SelectedStandardCode" value="@result.StdCode">
-                                <label for=@("standard_" + result.StdCode)>
-                                    @result.Standard
-                                </label>
-                            </div>
+                        <h1 class="heading-large">@Localizer["PreviouslyRecordedAssessments"]</h1>
+                            foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference != null))
+                            {
+                                <div class="multiple-choice">
+                                    <input id=@("standard_" + result.StdCode) type="radio" name="SelectedStandardCode" value="@result.StdCode">
+                                    <label for=@("standard_" + result.StdCode)>
+                                        @result.Standard
+                                    </label>
+                                </div>
+                            }
                         }
-                    }
-                </fieldset>
-            </div>
+                    </fieldset>
+                </div>
+            </fieldset>
             <div class="form-group">
-                <button class="button" type="submit">Select Standard</button>
+                <button class="button" type="submit">@Localizer["SelectStandardButton"]</button>
             </div>
         </form>
 
