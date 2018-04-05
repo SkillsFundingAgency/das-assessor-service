@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api
+﻿using SFA.DAS.AssessorService.Application.Api.StartupConfiguration;
+
+namespace SFA.DAS.AssessorService.Application.Api
 {
     using System;
     using global::NLog.Web;

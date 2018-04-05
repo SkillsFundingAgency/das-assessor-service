@@ -25,17 +25,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [HttpGet]
-        [Route("/")]
-        [Route("/[controller]")]
+        [Route("/[controller]/")]
         public IActionResult Index()
         {
             _contextAccessor.HttpContext.Session.Remove("SearchResults");
+            _contextAccessor.HttpContext.Session.Remove("SelectedStandard");
+            _contextAccessor.HttpContext.Session.Remove("SearchResultsChooseStandard");
+
             return View("Index");
         }
 
         [HttpPost]
-        [Route("/")]
-        [Route("/[controller]")]
+        [Route("/[controller]/")]
         public async Task<IActionResult> Index([FromForm] SearchRequestViewModel vm)
         {
             if (!ModelState.IsValid)
@@ -110,6 +111,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpPost(Name = "choose")]
         public IActionResult ChooseStandard(ChooseStandardViewModel chooseStandardViewModel)
         {
+            if (!ModelState.IsValid)
+            {
+                var viewModel = _contextAccessor.HttpContext.Session.Get<ChooseStandardViewModel>("SearchResultsChooseStandard");
+                return View("ChooseStandard", viewModel);
+            }
+
             var vm = _contextAccessor.HttpContext.Session.Get<SearchRequestViewModel>("SearchResults");
             if (vm == null)
             {
