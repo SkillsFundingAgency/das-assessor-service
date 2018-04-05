@@ -16,6 +16,8 @@ namespace SFA.DAS.AssessorService.Web.Validators
         public CertificateDateViewModelValidator(ICertificateApiClient certApiClient, IStringLocalizer<CertificateDateViewModelValidator> localizer)
         {
             _certApiClient = certApiClient;
+            RuleFor(vm => vm).Must(BeAtLeastTwelveMonthsFromStartDate).WithSeverity(Severity.Warning)
+                .WithMessage("Date must be at least 12 months greater than the Start Date");
             RuleFor(vm => vm).Custom((vm, context) =>
             {
                 if (int.TryParse(vm.Day, out var day) && int.TryParse(vm.Month, out var month) && int.TryParse(vm.Year, out var year))
@@ -51,6 +53,11 @@ namespace SFA.DAS.AssessorService.Web.Validators
                     context.AddFailure("Date", localizer["IncorrectFormat"]);
                 }
             });
+        }
+
+        private bool BeAtLeastTwelveMonthsFromStartDate(CertificateDateViewModel arg)
+        {
+            throw new NotImplementedException();
         }
     }
 }
