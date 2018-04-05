@@ -113,6 +113,7 @@ namespace SFA.DAS.AssessorService.Web
             app.UseStaticFiles()
                 .UseSession()
                 .UseAuthentication()
+                .UseRequestLocalization()
                 .UseMvc(routes =>
                 {
                     routes.MapRoute(
