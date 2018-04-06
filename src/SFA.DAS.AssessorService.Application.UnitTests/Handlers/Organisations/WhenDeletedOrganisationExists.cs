@@ -45,13 +45,13 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations
         {
             _orgRepos.Setup(r => r.CreateNewOrganisation(It.IsAny<Organisation>()))
                 .Throws(new Exception("Should not be called"));
-            _handler.Handle(new CreateOrganisationRequest(){EndPointAssessorOrganisationId = "12345"}, new CancellationToken()).Wait();
+            _handler.Handle(new CreateOrganisationRequest(){EndPointAssessorOrganisationId = "12345", EndPointAssessorUkprn = 123}, new CancellationToken()).Wait();
         }
 
         [Test]
         public void ThenExistingOrgIsUpdated()
         {
-            _handler.Handle(new CreateOrganisationRequest(){ EndPointAssessorOrganisationId = "12345" }, new CancellationToken()).Wait();
+            _handler.Handle(new CreateOrganisationRequest(){ EndPointAssessorOrganisationId = "12345", EndPointAssessorUkprn = 123 }, new CancellationToken()).Wait();
             _orgRepos.Verify(r =>
                 r.UpdateOrganisation(
                     It.Is<Organisation>(m => m.EndPointAssessorOrganisationId == "12345")));
