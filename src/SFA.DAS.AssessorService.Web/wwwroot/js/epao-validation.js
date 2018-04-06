@@ -34,9 +34,13 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
       highlight: function(element) {
         // console.log('h', element.id);
 
-        if ($(element).hasClass('date-input')) return;
+        if ($(element).hasClass('date-input')) {
+          $(element).addClass('form-control-error');
+          return false;
+        }
 
         $(element)
+          .addClass('form-control-error')
           .closest('.form-group')
           .addClass('form-group-error');
 
@@ -54,9 +58,13 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
       unhighlight: function(element) {
         // console.log('u', element.id);
 
-        if ($(element).hasClass('date-input')) return;
+        if ($(element).hasClass('date-input')) {
+          $(element).removeClass('form-control-error');
+          return false;
+        }
 
         $(element)
+          .removeClass('form-control-error')
           .closest('.form-group')
           .removeClass('form-group-error');
 
@@ -94,7 +102,7 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
       }
     });
 
-  // date only future
+  // only allow future date
   jQuery.validator.addMethod(
     'noFutureDate',
     function(value, element) {
@@ -110,6 +118,20 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
       }
     },
     'Please enter a date in the past'
+  );
+
+  // Matches UK postcode. Does not match to UK Channel Islands that have their own postcodes (non standard UK)
+  jQuery.validator.addMethod(
+    'postcodeUK',
+    function(value, element) {
+      return (
+        this.optional(element) ||
+        /^((([A-PR-UWYZ][0-9])|([A-PR-UWYZ][0-9][0-9])|([A-PR-UWYZ][A-HK-Y][0-9])|([A-PR-UWYZ][A-HK-Y][0-9][0-9])|([A-PR-UWYZ][0-9][A-HJKSTUW])|([A-PR-UWYZ][A-HK-Y][0-9][ABEHMNPRVWXY]))\s?([0-9][ABD-HJLNP-UW-Z]{2})|(GIR)\s?(0AA))$/i.test(
+          value
+        )
+      );
+    },
+    'Please specify a valid UK postcode'
   );
 
   $(window).load(function() {

@@ -118,16 +118,16 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InfoBody" xml:space="preserve">
-    <value>Each apprentice has a unique learner number (ULN) that is used to identify them. It is ten digits long and contains only numbers.</value>
+    <value>Each apprentice has a ULN that is used to identify them. It is ten digits long and contains only numbers.</value>
   </data>
   <data name="InfoHeader" xml:space="preserve">
-    <value>What is a unique learner number (ULN)?</value>
+    <value>What is a ULN?</value>
   </data>
   <data name="Lastname" xml:space="preserve">
     <value>Last name</value>
   </data>
   <data name="SearchButton" xml:space="preserve">
-    <value>Search</value>
+    <value>Continue</value>
   </data>
   <data name="SearchInfoSummary" xml:space="preserve">
     <value>Only record successful assessments</value>
