@@ -10,10 +10,12 @@
 <div class="grid-row">
     <div class="column-two-thirds">
         <a class="link-back" asp-controller="CertificateOption" asp-action="Option">Back</a>
-        
+
         <form class="apprentice-date-form" type="post" asp-controller="CertificateDate">
             <input type="hidden" name="fullDate" id="fullDate" class="date-input" data-mask="00/00/0000" />
             @Html.HiddenFor(c => c.Id)
+            @Html.HiddenFor(m => m.StartDate)
+            <input type="hidden" name="WarningShown" id="WarningShown" value="@Model.WarningShown" />
 
             @* hidden with css by default *@
             <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
@@ -25,14 +27,21 @@
 
             @if (!ViewData.ModelState.IsValid)
             {
-                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                        There are errors with your submission
-                    </h2>
-                    <ul class="error-summary-list">
-                        <li><a sfa-validation-for="Date"></a></li>
-                    </ul>
-                </div>
+                if (Model.WarningShown == "true")
+                {
+                    <text>There is a warning!!</text>
+                }
+                else
+                {
+                    <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                        <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                            There are errors with your submission
+                        </h2>
+                        <ul class="error-summary-list">
+                            <li><a sfa-validation-for="Date"></a></li>
+                        </ul>
+                    </div>
+                }
             }
 
             <fieldset sfa-anyvalidationerror-class="after-error-summary">
@@ -42,7 +51,7 @@
                         @Localizer["Heading"]
                     </h1>
                 </legend>
-                
+
                 <div class="form-group error-message-container" sfa-anyvalidationerror-class="form-group-error">
                     <span class="form-hint">
                         @Localizer["DateHint"]
@@ -74,7 +83,6 @@
                     </p>
                 </div>
             </details>
-            @Html.HiddenFor(m => m.StartDate)
             <button type="submit" class="button">@Localizer["ContinueButton"]</button>
         </form>
     </div>
