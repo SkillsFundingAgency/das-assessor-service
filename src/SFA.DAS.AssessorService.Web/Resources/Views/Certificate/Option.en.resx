@@ -124,7 +124,7 @@
     <value>Did the apprentice do any additional learning options?</value>
   </data>
   <data name="InfoBody" xml:space="preserve">
-    <value>For some standards, the learner can take different options. For example, the standard for Professional Accounting Technician has an Accounting or Tax option. If applicable, enter the option the learner has achieved. The option will appear on the certificate. You may know options as "pathways" or "specialisms".</value>
+    <value>For some standards, the apprentice can take different options. For example, the standard for professional accounting technician has an accounting or tax option. If it applies, enter the option the apprentice has achieved. The option will appear on the certificate. You may know options as 'pathways' or 'specialisms'.</value>
   </data>
   <data name="InfoHeader" xml:space="preserve">
     <value>What is a learning option?</value>

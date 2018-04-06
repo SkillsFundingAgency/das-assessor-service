@@ -133,13 +133,13 @@
     <value>Continue</value>
   </data>
   <data name="Dept" xml:space="preserve">
-    <value>Department</value>
+    <value>Department (optional)</value>
   </data>
   <data name="DeptHint" xml:space="preserve">
-    <value>Department Hint</value>
+    <value>For example, human resources</value>
   </data>
   <data name="Employer" xml:space="preserve">
-    <value>Employer</value>
+    <value>Organisation</value>
   </data>
   <data name="Heading" xml:space="preserve">
     <value>Where will the certificate be sent?</value>
@@ -154,7 +154,7 @@
     <value>Name</value>
   </data>
   <data name="NameHint" xml:space="preserve">
-    <value>Name Hint</value>
+    <value>For example, Joanna Smith</value>
   </data>
   <data name="Postcode" xml:space="preserve">
     <value>Postcode</value>
