@@ -3,30 +3,26 @@
 @model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateCheckViewModel
 
 @{
-    ViewBag.Title = "title";
+    ViewBag.Title = "Check and approve";
     Layout = "_Layout";
 }
 
 <div class="grid-row">
     <div class="column-two-thirds">
+        <a class="link-back" asp-controller="CertificateAddress" asp-action="Address">Back</a>
+
         <h1 class="heading-large">@Localizer["Heading"]</h1>
+        
         <div class="info-summary">
             <h2 class="heading-medium">@Localizer["InfoHeader"]</h2>
             <p>@Localizer["InfoLine1"]</p>
             <p>@Localizer["InfoLine2"]</p>
         </div>
 
-
-
-        <!-- only add a heading for a list if there is more than one list -->
         <h2 class="heading-medium">
             Personal details
         </h2>
 
-        <!-- use additional modifier class to  column widths for multiple groups of questions and answers: -->
-        <!--   * `cya-questions-short` for short questions -->
-        <!--   * `cya-questions-long` for long questions -->
-        <!--   * none for single group of q&a -->
         <dl class="govuk-check-your-answers cya-questions-short">
             <div>
                 <dt class="cya-question">
@@ -115,12 +111,11 @@
             </div>
         </dl>
 
-
         <h2 class="heading-medium">
             Employer details
         </h2>
 
-        <dl class="govuk-check-your-answers cya-questions-short">
+        <dl class="govuk-check-your-answers cya-questions-short form-group">
             <div>
                 <dt class="cya-question">
                     Name
@@ -177,8 +172,8 @@
                     </a>
                 </dd>
             </div>
-
         </dl>
+
         <form type="post" asp-controller="CertificateCheck">
             @Html.HiddenFor(c => c.Id)
             <button type="submit" class="button">@Localizer["ContinueButton"]</button>

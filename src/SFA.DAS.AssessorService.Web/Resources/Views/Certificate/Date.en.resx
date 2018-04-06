@@ -127,7 +127,7 @@
     <value>What is the apprenticeship achievement date?</value>
   </data>
   <data name="InfoBody" xml:space="preserve">
-    <value>The achievement date is when the end-point assessment organisation confirms when the apprentice has passed the apprenticeship.</value>
+    <value>The achievement date is when you confirm the apprentice has successfully completed the apprenticeship.</value>
   </data>
   <data name="InfoHeader" xml:space="preserve">
     <value>What is an achievement date?</value>
