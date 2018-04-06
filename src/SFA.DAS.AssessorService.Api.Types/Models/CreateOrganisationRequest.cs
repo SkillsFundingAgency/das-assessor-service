@@ -7,7 +7,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
     public class CreateOrganisationRequest : IRequest<Organisation>
     {
         public string EndPointAssessorOrganisationId { get; set; }
-        public int EndPointAssessorUkprn { get; set; }
+        public int? EndPointAssessorUkprn { get; set; }
         public string EndPointAssessorName { get; set; }
     }
 }
