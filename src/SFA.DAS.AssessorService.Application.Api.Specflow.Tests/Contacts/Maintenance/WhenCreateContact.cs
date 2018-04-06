@@ -145,7 +145,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
         private void RetrieveOrganisation(CreateOrganisationRequest createOrganisationRequest)
         {
             var result =
-                _organisationQueryService.SearchOrganisationByUkPrn(createOrganisationRequest.EndPointAssessorUkprn);
+                _organisationQueryService.SearchOrganisationByUkPrn(createOrganisationRequest.EndPointAssessorUkprn.Value);
             _organisaionRetrieved = result.Deserialise<OrganisationResponse>();
         }
 

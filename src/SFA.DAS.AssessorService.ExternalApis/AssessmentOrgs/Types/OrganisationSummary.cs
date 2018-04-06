@@ -11,5 +11,6 @@ namespace SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types
         public string Name { get; set; }
 
         public List<Link> Links { get; set; }
+        public int? Ukprn { get; set; }
     }
 }

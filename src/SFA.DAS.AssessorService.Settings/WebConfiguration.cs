@@ -10,6 +10,8 @@ namespace SFA.DAS.AssessorService.Settings
         public ApiAuthentication ApiAuthentication { get; set; }
         [JsonRequired]
         public ClientApiAuthentication ClientApiAuthentication { get; set; }
+        
+        public SftpSettings Sftp { get; set; }
         [JsonRequired]
         public string SqlConnectionString { get; set; }
     }
