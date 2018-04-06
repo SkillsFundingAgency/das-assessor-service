@@ -41,6 +41,11 @@ namespace SFA.DAS.AssessorService.Data
             return await _context.Certificates.Where(c => c.Uln == uln && (c.Status == CertificateStatus.Printed || c.Status == CertificateStatus.Submitted)).ToListAsync();
         }
 
+        public async Task<List<Certificate>> GetCertificatesToBePrinted()
+        {
+            return await _context.Certificates.Where(c => c.Status == CertificateStatus.Submitted).ToListAsync();
+        }
+
         public async Task<Certificate> Update(Certificate certificate, string username)
         {
             var cert = await GetCertificate(certificate.Id);
