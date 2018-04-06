@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Data;
+using System.Data.SqlClient;
 using System.IO;
 using Microsoft.Extensions.Configuration;
 using Renci.SshNet;
@@ -20,11 +22,14 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Console
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("local.settings.json");
 
-            var configuration = builder.Build();
+            var localConfiguration = builder.Build();
 
             Configuration = ConfigurationService
-                .GetConfig(configuration["EnvironmentName"], configuration["Values:ConfigurationStorageConnectionString"], Version, ServiceName).Result;
+                .GetConfig(localConfiguration["EnvironmentName"], localConfiguration["Values:ConfigurationStorageConnectionString"], Version, ServiceName).Result;
 
+            var connectionString = Configuration.SqlConnectionString;
+            var sqlConnection = new SqlConnection(connectionString);
+        
             Container = new Container(configure =>
             {
                 configure.Scan(x =>
@@ -33,9 +38,10 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Console
                     x.WithDefaultConventions();
                 });
 
-                configure.For<IConfiguration>().Use(configuration);
+                configure.For<IConfiguration>().Use(localConfiguration);
                 configure.For<SftpClient>().Use<SftpClient>("Build ISession from ISessionFactory",
                     c => new SftpClient(Configuration.Sftp.RemoteHost, Convert.ToInt32(Configuration.Sftp.Port), Configuration.Sftp.Username, Configuration.Sftp.Password));
+                configure.For<IDbConnection>().Use<SqlConnection>(sqlConnection);
             });
         }
 
