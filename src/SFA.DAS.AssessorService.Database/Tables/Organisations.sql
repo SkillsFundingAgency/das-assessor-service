@@ -4,7 +4,7 @@
 	[DeletedAt] [datetime2](7) NULL,
 	[EndPointAssessorName] [nvarchar](100) NOT NULL,
 	[EndPointAssessorOrganisationId] [nvarchar](12) NOT NULL,
-	[EndPointAssessorUkprn] [int] NOT NULL,
+	[EndPointAssessorUkprn] [int] NULL,
 	[PrimaryContact] [nvarchar](30) NULL,
 	[Status] [nvarchar](10) NOT NULL,
 	[UpdatedAt] [datetime2](7) NULL,

@@ -154,7 +154,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.RegisterUpdate
             {
                 EndPointAssessorName = epao.Name,
                 EndPointAssessorOrganisationId = epao.Id,
-                EndPointAssessorUkprn = epaoSummary.Ukprn ?? int.Parse(epao.Id.Replace("EPA", "1111"))
+                EndPointAssessorUkprn = epaoSummary.Ukprn 
             });
 
             _response.OrganisationsCreated++;
