@@ -44,8 +44,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.OrganisationHandlers
 
         private async Task<Organisation> UpdateOrganisationIfExists(CreateOrganisationRequest createOrganisationRequest)
         {
+            if (!createOrganisationRequest.EndPointAssessorUkprn.HasValue)
+            {
+                return null;
+            }
+
             var existingOrganisation =
-                await _organisationQueryRepository.GetByUkPrn(createOrganisationRequest.EndPointAssessorUkprn);
+                await _organisationQueryRepository.GetByUkPrn(createOrganisationRequest.EndPointAssessorUkprn.Value);
 
             if (existingOrganisation != null
                 && existingOrganisation.EndPointAssessorOrganisationId == createOrganisationRequest.EndPointAssessorOrganisationId

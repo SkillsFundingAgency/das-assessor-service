@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
             return PageInteractionHelper.VerifyPageHeading(this.GetPageHeading(), PAGE_TITLE);
         }
 
-        private By _confirmAndAccept = By.XPath("//*[@id=\"content\"]/div/div/form/button");
+        private readonly By _confirmAndAccept = By.XPath("//*[@id=\"content\"]/div/div/form/button");
 
         internal void ClickConfirmAndAccept()
         {

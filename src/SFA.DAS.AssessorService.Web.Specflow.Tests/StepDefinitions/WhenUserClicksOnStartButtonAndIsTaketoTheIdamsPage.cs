@@ -22,14 +22,14 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.StepDefinitions
         public void WhenIClickOnStartNowButtonOnTheRecordEndPointAssessmentOutcomePage()
         {
             var recordEndPointAssessmentOutcomePage = new RecordEndPointAssessmentOutcomePage(webDriver);
-            var idamsLogonPage = recordEndPointAssessmentOutcomePage.ClickStartNowButton();
+            recordEndPointAssessmentOutcomePage.ClickStartNowButton();
 
         }
 
         [Then(@"I should be taken onto idMAS sign in page")]
         public void ThenIShouldBeTakenOntoIdMASSignInPage()
         {
-            IdamsLogonPage idamsLogonPage = new IdamsLogonPage(webDriver);
+            var idamsLogonPage = new IdamsLogonPage(webDriver);
         }
     }
 }

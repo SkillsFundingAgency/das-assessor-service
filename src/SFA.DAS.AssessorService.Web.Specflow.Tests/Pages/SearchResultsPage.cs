@@ -19,12 +19,12 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
             return PageInteractionHelper.VerifyPageHeading(this.GetPageHeading(), PAGE_TITLE);
         }
 
-        private By dfeLink = By.LinkText("Department for Education");
+        private readonly By _dfeLink = By.LinkText("Department for Education");
 
         internal DepartmentForEducationHomePage ClickDfeLink()
         {
-            FormCompletionHelper.ClickElement(dfeLink);
-            return new DepartmentForEducationHomePage(webDriver);
+            FormCompletionHelper.ClickElement(_dfeLink);
+            return new DepartmentForEducationHomePage(WebDriver);
         }
     }
 }

@@ -19,19 +19,18 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
             return PageInteractionHelper.VerifyPageHeading(this.GetPageHeading(), PAGE_TITLE);
         }
 
-        private By selectedItem = By.Id("options_no");
+        private readonly By _selectedItem = By.Id("options_no");
      
         internal void SelectsNoOption()
         {
-            FormCompletionHelper.ClickElement(selectedItem);
+            FormCompletionHelper.ClickElement(_selectedItem);
         }
 
-        private By _continueButton = By.XPath("//*[@id=\"content\"]/div/div/form/button");
+        private readonly By _continueButton = By.XPath("//*[@id=\"content\"]/div/div/form/button");
 
-        internal ApprenticeAchievementDatePage ClickContinue()
+        internal void ClickContinue()
         {
             FormCompletionHelper.ClickElement(_continueButton);
-            return new ApprenticeAchievementDatePage(webDriver);
         }
     }
 }

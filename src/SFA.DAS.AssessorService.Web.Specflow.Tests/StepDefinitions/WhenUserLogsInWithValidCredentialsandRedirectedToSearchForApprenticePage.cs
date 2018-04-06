@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using SFA.DAS.AssessorService.Web.Specflow.Tests.Pages;
+﻿using SFA.DAS.AssessorService.Web.Specflow.Tests.Pages;
 using SFA.DAS.AssessorService.Web.Specflow.Tests.TestSupport;
 using TechTalk.SpecFlow;
 
@@ -39,7 +37,6 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.StepDefinitions
         {
            
         }
-
     }
 }
 

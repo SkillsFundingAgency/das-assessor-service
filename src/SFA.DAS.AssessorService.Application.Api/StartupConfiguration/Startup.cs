@@ -5,6 +5,7 @@ using System.IO;
 using FluentValidation.AspNetCore;
 using JWT;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Localization;
@@ -14,18 +15,16 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using StructureMap;
-using Swashbuckle.AspNetCore.Swagger;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using SFA.DAS.AssessorService.Application.Api.Extensions;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
-using SFA.DAS.AssessorService.Application.Api.StartupConfiguration;
 using SFA.DAS.AssessorService.Data;
 using SFA.DAS.AssessorService.Data.TestData;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.Settings;
+using StructureMap;
+using Swashbuckle.AspNetCore.Swagger;
 
-namespace SFA.DAS.AssessorService.Application.Api
+namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 {
     public class Startup
     {

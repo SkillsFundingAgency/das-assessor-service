@@ -19,11 +19,11 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
             return PageInteractionHelper.VerifyPageHeading(this.GetPageHeading(), PAGE_TITLE);
         }
 
-        private By startNowButton = By.Id("bySelection");
+        private By _startNowButton = By.Id("bySelection");
 
         internal void SelectProvider()
         {
-            var element = webDriver.FindElement(By.XPath("//span[contains(@class,'largeTextNoWrap')]  [contains(text(),'Pirean Preprod')]"));
+            var element = WebDriver.FindElement(By.XPath("//span[contains(@class,'largeTextNoWrap')]  [contains(text(),'Pirean Preprod')]"));
             element.Click();
         }
     }

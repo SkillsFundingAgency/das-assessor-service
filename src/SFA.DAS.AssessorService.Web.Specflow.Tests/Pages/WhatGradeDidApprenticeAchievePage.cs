@@ -19,12 +19,12 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
             return PageInteractionHelper.VerifyPageHeading(this.GetPageHeading(), PAGE_TITLE);
         }
 
-        private By selectedItem = By.Id("Distinction");
-        private By _continueButton = By.XPath("//*[@id=\"content\"]/div/div/form/button");
+        private readonly By _selectedItem = By.Id("Distinction");
+        private readonly By _continueButton = By.XPath("//*[@id=\"content\"]/div/div/form/button");
 
         internal void SelectsOption()
         {
-            FormCompletionHelper.ClickElement(selectedItem);
+            FormCompletionHelper.ClickElement(_selectedItem);
         }
 
         internal void ClicksContinue()

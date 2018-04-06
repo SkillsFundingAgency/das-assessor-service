@@ -20,6 +20,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests
                 cfg.CreateMap<Organisation, OrganisationResponse>();
                 cfg.CreateMap<CreateContactRequest, Contact>().ReverseMap();
                 cfg.CreateMap<Contact, ContactResponse>();
+                cfg.CreateMap<Ilr, SearchResult>();
             });
         }
     }
