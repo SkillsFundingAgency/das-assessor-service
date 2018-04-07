@@ -1,0 +1,17 @@
+<script>
+var epaoChooseStandardFormElement = $('.apprentice-choose-standard-form');
+var epaoChooseStandardValidationRulesObject = {
+  rules: {
+    SelectedStandardCode: {
+      required: true
+    }
+  },
+  messages: {
+    SelectedStandardCode: {
+      required: 'A standard should be selected'
+    }
+  }
+};
+
+GOVUK.epaoValidate(epaoChooseStandardFormElement, epaoChooseStandardValidationRulesObject);
+</script>

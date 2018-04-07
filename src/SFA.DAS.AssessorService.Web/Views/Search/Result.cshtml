@@ -39,21 +39,32 @@
                     <button class="button" type="submit">Start recording assessment</button>
                 </div>
             </form>
+
+            <p><a asp-controller="Search" asp-action="Index">Search again</a> if this is not the right apprentice.</p>
         }
         else
         {
-
             <h1 class="heading-large">An assessment has already been recorded against this apprentice</h1>
-            <b>Name: </b> @Model.GivenNames  @Model.FamilyName<br />
-            <b>Uln: </b> @Model.Uln<br />
-            <b>Standard: </b> @Model.Standard<br />
-            <b>Grade: </b> @Model.OverallGrade<br />
+            <h2 class="heading-medium">Apprentice details</h2>
+            <ul class="list">
+                <li>
+                    <p><span class="bold">Name:</span> @Model.GivenNames @Model.FamilyName</p>
+                </li>
+                <li>
+                    <p><span class="bold">ULN:</span> @Model.Uln</p>
+                </li>
+                <li>
+                    <p><span class="bold">Standard:</span> @Model.Standard</p>
+                </li>
+                <li>
+                    <p><span class="bold">Grade:</span> @Model.OverallGrade</p>
+                </li>
+            </ul>
 
+            <p><a asp-controller="Search" asp-action="Index">Return to search</a></p>
         }
 
-
-
-        <p>This is not the right apprentice. <a asp-controller="Search" asp-action="Index">Search again</a></p>
+        
     </div>
 </div>
 
