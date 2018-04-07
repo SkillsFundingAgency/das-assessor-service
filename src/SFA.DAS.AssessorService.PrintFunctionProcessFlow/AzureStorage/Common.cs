@@ -1,42 +1,43 @@
-﻿//using System;
-//using Microsoft.Extensions.Configuration;
-//using Microsoft.WindowsAzure.Storage;
+﻿using System;
+using Microsoft.Azure;
+using Microsoft.WindowsAzure.Storage;
+using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Logger;
 
-//namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.AzureStorage
-//{
-//    public  class Common
-//    {
-//        private readonly IConfiguration _configuration;
+namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.AzureStorage
+{
+    public class Common
+    {
+        private readonly IAggregateLogger _aggregateLogger;
 
-//        public Common(IConfiguration configuration)
-//        {
-//            _configuration = configuration;
-//        }
-       
-//        public  CloudStorageAccount CreateStorageAccountFromConnectionString()
-//        {
-//            CloudStorageAccount storageAccount;
-//            const string message = "Invalid storage account information provided. Please confirm the AccountName and AccountKey are valid in the app.config file - then restart the sample.";
+        public Common(
+            IAggregateLogger aggregateLogger)
+        {
 
-//            try
-//            {
-//                var storageAccountName = _configuration["Values:ConfigurationStorageConnectionString"];
-//                storageAccount = CloudStorageAccount.Parse(storageAccountName);
-//            }
-//            catch (FormatException)
-//            {
-//                Console.WriteLine(message);
-//                Console.ReadLine();
-//                throw;
-//            }
-//            catch (ArgumentException)
-//            {
-//                Console.WriteLine(message);
-//                Console.ReadLine();
-//                throw;
-//            }
+            _aggregateLogger = aggregateLogger;
+        }
 
-//            return storageAccount;
-//        }
-//    }
-//}
+        public CloudStorageAccount CreateStorageAccountFromConnectionString()
+        {
+            CloudStorageAccount storageAccount;
+            const string message = "Invalid storage account information provided. Please confirm the AccountName and AccountKey are valid in the app.config file - then restart the sample.";
+
+            try
+            {
+                var storageAccountName = CloudConfigurationManager.GetSetting("ConfigurationStorageConnectionString");
+                storageAccount = CloudStorageAccount.Parse(storageAccountName);
+            }
+            catch (FormatException e)
+            {
+                _aggregateLogger.LogError(message, e);
+                throw;
+            }
+            catch (ArgumentException e)
+            {
+                _aggregateLogger.LogError(message, e);
+                throw;
+            }
+
+            return storageAccount;
+        }
+    }
+}

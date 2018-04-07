@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Logger;
 
 //using Microsoft.Extensions.Configuration;
@@ -10,6 +11,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow
     public class Command
     {
         private readonly IAggregateLogger _aggregateLogger;
+        private readonly CoverLetterService _coverLetterService;
         //    private readonly CoverLetterService _coverLetterService;
     //    private readonly IFACertificateService _ifaCertificateService;
     //    private readonly IConfiguration _configuration;
@@ -23,23 +25,22 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow
         //    _configuration = configuration;
         //}
 
-        public Command(IAggregateLogger aggregateLogger)
+        public Command(IAggregateLogger aggregateLogger,
+            CoverLetterService coverLetterService)
         {
             _aggregateLogger = aggregateLogger;
+            _coverLetterService = coverLetterService;
         }
 
         public async Task Execute()
         {
             _aggregateLogger.LogInfo("Print Function Flow Started");
 
-
             _aggregateLogger.LogInfo("101 Azure Function Demo - Accessing Environment variables");
             var customSetting = Environment.GetEnvironmentVariable("CustomSetting", EnvironmentVariableTarget.Process);
             _aggregateLogger.LogInfo($"Process Environment = {EnvironmentVariableTarget.Process}");
 
-
-
-            //await _coverLetterService.Create();
+            await _coverLetterService.Create();
             //await _ifaCertificateService.Create();
 
         }

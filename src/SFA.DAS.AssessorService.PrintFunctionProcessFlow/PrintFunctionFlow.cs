@@ -19,8 +19,6 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow
         {
             try
             {
-              
-
                 new Bootstrapper().StartUp(functionLogger, context);
 
                 var command = Bootstrapper.Container.GetInstance<Command>();
@@ -46,10 +44,9 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow
             }
             catch (Exception e)
             {
-                //LogError("Function Errored", e);
+                functionLogger.Error("Function Errored", e);
                 throw;
             }
         }
-
     }
 }
