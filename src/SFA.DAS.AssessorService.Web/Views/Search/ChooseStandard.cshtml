@@ -55,33 +55,33 @@
                     @if (Model.SearchResults.Any(sr => sr.CertificateReference == null))
                     {
                         <div class="form-block">
-                            <span class="form-label-bold">@Localizer["AssessmentsNotRecordedYet"]</span>     
-                            @foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference == null))
-                            {
-                                <div class="multiple-choice">
-                                    <input id=@("standard_" + result.StdCode) type="radio" name="SelectedStandardCode" value="@result.StdCode">
-                                    <label for=@("standard_" + result.StdCode)>
-                                        @result.Standard
-                                    </label>
-                                </div>
-                            }
+                            <span class="bold-medium">@Localizer["AssessmentsNotRecordedYet"]</span>     
                         </div>
+                        @foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference == null))
+                        {
+                            <div class="multiple-choice">
+                                <input id=@("standard_" + result.StdCode) type="radio" name="SelectedStandardCode" value="@result.StdCode">
+                                <label for=@("standard_" + result.StdCode)>
+                                    @result.Standard
+                                </label>
+                            </div>
+                        }
                     }
                     @if (Model.SearchResults.Any(sr => sr.CertificateReference != null))
                     {
                         
                         <div class="form-block">
-                            <span class="form-label-bold">@Localizer["PreviouslyRecordedAssessments"]</span>
-                            @foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference != null))
-                            {
-                                <div class="multiple-choice">
-                                    <input id=@("standard_" + result.StdCode) type="radio" name="SelectedStandardCode" value="@result.StdCode">
-                                    <label for=@("standard_" + result.StdCode)>
-                                        @result.Standard
-                                    </label>
-                                </div>
-                            }
+                            <span class="bold-medium">@Localizer["PreviouslyRecordedAssessments"]</span>
                         </div>
+                        @foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference != null))
+                        {
+                            <div class="multiple-choice">
+                                <input id=@("standard_" + result.StdCode) type="radio" name="SelectedStandardCode" value="@result.StdCode">
+                                <label for=@("standard_" + result.StdCode)>
+                                    @result.Standard
+                                </label>
+                            </div>
+                        }
                     }
                 </div>
             </fieldset>
