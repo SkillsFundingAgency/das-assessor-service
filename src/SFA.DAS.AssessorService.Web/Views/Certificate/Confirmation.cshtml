@@ -3,7 +3,7 @@
 @model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateConfirmationViewModel
 
 @{
-    ViewBag.Title = "title";
+    ViewBag.Title = "Assessment recorded";
     Layout = "_Layout";
 }
 
@@ -15,7 +15,7 @@
                 @Localizer["Heading"]
             </h1>
             <p class="font-large">
-                @Localizer["CertificateNumberIs"] <br>
+                @Localizer["CertificateNumberIs"]<br />
                 <strong class="bold">@Model.Reference</strong>
             </p>
         </div>
