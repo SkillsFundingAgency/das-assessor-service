@@ -133,19 +133,4 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
     },
     'Please specify a valid UK postcode'
   );
-
-  $(window).load(function() {
-    // If there is an error summary, set focus to the summary
-    if ($('.error-summary').length) {
-      $('.error-summary').focus();
-      $('.error-summary a').click(function(e) {
-        e.preventDefault();
-        var href = $(this).attr('href');
-        $(href).is(':visible') ? $(href).focus() : $('input.form-control:first').focus();
-      });
-    } else {
-      // Otherwise, set focus to the field with the error
-      $('input.form-control:first').focus();
-    }
-  });
 };
