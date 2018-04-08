@@ -116,13 +116,14 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices
             worksheet.Cells[2, 10].Value = "Chair Title";
             worksheet.Cells[2, 11].Value = "Employer Contact";
             worksheet.Cells[2, 12].Value = "Employer Name";
-            worksheet.Cells[2, 13].Value = "Address Line 1";
-            worksheet.Cells[2, 14].Value = "Address Line 2";
-            worksheet.Cells[2, 15].Value = "Address Line 3";
-            worksheet.Cells[2, 16].Value = "Address Line 4";
-            worksheet.Cells[2, 17].Value = "Post Code";
+            worksheet.Cells[2, 13].Value = "Department";
+            worksheet.Cells[2, 14].Value = "Address Line 1";
+            worksheet.Cells[2, 15].Value = "Address Line 2";
+            worksheet.Cells[2, 16].Value = "Address Line 3";
+            worksheet.Cells[2, 17].Value = "Address Line 4";
+            worksheet.Cells[2, 18].Value = "Post Code";
 
-            using (var range = worksheet.Cells[2, 1, 2, 17])
+            using (var range = worksheet.Cells[2, 1, 2, 18])
             {
                 range.Style.Font.Bold = true;
                 range.Style.Fill.PatternType = ExcelFillStyle.Solid;
@@ -134,7 +135,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices
 
         private static void CreateWorksheetHeader(ExcelWorksheet worksheet)
         {
-            using (var range = worksheet.Cells[1, 1, 1, 17])
+            using (var range = worksheet.Cells[1, 1, 1, 18])
             {
                 range.Style.Font.Bold = true;
                 //range.Style.Fill.PatternType = ExcelFillStyle.Solid;
@@ -184,28 +185,32 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices
 
                 worksheet.Cells[row, 9].Value = Environment.GetEnvironmentVariable("ChairName", EnvironmentVariableTarget.Process);
                 worksheet.Cells[row, 10].Value = Environment.GetEnvironmentVariable("ChairTitle", EnvironmentVariableTarget.Process);
-                if (certificateData.ContactName != null)
-                    worksheet.Cells[row, 11].Value = certificateData.ContactName;
 
                 if (certificateData.ContactOrganisation != null)
-                    worksheet.Cells[row, 12].Value = certificateData.ContactOrganisation;
+                    worksheet.Cells[row, 11].Value = certificateData.ContactOrganisation;
+
+                if (certificateData.ContactName != null)
+                    worksheet.Cells[row, 12].Value = certificateData.ContactName;
+
+                if (certificateData.ContactOrganisation != null)
+                    worksheet.Cells[row, 13].Value = certificateData.Department;
 
                 if (certificateData.ContactAddLine1 != null)
-                    worksheet.Cells[row, 13].Value = certificateData.ContactAddLine1;
+                    worksheet.Cells[row, 14].Value = certificateData.ContactAddLine1;
 
                 if (certificateData.ContactAddLine2 != null)
-                    worksheet.Cells[row, 14].Value = certificateData.ContactAddLine2;
+                    worksheet.Cells[row, 15].Value = certificateData.ContactAddLine2;
 
                 if (certificateData.ContactAddLine3 != null)
-                    worksheet.Cells[row, 15].Value = certificateData.ContactAddLine3;
+                    worksheet.Cells[row, 16].Value = certificateData.ContactAddLine3;
 
                 if (certificateData.ContactAddLine4 != null)
-                    worksheet.Cells[row, 16].Value = certificateData.ContactAddLine4;
+                    worksheet.Cells[row, 17].Value = certificateData.ContactAddLine4;
 
                 if (certificateData.ContactPostCode != null)
-                    worksheet.Cells[row, 17].Value = certificateData.ContactPostCode;
+                    worksheet.Cells[row, 18].Value = certificateData.ContactPostCode;
 
-                Console.WriteLine($"Processing Certificate For IFA Certificate - {certificate.Id}");
+                _aggregateLogger.LogInfo($"Processing Certificate For IFA Certificate - {certificate.Id}");
 
                 row++;
             }

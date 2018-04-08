@@ -16,11 +16,11 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Sftp
 
         public async Task Send(MemoryStream memoryStream, string fileName)
         {
-            //_sftpClient.Connect();
+            _sftpClient.Connect();
 
-            //memoryStream.Position = 0; // ensure memory stream is set to begining of stream
-            //await _sftpClient.UploadAsync(memoryStream, $"/upload/{fileName}");
-            //_sftpClient.Disconnect();
+            memoryStream.Position = 0; // ensure memory stream is set to begining of stream
+            await _sftpClient.UploadAsync(memoryStream, $"/upload/{fileName}");
+            _sftpClient.Disconnect();
         }
     }
 }

@@ -45,9 +45,9 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices
 
                 var pdfStream = CreatePdfStream(certificateData, documentTemplateDataStream);
 
-                //await _fileTransferClient.Send(pdfStream, fileName);
+                await _fileTransferClient.Send(pdfStream, fileName);
 
-                //pdfStream.Close();
+                pdfStream.Close();
             }
 
             documentTemplateDataStream.Close();
@@ -73,12 +73,13 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices
             _aggregateLogger.LogInfo($"Document Template Stream = {documentTemplateStream.Length}");
 
 
-            document.Replace("[Addressee Name]", certificateData.ContactName, false, true);
-            document.Replace("[Address Line 1]", certificateData.ContactAddLine1, false, true);
-            document.Replace("[Address Line 2]", certificateData.ContactAddLine2, false, true);
-            document.Replace("[Address Line 3]", certificateData.ContactAddLine3, false, true);
-            document.Replace("[Address Line 4]", certificateData.ContactAddLine4, false, true);
-            document.Replace("[Address Line 5]", certificateData.ContactPostCode, false, true);
+            document.Replace("[Addressee Name]", string.IsNullOrEmpty(certificateData.ContactName) ? "" : certificateData.ContactName, false, true);
+            document.Replace("[Department]",  string.IsNullOrEmpty(certificateData.Department) ? "" : certificateData.Department, false, true);
+            document.Replace("[Address Line 1]", string.IsNullOrEmpty(certificateData.ContactAddLine1) ? "" : certificateData.ContactAddLine1, false, true);
+            document.Replace("[Address Line 2]", string.IsNullOrEmpty(certificateData.ContactAddLine2) ? "" : certificateData.ContactAddLine2, false, true);
+            document.Replace("[Address Line 3]", string.IsNullOrEmpty(certificateData.ContactAddLine3) ? "" : certificateData.ContactAddLine3, false, true);
+            document.Replace("[Address Line 4]", string.IsNullOrEmpty(certificateData.ContactAddLine4) ? "" : certificateData.ContactAddLine4, false, true);
+            document.Replace("[Address Line 5]", string.IsNullOrEmpty(certificateData.ContactPostCode) ? "" : certificateData.ContactPostCode, false, true);
 
             document.Replace("[Inset employer name?]", certificateData.ContactName, false, true);
             return document;
@@ -88,7 +89,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices
         {
             var pdfStream = new MemoryStream();
             _aggregateLogger.LogInfo("Saving document to stream ...");
-            //document.SaveToStream(pdfStream, FileFormat.PDF);
+            document.SaveToStream(pdfStream, FileFormat.PDF);
             _aggregateLogger.LogInfo("Saved document to stream ...");
             return pdfStream;
         }
