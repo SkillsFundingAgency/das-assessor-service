@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.WindowsAzure.Storage.Blob;
 using Newtonsoft.Json;
+using SFA.DAS.AssessorService.PrintFunctionProcessFlow.AzureStorage;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Data;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Logger;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Sftp;
@@ -16,36 +18,42 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices
         private readonly FileTransferClient _fileTransferClient;
         private readonly DocumentTemplateDataStream _documentTemplateDataStream;
         private readonly CertificatesRepository _certificatesRepository;
+        private readonly InitialiseContainer _initialiseContainer;
 
         public CoverLetterService(
             IAggregateLogger aggregateLogger,
             FileTransferClient fileTransferClient,
             DocumentTemplateDataStream documentTemplateDataStream,
-            CertificatesRepository certificatesRepository)
+            CertificatesRepository certificatesRepository,
+            InitialiseContainer initialiseContainer)
         {
             _aggregateLogger = aggregateLogger;
             _fileTransferClient = fileTransferClient;
             _documentTemplateDataStream = documentTemplateDataStream;
             _certificatesRepository = certificatesRepository;
+            _initialiseContainer = initialiseContainer;
         }
 
         public async Task Create()
         {
             var documentTemplateDataStream = await _documentTemplateDataStream.Get();
 
+            await CleanMergedDocumentContainer();
+
             foreach (var certificate in _certificatesRepository.GetData())
             {
                 var uuid = Guid.NewGuid();
-                var fileName = $"output-{uuid}.pdf";
+                var pdfFileName = $"output-{uuid}.pdf";
+
 
                 _aggregateLogger.LogInfo($"Processing Certificate for Cover Letter - {certificate.Id} - {uuid}");
                 var certificateData = JsonConvert.DeserializeObject<Domain.JsonData.CertificateData>(certificate.CertificateData);
 
                 _aggregateLogger.LogInfo($"converted certifcate data - Contact Name = {certificateData.ContactName}");
 
-                var pdfStream = CreatePdfStream(certificateData, documentTemplateDataStream);
+                var pdfStream = await CreatePdfStream(uuid.ToString(), certificateData, documentTemplateDataStream);
 
-                await _fileTransferClient.Send(pdfStream, fileName);
+                await _fileTransferClient.Send(pdfStream, pdfFileName);
 
                 pdfStream.Close();
             }
@@ -53,12 +61,16 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices
             documentTemplateDataStream.Close();
         }
 
-
-        private MemoryStream CreatePdfStream(CertificateData certificateData, MemoryStream documentTemplateStream)
+        private async Task<MemoryStream> CreatePdfStream(string uuid, CertificateData certificateData, MemoryStream documentTemplateStream)
         {
+            var mergedFileName = $"output-{uuid}.docx";
+
             _aggregateLogger.LogInfo("Merging fields in docuument ...");
             var document = MergeFieldsInDocument(certificateData, documentTemplateStream);
             _aggregateLogger.LogInfo("Converting Document to PDF ...");
+
+            await WriteCopyOfMergedDocumentToBlob(mergedFileName, document);
+
             return ConvertDocumentToPdf(document);
         }
 
@@ -72,9 +84,8 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices
 
             _aggregateLogger.LogInfo($"Document Template Stream = {documentTemplateStream.Length}");
 
-
             document.Replace("[Addressee Name]", string.IsNullOrEmpty(certificateData.ContactName) ? "" : certificateData.ContactName, false, true);
-            document.Replace("[Department]",  string.IsNullOrEmpty(certificateData.Department) ? "" : certificateData.Department, false, true);
+            document.Replace("[Department]", string.IsNullOrEmpty(certificateData.Department) ? "" : certificateData.Department, false, true);
             document.Replace("[Address Line 1]", string.IsNullOrEmpty(certificateData.ContactAddLine1) ? "" : certificateData.ContactAddLine1, false, true);
             document.Replace("[Address Line 2]", string.IsNullOrEmpty(certificateData.ContactAddLine2) ? "" : certificateData.ContactAddLine2, false, true);
             document.Replace("[Address Line 3]", string.IsNullOrEmpty(certificateData.ContactAddLine3) ? "" : certificateData.ContactAddLine3, false, true);
@@ -92,6 +103,31 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices
             document.SaveToStream(pdfStream, FileFormat.PDF);
             _aggregateLogger.LogInfo("Saved document to stream ...");
             return pdfStream;
+        }
+
+        private async Task WriteCopyOfMergedDocumentToBlob(string mergedFileName, Document document)
+        {
+            var memoryStream = new MemoryStream();
+            document.SaveToStream(memoryStream, FileFormat.Docx);
+
+            memoryStream.Position = 0;
+
+            var containerName = "mergeddocuments";
+            var container = await _initialiseContainer.Execute(containerName);
+
+            var blob = container.GetBlockBlobReference(mergedFileName);
+            blob.UploadFromStream(memoryStream);
+
+            memoryStream.Position = 0;
+            //await _fileTransferClient.Send(memoryStream, mergedFileName);
+        }
+
+        private async Task CleanMergedDocumentContainer()
+        {
+            var containerName = "mergeddocuments";
+            var container = await _initialiseContainer.Execute(containerName);
+
+            Parallel.ForEach(container.ListBlobs(), x => ((CloudBlob)x).Delete());
         }
     }
 }

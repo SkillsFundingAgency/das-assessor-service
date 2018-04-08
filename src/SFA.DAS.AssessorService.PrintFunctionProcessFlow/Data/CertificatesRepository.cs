@@ -1,30 +1,57 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Net.Http;
 using FizzWare.NBuilder;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
+using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Extensions;
+using SFA.DAS.AssessorService.PrintFunctionProcessFlow.InfrastructureServices;
+using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Logger;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Settings;
 
 namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Data
 {
     public class CertificatesRepository
     {
-        private readonly IWebConfiguration _configuration;
+        private readonly IAggregateLogger _aggregateLogger;
+        private readonly HttpClient _httpClient;
+        private readonly IWebConfiguration _webConfiguration;
+        private readonly TokenService _tokenService;
 
-        public CertificatesRepository(IWebConfiguration configuration)
+        public CertificatesRepository(IAggregateLogger aggregateLogger,
+            HttpClient httpClient,
+            IWebConfiguration webConfiguration,
+            TokenService tokenService)
         {
-            _configuration = configuration;
+            _aggregateLogger = aggregateLogger;
+            _httpClient = httpClient;
+            _webConfiguration = webConfiguration;
+            _tokenService = tokenService;
         }
 
         public IEnumerable<Certificate> GetData()
         {
-            var certificates = CreateDefaultData();
+            //var certificates = CreateDefaultData();
 
-            // Optionally create Dummy Data for Performance Testing
-            var generateDummyData = "false";
-            return generateDummyData == "true" ? certificates.Union(GenerateDummyData()) : certificates;
+            //// Optionally create Dummy Data for Performance Testing
+            //var generateDummyData = "false";
+            //return generateDummyData == "true" ? certificates.Union(GenerateDummyData()) : certificates;
+
+            var response = _httpClient.GetAsync(
+                "/api/v1/certificate").Result;
+
+            var certificates = response.Deserialise<List<Certificate>>();
+            if (response.IsSuccessStatusCode)
+            {
+                _aggregateLogger.LogInfo($"Status code returned: {response.StatusCode}. Content: {response.Content.ReadAsStringAsync().Result}");
+            }
+            else
+            {
+                _aggregateLogger.LogInfo($"Status code returned: {response.StatusCode}. Content: {response.Content.ReadAsStringAsync().Result}");
+            }
+
+            return certificates;
         }
 
         private static List<Certificate> CreateDefaultData()
@@ -94,7 +121,6 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Data
                     ContactPostCode = "B34 1JK"
                 }
             );
-
 
             certificates[2].CertificateData = JsonConvert.SerializeObject(
                 new CertificateData
