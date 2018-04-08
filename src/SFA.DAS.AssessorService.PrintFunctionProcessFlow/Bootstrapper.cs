@@ -40,11 +40,11 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow
             //var sqlConnection = new SqlConnection(connectionString);
 
             var agregateLogger = new AggregateLogger(functionLogger, context);
-            var webConfiguration = ConfigurationService.GetConfiguration();
+            Configuration = ConfigurationService.GetConfiguration();
 
             agregateLogger.LogInfo("Config Received");
 
-            var tokenService = new TokenService(webConfiguration);
+            var tokenService = new TokenService(Configuration);
             var token = tokenService.GetToken();
 
             agregateLogger.LogInfo($"Token Received => {token}");
@@ -59,7 +59,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow
                 });
 
                 configure.For<IAggregateLogger>().Use(agregateLogger).Singleton();
-                configure.For<IWebConfiguration>().Use(webConfiguration).Singleton();
+                configure.For<IWebConfiguration>().Use(Configuration).Singleton();
                 configure.For<SftpClient>().Use<SftpClient>("Build ISession from ISessionFactory",
                     c => new SftpClient(Configuration.Sftp.RemoteHost, Convert.ToInt32(Configuration.Sftp.Port), Configuration.Sftp.Username, Configuration.Sftp.Password));
                 //configure.For<IDbConnection>().Use<SqlConnection>(sqlConnection);

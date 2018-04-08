@@ -1,6 +1,9 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Data;
+using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Logger;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Sftp;
 using Spire.Doc;
 using CertificateData = SFA.DAS.AssessorService.Domain.JsonData.CertificateData;
@@ -9,38 +12,43 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices
 {
     public class CoverLetterService
     {
+        private readonly IAggregateLogger _aggregateLogger;
         private readonly FileTransferClient _fileTransferClient;
         private readonly DocumentTemplateDataStream _documentTemplateDataStream;
-        //private readonly CertificatesRepository _certificatesRepository;
+        private readonly CertificatesRepository _certificatesRepository;
 
         public CoverLetterService(
-            //FileTransferClient fileTransferClient,
-            DocumentTemplateDataStream documentTemplateDataStream)
-            //CertificatesRepository certificatesRepository)
+            IAggregateLogger aggregateLogger,
+            FileTransferClient fileTransferClient,
+            DocumentTemplateDataStream documentTemplateDataStream,
+            CertificatesRepository certificatesRepository)
         {
-            //_fileTransferClient = fileTransferClient;
+            _aggregateLogger = aggregateLogger;
+            _fileTransferClient = fileTransferClient;
             _documentTemplateDataStream = documentTemplateDataStream;
-            //_certificatesRepository = certificatesRepository;
+            _certificatesRepository = certificatesRepository;
         }
 
         public async Task Create()
         {
             var documentTemplateDataStream = await _documentTemplateDataStream.Get();
 
-            //foreach (var certificate in _certificatesRepository.GetData())
-            //{
-            //    var uuid = Guid.NewGuid();
-            //    var fileName = $"output-{uuid}.pdf";
+            foreach (var certificate in _certificatesRepository.GetData())
+            {
+                var uuid = Guid.NewGuid();
+                var fileName = $"output-{uuid}.pdf";
 
-            //    Console.WriteLine($"Processing Certificate for Cover Letter - {certificate.Id} - {uuid}");
-            //    var certificateData = JsonConvert.DeserializeObject<Domain.JsonData.CertificateData>(certificate.CertificateData);
+                _aggregateLogger.LogInfo($"Processing Certificate for Cover Letter - {certificate.Id} - {uuid}");
+                var certificateData = JsonConvert.DeserializeObject<Domain.JsonData.CertificateData>(certificate.CertificateData);
 
-            //    var pdfStream = CreatePdfStream(certificateData, documentTemplateDataStream);
+                _aggregateLogger.LogInfo($"converted certifcate data - Contact Name = {certificateData.ContactName}");
 
-            //    await _fileTransferClient.Send(pdfStream, fileName);
+                var pdfStream = CreatePdfStream(certificateData, documentTemplateDataStream);
 
-            //    pdfStream.Close();
-            //}
+                //await _fileTransferClient.Send(pdfStream, fileName);
+
+                //pdfStream.Close();
+            }
 
             documentTemplateDataStream.Close();
         }
@@ -48,14 +56,22 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices
 
         private MemoryStream CreatePdfStream(CertificateData certificateData, MemoryStream documentTemplateStream)
         {
+            _aggregateLogger.LogInfo("Merging fields in docuument ...");
             var document = MergeFieldsInDocument(certificateData, documentTemplateStream);
+            _aggregateLogger.LogInfo("Converting Document to PDF ...");
             return ConvertDocumentToPdf(document);
         }
 
-        private static Document MergeFieldsInDocument(CertificateData certificateData, MemoryStream documentTemplateStream)
+        private Document MergeFieldsInDocument(CertificateData certificateData, MemoryStream documentTemplateStream)
         {
             var document = new Document();
+
+            _aggregateLogger.LogInfo("load Document from Stream ...");
             document.LoadFromStream(documentTemplateStream, FileFormat.Docx);
+            _aggregateLogger.LogInfo($"Document Length = {document.Count}");
+
+            _aggregateLogger.LogInfo($"Document Template Stream = {documentTemplateStream.Length}");
+
 
             document.Replace("[Addressee Name]", certificateData.ContactName, false, true);
             document.Replace("[Address Line 1]", certificateData.ContactAddLine1, false, true);
@@ -68,10 +84,12 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices
             return document;
         }
 
-        private static MemoryStream ConvertDocumentToPdf(Document document)
+        private MemoryStream ConvertDocumentToPdf(Document document)
         {
             var pdfStream = new MemoryStream();
-            document.SaveToStream(pdfStream, FileFormat.PDF);
+            _aggregateLogger.LogInfo("Saving document to stream ...");
+            //document.SaveToStream(pdfStream, FileFormat.PDF);
+            _aggregateLogger.LogInfo("Saved document to stream ...");
             return pdfStream;
         }
     }

@@ -1,20 +1,13 @@
 using System;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Table;
-using Newtonsoft.Json;
-using NLog;
-using NLog.Config;
-using LogLevel = NLog.LogLevel;
 
 namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow
 {
     public static class PrintFunctionFlow
     {
         [FunctionName("PrintFunctionFlow")]
-        public static void Run([TimerTrigger("*/5 * * * * *")] TimerInfo myTimer, TraceWriter functionLogger,
+        public static void Run([TimerTrigger("0 */1 * * * *")] TimerInfo myTimer, TraceWriter functionLogger,
             ExecutionContext context)
         {
             try

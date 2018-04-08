@@ -3,33 +3,21 @@ using System.Threading.Tasks;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Logger;
 
-//using Microsoft.Extensions.Configuration;
-//using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Services;
-
 namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow
 {
     public class Command
     {
         private readonly IAggregateLogger _aggregateLogger;
         private readonly CoverLetterService _coverLetterService;
-        //    private readonly CoverLetterService _coverLetterService;
-    //    private readonly IFACertificateService _ifaCertificateService;
-    //    private readonly IConfiguration _configuration;
-
-        //public Command(CoverLetterService coverLetterService,
-        //    IFACertificateService ifaCertificateService,
-        //    IConfiguration configuration)
-        //{
-        //    _coverLetterService = coverLetterService;
-        //    _ifaCertificateService = ifaCertificateService;
-        //    _configuration = configuration;
-        //}
+        private readonly IFACertificateService _ifaCertificateService;
 
         public Command(IAggregateLogger aggregateLogger,
-            CoverLetterService coverLetterService)
+            CoverLetterService coverLetterService,
+            IFACertificateService ifaCertificateService)
         {
             _aggregateLogger = aggregateLogger;
             _coverLetterService = coverLetterService;
+            _ifaCertificateService = ifaCertificateService;
         }
 
         public async Task Execute()
@@ -41,8 +29,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow
             _aggregateLogger.LogInfo($"Process Environment = {EnvironmentVariableTarget.Process}");
 
             await _coverLetterService.Create();
-            //await _ifaCertificateService.Create();
-
+            await _ifaCertificateService.Create();
         }
     }
 }

@@ -14,6 +14,7 @@
     <PackageReference Include="EPPlus" Version="4.5.0.3-rc" />
     <PackageReference Include="FreeSpire.Doc" Version="5.7.0" />
     <PackageReference Include="Renci.SshNet.Async" Version="1.2.0" />
+    <PackageReference Include="NBuilder" Version="5.0.0" />
 
   </ItemGroup>
   <ItemGroup>
@@ -27,7 +28,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="local.settings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <CopyToPublishDirectory>Never</CopyToPublishDirectory>
     </None>
     <None Update="nlog.config">
