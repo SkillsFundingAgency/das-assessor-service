@@ -5,7 +5,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="3.16.0" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.6" />
-    <PackageReference Include="Newtonsoft.json" Version="11.0.2" />
+    <PackageReference Include="Newtonsoft.json" Version="10.0.1" />
     <PackageReference Include="NLog.Extensions.Logging" Version="1.0.0" />
     <PackageReference Include="SFA.DAS.NLog.Targets.Redis" Version="1.1.5" />
   </ItemGroup>
