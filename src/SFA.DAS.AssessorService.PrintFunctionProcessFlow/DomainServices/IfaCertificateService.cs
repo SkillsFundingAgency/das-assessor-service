@@ -4,32 +4,34 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Data;
+using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Logger;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Sftp;
 
-namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Services
+namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices
 {
     public class IFACertificateService
     {
-        private readonly IConfiguration _configuration;
+        private readonly IAggregateLogger _aggregateLogger;
         private readonly FileTransferClient _fileTransferClient;
         private readonly CertificatesRepository _certificatesRepository;
 
-        public IFACertificateService(IConfiguration configuration,
+        public IFACertificateService(
+            IAggregateLogger aggregateLogger,
             FileTransferClient fileTransferClient,
             CertificatesRepository certificatesRepository)
         {
-            _configuration = configuration;
+            _aggregateLogger = aggregateLogger;
             _fileTransferClient = fileTransferClient;
             _certificatesRepository = certificatesRepository;
         }
 
         public async Task Create()
         {
+            _aggregateLogger.LogInfo("Created Excdel Spreadsheet ....");
             var memoryStream = new MemoryStream();
 
             var uuid = Guid.NewGuid();
@@ -46,6 +48,8 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Services
 
                 memoryStream.Close();
             }
+
+            _aggregateLogger.LogInfo("Completed Excel Spreadsheet ....");
         }
 
         private static void CreateWorkBook(ExcelPackage package)
@@ -112,13 +116,14 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Services
             worksheet.Cells[2, 10].Value = "Chair Title";
             worksheet.Cells[2, 11].Value = "Employer Contact";
             worksheet.Cells[2, 12].Value = "Employer Name";
-            worksheet.Cells[2, 13].Value = "Address Line 1";
-            worksheet.Cells[2, 14].Value = "Address Line 2";
-            worksheet.Cells[2, 15].Value = "Address Line 3";
-            worksheet.Cells[2, 16].Value = "Address Line 4";
-            worksheet.Cells[2, 17].Value = "Post Code";
+            worksheet.Cells[2, 13].Value = "Department";
+            worksheet.Cells[2, 14].Value = "Address Line 1";
+            worksheet.Cells[2, 15].Value = "Address Line 2";
+            worksheet.Cells[2, 16].Value = "Address Line 3";
+            worksheet.Cells[2, 17].Value = "Address Line 4";
+            worksheet.Cells[2, 18].Value = "Post Code";
 
-            using (var range = worksheet.Cells[2, 1, 2, 17])
+            using (var range = worksheet.Cells[2, 1, 2, 18])
             {
                 range.Style.Font.Bold = true;
                 range.Style.Fill.PatternType = ExcelFillStyle.Solid;
@@ -130,7 +135,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Services
 
         private static void CreateWorksheetHeader(ExcelWorksheet worksheet)
         {
-            using (var range = worksheet.Cells[1, 1, 1, 17])
+            using (var range = worksheet.Cells[1, 1, 1, 18])
             {
                 range.Style.Font.Bold = true;
                 //range.Style.Fill.PatternType = ExcelFillStyle.Solid;
@@ -178,31 +183,34 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Services
                 if (certificate.CertificateReference != null)
                     worksheet.Cells[row, 8].Value = certificate.CertificateReference;
 
-                worksheet.Cells[row, 9].Value = _configuration["ChairDetails:ChairName"];
-                worksheet.Cells[row, 10].Value = _configuration["ChairDetails:ChairTitle"];
-
-                if (certificateData.ContactName != null)
-                    worksheet.Cells[row, 11].Value = certificateData.ContactName;
+                worksheet.Cells[row, 9].Value = Environment.GetEnvironmentVariable("ChairName", EnvironmentVariableTarget.Process);
+                worksheet.Cells[row, 10].Value = Environment.GetEnvironmentVariable("ChairTitle", EnvironmentVariableTarget.Process);
 
                 if (certificateData.ContactOrganisation != null)
-                    worksheet.Cells[row, 12].Value = certificateData.ContactOrganisation;
+                    worksheet.Cells[row, 11].Value = certificateData.ContactOrganisation;
+
+                if (certificateData.ContactName != null)
+                    worksheet.Cells[row, 12].Value = certificateData.ContactName;
+
+                if (certificateData.ContactOrganisation != null)
+                    worksheet.Cells[row, 13].Value = certificateData.Department;
 
                 if (certificateData.ContactAddLine1 != null)
-                    worksheet.Cells[row, 13].Value = certificateData.ContactAddLine1;
+                    worksheet.Cells[row, 14].Value = certificateData.ContactAddLine1;
 
                 if (certificateData.ContactAddLine2 != null)
-                    worksheet.Cells[row, 14].Value = certificateData.ContactAddLine2;
+                    worksheet.Cells[row, 15].Value = certificateData.ContactAddLine2;
 
                 if (certificateData.ContactAddLine3 != null)
-                    worksheet.Cells[row, 15].Value = certificateData.ContactAddLine3;
+                    worksheet.Cells[row, 16].Value = certificateData.ContactAddLine3;
 
                 if (certificateData.ContactAddLine4 != null)
-                    worksheet.Cells[row, 16].Value = certificateData.ContactAddLine4;
+                    worksheet.Cells[row, 17].Value = certificateData.ContactAddLine4;
 
                 if (certificateData.ContactPostCode != null)
-                    worksheet.Cells[row, 17].Value = certificateData.ContactPostCode;
+                    worksheet.Cells[row, 18].Value = certificateData.ContactPostCode;
 
-                Console.WriteLine($"Processing Certificate For IFA Certificate - {certificate.Id}");
+                _aggregateLogger.LogInfo($"Processing Certificate For IFA Certificate - {certificate.Id}");
 
                 row++;
             }

@@ -1,38 +1,39 @@
 ﻿using System;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Azure;
 using Microsoft.WindowsAzure.Storage;
+using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Logger;
 
 namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.AzureStorage
 {
-    public  class Common
+    public class Common
     {
-        private readonly IConfiguration _configuration;
+        private readonly IAggregateLogger _aggregateLogger;
 
-        public Common(IConfiguration configuration)
+        public Common(
+            IAggregateLogger aggregateLogger)
         {
-            _configuration = configuration;
+
+            _aggregateLogger = aggregateLogger;
         }
-       
-        public  CloudStorageAccount CreateStorageAccountFromConnectionString()
+
+        public CloudStorageAccount CreateStorageAccountFromConnectionString()
         {
             CloudStorageAccount storageAccount;
             const string message = "Invalid storage account information provided. Please confirm the AccountName and AccountKey are valid in the app.config file - then restart the sample.";
 
             try
             {
-                var storageAccountName = _configuration["Values:ConfigurationStorageConnectionString"];
+                var storageAccountName = CloudConfigurationManager.GetSetting("ConfigurationStorageConnectionString");
                 storageAccount = CloudStorageAccount.Parse(storageAccountName);
             }
-            catch (FormatException)
+            catch (FormatException e)
             {
-                Console.WriteLine(message);
-                Console.ReadLine();
+                _aggregateLogger.LogError(message, e);
                 throw;
             }
-            catch (ArgumentException)
+            catch (ArgumentException e)
             {
-                Console.WriteLine(message);
-                Console.ReadLine();
+                _aggregateLogger.LogError(message, e);
                 throw;
             }
 
