@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
+using SFA.DAS.AssessorService.PrintFunctionProcessFlow.AzureStorage;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Data;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Logger;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Sftp;
@@ -15,15 +16,18 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices
 {
     public class IFACertificateService
     {
+        private readonly InitialiseContainer _initialiseContainer;
         private readonly IAggregateLogger _aggregateLogger;
         private readonly FileTransferClient _fileTransferClient;
         private readonly CertificatesRepository _certificatesRepository;
 
         public IFACertificateService(
+            InitialiseContainer initialiseContainer,
             IAggregateLogger aggregateLogger,
             FileTransferClient fileTransferClient,
             CertificatesRepository certificatesRepository)
         {
+            _initialiseContainer = initialiseContainer;
             _aggregateLogger = aggregateLogger;
             _fileTransferClient = fileTransferClient;
             _certificatesRepository = certificatesRepository;
@@ -45,6 +49,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices
                 package.Save();
 
                 await _fileTransferClient.Send(memoryStream, fileName);
+                await WriteCopyOfMergedDocumentToBlob(fileName, memoryStream);
 
                 memoryStream.Close();
             }
@@ -223,6 +228,23 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices
             var year = DateTime.Now.Year;
             var monthYear = month + " " + year;
             return monthYear;
+        }
+
+        private async Task WriteCopyOfMergedDocumentToBlob(string mergedFileName, MemoryStream memoryStream)
+        {
+            //var memoryStream = new MemoryStream();
+            //document.SaveToStream(memoryStream, FileFormat.Docx);
+
+            memoryStream.Position = 0;
+
+            var containerName = "mergeddocuments";
+            var container = await _initialiseContainer.Execute(containerName);
+
+            var blob = container.GetBlockBlobReference(mergedFileName);
+            blob.UploadFromStream(memoryStream);
+
+            memoryStream.Position = 0;
+            //await _fileTransferClient.Send(memoryStream, mergedFileName);
         }
     }
 }

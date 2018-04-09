@@ -24,6 +24,8 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
         private readonly By _employerBy = By.Name("Employer");
         private readonly By _postCodeBy = By.Id("postcode-search");
 
+        private readonly By _enterAddressManuallyBy = By.Id("enterAddressManually");
+
         private readonly By _addressLine1By = By.Name("AddressLine1");
         private readonly By _addressLine2By = By.Name("AddressLine2");
         private readonly By _addressLine3By = By.Name("AddressLine3");
@@ -38,6 +40,7 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
             FormCompletionHelper.EnterText(_departmentBy, "Test Deparment");
             FormCompletionHelper.EnterText(_employerBy, "Jongo Ltd");
             FormCompletionHelper.EnterText(_postCodeBy, "B50 3DE");
+            FormCompletionHelper.ClickElement(_enterAddressManuallyBy);
 
             FormCompletionHelper.EnterText(_addressLine1By, "1 Anchor Drive");
             FormCompletionHelper.EnterText(_addressLine2By, "Enfield");
