@@ -72,19 +72,6 @@
             </div>
             <div>
                 <dt class="cya-question">
-                    Option
-                </dt>
-                <dd class="cya-answer">
-                    @Model.Option
-                </dd>
-                <dd class="cya-change">
-                    <a asp-controller="CertificateOption" asp-action="Option" asp-route-redirecttocheck="true">
-                        Change<span class="visually-hidden"> name</span>
-                    </a>
-                </dd>
-            </div>
-            <div>
-                <dt class="cya-question">
                     Grade
                 </dt>
                 <dd class="cya-answer">
@@ -92,6 +79,19 @@
                 </dd>
                 <dd class="cya-change">
                     <a asp-controller="CertificateGrade" asp-action="Grade" asp-route-redirecttocheck="true">
+                        Change<span class="visually-hidden"> name</span>
+                    </a>
+                </dd>
+            </div>
+            <div>
+                <dt class="cya-question">
+                    Option
+                </dt>
+                <dd class="cya-answer">
+                    @Model.Option
+                </dd>
+                <dd class="cya-change">
+                    <a asp-controller="CertificateOption" asp-action="Option" asp-route-redirecttocheck="true">
                         Change<span class="visually-hidden"> name</span>
                     </a>
                 </dd>
