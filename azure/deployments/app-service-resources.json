@@ -27,7 +27,9 @@
             "type": "string"
         }
     },
-    "variables": {},
+    "variables": {
+        "UseCustomHostname": "[greater(length(parameters('customHostname')) ,0)]"
+    },
     "resources": [
         {
             "apiVersion": "2015-05-01",
@@ -78,7 +80,8 @@
         },
         {
             "type": "Microsoft.Web/sites/hostnameBindings",
-            "name": "[concat(parameters('appServiceName'), '/', parameters('customHostname'))]",
+            "condition": "[variables('UseCustomHostname')]",
+            "name": "[concat(parameters('appServiceName'), '/', if(variables('UseCustomHostname'), parameters('customHostname'), 'placeholder'))]",
             "apiVersion": "2016-03-01",
             "location": "[resourceGroup().location]",
             "properties": {

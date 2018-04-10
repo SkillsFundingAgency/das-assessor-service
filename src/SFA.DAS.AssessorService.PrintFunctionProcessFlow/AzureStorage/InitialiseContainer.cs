@@ -4,19 +4,17 @@ using Microsoft.WindowsAzure.Storage.RetryPolicies;
 
 namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.AzureStorage
 {
-    public class InitialiseBlob
+    public class InitialiseContainer
     {
         private readonly Common _common;
 
-        public InitialiseBlob(Common common)
+        public InitialiseContainer(Common common)
         {
             _common = common;
         }
 
-        public async Task<CloudBlobContainer> Execute()
+        public async Task<CloudBlobContainer> Execute(string containerName)
         {
-            var containerName = "printfunction-prototype";
-
             var storageAccount = _common.CreateStorageAccountFromConnectionString();
             var client = storageAccount.CreateCloudBlobClient();
 
