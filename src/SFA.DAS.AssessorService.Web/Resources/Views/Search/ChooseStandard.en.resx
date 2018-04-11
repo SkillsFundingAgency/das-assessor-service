@@ -136,7 +136,7 @@
     <value>Previously recorded assessments:</value>
   </data>
   <data name="SelectStandardButton" xml:space="preserve">
-    <value>Select Standard</value>
+    <value>Continue</value>
   </data>
   <data name="Uln" xml:space="preserve">
     <value>Unique learner number (ULN)</value>
