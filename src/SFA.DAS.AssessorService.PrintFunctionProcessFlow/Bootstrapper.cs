@@ -7,6 +7,10 @@ using Renci.SshNet;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.InfrastructureServices;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Logger;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Settings;
+using SFA.DAS.Http;
+using SFA.DAS.Http.TokenGenerators;
+using SFA.DAS.Notifications.Api.Client;
+using SFA.DAS.Notifications.Api.Client.Configuration;
 using StructureMap;
 
 namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow
@@ -42,6 +46,18 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow
 
             agregateLogger.LogInfo($"Token Received => {token}");
 
+
+            INotificationsApiClientConfiguration clientConfiguration = new NotificationsApiClientConfiguration
+            {
+                ApiBaseUrl = "https://at-notifications.apprenticeships.sfa.bis.gov.uk/",
+                ClientToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJkYXRhIjoiU2VuZFNtcyBTZW5kRW1haWwiLCJpc3MiOiJodHRwOi8vZGFzLWF0LW5vdC1jcyIsImF1ZCI6Imh0dHA6Ly9kYXMtYXQtZWFzLWNzIiwiZXhwIjoxNTU1NzU2OTQ4LCJuYmYiOjE1MjMzNTY5NDh9.2IKr0p-nq5KscucjgzhXrfbVQ_mdQ63yH3PLSVSZ9Xk",
+                ClientId = "",
+                ClientSecret = "",
+                IdentifierUri = "",
+                Tenant = ""
+            };
+
+
             Container = new Container(configure =>
             {
                 configure.Scan(x =>
@@ -54,7 +70,13 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow
                 configure.For<IWebConfiguration>().Use(Configuration).Singleton();
                 configure.For<SftpClient>().Use<SftpClient>("SftpClient",
                     c => new SftpClient(Configuration.Sftp.RemoteHost, Convert.ToInt32(Configuration.Sftp.Port), Configuration.Sftp.Username, Configuration.Sftp.Password));
+
                 configure.For<HttpClient>().Use<HttpClient>(httpClient);
+
+                var notificationHttpClient = new HttpClientBuilder().WithBearerAuthorisationHeader(new JwtBearerTokenGenerator(clientConfiguration)).Build();
+                configure.For<INotificationsApi>().Use<NotificationsApi>().Ctor<HttpClient>().Is(notificationHttpClient);
+                configure.For<INotificationsApiClientConfiguration>().Use(clientConfiguration);
+
             });
         }
 

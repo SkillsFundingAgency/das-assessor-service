@@ -5,6 +5,7 @@ using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Data;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.EMail;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Logger;
+using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Notification;
 
 namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow
 {
@@ -14,18 +15,21 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow
         private readonly CoverLetterService _coverLetterService;
         private readonly IFACertificateService _ifaCertificateService;
         private readonly CertificatesRepository _certificatesRepository;
+        private readonly NotificationService _notificationService;
         private readonly EMailSender _emailSender;
 
         public Command(IAggregateLogger aggregateLogger,
             CoverLetterService coverLetterService,
             IFACertificateService ifaCertificateService,
             CertificatesRepository certificatesRepository,
+            NotificationService notificationService,
             EMailSender emailSender)
         {
             _aggregateLogger = aggregateLogger;
             _coverLetterService = coverLetterService;
             _ifaCertificateService = ifaCertificateService;
             _certificatesRepository = certificatesRepository;
+            _notificationService = notificationService;
             _emailSender = emailSender;
         }
 
@@ -38,6 +42,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow
                 Environment.GetEnvironmentVariable("CustomSetting", EnvironmentVariableTarget.Process);
             _aggregateLogger.LogInfo($"Process Environment = {EnvironmentVariableTarget.Process}");
 
+            //_notificationService.Send();
 
             //if (AnythingToProcess())
             //{
