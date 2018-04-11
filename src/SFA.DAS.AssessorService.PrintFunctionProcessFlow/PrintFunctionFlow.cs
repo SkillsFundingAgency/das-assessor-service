@@ -1,6 +1,7 @@
 using System;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
+using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Startup;
 
 namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow
 {

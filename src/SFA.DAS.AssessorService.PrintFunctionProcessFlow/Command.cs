@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow
                 Environment.GetEnvironmentVariable("CustomSetting", EnvironmentVariableTarget.Process);
             _aggregateLogger.LogInfo($"Process Environment = {EnvironmentVariableTarget.Process}");
 
-            //_notificationService.Send();
+            _notificationService.Send();
 
             if (AnythingToProcess())
             {
