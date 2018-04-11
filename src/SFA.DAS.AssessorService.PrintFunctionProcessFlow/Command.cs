@@ -44,16 +44,16 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow
 
             _notificationService.Send();
 
-            //if (AnythingToProcess())
-            //{
-            //    //await _emailSender.SendEMail();
-            //    await _coverLetterService.Create();
-            //    await _ifaCertificateService.Create();
-            //}
-            //else
-            //{
-            //    _aggregateLogger.LogInfo("Nothing to Process");
-            //}
+            if (AnythingToProcess())
+            {
+                //await _emailSender.SendEMail();
+                await _coverLetterService.Create();
+                await _ifaCertificateService.Create();
+            }
+            else
+            {
+                _aggregateLogger.LogInfo("Nothing to Process");
+            }
         }
 
         private bool AnythingToProcess()
