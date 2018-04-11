@@ -28,7 +28,7 @@
         }
     },
     "variables": {
-        "UseCustomHostname": "[greater(length(parameters('customHostname')) ,0)]"
+        "UseCustomHostname": "[greater(length(parameters('customHostname')), 0)]"
     },
     "resources": [
         {
@@ -86,7 +86,7 @@
             "location": "[resourceGroup().location]",
             "properties": {
                 "sslState": "SniEnabled",
-                "thumbprint": "[reference(resourceId(parameters('sharedAppServicePlanResourceGroup'), 'Microsoft.Web/certificates', parameters('keyvaultCertificateName')), '2016-03-01').Thumbprint]"
+                "thumbprint": "[reference(resourceId(parameters('sharedAppServicePlanResourceGroup'), 'Microsoft.Web/certificates', if(variables('UseCustomHostname'), parameters('keyvaultCertificateName'), 'placeholder')), '2016-03-01').Thumbprint]"
             },
             "dependsOn": [
                 "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"
