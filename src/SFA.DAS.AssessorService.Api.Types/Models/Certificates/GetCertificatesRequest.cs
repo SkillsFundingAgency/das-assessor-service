@@ -4,7 +4,8 @@ using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
 {
-    public class GetCertificatesToBePrintedRequest : IRequest<List<Certificate>>
+    public class GetCertificatesRequest : IRequest<List<CertificateResponse>>
     {
+        public string Status { get; set; }
     }
 }

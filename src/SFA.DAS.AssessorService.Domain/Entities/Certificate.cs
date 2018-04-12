@@ -10,11 +10,14 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public int StandardCode { get; set; }
         public int ProviderUkPrn { get; set; }
         public Guid OrganisationId { get; set; }
+        public Organisation Organisation { get; set; }
 
         public string CertificateReference { get; set; }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int? CertificateReferenceId { get; set; }
+
+        public int BatchNumber { get; set; }
 
         public string CertificateData { get; set; }
 

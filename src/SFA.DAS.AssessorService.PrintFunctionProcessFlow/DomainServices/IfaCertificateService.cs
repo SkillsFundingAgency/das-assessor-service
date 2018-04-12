@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
+using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.AzureStorage;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Data;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Logger;
@@ -19,32 +21,34 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices
         private readonly InitialiseContainer _initialiseContainer;
         private readonly IAggregateLogger _aggregateLogger;
         private readonly FileTransferClient _fileTransferClient;
-        private readonly CertificatesRepository _certificatesRepository;
+        private IEnumerable<CertificateResponse> _certificates;
 
         public IFACertificateService(
             InitialiseContainer initialiseContainer,
             IAggregateLogger aggregateLogger,
-            FileTransferClient fileTransferClient,
-            CertificatesRepository certificatesRepository)
+            FileTransferClient fileTransferClient)
         {
             _initialiseContainer = initialiseContainer;
             _aggregateLogger = aggregateLogger;
             _fileTransferClient = fileTransferClient;
-            _certificatesRepository = certificatesRepository;
         }
 
-        public async Task Create()
+        public async Task Create(int batchNumber, IEnumerable<CertificateResponse> certificates)
         {
-            _aggregateLogger.LogInfo("Created Excdel Spreadsheet ....");
+            _aggregateLogger.LogInfo("Created Excel Spreadsheet ....");
+
             var memoryStream = new MemoryStream();
 
+            var certificateResponses = certificates as CertificateResponse[] ?? certificates.ToArray();
+            _certificates = certificateResponses;
+
             var uuid = Guid.NewGuid();
-            var fileName = $"output-{uuid}.xlsx";
+            var fileName = $"IFA-Certificate-{GetMonthYear()}-{batchNumber.ToString().PadLeft(9, '0')}.xlsx";
 
             using (var package = new ExcelPackage(memoryStream))
             {
                 CreateWorkBook(package);
-                CreateWorkSheet(package);
+                CreateWorkSheet(package, certificateResponses);
 
                 package.Save();
 
@@ -67,7 +71,8 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices
             workbook.View.ShowSheetTabs = true;
         }
 
-        private void CreateWorkSheet(ExcelPackage package)
+        private void CreateWorkSheet(ExcelPackage package,
+            IEnumerable<CertificateResponse> certificates)
         {
             var monthYear = GetMonthYear("MMM");
 
@@ -156,14 +161,11 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices
 
         private void CreateWorksheetData(ExcelWorksheet worksheet)
         {
-            var certificates = _certificatesRepository.GetData().ToList();
-
             var row = 3;
 
-            foreach (var certificate in certificates)
+            foreach (var certificate in _certificates)
             {
-                var certificateData =
-                    JsonConvert.DeserializeObject<Domain.JsonData.CertificateData>(certificate.CertificateData);
+                var certificateData = certificate.CertificateData;
                 if (certificateData.AchievementDate != null)
                     worksheet.Cells[row, 1].Value = certificateData.AchievementDate.ToString();
 
@@ -215,7 +217,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices
                 if (certificateData.ContactPostCode != null)
                     worksheet.Cells[row, 18].Value = certificateData.ContactPostCode;
 
-                _aggregateLogger.LogInfo($"Processing Certificate For IFA Certificate - {certificate.Id}");
+                _aggregateLogger.LogInfo($"Processing Certificate For IFA Certificate - {certificate.CertificateReference}");
 
                 row++;
             }
@@ -232,9 +234,6 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices
 
         private async Task WriteCopyOfMergedDocumentToBlob(string mergedFileName, MemoryStream memoryStream)
         {
-            //var memoryStream = new MemoryStream();
-            //document.SaveToStream(memoryStream, FileFormat.Docx);
-
             memoryStream.Position = 0;
 
             var containerName = "mergeddocuments";
@@ -244,7 +243,15 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices
             blob.UploadFromStream(memoryStream);
 
             memoryStream.Position = 0;
-            //await _fileTransferClient.Send(memoryStream, mergedFileName);
+        }
+
+        private static string GetMonthYear()
+        {
+            var month = DateTime.Today.Month.ToString().PadLeft(2, '0');
+
+            var year = DateTime.Now.Year;
+            var monthYear = month + "-" + year;
+            return monthYear;
         }
     }
 }
