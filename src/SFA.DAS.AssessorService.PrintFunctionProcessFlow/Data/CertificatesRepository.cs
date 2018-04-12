@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Data
             //return generateDummyData == "true" ? certificates.Union(GenerateDummyData()) : certificates;
 
             var response = _httpClient.GetAsync(
-                "/api/v1/certificate").Result;
+                "/api/v1/certificates").Result;
 
             var certificates = response.Deserialise<List<Certificate>>();
             if (response.IsSuccessStatusCode)

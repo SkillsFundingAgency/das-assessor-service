@@ -14,7 +14,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
     [Authorize]
-    [Route("api/v1/certificate")]
+    [Route("api/v1/certificates")]
     [ValidateBadRequest]
     public class CertificateQueryController : Controller
     {
@@ -34,12 +34,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(await _mediator.Send(new GetCertificateRequest(id)));
         }
 
-        [HttpGet(Name = "GetCertificatesToBePrinted")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<Certificate>))]
+        [HttpGet(Name = "GetCertificates")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<CertificateResponse>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetCertificatesToBePrinted()
+        public async Task<IActionResult> GetCertificates([FromQuery] string status)
         {
-            return Ok(await _mediator.Send(new GetCertificatesToBePrintedRequest()));
+            return Ok(await _mediator.Send(new GetCertificates { Status = status }));
         }
     }
 }

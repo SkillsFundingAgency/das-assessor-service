@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Attributes;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
@@ -15,7 +13,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
     [Authorize]
-    [Route("api/v1/certificate")]
+    [Route("api/v1/certificates")]
     [ValidateBadRequest]
     public class CertificateController : Controller
     {

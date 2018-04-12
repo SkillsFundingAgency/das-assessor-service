@@ -5,31 +5,37 @@ using System.Threading;
 using System.Threading.Tasks;
 using FizzWare.NBuilder;
 using FluentAssertions;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Handlers.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Query
 {
-    public class WhenGetCertificatesToBePrinted
+    public class WhenGetCertificates
     {
         private Mock<ICertificateRepository> _certificateRepository;
-        private List<Certificate> _result;
+        private List<CertificateResponse> _result;
 
         [SetUp]
         public void Arrange()
         {
-            var certificates = Builder<Certificate>.CreateListOfSize(10).Build().ToList();
+            MappingBootstrapper.Initialize();
+
+            var certificateData = JsonConvert.SerializeObject(Builder<CertificateData>.CreateNew().Build());
+            var certificates = Builder<Certificate>.CreateListOfSize(10)
+                .All().With(q => q.CertificateData = certificateData).Build().ToList();
 
             _certificateRepository = new Mock<ICertificateRepository>();
-            _certificateRepository.Setup(r => r.GetCertificatesToBePrinted()).Returns(Task.FromResult(certificates));
+            _certificateRepository.Setup(r => r.GetCertificates(It.IsAny<string>())).Returns(Task.FromResult(certificates));
 
             var getCertificatesToBePrintedHandler =
-                new GetCertificatesToBePrintedHandler(_certificateRepository.Object);
+                new GetCertificatesHandler(_certificateRepository.Object);
 
-            _result = getCertificatesToBePrintedHandler.Handle(new GetCertificatesToBePrintedRequest(), new CancellationToken())
+            _result = getCertificatesToBePrintedHandler.Handle(new GetCertificates(), new CancellationToken())
                 .Result;
         }
 

@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
         }
 
         private readonly By _searchField = By.Name("q");
-        private readonly By _searchButton = By.CssSelector(".search-submit");
+        private readonly By _searchButton = By.CssSelector(".gem-c-search__submit");
 
         internal SearchResultsPage EnterSearchTextAndSubmit(String searchText)
         {
