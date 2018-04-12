@@ -13,13 +13,13 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow
         private readonly IAggregateLogger _aggregateLogger;
         private readonly CoverLetterService _coverLetterService;
         private readonly IFACertificateService _ifaCertificateService;
-        private readonly CertificatesRepository _certificatesRepository;
+        private readonly ICertificatesRepository _certificatesRepository;
         private readonly NotificationService _notificationService;
 
         public Command(IAggregateLogger aggregateLogger,
             CoverLetterService coverLetterService,
             IFACertificateService ifaCertificateService,
-            CertificatesRepository certificatesRepository,
+            ICertificatesRepository certificatesRepository,
             NotificationService notificationService)
         {
             _aggregateLogger = aggregateLogger;
@@ -38,10 +38,13 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow
                 Environment.GetEnvironmentVariable("CustomSetting", EnvironmentVariableTarget.Process);
             _aggregateLogger.LogInfo($"Process Environment = {EnvironmentVariableTarget.Process}");
 
-            if (AnythingToProcess())
+            if (await AnythingToProcess())
             {
-                await _coverLetterService.Create();
-                await _ifaCertificateService.Create();
+                var batchNumber = await _certificatesRepository.GenerateBatchNumber();
+                var certificates = (await _certificatesRepository.GetCertificatesToBePrinted()).ToList();
+
+                await _coverLetterService.Create(batchNumber, certificates);
+                await _ifaCertificateService.Create(batchNumber, certificates);
 
                 await _notificationService.Send();
             }
@@ -51,9 +54,9 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow
             }
         }
 
-        private bool AnythingToProcess()
+        private async Task<bool> AnythingToProcess()
         {
-            return _certificatesRepository.GetData().Any();
+            return (await _certificatesRepository.GetCertificatesToBePrinted()).Any();
         }
     }
 }

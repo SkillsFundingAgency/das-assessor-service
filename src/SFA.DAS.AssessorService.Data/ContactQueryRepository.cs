@@ -31,12 +31,12 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<Contact> GetContact(string userName)
         {
             var contact = await _assessorDbContext.Organisations
-                .Include(organisation => organisation.Contacts)     
+                .Include(organisation => organisation.Contacts)
                 .Where(q => q.Status != OrganisationStatus.Deleted)
                 .SelectMany(q => q.Contacts)
                 .Where(q => q.Username == userName)
-                .FirstOrDefaultAsync();          
-            
+                .FirstOrDefaultAsync();
+
             return contact;
         }
 

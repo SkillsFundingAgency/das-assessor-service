@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Qu
             var getCertificatesToBePrintedHandler =
                 new GetCertificatesHandler(_certificateRepository.Object);
 
-            _result = getCertificatesToBePrintedHandler.Handle(new GetCertificates(), new CancellationToken())
+            _result = getCertificatesToBePrintedHandler.Handle(new GetCertificatesRequest(), new CancellationToken())
                 .Result;
         }
 

@@ -48,6 +48,16 @@ namespace SFA.DAS.AssessorService.Data
                 .ToListAsync();
         }
 
+        public async Task<int> GenerateBatchNumber()
+        {
+            if (await _context.Certificates.AnyAsync(q => q.BatchNumber != 0))
+            {
+                return await _context.Certificates.MaxAsync(q => q.BatchNumber) + 1;
+            }
+
+            return 1;
+        }
+
         public async Task<Certificate> Update(Certificate certificate, string username)
         {
             var cert = await GetCertificate(certificate.Id);

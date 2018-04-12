@@ -1,14 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.WindowsAzure.Storage.Blob;
-using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.AzureStorage;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Data;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Logger;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Sftp;
 using Spire.Doc;
-using CertificateData = SFA.DAS.AssessorService.Domain.JsonData.CertificateData;
 
 namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices
 {
@@ -17,64 +18,77 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices
         private readonly IAggregateLogger _aggregateLogger;
         private readonly FileTransferClient _fileTransferClient;
         private readonly DocumentTemplateDataStream _documentTemplateDataStream;
-        private readonly CertificatesRepository _certificatesRepository;
         private readonly InitialiseContainer _initialiseContainer;
 
         public CoverLetterService(
             IAggregateLogger aggregateLogger,
             FileTransferClient fileTransferClient,
             DocumentTemplateDataStream documentTemplateDataStream,
-            CertificatesRepository certificatesRepository,
             InitialiseContainer initialiseContainer)
         {
             _aggregateLogger = aggregateLogger;
             _fileTransferClient = fileTransferClient;
             _documentTemplateDataStream = documentTemplateDataStream;
-            _certificatesRepository = certificatesRepository;
             _initialiseContainer = initialiseContainer;
         }
 
-        public async Task Create()
+        public async Task Create(int batchNumber, IEnumerable<CertificateResponse> certificates)
         {
             var documentTemplateDataStream = await _documentTemplateDataStream.Get();
 
             await CleanMergedDocumentContainer();
 
-            foreach (var certificate in _certificatesRepository.GetData())
+            var certificateResponses = certificates as CertificateResponse[] ?? certificates.ToArray();
+            var groupedCertificates = certificateResponses.ToArray().GroupBy(
+                x => new
+                {
+                    x.CertificateData.ContactOrganisation,
+                    x.CertificateData.Department,
+                    x.CertificateData.ContactName,
+                    x.CertificateData.ContactPostCode
+                },
+                (key, group) => new
+                {
+                    key1 = key.ContactOrganisation,
+                    key2 = key.Department,
+                    key3 = key.ContactName,
+                    key4 = key.ContactPostCode,
+                    Result = group.ToList()
+                });
+
+            int sequenceNumber = 0;
+
+            foreach (var groupedCertificate in groupedCertificates)
             {
-                var uuid = Guid.NewGuid();
-                var pdfFileName = $"output-{uuid}.pdf";
+                sequenceNumber++;
+                var certificate = groupedCertificate.Result[0];
+                var wordDocumentFileName = $"IFA-Certificate-{GetMonthYear()}-{batchNumber.ToString().PadLeft(9,'0')}-{certificate.CertificateData.ContactOrganisation}-{sequenceNumber}.docx";
 
+                _aggregateLogger.LogInfo($"Processing Certificate for Cover Letter - {certificate.CertificateReference} - {wordDocumentFileName}");
+                var wordStream = await CreateWordDocumentStream(wordDocumentFileName, certificate.CertificateData, documentTemplateDataStream);
 
-                _aggregateLogger.LogInfo($"Processing Certificate for Cover Letter - {certificate.Id} - {uuid}");
-                var certificateData = JsonConvert.DeserializeObject<Domain.JsonData.CertificateData>(certificate.CertificateData);
+                _aggregateLogger.LogInfo($"converted certifcate data - Contact Name = {certificate.CertificateData.ContactName}");
 
-                _aggregateLogger.LogInfo($"converted certifcate data - Contact Name = {certificateData.ContactName}");
+                await _fileTransferClient.Send(wordStream, wordDocumentFileName);
 
-                var pdfStream = await CreatePdfStream(uuid.ToString(), certificateData, documentTemplateDataStream);
-
-                await _fileTransferClient.Send(pdfStream, pdfFileName);
-
-                pdfStream.Close();
+                wordStream.Close();
             }
 
             documentTemplateDataStream.Close();
         }
 
-        private async Task<MemoryStream> CreatePdfStream(string uuid, CertificateData certificateData, MemoryStream documentTemplateStream)
+        private async Task<MemoryStream> CreateWordDocumentStream(string mergedFileName, CertificateDataResponse certificateData, MemoryStream documentTemplateStream)
         {
-            var mergedFileName = $"output-{uuid}.docx";
-
             _aggregateLogger.LogInfo("Merging fields in docuument ...");
             var document = MergeFieldsInDocument(certificateData, documentTemplateStream);
             _aggregateLogger.LogInfo("Converting Document to PDF ...");
 
             await WriteCopyOfMergedDocumentToBlob(mergedFileName, document);
 
-            return ConvertDocumentToPdf(document);
+            return ConvertDocumentToStream(document);
         }
 
-        private Document MergeFieldsInDocument(CertificateData certificateData, MemoryStream documentTemplateStream)
+        private Document MergeFieldsInDocument(CertificateDataResponse certificateData, MemoryStream documentTemplateStream)
         {
             var document = new Document();
 
@@ -96,13 +110,13 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices
             return document;
         }
 
-        private MemoryStream ConvertDocumentToPdf(Document document)
+        private MemoryStream ConvertDocumentToStream(Document document)
         {
-            var pdfStream = new MemoryStream();
+            var wordDocxStream = new MemoryStream();
             _aggregateLogger.LogInfo("Saving document to stream ...");
-            document.SaveToStream(pdfStream, FileFormat.PDF);
+            document.SaveToStream(wordDocxStream, FileFormat.Docx);
             _aggregateLogger.LogInfo("Saved document to stream ...");
-            return pdfStream;
+            return wordDocxStream;
         }
 
         private async Task WriteCopyOfMergedDocumentToBlob(string mergedFileName, Document document)
@@ -128,6 +142,15 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices
             var container = await _initialiseContainer.Execute(containerName);
 
             Parallel.ForEach(container.ListBlobs(), x => ((CloudBlob)x).Delete());
+        }
+
+        private static string GetMonthYear()
+        {
+            var month = DateTime.Today.Month.ToString().PadLeft(2, '0');
+
+            var year = DateTime.Now.Year;
+            var monthYear = month + "-" + year;
+            return monthYear;
         }
     }
 }

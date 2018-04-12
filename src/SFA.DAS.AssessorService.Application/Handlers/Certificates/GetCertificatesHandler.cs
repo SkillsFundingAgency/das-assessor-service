@@ -9,7 +9,7 @@ using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 {
-    public class GetCertificatesHandler : IRequestHandler<GetCertificates, List<CertificateResponse>>
+    public class GetCertificatesHandler : IRequestHandler<GetCertificatesRequest, List<CertificateResponse>>
     {
         private readonly ICertificateRepository _certificateRepository;
 
@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             _certificateRepository = certificateRepository;
         }
 
-        public async Task<List<CertificateResponse>> Handle(GetCertificates request,
+        public async Task<List<CertificateResponse>> Handle(GetCertificatesRequest request,
             CancellationToken cancellationToken)
         {
             var certificates = await _certificateRepository.GetCertificates(request.Status);

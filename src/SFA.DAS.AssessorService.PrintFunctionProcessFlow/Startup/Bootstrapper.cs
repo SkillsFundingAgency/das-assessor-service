@@ -4,6 +4,7 @@ using System.Net.Http.Headers;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
 using Renci.SshNet;
+using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Data;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.InfrastructureServices;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Logger;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Settings;
@@ -13,9 +14,9 @@ using StructureMap;
 namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Startup
 {
     public class Bootstrapper
-    {     
+    {
         private IAggregateLogger _logger;
-       
+
         public void StartUp(TraceWriter functionLogger, ExecutionContext context)
         {
             _logger = new AggregateLogger(functionLogger, context);
@@ -36,9 +37,10 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Startup
                 configure.For<IAggregateLogger>().Use(_logger).Singleton();
                 configure.For<IWebConfiguration>().Use(configuration).Singleton();
                 configure.For<HttpClient>().Use<HttpClient>(httpClient);
+                configure.For<ICertificatesRepository>().Use<MockCertificatesRepository>().Singleton();
                 configure.For<SftpClient>().Use<SftpClient>("SftpClient",
                     c => new SftpClient(configuration.Sftp.RemoteHost, Convert.ToInt32(configuration.Sftp.Port), configuration.Sftp.Username, configuration.Sftp.Password));
-                
+
                 configure.AddRegistry<NotificationsRegistry>();
             });
         }
@@ -60,7 +62,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Startup
                 new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
             httpClient.DefaultRequestHeaders.Accept.Add(
                 new MediaTypeWithQualityHeaderValue("application/json"));
-          
+
             return httpClient;
         }
 

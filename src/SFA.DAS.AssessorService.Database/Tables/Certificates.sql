@@ -7,6 +7,7 @@
 	[DeletedBy] [nvarchar](30) NULL,
 	[CertificateReference] VARCHAR(50) NOT NULL,
 	[OrganisationId] [uniqueidentifier] NOT NULL,
+	[BatchNumber] [int] NULL,
 	[Status] [nvarchar](20) NOT NULL,
 	[UpdatedAt] [datetime2](7) NULL,
 	[UpdatedBy] [nvarchar](30) NULL, 

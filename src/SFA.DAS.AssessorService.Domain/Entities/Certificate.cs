@@ -17,6 +17,8 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int? CertificateReferenceId { get; set; }
 
+        public int BatchNumber { get; set; }
+
         public string CertificateData { get; set; }
 
         public string Status { get; set; }
