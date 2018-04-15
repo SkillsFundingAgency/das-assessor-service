@@ -14,5 +14,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<List<Certificate>> GetCertificates(string requestStatus);
         Task<Certificate> Update(Certificate certificate, string username);
         Task<int> GenerateBatchNumber();
+        Task UpdateStatus(string certificateReference, string status);
     }
 }

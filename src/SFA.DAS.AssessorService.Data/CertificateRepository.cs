@@ -52,7 +52,7 @@ namespace SFA.DAS.AssessorService.Data
         {
             if (await _context.Certificates.AnyAsync(q => q.BatchNumber != 0))
             {
-                return await _context.Certificates.MaxAsync(q => q.BatchNumber) + 1;
+                return await _context.Certificates.MaxAsync(q => q.BatchNumber.Value) + 1;
             }
 
             return 1;
@@ -69,6 +69,15 @@ namespace SFA.DAS.AssessorService.Data
             await _context.SaveChangesAsync();
 
             return cert;
+        }
+
+        public async Task UpdateStatus(string certificateReference, string status)
+        {
+            var certificate = await _context.Certificates.FirstAsync(q => q.CertificateReference == certificateReference);
+            certificate.Status = status;
+
+            _context.MarkAsModified(certificate);
+            await _context.SaveChangesAsync();
         }
     }
 }

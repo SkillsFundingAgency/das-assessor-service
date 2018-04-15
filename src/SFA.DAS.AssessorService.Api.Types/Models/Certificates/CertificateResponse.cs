@@ -3,7 +3,7 @@
 namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
 {
     public class CertificateResponse
-    {    
+    {
         public long Uln { get; set; }
         public int StandardCode { get; set; }
         public int ProviderUkPrn { get; set; }
@@ -11,7 +11,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
 
         public string CertificateReference { get; set; }
 
-        //public int? CertificateReferenceId { get; set; }
+        public string BatchNumber { get; set; }
 
         public CertificateDataResponse CertificateData { get; set; }
 
