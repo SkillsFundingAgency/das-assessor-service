@@ -19,5 +19,5 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
         {
             await _certificateRepository.UpdateStatuses(updateCertificateStatusRequest);
         }
-    }
+    } 
 }

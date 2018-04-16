@@ -78,7 +78,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 GivenNames = result.SearchResults.First().GivenNames,
                 FamilyName = result.SearchResults.First().FamilyName,
                 CertificateReference = result.SearchResults.First().CertificateReference,
-                OverallGrade = result.SearchResults.First().OverallGrade
+                OverallGrade = result.SearchResults.First().OverallGrade,
+                Level = result.SearchResults.First().Level
             };
 
             _contextAccessor.HttpContext.Session.Put("SelectedStandard", selectedStandardViewModel);
@@ -134,7 +135,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 GivenNames = selected.GivenNames,
                 FamilyName = selected.FamilyName,
                 CertificateReference = selected.CertificateReference,
-                OverallGrade = selected.OverallGrade
+                OverallGrade = selected.OverallGrade,
+                Level = selected.Level
             };
 
             _contextAccessor.HttpContext.Session.Put("SelectedStandard", selectedStandardViewModel);

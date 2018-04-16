@@ -15,5 +15,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public DateTime AchDate { get; set; }
         public string OutGrade { get; set; }
         public string CertificateReference { get; set; }
+        public int Level { get; set; }
     }
 }
