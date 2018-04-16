@@ -38,6 +38,11 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Data
             return generateDummyData == "true" ? certificates.Union(GenerateDummyData()) : certificates;
         }
 
+        public Task ChangeStatusToPrinted(string batchNumber, IEnumerable<CertificateResponse> responses)
+        {
+            return Task.CompletedTask;
+        }
+
         public Task<int> GenerateBatchNumber()
         {
             return Task.FromResult(1);
@@ -174,7 +179,6 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Data
                     ContactAddLine4 = "Birmingham",
                     ContactPostCode = "B34 1JK"
                 };
-
 
             certificates[5].CertificateData =
                 new CertificateDataResponse

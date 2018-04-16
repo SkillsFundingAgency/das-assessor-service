@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
+using CertificateStatus = SFA.DAS.AssessorService.Domain.Consts.CertificateStatus;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -71,12 +72,20 @@ namespace SFA.DAS.AssessorService.Data
             return cert;
         }
 
-        public async Task UpdateStatus(string certificateReference, string status)
+        public async Task UpdateStatuses(UpdateCertificateStatusRequest updateCertificateStatusRequest)
         {
-            var certificate = await _context.Certificates.FirstAsync(q => q.CertificateReference == certificateReference);
-            certificate.Status = status;
+            var cerficates =
+                 _context.Certificates.Where(certificate => updateCertificateStatusRequest.CertificateStatuses
+                    .Select(certificateStatus => certificateStatus.CertificateReference)
+                    .Contains(certificate.CertificateReference));
 
-            _context.MarkAsModified(certificate);
+            foreach (var certificate in cerficates)
+            {
+                certificate.Status = CertificateStatus.Printed;
+            }
+
+
+            _context.MarkAsModified(cerficates);
             await _context.SaveChangesAsync();
         }
     }

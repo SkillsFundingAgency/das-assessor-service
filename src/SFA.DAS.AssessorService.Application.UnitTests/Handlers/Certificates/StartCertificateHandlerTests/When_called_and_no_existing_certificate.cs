@@ -77,7 +77,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
                 c.ProviderUkPrn == 12345678 &&
                 c.OrganisationId == _organisationId && 
                 c.CreatedBy == "user" && 
-                c.Status == CertificateStatus.Draft &&
+                c.Status == Domain.Consts.CertificateStatus.Draft &&
                 c.CertificateReference == "")));
         }
 

@@ -57,7 +57,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                     OrganisationId = organisation.Id,
                     CreatedBy = request.Username,
                     CertificateData = JsonConvert.SerializeObject(certData),
-                    Status = CertificateStatus.Draft,
+                    Status = Domain.Consts.CertificateStatus.Draft,
                     CertificateReference = ""
                 });
 

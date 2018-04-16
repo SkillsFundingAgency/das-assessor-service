@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Extensions;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.InfrastructureServices;
@@ -51,6 +53,26 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Data
                 "/api/v1/certificates/generatebatchnumber");
 
             return response.Deserialise<int>();
+        }
+
+        public async Task ChangeStatusToPrinted(string batchNumber, IEnumerable<CertificateResponse> responses)
+        {
+            var certificateStatuses = responses.Select(
+                q => new CertificateStatus
+                {
+                    CertificateReference = q.CertificateReference,
+                    Status = Domain.Consts.CertificateStatus.Printed
+                }).ToList();
+
+            var updateCertificateStatusRequest = new UpdateCertificateStatusRequest
+            {
+                CertificateStatuses = certificateStatuses
+            };
+
+            var jsonData = JsonConvert.SerializeObject(updateCertificateStatusRequest);
+
+            var responseMessage = await _httpClient.PutAsJsonAsync(
+                "/api/v1/certificates/{batchNumber}", updateCertificateStatusRequest);
         }
     }
 }
