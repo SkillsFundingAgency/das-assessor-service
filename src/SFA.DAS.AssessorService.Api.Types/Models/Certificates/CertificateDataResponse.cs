@@ -20,7 +20,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
         public string ContactPostCode { get; set; }
         public string Registration { get; set; }
         public DateTime LearningStartDate { get; set; }
-        public string AchievementOutcome { get; set; }
         public DateTime? AchievementDate { get; set; }
         public string CourseOption { get; set; }
         public string OverallGrade { get; set; }

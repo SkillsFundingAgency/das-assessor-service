@@ -10,8 +10,10 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Settings
 
         [JsonRequired] public ClientApiAuthentication ClientApiAuthentication { get; set; }
 
-        [JsonRequired] public SftpSettings Sftp { get; set; }
+        [JsonRequired] public CertificateDetails CertificateDetails { get; set; }
 
+        [JsonRequired] public SftpSettings Sftp { get; set; }
+   
         [JsonRequired] public string SqlConnectionString { get; set; }
     }
 }

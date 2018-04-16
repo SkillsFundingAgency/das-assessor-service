@@ -37,7 +37,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Startup
                 configure.For<IAggregateLogger>().Use(_logger).Singleton();
                 configure.For<IWebConfiguration>().Use(configuration).Singleton();
                 configure.For<HttpClient>().Use<HttpClient>(httpClient);
-                configure.For<ICertificatesRepository>().Use<MockCertificatesRepository>().Singleton();
+                configure.For<ICertificatesRepository>().Use<CertificatesRepository>().Singleton();
                 configure.For<SftpClient>().Use<SftpClient>("SftpClient",
                     c => new SftpClient(configuration.Sftp.RemoteHost, Convert.ToInt32(configuration.Sftp.Port), configuration.Sftp.Username, configuration.Sftp.Password));
 
