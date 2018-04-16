@@ -13,7 +13,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
     [Authorize]
-    [Route("api/v1/certificates/[action]")]
+    [Route("api/v1/certificates")]
     [ValidateBadRequest]
     public class CertificateController : Controller
     {
@@ -52,4 +52,4 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok();
         }
     }
-}
+} 

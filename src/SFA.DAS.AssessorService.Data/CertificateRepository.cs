@@ -34,19 +34,32 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<Certificate> GetCertificate(long uln, int standardCode)
         {
-            return await _context.Certificates.SingleOrDefaultAsync(c => c.Uln == uln && c.StandardCode == standardCode);
+            return await _context.Certificates.SingleOrDefaultAsync(c =>
+                c.Uln == uln && c.StandardCode == standardCode);
         }
 
         public async Task<List<Certificate>> GetCompletedCertificatesFor(long uln)
         {
-            return await _context.Certificates.Where(c => c.Uln == uln && (c.Status == CertificateStatus.Printed || c.Status == CertificateStatus.Submitted)).ToListAsync();
+            return await _context.Certificates.Where(c =>
+                    c.Uln == uln && (c.Status == CertificateStatus.Printed || c.Status == CertificateStatus.Submitted))
+                .ToListAsync();
         }
 
         public async Task<List<Certificate>> GetCertificates(string status)
         {
-            return await _context.Certificates
-                .Include(q => q.Organisation)
-                .ToListAsync();
+            if (string.IsNullOrEmpty(status))
+            {
+                return await _context.Certificates
+                    .Include(q => q.Organisation)
+                    .ToListAsync();
+            }
+            else
+            {
+                return await _context.Certificates
+                    .Include(q => q.Organisation)
+                    .Where(q => q.Status == status)
+                    .ToListAsync();
+            }
         }
 
         public async Task<int> GenerateBatchNumber()
@@ -74,6 +87,24 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task UpdateStatuses(UpdateCertificateStatusRequest updateCertificateStatusRequest)
         {
+            var toBePrintedDate = DateTime.Now;
+
+            //foreach (var updatedCertificate in updateCertificateStatusRequest.CertificateStatuses)
+            //{
+            //    var certificate = await _context.Certificates.FirstAsync(q =>
+            //        q.CertificateReference == updatedCertificate.CertificateReference);
+            //    certificate.Status = CertificateStatus.Printed;
+            //    certificate.ToBePrinted = toBePrintedDate;
+            //    //_context.MarkAsModified(certificate);
+
+            //    await _context.SaveChangesAsync();
+
+
+            //    //< Certificate > (q => q.)
+            //    //    certificate.Status = CertificateStatus.Printed;
+            //    //    _context.MarkAsModified(certificate);
+            //    //}
+
             var cerficates =
                  _context.Certificates.Where(certificate => updateCertificateStatusRequest.CertificateStatuses
                     .Select(certificateStatus => certificateStatus.CertificateReference)
@@ -82,11 +113,10 @@ namespace SFA.DAS.AssessorService.Data
             foreach (var certificate in cerficates)
             {
                 certificate.Status = CertificateStatus.Printed;
+                //_context.MarkAsModified(certificate);
             }
 
-
-            _context.MarkAsModified(cerficates);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
         }
     }
 }

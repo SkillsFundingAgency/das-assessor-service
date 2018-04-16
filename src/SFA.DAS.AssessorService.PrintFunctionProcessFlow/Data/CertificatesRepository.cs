@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Data
         public async Task<IEnumerable<CertificateResponse>> GetCertificatesToBePrinted()
         {
             var response = await _httpClient.GetAsync(
-                "/api/v1/certificates");
+                "/api/v1/certificates?status=Submitted");
 
             var certificates = response.Deserialise<List<CertificateResponse>>();
             if (response.IsSuccessStatusCode)
