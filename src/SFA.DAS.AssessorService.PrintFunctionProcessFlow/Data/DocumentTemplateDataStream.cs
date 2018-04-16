@@ -1,18 +1,17 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
-using Microsoft.WindowsAzure.Storage.Blob;
-using SFA.DAS.AssessorService.PrintFunctionProcessFlow.AzureStorage;
+using SFA.DAS.AssessorService.PrintFunctionProcessFlow.InfrastructureServices;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Logger;
 
 namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Data
 {
     public class DocumentTemplateDataStream
     {
-        private readonly InitialiseContainer _initialiseContainer;
+        private readonly BlobContainerHelper _initialiseContainer;
         private readonly IAggregateLogger _aggregateLogger;
-        private const string TemplateFile = "ReadTest.docx";
+        private const string TemplateFile = "IFATemplateDocument.docx";
 
-        public DocumentTemplateDataStream(InitialiseContainer initialiseContainer,
+        public DocumentTemplateDataStream(BlobContainerHelper initialiseContainer,
             IAggregateLogger aggregateLogger)
         {
             _initialiseContainer = initialiseContainer;
@@ -23,11 +22,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Data
         {
             var containerName = "printfunctionflow";
 
-            var container = await _initialiseContainer.Execute(containerName);
-            if (!container.GetBlockBlobReference(TemplateFile).Exists())
-            {
-                CreateBlob(container);
-            }
+            var container = await _initialiseContainer.GetContainer(containerName);
 
             var blob = container.GetBlockBlobReference(TemplateFile);
             var memoryStream = new MemoryStream();
@@ -36,15 +31,6 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Data
             _aggregateLogger.LogInfo($"Downloaded memory stream length = {blob.Properties.Length}");
 
             return memoryStream;
-        }
-
-        private static void CreateBlob(CloudBlobContainer container)
-        {
-            var blob = container.GetBlockBlobReference(TemplateFile);
-            using (Stream file = System.IO.File.OpenRead(TemplateFile))
-            {
-                blob.UploadFromStream(file);
-            }
         }
     }
 }

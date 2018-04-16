@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
-using SFA.DAS.AssessorService.PrintFunctionProcessFlow.AzureStorage;
+using SFA.DAS.AssessorService.PrintFunctionProcessFlow.InfrastructureServices;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Logger;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Settings;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Sftp;
@@ -17,14 +17,14 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices
 {
     public class IFACertificateService
     {
-        private readonly InitialiseContainer _initialiseContainer;
+        private readonly BlobContainerHelper _initialiseContainer;
         private readonly IAggregateLogger _aggregateLogger;
         private readonly FileTransferClient _fileTransferClient;
         private readonly IWebConfiguration _webConfiguration;
         private IEnumerable<CertificateResponse> _certificates;
 
         public IFACertificateService(
-            InitialiseContainer initialiseContainer,
+            BlobContainerHelper initialiseContainer,
             IAggregateLogger aggregateLogger,
             FileTransferClient fileTransferClient,
             IWebConfiguration webConfiguration)
@@ -230,7 +230,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices
             memoryStream.Position = 0;
 
             var containerName = "mergeddocuments";
-            var container = await _initialiseContainer.Execute(containerName);
+            var container = await _initialiseContainer.GetContainer(containerName);
 
             var blob = container.GetBlockBlobReference(mergedFileName);
             blob.UploadFromStream(memoryStream);

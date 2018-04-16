@@ -5,8 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.WindowsAzure.Storage.Blob;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
-using SFA.DAS.AssessorService.PrintFunctionProcessFlow.AzureStorage;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Data;
+using SFA.DAS.AssessorService.PrintFunctionProcessFlow.InfrastructureServices;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Logger;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Sftp;
 using Spire.Doc;
@@ -18,13 +18,13 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices
         private readonly IAggregateLogger _aggregateLogger;
         private readonly FileTransferClient _fileTransferClient;
         private readonly DocumentTemplateDataStream _documentTemplateDataStream;
-        private readonly InitialiseContainer _initialiseContainer;
+        private readonly BlobContainerHelper _initialiseContainer;
 
         public CoverLetterService(
             IAggregateLogger aggregateLogger,
             FileTransferClient fileTransferClient,
             DocumentTemplateDataStream documentTemplateDataStream,
-            InitialiseContainer initialiseContainer)
+            BlobContainerHelper initialiseContainer)
         {
             _aggregateLogger = aggregateLogger;
             _fileTransferClient = fileTransferClient;
@@ -127,7 +127,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices
             memoryStream.Position = 0;
 
             var containerName = "mergeddocuments";
-            var container = await _initialiseContainer.Execute(containerName);
+            var container = await _initialiseContainer.GetContainer(containerName);
 
             var blob = container.GetBlockBlobReference(mergedFileName);
             blob.UploadFromStream(memoryStream);
@@ -139,7 +139,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices
         private async Task CleanMergedDocumentContainer()
         {
             var containerName = "mergeddocuments";
-            var container = await _initialiseContainer.Execute(containerName);
+            var container = await _initialiseContainer.GetContainer(containerName);
 
             Parallel.ForEach(container.ListBlobs(), x => ((CloudBlob)x).Delete());
         }
