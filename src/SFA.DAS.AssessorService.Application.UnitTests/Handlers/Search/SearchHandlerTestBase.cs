@@ -26,9 +26,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                     new StandardOrganisationSummary {StandardCode = "13"}
                 });
             assessmentOrgsApiClient.Setup(c => c.GetStandard("12"))
-                .ReturnsAsync(new Standard {Title = "Standard Name 12"});
+                .ReturnsAsync(new Standard {Title = "Standard Name 12", Level = 2});
             assessmentOrgsApiClient.Setup(c => c.GetStandard("13"))
-                .ReturnsAsync(new Standard {Title = "Standard Name 13"});
+                .ReturnsAsync(new Standard {Title = "Standard Name 13", Level = 3});
 
             var orgQueryRepo = new Mock<IOrganisationQueryRepository>();
             orgQueryRepo.Setup(r => r.GetByUkPrn(12345))
