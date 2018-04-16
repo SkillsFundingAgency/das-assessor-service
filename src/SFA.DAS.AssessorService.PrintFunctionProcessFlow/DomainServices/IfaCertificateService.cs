@@ -223,15 +223,6 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices
             }
         }
 
-        private static string GetMonthYear(string monthFormat)
-        {
-            var month = DateTime.Today.ToString(monthFormat, new CultureInfo("en-GB"));
-
-            var year = DateTime.Now.Year;
-            var monthYear = month + " " + year;
-            return monthYear;
-        }
-
         private async Task WriteCopyOfMergedDocumentToBlob(string mergedFileName, MemoryStream memoryStream)
         {
             memoryStream.Position = 0;
@@ -243,6 +234,15 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices
             blob.UploadFromStream(memoryStream);
 
             memoryStream.Position = 0;
+        }
+
+        private static string GetMonthYear(string monthFormat)
+        {
+            var month = DateTime.Today.ToString(monthFormat, new CultureInfo("en-GB"));
+
+            var year = DateTime.Now.Year;
+            var monthYear = month + " " + year;
+            return monthYear;
         }
 
         private static string GetMonthYear()
