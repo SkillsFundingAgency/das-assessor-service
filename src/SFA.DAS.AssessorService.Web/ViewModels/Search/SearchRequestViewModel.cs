@@ -25,5 +25,6 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Search
         public string StdCode { get; set; } 
         public string OverallGrade { get; set; }
         public string CertificateReference { get; set; }
+        public string Level { get; set; }
     }
 }
