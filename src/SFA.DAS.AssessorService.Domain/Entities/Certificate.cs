@@ -17,11 +17,13 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int? CertificateReferenceId { get; set; }
 
-        public int BatchNumber { get; set; }
+        public int? BatchNumber { get; set; }
 
         public string CertificateData { get; set; }
 
         public string Status { get; set; }
+
+        public DateTime ToBePrinted { get; set; }
 
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }

@@ -41,5 +41,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             return Ok(await _mediator.Send(certificate));
         }
+
+        [HttpPut(Name = "UpdateStatus")]
+        [SwaggerResponse((int)HttpStatusCode.OK)]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> UpdateStatus([FromBody] UpdateCertificateStatusRequest updateCertificateStatusRequest)
+        {
+            await _mediator.Send(updateCertificateStatusRequest);
+            return Ok();
+        }
     }
 }
