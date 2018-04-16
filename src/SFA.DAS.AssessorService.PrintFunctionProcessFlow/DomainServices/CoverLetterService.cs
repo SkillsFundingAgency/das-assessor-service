@@ -56,7 +56,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices
                     Result = group.ToList()
                 });
 
-            int sequenceNumber = 0;
+            var sequenceNumber = 0;
 
             foreach (var groupedCertificate in groupedCertificates)
             {
