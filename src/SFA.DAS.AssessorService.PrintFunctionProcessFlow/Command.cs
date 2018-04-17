@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow
         {
             _aggregateLogger.LogInfo("Print Function Flow Started");
 
-            _aggregateLogger.LogInfo("101 Azure Function Demo - Accessing Environment variables");
+            _aggregateLogger.LogInfo("Accessing Environment variables");
             var customSetting =
                 Environment.GetEnvironmentVariable("CustomSetting", EnvironmentVariableTarget.Process);
             _aggregateLogger.LogInfo($"Process Environment = {EnvironmentVariableTarget.Process}");
@@ -47,6 +47,8 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow
                 await _ifaCertificateService.Create(batchNumber, certificates);
 
                 await _notificationService.Send();
+
+                await _certificatesRepository.ChangeStatusToPrinted(batchNumber.ToString(), certificates);
             }
             else
             {

@@ -5,32 +5,34 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
-using SFA.DAS.AssessorService.PrintFunctionProcessFlow.AzureStorage;
-using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Data;
+using SFA.DAS.AssessorService.PrintFunctionProcessFlow.InfrastructureServices;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Logger;
+using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Settings;
 using SFA.DAS.AssessorService.PrintFunctionProcessFlow.Sftp;
 
 namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices
 {
     public class IFACertificateService
     {
-        private readonly InitialiseContainer _initialiseContainer;
+        private readonly BlobContainerHelper _initialiseContainer;
         private readonly IAggregateLogger _aggregateLogger;
         private readonly FileTransferClient _fileTransferClient;
+        private readonly IWebConfiguration _webConfiguration;
         private IEnumerable<CertificateResponse> _certificates;
 
         public IFACertificateService(
-            InitialiseContainer initialiseContainer,
+            BlobContainerHelper initialiseContainer,
             IAggregateLogger aggregateLogger,
-            FileTransferClient fileTransferClient)
+            FileTransferClient fileTransferClient,
+            IWebConfiguration webConfiguration)
         {
             _initialiseContainer = initialiseContainer;
             _aggregateLogger = aggregateLogger;
             _fileTransferClient = fileTransferClient;
+            _webConfiguration = webConfiguration;
         }
 
         public async Task Create(int batchNumber, IEnumerable<CertificateResponse> certificates)
@@ -171,27 +173,27 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices
 
                 var learnerName = $"{certificateData.LearnerGivenNames} {certificateData.LearnerFamilyName}";
                 if (certificateData.ContactName != null)
-                    worksheet.Cells[row, 2].Value = learnerName;
+                    worksheet.Cells[row, 2].Value = learnerName.ToUpper();
 
                 if (certificateData.StandardName != null)
-                    worksheet.Cells[row, 3].Value = certificateData.StandardName;
+                    worksheet.Cells[row, 3].Value = certificateData.StandardName.ToUpper();
 
                 if (certificateData.CourseOption != null)
-                    worksheet.Cells[row, 4].Value = certificateData.CourseOption;
+                    worksheet.Cells[row, 4].Value = certificateData.CourseOption.ToUpper();
 
-                worksheet.Cells[row, 5].Value = $"Level{certificateData.StandardLevel}";
-
-                if (certificateData.AchievementOutcome != null)
-                    worksheet.Cells[row, 6].Value = certificateData.AchievementOutcome;
+                worksheet.Cells[row, 5].Value = $"Level{certificateData.StandardLevel}".ToUpper();
 
                 if (certificateData.OverallGrade != null)
-                    worksheet.Cells[row, 7].Value = certificateData.OverallGrade;
+                    worksheet.Cells[row, 6].Value = "achieving a " + certificateData.OverallGrade.ToUpper();
+
+                if (certificateData.OverallGrade != null)
+                    worksheet.Cells[row, 7].Value = certificateData.OverallGrade.ToUpper();
 
                 if (certificate.CertificateReference != null)
-                    worksheet.Cells[row, 8].Value = certificate.CertificateReference;
+                    worksheet.Cells[row, 8].Value = certificate.CertificateReference.PadLeft(8, '0');
 
-                worksheet.Cells[row, 9].Value = Environment.GetEnvironmentVariable("ChairName", EnvironmentVariableTarget.Process);
-                worksheet.Cells[row, 10].Value = Environment.GetEnvironmentVariable("ChairTitle", EnvironmentVariableTarget.Process);
+                worksheet.Cells[row, 9].Value = _webConfiguration.CertificateDetails.ChairName;
+                worksheet.Cells[row, 10].Value = _webConfiguration.CertificateDetails.ChairTitle;
 
                 if (certificateData.ContactOrganisation != null)
                     worksheet.Cells[row, 11].Value = certificateData.ContactOrganisation;
@@ -228,7 +230,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.DomainServices
             memoryStream.Position = 0;
 
             var containerName = "mergeddocuments";
-            var container = await _initialiseContainer.Execute(containerName);
+            var container = await _initialiseContainer.GetContainer(containerName);
 
             var blob = container.GetBlockBlobReference(mergedFileName);
             blob.UploadFromStream(memoryStream);

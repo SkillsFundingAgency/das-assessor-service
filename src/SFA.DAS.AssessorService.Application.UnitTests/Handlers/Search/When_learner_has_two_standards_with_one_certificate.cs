@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                 {
                     new Certificate {CertificateReference = "00010001", StandardCode = 12,
                         CertificateData =
-                            JsonConvert.SerializeObject(new CertificateData {AchievementOutcome = "Distinction"})}
+                            JsonConvert.SerializeObject(new CertificateData {})}
                 });
 
             IlrRepository.Setup(r => r.Search(It.IsAny<SearchRequest>()))
