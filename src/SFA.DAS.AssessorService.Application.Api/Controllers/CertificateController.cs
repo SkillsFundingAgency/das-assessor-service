@@ -14,6 +14,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
     [Authorize]
     [ValidateBadRequest]
+    [Route("api/v1/certificates/")]
     public class CertificateController : Controller
     {
         private readonly IMediator _mediator;
@@ -23,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpPost("api/v1/certificates/start", Name = "Start")]
+        [HttpPost("start", Name = "Start")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Certificate))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
@@ -32,7 +33,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(await _mediator.Send(request));
         }
 
-        [HttpPut("api/v1/certificates/update", Name = "Update")]
+        [HttpPut("update", Name = "Update")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Certificate))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
@@ -41,7 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(await _mediator.Send(certificate));
         }
 
-        [HttpPut("api/v1/certificates/{batchNumber}", Name = "UpdateStatus")]
+        [HttpPut("{batchNumber}", Name = "UpdateStatus")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Certificate))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
