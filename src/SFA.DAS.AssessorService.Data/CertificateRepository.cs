@@ -64,7 +64,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<int> GenerateBatchNumber()
         {
-            if (await _context.Certificates.AnyAsync(q => q.BatchNumber != 0))
+            if (await _context.Certificates.AnyAsync(q => q.BatchNumber != 0 && q.BatchNumber.HasValue))
             {
                 return await _context.Certificates.MaxAsync(q => q.BatchNumber.Value) + 1;
             }
