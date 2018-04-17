@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
 using NLog;
@@ -19,13 +20,15 @@ namespace SFA.DAS.AssessorService.Functions.Logger
             _functionLogger = functionLogger;
             _executionContext = executionContext;
 
-            LogManager.Configuration = new XmlLoggingConfiguration($@"{executionContext.FunctionAppDirectory}\nlog.config");
+            var nLogFileName = GetNLogConfigurationFileName(source);
+
+            LogManager.Configuration = new XmlLoggingConfiguration($@"{executionContext.FunctionAppDirectory}\{nLogFileName}.config");
             _redisLogger = LogManager.GetCurrentClassLogger();
 
         }
 
         public void LogError(string message, Exception ex)
-        {         
+        {
             _functionLogger.Error(message, ex, _source);
             _redisLogger.Error(ex, message);
         }
@@ -34,6 +37,12 @@ namespace SFA.DAS.AssessorService.Functions.Logger
         {
             _functionLogger.Info(message, _source);
             _redisLogger.Info(message);
+        }
+
+        private static string GetNLogConfigurationFileName(string source)
+        {
+            var nLogFileName = source.Split('-').Last().Trim() + ".nlog";
+            return nLogFileName;
         }
     }
 }
