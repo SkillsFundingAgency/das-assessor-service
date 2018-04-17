@@ -1,31 +1,29 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 using Renci.SshNet;
-using Renci.SshNet.Async;
+using SFA.DAS.AssessorService.EpaoImporter.Logger;
 using SFA.DAS.AssessorService.EpaoImporter.Settings;
 
 namespace SFA.DAS.AssessorService.EpaoImporter.Sftp
 {
-    public class FileTransferClient : IFileTransferClient
+    public class MockFileTransferClient : IFileTransferClient
     {
         private readonly SftpClient _sftpClient;
+        private readonly IAggregateLogger _logger;
         private readonly IWebConfiguration _webConfiguration;
 
-        public FileTransferClient(SftpClient sftpClient,
+        public MockFileTransferClient(SftpClient sftpClient,
+            IAggregateLogger logger,
             IWebConfiguration webConfiguration)
         {
             _sftpClient = sftpClient;
+            _logger = logger;
             _webConfiguration = webConfiguration;
         }
 
         public async Task Send(MemoryStream memoryStream, string fileName)
-        {
-            _sftpClient.Connect();
-
-            memoryStream.Position = 0; // ensure memory stream is set to begining of stream
-          
-            await _sftpClient.UploadAsync(memoryStream, $"{_webConfiguration.Sftp.UploadDirectory}/{fileName}");
-            _sftpClient.Disconnect();
+        { 
+            _logger.LogInfo("Sending file - {fileName} through sftp");
         }
     }
 }

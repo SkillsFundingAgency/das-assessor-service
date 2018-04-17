@@ -19,14 +19,14 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
     {
         private readonly BlobContainerHelper _initialiseContainer;
         private readonly IAggregateLogger _aggregateLogger;
-        private readonly FileTransferClient _fileTransferClient;
+        private readonly IFileTransferClient _fileTransferClient;
         private readonly IWebConfiguration _webConfiguration;
         private IEnumerable<CertificateResponse> _certificates;
 
         public IFACertificateService(
             BlobContainerHelper initialiseContainer,
             IAggregateLogger aggregateLogger,
-            FileTransferClient fileTransferClient,
+            IFileTransferClient fileTransferClient,
             IWebConfiguration webConfiguration)
         {
             _initialiseContainer = initialiseContainer;

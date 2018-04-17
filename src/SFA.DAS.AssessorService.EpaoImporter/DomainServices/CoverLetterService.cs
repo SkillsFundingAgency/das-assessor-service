@@ -16,13 +16,13 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
     public class CoverLetterService
     {
         private readonly IAggregateLogger _aggregateLogger;
-        private readonly FileTransferClient _fileTransferClient;
+        private readonly IFileTransferClient _fileTransferClient;
         private readonly DocumentTemplateDataStream _documentTemplateDataStream;
         private readonly BlobContainerHelper _initialiseContainer;
 
         public CoverLetterService(
             IAggregateLogger aggregateLogger,
-            FileTransferClient fileTransferClient,
+            IFileTransferClient fileTransferClient,
             DocumentTemplateDataStream documentTemplateDataStream,
             BlobContainerHelper initialiseContainer)
         {

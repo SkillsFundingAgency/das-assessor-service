@@ -6,6 +6,7 @@ using SFA.DAS.AssessorService.EpaoImporter.Data;
 using SFA.DAS.AssessorService.EpaoImporter.InfrastructureServices;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
 using SFA.DAS.AssessorService.EpaoImporter.Settings;
+using SFA.DAS.AssessorService.EpaoImporter.Sftp;
 using SFA.DAS.AssessorService.EpaoImporter.Startup.DependencyResolution;
 using StructureMap;
 
@@ -32,8 +33,9 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Startup
 
                 configure.For<IAggregateLogger>().Use(_logger).Singleton();
                 configure.For<IWebConfiguration>().Use(configuration).Singleton();
-               
-                configure.For<ICertificatesRepository>().Use<CertificatesRepository>().Singleton();
+
+                configure.For<IFileTransferClient>().Use<MockFileTransferClient>();
+                configure.For<ICertificatesRepository>().Use<MockCertificatesRepository>().Singleton();
                 configure.For<SftpClient>().Use<SftpClient>("SftpClient",
                     c => new SftpClient(configuration.Sftp.RemoteHost, Convert.ToInt32(configuration.Sftp.Port), configuration.Sftp.Username, configuration.Sftp.Password));
 

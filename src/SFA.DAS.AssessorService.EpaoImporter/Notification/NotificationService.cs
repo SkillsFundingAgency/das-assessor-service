@@ -23,9 +23,11 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Notification
             var personalisation = new Dictionary<string, string>
                 {{"name", "john coxhead"}, {"day ", "1"}, {"day of week", "Monday"}, {"colour", "blue"}};
 
-            var email = new Email
+            
+             var email = new Email
             {
-                RecipientsAddress = _webConfiguration.EmailTemplateSettings.RecipientsAddress,
+                //RecipientsAddress = _webConfiguration.EmailTemplateSettings.RecipientsAddress,
+                RecipientsAddress = "jcoxhead@hotmail.com",
                 TemplateId = _webConfiguration.EmailTemplateSettings.TemplateId,
                 ReplyToAddress = _webConfiguration.EmailTemplateSettings.ReplyToAddress,
                 Subject = _webConfiguration.EmailTemplateSettings.Subject,
