@@ -165,8 +165,6 @@ namespace SFA.DAS.AssessorService.DocumentConversion.Prototype.Services
 
                 worksheet.Cells[row, 5].Value = $"Level{certificateData.StandardLevel}";
 
-                if (certificateData.AchievementOutcome != null)
-                    worksheet.Cells[row, 6].Value = certificateData.AchievementOutcome;
 
                 if (certificateData.OverallGrade != null)
                     worksheet.Cells[row, 7].Value = certificateData.OverallGrade;

@@ -38,6 +38,11 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Data
             return generateDummyData == "true" ? certificates.Union(GenerateDummyData()) : certificates;
         }
 
+        public Task ChangeStatusToPrinted(string batchNumber, IEnumerable<CertificateResponse> responses)
+        {
+            return Task.CompletedTask;
+        }
+
         public Task<int> GenerateBatchNumber()
         {
             return Task.FromResult(1);
@@ -76,7 +81,6 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Data
                     CourseOption = "SPECIFIC OPTION",
                     StandardLevel = 2,
                     Department = "Human Resources",
-                    AchievementOutcome = "acheiving a",
                     OverallGrade = "MERIT",
                     ContactName = "Mr James Green",
                     ContactOrganisation = "Employer 1",
@@ -97,7 +101,6 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Data
                     CourseOption = "SPECIFIC OPTION",
                     StandardLevel = 2,
                     Department = "Human Resources",
-                    AchievementOutcome = "acheiving a",
                     OverallGrade = "MERIT",
                     ContactName = "Mr James Green",
                     ContactOrganisation = "Employer 2",
@@ -118,7 +121,6 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Data
                     StandardName = "FIRE EMERGENCY & SECURITY SYSTEMS TECHNICIAN",
                     CourseOption = "",
                     StandardLevel = 2,
-                    AchievementOutcome = "acheiving a",
                     OverallGrade = "MERIT",
                     ContactName = "Mr James Green",
                     ContactOrganisation = "Employer 3",
@@ -141,7 +143,6 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Data
                     StandardName = "FIRE EMERGENCY & SECURITY SYSTEMS TECHNICIAN",
                     CourseOption = "",
                     StandardLevel = 2,
-                    AchievementOutcome = "acheiving a",
                     OverallGrade = "MERIT",
                     ContactName = "Miss Millicent Martin",
                     ContactOrganisation = "Employer 2",
@@ -163,7 +164,6 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Data
                     StandardName = "FIRE EMERGENCY & SECURITY SYSTEMS TECHNICIAN",
                     CourseOption = "",
                     StandardLevel = 2,
-                    AchievementOutcome = "acheiving a",
                     OverallGrade = "MERIT",
                     ContactName = "Susan Smith",
                     ContactOrganisation = "Employer 1",
@@ -175,7 +175,6 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Data
                     ContactPostCode = "B34 1JK"
                 };
 
-
             certificates[5].CertificateData =
                 new CertificateDataResponse
                 {
@@ -185,7 +184,6 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Data
                     StandardName = "FIRE EMERGENCY & SECURITY SYSTEMS TECHNICIAN",
                     CourseOption = "SPECIFIC OPTION",
                     StandardLevel = 3,
-                    AchievementOutcome = "acheiving a",
                     OverallGrade = "DISTINCTION",
                     ContactName = "Alan Bold",
                     ContactOrganisation = "Employer 3",
@@ -207,7 +205,6 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Data
                     StandardName = "FIRE EMERGENCY & SECURITY SYSTEMS TECHNICIAN",
                     CourseOption = "",
                     StandardLevel = 4,
-                    AchievementOutcome = "acheiving a",
                     OverallGrade = "MERIT",
                     ContactName = "Mr Stephen Long",
                     ContactOrganisation = "Employer 4",
@@ -228,7 +225,6 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Data
                     StandardName = "FIRE EMERGENCY & SECURITY SYSTEMS TECHNICIAN",
                     CourseOption = "",
                     StandardLevel = 2,
-                    AchievementOutcome = "acheiving a",
                     OverallGrade = "MERIT",
                     ContactName = "Mary Green Ward",
                     ContactOrganisation = "Employer 5",

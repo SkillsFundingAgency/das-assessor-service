@@ -1,4 +1,5 @@
 ﻿using System.Net.Http;
+using SFA.DAS.AssessorService.PrintFunctionProcessFlow.InfrastructureServices;
 using SFA.DAS.Http;
 using SFA.DAS.Http.TokenGenerators;
 using SFA.DAS.Notifications.Api.Client;
@@ -11,10 +12,12 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Startup.DependencyRes
     {
         public NotificationsRegistry()
         {
+            var configuration = ConfigurationHelper.GetConfiguration();
+
             INotificationsApiClientConfiguration clientConfiguration = new NotificationsApiClientConfiguration
             {
-                ApiBaseUrl = "https://at-notifications.apprenticeships.sfa.bis.gov.uk/",
-                ClientToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJkYXRhIjoiU2VuZFNtcyBTZW5kRW1haWwiLCJpc3MiOiJodHRwOi8vZGFzLWF0LW5vdC1jcyIsImF1ZCI6Imh0dHA6Ly9kYXMtYXQtZWFzLWNzIiwiZXhwIjoxNTU1NzU2OTQ4LCJuYmYiOjE1MjMzNTY5NDh9.2IKr0p-nq5KscucjgzhXrfbVQ_mdQ63yH3PLSVSZ9Xk",
+                ApiBaseUrl = configuration.NotificationsApiClientConfiguration.ApiBaseUrl,
+                ClientToken = configuration.NotificationsApiClientConfiguration.ClientToken,
                 ClientId = "",
                 ClientSecret = "",
                 IdentifierUri = "",

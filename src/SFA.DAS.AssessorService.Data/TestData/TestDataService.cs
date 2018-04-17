@@ -58,7 +58,6 @@ namespace SFA.DAS.AssessorService.Data.TestData
                 var firstCertificateData = new CertificateData
                 {
                     AchievementDate = DateTime.Now.AddDays(-1),
-                    AchievementOutcome = "Succesful",
                     ContactName = "David Gouge",
                     ContactOrganisation = "1234",
                     Department = "Human Resources",
@@ -101,7 +100,6 @@ namespace SFA.DAS.AssessorService.Data.TestData
                 var secondCertificateData = new CertificateData
                 {
                     AchievementDate = DateTime.Now.AddDays(-1),
-                    AchievementOutcome = "Succesful",
                     ContactName = "John Coxhead",
                     ContactOrganisation = "1234",
                     Department = "Human Resources",

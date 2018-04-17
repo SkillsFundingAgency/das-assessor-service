@@ -8,5 +8,6 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.Data
     {
         Task<int> GenerateBatchNumber();
         Task<IEnumerable<CertificateResponse>> GetCertificatesToBePrinted();
+        Task ChangeStatusToPrinted(string batchNumber, IEnumerable<CertificateResponse> responses);
     }
 }
