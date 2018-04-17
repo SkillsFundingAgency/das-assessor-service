@@ -61,7 +61,7 @@ namespace SFA.DAS.AssessorService.Web.Resources.Views.Certificate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Confirm and apply for certificate.
+        ///   Looks up a localized string similar to Apply for certificate.
         /// </summary>
         internal static string ContinueButton {
             get {

@@ -123,7 +123,34 @@
   <data name="DateMustNotBeInFuture" xml:space="preserve">
     <value>Achievement date cannot be in the future</value>
   </data>
+  <data name="DayNumber" xml:space="preserve">
+    <value>Day must be a number</value>
+  </data>
+  <data name="DayRange" xml:space="preserve">
+    <value>Please enter a valid day</value>
+  </data>
+  <data name="DayRequired" xml:space="preserve">
+    <value>Please enter a day</value>
+  </data>
   <data name="IncorrectFormat" xml:space="preserve">
-    <value>The achievement date is not a valid format</value>
+    <value>Please enter a valid date</value>
+  </data>
+  <data name="MonthNumber" xml:space="preserve">
+    <value>Month must be a number</value>
+  </data>
+  <data name="MonthRange" xml:space="preserve">
+    <value>Please enter a valid month</value>
+  </data>
+  <data name="MonthRequired" xml:space="preserve">
+    <value>Please enter a month</value>
+  </data>
+  <data name="YearNumber" xml:space="preserve">
+    <value>Year must be a number</value>
+  </data>
+  <data name="YearRange" xml:space="preserve">
+    <value>Please enter a valid year</value>
+  </data>
+  <data name="YearRequired" xml:space="preserve">
+    <value>Please enter a year</value>
   </data>
 </root>
