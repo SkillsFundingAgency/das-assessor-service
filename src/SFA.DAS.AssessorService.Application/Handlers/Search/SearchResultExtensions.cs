@@ -16,7 +16,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             {
                 // Yes, I know this is calling out to an API in a tight loop, but there will be very few searchResults.  Usually only one.
                 // Obviously if this does become a perf issue, then it'll need changing.
-                searchResult.Standard = (assessmentOrgsApiClient.GetStandard(searchResult.StdCode)).Result.Title;
+                var standard = assessmentOrgsApiClient.GetStandard(searchResult.StdCode).Result;
+                searchResult.Standard = standard.Title;
+                searchResult.Level = standard.Level;
             }
 
             return searchResults;

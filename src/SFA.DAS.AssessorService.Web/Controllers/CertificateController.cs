@@ -54,7 +54,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             _logger.LogInformation($"New Certificate received for ULN {vm.Uln} and Standard Code: {vm.StdCode} with ID {cert.Id}");
 
-            return RedirectToAction("Grade", "CertificateGrade");
+            return RedirectToAction("Declare", "CertificateDeclaration");
         }
     }
 }

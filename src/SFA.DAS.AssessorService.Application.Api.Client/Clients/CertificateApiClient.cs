@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         public async Task<Certificate> Start(StartCertificateRequest request)
         {
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Post, "api/v1/certificate"))
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Post, "api/v1/certificates/start"))
             {
                 return await PostPutRequestWithResponse<StartCertificateRequest, Certificate>(httpRequest, request);
             }
@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         public async Task<Certificate> GetCertificate(Guid certificateId)
         {
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/certificate/{certificateId}"))
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/certificates/{certificateId}"))
             {
                 return await RequestAndDeserialiseAsync<Certificate>(httpRequest, "Could not get Certificate");
             }
@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         public async Task<Certificate> UpdateCertificate(UpdateCertificateRequest certificateRequest)
         {
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Put, "api/v1/certificate"))
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Put, "api/v1/certificates/update"))
             {
                 return await PostPutRequestWithResponse<UpdateCertificateRequest, Certificate >(httpRequest, certificateRequest);
             }

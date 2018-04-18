@@ -38,14 +38,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
         {
             var ilr = await _ilrRepository.Get(request.Uln, request.StandardCode);
             var organisation = await _organisationQueryRepository.GetByUkPrn(request.UkPrn);
+            var standard = await _assessmentOrgsApiClient.GetStandard(ilr.StdCode);
             var certData = new CertificateData()
             {
                 LearnerGivenNames = ilr.GivenNames,
                 LearnerFamilyName = ilr.FamilyName,
                 LearnerDateofBirth = ilr.DateOfBirth,
                 LearnerSex = ilr.Sex,
-                StandardName = (await _assessmentOrgsApiClient.GetStandard(ilr.StdCode)).Title,
-                LearningStartDate = ilr.LearnStartDate
+                StandardName = standard.Title,
+                LearningStartDate = ilr.LearnStartDate, 
+                StandardLevel = standard.Level
             };
 
             var newCertificate = await _certificateRepository.New(
@@ -57,7 +59,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                     OrganisationId = organisation.Id,
                     CreatedBy = request.Username,
                     CertificateData = JsonConvert.SerializeObject(certData),
-                    Status = CertificateStatus.Draft,
+                    Status = Domain.Consts.CertificateStatus.Draft,
                     CertificateReference = ""
                 });
 

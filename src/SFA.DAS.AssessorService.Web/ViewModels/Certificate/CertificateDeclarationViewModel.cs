@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 
         public Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData certData)
         {
-            certificate.Status = CertificateStatus.Submitted;
+            
             certificate.CertificateData = JsonConvert.SerializeObject(certData);
             return certificate;
         }
