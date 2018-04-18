@@ -14,13 +14,13 @@ namespace SFA.DAS.AssessorService.EpaoImporter
         private readonly CoverLetterService _coverLetterService;
         private readonly IFACertificateService _ifaCertificateService;
         private readonly ICertificatesRepository _certificatesRepository;
-        private readonly NotificationService _notificationService;
+        private readonly INotificationService _notificationService;
 
         public PrintProcessFlowCommand(IAggregateLogger aggregateLogger,
             CoverLetterService coverLetterService,
             IFACertificateService ifaCertificateService,
             ICertificatesRepository certificatesRepository,
-            NotificationService notificationService)
+            INotificationService notificationService)
         {
             _aggregateLogger = aggregateLogger;
             _coverLetterService = coverLetterService;

@@ -5,6 +5,7 @@ using Renci.SshNet;
 using SFA.DAS.AssessorService.EpaoImporter.Data;
 using SFA.DAS.AssessorService.EpaoImporter.InfrastructureServices;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
+using SFA.DAS.AssessorService.EpaoImporter.Notification;
 using SFA.DAS.AssessorService.EpaoImporter.Sftp;
 using SFA.DAS.AssessorService.EpaoImporter.Startup.DependencyResolution;
 using SFA.DAS.AssessorService.Settings;
@@ -36,6 +37,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Startup
 
                 configure.For<IFileTransferClient>().Use<MockFileTransferClient>();
                 configure.For<ICertificatesRepository>().Use<MockCertificatesRepository>().Singleton();
+                configure.For<INotificationService>().Use<MockNotificationService>();
                 configure.For<SftpClient>().Use<SftpClient>("SftpClient",
                     c => new SftpClient(configuration.Sftp.RemoteHost, Convert.ToInt32(configuration.Sftp.Port), configuration.Sftp.Username, configuration.Sftp.Password));
 

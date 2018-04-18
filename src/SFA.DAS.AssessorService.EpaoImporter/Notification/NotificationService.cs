@@ -6,7 +6,7 @@ using SFA.DAS.Notifications.Api.Types;
 
 namespace SFA.DAS.AssessorService.EpaoImporter.Notification
 {
-    public class NotificationService
+    public class NotificationService : INotificationService
     {
         private readonly INotificationsApi _notificationsApi;
         private readonly IWebConfiguration _webConfiguration;
@@ -28,10 +28,10 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Notification
             {
                 //RecipientsAddress = _webConfiguration.EmailTemplateSettings.RecipientsAddress,
                 RecipientsAddress = "jcoxhead@hotmail.com",
-                TemplateId = _webConfiguration.EmailTemplateSettings.TemplateId,
-                ReplyToAddress = _webConfiguration.EmailTemplateSettings.ReplyToAddress,
-                Subject = _webConfiguration.EmailTemplateSettings.Subject,
-                SystemId = _webConfiguration.EmailTemplateSettings.SystemId,
+                //TemplateId = "",
+                //ReplyToAddress = "",
+                //Subject = _webConfiguration.EmailTemplateSettings.Subject,
+                //SystemId = _webConfiguration.EmailTemplateSettings.SystemId,
                 Tokens = personalisation
             };
 
