@@ -120,10 +120,25 @@
                 </div>
             </div>
         </div>
+        <main id="content" role="main">
+            <div class="phase-banner">
+                <p>
+                    <strong class="phase-tag">BETA</strong>
+                    <span>This is a new service – your <a href="#">feedback</a> will help us to improve it.</span>
+                </p>
+            </div>
+            @RenderBody()
+        </main>
     }
-    <main id="content" role="main">
-        @RenderBody()
-    </main>
+    else
+    {
+        <main id="content" role="main">
+            @RenderBody()
+        </main>
+    }
+
+    
+    
     <footer class="group js-footer" id="footer" role="contentinfo">
 
         <div class="footer-wrapper">
@@ -151,18 +166,18 @@
     <div id="global-app-error" class="app-error hidden"></div>
 
     <environment include="Development">
-        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/jquery/dist/jquery-1.12.4.js"></script>
         <script src="/assets/javascripts/govuk-template.js?0.23.0"></script>
         <script src="~/js/show-hide-content.js" asp-append-version="true"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
     </environment>
 
     <environment exclude="Development">
-        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
-                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+        <script src="https://code.jquery.com/jquery-1.12.4.min.js"
+                asp-fallback-src="~/lib/jquery/dist/jquery-1.12.4.min.js"
                 asp-fallback-test="window.jQuery"
-                crossorigin="anonymous"
-                integrity="sha384-K+ctZQ+LL8q6tP7I94W+qzQsfRV2a+AfHIi9k8z8l9ggpc8X+Ytst4yBo/hH+8Fk">
+                integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
+                crossorigin="anonymous">
         </script>
         <script src="/assets/javascripts/govuk-template.js?0.23.0"></script>
         <script src="~/js/site.min.js" asp-append-version="true"></script>

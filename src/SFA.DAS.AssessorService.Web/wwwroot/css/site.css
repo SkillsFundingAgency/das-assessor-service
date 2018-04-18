@@ -585,7 +585,8 @@ fieldset.after-error-summary {
 }
 
 @media (min-width: 769px) {
-  .govuk-check-your-answers.cya-questions-short, .govuk-check-your-answers.cya-questions-long {
+  .govuk-check-your-answers.cya-questions-short,
+  .govuk-check-your-answers.cya-questions-long {
     width: 100%;
   }
   .govuk-check-your-answers.cya-questions-short .cya-question {
@@ -611,5 +612,24 @@ fieldset.after-error-summary {
   .govuk-check-your-answers .cya-change {
     position: static;
     padding-right: 0;
+  }
+}
+
+/* Fix .header-user nav on IE */
+
+.header-user .header-inner {
+  max-width: 960px;
+  margin: 0 15px;
+}
+
+@media (min-width: 641px) {
+  .header-user .header-inner {
+    margin: 0 30px;
+  }
+}
+
+@media (min-width: 1020px) {
+  .header-user .header-inner {
+    margin: 0 auto;
   }
 }
