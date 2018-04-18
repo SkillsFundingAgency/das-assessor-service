@@ -1,5 +1,5 @@
 ﻿using Microsoft.IdentityModel.Clients.ActiveDirectory;
-using SFA.DAS.AssessorService.EpaoImporter.Settings;
+using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.EpaoImporter.InfrastructureServices
 {

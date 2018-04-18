@@ -5,9 +5,9 @@ using Renci.SshNet;
 using SFA.DAS.AssessorService.EpaoImporter.Data;
 using SFA.DAS.AssessorService.EpaoImporter.InfrastructureServices;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
-using SFA.DAS.AssessorService.EpaoImporter.Settings;
 using SFA.DAS.AssessorService.EpaoImporter.Sftp;
 using SFA.DAS.AssessorService.EpaoImporter.Startup.DependencyResolution;
+using SFA.DAS.AssessorService.Settings;
 using StructureMap;
 
 namespace SFA.DAS.AssessorService.EpaoImporter.Startup

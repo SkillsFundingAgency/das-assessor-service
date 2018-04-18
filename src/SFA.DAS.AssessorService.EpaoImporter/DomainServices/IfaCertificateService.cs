@@ -10,8 +10,8 @@ using OfficeOpenXml.Style;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.EpaoImporter.InfrastructureServices;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
-using SFA.DAS.AssessorService.EpaoImporter.Settings;
 using SFA.DAS.AssessorService.EpaoImporter.Sftp;
+using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 {

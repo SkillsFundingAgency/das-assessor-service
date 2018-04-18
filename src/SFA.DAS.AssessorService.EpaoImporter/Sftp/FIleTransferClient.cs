@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Renci.SshNet;
 using Renci.SshNet.Async;
-using SFA.DAS.AssessorService.EpaoImporter.Settings;
+using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.EpaoImporter.Sftp
 {
