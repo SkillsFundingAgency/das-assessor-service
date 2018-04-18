@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[EmployeeTemplates](
+﻿CREATE TABLE [dbo].[EMailTemplates](
 	[Id] [uniqueidentifier] NOT NULL DEFAULT NEWID(),
 	[TemplateName] [nvarchar](max) NOT NULL,
 	[TemplateId]  [nvarchar](max) NOT NULL,

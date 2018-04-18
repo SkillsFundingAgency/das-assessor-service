@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using SFA.DAS.AssessorService.Application.Exceptions;
-using SFA.DAS.AssessorService.Domain.Exceptions;
 
 namespace SFA.DAS.AssessorService.Application.Api.Middleware
 {
@@ -30,15 +29,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Middleware
             catch (Exception ex)
             {
                 if (ex is ApplicationException || ex is BadRequestException)
-                    context.Response.StatusCode = (int) HttpStatusCode.BadRequest;
+                    context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 else if (ex is ResourceNotFoundException)
-                    context.Response.StatusCode = (int) HttpStatusCode.NotFound;
+                    context.Response.StatusCode = (int)HttpStatusCode.NotFound;
                 else if (ex is UnauthorisedException)
-                    context.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
+                    context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                 else
+                {
                     context.Response.StatusCode = 500;
-
-                _logger.LogError($"Unhandled Exeption raised : {ex.Message} : Stack Trace : {ex.StackTrace}");
+                    _logger.LogError($"Unhandled Exeption raised : {ex.Message} : Stack Trace : {ex.StackTrace}");
+                }
 
                 context.Response.ContentType = "application/json";
 
