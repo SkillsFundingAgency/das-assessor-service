@@ -25,11 +25,11 @@ namespace SFA.DAS.AssessorService.Functions.Notification
 
             var email = new Email
             {
-                RecipientsAddress = "john.coxhead@digital.education.gov.uk",
+                RecipientsAddress = _webConfiguration.EmailTemplateSettings.RecipientsAddress,
                 TemplateId = _webConfiguration.EmailTemplateSettings.TemplateId,
-                ReplyToAddress = "jcoxhead@hotmail.com",
-                Subject = "XXXXXX",
-                SystemId = "SFA.DAS.AssessorService.PrintFunctionProcessFlow",
+                ReplyToAddress = _webConfiguration.EmailTemplateSettings.ReplyToAddress,
+                Subject = _webConfiguration.EmailTemplateSettings.Subject,
+                SystemId = _webConfiguration.EmailTemplateSettings.SystemId,
                 Tokens = personalisation
             };
 
