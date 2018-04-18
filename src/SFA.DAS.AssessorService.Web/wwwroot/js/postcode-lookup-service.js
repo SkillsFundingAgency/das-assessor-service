@@ -168,9 +168,10 @@ $(document).ready(function() {
   }
 
   function populateAddress(address) {
-    if (!$('#Employer').val()) {
-      $('#Employer').val(address.Company);
-    }
+    // Removed after mass debate
+    // if (!$('#Employer').val()) {
+    //   $('#Employer').val(address.Company);
+    // }
     $('#AddressLine1').val(address.Line1);
     $('#AddressLine2').val(address.Line2);
     $('#AddressLine3').val(address.Line3);
