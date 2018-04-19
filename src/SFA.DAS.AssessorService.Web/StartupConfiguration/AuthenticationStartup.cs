@@ -33,7 +33,11 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                     options.Events.OnSecurityTokenValidated = OnTokenValidated;
                     options.CallbackPath = "/Account/SignedIn";
                 })
-                .AddCookie(options => { options.ReturnUrlParameter = "/Account/SignedIn"; });
+                .AddCookie(options =>
+                {
+                    options.ReturnUrlParameter = "/Account/SignedIn";
+                    options.Cookie = new CookieBuilder() {Name = ".Assessors.Cookies"};
+                });
         }
 
 
