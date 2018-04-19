@@ -51,9 +51,12 @@
   $(document).ready(function () {
 
     // Populate hidden field
-    $(".date-input").on('keyup input', function () {
-      $("#fullDate").val($('[name="Month"]').val() + "/" + $('[name="Day"]').val() + "/" + $('[name="Year"]').val());
-    });
+    getFullDate();
+    $(".date-input").on('keyup input', getFullDate);
+
+    function getFullDate() {
+      $("#fullDate").val($('[name="Day"]').val() + "/" + $('[name="Month"]').val() + "/" + $('[name="Year"]').val());
+    }
 
     // Only allow integers
     $('.js-integers-only').on('keydown', function (e) {
