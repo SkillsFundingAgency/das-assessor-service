@@ -5,20 +5,21 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using FizzWare.NBuilder;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.EpaoImporter.InfrastructureServices;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
 using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.EpaoImporter.Data
 {
-    public class MockCertificatesRepository : ICertificatesRepository
+    public class MockAssessorServiceApi : IAssessorServiceApi
     {
         private readonly IAggregateLogger _aggregateLogger;
         private readonly HttpClient _httpClient;
         private readonly IWebConfiguration _webConfiguration;
         private readonly TokenService _tokenService;
 
-        public MockCertificatesRepository(IAggregateLogger aggregateLogger,
+        public MockAssessorServiceApi(IAggregateLogger aggregateLogger,
             HttpClient httpClient,
             IWebConfiguration webConfiguration,
             TokenService tokenService)
@@ -41,6 +42,18 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
         public Task ChangeStatusToPrinted(string batchNumber, IEnumerable<CertificateResponse> responses)
         {
             return Task.CompletedTask;
+        }
+
+        public Task<EMailTemplate> GetEmailTemplate()
+        {
+            var emailTemplate = new EMailTemplate
+            {
+                TemplateName = "PrintAssessorCoverLetters",
+                TemplateId = "5b171b91-d406-402a-a651-081cce820acb",
+                Recipients = "jcoxhead@hotmail.com"
+            };
+
+            return Task.FromResult<EMailTemplate>(emailTemplate);
         }
 
         public Task<int> GenerateBatchNumber()

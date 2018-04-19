@@ -1,8 +1,8 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.Attributes
-{
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.Filters;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 
+namespace SFA.DAS.AssessorService.Application.Api.Properties.Attributes
+{
     public class ValidateBadRequest : ActionFilterAttribute
     {
         public override void OnActionExecuting(ActionExecutingContext context)

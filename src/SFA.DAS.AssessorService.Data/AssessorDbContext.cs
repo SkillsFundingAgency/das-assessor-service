@@ -23,6 +23,7 @@ namespace SFA.DAS.AssessorService.Data
         public virtual DbSet<Contact> Contacts { get; set; }
         public virtual DbSet<Organisation> Organisations { get; set; }
         public virtual DbSet<Ilr> Ilrs { get; set; }
+        public virtual DbSet<EMailTemplate> EMailTemplates { get; set; }
 
         public override int SaveChanges()
         {

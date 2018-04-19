@@ -73,10 +73,10 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     LearnerGivenNames = "David",
 
                     OverallGrade = "PASS",
-                    
+
                     Registration = "Registered",
                     LearningStartDate = DateTime.Now.AddDays(10),
-                    
+
                     StandardLevel = 1,
                     StandardName = "Test",
                     StandardPublicationDate = DateTime.Now
@@ -88,7 +88,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     OrganisationId = organisation.Id,
                     CertificateData = JsonConvert.SerializeObject(firstCertificateData),
                     Status = CertificateStatus.Submitted,
-                    CreatedBy = "jcoxhead", 
+                    CreatedBy = "jcoxhead",
                     CertificateReference = "ABC123",
                     Uln = 1234567890,
                     StandardCode = 93,
@@ -142,7 +142,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     Id = Guid.NewGuid(),
                     Action = "Action",
                     CertificateId = firstCertificate.Id,
-                  
+
                     EventTime = DateTime.Now,
                     Status = CertificateStatus.Ready,
 
@@ -157,7 +157,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     Id = Guid.NewGuid(),
                     Action = "Action",
                     CertificateId = secondCertificate.Id,
-                 
+
                     EventTime = DateTime.Now,
                     Status = CertificateStatus.Ready,
 
@@ -167,6 +167,19 @@ namespace SFA.DAS.AssessorService.Data.TestData
 
                 context.CertificateLogs.Add(secondCertificateLog);
                 context.SaveChanges();
+
+
+                var emailTemplate = new EMailTemplate
+                {
+                    Id = Guid.NewGuid(),
+                    Recipients = "john.coxhead@digital.education.gov.uk",
+                    TemplateId = "5b171b91-d406-402a-a651-081cce820acb",
+                    TemplateName = "PrintAssessorCoverLetters",
+                };
+
+                context.EMailTemplates.Add(emailTemplate);
+                context.SaveChanges();
+
             }
 
             var existingIlrData = context.Ilrs.FirstOrDefault();

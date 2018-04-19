@@ -32,8 +32,6 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
       errorElement: 'span',
       errorClass: 'error-message',
       highlight: function(element) {
-        // console.log('h', element.id);
-
         if ($(element).hasClass('date-input')) {
           $(element).addClass('form-control-error');
           return false;
@@ -56,8 +54,6 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
         }
       },
       unhighlight: function(element) {
-        // console.log('u', element.id);
-
         if ($(element).hasClass('date-input')) {
           $(element).removeClass('form-control-error');
           return false;
@@ -102,20 +98,13 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
       }
     });
 
-  // only allow future date
+  // Ensures date is not in the future
   jQuery.validator.addMethod(
     'noFutureDate',
     function(value, element) {
       var now = new Date();
-      var userDate = new Date(value);
-      if (
-        Object.prototype.toString.call(userDate) === '[object Date]' &&
-        !isNaN(userDate.getTime())
-      ) {
-        return this.optional(element) || userDate < now;
-      } else {
-        return true;
-      }
+      var userDate = parseDate(value);
+      return userDate ? this.optional(element) || userDate < now : true;
     },
     'Please enter a date in the past'
   );
@@ -133,4 +122,19 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
     },
     'Please specify a valid UK postcode'
   );
+
+  // Helper to confirm date input is correct format
+  function parseDate(str) {
+    var t = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (t !== null) {
+      var d = +t[1],
+        m = +t[2],
+        y = +t[3];
+      var date = new Date(y, m - 1, d);
+      if (date.getFullYear() === y && date.getMonth() === m - 1) {
+        return date;
+      }
+    }
+    return false;
+  }
 };

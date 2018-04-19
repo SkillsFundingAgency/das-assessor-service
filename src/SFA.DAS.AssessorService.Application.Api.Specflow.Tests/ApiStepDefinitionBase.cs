@@ -47,6 +47,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests
             command = "DELETE FROM Contacts";
             _dbConnection.Execute(command);
 
+            command = "DELETE FROM EMailTemplates";
+            _dbConnection.Execute(command);
+
             command = "DELETE FROM Organisations";
             _dbConnection.Execute(command);
 
