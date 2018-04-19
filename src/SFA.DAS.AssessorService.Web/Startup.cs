@@ -4,6 +4,7 @@ using System.Globalization;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -51,6 +52,8 @@ namespace SFA.DAS.AssessorService.Web
                 .AddViewLocalization(opts => { opts.ResourcesPath = "Resources"; })
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
 
+
+            services.AddAntiforgery(options => options.Cookie = new CookieBuilder() {Name = ".Assessors.AntiForgery"});
 
             //if (_env.IsDevelopment())
             //{
@@ -111,7 +114,7 @@ namespace SFA.DAS.AssessorService.Web
             }
 
             app.UseStaticFiles()
-                .UseSession()
+                .UseSession(new SessionOptions(){Cookie = new CookieBuilder(){Name = ".Assessors.Session"}})
                 .UseAuthentication()
                 .UseRequestLocalization()
                 .UseMvc(routes =>
