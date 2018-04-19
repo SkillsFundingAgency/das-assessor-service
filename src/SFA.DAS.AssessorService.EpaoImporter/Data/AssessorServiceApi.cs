@@ -4,6 +4,8 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.EpaoImporter.Const;
 using SFA.DAS.AssessorService.EpaoImporter.Extensions;
 using SFA.DAS.AssessorService.EpaoImporter.InfrastructureServices;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
@@ -11,14 +13,14 @@ using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.EpaoImporter.Data
 {
-    public class CertificatesRepository : ICertificatesRepository
+    public class AssessorServiceApi : IAssessorServiceApi
     {
         private readonly IAggregateLogger _aggregateLogger;
         private readonly HttpClient _httpClient;
         private readonly IWebConfiguration _webConfiguration;
         private readonly TokenService _tokenService;
 
-        public CertificatesRepository(IAggregateLogger aggregateLogger,
+        public AssessorServiceApi(IAggregateLogger aggregateLogger,
             HttpClient httpClient,
             IWebConfiguration webConfiguration,
             TokenService tokenService)
@@ -73,6 +75,25 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
 
             var responseMessage = await _httpClient.PutAsJsonAsync(
                 "/api/v1/certificates/{batchNumber}", updateCertificateStatusRequest);
+        }
+
+        public async Task<EMailTemplate> GetEmailTemplate()
+        {
+            var templateName = EMailTemplateNames.PrintAssessorCoverLetters;
+            var response = await _httpClient.GetAsync(
+                $"/api/v1/emailTemplates/{templateName}");
+
+            var emailTemplate = response.Deserialise<EMailTemplate>();
+            if (response.IsSuccessStatusCode)
+            {
+                _aggregateLogger.LogInfo($"Status code returned: {response.StatusCode}. Content: {response.Content.ReadAsStringAsync().Result}");
+            }
+            else
+            {
+                _aggregateLogger.LogInfo($"Status code returned: {response.StatusCode}. Content: {response.Content.ReadAsStringAsync().Result}");
+            }
+
+            return emailTemplate;
         }
     }
 }

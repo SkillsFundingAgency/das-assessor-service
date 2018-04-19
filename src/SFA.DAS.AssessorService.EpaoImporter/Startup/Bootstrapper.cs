@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Startup
                 configure.For<IWebConfiguration>().Use(configuration).Singleton();
 
                 configure.For<IFileTransferClient>().Use<MockFileTransferClient>();
-                configure.For<ICertificatesRepository>().Use<MockCertificatesRepository>().Singleton();
+                configure.For<IAssessorServiceApi>().Use<MockAssessorServiceApi>().Singleton();
                 configure.For<INotificationService>().Use<MockNotificationService>();
                 configure.For<SftpClient>().Use<SftpClient>("SftpClient",
                     c => new SftpClient(configuration.Sftp.RemoteHost, Convert.ToInt32(configuration.Sftp.Port), configuration.Sftp.Username, configuration.Sftp.Password));

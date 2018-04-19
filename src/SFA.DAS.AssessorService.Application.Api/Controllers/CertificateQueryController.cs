@@ -6,8 +6,8 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
-using SFA.DAS.AssessorService.Application.Api.Attributes;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
+using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Domain.Entities;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
