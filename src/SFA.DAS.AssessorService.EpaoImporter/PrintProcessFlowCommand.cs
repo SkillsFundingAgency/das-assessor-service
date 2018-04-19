@@ -13,19 +13,19 @@ namespace SFA.DAS.AssessorService.EpaoImporter
         private readonly IAggregateLogger _aggregateLogger;
         private readonly CoverLetterService _coverLetterService;
         private readonly IFACertificateService _ifaCertificateService;
-        private readonly ICertificatesRepository _certificatesRepository;
+        private readonly IAssessorServiceApi _assessorServiceApi;
         private readonly INotificationService _notificationService;
 
         public PrintProcessFlowCommand(IAggregateLogger aggregateLogger,
             CoverLetterService coverLetterService,
             IFACertificateService ifaCertificateService,
-            ICertificatesRepository certificatesRepository,
+            IAssessorServiceApi assessorServiceApi,
             INotificationService notificationService)
         {
             _aggregateLogger = aggregateLogger;
             _coverLetterService = coverLetterService;
             _ifaCertificateService = ifaCertificateService;
-            _certificatesRepository = certificatesRepository;
+            _assessorServiceApi = assessorServiceApi;
             _notificationService = notificationService;
         }
 
@@ -43,15 +43,15 @@ namespace SFA.DAS.AssessorService.EpaoImporter
 
                 if (await AnythingToProcess())
                 {
-                    var batchNumber = await _certificatesRepository.GenerateBatchNumber();
-                    var certificates = (await _certificatesRepository.GetCertificatesToBePrinted()).ToList();
+                    var batchNumber = await _assessorServiceApi.GenerateBatchNumber();
+                    var certificates = (await _assessorServiceApi.GetCertificatesToBePrinted()).ToList();
 
                     await _coverLetterService.Create(batchNumber, certificates);
                     await _ifaCertificateService.Create(batchNumber, certificates);
 
                     await _notificationService.Send();
 
-                    await _certificatesRepository.ChangeStatusToPrinted(batchNumber.ToString(), certificates);
+                    await _assessorServiceApi.ChangeStatusToPrinted(batchNumber.ToString(), certificates);
                 }
                 else
                 {
@@ -67,7 +67,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
 
         private async Task<bool> AnythingToProcess()
         {
-            return (await _certificatesRepository.GetCertificatesToBePrinted()).Any();
+            return (await _assessorServiceApi.GetCertificatesToBePrinted()).Any();
         }
     }
 }

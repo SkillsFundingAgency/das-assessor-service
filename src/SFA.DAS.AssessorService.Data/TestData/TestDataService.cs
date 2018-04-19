@@ -167,18 +167,20 @@ namespace SFA.DAS.AssessorService.Data.TestData
 
                 context.CertificateLogs.Add(secondCertificateLog);
                 context.SaveChanges();
+
+
+                var emailTemplate = new EMailTemplate
+                {
+                    Id = Guid.NewGuid(),
+                    Recipients = "john.coxhead@digital.education.gov.uk",
+                    TemplateId = "5b171b91-d406-402a-a651-081cce820acb",
+                    TemplateName = "PrintAssessorCoverLetters",
+                };
+
+                context.EMailTemplates.Add(emailTemplate);
+                context.SaveChanges();
+
             }
-
-            var emailTemplate = new EMailTemplate
-            {
-                Id = Guid.NewGuid(),
-                Recipients = "jcoxhead@hotmail.com",
-                TemplateId = "5b171b91-d406-402a-a651-081cce820acb",
-                TemplateName = "PrintAssessorCoverLetters",
-            };
-
-            context.EMailTemplates.Add(emailTemplate);
-            context.SaveChanges();
 
             var existingIlrData = context.Ilrs.FirstOrDefault();
             if (existingIlrData == null)
