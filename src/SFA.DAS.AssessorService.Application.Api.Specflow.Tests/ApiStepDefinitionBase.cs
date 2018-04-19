@@ -50,6 +50,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests
             command = "DELETE FROM Organisations";
             _dbConnection.Execute(command);
 
+            command = "DELETE FROM Ilrs";
+            _dbConnection.Execute(command);
         }
 
         [Given(@"System Has access to the SFA\.DAS\.AssessmentOrgs\.Api")]

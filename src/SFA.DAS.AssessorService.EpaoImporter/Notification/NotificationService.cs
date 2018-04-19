@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Functions.Settings;
+using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.Notifications.Api.Client;
 using SFA.DAS.Notifications.Api.Types;
 
-namespace SFA.DAS.AssessorService.Functions.Notification
+namespace SFA.DAS.AssessorService.EpaoImporter.Notification
 {
-    public class NotificationService
+    public class NotificationService : INotificationService
     {
         private readonly INotificationsApi _notificationsApi;
         private readonly IWebConfiguration _webConfiguration;
@@ -23,13 +23,15 @@ namespace SFA.DAS.AssessorService.Functions.Notification
             var personalisation = new Dictionary<string, string>
                 {{"name", "john coxhead"}, {"day ", "1"}, {"day of week", "Monday"}, {"colour", "blue"}};
 
-            var email = new Email
+            
+             var email = new Email
             {
-                RecipientsAddress = _webConfiguration.EmailTemplateSettings.RecipientsAddress,
-                TemplateId = _webConfiguration.EmailTemplateSettings.TemplateId,
-                ReplyToAddress = _webConfiguration.EmailTemplateSettings.ReplyToAddress,
-                Subject = _webConfiguration.EmailTemplateSettings.Subject,
-                SystemId = _webConfiguration.EmailTemplateSettings.SystemId,
+                //RecipientsAddress = _webConfiguration.EmailTemplateSettings.RecipientsAddress,
+                RecipientsAddress = "jcoxhead@hotmail.com",
+                //TemplateId = "",
+                //ReplyToAddress = "",
+                //Subject = _webConfiguration.EmailTemplateSettings.Subject,
+                //SystemId = _webConfiguration.EmailTemplateSettings.SystemId,
                 Tokens = personalisation
             };
 

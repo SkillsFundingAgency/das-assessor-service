@@ -12,5 +12,7 @@ namespace SFA.DAS.AssessorService.Settings
         public string Username { get; set; }
         [JsonRequired]
         public string Password { get; set; }
+        [JsonRequired]
+        public string UploadDirectory { get; set; }
     }
 }
