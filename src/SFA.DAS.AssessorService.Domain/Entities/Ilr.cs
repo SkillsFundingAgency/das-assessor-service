@@ -8,14 +8,15 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public long Uln { get; set; }
         public string GivenNames { get; set; }
         public string FamilyName { get; set; }
-        public DateTime DateOfBirth { get; set; }
-        public string Sex { get; set; }
+        
         public int UkPrn { get; set; }
         public string StdCode { get; set; }
         public DateTime LearnStartDate { get; set; }
         public string EpaOrgId { get; set; }
-        public string Outcome { get; set; }
-        public DateTime? AchDate { get; set; }
-        public string OutGrade { get; set; }
+
+        public int FundingModel { get; set; }
+        public long ApprenticeshipId { get; set; }
+        public long EmployerAccountId { get; set; }
+        public string Source { get; set; }
     }
 }
