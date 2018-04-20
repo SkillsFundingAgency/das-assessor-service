@@ -57,7 +57,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
             return response.Deserialise<int>();
         }
 
-        public async Task ChangeStatusToPrinted(string batchNumber, IEnumerable<CertificateResponse> responses)
+        public async Task ChangeStatusToPrinted(int batchNumber, IEnumerable<CertificateResponse> responses)
         {
             var certificateStatuses = responses.Select(
                 q => new CertificateStatus
@@ -66,15 +66,16 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
                     Status = Domain.Consts.CertificateStatus.Printed
                 }).ToList();
 
-            var updateCertificateStatusRequest = new UpdateCertificateStatusRequest
+            var updateCertificatesBatchToIndicatePrintedRequest = new UpdateCertificatesBatchToIndicatePrintedRequest
             {
+                BatchNumber = batchNumber,
                 CertificateStatuses = certificateStatuses
             };
 
-            var jsonData = JsonConvert.SerializeObject(updateCertificateStatusRequest);
+            var jsonData = JsonConvert.SerializeObject(updateCertificatesBatchToIndicatePrintedRequest);
 
             var responseMessage = await _httpClient.PutAsJsonAsync(
-                "/api/v1/certificates/{batchNumber}", updateCertificateStatusRequest);
+                $"/api/v1/certificates/{batchNumber.ToString()}", updateCertificatesBatchToIndicatePrintedRequest);
         }
 
         public async Task<EMailTemplate> GetEmailTemplate()

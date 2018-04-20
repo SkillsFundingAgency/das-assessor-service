@@ -51,7 +51,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
 
                     await _notificationService.Send();
 
-                    await _assessorServiceApi.ChangeStatusToPrinted(batchNumber.ToString(), certificates);
+                    await _assessorServiceApi.ChangeStatusToPrinted(batchNumber, certificates);
                 }
                 else
                 {

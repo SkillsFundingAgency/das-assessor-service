@@ -62,7 +62,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             {
                 sequenceNumber++;
                 var certificate = groupedCertificate.Result[0];
-                var wordDocumentFileName = $"IFA-Certificate-{GetMonthYear()}-{batchNumber.ToString().PadLeft(9,'0')}-{certificate.CertificateData.ContactOrganisation}-{sequenceNumber}.docx";
+                var wordDocumentFileName = $"IFA-Certificate-{GetMonthYear()}-{batchNumber.ToString().PadLeft(3,'0')}-{certificate.CertificateData.ContactOrganisation}-{sequenceNumber}.docx";
 
                 _aggregateLogger.LogInfo($"Processing Certificate for Cover Letter - {certificate.CertificateReference} - {wordDocumentFileName}");
                 var wordStream = await CreateWordDocumentStream(wordDocumentFileName, certificate.CertificateData, documentTemplateDataStream);
@@ -149,7 +149,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             var month = DateTime.Today.Month.ToString().PadLeft(2, '0');
 
             var year = DateTime.Now.Year;
-            var monthYear = month + "-" + year;
+            var monthYear = month + year.ToString().Substring(2,2);
             return monthYear;
         }
     }

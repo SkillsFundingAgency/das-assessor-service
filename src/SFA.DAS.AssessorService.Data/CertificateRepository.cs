@@ -64,12 +64,16 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<int> GenerateBatchNumber()
         {
-            if (await _context.Certificates.AnyAsync(q => q.BatchNumber != 0 && q.BatchNumber.HasValue))
+            if (!await _context.Certificates.AnyAsync(q =>
+                q.BatchNumber != 0 && q.BatchNumber.HasValue && q.ToBePrinted != null))
+                    return 1;
             {
-                return await _context.Certificates.MaxAsync(q => q.BatchNumber.Value) + 1;
+                var latestCertificate = _context.Certificates.OrderByDescending(q => q.ToBePrinted).First();
+                if (latestCertificate.ToBePrinted.Month != DateTime.Now.Month)
+                    return 1;
+                return latestCertificate.BatchNumber + 1 ?? 1;
             }
 
-            return 1;
         }
 
         public async Task<Certificate> Update(Certificate certificate, string username)
@@ -85,17 +89,18 @@ namespace SFA.DAS.AssessorService.Data
             return cert;
         }
 
-        public async Task UpdateStatuses(UpdateCertificateStatusRequest updateCertificateStatusRequest)
+        public async Task UpdateStatuses(UpdateCertificatesBatchToIndicatePrintedRequest updateCertificatesBatchToIndicatePrintedRequest)
         {
             var toBePrintedDate = DateTime.Now;
 
             var cerficates =
-                await _context.Certificates.Where(certificate => updateCertificateStatusRequest.CertificateStatuses
+                await _context.Certificates.Where(certificate => updateCertificatesBatchToIndicatePrintedRequest.CertificateStatuses
                     .Select(certificateStatus => certificateStatus.CertificateReference)
                     .Contains(certificate.CertificateReference)).ToListAsync();
 
             foreach (var certificate in cerficates)
             {
+                certificate.BatchNumber = updateCertificatesBatchToIndicatePrintedRequest.BatchNumber;
                 certificate.Status = CertificateStatus.Printed;
                 certificate.ToBePrinted = toBePrintedDate;
             }
