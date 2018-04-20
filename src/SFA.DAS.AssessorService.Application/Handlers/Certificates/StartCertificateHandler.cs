@@ -43,8 +43,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             {
                 LearnerGivenNames = ilr.GivenNames,
                 LearnerFamilyName = ilr.FamilyName,
-                LearnerDateofBirth = ilr.DateOfBirth,
-                LearnerSex = ilr.Sex,
                 StandardName = standard.Title,
                 LearningStartDate = ilr.LearnStartDate, 
                 StandardLevel = standard.Level
