@@ -39,7 +39,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
             return generateDummyData == "true" ? certificates.Union(GenerateDummyData()) : certificates;
         }
 
-        public Task ChangeStatusToPrinted(string batchNumber, IEnumerable<CertificateResponse> responses)
+        public Task ChangeStatusToPrinted(int batchNumber, IEnumerable<CertificateResponse> responses)
         {
             return Task.CompletedTask;
         }

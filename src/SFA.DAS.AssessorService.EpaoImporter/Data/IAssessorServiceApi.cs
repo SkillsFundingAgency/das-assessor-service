@@ -9,7 +9,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
     {
         Task<int> GenerateBatchNumber();
         Task<IEnumerable<CertificateResponse>> GetCertificatesToBePrinted();
-        Task ChangeStatusToPrinted(string batchNumber, IEnumerable<CertificateResponse> responses);
+        Task ChangeStatusToPrinted(int batchNumber, IEnumerable<CertificateResponse> responses);
         Task<EMailTemplate> GetEmailTemplate();
     }
 }

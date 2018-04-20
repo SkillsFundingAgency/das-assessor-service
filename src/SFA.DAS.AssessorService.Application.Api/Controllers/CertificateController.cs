@@ -42,13 +42,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(await _mediator.Send(certificate));
         }
 
-        [HttpPut("{batchNumber}", Name = "UpdateStatus")]
+        [HttpPut("{batchNumber}", Name = "UpdateCertificatesBatchToIndicatePrinted")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Certificate))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> UpdateStatus(string batchNumber, [FromBody] UpdateCertificateStatusRequest updateCertificateStatusRequest)
+        public async Task<IActionResult> UpdateCertificatesBatchToIndicatePrinted(int batchNumber, [FromBody] UpdateCertificatesBatchToIndicatePrintedRequest updateCertificatesBatchToIndicatePrintedRequest)
         {
-            await _mediator.Send(updateCertificateStatusRequest);
+            await _mediator.Send(updateCertificatesBatchToIndicatePrintedRequest);
             return Ok();
         }
     }

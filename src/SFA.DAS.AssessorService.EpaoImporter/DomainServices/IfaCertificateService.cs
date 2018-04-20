@@ -45,7 +45,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             _certificates = certificateResponses;
 
             var uuid = Guid.NewGuid();
-            var fileName = $"IFA-Certificate-{GetMonthYear()}-{batchNumber.ToString().PadLeft(9, '0')}.xlsx";
+            var fileName = $"IFA-Certificate-{GetMonthYear()}-{batchNumber.ToString().PadLeft(3, '0')}.xlsx";
 
             using (var package = new ExcelPackage(memoryStream))
             {
@@ -252,7 +252,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             var month = DateTime.Today.Month.ToString().PadLeft(2, '0');
 
             var year = DateTime.Now.Year;
-            var monthYear = month + "-" + year;
+            var monthYear = month + year.ToString().Substring(2, 2);
             return monthYear;
         }
     }
