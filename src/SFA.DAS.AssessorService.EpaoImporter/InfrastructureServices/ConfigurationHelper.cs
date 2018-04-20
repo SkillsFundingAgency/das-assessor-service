@@ -8,6 +8,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.InfrastructureServices
 {
     public static class ConfigurationHelper
     {
+
         private static IWebConfiguration _webConfiguration;
 
         public static IWebConfiguration GetConfiguration()
