@@ -8,7 +8,6 @@ namespace SFA.DAS.AssessorService.EpaoImporter.InfrastructureServices
 {
     public class BlobContainerHelper
     {
-
         public async Task<CloudBlobContainer> GetContainer(string containerName)
         {
             var storageAccountName = CloudConfigurationManager.GetSetting("ConfigurationStorageConnectionString");
