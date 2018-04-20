@@ -14,13 +14,13 @@
     <PackageReference Include="MailKit" Version="2.0.2" />
     <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="3.16.0" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.6" />
+    <PackageReference Include="Microsoft.WindowsAzure.ConfigurationManager" Version="3.2.3" />
 
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3">
     </PackageReference>
 
     <PackageReference Include="NLog.Extensions.Logging" Version="1.0.0" />
     <PackageReference Include="SFA.DAS.Http" Version="1.0.0.39136" />
-    <PackageReference Include="SFA.DAS.NLog.Targets.Redis" Version="1.1.5" />
     <PackageReference Include="SFA.DAS.Notifications.Api.Client" Version="2.0.0.35919" />
     <PackageReference Include="StructureMap" Version="4.6.1" />
     <PackageReference Include="Dapper" Version="1.50.4" />
@@ -34,10 +34,14 @@
   <ItemGroup>
     <ProjectReference Include="..\SFA.DAS.AssessorService.Application.Api.Client\SFA.DAS.AssessorService.Application.Api.Client.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Domain\SFA.DAS.AssessorService.Domain.csproj" />
+    <ProjectReference Include="..\SFA.DAS.AssessorService.NLog.Targets.Redis\SFA.DAS.AssessorService.NLog.Targets.Redis.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Settings\SFA.DAS.AssessorService.Settings.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.WindowsAzure.Configuration">
+      <HintPath>..\..\..\..\..\Users\jcoxh\.nuget\packages\microsoft.windowsazure.configurationmanager\3.2.3\lib\net40\Microsoft.WindowsAzure.Configuration.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Update="nlog.printing.config">
