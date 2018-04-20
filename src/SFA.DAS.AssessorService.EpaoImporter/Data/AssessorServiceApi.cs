@@ -75,7 +75,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
             var jsonData = JsonConvert.SerializeObject(updateCertificatesBatchToIndicatePrintedRequest);
 
             var responseMessage = await _httpClient.PutAsJsonAsync(
-                "/api/v1/certificates/{batchNumber}", updateCertificatesBatchToIndicatePrintedRequest);
+                $"/api/v1/certificates/{batchNumber.ToString()}", updateCertificatesBatchToIndicatePrintedRequest);
         }
 
         public async Task<EMailTemplate> GetEmailTemplate()
