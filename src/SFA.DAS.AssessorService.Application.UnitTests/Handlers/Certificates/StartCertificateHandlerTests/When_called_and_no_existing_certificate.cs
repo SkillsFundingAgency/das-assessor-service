@@ -36,8 +36,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             {
                 GivenNames = "Dave",
                 FamilyName = "Smith",
-                DateOfBirth = new DateTime(1990, 01, 01),
-                Sex = "Male",
                 StdCode = "30",
                 LearnStartDate = new DateTime(2016, 01, 09),
                 UkPrn = 12345678
