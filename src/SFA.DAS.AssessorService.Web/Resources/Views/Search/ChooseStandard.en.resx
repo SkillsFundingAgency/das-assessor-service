@@ -121,7 +121,7 @@
     <value>Assessments not recorded yet:</value>
   </data>
   <data name="ErrorsWithSubmission" xml:space="preserve">
-    <value>There are errors with your submission</value>
+    <value>There's a problem</value>
   </data>
   <data name="Lastname" xml:space="preserve">
     <value>Last name</value>

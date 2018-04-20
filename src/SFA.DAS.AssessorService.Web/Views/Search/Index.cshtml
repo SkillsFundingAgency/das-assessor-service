@@ -10,7 +10,6 @@
 <div class="grid-row">
     <div class="column-two-thirds">
         <!-- <a class="link-back" asp-controller="Search" asp-action="Index">Back</a> -->
-        <h1 class="heading-large">Search for an apprentice</h1>
 
         @if (Model?.SearchResults != null)
         {
@@ -26,7 +25,6 @@
             }
         }
 
-        
         @{ await Html.RenderPartialAsync("_SearchForm", Model); }
         
     </div>
