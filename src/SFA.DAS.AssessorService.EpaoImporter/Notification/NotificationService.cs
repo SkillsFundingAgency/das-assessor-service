@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.EpaoImporter.Data;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.Notifications.Api.Client;
@@ -23,12 +25,18 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Notification
             _webConfiguration = webConfiguration;
         }
 
-        public async Task Send()
+        public async Task Send(int batchNumber, List<CertificateResponse> certificates,
+            int coverLettersProduced)
         {
             var emailTemplate = await _assessorServiceApi.GetEmailTemplate();
 
+            var fileName = $"IFA-Certificate-{GetMonthYear()}-{batchNumber.ToString().PadLeft(3, '0')}.xlsx";
+
             var personalisation = new Dictionary<string, string>
-                {{"name", "john coxhead"}, {"day ", "1"}, {"day of week", "Monday"}, {"colour", "blue"}};
+                {{"fileName", $"File Name:- {fileName}" },
+                    { "numberOfCertificatesToBePrinted", $"Number Of Certificates to be Printed:- {certificates.Count}"},
+                    { "numberOfCoverLetters", $"Number of Cover Letters:- {coverLettersProduced}"},
+                    { "epaos", "John\r\nJames\r\nJane\r\n" }};
 
             var recipients = emailTemplate.Recipients.Split(';').Select(x => x.Trim());
             foreach (var recipient in recipients)
@@ -45,6 +53,15 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Notification
 
                 await _notificationsApi.SendEmail(email);
             }
+        }
+
+        private static string GetMonthYear()
+        {
+            var month = DateTime.Today.Month.ToString().PadLeft(2, '0');
+
+            var year = DateTime.Now.Year;
+            var monthYear = month + year.ToString().Substring(2, 2);
+            return monthYear;
         }
     }
 }

@@ -46,10 +46,10 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                     var batchNumber = await _assessorServiceApi.GenerateBatchNumber();
                     var certificates = (await _assessorServiceApi.GetCertificatesToBePrinted()).ToList();
 
-                    await _coverLetterService.Create(batchNumber, certificates);
+                    var coverLettersProduced = await _coverLetterService.Create(batchNumber, certificates);
                     await _ifaCertificateService.Create(batchNumber, certificates);
 
-                    await _notificationService.Send();
+                    await _notificationService.Send(batchNumber, certificates, coverLettersProduced);
 
                     await _assessorServiceApi.ChangeStatusToPrinted(batchNumber, certificates);
                 }
