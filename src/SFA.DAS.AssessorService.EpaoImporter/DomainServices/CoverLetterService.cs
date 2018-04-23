@@ -79,11 +79,11 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 
         private async Task<MemoryStream> CreateWordDocumentStream(string mergedFileName, CertificateDataResponse certificateData, MemoryStream documentTemplateStream)
         {
-            _aggregateLogger.LogInfo("Merging fields in docuument ...");
+            _aggregateLogger.LogInfo("Merging fields in document ...");
             var document = MergeFieldsInDocument(certificateData, documentTemplateStream);
-            _aggregateLogger.LogInfo("Converting Document to PDF ...");
+            _aggregateLogger.LogInfo("Merged fields in Document");
 
-            await WriteCopyOfMergedDocumentToBlob(mergedFileName, document);
+            //await WriteCopyOfMergedDocumentToBlob(mergedFileName, document);
 
             return ConvertDocumentToStream(document);
         }
