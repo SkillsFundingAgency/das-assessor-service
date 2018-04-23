@@ -44,7 +44,6 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             var certificateResponses = certificates as CertificateResponse[] ?? certificates.ToArray();
             _certificates = certificateResponses;
 
-            var uuid = Guid.NewGuid();
             var fileName = $"IFA-Certificate-{GetMonthYear()}-{batchNumber.ToString().PadLeft(3, '0')}.xlsx";
 
             using (var package = new ExcelPackage(memoryStream))
@@ -55,7 +54,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                 package.Save();
 
                 await _fileTransferClient.Send(memoryStream, fileName);
-                await WriteCopyOfMergedDocumentToBlob(fileName, memoryStream);
+                //await WriteCopyOfMergedDocumentToBlob(fileName, memoryStream);
 
                 memoryStream.Close();
             }

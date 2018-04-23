@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             _initialiseContainer = initialiseContainer;
         }
 
-        public async Task Create(int batchNumber, IEnumerable<CertificateResponse> certificates)
+        public async Task<int> Create(int batchNumber, IEnumerable<CertificateResponse> certificates)
         {
             var documentTemplateDataStream = await _documentTemplateDataStream.Get();
 
@@ -57,12 +57,15 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                 });
 
             var sequenceNumber = 0;
+            var totalCoverLettersProduced = 0;
 
             foreach (var groupedCertificate in groupedCertificates)
             {
                 sequenceNumber++;
+                totalCoverLettersProduced++;
+
                 var certificate = groupedCertificate.Result[0];
-                var wordDocumentFileName = $"IFA-Certificate-{GetMonthYear()}-{batchNumber.ToString().PadLeft(3,'0')}-{certificate.CertificateData.ContactOrganisation}-{sequenceNumber}.docx";
+                var wordDocumentFileName = $"IFA-Certificate-{GetMonthYear()}-{batchNumber.ToString().PadLeft(3, '0')}-{certificate.CertificateData.ContactOrganisation}-{sequenceNumber}.docx";
 
                 _aggregateLogger.LogInfo($"Processing Certificate for Cover Letter - {certificate.CertificateReference} - {wordDocumentFileName}");
                 var wordStream = await CreateWordDocumentStream(wordDocumentFileName, certificate.CertificateData, documentTemplateDataStream);
@@ -75,6 +78,8 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             }
 
             documentTemplateDataStream.Close();
+
+            return totalCoverLettersProduced;
         }
 
         private async Task<MemoryStream> CreateWordDocumentStream(string mergedFileName, CertificateDataResponse certificateData, MemoryStream documentTemplateStream)
@@ -149,7 +154,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             var month = DateTime.Today.Month.ToString().PadLeft(2, '0');
 
             var year = DateTime.Now.Year;
-            var monthYear = month + year.ToString().Substring(2,2);
+            var monthYear = month + year.ToString().Substring(2, 2);
             return monthYear;
         }
     }

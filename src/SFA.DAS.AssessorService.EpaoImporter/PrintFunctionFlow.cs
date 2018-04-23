@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
     public static class PrintFunctionFlow
     {
         [FunctionName("PrintFunctionFlow")]
-        public static void Run([TimerTrigger("0 */8 * * * *",
+        public static void Run([TimerTrigger("0 */2 * * * *",
                 RunOnStartup = false)] TimerInfo myTimer, TraceWriter functionLogger,
             ExecutionContext context)
         {
