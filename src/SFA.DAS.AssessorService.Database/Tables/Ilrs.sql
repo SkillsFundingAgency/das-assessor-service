@@ -11,5 +11,7 @@
 	[FundingModel] INT NULL,
     [ApprenticeshipId] BIGINT NULL,
     [EmployerAccountId] BIGINT NULL,
-    [Source] NVARCHAR(10) NULL
+    [Source] NVARCHAR(10) NULL, 
+    [CreatedAt] DATETIME NOT NULL, 
+    [UpdatedAt] DATETIME NULL
 )
