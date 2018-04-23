@@ -12,6 +12,6 @@
     [ApprenticeshipId] BIGINT NULL,
     [EmployerAccountId] BIGINT NULL,
     [Source] NVARCHAR(10) NULL, 
-    [CreatedAt] DATETIME NOT NULL, 
-    [UpdatedAt] DATETIME NULL
+    [CreatedAt] DATETIME2 NOT NULL, 
+    [UpdatedAt] DATETIME2 NULL
 )
