@@ -68,4 +68,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             return newCertificate;
         }
     }
+
+    public interface ICommitmentsApi
+    {
+        CommitmentEmployerDetails GetCommitmentEmployerDetails(long providerId, long commitmentId);
+    }
+
+    public class CommitmentEmployerDetails
+    {
+        public string LegalEntityName { get; set; }
+        public string LegalEntityAddress { get; set; }
+    }
 }

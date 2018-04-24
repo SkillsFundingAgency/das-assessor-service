@@ -13,5 +13,10 @@
     [EmployerAccountId] BIGINT NULL,
     [Source] NVARCHAR(10) NULL, 
     [CreatedAt] DATETIME2 NOT NULL, 
-    [UpdatedAt] DATETIME2 NULL
+    [UpdatedAt] DATETIME2 NULL,
+	[LearnRefNumber] NVARCHAR(12) NULL
 )
+
+GO
+
+CREATE INDEX [IX_Ilrs_Uln_FamilyName_StdCode] ON [dbo].[Ilrs] ([Uln], [FamilyName], [StdCode])

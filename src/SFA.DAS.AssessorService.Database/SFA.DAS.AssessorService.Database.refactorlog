@@ -7,4 +7,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="CertificateReference" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="ca8bc869-a0e4-4217-9f08-f8f79a2f7937" ChangeDateTime="04/24/2018 07:34:24">
+    <Property Name="ElementName" Value="[dbo].[Ilrs].[IX_Ilrs_Column]" />
+    <Property Name="ElementType" Value="SqlIndex" />
+    <Property Name="ParentElementName" Value="[dbo].[Ilrs]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[IX_Ilrs_Uln_FamilyName_StdCode]" />
+  </Operation>
 </Operations>
