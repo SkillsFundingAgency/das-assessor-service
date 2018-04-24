@@ -3,7 +3,7 @@
 @model SFA.DAS.AssessorService.Web.ViewModels.Search.SelectedStandardViewModel
 
 @{
-    ViewBag.Title = "Confirm apprentice";
+    ViewBag.Title = Model.CertificateReference == null ? "Confirm this is the correct apprentice" : "An assessment has already been recorded against this apprentice";
     Layout = "_Layout";
 }
 
@@ -15,7 +15,7 @@
         @if (Model.CertificateReference == null)
         {
 
-            <h1 class="heading-large">Confirm apprentice</h1>
+            <h1 class="heading-large">Confirm this is the correct apprentice</h1>
             <form asp-controller="Certificate" asp-action="Start" method="post">
                 <div class="form-group">
                     <fieldset>
@@ -33,22 +33,23 @@
                                 <p><span class="bold">Level:</span> @Model.Level</p>
                             </li>
                         </ul>
+                        <p>If the name, standard or level are incorrect, you must ask the training provider to update the Individualised Learner Record (ILR).</p>
+
                     </fieldset>
                 </div>
 
                 @Html.HiddenFor(m => m.Uln)
                 @Html.HiddenFor(m => m.StdCode)
                 <div class="form-group">
-                    <button class="button" type="submit">Start recording assessment</button>
+                    <button class="button" type="submit">Confirm and continue</button>
                 </div>
             </form>
 
-            <p><a asp-controller="Search" asp-action="Index">Search again</a> if this is not the right apprentice.</p>
+            <p><a asp-controller="Search" asp-action="Index">Search again</a> if this isn't the correct apprentice.</p>
         }
         else
         {
             <h1 class="heading-large">An assessment has already been recorded against this apprentice</h1>
-            <h2 class="heading-medium">Apprentice details</h2>
             <ul class="list">
                 <li>
                     <p><span class="bold">Name:</span> @Model.GivenNames @Model.FamilyName</p>
@@ -62,12 +63,9 @@
                 <li>
                     <p><span class="bold">Level:</span> @Model.Level</p>
                 </li>
-                <li>
-                    <p><span class="bold">Grade:</span> @Model.OverallGrade</p>
-                </li>
             </ul>
 
-            <p><a asp-controller="Search" asp-action="Index">Return to search</a></p>
+            <p><a asp-controller="Search" asp-action="Index">Search again</a></p>
         }
 
         

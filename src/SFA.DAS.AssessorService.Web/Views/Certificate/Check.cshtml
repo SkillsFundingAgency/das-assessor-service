@@ -3,7 +3,7 @@
 @model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateCheckViewModel
 
 @{
-    ViewBag.Title = "Check and approve";
+    ViewBag.Title = "Check and approve the assessment details";
     Layout = "_Layout";
 }
 
@@ -20,7 +20,7 @@
         </div>
 
         <h2 class="heading-medium">
-            Personal details
+            Apprentice details
         </h2>
 
         <dl class="govuk-check-your-answers cya-questions-short">
@@ -79,7 +79,7 @@
                 </dd>
                 <dd class="cya-change">
                     <a asp-controller="CertificateGrade" asp-action="Grade" asp-route-redirecttocheck="true">
-                        Change<span class="visually-hidden"> name</span>
+                        Change<span class="visually-hidden"> grade</span>
                     </a>
                 </dd>
             </div>
@@ -92,20 +92,20 @@
                 </dd>
                 <dd class="cya-change">
                     <a asp-controller="CertificateOption" asp-action="Option" asp-route-redirecttocheck="true">
-                        Change<span class="visually-hidden"> name</span>
+                        Change<span class="visually-hidden"> option</span>
                     </a>
                 </dd>
             </div>
             <div>
                 <dt class="cya-question">
-                    Apprenticeship achievement date
+                    Achievement date
                 </dt>
                 <dd class="cya-answer">
                     @Model.AchievementDate.ToShortDateString()
                 </dd>
                 <dd class="cya-change">
                     <a asp-controller="CertificateDate" asp-action="Date" asp-route-redirecttocheck="true">
-                        Change<span class="visually-hidden"> name</span>
+                        Change<span class="visually-hidden"> achievement date</span>
                     </a>
                 </dd>
             </div>
@@ -131,14 +131,14 @@
             </div>
             <div>
                 <dt class="cya-question">
-                    Department (optional)
+                    Department
                 </dt>
                 <dd class="cya-answer">
                     @Model.Dept
                 </dd>
                 <dd class="cya-change">
                     <a asp-controller="CertificateAddress" asp-action="Address" asp-route-redirecttocheck="true">
-                        Change<span class="visually-hidden"> name</span>
+                        Change<span class="visually-hidden"> department</span>
                     </a>
                 </dd>
             </div>
@@ -151,7 +151,7 @@
                 </dd>
                 <dd class="cya-change">
                     <a asp-controller="CertificateAddress" asp-action="Address" asp-route-redirecttocheck="true">
-                        Change<span class="visually-hidden"> name</span>
+                        Change<span class="visually-hidden"> organisation</span>
                     </a>
                 </dd>
             </div>
@@ -168,7 +168,7 @@
                 </dd>
                 <dd class="cya-change">
                     <a asp-controller="CertificateAddress" asp-action="Address" asp-route-redirecttocheck="true">
-                        Change<span class="visually-hidden"> name</span>
+                        Change<span class="visually-hidden"> address</span>
                     </a>
                 </dd>
             </div>

@@ -17,7 +17,7 @@
             @* hidden with css by default *@
             <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
                 <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                    There are errors with your submission
+                    @Localizer["ErrorsWithSubmission"]
                 </h2>
                 <ul class="js-error-summary-list error-summary-list"></ul>
             </div>
@@ -83,6 +83,9 @@
                             </div>
                         }
                     }
+                    <div class="form-block">
+                        <p>If the name, standard or level are incorrect, you must ask the training provider to update the Individualised Learner Record (ILR).</p>
+                    </div>
                 </div>
             </fieldset>
             <div class="form-group">
@@ -90,7 +93,7 @@
             </div>
         </form>
 
-        <p><a asp-controller="Search" asp-action="Index">Search again</a> if this is not the right apprentice.</p>
+        <p><a asp-controller="Search" asp-action="Index">Search again</a> if this isn’t the correct apprentice.</p>
     </div>
 </div>
 

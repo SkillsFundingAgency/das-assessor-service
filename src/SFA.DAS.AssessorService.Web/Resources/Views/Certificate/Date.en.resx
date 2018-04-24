@@ -124,12 +124,12 @@
     <value>For example, 15 10 2017</value>
   </data>
   <data name="Heading" xml:space="preserve">
-    <value>What is the apprenticeship achievement date?</value>
+    <value>What's the apprenticeship achievement date?</value>
   </data>
   <data name="InfoBody" xml:space="preserve">
-    <value>The achievement date is when you confirm the apprentice has successfully completed the apprenticeship.</value>
+    <value>The achievement date is when the apprentice successfully completed the assessment.</value>
   </data>
   <data name="InfoHeader" xml:space="preserve">
-    <value>What is an achievement date?</value>
+    <value>What’s an apprenticeship achievement date?</value>
   </data>
 </root>

@@ -118,6 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="GradeShouldBeSelected" xml:space="preserve">
-    <value>A grade should be selected.</value>
+    <value>Select the grade the apprentice achieved</value>
   </data>
 </root>
