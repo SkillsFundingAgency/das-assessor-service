@@ -127,7 +127,7 @@
     <value />
   </data>
   <data name="City" xml:space="preserve">
-    <value>City</value>
+    <value>City or town</value>
   </data>
   <data name="ContinueButton" xml:space="preserve">
     <value>Continue</value>
@@ -148,7 +148,7 @@
     <value>Loading address...</value>
   </data>
   <data name="ManualAddressLink" xml:space="preserve">
-    <value>Or enter address manually</value>
+    <value>Or enter the address manually</value>
   </data>
   <data name="Name" xml:space="preserve">
     <value>Name</value>
@@ -163,6 +163,6 @@
     <value>Start typing the postcode or address</value>
   </data>
   <data name="ServiceUnavailable" xml:space="preserve">
-    <value>Service is currently unavailable, please enter address manually</value>
+    <value>Service is currently unavailable, enter the address manually</value>
   </data>
 </root>

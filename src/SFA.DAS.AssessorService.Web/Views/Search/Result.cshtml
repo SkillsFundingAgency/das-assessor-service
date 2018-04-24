@@ -3,7 +3,7 @@
 @model SFA.DAS.AssessorService.Web.ViewModels.Search.SelectedStandardViewModel
 
 @{
-    ViewBag.Title = "Confirm this is the correct apprentice";
+    ViewBag.Title = Model.CertificateReference == null ? "Confirm this is the correct apprentice" : "An assessment has already been recorded against this apprentice";
     Layout = "_Layout";
 }
 
@@ -62,9 +62,6 @@
                 </li>
                 <li>
                     <p><span class="bold">Level:</span> @Model.Level</p>
-                </li>
-                <li>
-                    <p><span class="bold">Grade:</span> @Model.OverallGrade</p>
                 </li>
             </ul>
 
