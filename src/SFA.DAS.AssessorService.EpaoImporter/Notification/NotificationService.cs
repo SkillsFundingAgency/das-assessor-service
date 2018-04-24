@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.EpaoImporter.Data;
@@ -25,18 +26,36 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Notification
             _webConfiguration = webConfiguration;
         }
 
-        public async Task Send(int batchNumber, List<CertificateResponse> certificates,
+        public async Task Send(int batchNumber, List<CertificateResponse> certificateResponses,
             int coverLettersProduced)
         {
             var emailTemplate = await _assessorServiceApi.GetEmailTemplate();
-
             var fileName = $"IFA-Certificate-{GetMonthYear()}-{batchNumber.ToString().PadLeft(3, '0')}.xlsx";
+
+            var endPointAssessorOrganisations = certificateResponses.ToArray().GroupBy(
+                x => new
+                {
+                    x.CertificateData.ContactOrganisation,
+                },
+                (key, group) => new
+                {
+                    key1 = key.ContactOrganisation,
+                    Result = group.ToList()
+                }).Select(x => x.key1).ToList()
+                .Distinct();
+
+            var organisations = new StringBuilder();
+            foreach (var organisation in endPointAssessorOrganisations)
+            {
+                organisations.Append(organisation);
+                organisations.Append("\r\n");
+            }
 
             var personalisation = new Dictionary<string, string>
                 {{"fileName", $"File Name:- {fileName}" },
-                    { "numberOfCertificatesToBePrinted", $"Number Of Certificates to be Printed:- {certificates.Count}"},
+                    { "numberOfCertificatesToBePrinted", $"Number Of Certificates to be Printed:- {certificateResponses.Count}"},
                     { "numberOfCoverLetters", $"Number of Cover Letters:- {coverLettersProduced}"},
-                    { "epaos", "John\r\nJames\r\nJane\r\n" }};
+                    { "epaos", $"{organisations}" }};
 
             var recipients = emailTemplate.Recipients.Split(';').Select(x => x.Trim());
             foreach (var recipient in recipients)

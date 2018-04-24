@@ -21,11 +21,35 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     Id = Guid.NewGuid(),
                     EndPointAssessorName = "EPAO 1",
                     EndPointAssessorOrganisationId = "1234",
-                    EndPointAssessorUkprn = 10033670,
+                    EndPointAssessorUkprn = 10033671,
                     Status = OrganisationStatus.New
                 };
 
                 context.Organisations.Add(organisation);
+                context.SaveChanges();
+
+                var secondOrganisation = new Organisation
+                {
+                    Id = Guid.NewGuid(),
+                    EndPointAssessorName = "EPAO 2",
+                    EndPointAssessorOrganisationId = "1235",
+                    EndPointAssessorUkprn = 10033672,
+                    Status = OrganisationStatus.New
+                };
+
+                context.Organisations.Add(secondOrganisation);
+                context.SaveChanges();
+
+                var thirdOrganisation = new Organisation
+                {
+                    Id = Guid.NewGuid(),
+                    EndPointAssessorName = "EPAO 3",
+                    EndPointAssessorOrganisationId = "1236",
+                    EndPointAssessorUkprn = 10033672,
+                    Status = OrganisationStatus.New
+                };
+
+                context.Organisations.Add(thirdOrganisation);
                 context.SaveChanges();
 
                 var firstContact = new Contact
@@ -53,6 +77,20 @@ namespace SFA.DAS.AssessorService.Data.TestData
                 };
 
                 context.Contacts.Add(secondContact);
+                context.SaveChanges();
+
+                var thirdContact = new Contact
+                {
+                    Id = Guid.NewGuid(),
+                    Username = "jcoxhead2",
+                    Email = "jcoxhead@gmail.com",
+                    DisplayName = "John Coxhead",
+                    EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
+                    Status = ContactStatus.Live,
+                    OrganisationId = secondOrganisation.Id
+                };
+
+                context.Contacts.Add(thirdContact);
                 context.SaveChanges();
 
                 var firstCertificateData = new CertificateData
@@ -117,6 +155,28 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     StandardPublicationDate = DateTime.Now,
                 };
 
+                var thirdCertificateData = new CertificateData
+                {
+                    AchievementDate = DateTime.Now.AddDays(-1),
+                    ContactName = "John Coxhead",
+                    ContactOrganisation = "1235",
+                    Department = "Human Resources",
+                    ContactAddLine1 = "1 Beta Drive",
+                    ContactAddLine2 = "Oakhalls",
+                    ContactAddLine3 = "Malvern",
+                    ContactAddLine4 = "Worcs",
+                    ContactPostCode = "B60 2TY",
+                    CourseOption = "French",
+                    LearnerFamilyName = "Coxhead",
+                    LearnerGivenNames = "David",
+                    OverallGrade = "PASS",
+                    Registration = "Registered",
+                    LearningStartDate = DateTime.Now.AddDays(10),
+                    StandardLevel = 1,
+                    StandardName = "Test",
+                    StandardPublicationDate = DateTime.Now,
+                };
+
                 var secondCertificate = new Certificate
                 {
                     Id = Guid.NewGuid(),
@@ -131,6 +191,22 @@ namespace SFA.DAS.AssessorService.Data.TestData
                 };
 
                 context.Certificates.Add(secondCertificate);
+                context.SaveChanges();
+
+                var thirdCertificate = new Certificate
+                {
+                    Id = Guid.NewGuid(),
+                    OrganisationId = secondOrganisation.Id,
+                    CertificateData = JsonConvert.SerializeObject(thirdCertificateData),
+                    Status = CertificateStatus.Submitted,
+                    CreatedBy = "jcoxhead",
+                    CertificateReference = "DEF456",
+                    Uln = 1234567890,
+                    StandardCode = 94,
+                    ProviderUkPrn = 12345678
+                };
+
+                context.Certificates.Add(thirdCertificate);
                 context.SaveChanges();
 
                 var firstCertificateLog = new CertificateLog
@@ -183,7 +259,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
             {
                 var ilrs = new List<Ilr>
                 {
-                    new Ilr() 
+                    new Ilr()
                     {
                         Uln = 1111111111,
                         GivenNames = "Karla",
