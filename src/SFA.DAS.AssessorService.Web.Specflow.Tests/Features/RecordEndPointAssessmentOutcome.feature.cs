@@ -82,8 +82,8 @@ testRunner.And("User should be navigated to search for an apprentice page on EPA
                         "lastname",
                         "ULN"});
             table1.AddRow(new string[] {
-                        "Taylor",
-                        "2222222222"});
+                        "Malmberg",
+                        "9366308321"});
 #line 12
 testRunner.And("User enters valid search criteria", ((string)(null)), table1, "And ");
 #line 15
