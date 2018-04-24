@@ -118,22 +118,22 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AssessmentsNotRecordedYet" xml:space="preserve">
-    <value>Assessments not recorded yet:</value>
+    <value>Assessments not recorded yet</value>
   </data>
   <data name="ErrorsWithSubmission" xml:space="preserve">
-    <value>There are errors with your submission</value>
+    <value>There's a problem</value>
   </data>
   <data name="Lastname" xml:space="preserve">
     <value>Last name</value>
   </data>
   <data name="PageDescription" xml:space="preserve">
-    <value>Select the standard that you would like to record an assessment for.</value>
+    <value>Select the standard that you want to record an assessment for.</value>
   </data>
   <data name="PageHeading" xml:space="preserve">
     <value>The apprentice is enrolled on more than one apprenticeship</value>
   </data>
   <data name="PreviouslyRecordedAssessments" xml:space="preserve">
-    <value>Previously recorded assessments:</value>
+    <value>Previously recorded assessments</value>
   </data>
   <data name="SelectStandardButton" xml:space="preserve">
     <value>Continue</value>
