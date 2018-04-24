@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Notification
             _logger = logger;
         }
 
-        public Task Send(int batchNumber, List<CertificateResponse> certificates, int coverLettersProduced)
+        public Task Send(int batchNumber, List<CertificateResponse> certificates, List<string> coverLetterFileNames)
         {
             _logger.LogInfo("Sending Notification ..");
             return Task.CompletedTask;
