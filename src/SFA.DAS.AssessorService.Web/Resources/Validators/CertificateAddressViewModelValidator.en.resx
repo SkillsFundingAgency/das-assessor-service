@@ -118,21 +118,21 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddressLine1CannotBeEmpty" xml:space="preserve">
-    <value>Please enter a street address</value>
+    <value>Enter an address</value>
   </data>
   <data name="CityCannotBeEmpty" xml:space="preserve">
-    <value>Please enter a city</value>
+    <value>Enter a city or town</value>
   </data>
   <data name="EmployerCannotBeEmpty" xml:space="preserve">
-    <value>Please enter an organisation</value>
+    <value>Enter an organisation</value>
   </data>
   <data name="NameCannotBeEmpty" xml:space="preserve">
-    <value>Please enter a name</value>
+    <value>Enter a name</value>
   </data>
   <data name="PostcodeCannotBeEmpty" xml:space="preserve">
-    <value>Please enter a postcode</value>
+    <value>Enter a postcode</value>
   </data>
   <data name="PostcodeValid" xml:space="preserve">
-    <value>Please enter a valid UK postcode</value>
+    <value>Enter a valid UK postcode</value>
   </data>
 </root>

@@ -10,29 +10,45 @@
 <div class="grid-row">
     <div class="column-two-thirds">
         <!-- <a class="link-back" asp-controller="Search" asp-action="Index">Back</a> -->
-        <h1 class="heading-large">Search for an apprentice</h1>
 
         @if (Model?.SearchResults != null)
         {
             if (!Model.SearchResults.Any())
             {
+                <h1 class="heading-large">Search for an apprentice</h1>
                 <h2 class="heading-medium">0 results found</h2>
 
-                <p class="heading-medium">Please try:</p>
+                <p class="heading-medium">Check the:</p>
                 <ul class="list list-bullet">
-                    <li>checking the spelling of the last name</li>
-                    <li>making sure the ULN is correct for the apprentice</li>
+                    <li>spelling of the last name</li>
+                    <li>ULN is correct for the apprentice</li>
                 </ul>
             }
+            <p><a asp-controller="Search" asp-action="Index">Search again</a></p>
+
+            <details role="group">
+                <summary role="button" aria-controls="why-we-cant-find-the-apprentice" aria-expanded="false"><span class="summary">Why we can't find the apprentice</span></summary>
+                    <div class="text panel panel-border-narrow" id="why-we-cant-find-the-apprentice" aria-hidden="true">
+                    <p>The most common reasons we can't find the apprentice are:</p>
+                    <ul class="list list-bullet">
+                        <li>the apprentice's details have changed, but the Individualised Learner Record (ILR) is not up to date</li>
+                        <li>the ULN given to you by the training provider does not match what we have in our system</li>
+                        <li>the apprenticeship is privately funded</li>
+                    </ul>
+                    <p>Please contact the training provider or employer to confirm the apprentice's details.</p>
+                    <p>If the training provider needs to update the ILR, you'll be able to record that apprentice's end-point assessment in around 5 working days after the provider updates the ILR.</p>
+                </div>
+            </details>
+        }
+        else
+        {
+            await Html.RenderPartialAsync("_SearchForm", Model);
         }
 
-        
-        @{ await Html.RenderPartialAsync("_SearchForm", Model); }
-        
     </div>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-    @{await Html.RenderPartialAsync("_SearchScriptsPartial"); }
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    @{ await Html.RenderPartialAsync("_SearchScriptsPartial"); }
 }

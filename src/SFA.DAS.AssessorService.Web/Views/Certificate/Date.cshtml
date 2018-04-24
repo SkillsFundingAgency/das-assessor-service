@@ -3,7 +3,7 @@
 @model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateDateViewModel
 
 @{
-    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Achievement date";
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Apprenticeship achievement date";
     Layout = "_Layout";
 }
 
@@ -20,7 +20,7 @@
             @* hidden with css by default *@
             <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
                 <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                    There are errors with your submission
+                    There's a problem
                 </h2>
                 <ul class="js-error-summary-list error-summary-list"></ul>
             </div>
@@ -35,7 +35,7 @@
                 {
                     <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
                         <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                            There are errors with your submission
+                            There's a problem
                         </h2>
                         <ul class="error-summary-list">
                             <li><a sfa-validation-for="Date"></a></li>

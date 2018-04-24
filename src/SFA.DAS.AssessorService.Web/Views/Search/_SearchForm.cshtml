@@ -7,7 +7,7 @@
     @* hidden with css by default *@
     <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
         <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-            There are errors with your search
+            There's a problem
         </h2>
         <ul class="js-error-summary-list error-summary-list"></ul>
     </div>
@@ -16,7 +16,7 @@
     {
         <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
             <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                There are errors with your search
+                There's a problem
             </h2>
             <ul class="error-summary-list">
                 <li><a sfa-validation-for="Surname"></a></li>
@@ -25,15 +25,19 @@
         </div>
     }
 
-    <div class="info-summary">
-        <h3 class="heading-medium">@Localizer["SearchInfoSummary"]</h3>
-    </div>
-
     <fieldset>
+        <legend>
+            <h1 class="heading-large">Search for an apprentice</h1>
+        </legend>
+
+        <div class="info-summary">
+            <h3 class="heading-medium">@Localizer["SearchInfoSummary"]</h3>
+        </div>
 
         <div class="form-group" sfa-validation-for="Surname" sfa-validationerror-class="form-group-error">
             <label class="form-label" for="Surname">
                 <span class="form-label-bold">@Localizer["Lastname"]</span>
+                <span class="form-hint">@Localizer["LastnameHint"]</span>
                 <span class="error-message" asp-validation-for="Surname"></span>
             </label>
             <input class="form-control" name="Surname" sfa-validation-for="Surname" sfa-validationerror-class="form-control-error" asp-for="Surname" type="text" maxlength="100" />
@@ -42,7 +46,7 @@
         <div class="form-group" sfa-validation-for="Uln" sfa-validationerror-class="form-group-error">
             <label class="form-label" for="Uln">
                 <span class="form-label-bold">@Localizer["Uln"]</span>
-                @* <span class="form-hint">@Localizer["UlnHint"]</span> *@
+                <span class="form-hint">@Localizer["UlnHint"]</span>
                 <span class="error-message" asp-validation-for="Uln"></span>
             </label>
             <input class="form-control" name="Uln" asp-for="Uln" type="text" sfa-validation-for="Uln" sfa-validationerror-class="form-control-error" maxlength="10" />

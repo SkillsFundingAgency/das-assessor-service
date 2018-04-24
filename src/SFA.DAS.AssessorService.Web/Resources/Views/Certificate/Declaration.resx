@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ContinueButton" xml:space="preserve">
-    <value>Apply for certificate</value>
+    <value>Confirm and apply for a certificate</value>
   </data>
   <data name="Heading" xml:space="preserve">
     <value>Declaration</value>
@@ -133,9 +133,9 @@
     <value>the assessment was independent of both the provider and employer</value>
   </data>
   <data name="InfoLine3" xml:space="preserve">
-    <value>the apprentice has achieved all the requirements of the assessment plan, including the end-point assessment</value>
+    <value>the apprentice achieved all the requirements of the assessment plan, including the end-point assessment</value>
   </data>
   <data name="InfoLine4" xml:space="preserve">
-    <value>the apprentice has met the minimum duration of the apprenticeship</value>
+    <value>the apprentice met the minimum duration of the apprenticeship</value>
   </data>
 </root>

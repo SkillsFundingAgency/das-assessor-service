@@ -3,7 +3,7 @@
 @model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateOptionViewModel
 
 @{
-    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Additional learning options";
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Learning option";
     Layout = "_Layout";
 }
 
@@ -75,6 +75,9 @@
                     <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
                         <p>
                             @Localizer["InfoBody"]
+                        </p>
+                        <p>
+                            @Localizer["InfoBodyTwo"]
                         </p>
                     </div>
                 </details>
