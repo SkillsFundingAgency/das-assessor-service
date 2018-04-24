@@ -15,3 +15,7 @@
     [CreatedAt] DATETIME2 NOT NULL, 
     [UpdatedAt] DATETIME2 NULL
 )
+
+GO
+
+CREATE INDEX [IX_Ilrs_Uln_FamilyName_StdCode] ON [dbo].[Ilrs] ([Uln], [FamilyName], [StdCode])
