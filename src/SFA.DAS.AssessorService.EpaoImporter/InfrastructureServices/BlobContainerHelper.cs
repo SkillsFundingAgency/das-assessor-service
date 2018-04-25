@@ -3,15 +3,21 @@ using Microsoft.Azure;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.Storage.RetryPolicies;
+using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.EpaoImporter.InfrastructureServices
 {
     public class BlobContainerHelper
     {
-        public async Task<CloudBlobContainer> GetContainer(string containerName)
+        private readonly IWebConfiguration _webConfiguration;
+
+        public BlobContainerHelper(IWebConfiguration webConfiguration)
         {
-            var storageAccountName = CloudConfigurationManager.GetSetting("ConfigurationStorageConnectionString");
-            var storageAccount = CloudStorageAccount.Parse(storageAccountName);
+            _webConfiguration = webConfiguration;
+        }
+        public async Task<CloudBlobContainer> GetContainer(string containerName)
+        {         
+            var storageAccount = CloudStorageAccount.Parse(_webConfiguration.IFATemplateStorageConnectionString);
 
             var client = storageAccount.CreateCloudBlobClient();
 
