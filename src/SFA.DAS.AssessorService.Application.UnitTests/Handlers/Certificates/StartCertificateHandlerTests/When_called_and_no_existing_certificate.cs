@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
@@ -53,7 +54,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
 
             _startCertificateHandler = new StartCertificateHandler(_certificateRepository.Object,
                 ilrRepository.Object, assessmentOrgsApiClient.Object,
-                organisationQueryRepository.Object);
+                organisationQueryRepository.Object, new Mock<ILogger<StartCertificateHandler>>().Object);
 
             _returnedCertificate = _startCertificateHandler
                 .Handle(
