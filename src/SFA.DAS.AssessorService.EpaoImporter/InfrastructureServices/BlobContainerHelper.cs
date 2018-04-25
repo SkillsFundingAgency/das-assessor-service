@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.InfrastructureServices
     {
         public async Task<CloudBlobContainer> GetContainer(string containerName)
         {
-            var storageAccountName = CloudConfigurationManager.GetSetting("ConfigurationStorageConnectionString");
+            var storageAccountName = CloudConfigurationManager.GetSetting("IFATemplateStorageConnectionString");
             var storageAccount = CloudStorageAccount.Parse(storageAccountName);
 
             var client = storageAccount.CreateCloudBlobClient();
