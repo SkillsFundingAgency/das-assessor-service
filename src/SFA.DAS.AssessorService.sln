@@ -61,7 +61,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.Web
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Data.UnitTests", "SFA.DAS.AssessorService.Data.UnitTests\SFA.DAS.AssessorService.Data.UnitTests.csproj", "{C6966220-9CF5-41CA-92CD-DF428AD66AB5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.EpaoImporter", "SFA.DAS.AssessorService.EpaoImporter\SFA.DAS.AssessorService.EpaoImporter.csproj", "{6901B04C-FEA8-4BAB-87CF-1FF871B7C497}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService", "SFA.DAS.AssessorService.EpaoImporter\SFA.DAS.AssessorService.csproj", "{6901B04C-FEA8-4BAB-87CF-1FF871B7C497}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests", "SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests\SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests.csproj", "{830676C3-27E8-46A1-9624-1A733502911E}"
 EndProject

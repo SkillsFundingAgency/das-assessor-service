@@ -11,7 +11,7 @@ And Clicks on sign in button
 And User should be navigated to search for an apprentice page on EPAO service
 And User enters valid search criteria 
 |	lastname	| 		ULN			|
-|	Malmberg	| 		9366308321	|
+|	Abetrani	| 		7529479311	|
 And Clicks On Search Apprentice Button
 
 
