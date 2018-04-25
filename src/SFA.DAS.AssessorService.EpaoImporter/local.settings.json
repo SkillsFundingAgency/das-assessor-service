@@ -6,6 +6,7 @@
 
     "EnvironmentName": "LOCAL",
     "ConfigurationStorageConnectionString": "UseDevelopmentStorage=true",
+    "IFATemplateStorageConnectionString": "UseDevelopmentStorage=true",
     "Redis": "localhost:6379"
   }
 }
