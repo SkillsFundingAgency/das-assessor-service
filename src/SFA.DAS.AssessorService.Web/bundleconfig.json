@@ -8,7 +8,11 @@
   },
   {
     "outputFileName": "wwwroot/js/site.min.js",
-    "inputFiles": ["wwwroot/js/show-hide-content.js", "wwwroot/js/site.js"],
+    "inputFiles": [
+      "wwwroot/assets/javascripts/govuk-template.js",
+      "wwwroot/js/show-hide-content.js",
+      "wwwroot/js/site.js"
+    ],
     // Optionally specify minification options
     "minify": {
       "enabled": true,
@@ -20,6 +24,16 @@
   {
     "outputFileName": "wwwroot/js/epao-validation.min.js",
     "inputFiles": ["wwwroot/js/epao-validation.js"],
+    "minify": {
+      "renameLocals": true
+    }
+  },
+  {
+    "outputFileName": "wwwroot/js/postcode-lookup-service.min.js",
+    "inputFiles": [
+      "wwwroot/lib/jquery-ui/dist/jquery-ui.min.js",
+      "wwwroot/js/postcode-lookup-service.js"
+    ],
     "minify": {
       "renameLocals": true
     }
