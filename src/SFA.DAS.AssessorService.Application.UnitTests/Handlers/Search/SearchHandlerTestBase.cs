@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.AssessorService.Application.Handlers.Search;
 using SFA.DAS.AssessorService.Application.Interfaces;
@@ -40,7 +41,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
             CertificateRepository = new Mock<ICertificateRepository>();
 
             SearchHandler = new SearchHandler(assessmentOrgsApiClient.Object, orgQueryRepo.Object, IlrRepository.Object,
-                CertificateRepository.Object);
+                CertificateRepository.Object, new Mock<ILogger<SearchHandler>>().Object);
         }
     }
 }

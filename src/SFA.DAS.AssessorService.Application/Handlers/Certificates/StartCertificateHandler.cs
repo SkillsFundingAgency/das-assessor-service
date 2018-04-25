@@ -2,10 +2,12 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Application.Logging;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
@@ -19,13 +21,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
         private readonly IIlrRepository _ilrRepository;
         private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
+        private readonly ILogger<StartCertificateHandler> _logger;
 
-        public StartCertificateHandler(ICertificateRepository certificateRepository, IIlrRepository ilrRepository, IAssessmentOrgsApiClient assessmentOrgsApiClient, IOrganisationQueryRepository organisationQueryRepository)
+        public StartCertificateHandler(ICertificateRepository certificateRepository, IIlrRepository ilrRepository, IAssessmentOrgsApiClient assessmentOrgsApiClient, 
+            IOrganisationQueryRepository organisationQueryRepository, ILogger<StartCertificateHandler> logger)
         {
             _certificateRepository = certificateRepository;
             _ilrRepository = ilrRepository;
             _assessmentOrgsApiClient = assessmentOrgsApiClient;
             _organisationQueryRepository = organisationQueryRepository;
+            _logger = logger;
         }
 
         public async Task<Certificate> Handle(StartCertificateRequest request, CancellationToken cancellationToken)
@@ -64,6 +69,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             newCertificate.CertificateReference = newCertificate.CertificateReferenceId.ToString().PadLeft(8,'0');
 
             await _certificateRepository.Update(newCertificate, request.Username);
+
+            _logger.LogInformation(LoggingConstants.CertificateStarted);
+            _logger.LogInformation($"Certificate with ID: {newCertificate.Id} Started with reference of {newCertificate.CertificateReference}");
 
             return newCertificate;
         }

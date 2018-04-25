@@ -10,7 +10,5 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
         {
             _httpClient = httpClient;
         }
-
-      
     }
 }

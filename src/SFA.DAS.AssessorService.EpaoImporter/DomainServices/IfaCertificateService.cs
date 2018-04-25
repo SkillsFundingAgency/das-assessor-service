@@ -53,8 +53,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 
                 package.Save();
 
-                await _fileTransferClient.Send(memoryStream, fileName);
-                //await WriteCopyOfMergedDocumentToBlob(fileName, memoryStream);
+                await _fileTransferClient.Send(memoryStream, fileName);              
 
                 memoryStream.Close();
             }
@@ -222,20 +221,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 
                 row++;
             }
-        }
-
-        private async Task WriteCopyOfMergedDocumentToBlob(string mergedFileName, MemoryStream memoryStream)
-        {
-            memoryStream.Position = 0;
-
-            var containerName = "mergeddocuments";
-            var container = await _initialiseContainer.GetContainer(containerName);
-
-            var blob = container.GetBlockBlobReference(mergedFileName);
-            blob.UploadFromStream(memoryStream);
-
-            memoryStream.Position = 0;
-        }
+        }       
 
         private static string GetMonthYear(string monthFormat)
         {

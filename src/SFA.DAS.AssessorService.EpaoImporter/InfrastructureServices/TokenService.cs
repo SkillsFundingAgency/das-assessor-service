@@ -14,10 +14,10 @@ namespace SFA.DAS.AssessorService.EpaoImporter.InfrastructureServices
 
         public string GetToken()
         {
-            var tenantId = _configuration.ClientApiAuthentication.TenantId;// 
-            var clientId = _configuration.ClientApiAuthentication.ClientId;// 
-            var appKey = _configuration.ClientApiAuthentication.ClientSecret;// 
-            var resourceId = _configuration.ClientApiAuthentication.ResourceId;// 
+            var tenantId = _configuration.ClientApiAuthentication.TenantId;
+            var clientId = _configuration.ClientApiAuthentication.ClientId; 
+            var appKey = _configuration.ClientApiAuthentication.ClientSecret; 
+            var resourceId = _configuration.ClientApiAuthentication.ResourceId; 
 
             var authority = $"https://login.microsoftonline.com/{tenantId}";
             var clientCredential = new ClientCredential(clientId, appKey);

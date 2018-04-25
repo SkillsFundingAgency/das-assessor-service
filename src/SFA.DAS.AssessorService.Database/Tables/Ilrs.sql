@@ -2,8 +2,8 @@
 (
 	[Id] UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID() PRIMARY KEY, 
     [Uln] BIGINT NULL, 
-    [GivenNames] NVARCHAR(MAX) NULL, 
-    [FamilyName] NVARCHAR(MAX) NULL, 
+    [GivenNames] NVARCHAR(250) NULL, 
+    [FamilyName] NVARCHAR(250) NULL, 
     [UkPrn] INT NULL, 
     [StdCode] NVARCHAR(50) NULL, 
     [LearnStartDate] DATETIME2 NULL, 

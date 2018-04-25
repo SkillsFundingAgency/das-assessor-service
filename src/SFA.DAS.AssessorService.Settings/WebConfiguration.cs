@@ -14,8 +14,10 @@ namespace SFA.DAS.AssessorService.Settings
 
         [JsonRequired] public CertificateDetails CertificateDetails { get; set; }
 
-        [JsonRequired] public SftpSettings Sftp { get; set; }      
-   
+        [JsonRequired] public SftpSettings Sftp { get; set; }
+
+        [JsonRequired] public string IFATemplateStorageConnectionString { get; set; }
+
         [JsonRequired] public string SqlConnectionString { get; set; }
     }
 }
