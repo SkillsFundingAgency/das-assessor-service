@@ -14,39 +14,26 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Notification
     public class NotificationService : INotificationService
     {
         private readonly INotificationsApi _notificationsApi;
-        private readonly IAssessorServiceApi _assessorServiceApi;
-        private readonly IWebConfiguration _webConfiguration;      
+        private readonly IAssessorServiceApi _assessorServiceApi;         
 
         public NotificationService(INotificationsApi notificationsApi,
-            IAssessorServiceApi assessorServiceApi,
-            IWebConfiguration webConfiguration)
+            IAssessorServiceApi assessorServiceApi)
         {
             _notificationsApi = notificationsApi;
-            _assessorServiceApi = assessorServiceApi;
-            _webConfiguration = webConfiguration;
+            _assessorServiceApi = assessorServiceApi;     
         }
 
         public async Task Send(int batchNumber, List<CertificateResponse> certificateResponses,
             List<string> coverLetterFileNames)
         {
             var emailTemplate = await _assessorServiceApi.GetEmailTemplate();
-            var fileName = $"IFA-Certificate-{GetMonthYear()}-{batchNumber.ToString().PadLeft(3, '0')}.xlsx";
 
-            var endPointAssessorOrganisations = GetEndPointOrganisations(certificateResponses);
+            var certificatesFileName = $"IFA-Certificate-{GetMonthYear()}-{batchNumber.ToString().PadLeft(3, '0')}.xlsx";
 
-            var stringifiedCoverLetterFileNames = GetCoverLetterFileNames(coverLetterFileNames);
+            var strinfigiedEndPointAssessorOrganisations = GetStringifiedEndPointOrganisations(certificateResponses);
+            var stringifiedCoverLetterFileNames = GetStringifiedCoverLetterFileNames(coverLetterFileNames);
 
-            var personalisation = new Dictionary<string, string>
-            {
-                {"fileName", $"Certificates File Name:- {fileName}"},
-                {
-                    "numberOfCertificatesToBePrinted",
-                    $"Number Of Certificates to be Printed:- {certificateResponses.Count}"
-                },
-                {"numberOfCoverLetters", $"Number of Cover Letters:- {coverLetterFileNames.Count}"},
-                {"epaos", $"{endPointAssessorOrganisations}"},
-                {"coverLetterFileNames", $"{stringifiedCoverLetterFileNames}"}
-            };
+            var personalisation = CreatePersonalisationTokens(certificateResponses, coverLetterFileNames, certificatesFileName, strinfigiedEndPointAssessorOrganisations, stringifiedCoverLetterFileNames);
 
             var recipients = emailTemplate.Recipients.Split(';').Select(x => x.Trim());
             foreach (var recipient in recipients)
@@ -65,7 +52,25 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Notification
             }
         }
 
-        private static StringBuilder GetCoverLetterFileNames(List<string> coverLetterFileNames)
+        private static Dictionary<string, string> CreatePersonalisationTokens(List<CertificateResponse> certificateResponses,
+            List<string> coverLetterFileNames, string certificatesFileName,
+            string strinfigiedEndPointAssessorOrganisations, StringBuilder stringifiedCoverLetterFileNames)
+        {
+            var personalisation = new Dictionary<string, string>
+            {
+                {"fileName", $"Certificates File Name:- {certificatesFileName}"},
+                {
+                    "numberOfCertificatesToBePrinted",
+                    $"Number Of Certificates to be Printed:- {certificateResponses.Count}"
+                },
+                {"numberOfCoverLetters", $"Number of Cover Letters:- {coverLetterFileNames.Count}"},
+                {"epaos", $"{strinfigiedEndPointAssessorOrganisations}"},
+                {"coverLetterFileNames", $"{stringifiedCoverLetterFileNames}"}
+            };
+            return personalisation;
+        }
+
+        private static StringBuilder GetStringifiedCoverLetterFileNames(List<string> coverLetterFileNames)
         {
             var stringifiedFileName = new StringBuilder();
             foreach (var coverLetterFileName in coverLetterFileNames)
@@ -78,7 +83,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Notification
             return stringifiedFileName;
         }
 
-        private static string GetEndPointOrganisations(List<CertificateResponse> certificateResponses)
+        private static string GetStringifiedEndPointOrganisations(List<CertificateResponse> certificateResponses)
         {
             var endPointAssessorOrganisations = certificateResponses.ToArray().GroupBy(
                     x => new

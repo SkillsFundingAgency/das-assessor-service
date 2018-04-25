@@ -14,8 +14,8 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.StepDefinitions
         [Given(@"User enters valid credentials")]
         public void GivenUserEntersValidCredentials()
         {
-            _userName = "isp\\testinge";
-            _password = "Windmill2";
+            _userName = "ISP\\epao0010p";
+            _password = "Windmill1";
 
             _skillsFundingLogonPage = new SkillsFundingLogonPage(webDriver);
         }

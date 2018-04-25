@@ -48,10 +48,10 @@ namespace SFA.DAS.AssessorService.EpaoImporter
 
                     var coverLettersProduced = await _coverLetterService.Create(batchNumber, certificates);
                     await _ifaCertificateService.Create(batchNumber, certificates);
+                  
+                    await _assessorServiceApi.ChangeStatusToPrinted(batchNumber, certificates);
 
                     await _notificationService.Send(batchNumber, certificates, coverLettersProduced);
-
-                    await _assessorServiceApi.ChangeStatusToPrinted(batchNumber, certificates);
                 }
                 else
                 {

@@ -24,8 +24,6 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Startup.DependencyResolution
                 Tenant = ""
             };
 
-            //var config = ConfigurationHelper.GetConfiguration<Domain.Configuration.NotificationsApiClientConfiguration>($"{Constants.ServiceName}.Notifications");
-
             var httpClient = string.IsNullOrWhiteSpace(clientConfiguration.ClientId)
                 ? new HttpClientBuilder().WithBearerAuthorisationHeader(new JwtBearerTokenGenerator(clientConfiguration)).Build()
                 : new HttpClientBuilder().WithBearerAuthorisationHeader(new AzureADBearerTokenGenerator(clientConfiguration)).Build();
