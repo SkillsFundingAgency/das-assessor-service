@@ -14,13 +14,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 {
     public class CertificateBaseController : Controller
     {
-        private readonly ILogger<CertificateController> _logger;
+        protected readonly ILogger<CertificateController> Logger;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly ICertificateApiClient _certificateApiClient;
 
         public CertificateBaseController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor, ICertificateApiClient certificateApiClient)
         {
-            _logger = logger;
+            Logger = logger;
             _contextAccessor = contextAccessor;
             _certificateApiClient = certificateApiClient;
         }
@@ -28,12 +28,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
-            _logger.LogInformation($"Load View Model for {typeof(T).Name} for {username}");
+            Logger.LogInformation($"Load View Model for {typeof(T).Name} for {username}");
 
             var query = _contextAccessor.HttpContext.Request.Query;
             if (query.ContainsKey("redirecttocheck") && bool.Parse(query["redirecttocheck"]))
             {
-                _logger.LogInformation($"RedirectToCheck for {typeof(T).Name} is true");
+                Logger.LogInformation($"RedirectToCheck for {typeof(T).Name} is true");
                 _contextAccessor.HttpContext.Session.SetString("redirecttocheck", "true");
             }
             else
@@ -42,19 +42,19 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var sessionString = _contextAccessor.HttpContext.Session.GetString("CertificateSession");
             if (sessionString == null)
             {
-                _logger.LogInformation($"Session for {typeof(T).Name} requested by {username} has been lost. Redirecting to Search Index");
+                Logger.LogInformation($"Session for {typeof(T).Name} requested by {username} has been lost. Redirecting to Search Index");
                 return RedirectToAction("Index", "Search");
             }
             var certSession = JsonConvert.DeserializeObject<CertificateSession>(sessionString);
 
             var certificate = await _certificateApiClient.GetCertificate(certSession.CertificateId);
 
-            _logger.LogInformation($"Got Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id}");
+            Logger.LogInformation($"Got Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id}");
 
             var viewModel = new T();
             viewModel.FromCertificate(certificate);
 
-            _logger.LogInformation($"Got View Model of type {typeof(T).Name} requested by {username}");
+            Logger.LogInformation($"Got View Model of type {typeof(T).Name} requested by {username}");
 
             return View(view, viewModel);
         }
@@ -63,7 +63,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
             
-            _logger.LogInformation($"Save View Model for {typeof(T).Name} for {username} with values: {GetModelValues(vm)}");
+            Logger.LogInformation($"Save View Model for {typeof(T).Name} for {username} with values: {GetModelValues(vm)}");
 
             var certificate = await _certificateApiClient.GetCertificate(vm.Id);
             var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
@@ -72,7 +72,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             {
                 vm.FamilyName = certData.LearnerFamilyName;
                 vm.GivenNames = certData.LearnerGivenNames;
-                _logger.LogInformation($"Model State not valid for {typeof(T).Name} requested by {username} with Id {certificate.Id}. Errors: {ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)}");
+                Logger.LogInformation($"Model State not valid for {typeof(T).Name} requested by {username} with Id {certificate.Id}. Errors: {ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)}");
                 return View(returnToIfModelNotValid, vm);
             }
 
@@ -80,16 +80,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             await _certificateApiClient.UpdateCertificate(new UpdateCertificateRequest(updatedCertificate) { Username = username });
 
-            _logger.LogInformation($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} updated.");
+            Logger.LogInformation($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} updated.");
 
             var session = _contextAccessor.HttpContext.Session;
             if (session.Keys.Any(k => k == "redirecttocheck") && bool.Parse(session.GetString("redirecttocheck")))
             {
-                _logger.LogInformation($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} redirecting back to Certificate Check.");
+                Logger.LogInformation($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} redirecting back to Certificate Check.");
                 return new RedirectToActionResult("Check", "CertificateCheck", null);
             }
 
-            _logger.LogInformation($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} redirecting to {nextAction.ControllerName} {nextAction.ActionName}");
+            Logger.LogInformation($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} redirecting to {nextAction.ControllerName} {nextAction.ActionName}");
             return nextAction;
         }
 

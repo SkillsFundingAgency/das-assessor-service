@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Application.Logging;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Settings;
@@ -34,6 +35,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
             if (UserDoesNotHaveAcceptableRole(request.Roles))
             {
                 _logger.LogInformation("Invalid Role");
+                _logger.LogInformation(LoggingConstants.SignInIncorrectRole);
                 response.Result = LoginResult.InvalidRole;
                 return response;
             }
@@ -46,6 +48,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
             if (organisation == null)
             {
                 _logger.LogInformation($"Org not registered");
+                _logger.LogInformation(LoggingConstants.SignInNotAnEpao);
                 response.Result = LoginResult.NotRegistered;
                 return response;
             }
@@ -53,6 +56,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
             if (organisation.Status == OrganisationStatus.Deleted)
             {
                 _logger.LogInformation($"Org found, but Deleted");
+                _logger.LogInformation(LoggingConstants.SignInEpaoDeleted);
                 response.Result = LoginResult.NotRegistered;
                 return response;
             }
@@ -64,6 +68,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
             {
                 await CreateNewContact(request.Email, organisation, request.DisplayName, request.Username);
             }
+
+            _logger.LogInformation(LoggingConstants.SignInSuccessful);
+
             response.Result = LoginResult.Valid;
             response.OrganisationName = organisation.EndPointAssessorName;
             return response;
