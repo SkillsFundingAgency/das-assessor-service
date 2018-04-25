@@ -93,13 +93,10 @@ namespace SFA.DAS.AssessorService.Data
         {
             var toBePrintedDate = DateTime.Now;
 
-            var cerficates =
-                await _context.Certificates.Where(certificate => updateCertificatesBatchToIndicatePrintedRequest.CertificateStatuses
-                    .Select(certificateStatus => certificateStatus.CertificateReference)
-                    .Contains(certificate.CertificateReference)).ToListAsync();
-
-            foreach (var certificate in cerficates)
+            foreach (var certificateStatus in updateCertificatesBatchToIndicatePrintedRequest.CertificateStatuses)
             {
+                var certificate =
+                    _context.Certificates.First(q => q.CertificateReference == certificateStatus.CertificateReference);
                 certificate.BatchNumber = updateCertificatesBatchToIndicatePrintedRequest.BatchNumber;
                 certificate.Status = CertificateStatus.Printed;
                 certificate.ToBePrinted = toBePrintedDate;

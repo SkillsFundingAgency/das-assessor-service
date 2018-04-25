@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Startup
                 configure.For<IAggregateLogger>().Use(_logger).Singleton();
                 configure.For<IWebConfiguration>().Use(configuration).Singleton();
 
-                configure.For<IFileTransferClient>().Use<FileTransferClient>();
+                configure.For<IFileTransferClient>().Use<MockFileTransferClient>();
                 configure.For<IAssessorServiceApi>().Use<AssessorServiceApi>().Singleton();
                 configure.For<INotificationService>().Use<NotificationService>();
                 configure.For<SftpClient>().Use<SftpClient>("SftpClient",
