@@ -7,7 +7,8 @@
         ClientApiAuthentication ClientApiAuthentication { get; set; }
         NotificationsApiClientConfiguration NotificationsApiClientConfiguration { get; set; }
         CertificateDetails CertificateDetails { get; set; }
-        SftpSettings Sftp { get; set; }      
+        SftpSettings Sftp { get; set; }
+        string IFATemplateStorageConnectionString { get; set; }
         string SqlConnectionString { get; set; }
     }
 }
