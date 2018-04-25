@@ -25,6 +25,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpPost(Name = "Declare")]
         public async Task<IActionResult> Declare(CertificateDeclarationViewModel vm)
         {
+            Logger.LogInformation($"Certificate with ID {vm.Id} Confirmed");
+
             return await SaveViewModel(vm, 
                 returnToIfModelNotValid: "~/Views/Certificate/Declaration.cshtml",
                 nextAction: RedirectToAction("Grade", "CertificateGrade"));

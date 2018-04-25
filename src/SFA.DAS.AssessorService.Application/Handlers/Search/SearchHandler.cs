@@ -30,6 +30,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
         }
         public async Task<List<SearchResult>> Handle(SearchQuery request, CancellationToken cancellationToken)
         {
+            _logger.LogInformation($"Search for surname: {request.Surname} uln: {request.Uln} made by {request.UkPrn}");
+
             var thisEpao = await _organisationRepository.GetByUkPrn(request.UkPrn);
 
             var theStandardsThisEpaoProvides = await _assessmentOrgsApiClient.FindAllStandardsByOrganisationIdAsync(thisEpao
