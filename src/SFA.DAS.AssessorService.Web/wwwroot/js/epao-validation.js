@@ -149,6 +149,8 @@ $(document).ready(function() {
       (e.keyCode == 65 && (e.ctrlKey === true || e.metaKey === true)) ||
       // Allow: Ctrl/cmd+C
       (e.keyCode == 67 && (e.ctrlKey === true || e.metaKey === true)) ||
+      // Allow: Ctrl/cmd+V
+      (e.keyCode == 86 && (e.ctrlKey === true || e.metaKey === true)) ||
       // Allow: Ctrl/cmd+X
       (e.keyCode == 88 && (e.ctrlKey === true || e.metaKey === true)) ||
       // Allow: home, end, left, right
