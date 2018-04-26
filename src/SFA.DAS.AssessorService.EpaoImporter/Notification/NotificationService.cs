@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.EpaoImporter.Data;
+using SFA.DAS.AssessorService.EpaoImporter.Logger;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.Notifications.Api.Client;
 using SFA.DAS.Notifications.Api.Types;
@@ -14,12 +15,18 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Notification
     public class NotificationService : INotificationService
     {
         private readonly INotificationsApi _notificationsApi;
+        private readonly IAggregateLogger _aggregateLogger;
+        private readonly IWebConfiguration _webConfiguration;
         private readonly IAssessorServiceApi _assessorServiceApi;         
 
         public NotificationService(INotificationsApi notificationsApi,
+            IAggregateLogger aggregateLogger,
+            IWebConfiguration webConfiguration,
             IAssessorServiceApi assessorServiceApi)
         {
             _notificationsApi = notificationsApi;
+            _aggregateLogger = aggregateLogger;
+            _webConfiguration = webConfiguration;
             _assessorServiceApi = assessorServiceApi;     
         }
 
@@ -35,6 +42,11 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Notification
 
             var personalisation = CreatePersonalisationTokens(certificateResponses, coverLetterFileNames, certificatesFileName, strinfigiedEndPointAssessorOrganisations, stringifiedCoverLetterFileNames);
 
+            _aggregateLogger.LogInfo("Send Email");
+            _aggregateLogger.LogInfo($"Base Url = {_webConfiguration.NotificationsApiClientConfiguration.ApiBaseUrl}");
+            _aggregateLogger.LogInfo($"Client Token = {_webConfiguration.NotificationsApiClientConfiguration.ClientToken}");
+            _aggregateLogger.LogInfo("Send Email");
+
             var recipients = emailTemplate.Recipients.Split(';').Select(x => x.Trim());
             foreach (var recipient in recipients)
             {
@@ -46,7 +58,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Notification
                     Subject = "Test Subject",
                     SystemId = "PrintAssessorCoverLetters",
                     Tokens = personalisation
-                };
+                };                
 
                 await _notificationsApi.SendEmail(email);
             }
