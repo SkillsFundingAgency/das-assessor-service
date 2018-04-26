@@ -23,6 +23,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 cfg.CreateMap<Certificate, CertificateResponse>()
                     .ForMember(q => q.EndPointAssessorOrganisationId,
                         opts => { opts.MapFrom(q => q.Organisation.EndPointAssessorOrganisationId); })
+                    .ForMember(q => q.EndPointAssessorOrganisationName,
+                        opts => { opts.MapFrom(q => q.Organisation.EndPointAssessorName); })              
                     .ForMember(q => q.BatchNumber,
                         opts => { opts.ResolveUsing<BatchNumberResolver>(); });
 
