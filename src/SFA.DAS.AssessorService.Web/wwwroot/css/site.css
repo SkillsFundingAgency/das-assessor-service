@@ -633,3 +633,15 @@ fieldset.after-error-summary {
     margin: 0 auto;
   }
 }
+
+/* Spaced table */
+
+.table-spaced {
+  margin-bottom: 0.75em;
+}
+
+@media (min-width: 641px) {
+  .table-spaced {
+    margin-bottom: 1.25em;
+  }
+}
