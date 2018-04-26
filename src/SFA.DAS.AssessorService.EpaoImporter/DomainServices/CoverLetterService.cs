@@ -56,12 +56,12 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                     Result = group.ToList()
                 });
 
-            var sequenceNumber = 0;          
+            var sequenceNumber = 0;
             var coverLetterFileNames = new List<string>();
 
             foreach (var groupedCertificate in groupedCertificates)
             {
-                sequenceNumber++;            
+                sequenceNumber++;
 
                 var certificate = groupedCertificate.Result[0];
                 var wordDocumentFileName = $"IFA-Certificate-{GetMonthYear()}-{batchNumber.ToString().PadLeft(3, '0')}-{certificate.CertificateData.ContactOrganisation}-{sequenceNumber}.docx";
@@ -86,7 +86,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
         {
             _aggregateLogger.LogInfo("Merging fields in document ...");
             var document = MergeFieldsInDocument(certificateData, documentTemplateStream);
-            _aggregateLogger.LogInfo("Merged fields in Document");          
+            _aggregateLogger.LogInfo("Merged fields in Document");
 
             return ConvertDocumentToStream(document);
         }
@@ -101,13 +101,34 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 
             _aggregateLogger.LogInfo($"Document Template Stream = {documentTemplateStream.Length}");
 
+            var contactDetails = "";
+            if (!string.IsNullOrEmpty(certificateData.Department))
+            {
+                contactDetails += certificateData.Department + System.Environment.NewLine;
+            }
+
+            if (!string.IsNullOrEmpty(certificateData.ContactAddLine1))
+            {
+                contactDetails += certificateData.ContactAddLine1 + System.Environment.NewLine;
+            }
+
+            if (!string.IsNullOrEmpty(certificateData.ContactAddLine2))
+            {
+                contactDetails += certificateData.ContactAddLine2 + System.Environment.NewLine;
+            }
+
+            if (!string.IsNullOrEmpty(certificateData.ContactAddLine3))
+            {
+                contactDetails += certificateData.ContactAddLine3 + System.Environment.NewLine;
+            }
+
+            if (!string.IsNullOrEmpty(certificateData.ContactPostCode))
+            {
+                contactDetails += certificateData.ContactPostCode + System.Environment.NewLine;
+            }
+
             document.Replace("[Addressee Name]", string.IsNullOrEmpty(certificateData.ContactName) ? "" : certificateData.ContactName, false, true);
-            document.Replace("[Department]", string.IsNullOrEmpty(certificateData.Department) ? "" : certificateData.Department, false, true);
-            document.Replace("[Address Line 1]", string.IsNullOrEmpty(certificateData.ContactAddLine1) ? "" : certificateData.ContactAddLine1, false, true);
-            document.Replace("[Address Line 2]", string.IsNullOrEmpty(certificateData.ContactAddLine2) ? "" : certificateData.ContactAddLine2, false, true);
-            document.Replace("[Address Line 3]", string.IsNullOrEmpty(certificateData.ContactAddLine3) ? "" : certificateData.ContactAddLine3, false, true);
-            document.Replace("[Address Line 4]", string.IsNullOrEmpty(certificateData.ContactAddLine4) ? "" : certificateData.ContactAddLine4, false, true);
-            document.Replace("[Address Line 5]", string.IsNullOrEmpty(certificateData.ContactPostCode) ? "" : certificateData.ContactPostCode, false, true);
+            document.Replace("[ContactDetails]", contactDetails, false, true);           
 
             document.Replace("[Inset employer name?]", certificateData.ContactName, false, true);
             return document;
@@ -120,7 +141,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             document.SaveToStream(wordDocxStream, FileFormat.Docx);
             _aggregateLogger.LogInfo("Saved document to stream ...");
             return wordDocxStream;
-        }      
+        }
 
         private async Task CleanMergedDocumentContainer()
         {
