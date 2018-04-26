@@ -99,11 +99,11 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Notification
             var endPointAssessorOrganisations = certificateResponses.ToArray().GroupBy(
                     x => new
                     {
-                        x.CertificateData.ContactOrganisation,
+                        x.EndPointAssessorOrganisationName
                     },
                     (key, group) => new
                     {
-                        key1 = key.ContactOrganisation,
+                        key1 = key.EndPointAssessorOrganisationName,
                         Result = @group.ToList()
                     }).Select(x => x.key1).ToList()
                 .Distinct();
