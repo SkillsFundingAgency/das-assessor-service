@@ -121,7 +121,7 @@
     <value>The achievement date must be at least 12 months from the learner start date</value>
   </data>
   <data name="DateMustNotBeInFuture" xml:space="preserve">
-    <value>Achievement date cannot be in the future</value>
+    <value>An achievement date cannot be in the future</value>
   </data>
   <data name="DayNumber" xml:space="preserve">
     <value>Day must be a number</value>
