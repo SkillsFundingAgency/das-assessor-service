@@ -130,7 +130,7 @@
     <value>the apprentice has given permission for you to apply for a certificate on their behalf</value>
   </data>
   <data name="InfoLine2" xml:space="preserve">
-    <value>the assessment was independent of both the provider and employer</value>
+    <value>the assessment was independent of both the training provider and employer</value>
   </data>
   <data name="InfoLine3" xml:space="preserve">
     <value>the apprentice achieved all the requirements of the assessment plan, including the end-point assessment</value>

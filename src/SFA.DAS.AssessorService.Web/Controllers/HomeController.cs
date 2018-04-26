@@ -34,5 +34,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             return View();
         }
+
+        public IActionResult Help()
+        {
+            return View();
+        }
+
+        public IActionResult Privacy()
+        {
+            return View();
+        }
+
     }
 }

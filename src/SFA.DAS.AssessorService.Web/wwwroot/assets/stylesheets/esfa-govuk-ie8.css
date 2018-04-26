@@ -1468,7 +1468,3 @@ input[type=number] {
   details summary:not([tabindex]) {
     display: list-item;
     display: revert; } }
-
-/***** FRONTEND-TOOLKIT START *****/
-/***** ELEMENTS START *****/
-/***** ELEMENTS END *****/
