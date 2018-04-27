@@ -119,7 +119,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             worksheet.Cells[2, 3].Value = "Standard Title";
             worksheet.Cells[2, 4].Value = "Option";
             worksheet.Cells[2, 5].Value = "Level";
-            worksheet.Cells[2, 6].Value = "acheiving a";
+            worksheet.Cells[2, 6].Value = "";
             worksheet.Cells[2, 7].Value = "Grade";
             worksheet.Cells[2, 8].Value = "Certificate Number";
             worksheet.Cells[2, 9].Value = "Chair Name";
@@ -182,7 +182,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                 worksheet.Cells[row, 5].Value = $"Level{certificateData.StandardLevel}".ToUpper();
 
                 if (certificateData.OverallGrade != null)
-                    worksheet.Cells[row, 6].Value = "achieving a " + certificateData.OverallGrade.ToUpper();
+                    worksheet.Cells[row, 6].Value = "achieving a ";
 
                 if (certificateData.OverallGrade != null)
                     worksheet.Cells[row, 7].Value = certificateData.OverallGrade.ToUpper();
@@ -193,12 +193,12 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                 worksheet.Cells[row, 9].Value = _webConfiguration.CertificateDetails.ChairName;
                 worksheet.Cells[row, 10].Value = _webConfiguration.CertificateDetails.ChairTitle;
 
-                if (certificateData.ContactOrganisation != null)
-                    worksheet.Cells[row, 11].Value = certificateData.ContactOrganisation;
-
                 if (certificateData.ContactName != null)
-                    worksheet.Cells[row, 12].Value = certificateData.ContactName;
+                    worksheet.Cells[row, 11].Value = certificateData.ContactName;
 
+                if (certificateData.ContactOrganisation != null)
+                    worksheet.Cells[row, 12].Value = certificateData.ContactOrganisation;
+              
                 if (certificateData.ContactOrganisation != null)
                     worksheet.Cells[row, 13].Value = certificateData.Department;
 
