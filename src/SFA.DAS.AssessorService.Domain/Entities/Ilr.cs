@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string FamilyName { get; set; }
         
         public int UkPrn { get; set; }
-        public string StdCode { get; set; }
+        public int StdCode { get; set; }
         public DateTime LearnStartDate { get; set; }
         public string EpaOrgId { get; set; }
 

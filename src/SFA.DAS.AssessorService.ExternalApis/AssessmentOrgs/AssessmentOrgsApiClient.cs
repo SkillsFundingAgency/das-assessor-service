@@ -171,7 +171,7 @@ namespace SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs
             }
         }
 
-        public async Task<Standard> GetStandard(string standardId)
+        public async Task<Standard> GetStandard(int standardId)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/standards/{standardId}"))
             {

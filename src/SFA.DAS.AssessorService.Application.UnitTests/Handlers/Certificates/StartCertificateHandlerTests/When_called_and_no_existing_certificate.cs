@@ -37,7 +37,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             {
                 GivenNames = "Dave",
                 FamilyName = "Smith",
-                StdCode = "30",
+                StdCode = 30,
                 LearnStartDate = new DateTime(2016, 01, 09),
                 UkPrn = 12345678
             });
@@ -49,7 +49,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             organisationQueryRepository.Setup(r => r.GetByUkPrn(88888888)).ReturnsAsync(new Organisation() { Id = _organisationId});
 
             var assessmentOrgsApiClient = new Mock<IAssessmentOrgsApiClient>();
-            assessmentOrgsApiClient.Setup(c => c.GetStandard("30"))
+            assessmentOrgsApiClient.Setup(c => c.GetStandard(30))
                 .ReturnsAsync(new Standard() {Title = "Standard Name"});
 
             _startCertificateHandler = new StartCertificateHandler(_certificateRepository.Object,

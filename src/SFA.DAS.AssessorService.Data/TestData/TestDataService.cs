@@ -265,7 +265,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                         GivenNames = "Karla",
                         FamilyName = "Hawkins",
                         UkPrn = 10009931,
-                        StdCode = "90",
+                        StdCode = 90,
                         LearnStartDate = new DateTime(2015, 8, 9),
                         EpaOrgId = "EPA000011",
                         CreatedAt = new DateTime(2018,1,1)
@@ -276,7 +276,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                         GivenNames = "Karla",
                         FamilyName = "Hawkins",
                         UkPrn = 10009931,
-                        StdCode = "93",
+                        StdCode = 93,
                         LearnStartDate = new DateTime(2015, 3, 2),
                         EpaOrgId = "EPA000011",
                         CreatedAt = new DateTime(2018,1,1)
@@ -287,7 +287,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                         GivenNames = "Karla",
                         FamilyName = "Hawkins",
                         UkPrn = 10009931,
-                        StdCode = "33",
+                        StdCode = 33,
                         LearnStartDate = new DateTime(2015, 8, 9),
                         EpaOrgId = "EPA000011",
                         CreatedAt = new DateTime(2018,1,1)

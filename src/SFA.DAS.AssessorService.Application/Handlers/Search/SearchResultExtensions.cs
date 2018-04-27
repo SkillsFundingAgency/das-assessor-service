@@ -28,9 +28,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
         {
             var completedCertificates = certificateRepository.GetCompletedCertificatesFor(request.Uln).Result;
 
-            foreach (var searchResult in searchResults.Where(r => completedCertificates.Select(s => s.StandardCode.ToString()).Contains(r.StdCode)))
+            foreach (var searchResult in searchResults.Where(r => completedCertificates.Select(s => s.StandardCode).Contains(r.StdCode)))
             {
-                var certificate = completedCertificates.Single(s => s.StandardCode.ToString() == searchResult.StdCode);
+                var certificate = completedCertificates.Single(s => s.StandardCode == searchResult.StdCode);
                 var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
                 searchResult.CertificateReference = certificate.CertificateReference;
                 searchResult.OverallGrade = certificateData.OverallGrade;
