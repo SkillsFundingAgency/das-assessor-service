@@ -1,4 +1,9 @@
--- Load Certificate Data.
+-- Script to load legacy Certificate Data into the Assessor Service Certificates table from 
+-- a CSV file held in Blob Storage.
+
+-- Process --
+
+-- In Excel:
 -- Open certificates xls.
 -- Remove Columns: 
 --    Provider Name
@@ -7,35 +12,32 @@
 --    Date of Birth
 --    Sex
 --    Warnings
+-- Export to csv named certs.csv
 
---Export to csv
+-- Open CSV in notepad++ and replace fake-spaces with real spaces (found in the Standard Name column)
+-- Remove blank rows
+-- Upload csv to blob storage.
 
---Open CSV in notepad++ and replace fake-spaces with real spaces
-
---Remove blank rows
-
---Upload csv to blob storage.
-
---Uncomment and run the following to create connection to blob storage.
-
+-- Replace Blob Storage Location (including container) & SAS Secret below
+-- Run script.
+-- With current data, it should finish with:
+--(1668 row(s) affected)
+--(1170 row(s) affected)
 
 -- Create a database master key if one does not already exist, using your own password. This key is used to encrypt the credential secret in next step.
---CREATE MASTER KEY ENCRYPTION BY PASSWORD = 'baldy nerd face';
+CREATE MASTER KEY ENCRYPTION BY PASSWORD = 'Baldy N3rd Face';
 
 ---- Create a database scoped credential with Azure storage account key as the secret.
---CREATE DATABASE SCOPED CREDENTIAL BlobCredential 
---WITH IDENTITY = 'SHARED ACCESS SIGNATURE', 
---SECRET = 'sv=2017-07-29&ss=bfqt&srt=sco&sp=r&se=2018-04-30T16:25:09Z&st=2018-04-26T08:25:09Z&spr=https&sig=gAxvJPMRYsosb3MN0S4u%2F3UuhZ7nR%2FqK16eYsjkGGdM%3D';
+CREATE DATABASE SCOPED CREDENTIAL BlobCredential 
+WITH IDENTITY = 'SHARED ACCESS SIGNATURE', 
+SECRET = 'sv=2017-07-29&ss=bfqt&srt=sco&sp=r&se=2018-04-30T16:25:09Z&st=2018-04-26T08:25:09Z&spr=https&sig=gAxvJPMRYsosb3MN0S4u%2F3UuhZ7nR%2FqK16eYsjkGGdM%3D';
 
 ---- Create an external data source with CREDENTIAL option.
---CREATE EXTERNAL DATA SOURCE BlobStorage WITH (
---    TYPE = BLOB_STORAGE, 
---    LOCATION = 'https://esfatempstorage.blob.core.windows.net/import',
---    CREDENTIAL = BlobCredential
---);
-
-
--- Run the rest to import.
+CREATE EXTERNAL DATA SOURCE BlobStorage WITH (
+    TYPE = BLOB_STORAGE, 
+    LOCATION = 'https://esfatempstorage.blob.core.windows.net/import',
+    CREDENTIAL = BlobCredential
+);
 
 CREATE TABLE [dbo].[CertificateImport](
 	[Year] [nvarchar](4) NULL,
@@ -130,7 +132,9 @@ WHERE ci.Source = 'ILR'
 
 SET IDENTITY_INSERT Certificates OFF
 
-SELECT * FROM CertificateImport
-
 DROP FUNCTION GetCertificateDataJson
 DROP TABLE CertificateImport
+
+DROP EXTERNAL DATA SOURCE BlobStorage
+DROP DATABASE SCOPED  CREDENTIAL BlobCredential 
+DROP MASTER KEY
