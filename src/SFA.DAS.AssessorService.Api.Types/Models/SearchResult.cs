@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public string GivenNames { get; set; }
         public string FamilyName { get; set; }
         public DateTime DateOfBirth { get; set; }
-        public string StdCode { get; set; }
+        public int StdCode { get; set; }
         public string Standard { get; set; }
         public DateTime LearnStartDate { get; set; }
         public string OverallGrade { get; set; }

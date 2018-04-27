@@ -5,7 +5,7 @@
     [GivenNames] NVARCHAR(250) NULL, 
     [FamilyName] NVARCHAR(250) NULL, 
     [UkPrn] INT NULL, 
-    [StdCode] NVARCHAR(50) NULL, 
+    [StdCode] INT NULL, 
     [LearnStartDate] DATETIME2 NULL, 
     [EpaOrgId] NVARCHAR(50) NULL,     
 	[FundingModel] INT NULL,

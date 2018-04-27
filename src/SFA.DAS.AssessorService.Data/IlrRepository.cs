@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<Ilr> Get(long uln, int standardCode)
         {
-            return await _context.Ilrs.SingleAsync(i => i.Uln == uln && i.StdCode == standardCode.ToString());
+            return await _context.Ilrs.SingleAsync(i => i.Uln == uln && i.StdCode == standardCode);
         }
     }
 }
