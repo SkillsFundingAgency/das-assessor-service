@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             {
                 FamilyName = request.Surname,
                 Uln = request.Uln,
-                StandardIds = theStandardsThisEpaoProvides.Select(s => s.StandardCode).ToList()
+                StandardIds = theStandardsThisEpaoProvides.Select(s => int.Parse(s.StandardCode)).ToList()
             });
 
             _logger.LogInformation(ilrResults.Any() ? LoggingConstants.SearchSuccess : LoggingConstants.SearchFailure);
