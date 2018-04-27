@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Http
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,16 +9,22 @@
 
     <environment include="Development">
         <!-- TEMPLATE STYLES - START -->
-        <!--[if gt IE 8]><!--><link rel="stylesheet" media="screen" href="/assets/stylesheets/govuk-template.css?0.23.0" /><!--<![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" media="screen" href="/assets/stylesheets/govuk-template.css?0.23.0" />
+        <!--<![endif]-->
         <!--[if IE 6]><link rel="stylesheet" media="screen" href="/assets/stylesheets/govuk-template-ie6.css?0.23.0" /><![endif]-->
         <!--[if IE 7]><link rel="stylesheet" media="screen" href="/assets/stylesheets/govuk-template-ie7.css?0.23.0" /><![endif]-->
         <!--[if IE 8]><link rel="stylesheet" media="screen" href="/assets/stylesheets/govuk-template-ie8.css?0.23.0" /><![endif]-->
         <link rel="stylesheet" media="print" href="/assets/stylesheets/govuk-template-print.css?0.23.0" />
         <!--[if IE 8]><link rel="stylesheet" media="all" href="/assets/stylesheets/fonts-ie8.css?0.23.0" /><![endif]-->
-        <!--[if gte IE 9]><!--><link rel="stylesheet" media="all" href="/assets/stylesheets/fonts.css?0.23.0" /><!--<![endif]-->
+        <!--[if gte IE 9]><!-->
+        <link rel="stylesheet" media="all" href="/assets/stylesheets/fonts.css?0.23.0" />
+        <!--<![endif]-->
         <!-- TEMPLATE STYLES - END -->
         <!-- ELEMENTS AND TOOLKIT STYLES - START -->
-        <!--[if gt IE 8]><!--><link rel="stylesheet" media="screen" href="/assets/stylesheets/esfa-govuk-base.css?3.1.2" /><!--<![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" media="screen" href="/assets/stylesheets/esfa-govuk-base.css?3.1.2" />
+        <!--<![endif]-->
         <!--[if IE 6]><link rel="stylesheet" media="screen" href="/assets/stylesheets/esfa-govuk-ie6.css?3.1.2" /><![endif]-->
         <!--[if IE 7]><link rel="stylesheet" media="screen" href="/assets/stylesheets/esfa-govuk-ie7.css?3.1.2" /><![endif]-->
         <!--[if IE 8]><link rel="stylesheet" media="screen" href="/assets/stylesheets/esfa-govuk-ie8.css?3.1.2" /><![endif]-->
@@ -28,16 +35,22 @@
 
     <environment exclude="Development">
         <!-- TEMPLATE STYLES - START -->
-        <!--[if gt IE 8]><!--><link rel="stylesheet" media="screen" href="/assets/stylesheets/govuk-template.min.css?0.23.0" /><!--<![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" media="screen" href="/assets/stylesheets/govuk-template.min.css?0.23.0" />
+        <!--<![endif]-->
         <!--[if IE 6]><link rel="stylesheet" media="screen" href="/assets/stylesheets/govuk-template-ie6.min.css?0.23.0" /><![endif]-->
         <!--[if IE 7]><link rel="stylesheet" media="screen" href="/assets/stylesheets/govuk-template-ie7.min.css?0.23.0" /><![endif]-->
         <!--[if IE 8]><link rel="stylesheet" media="screen" href="/assets/stylesheets/govuk-template-ie8.min.css?0.23.0" /><![endif]-->
         <link rel="stylesheet" media="print" href="/assets/stylesheets/govuk-template-print.min.css?0.23.0" />
         <!--[if IE 8]><link rel="stylesheet" media="all" href="/assets/stylesheets/fonts-ie8.min.css?0.23.0" /><![endif]-->
-        <!--[if gte IE 9]><!--><link rel="stylesheet" media="all" href="/assets/stylesheets/fonts.min.css?0.23.0" /><!--<![endif]-->
+        <!--[if gte IE 9]><!-->
+        <link rel="stylesheet" media="all" href="/assets/stylesheets/fonts.min.css?0.23.0" />
+        <!--<![endif]-->
         <!-- TEMPLATE STYLES - END -->
         <!-- ELEMENTS AND TOOLKIT STYLES - START -->
-        <!--[if gt IE 8]><!--><link rel="stylesheet" media="screen" href="/assets/stylesheets/esfa-govuk-base.min.css?3.1.2" /><!--<![endif]-->
+        <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" media="screen" href="/assets/stylesheets/esfa-govuk-base.min.css?3.1.2" />
+        <!--<![endif]-->
         <!--[if IE 6]><link rel="stylesheet" media="screen" href="/assets/stylesheets/esfa-govuk-ie6.min.css?3.1.2" /><![endif]-->
         <!--[if IE 7]><link rel="stylesheet" media="screen" href="/assets/stylesheets/esfa-govuk-ie7.min.css?3.1.2" /><![endif]-->
         <!--[if IE 8]><link rel="stylesheet" media="screen" href="/assets/stylesheets/esfa-govuk-ie8.min.css?3.1.2" /><![endif]-->
@@ -61,6 +74,7 @@
     <meta property="og:image" content="/assets/images/opengraph-image.png">
 
 </head>
+
 <body>
     <script>document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
 
@@ -71,7 +85,9 @@
     </div>
 
     <div id="global-cookie-message">
-        <p>GOV.UK uses cookies to make the site simpler. <a href="https://www.gov.uk/help/cookies">Find out more about cookies</a></p>
+        <p>GOV.UK uses cookies to make the site simpler.
+            <a href="https://www.gov.uk/help/cookies">Find out more about cookies</a>
+        </p>
     </div>
 
     <header role="banner" id="global-header" class="with-proposition">
@@ -94,44 +110,47 @@
     </header>
     <div id="global-header-bar"></div>
 
-    @if (User.Identity.IsAuthenticated)
-    {
-
-        <div class="header-user">
-            <div id="global-header-bar" class="global-header-bar--white"></div>
-            <div class="header-inner">
-                <div id="header-user--nav" class="grid-row">
-                    <div class="column-two-thirds">
-                        <h2 class="heading-small">
-                            @Context.Session.GetString("OrganisationName")
-                            <span class="heading-secondary">
-                                <span class="visuallyhidden">Logged in as </span>@User.Identity.Name
-                            </span>
-                        </h2>
-                    </div>
-                    <div class="column-one-third">
-                        <nav id="user-nav" class="js-hidden-mobile">
-                            <ul>
-                                <li><a href="/home/help">Help</a></li>
-                                <li><a asp-controller="Account" asp-action="SignOut">Sign out</a></li>
-                            </ul>
-                        </nav>
-                    </div>
+    @if (User.Identity.IsAuthenticated) {
+    <div class="header-user">
+        <div id="global-header-bar" class="global-header-bar--white"></div>
+        <div class="header-inner">
+            <div id="header-user--nav" class="grid-row">
+                <div class="column-two-thirds">
+                    <h2 class="heading-small">
+                        @Context.Session.GetString("OrganisationName")
+                        <span class="heading-secondary">
+                            <span class="visuallyhidden">Logged in as </span>@User.Identity.Name
+                        </span>
+                    </h2>
+                </div>
+                <div class="column-one-third">
+                    <nav id="user-nav" class="js-hidden-mobile">
+                        <ul>
+                            <li>
+                                <a href="/home/help">Help</a>
+                            </li>
+                            <li>
+                                <a asp-controller="Account" asp-action="SignOut">Sign out</a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
         </div>
+    </div>
     }
-    
+
     <main id="content" role="main">
         <div class="phase-banner">
             <p>
                 <strong class="phase-tag">BETA</strong>
-                <span>This is a new service – your <a href="https://www.surveymonkey.co.uk/r/P8YBH9J">feedback</a> will help us to improve it.</span>
+                <span>This is a new service – your
+                    <a href="https://www.surveymonkey.co.uk/r/P8YBH9J">feedback</a> will help us to improve it.</span>
             </p>
         </div>
         @RenderBody()
     </main>
-    
+
     <footer class="group js-footer" id="footer" role="contentinfo">
 
         <div class="footer-wrapper">
@@ -142,20 +161,31 @@
                     <h2 class="visuallyhidden">Support links</h2>
                     <ul>
                         @*
-                        <li><a href="/feedback" "="">Give feedback</a></li>
-                        <li><a href="/helpdesk">Contact</a></li>
+                        <li>
+                            <a href="/feedback">Give feedback</a>
+                        </li>
+                        <li>
+                            <a href="/helpdesk">Contact</a>
+                        </li>
                         *@
-                        <li><a href="/home/privacy">Privacy and cookies</a></li>
+                        <li>
+                            <a href="/home/privacy">Privacy and cookies</a>
+                        </li>
                         @*
-                        <li>Built by the <a href="https://www.gov.uk/sfa">Skills Funding Agency</a></li>
+                        <li>Built by the
+                            <a href="https://www.gov.uk/sfa">Skills Funding Agency</a>
+                        </li>
                         *@
                     </ul>
 
 
                     <div class="open-government-licence">
-                        <p class="logo"><a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license">Open Government Licence</a></p>
+                        <p class="logo">
+                            <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license">Open Government Licence</a>
+                        </p>
 
-                        <p>All content is available under the <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license">Open Government Licence v3.0</a>, except where otherwise stated</p>
+                        <p>All content is available under the
+                            <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license">Open Government Licence v3.0</a>, except where otherwise stated</p>
 
                     </div>
                 </div>
@@ -177,16 +207,14 @@
     </environment>
 
     <environment exclude="Development">
-        <script src="https://code.jquery.com/jquery-1.12.4.min.js"
-                asp-fallback-src="~/lib/jquery/dist/jquery-1.12.4.min.js"
-                asp-fallback-test="window.jQuery"
-                integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
-                crossorigin="anonymous">
-        </script>
+        <script src="https://code.jquery.com/jquery-1.12.4.min.js" asp-fallback-src="~/lib/jquery/dist/jquery-1.12.4.min.js" asp-fallback-test="window.jQuery"
+            integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous">
+            </script>
         <script src="~/js/site.min.js" asp-append-version="true"></script>
     </environment>
 
     @RenderSection("Scripts", required: false)
     <script>if (typeof window.GOVUK === 'undefined') document.body.className = document.body.className.replace('js-enabled', '');</script>
 </body>
+
 </html>
