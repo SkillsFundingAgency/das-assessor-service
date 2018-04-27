@@ -118,12 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="LastNameShouldNotBeEmpty" xml:space="preserve">
-    <value>The last name field should not be empty</value>
+    <value>Enter the apprentice's last name</value>
   </data>
   <data name="UlnShouldNotBeEmpty" xml:space="preserve">
-    <value>The ULN field should not be empty</value>
+    <value>Enter the apprentice's ULN</value>
   </data>
   <data name="UlnFormatInvalid" xml:space="preserve">
-    <value>A ULN should contain exactly 10 numbers</value>
+    <value>The apprentice's ULN should contain exactly 10 numbers</value>
   </data>
 </root>
