@@ -7,13 +7,14 @@ using Microsoft.WindowsAzure.Storage.Blob;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.EpaoImporter.Data;
 using SFA.DAS.AssessorService.EpaoImporter.InfrastructureServices;
+using SFA.DAS.AssessorService.EpaoImporter.Interfaces;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
 using SFA.DAS.AssessorService.EpaoImporter.Sftp;
 using Spire.Doc;
 
 namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 {
-    public class CoverLetterService
+    public class CoverLetterService : ICoverLetterService
     {
         private readonly IAggregateLogger _aggregateLogger;
         private readonly IFileTransferClient _fileTransferClient;
