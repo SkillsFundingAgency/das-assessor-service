@@ -147,7 +147,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     CourseOption = "French",
                     LearnerFamilyName = "Coxhead",
                     LearnerGivenNames = "David",
-                    OverallGrade = "PASS",
+                    OverallGrade = "NO GRADE AWARDED",
                     Registration = "Registered",
                     LearningStartDate = DateTime.Now.AddDays(10),
                     StandardLevel = 1,
