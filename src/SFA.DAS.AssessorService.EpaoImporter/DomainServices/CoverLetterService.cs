@@ -68,7 +68,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                 coverLetterFileNames.Add(wordDocumentFileName);
 
                 _aggregateLogger.LogInfo($"Processing Certificate for Cover Letter - {certificate.CertificateReference} - {wordDocumentFileName}");
-                var wordStream = await CreateWordDocumentStream(wordDocumentFileName, certificate.CertificateData, documentTemplateDataStream);
+                var wordStream = await CreateWordDocumentStream(wordDocumentFileName, certificate, documentTemplateDataStream);
 
                 _aggregateLogger.LogInfo($"converted certifcate data - Contact Name = {certificate.CertificateData.ContactName}");
 
@@ -82,16 +82,16 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             return coverLetterFileNames;
         }
 
-        private async Task<MemoryStream> CreateWordDocumentStream(string mergedFileName, CertificateDataResponse certificateData, MemoryStream documentTemplateStream)
+        private async Task<MemoryStream> CreateWordDocumentStream(string mergedFileName, CertificateResponse certificateResponse, MemoryStream documentTemplateStream)
         {
             _aggregateLogger.LogInfo("Merging fields in document ...");
-            var document = MergeFieldsInDocument(certificateData, documentTemplateStream);
+            var document = MergeFieldsInDocument(certificateResponse, documentTemplateStream);
             _aggregateLogger.LogInfo("Merged fields in Document");
 
             return ConvertDocumentToStream(document);
         }
 
-        private Document MergeFieldsInDocument(CertificateDataResponse certificateData, MemoryStream documentTemplateStream)
+        private Document MergeFieldsInDocument(CertificateResponse certificateResponse, MemoryStream documentTemplateStream)
         {
             var document = new Document();
 
@@ -101,7 +101,14 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 
             _aggregateLogger.LogInfo($"Document Template Stream = {documentTemplateStream.Length}");
 
+            var certificateData = certificateResponse.CertificateData;
+
             var contactDetails = "";
+            if (!string.IsNullOrEmpty(certificateResponse.EndPointAssessorOrganisationName))
+            {
+                contactDetails += certificateResponse.EndPointAssessorOrganisationName + System.Environment.NewLine;
+            }
+
             if (!string.IsNullOrEmpty(certificateData.Department))
             {
                 contactDetails += certificateData.Department + System.Environment.NewLine;

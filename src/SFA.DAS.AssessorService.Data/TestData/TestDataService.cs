@@ -184,7 +184,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     CertificateData = JsonConvert.SerializeObject(secondCertificateData),
                     Status = CertificateStatus.Submitted,
                     CreatedBy = "jcoxhead",
-                    CertificateReference = "DEF456",
+                    CertificateReference = "DEF4578",
                     Uln = 1234567890,
                     StandardCode = 94,
                     ProviderUkPrn = 12345678
