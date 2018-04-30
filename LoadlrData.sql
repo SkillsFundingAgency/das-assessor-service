@@ -71,6 +71,8 @@ BULK INSERT LearnerImport
 FROM 'learners.csv'
 WITH (DATA_SOURCE = 'BlobStorage', FORMAT = 'CSV', FIRSTROW= 2)
 
+TRUNCATE TABLE Ilrs
+
 INSERT INTO Ilrs (CreatedAt, ULN, LearnRefNumber, GivenNames, FamilyName, UKPRN, StdCode, LearnStartDate, EPAOrgID, FundingModel, ApprenticeshipId, EmployerAccountId)
 SELECT 
 	GETDATE() AS CreatedAt, 
