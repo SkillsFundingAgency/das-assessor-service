@@ -24,13 +24,14 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Sftp
 
         public async Task Send(MemoryStream memoryStream, string fileName)
         {
-            _sftpClient.Connect();
-
-            memoryStream.Position = 0; // ensure memory stream is set to begining of stream
-
             _aggregateLogger.LogInfo($"Connection = {_webConfiguration.Sftp.RemoteHost}");
             _aggregateLogger.LogInfo($"Port = {_webConfiguration.Sftp.Port}");
             _aggregateLogger.LogInfo($"Username = {_webConfiguration.Sftp.Username}");
+            _aggregateLogger.LogInfo($"Upload Directory {_webConfiguration.Sftp.UploadDirectory}");
+
+            _sftpClient.Connect();
+
+            memoryStream.Position = 0; // ensure memory stream is set to begining of stream          
 
             await _sftpClient.UploadAsync(memoryStream, $"{_webConfiguration.Sftp.UploadDirectory}/{fileName}");
             _sftpClient.Disconnect();
