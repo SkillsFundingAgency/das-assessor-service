@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.Settings
 
         [JsonRequired] public ClientApiAuthentication ClientApiAuthentication { get; set; }
 
-        [JsonRequired]  public NotificationsApiClientConfiguration NotificationsApiClientConfiguration { get; set; }
+        [JsonRequired] public NotificationsApiClientConfiguration NotificationsApiClientConfiguration { get; set; }
 
         [JsonRequired] public CertificateDetails CertificateDetails { get; set; }
 
@@ -19,5 +19,7 @@ namespace SFA.DAS.AssessorService.Settings
         [JsonRequired] public string IFATemplateStorageConnectionString { get; set; }
 
         [JsonRequired] public string SqlConnectionString { get; set; }
+
+        [JsonRequired] public string SessionRedisConnectionString { get; set; }
     }
 }
