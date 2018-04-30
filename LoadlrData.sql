@@ -1,4 +1,4 @@
--- Script to load legacy Learner Data into the Assessor Service Certificates table from 
+-- Script to load legacy Learner Data into the Assessor Service Ilrs table from 
 -- a CSV file held in Blob Storage.
 
 -- Process --
@@ -55,7 +55,7 @@ CREATE EXTERNAL DATA SOURCE BlobStorage WITH (
 
 CREATE TABLE [dbo].[LearnerImport](
 	[Uln] [bigint] NULL,
-	[LearnRefNumber] [bigint] NULL,
+	[LearnRefNumber] [nvarchar](12) NULL,
 	[GivenNames] [nvarchar](250) NULL,
 	[FamilyName] [nvarchar](250) NULL,
 	[UkPrn] [int] NULL,
@@ -67,24 +67,18 @@ CREATE TABLE [dbo].[LearnerImport](
 )
 GO
 
-
 BULK INSERT LearnerImport 
 FROM 'learners.csv'
 WITH (DATA_SOURCE = 'BlobStorage', FORMAT = 'CSV', FIRSTROW= 2)
 
-SET IDENTITY_INSERT Certificates ON
-
-INSERT INTO ilrs (CreatedAt, ULN, LearnRefNumber, GivenNames, FamilyName, UKPRN, StdCode, LearnStartDate, EPAOrgID, FundModel, ApprenticeshipId)
+INSERT INTO Ilrs (CreatedAt, ULN, LearnRefNumber, GivenNames, FamilyName, UKPRN, StdCode, LearnStartDate, EPAOrgID, FundingModel, ApprenticeshipId)
 SELECT 
 	GETDATE() AS CreatedAt, 
-	ULN, LearnRefNumber, GivenNames, FamilyName, UKPRN, StdCode, LearnStartDate, EPAOrgID, FundModel, ApprenticeshipId
+	ULN, LearnRefNumber, GivenNames, FamilyName, UKPRN, StdCode, LearnStartDate, EPAOrgID, FundingModel, ApprenticeshipId
 FROM LearnerImport 
 
-SET IDENTITY_INSERT Certificates OFF
-
-DROP FUNCTION GetCertificateDataJson
-DROP TABLE CertificateImport
+DROP TABLE LearnerImport
 
 DROP EXTERNAL DATA SOURCE BlobStorage
-DROP DATABASE SCOPED  CREDENTIAL BlobCredential 
+DROP DATABASE SCOPED CREDENTIAL BlobCredential 
 DROP MASTER KEY

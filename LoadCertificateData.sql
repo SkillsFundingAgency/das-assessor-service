@@ -129,6 +129,7 @@ SELECT
 FROM CertificateImport ci
 INNER JOIN Organisations o ON o.EndPointAssessorOrganisationId = ci.EpaUln
 WHERE ci.Source = 'ILR'
+AND NOT EXISTS (SELECT null FROM Certificates ce WHERE ce.CertificateReference = ci.ID)
 
 SET IDENTITY_INSERT Certificates OFF
 
