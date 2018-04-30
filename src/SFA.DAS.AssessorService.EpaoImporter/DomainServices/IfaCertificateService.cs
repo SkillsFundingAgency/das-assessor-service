@@ -180,12 +180,12 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                 if (certificateData.CourseOption != null)
                     worksheet.Cells[row, 4].Value = certificateData.CourseOption.ToUpper();
 
-                worksheet.Cells[row, 5].Value = $"Level{certificateData.StandardLevel}".ToUpper();
+                worksheet.Cells[row, 5].Value = $"Level {certificateData.StandardLevel}".ToUpper();
 
-                if (certificateData.OverallGrade != null && certificateData.OverallGrade != "NO GRADE AWARDED")
+                if (certificateData.OverallGrade != null && !certificateData.OverallGrade.ToLower().Contains("no grade awarded"))
                     worksheet.Cells[row, 6].Value = "achieving a ";
 
-                if (certificateData.OverallGrade != null && certificateData.OverallGrade != "NO GRADE AWARDED")
+                if (certificateData.OverallGrade != null && !certificateData.OverallGrade.ToLower().Contains("no grade awarded"))
                     worksheet.Cells[row, 7].Value = certificateData.OverallGrade.ToUpper();
 
                 if (certificate.CertificateReference != null)
