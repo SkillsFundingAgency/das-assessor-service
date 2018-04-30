@@ -53,7 +53,7 @@ namespace SFA.DAS.AssessorService.Web
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
 
 
-            services.AddAntiforgery(options => options.Cookie = new CookieBuilder() {Name = ".Assessors.AntiForgery"});
+            services.AddAntiforgery(options => options.Cookie = new CookieBuilder() {Name = ".Assessors.AntiForgery", HttpOnly = true});
 
             //if (_env.IsDevelopment())
             //{
@@ -114,7 +114,7 @@ namespace SFA.DAS.AssessorService.Web
             }
 
             app.UseStaticFiles()
-                .UseSession(new SessionOptions(){Cookie = new CookieBuilder(){Name = ".Assessors.Session"}})
+                .UseSession(new SessionOptions(){Cookie = new CookieBuilder(){Name = ".Assessors.Session", HttpOnly = true}})
                 .UseAuthentication()
                 .UseRequestLocalization()
                 .UseMvc(routes =>
