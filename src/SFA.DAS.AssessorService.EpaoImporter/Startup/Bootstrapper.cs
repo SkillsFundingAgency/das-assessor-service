@@ -44,6 +44,10 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Startup
                 configure.AddRegistry<NotificationsRegistry>();
                 configure.AddRegistry<HttpRegistry>();
             });
+
+            var language = "en-GB";
+            System.Threading.Thread.CurrentThread.CurrentCulture =
+                new System.Globalization.CultureInfo(language);
         }
 
         public static Container Container { get; private set; }
