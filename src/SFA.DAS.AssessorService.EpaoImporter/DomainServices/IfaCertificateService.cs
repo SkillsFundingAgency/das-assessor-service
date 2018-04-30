@@ -9,13 +9,14 @@ using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.EpaoImporter.InfrastructureServices;
+using SFA.DAS.AssessorService.EpaoImporter.Interfaces;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
 using SFA.DAS.AssessorService.EpaoImporter.Sftp;
 using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 {
-    public class IFACertificateService
+    public class IFACertificateService : IIFACertificateService
     {
         private readonly BlobContainerHelper _initialiseContainer;
         private readonly IAggregateLogger _aggregateLogger;
@@ -119,7 +120,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             worksheet.Cells[2, 3].Value = "Standard Title";
             worksheet.Cells[2, 4].Value = "Option";
             worksheet.Cells[2, 5].Value = "Level";
-            worksheet.Cells[2, 6].Value = "";
+            worksheet.Cells[2, 6].Value = "achieving a";
             worksheet.Cells[2, 7].Value = "Grade";
             worksheet.Cells[2, 8].Value = "Certificate Number";
             worksheet.Cells[2, 9].Value = "Chair Name";
@@ -181,10 +182,10 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 
                 worksheet.Cells[row, 5].Value = $"Level{certificateData.StandardLevel}".ToUpper();
 
-                if (certificateData.OverallGrade != null)
+                if (certificateData.OverallGrade != null && certificateData.OverallGrade != "NO GRADE AWARDED")
                     worksheet.Cells[row, 6].Value = "achieving a ";
 
-                if (certificateData.OverallGrade != null)
+                if (certificateData.OverallGrade != null && certificateData.OverallGrade != "NO GRADE AWARDED")
                     worksheet.Cells[row, 7].Value = certificateData.OverallGrade.ToUpper();
 
                 if (certificate.CertificateReference != null)
@@ -199,7 +200,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                 if (certificateData.ContactOrganisation != null)
                     worksheet.Cells[row, 12].Value = certificateData.ContactOrganisation;
               
-                if (certificateData.ContactOrganisation != null)
+                if (certificateData.Department != null)
                     worksheet.Cells[row, 13].Value = certificateData.Department;
 
                 if (certificateData.ContactAddLine1 != null)
