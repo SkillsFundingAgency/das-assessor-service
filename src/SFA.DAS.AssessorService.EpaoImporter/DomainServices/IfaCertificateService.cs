@@ -157,7 +157,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 
             var monthYear = GetMonthYear("MMMM");
             worksheet.Cells["A1:J1"].Merge = true;
-            worksheet.Cells["A1:J1"].Value = monthYear + " Print Data - " + batchNumber.ToString();
+            worksheet.Cells["A1:J1"].Value = monthYear + " Print Data - Batch " + batchNumber.ToString();
         }
 
         private void CreateWorksheetData(ExcelWorksheet worksheet)
