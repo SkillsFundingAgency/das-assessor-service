@@ -136,7 +136,9 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             }
 
             document.Replace("[Addressee Name]", string.IsNullOrEmpty(certificateData.ContactName) ? "" : certificateData.ContactName, false, true);
-            document.Replace("[ContactDetails]", contactDetails, false, true);           
+            document.Replace("[ContactDetails]", contactDetails, false, true);
+
+            document.Replace("[TodaysDate]", DateTime.Now.ToString("dd MMMM yyyy"), false, true);
 
             document.Replace("[Inset employer name?]", certificateData.ContactName, false, true);
             return document;
