@@ -167,8 +167,8 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             foreach (var certificate in _certificates)
             {
                 var certificateData = certificate.CertificateData;
-                if (certificateData.AchievementDate != null)
-                    worksheet.Cells[row, 1].Value = certificateData.AchievementDate.ToString();
+                if (certificateData.AchievementDate.HasValue)
+                    worksheet.Cells[row, 1].Value = certificateData.AchievementDate.Value.ToString("dddd, MMMM dd, yyyy");
 
                 var learnerName = $"{certificateData.LearnerGivenNames} {certificateData.LearnerFamilyName}";
                 if (certificateData.ContactName != null)

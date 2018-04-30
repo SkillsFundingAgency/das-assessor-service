@@ -105,9 +105,9 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             var certificateData = certificateResponse.CertificateData;
 
             var contactDetails = "";
-            if (!string.IsNullOrEmpty(certificateResponse.EndPointAssessorOrganisationName))
+            if (!string.IsNullOrEmpty(certificateData.ContactOrganisation))
             {
-                contactDetails += certificateResponse.EndPointAssessorOrganisationName + System.Environment.NewLine;
+                contactDetails += certificateData.ContactOrganisation + System.Environment.NewLine;
             }
 
             if (!string.IsNullOrEmpty(certificateData.Department))
