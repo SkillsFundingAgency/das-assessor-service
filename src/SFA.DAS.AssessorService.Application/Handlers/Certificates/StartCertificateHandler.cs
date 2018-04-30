@@ -50,7 +50,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                 LearnerFamilyName = ilr.FamilyName,
                 StandardName = standard.Title,
                 LearningStartDate = ilr.LearnStartDate, 
-                StandardLevel = standard.Level
+                StandardLevel = standard.Level,
+                StandardPublicationDate = standard.EffectiveFrom
             };
 
             var newCertificate = await _certificateRepository.New(
