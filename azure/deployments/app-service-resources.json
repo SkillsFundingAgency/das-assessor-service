@@ -48,7 +48,8 @@
             "location": "[resourceGroup().location]",
             "properties": {
                 "serverFarmId": "[parameters('appServicePlanId')]",
-                "siteConfig": {
+                "clientAffinityEnabled": false,
+                "siteConfig": {                   
                     "alwaysOn": true,
                     "appSettings": [
                         {
