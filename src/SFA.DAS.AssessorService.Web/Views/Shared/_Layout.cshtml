@@ -147,7 +147,7 @@
             <p>
                 <strong class="phase-tag">BETA</strong>
                 <span>This is a new service – your
-                    <a href="https://www.surveymonkey.co.uk/r/P8YBH9J">feedback</a> will help us to improve it.</span>
+                    <a href="https://www.surveymonkey.co.uk/r/H5YMRHL">feedback</a> will help us to improve it.</span>
             </p>
         </div>
         @RenderBody()
@@ -171,7 +171,7 @@
                         </li>
                         *@
                         <li>
-                            <a href="/home/privacy">Privacy and cookies</a>
+                            <a href="/home/cookies">Cookies</a>
                         </li>
                         @*
                         <li>Built by the
@@ -203,15 +203,13 @@
 
     <environment include="Development">
         <script src="~/lib/jquery/dist/jquery-1.12.4.js"></script>
-        <script src="/assets/javascripts/govuk-template.js?0.23.0"></script>
+        <script src="~/assets/javascripts/govuk-template.js?0.23.0"></script>
         <script src="~/js/show-hide-content.js" asp-append-version="true"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
     </environment>
 
     <environment exclude="Development">
-        <script src="https://code.jquery.com/jquery-1.12.4.min.js" asp-fallback-src="~/lib/jquery/dist/jquery-1.12.4.min.js" asp-fallback-test="window.jQuery"
-            integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous">
-            </script>
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
         <script src="~/js/site.min.js" asp-append-version="true"></script>
     </environment>
 

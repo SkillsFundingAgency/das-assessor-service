@@ -48,7 +48,8 @@
             "location": "[resourceGroup().location]",
             "properties": {
                 "serverFarmId": "[parameters('appServicePlanId')]",
-                "siteConfig": {
+                "clientAffinityEnabled": false,
+                "siteConfig": {                   
                     "alwaysOn": true,
                     "appSettings": [
                         {
@@ -81,6 +82,7 @@
                     "apiVersion": "2016-08-01",
                     "location": "[resourceGroup().location]",
                     "properties": {
+                        "clientAffinityEnabled": false,
                         "scmSiteAlsoStopped": true
                     },
                     "dependsOn": [
