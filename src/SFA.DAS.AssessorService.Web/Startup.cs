@@ -93,7 +93,8 @@ namespace SFA.DAS.AssessorService.Web
                 config.For<ISearchApiClient>().Use<SearchApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<ICertificateApiClient>().Use<CertificateApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<ILoginApiClient>().Use<LoginApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
-
+                config.For<ISessionService>().Use<SessionService>().Ctor<string>().Is(_env.EnvironmentName);
+                
                 config.Populate(services);
             });
 
