@@ -12,6 +12,7 @@ namespace SFA.DAS.AssessorService.Web.Infrastructure
         void Remove(string key);
         string Get(string key);
         T Get<T>(string key);
+        bool Exists(string key);
     }
 
     class SessionService : ISessionService
@@ -60,6 +61,11 @@ namespace SFA.DAS.AssessorService.Web.Infrastructure
             var value = session.GetString(key);
 
             return string.IsNullOrWhiteSpace(value) ? default(T): JsonConvert.DeserializeObject<T>(value);
+        }
+
+        public bool Exists(string key)
+        {
+            return _httpContextAccessor.HttpContext.Session.Keys.Any(k => k == _environment + "_" + key);
         }
     }
 }
