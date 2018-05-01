@@ -53,22 +53,28 @@ namespace SFA.DAS.AssessorService.Web
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
 
 
-            services.AddAntiforgery(options => options.Cookie = new CookieBuilder() {Name = ".Assessors.AntiForgery"});
+            services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Assessors.AntiForgery", HttpOnly = true });
 
-            //if (_env.IsDevelopment())
-            //{
+            if (_env.IsDevelopment())
+            {
                 services.AddDistributedMemoryCache();
-            //}
-            //    else
-            //    {
-            //        services.AddDistributedRedisCache(options =>
-            //        {
-            //            options.Configuration = "localhost";
-            //        });
-            //    }
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(Configuration.SessionRedisConnectionString))
+                {
+                    services.AddDistributedRedisCache(options =>
+                    {
+                        options.Configuration = Configuration.SessionRedisConnectionString;
+                    });
+                }
+                else
+                {
+                    services.AddDistributedMemoryCache();
+                }
+            }
 
-            services.AddSession(opt => {opt.IdleTimeout = TimeSpan.FromHours(1);});
-            
+            services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
 
             return ConfigureIOC(services);
         }
@@ -93,6 +99,7 @@ namespace SFA.DAS.AssessorService.Web
                 config.For<ISearchApiClient>().Use<SearchApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<ICertificateApiClient>().Use<CertificateApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<ILoginApiClient>().Use<LoginApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
+                config.For<ISessionService>().Use<SessionService>().Ctor<string>().Is(_env.EnvironmentName);
 
                 config.Populate(services);
             });
@@ -114,7 +121,7 @@ namespace SFA.DAS.AssessorService.Web
             }
 
             app.UseStaticFiles()
-                .UseSession(new SessionOptions(){Cookie = new CookieBuilder(){Name = ".Assessors.Session"}})
+                .UseSession(new SessionOptions() { Cookie = new CookieBuilder() { Name = ".Assessors.Session", HttpOnly = true } })
                 .UseAuthentication()
                 .UseRequestLocalization()
                 .UseMvc(routes =>

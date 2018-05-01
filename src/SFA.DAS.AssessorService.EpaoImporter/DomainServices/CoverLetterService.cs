@@ -105,9 +105,9 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             var certificateData = certificateResponse.CertificateData;
 
             var contactDetails = "";
-            if (!string.IsNullOrEmpty(certificateResponse.EndPointAssessorOrganisationName))
+            if (!string.IsNullOrEmpty(certificateData.ContactOrganisation))
             {
-                contactDetails += certificateResponse.EndPointAssessorOrganisationName + System.Environment.NewLine;
+                contactDetails += certificateData.ContactOrganisation + System.Environment.NewLine;
             }
 
             if (!string.IsNullOrEmpty(certificateData.Department))
@@ -136,7 +136,9 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             }
 
             document.Replace("[Addressee Name]", string.IsNullOrEmpty(certificateData.ContactName) ? "" : certificateData.ContactName, false, true);
-            document.Replace("[ContactDetails]", contactDetails, false, true);           
+            document.Replace("[ContactDetails]", contactDetails, false, true);
+
+            document.Replace("[TodaysDate]", DateTime.Now.ToString("dd MMMM yyyy"), false, true);
 
             document.Replace("[Inset employer name?]", certificateData.ContactName, false, true);
             return document;

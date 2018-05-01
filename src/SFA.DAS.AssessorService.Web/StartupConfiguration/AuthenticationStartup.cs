@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                 .AddCookie(options =>
                 {
                     options.ReturnUrlParameter = "/Account/SignedIn";
-                    options.Cookie = new CookieBuilder() {Name = ".Assessors.Cookies"};
+                    options.Cookie = new CookieBuilder() {Name = ".Assessors.Cookies", HttpOnly = true};
                 });
         }
     }

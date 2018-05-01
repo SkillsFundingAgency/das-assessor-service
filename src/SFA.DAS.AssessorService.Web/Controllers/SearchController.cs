@@ -16,21 +16,21 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     public class SearchController : Controller
     {
         private readonly ISearchOrchestrator _searchOrchestrator;
-        private readonly IHttpContextAccessor _contextAccessor;
+        private readonly ISessionService _sessionService;
 
-        public SearchController(ISearchOrchestrator searchOrchestrator, IHttpContextAccessor contextAccessor)
+        public SearchController(ISearchOrchestrator searchOrchestrator, ISessionService sessionService)
         {
             _searchOrchestrator = searchOrchestrator;
-            _contextAccessor = contextAccessor;
+            _sessionService = sessionService;
         }
 
         [HttpGet]
         [Route("/[controller]/")]
         public IActionResult Index()
         {
-            _contextAccessor.HttpContext.Session.Remove("SearchResults");
-            _contextAccessor.HttpContext.Session.Remove("SelectedStandard");
-            _contextAccessor.HttpContext.Session.Remove("SearchResultsChooseStandard");
+            _sessionService.Remove("SearchResults");
+            _sessionService.Remove("SelectedStandard");
+            _sessionService.Remove("SearchResultsChooseStandard");
 
             return View("Index");
         }
@@ -46,8 +46,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             var result = await _searchOrchestrator.Search(vm);
             if (!result.SearchResults.Any()) return View("Index", vm);
-            _contextAccessor.HttpContext.Session.Put("SearchResults", result);
 
+            _sessionService.Set("SearchResults", result);
+            
             if (result.SearchResults.Count() > 1)
             {
                 GetChooseStandardViewModel(vm);
@@ -65,7 +66,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 SearchResults = vm.SearchResults
             };
 
-            _contextAccessor.HttpContext.Session.Put("SearchResultsChooseStandard", chooseStandardViewModel);
+            _sessionService.Set("SearchResultsChooseStandard", chooseStandardViewModel);
         }
 
         private void GetSelectedStandardViewModel(SearchRequestViewModel result)
@@ -82,13 +83,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 Level = result.SearchResults.First().Level
             };
 
-            _contextAccessor.HttpContext.Session.Put("SelectedStandard", selectedStandardViewModel);
+            _sessionService.Set("SelectedStandard", selectedStandardViewModel);
         }
 
         [HttpGet]
         public IActionResult Result()
         {
-            var vm = _contextAccessor.HttpContext.Session.Get<SelectedStandardViewModel>("SelectedStandard");
+            var vm = _sessionService.Get<SelectedStandardViewModel>("SelectedStandard");
             if (vm == null)
             {
                 return RedirectToAction("Index");
@@ -100,7 +101,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet(Name = "choose")]
         public IActionResult ChooseStandard()
         {
-            var vm = _contextAccessor.HttpContext.Session.Get<ChooseStandardViewModel>("SearchResultsChooseStandard");
+            var vm = _sessionService.Get<ChooseStandardViewModel>("SearchResultsChooseStandard");
             if (vm == null)
             {
                 return RedirectToAction("Index");
@@ -114,11 +115,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             if (!ModelState.IsValid)
             {
-                var viewModel = _contextAccessor.HttpContext.Session.Get<ChooseStandardViewModel>("SearchResultsChooseStandard");
+                var viewModel = _sessionService.Get<ChooseStandardViewModel>("SearchResultsChooseStandard");
                 return View("ChooseStandard", viewModel);
             }
 
-            var vm = _contextAccessor.HttpContext.Session.Get<SearchRequestViewModel>("SearchResults");
+            var vm = _sessionService.Get<SearchRequestViewModel>("SearchResults");
             if (vm == null)
             {
                 return RedirectToAction("Index");
@@ -139,7 +140,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 Level = selected.Level
             };
 
-            _contextAccessor.HttpContext.Session.Put("SelectedStandard", selectedStandardViewModel);
+            _sessionService.Set("SelectedStandard", selectedStandardViewModel);
             
             return RedirectToAction("Result");
         }

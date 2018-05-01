@@ -50,7 +50,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             using (var package = new ExcelPackage(memoryStream))
             {
                 CreateWorkBook(package);
-                CreateWorkSheet(package, certificateResponses);
+                CreateWorkSheet(batchNumber, package, certificateResponses);
 
                 package.Save();
 
@@ -72,7 +72,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             workbook.View.ShowSheetTabs = true;
         }
 
-        private void CreateWorkSheet(ExcelPackage package,
+        private void CreateWorkSheet(int batchNumber, ExcelPackage package,
             IEnumerable<CertificateResponse> certificates)
         {
             var monthYear = GetMonthYear("MMM");
@@ -82,7 +82,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             CreateWorksheetDefaults(worksheet);
             CreateWorkbookProperties(package);
 
-            CreateWorksheetHeader(worksheet);
+            CreateWorksheetHeader(batchNumber, worksheet);
             CreateWorksheetTableHeader(worksheet);
 
             CreateWorksheetData(worksheet);
@@ -103,7 +103,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 
         private static void CreateWorkbookProperties(ExcelPackage package)
         {
-            package.Workbook.Properties.Title = "PrintFLow Prototype";
+            package.Workbook.Properties.Title = "PrintFlow Prototype";
             package.Workbook.Properties.Author = "Alan Burns";
             package.Workbook.Properties.Comments =
                 "This sample demonstrates how to create an Excel 2007 workbook for Printer Output Prototype";
@@ -112,7 +112,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
         private static void CreateWorksheetTableHeader(ExcelWorksheet worksheet)
         {
             worksheet.Cells["K1:Q1"].Merge = true;
-            worksheet.Cells["K1:Q1"].Value = "EmployerAddress Details";
+            worksheet.Cells["K1:Q1"].Value = "Employer Address Details";
 
 
             worksheet.Cells[2, 1].Value = "Achievement Date";
@@ -144,7 +144,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             }
         }
 
-        private static void CreateWorksheetHeader(ExcelWorksheet worksheet)
+        private static void CreateWorksheetHeader(int batchNumber, ExcelWorksheet worksheet)
         {
             using (var range = worksheet.Cells[1, 1, 1, 18])
             {
@@ -157,7 +157,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 
             var monthYear = GetMonthYear("MMMM");
             worksheet.Cells["A1:J1"].Merge = true;
-            worksheet.Cells["A1:J1"].Value = monthYear + " Print Data";
+            worksheet.Cells["A1:J1"].Value = monthYear + " Print Data - Batch " + batchNumber.ToString();
         }
 
         private void CreateWorksheetData(ExcelWorksheet worksheet)
@@ -167,8 +167,8 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             foreach (var certificate in _certificates)
             {
                 var certificateData = certificate.CertificateData;
-                if (certificateData.AchievementDate != null)
-                    worksheet.Cells[row, 1].Value = certificateData.AchievementDate.ToString();
+                if (certificateData.AchievementDate.HasValue)
+                    worksheet.Cells[row, 1].Value = certificateData.AchievementDate.Value.ToString("dddd, MMMM dd, yyyy");
 
                 var learnerName = $"{certificateData.LearnerGivenNames} {certificateData.LearnerFamilyName}";
                 if (certificateData.ContactName != null)
@@ -180,12 +180,12 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                 if (certificateData.CourseOption != null)
                     worksheet.Cells[row, 4].Value = certificateData.CourseOption.ToUpper();
 
-                worksheet.Cells[row, 5].Value = $"Level{certificateData.StandardLevel}".ToUpper();
+                worksheet.Cells[row, 5].Value = $"Level {certificateData.StandardLevel}".ToUpper();
 
-                if (certificateData.OverallGrade != null && certificateData.OverallGrade != "NO GRADE AWARDED")
+                if (certificateData.OverallGrade != null && !certificateData.OverallGrade.ToLower().Contains("no grade awarded"))
                     worksheet.Cells[row, 6].Value = "achieving a ";
 
-                if (certificateData.OverallGrade != null && certificateData.OverallGrade != "NO GRADE AWARDED")
+                if (certificateData.OverallGrade != null && !certificateData.OverallGrade.ToLower().Contains("no grade awarded"))
                     worksheet.Cells[row, 7].Value = certificateData.OverallGrade.ToUpper();
 
                 if (certificate.CertificateReference != null)
