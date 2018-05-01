@@ -124,7 +124,7 @@
     <value>What's a ULN?</value>
   </data>
   <data name="Lastname" xml:space="preserve">
-    <value>Enter the apprentice's last name</value>
+    <value>Last name</value>
   </data>
   <data name="LastnameHint" xml:space="preserve">
     <value>For example, Smith</value>
@@ -136,7 +136,7 @@
     <value>Only record successful assessments</value>
   </data>
   <data name="Uln" xml:space="preserve">
-    <value>Enter the apprentice’s ULN</value>
+    <value>Unique learner number (ULN)</value>
   </data>
   <data name="UlnHint" xml:space="preserve">
     <value>For example, 1234567890</value>
