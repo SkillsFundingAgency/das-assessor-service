@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
@@ -12,8 +13,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     [Route("certificate/option")]
     public class CertificateOptionController : CertificateBaseController
     {
-        public CertificateOptionController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor, ICertificateApiClient certificateApiClient)
-            :base(logger, contextAccessor, certificateApiClient)
+        public CertificateOptionController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor, ICertificateApiClient certificateApiClient, ISessionService sessionService)
+            :base(logger, contextAccessor, certificateApiClient, sessionService)
         {}
 
         [HttpGet]

@@ -7,6 +7,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Web.Controllers;
+using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Orchestrators.Login;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
@@ -29,7 +30,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
                 .Returns("callbackUrl")
                 .Verifiable();
 
-            _accountController = new AccountController(new Mock<IHttpContextAccessor>().Object, new Mock<ILogger<AccountController>>().Object, new Mock<ILoginOrchestrator>().Object);
+            _accountController = new AccountController(new Mock<ILogger<AccountController>>().Object, new Mock<ILoginOrchestrator>().Object, new Mock<ISessionService>().Object);
 
             _accountController.Url = mockUrlHelper.Object;
         }

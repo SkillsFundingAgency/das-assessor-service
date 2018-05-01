@@ -20,6 +20,6 @@ namespace SFA.DAS.AssessorService.Settings
 
         [JsonRequired] public string SqlConnectionString { get; set; }
 
-        [JsonRequired] public string SessionRedisConnectionString { get; set; }
+        public string SessionRedisConnectionString { get; set; }
     }
 }

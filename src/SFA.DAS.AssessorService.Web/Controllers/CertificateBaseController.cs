@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.JsonData;
+using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
@@ -17,12 +18,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         protected readonly ILogger<CertificateController> Logger;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly ICertificateApiClient _certificateApiClient;
+        private readonly ISessionService _sessionService;
 
-        public CertificateBaseController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor, ICertificateApiClient certificateApiClient)
+        public CertificateBaseController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor, ICertificateApiClient certificateApiClient, ISessionService sessionService)
         {
             Logger = logger;
             _contextAccessor = contextAccessor;
             _certificateApiClient = certificateApiClient;
+            _sessionService = sessionService;
         }
         protected async Task<IActionResult> LoadViewModel<T>(string view) where T : ICertificateViewModel, new()
         {
@@ -34,12 +37,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             if (query.ContainsKey("redirecttocheck") && bool.Parse(query["redirecttocheck"]))
             {
                 Logger.LogInformation($"RedirectToCheck for {typeof(T).Name} is true");
-                _contextAccessor.HttpContext.Session.SetString("redirecttocheck", "true");
+                _sessionService.Set("redirecttocheck", "true");
             }
             else
-                _contextAccessor.HttpContext.Session.Remove("redirecttocheck");
-
-            var sessionString = _contextAccessor.HttpContext.Session.GetString("CertificateSession");
+                _sessionService.Remove("redirecttocheck");
+                
+            var sessionString = _sessionService.Get("CertificateSession");
             if (sessionString == null)
             {
                 Logger.LogInformation($"Session for {typeof(T).Name} requested by {username} has been lost. Redirecting to Search Index");

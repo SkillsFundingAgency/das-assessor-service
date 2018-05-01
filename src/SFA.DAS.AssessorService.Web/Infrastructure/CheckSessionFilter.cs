@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
@@ -9,24 +8,25 @@ namespace SFA.DAS.AssessorService.Web.Infrastructure
     public class CheckSessionFilter : IActionFilter
     {
         private ILogger<CheckSessionAttribute> _logger;
+        private readonly ISessionService _sessionService;
 
-        public CheckSessionFilter(ILogger<CheckSessionAttribute> logger)
+        public CheckSessionFilter(ILogger<CheckSessionAttribute> logger, ISessionService sessionService)
         {
             _logger = logger;
+            _sessionService = sessionService;
         }
 
         public void OnActionExecuting(ActionExecutingContext context)
         {
-            var meterAttribute = context.Controller.GetType().GetTypeInfo()
+            var checkSessionAttribute = context.Controller.GetType().GetTypeInfo()
                 .GetCustomAttribute<CheckSessionAttribute>();
 
-            if (meterAttribute == null)
+            if (checkSessionAttribute == null)
             {
                 return;
             }
 
-            var session = context.HttpContext.Session;
-            if (session.GetString("OrganisationName") == null)
+            if (_sessionService.Get("OrganisationName") == null)
             {
                 context.Result = new RedirectToActionResult("SignIn", "Account", null);
                 _logger.LogInformation("Session lost, redirecting to Sign In");

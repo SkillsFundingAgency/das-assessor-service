@@ -3,10 +3,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.WsFederation;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Orchestrators.Login;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
@@ -14,15 +14,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     [Route("[controller]/[action]")]
     public class AccountController : Controller
     {
-        private readonly IHttpContextAccessor _contextAccessor;
         private readonly ILogger<AccountController> _logger;
         private readonly ILoginOrchestrator _loginOrchestrator;
+        private readonly ISessionService _sessionService;
 
-        public AccountController(IHttpContextAccessor contextAccessor, ILogger<AccountController> logger, ILoginOrchestrator loginOrchestrator)
+        public AccountController(ILogger<AccountController> logger, ILoginOrchestrator loginOrchestrator, ISessionService sessionService)
         {
-            _contextAccessor = contextAccessor;
             _logger = logger;
             _loginOrchestrator = loginOrchestrator;
+            _sessionService = sessionService;
         }
 
         [HttpGet]
@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             switch (loginResult.Result)
             {
                 case LoginResult.Valid:
-                    _contextAccessor.HttpContext.Session.SetString("OrganisationName", loginResult.OrganisationName);
+                    _sessionService.Set("OrganisationName", loginResult.OrganisationName);
                     return RedirectToAction("Index", "Search");
                 case LoginResult.NotRegistered:
                     return RedirectToAction("NotRegistered", "Home");

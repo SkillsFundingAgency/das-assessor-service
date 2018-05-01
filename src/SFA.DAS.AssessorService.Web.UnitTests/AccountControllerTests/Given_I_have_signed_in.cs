@@ -10,6 +10,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Web.Controllers;
+using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Orchestrators.Login;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
@@ -35,7 +36,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
 
             _loginOrchestrator = new Mock<ILoginOrchestrator>();
 
-            _accountController = new AccountController(_contextAccessor.Object, new Mock<ILogger<AccountController>>().Object, _loginOrchestrator.Object);
+            _accountController = new AccountController(new Mock<ILogger<AccountController>>().Object, _loginOrchestrator.Object, new Mock<ISessionService>().Object);
         }
 
         [Test]

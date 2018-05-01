@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Validators;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
 
@@ -18,7 +19,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly CertificateDateViewModelValidator _validator;
 
         public CertificateDateController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor,
-            ICertificateApiClient certificateApiClient, CertificateDateViewModelValidator validator) : base(logger, contextAccessor, certificateApiClient)
+            ICertificateApiClient certificateApiClient, CertificateDateViewModelValidator validator, ISessionService sessionService) : base(logger, contextAccessor, certificateApiClient, sessionService)
         {
             _validator = validator;
         }
