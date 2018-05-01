@@ -1,4 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Http
+@using SFA.DAS.AssessorService.Web.Infrastructure
+@inject ISessionService SessionService
 <!DOCTYPE html>
 <html>
 
@@ -117,7 +119,7 @@
             <div id="header-user--nav" class="grid-row">
                 <div class="column-two-thirds">
                     <h2 class="heading-small">
-                        @Context.Session.GetString("OrganisationName")
+                        @SessionService.Get("OrganisationName")
                         <span class="heading-secondary">
                             <span class="visuallyhidden">Logged in as </span>@User.Identity.Name
                         </span>

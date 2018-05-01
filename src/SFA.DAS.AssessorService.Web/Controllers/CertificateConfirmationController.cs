@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
@@ -12,12 +13,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     [Route("certificate/confirmation")]
     public class CertificateConfirmationController : CertificateBaseController
     {
-        private readonly IHttpContextAccessor _contextAccessor;
+        private readonly ISessionService _sessionService;
 
         public CertificateConfirmationController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor,
-            ICertificateApiClient certificateApiClient) : base(logger, contextAccessor, certificateApiClient)
+            ICertificateApiClient certificateApiClient, ISessionService sessionService) : base(logger, contextAccessor, certificateApiClient, sessionService)
         {
-            _contextAccessor = contextAccessor;
+            _sessionService = sessionService;
         }
 
         [HttpGet]
@@ -25,7 +26,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             var actionResult = await LoadViewModel<CertificateConfirmationViewModel>("~/Views/Certificate/Confirmation.cshtml");
 
-            _contextAccessor.HttpContext.Session.Remove("CertificateSession");
+            _sessionService.Remove("CertificateSession");
 
             return actionResult;
         }

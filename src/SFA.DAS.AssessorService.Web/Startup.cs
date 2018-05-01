@@ -61,14 +61,20 @@ namespace SFA.DAS.AssessorService.Web
             }
             else
             {
-                services.AddDistributedRedisCache(options =>
+                if (!string.IsNullOrEmpty(Configuration.SessionRedisConnectionString))
                 {
-                    options.Configuration = Configuration.SessionRedisConnectionString;
-                });
+                    services.AddDistributedRedisCache(options =>
+                    {
+                        options.Configuration = Configuration.SessionRedisConnectionString;
+                    });
+                }
+                else
+                {
+                    services.AddDistributedMemoryCache();
+                }
             }
 
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
-
 
             return ConfigureIOC(services);
         }
@@ -93,6 +99,7 @@ namespace SFA.DAS.AssessorService.Web
                 config.For<ISearchApiClient>().Use<SearchApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<ICertificateApiClient>().Use<CertificateApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<ILoginApiClient>().Use<LoginApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
+                config.For<ISessionService>().Use<SessionService>().Ctor<string>().Is(_env.EnvironmentName);
 
                 config.Populate(services);
             });
