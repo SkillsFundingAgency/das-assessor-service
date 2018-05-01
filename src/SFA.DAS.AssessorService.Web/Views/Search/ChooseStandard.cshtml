@@ -11,7 +11,7 @@
 <div class="grid-row">
     <div class="column-two-thirds">
         <a class="link-back" asp-controller="Search" asp-action="Index">Back</a>
-        
+
         <form class="apprentice-choose-standard-form" asp-controller="Search" asp-action="ChooseStandard" method="post">
 
             @* hidden with css by default *@
@@ -55,9 +55,16 @@
                     @if (Model.SearchResults.Any(sr => sr.CertificateReference == null))
                     {
                         <div class="form-block">
-                            <span class="bold-medium">@Localizer["AssessmentsNotRecordedYet"]</span>     
+                            @if (Model.SearchResults.Count(sr => sr.CertificateReference == null) > 1)
+                            {
+                                <span class="bold-medium">@Localizer["AssessmentsNotRecordedYet"]</span>
+                            }
+                            else
+                            {
+                                <span class="bold-medium">@Localizer["AssessmentNotRecordedYet"]</span>
+                            }
                         </div>
-                        @foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference == null))
+                        foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference == null))
                         {
                             <div class="multiple-choice">
                                 <input id=@("standard_" + result.StdCode) type="radio" name="SelectedStandardCode" value="@result.StdCode">
@@ -69,11 +76,19 @@
                     }
                     @if (Model.SearchResults.Any(sr => sr.CertificateReference != null))
                     {
-                        
+
                         <div class="form-block">
-                            <span class="bold-medium">@Localizer["PreviouslyRecordedAssessments"]</span>
+                            @if (Model.SearchResults.Count(sr => sr.CertificateReference != null) > 1)
+                            {
+                                <span class="bold-medium">@Localizer["PreviouslyRecordedAssessments"]</span>
+                            }
+                            else
+                            {
+                                <span class="bold-medium">@Localizer["PreviouslyRecordedAssessment"]</span>
+                            }
+
                         </div>
-                        @foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference != null))
+                        foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference != null))
                         {
                             <div class="multiple-choice">
                                 <input id=@("standard_" + result.StdCode) type="radio" name="SelectedStandardCode" value="@result.StdCode">

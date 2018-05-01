@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AssessmentNotRecordedYet" xml:space="preserve">
+    <value>Assessment not recorded yet</value>
+  </data>
   <data name="AssessmentsNotRecordedYet" xml:space="preserve">
     <value>Assessments not recorded yet</value>
   </data>
@@ -131,6 +134,9 @@
   </data>
   <data name="PageHeading" xml:space="preserve">
     <value>The apprentice is enrolled on more than one apprenticeship</value>
+  </data>
+  <data name="PreviouslyRecordedAssessment" xml:space="preserve">
+    <value>Previously recorded assessment</value>
   </data>
   <data name="PreviouslyRecordedAssessments" xml:space="preserve">
     <value>Previously recorded assessments</value>
