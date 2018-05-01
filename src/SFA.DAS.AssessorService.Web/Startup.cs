@@ -61,17 +61,26 @@ namespace SFA.DAS.AssessorService.Web
             }
             else
             {
-                if (!string.IsNullOrEmpty(Configuration.SessionRedisConnectionString))
+                //if (!string.IsNullOrEmpty(Configuration.SessionRedisConnectionString))
+                //{
+                try
                 {
                     services.AddDistributedRedisCache(options =>
                     {
                         options.Configuration = Configuration.SessionRedisConnectionString;
                     });
                 }
-                else
+                catch (Exception e)
                 {
-                    services.AddDistributedMemoryCache();
+                    _logger.LogError(e, $"Error setting redis for session.  Conn: {Configuration.SessionRedisConnectionString}");
+                    throw;
                 }
+                    
+                //}
+                //else
+                //{
+                //    services.AddDistributedMemoryCache();
+                //}
             }
 
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
