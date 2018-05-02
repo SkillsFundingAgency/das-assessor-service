@@ -45,7 +45,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                     var certificates = (await _assessorServiceApi.GetCertificatesToBePrinted()).ToList();
 
                     var coverLettersProduced = await _coverLetterService.Create(batchNumber, certificates);
-                    await _ifaCertificateService.Create(batchNumber, certificates);
+                    await _ifaCertificateService.Create(batchNumber, certificates, coverLettersProduced);
 
                     await _notificationService.Send(batchNumber, certificates, coverLettersProduced);
 

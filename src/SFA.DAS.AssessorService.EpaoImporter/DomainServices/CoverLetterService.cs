@@ -33,10 +33,10 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             _initialiseContainer = initialiseContainer;
         }
 
-        public async Task<List<string>> Create(int batchNumber, IEnumerable<CertificateResponse> certificates)
+        public async Task<CoverLettersProduced> Create(int batchNumber, IEnumerable<CertificateResponse> certificates)
         {
             var documentTemplateDataStream = await _documentTemplateDataStream.Get();
-
+          
             await CleanMergedDocumentContainer();
 
             var certificateResponses = certificates as CertificateResponse[] ?? certificates.ToArray();
@@ -55,32 +55,43 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                     key3 = key.ContactName,
                     key4 = key.ContactPostCode,
                     Result = group.ToList()
-                });
+                }).OrderBy(q => q.key1);
 
+            var coverLettersProduced = new CoverLettersProduced();
             var sequenceNumber = 0;
-            var coverLetterFileNames = new List<string>();
+            var contactOrganisationsAlreadyProceseed = new List<string>();
 
             foreach (var groupedCertificate in groupedCertificates)
             {
+                if (contactOrganisationsAlreadyProceseed.FirstOrDefault(q => q == groupedCertificate.key1) == null)
+                {
+                    sequenceNumber = 0;
+                    contactOrganisationsAlreadyProceseed.Add(groupedCertificate.key1);
+                }
                 sequenceNumber++;
 
                 var certificate = groupedCertificate.Result[0];
                 var wordDocumentFileName = $"IFA-Certificate-{GetMonthYear()}-{batchNumber.ToString().PadLeft(3, '0')}-{certificate.CertificateData.ContactOrganisation}-{sequenceNumber}.docx";
-                coverLetterFileNames.Add(wordDocumentFileName);
+                coverLettersProduced.CoverLetterFileNames.Add(wordDocumentFileName);
+
+                foreach (var groupCertificateResult in groupedCertificate.Result)
+                {
+                    coverLettersProduced.CoverLetterCertificates.Add(groupCertificateResult.CertificateReference, wordDocumentFileName);
+                }
 
                 _aggregateLogger.LogInfo($"Processing Certificate for Cover Letter - {certificate.CertificateReference} - {wordDocumentFileName}");
                 var wordStream = await CreateWordDocumentStream(wordDocumentFileName, certificate, documentTemplateDataStream);
 
-                _aggregateLogger.LogInfo($"converted certifcate data - Contact Name = {certificate.CertificateData.ContactName}");
+                _aggregateLogger.LogInfo($"Converted Certificate data - Contact Name = {certificate.CertificateData.ContactName}");
 
                 await _fileTransferClient.Send(wordStream, wordDocumentFileName);
 
-                wordStream.Close();
+                wordStream.Close(); 
             }
 
             documentTemplateDataStream.Close();
 
-            return coverLetterFileNames;
+            return coverLettersProduced;
         }
 
         private async Task<MemoryStream> CreateWordDocumentStream(string mergedFileName, CertificateResponse certificateResponse, MemoryStream documentTemplateStream)
