@@ -175,7 +175,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             {
                 var certificateData = certificate.CertificateData;
                 if (certificateData.AchievementDate.HasValue)
-                    worksheet.Cells[row, 1].Value = certificateData.AchievementDate.Value.ToString("dddd, MMMM dd, yyyy");
+                    worksheet.Cells[row, 1].Value = certificateData.AchievementDate.Value.ToString("dd MMMM, yyyy");
 
                 var learnerName = $"{certificateData.LearnerGivenNames} {certificateData.LearnerFamilyName}";
                 if (certificateData.ContactName != null)
