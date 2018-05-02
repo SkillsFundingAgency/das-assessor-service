@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using SFA.DAS.AssessorService.Web.Utils
 @inject IViewLocalizer Localizer
 @model SFA.DAS.AssessorService.Web.ViewModels.Search.ChooseStandardViewModel
 
@@ -55,14 +56,7 @@
                     @if (Model.SearchResults.Any(sr => sr.CertificateReference == null))
                     {
                         <div class="form-block">
-                            @if (Model.SearchResults.Count(sr => sr.CertificateReference == null) > 1)
-                            {
-                                <span class="bold-medium">@Localizer["AssessmentsNotRecordedYet"]</span>
-                            }
-                            else
-                            {
-                                <span class="bold-medium">@Localizer["AssessmentNotRecordedYet"]</span>
-                            }
+                            <span class="bold-medium">@Localizer.Pluralize("AssessmentsNotRecordedYet", Model.SearchResults.Count(sr => sr.CertificateReference == null) > 1)</span>
                         </div>
                         foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference == null))
                         {
@@ -78,15 +72,7 @@
                     {
 
                         <div class="form-block">
-                            @if (Model.SearchResults.Count(sr => sr.CertificateReference != null) > 1)
-                            {
-                                <span class="bold-medium">@Localizer["PreviouslyRecordedAssessments"]</span>
-                            }
-                            else
-                            {
-                                <span class="bold-medium">@Localizer["PreviouslyRecordedAssessment"]</span>
-                            }
-
+                            <span class="bold-medium">@Localizer.Pluralize("PreviouslyRecordedAssessments", Model.SearchResults.Count(sr => sr.CertificateReference != null) > 1)</span>
                         </div>
                         foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference != null))
                         {
