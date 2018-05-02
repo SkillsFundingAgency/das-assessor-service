@@ -28,6 +28,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Sftp
             _aggregateLogger.LogInfo($"Port = {_webConfiguration.Sftp.Port}");
             _aggregateLogger.LogInfo($"Username = {_webConfiguration.Sftp.Username}");
             _aggregateLogger.LogInfo($"Upload Directory = {_webConfiguration.Sftp.UploadDirectory}");
+            _aggregateLogger.LogInfo($"Proof Directory = {_webConfiguration.Sftp.ProofDirectory}");
 
             _sftpClient.Connect();
 
