@@ -72,7 +72,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests
         public void ItShouldSendANotification()
         {
             _notificationService.Verify(q =>
-                q.Send(It.IsAny<int>(), It.IsAny<List<CertificateResponse>>(), It.IsAny<List<string>>()), Times.Once());
+                q.Send(It.IsAny<int>(), It.IsAny<List<CertificateResponse>>(), It.IsAny<CoverLettersProduced>()), Times.Once());
         }
 
 
