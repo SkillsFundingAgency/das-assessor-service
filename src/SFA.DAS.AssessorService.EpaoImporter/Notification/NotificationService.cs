@@ -63,7 +63,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Notification
             }
         }
 
-        private static Dictionary<string, string> CreatePersonalisationTokens(List<CertificateResponse> certificateResponses,
+        private Dictionary<string, string> CreatePersonalisationTokens(List<CertificateResponse> certificateResponses,
             List<string> coverLetterFileNames, string certificatesFileName,
             string strinfigiedEndPointAssessorOrganisations, StringBuilder stringifiedCoverLetterFileNames)
         {
@@ -76,7 +76,9 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Notification
                 },
                 {"numberOfCoverLetters", $"Number of Cover Letters:- {coverLetterFileNames.Count}"},
                 {"epaos", $"{strinfigiedEndPointAssessorOrganisations}"},
-                {"coverLetterFileNames", $"{stringifiedCoverLetterFileNames}"}
+                {"coverLetterFileNames", $"{stringifiedCoverLetterFileNames}"},
+                {"sftpUploadDirectory", $"{_webConfiguration.Sftp.UploadDirectory}"},
+                {"proofDirectory", $"{_webConfiguration.Sftp.ProofDirectory}"}
             };
             return personalisation;
         }

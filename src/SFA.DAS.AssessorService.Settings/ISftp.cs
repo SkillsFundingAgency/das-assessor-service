@@ -7,5 +7,6 @@
         string RemoteHost { get; set; }
         string Username { get; set; }
         string UploadDirectory { get; set; }
+        string ProofDirectory { get; set; }
     }
 }

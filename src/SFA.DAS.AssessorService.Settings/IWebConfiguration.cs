@@ -10,6 +10,6 @@
         SftpSettings Sftp { get; set; }
         string IFATemplateStorageConnectionString { get; set; }
         string SqlConnectionString { get; set; }
-        string SessionRedisConnectionString { get;set; }
+        string SessionRedisConnectionString { get; set; }
     }
 }
