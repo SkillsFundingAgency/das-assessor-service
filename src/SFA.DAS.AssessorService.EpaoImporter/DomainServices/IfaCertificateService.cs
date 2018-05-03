@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.EpaoImporter.Data;
 using SFA.DAS.AssessorService.EpaoImporter.InfrastructureServices;
 using SFA.DAS.AssessorService.EpaoImporter.Interfaces;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
@@ -23,6 +24,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
         private readonly IFileTransferClient _fileTransferClient;
         private readonly IWebConfiguration _webConfiguration;
         private IEnumerable<CertificateResponse> _certificates;
+        private CoverLettersProduced _coverLettersProduced;
 
         public IFACertificateService(
             BlobContainerHelper initialiseContainer,
@@ -36,9 +38,13 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             _webConfiguration = webConfiguration;
         }
 
-        public async Task Create(int batchNumber, IEnumerable<CertificateResponse> certificates)
+        public async Task Create(int batchNumber,
+            IEnumerable<CertificateResponse> certificates,
+            CoverLettersProduced coverLettersProduced)
         {
             _aggregateLogger.LogInfo("Created Excel Spreadsheet ....");
+
+            _coverLettersProduced = coverLettersProduced;
 
             var memoryStream = new MemoryStream();
 
@@ -54,7 +60,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 
                 package.Save();
 
-                await _fileTransferClient.Send(memoryStream, fileName);              
+                await _fileTransferClient.Send(memoryStream, fileName);
 
                 memoryStream.Close();
             }
@@ -133,8 +139,9 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             worksheet.Cells[2, 16].Value = "Address Line 3";
             worksheet.Cells[2, 17].Value = "Address Line 4";
             worksheet.Cells[2, 18].Value = "Post Code";
+            worksheet.Cells[2, 19].Value = "Cover Letter Filename";
 
-            using (var range = worksheet.Cells[2, 1, 2, 18])
+            using (var range = worksheet.Cells[2, 1, 2, 19])
             {
                 range.Style.Font.Bold = true;
                 range.Style.Fill.PatternType = ExcelFillStyle.Solid;
@@ -168,7 +175,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             {
                 var certificateData = certificate.CertificateData;
                 if (certificateData.AchievementDate.HasValue)
-                    worksheet.Cells[row, 1].Value = certificateData.AchievementDate.Value.ToString("dddd, MMMM dd, yyyy");
+                    worksheet.Cells[row, 1].Value = certificateData.AchievementDate.Value.ToString("dd MMMM, yyyy");
 
                 var learnerName = $"{certificateData.LearnerGivenNames} {certificateData.LearnerFamilyName}";
                 if (certificateData.ContactName != null)
@@ -199,7 +206,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 
                 if (certificateData.ContactOrganisation != null)
                     worksheet.Cells[row, 12].Value = certificateData.ContactOrganisation;
-              
+
                 if (certificateData.Department != null)
                     worksheet.Cells[row, 13].Value = certificateData.Department;
 
@@ -218,11 +225,13 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                 if (certificateData.ContactPostCode != null)
                     worksheet.Cells[row, 18].Value = certificateData.ContactPostCode;
 
+                worksheet.Cells[row, 19].Value = _coverLettersProduced.CoverLetterCertificates[certificate.CertificateReference];
+
                 _aggregateLogger.LogInfo($"Processing Certificate For IFA Certificate - {certificate.CertificateReference}");
 
                 row++;
             }
-        }       
+        }
 
         private static string GetMonthYear(string monthFormat)
         {

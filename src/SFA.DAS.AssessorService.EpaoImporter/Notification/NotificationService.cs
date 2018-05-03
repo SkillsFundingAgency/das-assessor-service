@@ -31,16 +31,16 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Notification
         }
 
         public async Task Send(int batchNumber, List<CertificateResponse> certificateResponses,
-            List<string> coverLetterFileNames)
+            CoverLettersProduced coverLettersProduced)
         {
             var emailTemplate = await _assessorServiceApi.GetEmailTemplate();
 
             var certificatesFileName = $"IFA-Certificate-{GetMonthYear()}-{batchNumber.ToString().PadLeft(3, '0')}.xlsx";
 
-            var strinfigiedEndPointAssessorOrganisations = GetStringifiedEndPointOrganisations(certificateResponses);
-            var stringifiedCoverLetterFileNames = GetStringifiedCoverLetterFileNames(coverLetterFileNames);
+            var stringifiedEndPointOrganisations = GetStringifiedEndPointOrganisations(certificateResponses);
+            var stringifiedCoverLetterFileNames = GetStringifiedCoverLetterFileNames(coverLettersProduced.CoverLetterFileNames);
 
-            var personalisation = CreatePersonalisationTokens(certificateResponses, coverLetterFileNames, certificatesFileName, strinfigiedEndPointAssessorOrganisations, stringifiedCoverLetterFileNames);
+            var personalisation = CreatePersonalisationTokens(certificateResponses, coverLettersProduced.CoverLetterFileNames, certificatesFileName, stringifiedEndPointOrganisations, stringifiedCoverLetterFileNames);
 
             _aggregateLogger.LogInfo("Send Email");
             _aggregateLogger.LogInfo($"Base Url = {_webConfiguration.NotificationsApiClientConfiguration.ApiBaseUrl}");
@@ -63,7 +63,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Notification
             }
         }
 
-        private static Dictionary<string, string> CreatePersonalisationTokens(List<CertificateResponse> certificateResponses,
+        private Dictionary<string, string> CreatePersonalisationTokens(List<CertificateResponse> certificateResponses,
             List<string> coverLetterFileNames, string certificatesFileName,
             string strinfigiedEndPointAssessorOrganisations, StringBuilder stringifiedCoverLetterFileNames)
         {
@@ -76,7 +76,9 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Notification
                 },
                 {"numberOfCoverLetters", $"Number of Cover Letters:- {coverLetterFileNames.Count}"},
                 {"epaos", $"{strinfigiedEndPointAssessorOrganisations}"},
-                {"coverLetterFileNames", $"{stringifiedCoverLetterFileNames}"}
+                {"coverLetterFileNames", $"{stringifiedCoverLetterFileNames}"},
+                {"sftpUploadDirectory", $"{_webConfiguration.Sftp.UploadDirectory}"},
+                {"proofDirectory", $"{_webConfiguration.Sftp.ProofDirectory}"}
             };
             return personalisation;
         }
