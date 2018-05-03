@@ -7,7 +7,7 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
 {
     public class ConfirmApprenticePage : BasePage
     {
-        private static String PAGE_TITLE = "Confirm apprentice";
+        private static String PAGE_TITLE = "Confirm this is the correct apprentice";
 
         public ConfirmApprenticePage(IWebDriver webDriver) : base(webDriver)
         {

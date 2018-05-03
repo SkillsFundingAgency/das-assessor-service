@@ -7,7 +7,7 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
 {
     public class ApprenticeAchievementDatePage : BasePage
     {
-        private static String PAGE_TITLE = "What is the apprenticeship achievement date?";
+        private static String PAGE_TITLE = "What's the apprenticeship achievement date?";
 
         public ApprenticeAchievementDatePage(IWebDriver webDriver) : base(webDriver)
         {

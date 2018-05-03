@@ -7,7 +7,7 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
 {
     public class AddiitionalLearningOptionsPage : BasePage
     {
-        private static String PAGE_TITLE = "Did the apprentice do any additional learning options?";
+        private static String PAGE_TITLE = "Did the apprentice take a learning option?";
 
         public AddiitionalLearningOptionsPage(IWebDriver webDriver) : base(webDriver)
         {
