@@ -25,5 +25,5 @@ REFERENCES [dbo].[Organisations] ([Id])
 ON DELETE CASCADE
 GO
 
-ALTER TABLE [dbo].[Contacts] CONSTRAINT [FK_Contacts_Organisations_OrganisationId]
+ALTER TABLE [dbo].[Contacts] ADD CONSTRAINT [FK_Contacts_Organisations_OrganisationId]
 GO
