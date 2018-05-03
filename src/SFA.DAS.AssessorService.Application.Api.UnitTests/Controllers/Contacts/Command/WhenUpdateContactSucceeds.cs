@@ -11,18 +11,15 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts
     public class WhenUpdateContactSucceeds : ContactTestBase
     {
         private static UpdateContactRequest _updateContactRequest;
-        private static ContactResponse _contactResponse;
-        private ActionResult _result;
 
         [SetUp]
         public async Task Arrange()
         {
             Setup();
 
-            _contactResponse = Builder<ContactResponse>.CreateNew().Build();
+            Builder<ContactResponse>.CreateNew().Build();
 
-            _updateContactRequest = Builder<UpdateContactRequest>.CreateNew()
-                .Build();
+            _updateContactRequest = Builder<UpdateContactRequest>.CreateNew().Build();
 
             await ContactController.UpdateContact(_updateContactRequest);
         }
@@ -30,7 +27,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts
         [Test]
         public void ThenItShouldSucceed()
         {
-            Mediator.Verify(q => q.Send(Moq.It.IsAny<UpdateContactRequest>(), new CancellationToken()), Times.Once);
+            Mediator.Verify(q => q.Send(It.IsAny<UpdateContactRequest>(), new CancellationToken()), Times.Once);
         }
     }
 }

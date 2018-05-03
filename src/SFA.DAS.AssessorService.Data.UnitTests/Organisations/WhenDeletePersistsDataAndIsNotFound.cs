@@ -16,8 +16,6 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Organisations
     public class WhenDeletePersistsDataAndIsNotFound
     {
         private OrganisationRepository _organisationRepository;       
-
-        private Task _result;
         private Exception _exception;
 
         [SetUp]
@@ -59,10 +57,10 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Organisations
             var mockDbContext = new Mock<AssessorDbContext>();
 
             mockDbContext.Setup(c => c.Organisations).Returns(mockSet.Object);
-            mockDbContext.Setup(x => x.MarkAsModified(Moq.It.IsAny<Organisation>()));
+            mockDbContext.Setup(x => x.MarkAsModified(It.IsAny<Organisation>()));
 
             mockDbContext.Setup(q => q.SaveChangesAsync(new CancellationToken()))
-                .Returns(Task.FromResult(Moq.It.IsAny<int>()));
+                .Returns(Task.FromResult(It.IsAny<int>()));
             return mockDbContext;
         }
     }
