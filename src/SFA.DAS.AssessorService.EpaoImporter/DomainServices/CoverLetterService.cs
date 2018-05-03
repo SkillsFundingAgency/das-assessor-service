@@ -141,6 +141,11 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                 contactDetails += certificateData.ContactAddLine3 + System.Environment.NewLine;
             }
 
+            if (!string.IsNullOrEmpty(certificateData.ContactAddLine4))
+            {
+                contactDetails += certificateData.ContactAddLine4 + System.Environment.NewLine;
+            }
+
             if (!string.IsNullOrEmpty(certificateData.ContactPostCode))
             {
                 contactDetails += certificateData.ContactPostCode + System.Environment.NewLine;
