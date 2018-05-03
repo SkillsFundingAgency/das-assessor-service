@@ -11,7 +11,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
 {   
     public class WhenCreateOrganisation : OrganisationTestBase
     {
-        private static CreateOrganisationRequest _createOrganisationRequest;
         private static Organisation _organisation;
         private IActionResult _result;
 
@@ -25,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
             Mediator.Setup(q => q.Send(Moq.It.IsAny<CreateOrganisationRequest>(), Moq.It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult((_organisation)));
 
-            _result = OrganisationController.CreateOrganisation(_createOrganisationRequest).Result;
+            _result = OrganisationController.CreateOrganisation(default(CreateOrganisationRequest)).Result;
         }
 
         [Test]

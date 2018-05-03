@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using FluentValidation.Results;
-using Machine.Specifications;
 using NUnit.Framework;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.UkPrnValidator

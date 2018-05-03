@@ -18,7 +18,7 @@
 ) ON [PRIMARY]
 GO
 
-ALTER TABLE [dbo].[CertificateLogs]  WITH CHECK ADD  CONSTRAINT [FK_CertificateLogs_Certificates_CertificateId] FOREIGN KEY([CertificateId])
+ALTER TABLE [dbo].[CertificateLogs]  ADD  CONSTRAINT [FK_CertificateLogs_Certificates_CertificateId] FOREIGN KEY([CertificateId])
 REFERENCES [dbo].[Certificates] ([Id])
 ON DELETE CASCADE
 GO
