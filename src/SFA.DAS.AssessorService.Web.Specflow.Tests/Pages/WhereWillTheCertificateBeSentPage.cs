@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using OpenQA.Selenium;
 using SFA.DAS.AssessorService.Web.Specflow.Tests.Framework.Helpers;
 using SFA.DAS.AssessorService.Web.Specflow.Tests.TestSupport;
@@ -40,6 +41,8 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
             FormCompletionHelper.EnterText(_departmentBy, "Test Deparment");
             FormCompletionHelper.EnterText(_employerBy, "Jongo Ltd");
             FormCompletionHelper.EnterText(_postCodeBy, "B50 3DE");
+
+            Thread.Sleep(3000);
             FormCompletionHelper.ClickElement(_enterAddressManuallyBy);
 
             FormCompletionHelper.EnterText(_addressLine1By, "1 Anchor Drive");

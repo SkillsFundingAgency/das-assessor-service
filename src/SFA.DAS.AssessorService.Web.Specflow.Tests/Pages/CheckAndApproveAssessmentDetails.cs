@@ -7,7 +7,7 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
 {
     public class CheckAndApproveAssessmentDetails : BasePage
     {
-        private static String PAGE_TITLE = "Check and approve the assessment details";
+        private static String PAGE_TITLE = "Check and submit the assessment details";
 
         public CheckAndApproveAssessmentDetails(IWebDriver webDriver) : base(webDriver)
         {
