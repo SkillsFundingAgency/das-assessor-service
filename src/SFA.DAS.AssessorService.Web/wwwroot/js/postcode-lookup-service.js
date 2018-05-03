@@ -5,6 +5,10 @@ $(document).ready(function() {
   });
 });
 
+function hasValue(elem) {
+    return $(elem).filter(function() { return $(this).val(); }).length > 0;
+}
+
 // provides the matching addresses from postcode
 (function($) {
   var searchContext = '',
@@ -15,7 +19,9 @@ $(document).ready(function() {
   $('#address-lookup').removeClass('disabled');
   $('#postcode-search').prop('disabled', false);
   // grey out manual input
-  $('#address-details').addClass('disabled');
+  if (!hasValue("#address-details input")) {
+      $('#address-details').addClass('disabled');
+  }
 
   $('#enterAddressManually').on('click', function(e) {
     e.preventDefault();
