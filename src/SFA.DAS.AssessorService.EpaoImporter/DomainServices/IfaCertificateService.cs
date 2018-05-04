@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -49,9 +48,9 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             var memoryStream = new MemoryStream();
 
             var certificateResponses = certificates as CertificateResponse[] ?? certificates.ToArray();
-            _certificates = certificateResponses;
+            _certificates = certificateResponses;          
 
-            var fileName = $"IFA-Certificate-{GetMonthYear()}-{batchNumber.ToString().PadLeft(3, '0')}.xlsx";
+            var fileName = $"IFA-Certificate-{DateTime.Now:MMyy}-{batchNumber.ToString().PadLeft(3, '0')}.xlsx";
 
             using (var package = new ExcelPackage(memoryStream))
             {
@@ -80,9 +79,8 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 
         private void CreateWorkSheet(int batchNumber, ExcelPackage package,
             IEnumerable<CertificateResponse> certificates)
-        {
-            var monthYear = GetMonthYear("MMM");
-
+        {            
+            var monthYear = DateTime.Today.ToString("MMM yyyy");
             var worksheet = package.Workbook.Worksheets.Add(monthYear);
 
             CreateWorksheetDefaults(worksheet);
@@ -156,13 +154,12 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             using (var range = worksheet.Cells[1, 1, 1, 18])
             {
                 range.Style.Font.Bold = true;
-                //range.Style.Fill.PatternType = ExcelFillStyle.Solid;
-                //range.Style.Fill.BackgroundColor.SetColor(Color.DarkBlue);
                 range.Style.Font.Color.SetColor(Color.Red);
                 range.Style.Font.Size = 20;
             }
 
-            var monthYear = GetMonthYear("MMMM");
+            var monthYear = DateTime.Today.ToString("MMMM yyyy");
+
             worksheet.Cells["A1:J1"].Merge = true;
             worksheet.Cells["A1:J1"].Value = monthYear + " Print Data - Batch " + batchNumber.ToString();
         }
@@ -231,24 +228,6 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 
                 row++;
             }
-        }
-
-        private static string GetMonthYear(string monthFormat)
-        {
-            var month = DateTime.Today.ToString(monthFormat, new CultureInfo("en-GB"));
-
-            var year = DateTime.Now.Year;
-            var monthYear = month + " " + year;
-            return monthYear;
-        }
-
-        private static string GetMonthYear()
-        {
-            var month = DateTime.Today.Month.ToString().PadLeft(2, '0');
-
-            var year = DateTime.Now.Year;
-            var monthYear = month + year.ToString().Substring(2, 2);
-            return monthYear;
         }
     }
 }
