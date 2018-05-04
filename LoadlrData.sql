@@ -3,30 +3,6 @@
 
 -- Process --
 
-/* 
-Extract Learner data to CSv file
-e.g.
-SELECT 
-   l.ULN, 
-   l.LearnRefNumber,
-   l.GivenNames, 
-   l.FamilyName, 
-   l.UKPRN, 
-   ld.StdCode, 
-   ld.LearnStartDate, 
-   ld.EPAOrgID, 
-   ld.FundModel,
-   s.commitmentidMAX AS ApprenticeshipId
-FROM [DS_SILR1718_Collection].[Valid].[Learner] l
-LEFT JOIN [Valid].[LearningDelivery] ld on ld.UKPRN = l.UKPRN AND ld.LearnRefNumber = l.LearnRefNumber
-LEFT JOIN (SELECT MAX(commitmentid) AS commitmentidMAX, ukprn, LearnRefNumber
-           FROM [DAS_PeriodEnd].[DataLock].[PriceEpisodeMatch]
-           GROUP BY Ukprn, LearnRefNumber) s on s.Ukprn=l.UKPRN AND s.LearnRefNumber=l.LearnRefNumber
-WHERE ld.StdCode is not null
-AND AimType = 1
-
-
-*/
 
 -- Open CSV in notepad++ and replace fake-spaces with real spaces (found in the Standard Name column)
 -- Remove blank rows

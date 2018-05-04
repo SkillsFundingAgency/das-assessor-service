@@ -2,14 +2,12 @@
 using System.Threading.Tasks;
 using FizzWare.NBuilder;
 using FluentAssertions;
-using Machine.Specifications;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisations.Query
 {
-    [Subject("AssessorService")]
     public class WhenSearchOrganisationIsPassedInvalidUkprn : OrganisationQueryBase
     {
         private static Organisation _organisation;
