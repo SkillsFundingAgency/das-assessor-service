@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.WindowsAzure.Storage.Blob;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.EpaoImporter.Data;
 using SFA.DAS.AssessorService.EpaoImporter.InfrastructureServices;
@@ -36,8 +35,6 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
         public async Task<CoverLettersProduced> Create(int batchNumber, IEnumerable<CertificateResponse> certificates)
         {
             var documentTemplateDataStream = await _documentTemplateDataStream.Get();
-          
-            await CleanMergedDocumentContainer();
 
             var certificateResponses = certificates as CertificateResponse[] ?? certificates.ToArray();
             var groupedCertificates = certificateResponses.ToArray().GroupBy(
@@ -71,7 +68,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                 sequenceNumber++;
 
                 var certificate = groupedCertificate.Result[0];
-                var wordDocumentFileName = $"IFA-Certificate-{GetMonthYear()}-{batchNumber.ToString().PadLeft(3, '0')}-{certificate.CertificateData.ContactOrganisation}-{sequenceNumber}.docx";
+                var wordDocumentFileName = $"IFA-Certificate-{DateTime.Now:MMyy}-{batchNumber.ToString().PadLeft(3, '0')}-{certificate.CertificateData.ContactOrganisation}-{sequenceNumber}.docx";
                 coverLettersProduced.CoverLetterFileNames.Add(wordDocumentFileName);
 
                 foreach (var groupCertificateResult in groupedCertificate.Result)
@@ -80,13 +77,12 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                 }
 
                 _aggregateLogger.LogInfo($"Processing Certificate for Cover Letter - {certificate.CertificateReference} - {wordDocumentFileName}");
-                var wordStream = await CreateWordDocumentStream(wordDocumentFileName, certificate, documentTemplateDataStream);
-
+                var wordStream = CreateWordDocumentStream(wordDocumentFileName, certificate, documentTemplateDataStream);
                 _aggregateLogger.LogInfo($"Converted Certificate data - Contact Name = {certificate.CertificateData.ContactName}");
 
                 await _fileTransferClient.Send(wordStream, wordDocumentFileName);
 
-                wordStream.Close(); 
+                wordStream.Close();
             }
 
             documentTemplateDataStream.Close();
@@ -94,7 +90,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             return coverLettersProduced;
         }
 
-        private async Task<MemoryStream> CreateWordDocumentStream(string mergedFileName, CertificateResponse certificateResponse, MemoryStream documentTemplateStream)
+        private MemoryStream CreateWordDocumentStream(string mergedFileName, CertificateResponse certificateResponse, MemoryStream documentTemplateStream)
         {
             _aggregateLogger.LogInfo("Merging fields in document ...");
             var document = MergeFieldsInDocument(certificateResponse, documentTemplateStream);
@@ -107,7 +103,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
         {
             var document = new Document();
 
-            _aggregateLogger.LogInfo("load Document from Stream ...");
+            _aggregateLogger.LogInfo("Load Document from Stream ...");
             document.LoadFromStream(documentTemplateStream, FileFormat.Docx);
             _aggregateLogger.LogInfo($"Document Length = {document.Count}");
 
@@ -162,28 +158,11 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 
         private MemoryStream ConvertDocumentToStream(Document document)
         {
-            var wordDocxStream = new MemoryStream();
+            var wordDocumentStream = new MemoryStream();
             _aggregateLogger.LogInfo("Saving document to stream ...");
-            document.SaveToStream(wordDocxStream, FileFormat.Docx);
+            document.SaveToStream(wordDocumentStream, FileFormat.Docx);
             _aggregateLogger.LogInfo("Saved document to stream ...");
-            return wordDocxStream;
-        }
-
-        private async Task CleanMergedDocumentContainer()
-        {
-            var containerName = "mergeddocuments";
-            var container = await _initialiseContainer.GetContainer(containerName);
-
-            Parallel.ForEach(container.ListBlobs(), x => ((CloudBlob)x).Delete());
-        }
-
-        private static string GetMonthYear()
-        {
-            var month = DateTime.Today.Month.ToString().PadLeft(2, '0');
-
-            var year = DateTime.Now.Year;
-            var monthYear = month + year.ToString().Substring(2, 2);
-            return monthYear;
+            return wordDocumentStream;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Azure;
+﻿using System;
+using Microsoft.Azure;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 using Newtonsoft.Json;
@@ -9,28 +10,36 @@ namespace SFA.DAS.AssessorService.EpaoImporter.InfrastructureServices
     public static class ConfigurationHelper
     {
         private static IWebConfiguration _webConfiguration;
+        private static readonly Object _lock = new Object();
 
         public static IWebConfiguration GetConfiguration()
         {
-            if (_webConfiguration == null)
+            lock (_lock)
             {
-                var ServiceName = "SFA.DAS.AssessorService";
-                var Version = "1.0";
+                if (_webConfiguration == null)
+                {
+                    var serviceName = "SFA.DAS.AssessorService";
+                    var version = "1.0";
 
-                var conn = CloudStorageAccount.Parse(
-                    CloudConfigurationManager.GetSetting("ConfigurationStorageConnectionString"));
-                var tableClient = conn.CreateCloudTableClient();
-                var table = tableClient.GetTableReference("Configuration");
+                    var connection = CloudStorageAccount.Parse(
+                        CloudConfigurationManager.GetSetting("ConfigurationStorageConnectionString"));
+                    var tableClient = connection.CreateCloudTableClient();
+                    var table = tableClient.GetTableReference("Configuration");
 
-                var operation = TableOperation.Retrieve(
-                    CloudConfigurationManager.GetSetting("EnvironmentName"),
-                    $"{ServiceName}_{Version}");
-                var result = table.ExecuteAsync(operation).Result;
-
-                var dynResult = result.Result as DynamicTableEntity;
-                var data = dynResult.Properties["Data"].StringValue;
-
-                _webConfiguration = JsonConvert.DeserializeObject<WebConfiguration>(data);
+                    var operation = TableOperation.Retrieve(
+                        CloudConfigurationManager.GetSetting("EnvironmentName"),
+                        $"{serviceName}_{version}");
+                    var result = table.ExecuteAsync(operation).Result;
+                    if (result.Result is DynamicTableEntity dynResult)
+                    {
+                        var data = dynResult.Properties["Data"].StringValue;
+                        _webConfiguration = JsonConvert.DeserializeObject<WebConfiguration>(data);
+                    }
+                    else
+                    {
+                        throw new ApplicationException("Cannot Deserialise Configuration Entry");
+                    }
+                }
             }
 
             return _webConfiguration;
