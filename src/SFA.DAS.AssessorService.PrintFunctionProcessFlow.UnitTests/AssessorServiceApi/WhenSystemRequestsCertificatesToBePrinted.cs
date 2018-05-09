@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests.AssessorSer
         }
 
         [Test]
-        public void ThenItShouldGenerateABatchNumber()
+        public void ThenItShouldReturnValidCertificates()
         {
             _result.Count().Should().Be(10);
         }

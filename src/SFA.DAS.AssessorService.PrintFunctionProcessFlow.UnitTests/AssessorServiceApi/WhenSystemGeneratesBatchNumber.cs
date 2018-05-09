@@ -4,7 +4,7 @@ using RichardSzalay.MockHttp;
 
 namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests.AssessorServiceApi
 {
-    public class WhenSystemGeneratesBatchNumber : AssesssorServiceTestBase
+    public class WhenSystemProcessesCoverLetter : AssesssorServiceTestBase
     {
         private int _result;
 

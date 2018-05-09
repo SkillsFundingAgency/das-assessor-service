@@ -17,21 +17,18 @@ using SFA.DAS.AssessorService.Settings;
 namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 {
     public class IFACertificateService : IIFACertificateService
-    {
-        private readonly BlobContainerHelper _initialiseContainer;
+    {        
         private readonly IAggregateLogger _aggregateLogger;
         private readonly IFileTransferClient _fileTransferClient;
         private readonly IWebConfiguration _webConfiguration;
         private IEnumerable<CertificateResponse> _certificates;
         private CoverLettersProduced _coverLettersProduced;
 
-        public IFACertificateService(
-            BlobContainerHelper initialiseContainer,
+        public IFACertificateService(         
             IAggregateLogger aggregateLogger,
             IFileTransferClient fileTransferClient,
             IWebConfiguration webConfiguration)
-        {
-            _initialiseContainer = initialiseContainer;
+        {            
             _aggregateLogger = aggregateLogger;
             _fileTransferClient = fileTransferClient;
             _webConfiguration = webConfiguration;

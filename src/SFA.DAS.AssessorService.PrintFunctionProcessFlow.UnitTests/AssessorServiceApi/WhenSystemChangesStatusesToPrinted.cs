@@ -1,8 +1,6 @@
 ﻿using System.Linq;
 using System.Net.Http;
 using FizzWare.NBuilder;
-using FluentAssertions;
-using Newtonsoft.Json;
 using NUnit.Framework;
 using RichardSzalay.MockHttp;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
@@ -33,9 +31,9 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests.AssessorSer
         }
 
         [Test]
-        public void ThenItShouldGenerateABatchNumber()
+        public void ThenItShouldUpdateCertificates()
         {
-            //_result.Should().Be(12);
+            MockHttp.VerifyNoOutstandingExpectation();
         }
     }
 }
