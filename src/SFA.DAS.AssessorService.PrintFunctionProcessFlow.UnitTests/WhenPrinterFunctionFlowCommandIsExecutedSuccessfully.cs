@@ -52,7 +52,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests
             _assessorServiceApi.Setup(q => q.GetCertificatesToBePrinted()
             ).Returns(Task.FromResult(certificateResponses.AsEnumerable()));
 
-            _sanitizerServiceMock.Setup(q => q.Sanitize(It.IsAny<List<CertificateResponse>>())
+            _sanitizerServiceMock.Setup(q => q.Sanitise(It.IsAny<List<CertificateResponse>>())
                 ).Returns(certificateResponses.ToList());
 
             _printProcessFlowCommand.Execute();
