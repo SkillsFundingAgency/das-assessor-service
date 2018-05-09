@@ -5,6 +5,6 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 {
     public interface ISanitiserService
     {
-        List<CertificateResponse> Sanitize(List<CertificateResponse> certificateResponses);
+        List<CertificateResponse> Sanitise(List<CertificateResponse> certificateResponses);
     }
 }

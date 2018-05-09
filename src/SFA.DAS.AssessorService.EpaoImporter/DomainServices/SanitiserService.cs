@@ -14,13 +14,13 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             _aggregateLogger = aggregateLogger;
         }
 
-        public List<CertificateResponse> Sanitize(List<CertificateResponse> certificateResponses)
+        public List<CertificateResponse> Sanitise(List<CertificateResponse> certificateResponses)
         {
             var sanitizedCertificateResponses = new List<CertificateResponse>();
 
             foreach (var certificateResponse in certificateResponses)
             {
-                _aggregateLogger.LogInfo("Sanitizing Certificates ...");
+                _aggregateLogger.LogInfo("Sanitising Certificates ...");
 
                 var certificateData = certificateResponse.CertificateData;
 
