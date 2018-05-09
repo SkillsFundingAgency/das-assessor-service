@@ -17,19 +17,16 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
     {
         private readonly IAggregateLogger _aggregateLogger;
         private readonly IFileTransferClient _fileTransferClient;
-        private readonly DocumentTemplateDataStream _documentTemplateDataStream;
-        private readonly BlobContainerHelper _initialiseContainer;
+        private readonly IDocumentTemplateDataStream _documentTemplateDataStream;        
 
         public CoverLetterService(
             IAggregateLogger aggregateLogger,
             IFileTransferClient fileTransferClient,
-            DocumentTemplateDataStream documentTemplateDataStream,
-            BlobContainerHelper initialiseContainer)
+            IDocumentTemplateDataStream documentTemplateDataStream)            
         {
             _aggregateLogger = aggregateLogger;
             _fileTransferClient = fileTransferClient;
-            _documentTemplateDataStream = documentTemplateDataStream;
-            _initialiseContainer = initialiseContainer;
+            _documentTemplateDataStream = documentTemplateDataStream;            
         }
 
         public async Task<CoverLettersProduced> Create(int batchNumber, IEnumerable<CertificateResponse> certificates)
