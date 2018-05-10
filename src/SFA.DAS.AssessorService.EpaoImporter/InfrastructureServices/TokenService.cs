@@ -1,9 +1,10 @@
 ﻿using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.EpaoImporter.InfrastructureServices
 {
-    public class TokenService 
+    public class TokenService : ITokenService
     {
         private readonly IWebConfiguration _configuration;
 
