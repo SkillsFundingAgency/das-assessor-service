@@ -39,7 +39,7 @@ namespace SFA.DAS.AssessorService.Web
         {
             Configuration = ConfigurationService.GetConfig(_config["EnvironmentName"], _config["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
-            services.AddAndConfigureAuthentication(Configuration);
+            services.AddAndConfigureAuthentication(Configuration, _logger);
             services.Configure<RequestLocalizationOptions>(options =>
             {
                 options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("en-GB");
