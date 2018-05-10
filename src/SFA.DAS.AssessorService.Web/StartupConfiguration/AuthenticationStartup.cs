@@ -25,11 +25,9 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                 {
                     options.Wtrealm = configuration.Authentication.WtRealm;
                     options.MetadataAddress = configuration.Authentication.MetadataAddress;
-                    options.CallbackPath = "/Account/SignedIn";
                 })
                 .AddCookie(options =>
                 {
-                    options.ReturnUrlParameter = "/Account/SignedIn";
                     options.Cookie = new CookieBuilder() {Name = ".Assessors.Cookies", HttpOnly = true};
                 });
         }
