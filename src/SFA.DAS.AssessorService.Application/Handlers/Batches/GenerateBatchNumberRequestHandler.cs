@@ -4,7 +4,7 @@ using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
 
-namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
+namespace SFA.DAS.AssessorService.Application.Handlers.Batches
 {
     public class GenerateBatchNumberRequestHandler : IRequestHandler<GenerateBatchNumberRequest, int>
     {

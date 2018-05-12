@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet(Name = "GetLastBatchLog")]
+        [HttpGet("latest", Name = "GetLastBatchLog")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(BatchLogResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]

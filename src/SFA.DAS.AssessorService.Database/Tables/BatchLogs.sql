@@ -1,5 +1,6 @@
 ﻿CREATE TABLE [dbo].[BatchLogs](
 	[Id] [uniqueidentifier] NOT NULL DEFAULT NEWID(),
+	[Period] [nvarchar](4) NOT NULL,
 	[BatchCreated] [datetime2](7) NOT NULL,
 	[BatchNumber] [int] NOT NULL,
 	[NumberOfCertificates] [int] NOT NULL,

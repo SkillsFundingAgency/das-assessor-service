@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
@@ -24,13 +25,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _mediator = mediator;
         }
 
-        //[HttpPost("start", Name = "Start")]
-        //[SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Certificate))]
-        //[SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
-        //[SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        //public async Task<IActionResult> Start([FromBody] StartCertificateRequest request)
-        //{
-        //    return Ok(await _mediator.Send(request));
-        //}
+        [HttpPost(Name = "CreateBatchLog")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(BatchLogResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> CreateBatchLog([FromBody] CreateBatchLogRequest request)
+        {
+            return Ok(await _mediator.Send(request));
+        }
     }
 } 
