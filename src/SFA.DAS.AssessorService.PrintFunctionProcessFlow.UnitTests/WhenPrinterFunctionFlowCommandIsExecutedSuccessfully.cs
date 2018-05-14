@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.ConstrainedExecution;
 using System.Threading.Tasks;
 using FizzWare.NBuilder;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.EpaoImporter;
 using SFA.DAS.AssessorService.EpaoImporter.Data;
@@ -15,7 +16,7 @@ using SFA.DAS.AssessorService.EpaoImporter.Notification;
 
 namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests
 {
-    public class WhenPrinterFunctionFlowCommandIsExecutedSuccessfully
+    public class WhenSystemSchedulesDate
     {
         private PrintProcessFlowCommand _printProcessFlowCommand;
         private Mock<IAggregateLogger> _aggregateLogger;
@@ -55,13 +56,26 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests
             _sanitizerServiceMock.Setup(q => q.Sanitise(It.IsAny<List<CertificateResponse>>())
                 ).Returns(certificateResponses.ToList());
 
+            _assessorServiceApi.Setup(q => q.GetCurrentBatchLog())
+                .Returns(Task.FromResult(new BatchLogResponse
+                {
+                    BatchNumber = 12,
+                    NumberOfCoverLetters = 12,
+                    FileUploadEndTime = DateTime.Now,
+                    BatchCreated = DateTime.Now,
+                    CertificatesFileName = "XXXX",
+                    Period = "0818",
+                    FileUploadStartTime = DateTime.Now,
+                    NumberOfCertificates = 12
+                }));
+
             _printProcessFlowCommand.Execute();
         }
 
         [Test]
         public void ItShouldGenerateABatchNumber()
         {
-            _assessorServiceApi.Verify(q => q.GenerateBatchNumber(), Times.Once());
+            _assessorServiceApi.Verify(q => q.GetCurrentBatchLog(), Times.Once());
         }
 
         [Test]

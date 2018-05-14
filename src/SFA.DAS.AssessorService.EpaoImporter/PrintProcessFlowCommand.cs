@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.EpaoImporter.Data;
 using SFA.DAS.AssessorService.EpaoImporter.DomainServices;
+using SFA.DAS.AssessorService.EpaoImporter.Helpers;
 using SFA.DAS.AssessorService.EpaoImporter.Interfaces;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
 using SFA.DAS.AssessorService.EpaoImporter.Notification;
@@ -34,18 +36,20 @@ namespace SFA.DAS.AssessorService.EpaoImporter
         }
 
         public async Task Execute()
-          {
+        {
             try
             {
                 _aggregateLogger.LogInfo("Function Started");
                 _aggregateLogger.LogInfo("Print Function Flow Started");
 
-                _aggregateLogger.LogInfo("Accessing Environment variables");            
+                _aggregateLogger.LogInfo("Accessing Environment variables");
                 _aggregateLogger.LogInfo($"Process Environment = {EnvironmentVariableTarget.Process}");
 
-                if (await AnythingToProcess())
+                var batchLogResponse = await _assessorServiceApi.GetCurrentBatchLog();
+
+                if (await AnythingToProcess(batchLogResponse))
                 {
-                    var batchNumber = await _assessorServiceApi.GenerateBatchNumber();
+                    var batchNumber = batchLogResponse.BatchNumber + 1;
                     var certificates = (await _assessorServiceApi.GetCertificatesToBePrinted()).ToList();
 
                     var sanitizedCertificateResponses = _sanitiserService.Sanitise(certificates);
@@ -55,32 +59,63 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                     }
                     else
                     {
-                        var coverLettersProduced =
-                            await _coverLetterService.Create(batchNumber, sanitizedCertificateResponses);
-                        await _ifaCertificateService.Create(batchNumber, sanitizedCertificateResponses,
-                            coverLettersProduced);
+                        var batchLogRequest = new CreateBatchLogRequest
+                        {
+                            BatchNumber = batchNumber,
+                            FileUploadStartTime = DateTime.Now,
+                            Period = DateTime.Now.ToString("MMyy"),
+                            BatchCreated = DateTime.Now,
+                            CertificatesFileName =
+                                $"IFA-Certificate-{DateTime.Now:MMyy}-{batchNumber.ToString().PadLeft(3, '0')}.xlsx"
+                    };
 
-                        await _notificationService.Send(batchNumber, sanitizedCertificateResponses,
-                            coverLettersProduced);
+                    var coverLettersProduced =
+                        await _coverLetterService.Create(batchNumber, sanitizedCertificateResponses);
+                    await _ifaCertificateService.Create(batchNumber, sanitizedCertificateResponses,
+                        coverLettersProduced);
 
-                        await _assessorServiceApi.ChangeStatusToPrinted(batchNumber, sanitizedCertificateResponses);
-                    }
-                }
-                else
-                {
-                    _aggregateLogger.LogInfo("Nothing to Process");
+                    await _notificationService.Send(batchNumber, sanitizedCertificateResponses,
+                        coverLettersProduced);
+
+                    batchLogRequest.FileUploadEndTime = DateTime.Now;
+                    batchLogRequest.NumberOfCertificates = coverLettersProduced.CoverLetterCertificates.Count;
+                    batchLogRequest.NumberOfCoverLetters = coverLettersProduced.CoverLetterFileNames.Count;
+                    batchLogRequest.ScheduledDate =
+                        new ScheduledDates().GetThisScheduledDate(DateTime.Now, batchLogResponse.ScheduledDate);
+
+                    await _assessorServiceApi.CreateBatchLog(batchLogRequest);
+
+                    await _assessorServiceApi.ChangeStatusToPrinted(batchNumber, sanitizedCertificateResponses);
                 }
             }
+                else
+                {
+                _aggregateLogger.LogInfo("Nothing to Process");
+            }
+        }
             catch (Exception e)
             {
                 _aggregateLogger.LogError("Function Errored", e);
                 throw;
             }
-        }
+}
 
-        private async Task<bool> AnythingToProcess()
-        {
-            return (await _assessorServiceApi.GetCertificatesToBePrinted()).Any();
-        }
+private async Task<bool> AnythingToProcess(BatchLogResponse batchLogResponse)
+{
+    if ((await _assessorServiceApi.GetCertificatesToBePrinted()).Any())
+    {
+        var today = DateTime.Now;
+        if (today >= batchLogResponse.ScheduledDate.AddDays(7))
+            return true;
+    }
+
+    return false;
+}
+
+private DateTime GetNextScheduledDate(DateTime scheduledDateTime)
+{
+    var nextDate = new ScheduledDates().GetNextScheduledDate(DateTime.Now, scheduledDateTime);
+    return nextDate;
+}
     }
 }

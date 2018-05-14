@@ -1,28 +1,36 @@
-﻿using FluentAssertions;
+﻿using FizzWare.NBuilder;
+using FluentAssertions;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using RichardSzalay.MockHttp;
+using SFA.DAS.AssessorService.Api.Types.Models;
 
 namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests.AssessorServiceApi
 {
     public class WhenSystemProcessesCoverLetter : AssesssorServiceTestBase
     {
-        private int _result;
+        private BatchLogResponse _result;
+        private BatchLogResponse _expected;
 
         [SetUp]
         public void Arrange()
         {
-            Setup();            
+            Setup();
 
-            MockHttp.When("http://localhost:59022/api/v1/certificates/generatebatchnumber")
-                .Respond("application/json", "12" ); // Respond with JSON
+            _expected = Builder<BatchLogResponse>.CreateNew()
+                .With(q => q.BatchNumber = 12)
+                .Build();
 
-            _result = AssessorServiceApi.GenerateBatchNumber().Result;
+            MockHttp.When("http://localhost:59022/api/v1/batches/latest")
+                .Respond("application/json", JsonConvert.SerializeObject(_expected)); // Respond with JSON
+
+            _result = AssessorServiceApi.GetCurrentBatchLog().Result;
         }
 
         [Test]
         public void ThenItShouldGenerateABatchNumber()
         {
-            _result.Should().Be(12);
+            _result.BatchNumber.Should().Be(12);
         }
     }
 }

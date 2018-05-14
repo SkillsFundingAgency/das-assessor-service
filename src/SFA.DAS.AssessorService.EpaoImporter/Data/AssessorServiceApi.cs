@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.EpaoImporter.Const;
@@ -14,13 +16,21 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
     public class AssessorServiceApi : IAssessorServiceApi
     {
         private readonly IAggregateLogger _aggregateLogger;
-        private readonly HttpClient _httpClient;      
+        private readonly HttpClient _httpClient;
 
         public AssessorServiceApi(IAggregateLogger aggregateLogger,
-            HttpClient httpClient)         
+            HttpClient httpClient)
         {
             _aggregateLogger = aggregateLogger;
-            _httpClient = httpClient;            
+            _httpClient = httpClient;
+        }
+
+        public async Task<BatchLogResponse> CreateBatchLog(CreateBatchLogRequest createBatchLogRequest)
+        {
+            var responseMessage = await _httpClient.PostAsJsonAsync(
+                $"/api/v1/batches", createBatchLogRequest);
+
+            return responseMessage.Deserialise<BatchLogResponse>();
         }
 
         public async Task<IEnumerable<CertificateResponse>> GetCertificatesToBePrinted()
@@ -41,12 +51,21 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
             return certificates;
         }
 
-        public async Task<int> GenerateBatchNumber()
+        public async Task<BatchLogResponse> GetCurrentBatchLog()
         {
             var response = await _httpClient.GetAsync(
-                "/api/v1/certificates/generatebatchnumber");
+                "/api/v1/batches/latest");
 
-            return response.Deserialise<int>();
+            if (response.StatusCode == HttpStatusCode.NoContent)
+            {
+                return new BatchLogResponse
+                {
+                    BatchNumber = 0,
+                    ScheduledDate = DateTime.Now.GetNextWeekday(DayOfWeek.Monday).AddDays(-7)                    
+                };
+            }
+
+            return response.Deserialise<BatchLogResponse>();
         }
 
         public async Task ChangeStatusToPrinted(int batchNumber, IEnumerable<CertificateResponse> responses)
@@ -62,7 +81,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
             {
                 BatchNumber = batchNumber,
                 CertificateStatuses = certificateStatuses
-            };          
+            };
 
             var responseMessage = await _httpClient.PutAsJsonAsync(
                 $"/api/v1/certificates/{batchNumber.ToString()}", updateCertificatesBatchToIndicatePrintedRequest);

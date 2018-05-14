@@ -5,6 +5,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
     public class BatchLogResponse
     {
         public DateTime BatchCreated { get; set; }
+        public DateTime ScheduledDate { get; set; }
         public string Period { get; set; }
         public int BatchNumber { get; set; }
         public int NumberOfCertificates { get; set; }
