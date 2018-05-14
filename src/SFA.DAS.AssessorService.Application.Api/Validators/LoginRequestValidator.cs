@@ -13,13 +13,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             RuleFor(lr => lr.DisplayName).NotEmpty().WithMessage("Display name must not be empty");
             RuleFor(lr => lr.Email).NotEmpty().WithMessage("Email must not be empty");
             RuleFor(lr => lr.Username).NotEmpty().WithMessage("Username must not be empty");
-            RuleFor(lr => lr.Roles).Custom((roles, context) =>
-            {
-                if (!roles.Any())
-                {
-                    context.AddFailure("Roles must contain at least one role");
-                }
-            });
         }
     }
 }
