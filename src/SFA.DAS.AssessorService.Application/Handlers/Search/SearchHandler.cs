@@ -63,10 +63,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 var likedSurname = request.Surname;
                 foreach (var specialCharacter in specialCharacters)
                 {
-                    likedSurname = likedSurname.Replace(specialCharacter, '%');
+                    likedSurname = likedSurname.Replace(specialCharacter, '_');
                 }
-
-                likedSurname = "%" + likedSurname + "%";
                 
                 ilrResults = await _ilrRepository.SearchLike(new SearchRequest
                 {

@@ -15,12 +15,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
             Setup();
         }
         
-        [TestCase("o`neill", "%o%neill%")]
-        [TestCase("o'neill", "%o%neill%")]
-        [TestCase("o’neill", "%o%neill%")]
-        [TestCase("Oxlade-Chamberlain", "%Oxlade%Chamberlain%")]
-        [TestCase("Oxlade–Chamberlain", "%Oxlade%Chamberlain%")]
-        [TestCase("Oxlade – o`neill", "%Oxlade % o%neill%")]
+        [TestCase("o`neill", "o_neill")]
+        [TestCase("o'neill", "o_neill")]
+        [TestCase("o’neill", "o_neill")]
+        [TestCase("Oxlade-Chamberlain", "Oxlade_Chamberlain")]
+        [TestCase("Oxlade–Chamberlain", "Oxlade_Chamberlain")]
+        [TestCase("Oxlade – o`neill", "Oxlade _ o_neill")]
         public void Then_search_is_swapped_to_a_LIKE_with_the_character_replaced(string surname, string likedSurname)
         {
             SearchHandler.Handle(new SearchQuery(){Surname = surname, UkPrn = 12345, Uln = 12345, Username = "dave"}, new CancellationToken()).Wait();
