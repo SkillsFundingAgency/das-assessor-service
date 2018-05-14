@@ -29,6 +29,17 @@ namespace SFA.DAS.AssessorService.Data
             return response;
         }
 
+        public async Task<IEnumerable<Ilr>> SearchLike(SearchRequest searchRequest)
+        {
+            var learnerRecords = await _context.Ilrs.Where(r => EF.Functions.Like(r.FamilyName, searchRequest.FamilyName)
+                && r.Uln == searchRequest.Uln
+                && searchRequest.StandardIds.Contains(r.StdCode)).ToListAsync();
+
+            var response = learnerRecords;
+
+            return response;
+        }
+
         public async Task<Ilr> Get(long uln, int standardCode)
         {
             return await _context.Ilrs.SingleAsync(i => i.Uln == uln && i.StdCode == standardCode);

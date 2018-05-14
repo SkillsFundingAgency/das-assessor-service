@@ -5,7 +5,7 @@ using SFA.DAS.AssessorService.EpaoImporter.Logger;
 
 namespace SFA.DAS.AssessorService.EpaoImporter.Data
 {
-    public class DocumentTemplateDataStream
+    public class DocumentTemplateDataStream : IDocumentTemplateDataStream
     {
         private readonly BlobContainerHelper _initialiseContainer;
         private readonly IAggregateLogger _aggregateLogger;

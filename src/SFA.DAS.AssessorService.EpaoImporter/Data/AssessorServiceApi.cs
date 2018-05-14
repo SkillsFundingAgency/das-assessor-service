@@ -7,28 +7,20 @@ using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.EpaoImporter.Const;
 using SFA.DAS.AssessorService.EpaoImporter.Extensions;
-using SFA.DAS.AssessorService.EpaoImporter.InfrastructureServices;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
-using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.EpaoImporter.Data
 {
     public class AssessorServiceApi : IAssessorServiceApi
     {
         private readonly IAggregateLogger _aggregateLogger;
-        private readonly HttpClient _httpClient;
-        private readonly IWebConfiguration _webConfiguration;
-        private readonly TokenService _tokenService;
+        private readonly HttpClient _httpClient;      
 
         public AssessorServiceApi(IAggregateLogger aggregateLogger,
-            HttpClient httpClient,
-            IWebConfiguration webConfiguration,
-            TokenService tokenService)
+            HttpClient httpClient)         
         {
             _aggregateLogger = aggregateLogger;
-            _httpClient = httpClient;
-            _webConfiguration = webConfiguration;
-            _tokenService = tokenService;
+            _httpClient = httpClient;            
         }
 
         public async Task<IEnumerable<CertificateResponse>> GetCertificatesToBePrinted()
@@ -70,9 +62,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
             {
                 BatchNumber = batchNumber,
                 CertificateStatuses = certificateStatuses
-            };
-
-            var jsonData = JsonConvert.SerializeObject(updateCertificatesBatchToIndicatePrintedRequest);
+            };          
 
             var responseMessage = await _httpClient.PutAsJsonAsync(
                 $"/api/v1/certificates/{batchNumber.ToString()}", updateCertificatesBatchToIndicatePrintedRequest);
