@@ -67,55 +67,49 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                             BatchCreated = DateTime.Now,
                             CertificatesFileName =
                                 $"IFA-Certificate-{DateTime.Now:MMyy}-{batchNumber.ToString().PadLeft(3, '0')}.xlsx"
-                    };
+                        };
 
-                    var coverLettersProduced =
-                        await _coverLetterService.Create(batchNumber, sanitizedCertificateResponses);
-                    await _ifaCertificateService.Create(batchNumber, sanitizedCertificateResponses,
-                        coverLettersProduced);
+                        var coverLettersProduced =
+                            await _coverLetterService.Create(batchNumber, sanitizedCertificateResponses);
+                        await _ifaCertificateService.Create(batchNumber, sanitizedCertificateResponses,
+                            coverLettersProduced);
 
-                    await _notificationService.Send(batchNumber, sanitizedCertificateResponses,
-                        coverLettersProduced);
+                        await _notificationService.Send(batchNumber, sanitizedCertificateResponses,
+                            coverLettersProduced);
 
-                    batchLogRequest.FileUploadEndTime = DateTime.Now;
-                    batchLogRequest.NumberOfCertificates = coverLettersProduced.CoverLetterCertificates.Count;
-                    batchLogRequest.NumberOfCoverLetters = coverLettersProduced.CoverLetterFileNames.Count;
-                    batchLogRequest.ScheduledDate =
-                        new ScheduledDates().GetThisScheduledDate(DateTime.Now, batchLogResponse.ScheduledDate);
+                        batchLogRequest.FileUploadEndTime = DateTime.Now;
+                        batchLogRequest.NumberOfCertificates = coverLettersProduced.CoverLetterCertificates.Count;
+                        batchLogRequest.NumberOfCoverLetters = coverLettersProduced.CoverLetterFileNames.Count;
+                        batchLogRequest.ScheduledDate =
+                            new ScheduledDates().GetThisScheduledDate(DateTime.Now, batchLogResponse.ScheduledDate);
 
-                    await _assessorServiceApi.CreateBatchLog(batchLogRequest);
+                        await _assessorServiceApi.CreateBatchLog(batchLogRequest);
 
-                    await _assessorServiceApi.ChangeStatusToPrinted(batchNumber, sanitizedCertificateResponses);
+                        await _assessorServiceApi.ChangeStatusToPrinted(batchNumber, sanitizedCertificateResponses);
+                    }
                 }
-            }
                 else
                 {
-                _aggregateLogger.LogInfo("Nothing to Process");
+                    _aggregateLogger.LogInfo("Nothing to Process");
+                }
             }
-        }
             catch (Exception e)
             {
                 _aggregateLogger.LogError("Function Errored", e);
                 throw;
             }
-}
+        }
 
-private async Task<bool> AnythingToProcess(BatchLogResponse batchLogResponse)
-{
-    if ((await _assessorServiceApi.GetCertificatesToBePrinted()).Any())
-    {
-        var today = DateTime.Now;
-        if (today >= batchLogResponse.ScheduledDate.AddDays(7))
-            return true;
-    }
+        private async Task<bool> AnythingToProcess(BatchLogResponse batchLogResponse)
+        {
+            if ((await _assessorServiceApi.GetCertificatesToBePrinted()).Any())
+            {
+                var today = DateTime.Now;
+                if (today >= batchLogResponse.ScheduledDate.AddDays(7))
+                    return true;
+            }
 
-    return false;
-}
-
-private DateTime GetNextScheduledDate(DateTime scheduledDateTime)
-{
-    var nextDate = new ScheduledDates().GetNextScheduledDate(DateTime.Now, scheduledDateTime);
-    return nextDate;
-}
+            return false;
+        }
     }
 }
