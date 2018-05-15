@@ -16,7 +16,7 @@ $(document).ready(function() {
   // GOVUK.shimLinksWithButtonRole.init();
 
   // Details/summary polyfill from frontend toolkit
-  // GOVUK.details.init();
+  GOVUK.details.init();
 
   // stop input when more than set number of characters when data-maxlength attribute is present
   // e.g. data-maxlength="4"
