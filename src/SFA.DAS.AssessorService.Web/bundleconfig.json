@@ -11,6 +11,7 @@
     "inputFiles": [
       "wwwroot/assets/javascripts/govuk-template.js",
       "wwwroot/js/details.polyfill.js",
+      "wwwroot/js/shim-links-with-button-role.js",
       "wwwroot/js/show-hide-content.js",
       "wwwroot/js/site.js"
     ],
