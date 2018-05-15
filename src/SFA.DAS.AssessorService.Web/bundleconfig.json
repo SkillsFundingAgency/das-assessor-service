@@ -10,6 +10,7 @@
     "outputFileName": "wwwroot/js/site.min.js",
     "inputFiles": [
       "wwwroot/assets/javascripts/govuk-template.js",
+      "wwwroot/js/details.polyfill.js",
       "wwwroot/js/show-hide-content.js",
       "wwwroot/js/site.js"
     ],
