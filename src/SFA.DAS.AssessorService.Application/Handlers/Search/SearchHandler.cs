@@ -10,6 +10,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Logging;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
+using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Search
 {
@@ -56,6 +57,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             var theStandardsThisEpaoProvides = await _assessmentOrgsApiClient.FindAllStandardsByOrganisationIdAsync(thisEpao
                 .EndPointAssessorOrganisationId);
 
+            var intStandards = ConvertStandardsToListOfInts(theStandardsThisEpaoProvides);
+            
             var specialCharacters = SpecialCharactersInSurname(request.Surname);
             IEnumerable<Ilr> ilrResults;
             if (specialCharacters.Length > 0)
@@ -70,7 +73,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 {
                     FamilyName = likedSurname,
                     Uln = request.Uln,
-                    StandardIds = theStandardsThisEpaoProvides.Select(s => int.Parse(s.StandardCode)).ToList()
+                    StandardIds = intStandards
                 });
             }
             else
@@ -79,7 +82,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 {
                     FamilyName = request.Surname,
                     Uln = request.Uln,
-                    StandardIds = theStandardsThisEpaoProvides.Select(s => int.Parse(s.StandardCode)).ToList()
+                    StandardIds = intStandards
                 });
             }
 
@@ -90,6 +93,20 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 .PopulateStandards(_assessmentOrgsApiClient);
 
             return searchResults;
+        }
+
+        private List<int> ConvertStandardsToListOfInts(IEnumerable<StandardOrganisationSummary> theStandardsThisEpaoProvides)
+        {
+            var list = new List<int>();
+            foreach (var standardSummary in theStandardsThisEpaoProvides)
+            {
+                if (int.TryParse(standardSummary.StandardCode, out var stdCode))
+                {
+                    list.Add(stdCode);
+                }
+            }
+
+            return list;
         }
 
         private char[] SpecialCharactersInSurname(string surname)
