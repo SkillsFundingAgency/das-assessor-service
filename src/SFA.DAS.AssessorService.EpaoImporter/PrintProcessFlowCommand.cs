@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentDateTime;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.EpaoImporter.Data;
 using SFA.DAS.AssessorService.EpaoImporter.DomainServices;
-using SFA.DAS.AssessorService.EpaoImporter.Helpers;
 using SFA.DAS.AssessorService.EpaoImporter.Interfaces;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
 using SFA.DAS.AssessorService.EpaoImporter.Notification;
@@ -19,13 +19,15 @@ namespace SFA.DAS.AssessorService.EpaoImporter
         private readonly IIFACertificateService _ifaCertificateService;
         private readonly IAssessorServiceApi _assessorServiceApi;
         private readonly INotificationService _notificationService;
+        private readonly ScheduleConfig _scheduleConfig;
 
         public PrintProcessFlowCommand(IAggregateLogger aggregateLogger,
             ISanitiserService sanitiserService,
             ICoverLetterService coverLetterService,
             IIFACertificateService ifaCertificateService,
             IAssessorServiceApi assessorServiceApi,
-            INotificationService notificationService)
+            INotificationService notificationService,
+            ScheduleConfig scheduleConfig)
         {
             _aggregateLogger = aggregateLogger;
             _sanitiserService = sanitiserService;
@@ -33,6 +35,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
             _ifaCertificateService = ifaCertificateService;
             _assessorServiceApi = assessorServiceApi;
             _notificationService = notificationService;
+            _scheduleConfig = scheduleConfig;
         }
 
         public async Task Execute()
@@ -80,8 +83,9 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                         batchLogRequest.FileUploadEndTime = DateTime.Now;
                         batchLogRequest.NumberOfCertificates = coverLettersProduced.CoverLetterCertificates.Count;
                         batchLogRequest.NumberOfCoverLetters = coverLettersProduced.CoverLetterFileNames.Count;
-                        batchLogRequest.ScheduledDate =
-                            new ScheduledDates().GetThisScheduledDate(DateTime.Now, batchLogResponse.ScheduledDate);
+                        //batchLogRequest.ScheduledDate =
+                        //    new ScheduledDates().GetThisScheduledDate(DateTime.Now, batchLogResponse.ScheduledDate);
+                        batchLogRequest.ScheduledDate = batchLogResponse.ScheduledDate;
 
                         await _assessorServiceApi.CreateBatchLog(batchLogRequest);
 
@@ -105,7 +109,33 @@ namespace SFA.DAS.AssessorService.EpaoImporter
             if ((await _assessorServiceApi.GetCertificatesToBePrinted()).Any())
             {
                 var today = DateTime.Now;
-                if (today >= batchLogResponse.ScheduledDate.AddDays(7))
+                var scheduledDate = batchLogResponse.ScheduledDate;
+                // Take care of potential configuration change
+                if (_scheduleConfig.Hour != batchLogResponse.ScheduledDate.Hour
+                    || (DayOfWeek)_scheduleConfig.DayOfWeek != batchLogResponse.ScheduledDate.DayOfWeek
+                    || _scheduleConfig.Minute != batchLogResponse.ScheduledDate.Minute)
+                {
+                    _aggregateLogger.LogInfo("Detected change in schedule config ...");
+                    var diff = _scheduleConfig.DayOfWeek - (int)batchLogResponse.ScheduledDate.DayOfWeek;
+                    if (diff >= 0)
+                    {
+                        scheduledDate = scheduledDate.AddDays(diff);
+                    }
+                    else
+                    {                       
+                        scheduledDate = scheduledDate.Next((DayOfWeek)_scheduleConfig.DayOfWeek);
+                    }
+
+                    batchLogResponse.ScheduledDate = scheduledDate;
+
+                    _aggregateLogger.LogInfo($"Next scheduled date = {scheduledDate}");
+                }
+                else
+                {
+                    scheduledDate = batchLogResponse.ScheduledDate.AddDays(7);
+                }
+
+                if (today >= scheduledDate)
                     return true;
             }
 

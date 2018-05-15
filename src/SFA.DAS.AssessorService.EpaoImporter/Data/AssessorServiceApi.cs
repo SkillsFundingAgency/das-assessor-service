@@ -4,11 +4,13 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using FluentDateTime;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.EpaoImporter.Const;
 using SFA.DAS.AssessorService.EpaoImporter.Extensions;
+using SFA.DAS.AssessorService.EpaoImporter.Helpers;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
 
 namespace SFA.DAS.AssessorService.EpaoImporter.Data
@@ -17,12 +19,15 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
     {
         private readonly IAggregateLogger _aggregateLogger;
         private readonly HttpClient _httpClient;
+        private readonly ScheduleConfig _scheduleConfig;
 
         public AssessorServiceApi(IAggregateLogger aggregateLogger,
-            HttpClient httpClient)
+            HttpClient httpClient,
+            ScheduleConfig scheduleConfig)
         {
             _aggregateLogger = aggregateLogger;
             _httpClient = httpClient;
+            _scheduleConfig = scheduleConfig;
         }
 
         public async Task<BatchLogResponse> CreateBatchLog(CreateBatchLogRequest createBatchLogRequest)
@@ -58,10 +63,24 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
 
             if (response.StatusCode == HttpStatusCode.NoContent)
             {
+                DateTime nextDate;
+                if (DateTime.Now.DayOfWeek == (DayOfWeek) _scheduleConfig.DayOfWeek)
+                {
+                    nextDate = DateTime.Now.AddDays(-7).Date;
+                }
+                else
+                {
+                    nextDate = DateTime.Now.Previous(ScheduledDates.GetDayOfWeek(_scheduleConfig.DayOfWeek))
+                        .AddDays(-7);
+                }
+
+                var hourDate = nextDate.AddHours(_scheduleConfig.Hour);
+                var scheduledDate = hourDate.AddMinutes(_scheduleConfig.Minute);
+
                 return new BatchLogResponse
                 {
                     BatchNumber = 0,
-                    ScheduledDate = DateTime.Now.GetNextWeekday(DayOfWeek.Monday).AddDays(-7)                    
+                    ScheduledDate = scheduledDate
                 };
             }
 

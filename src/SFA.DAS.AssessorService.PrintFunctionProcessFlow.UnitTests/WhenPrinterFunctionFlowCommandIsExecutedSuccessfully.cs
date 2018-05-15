@@ -43,7 +43,13 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests
                 _coverLetterService.Object,
                 _ifaCertificateService.Object,
                 _assessorServiceApi.Object,
-                _notificationService.Object
+                _notificationService.Object,
+                new ScheduleConfig
+                {
+                    DayOfWeek = 1,
+                    Hour = 18,
+                    Minute = 00
+                }
                 );
 
             var certificateResponses = Builder<CertificateResponse>.CreateListOfSize(10).Build();

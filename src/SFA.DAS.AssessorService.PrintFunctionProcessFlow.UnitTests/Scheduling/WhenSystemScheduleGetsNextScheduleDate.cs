@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests.Scheduling
         {
             var scheduledDateTime = new DateTime(2018, 05, 14);
 
-            var nextDate = new ScheduledDates().GetNextScheduledDate(new DateTime(2018, 05, 14), new DateTime(2018, 05, 14));
+            var nextDate = new ScheduledDates().GetNextScheduledDate(new DateTime(2018, 05, 14), new DateTime(2018, 05, 14), DayOfWeek.Monday);
 
             nextDate.Date.Should().Be(new DateTime(2018, 05, 21));
         }
@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests.Scheduling
         {
             var scheduledDateTime = new DateTime(2018, 05, 14);
 
-            var nextDate = new ScheduledDates().GetNextScheduledDate(new DateTime(2018, 05, 15), scheduledDateTime);
+            var nextDate = new ScheduledDates().GetNextScheduledDate(new DateTime(2018, 05, 15), scheduledDateTime, DayOfWeek.Monday);
 
             nextDate.Date.Should().Be(new DateTime(2018, 05, 21));
         }
@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests.Scheduling
         {
             var scheduledDateTime = new DateTime(2018, 05, 14);
 
-            var nextDate = new ScheduledDates().GetNextScheduledDate(new DateTime(2018, 05, 20), scheduledDateTime);
+            var nextDate = new ScheduledDates().GetNextScheduledDate(new DateTime(2018, 05, 20), scheduledDateTime, DayOfWeek.Monday);
 
             nextDate.Date.Should().Be(new DateTime(2018, 05, 21));
         }
@@ -45,7 +45,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests.Scheduling
 
             var x = scheduledDateTime.AddDays(7);
 
-            var nextDate = new ScheduledDates().GetNextScheduledDate(new DateTime(2018, 05, 20), scheduledDateTime);
+            var nextDate = new ScheduledDates().GetNextScheduledDate(new DateTime(2018, 05, 20), scheduledDateTime, DayOfWeek.Monday);
 
             nextDate.Date.Should().Be(new DateTime(2018, 05, 21));
         }
@@ -55,7 +55,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests.Scheduling
         {
             var scheduledDateTime = new DateTime(2018, 05, 14);
 
-            var nextDate = new ScheduledDates().GetNextScheduledDate(new DateTime(2018, 05, 22), scheduledDateTime);
+            var nextDate = new ScheduledDates().GetNextScheduledDate(new DateTime(2018, 05, 22), scheduledDateTime, DayOfWeek.Monday);
 
             nextDate.Date.Should().Be(new DateTime(2018, 05, 28));
         }
@@ -65,7 +65,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests.Scheduling
         {
             var scheduledDateTime = new DateTime(2018, 05, 14);
 
-            var nextDate = new ScheduledDates().GetNextScheduledDate(new DateTime(2018, 05, 22), scheduledDateTime);
+            var nextDate = new ScheduledDates().GetNextScheduledDate(new DateTime(2018, 05, 22), scheduledDateTime, DayOfWeek.Monday);
 
             nextDate.Date.Should().Be(new DateTime(2018, 05, 28));
         }
@@ -75,7 +75,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests.Scheduling
         {
             var scheduledDateTime = new DateTime(2018, 05, 14);
 
-            var nextDate = new ScheduledDates().GetNextScheduledDate(new DateTime(2018, 05, 22), scheduledDateTime);
+            var nextDate = new ScheduledDates().GetNextScheduledDate(new DateTime(2018, 05, 22), scheduledDateTime, DayOfWeek.Monday);
 
             nextDate.Date.Should().Be(new DateTime(2018, 05, 28));
         }
@@ -84,9 +84,19 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests.Scheduling
         {
             var scheduledDateTime = new DateTime(2018, 05, 14);
 
-            var nextDate = new ScheduledDates().GetNextScheduledDate(new DateTime(2018, 05, 29), scheduledDateTime);
+            var nextDate = new ScheduledDates().GetNextScheduledDate(new DateTime(2018, 05, 29), scheduledDateTime, DayOfWeek.Monday);
 
             nextDate.Date.Should().Be(new DateTime(2018, 06, 04));
-        }       
+        }
+
+        [TestMethod]
+        public void GetNextDateForSystemSucessfullyRunsOnThe21stAndTodaysDateIsThe29th()
+        {
+            var scheduledDateTime = new DateTime(2018, 05, 14);
+
+            var nextDate = new ScheduledDates().GetNextScheduledDate(new DateTime(2018, 05, 21), scheduledDateTime, DayOfWeek.Monday);
+
+            nextDate.Date.Should().Be(new DateTime(2018, 05, 28));
+        }
     }
 }

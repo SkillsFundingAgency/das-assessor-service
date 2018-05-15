@@ -5,12 +5,13 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Helpers
 {
     public class ScheduledDates
     {
-        public DateTime GetNextScheduledDate(DateTime todaysDate, DateTime scheduledDate)
+        public DateTime GetNextScheduledDate(DateTime todaysDate, 
+            DateTime scheduledDate, DayOfWeek dayOfWeek)
         {
             if (todaysDate.Date == scheduledDate.Date)
                 return scheduledDate.AddDays(7);
 
-            while (scheduledDate.GetNextWeekday(DayOfWeek.Monday) <= todaysDate)
+            while (scheduledDate.GetNextWeekday(dayOfWeek) <= todaysDate)
             {
                 scheduledDate = scheduledDate.AddDays(7);
             }
@@ -29,6 +30,11 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Helpers
             }
 
             return scheduledDate.AddDays(-7);
+        }
+
+        public static DayOfWeek GetDayOfWeek(int dayOfWeek)
+        {
+            return (DayOfWeek) dayOfWeek;
         }
     }
 }

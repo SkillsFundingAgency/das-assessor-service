@@ -1,0 +1,5 @@
+﻿{
+  "DayOfWeek": "1", // where 1 = Monday, 2 = Tuesday ....
+  "Hour": "12",
+  "Minute": "05"
+}
