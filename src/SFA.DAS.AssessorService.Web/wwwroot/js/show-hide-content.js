@@ -1,4 +1,4 @@
-(function(global) {
+;(function(global) {
   'use strict';
 
   var $ = global.jQuery;
@@ -171,4 +171,4 @@
 
   GOVUK.ShowHideContent = ShowHideContent;
   global.GOVUK = GOVUK;
-})(window);
+})(window)

@@ -21,8 +21,9 @@ namespace SFA.DAS.AssessorService.Data
         {
             var learnerRecords = await _context.Ilrs.Where(r =>
                 string.Equals(r.FamilyName.Trim(), searchRequest.FamilyName.Trim(), StringComparison.CurrentCultureIgnoreCase)
-                && r.Uln == searchRequest.Uln
-                && searchRequest.StandardIds.Contains(r.StdCode)).ToListAsync();
+                && r.Uln == searchRequest.Uln).ToListAsync();
+                
+            learnerRecords = learnerRecords.Where(r => searchRequest.StandardIds.Contains(r.StdCode)).ToList();
 
             var response = learnerRecords;
 
@@ -31,10 +32,12 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<IEnumerable<Ilr>> SearchLike(SearchRequest searchRequest)
         {
-            var learnerRecords = await _context.Ilrs.Where(r => EF.Functions.Like(r.FamilyName, searchRequest.FamilyName)
-                && r.Uln == searchRequest.Uln
-                && searchRequest.StandardIds.Contains(r.StdCode)).ToListAsync();
+            var learnerRecords = await _context.Ilrs.Where(r => 
+                EF.Functions.Like(r.FamilyName, searchRequest.FamilyName)
+                && r.Uln == searchRequest.Uln).ToListAsync();
 
+            learnerRecords = learnerRecords.Where(r => searchRequest.StandardIds.Contains(r.StdCode)).ToList();
+            
             var response = learnerRecords;
 
             return response;
