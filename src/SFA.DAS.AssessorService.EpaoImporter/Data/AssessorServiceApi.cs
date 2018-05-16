@@ -71,7 +71,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
                 else
                 {
                     nextDate = DateTime.Now.Previous(ScheduledDates.GetDayOfWeek(_scheduleConfig.DayOfWeek))
-                        .AddDays(-7);
+                        .AddDays(-7).Date;
                 }
 
                 var hourDate = nextDate.AddHours(_scheduleConfig.Hour);
