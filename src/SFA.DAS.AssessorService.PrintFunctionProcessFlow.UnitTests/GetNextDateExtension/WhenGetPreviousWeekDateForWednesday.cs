@@ -9,7 +9,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests.GetNextDate
     public class WhenGetPreviousWeekDateForWednesday
     {
         [TestMethod]
-        public void CompundDateTest()
+        public void CompoundDateTest()
         {         
             for (var firstDay = 16; firstDay <= 27; firstDay++)
             {
