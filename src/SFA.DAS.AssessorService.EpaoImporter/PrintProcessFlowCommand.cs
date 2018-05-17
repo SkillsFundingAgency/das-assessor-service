@@ -73,7 +73,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                         };
 
                         var coverLettersProduced =
-                            await _coverLetterService.Create(batchNumber, sanitizedCertificateResponses);
+                            await _coverLetterService.Create(batchNumber, sanitizedCertificateResponses.AsEnumerable());
                         await _ifaCertificateService.Create(batchNumber, sanitizedCertificateResponses,
                             coverLettersProduced);
 
