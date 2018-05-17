@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests
             var fileLocation = directory + "\\IFATemplateDocument.docx";
             var fileStream = File.OpenRead(fileLocation);
             var memoryStream = new MemoryStream();
-            fileStream.CopyTo(memoryStream);            
+            fileStream.CopyTo(memoryStream);
             fileStream.Close();
 
             var fileTransferClientMock = new Mock<IFileTransferClient>();
