@@ -11,6 +11,14 @@
     <None Remove="Settings\**" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="scheduleConfig.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="scheduleConfig.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="FluentDateTime" Version="1.14.0" />
     <PackageReference Include="MailKit" Version="2.0.2" />
     <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="3.16.0" />
@@ -62,9 +70,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
     </None>
     <None Update="IFATemplateDocument.docx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="scheduleConfig.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
