@@ -10,8 +10,8 @@ namespace SFA.DAS.AssessorService.Application.Mapping.CustomResolvers
         {
             if (source.BatchNumber.HasValue)
             {
-                var month = source.ToBePrinted.Month.ToString().PadLeft(2, '0');
-                var year = source.ToBePrinted.Year;
+                var month = source.ToBePrinted.Value.Month.ToString().PadLeft(2, '0');
+                var year = source.ToBePrinted.Value.Year;
                 var monthYear = month + year;
 
                 return monthYear + '-' + source.BatchNumber;

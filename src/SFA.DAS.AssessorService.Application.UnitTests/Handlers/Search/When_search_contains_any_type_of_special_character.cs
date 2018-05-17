@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
         {
             SearchHandler.Handle(new SearchQuery(){Surname = surname, UkPrn = 12345, Uln = 12345, Username = "dave"}, new CancellationToken()).Wait();
             
-            IlrRepository.Verify(r => r.SearchLike(It.Is<SearchRequest>(sr => sr.FamilyName == likedSurname)));
+            IlrRepository.Verify(r => r.SearchForLearnerLike(It.Is<SearchRequest>(sr => sr.FamilyName == likedSurname)));
         }
     }
 }

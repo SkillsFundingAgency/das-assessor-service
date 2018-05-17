@@ -69,22 +69,25 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                     likedSurname = likedSurname.Replace(specialCharacter, '_');
                 }
                 
-                ilrResults = await _ilrRepository.SearchLike(new SearchRequest
+                ilrResults = await _ilrRepository.SearchForLearnerLike(new SearchRequest
                 {
                     FamilyName = likedSurname,
-                    Uln = request.Uln,
-                    StandardIds = intStandards
+                    Uln = request.Uln
                 });
             }
             else
             {
-                ilrResults = await _ilrRepository.Search(new SearchRequest
+                ilrResults = await _ilrRepository.SearchForLearner(new SearchRequest
                 {
                     FamilyName = request.Surname,
-                    Uln = request.Uln,
-                    StandardIds = intStandards
+                    Uln = request.Uln
                 });
             }
+
+            ilrResults = ilrResults.Where(r =>
+                r.EpaOrgId == thisEpao.EndPointAssessorOrganisationId ||
+                (r.EpaOrgId != thisEpao.EndPointAssessorOrganisationId && intStandards.Contains(r.StdCode))).ToList();
+            
 
             _logger.LogInformation(ilrResults.Any() ? LoggingConstants.SearchSuccess : LoggingConstants.SearchFailure);
 

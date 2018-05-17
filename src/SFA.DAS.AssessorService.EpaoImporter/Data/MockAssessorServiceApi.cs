@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using FizzWare.NBuilder;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.EpaoImporter.InfrastructureServices;
@@ -59,6 +60,27 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
         public Task<int> GenerateBatchNumber()
         {
             return Task.FromResult(1);
+        }
+
+
+        public Task<BatchLogResponse> CreateBatchLog(CreateBatchLogRequest createBatchLogRequest)
+        {
+            return Task.FromResult(Builder<BatchLogResponse>.CreateNew().Build());
+        }
+
+        Task<BatchLogResponse> IAssessorServiceApi.GetCurrentBatchLog()
+        {
+            return Task.FromResult(new BatchLogResponse
+            {
+                BatchNumber = 2,
+                BatchCreated = DateTime.Now,
+                CertificatesFileName = "testMockEntry",
+                FileUploadEndTime = DateTime.Now,
+                FileUploadStartTime = DateTime.Now,
+                NumberOfCertificates = 2,
+                NumberOfCoverLetters = 3,
+                Period = "0899"
+            });
         }
 
         private static Task<List<CertificateResponse>> CreateDefaultData()

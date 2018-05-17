@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.AssessorService.Domain.Entities
 {
-    public class EMailTemplate : BaseEntity
+    public class EMailTemplate : BaseEntity                                                             
     {
         public Guid Id { get; set; }
         public string TemplateName { get; set; }
