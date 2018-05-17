@@ -51,6 +51,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             //services.AddAndConfigureAuthentication(Configuration);
             try
             {
+                services.AddApplicationInsightsTelemetry();
+
                 services.AddAuthentication(sharedOptions =>
                 {
                     sharedOptions.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
