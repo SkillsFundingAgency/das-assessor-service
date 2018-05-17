@@ -32,6 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Api
         public static IWebHost BuildWebHost(string[] args)
         {
             return WebHost.CreateDefaultBuilder(args)
+                .UseApplicationInsights()
                 .UseKestrel()
                 .UseStartup<Startup>()
                 .UseNLog()
