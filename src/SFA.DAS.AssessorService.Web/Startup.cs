@@ -38,6 +38,9 @@ namespace SFA.DAS.AssessorService.Web
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             Configuration = ConfigurationService.GetConfig(_config["EnvironmentName"], _config["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
+
+            services.AddApplicationInsightsTelemetry();
+
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
             services.AddAndConfigureAuthentication(Configuration, _logger);
             services.Configure<RequestLocalizationOptions>(options =>
