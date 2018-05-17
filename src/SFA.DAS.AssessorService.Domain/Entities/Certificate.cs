@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
 
         public string Status { get; set; }
 
-        public DateTime ToBePrinted { get; set; }
+        public DateTime? ToBePrinted { get; set; }
 
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }
