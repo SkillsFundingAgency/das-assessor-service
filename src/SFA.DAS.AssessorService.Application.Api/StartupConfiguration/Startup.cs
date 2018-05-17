@@ -51,7 +51,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             //services.AddAndConfigureAuthentication(Configuration);
             try
             {
-                services.AddApplicationInsightsTelemetry("31aac436-1c55-4e0f-bad5-d29bbc8c7ffc");
+                services.AddApplicationInsightsTelemetry();
 
                 services.AddAuthentication(sharedOptions =>
                 {
