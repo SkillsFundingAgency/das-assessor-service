@@ -40,14 +40,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> GetCertificates([FromQuery] string status)
         {
             return Ok(await _mediator.Send(new GetCertificatesRequest { Status = status }));
-        }
-
-        [HttpGet("generatebatchnumber", Name = "GenerateBatchNumber")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(int))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GenerateBatchNumber()
-        {
-            return Ok(await _mediator.Send(new GenerateBatchNumberRequest { }));
-        }
+        }       
     }
 }

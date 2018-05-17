@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[Certificates](
 	[Id] [uniqueidentifier] NOT NULL DEFAULT NEWID(),
 	[CertificateData] [nvarchar](max) NOT NULL,
-	[ToBePrinted] [datetime2](7) NOT NULL,
+	[ToBePrinted] [datetime2](7) NULL,
 	[CreatedAt] [datetime2](7) NOT NULL,
 	[CreatedBy] [nvarchar](30) NOT NULL,
 	[DeletedAt] [datetime2](7) NULL,

@@ -67,6 +67,7 @@
     <Build Include="Tables\Organisations.sql" />
     <Build Include="Tables\Ilrs.sql" />
     <Build Include="Tables\EMailTemplates.sql" />
+    <Build Include="Tables\BatchLogs.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />

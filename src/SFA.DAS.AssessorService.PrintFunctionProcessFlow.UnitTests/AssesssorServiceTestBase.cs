@@ -1,6 +1,7 @@
 ﻿using System;
 using Moq;
 using RichardSzalay.MockHttp;
+using SFA.DAS.AssessorService.EpaoImporter.Data;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
 
 namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests
@@ -22,7 +23,13 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests
 
             AssessorServiceApi = new EpaoImporter.Data.AssessorServiceApi(
                 AggregateLogger.Object,
-                client
+                client,
+                new ScheduleConfig
+                {
+                    DayOfWeek = 1,
+                    Hour = 18,
+                    Minute = 0
+                }
             );
         }
     }

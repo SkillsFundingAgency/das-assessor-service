@@ -62,20 +62,6 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        public async Task<int> GenerateBatchNumber()
-        {
-            if (!await _context.Certificates.AnyAsync(q =>
-                q.BatchNumber != 0 && q.BatchNumber.HasValue && q.ToBePrinted != null))
-                    return 1;
-            {
-                var latestCertificate = _context.Certificates.OrderByDescending(q => q.ToBePrinted).First();
-                if (latestCertificate.ToBePrinted.Month != DateTime.Now.Month)
-                    return 1;
-                return latestCertificate.BatchNumber + 1 ?? 1;
-            }
-
-        }
-
         public async Task<Certificate> Update(Certificate certificate, string username)
         {
             var cert = await GetCertificate(certificate.Id);
