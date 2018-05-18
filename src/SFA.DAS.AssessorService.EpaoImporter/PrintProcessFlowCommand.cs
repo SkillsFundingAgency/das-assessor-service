@@ -2,7 +2,9 @@
 using System.Linq;
 using System.Threading.Tasks;
 using FluentDateTime;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.EpaoImporter.Data;
 using SFA.DAS.AssessorService.EpaoImporter.DomainServices;
 using SFA.DAS.AssessorService.EpaoImporter.Interfaces;
@@ -19,7 +21,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
         private readonly IIFACertificateService _ifaCertificateService;
         private readonly IAssessorServiceApi _assessorServiceApi;
         private readonly INotificationService _notificationService;
-        private readonly ScheduleConfig _scheduleConfig;
+        private readonly ISchedulingConfigurationService _schedulingConfigurationService;
 
         public PrintProcessFlowCommand(IAggregateLogger aggregateLogger,
             ISanitiserService sanitiserService,
@@ -27,7 +29,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
             IIFACertificateService ifaCertificateService,
             IAssessorServiceApi assessorServiceApi,
             INotificationService notificationService,
-            ScheduleConfig scheduleConfig)
+            ISchedulingConfigurationService schedulingConfigurationService)
         {
             _aggregateLogger = aggregateLogger;
             _sanitiserService = sanitiserService;
@@ -35,7 +37,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
             _ifaCertificateService = ifaCertificateService;
             _assessorServiceApi = assessorServiceApi;
             _notificationService = notificationService;
-            _scheduleConfig = scheduleConfig;
+            _schedulingConfigurationService = schedulingConfigurationService;
         }
 
         public async Task Execute()
@@ -82,9 +84,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
 
                         batchLogRequest.FileUploadEndTime = DateTime.Now;
                         batchLogRequest.NumberOfCertificates = coverLettersProduced.CoverLetterCertificates.Count;
-                        batchLogRequest.NumberOfCoverLetters = coverLettersProduced.CoverLetterFileNames.Count;
-                        //batchLogRequest.ScheduledDate =
-                        //    new ScheduledDates().GetThisScheduledDate(DateTime.Now, batchLogResponse.ScheduledDate);
+                        batchLogRequest.NumberOfCoverLetters = coverLettersProduced.CoverLetterFileNames.Count;                    
                         batchLogRequest.ScheduledDate = batchLogResponse.ScheduledDate;
 
                         await _assessorServiceApi.CreateBatchLog(batchLogRequest);
@@ -108,27 +108,30 @@ namespace SFA.DAS.AssessorService.EpaoImporter
         {
             if ((await _assessorServiceApi.GetCertificatesToBePrinted()).Any())
             {
+                var schedulingConfiguration = await _schedulingConfigurationService.GetSchedulingConfiguration();
+                var schedulingConfigurationData = JsonConvert.DeserializeObject<SchedulingConfiguraionData>(schedulingConfiguration.Data);
+
                 var today = DateTime.Now;
                 var scheduledDate = batchLogResponse.ScheduledDate;
                 // Take care of potential configuration change
-                if (_scheduleConfig.Hour != batchLogResponse.ScheduledDate.Hour
-                    || (DayOfWeek)_scheduleConfig.DayOfWeek != batchLogResponse.ScheduledDate.DayOfWeek
-                    || _scheduleConfig.Minute != batchLogResponse.ScheduledDate.Minute)
+                if (schedulingConfigurationData.Hour != batchLogResponse.ScheduledDate.Hour
+                    || (DayOfWeek)schedulingConfigurationData.DayOfWeek != batchLogResponse.ScheduledDate.DayOfWeek
+                    || schedulingConfigurationData.Minute != batchLogResponse.ScheduledDate.Minute)
                 {
                     _aggregateLogger.LogInfo("Detected change in schedule config ...");
-                    var diff = _scheduleConfig.DayOfWeek - (int)batchLogResponse.ScheduledDate.DayOfWeek;
+                    var diff = schedulingConfigurationData.DayOfWeek - (int)batchLogResponse.ScheduledDate.DayOfWeek;
                     if (diff >= 0)
                     {
                         if (today.Date >= scheduledDate.Date.AddDays(7).Date)
                         {
                             DateTime tempDate;
-                            if (today.Date.DayOfWeek == (DayOfWeek) _scheduleConfig.DayOfWeek)
+                            if (today.Date.DayOfWeek == (DayOfWeek) schedulingConfigurationData.DayOfWeek)
                             {
                                 tempDate = today.Date;
                             }
                             else
                             {
-                                tempDate = today.Previous((DayOfWeek)_scheduleConfig.DayOfWeek).Date;
+                                tempDate = today.Previous((DayOfWeek) schedulingConfigurationData.DayOfWeek).Date;
                             }
                           
                             tempDate = tempDate.AddHours(scheduledDate.Hour);
@@ -145,13 +148,13 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                         if (today.Date.Date >= scheduledDate.Date.AddDays(7).Date)
                         {
                             DateTime tempDate;
-                            if (today.Date.DayOfWeek == (DayOfWeek)_scheduleConfig.DayOfWeek)
+                            if (today.Date.DayOfWeek == (DayOfWeek) schedulingConfigurationData.DayOfWeek)
                             {
                                 tempDate = today.Date;
                             }
                             else
                             {
-                                tempDate = today.Previous((DayOfWeek)_scheduleConfig.DayOfWeek).Date;
+                                tempDate = today.Previous((DayOfWeek) schedulingConfigurationData.DayOfWeek).Date;
                             }
 
                             tempDate = tempDate.AddHours(scheduledDate.Hour);
@@ -160,7 +163,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                         }
                         else
                         {
-                            scheduledDate = scheduledDate.Next((DayOfWeek) _scheduleConfig.DayOfWeek);
+                            scheduledDate = scheduledDate.Next((DayOfWeek) schedulingConfigurationData.DayOfWeek);
                         }
                     }
 
@@ -171,7 +174,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                     scheduledDate = batchLogResponse.ScheduledDate.AddDays(7);
                     if (today.Date > scheduledDate.Date)
                     {
-                        var tempDate = today.Next((DayOfWeek)_scheduleConfig.DayOfWeek).AddDays(-7).Date;
+                        var tempDate = today.Next((DayOfWeek) schedulingConfigurationData.DayOfWeek).AddDays(-7).Date;
                         tempDate = tempDate.AddHours(scheduledDate.Hour);
                         tempDate = tempDate.AddMinutes(scheduledDate.Minute);
                         scheduledDate = tempDate;

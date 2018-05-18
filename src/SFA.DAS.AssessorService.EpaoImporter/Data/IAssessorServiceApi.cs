@@ -12,6 +12,6 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
         Task<BatchLogResponse> GetCurrentBatchLog();
         Task<IEnumerable<CertificateResponse>> GetCertificatesToBePrinted();
         Task ChangeStatusToPrinted(int batchNumber, IEnumerable<CertificateResponse> responses);
-        Task<EMailTemplate> GetEmailTemplate();
+        Task<EMailTemplate> GetEmailTemplate();        
     }
 }

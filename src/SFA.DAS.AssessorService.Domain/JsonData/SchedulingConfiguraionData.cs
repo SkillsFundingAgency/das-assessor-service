@@ -1,6 +1,6 @@
-﻿namespace SFA.DAS.AssessorService.EpaoImporter.Data
+﻿namespace SFA.DAS.AssessorService.Domain.JsonData
 {
-    public class ScheduleConfig
+    public class SchedulingConfiguraionData
     {
         public int DayOfWeek { get; set; }
         public int Hour { get; set; }

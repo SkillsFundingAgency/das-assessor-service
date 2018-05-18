@@ -5,9 +5,11 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using FluentDateTime;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.EpaoImporter.Const;
 using SFA.DAS.AssessorService.EpaoImporter.Extensions;
 using SFA.DAS.AssessorService.EpaoImporter.Helpers;
@@ -18,16 +20,16 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
     public class AssessorServiceApi : IAssessorServiceApi
     {
         private readonly IAggregateLogger _aggregateLogger;
-        private readonly HttpClient _httpClient;
-        private readonly ScheduleConfig _scheduleConfig;
+        private readonly ISchedulingConfigurationService _schedulingConfigurationService;
+        private readonly HttpClient _httpClient;      
 
         public AssessorServiceApi(IAggregateLogger aggregateLogger,
-            HttpClient httpClient,
-            ScheduleConfig scheduleConfig)
+            ISchedulingConfigurationService schedulingConfigurationService,
+            HttpClient httpClient)
         {
             _aggregateLogger = aggregateLogger;
-            _httpClient = httpClient;
-            _scheduleConfig = scheduleConfig;
+            _schedulingConfigurationService = schedulingConfigurationService;
+            _httpClient = httpClient;            
         }
 
         public async Task<BatchLogResponse> CreateBatchLog(CreateBatchLogRequest createBatchLogRequest)
@@ -46,11 +48,11 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
             var certificates = response.Deserialise<List<CertificateResponse>>();
             if (response.IsSuccessStatusCode)
             {
-                _aggregateLogger.LogInfo($"Status code returned: {response.StatusCode}. Content: {response.Content.ReadAsStringAsync().Result}");
+                _aggregateLogger.LogInfo($"Geting Certificates to o be printed - Status code returned: {response.StatusCode}. Content: {response.Content.ReadAsStringAsync().Result}");
             }
             else
             {
-                _aggregateLogger.LogInfo($"Status code returned: {response.StatusCode}. Content: {response.Content.ReadAsStringAsync().Result}");
+                _aggregateLogger.LogInfo($"Geting Certificates to o be printed - Status code returned: {response.StatusCode}. Content: {response.Content.ReadAsStringAsync().Result}");
             }
 
             return certificates;
@@ -58,24 +60,27 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
 
         public async Task<BatchLogResponse> GetCurrentBatchLog()
         {
+            var schedulingConfiguration = await  _schedulingConfigurationService.GetSchedulingConfiguration();
+            var schedulingConfigurationData = JsonConvert.DeserializeObject<SchedulingConfiguraionData>(schedulingConfiguration.Data);
+
             var response = await _httpClient.GetAsync(
                 "/api/v1/batches/latest");
 
             if (response.StatusCode == HttpStatusCode.NoContent)
             {
                 DateTime nextDate;
-                if (DateTime.Now.DayOfWeek == (DayOfWeek) _scheduleConfig.DayOfWeek)
+                if (DateTime.Now.DayOfWeek == (DayOfWeek) schedulingConfigurationData.DayOfWeek)
                 {
                     nextDate = DateTime.Now.AddDays(-7).Date;
                 }
                 else
                 {
-                    nextDate = DateTime.Now.Previous(ScheduledDates.GetDayOfWeek(_scheduleConfig.DayOfWeek))
+                    nextDate = DateTime.Now.Previous(ScheduledDates.GetDayOfWeek(schedulingConfigurationData.DayOfWeek))
                         .Date;
                 }
 
-                var hourDate = nextDate.AddHours(_scheduleConfig.Hour);
-                var scheduledDate = hourDate.AddMinutes(_scheduleConfig.Minute);
+                var hourDate = nextDate.AddHours(schedulingConfigurationData.Hour);
+                var scheduledDate = hourDate.AddMinutes(schedulingConfigurationData.Minute);
 
                 return new BatchLogResponse
                 {
