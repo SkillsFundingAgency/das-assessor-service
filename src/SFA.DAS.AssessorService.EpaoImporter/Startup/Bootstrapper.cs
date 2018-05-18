@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Startup
             _logger.LogInfo("Config Received");
 
             Container = new Container(configure =>
-            {
+            { 
                 configure.Scan(x =>
                 {
                     x.TheCallingAssembly();
