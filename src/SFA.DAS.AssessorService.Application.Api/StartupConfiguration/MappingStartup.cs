@@ -17,17 +17,18 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 cfg.CreateMap<Organisation, OrganisationResponse>();
                 cfg.CreateMap<CreateOrganisationRequest, Organisation>();
                 cfg.CreateMap<UpdateOrganisationRequest, Organisation>();
-                cfg.CreateMap<CreateContactRequest, Contact>().ReverseMap();                
+                cfg.CreateMap<CreateContactRequest, Contact>().ReverseMap();
                 cfg.CreateMap<Contact, ContactResponse>();
                 cfg.CreateMap<Ilr, SearchResult>();
                 cfg.CreateMap<CreateBatchLogRequest, BatchLog>();
                 cfg.CreateMap<BatchLog, BatchLogResponse>();
+                cfg.CreateMap<ScheduleConfiguration, ScheduleConfigurationResponse>();
 
                 cfg.CreateMap<Certificate, CertificateResponse>()
                     .ForMember(q => q.EndPointAssessorOrganisationId,
                         opts => { opts.MapFrom(q => q.Organisation.EndPointAssessorOrganisationId); })
                     .ForMember(q => q.EndPointAssessorOrganisationName,
-                        opts => { opts.MapFrom(q => q.Organisation.EndPointAssessorName); })              
+                        opts => { opts.MapFrom(q => q.Organisation.EndPointAssessorName); })
                     .ForMember(q => q.BatchNumber,
                         opts => { opts.ResolveUsing<BatchNumberResolver>(); });
 

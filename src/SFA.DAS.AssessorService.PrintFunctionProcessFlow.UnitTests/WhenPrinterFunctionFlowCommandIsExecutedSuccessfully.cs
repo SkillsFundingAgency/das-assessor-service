@@ -4,9 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using FizzWare.NBuilder;
 using Moq;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.EpaoImporter;
 using SFA.DAS.AssessorService.EpaoImporter.Data;
 using SFA.DAS.AssessorService.EpaoImporter.DomainServices;
@@ -25,6 +28,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests
         private Mock<IAssessorServiceApi> _assessorServiceApi;
         private Mock<INotificationService> _notificationService;
         private Mock<ISanitiserService> _sanitizerServiceMock;
+        private Mock<ISchedulingConfigurationService> _schedulingConfigurationServiceMock;
 
         [SetUp]
         public void Arrange()
@@ -35,6 +39,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests
             _assessorServiceApi = new Mock<IAssessorServiceApi>();
             _notificationService = new Mock<INotificationService>();
             _sanitizerServiceMock = new Mock<ISanitiserService>();
+            _schedulingConfigurationServiceMock = new Mock<ISchedulingConfigurationService>();
 
 
             _printProcessFlowCommand = new PrintProcessFlowCommand(
@@ -44,12 +49,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests
                 _ifaCertificateService.Object,
                 _assessorServiceApi.Object,
                 _notificationService.Object,
-                new ScheduleConfig
-                {
-                    DayOfWeek = 1,
-                    Hour = 18,
-                    Minute = 00
-                }
+                _schedulingConfigurationServiceMock.Object
                 );
 
             var certificateResponses = Builder<CertificateResponse>.CreateListOfSize(10).Build();
@@ -81,6 +81,18 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests
                     FileUploadStartTime = DateTime.Now,
                     NumberOfCertificates = 12
                 }));
+
+            _schedulingConfigurationServiceMock.Setup(q => q.GetSchedulingConfiguration())
+                .Returns(Task.FromResult(new ScheduleConfiguration
+                {
+                    Data = JsonConvert.SerializeObject(new SchedulingConfiguraionData
+                    {
+                        DayOfWeek = (int)DateTime.Now.DayOfWeek,
+                        Hour = DateTime.Now.Hour - 1,
+                        Minute = DateTime.Now.Minute
+                    })
+                }));
+
 
 
 

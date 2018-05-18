@@ -25,6 +25,7 @@ namespace SFA.DAS.AssessorService.Data
         public virtual DbSet<Ilr> Ilrs { get; set; }
         public virtual DbSet<EMailTemplate> EMailTemplates { get; set; }
         public virtual DbSet<BatchLog> BatchLogs { get; set; }
+        public virtual DbSet<ScheduleConfiguration> ScheduleConfigurations { get; set; }
 
         public override int SaveChanges()
         {
@@ -32,7 +33,7 @@ namespace SFA.DAS.AssessorService.Data
             foreach (var entry in ChangeTracker.Entries()
                 .Where(e => e.State == EntityState.Added && e.Entity is BaseEntity))
                 if (entry.Property("CreatedAt").CurrentValue == null ||
-                    (DateTime) entry.Property("CreatedAt").CurrentValue == DateTime.MinValue)
+                    (DateTime)entry.Property("CreatedAt").CurrentValue == DateTime.MinValue)
                     entry.Property("CreatedAt").CurrentValue = saveTime;
 
             foreach (var entry in ChangeTracker.Entries()
