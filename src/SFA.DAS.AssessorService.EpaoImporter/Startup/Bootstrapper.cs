@@ -1,8 +1,6 @@
 ﻿using System;
-using System.IO;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
-using Newtonsoft.Json;
 using Renci.SshNet;
 using SFA.DAS.AssessorService.EpaoImporter.Data;
 using SFA.DAS.AssessorService.EpaoImporter.InfrastructureServices;
@@ -26,8 +24,6 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Startup
             var configuration = ConfigurationHelper.GetConfiguration();
             _logger.LogInfo("Config Received");
 
-            var scheduleConfig = JsonConvert.DeserializeObject<ScheduleConfig>(File.ReadAllText(@"scheduleConfig.json"));
-
             Container = new Container(configure =>
             {
                 configure.Scan(x =>
@@ -43,8 +39,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Startup
                 configure.For<IAssessorServiceApi>().Use<AssessorServiceApi>().Singleton();
                 configure.For<INotificationService>().Use<NotificationService>();
                 configure.For<SftpClient>().Use<SftpClient>("SftpClient",
-                    c => new SftpClient(configuration.Sftp.RemoteHost, Convert.ToInt32(configuration.Sftp.Port), configuration.Sftp.Username, configuration.Sftp.Password));
-                configure.For<ScheduleConfig>().Use(scheduleConfig);
+                    c => new SftpClient(configuration.Sftp.RemoteHost, Convert.ToInt32(configuration.Sftp.Port), configuration.Sftp.Username, configuration.Sftp.Password));              
                 configure.AddRegistry<NotificationsRegistry>();
                 configure.AddRegistry<HttpRegistry>();
             });

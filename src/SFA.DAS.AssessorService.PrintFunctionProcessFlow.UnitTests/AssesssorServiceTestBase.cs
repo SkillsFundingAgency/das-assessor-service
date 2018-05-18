@@ -21,15 +21,12 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests
             var client = MockHttp.ToHttpClient();
             client.BaseAddress = new Uri("http://localhost:59022/");
 
+            var schedulingConfigurationServiceMock = new Mock<ISchedulingConfigurationService>();
+
             AssessorServiceApi = new EpaoImporter.Data.AssessorServiceApi(
                 AggregateLogger.Object,
-                client,
-                new ScheduleConfig
-                {
-                    DayOfWeek = 1,
-                    Hour = 18,
-                    Minute = 0
-                }
+                schedulingConfigurationServiceMock.Object,
+                client
             );
         }
     }

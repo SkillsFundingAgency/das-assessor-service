@@ -25,6 +25,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests
         private Mock<IAssessorServiceApi> _assessorServiceApi;
         private Mock<INotificationService> _notificationService;
         private Mock<ISanitiserService> _sanitizerServiceMock;
+        private Mock<ISchedulingConfigurationService> _schedulingConfigurationServiceMock;
 
         [SetUp]
         public void Arrange()
@@ -35,6 +36,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests
             _assessorServiceApi = new Mock<IAssessorServiceApi>();
             _notificationService = new Mock<INotificationService>();
             _sanitizerServiceMock = new Mock<ISanitiserService>();
+            _schedulingConfigurationServiceMock = new Mock<ISchedulingConfigurationService>();
 
 
             _printProcessFlowCommand = new PrintProcessFlowCommand(
@@ -44,12 +46,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests
                 _ifaCertificateService.Object,
                 _assessorServiceApi.Object,
                 _notificationService.Object,
-                new ScheduleConfig
-                {
-                    DayOfWeek = 1,
-                    Hour = 18,
-                    Minute = 00
-                }
+                _schedulingConfigurationServiceMock.Object
                 );
 
             var certificateResponses = Builder<CertificateResponse>.CreateListOfSize(10).Build();
