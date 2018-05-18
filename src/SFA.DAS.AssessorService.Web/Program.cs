@@ -30,6 +30,7 @@ namespace SFA.DAS.AssessorService.Web
             IHostingEnvironment hostingEnvironment = null;
 
             return WebHost.CreateDefaultBuilder(args)
+                .UseApplicationInsights()
                 .ConfigureServices(
                     services =>
                     {
