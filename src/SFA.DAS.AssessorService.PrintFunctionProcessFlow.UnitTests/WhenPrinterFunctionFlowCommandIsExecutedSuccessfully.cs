@@ -29,6 +29,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests
         private Mock<INotificationService> _notificationService;
         private Mock<ISanitiserService> _sanitizerServiceMock;
         private Mock<ISchedulingConfigurationService> _schedulingConfigurationServiceMock;
+        private Mock<IDateTimeZoneInformation> _dateTimeZoneInformationMock;
 
         [SetUp]
         public void Arrange()
@@ -40,7 +41,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests
             _notificationService = new Mock<INotificationService>();
             _sanitizerServiceMock = new Mock<ISanitiserService>();
             _schedulingConfigurationServiceMock = new Mock<ISchedulingConfigurationService>();
-
+            _dateTimeZoneInformationMock = new Mock<IDateTimeZoneInformation>();
 
             _printProcessFlowCommand = new PrintProcessFlowCommand(
                 _aggregateLogger.Object,
@@ -49,7 +50,8 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests
                 _ifaCertificateService.Object,
                 _assessorServiceApi.Object,
                 _notificationService.Object,
-                _schedulingConfigurationServiceMock.Object
+                _schedulingConfigurationServiceMock.Object,
+                _dateTimeZoneInformationMock.Object
                 );
 
             var certificateResponses = Builder<CertificateResponse>.CreateListOfSize(10).Build();
@@ -92,9 +94,6 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests
                         Minute = DateTime.Now.Minute
                     })
                 }));
-
-
-
 
             _printProcessFlowCommand.Execute();
         }
