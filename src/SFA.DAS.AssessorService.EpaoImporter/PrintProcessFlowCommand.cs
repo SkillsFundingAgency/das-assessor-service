@@ -22,6 +22,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
         private readonly IAssessorServiceApi _assessorServiceApi;
         private readonly INotificationService _notificationService;
         private readonly ISchedulingConfigurationService _schedulingConfigurationService;
+        private readonly IDateTimeZoneInformation _dateTimeZoneInformation;
 
         public PrintProcessFlowCommand(IAggregateLogger aggregateLogger,
             ISanitiserService sanitiserService,
@@ -29,7 +30,8 @@ namespace SFA.DAS.AssessorService.EpaoImporter
             IIFACertificateService ifaCertificateService,
             IAssessorServiceApi assessorServiceApi,
             INotificationService notificationService,
-            ISchedulingConfigurationService schedulingConfigurationService)
+            ISchedulingConfigurationService schedulingConfigurationService,
+            IDateTimeZoneInformation dateTimeZoneInformation)
         {
             _aggregateLogger = aggregateLogger;
             _sanitiserService = sanitiserService;
@@ -38,6 +40,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
             _assessorServiceApi = assessorServiceApi;
             _notificationService = notificationService;
             _schedulingConfigurationService = schedulingConfigurationService;
+            _dateTimeZoneInformation = dateTimeZoneInformation;
         }
 
         public async Task Execute()
@@ -49,6 +52,9 @@ namespace SFA.DAS.AssessorService.EpaoImporter
 
                 _aggregateLogger.LogInfo("Accessing Environment variables");
                 _aggregateLogger.LogInfo($"Process Environment = {EnvironmentVariableTarget.Process}");
+
+                _dateTimeZoneInformation.GetCurrentTimeZone();
+                _dateTimeZoneInformation.DisplayTimeZoneNames();
 
                 var batchLogResponse = await _assessorServiceApi.GetCurrentBatchLog();
 
