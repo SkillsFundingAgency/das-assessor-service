@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.EpaoImporter.Const;
 using SFA.DAS.AssessorService.EpaoImporter.Data;
-using SFA.DAS.AssessorService.EpaoImporter.InfrastructureServices;
+using SFA.DAS.AssessorService.EpaoImporter.Extensions;
 using SFA.DAS.AssessorService.EpaoImporter.Interfaces;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
 using SFA.DAS.AssessorService.EpaoImporter.Sftp;
@@ -45,9 +46,11 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             var memoryStream = new MemoryStream();
 
             var certificateResponses = certificates as CertificateResponse[] ?? certificates.ToArray();
-            _certificates = certificateResponses;          
+            _certificates = certificateResponses;
 
-            var fileName = $"IFA-Certificate-{DateTime.Now:MMyy}-{batchNumber.ToString().PadLeft(3, '0')}.xlsx";
+            var utcNow = DateTime.UtcNow;
+            var gmtNow = utcNow.UtcToTimeZoneTime(TimezoneNames.GmtStandardTimeZone);
+            var fileName = $"IFA-Certificate-{gmtNow:MMyy}-{batchNumber.ToString().PadLeft(3, '0')}.xlsx";
 
             using (var package = new ExcelPackage(memoryStream))
             {
@@ -76,8 +79,12 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 
         private void CreateWorkSheet(int batchNumber, ExcelPackage package,
             IEnumerable<CertificateResponse> certificates)
-        {            
-            var monthYear = DateTime.Today.ToString("MMM yyyy");
+        {
+
+            var utcNow = DateTime.UtcNow;
+            var gmtNow = utcNow.UtcToTimeZoneTime(TimezoneNames.GmtStandardTimeZone);
+
+            var monthYear = gmtNow.ToString("MMM yyyy");
             var worksheet = package.Workbook.Worksheets.Add(monthYear);
 
             CreateWorksheetDefaults(worksheet);

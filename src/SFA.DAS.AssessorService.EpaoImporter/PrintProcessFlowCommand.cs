@@ -5,8 +5,10 @@ using FluentDateTime;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.JsonData;
+using SFA.DAS.AssessorService.EpaoImporter.Const;
 using SFA.DAS.AssessorService.EpaoImporter.Data;
 using SFA.DAS.AssessorService.EpaoImporter.DomainServices;
+using SFA.DAS.AssessorService.EpaoImporter.Extensions;
 using SFA.DAS.AssessorService.EpaoImporter.Interfaces;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
 using SFA.DAS.AssessorService.EpaoImporter.Notification;
@@ -54,7 +56,6 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                 _aggregateLogger.LogInfo($"Process Environment = {EnvironmentVariableTarget.Process}");
 
                 _dateTimeZoneInformation.GetCurrentTimeZone();
-                _dateTimeZoneInformation.DisplayTimeZoneNames();
 
                 var batchLogResponse = await _assessorServiceApi.GetCurrentBatchLog();
 
@@ -73,11 +74,11 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                         var batchLogRequest = new CreateBatchLogRequest
                         {
                             BatchNumber = batchNumber,
-                            FileUploadStartTime = DateTime.Now,
-                            Period = DateTime.Now.ToString("MMyy"),
-                            BatchCreated = DateTime.Now,
+                            FileUploadStartTime = DateTime.UtcNow.UtcToTimeZoneTime(),
+                            Period = DateTime.UtcNow.UtcToTimeZoneTime().ToString("MMyy"),
+                            BatchCreated = DateTime.UtcNow.UtcToTimeZoneTime(),
                             CertificatesFileName =
-                                $"IFA-Certificate-{DateTime.Now:MMyy}-{batchNumber.ToString().PadLeft(3, '0')}.xlsx"
+                                $"IFA-Certificate-{DateTime.UtcNow.UtcToTimeZoneTime():MMyy}-{batchNumber.ToString().PadLeft(3, '0')}.xlsx"
                         };
 
                         var coverLettersProduced =
@@ -88,9 +89,9 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                         await _notificationService.Send(batchNumber, sanitizedCertificateResponses,
                             coverLettersProduced);
 
-                        batchLogRequest.FileUploadEndTime = DateTime.Now;
+                        batchLogRequest.FileUploadEndTime = DateTime.UtcNow.UtcToTimeZoneTime();
                         batchLogRequest.NumberOfCertificates = coverLettersProduced.CoverLetterCertificates.Count;
-                        batchLogRequest.NumberOfCoverLetters = coverLettersProduced.CoverLetterFileNames.Count;                    
+                        batchLogRequest.NumberOfCoverLetters = coverLettersProduced.CoverLetterFileNames.Count;
                         batchLogRequest.ScheduledDate = batchLogResponse.ScheduledDate;
 
                         await _assessorServiceApi.CreateBatchLog(batchLogRequest);
@@ -117,7 +118,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                 var schedulingConfiguration = await _schedulingConfigurationService.GetSchedulingConfiguration();
                 var schedulingConfigurationData = JsonConvert.DeserializeObject<SchedulingConfiguraionData>(schedulingConfiguration.Data);
 
-                var today = DateTime.Now;
+                var today = DateTime.UtcNow;
                 var scheduledDate = batchLogResponse.ScheduledDate;
                 // Take care of potential configuration change
                 if (schedulingConfigurationData.Hour != batchLogResponse.ScheduledDate.Hour
@@ -131,15 +132,15 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                         if (today.Date >= scheduledDate.Date.AddDays(7).Date)
                         {
                             DateTime tempDate;
-                            if (today.Date.DayOfWeek == (DayOfWeek) schedulingConfigurationData.DayOfWeek)
+                            if (today.Date.DayOfWeek == (DayOfWeek)schedulingConfigurationData.DayOfWeek)
                             {
                                 tempDate = today.Date;
                             }
                             else
                             {
-                                tempDate = today.Previous((DayOfWeek) schedulingConfigurationData.DayOfWeek).Date;
+                                tempDate = today.Previous((DayOfWeek)schedulingConfigurationData.DayOfWeek).Date;
                             }
-                          
+
                             tempDate = tempDate.AddHours(scheduledDate.Hour);
                             tempDate = tempDate.AddMinutes(scheduledDate.Minute);
                             scheduledDate = tempDate;
@@ -154,13 +155,13 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                         if (today.Date.Date >= scheduledDate.Date.AddDays(7).Date)
                         {
                             DateTime tempDate;
-                            if (today.Date.DayOfWeek == (DayOfWeek) schedulingConfigurationData.DayOfWeek)
+                            if (today.Date.DayOfWeek == (DayOfWeek)schedulingConfigurationData.DayOfWeek)
                             {
                                 tempDate = today.Date;
                             }
                             else
                             {
-                                tempDate = today.Previous((DayOfWeek) schedulingConfigurationData.DayOfWeek).Date;
+                                tempDate = today.Previous((DayOfWeek)schedulingConfigurationData.DayOfWeek).Date;
                             }
 
                             tempDate = tempDate.AddHours(scheduledDate.Hour);
@@ -169,7 +170,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                         }
                         else
                         {
-                            scheduledDate = scheduledDate.Next((DayOfWeek) schedulingConfigurationData.DayOfWeek);
+                            scheduledDate = scheduledDate.Next((DayOfWeek)schedulingConfigurationData.DayOfWeek);
                         }
                     }
 
@@ -180,7 +181,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                     scheduledDate = batchLogResponse.ScheduledDate.AddDays(7);
                     if (today.Date > scheduledDate.Date)
                     {
-                        var tempDate = today.Next((DayOfWeek) schedulingConfigurationData.DayOfWeek).AddDays(-7).Date;
+                        var tempDate = today.Next((DayOfWeek)schedulingConfigurationData.DayOfWeek).AddDays(-7).Date;
                         tempDate = tempDate.AddHours(scheduledDate.Hour);
                         tempDate = tempDate.AddMinutes(scheduledDate.Minute);
                         scheduledDate = tempDate;
@@ -189,7 +190,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
 
                 batchLogResponse.ScheduledDate = scheduledDate;
 
-                if (today >= scheduledDate)
+                if (today.UtcToTimeZoneTime(TimezoneNames.GmtStandardTimeZone) >= scheduledDate)
                     return true;
             }
 
