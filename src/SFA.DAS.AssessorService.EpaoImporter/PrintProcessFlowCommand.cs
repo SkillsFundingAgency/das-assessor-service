@@ -75,10 +75,10 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                         {
                             BatchNumber = batchNumber,
                             FileUploadStartTime = DateTime.UtcNow.UtcToTimeZoneTime(),
-                            Period = DateTime.Now.ToString("MMyy"),
-                            BatchCreated = DateTime.Now,
+                            Period = DateTime.UtcNow.UtcToTimeZoneTime().ToString("MMyy"),
+                            BatchCreated = DateTime.UtcNow.UtcToTimeZoneTime(),
                             CertificatesFileName =
-                                $"IFA-Certificate-{DateTime.Now:MMyy}-{batchNumber.ToString().PadLeft(3, '0')}.xlsx"
+                                $"IFA-Certificate-{DateTime.UtcNow.UtcToTimeZoneTime():MMyy}-{batchNumber.ToString().PadLeft(3, '0')}.xlsx"
                         };
 
                         var coverLettersProduced =
