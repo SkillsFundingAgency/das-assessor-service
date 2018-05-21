@@ -78,10 +78,8 @@ namespace SFA.DAS.AssessorService.Data
         }
 
         public async Task UpdateStatuses(UpdateCertificatesBatchToIndicatePrintedRequest updateCertificatesBatchToIndicatePrintedRequest)
-        {
-            var utcNow = DateTime.UtcNow;
-            var gmtNow = utcNow.UtcToTimeZoneTime(TimezoneNames.GmtStandardTimeZone);
-            var toBePrintedDate = gmtNow;
+        {           
+            var toBePrintedDate = DateTime.UtcNow; ;
 
             foreach (var certificateStatus in updateCertificatesBatchToIndicatePrintedRequest.CertificateStatuses)
             {

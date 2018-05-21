@@ -76,9 +76,9 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                         var batchLogRequest = new CreateBatchLogRequest
                         {
                             BatchNumber = batchNumber,
-                            FileUploadStartTime = DateTime.UtcNow.UtcToTimeZoneTime(),
+                            FileUploadStartTime = DateTime.UtcNow,
                             Period = DateTime.UtcNow.UtcToTimeZoneTime().ToString("MMyy"),
-                            BatchCreated = DateTime.UtcNow.UtcToTimeZoneTime(),
+                            BatchCreated = DateTime.UtcNow,
                             CertificatesFileName =
                                 $"IFA-Certificate-{DateTime.UtcNow.UtcToTimeZoneTime():MMyy}-{batchNumber.ToString().PadLeft(3, '0')}.xlsx"
                         };
