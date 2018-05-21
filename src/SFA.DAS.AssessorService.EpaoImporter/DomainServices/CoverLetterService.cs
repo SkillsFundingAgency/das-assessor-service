@@ -4,8 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.EpaoImporter.Const;
 using SFA.DAS.AssessorService.EpaoImporter.Data;
-using SFA.DAS.AssessorService.EpaoImporter.InfrastructureServices;
+using SFA.DAS.AssessorService.EpaoImporter.Extensions;
 using SFA.DAS.AssessorService.EpaoImporter.Interfaces;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
 using SFA.DAS.AssessorService.EpaoImporter.Sftp;
@@ -55,6 +56,9 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             var sequenceNumber = 0;
             var contactOrganisationsAlreadyProceseed = new List<string>();
 
+            var utcNow = DateTime.UtcNow;
+            var gmtNow = utcNow.UtcToTimeZoneTime(TimezoneNames.GmtStandardTimeZone);
+
             foreach (var groupedCertificate in groupedCertificates)
             {
                 if (contactOrganisationsAlreadyProceseed.FirstOrDefault(q => q == groupedCertificate.key1) == null)
@@ -65,7 +69,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                 sequenceNumber++;
 
                 var certificate = groupedCertificate.Result[0];
-                var wordDocumentFileName = $"IFA-Certificate-{DateTime.Now:MMyy}-{batchNumber.ToString().PadLeft(3, '0')}-{certificate.CertificateData.ContactOrganisation}-{sequenceNumber}.docx";
+                var wordDocumentFileName = $"IFA-Certificate-{gmtNow:MMyy}-{batchNumber.ToString().PadLeft(3, '0')}-{certificate.CertificateData.ContactOrganisation}-{sequenceNumber}.docx";
                 coverLettersProduced.CoverLetterFileNames.Add(wordDocumentFileName);
 
                 foreach (var groupCertificateResult in groupedCertificate.Result)
@@ -147,7 +151,9 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             document.Replace("[Addressee Name]", string.IsNullOrEmpty(certificateData.ContactName) ? "" : certificateData.ContactName, false, true);
             document.Replace("[ContactDetails]", contactDetails, false, true);
 
-            document.Replace("[TodaysDate]", DateTime.Now.ToString("dd MMMM yyyy"), false, true);
+            var utcNow = DateTime.UtcNow;
+            var gmtNow = utcNow.UtcToTimeZoneTime(TimezoneNames.GmtStandardTimeZone);
+            document.Replace("[TodaysDate]", gmtNow.ToString("dd MMMM yyyy"), false, true);
 
             document.Replace("[Inset employer name?]", certificateData.ContactName, false, true);
             return document;

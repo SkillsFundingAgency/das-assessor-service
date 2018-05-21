@@ -21,7 +21,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
     {
         private readonly IAggregateLogger _aggregateLogger;
         private readonly ISchedulingConfigurationService _schedulingConfigurationService;
-        private readonly HttpClient _httpClient;      
+        private readonly HttpClient _httpClient;
 
         public AssessorServiceApi(IAggregateLogger aggregateLogger,
             ISchedulingConfigurationService schedulingConfigurationService,
@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
         {
             _aggregateLogger = aggregateLogger;
             _schedulingConfigurationService = schedulingConfigurationService;
-            _httpClient = httpClient;            
+            _httpClient = httpClient;
         }
 
         public async Task<BatchLogResponse> CreateBatchLog(CreateBatchLogRequest createBatchLogRequest)
@@ -60,7 +60,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
 
         public async Task<BatchLogResponse> GetCurrentBatchLog()
         {
-            var schedulingConfiguration = await  _schedulingConfigurationService.GetSchedulingConfiguration();
+            var schedulingConfiguration = await _schedulingConfigurationService.GetSchedulingConfiguration();
             var schedulingConfigurationData = JsonConvert.DeserializeObject<SchedulingConfiguraionData>(schedulingConfiguration.Data);
 
             var response = await _httpClient.GetAsync(
@@ -69,18 +69,18 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
             if (response.StatusCode == HttpStatusCode.NoContent)
             {
                 DateTime nextDate;
-                if (DateTime.Now.DayOfWeek == (DayOfWeek) schedulingConfigurationData.DayOfWeek)
+                if (DateTime.Now.DayOfWeek == (DayOfWeek)schedulingConfigurationData.DayOfWeek)
                 {
-                    nextDate = DateTime.Now.AddDays(-7).Date;
+                    nextDate = DateTime.UtcNow.AddDays(-7).Date;
                 }
                 else
                 {
-                    nextDate = DateTime.Now.Previous(ScheduledDates.GetDayOfWeek(schedulingConfigurationData.DayOfWeek))
+                    nextDate = DateTime.UtcNow.Previous(ScheduledDates.GetDayOfWeek(schedulingConfigurationData.DayOfWeek))
                         .Date;
                 }
 
                 var hourDate = nextDate.AddHours(schedulingConfigurationData.Hour);
-                var scheduledDate = hourDate.AddMinutes(schedulingConfigurationData.Minute);
+                var scheduledDate = hourDate.AddMinutes(schedulingConfigurationData.Minute);             
 
                 return new BatchLogResponse
                 {
