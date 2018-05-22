@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.EpaoImporter.Const;
 using SFA.DAS.AssessorService.EpaoImporter.Extensions;
@@ -48,11 +49,11 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
             var certificates = response.Deserialise<List<CertificateResponse>>();
             if (response.IsSuccessStatusCode)
             {
-                _aggregateLogger.LogInfo($"Geting Certificates to o be printed - Status code returned: {response.StatusCode}. Content: {response.Content.ReadAsStringAsync().Result}");
+                _aggregateLogger.LogInfo($"Getting Certificates to be printed - Status code returned: {response.StatusCode}. Content: {response.Content.ReadAsStringAsync().Result}");
             }
             else
             {
-                _aggregateLogger.LogInfo($"Geting Certificates to o be printed - Status code returned: {response.StatusCode}. Content: {response.Content.ReadAsStringAsync().Result}");
+                _aggregateLogger.LogInfo($"Getting Certificates to be printed - Status code returned: {response.StatusCode}. Content: {response.Content.ReadAsStringAsync().Result}");
             }
 
             return certificates;
@@ -69,13 +70,14 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
             if (response.StatusCode == HttpStatusCode.NoContent)
             {
                 DateTime nextDate;
-                if (DateTime.Now.DayOfWeek == (DayOfWeek)schedulingConfigurationData.DayOfWeek)
+               
+                if (DateTime.UtcNow.UtcToTimeZoneTime().DayOfWeek == (DayOfWeek)schedulingConfigurationData.DayOfWeek)
                 {
-                    nextDate = DateTime.UtcNow.AddDays(-7).Date;
+                    nextDate = DateTime.UtcNow.UtcToTimeZoneTime().AddDays(-7).Date;
                 }
                 else
                 {
-                    nextDate = DateTime.UtcNow.Previous(ScheduledDates.GetDayOfWeek(schedulingConfigurationData.DayOfWeek))
+                    nextDate = DateTime.UtcNow.UtcToTimeZoneTime().Previous(ScheduledDates.GetDayOfWeek(schedulingConfigurationData.DayOfWeek))
                         .Date;
                 }
 
@@ -85,7 +87,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
                 return new BatchLogResponse
                 {
                     BatchNumber = 0,
-                    ScheduledDate = scheduledDate
+                    ScheduledDate = scheduledDate.UtcFromTimeZoneTime()
                 };
             }
 
