@@ -143,8 +143,8 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                                 tempDate = todayLocalDate.Previous((DayOfWeek)schedulingConfigurationData.DayOfWeek).Date;
                             }
 
-                            tempDate = tempDate.AddHours(scheduledLocalDate.Hour);
-                            tempDate = tempDate.AddMinutes(scheduledLocalDate.Minute);
+                            tempDate = tempDate.AddHours(schedulingConfigurationData.Hour);
+                            tempDate = tempDate.AddMinutes(schedulingConfigurationData.Minute);
                             scheduledLocalDate = tempDate;
                         }
                         else
@@ -166,8 +166,8 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                                 tempDate = todayLocalDate.Previous((DayOfWeek)schedulingConfigurationData.DayOfWeek).Date;
                             }
 
-                            tempDate = tempDate.AddHours(scheduledLocalDate.Hour);
-                            tempDate = tempDate.AddMinutes(scheduledLocalDate.Minute);
+                            tempDate = tempDate.AddHours(schedulingConfigurationData.Hour);
+                            tempDate = tempDate.AddMinutes(schedulingConfigurationData.Minute);
                             scheduledLocalDate = tempDate;
                         }
                         else
@@ -184,8 +184,8 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                     if (todayLocalDate.Date > scheduledLocalDate.Date)
                     {
                         var tempDate = todayLocalDate.Next((DayOfWeek)schedulingConfigurationData.DayOfWeek).AddDays(-7).Date;
-                        tempDate = tempDate.AddHours(scheduledLocalDate.Hour);
-                        tempDate = tempDate.AddMinutes(scheduledLocalDate.Minute);
+                        tempDate = tempDate.AddHours(schedulingConfigurationData.Hour);
+                        tempDate = tempDate.AddMinutes(schedulingConfigurationData.Minute);
                         scheduledLocalDate = tempDate;
                     }
                 }          
