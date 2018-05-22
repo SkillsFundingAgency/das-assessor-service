@@ -7,10 +7,8 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.JsonData;
-using SFA.DAS.AssessorService.EpaoImporter.Const;
 using SFA.DAS.AssessorService.EpaoImporter.Data;
 using SFA.DAS.AssessorService.EpaoImporter.DomainServices;
-using SFA.DAS.AssessorService.EpaoImporter.Extensions;
 using SFA.DAS.AssessorService.EpaoImporter.Interfaces;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
 using SFA.DAS.AssessorService.EpaoImporter.Notification;
@@ -91,7 +89,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                         await _notificationService.Send(batchNumber, sanitizedCertificateResponses,
                             coverLettersProduced);
 
-                        batchLogRequest.FileUploadEndTime = DateTime.UtcNow.UtcToTimeZoneTime();
+                        batchLogRequest.FileUploadEndTime = DateTime.UtcNow;
                         batchLogRequest.NumberOfCertificates = coverLettersProduced.CoverLetterCertificates.Count;
                         batchLogRequest.NumberOfCoverLetters = coverLettersProduced.CoverLetterFileNames.Count;
                         batchLogRequest.ScheduledDate = batchLogResponse.ScheduledDate;
@@ -117,82 +115,88 @@ namespace SFA.DAS.AssessorService.EpaoImporter
         {
             if ((await _assessorServiceApi.GetCertificatesToBePrinted()).Any())
             {
+                // Convert everything back to local time to do comparisons....
                 var schedulingConfiguration = await _schedulingConfigurationService.GetSchedulingConfiguration();
                 var schedulingConfigurationData = JsonConvert.DeserializeObject<SchedulingConfiguraionData>(schedulingConfiguration.Data);
 
-                var today = DateTime.UtcNow;
-                var scheduledDate = batchLogResponse.ScheduledDate;
+                var todayLocalDate = DateTime.UtcNow.UtcToTimeZoneTime();
+                var scheduledLocalDate = batchLogResponse.ScheduledDate.UtcToTimeZoneTime();
+
                 // Take care of potential configuration change
-                if (schedulingConfigurationData.Hour != batchLogResponse.ScheduledDate.Hour
-                    || (DayOfWeek)schedulingConfigurationData.DayOfWeek != batchLogResponse.ScheduledDate.DayOfWeek
-                    || schedulingConfigurationData.Minute != batchLogResponse.ScheduledDate.Minute)
+                if (schedulingConfigurationData.Hour != scheduledLocalDate.Hour
+                    || (DayOfWeek)schedulingConfigurationData.DayOfWeek != scheduledLocalDate.DayOfWeek
+                    || schedulingConfigurationData.Minute != scheduledLocalDate.Minute)
                 {
                     _aggregateLogger.LogInfo("Detected change in schedule config ...");
                     var diff = schedulingConfigurationData.DayOfWeek - (int)batchLogResponse.ScheduledDate.DayOfWeek;
                     if (diff >= 0)
                     {
-                        if (today.Date >= scheduledDate.Date.AddDays(7).Date)
+                        if (todayLocalDate.Date >= scheduledLocalDate.Date.AddDays(7).Date)
                         {
                             DateTime tempDate;
-                            if (today.Date.DayOfWeek == (DayOfWeek)schedulingConfigurationData.DayOfWeek)
+                            if (todayLocalDate.Date.DayOfWeek == (DayOfWeek)schedulingConfigurationData.DayOfWeek)
                             {
-                                tempDate = today.Date;
+                                tempDate = todayLocalDate.Date;
                             }
                             else
                             {
-                                tempDate = today.Previous((DayOfWeek)schedulingConfigurationData.DayOfWeek).Date;
+                                tempDate = todayLocalDate.Previous((DayOfWeek)schedulingConfigurationData.DayOfWeek).Date;
                             }
 
-                            tempDate = tempDate.AddHours(scheduledDate.Hour);
-                            tempDate = tempDate.AddMinutes(scheduledDate.Minute);
-                            scheduledDate = tempDate;
+                            tempDate = tempDate.AddHours(scheduledLocalDate.Hour);
+                            tempDate = tempDate.AddMinutes(scheduledLocalDate.Minute);
+                            scheduledLocalDate = tempDate;
                         }
                         else
                         {
-                            scheduledDate = scheduledDate.AddDays(diff);
+                            scheduledLocalDate = scheduledLocalDate.AddDays(diff);
                         }
                     }
                     else
                     {
-                        if (today.Date.Date >= scheduledDate.Date.AddDays(7).Date)
+                        if (todayLocalDate.Date.Date >= scheduledLocalDate.Date.AddDays(7).Date)
                         {
                             DateTime tempDate;
-                            if (today.Date.DayOfWeek == (DayOfWeek)schedulingConfigurationData.DayOfWeek)
+                            if (todayLocalDate.Date.DayOfWeek == (DayOfWeek)schedulingConfigurationData.DayOfWeek)
                             {
-                                tempDate = today.Date;
+                                tempDate = todayLocalDate.Date;
                             }
                             else
                             {
-                                tempDate = today.Previous((DayOfWeek)schedulingConfigurationData.DayOfWeek).Date;
+                                tempDate = todayLocalDate.Previous((DayOfWeek)schedulingConfigurationData.DayOfWeek).Date;
                             }
 
-                            tempDate = tempDate.AddHours(scheduledDate.Hour);
-                            tempDate = tempDate.AddMinutes(scheduledDate.Minute);
-                            scheduledDate = tempDate;
+                            tempDate = tempDate.AddHours(scheduledLocalDate.Hour);
+                            tempDate = tempDate.AddMinutes(scheduledLocalDate.Minute);
+                            scheduledLocalDate = tempDate;
                         }
                         else
                         {
-                            scheduledDate = scheduledDate.Next((DayOfWeek)schedulingConfigurationData.DayOfWeek);
+                            scheduledLocalDate = scheduledLocalDate.Next((DayOfWeek)schedulingConfigurationData.DayOfWeek);
                         }
                     }
 
-                    _aggregateLogger.LogInfo($"Next scheduled date = {scheduledDate}");
+                    _aggregateLogger.LogInfo($"Next scheduled date = {scheduledLocalDate}");
                 }
                 else
                 {
-                    scheduledDate = batchLogResponse.ScheduledDate.AddDays(7);
-                    if (today.Date > scheduledDate.Date)
+                    scheduledLocalDate = scheduledLocalDate.AddDays(7);
+                    if (todayLocalDate.Date > scheduledLocalDate.Date)
                     {
-                        var tempDate = today.Next((DayOfWeek)schedulingConfigurationData.DayOfWeek).AddDays(-7).Date;
-                        tempDate = tempDate.AddHours(scheduledDate.Hour);
-                        tempDate = tempDate.AddMinutes(scheduledDate.Minute);
-                        scheduledDate = tempDate;
+                        var tempDate = todayLocalDate.Next((DayOfWeek)schedulingConfigurationData.DayOfWeek).AddDays(-7).Date;
+                        tempDate = tempDate.AddHours(scheduledLocalDate.Hour);
+                        tempDate = tempDate.AddMinutes(scheduledLocalDate.Minute);
+                        scheduledLocalDate = tempDate;
                     }
-                }
+                }          
 
-                batchLogResponse.ScheduledDate = scheduledDate;
+                batchLogResponse.ScheduledDate = scheduledLocalDate.UtcFromTimeZoneTime();
 
-                if (today.UtcToTimeZoneTime(TimezoneNames.GmtStandardTimeZone) >= scheduledDate)
+                _aggregateLogger.LogInfo($"scheduledLocalDate = {scheduledLocalDate}");
+                _aggregateLogger.LogInfo($"todayLocalDate.Date = {todayLocalDate}");
+                _aggregateLogger.LogInfo($"batchLogResponse.ScheduledDate = {batchLogResponse.ScheduledDate}");
+
+                if (todayLocalDate >= scheduledLocalDate)
                     return true;
             }
 
