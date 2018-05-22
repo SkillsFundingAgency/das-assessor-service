@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.AssessorService.EpaoImporter.Const
+﻿namespace SFA.DAS.AssessorService.Domain.Consts
 {
     public class TimezoneNames
     {

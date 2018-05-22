@@ -1,4 +1,5 @@
 ﻿using System;
+using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.EpaoImporter.Extensions;
 
 namespace SFA.DAS.AssessorService.EpaoImporter.Helpers
