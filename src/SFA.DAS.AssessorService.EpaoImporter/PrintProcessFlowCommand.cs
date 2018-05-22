@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using FluentDateTime;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.EpaoImporter.Const;
 using SFA.DAS.AssessorService.EpaoImporter.Data;
@@ -74,9 +76,9 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                         var batchLogRequest = new CreateBatchLogRequest
                         {
                             BatchNumber = batchNumber,
-                            FileUploadStartTime = DateTime.UtcNow.UtcToTimeZoneTime(),
+                            FileUploadStartTime = DateTime.UtcNow,
                             Period = DateTime.UtcNow.UtcToTimeZoneTime().ToString("MMyy"),
-                            BatchCreated = DateTime.UtcNow.UtcToTimeZoneTime(),
+                            BatchCreated = DateTime.UtcNow,
                             CertificatesFileName =
                                 $"IFA-Certificate-{DateTime.UtcNow.UtcToTimeZoneTime():MMyy}-{batchNumber.ToString().PadLeft(3, '0')}.xlsx"
                         };

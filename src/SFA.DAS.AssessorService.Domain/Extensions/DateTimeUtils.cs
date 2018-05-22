@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SFA.DAS.AssessorService.EpaoImporter.Extensions
+namespace SFA.DAS.AssessorService.Domain.Extensions
 {
     public static class DateTimeUtils
     {
