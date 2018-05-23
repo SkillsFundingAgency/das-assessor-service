@@ -79,7 +79,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task UpdateStatuses(UpdateCertificatesBatchToIndicatePrintedRequest updateCertificatesBatchToIndicatePrintedRequest)
         {           
-            var toBePrintedDate = DateTime.UtcNow; ;
+            var toBePrintedDate = DateTime.UtcNow;
 
             foreach (var certificateStatus in updateCertificatesBatchToIndicatePrintedRequest.CertificateStatuses)
             {
