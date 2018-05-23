@@ -144,6 +144,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.RegisterUpdate
 
         private async Task CreateNewOrganisation(OrganisationSummary epaoSummary)
         {
+            if (string.IsNullOrWhiteSpace(epaoSummary.Id))
+            {
+                _logger.LogInformation($"EPAO with ukprn {epaoSummary.Ukprn} not created as empty EPAOrgId");    
+                return;
+            }
+
             _logger.LogInformation($"EPAO {epaoSummary.Id} not found in Repository");
 
             var epao = _registerApiClient.Get(epaoSummary.Id);
