@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SFA.DAS.AssessorService.Application.Interfaces;
@@ -20,6 +21,9 @@ namespace SFA.DAS.AssessorService.Data
             var batchLog = await _assessorDbContext.BatchLogs
                 .OrderByDescending(q => q.BatchCreated)
                 .FirstOrDefaultAsync();
+
+            if (batchLog.ScheduledDate.Month != DateTime.Now.Month)
+                batchLog.BatchNumber = 0;
 
             return batchLog;
         }
