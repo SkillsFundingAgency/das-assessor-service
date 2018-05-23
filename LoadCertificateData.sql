@@ -6,7 +6,6 @@
 -- In Excel:
 -- Open certificates xls.
 -- Remove Columns: 
---    Provider Name
 --    Awarding Org
 --    Employer Reference Number
 --    Date of Birth
@@ -18,7 +17,7 @@
 -- Remove blank rows
 -- Upload csv to blob storage.
 
--- Replace Blob Storage Location (including container) & SAS Secret below
+-- Replace Blob Storage Location (including container) & SAS Secret below  (Ensure SAS Secret does not include leading '?')
 -- Run script.
 -- With current data, it should finish with:
 --(1668 row(s) affected)
@@ -30,7 +29,7 @@ CREATE MASTER KEY ENCRYPTION BY PASSWORD = 'Baldy N3rd Face';
 ---- Create a database scoped credential with Azure storage account key as the secret.
 CREATE DATABASE SCOPED CREDENTIAL BlobCredential 
 WITH IDENTITY = 'SHARED ACCESS SIGNATURE', 
-SECRET = '[[Put your SAS Signature here]]';
+SECRET = 'sv=2017-07-29&ss=bfqt&srt=sco&sp=rwdlacup&se=2018-05-23T16:59:08Z&st=2018-05-23T08:59:08Z&spr=https&sig=rKoFdgab4dzyDRGVTONrKbWLbMOViuhzYGzMb7Ctr5Y%3D';
 
 ---- Create an external data source with CREDENTIAL option.
 CREATE EXTERNAL DATA SOURCE BlobStorage WITH (
@@ -44,6 +43,7 @@ CREATE TABLE [dbo].[CertificateImport](
 	[Return] [int] NULL,
 	[Source] [nvarchar](10) NULL,
 	[ID] [nvarchar](50) NULL,
+	[ProviderName] [nvarchar](100) NULL,
 	[UKPRN] [bigint] NULL,
 	[EpaUln] [nvarchar](50) NULL,
 	[EmployerName] [nvarchar](200) NULL,
@@ -79,10 +79,10 @@ BEGIN
 
 	-- Add the T-SQL statements to compute the return value here
 	SELECT @Json = (SELECT TOP (1) 
-		i.GivenNames AS LearnerGivenNames,
-		i.FamilyName AS LearnerFamilyName,	
+		TRIM(ISNULL(i.GivenNames, REPLACE(ci.FullName, SUBSTRING(ci.FullName, LEN(ci.FullName) - CHARINDEX(' ',REVERSE(ci.FullName)) + 2, LEN(ci.FullName)), ''))) AS LearnerGivenNames,
+		TRIM(ISNULL(i.FamilyName,SUBSTRING(ci.FullName, LEN(ci.FullName) - CHARINDEX(' ',REVERSE(ci.FullName)) + 2, LEN(ci.FullName)))) AS LearnerFamilyName,	
 		ci.StandardName AS StandardName,
-		ci.Level AS StandardLevel,
+		SUBSTRING(ci.Level,7,1) AS StandardLevel,
 		CAST(ci.PublicationDate AS datetime2) AS StandardPublicationDate,
 		ci.EmployerContact AS ContactName,
 		ci.EmployerName AS ContactOrganisation,
@@ -95,8 +95,10 @@ BEGIN
 		CAST(ci.LearningStartDate AS datetime2) AS LearningStartDate,
 		CAST(ci.AchievementDate AS datetime2) AS AchievementDate,
 		ci.[Option] AS CourseOption,
-		ci.OverallGrade AS OverallGrade,
-		null AS Department
+		CASE WHEN ci.OverallGrade = 'NOT APPLICABLE' THEN 'No grade awarded' ELSE ci.OverallGrade END AS OverallGrade,
+		null AS Department,
+		ci.FullName as FullName,
+		ISNULL(ci.ProviderName, '') as ProviderName
 	FROM CertificateImport ci 
 	LEFT OUTER JOIN Ilrs i ON i.Uln = ci.Uln
 	WHERE ci.Id = @CertificateId FOR JSON PATH, INCLUDE_NULL_VALUES, WITHOUT_ARRAY_WRAPPER)
@@ -118,7 +120,7 @@ SELECT
 	GETDATE() AS ToBePrinted, 
 	ci.ID AS CertificateReferenceId,
 	ci.ID AS CertificateReference,
-	ci.UkPrn AS ProviderUkPrn,
+	ISNULL(ci.UkPrn, 0) AS ProviderUkPrn,
 	o.Id AS OrganisationId,
 	ci.Uln AS Uln,
 	ci.StandardCode AS StandardCode,
@@ -128,7 +130,7 @@ SELECT
 	dbo.GetCertificateDataJson(ci.ID) AS CertificateData
 FROM CertificateImport ci
 INNER JOIN Organisations o ON o.EndPointAssessorOrganisationId = ci.EpaUln
-WHERE ci.Source = 'ILR'
+WHERE ci.Uln != 9999999999
 AND NOT EXISTS (SELECT null FROM Certificates ce WHERE ce.CertificateReference = ci.ID)
 
 SET IDENTITY_INSERT Certificates OFF
@@ -137,5 +139,5 @@ DROP FUNCTION GetCertificateDataJson
 DROP TABLE CertificateImport
 
 DROP EXTERNAL DATA SOURCE BlobStorage
-DROP DATABASE SCOPED  CREDENTIAL BlobCredential 
+DROP DATABASE SCOPED CREDENTIAL BlobCredential 
 DROP MASTER KEY
