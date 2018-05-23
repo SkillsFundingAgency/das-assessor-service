@@ -37,6 +37,9 @@
             "type": "Microsoft.Insights/components",
             "location": "[resourceGroup().location]",
             "kind": "web",
+            "tags": {
+                "[concat('hidden-link:', resourceId('Microsoft.Web/sites', parameters('appServiceName')))]": "Resource"
+            },
             "properties": {
                 "Application_Type": "web"
             }
@@ -49,7 +52,7 @@
             "properties": {
                 "serverFarmId": "[parameters('appServicePlanId')]",
                 "clientAffinityEnabled": false,
-                "siteConfig": {                   
+                "siteConfig": {
                     "alwaysOn": true,
                     "appSettings": [
                         {
