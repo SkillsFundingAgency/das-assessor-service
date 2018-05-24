@@ -98,6 +98,7 @@
                 if (item.Next == 'Retrieve') {
                     //retrieve the address
                     retrieveAddress(item.Id);
+                    searchContext = '';
                 } else {
                     var field = $(this);
                     searchContext = item.Id;
@@ -115,6 +116,7 @@
                             field.autocomplete('search', item.Id);
                         });
                     }
+
                 }
             },
             focus: function(event, ui) {
