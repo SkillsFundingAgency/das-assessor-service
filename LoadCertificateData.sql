@@ -27,6 +27,8 @@
 -- Update existing Certificate Records with FullName and a placeholder for ProviderName
 UPDATE Certificates SET CertificateData = JSON_MODIFY(JSON_MODIFY(CertificateData, '$.ProviderName', ''), '$.FullName', JSON_VALUE(CertificateData, '$.LearnerGivenNames') + ' ' + JSON_VALUE(CertificateData, '$.LearnerFamilyName'))
 
+-- Update existing StandardLevel to remove the word "Level"
+UPDATE Certificates SET CertificateData = JSON_MODIFY(CertificateData, '$.StandardLevel', SUBSTRING(JSON_VALUE(CertificateData, '$.StandardLevel'), 7, 1))
 
 -- Create a database master key if one does not already exist, using your own password. This key is used to encrypt the credential secret in next step.
 CREATE MASTER KEY ENCRYPTION BY PASSWORD = 'Baldy N3rd Face';
