@@ -129,7 +129,7 @@ UPDATE       Certificates
 SET                DeletedAt = GETDATE(), DeletedBy = 'Removed From Register', Status = 'Deleted'
 FROM            Certificates cert LEFT OUTER JOIN
                          CertificateImport AS imp ON cert.CertificateReference = imp.ID
-WHERE        (imp.ID IS NULL) AND cert.Status != 'Deleted'
+WHERE        (imp.ID IS NULL) AND cert.Status != 'Deleted' AND cert.CreatedBy = 'Manual'
 
 SET IDENTITY_INSERT Certificates ON
 
