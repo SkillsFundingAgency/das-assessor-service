@@ -25,5 +25,10 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Sftp
         { 
             _logger.LogInfo("Sending file - {fileName} through sftp");
         }
+
+        public Task LogUploadDirectory()
+        {
+            return Task.CompletedTask;
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using Renci.SshNet;
 using Renci.SshNet.Async;
@@ -39,6 +40,22 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Sftp
             await _sftpClient.UploadAsync(memoryStream, $"{_webConfiguration.Sftp.UploadDirectory}/{fileName}");
 
             await ValidateUpload(fileName, memoryStream.Length);
+
+            _sftpClient.Disconnect();
+        }
+
+        public async Task LogUploadDirectory()
+        {
+            _sftpClient.Connect();
+
+            var fileList = await _sftpClient.ListDirectoryAsync($"{_webConfiguration.Sftp.UploadDirectory}");
+            var fileDetails = new StringBuilder();
+            foreach (var file in fileList)
+            {                
+                fileDetails.Append(file + "\r\n");
+            }
+            if(fileDetails.Length > 0)
+                _aggregateLogger.LogInfo($"Uploaded Files to {_webConfiguration.Sftp.UploadDirectory} Contains\r\n{fileDetails}");
 
             _sftpClient.Disconnect();
         }
