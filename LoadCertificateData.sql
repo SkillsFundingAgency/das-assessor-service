@@ -24,7 +24,9 @@
 --(1170 row(s) affected)
 
 -- Update existing StandardLevel to remove the word "Level"
-UPDATE Certificates SET CertificateData = JSON_MODIFY(CertificateData, '$.StandardLevel', SUBSTRING(JSON_VALUE(CertificateData, '$.StandardLevel'), 7, 1)) WHERE CreatedBy = 'Manual'
+UPDATE Certificates 
+	SET CertificateData = JSON_MODIFY(CertificateData, '$.StandardLevel', SUBSTRING(JSON_VALUE(CertificateData, '$.StandardLevel'), 7, 1)) 
+	WHERE CreatedBy = 'Manual' AND JSON_VALUE(CertificateData, '$.StandardLevel') LIKE '%LEVEL%'
 
 -- Create a database master key if one does not already exist, using your own password. This key is used to encrypt the credential secret in next step.
 CREATE MASTER KEY ENCRYPTION BY PASSWORD = 'Baldy N3rd Face';
