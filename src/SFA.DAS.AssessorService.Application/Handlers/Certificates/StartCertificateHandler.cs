@@ -41,8 +41,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
         private async Task<Certificate> CreateNewCertificate(StartCertificateRequest request)
         {
+            _logger.LogInformation("CreateNewCertificate Before Get Ilr from db");
             var ilr = await _ilrRepository.Get(request.Uln, request.StandardCode);
+            _logger.LogInformation("CreateNewCertificate Before Get Organisation from db");
             var organisation = await _organisationQueryRepository.GetByUkPrn(request.UkPrn);
+            _logger.LogInformation("CreateNewCertificate Before Get Standard from API");
             var standard = await _assessmentOrgsApiClient.GetStandard(ilr.StdCode);
             var certData = new CertificateData()
             {
@@ -54,7 +57,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                 StandardPublicationDate = standard.EffectiveFrom,
                 FullName = $"{ilr.GivenNames} {ilr.FamilyName}"
             };
-
+            
+            _logger.LogInformation("CreateNewCertificate Before create new Certificate");
             var newCertificate = await _certificateRepository.New(
                 new Certificate()
                 {
@@ -69,7 +73,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                 });
 
             newCertificate.CertificateReference = newCertificate.CertificateReferenceId.ToString().PadLeft(8,'0');
-
+            
+            _logger.LogInformation("CreateNewCertificate Before Update Cert in db");
             await _certificateRepository.Update(newCertificate, request.Username);
 
             _logger.LogInformation(LoggingConstants.CertificateStarted);
