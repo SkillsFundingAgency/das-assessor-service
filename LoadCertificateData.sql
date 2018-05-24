@@ -23,10 +23,6 @@
 --(1668 row(s) affected)
 --(1170 row(s) affected)
 
-
--- Update existing Certificate Records with FullName and a placeholder for ProviderName
-UPDATE Certificates SET CertificateData = JSON_MODIFY(JSON_MODIFY(CertificateData, '$.ProviderName', ''), '$.FullName', JSON_VALUE(CertificateData, '$.LearnerGivenNames') + ' ' + JSON_VALUE(CertificateData, '$.LearnerFamilyName'))
-
 -- Update existing StandardLevel to remove the word "Level"
 UPDATE Certificates SET CertificateData = JSON_MODIFY(CertificateData, '$.StandardLevel', SUBSTRING(JSON_VALUE(CertificateData, '$.StandardLevel'), 7, 1)) WHERE CreatedBy = 'Manual'
 
@@ -36,7 +32,7 @@ CREATE MASTER KEY ENCRYPTION BY PASSWORD = 'Baldy N3rd Face';
 ---- Create a database scoped credential with Azure storage account key as the secret.
 CREATE DATABASE SCOPED CREDENTIAL BlobCredential 
 WITH IDENTITY = 'SHARED ACCESS SIGNATURE', 
-SECRET = '';
+SECRET = 'sv=2017-07-29&ss=bfqt&srt=sco&sp=rwdlacup&se=2018-05-24T15:18:31Z&st=2018-05-24T07:18:31Z&spr=https&sig=tMpYxCReRrwdLxiagOWPiRxiYgn3oU7yTgGTodyGH8Y%3D';
 
 ---- Create an external data source with CREDENTIAL option.
 CREATE EXTERNAL DATA SOURCE BlobStorage WITH (
@@ -119,6 +115,14 @@ BULK INSERT CertificateImport
 FROM 'certs.csv'
 WITH (DATA_SOURCE = 'BlobStorage', FORMAT = 'CSV', FIRSTROW= 2)
 
+-- Update existing Certificate Records with FullName and ProviderName
+UPDATE       Certificates
+SET                CertificateData = JSON_MODIFY(JSON_MODIFY(CertificateData, '$.ProviderName', imp.ProviderName), '$.FullName', imp.FullName)
+FROM            Certificates INNER JOIN
+                         CertificateImport AS imp ON imp.ID = Certificates.CertificateReference
+WHERE        (Certificates.CreatedBy = 'Manual')
+
+
 SET IDENTITY_INSERT Certificates ON
 
 INSERT INTO Certificates (CreatedAt, ToBePrinted, CertificateReferenceId, CertificateReference, ProviderUkPrn, OrganisationId, Uln, StandardCode, BatchNumber, Status, CreatedBy, CertificateData)
@@ -143,7 +147,7 @@ AND NOT EXISTS (SELECT null FROM Certificates ce WHERE ce.CertificateReference =
 SET IDENTITY_INSERT Certificates OFF
 
 DROP FUNCTION GetCertificateDataJson
-DROP TABLE CertificateImport
+--DROP TABLE CertificateImport
 
 DROP EXTERNAL DATA SOURCE BlobStorage
 DROP DATABASE SCOPED CREDENTIAL BlobCredential 
