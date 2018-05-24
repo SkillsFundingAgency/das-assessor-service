@@ -16,6 +16,7 @@ using SFA.DAS.AssessorService.EpaoImporter.DomainServices;
 using SFA.DAS.AssessorService.EpaoImporter.Interfaces;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
 using SFA.DAS.AssessorService.EpaoImporter.Notification;
+using SFA.DAS.AssessorService.EpaoImporter.Sftp;
 
 namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests
 {
@@ -30,6 +31,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests
         private Mock<ISanitiserService> _sanitizerServiceMock;
         private Mock<ISchedulingConfigurationService> _schedulingConfigurationServiceMock;
         private Mock<IDateTimeZoneInformation> _dateTimeZoneInformationMock;
+        private Mock<IFileTransferClient> _fileTransferClient;
 
         [SetUp]
         public void Arrange()
@@ -42,6 +44,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests
             _sanitizerServiceMock = new Mock<ISanitiserService>();
             _schedulingConfigurationServiceMock = new Mock<ISchedulingConfigurationService>();
             _dateTimeZoneInformationMock = new Mock<IDateTimeZoneInformation>();
+            _fileTransferClient = new Mock<IFileTransferClient>();
 
             _printProcessFlowCommand = new PrintProcessFlowCommand(
                 _aggregateLogger.Object,
@@ -51,7 +54,8 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests
                 _assessorServiceApi.Object,
                 _notificationService.Object,
                 _schedulingConfigurationServiceMock.Object,
-                _dateTimeZoneInformationMock.Object
+                _dateTimeZoneInformationMock.Object,
+                _fileTransferClient.Object
                 );
 
             var certificateResponses = Builder<CertificateResponse>.CreateListOfSize(10).Build();

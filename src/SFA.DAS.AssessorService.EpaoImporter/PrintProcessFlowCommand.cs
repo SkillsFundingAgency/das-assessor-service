@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using FluentDateTime;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.EpaoImporter.Data;
@@ -12,6 +11,7 @@ using SFA.DAS.AssessorService.EpaoImporter.DomainServices;
 using SFA.DAS.AssessorService.EpaoImporter.Interfaces;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
 using SFA.DAS.AssessorService.EpaoImporter.Notification;
+using SFA.DAS.AssessorService.EpaoImporter.Sftp;
 
 namespace SFA.DAS.AssessorService.EpaoImporter
 {
@@ -25,6 +25,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
         private readonly INotificationService _notificationService;
         private readonly ISchedulingConfigurationService _schedulingConfigurationService;
         private readonly IDateTimeZoneInformation _dateTimeZoneInformation;
+        private readonly IFileTransferClient _fileTransferClient;
 
         public PrintProcessFlowCommand(IAggregateLogger aggregateLogger,
             ISanitiserService sanitiserService,
@@ -33,7 +34,8 @@ namespace SFA.DAS.AssessorService.EpaoImporter
             IAssessorServiceApi assessorServiceApi,
             INotificationService notificationService,
             ISchedulingConfigurationService schedulingConfigurationService,
-            IDateTimeZoneInformation dateTimeZoneInformation)
+            IDateTimeZoneInformation dateTimeZoneInformation,
+            IFileTransferClient fileTransferClient)
         {
             _aggregateLogger = aggregateLogger;
             _sanitiserService = sanitiserService;
@@ -43,6 +45,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
             _notificationService = notificationService;
             _schedulingConfigurationService = schedulingConfigurationService;
             _dateTimeZoneInformation = dateTimeZoneInformation;
+            _fileTransferClient = fileTransferClient;
         }
 
         public async Task Execute()
@@ -93,6 +96,8 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                         batchLogRequest.NumberOfCertificates = coverLettersProduced.CoverLetterCertificates.Count;
                         batchLogRequest.NumberOfCoverLetters = coverLettersProduced.CoverLetterFileNames.Count;
                         batchLogRequest.ScheduledDate = batchLogResponse.ScheduledDate;
+
+                        await _fileTransferClient.LogUploadDirectory();
 
                         await _assessorServiceApi.CreateBatchLog(batchLogRequest);
 

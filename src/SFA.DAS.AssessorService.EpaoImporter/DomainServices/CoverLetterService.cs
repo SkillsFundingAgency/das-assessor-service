@@ -86,7 +86,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                 await _fileTransferClient.Send(wordStream, wordDocumentFileName);
 
                 wordStream.Close();
-            }
+            }         
 
             documentTemplateDataStream.Close();
 
