@@ -37,8 +37,10 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Sftp
 
             memoryStream.Position = 0; // ensure memory stream is set to begining of stream          
 
+            _aggregateLogger.LogInfo($"Uploading file ... {_webConfiguration.Sftp.UploadDirectory}/{fileName}");
             await _sftpClient.UploadAsync(memoryStream, $"{_webConfiguration.Sftp.UploadDirectory}/{fileName}");
 
+            _aggregateLogger.LogInfo($"Validating Upload length of file ... {_webConfiguration.Sftp.UploadDirectory}/{fileName} = {memoryStream.Length}");
             await ValidateUpload(fileName, memoryStream.Length);
 
             _sftpClient.Disconnect();
