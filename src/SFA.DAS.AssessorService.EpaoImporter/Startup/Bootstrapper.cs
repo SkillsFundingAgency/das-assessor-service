@@ -16,37 +16,45 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Startup
     public class Bootstrapper
     {
         private IAggregateLogger _logger;
+        private static readonly Object _lock = new Object();
 
         public void StartUp(string source, TraceWriter functionLogger, ExecutionContext context)
         {
-            _logger = new AggregateLogger(source, functionLogger, context);
-
-            var configuration = ConfigurationHelper.GetConfiguration();
-            _logger.LogInfo("Config Received");
-
-            Container = new Container(configure =>
-            { 
-                configure.Scan(x =>
+            lock (_lock)
+            {
+                if (Container == null)
                 {
-                    x.TheCallingAssembly();
-                    x.WithDefaultConventions();
-                });
+                    _logger = new AggregateLogger(source, functionLogger, context);
 
-                configure.For<IAggregateLogger>().Use(_logger).Singleton();
-                configure.For<IWebConfiguration>().Use(configuration).Singleton();
+                    var configuration = ConfigurationHelper.GetConfiguration();
+                    _logger.LogInfo("Config Received");
 
-                configure.For<IFileTransferClient>().Use<FileTransferClient>();
-                configure.For<IAssessorServiceApi>().Use<AssessorServiceApi>().Singleton();
-                configure.For<INotificationService>().Use<NotificationService>();
-                configure.For<SftpClient>().Use<SftpClient>("SftpClient",
-                    c => new SftpClient(configuration.Sftp.RemoteHost, Convert.ToInt32(configuration.Sftp.Port), configuration.Sftp.Username, configuration.Sftp.Password));              
-                configure.AddRegistry<NotificationsRegistry>();
-                configure.AddRegistry<HttpRegistry>();
-            });
+                    Container = new Container(configure =>
+                    {
+                        configure.Scan(x =>
+                        {
+                            x.TheCallingAssembly();
+                            x.WithDefaultConventions();
+                        });
 
-            var language = "en-GB";
-            System.Threading.Thread.CurrentThread.CurrentCulture =
-                new System.Globalization.CultureInfo(language);
+                        configure.For<IAggregateLogger>().Use(_logger).Singleton();
+                        configure.For<IWebConfiguration>().Use(configuration).Singleton();
+
+                        configure.For<IFileTransferClient>().Use<FileTransferClient>();
+                        configure.For<IAssessorServiceApi>().Use<AssessorServiceApi>().Singleton();
+                        configure.For<INotificationService>().Use<NotificationService>();
+                        configure.For<SftpClient>().Use<SftpClient>("SftpClient",
+                            c => new SftpClient(configuration.Sftp.RemoteHost, Convert.ToInt32(configuration.Sftp.Port),
+                                configuration.Sftp.Username, configuration.Sftp.Password));
+                        configure.AddRegistry<NotificationsRegistry>();
+                        configure.AddRegistry<HttpRegistry>();
+                    });
+
+                    var language = "en-GB";
+                    System.Threading.Thread.CurrentThread.CurrentCulture =
+                        new System.Globalization.CultureInfo(language);
+                }
+            }
         }
 
         public static Container Container { get; private set; }
