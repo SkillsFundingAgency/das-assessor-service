@@ -2,6 +2,7 @@
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
 using Renci.SshNet;
+using SFA.DAS.AssessorService.EpaoImporter.Const;
 using SFA.DAS.AssessorService.EpaoImporter.Data;
 using SFA.DAS.AssessorService.EpaoImporter.InfrastructureServices;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
@@ -16,15 +17,17 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Startup
     public class Bootstrapper
     {
         private IAggregateLogger _logger;
+        private IEaoImporterLogger _eaoImporterLogger;
         private static readonly Object _lock = new Object();
 
-        public void StartUp(string source, TraceWriter functionLogger, ExecutionContext context)
+        public void StartUp(TraceWriter functionLogger, ExecutionContext context)
         {
             lock (_lock)
             {
                 if (Container == null)
                 {
-                    _logger = new AggregateLogger(source, functionLogger, context);
+                    _logger = new AggregateLogger(FunctionName.PrintProcessFlow, functionLogger, context);
+                    _eaoImporterLogger = new AggregateLogger(FunctionName.EpaoImporter, functionLogger, context);
 
                     var configuration = ConfigurationHelper.GetConfiguration();
                     _logger.LogInfo("Config Received");
@@ -38,6 +41,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Startup
                         });
 
                         configure.For<IAggregateLogger>().Use(_logger).Singleton();
+                        configure.For<IEaoImporterLogger>().Use(_eaoImporterLogger).Singleton();
                         configure.For<IWebConfiguration>().Use(configuration).Singleton();
 
                         configure.For<IFileTransferClient>().Use<FileTransferClient>();
