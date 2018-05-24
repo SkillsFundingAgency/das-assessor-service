@@ -22,6 +22,15 @@ namespace SFA.DAS.AssessorService.Data
                 .OrderByDescending(q => q.BatchCreated)
                 .FirstOrDefaultAsync();
 
+            if (batchLog == null)
+            {
+                batchLog = new BatchLog
+                {
+                    BatchNumber = 0
+                };
+                return batchLog;
+            }
+
             if (batchLog.ScheduledDate.Month != DateTime.Now.Month)
                 batchLog.BatchNumber = 0;
 
