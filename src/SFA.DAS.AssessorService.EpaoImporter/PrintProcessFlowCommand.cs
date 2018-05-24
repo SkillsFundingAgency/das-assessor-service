@@ -52,7 +52,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
         {
             try
             {
-                _aggregateLogger.LogInfo("Function Started");
+                _aggregateLogger.LogInfo("Print Pocess Flow Function Started");
                 _aggregateLogger.LogInfo("Print Function Flow Started");
 
                 _aggregateLogger.LogInfo("Accessing Environment variables");

@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
         {
             try
             {
-                _aggregateLogger.LogInfo("Function Started");
+                _aggregateLogger.LogInfo("EAO Importer Function Started");
 
                 var webConfig = ConfigurationHelper.GetConfiguration();
 
