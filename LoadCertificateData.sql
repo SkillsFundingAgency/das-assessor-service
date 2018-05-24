@@ -124,6 +124,12 @@ FROM            Certificates INNER JOIN
                          CertificateImport AS imp ON imp.ID = Certificates.CertificateReference
 WHERE        (Certificates.CreatedBy = 'Manual')
 
+-- 'Delete' any Certificate records that are now missing from the import
+UPDATE       Certificates
+SET                DeletedAt = GETDATE(), DeletedBy = 'Removed From Register', Status = 'Deleted'
+FROM            Certificates cert LEFT OUTER JOIN
+                         CertificateImport AS imp ON cert.CertificateReference = imp.ID
+WHERE        (imp.ID IS NULL) AND cert.Status != 'Deleted'
 
 SET IDENTITY_INSERT Certificates ON
 
