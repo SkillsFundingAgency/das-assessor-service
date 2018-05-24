@@ -92,8 +92,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             _logger.LogInformation(ilrResults.Any() ? LoggingConstants.SearchSuccess : LoggingConstants.SearchFailure);
 
             var searchResults = Mapper.Map<List<SearchResult>>(ilrResults)
-                .MatchUpExistingCompletedStandards(request, _certificateRepository)
-                .PopulateStandards(_assessmentOrgsApiClient);
+                .MatchUpExistingCompletedStandards(request, _certificateRepository, _logger)
+                .PopulateStandards(_assessmentOrgsApiClient, _logger);
 
             return searchResults;
         }
