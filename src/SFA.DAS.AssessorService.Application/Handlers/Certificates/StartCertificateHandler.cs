@@ -54,7 +54,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                 StandardName = standard.Title,
                 LearningStartDate = ilr.LearnStartDate, 
                 StandardLevel = standard.Level,
-                StandardPublicationDate = standard.EffectiveFrom
+                StandardPublicationDate = standard.EffectiveFrom,
+                FullName = $"{ilr.GivenNames} {ilr.FamilyName}"
             };
             
             _logger.LogInformation("CreateNewCertificate Before create new Certificate");
