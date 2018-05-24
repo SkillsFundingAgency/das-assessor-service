@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using Renci.SshNet;
 using Renci.SshNet.Async;
@@ -36,7 +37,21 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Sftp
             memoryStream.Position = 0; // ensure memory stream is set to begining of stream          
 
             await _sftpClient.UploadAsync(memoryStream, $"{_webConfiguration.Sftp.UploadDirectory}/{fileName}");
+
+            await ValidateUpload(fileName, memoryStream.Length);
+
             _sftpClient.Disconnect();
+        }
+
+        private async Task ValidateUpload(string fileName, long length)
+        {
+            var memoryStreamBack = new MemoryStream();
+            await _sftpClient.DownloadAsync($"{_webConfiguration.Sftp.UploadDirectory}/{fileName}", memoryStreamBack);
+            memoryStreamBack.Position = 0;
+
+            if(memoryStreamBack.Length != length)
+                 throw new ApplicationException($"There has been  problem with the sftp file transfer with file name {_webConfiguration.Sftp.UploadDirectory}/{fileName}");
         }
     }
 }
+    
