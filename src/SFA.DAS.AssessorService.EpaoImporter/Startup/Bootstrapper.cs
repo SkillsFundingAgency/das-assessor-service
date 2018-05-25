@@ -16,49 +16,45 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Startup
 {
     public class Bootstrapper
     {
-        private IAggregateLogger _logger;
-        private IEaoImporterLogger _eaoImporterLogger;
+        private IAggregateLogger _logger;      
         private static readonly Object _lock = new Object();
 
         public void StartUp(TraceWriter functionLogger, ExecutionContext context)
         {
-            lock (_lock)
+
+            _logger = new AggregateLogger(FunctionName.PrintProcessFlow, functionLogger, context);          
+
+            var configuration = ConfigurationHelper.GetConfiguration();
+
+            _logger.LogInfo("Initialising bootstrapper ....");
+            _logger.LogInfo("Config Received");
+
+            Container = new Container(configure =>
             {
-                if (Container == null)
+                configure.Scan(x =>
                 {
-                    _logger = new AggregateLogger(FunctionName.PrintProcessFlow, functionLogger, context);
-                    _eaoImporterLogger = new AggregateLogger(FunctionName.EpaoImporter, functionLogger, context);
+                    x.TheCallingAssembly();
+                    x.WithDefaultConventions();
+                });
 
-                    var configuration = ConfigurationHelper.GetConfiguration();
-                    _logger.LogInfo("Config Received");
+                configure.For<IAggregateLogger>().Use(_logger).Singleton();               
+                configure.For<IWebConfiguration>().Use(configuration).Singleton();
 
-                    Container = new Container(configure =>
-                    {
-                        configure.Scan(x =>
-                        {
-                            x.TheCallingAssembly();
-                            x.WithDefaultConventions();
-                        });
+                configure.For<IFileTransferClient>().Use<FileTransferClient>();
+                configure.For<IAssessorServiceApi>().Use<AssessorServiceApi>().Singleton();
+                configure.For<INotificationService>().Use<NotificationService>();
+                configure.For<SftpClient>().Use<SftpClient>("SftpClient",
+                    c => new SftpClient(configuration.Sftp.RemoteHost, Convert.ToInt32(configuration.Sftp.Port),
+                        configuration.Sftp.Username, configuration.Sftp.Password));
+                configure.AddRegistry<NotificationsRegistry>();
 
-                        configure.For<IAggregateLogger>().Use(_logger).Singleton();
-                        configure.For<IEaoImporterLogger>().Use(_eaoImporterLogger).Singleton();
-                        configure.For<IWebConfiguration>().Use(configuration).Singleton();
+                _logger.LogInfo("Calling http registry and getting the token ....");
+                configure.AddRegistry<HttpRegistry>();
+            });
 
-                        configure.For<IFileTransferClient>().Use<FileTransferClient>();
-                        configure.For<IAssessorServiceApi>().Use<AssessorServiceApi>().Singleton();
-                        configure.For<INotificationService>().Use<NotificationService>();
-                        configure.For<SftpClient>().Use<SftpClient>("SftpClient",
-                            c => new SftpClient(configuration.Sftp.RemoteHost, Convert.ToInt32(configuration.Sftp.Port),
-                                configuration.Sftp.Username, configuration.Sftp.Password));
-                        configure.AddRegistry<NotificationsRegistry>();
-                        configure.AddRegistry<HttpRegistry>();
-                    });
-
-                    var language = "en-GB";
-                    System.Threading.Thread.CurrentThread.CurrentCulture =
-                        new System.Globalization.CultureInfo(language);
-                }
-            }
+            var language = "en-GB";
+            System.Threading.Thread.CurrentThread.CurrentCulture =
+                new System.Globalization.CultureInfo(language);
         }
 
         public static Container Container { get; private set; }
