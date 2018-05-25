@@ -7,7 +7,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
     public static class EpaoImporterFunction
     {
         [FunctionName("EpaoImporterFunction")]
-        public static void Run([TimerTrigger("0 15 * * * *")] TimerInfo myTimer, TraceWriter functionLogger,
+        public static void Run([TimerTrigger("0 15 * * * *"), Disable()] TimerInfo myTimer, TraceWriter functionLogger,
             ExecutionContext context)
         {
             new Bootstrapper().StartUp(functionLogger, context);
