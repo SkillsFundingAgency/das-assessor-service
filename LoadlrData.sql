@@ -20,7 +20,7 @@ CREATE MASTER KEY ENCRYPTION BY PASSWORD = 'Baldy N3rd Face';
 ---- Create a database scoped credential with Azure storage account key as the secret.
 CREATE DATABASE SCOPED CREDENTIAL BlobCredential 
 WITH IDENTITY = 'SHARED ACCESS SIGNATURE', 
-SECRET = 'sv=2017-07-29&ss=bfqt&srt=sco&sp=r&se=2018-04-30T16:25:09Z&st=2018-04-26T08:25:09Z&spr=https&sig=gAxvJPMRYsosb3MN0S4u%2F3UuhZ7nR%2FqK16eYsjkGGdM%3D';
+SECRET = '';
 
 ---- Create an external data source with CREDENTIAL option.
 CREATE EXTERNAL DATA SOURCE BlobStorage WITH (
@@ -47,15 +47,17 @@ BULK INSERT LearnerImport
 FROM 'learners.csv'
 WITH (DATA_SOURCE = 'BlobStorage', FORMAT = 'CSV', FIRSTROW= 2)
 
-TRUNCATE TABLE Ilrs
-
 INSERT INTO Ilrs (CreatedAt, ULN, LearnRefNumber, GivenNames, FamilyName, UKPRN, StdCode, LearnStartDate, EPAOrgID, FundingModel, ApprenticeshipId, EmployerAccountId)
 SELECT 
 	GETDATE() AS CreatedAt, 
-	ULN, LearnRefNumber, GivenNames, FamilyName, UKPRN, StdCode, LearnStartDate, EPAOrgID, FundingModel, ApprenticeshipId, 0 AS EmployerAccountId
-FROM LearnerImport 
+	li.ULN, li.LearnRefNumber, li.GivenNames, li.FamilyName, li.UKPRN, li.StdCode, li.LearnStartDate, li.EPAOrgID, li.FundingModel, li.ApprenticeshipId, 0 AS EmployerAccountId
+	FROM LearnerImport li
+	LEFT OUTER JOIN Ilrs i ON i.Uln = li.ULN AND i.LearnRefNumber = li.LearnRefNumber AND i.StdCode = li.StdCode AND i.UkPrn = li.UKPRN AND i.LearnStartDate = li.LearnStartDate
+	WHERE i.Uln IS NULL
 
 DROP TABLE LearnerImport
+
+UPDATE Ilrs SET FamilyName = REPLACE(REPLACE(REPLACE(FamilyName, '`',''''),'’',''''),'–','-'), GivenNames = REPLACE(REPLACE(REPLACE(GivenNames, '`',''''),'’',''''),'–','-')
 
 DROP EXTERNAL DATA SOURCE BlobStorage
 DROP DATABASE SCOPED CREDENTIAL BlobCredential 
