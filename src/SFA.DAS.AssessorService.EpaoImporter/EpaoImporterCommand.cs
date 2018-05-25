@@ -8,13 +8,13 @@ namespace SFA.DAS.AssessorService.EpaoImporter
 {
     public class EpaoImporterCommand : ICommand
     {
-        private readonly IAggregateLogger _aggregateLogger;
+        private readonly IEaoImporterLogger _eaoImporterLogger;
         private readonly TokenService _tokenService;
 
-        public EpaoImporterCommand(IAggregateLogger aggregateLogger,
+        public EpaoImporterCommand(IEaoImporterLogger eaoImporterLogger,
             TokenService tokenService)
         {
-            _aggregateLogger = aggregateLogger;
+            _eaoImporterLogger = eaoImporterLogger;
             _tokenService = tokenService;
         }
 
@@ -22,15 +22,15 @@ namespace SFA.DAS.AssessorService.EpaoImporter
         {
             try
             {
-                _aggregateLogger.LogInfo("EAO Importer Function Started");
+                _eaoImporterLogger.LogInfo("EAO Importer Function Started");
 
                 var webConfig = ConfigurationHelper.GetConfiguration();
 
-                _aggregateLogger.LogInfo("Config Received");
+                _eaoImporterLogger.LogInfo("Config Received");
 
                 var token = _tokenService.GetToken();
 
-                _aggregateLogger.LogInfo("Token Received");
+                _eaoImporterLogger.LogInfo("Token Received");
 
                 using (var client = new HttpClient())
                 {
@@ -42,17 +42,17 @@ namespace SFA.DAS.AssessorService.EpaoImporter
 
                     if (response.IsSuccessStatusCode)
                     {
-                        _aggregateLogger.LogInfo($"Status code returned: {response.StatusCode}. Content: {content}");
+                        _eaoImporterLogger.LogInfo($"Status code returned: {response.StatusCode}. Content: {content}");
                     }
                     else
                     {
-                        _aggregateLogger.LogInfo($"Status code returned: {response.StatusCode}. Content: {content}");
+                        _eaoImporterLogger.LogInfo($"Status code returned: {response.StatusCode}. Content: {content}");
                     }
                 }
             }
             catch (Exception e)
             {
-                _aggregateLogger.LogError("Function Errored", e);
+                _eaoImporterLogger.LogError("Function Errored", e);
                 throw;
             }
         }
