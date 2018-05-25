@@ -32,6 +32,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Startup
                     var configuration = ConfigurationHelper.GetConfiguration();
                     _logger.LogInfo("Config Received");
 
+                    _logger.LogInfo("Printing Function - Creating DI Container");
                     Container = new Container(configure =>
                     {
                         configure.Scan(x =>
