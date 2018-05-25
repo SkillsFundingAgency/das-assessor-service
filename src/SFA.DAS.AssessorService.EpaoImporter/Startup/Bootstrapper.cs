@@ -16,8 +16,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Startup
 {
     public class Bootstrapper
     {
-        private IAggregateLogger _logger;      
-        private static readonly Object _lock = new Object();
+        private IAggregateLogger _logger;            
 
         public void StartUp(TraceWriter functionLogger, ExecutionContext context)
         {
