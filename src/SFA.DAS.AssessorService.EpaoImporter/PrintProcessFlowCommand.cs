@@ -119,21 +119,66 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                     var diff = _scheduleConfig.DayOfWeek - (int)batchLogResponse.ScheduledDate.DayOfWeek;
                     if (diff >= 0)
                     {
-                        scheduledDate = scheduledDate.AddDays(diff);
+                        if (today.Date >= scheduledDate.Date.AddDays(7).Date)
+                        {
+                            DateTime tempDate;
+                            if (today.Date.DayOfWeek == (DayOfWeek) _scheduleConfig.DayOfWeek)
+                            {
+                                tempDate = today.Date;
+                            }
+                            else
+                            {
+                                tempDate = today.Previous((DayOfWeek)_scheduleConfig.DayOfWeek).Date;
+                            }
+                          
+                            tempDate = tempDate.AddHours(scheduledDate.Hour);
+                            tempDate = tempDate.AddMinutes(scheduledDate.Minute);
+                            scheduledDate = tempDate;
+                        }
+                        else
+                        {
+                            scheduledDate = scheduledDate.AddDays(diff);
+                        }
                     }
                     else
-                    {                       
-                        scheduledDate = scheduledDate.Next((DayOfWeek)_scheduleConfig.DayOfWeek);
-                    }
+                    {
+                        if (today.Date.Date >= scheduledDate.Date.AddDays(7).Date)
+                        {
+                            DateTime tempDate;
+                            if (today.Date.DayOfWeek == (DayOfWeek)_scheduleConfig.DayOfWeek)
+                            {
+                                tempDate = today.Date;
+                            }
+                            else
+                            {
+                                tempDate = today.Previous((DayOfWeek)_scheduleConfig.DayOfWeek).Date;
+                            }
 
-                    batchLogResponse.ScheduledDate = scheduledDate;
+                            tempDate = tempDate.AddHours(scheduledDate.Hour);
+                            tempDate = tempDate.AddMinutes(scheduledDate.Minute);
+                            scheduledDate = tempDate;
+                        }
+                        else
+                        {
+                            scheduledDate = scheduledDate.Next((DayOfWeek) _scheduleConfig.DayOfWeek);
+                        }
+                    }
 
                     _aggregateLogger.LogInfo($"Next scheduled date = {scheduledDate}");
                 }
                 else
                 {
                     scheduledDate = batchLogResponse.ScheduledDate.AddDays(7);
+                    if (today.Date > scheduledDate.Date)
+                    {
+                        var tempDate = today.Next((DayOfWeek)_scheduleConfig.DayOfWeek).AddDays(-7).Date;
+                        tempDate = tempDate.AddHours(scheduledDate.Hour);
+                        tempDate = tempDate.AddMinutes(scheduledDate.Minute);
+                        scheduledDate = tempDate;
+                    }
                 }
+
+                batchLogResponse.ScheduledDate = scheduledDate;
 
                 if (today >= scheduledDate)
                     return true;

@@ -1,5 +1,5 @@
 {
-  "singleton": {
-    "listenerLockPeriod": "00:00:15"
-  }
+  //"singleton": {
+  //  "listenerLockPeriod": "00:00:15"
+  //}
 }
