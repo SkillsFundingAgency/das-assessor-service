@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                             JsonConvert.SerializeObject(new CertificateData {})}
                 });
 
-            IlrRepository.Setup(r => r.Search(It.IsAny<SearchRequest>()))
+            IlrRepository.Setup(r => r.SearchForLearner(It.IsAny<SearchRequest>()))
                 .ReturnsAsync(new List<Ilr> {new Ilr() {StdCode = 12}, new Ilr() {StdCode = 13}});
         }
 
