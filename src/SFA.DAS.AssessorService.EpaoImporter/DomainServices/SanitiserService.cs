@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
 
@@ -20,23 +19,22 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 
             foreach (var certificateResponse in certificateResponses)
             {
+                var errorFlag = false;
+
                 _aggregateLogger.LogInfo("Sanitising Certificates ...");
 
-                var certificateData = certificateResponse.CertificateData;
-
-                var certificateContactDetails = "";
-
-                if (!string.IsNullOrEmpty(certificateData.ContactAddLine1))
+                var certificateData = certificateResponse.CertificateData;      
+                if (string.IsNullOrEmpty(certificateData.ContactAddLine1))
                 {
-                    certificateContactDetails += certificateData.ContactAddLine1 + System.Environment.NewLine;
+                   errorFlag = true;
                 }
 
-                if (!string.IsNullOrEmpty(certificateData.ContactPostCode))
+                if (string.IsNullOrEmpty(certificateData.ContactPostCode))
                 {
-                    certificateContactDetails += certificateData.ContactPostCode + System.Environment.NewLine;
+                    errorFlag = true;                   
                 }
 
-                if (string.IsNullOrEmpty(certificateContactDetails))
+                if (errorFlag)
                 {
                     if (!string.IsNullOrEmpty(certificateData.LearnerGivenNames)
                         && !string.IsNullOrEmpty(certificateData.LearnerFamilyName))

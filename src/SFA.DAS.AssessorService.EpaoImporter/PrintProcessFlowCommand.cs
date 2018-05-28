@@ -159,7 +159,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                     }
                     else
                     {
-                        if (todayLocalDate.Date.Date >= scheduledLocalDate.Date.AddDays(7).Date)
+                        if (todayLocalDate.Date >= scheduledLocalDate.Date.AddDays(7).Date)
                         {
                             DateTime tempDate;
                             if (todayLocalDate.Date.DayOfWeek == (DayOfWeek)schedulingConfigurationData.DayOfWeek)

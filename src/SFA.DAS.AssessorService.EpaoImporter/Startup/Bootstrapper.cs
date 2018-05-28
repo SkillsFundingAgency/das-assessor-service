@@ -20,7 +20,6 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Startup
 
         public void StartUp(TraceWriter functionLogger, ExecutionContext context)
         {
-
             _logger = new AggregateLogger(FunctionName.PrintProcessFlow, functionLogger, context);          
 
             var configuration = ConfigurationHelper.GetConfiguration();
