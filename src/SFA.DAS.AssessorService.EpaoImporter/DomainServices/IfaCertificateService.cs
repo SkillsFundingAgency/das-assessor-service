@@ -204,7 +204,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                 worksheet.Cells[row, 10].Value = _webConfiguration.CertificateDetails.ChairTitle;
 
                 if (certificateData.ContactName != null)
-                    worksheet.Cells[row, 11].Value = certificateData.ContactName;
+                    worksheet.Cells[row, 11].Value = certificateData.ContactName.Replace("\t", " ");
 
                 if (certificateData.ContactOrganisation != null)
                     worksheet.Cells[row, 12].Value = certificateData.ContactOrganisation;
