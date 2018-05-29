@@ -39,7 +39,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Logger
             _redisLogger.Info(message);
         }
 
-        private static string GetNLogConfigurationFileName(string source)
+        private string GetNLogConfigurationFileName(string source)
         {
             var nLogFileName = "nlog." + source.Split('-').Last().Trim();
             return nLogFileName;
