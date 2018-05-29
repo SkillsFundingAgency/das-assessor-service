@@ -7,7 +7,7 @@ using NLog.Config;
 
 namespace SFA.DAS.AssessorService.EpaoImporter.Logger
 {
-    public class AggregateLogger : IEaoImporterLogger
+    public class AggregateLogger : IAggregateLogger
     {
         private readonly TraceWriter _functionLogger;
         private readonly global::NLog.Logger _redisLogger;
