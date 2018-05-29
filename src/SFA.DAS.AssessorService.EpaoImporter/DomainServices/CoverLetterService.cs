@@ -63,16 +63,16 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 
             foreach (var groupedCertificate in groupedCertificates)
             {
-                if (contactOrganisationsAlreadyProceseed.FirstOrDefault(q => q == groupedCertificate.key1) == null)
+                if (contactOrganisationsAlreadyProceseed.FirstOrDefault(q => q == groupedCertificate.key1.ToLower()) == null)
                 {
                     sequenceNumber = 0;
-                    contactOrganisationsAlreadyProceseed.Add(groupedCertificate.key1);
+                    contactOrganisationsAlreadyProceseed.Add(groupedCertificate.key1.ToLower());
                 }
                 sequenceNumber++;
 
                 var certificate = groupedCertificate.Result[0];
                 var wordDocumentFileName =
-                    $"IFA-Certificate-{gmtNow:MMyy}-{batchNumber.ToString().PadLeft(3, '0')}-{certificate.CertificateData.ContactOrganisation}-{sequenceNumber}.docx".Replace(' ', '-');
+                    $"IFA-Certificate-{gmtNow:MMyy}-{batchNumber.ToString().PadLeft(3, '0')}-{certificate.CertificateData.ContactOrganisation.ToLower()}-{sequenceNumber}.docx".Replace(' ', '-');
 
                 foreach (var groupCertificateResult in groupedCertificate.Result)
                 {
