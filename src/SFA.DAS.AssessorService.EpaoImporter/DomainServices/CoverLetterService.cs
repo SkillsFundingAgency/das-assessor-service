@@ -73,6 +73,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                 var certificate = groupedCertificate.Result[0];
                 var wordDocumentFileName =
                     $"IFA-Certificate-{gmtNow:MMyy}-{batchNumber.ToString().PadLeft(3, '0')}-{certificate.CertificateData.ContactOrganisation.ToLower()}-{sequenceNumber}.docx".Replace(' ', '-');
+                coverLettersProduced.CoverLetterFileNames.Add(wordDocumentFileName);
 
                 foreach (var groupCertificateResult in groupedCertificate.Result)
                 {
