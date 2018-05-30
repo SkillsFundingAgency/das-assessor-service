@@ -42,13 +42,13 @@ namespace SFA.DAS.AssessorService.Web
                 .UseKestrel(options =>
                 {
                     options.AddServerHeader = false;
-                    if (hostingEnvironment.IsDevelopment())
-                    {
-                        options.Listen(IPAddress.Loopback, 5015, listenOptions =>
-                        {
-                            listenOptions.UseHttps("sfa.das.assessorservice.pfx", "C0ventry18");
-                        });
-                    }
+                    //if (hostingEnvironment.IsDevelopment())
+                    //{
+                    //    options.Listen(IPAddress.Loopback, 5015, listenOptions =>
+                    //    {
+                    //        listenOptions.UseHttps("sfa.das.assessorservice.pfx", "C0ventry18");
+                    //    });
+                    //}
                 })
                 .UseStartup<Startup>()
                 .UseNLog()

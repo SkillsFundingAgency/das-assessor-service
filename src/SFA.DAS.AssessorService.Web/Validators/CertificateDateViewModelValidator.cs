@@ -46,6 +46,12 @@ namespace SFA.DAS.AssessorService.Web.Validators
                     {
                         context.AddFailure("Date", localizer["DateMustNotBeInFuture"]);
                     }
+
+                    var achievementStartDate = new DateTime(2017, 1, 1);
+                    if (achievementDate < achievementStartDate)
+                    {
+                        context.AddFailure("Date", localizer["DateMustNotBeBeforeStartDate"]);
+                    }
                 }
                 catch (ArgumentOutOfRangeException)
                 {

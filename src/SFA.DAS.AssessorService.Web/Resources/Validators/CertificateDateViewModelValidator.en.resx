@@ -120,6 +120,9 @@
   <data name="DateMustBeAtLeastTwelveMonthsFromStartDate" xml:space="preserve">
     <value>The achievement date must be at least 12 months from the learner start date</value>
   </data>
+  <data name="DateMustNotBeBeforeStartDate" xml:space="preserve">
+    <value>The achievement date cannot be before 01 01 2017</value>
+  </data>
   <data name="DateMustNotBeInFuture" xml:space="preserve">
     <value>An achievement date cannot be in the future</value>
   </data>
