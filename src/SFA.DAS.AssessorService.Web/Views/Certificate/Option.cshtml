@@ -42,6 +42,8 @@
                         @*<span class="heading-secondary">@Model.GivenNames @Model.FamilyName</span>*@
                         @Localizer["Heading"]
                     </h1>
+                    <p>You may know options as 'pathways', 'specialisms' or 'specialist functions'.</p>
+                    <p>The option will appear on the certificate.</p>
                     <div class="error-message-container" sfa-validation-for="HasAdditionalLearningOption" sfa-validationerror-class="form-group-error">
                         <span class="error-message" asp-validation-for="HasAdditionalLearningOption"></span>
                     </div>
@@ -75,9 +77,6 @@
                 <div class="panel panel-border-narrow" id="what-is-a-learning-option">
                     <p>
                         @Localizer["InfoBody"]
-                    </p>
-                    <p>
-                        @Localizer["InfoBodyTwo"]
                     </p>
                 </div>
             </details>
