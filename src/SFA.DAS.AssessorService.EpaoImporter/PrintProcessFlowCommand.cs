@@ -124,46 +124,46 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                 var schedulingConfiguration = await _schedulingConfigurationService.GetSchedulingConfiguration();
                 var schedulingConfigurationData = JsonConvert.DeserializeObject<SchedulingConfiguraionData>(schedulingConfiguration.Data);
 
-                var todayLocalDate = DateTime.UtcNow.UtcToTimeZoneTime();
-                var scheduledLocalDate = batchLogResponse.ScheduledDate.UtcToTimeZoneTime();
+                var todayLocalDateTime = DateTime.UtcNow.UtcToTimeZoneTime();
+                var scheduledLocalDateTime = batchLogResponse.ScheduledDate.UtcToTimeZoneTime();
 
                 // Take care of potential configuration change
-                if (schedulingConfigurationData.Hour != scheduledLocalDate.Hour
-                    || (DayOfWeek)schedulingConfigurationData.DayOfWeek != scheduledLocalDate.DayOfWeek
-                    || schedulingConfigurationData.Minute != scheduledLocalDate.Minute)
+                if (schedulingConfigurationData.Hour != scheduledLocalDateTime.Hour
+                    || (DayOfWeek)schedulingConfigurationData.DayOfWeek != scheduledLocalDateTime.DayOfWeek
+                    || schedulingConfigurationData.Minute != scheduledLocalDateTime.Minute)
                 {
                     _aggregateLogger.LogInfo("Detected change in schedule config ...");
                     var diff = schedulingConfigurationData.DayOfWeek - (int)batchLogResponse.ScheduledDate.DayOfWeek;
 
-                    var nextDate = scheduledLocalDate.Next((DayOfWeek)schedulingConfigurationData.DayOfWeek).Date;
-                    var tempDate = todayLocalDate.Date > nextDate ?
-                        todayLocalDate.Previous((DayOfWeek)schedulingConfigurationData.DayOfWeek).Date : nextDate;
+                    var nextDate = scheduledLocalDateTime.Next((DayOfWeek)schedulingConfigurationData.DayOfWeek).Date;
+                    var tempDate = todayLocalDateTime.Date > nextDate ?
+                        todayLocalDateTime.Previous((DayOfWeek)schedulingConfigurationData.DayOfWeek).Date : nextDate;
 
                     tempDate = tempDate.AddHours(schedulingConfigurationData.Hour);
                     tempDate = tempDate.AddMinutes(schedulingConfigurationData.Minute);
-                    scheduledLocalDate = tempDate;
+                    scheduledLocalDateTime = tempDate;
 
-                    _aggregateLogger.LogInfo($"Next scheduled date = {scheduledLocalDate}");
+                    _aggregateLogger.LogInfo($"Next scheduled date = {scheduledLocalDateTime}");
                 }
                 else
                 {
-                    scheduledLocalDate = scheduledLocalDate.AddDays(7);
-                    if (todayLocalDate.Date > scheduledLocalDate.Date)
+                    scheduledLocalDateTime = scheduledLocalDateTime.AddDays(7);
+                    if (todayLocalDateTime.Date > scheduledLocalDateTime.Date)
                     {
-                        var tempDate = todayLocalDate.Next((DayOfWeek)schedulingConfigurationData.DayOfWeek).AddDays(-7).Date;
+                        var tempDate = todayLocalDateTime.Next((DayOfWeek)schedulingConfigurationData.DayOfWeek).AddDays(-7).Date;
                         tempDate = tempDate.AddHours(schedulingConfigurationData.Hour);
                         tempDate = tempDate.AddMinutes(schedulingConfigurationData.Minute);
-                        scheduledLocalDate = tempDate;
+                        scheduledLocalDateTime = tempDate;
                     }
                 }
 
-                batchLogResponse.ScheduledDate = scheduledLocalDate.UtcFromTimeZoneTime();
+                batchLogResponse.ScheduledDate = scheduledLocalDateTime.UtcFromTimeZoneTime();
 
-                _aggregateLogger.LogInfo($"scheduledLocalDate = {scheduledLocalDate}");
-                _aggregateLogger.LogInfo($"todayLocalDate.Date = {todayLocalDate}");
+                _aggregateLogger.LogInfo($"scheduledLocalDate = {scheduledLocalDateTime}");
+                _aggregateLogger.LogInfo($"todayLocalDate.Date = {todayLocalDateTime}");
                 _aggregateLogger.LogInfo($"batchLogResponse.ScheduledDate = {batchLogResponse.ScheduledDate}");
 
-                if (todayLocalDate >= scheduledLocalDate)
+                if (todayLocalDateTime >= scheduledLocalDateTime)
                     return true;
             }
 
