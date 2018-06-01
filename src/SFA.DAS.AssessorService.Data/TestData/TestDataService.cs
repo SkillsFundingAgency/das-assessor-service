@@ -115,7 +115,8 @@ namespace SFA.DAS.AssessorService.Data.TestData
 
                     StandardLevel = 1,
                     StandardName = "Test",
-                    StandardPublicationDate = DateTime.Now
+                    StandardPublicationDate = DateTime.Now,
+                    FullName = "David Gouge"
                 };
 
                 var firstCertificate = new Certificate
@@ -153,6 +154,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     StandardLevel = 1,
                     StandardName = "Test",
                     StandardPublicationDate = DateTime.Now,
+                    FullName = "John Coxhead"
                 };
 
                 var thirdCertificateData = new CertificateData
@@ -175,6 +177,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     StandardLevel = 1,
                     StandardName = "Test",
                     StandardPublicationDate = DateTime.Now,
+                    FullName = "David Coxhead"
                 };
 
                 var secondCertificate = new Certificate
@@ -295,7 +298,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
 
                 };
                 context.Ilrs.AddRange(ilrs);
-                context.SaveChanges();               
+                context.SaveChanges();
             }
 
             var schedulingConfigData = new SFA.DAS.AssessorService.Domain.JsonData.SchedulingConfiguraionData
