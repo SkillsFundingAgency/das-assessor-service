@@ -91,7 +91,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.RegisterUpdate
         private async Task CheckAndUpdateOrganisation(OrganisationSummary epaoSummary)
         {
             if (_organisations.Any(o =>
-                o.EndPointAssessorOrganisationId == epaoSummary.Id && (o.EndPointAssessorName != epaoSummary.Name || o.EndPointAssessorUkprn.GetValueOrDefault() != epaoSummary.Ukprn)))
+                o.EndPointAssessorOrganisationId == epaoSummary.Id && (o.EndPointAssessorName != epaoSummary.Name || o.EndPointAssessorUkprn != epaoSummary.Ukprn)))
             {
                 var organisation =
                     _organisations.Single(o => o.EndPointAssessorOrganisationId == epaoSummary.Id);
@@ -99,7 +99,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.RegisterUpdate
                 {
                     EndPointAssessorName = epaoSummary.Name,
                     EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
-                    EndPointAssessorUkprn = epaoSummary.Ukprn.GetValueOrDefault()
+                    EndPointAssessorUkprn = epaoSummary.Ukprn
                 });
 
                 _response.OrganisationsUpdated++;
@@ -116,7 +116,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.RegisterUpdate
                 {
                     EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
                     EndPointAssessorName = organisation.EndPointAssessorName,
-                    EndPointAssessorUkprn = epaoSummary.Ukprn.GetValueOrDefault()
+                    EndPointAssessorUkprn = epaoSummary.Ukprn
                 });
 
                 _response.OrganisationsUnDeleted++;
