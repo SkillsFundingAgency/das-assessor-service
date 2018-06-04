@@ -43,7 +43,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.RegisterUpdate
             {
                 if (OrganisationExists(epaoSummary))
                 {
-                    await CheckAndUpdateOrganisationName(epaoSummary);
+                    await CheckAndUpdateOrganisation(epaoSummary);
                 }
                 else
                 {
@@ -88,17 +88,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.RegisterUpdate
             return _organisations.Any(o => o.EndPointAssessorOrganisationId == epaoSummary.Id);
         }
 
-        private async Task CheckAndUpdateOrganisationName(OrganisationSummary epaoSummary)
+        private async Task CheckAndUpdateOrganisation(OrganisationSummary epaoSummary)
         {
             if (_organisations.Any(o =>
-                o.EndPointAssessorOrganisationId == epaoSummary.Id && o.EndPointAssessorName != epaoSummary.Name))
+                o.EndPointAssessorOrganisationId == epaoSummary.Id && (o.EndPointAssessorName != epaoSummary.Name || o.EndPointAssessorUkprn.Value != epaoSummary.Ukprn)))
             {
                 var organisation =
                     _organisations.Single(o => o.EndPointAssessorOrganisationId == epaoSummary.Id);
                 await _mediator.Send(new UpdateOrganisationRequest()
                 {
                     EndPointAssessorName = epaoSummary.Name,
-                    EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId
+                    EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
+                    EndPointAssessorUkprn = epaoSummary.Ukprn.GetValueOrDefault()
                 });
 
                 _response.OrganisationsUpdated++;
@@ -114,7 +115,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.RegisterUpdate
                 await _mediator.Send(new UpdateOrganisationRequest()
                 {
                     EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
-                    EndPointAssessorName = organisation.EndPointAssessorName
+                    EndPointAssessorName = organisation.EndPointAssessorName,
+                    EndPointAssessorUkprn = epaoSummary.Ukprn.GetValueOrDefault()
                 });
 
                 _response.OrganisationsUnDeleted++;

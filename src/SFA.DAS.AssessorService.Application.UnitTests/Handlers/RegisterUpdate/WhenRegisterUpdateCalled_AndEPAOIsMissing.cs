@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.RegisterUpdate
             ApiClient.Setup(c => c.FindAllAsync())
                 .Returns(Task.FromResult(new List<OrganisationSummary>()
                 {
-                    new OrganisationSummary {Id = "EPA0001"}
+                    new OrganisationSummary {Id = "EPA0001", Ukprn = 11111111}
                     
                 }.AsEnumerable()));
 
@@ -35,8 +35,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.RegisterUpdate
             OrganisationRepository.Setup(r => r.GetAllOrganisations())
                 .Returns(Task.FromResult(new List<Organisation>
                 {
-                    new Organisation() {EndPointAssessorOrganisationId = "EPA0001"},
-                    new Organisation() {EndPointAssessorOrganisationId = "EPA0002", Status = OrganisationStatus.Live}
+                    new Organisation() {EndPointAssessorOrganisationId = "EPA0001", EndPointAssessorUkprn = 11111111},
+                    new Organisation() {EndPointAssessorOrganisationId = "EPA0002", Status = OrganisationStatus.Live, EndPointAssessorUkprn = 22222222}
                 }.AsEnumerable()));
         }
 
