@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.RegisterUpdate
 {
 
 
-    public class WhenRegisterUpdateCalled_AndEPAONameIsDifferent : RegisterUpdateTestsBase
+    public class WhenRegisterUpdateCalled_AndUkPrnIsDifferent : RegisterUpdateTestsBase
     {
             private string _endPointAssessorOrganisationId;
 
@@ -27,8 +27,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.RegisterUpdate
             ApiClient.Setup(c => c.FindAllAsync())
                 .Returns(Task.FromResult(new List<OrganisationSummary>()
                 {
-                    new OrganisationSummary { Id = _endPointAssessorOrganisationId, Name = "The New EPAO Name", Ukprn = 11111111},
-                    new OrganisationSummary { Id = "EPA0002", Name = "Another EPAO", Ukprn = 22222222}
+                    new OrganisationSummary { Id = _endPointAssessorOrganisationId, Name = "OLD NAME", Ukprn = 11111111},
+                    new OrganisationSummary { Id = "EPA0002", Name = "Another EPAO", Ukprn = 99999999}
 
                 }.AsEnumerable()));
 
@@ -36,19 +36,19 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.RegisterUpdate
             OrganisationRepository.Setup(r => r.GetAllOrganisations())
                 .Returns(Task.FromResult(new List<Organisation>
                 {
-                    new Organisation() { EndPointAssessorOrganisationId = _endPointAssessorOrganisationId, EndPointAssessorName = "OLD NAME", EndPointAssessorUkprn = 11111111},
-                    new Organisation() { EndPointAssessorOrganisationId = "EPA0002", EndPointAssessorName = "Another EPAO", EndPointAssessorUkprn = 22222222}
+                    new Organisation() { EndPointAssessorOrganisationId = _endPointAssessorOrganisationId, EndPointAssessorName = "OLD NAME", EndPointAssessorUkprn = 22222222},
+                    new Organisation() { EndPointAssessorOrganisationId = "EPA0002", EndPointAssessorName = "Another EPAO", EndPointAssessorUkprn = 99999999}
                 }.AsEnumerable()));
         }
 
         [Test]
-        public void ThenOrganisationIsUpdatedWithNewName()
+        public void ThenOrganisationIsUpdatedWithNewUkPrn()
         {
             RegisterUpdateHandler.Handle(new RegisterUpdateRequest(), new CancellationToken()).Wait();
             Mediator.Verify(m =>
                 m.Send(
                     It.Is<UpdateOrganisationRequest>(vm =>
-                        vm.EndPointAssessorOrganisationId == _endPointAssessorOrganisationId && vm.EndPointAssessorName == "The New EPAO Name"),
+                        vm.EndPointAssessorOrganisationId == _endPointAssessorOrganisationId && vm.EndPointAssessorUkprn == 11111111),
                     new CancellationToken()));
         }
     }
