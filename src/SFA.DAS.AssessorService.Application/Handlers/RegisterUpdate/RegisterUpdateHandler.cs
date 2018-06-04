@@ -91,7 +91,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.RegisterUpdate
         private async Task CheckAndUpdateOrganisation(OrganisationSummary epaoSummary)
         {
             if (_organisations.Any(o =>
-                o.EndPointAssessorOrganisationId == epaoSummary.Id && (o.EndPointAssessorName != epaoSummary.Name || o.EndPointAssessorUkprn.Value != epaoSummary.Ukprn)))
+                o.EndPointAssessorOrganisationId == epaoSummary.Id && (o.EndPointAssessorName != epaoSummary.Name || o.EndPointAssessorUkprn.GetValueOrDefault() != epaoSummary.Ukprn)))
             {
                 var organisation =
                     _organisations.Single(o => o.EndPointAssessorOrganisationId == epaoSummary.Id);
