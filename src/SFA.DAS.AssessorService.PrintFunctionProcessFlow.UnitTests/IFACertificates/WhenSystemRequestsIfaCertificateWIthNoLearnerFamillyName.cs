@@ -16,7 +16,7 @@ using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests.IFACertificates
 {
-    public class WhenSystemRequestsIfaCertificate
+    public class WhenSystemRequestsIfaCertificateWithNoLearnerFamillyName
     {
         private int _result;
 
@@ -37,7 +37,10 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests.IFACertific
                 _fileTransferClientMock.Object,
                 _webConfigurationMock.Object);
 
-            var certificateData = Builder<CertificateDataResponse>.CreateNew().Build();
+            var certificateData = Builder<CertificateDataResponse>.CreateNew()
+                .With(q => q.LearnerGivenNames = null)
+                .With(q => q.LearnerFamilyName = null)
+                .Build();
             var certificateResponses = Builder<CertificateResponse>.CreateListOfSize(1).All().With(x => x.CertificateData = certificateData).Build();           
 
             var coverLetterProduced = new CoverLettersProduced();
