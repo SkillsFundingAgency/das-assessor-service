@@ -252,6 +252,20 @@ namespace SFA.DAS.AssessorService.Data.TestData
                 context.EMailTemplates.Add(emailTemplate);
                 context.SaveChanges();
 
+                var schedulingConfigData = new SFA.DAS.AssessorService.Domain.JsonData.SchedulingConfiguraionData
+                {
+                    DayOfWeek = 4,
+                    Hour = 18,
+                    Minute = 0
+                };
+
+                var schedulingConfiguration = new ScheduleConfiguration
+                {
+                    Data = JsonConvert.SerializeObject(schedulingConfigData)
+                };
+
+                context.ScheduleConfigurations.Add(schedulingConfiguration);
+                context.SaveChanges();
             }
 
             var existingIlrData = context.Ilrs.FirstOrDefault();
@@ -296,22 +310,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                 };
                 context.Ilrs.AddRange(ilrs);
                 context.SaveChanges();               
-            }
-
-            var schedulingConfigData = new SFA.DAS.AssessorService.Domain.JsonData.SchedulingConfiguraionData
-            {
-                DayOfWeek = 4,
-                Hour = 18,
-                Minute = 0
-            };
-
-            var schedulingConfiguration = new ScheduleConfiguration
-            {
-                Data = JsonConvert.SerializeObject(schedulingConfigData)
-            };
-
-            context.ScheduleConfigurations.Add(schedulingConfiguration);
-            context.SaveChanges();
+            }         
         }
     }
 }
