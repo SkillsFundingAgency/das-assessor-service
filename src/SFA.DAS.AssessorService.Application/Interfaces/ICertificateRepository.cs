@@ -13,7 +13,8 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<Certificate> GetCertificate(long uln, int standardCode);
         Task<List<Certificate>> GetCompletedCertificatesFor(long uln);
         Task<List<Certificate>> GetCertificates(string requestStatus);
-        Task<Certificate> Update(Certificate certificate, string username);        
+        Task<Certificate> Update(Certificate certificate, string username, string action);        
         Task UpdateStatuses(UpdateCertificatesBatchToIndicatePrintedRequest updateCertificatesBatchToIndicatePrintedRequest);
+        Task<List<CertificateLog>> GetCertificateLogsFor(Guid certificateId);
     }
 }

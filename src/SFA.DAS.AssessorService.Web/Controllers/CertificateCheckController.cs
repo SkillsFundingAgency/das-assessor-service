@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
 
@@ -28,7 +29,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             return await SaveViewModel(vm, 
                 returnToIfModelNotValid: "~/Views/Certificate/Check.cshtml",
-                nextAction: RedirectToAction("Confirm", "CertificateConfirmation"));
+                nextAction: RedirectToAction("Confirm", "CertificateConfirmation"), action: CertificateActions.Submit);
         }
     }
 }

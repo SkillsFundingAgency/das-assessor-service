@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.AssessorService.Web.ViewModels.Search
+﻿using System;
+
+namespace SFA.DAS.AssessorService.Web.ViewModels.Search
 {
     public class ResultViewModel
     {
@@ -10,5 +12,7 @@
         public string OverallGrade { get; set; }
         public string CertificateReference { get; set; }
         public string Level { get; set; }
+        public DateTime? SubmittedAt { get; set; }
+        public string SubmittedBy { get; set; }
     }
 }

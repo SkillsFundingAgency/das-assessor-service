@@ -14,4 +14,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="[IX_Ilrs_Uln_FamilyName_StdCode]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="07095449-d9aa-4605-a588-ea7a270f4d6b" ChangeDateTime="06/05/2018 08:31:53">
+    <Property Name="ElementName" Value="[dbo].[CertificateLogs].[username]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[CertificateLogs]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Username" />
+  </Operation>
 </Operations>
