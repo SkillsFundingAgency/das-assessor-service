@@ -111,12 +111,14 @@ namespace SFA.DAS.AssessorService.Data
             foreach (var certificateStatus in updateCertificatesBatchToIndicatePrintedRequest.CertificateStatuses)
             {
                 var certificate =
-                    _context.Certificates.First(q => q.CertificateReference == certificateStatus.CertificateReference);
+                    await _context.Certificates.FirstAsync(q => q.CertificateReference == certificateStatus.CertificateReference);
 
                 certificate.BatchNumber = updateCertificatesBatchToIndicatePrintedRequest.BatchNumber;
                 certificate.Status = CertificateStatus.Printed;
                 certificate.ToBePrinted = toBePrintedDate;
                 certificate.UpdatedBy = UpdatedBy.PrintFunctionFlow;
+
+                await UpdateCertificateLog(certificate, CertificateActions.Printed, UpdatedBy.PrintFunctionFlow);
             }
 
             await _context.SaveChangesAsync();

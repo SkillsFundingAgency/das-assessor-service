@@ -9,5 +9,6 @@
         public const string Option = "Option";
         public const string Submit = "Submit";
         public const string Declaration = "Declaration";
+        public const string Printed = "Printed";
     }
 }
