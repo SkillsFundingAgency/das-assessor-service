@@ -93,125 +93,65 @@ namespace SFA.DAS.AssessorService.Data.TestData
                 context.Contacts.Add(thirdContact);
                 context.SaveChanges();
 
-                var firstCertificateData = new CertificateData
+                for (int i = 0; i <= 15; i++)
                 {
-                    AchievementDate = DateTime.Now.AddDays(-1),
-                    ContactName = "David Gouge",
-                    ContactOrganisation = "1234",
-                    Department = "Human Resources",
-                    ContactAddLine1 = "1 Alpha Drive",
-                    ContactAddLine2 = "Oakhalls",
-                    ContactAddLine3 = "Malvern",
-                    ContactAddLine4 = "Worcs",
-                    ContactPostCode = "B60 2TY",
-                    CourseOption = "French",
-                    LearnerFamilyName = "Gouge",
-                    LearnerGivenNames = "David",
+                    var firstCertificateData = new CertificateData
+                    {
+                        AchievementDate = DateTime.Now.AddDays(-1),
+                        ContactName = "David Gouge",
+                        ContactOrganisation = "1234" + i,
+                        Department = "Human Resources",
+                        ContactAddLine1 = "1 Alpha Drive",
+                        ContactAddLine2 = "Oakhalls",
+                        ContactAddLine3 = "Malvern",
+                        ContactAddLine4 = "Worcs",
+                        ContactPostCode = "B60 2TY",
+                        CourseOption = "French",
+                        LearnerFamilyName = "Gouge",
+                        LearnerGivenNames = "David",
 
-                    OverallGrade = "PASS",
+                        OverallGrade = "PASS",
 
-                    Registration = "Registered",
-                    LearningStartDate = DateTime.Now.AddDays(10),
+                        Registration = "Registered",
+                        LearningStartDate = DateTime.Now.AddDays(10),
 
-                    StandardLevel = 1,
-                    StandardName = "Test",
-                    StandardPublicationDate = DateTime.Now,
-                    FullName = "David Gouge"
-                };
+                        StandardLevel = 1,
+                        StandardName = "Test",
+                        StandardPublicationDate = DateTime.Now,
+                        FullName = "David Gouge"
+                    };
 
-                var firstCertificate = new Certificate
-                {
-                    Id = Guid.NewGuid(),
-                    OrganisationId = organisation.Id,
-                    CertificateData = JsonConvert.SerializeObject(firstCertificateData),
-                    Status = CertificateStatus.Submitted,
-                    CreatedBy = "jcoxhead",
-                    CertificateReference = "ABC123",
-                    Uln = 1234567890,
-                    StandardCode = 93,
-                    ProviderUkPrn = 12345678
-                };
+                    var firstCertificate = new Certificate
+                    {
+                        Id = Guid.NewGuid(),
+                        OrganisationId = organisation.Id,
+                        CertificateData = JsonConvert.SerializeObject(firstCertificateData),
+                        Status = CertificateStatus.Submitted,
+                        CreatedBy = "jcoxhead",
+                        CertificateReference = "ABC123" + i,
+                        Uln = 1234567890 + i,
+                        StandardCode = 93,
+                        ProviderUkPrn = 12345678
+                    };
 
-                context.Certificates.Add(firstCertificate);
+                    context.Certificates.Add(firstCertificate);
 
-                var secondCertificateData = new CertificateData
-                {
-                    AchievementDate = DateTime.Now.AddDays(-1),
-                    ContactName = "John Coxhead",
-                    ContactOrganisation = "1234",
-                    Department = "Human Resources",
-                    ContactAddLine1 = "1 Beta Drive",
-                    ContactAddLine2 = "Oakhalls",
-                    ContactAddLine3 = "Malvern",
-                    ContactAddLine4 = "Worcs",
-                    ContactPostCode = "B60 2TY",
-                    CourseOption = "French",
-                    LearnerFamilyName = "Coxhead",
-                    LearnerGivenNames = "David",
-                    OverallGrade = "NO GRADE AWARDED",
-                    Registration = "Registered",
-                    LearningStartDate = DateTime.Now.AddDays(10),
-                    StandardLevel = 1,
-                    StandardName = "Test",
-                    StandardPublicationDate = DateTime.Now,
-                    FullName = "John Coxhead"
-                };
+                    var firstCertificateLog = new CertificateLog
+                    {
+                        Id = Guid.NewGuid(),
+                        Action = "Action",
+                        CertificateId = firstCertificate.Id,
+                        CertificateData = JsonConvert.SerializeObject(firstCertificateData),
+                        Certificate = firstCertificate,
+                        EventTime = DateTime.Now,
+                        Status = CertificateStatus.Ready,      
+                        Username = "testuser"
+                    };
 
-                var thirdCertificateData = new CertificateData
-                {
-                    AchievementDate = DateTime.Now.AddDays(-1),
-                    ContactName = "John Coxhead",
-                    ContactOrganisation = "1235",
-                    Department = "Human Resources",
-                    ContactAddLine1 = "1 Beta Drive",
-                    ContactAddLine2 = "Oakhalls",
-                    ContactAddLine3 = "Malvern",
-                    ContactAddLine4 = "Worcs",
-                    ContactPostCode = "B60 2TY",
-                    CourseOption = "French",
-                    LearnerFamilyName = "Coxhead",
-                    LearnerGivenNames = "David",
-                    OverallGrade = "PASS",
-                    Registration = "Registered",
-                    LearningStartDate = DateTime.Now.AddDays(10),
-                    StandardLevel = 1,
-                    StandardName = "Test",
-                    StandardPublicationDate = DateTime.Now,
-                    FullName = "David Coxhead"
-                };
+                    context.CertificateLogs.Add(firstCertificateLog);
 
-                var secondCertificate = new Certificate
-                {
-                    Id = Guid.NewGuid(),
-                    OrganisationId = organisation.Id,
-                    CertificateData = JsonConvert.SerializeObject(secondCertificateData),
-                    Status = CertificateStatus.Submitted,
-                    CreatedBy = "jcoxhead",
-                    CertificateReference = "DEF4578",
-                    Uln = 1234567890,
-                    StandardCode = 94,
-                    ProviderUkPrn = 12345678
-                };
-
-                context.Certificates.Add(secondCertificate);
-                context.SaveChanges();
-
-                var thirdCertificate = new Certificate
-                {
-                    Id = Guid.NewGuid(),
-                    OrganisationId = secondOrganisation.Id,
-                    CertificateData = JsonConvert.SerializeObject(thirdCertificateData),
-                    Status = CertificateStatus.Submitted,
-                    CreatedBy = "jcoxhead",
-                    CertificateReference = "DEF456",
-                    Uln = 1234567890,
-                    StandardCode = 94,
-                    ProviderUkPrn = 12345678
-                };
-
-                context.Certificates.Add(thirdCertificate);
-                context.SaveChanges();
-
+                    context.SaveChanges();
+                }
 
                 var emailTemplate = new EMailTemplate
                 {
@@ -281,8 +221,8 @@ namespace SFA.DAS.AssessorService.Data.TestData
 
                 };
                 context.Ilrs.AddRange(ilrs);
-                context.SaveChanges();               
-            }         
+                context.SaveChanges();
+            }
         }
     }
 }
