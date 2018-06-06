@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using SFA.DAS.AssessorService.Api.Types.Models;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Search
@@ -26,5 +27,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Search
         public string OverallGrade { get; set; }
         public string CertificateReference { get; set; }
         public string Level { get; set; }
+        public DateTime? SubmittedAt { get; set; }
+        public string SubmittedBy { get; set; }
     }
 }

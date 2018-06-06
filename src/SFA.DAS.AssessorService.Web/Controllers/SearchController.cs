@@ -71,16 +71,19 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         private void GetSelectedStandardViewModel(SearchRequestViewModel result)
         {
+            var resultViewModel = result.SearchResults.First();
             var selectedStandardViewModel = new SelectedStandardViewModel()
             {
-                Standard = result.SearchResults.First().Standard,
-                StdCode = result.SearchResults.First().StdCode,
-                Uln = result.SearchResults.First().Uln,
-                GivenNames = result.SearchResults.First().GivenNames,
-                FamilyName = result.SearchResults.First().FamilyName,
-                CertificateReference = result.SearchResults.First().CertificateReference,
-                OverallGrade = result.SearchResults.First().OverallGrade,
-                Level = result.SearchResults.First().Level
+                Standard = resultViewModel.Standard,
+                StdCode = resultViewModel.StdCode,
+                Uln = resultViewModel.Uln,
+                GivenNames = resultViewModel.GivenNames,
+                FamilyName = resultViewModel.FamilyName,
+                CertificateReference = resultViewModel.CertificateReference,
+                OverallGrade = resultViewModel.OverallGrade,
+                Level = resultViewModel.Level,
+                SubmittedAt = resultViewModel.SubmittedAt,
+                SubmittedBy = resultViewModel.SubmittedBy
             };
 
             _sessionService.Set("SelectedStandard", selectedStandardViewModel);

@@ -62,7 +62,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return View(view, viewModel);
         }
 
-        protected async Task<IActionResult> SaveViewModel<T>(T vm, string returnToIfModelNotValid, RedirectToActionResult nextAction) where T : ICertificateViewModel
+        protected async Task<IActionResult> SaveViewModel<T>(T vm, string returnToIfModelNotValid, RedirectToActionResult nextAction, string action) where T : ICertificateViewModel
         {
             var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
             
@@ -81,7 +81,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             var updatedCertificate = vm.GetCertificateFromViewModel(certificate, certData);
 
-            await _certificateApiClient.UpdateCertificate(new UpdateCertificateRequest(updatedCertificate) { Username = username });
+            await _certificateApiClient.UpdateCertificate(new UpdateCertificateRequest(updatedCertificate) { Username = username, Action = action});
 
             Logger.LogInformation($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} updated.");
 

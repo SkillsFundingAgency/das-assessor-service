@@ -212,37 +212,6 @@ namespace SFA.DAS.AssessorService.Data.TestData
                 context.Certificates.Add(thirdCertificate);
                 context.SaveChanges();
 
-                var firstCertificateLog = new CertificateLog
-                {
-                    Id = Guid.NewGuid(),
-                    Action = "Action",
-                    CertificateId = firstCertificate.Id,
-
-                    EventTime = DateTime.Now,
-                    Status = CertificateStatus.Ready,
-
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now
-                };
-
-                context.CertificateLogs.Add(firstCertificateLog);
-
-                var secondCertificateLog = new CertificateLog
-                {
-                    Id = Guid.NewGuid(),
-                    Action = "Action",
-                    CertificateId = secondCertificate.Id,
-
-                    EventTime = DateTime.Now,
-                    Status = CertificateStatus.Ready,
-
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now
-                };
-
-                context.CertificateLogs.Add(secondCertificateLog);
-                context.SaveChanges();
-
 
                 var emailTemplate = new EMailTemplate
                 {

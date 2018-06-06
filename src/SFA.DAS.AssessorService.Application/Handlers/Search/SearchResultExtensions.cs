@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 
@@ -27,7 +28,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             return searchResults;
         }
 
-        public static List<SearchResult> MatchUpExistingCompletedStandards(this List<SearchResult> searchResults, SearchQuery request, ICertificateRepository certificateRepository, ILogger<SearchHandler> logger)
+        public static List<SearchResult> MatchUpExistingCompletedStandards(this List<SearchResult> searchResults, SearchQuery request, ICertificateRepository certificateRepository, IContactQueryRepository contactRepository, ILogger<SearchHandler> logger)
         {
             logger.LogInformation("MatchUpExistingCompletedStandards Before Get Certificates for uln from db");
             var completedCertificates = certificateRepository.GetCompletedCertificatesFor(request.Uln).Result;
@@ -38,6 +39,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
                 searchResult.CertificateReference = certificate.CertificateReference;
                 searchResult.OverallGrade = certificateData.OverallGrade;
+
+                var certificateLogs = certificateRepository.GetCertificateLogsFor(certificate.Id).Result;
+                logger.LogInformation("MatchUpExistingCompletedStandards After GetCertificateLogsFor");
+                var submittedLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Submitted);
+                if (submittedLogEntry == null) continue;
+                
+                var contact = contactRepository.GetContact(submittedLogEntry.Username).Result;
+                logger.LogInformation("MatchUpExistingCompletedStandards After GetContact");
+                searchResult.SubmittedBy = contact.DisplayName; // This needs to be contact real name
+                searchResult.SubmittedAt = submittedLogEntry.EventTime.ToLocalTime(); // This needs to be local time
             }
 
             return searchResults;

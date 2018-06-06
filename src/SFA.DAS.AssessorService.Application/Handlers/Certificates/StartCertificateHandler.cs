@@ -75,7 +75,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             newCertificate.CertificateReference = newCertificate.CertificateReferenceId.ToString().PadLeft(8,'0');
             
             _logger.LogInformation("CreateNewCertificate Before Update Cert in db");
-            await _certificateRepository.Update(newCertificate, request.Username);
+            await _certificateRepository.Update(newCertificate, request.Username, null);
 
             _logger.LogInformation(LoggingConstants.CertificateStarted);
             _logger.LogInformation($"Certificate with ID: {newCertificate.Id} Started with reference of {newCertificate.CertificateReference}");

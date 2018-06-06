@@ -45,7 +45,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
             CertificateRepository = new Mock<ICertificateRepository>();
 
             SearchHandler = new SearchHandler(AssessmentOrgsApiClient.Object, orgQueryRepo.Object, IlrRepository.Object,
-                CertificateRepository.Object, new Mock<ILogger<SearchHandler>>().Object);
+                CertificateRepository.Object, new Mock<ILogger<SearchHandler>>().Object, new Mock<IContactQueryRepository>().Object);
         }
     }
 }

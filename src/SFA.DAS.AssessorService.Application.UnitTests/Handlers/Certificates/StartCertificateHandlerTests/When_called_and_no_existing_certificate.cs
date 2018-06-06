@@ -84,7 +84,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
         public void Then_the_reference_number_is_padded_to_8_characters_with_zeroes()
         {
             _returnedCertificate.CertificateReference.Should().Be("00010000");
-            _certificateRepository.Verify(r => r.Update(It.Is<Certificate>(c => c.CertificateReference == "00010000"), "user"));
+            _certificateRepository.Verify(r => r.Update(It.Is<Certificate>(c => c.CertificateReference == "00010000"), "user", null));
         }
     }
 }
