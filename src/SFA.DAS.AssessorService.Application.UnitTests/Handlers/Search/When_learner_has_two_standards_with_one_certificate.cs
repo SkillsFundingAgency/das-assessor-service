@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using FluentAssertions;
 using Moq;
@@ -25,6 +26,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                         CertificateData =
                             JsonConvert.SerializeObject(new CertificateData {})}
                 });
+
+            CertificateRepository.Setup(r => r.GetCertificateLogsFor(It.IsAny<Guid>()))
+                .ReturnsAsync(new List<CertificateLog>());
 
             IlrRepository.Setup(r => r.SearchForLearner(It.IsAny<SearchRequest>()))
                 .ReturnsAsync(new List<Ilr> {new Ilr() {StdCode = 12}, new Ilr() {StdCode = 13}});
