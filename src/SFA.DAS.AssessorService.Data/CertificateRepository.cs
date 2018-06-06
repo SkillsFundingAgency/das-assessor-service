@@ -112,9 +112,11 @@ namespace SFA.DAS.AssessorService.Data
             {
                 var certificate =
                     _context.Certificates.First(q => q.CertificateReference == certificateStatus.CertificateReference);
+
                 certificate.BatchNumber = updateCertificatesBatchToIndicatePrintedRequest.BatchNumber;
                 certificate.Status = CertificateStatus.Printed;
                 certificate.ToBePrinted = toBePrintedDate;
+                certificate.UpdatedBy = UpdatedBy.PrintFunctionFlow;
             }
 
             await _context.SaveChangesAsync();

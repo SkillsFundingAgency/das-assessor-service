@@ -99,7 +99,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests
                     })
                 }));
 
-            _printProcessFlowCommand.Execute();
+            _printProcessFlowCommand.Execute().GetAwaiter().GetResult();
         }
 
         [Test]

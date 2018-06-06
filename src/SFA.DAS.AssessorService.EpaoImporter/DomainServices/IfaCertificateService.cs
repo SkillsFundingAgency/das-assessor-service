@@ -9,7 +9,6 @@ using OfficeOpenXml.Style;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Extensions;
-using SFA.DAS.AssessorService.EpaoImporter.Const;
 using SFA.DAS.AssessorService.EpaoImporter.Data;
 using SFA.DAS.AssessorService.EpaoImporter.Interfaces;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
@@ -19,18 +18,18 @@ using SFA.DAS.AssessorService.Settings;
 namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 {
     public class IFACertificateService : IIFACertificateService
-    {        
+    {
         private readonly IAggregateLogger _aggregateLogger;
         private readonly IFileTransferClient _fileTransferClient;
         private readonly IWebConfiguration _webConfiguration;
         private IEnumerable<CertificateResponse> _certificates;
         private CoverLettersProduced _coverLettersProduced;
 
-        public IFACertificateService(         
+        public IFACertificateService(
             IAggregateLogger aggregateLogger,
             IFileTransferClient fileTransferClient,
             IWebConfiguration webConfiguration)
-        {            
+        {
             _aggregateLogger = aggregateLogger;
             _fileTransferClient = fileTransferClient;
             _webConfiguration = webConfiguration;
@@ -113,9 +112,9 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
         private static void CreateWorkbookProperties(ExcelPackage package)
         {
             package.Workbook.Properties.Title = "PrintFlow Prototype";
-            package.Workbook.Properties.Author = "Alan Burns";
+            package.Workbook.Properties.Author = "SFA";
             package.Workbook.Properties.Comments =
-                "This sample demonstrates how to create an Excel 2007 workbook for Printer Output Prototype";
+                "Printed Certificates information";
         }
 
         private static void CreateWorksheetTableHeader(ExcelWorksheet worksheet)
@@ -180,8 +179,8 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                     worksheet.Cells[row, 1].Value = certificateData.AchievementDate.Value.ToString("dd MMMM, yyyy");
 
                 var learnerName = $"{certificateData.LearnerGivenNames} {certificateData.LearnerFamilyName}";
-                if (certificateData.ContactName != null)
-                    worksheet.Cells[row, 2].Value = learnerName.ToUpper();
+                worksheet.Cells[row, 2].Value = certificateData.FullName != null ? 
+                    certificateData.FullName.ToUpper() : learnerName.ToUpper();
 
                 if (certificateData.StandardName != null)
                     worksheet.Cells[row, 3].Value = certificateData.StandardName.ToUpper();

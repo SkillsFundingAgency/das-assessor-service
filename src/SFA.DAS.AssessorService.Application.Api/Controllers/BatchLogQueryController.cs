@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> GetLastBatchLog()
         {
             var batchLog = await _mediator.Send(new GetLastBatchLogRequest());
-            if (batchLog == null)
+            if (batchLog.CertificatesFileName == null)
                 return NoContent();
             return Ok(batchLog);
         }
