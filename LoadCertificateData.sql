@@ -168,7 +168,7 @@ SET                LearnRefNumber = Ilrs.LearnRefNumber
 FROM            Ilrs INNER JOIN
                          Certificates ON CONVERT(char(10), Ilrs.LearnStartDate) = CONVERT(char(10), json_value(Certificates.CertificateData, '$."LearningStartDate"')) AND Ilrs.UkPrn = Certificates.ProviderUkPrn AND Ilrs.Uln = Certificates.Uln AND 
                          Ilrs.StdCode = Certificates.StandardCode
-WHERE Certificates.CreatedBy = 'Manual' AND Certificates.LearnRefNumber IS NULL
+WHERE Certificates.LearnRefNumber IS NULL
 
 -- Update existing Certificate Records to remove non breaking space from standard names
 UPDATE Certificates 
