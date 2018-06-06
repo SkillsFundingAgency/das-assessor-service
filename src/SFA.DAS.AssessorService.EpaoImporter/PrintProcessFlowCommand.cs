@@ -134,52 +134,14 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                 {
                     _aggregateLogger.LogInfo("Detected change in schedule config ...");
                     var diff = schedulingConfigurationData.DayOfWeek - (int)batchLogResponse.ScheduledDate.DayOfWeek;
-                    if (diff >= 0)
-                    {
-                        if (todayLocalDate.Date >= scheduledLocalDate.Date.AddDays(7).Date)
-                        {
-                            DateTime tempDate;
-                            if (todayLocalDate.Date.DayOfWeek == (DayOfWeek)schedulingConfigurationData.DayOfWeek)
-                            {
-                                tempDate = todayLocalDate.Date;
-                            }
-                            else
-                            {
-                                tempDate = todayLocalDate.Previous((DayOfWeek)schedulingConfigurationData.DayOfWeek).Date;
-                            }
 
-                            tempDate = tempDate.AddHours(schedulingConfigurationData.Hour);
-                            tempDate = tempDate.AddMinutes(schedulingConfigurationData.Minute);
-                            scheduledLocalDate = tempDate;
-                        }
-                        else
-                        {
-                            scheduledLocalDate = scheduledLocalDate.AddDays(diff);
-                        }
-                    }
-                    else
-                    {
-                        if (todayLocalDate.Date >= scheduledLocalDate.Date.AddDays(7).Date)
-                        {
-                            DateTime tempDate;
-                            if (todayLocalDate.Date.DayOfWeek == (DayOfWeek)schedulingConfigurationData.DayOfWeek)
-                            {
-                                tempDate = todayLocalDate.Date;
-                            }
-                            else
-                            {
-                                tempDate = todayLocalDate.Previous((DayOfWeek)schedulingConfigurationData.DayOfWeek).Date;
-                            }
+                    var nextDate = scheduledLocalDate.Next((DayOfWeek)schedulingConfigurationData.DayOfWeek).Date;
+                    var tempDate = todayLocalDate.Date > nextDate ?
+                        todayLocalDate.Previous((DayOfWeek)schedulingConfigurationData.DayOfWeek).Date : nextDate;
 
-                            tempDate = tempDate.AddHours(schedulingConfigurationData.Hour);
-                            tempDate = tempDate.AddMinutes(schedulingConfigurationData.Minute);
-                            scheduledLocalDate = tempDate;
-                        }
-                        else
-                        {
-                            scheduledLocalDate = scheduledLocalDate.Next((DayOfWeek)schedulingConfigurationData.DayOfWeek);
-                        }
-                    }
+                    tempDate = tempDate.AddHours(schedulingConfigurationData.Hour);
+                    tempDate = tempDate.AddMinutes(schedulingConfigurationData.Minute);
+                    scheduledLocalDate = tempDate;
 
                     _aggregateLogger.LogInfo($"Next scheduled date = {scheduledLocalDate}");
                 }
@@ -193,7 +155,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                         tempDate = tempDate.AddMinutes(schedulingConfigurationData.Minute);
                         scheduledLocalDate = tempDate;
                     }
-                }          
+                }
 
                 batchLogResponse.ScheduledDate = scheduledLocalDate.UtcFromTimeZoneTime();
 
