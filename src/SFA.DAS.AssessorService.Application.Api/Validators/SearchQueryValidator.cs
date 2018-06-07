@@ -12,7 +12,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             RuleFor(query => query.Surname).NotEmpty().WithMessage(localizer[ResourceMessageName.MustHaveSurname]);
             RuleFor(query => query.UkPrn).InclusiveBetween(10000000, 99999999)
                 .WithMessage(localizer[ResourceMessageName.InvalidUkprn].Value);
-            RuleFor(query => query.Uln).InclusiveBetween(1111111111,9999999999)
+            RuleFor(query => query.Uln).InclusiveBetween(1000000000,9999999999)
                 .WithMessage(localizer[ResourceMessageName.InvalidUln].Value);
             RuleFor(query => query.Username).NotEmpty()
                 .WithMessage(localizer[ResourceMessageName.MustHaveUsername].Value);
