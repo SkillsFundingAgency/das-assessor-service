@@ -77,8 +77,9 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
                 }
                 else
                 {
-                    nextDate = DateTime.UtcNow.UtcToTimeZoneTime().Previous(ScheduledDates.GetDayOfWeek(schedulingConfigurationData.DayOfWeek))
-                        .Date;
+                    nextDate = DateTime.UtcNow.UtcToTimeZoneTime()
+                        .Previous(ScheduledDates.GetDayOfWeek(schedulingConfigurationData.DayOfWeek))
+                        .Date.AddDays(-7);
                 }
 
                 var hourDate = nextDate.AddHours(schedulingConfigurationData.Hour);

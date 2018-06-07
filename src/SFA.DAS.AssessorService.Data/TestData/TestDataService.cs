@@ -93,7 +93,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                 context.Contacts.Add(thirdContact);
                 context.SaveChanges();
 
-                for (int i = 0; i <= 15; i++)
+                for (int i = 0; i <=3; i++)
                 {
                     var firstCertificateData = new CertificateData
                     {
