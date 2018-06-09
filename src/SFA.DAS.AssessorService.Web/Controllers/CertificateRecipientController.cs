@@ -11,25 +11,25 @@ using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
     [Authorize]
-    [Route("certificate/address")]
-    public class CertificateAddressController : CertificateBaseController
+    [Route("certificate/recipient")]
+    public class CertificateRecipientController : CertificateBaseController
     {
-        public CertificateAddressController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor,
+        public CertificateRecipientController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor,
             ICertificateApiClient certificateApiClient, ISessionService sessionService) : base(logger, contextAccessor, certificateApiClient, sessionService)
         {}
 
         [HttpGet]
-        public async Task<IActionResult> Address(bool? redirectToCheck = false)
+        public async Task<IActionResult> Recipient(bool? redirectToCheck = false)
         {
-            return await LoadViewModel<CertificateAddressViewModel>("~/Views/Certificate/Address.cshtml");
+            return await LoadViewModel<CertificateRecipientViewModel>("~/Views/Certificate/Recipient.cshtml");
         }
         
-        [HttpPost(Name = "Address")]
-        public async Task<IActionResult> Address(CertificateAddressViewModel vm)
+        [HttpPost(Name = "Recipient")]
+        public async Task<IActionResult> Recipient(CertificateRecipientViewModel vm)
         {
             return await SaveViewModel(vm, 
-                returnToIfModelNotValid: "~/Views/Certificate/Address.cshtml",
-                nextAction: RedirectToAction("Recipient","CertificateRecipient"), action: CertificateActions.Address);
+                returnToIfModelNotValid: "~/Views/Certificate/Recipient.cshtml",
+                nextAction: RedirectToAction("Check","CertificateCheck"), action: CertificateActions.Recipient);
         }
     }
 }
