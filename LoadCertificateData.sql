@@ -175,6 +175,13 @@ UPDATE Certificates
 	SET CertificateData = JSON_MODIFY(CertificateData, '$.StandardName', REPLACE(json_value([CertificateData],'$.StandardName'),NCHAR(0x00A0),' ')) 
 	WHERE CreatedBy = 'Manual'
 
+-- Insert ESFA 'manual' user to handle data fed certs.
+IF NOT EXISTS(SELECT * FROM Contacts WHERE Username = 'manual')
+BEGIN
+INSERT INTO Contacts (Id, CreatedAt, DisplayName, EndPointAssessorOrganisationId, Status, Username) 
+VALUES (NEWID(), GETDATE(), 'ESFA User', 'EPAO999', 'Live', 'manual')
+END
+
 DROP FUNCTION GetCertificateDataJson
 --DROP TABLE CertificateImport
 
