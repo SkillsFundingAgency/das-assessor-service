@@ -4,10 +4,12 @@ using System.Data.SqlTypes;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.JsonData;
 using CertificateStatus = SFA.DAS.AssessorService.Domain.Consts.CertificateStatus;
 
 namespace SFA.DAS.AssessorService.Data
@@ -41,6 +43,23 @@ namespace SFA.DAS.AssessorService.Data
         {
             return await _context.Certificates.SingleOrDefaultAsync(c =>
                 c.Uln == uln && c.StandardCode == standardCode);
+        }
+
+        public async Task<Certificate> GetCertificate(
+            string certificateReference,
+            string lastName,
+            DateTime? achievementDate)
+        {
+            var certificate = await
+                _context.Certificates
+                    .FirstOrDefaultAsync(q => q.CertificateReference == certificateReference && CheckCertificateData(q, lastName, achievementDate));
+            return certificate;
+        }
+
+        private bool CheckCertificateData(Certificate certificate, string lastName, DateTime? achievementDate)
+        {
+            var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+            return (certificateData.AchievementDate == achievementDate && certificateData.LearnerFamilyName == lastName);
         }
 
         public async Task<List<Certificate>> GetCompletedCertificatesFor(long uln)
@@ -126,29 +145,6 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<List<CertificateLog>> GetCertificateLogsFor(Guid certificateId)
         {
             return await _context.CertificateLogs.Where(l => l.CertificateId == certificateId).OrderByDescending(l => l.EventTime).ToListAsync();
-        }
-
-        public async Task<bool> RequestReprint(string userName,
-            string certificateReference,
-            string lastName,
-            DateTime? achievementDate)
-        {
-            var certificateLogs =
-                _context.CertificateLogs
-                    .Include(q => q.Certificate)
-                    .Where(q => q.Certificate.CertificateReference == certificateReference);
-            if (!certificateLogs.Any())
-            {
-                return false;
-            }
-
-            var certificate = certificateLogs.First().Certificate;
-
-            await UpdateCertificateLog(certificate, CertificateActions.Reprint, userName);
-
-            await _context.SaveChangesAsync();
-
-            return true;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.ConstrainedExecution;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -20,9 +21,20 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
         public async Task Handle(CertificateReprintRequest request, CancellationToken cancellationToken)
         {
-            var result = await _certificateRepository.RequestReprint(request.Username, request.CertificateReference, request.LastName, request.AchievementDate);
-            if (result == false)
+            var certificate  = await _certificateRepository.GetCertificate(request.CertificateReference, request.LastName, request.AchievementDate);
+            if (certificate == null)
                 throw new NotFound();
+
+            if (certificate.Status == SFA.DAS.AssessorService.Domain.Consts.CertificateStatus.Printed)
+            {
+                certificate.Status = SFA.DAS.AssessorService.Domain.Consts.CertificateStatus.Reprint;
+                await _certificateRepository.Update(certificate, request.Username,
+                    SFA.DAS.AssessorService.Domain.Consts.CertificateActions.Reprint);
+            }
+            else
+            {
+                throw new NotFound();
+            }
         }
     }
 }
