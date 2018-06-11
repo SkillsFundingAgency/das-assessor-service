@@ -117,7 +117,7 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
         var eariestDate = parseDate(params);
         return userDate ? this.optional(element) || userDate >= eariestDate : true;
       },
-      'The achievement date cannot be before the set date'
+      'The entered date cannot be before the set date'
     );
 
   // Matches UK postcode. Does not match to UK Channel Islands that have their own postcodes (non standard UK)
