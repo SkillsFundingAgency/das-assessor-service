@@ -69,13 +69,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                     CreatedBy = request.Username,
                     CertificateData = JsonConvert.SerializeObject(certData),
                     Status = Domain.Consts.CertificateStatus.Draft,
-                    CertificateReference = ""
+                    CertificateReference = "",
+                    LearnRefNumber = ilr.LearnRefNumber
                 });
 
             newCertificate.CertificateReference = newCertificate.CertificateReferenceId.ToString().PadLeft(8,'0');
             
             _logger.LogInformation("CreateNewCertificate Before Update Cert in db");
-            await _certificateRepository.Update(newCertificate, request.Username);
+            await _certificateRepository.Update(newCertificate, request.Username, null);
 
             _logger.LogInformation(LoggingConstants.CertificateStarted);
             _logger.LogInformation($"Certificate with ID: {newCertificate.Id} Started with reference of {newCertificate.CertificateReference}");

@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -27,7 +28,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                 _logger.LogInformation(LoggingConstants.CertificateSubmitted);
                 _logger.LogInformation($"Certificate with ID: {request.Certificate.Id} Submitted with reference of {request.Certificate.CertificateReference}");
             }
-            return await _certificateRepository.Update(request.Certificate, request.Username);
+            return await _certificateRepository.Update(request.Certificate, request.Username, request.Action);
         }
     }
 }

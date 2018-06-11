@@ -7,6 +7,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
     {
         public string Username { get; set; }
         public Certificate Certificate { get; }
+        public string Action { get; set; }
 
         public UpdateCertificateRequest(Certificate certificate)
         {

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Domain.Entities;
 

@@ -21,16 +21,19 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
         private readonly IIlrRepository _ilrRepository;
         private readonly ICertificateRepository _certificateRepository;
         private readonly ILogger<SearchHandler> _logger;
+        private readonly IContactQueryRepository _contactRepository;
         private Dictionary<char, char[]> _alternates;
 
-        public SearchHandler(IAssessmentOrgsApiClient assessmentOrgsApiClient, IOrganisationQueryRepository organisationRepository, IIlrRepository ilrRepository, ICertificateRepository certificateRepository, ILogger<SearchHandler> logger)
+        public SearchHandler(IAssessmentOrgsApiClient assessmentOrgsApiClient, IOrganisationQueryRepository organisationRepository, 
+            IIlrRepository ilrRepository, ICertificateRepository certificateRepository, ILogger<SearchHandler> logger, IContactQueryRepository contactRepository)
         {
             _assessmentOrgsApiClient = assessmentOrgsApiClient;
             _organisationRepository = organisationRepository;
             _ilrRepository = ilrRepository;
             _certificateRepository = certificateRepository;
             _logger = logger;
-            
+            _contactRepository = contactRepository;
+
             BuildAlternates();
 
         }
@@ -92,7 +95,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             _logger.LogInformation(ilrResults.Any() ? LoggingConstants.SearchSuccess : LoggingConstants.SearchFailure);
 
             var searchResults = Mapper.Map<List<SearchResult>>(ilrResults)
-                .MatchUpExistingCompletedStandards(request, _certificateRepository, _logger)
+                .MatchUpExistingCompletedStandards(request, _certificateRepository, _contactRepository, _logger)
                 .PopulateStandards(_assessmentOrgsApiClient, _logger);
 
             return searchResults;

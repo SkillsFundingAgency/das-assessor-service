@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.AssessorService.Domain.Entities
 {
-    public class CertificateLog : BaseEntity
+    public class CertificateLog 
     {
         public Guid Id { get; set; }
         public Guid CertificateId { get; set; }
@@ -11,5 +11,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string Action { get; set; }
         public string Status { get; set; }
         public DateTime EventTime { get; set; }
+        public string CertificateData { get; set; }
+        public string Username { get; set; }
     }
 }

@@ -52,7 +52,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
             
             var handler = new SearchHandler(assessmentOrgsApiClient.Object,
                 organisationRepository.Object, ilrRepository.Object,
-                certificateRepository.Object, new Mock<ILogger<SearchHandler>>().Object);
+                certificateRepository.Object, new Mock<ILogger<SearchHandler>>().Object, new Mock<IContactQueryRepository>().Object);
 
             var result = handler.Handle(new SearchQuery{ Surname = "James", Uln = 1111111111, UkPrn = 12345, Username = "user@name"}, new CancellationToken()).Result;
 
@@ -93,7 +93,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
             
             var handler = new SearchHandler(assessmentOrgsApiClient.Object,
                 organisationRepository.Object, ilrRepository.Object,
-                certificateRepository.Object, new Mock<ILogger<SearchHandler>>().Object);
+                certificateRepository.Object, new Mock<ILogger<SearchHandler>>().Object, new Mock<IContactQueryRepository>().Object);
 
             var result = handler.Handle(new SearchQuery{ Surname = "James", Uln = 1111111111, UkPrn = 12345, Username = "user@name"}, new CancellationToken()).Result;
 

@@ -28,6 +28,7 @@ UPDATE Certificates
 	SET CertificateData = JSON_MODIFY(CertificateData, '$.StandardLevel', SUBSTRING(JSON_VALUE(CertificateData, '$.StandardLevel'), 7, 1)) 
 	WHERE CreatedBy = 'Manual' AND JSON_VALUE(CertificateData, '$.StandardLevel') LIKE '%LEVEL%'
 
+
 -- Create a database master key if one does not already exist, using your own password. This key is used to encrypt the credential secret in next step.
 CREATE MASTER KEY ENCRYPTION BY PASSWORD = 'Baldy N3rd Face';
 
@@ -153,6 +154,26 @@ WHERE ci.Uln != 9999999999
 AND NOT EXISTS (SELECT null FROM Certificates ce WHERE ce.CertificateReference = ci.ID)
 
 SET IDENTITY_INSERT Certificates OFF
+
+-- Add LearnRefNumber column to Certificates if it doesn't exist
+IF COL_LENGTH('Certificates', 'LearnRefNumber') IS NULL
+BEGIN
+    ALTER TABLE Certificates
+    ADD LearnRefNumber NVARCHAR(12) NULL
+END
+
+-- Update existing Certificate Records with LearnRefNum from Ilr
+UPDATE       Certificates
+SET                LearnRefNumber = Ilrs.LearnRefNumber
+FROM            Ilrs INNER JOIN
+                         Certificates ON CONVERT(char(10), Ilrs.LearnStartDate) = CONVERT(char(10), json_value(Certificates.CertificateData, '$."LearningStartDate"')) AND Ilrs.UkPrn = Certificates.ProviderUkPrn AND Ilrs.Uln = Certificates.Uln AND 
+                         Ilrs.StdCode = Certificates.StandardCode
+WHERE Certificates.LearnRefNumber IS NULL
+
+-- Update existing Certificate Records to remove non breaking space from standard names
+UPDATE Certificates 
+	SET CertificateData = JSON_MODIFY(CertificateData, '$.StandardName', REPLACE(json_value([CertificateData],'$.StandardName'),NCHAR(0x00A0),' ')) 
+	WHERE CreatedBy = 'Manual'
 
 DROP FUNCTION GetCertificateDataJson
 --DROP TABLE CertificateImport

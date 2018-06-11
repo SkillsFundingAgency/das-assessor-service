@@ -31,9 +31,6 @@ namespace SFA.DAS.AssessorService.Data
                 return batchLog;
             }
 
-            if (batchLog.ScheduledDate.Month != DateTime.Now.Month)
-                batchLog.BatchNumber = 0;
-
             return batchLog;
         }
     }

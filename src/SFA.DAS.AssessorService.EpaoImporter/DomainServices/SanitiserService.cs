@@ -21,7 +21,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             {
                 var errorFlag = false;
 
-                _aggregateLogger.LogInfo("Sanitising Certificates ...");
+                _aggregateLogger.LogInfo($"Sanitising Certificate - {certificateResponse.CertificateReference} ...");
 
                 var certificateData = certificateResponse.CertificateData;      
                 if (string.IsNullOrEmpty(certificateData.ContactAddLine1))
