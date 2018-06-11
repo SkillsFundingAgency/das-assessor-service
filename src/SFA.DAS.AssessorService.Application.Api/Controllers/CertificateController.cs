@@ -7,8 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
+using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Domain.Entities;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using NotFound = SFA.DAS.AssessorService.Domain.Exceptions.NotFound;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -49,6 +51,24 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> UpdateCertificatesBatchToIndicatePrinted(int batchNumber, [FromBody] UpdateCertificatesBatchToIndicatePrintedRequest updateCertificatesBatchToIndicatePrintedRequest)
         {
             await _mediator.Send(updateCertificatesBatchToIndicatePrintedRequest);
+            return Ok();
+        }
+
+        [HttpPost("requestreprint", Name = "RequestReprint")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Certificate))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> RequestReprint([FromBody] CertificateReprintRequest certificateReprintRequest)
+        {
+            try
+            {
+                await _mediator.Send(certificateReprintRequest);
+            }
+            catch (NotFound)
+            {
+                throw new ResourceNotFoundException();
+            }
+
             return Ok();
         }
     }

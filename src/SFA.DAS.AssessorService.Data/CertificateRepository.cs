@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
-using System.Runtime.ConstrainedExecution;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.Extensions;
+using SFA.DAS.AssessorService.Domain.JsonData;
 using CertificateStatus = SFA.DAS.AssessorService.Domain.Consts.CertificateStatus;
 
 namespace SFA.DAS.AssessorService.Data
@@ -42,6 +43,23 @@ namespace SFA.DAS.AssessorService.Data
         {
             return await _context.Certificates.SingleOrDefaultAsync(c =>
                 c.Uln == uln && c.StandardCode == standardCode);
+        }
+
+        public async Task<Certificate> GetCertificate(
+            string certificateReference,
+            string lastName,
+            DateTime? achievementDate)
+        {
+            var certificate = await
+                _context.Certificates
+                    .FirstOrDefaultAsync(q => q.CertificateReference == certificateReference && CheckCertificateData(q, lastName, achievementDate));
+            return certificate;
+        }
+
+        private bool CheckCertificateData(Certificate certificate, string lastName, DateTime? achievementDate)
+        {
+            var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+            return (certificateData.AchievementDate == achievementDate && certificateData.LearnerFamilyName == lastName);
         }
 
         public async Task<List<Certificate>> GetCompletedCertificatesFor(long uln)
@@ -100,7 +118,7 @@ namespace SFA.DAS.AssessorService.Data
                     Username = username
                 };
 
-                await _context.CertificateLogs.AddAsync(certLog);   
+                await _context.CertificateLogs.AddAsync(certLog);
             }
         }
 
