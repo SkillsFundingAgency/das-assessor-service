@@ -9,5 +9,6 @@
         public const string Cancelled = "Cancelled";
         public const string NoCertificate = "NoCertificate";
         public const string Deleted = "Deleted";
+        public const string Reprint = "Reprint";
     }
 }

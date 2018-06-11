@@ -166,8 +166,8 @@ namespace SFA.DAS.AssessorService.Data.TestData
 
                 var schedulingConfigData = new SFA.DAS.AssessorService.Domain.JsonData.SchedulingConfiguraionData
                 {
-                    DayOfWeek = 4,
-                    Hour = 18,
+                    DayOfWeek = 5,
+                    Hour = 9,
                     Minute = 0
                 };
 
