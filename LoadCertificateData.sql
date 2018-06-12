@@ -35,7 +35,7 @@ CREATE MASTER KEY ENCRYPTION BY PASSWORD = 'Baldy N3rd Face';
 ---- Create a database scoped credential with Azure storage account key as the secret.
 CREATE DATABASE SCOPED CREDENTIAL BlobCredential 
 WITH IDENTITY = 'SHARED ACCESS SIGNATURE', 
-SECRET = '';
+SECRET = 'st=2018-06-12T06%3A32%3A40Z&se=2018-06-13T06%3A32%3A40Z&sp=rl&sv=2017-04-17&sr=c&sig=soZRK%2BzVkeFc%2BZXsMFCgGCKp%2FC%2BpMiBRP3ZlWMIh9%2B0%3D';
 
 ---- Create an external data source with CREDENTIAL option.
 CREATE EXTERNAL DATA SOURCE BlobStorage WITH (
@@ -118,12 +118,26 @@ BULK INSERT CertificateImport
 FROM 'certs.csv'
 WITH (DATA_SOURCE = 'BlobStorage', FORMAT = 'CSV', FIRSTROW= 2)
 
+--Log any import records that are a duplicates of certificates created by Service.
+INSERT INTO CertificateLogs
+                         (Id, Action, CertificateId, EventTime, Status, CertificateData, Username)
+SELECT       NEWID() AS Id, 'Manual Import' AS Action, c.Id AS CertificateId, GETDATE() AS EventTime, 'Duplicate' AS Status, c.CertificateData, 'manual' AS Username
+FROM            Certificates AS c INNER JOIN
+                         CertificateImport AS ci ON ci.Uln = c.Uln AND ci.StandardCode = c.StandardCode AND ci.UKPRN = c.ProviderUkPrn AND CAST(ci.LearningStartDate AS datetime) = CAST(JSON_VALUE(c.CertificateData, '$.LearningStartDate') 
+                         AS datetime) AND c.CreatedBy <> 'manual' AND c.Status <> 'Deleted' 
+WHERE NOT EXISTS(SELECT null FROM CertificateLogs cl WHERE CertificateId = c.Id AND cl.Status = 'Duplicate')
+
 -- Update existing Certificate Records with FullName and ProviderName
 UPDATE       Certificates
 SET                CertificateData = JSON_MODIFY(JSON_MODIFY(CertificateData, '$.ProviderName', imp.ProviderName), '$.FullName', imp.FullName)
 FROM            Certificates INNER JOIN
                          CertificateImport AS imp ON imp.ID = Certificates.CertificateReference
 WHERE        (Certificates.CreatedBy = 'Manual')
+
+-- Update Service Certificates that are missing FullName
+UPDATE Certificates SET CertificateData = JSON_MODIFY(CertificateData, '$.FullName', JSON_VALUE(CertificateData, '$.LearnerGivenNames') + ' ' + JSON_VALUE(CertificateData, '$.LearnerFamilyName')) 
+WHERE CreatedBy != 'manual' 
+AND JSON_VALUE(CertificateData, '$.FullName') IS NULL
 
 -- 'Delete' any Certificate records that are now missing from the import
 UPDATE       Certificates
@@ -152,8 +166,22 @@ FROM CertificateImport ci
 INNER JOIN Organisations o ON o.EndPointAssessorOrganisationId = ci.EpaUln
 WHERE ci.Uln != 9999999999
 AND NOT EXISTS (SELECT null FROM Certificates ce WHERE ce.CertificateReference = ci.ID)
+AND NOT EXISTS (SELECT null FROM Certificates AS c 
+					WHERE ci.Uln = c.Uln 
+					AND ci.StandardCode = c.StandardCode 
+					AND ci.UKPRN = c.ProviderUkPrn 
+					AND CAST(ci.LearningStartDate AS datetime) = CAST(JSON_VALUE(c.CertificateData, '$.LearningStartDate') AS datetime) 
+					AND c.CreatedBy <> 'manual' AND c.Status <> 'Deleted' )
 
 SET IDENTITY_INSERT Certificates OFF
+
+--Update any Certificates created withing the Service as Deleted if they are Draft and in Import.
+UPDATE       Certificates
+SET                Status = 'Deleted'
+FROM            Certificates c INNER JOIN
+                         CertificateImport AS ci ON ci.Uln = c.Uln AND ci.StandardCode = c.StandardCode AND ci.UKPRN = c.ProviderUkPrn AND CAST(ci.LearningStartDate AS datetime) 
+                         = CAST(JSON_VALUE(c.CertificateData, '$.LearningStartDate') AS datetime) AND c.CreatedBy <> 'manual' AND c.Status <> 'Deleted'
+WHERE c.Status = 'Draft'
 
 -- Add LearnRefNumber column to Certificates if it doesn't exist
 IF COL_LENGTH('Certificates', 'LearnRefNumber') IS NULL
@@ -183,7 +211,7 @@ VALUES (NEWID(), GETDATE(), 'ESFA User', 'EPAO999', 'Live', 'manual')
 END
 
 DROP FUNCTION GetCertificateDataJson
---DROP TABLE CertificateImport
+DROP TABLE CertificateImport
 
 DROP EXTERNAL DATA SOURCE BlobStorage
 DROP DATABASE SCOPED CREDENTIAL BlobCredential 
