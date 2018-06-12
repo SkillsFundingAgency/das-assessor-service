@@ -13,5 +13,6 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public DateTime EventTime { get; set; }
         public string CertificateData { get; set; }
         public string Username { get; set; }
+        public int? BatchNumber { get; set; }
     }
 }

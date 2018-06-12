@@ -5,7 +5,8 @@
 	[EventTime] [datetime2](7) NOT NULL,
 	[Status] [nvarchar](12) NOT NULL,
  [CertificateData] NVARCHAR(MAX) NOT NULL, 
-    [Username] NVARCHAR(50) NOT NULL, 
+    [Username] NVARCHAR(50) NOT NULL,
+	[BatchNumber] [int] NULL,
     CONSTRAINT [PK_CertificateLogs] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC

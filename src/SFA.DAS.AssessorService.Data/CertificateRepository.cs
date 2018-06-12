@@ -115,7 +115,8 @@ namespace SFA.DAS.AssessorService.Data
                     Status = cert.Status,
                     Id = Guid.NewGuid(),
                     CertificateData = cert.CertificateData,
-                    Username = username
+                    Username = username,
+                    BatchNumber = cert.BatchNumber
                 };
 
                 await _context.CertificateLogs.AddAsync(certLog);
