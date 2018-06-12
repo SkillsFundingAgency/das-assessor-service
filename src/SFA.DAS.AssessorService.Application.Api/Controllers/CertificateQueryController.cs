@@ -37,9 +37,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [HttpGet(Name = "GetCertificates")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<CertificateResponse>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetCertificates([FromQuery] string status)
+        public async Task<IActionResult> GetCertificates([FromQuery] List<string> statuses)
         {
-            return Ok(await _mediator.Send(new GetCertificatesRequest { Status = status }));
+            return Ok(await _mediator.Send(new GetCertificatesRequest { Statuses = statuses }));
         }       
     }
 }

@@ -139,7 +139,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                     var firstCertificateLog = new CertificateLog
                     {
                         Id = Guid.NewGuid(),
-                        Action = "Action",
+                        Action = "Submitted",
                         CertificateId = firstCertificate.Id,
                         CertificateData = JsonConvert.SerializeObject(firstCertificateData),
                         Certificate = firstCertificate,
