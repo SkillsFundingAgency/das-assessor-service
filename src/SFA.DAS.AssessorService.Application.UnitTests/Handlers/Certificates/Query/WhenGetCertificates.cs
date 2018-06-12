@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Qu
                 .All().With(q => q.CertificateData = certificateData).Build().ToList();
 
             _certificateRepository = new Mock<ICertificateRepository>();
-            _certificateRepository.Setup(r => r.GetCertificates(It.IsAny<string>())).Returns(Task.FromResult(certificates));
+            _certificateRepository.Setup(r => r.GetCertificates(It.IsAny<List<string>>())).Returns(Task.FromResult(certificates));
 
             var getCertificatesToBePrintedHandler =
                 new GetCertificatesHandler(_certificateRepository.Object);

@@ -21,7 +21,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
         public async Task<List<CertificateResponse>> Handle(GetCertificatesRequest request,
             CancellationToken cancellationToken)
         {
-            var certificates = await _certificateRepository.GetCertificates(request.Status);
+            var certificates = await _certificateRepository.GetCertificates(request.Statuses);
             var certificateResponses = Mapper.Map<List<Certificate>, List<CertificateResponse>>(certificates);
             return certificateResponses;
         }
