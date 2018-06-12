@@ -69,21 +69,21 @@ namespace SFA.DAS.AssessorService.Data
                 .ToListAsync();
         }
 
-        public async Task<List<Certificate>> GetCertificates(string status)
+        public async Task<List<Certificate>> GetCertificates(List<string> statuses)
         {
-            if (string.IsNullOrEmpty(status))
+           if (statuses == null || !statuses.Any())
             {
                 return await _context.Certificates
                     .Include(q => q.Organisation)
                     .ToListAsync();
             }
             else
-            {
-                return await _context.Certificates
-                    .Include(q => q.Organisation)
-                    .Where(q => q.Status == status)
-                    .ToListAsync();
-            }
+           {
+               return await _context.Certificates
+                   .Include(q => q.Organisation)
+                   .Where(x => statuses.Contains(x.Status))
+                   .ToListAsync();
+           }
         }
 
         public async Task<Certificate> Update(Certificate certificate, string username, string action)
@@ -115,7 +115,8 @@ namespace SFA.DAS.AssessorService.Data
                     Status = cert.Status,
                     Id = Guid.NewGuid(),
                     CertificateData = cert.CertificateData,
-                    Username = username
+                    Username = username,
+                    BatchNumber = cert.BatchNumber
                 };
 
                 await _context.CertificateLogs.AddAsync(certLog);
