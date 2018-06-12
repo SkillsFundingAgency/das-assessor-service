@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FizzWare.NBuilder;
@@ -29,7 +30,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Certific
 
             var certificateQueryControler = new CertificateQueryController(mediator.Object);
 
-            _result = certificateQueryControler.GetCertificates("Submitted").Result;
+            var statuses = new List<string> {"Submitted"};
+            _result = certificateQueryControler.GetCertificates(statuses).Result;
         }
 
         [Test]
