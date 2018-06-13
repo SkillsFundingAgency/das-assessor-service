@@ -15,6 +15,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
         protected Mock<ICertificateRepository> CertificateRepository;
         protected Mock<IIlrRepository> IlrRepository;
         protected Mock<IAssessmentOrgsApiClient> AssessmentOrgsApiClient;
+        protected Mock<IContactQueryRepository> ContactRepository;
 
         public void Setup()
         {
@@ -44,8 +45,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 
             CertificateRepository = new Mock<ICertificateRepository>();
 
+            ContactRepository = new Mock<IContactQueryRepository>();
             SearchHandler = new SearchHandler(AssessmentOrgsApiClient.Object, orgQueryRepo.Object, IlrRepository.Object,
-                CertificateRepository.Object, new Mock<ILogger<SearchHandler>>().Object, new Mock<IContactQueryRepository>().Object);
+                CertificateRepository.Object, new Mock<ILogger<SearchHandler>>().Object, ContactRepository.Object);
         }
     }
 }

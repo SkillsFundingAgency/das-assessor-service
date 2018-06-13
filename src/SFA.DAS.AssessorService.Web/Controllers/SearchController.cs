@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -82,11 +83,29 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 CertificateReference = resultViewModel.CertificateReference,
                 OverallGrade = resultViewModel.OverallGrade,
                 Level = resultViewModel.Level,
-                SubmittedAt = resultViewModel.SubmittedAt,
+                SubmittedAt = GetSubmittedAtString(resultViewModel.SubmittedAt),
                 SubmittedBy = resultViewModel.SubmittedBy
             };
 
             _sessionService.Set("SelectedStandard", selectedStandardViewModel);
+        }
+
+        private string GetSubmittedAtString(DateTime? submittedAt)
+        {
+            if (!submittedAt.HasValue)
+            {
+                return "";
+            }
+
+            var submittedDate = submittedAt.Value;
+            var utcDate = submittedDate.ToUniversalTime();
+
+            if (utcDate.Hour == 0 && utcDate.Minute == 0 && utcDate.Second == 0)
+            {
+                return submittedDate.ToString("d MMMM yyyy");
+            }
+
+            return $"{submittedDate:d MMMM yyyy} at {submittedDate:h:mm}{submittedDate.ToString("tt").ToLower()}";
         }
 
         [HttpGet]
