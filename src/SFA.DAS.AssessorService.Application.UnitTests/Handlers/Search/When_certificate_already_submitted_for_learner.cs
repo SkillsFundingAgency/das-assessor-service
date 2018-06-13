@@ -49,7 +49,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                     new CancellationToken()).Result;
             result.Count.Should().Be(1);
             result[0].CertificateReference.Should().Be("00010001");
-            result[0].OverallGrade.Should().Be("Distinction");
         }
     }
 }

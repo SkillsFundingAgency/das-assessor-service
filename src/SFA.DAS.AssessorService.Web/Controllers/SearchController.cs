@@ -84,7 +84,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 OverallGrade = resultViewModel.OverallGrade,
                 Level = resultViewModel.Level,
                 SubmittedAt = GetSubmittedAtString(resultViewModel.SubmittedAt),
-                SubmittedBy = resultViewModel.SubmittedBy
+                SubmittedBy = resultViewModel.SubmittedBy,
+                LearnerStartDate = resultViewModel.LearnStartDate.GetValueOrDefault().ToString("d MMMM yyyy"),
+                AchievementDate = resultViewModel.AchDate.GetValueOrDefault().ToString("d MMMM yyyy"),
+                ShowExtraInfo = resultViewModel.ShowExtraInfo
             };
 
             _sessionService.Set("SelectedStandard", selectedStandardViewModel);
