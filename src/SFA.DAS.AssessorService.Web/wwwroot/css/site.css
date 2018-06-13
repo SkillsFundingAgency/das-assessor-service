@@ -62,7 +62,8 @@
 .header-inner h2,
 .header-inner h3,
 .header-inner h4,
-.header-inner h5 {
+.header-inner h5,
+.header-inner p {
   padding: 0;
   margin: 0;
 }
