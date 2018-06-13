@@ -45,10 +45,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 var submittedLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Submitted);
                 if (submittedLogEntry == null) continue;
                 
-                var contact = contactRepository.GetContact(submittedLogEntry.Username).Result;
+                var submittingContact = contactRepository.GetContact(submittedLogEntry.Username).Result;
                 logger.LogInformation("MatchUpExistingCompletedStandards After GetContact");
-                searchResult.SubmittedBy = contact.DisplayName; // This needs to be contact real name
-                searchResult.SubmittedAt = submittedLogEntry.EventTime.ToLocalTime(); // This needs to be local time
+
+                var searchingContact = contactRepository.GetContact(request.Username).Result;
+
+                if (submittingContact.OrganisationId == searchingContact.OrganisationId)
+                {
+                    searchResult.SubmittedBy = submittingContact.DisplayName; // This needs to be contact real name
+                    searchResult.SubmittedAt = submittedLogEntry.EventTime.ToLocalTime(); // This needs to be local time    
+                }
             }
 
             return searchResults;
