@@ -65,6 +65,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 
             result[0].SubmittedAt.Should().BeNull();
             result[0].SubmittedBy.Should().BeNullOrEmpty();
+            result[0].LearnStartDate.Should().BeNull();//.Be(new DateTime(2015,06,01));
+            result[0].AchDate.Should().BeNull();//(new DateTime(2018, 06, 01))
+            result[0].OverallGrade.Should().BeNullOrEmpty();
+            result[0].ShowExtraInfo.Should().BeFalse();
         }
     }
 }
