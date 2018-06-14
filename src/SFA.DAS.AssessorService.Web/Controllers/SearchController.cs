@@ -162,7 +162,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 FamilyName = selected.FamilyName,
                 CertificateReference = selected.CertificateReference,
                 OverallGrade = selected.OverallGrade,
-                Level = selected.Level
+                Level = selected.Level,
+                SubmittedAt = GetSubmittedAtString(selected.SubmittedAt),
+                SubmittedBy = selected.SubmittedBy,
+                LearnerStartDate = selected.LearnStartDate.GetValueOrDefault().ToString("d MMMM yyyy"),
+                AchievementDate = selected.AchDate.GetValueOrDefault().ToString("d MMMM yyyy"),
+                ShowExtraInfo = selected.ShowExtraInfo
             };
 
             _sessionService.Set("SelectedStandard", selectedStandardViewModel);
