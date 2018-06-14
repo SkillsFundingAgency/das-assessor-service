@@ -161,8 +161,14 @@
                 </dt>
                 <dd class="cya-answer">
                     @Model.AddressLine1<br />
-                    @Model.AddressLine2<br />
-                    @Model.AddressLine3<br />
+                    @if(@Model.AddressLine2 != null)
+                    {
+                        @Model.AddressLine2<br />
+                    }
+                    @if(@Model.AddressLine3 != null)
+                    {
+                        @Model.AddressLine3<br />
+                    }
                     @Model.City<br />
                     @Model.Postcode
                 </dd>
