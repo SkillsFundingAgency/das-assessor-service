@@ -14,7 +14,7 @@ using SFA.DAS.AssessorService.Domain.JsonData;
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 {
     [TestFixture]
-    public class When_certificate_already_submitted_for_learner_by_different_epaOrg : SearchHandlerTestBase
+    public class When_search_completed : SearchHandlerTestBase
     {
         [SetUp]
         public void Arrange()
@@ -41,15 +41,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                                 LearningStartDate = new DateTime(2015, 06, 01),
                                 AchievementDate = new DateTime(2018, 06, 01)
                             }),
-                        CreatedBy = "differentuser"
+                        CreatedBy = "username"
                     }
                 });
 
             CertificateRepository.Setup(r => r.GetCertificateLogsFor(certificateId))
-                .ReturnsAsync(new List<CertificateLog>(){new CertificateLog(){Status = CertificateStatus.Submitted, EventTime = new DateTime(2018,2,3,13,23,33), Username = "differentuser"}});
-
-            ContactRepository.Setup(cr => cr.GetContact("differentuser"))
-                .ReturnsAsync(new Contact() {DisplayName = "EPAO User from another EAPOrg", OrganisationId = submittingEpaoOrgId});
+                .ReturnsAsync(new List<CertificateLog>());
 
             ContactRepository.Setup(cr => cr.GetContact("username"))
                 .ReturnsAsync(new Contact() {DisplayName = "EPAO User from this EAPOrg", OrganisationId = searchingEpaoOrgId});
@@ -61,18 +58,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 
 
         [Test]
-        public void Then_a_response_is_returned_with_sensitive_fields_empty()
+        public void Then_a_response_is_returned_including_LearnStartDate()
         {
             var result =
                 SearchHandler.Handle(
                     new SearchQuery() {Surname = "Lamora", UkPrn = 12345, Uln = 1111111111, Username = "username"},
                     new CancellationToken()).Result;
 
-            result[0].SubmittedAt.Should().BeNull();
-            result[0].SubmittedBy.Should().BeNullOrEmpty();
-            result[0].AchDate.Should().BeNull();//(new DateTime(2018, 06, 01))
-            result[0].OverallGrade.Should().BeNullOrEmpty();
-            result[0].ShowExtraInfo.Should().BeFalse();
+            result[0].LearnStartDate.Should().Be(new DateTime(2015, 06, 01));
         }
     }
 }
