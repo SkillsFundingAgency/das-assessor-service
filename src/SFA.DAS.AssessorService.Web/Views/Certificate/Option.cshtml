@@ -9,8 +9,16 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <a class="link-back" asp-controller="CertificateGrade" asp-action="Grade">Back</a>
+        @if (Model.BackToCheckPage)
+        {
+            <a class="link-back" asp-controller="CertificateCheck" asp-action="Check">Back</a>
+        }
+        else
+        {
+            <a class="link-back" asp-controller="CertificateGrade" asp-action="Grade">Back</a>
+        }
         
+
         <form type="post" asp-controller="Certificate" asp-method="Options" class="apprentice-option-form">
             @Html.HiddenFor(c => c.Id)
 
@@ -60,11 +68,11 @@
                             <span class="form-label">What was the option?</span>
                             <span class="error-message" asp-validation-for="Option"></span>
                         </label>
-                        <input class="form-control" sfa-validation-for="Option" sfa-validationerror-class="form-control-error" asp-for="Option" type="text"/>
+                        <input class="form-control" sfa-validation-for="Option" sfa-validationerror-class="form-control-error" asp-for="Option" type="text" />
                     </div>
 
                     <div class="multiple-choice">
-                        <input asp-for="HasAdditionalLearningOption" id="options_no" type="radio" value="False"/>
+                        <input asp-for="HasAdditionalLearningOption" id="options_no" type="radio" value="False" />
                         <label for="options_no">
                             No
                         </label>

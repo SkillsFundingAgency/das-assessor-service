@@ -9,7 +9,15 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <a class="link-back" asp-controller="CertificateDeclaration" asp-action="Declare">Back</a>
+        @if (Model.BackToCheckPage)
+        {
+            <a class="link-back" asp-controller="CertificateCheck" asp-action="Check">Back</a>
+        }
+        else
+        {
+            <a class="link-back" asp-controller="CertificateDeclaration" asp-action="Declare">Back</a>
+        }
+
 
         <form class="apprentice-grade-form" type="post" asp-controller="CertificateGrade">
             @Html.HiddenFor(c => c.Id)
