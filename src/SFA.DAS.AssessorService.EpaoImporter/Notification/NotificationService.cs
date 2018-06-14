@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.EpaoImporter.Data;
@@ -36,10 +35,8 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Notification
             var emailTemplate = await _assessorServiceApi.GetEmailTemplate();
 
             var certificatesFileName = $"IFA-Certificate-{GetMonthYear()}-{batchNumber.ToString().PadLeft(3, '0')}.xlsx";
-
-            var stringifiedEndPointOrganisations = GetStringifiedEndPointOrganisations(certificateResponses);
             
-            var personalisation = CreatePersonalisationTokens(certificateResponses, coverLettersProduced.CoverLetterFileNames, certificatesFileName, stringifiedEndPointOrganisations);
+            var personalisation = CreatePersonalisationTokens(certificateResponses, coverLettersProduced.CoverLetterFileNames, certificatesFileName);
 
             _aggregateLogger.LogInfo("Send Email");
             _aggregateLogger.LogInfo($"Base Url = {_webConfiguration.NotificationsApiClientConfiguration.ApiBaseUrl}");
@@ -63,8 +60,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Notification
         }
 
         private Dictionary<string, string> CreatePersonalisationTokens(List<CertificateResponse> certificateResponses,
-            List<string> coverLetterFileNames, string certificatesFileName,
-            string strinfigiedEndPointAssessorOrganisations)
+            List<string> coverLetterFileNames, string certificatesFileName)
         {
             var personalisation = new Dictionary<string, string>
             {
@@ -73,38 +69,13 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Notification
                     "numberOfCertificatesToBePrinted",
                     $"Number Of Certificates to be Printed:- {certificateResponses.Count}"
                 },
-                {"numberOfCoverLetters", $"Number of Cover Letters:- {coverLetterFileNames.Count}"},
-                {"epaos", $"{strinfigiedEndPointAssessorOrganisations}"},               
+                {"numberOfCoverLetters", $"Number of Cover Letters:- {coverLetterFileNames.Count}"},                      
                 {"sftpUploadDirectory", $"{_webConfiguration.Sftp.UploadDirectory}"},
                 {"proofDirectory", $"{_webConfiguration.Sftp.ProofDirectory}"}
             };
             return personalisation;
         }
         
-        private static string GetStringifiedEndPointOrganisations(List<CertificateResponse> certificateResponses)
-        {
-            var endPointAssessorOrganisations = certificateResponses.ToArray().GroupBy(
-                    x => new
-                    {
-                        x.EndPointAssessorOrganisationName
-                    },
-                    (key, group) => new
-                    {
-                        key1 = key.EndPointAssessorOrganisationName,
-                        Result = @group.ToList()
-                    }).Select(x => x.key1).ToList()
-                .Distinct();
-
-            var organisations = new StringBuilder();
-            foreach (var organisation in endPointAssessorOrganisations)
-            {
-                organisations.Append(organisation);
-                organisations.Append("\r\n");
-            }
-
-            return organisations.ToString();
-        }
-
         private static string GetMonthYear()
         {
             var month = DateTime.Today.Month.ToString().PadLeft(2, '0');
