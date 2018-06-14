@@ -142,7 +142,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 config.For<SingleInstanceFactory>().Use<SingleInstanceFactory>(ctx => t => ctx.GetInstance(t));
                 config.For<MultiInstanceFactory>().Use<MultiInstanceFactory>(ctx => t => ctx.GetAllInstances(t));
                 config.For<IMediator>().Use<Mediator>();
-                config.For<IAssessmentOrgsApiClient>().Use(() => new AssessmentOrgsApiClient("https://findapprenticeshiptraining-api.sfa.bis.gov.uk"));
+                config.For<IAssessmentOrgsApiClient>().Use(() => new AssessmentOrgsApiClient(Configuration.AssessmentOrgsApiClientBaseUrl));
                 config.For<IDateTimeProvider>().Use<UtcDateTimeProvider>();
 
                 var option = new DbContextOptionsBuilder<AssessorDbContext>();

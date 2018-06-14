@@ -109,6 +109,17 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
     'Please enter a date in the past'
   );
 
+  // Ensures date is not before a set date
+  jQuery.validator.addMethod(
+    'earliestDate',
+    function(value, element, params) {
+      var userDate = parseDate(value);
+      var eariestDate = parseDate(params);
+      return userDate ? this.optional(element) || userDate >= eariestDate : true;
+    },
+    'The entered date cannot be before the set date'
+  );
+
   // Matches UK postcode. Does not match to UK Channel Islands that have their own postcodes (non standard UK)
   jQuery.validator.addMethod(
     'postcodeUK',
