@@ -40,7 +40,7 @@
                 <span class="form-hint">@Localizer["LastnameHint"]</span>
                 <span class="error-message" asp-validation-for="Surname"></span>
             </label>
-            <input class="form-control" name="Surname" sfa-validation-for="Surname" sfa-validationerror-class="form-control-error" asp-for="Surname" type="text" maxlength="100" />
+            <input class="form-control" name="Surname" autocomplete="off" sfa-validation-for="Surname" sfa-validationerror-class="form-control-error" asp-for="Surname" type="text" maxlength="100" />
         </div>
 
         <div class="form-group" sfa-validation-for="Uln" sfa-validationerror-class="form-group-error">
@@ -49,7 +49,7 @@
                 <span class="form-hint">@Localizer["UlnHint"]</span>
                 <span class="error-message" asp-validation-for="Uln"></span>
             </label>
-            <input class="form-control js-integers-only" name="Uln" asp-for="Uln" type="text" sfa-validation-for="Uln" sfa-validationerror-class="form-control-error" maxlength="10" />
+            <input class="form-control js-integers-only" name="Uln" autocomplete="off" asp-for="Uln" type="text" sfa-validation-for="Uln" sfa-validationerror-class="form-control-error" maxlength="10" />
         </div>
 
         <details>

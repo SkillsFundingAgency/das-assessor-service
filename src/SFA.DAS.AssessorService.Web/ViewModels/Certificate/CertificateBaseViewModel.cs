@@ -20,5 +20,6 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         public string FamilyName { get; set; }
         public string GivenNames { get; set; }
         public string Standard { get; set; }
+        public bool BackToCheckPage { get; set; }
     }
 }

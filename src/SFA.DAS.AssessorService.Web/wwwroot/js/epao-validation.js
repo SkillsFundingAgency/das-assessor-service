@@ -7,7 +7,11 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
         $('.js-error-summary-list').empty();
         validator.errorList.forEach(function(error) {
           $('.js-error-summary-list').append(
-            '<li><a href="#' + error.element.id + '">' + error.message + '</a></li>'
+            '<li><a href="#' +
+              error.element.id +
+              '">' +
+              error.message +
+              '</a></li>'
           );
         });
         $('.js-error-summary')
@@ -16,7 +20,9 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
         $('.js-error-summary a').click(function(e) {
           e.preventDefault();
           var href = $(this).attr('href');
-          $(href).is(':visible') ? $(href).focus() : $('input.form-control:first').focus();
+          $(href).is(':visible')
+            ? $(href).focus()
+            : $('input.form-control:first').focus();
         });
       } else {
         // Otherwise, set focus to the field with the error
@@ -102,8 +108,8 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
   jQuery.validator.addMethod(
     'noFutureDate',
     function(value, element) {
-      var now = new Date();
-      var userDate = parseDate(value);
+      var now = new Date().getTime();
+      var userDate = parseDate(value).getTime();
       return userDate ? this.optional(element) || userDate < now : true;
     },
     'Please enter a date in the past'
@@ -113,9 +119,11 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
   jQuery.validator.addMethod(
     'earliestDate',
     function(value, element, params) {
-      var userDate = parseDate(value);
-      var eariestDate = parseDate(params);
-      return userDate ? this.optional(element) || userDate >= eariestDate : true;
+      var userDate = parseDate(value).getTime();
+      var earliestDate = parseDate(params).getTime();
+      return userDate
+        ? this.optional(element) || userDate >= earliestDate
+        : true;
     },
     'The entered date cannot be before the set date'
   );
@@ -134,7 +142,7 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
     'Please specify a valid UK postcode'
   );
 
-  // Helper to confirm date input is correct format
+  // Helper to ensure date input is correct format
   function parseDate(str) {
     var t = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
     if (t !== null) {
@@ -171,7 +179,10 @@ $(document).ready(function() {
       return;
     }
     // Ensure that it is a number and stop the keypress
-    if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+    if (
+      (e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) &&
+      (e.keyCode < 96 || e.keyCode > 105)
+    ) {
       e.preventDefault();
     }
   });

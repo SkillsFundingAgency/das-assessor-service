@@ -9,7 +9,15 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <a asp-controller="CertificateDate" asp-action="Date" class="link-back">Back</a>
+        @if (Model.BackToCheckPage)
+        {
+            <a class="link-back" asp-controller="CertificateCheck" asp-action="Check">Back</a>
+        }
+        else
+        {
+            <a asp-controller="CertificateDate" asp-action="Date" class="link-back">Back</a>
+        }
+        
 
         <form class="apprentice-address-form" type="post" asp-controller="CertificateAddress">
             @Html.HiddenFor(c => c.Id)
@@ -37,7 +45,7 @@
                     </ul>
                 </div>
             }
-            
+
             <fieldset sfa-anyvalidationerror-class="after-error-summary">
                 <legend>
                     <h1 class="heading-large">
@@ -46,7 +54,7 @@
                     </h1>
                     <p>Certificates should go to the apprentice's employer.</p>
                 </legend>
-                
+
                 <div class="form-group" sfa-validation-for="Name" sfa-validationerror-class="form-group-error">
                     <label for="Name">
                         <span class="form-label-bold">@Localizer["Name"]</span>
@@ -55,7 +63,7 @@
                         </span>
                         <span class="error-message" asp-validation-for="Name"></span>
                     </label>
-                    <input class="form-control" name="Name" sfa-validation-for="Name" sfa-validationerror-class="form-control-error" asp-for="Name" type="text"/>
+                    <input class="form-control" name="Name" sfa-validation-for="Name" sfa-validationerror-class="form-control-error" asp-for="Name" type="text" />
                 </div>
 
                 <div class="form-group" sfa-validation-for="Dept" sfa-validationerror-class="form-group-error">
@@ -66,7 +74,7 @@
                         </span>
                         <span class="error-message" asp-validation-for="Dept"></span>
                     </label>
-                    <input class="form-control" name="Dept" sfa-validation-for="Dept" sfa-validationerror-class="form-control-error" asp-for="Dept" type="text"/>
+                    <input class="form-control" name="Dept" sfa-validation-for="Dept" sfa-validationerror-class="form-control-error" asp-for="Dept" type="text" />
                 </div>
 
                 <div class="form-group" sfa-validation-for="Employer" sfa-validationerror-class="form-group-error">
@@ -74,9 +82,9 @@
                         <span class="form-label-bold">@Localizer["Employer"]</span>
                         <span class="error-message" asp-validation-for="Employer"></span>
                     </label>
-                    <input class="form-control form-control-3-4" name="Employer" sfa-validation-for="Employer" sfa-validationerror-class="form-control-error" asp-for="Employer" type="text"/>
+                    <input class="form-control form-control-3-4" name="Employer" sfa-validation-for="Employer" sfa-validationerror-class="form-control-error" asp-for="Employer" type="text" />
                 </div>
-                
+
                 <div id="address-lookup" class="hide-nojs disabled">
                     <div class="form-group form-group-compound" id="addressInputWrapper">
                         <label for="postcode-search" class="form-label">Start typing the company name or postcode</label>
@@ -98,7 +106,7 @@
                                 <span class="form-label-bold">@Localizer["Address"]</span>
                                 <span class="error-message" asp-validation-for="AddressLine1"></span>
                             </label>
-                            <input autocomplete="off" class="form-control" name="AddressLine1" sfa-validation-for="AddressLine1" sfa-validationerror-class="form-control-error" asp-for="AddressLine1" type="text"/>
+                            <input autocomplete="off" class="form-control" name="AddressLine1" sfa-validation-for="AddressLine1" sfa-validationerror-class="form-control-error" asp-for="AddressLine1" type="text" />
                         </div>
 
                         <div class="form-group-compound address-item form-group" sfa-validation-for="AddressLine2" sfa-validationerror-class="form-group-error">
@@ -106,28 +114,28 @@
                                 <span class="form-label-bold">@Localizer["AddressLine2"]</span>
                                 <span class="error-message" asp-validation-for="AddressLine2"></span>
                             </label>
-                            <input autocomplete="off" class="form-control" name="AddressLine2" sfa-validation-for="AddressLine2" sfa-validationerror-class="form-control-error" asp-for="AddressLine2" type="text"/>
+                            <input autocomplete="off" class="form-control" name="AddressLine2" sfa-validation-for="AddressLine2" sfa-validationerror-class="form-control-error" asp-for="AddressLine2" type="text" />
                         </div>
                         <div class="form-group-compound address-item form-group" sfa-validation-for="AddressLine3" sfa-validationerror-class="form-group-error">
                             <label for="AddressLine3">
                                 <span class="form-label-bold">@Localizer["AddressLine3"]</span>
                                 <span class="error-message" asp-validation-for="AddressLine3"></span>
                             </label>
-                            <input autocomplete="off" class="form-control" name="AddressLine3" sfa-validation-for="AddressLine3" sfa-validationerror-class="form-control-error" asp-for="AddressLine3" type="text"/>
+                            <input autocomplete="off" class="form-control" name="AddressLine3" sfa-validation-for="AddressLine3" sfa-validationerror-class="form-control-error" asp-for="AddressLine3" type="text" />
                         </div>
                         <div class="form-group-compound address-item form-group" sfa-validation-for="City" sfa-validationerror-class="form-group-error">
                             <label for="City">
                                 <span class="form-label-bold">@Localizer["City"]</span>
                                 <span class="error-message" asp-validation-for="City"></span>
                             </label>
-                            <input autocomplete="off" class="form-control" name="City" sfa-validation-for="City" sfa-validationerror-class="form-control-error" asp-for="City" type="text"/>
+                            <input autocomplete="off" class="form-control" name="City" sfa-validation-for="City" sfa-validationerror-class="form-control-error" asp-for="City" type="text" />
                         </div>
                         <div class="address-item form-group" sfa-validation-for="Postcode" sfa-validationerror-class="form-group-error">
                             <label for="Postcode">
                                 <span class="form-label-bold">@Localizer["Postcode"]</span>
                                 <span class="error-message" asp-validation-for="Postcode"></span>
                             </label>
-                            <input autocomplete="off" class="form-control js-no-special-chars" name="Postcode" sfa-validation-for="Postcode" sfa-validationerror-class="form-control-error" asp-for="Postcode" type="text"/>
+                            <input autocomplete="off" class="form-control js-no-special-chars" name="Postcode" sfa-validation-for="Postcode" sfa-validationerror-class="form-control-error" asp-for="Postcode" type="text" />
                         </div>
 
                     </div>
