@@ -44,6 +44,15 @@ CREATE EXTERNAL DATA SOURCE BlobStorage WITH (
     CREDENTIAL = BlobCredential
 );
 
+
+IF (EXISTS (SELECT * 
+                 FROM INFORMATION_SCHEMA.TABLES 
+                 WHERE TABLE_SCHEMA = 'dbo' 
+                 AND  TABLE_NAME = 'CertificateImport'))
+BEGIN
+    DROP TABLE [CertificateImport]
+END
+
 CREATE TABLE [dbo].[CertificateImport](
 	[Year] [nvarchar](4) NULL,
 	[Return] [int] NULL,
@@ -211,7 +220,7 @@ VALUES (NEWID(), GETDATE(), 'ESFA User', 'EPAO999', 'Live', 'manual')
 END
 
 DROP FUNCTION GetCertificateDataJson
-DROP TABLE CertificateImport
+
 
 DROP EXTERNAL DATA SOURCE BlobStorage
 DROP DATABASE SCOPED CREDENTIAL BlobCredential 
