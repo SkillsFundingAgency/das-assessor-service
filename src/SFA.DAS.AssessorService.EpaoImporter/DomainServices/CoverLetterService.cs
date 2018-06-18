@@ -6,9 +6,7 @@ using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Extensions;
-using SFA.DAS.AssessorService.EpaoImporter.Const;
 using SFA.DAS.AssessorService.EpaoImporter.Data;
-using SFA.DAS.AssessorService.EpaoImporter.Extensions;
 using SFA.DAS.AssessorService.EpaoImporter.Interfaces;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
 using SFA.DAS.AssessorService.EpaoImporter.Sftp;
@@ -81,12 +79,14 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                 }
 
                 _aggregateLogger.LogInfo($"Processing Certificate for Cover Letter - {certificate.CertificateReference} - {wordDocumentFileName}");
-                var wordStream = CreateWordDocumentStream(wordDocumentFileName, certificate, documentTemplateDataStream);
-                _aggregateLogger.LogInfo($"Converted Certificate data - Contact Name = {certificate.CertificateData.ContactName}");
+                using (var wordStream =
+                    CreateWordDocumentStream(wordDocumentFileName, certificate, documentTemplateDataStream))
+                {
+                    _aggregateLogger.LogInfo(
+                        $"Converted Certificate data - Contact Name = {certificate.CertificateData.ContactName}");
 
-                await _fileTransferClient.Send(wordStream, wordDocumentFileName);
-
-                wordStream.Close();
+                    await _fileTransferClient.Send(wordStream, wordDocumentFileName);                 
+                }
             }         
 
             documentTemplateDataStream.Close();
