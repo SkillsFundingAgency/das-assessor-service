@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 
         public List<CertificateResponse> Sanitise(List<CertificateResponse> certificateResponses)
         {
-            var sanitizedCertificateResponses = new List<CertificateResponse>();
+            var sanitisedCertificateResponse = new List<CertificateResponse>();
 
             foreach (var certificateResponse in certificateResponses)
             {
@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                         && !string.IsNullOrEmpty(certificateData.LearnerFamilyName))
                     {
                         _aggregateLogger.LogInfo(
-                            $"Unprintable Certificate -> Given Names = {certificateData.LearnerGivenNames} Familly Name = {certificateData.LearnerFamilyName} - Cannot be processed");
+                            $"Unprintable Certificate -> Given Names = {certificateData.LearnerGivenNames} Family Name = {certificateData.LearnerFamilyName} - Cannot be processed");
                     }
                     else
                     {
@@ -49,10 +49,10 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                 }
                 else
                 {
-                    sanitizedCertificateResponses.Add(certificateResponse);
+                    sanitisedCertificateResponse.Add(certificateResponse);
                 }
             }
-            return sanitizedCertificateResponses;
+            return sanitisedCertificateResponse;
         }
     }
 }
