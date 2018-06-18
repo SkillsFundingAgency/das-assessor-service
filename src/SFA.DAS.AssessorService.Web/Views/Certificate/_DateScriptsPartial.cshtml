@@ -20,7 +20,8 @@
         maxlength: 4
       },
       fullDate: {
-        noFutureDate: true
+        noFutureDate: true,
+        earliestDate: '1/1/2017'
       }
     },
     messages: {
@@ -41,7 +42,8 @@
         maxlength: 'Enter a valid year'
       },
       fullDate: {
-        noFutureDate: 'An achievement date cannot be in the future'
+        noFutureDate: 'An achievement date cannot be in the future',
+        earliestDate: 'The achievement date cannot be before 01 01 2017'
       }
     }
   };
