@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
-using System.Runtime.ConstrainedExecution;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.Extensions;
+using SFA.DAS.AssessorService.Domain.JsonData;
 using CertificateStatus = SFA.DAS.AssessorService.Domain.Consts.CertificateStatus;
 
 namespace SFA.DAS.AssessorService.Data
@@ -44,6 +45,23 @@ namespace SFA.DAS.AssessorService.Data
                 c.Uln == uln && c.StandardCode == standardCode);
         }
 
+        public async Task<Certificate> GetCertificate(
+            string certificateReference,
+            string lastName,
+            DateTime? achievementDate)
+        {
+            var certificate = await
+                _context.Certificates
+                    .FirstOrDefaultAsync(q => q.CertificateReference == certificateReference && CheckCertificateData(q, lastName, achievementDate));
+            return certificate;
+        }
+
+        private bool CheckCertificateData(Certificate certificate, string lastName, DateTime? achievementDate)
+        {
+            var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+            return (certificateData.AchievementDate == achievementDate && certificateData.LearnerFamilyName == lastName);
+        }
+
         public async Task<List<Certificate>> GetCompletedCertificatesFor(long uln)
         {
             return await _context.Certificates.Where(c =>
@@ -51,21 +69,21 @@ namespace SFA.DAS.AssessorService.Data
                 .ToListAsync();
         }
 
-        public async Task<List<Certificate>> GetCertificates(string status)
+        public async Task<List<Certificate>> GetCertificates(List<string> statuses)
         {
-            if (string.IsNullOrEmpty(status))
+           if (statuses == null || !statuses.Any())
             {
                 return await _context.Certificates
                     .Include(q => q.Organisation)
                     .ToListAsync();
             }
             else
-            {
-                return await _context.Certificates
-                    .Include(q => q.Organisation)
-                    .Where(q => q.Status == status)
-                    .ToListAsync();
-            }
+           {
+               return await _context.Certificates
+                   .Include(q => q.Organisation)
+                   .Where(x => statuses.Contains(x.Status))
+                   .ToListAsync();
+           }
         }
 
         public async Task<Certificate> Update(Certificate certificate, string username, string action)
@@ -97,10 +115,11 @@ namespace SFA.DAS.AssessorService.Data
                     Status = cert.Status,
                     Id = Guid.NewGuid(),
                     CertificateData = cert.CertificateData,
-                    Username = username
+                    Username = username,
+                    BatchNumber = cert.BatchNumber
                 };
 
-                await _context.CertificateLogs.AddAsync(certLog);   
+                await _context.CertificateLogs.AddAsync(certLog);
             }
         }
 

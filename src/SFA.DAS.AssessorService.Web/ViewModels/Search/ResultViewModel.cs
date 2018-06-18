@@ -14,5 +14,8 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Search
         public string Level { get; set; }
         public DateTime? SubmittedAt { get; set; }
         public string SubmittedBy { get; set; }
+        public DateTime? AchDate { get; set; }
+        public DateTime? LearnStartDate { get; set; }
+        public bool ShowExtraInfo { get; set; }
     }
 }

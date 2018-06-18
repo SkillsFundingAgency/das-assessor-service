@@ -32,12 +32,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
             Logger.LogInformation($"Load View Model for {typeof(T).Name} for {username}");
+            
+            var viewModel = new T();
 
             var query = _contextAccessor.HttpContext.Request.Query;
             if (query.ContainsKey("redirecttocheck") && bool.Parse(query["redirecttocheck"]))
             {
                 Logger.LogInformation($"RedirectToCheck for {typeof(T).Name} is true");
                 _sessionService.Set("redirecttocheck", "true");
+                viewModel.BackToCheckPage = true;
             }
             else
                 _sessionService.Remove("redirecttocheck");
@@ -54,7 +57,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             Logger.LogInformation($"Got Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id}");
 
-            var viewModel = new T();
             viewModel.FromCertificate(certificate);
 
             Logger.LogInformation($"Got View Model of type {typeof(T).Name} requested by {username}");

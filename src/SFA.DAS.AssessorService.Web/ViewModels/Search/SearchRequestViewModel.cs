@@ -27,7 +27,11 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Search
         public string OverallGrade { get; set; }
         public string CertificateReference { get; set; }
         public string Level { get; set; }
-        public DateTime? SubmittedAt { get; set; }
+        public string SubmittedAt { get; set; }
         public string SubmittedBy { get; set; }
+        public string LearnerStartDate { get; set; }
+        public string AchievementDate { get; set; }
+        
+        public bool ShowExtraInfo { get; set; }
     }
 }

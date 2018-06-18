@@ -1,18 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Extensions;
-using SFA.DAS.AssessorService.EpaoImporter.Const;
 using SFA.DAS.AssessorService.EpaoImporter.Data;
-using SFA.DAS.AssessorService.EpaoImporter.Extensions;
 using SFA.DAS.AssessorService.EpaoImporter.Interfaces;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
 using SFA.DAS.AssessorService.EpaoImporter.Sftp;
-using Spire.Doc;
 
 namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 {
