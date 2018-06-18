@@ -59,7 +59,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 
                 package.Save();
 
-                await _fileTransferClient.Send(memoryStream, fileName);
+                _fileTransferClient.Send(memoryStream, fileName);
 
                 memoryStream.Close();
             }

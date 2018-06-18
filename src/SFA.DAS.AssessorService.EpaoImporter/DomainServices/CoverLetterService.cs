@@ -85,7 +85,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                     _aggregateLogger.LogInfo(
                         $"Converted Certificate data - Contact Name = {certificate.CertificateData.ContactName}");
 
-                    await _fileTransferClient.Send(wordStream, wordDocumentFileName);                 
+                    _fileTransferClient.Send(wordStream, wordDocumentFileName);                 
                 }
             }         
 
