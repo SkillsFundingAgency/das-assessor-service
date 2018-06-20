@@ -21,7 +21,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Sftp
             _webConfiguration = webConfiguration;
         }
 
-        public async Task Send(MemoryStream memoryStream, string fileName)
+        public void Send(MemoryStream memoryStream, string fileName)
         { 
             _logger.LogInfo("Sending file - {fileName} through sftp");
         }
