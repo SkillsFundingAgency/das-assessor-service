@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
@@ -10,7 +9,6 @@ using SFA.DAS.AssessorService.EpaoImporter.Data;
 using SFA.DAS.AssessorService.EpaoImporter.Interfaces;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
 using SFA.DAS.AssessorService.EpaoImporter.Sftp;
-using Spire.Doc;
 
 namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 {
@@ -77,7 +75,6 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                 {
                     coverLettersProduced.CoverLetterCertificates.Add(groupCertificateResult.CertificateReference, wordDocumentFileName);
                 }
-
                 _aggregateLogger.LogInfo($"Processing Certificate for Cover Letter - {certificate.CertificateReference} - {wordDocumentFileName}");
                 using (var wordStream =
                     CreateWordDocumentStream(wordDocumentFileName, certificate, documentTemplateDataStream))
@@ -94,81 +91,81 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             return coverLettersProduced;
         }
 
-        private MemoryStream CreateWordDocumentStream(string mergedFileName, CertificateResponse certificateResponse, MemoryStream documentTemplateStream)
-        {
-            _aggregateLogger.LogInfo("Merging fields in document ...");
-            var document = MergeFieldsInDocument(certificateResponse, documentTemplateStream);
-            _aggregateLogger.LogInfo("Merged fields in Document");
+        //private MemoryStream CreateWordDocumentStream(string mergedFileName, CertificateResponse certificateResponse, MemoryStream documentTemplateStream)
+        //{
+        //    _aggregateLogger.LogInfo("Merging fields in document ...");
+        //    var document = MergeFieldsInDocument(certificateResponse, documentTemplateStream);
+        //    _aggregateLogger.LogInfo("Merged fields in Document");
 
-            return ConvertDocumentToStream(document);
-        }
+        //    return ConvertDocumentToStream(document);
+        //}
 
-        private Document MergeFieldsInDocument(CertificateResponse certificateResponse, MemoryStream documentTemplateStream)
-        {
-            var document = new Document();
+        //private Document MergeFieldsInDocument(CertificateResponse certificateResponse, MemoryStream documentTemplateStream)
+        //{
+        //    var document = new Document();
 
-            _aggregateLogger.LogInfo("Load Document from Stream ...");
-            document.LoadFromStream(documentTemplateStream, FileFormat.Docx);
-            _aggregateLogger.LogInfo($"Document Length = {document.Count}");
+        //    _aggregateLogger.LogInfo("Load Document from Stream ...");
+        //    document.LoadFromStream(documentTemplateStream, FileFormat.Docx);
+        //    _aggregateLogger.LogInfo($"Document Length = {document.Count}");
 
-            _aggregateLogger.LogInfo($"Document Template Stream = {documentTemplateStream.Length}");
+        //    _aggregateLogger.LogInfo($"Document Template Stream = {documentTemplateStream.Length}");
 
-            var certificateData = certificateResponse.CertificateData;
+        //    var certificateData = certificateResponse.CertificateData;
 
-            var contactDetails = "";
-            if (!string.IsNullOrEmpty(certificateData.ContactOrganisation))
-            {
-                contactDetails += certificateData.ContactOrganisation + System.Environment.NewLine;
-            }
+        //    var contactDetails = "";
+        //    if (!string.IsNullOrEmpty(certificateData.ContactOrganisation))
+        //    {
+        //        contactDetails += certificateData.ContactOrganisation + System.Environment.NewLine;
+        //    }
 
-            if (!string.IsNullOrEmpty(certificateData.Department))
-            {
-                contactDetails += certificateData.Department + System.Environment.NewLine;
-            }
+        //    if (!string.IsNullOrEmpty(certificateData.Department))
+        //    {
+        //        contactDetails += certificateData.Department + System.Environment.NewLine;
+        //    }
 
-            if (!string.IsNullOrEmpty(certificateData.ContactAddLine1))
-            {
-                contactDetails += certificateData.ContactAddLine1 + System.Environment.NewLine;
-            }
+        //    if (!string.IsNullOrEmpty(certificateData.ContactAddLine1))
+        //    {
+        //        contactDetails += certificateData.ContactAddLine1 + System.Environment.NewLine;
+        //    }
 
-            if (!string.IsNullOrEmpty(certificateData.ContactAddLine2))
-            {
-                contactDetails += certificateData.ContactAddLine2 + System.Environment.NewLine;
-            }
+        //    if (!string.IsNullOrEmpty(certificateData.ContactAddLine2))
+        //    {
+        //        contactDetails += certificateData.ContactAddLine2 + System.Environment.NewLine;
+        //    }
 
-            if (!string.IsNullOrEmpty(certificateData.ContactAddLine3))
-            {
-                contactDetails += certificateData.ContactAddLine3 + System.Environment.NewLine;
-            }
+        //    if (!string.IsNullOrEmpty(certificateData.ContactAddLine3))
+        //    {
+        //        contactDetails += certificateData.ContactAddLine3 + System.Environment.NewLine;
+        //    }
 
-            if (!string.IsNullOrEmpty(certificateData.ContactAddLine4))
-            {
-                contactDetails += certificateData.ContactAddLine4 + System.Environment.NewLine;
-            }
+        //    if (!string.IsNullOrEmpty(certificateData.ContactAddLine4))
+        //    {
+        //        contactDetails += certificateData.ContactAddLine4 + System.Environment.NewLine;
+        //    }
 
-            if (!string.IsNullOrEmpty(certificateData.ContactPostCode))
-            {
-                contactDetails += certificateData.ContactPostCode + System.Environment.NewLine;
-            }
+        //    if (!string.IsNullOrEmpty(certificateData.ContactPostCode))
+        //    {
+        //        contactDetails += certificateData.ContactPostCode + System.Environment.NewLine;
+        //    }
 
-            document.Replace("[Addressee Name]", string.IsNullOrEmpty(certificateData.ContactName) ? "" : certificateData.ContactName, false, true);
-            document.Replace("[ContactDetails]", contactDetails, false, true);
+        //    document.Replace("[Addressee Name]", string.IsNullOrEmpty(certificateData.ContactName) ? "" : certificateData.ContactName, false, true);
+        //    document.Replace("[ContactDetails]", contactDetails, false, true);
 
-            var utcNow = DateTime.UtcNow;
-            var gmtNow = utcNow.UtcToTimeZoneTime(TimezoneNames.GmtStandardTimeZone);
-            document.Replace("[TodaysDate]", gmtNow.ToString("dd MMMM yyyy"), false, true);
+        //    var utcNow = DateTime.UtcNow;
+        //    var gmtNow = utcNow.UtcToTimeZoneTime(TimezoneNames.GmtStandardTimeZone);
+        //    document.Replace("[TodaysDate]", gmtNow.ToString("dd MMMM yyyy"), false, true);
 
-            document.Replace("[Inset employer name?]", certificateData.ContactName, false, true);
-            return document;
-        }
+        //    document.Replace("[Inset employer name?]", certificateData.ContactName, false, true);
+        //    return document;
+        //}
 
-        private MemoryStream ConvertDocumentToStream(Document document)
-        {
-            var wordDocumentStream = new MemoryStream();
-            _aggregateLogger.LogInfo("Saving document to stream ...");
-            document.SaveToStream(wordDocumentStream, FileFormat.Docx);
-            _aggregateLogger.LogInfo("Saved document to stream ...");
-            return wordDocumentStream;
-        }
+        //private MemoryStream ConvertDocumentToStream(Document document)
+        //{
+        //    var wordDocumentStream = new MemoryStream();
+        //    _aggregateLogger.LogInfo("Saving document to stream ...");
+        //    document.SaveToStream(wordDocumentStream, FileFormat.Docx);
+        //    _aggregateLogger.LogInfo("Saved document to stream ...");
+        //    return wordDocumentStream;
+        //}
     }
 }
