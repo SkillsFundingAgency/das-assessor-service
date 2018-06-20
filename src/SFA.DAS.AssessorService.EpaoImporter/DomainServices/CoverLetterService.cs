@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -75,15 +75,14 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                 {
                     coverLettersProduced.CoverLetterCertificates.Add(groupCertificateResult.CertificateReference, wordDocumentFileName);
                 }
-                _aggregateLogger.LogInfo($"Processing Certificate for Cover Letter - {certificate.CertificateReference} - {wordDocumentFileName}");
-                using (var wordStream =
-                    CreateWordDocumentStream(wordDocumentFileName, certificate, documentTemplateDataStream))
-                {
-                    _aggregateLogger.LogInfo(
-                        $"Converted Certificate data - Contact Name = {certificate.CertificateData.ContactName}");
 
-                    _fileTransferClient.Send(wordStream, wordDocumentFileName);                 
-                }
+                //_aggregateLogger.LogInfo($"Processing Certificate for Cover Letter - {certificate.CertificateReference} - {wordDocumentFileName}");
+                //var wordStream = CreateWordDocumentStream(wordDocumentFileName, certificate, documentTemplateDataStream);
+                //_aggregateLogger.LogInfo($"Converted Certificate data - Contact Name = {certificate.CertificateData.ContactName}");
+
+                //await _fileTransferClient.Send(wordStream, wordDocumentFileName);
+
+                //wordStream.Close();
             }         
 
             documentTemplateDataStream.Close();
