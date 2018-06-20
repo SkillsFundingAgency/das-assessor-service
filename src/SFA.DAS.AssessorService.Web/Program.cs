@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.Web
             try
             {
                 logger.Info("Starting up host");
-                BuildWebHost(args).Run();
+                CreateWebHostBuilder(args).Build().Run();
             }
             catch (Exception ex)
             {
@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Web
             }
         }
 
-        public static IWebHost BuildWebHost(string[] args)
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
             IHostingEnvironment hostingEnvironment = null;
 
@@ -51,8 +51,7 @@ namespace SFA.DAS.AssessorService.Web
                     }
                 })
                 .UseStartup<Startup>()
-                .UseNLog()
-                .Build();
+                .UseNLog();
         }
     }
 }
