@@ -120,7 +120,7 @@ namespace SFA.DAS.AssessorService.Application.Api.ReprintTest
         {
             var tenantId = "1a92889b-8ea1-4a16-8132-347814051567";
             var clientId = "b29803ca-cf9f-4b9a-9f63-a0e2700c55d7";
-            var appKey = "GYM1zqwiHXQrM7r7x22kuUdSCEnciTM9K/BAUlCQ9Bs=";
+            var appKey = "";
             var resourceId = "https://citizenazuresfabisgov.onmicrosoft.com/assessorservice-api";
 
             var authority = $"https://login.microsoftonline.com/{tenantId}";
