@@ -15,112 +15,50 @@ namespace SFA.DAS.AssessorService.Application.Api.ReprintTest
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("Reprint console");
+            Console.Write("Enter App Key: ");
+            var appKey = Console.ReadLine();
+            Console.Write("Enter Certificate Reference: ");
+            var certRef = Console.ReadLine();
+            Console.Write("Enter Achievement Date (dd/mm/yyyy): ");
+            var achievementDate = Console.ReadLine();
+            Console.Write("Enter Surname: ");
+            var surname = Console.ReadLine();
+            Console.Write("Enter Username (can be anything): ");
+            var username = Console.ReadLine();
+
+
             var baseUri = "https://at-assessors-api.apprenticeships.sfa.bis.gov.uk/";
             var httpClient = new HttpClient { BaseAddress = new Uri($"{baseUri}") };
-            IEnumerable<CertificateResponse> certificateResponses;
 
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/certificates?statuses=Printed"))
-            {
-                certificateResponses = RequestAndDeserialiseAsync<IEnumerable<CertificateResponse>>(httpClient, request,
-                    $"Could not find the certificates").GetAwaiter().GetResult();
-                foreach (var certificateResponse in certificateResponses)
+            var reprintRequest = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/certificates/requestreprint");
+
+            reprintRequest.Content = new StringContent(JsonConvert.SerializeObject(new CertificateReprintRequest
                 {
-                    Console.WriteLine($"We have found the following Certificate References with a status of Printed ==> {certificateResponse.CertificateReference}");
-                }
-
-                Console.WriteLine("Please enter a certificate reference you would like to update ...");
-                var certificateReference = Console.ReadLine();
-
-                CertificateReprintRequest certificateReprintRequest;
-                var updateCertificateReference =
-                    certificateResponses.FirstOrDefault(q => q.CertificateReference == certificateReference);
-                if (updateCertificateReference == null)
-                {
-                    // Create record that will not be found should return 404
-                    certificateReprintRequest = new CertificateReprintRequest
-                    {
-                        CertificateReference = certificateReference,
-                        AchievementDate = DateTime.Now,
-                        Username = "XXXX",
-                        LastName = "XXX"
-                    };
-                }
-                else
-                {
-                    certificateReprintRequest = new CertificateReprintRequest
-                    {
-                        CertificateReference = certificateReference,
-                        AchievementDate = updateCertificateReference.CertificateData.AchievementDate,
-                        Username = "rajb",
-                        LastName = updateCertificateReference.CertificateData.LearnerFamilyName
-                    };
-                }
-
-                using (var reprintRequest = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/certificates/requestreprint"))
-                {
-                    PostPutRequest(httpClient, reprintRequest, certificateReprintRequest).GetAwaiter().GetResult();
-                    Console.WriteLine("Update request ws successfull");
-                }
-            }
-        }
-
-        protected static async Task<T> RequestAndDeserialiseAsync<T>(HttpClient httpClient, HttpRequestMessage request, string message = null) where T : class
-        {
-            request.Headers.Add("Accept", "application/json");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", GetToken());
-
-            using (var response = httpClient.SendAsync(request))
-            {
-                var result = await response;
-                if (result.StatusCode == HttpStatusCode.OK)
-                {
-                    var json = await result.Content.ReadAsStringAsync();
-                    return await Task.Factory.StartNew<T>(() => JsonConvert.DeserializeObject<T>(json));
-                }
-                if (result.StatusCode == HttpStatusCode.NotFound)
-                {
-                    if (message == null)
-                    {
-                        message = "Could not find " + request.RequestUri.PathAndQuery;
-                    }
-
-                    RaiseResponseError(message, request, result);
-                }
-
-                RaiseResponseError(request, result);
-            }
-
-            return null;
-        }
-
-        protected static async Task PostPutRequest<T>(HttpClient httpClient, HttpRequestMessage requestMessage, T model)
-        {
-            var serializeObject = JsonConvert.SerializeObject(model);
-            requestMessage.Content = new StringContent(serializeObject,
+                    CertificateReference = certRef,
+                    AchievementDate = DateTime.Parse(achievementDate),
+                    Username = username,
+                    LastName = surname
+                }),
                 System.Text.Encoding.UTF8, "application/json");
 
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", GetToken());
+            reprintRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", GetToken(appKey));
 
-            var response = await httpClient.SendAsync(requestMessage);
+            var response = httpClient.SendAsync(reprintRequest).Result;
 
-            if (response.StatusCode == HttpStatusCode.NotFound)
-            {
-                var message = "Could not find " + requestMessage.RequestUri.PathAndQuery;
-                RaiseResponseError(message, requestMessage, response);
-            }
-
-            if (response.StatusCode == HttpStatusCode.InternalServerError)
-            {
-                throw new HttpRequestException();
-            }
+            Console.WriteLine("Response received");
+            Console.WriteLine($"Status code: {response.StatusCode}");
+            Console.WriteLine("Content:");
+            Console.Write(response.Content.ReadAsStringAsync().Result);
+            Console.WriteLine();
+            Console.WriteLine("Press Any Key to finish");
+            Console.ReadKey();
         }
 
-
-        public static string GetToken()
+        public static string GetToken(string appKey)
         {
             var tenantId = "1a92889b-8ea1-4a16-8132-347814051567";
             var clientId = "b29803ca-cf9f-4b9a-9f63-a0e2700c55d7";
-            var appKey = "";
             var resourceId = "https://citizenazuresfabisgov.onmicrosoft.com/assessorservice-api";
 
             var authority = $"https://login.microsoftonline.com/{tenantId}";
@@ -131,30 +69,5 @@ namespace SFA.DAS.AssessorService.Application.Api.ReprintTest
 
             return accessToken;
         }
-
-        private static void RaiseResponseError(HttpRequestMessage failedRequest, HttpResponseMessage failedResponse)
-        {
-            throw CreateRequestException(failedRequest, failedResponse);
-        }
-
-        private static void RaiseResponseError(string message, HttpRequestMessage failedRequest, HttpResponseMessage failedResponse)
-        {
-            if (failedResponse.StatusCode == HttpStatusCode.NotFound)
-            {
-                throw new ApplicationException(message, CreateRequestException(failedRequest, failedResponse));
-            }
-
-            throw CreateRequestException(failedRequest, failedResponse);
-        }
-
-        private static HttpRequestException CreateRequestException(HttpRequestMessage failedRequest, HttpResponseMessage failedResponse)
-        {
-            return new HttpRequestException(
-                string.Format($"The Client request for {{0}} {{1}} failed. Response Status: {{2}}, Response Body: {{3}}",
-                    failedRequest.Method.ToString().ToUpperInvariant(),
-                    failedRequest.RequestUri,
-                    (int)failedResponse.StatusCode,
-                    failedResponse.Content.ReadAsStringAsync().Result));
-        }
-    }
+    }  
 }
