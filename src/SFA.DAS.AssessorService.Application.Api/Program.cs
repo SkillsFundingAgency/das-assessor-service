@@ -1,11 +1,11 @@
-﻿using SFA.DAS.AssessorService.Application.Api.StartupConfiguration;
+﻿using System;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Hosting;
+using SFA.DAS.AssessorService.Application.Api.StartupConfiguration;
 
 namespace SFA.DAS.AssessorService.Application.Api
 {
-    using System;
     using global::NLog.Web;
-    using Microsoft.AspNetCore;
-    using Microsoft.AspNetCore.Hosting;
 
     public class Program
     {
@@ -17,9 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Api
             {
                 logger.Info("Starting up host");
 
-                var host = BuildWebHost(args);
-
-                host.Run();
+                CreateWebHostBuilder(args).Build().Run();
             }
             catch (Exception ex)
             {
@@ -29,14 +27,13 @@ namespace SFA.DAS.AssessorService.Application.Api
             }
         }
 
-        public static IWebHost BuildWebHost(string[] args)
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
             return WebHost.CreateDefaultBuilder(args)
+                .UseStartup<Startup>()
                 .UseApplicationInsights()
                 .UseKestrel()
-                .UseStartup<Startup>()
-                .UseNLog()
-                .Build();
+                .UseNLog();
         }
     }
 }
