@@ -66,8 +66,6 @@ namespace SFA.DAS.AssessorService.Web
             }
             else
             {
-                //if (!string.IsNullOrEmpty(Configuration.SessionRedisConnectionString))
-                //{
                 try
                 {
                     services.AddDistributedRedisCache(options =>
@@ -80,12 +78,6 @@ namespace SFA.DAS.AssessorService.Web
                     _logger.LogError(e, $"Error setting redis for session.  Conn: {Configuration.SessionRedisConnectionString}");
                     throw;
                 }
-                    
-                //}
-                //else
-                //{
-                //    services.AddDistributedMemoryCache();
-                //}
             }
 
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
