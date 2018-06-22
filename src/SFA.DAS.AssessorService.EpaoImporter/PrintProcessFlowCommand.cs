@@ -52,8 +52,8 @@ namespace SFA.DAS.AssessorService.EpaoImporter
         {
             try
             {
-                _aggregateLogger.LogInfo("Print Pocess Flow Function Started");
-                _aggregateLogger.LogInfo("Print Function Flow Started");
+                _aggregateLogger.LogInfo("Print Process Function Started");
+                _aggregateLogger.LogInfo("Print Function Started");
 
                 _aggregateLogger.LogInfo("Accessing Environment variables");
                 _aggregateLogger.LogInfo($"Process Environment = {EnvironmentVariableTarget.Process}");
@@ -67,8 +67,8 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                     var batchNumber = batchLogResponse.BatchNumber + 1;
                     var certificates = (await _assessorServiceApi.GetCertificatesToBePrinted()).ToList();
 
-                    var sanitizedCertificateResponses = _sanitiserService.Sanitise(certificates);
-                    if (sanitizedCertificateResponses.Count == 0)
+                    var sanitisedCertificates = _sanitiserService.Sanitise(certificates);
+                    if (sanitisedCertificates.Count == 0)
                     {
                         _aggregateLogger.LogInfo("Nothing to Process");
                     }
@@ -85,11 +85,11 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                         };
 
                         var coverLettersProduced =
-                            await _coverLetterService.Create(batchNumber, sanitizedCertificateResponses.AsEnumerable());
-                        await _ifaCertificateService.Create(batchNumber, sanitizedCertificateResponses,
+                            await _coverLetterService.Create(batchNumber, sanitisedCertificates.AsEnumerable());
+                        await _ifaCertificateService.Create(batchNumber, sanitisedCertificates,
                             coverLettersProduced);
 
-                        await _notificationService.Send(batchNumber, sanitizedCertificateResponses,
+                        await _notificationService.Send(batchNumber, sanitisedCertificates,
                             coverLettersProduced);
 
                         batchLogRequest.FileUploadEndTime = DateTime.UtcNow;
@@ -101,7 +101,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
 
                         await _assessorServiceApi.CreateBatchLog(batchLogRequest);
 
-                        await _assessorServiceApi.ChangeStatusToPrinted(batchNumber, sanitizedCertificateResponses);
+                        await _assessorServiceApi.ChangeStatusToPrinted(batchNumber, sanitisedCertificates);
                     }
                 }
                 else

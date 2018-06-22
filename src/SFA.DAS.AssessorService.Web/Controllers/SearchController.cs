@@ -95,20 +95,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         private string GetSubmittedAtString(DateTime? submittedAt)
         {
-            if (!submittedAt.HasValue)
-            {
-                return "";
-            }
-
-            var submittedDate = submittedAt.Value;
-            var utcDate = submittedDate.ToUniversalTime();
-
-            if (utcDate.Hour == 0 && utcDate.Minute == 0 && utcDate.Second == 0)
-            {
-                return submittedDate.ToString("d MMMM yyyy");
-            }
-
-            return $"{submittedDate:d MMMM yyyy} at {submittedDate:h:mm}{submittedDate.ToString("tt").ToLower()}";
+            return !submittedAt.HasValue ? "" : submittedAt.Value.ToString("d MMMM yyyy");
         }
 
         [HttpGet]

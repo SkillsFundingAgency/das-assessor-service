@@ -16,7 +16,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Notification
         private readonly INotificationsApi _notificationsApi;
         private readonly IAggregateLogger _aggregateLogger;
         private readonly IWebConfiguration _webConfiguration;
-        private readonly IAssessorServiceApi _assessorServiceApi;         
+        private readonly IAssessorServiceApi _assessorServiceApi;
 
         public NotificationService(INotificationsApi notificationsApi,
             IAggregateLogger aggregateLogger,
@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Notification
             _notificationsApi = notificationsApi;
             _aggregateLogger = aggregateLogger;
             _webConfiguration = webConfiguration;
-            _assessorServiceApi = assessorServiceApi;     
+            _assessorServiceApi = assessorServiceApi;
         }
 
         public async Task Send(int batchNumber, List<CertificateResponse> certificateResponses,
@@ -35,12 +35,12 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Notification
             var emailTemplate = await _assessorServiceApi.GetEmailTemplate();
 
             var certificatesFileName = $"IFA-Certificate-{GetMonthYear()}-{batchNumber.ToString().PadLeft(3, '0')}.xlsx";
-            
+
             var personalisation = CreatePersonalisationTokens(certificateResponses, coverLettersProduced.CoverLetterFileNames, certificatesFileName);
 
             _aggregateLogger.LogInfo("Send Email");
             _aggregateLogger.LogInfo($"Base Url = {_webConfiguration.NotificationsApiClientConfiguration.ApiBaseUrl}");
-            _aggregateLogger.LogInfo($"Client Token = {_webConfiguration.NotificationsApiClientConfiguration.ClientToken}");           
+            _aggregateLogger.LogInfo($"Client Token = {_webConfiguration.NotificationsApiClientConfiguration.ClientToken}");
 
             var recipients = emailTemplate.Recipients.Split(';').Select(x => x.Trim());
             foreach (var recipient in recipients)
@@ -53,7 +53,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Notification
                     Subject = "Test Subject",
                     SystemId = "PrintAssessorCoverLetters",
                     Tokens = personalisation
-                };                
+                };
 
                 await _notificationsApi.SendEmail(email);
             }
@@ -69,13 +69,13 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Notification
                     "numberOfCertificatesToBePrinted",
                     $"Number Of Certificates to be Printed:- {certificateResponses.Count}"
                 },
-                {"numberOfCoverLetters", $"Number of Cover Letters:- {coverLetterFileNames.Count}"},                      
+                {"numberOfCoverLetters", $"Number of Cover Letters:- {coverLetterFileNames.Count}"},
                 {"sftpUploadDirectory", $"{_webConfiguration.Sftp.UploadDirectory}"},
                 {"proofDirectory", $"{_webConfiguration.Sftp.ProofDirectory}"}
             };
             return personalisation;
         }
-        
+
         private static string GetMonthYear()
         {
             var month = DateTime.Today.Month.ToString().PadLeft(2, '0');
