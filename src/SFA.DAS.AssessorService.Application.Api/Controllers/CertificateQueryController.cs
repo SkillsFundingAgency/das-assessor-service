@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
+using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Domain.Entities;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -40,6 +42,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> GetCertificates([FromQuery] List<string> statuses)
         {
             return Ok(await _mediator.Send(new GetCertificatesRequest { Statuses = statuses }));
-        }       
+        }
+
+        [HttpGet("addresses", Name = "GetCertificateAddresses")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<CertificateAddressResponse>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetCertificateAddresses([FromQuery] string userName)
+        {
+            var addresses = await _mediator.Send(new GetAddressesRequest { Username = userName });
+            if(addresses.Count == 0)
+                throw new ResourceNotFoundException();
+            return Ok(addresses);
+        }
     }
 }

@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Data.SqlTypes;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
@@ -17,10 +20,13 @@ namespace SFA.DAS.AssessorService.Data
     public class CertificateRepository : ICertificateRepository
     {
         private readonly AssessorDbContext _context;
+        private readonly IDbConnection _connection;
 
-        public CertificateRepository(AssessorDbContext context)
+        public CertificateRepository(AssessorDbContext context,
+            IDbConnection connection)
         {
             _context = context;
+            _connection = connection;
         }
 
         public async Task<Certificate> New(Certificate certificate)
@@ -71,19 +77,19 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<List<Certificate>> GetCertificates(List<string> statuses)
         {
-           if (statuses == null || !statuses.Any())
+            if (statuses == null || !statuses.Any())
             {
                 return await _context.Certificates
                     .Include(q => q.Organisation)
                     .ToListAsync();
             }
             else
-           {
-               return await _context.Certificates
-                   .Include(q => q.Organisation)
-                   .Where(x => statuses.Contains(x.Status))
-                   .ToListAsync();
-           }
+            {
+                return await _context.Certificates
+                    .Include(q => q.Organisation)
+                    .Where(x => statuses.Contains(x.Status))
+                    .ToListAsync();
+            }
         }
 
         public async Task<Certificate> Update(Certificate certificate, string username, string action)
@@ -146,6 +152,14 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<List<CertificateLog>> GetCertificateLogsFor(Guid certificateId)
         {
             return await _context.CertificateLogs.Where(l => l.CertificateId == certificateId).OrderByDescending(l => l.EventTime).ToListAsync();
+        }
+
+        public async Task<List<CertificateAddress>> GetCertificateAddresses(Guid organisationId)
+        {
+            var addresses = await _connection.QueryAsync<CertificateAddress>("GetRecentCertificateAddresses",
+                new {OrganisationId = organisationId},
+                commandType: CommandType.StoredProcedure);
+            return addresses.ToList();
         }
     }
 }
