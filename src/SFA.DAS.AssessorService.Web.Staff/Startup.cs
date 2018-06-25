@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.AssessorService.Settings;
+using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 
 namespace SFA.DAS.AssessorService.Web.Staff
 {
@@ -37,6 +38,12 @@ namespace SFA.DAS.AssessorService.Web.Staff
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
+
+            services.AddHttpClient<ApiClient>("ApiClient", config =>
+            {
+                config.BaseAddress = new Uri(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
+                config.DefaultRequestHeaders.Add("Accept", "Application/json");
             });
 
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });

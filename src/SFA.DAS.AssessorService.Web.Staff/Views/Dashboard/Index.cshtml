@@ -1,6 +1,28 @@
-﻿
+﻿@model dynamic
+
 @{
     ViewBag.Title = "title";
 }
 
 <h2>Staff Dashboard</h2>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Uln</th>
+            <th>Ref</th>
+            <th>Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var cert in Model)
+        {
+            <tr>
+                <td>@cert.Uln</td>
+                <td>@cert.CertificateReference</td>
+                <td>@cert.CertificateData.FullName</td>
+            </tr>
+        }
+    </tbody>
+</table>
