@@ -95,20 +95,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         private string GetSubmittedAtString(DateTime? submittedAt)
         {
-            if (!submittedAt.HasValue)
-            {
-                return "";
-            }
-
-            var submittedDate = submittedAt.Value;
-            var utcDate = submittedDate.ToUniversalTime();
-
-            if (utcDate.Hour == 0 && utcDate.Minute == 0 && utcDate.Second == 0)
-            {
-                return submittedDate.ToString("d MMMM yyyy");
-            }
-
-            return $"{submittedDate:d MMMM yyyy} at {submittedDate:h:mm}{submittedDate.ToString("tt").ToLower()}";
+            return !submittedAt.HasValue ? "" : submittedAt.Value.ToString("d MMMM yyyy");
         }
 
         [HttpGet]
@@ -162,7 +149,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 FamilyName = selected.FamilyName,
                 CertificateReference = selected.CertificateReference,
                 OverallGrade = selected.OverallGrade,
-                Level = selected.Level
+                Level = selected.Level,
+                SubmittedAt = GetSubmittedAtString(selected.SubmittedAt),
+                SubmittedBy = selected.SubmittedBy,
+                LearnerStartDate = selected.LearnStartDate.GetValueOrDefault().ToString("d MMMM yyyy"),
+                AchievementDate = selected.AchDate.GetValueOrDefault().ToString("d MMMM yyyy"),
+                ShowExtraInfo = selected.ShowExtraInfo
             };
 
             _sessionService.Set("SelectedStandard", selectedStandardViewModel);
