@@ -117,28 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AssessmentsNotRecordedYet" xml:space="preserve">
-    <value>Assessment not recorded yet|Assessments not recorded yet</value>
-  </data>
   <data name="ErrorsWithSubmission" xml:space="preserve">
     <value>There's a problem</value>
   </data>
-  <data name="Lastname" xml:space="preserve">
-    <value>Last name</value>
+  <data name="PageHeading" xml:space="preserve">
+    <value>The apprentice is enrolled on more than one apprenticeship</value>
   </data>
   <data name="PageDescription" xml:space="preserve">
     <value>Select the standard that you want to record an assessment for.</value>
   </data>
-  <data name="PageHeading" xml:space="preserve">
-    <value>The apprentice is enrolled on more than one apprenticeship</value>
+  <data name="AssessmentsNotRecordedYet" xml:space="preserve">
+    <value>Assessment not recorded yet|Assessments not recorded yet</value>
   </data>
   <data name="PreviouslyRecordedAssessments" xml:space="preserve">
     <value>Previously recorded assessment|Previously recorded assessments</value>
   </data>
   <data name="SelectStandardButton" xml:space="preserve">
     <value>Continue</value>
-  </data>
-  <data name="Uln" xml:space="preserve">
-    <value>Unique learner number (ULN)</value>
   </data>
 </root>
