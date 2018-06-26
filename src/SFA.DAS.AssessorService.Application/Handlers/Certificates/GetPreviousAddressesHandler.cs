@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using MediatR;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 
@@ -12,27 +10,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 {
     public class GetPreviousAddressesHandler : IRequestHandler<GetPreviousAddressesRequest, List<CertificateAddress>>
     {
-        private readonly IContactQueryRepository _contactQueryRepository;
-        private readonly ICertificateRepository _certificateRepository;        
-        private readonly IOrganisationQueryRepository _organisationQueryRepository;
-        private readonly ILogger<StartCertificateHandler> _logger;
+        private readonly ICertificateRepository _certificateRepository;
 
         public GetPreviousAddressesHandler(
-            IContactQueryRepository contactQueryRepository,
-            ICertificateRepository certificateRepository,           
-            IOrganisationQueryRepository organisationQueryRepository)         
+            ICertificateRepository certificateRepository)
         {
-            _contactQueryRepository = contactQueryRepository;
-            _certificateRepository = certificateRepository;                
-            _organisationQueryRepository = organisationQueryRepository;            
+            _certificateRepository = certificateRepository;
         }
-     
+
         public async Task<List<CertificateAddress>> Handle(GetPreviousAddressesRequest request, CancellationToken cancellationToken)
         {
-            var contact = await _contactQueryRepository.GetContact(request.Username);
-            var organisation = await _organisationQueryRepository.Get(contact.EndPointAssessorOrganisationId);
-
-            var certificateAddresses = await _certificateRepository.GetPreviousAddresses(organisation.Id);            
+            var certificateAddresses = await _certificateRepository.GetPreviousAddresses(request.Username);
             return certificateAddresses;
         }
     }

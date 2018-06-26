@@ -17,6 +17,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<Certificate> Update(Certificate certificate, string username, string action);
         Task UpdateStatuses(UpdateCertificatesBatchToIndicatePrintedRequest updateCertificatesBatchToIndicatePrintedRequest);
         Task<List<CertificateLog>> GetCertificateLogsFor(Guid certificateId);
-        Task<List<CertificateAddress>> GetPreviousAddresses(Guid organisationId);
+        Task<List<CertificateAddress>> GetPreviousAddresses(string organisationId);
     }
 }

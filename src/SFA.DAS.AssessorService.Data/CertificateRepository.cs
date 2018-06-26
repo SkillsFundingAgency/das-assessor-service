@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
-using System.Data.SqlTypes;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
@@ -10,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Consts;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
@@ -154,10 +153,10 @@ namespace SFA.DAS.AssessorService.Data
             return await _context.CertificateLogs.Where(l => l.CertificateId == certificateId).OrderByDescending(l => l.EventTime).ToListAsync();
         }
 
-        public async Task<List<CertificateAddress>> GetPreviousAddresses(Guid organisationId)
+        public async Task<List<CertificateAddress>> GetPreviousAddresses(string userName)
         {
-            var addresses = await _connection.QueryAsync<CertificateAddress>("GetRecentCertificateAddresses",
-                new {OrganisationId = organisationId},
+            var addresses = await _connection.QueryAsync<CertificateAddress>(StoredProcedureNames.GetPreviousAddresses,
+                new {UserName = userName },
                 commandType: CommandType.StoredProcedure);
             return addresses.ToList();
         }
