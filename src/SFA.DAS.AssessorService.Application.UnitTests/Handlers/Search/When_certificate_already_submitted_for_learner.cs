@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                 .ReturnsAsync(new List<CertificateLog>());
 
             IlrRepository.Setup(r => r.SearchForLearner(It.IsAny<SearchRequest>()))
-                .ReturnsAsync(new List<Ilr> {new Ilr() {StdCode = 12}});
+                .ReturnsAsync(new List<Ilr> {new Ilr() {StdCode = 12, FamilyName = "Lamora"}});
         }
 
 
@@ -45,7 +45,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
         {
             var result =
                 SearchHandler.Handle(
-                    new SearchQuery() {Surname = "Lamora", UkPrn = 12345, Uln = 1111111111, Username = "username"},
+                    new SearchQuery() { Surname = "Lamora", UkPrn = 12345, Uln = 1111111111, Username = "username" },
                     new CancellationToken()).Result;
             result.Count.Should().Be(1);
             result[0].CertificateReference.Should().Be("00010001");
