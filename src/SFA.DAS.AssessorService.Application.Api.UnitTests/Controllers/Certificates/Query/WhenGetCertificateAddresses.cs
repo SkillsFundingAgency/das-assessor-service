@@ -10,6 +10,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Certificates.Query
 {
@@ -23,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Certific
             var mediator = new Mock<IMediator>();
 
             MappingBootstrapper.Initialize();
-            var certificateResponses = Builder<CertificateAddressResponse>.CreateListOfSize(10).Build().ToList();
+            var certificateResponses = Builder<CertificateAddress>.CreateListOfSize(10).Build().ToList();
 
             mediator.Setup(q => q.Send(Moq.It.IsAny<GetPreviousAddressesRequest>(), new CancellationToken()))
                 .Returns(Task.FromResult((certificateResponses)));

@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Qu
         private Mock<IContactQueryRepository> _contactQueryRepositoryMock;
         private Mock<IOrganisationQueryRepository> _organisationQueryRepositoryMock;
 
-        private List<CertificateAddressResponse> _result;
+        private List<CertificateAddress> _result;
 
 
         [SetUp]

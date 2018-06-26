@@ -45,7 +45,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpGet("addresses", Name = "GetPreviousAddresses")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<CertificateAddressResponse>))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<CertificateAddress>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetPreviousAddresses([FromQuery] string userName)
         {
