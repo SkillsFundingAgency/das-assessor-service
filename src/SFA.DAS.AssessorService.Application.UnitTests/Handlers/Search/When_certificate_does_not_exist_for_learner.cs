@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                 .ReturnsAsync(new List<Certificate>());
 
             IlrRepository.Setup(r => r.SearchForLearner(It.IsAny<SearchRequest>()))
-                .ReturnsAsync(new List<Ilr> {new Ilr() {StdCode = 12}});
+                .ReturnsAsync(new List<Ilr> {new Ilr() {StdCode = 12, FamilyName = "Lamora"}});
         }
 
         [Test]
