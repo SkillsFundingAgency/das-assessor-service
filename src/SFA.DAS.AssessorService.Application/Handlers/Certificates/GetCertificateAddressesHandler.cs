@@ -9,7 +9,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 {
-    public class GetAddressesHandler : IRequestHandler<GetAddressesRequest, List<CertificateAddressResponse>>
+    public class GetCertificateAddressesHandler : IRequestHandler<GetAddressesRequest, List<CertificateAddressResponse>>
     {
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly ICertificateRepository _certificateRepository;
@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
         private readonly ILogger<StartCertificateHandler> _logger;
 
-        public GetAddressesHandler(
+        public GetCertificateAddressesHandler(
             IContactQueryRepository contactQueryRepository,
             ICertificateRepository certificateRepository, IIlrRepository ilrRepository,            
             IOrganisationQueryRepository organisationQueryRepository, ILogger<StartCertificateHandler> logger)
