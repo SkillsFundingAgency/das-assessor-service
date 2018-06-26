@@ -26,11 +26,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Qu
         {
             MappingBootstrapper.Initialize();                                 
             var cetificateAddresses = Builder<CertificateAddress>.CreateListOfSize(10).Build()
-                .ToList();         
+                .ToList();
 
-            _certificateRepositoryMock.Setup(q => q.GetPreviousAddresses("TestUser"))
+            _certificateRepositoryMock = new Mock<ICertificateRepository>();
+
+            _certificateRepositoryMock.Setup(q => q.GetPreviousAddresses(It.IsAny<string>()))
                 .Returns(Task.FromResult(cetificateAddresses));
-
 
             var getCertificatesHandler =
                 new GetPreviousAddressesHandler(_certificateRepositoryMock.Object);
