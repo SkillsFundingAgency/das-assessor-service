@@ -82,6 +82,7 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
         }
       },
       rules: validationRulesObject.rules,
+      groups: validationRulesObject.groups,
       messages: validationRulesObject.messages,
       errorPlacement: function(error, element) {
         if (element.attr('type') == 'radio') {
@@ -90,6 +91,7 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
             .show()
             .append(error);
         } else if (element.hasClass('date-input')) {
+          console.log(error, element);
           $('.error-message-container')
             .addClass('form-group-error')
             .show()
@@ -104,12 +106,29 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
       }
     });
 
+  // Ensures date is valid
+  $.validator.addMethod(
+    'isValidDate',
+    function(value, element, params) {
+      console.log(value, element.name, params);
+      var dateString = getFullDate();
+      console.log(parseDate(dateString.toString()));
+      return dateString
+        ? this.optional(element) || parseDate(dateString.toString())
+        : true;
+    },
+    'Please enter a valid user date'
+  );
+
   // Ensures date is not in the future
   jQuery.validator.addMethod(
     'noFutureDate',
     function(value, element) {
       var now = new Date().getTime();
-      var userDate = parseDate(value).getTime();
+      console.log(getFullDate());
+      var userDate = parseDate(getFullDate())
+        ? parseDate(getFullDate()).getTime()
+        : false;
       return userDate ? this.optional(element) || userDate < now : true;
     },
     'Please enter a date in the past'
@@ -119,7 +138,9 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
   jQuery.validator.addMethod(
     'earliestDate',
     function(value, element, params) {
-      var userDate = parseDate(value).getTime();
+      var userDate = parseDate(getFullDate())
+        ? parseDate(getFullDate()).getTime()
+        : false;
       var earliestDate = parseDate(params).getTime();
       return userDate
         ? this.optional(element) || userDate >= earliestDate
@@ -155,6 +176,13 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
       }
     }
     return false;
+  }
+
+  function getFullDate() {
+    var day = $('[name="Day"]').val();
+    var month = $('[name="Month"]').val();
+    var year = $('[name="Year"]').val();
+    return day + '/' + month + '/' + year;
   }
 };
 
