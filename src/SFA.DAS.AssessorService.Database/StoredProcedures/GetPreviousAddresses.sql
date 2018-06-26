@@ -18,13 +18,13 @@ BEGIN
    ,JSON_VALUE([CertificateData],'$.ContactAddLine4') AS City
       ,JSON_VALUE([CertificateData],'$.ContactPostCode') AS PostCode
 	  ,MAX(c.CreatedAt) As CreatedAt
-	FROM [SFA.DAS.AssessorService].[dbo].[Certificates] c
+	FROM [dbo].[Certificates] c
 	group by  c.OrganisationId, JSON_VALUE([CertificateData],'$.ContactAddLine1'),
 	JSON_VALUE([CertificateData],'$.ContactAddLine2'),
 	JSON_VALUE([CertificateData],'$.ContactAddLine3'),
 	JSON_VALUE([CertificateData],'$.ContactAddLine4'),
 	JSON_VALUE([CertificateData],'$.ContactPostCode'),
 	c.Status
-	having c.OrganisationId = @OrganisationId AND (c.Status = 'Submitted' OR c.Status = 'Printed' OR c.Status = 'Reprint')
+	having c.OrganisationId = @OrganisationId AND c.CreatedBy = 'Manual' AND (c.Status = 'Submitted' OR c.Status = 'Printed' OR c.Status = 'Reprint')
 	order by MAX(c.CreatedAt) desc
 END
