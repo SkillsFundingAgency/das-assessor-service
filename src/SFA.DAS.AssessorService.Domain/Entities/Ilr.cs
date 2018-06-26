@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SFA.DAS.AssessorService.Domain.Entities
 {
@@ -8,7 +9,10 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public long Uln { get; set; }
         public string GivenNames { get; set; }
         public string FamilyName { get; set; }
-        
+
+        [NotMapped]
+        public string FamilyNameForSearch { get; set; }
+
         public int UkPrn { get; set; }
         public int StdCode { get; set; }
         public DateTime LearnStartDate { get; set; }

@@ -73,7 +73,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             ilrResults = ilrResults.Where(r =>(
                 r.EpaOrgId == thisEpao.EndPointAssessorOrganisationId ||
                 (r.EpaOrgId != thisEpao.EndPointAssessorOrganisationId && intStandards.Contains(r.StdCode)))
-            && string.Equals(r.FamilyName.Trim(), likedSurname.Trim(), StringComparison.CurrentCultureIgnoreCase)).ToList();
+            && string.Equals(r.FamilyNameForSearch.Trim(), likedSurname.Trim(), StringComparison.CurrentCultureIgnoreCase)).ToList();
             
 
             _logger.LogInformation(ilrResults.Any() ? LoggingConstants.SearchSuccess : LoggingConstants.SearchFailure);
@@ -96,6 +96,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
         private string DealWithSpecialCharactersAndSpaces(SearchQuery request, string likedSurname, IEnumerable<Ilr> ilrResults)
         {
+            foreach (var ilrResult in ilrResults)
+            {
+                ilrResult.FamilyNameForSearch = ilrResult.FamilyName.Replace(" ", "");
+            }
+
             var specialCharacters = SpecialCharactersInSurname(request.Surname);
             if (specialCharacters.Length > 0)
             {
@@ -110,15 +115,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                     {
                         foreach (var alternate in _alternates[specialCharacter])
                         {
-                            ilrResult.FamilyName = ilrResult.FamilyName.Replace(alternate.ToString(), "");
+                            ilrResult.FamilyNameForSearch = ilrResult.FamilyNameForSearch.Replace(alternate.ToString(), "");
                         }
                     }
                 }
-            }
-
-            foreach (var ilrResult in ilrResults)
-            {
-                ilrResult.FamilyName = ilrResult.FamilyName.Replace(" ", "");
             }
 
             return likedSurname;
