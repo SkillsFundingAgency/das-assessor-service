@@ -117,12 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="InfoBody" xml:space="preserve">
-    <value>The ULN is a 10-digit reference number. It's used to access the online Personal Learning Record (PLR) of anyone aged 14 and over in UK education or training, including apprenticeships.</value>
-  </data>
-  <data name="InfoHeader" xml:space="preserve">
-    <value>What's a ULN?</value>
-  </data>
   <data name="Lastname" xml:space="preserve">
     <value>Last name</value>
   </data>
@@ -134,9 +128,6 @@
   </data>
   <data name="SearchInfoSummary" xml:space="preserve">
     <value>Only record successful assessments</value>
-  </data>
-  <data name="Uln" xml:space="preserve">
-    <value>Unique learner number (ULN)</value>
   </data>
   <data name="UlnHint" xml:space="preserve">
     <value>For example, 1234567890</value>
