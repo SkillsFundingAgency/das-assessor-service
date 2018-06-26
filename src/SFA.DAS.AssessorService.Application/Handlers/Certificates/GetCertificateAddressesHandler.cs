@@ -12,21 +12,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
     public class GetCertificateAddressesHandler : IRequestHandler<GetAddressesRequest, List<CertificateAddressResponse>>
     {
         private readonly IContactQueryRepository _contactQueryRepository;
-        private readonly ICertificateRepository _certificateRepository;
-        private readonly IIlrRepository _ilrRepository;
+        private readonly ICertificateRepository _certificateRepository;        
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
         private readonly ILogger<StartCertificateHandler> _logger;
 
         public GetCertificateAddressesHandler(
             IContactQueryRepository contactQueryRepository,
-            ICertificateRepository certificateRepository, IIlrRepository ilrRepository,            
-            IOrganisationQueryRepository organisationQueryRepository, ILogger<StartCertificateHandler> logger)
+            ICertificateRepository certificateRepository,           
+            IOrganisationQueryRepository organisationQueryRepository)         
         {
             _contactQueryRepository = contactQueryRepository;
-            _certificateRepository = certificateRepository;
-            _ilrRepository = ilrRepository;        
-            _organisationQueryRepository = organisationQueryRepository;
-            _logger = logger;
+            _certificateRepository = certificateRepository;                
+            _organisationQueryRepository = organisationQueryRepository;            
         }
      
         public async Task<List<CertificateAddressResponse>> Handle(GetAddressesRequest request, CancellationToken cancellationToken)
