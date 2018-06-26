@@ -30,9 +30,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
             ilrRepository.Setup(r => r.SearchForLearner(It.IsAny<SearchRequest>()))
                 .ReturnsAsync(new List<Ilr>
                 {
-                    new Ilr{ EpaOrgId = "EPA0001", StdCode = 1},
-                    new Ilr{ EpaOrgId = "EPA0001", StdCode = 2},
-                    new Ilr{ EpaOrgId = "EPA0001", StdCode = 3}
+                    new Ilr{ EpaOrgId = "EPA0001", StdCode = 1, FamilyName = "James"},
+                    new Ilr{ EpaOrgId = "EPA0001", StdCode = 2, FamilyName = "James"},
+                    new Ilr{ EpaOrgId = "EPA0001", StdCode = 3, FamilyName = "James"}
                 });
 
             var assessmentOrgsApiClient = new Mock<IAssessmentOrgsApiClient>();
