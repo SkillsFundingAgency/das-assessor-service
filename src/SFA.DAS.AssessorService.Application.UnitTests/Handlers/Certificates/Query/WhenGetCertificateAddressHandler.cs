@@ -46,18 +46,18 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Qu
             _organisationQueryRepositoryMock.Setup(q => q.Get(contact.EndPointAssessorOrganisationId))
                 .Returns(Task.FromResult(organisation));
 
-            _certificateRepositoryMock.Setup(q => q.GetCertificateAddresses(organisation.Id))
+            _certificateRepositoryMock.Setup(q => q.GetPreviousAddresses(organisation.Id))
                 .Returns(Task.FromResult(cetificateAddresses));
 
 
             var getCertificatesHandler =
-                new GetCertificateAddressesHandler(
+                new GetPreviousAddressesHandler(
                     _contactQueryRepositoryMock.Object,
                     _certificateRepositoryMock.Object,
                     _organisationQueryRepositoryMock.Object
                     );
 
-            _result = getCertificatesHandler.Handle(new GetAddressesRequest { Username = "TestUser"}, new CancellationToken())
+            _result = getCertificatesHandler.Handle(new GetPreviousAddressesRequest { Username = "TestUser"}, new CancellationToken())
                 .Result;
         }
 

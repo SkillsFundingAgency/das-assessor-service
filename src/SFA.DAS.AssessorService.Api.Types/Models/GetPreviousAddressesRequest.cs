@@ -4,7 +4,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
 {
     using MediatR;
 
-    public class GetAddressesRequest : IRequest<List<CertificateAddressResponse>>
+    public class GetPreviousAddressesRequest : IRequest<List<CertificateAddressResponse>>
     {
         public string Username { get; set; }
     }

@@ -9,14 +9,14 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 {
-    public class GetCertificateAddressesHandler : IRequestHandler<GetAddressesRequest, List<CertificateAddressResponse>>
+    public class GetPreviousAddressesHandler : IRequestHandler<GetPreviousAddressesRequest, List<CertificateAddressResponse>>
     {
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly ICertificateRepository _certificateRepository;        
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
         private readonly ILogger<StartCertificateHandler> _logger;
 
-        public GetCertificateAddressesHandler(
+        public GetPreviousAddressesHandler(
             IContactQueryRepository contactQueryRepository,
             ICertificateRepository certificateRepository,           
             IOrganisationQueryRepository organisationQueryRepository)         
@@ -26,12 +26,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             _organisationQueryRepository = organisationQueryRepository;            
         }
      
-        public async Task<List<CertificateAddressResponse>> Handle(GetAddressesRequest request, CancellationToken cancellationToken)
+        public async Task<List<CertificateAddressResponse>> Handle(GetPreviousAddressesRequest request, CancellationToken cancellationToken)
         {
             var contact = await _contactQueryRepository.GetContact(request.Username);
             var organisation = await _organisationQueryRepository.Get(contact.EndPointAssessorOrganisationId);
 
-            var certificateAddresses = await _certificateRepository.GetCertificateAddresses(organisation.Id);
+            var certificateAddresses = await _certificateRepository.GetPreviousAddresses(organisation.Id);
             var addresses = Mapper.Map<List<CertificateAddressResponse>>(certificateAddresses);
 
             return addresses;

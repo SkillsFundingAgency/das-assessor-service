@@ -44,12 +44,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(await _mediator.Send(new GetCertificatesRequest { Statuses = statuses }));
         }
 
-        [HttpGet("addresses", Name = "GetCertificateAddresses")]
+        [HttpGet("addresses", Name = "GetPreviousAddresses")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<CertificateAddressResponse>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetCertificateAddresses([FromQuery] string userName)
+        public async Task<IActionResult> GetPreviousAddresses([FromQuery] string userName)
         {
-            var addresses = await _mediator.Send(new GetAddressesRequest { Username = userName });
+            var addresses = await _mediator.Send(new GetPreviousAddressesRequest { Username = userName });
             if(addresses.Count == 0)
                 throw new ResourceNotFoundException();
             return Ok(addresses);

@@ -154,7 +154,7 @@ namespace SFA.DAS.AssessorService.Data
             return await _context.CertificateLogs.Where(l => l.CertificateId == certificateId).OrderByDescending(l => l.EventTime).ToListAsync();
         }
 
-        public async Task<List<CertificateAddress>> GetCertificateAddresses(Guid organisationId)
+        public async Task<List<CertificateAddress>> GetPreviousAddresses(Guid organisationId)
         {
             var addresses = await _connection.QueryAsync<CertificateAddress>("GetRecentCertificateAddresses",
                 new {OrganisationId = organisationId},
