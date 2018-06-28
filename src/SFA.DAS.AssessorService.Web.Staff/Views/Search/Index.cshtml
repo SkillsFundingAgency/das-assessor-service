@@ -1,0 +1,14 @@
+﻿@using SFA.DAS.AssessorService.Web.Staff.Controllers
+@model SFA.DAS.AssessorService.Web.Staff.Controllers.SearchViewModel
+
+@{
+    
+}
+
+<h2>Search</h2>
+
+<form asp-action="Index" asp-controller="Search">
+    <label asp-for="SearchString"></label>
+    <input asp-for="SearchString"/>
+    <button type="submit">Search</button>
+</form>

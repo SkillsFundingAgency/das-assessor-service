@@ -1,0 +1,14 @@
+﻿@model List<SFA.DAS.AssessorService.Api.Types.Models.SearchResult>
+
+@{
+    
+}
+
+<h2>Results</h2>
+
+
+@foreach (var result in Model)
+{
+    <br />@result.FamilyName
+          <br/>@result.CertificateReference
+}

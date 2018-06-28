@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         [HttpGet]
         public async Task<IActionResult> PostSignIn()
         {
-            return RedirectToAction("Index", "Dashboard");
+            return RedirectToAction("Index", "Search");
         }
 
         //[HttpGet]
