@@ -35,7 +35,7 @@ CREATE MASTER KEY ENCRYPTION BY PASSWORD = 'Baldy N3rd Face';
 ---- Create a database scoped credential with Azure storage account key as the secret.
 CREATE DATABASE SCOPED CREDENTIAL BlobCredential 
 WITH IDENTITY = 'SHARED ACCESS SIGNATURE', 
-SECRET = '';
+SECRET = 'st=2018-06-28T13%3A10%3A59Z&se=2018-06-29T13%3A10%3A59Z&sp=rwdl&sv=2017-04-17&sr=c&sig=UprgHvdTivEci%2Fqq%2FQkiAEwzps5%2BnCE96SouZGaz8HY%3D';
 
 ---- Create an external data source with CREDENTIAL option.
 CREATE EXTERNAL DATA SOURCE BlobStorage WITH (
@@ -127,6 +127,19 @@ BULK INSERT CertificateImport
 FROM 'certs.csv'
 WITH (DATA_SOURCE = 'BlobStorage', FORMAT = 'CSV', FIRSTROW= 2)
 
+-- Check to see if the CertificateIds have been converted properly and not munged by excel.
+DECLARE @badCertificateIdCount int
+SELECT @badCertificateIdCount = COUNT(1) FROM CertificateImport WHERE LEN(ID) != 8
+
+IF @badCertificateIdCount > 0 
+BEGIN
+	SELECT * FROM CertificateImport WHERE LEN(ID) != 8
+	DROP FUNCTION GetCertificateDataJson;
+	DROP EXTERNAL DATA SOURCE BlobStorage;
+	DROP DATABASE SCOPED CREDENTIAL BlobCredential;
+	DROP MASTER KEY;
+	THROW 51000, 'Invalid Certificate IDs in Import File. See ''Results'' window',1;
+END
 --Log any import records that are a duplicates of certificates created by Service.
 INSERT INTO CertificateLogs
                          (Id, Action, CertificateId, EventTime, Status, CertificateData, Username)
