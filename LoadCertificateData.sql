@@ -167,13 +167,13 @@ SELECT
 	o.Id AS OrganisationId,
 	ci.Uln AS Uln,
 	ci.StandardCode AS StandardCode,
-	1 AS BatchNumber,
-	'Printed' AS Status,
+	null AS BatchNumber,
+	'Submitted' AS Status,
 	'Manual' AS CreatedBy,
 	dbo.GetCertificateDataJson(ci.ID) AS CertificateData
 FROM CertificateImport ci
 INNER JOIN Organisations o ON o.EndPointAssessorOrganisationId = ci.EpaUln
-WHERE ci.Uln != 9999999999
+WHERE ci.Uln IS NULL OR ci.Uln != 9999999999
 AND NOT EXISTS (SELECT null FROM Certificates ce WHERE ce.CertificateReference = ci.ID)
 AND NOT EXISTS (SELECT null FROM Certificates AS c 
 					WHERE ci.Uln = c.Uln 
@@ -186,7 +186,7 @@ SET IDENTITY_INSERT Certificates OFF
 
 --Update any Certificates created withing the Service as Deleted if they are Draft and in Import.
 UPDATE       Certificates
-SET                Status = 'Deleted'
+SET                Status = 'Deleted', DeletedAt = GETDATE(), DeletedBy = 'Manual'
 FROM            Certificates c INNER JOIN
                          CertificateImport AS ci ON ci.Uln = c.Uln AND ci.StandardCode = c.StandardCode AND ci.UKPRN = c.ProviderUkPrn AND CAST(ci.LearningStartDate AS datetime) 
                          = CAST(JSON_VALUE(c.CertificateData, '$.LearningStartDate') AS datetime) AND c.CreatedBy <> 'manual' AND c.Status <> 'Deleted'
@@ -211,6 +211,12 @@ WHERE Certificates.LearnRefNumber IS NULL
 UPDATE Certificates 
 	SET CertificateData = JSON_MODIFY(CertificateData, '$.StandardName', REPLACE(json_value([CertificateData],'$.StandardName'),NCHAR(0x00A0),' ')) 
 	WHERE CreatedBy = 'Manual'
+
+--Remove Odd Space Characters
+UPDATE [dbo].[Certificates]
+SET CertificateData = JSON_MODIFY([CertificateData], '$.StandardName', REPLACE(UPPER(json_value([CertificateData],'$.StandardName')),'Á',' ') )
+WHERE CHARINDEX('Á',json_value([CertificateData],'$.StandardName')) + CHARINDEX('á',json_value([CertificateData],'$.StandardName')) > 0
+
 
 -- Insert ESFA 'manual' user to handle data fed certs.
 IF NOT EXISTS(SELECT * FROM Contacts WHERE Username = 'manual')
