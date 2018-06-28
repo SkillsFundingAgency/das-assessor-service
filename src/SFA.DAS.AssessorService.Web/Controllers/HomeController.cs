@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return View();
         }
 
-        public IActionResult Help()
+        public IActionResult ContactUs()
         {
             return View();
         }
