@@ -35,7 +35,7 @@ CREATE MASTER KEY ENCRYPTION BY PASSWORD = 'Baldy N3rd Face';
 ---- Create a database scoped credential with Azure storage account key as the secret.
 CREATE DATABASE SCOPED CREDENTIAL BlobCredential 
 WITH IDENTITY = 'SHARED ACCESS SIGNATURE', 
-SECRET = 'st=2018-06-28T13%3A10%3A59Z&se=2018-06-29T13%3A10%3A59Z&sp=rwdl&sv=2017-04-17&sr=c&sig=UprgHvdTivEci%2Fqq%2FQkiAEwzps5%2BnCE96SouZGaz8HY%3D';
+SECRET = '';
 
 ---- Create an external data source with CREDENTIAL option.
 CREATE EXTERNAL DATA SOURCE BlobStorage WITH (
