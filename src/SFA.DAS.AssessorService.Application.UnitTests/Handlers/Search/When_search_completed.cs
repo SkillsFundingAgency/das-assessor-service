@@ -7,7 +7,6 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
@@ -22,8 +21,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
             Setup();
 
             var certificateId = Guid.NewGuid();
-
-            var submittingEpaoOrgId = Guid.NewGuid();
             var searchingEpaoOrgId = Guid.NewGuid();
 
             CertificateRepository.Setup(r => r.GetCompletedCertificatesFor(1111111111))
@@ -65,6 +62,17 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                     new CancellationToken()).Result;
 
             result[0].LearnStartDate.Should().Be(new DateTime(2015, 06, 01));
+        }
+
+        [Test]
+        public void Then_a_Seach_Log_entry_is_created()
+        {
+            SearchHandler.Handle(
+                    new SearchQuery() {Surname = "Lamora", UkPrn = 12345, Uln = 1111111111, Username = "username"},
+                    new CancellationToken()).Wait();
+
+            IlrRepository.Verify(r => r.StoreSearchLog(It.Is<SearchLog>(l =>
+                l.Username == "username" && l.NumberOfResults == 1 && l.Surname == "Lamora" && l.Uln == 1111111111)));
         }
     }
 }

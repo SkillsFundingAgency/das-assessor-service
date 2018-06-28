@@ -8,5 +8,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
     {
         Task<IEnumerable<Ilr>> SearchForLearner(SearchRequest searchRequest);
         Task<Ilr> Get(long uln, int standardCode);
+        Task StoreSearchLog(SearchLog log);
     }
 }
