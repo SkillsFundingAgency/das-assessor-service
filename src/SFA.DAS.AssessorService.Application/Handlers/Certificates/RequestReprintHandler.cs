@@ -21,9 +21,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
         public async Task Handle(CertificateReprintRequest request, CancellationToken cancellationToken)
         {
-            var certificate  = await _certificateRepository.GetCertificate(request.CertificateReference, request.LastName, request.AchievementDate);
+            var certificate = await _certificateRepository.GetCertificate(request.CertificateReference, request.LastName, request.AchievementDate);
             if (certificate == null)
                 throw new NotFound();
+
+            if (certificate.Status == SFA.DAS.AssessorService.Domain.Consts.CertificateStatus.Reprint)
+            {
+                return;
+            }
 
             if (certificate.Status == SFA.DAS.AssessorService.Domain.Consts.CertificateStatus.Printed)
             {

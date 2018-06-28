@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -19,29 +18,24 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<IEnumerable<Ilr>> SearchForLearner(SearchRequest searchRequest)
         {
-            var learnerRecords = await _context.Ilrs.Where(r =>
-                string.Equals(r.FamilyName.Trim(), searchRequest.FamilyName.Trim(), StringComparison.CurrentCultureIgnoreCase)
-                && r.Uln == searchRequest.Uln).ToListAsync();
-               
-            var response = learnerRecords;
-
-            return response;
-        }
-
-        public async Task<IEnumerable<Ilr>> SearchForLearnerLike(SearchRequest searchRequest)
-        {
-            var learnerRecords = await _context.Ilrs.Where(r => 
-                EF.Functions.Like(r.FamilyName, searchRequest.FamilyName)
-                && r.Uln == searchRequest.Uln).ToListAsync();
-
-            var response = learnerRecords;
-
-            return response;
+            return await _context.Ilrs.Where(r => r.Uln == searchRequest.Uln).ToListAsync();
         }
 
         public async Task<Ilr> Get(long uln, int standardCode)
         {
             return await _context.Ilrs.SingleAsync(i => i.Uln == uln && i.StdCode == standardCode);
+        }
+
+        public async Task StoreSearchLog(SearchLog log)
+        {
+            await _context.SearchLogs.AddAsync(log);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<Ilr>> Search(string searchQuery)
+        {
+            return await _context.Ilrs.Where(r => r.FamilyName == searchQuery || r.GivenNames == searchQuery || r.Uln == long.Parse(searchQuery))
+                .ToListAsync();
         }
     }
 }

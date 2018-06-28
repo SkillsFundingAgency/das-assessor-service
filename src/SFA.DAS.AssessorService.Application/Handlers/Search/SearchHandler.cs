@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ using SFA.DAS.AssessorService.Application.Logging;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
+using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Search
 {
@@ -57,39 +59,21 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
             var thisEpao = await _organisationRepository.GetByUkPrn(request.UkPrn);
 
-            var theStandardsThisEpaoProvides = await _assessmentOrgsApiClient.FindAllStandardsByOrganisationIdAsync(thisEpao
-                .EndPointAssessorOrganisationId);
+            var intStandards = await GetEpaoStandards(thisEpao);
 
-            var intStandards = ConvertStandardsToListOfInts(theStandardsThisEpaoProvides);
-            
-            var specialCharacters = SpecialCharactersInSurname(request.Surname);
-            IEnumerable<Ilr> ilrResults;
-            if (specialCharacters.Length > 0)
+            var ilrResults = await _ilrRepository.SearchForLearner(new SearchRequest
             {
-                var likedSurname = request.Surname;
-                foreach (var specialCharacter in specialCharacters)
-                {
-                    likedSurname = likedSurname.Replace(specialCharacter, '_');
-                }
-                
-                ilrResults = await _ilrRepository.SearchForLearnerLike(new SearchRequest
-                {
-                    FamilyName = likedSurname,
-                    Uln = request.Uln
-                });
-            }
-            else
-            {
-                ilrResults = await _ilrRepository.SearchForLearner(new SearchRequest
-                {
-                    FamilyName = request.Surname,
-                    Uln = request.Uln
-                });
-            }
+                Uln = request.Uln
+            });
 
-            ilrResults = ilrResults.Where(r =>
+            var likedSurname = request.Surname.Replace(" ","");
+
+            likedSurname = DealWithSpecialCharactersAndSpaces(request, likedSurname, ilrResults);
+
+            ilrResults = ilrResults.Where(r =>(
                 r.EpaOrgId == thisEpao.EndPointAssessorOrganisationId ||
-                (r.EpaOrgId != thisEpao.EndPointAssessorOrganisationId && intStandards.Contains(r.StdCode))).ToList();
+                (r.EpaOrgId != thisEpao.EndPointAssessorOrganisationId && intStandards.Contains(r.StdCode)))
+            && string.Equals(r.FamilyNameForSearch.Trim(), likedSurname.Trim(), StringComparison.CurrentCultureIgnoreCase)).ToList();
             
 
             _logger.LogInformation(ilrResults.Any() ? LoggingConstants.SearchSuccess : LoggingConstants.SearchFailure);
@@ -98,7 +82,55 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 .MatchUpExistingCompletedStandards(request, _certificateRepository, _contactRepository, _logger)
                 .PopulateStandards(_assessmentOrgsApiClient, _logger);
 
+            await _ilrRepository.StoreSearchLog(new SearchLog()
+            {
+                NumberOfResults = searchResults.Count,
+                SearchTime = DateTime.UtcNow,
+                Surname = request.Surname,
+                Uln = request.Uln,
+                Username = request.Username
+            });
+
             return searchResults;
+        }
+
+        private async Task<List<int>> GetEpaoStandards(Organisation thisEpao)
+        {
+            var theStandardsThisEpaoProvides = await _assessmentOrgsApiClient.FindAllStandardsByOrganisationIdAsync(thisEpao
+                .EndPointAssessorOrganisationId);
+
+            var intStandards = ConvertStandardsToListOfInts(theStandardsThisEpaoProvides);
+            return intStandards;
+        }
+
+        private string DealWithSpecialCharactersAndSpaces(SearchQuery request, string likedSurname, IEnumerable<Ilr> ilrResults)
+        {
+            foreach (var ilrResult in ilrResults)
+            {
+                ilrResult.FamilyNameForSearch = ilrResult.FamilyName.Replace(" ", "");
+            }
+
+            var specialCharacters = SpecialCharactersInSurname(request.Surname);
+            if (specialCharacters.Length > 0)
+            {
+                foreach (var specialCharacter in specialCharacters)
+                {
+                    likedSurname = likedSurname.Replace(specialCharacter.ToString(), "");
+                }
+
+                foreach (var ilrResult in ilrResults)
+                {
+                    foreach (var specialCharacter in specialCharacters)
+                    {
+                        foreach (var alternate in _alternates[specialCharacter])
+                        {
+                            ilrResult.FamilyNameForSearch = ilrResult.FamilyNameForSearch.Replace(alternate.ToString(), "");
+                        }
+                    }
+                }
+            }
+
+            return likedSurname;
         }
 
         private List<int> ConvertStandardsToListOfInts(IEnumerable<StandardOrganisationSummary> theStandardsThisEpaoProvides)
