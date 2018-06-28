@@ -136,7 +136,7 @@
                     <nav id="user-nav" class="js-hidden-mobile">
                         <ul>
                             <li>
-                                <a href="/home/help">Help</a>
+                                <a asp-controller="Home" asp-action="ContactUs">Contact us</a>
                             </li>
                             <li>
                                 <a asp-controller="Account" asp-action="SignOut">Sign out</a>
@@ -178,10 +178,10 @@
                         </li>
                         *@
                         <li>
-                            <a href="/home/cookies">Cookies</a>
+                            <a asp-controller="Home" asp-action="Cookies">Cookies</a>
                         </li>
                         <li>
-                            <a href="/home/privacy">Privacy</a>
+                            <a asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                         @*
                         <li>Built by the
