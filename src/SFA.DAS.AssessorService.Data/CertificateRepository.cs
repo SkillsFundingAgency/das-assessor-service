@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlTypes;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -71,19 +70,35 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<List<Certificate>> GetCertificates(List<string> statuses)
         {
-           if (statuses == null || !statuses.Any())
+            if (statuses == null || !statuses.Any())
             {
                 return await _context.Certificates
                     .Include(q => q.Organisation)
                     .ToListAsync();
             }
             else
-           {
-               return await _context.Certificates
-                   .Include(q => q.Organisation)
-                   .Where(x => statuses.Contains(x.Status))
-                   .ToListAsync();
-           }
+            {
+                return await _context.Certificates
+                    .Include(q => q.Organisation)
+                    .Where(x => statuses.Contains(x.Status))
+                    .ToListAsync();
+            }
+        }
+
+        public async Task<List<Certificate>> GetCertificateHistory()
+        {
+            var statuses = new List<string>
+            {
+                CertificateStatus.Submitted,
+                CertificateStatus.Printed,
+                CertificateStatus.Reprint
+            };
+
+            return await _context.Certificates
+                .Include(q => q.Organisation)
+                .Where(x => statuses.Contains(x.Status))
+                .ToListAsync();
+
         }
 
         public async Task<Certificate> Update(Certificate certificate, string username, string action)

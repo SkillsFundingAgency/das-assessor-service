@@ -160,6 +160,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
         {
             try
             {
+
                 MappingStartup.AddMappings();
 
                 if (env.IsDevelopment()) app.UseDeveloperExceptionPage();

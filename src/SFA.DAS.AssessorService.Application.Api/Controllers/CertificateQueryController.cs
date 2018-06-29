@@ -40,6 +40,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> GetCertificates([FromQuery] List<string> statuses)
         {
             return Ok(await _mediator.Send(new GetCertificatesRequest { Statuses = statuses }));
-        }       
+        }
+
+        [HttpGet("history", Name = "GetCertificatesHistory")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<CertificateHistoryResponse>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetCertificatesHistory()
+        {
+            return Ok(await _mediator.Send(new GetCertificateHistoryRequest {}));
+        }
     }
 }
