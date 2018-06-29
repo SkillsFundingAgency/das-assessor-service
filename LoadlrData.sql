@@ -75,6 +75,10 @@ SELECT
 
 UPDATE Ilrs SET FamilyName = REPLACE(REPLACE(REPLACE(FamilyName, '`',''''),'’',''''),'–','-'), GivenNames = REPLACE(REPLACE(REPLACE(GivenNames, '`',''''),'’',''''),'–','-')
 
+UPDATE ilrs
+SET source = '1617'
+WHERE source IS NULL
+
 DROP EXTERNAL DATA SOURCE BlobStorage
 DROP DATABASE SCOPED CREDENTIAL BlobCredential 
 DROP MASTER KEY
