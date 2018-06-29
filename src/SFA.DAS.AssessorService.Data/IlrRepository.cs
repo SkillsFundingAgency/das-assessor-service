@@ -25,5 +25,11 @@ namespace SFA.DAS.AssessorService.Data
         {
             return await _context.Ilrs.SingleAsync(i => i.Uln == uln && i.StdCode == standardCode);
         }
+
+        public async Task StoreSearchLog(SearchLog log)
+        {
+            await _context.SearchLogs.AddAsync(log);
+            await _context.SaveChangesAsync();
+        }
     }
 }

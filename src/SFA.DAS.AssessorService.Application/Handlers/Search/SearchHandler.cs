@@ -82,6 +82,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 .MatchUpExistingCompletedStandards(request, _certificateRepository, _contactRepository, _logger)
                 .PopulateStandards(_assessmentOrgsApiClient, _logger);
 
+            await _ilrRepository.StoreSearchLog(new SearchLog()
+            {
+                NumberOfResults = searchResults.Count,
+                SearchTime = DateTime.UtcNow,
+                Surname = request.Surname,
+                Uln = request.Uln,
+                Username = request.Username
+            });
+
             return searchResults;
         }
 
