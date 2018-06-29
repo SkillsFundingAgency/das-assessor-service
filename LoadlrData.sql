@@ -52,15 +52,23 @@ CREATE TABLE [dbo].[LearnerImport](
 )
 GO
 
+IF NOT EXISTS(SELECT 1 FROM sys.columns 
+          WHERE Name = N'CompletionStatus'
+          AND Object_ID = Object_ID(N'dbo.Ilrs'))
+BEGIN
+    ALTER TABLE dbo.Ilrs ADD CompletionStatus int NULL
+END
+GO
+
 BULK INSERT LearnerImport 
 FROM 'learners.csv'
 WITH (DATA_SOURCE = 'BlobStorage', FORMAT = 'CSV', FIRSTROW= 2)
 
-INSERT INTO Ilrs (CreatedAt, ULN, LearnRefNumber, GivenNames, FamilyName, UKPRN, StdCode, LearnStartDate, EPAOrgID, FundingModel, ApprenticeshipId, EmployerAccountId, Source)
+INSERT INTO Ilrs (CreatedAt, ULN, LearnRefNumber, GivenNames, FamilyName, UKPRN, StdCode, LearnStartDate, EPAOrgID, FundingModel, ApprenticeshipId, EmployerAccountId, CompletionStatus, Source)
 SELECT 
 	GETDATE() AS CreatedAt, 
 	li.ULN, li.LearnRefNumber, li.GivenNames, li.FamilyName, li.UKPRN, li.StdCode, li.LearnStartDate, li.EPAOrgID, li.FundingModel, li.ApprenticeshipId, 0 AS EmployerAccountId,
-	'1718' AS Source
+	li.CompletionStatus, '1718' AS Source
 	FROM LearnerImport li
 	LEFT OUTER JOIN Ilrs i ON i.Uln = li.ULN AND i.LearnRefNumber = li.LearnRefNumber AND i.StdCode = li.StdCode AND i.UkPrn = li.UKPRN AND i.LearnStartDate = li.LearnStartDate
 	WHERE i.Uln IS NULL
