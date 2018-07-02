@@ -70,7 +70,7 @@ SELECT
 	li.ULN, li.LearnRefNumber, li.GivenNames, li.FamilyName, li.UKPRN, li.StdCode, li.LearnStartDate, li.EPAOrgID, li.FundingModel, li.ApprenticeshipId, 0 AS EmployerAccountId,
 	li.CompletionStatus, '1718' AS Source
 	FROM LearnerImport li
-	LEFT OUTER JOIN Ilrs i ON i.Uln = li.ULN AND i.LearnRefNumber = li.LearnRefNumber AND i.StdCode = li.StdCode AND i.UkPrn = li.UKPRN AND i.LearnStartDate = li.LearnStartDate
+	LEFT OUTER JOIN Ilrs i ON i.Uln = li.ULN AND i.LearnRefNumber = li.LearnRefNumber AND i.StdCode = li.StdCode AND i.UkPrn = li.UKPRN AND i.LearnStartDate = li.LearnStartDate AND i.Source = li.Source
 	WHERE i.Uln IS NULL
 
 UPDATE Ilrs SET FamilyName = REPLACE(REPLACE(REPLACE(FamilyName, '`',''''),'’',''''),'–','-'), GivenNames = REPLACE(REPLACE(REPLACE(GivenNames, '`',''''),'’',''''),'–','-')
