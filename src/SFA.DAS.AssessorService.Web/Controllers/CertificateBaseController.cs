@@ -13,6 +13,7 @@ using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
+    [CheckSession]
     public class CertificateBaseController : Controller
     {
         protected readonly ILogger<CertificateController> Logger;

@@ -29,6 +29,14 @@ CREATE EXTERNAL DATA SOURCE BlobStorage WITH (
     CREDENTIAL = BlobCredential
 );
 
+IF (EXISTS (SELECT * 
+                 FROM INFORMATION_SCHEMA.TABLES 
+                 WHERE TABLE_SCHEMA = 'dbo' 
+                 AND  TABLE_NAME = 'LearnerImport'))
+BEGIN
+    DROP TABLE [LearnerImport]
+END
+
 CREATE TABLE [dbo].[LearnerImport](
 	[Uln] [bigint] NULL,
 	[LearnRefNumber] [nvarchar](12) NULL,
@@ -39,25 +47,41 @@ CREATE TABLE [dbo].[LearnerImport](
 	[LearnStartDate] [nvarchar](50) NULL,
 	[EpaOrgId] [nvarchar](50) NULL,
 	[FundingModel] [int] NULL,
-	[ApprenticeshipId] [bigint] NULL
+	[ApprenticeshipId] [bigint] NULL,
+	[CompletionStatus] [int] NULL
 )
+GO
+
+IF NOT EXISTS(SELECT 1 FROM sys.columns 
+          WHERE Name = N'CompletionStatus'
+          AND Object_ID = Object_ID(N'dbo.Ilrs'))
+BEGIN
+    ALTER TABLE dbo.Ilrs ADD CompletionStatus int NULL
+END
 GO
 
 BULK INSERT LearnerImport 
 FROM 'learners.csv'
-WITH (DATA_SOURCE = 'BlobStorage', FORMAT = 'CSV', FIRSTROW= 2)
+WITH (DATA_SOURCE = 'BlobStorage', FORMAT = 'CSV', FIRSTROW= 2, CODEPAGE='65001')
 
-INSERT INTO Ilrs (CreatedAt, ULN, LearnRefNumber, GivenNames, FamilyName, UKPRN, StdCode, LearnStartDate, EPAOrgID, FundingModel, ApprenticeshipId, EmployerAccountId)
+MERGE INTO Ilrs AS i
+USING (
 SELECT 
 	GETDATE() AS CreatedAt, 
-	li.ULN, li.LearnRefNumber, li.GivenNames, li.FamilyName, li.UKPRN, li.StdCode, li.LearnStartDate, li.EPAOrgID, li.FundingModel, li.ApprenticeshipId, 0 AS EmployerAccountId
-	FROM LearnerImport li
-	LEFT OUTER JOIN Ilrs i ON i.Uln = li.ULN AND i.LearnRefNumber = li.LearnRefNumber AND i.StdCode = li.StdCode AND i.UkPrn = li.UKPRN AND i.LearnStartDate = li.LearnStartDate
-	WHERE i.Uln IS NULL
-
-DROP TABLE LearnerImport
+	ULN, LearnRefNumber, GivenNames, FamilyName, UKPRN, StdCode, LearnStartDate, EPAOrgID, FundingModel, ApprenticeshipId, 0 AS EmployerAccountId, CompletionStatus, '1718' AS Source
+	FROM LearnerImport) as li
+ON (i.Uln = li.ULN AND i.LearnRefNumber = li.LearnRefNumber AND i.StdCode = li.StdCode AND i.UkPrn = li.UKPRN AND i.LearnStartDate = li.LearnStartDate AND i.Source = li.Source)
+	WHEN NOT MATCHED THEN 
+   INSERT (CreatedAt, ULN, LearnRefNumber, GivenNames, FamilyName, UKPRN, StdCode, LearnStartDate, EPAOrgID, FundingModel, ApprenticeshipId, EmployerAccountId, CompletionStatus, Source)
+   VALUES (li.CreatedAt, li.ULN, li.LearnRefNumber, li.GivenNames, li.FamilyName, li.UKPRN, li.StdCode, li.LearnStartDate, li.EPAOrgID, li.FundingModel, li.ApprenticeshipId, li.EmployerAccountId, li.CompletionStatus, li.Source);
+   
 
 UPDATE Ilrs SET FamilyName = REPLACE(REPLACE(REPLACE(FamilyName, '`',''''),'’',''''),'–','-'), GivenNames = REPLACE(REPLACE(REPLACE(GivenNames, '`',''''),'’',''''),'–','-')
+
+UPDATE Ilrs SET FamilyName = REPLACE(FamilyName,NCHAR(0x00A0),' ') WHERE CHARINDEX(NCHAR(0x00A0),FamilyName) > 0
+
+UPDATE Ilrs SET GivenNames = REPLACE(GivenNames,NCHAR(0x00A0),' ') WHERE CHARINDEX(NCHAR(0x00A0),GivenNames) > 0
+
 
 DROP EXTERNAL DATA SOURCE BlobStorage
 DROP DATABASE SCOPED CREDENTIAL BlobCredential 

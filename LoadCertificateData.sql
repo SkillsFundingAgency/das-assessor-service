@@ -125,8 +125,21 @@ GO
 
 BULK INSERT CertificateImport 
 FROM 'certs.csv'
-WITH (DATA_SOURCE = 'BlobStorage', FORMAT = 'CSV', FIRSTROW= 2)
+WITH (DATA_SOURCE = 'BlobStorage', FORMAT = 'CSV', FIRSTROW= 2, CODEPAGE='65001')
 
+-- Check to see if the CertificateIds have been converted properly and not munged by excel.
+DECLARE @badCertificateIdCount int
+SELECT @badCertificateIdCount = COUNT(1) FROM CertificateImport WHERE LEN(ID) != 8
+
+IF @badCertificateIdCount > 0 
+BEGIN
+	SELECT * FROM CertificateImport WHERE LEN(ID) != 8
+	DROP FUNCTION GetCertificateDataJson;
+	DROP EXTERNAL DATA SOURCE BlobStorage;
+	DROP DATABASE SCOPED CREDENTIAL BlobCredential;
+	DROP MASTER KEY;
+	THROW 51000, 'Invalid Certificate IDs in Import File. See ''Results'' window',1;
+END
 --Log any import records that are a duplicates of certificates created by Service.
 INSERT INTO CertificateLogs
                          (Id, Action, CertificateId, EventTime, Status, CertificateData, Username)
@@ -167,13 +180,13 @@ SELECT
 	o.Id AS OrganisationId,
 	ci.Uln AS Uln,
 	ci.StandardCode AS StandardCode,
-	1 AS BatchNumber,
-	'Printed' AS Status,
+	null AS BatchNumber,
+	'Submitted' AS Status,
 	'Manual' AS CreatedBy,
 	dbo.GetCertificateDataJson(ci.ID) AS CertificateData
 FROM CertificateImport ci
 INNER JOIN Organisations o ON o.EndPointAssessorOrganisationId = ci.EpaUln
-WHERE ci.Uln != 9999999999
+WHERE ci.Uln IS NULL OR ci.Uln != 9999999999
 AND NOT EXISTS (SELECT null FROM Certificates ce WHERE ce.CertificateReference = ci.ID)
 AND NOT EXISTS (SELECT null FROM Certificates AS c 
 					WHERE ci.Uln = c.Uln 
@@ -186,7 +199,7 @@ SET IDENTITY_INSERT Certificates OFF
 
 --Update any Certificates created withing the Service as Deleted if they are Draft and in Import.
 UPDATE       Certificates
-SET                Status = 'Deleted'
+SET                Status = 'Deleted', DeletedAt = GETDATE(), DeletedBy = 'Manual'
 FROM            Certificates c INNER JOIN
                          CertificateImport AS ci ON ci.Uln = c.Uln AND ci.StandardCode = c.StandardCode AND ci.UKPRN = c.ProviderUkPrn AND CAST(ci.LearningStartDate AS datetime) 
                          = CAST(JSON_VALUE(c.CertificateData, '$.LearningStartDate') AS datetime) AND c.CreatedBy <> 'manual' AND c.Status <> 'Deleted'
@@ -211,6 +224,12 @@ WHERE Certificates.LearnRefNumber IS NULL
 UPDATE Certificates 
 	SET CertificateData = JSON_MODIFY(CertificateData, '$.StandardName', REPLACE(json_value([CertificateData],'$.StandardName'),NCHAR(0x00A0),' ')) 
 	WHERE CreatedBy = 'Manual'
+
+--Remove Odd Space Characters
+UPDATE [dbo].[Certificates]
+SET CertificateData = JSON_MODIFY([CertificateData], '$.StandardName', REPLACE(UPPER(json_value([CertificateData],'$.StandardName')),'Á',' ') )
+WHERE CHARINDEX('Á',json_value([CertificateData],'$.StandardName')) + CHARINDEX('á',json_value([CertificateData],'$.StandardName')) > 0
+
 
 -- Insert ESFA 'manual' user to handle data fed certs.
 IF NOT EXISTS(SELECT * FROM Contacts WHERE Username = 'manual')
