@@ -58,23 +58,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
         public async Task<List<SearchResult>> Handle(StaffSearchRequest request, CancellationToken cancellationToken)
         {
-            IEnumerable<Ilr> ilrResults;
-
-            // Naive decision on what is being searched.
-            if (request.SearchQuery.Length == 10 && long.TryParse(request.SearchQuery, out var uln))
-            {
-                // Search string is a long of 10 length so must be a uln.
-                ilrResults = await _ilrRepository.SearchForLearnerByUln(uln);
-            }
-
-            if (request.SearchQuery.Length == 8 && long.TryParse(request.SearchQuery, out var certRef))
-            {
-                // Search string is 8 chars and is a valid long so must be a CertificateReference
-                ilrResults = await _ilrRepository.SearchForLearnerByCertificateReference(request.SearchQuery);
-            }
-
-            // None of the above, search on Surname / firstname.
-            ilrResults = await _ilrRepository.SearchForLearnerByName(request.SearchQuery);
+            var ilrResults = await Search(request);
 
             _logger.LogInformation(ilrResults.Any() ? LoggingConstants.SearchSuccess : LoggingConstants.SearchFailure);
 
@@ -84,6 +68,25 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 .PopulateStandards(_assessmentOrgsApiClient, _logger);
 
             return searchResults;
+        }
+
+        private async Task<IEnumerable<Ilr>> Search(StaffSearchRequest request)
+        {
+            // Naive decision on what is being searched.
+            if (request.SearchQuery.Length == 10 && long.TryParse(request.SearchQuery, out var uln))
+            {
+                // Search string is a long of 10 length so must be a uln.
+                return await _ilrRepository.SearchForLearnerByUln(uln);
+            }
+
+            if (request.SearchQuery.Length == 8 && long.TryParse(request.SearchQuery, out var certRef))
+            {
+                // Search string is 8 chars and is a valid long so must be a CertificateReference
+                return await _ilrRepository.SearchForLearnerByCertificateReference(request.SearchQuery);
+            }
+
+            // None of the above, search on Surname / firstname.
+            return await _ilrRepository.SearchForLearnerByName(request.SearchQuery);   
         }
 
         private List<int> ConvertStandardsToListOfInts(IEnumerable<StandardOrganisationSummary> theStandardsThisEpaoProvides)
