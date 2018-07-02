@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
             
             var ilrRepository = new Mock<IIlrRepository>();
 
-            ilrRepository.Setup(r => r.SearchForLearner(It.IsAny<SearchRequest>()))
+            ilrRepository.Setup(r => r.SearchForLearnerByUln(It.IsAny<long>()))
                 .ReturnsAsync(new List<Ilr>
                 {
                     new Ilr{ EpaOrgId = "EPA0001", StdCode = 1, FamilyName = "James"},

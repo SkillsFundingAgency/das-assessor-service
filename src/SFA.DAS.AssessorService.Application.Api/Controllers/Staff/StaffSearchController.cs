@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
         }
 
 
-        [HttpGet(Name = "Search")]
+        [HttpGet]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<SearchResult>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]

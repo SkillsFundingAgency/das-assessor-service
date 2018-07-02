@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
 
         public async Task<List<SearchResult>> Search(string searchString)
         {
-            var res = await _client.GetAsync(new Uri($"/api/v1/staffsearch?search={searchString}"));
+            var res = await _client.GetAsync(new Uri($"/api/v1/staffsearch?search={searchString}", UriKind.Relative));
             return await res.Content.ReadAsAsync<List<SearchResult>>();
         }
     }

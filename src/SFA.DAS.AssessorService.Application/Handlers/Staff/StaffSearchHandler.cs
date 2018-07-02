@@ -8,7 +8,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Application.Handlers.Staff;
+using SFA.DAS.AssessorService.Application.Handlers.Search;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Logging;
 using SFA.DAS.AssessorService.Domain.Consts;
@@ -17,7 +17,7 @@ using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
 
-namespace SFA.DAS.AssessorService.Application.Handlers.Search
+namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 {
     public class StaffSearchHandler : IRequestHandler<StaffSearchRequest, List<SearchResult>>
     {
@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
         private readonly IContactQueryRepository _contactRepository;
         private Dictionary<char, char[]> _alternates;
 
-        public StaffSearchHandler(IAssessmentOrgsApiClient assessmentOrgsApiClient, IOrganisationQueryRepository organisationRepository, 
+        public StaffSearchHandler(IAssessmentOrgsApiClient assessmentOrgsApiClient, IOrganisationQueryRepository organisationRepository,
             IIlrRepository ilrRepository, ICertificateRepository certificateRepository, ILogger<SearchHandler> logger, IContactQueryRepository contactRepository)
         {
             _assessmentOrgsApiClient = assessmentOrgsApiClient;
@@ -58,14 +58,29 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
         public async Task<List<SearchResult>> Handle(StaffSearchRequest request, CancellationToken cancellationToken)
         {
-            var ilrResults = _ilrRepository.Search(request.SearchQuery);
+            IEnumerable<Ilr> ilrResults;
 
+            // Naive decision on what is being searched.
+            if (request.SearchQuery.Length == 10 && long.TryParse(request.SearchQuery, out var uln))
+            {
+                // Search string is a long of 10 length so must be a uln.
+                ilrResults = await _ilrRepository.SearchForLearnerByUln(uln);
+            }
+
+            if (request.SearchQuery.Length == 8 && long.TryParse(request.SearchQuery, out var certRef))
+            {
+                // Search string is 8 chars and is a valid long so must be a CertificateReference
+                ilrResults = await _ilrRepository.SearchForLearnerByCertificateReference(request.SearchQuery);
+            }
+
+            // None of the above, search on Surname / firstname.
+            ilrResults = await _ilrRepository.SearchForLearnerByName(request.SearchQuery);
 
             _logger.LogInformation(ilrResults.Any() ? LoggingConstants.SearchSuccess : LoggingConstants.SearchFailure);
 
             var searchResults = Mapper.Map<List<SearchResult>>(ilrResults);
 
-            searchResults = MatchUpExistingCompletedStandards(searchResults, request, _certificateRepository, _contactRepository, _logger)
+            searchResults = MatchUpExistingCompletedStandards(searchResults)
                 .PopulateStandards(_assessmentOrgsApiClient, _logger);
 
             return searchResults;
@@ -90,27 +105,35 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             return _alternates.Where(kvp => surname.Contains(kvp.Key)).Select(kvp => kvp.Key).ToArray();
         }
 
-         public static List<SearchResult> MatchUpExistingCompletedStandards(List<SearchResult> searchResults, SearchQuery request, ICertificateRepository certificateRepository, IContactQueryRepository contactRepository, ILogger<SearchHandler> logger)
+        private List<SearchResult> MatchUpExistingCompletedStandards(List<SearchResult> searchResults)
         {
-            logger.LogInformation("MatchUpExistingCompletedStandards Before Get Certificates for uln from db");
-            var completedCertificates = certificateRepository.GetCompletedCertificatesFor(request.Uln).Result;
-            logger.LogInformation("MatchUpExistingCompletedStandards After Get Certificates for uln from db");
-            foreach (var searchResult in searchResults.Where(r => completedCertificates.Select(s => s.StandardCode).Contains(r.StdCode)))
+            foreach (var searchResult in searchResults)
             {
-                var certificate = completedCertificates.Single(s => s.StandardCode == searchResult.StdCode);
+                _logger.LogInformation("MatchUpExistingCompletedStandards Before Get Certificates for uln from db");
+                var completedCertificates = _certificateRepository.GetCompletedCertificatesFor(searchResult.Uln).Result;
+                _logger.LogInformation("MatchUpExistingCompletedStandards After Get Certificates for uln from db");
+
+                var certificate = completedCertificates.SingleOrDefault(s => s.StandardCode == searchResult.StdCode);
+                if (certificate == null) continue;
+
                 var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
                 searchResult.CertificateReference = certificate.CertificateReference;
-                searchResult.LearnStartDate = certificateData.LearningStartDate == DateTime.MinValue ? null : new DateTime?(certificateData.LearningStartDate) ;
+                searchResult.LearnStartDate = certificateData.LearningStartDate == DateTime.MinValue ? null : new DateTime?(certificateData.LearningStartDate);
 
-                var certificateLogs = certificateRepository.GetCertificateLogsFor(certificate.Id).Result;
-                logger.LogInformation("MatchUpExistingCompletedStandards After GetCertificateLogsFor");
+                var certificateLogs = _certificateRepository.GetCertificateLogsFor(certificate.Id).Result;
+                _logger.LogInformation("MatchUpExistingCompletedStandards After GetCertificateLogsFor");
                 var submittedLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Submitted);
                 if (submittedLogEntry == null) continue;
-                
-              
-              
-            }
 
+                var submittingContact = _contactRepository.GetContact(submittedLogEntry.Username).Result;
+                _logger.LogInformation("MatchUpExistingCompletedStandards After GetContact");
+
+                searchResult.ShowExtraInfo = true;
+                searchResult.OverallGrade = certificateData.OverallGrade;
+                searchResult.SubmittedBy = submittingContact.DisplayName; // This needs to be contact real name
+                searchResult.SubmittedAt = submittedLogEntry.EventTime.ToLocalTime(); // This needs to be local time 
+                searchResult.AchDate = certificateData.AchievementDate;
+            }
             return searchResults;
         }
     }
