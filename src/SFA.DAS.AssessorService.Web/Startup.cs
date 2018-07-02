@@ -123,8 +123,10 @@ namespace SFA.DAS.AssessorService.Web
             else
             {
                 app.UseExceptionHandler("/Home/Error");
+                app.UseHsts();
             }
 
+            app.UseHttpsRedirection();
             app.UseStaticFiles()
                 .UseSession(new SessionOptions() { Cookie = new CookieBuilder() { Name = ".Assessors.Session", HttpOnly = true } })
                 .UseAuthentication()
