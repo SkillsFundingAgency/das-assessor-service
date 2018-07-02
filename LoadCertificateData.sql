@@ -125,7 +125,7 @@ GO
 
 BULK INSERT CertificateImport 
 FROM 'certs.csv'
-WITH (DATA_SOURCE = 'BlobStorage', FORMAT = 'CSV', FIRSTROW= 2)
+WITH (DATA_SOURCE = 'BlobStorage', FORMAT = 'CSV', FIRSTROW= 2, CODEPAGE='65001')
 
 -- Check to see if the CertificateIds have been converted properly and not munged by excel.
 DECLARE @badCertificateIdCount int

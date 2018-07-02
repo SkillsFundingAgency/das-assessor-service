@@ -20,7 +20,7 @@ CREATE MASTER KEY ENCRYPTION BY PASSWORD = 'Baldy N3rd Face';
 ---- Create a database scoped credential with Azure storage account key as the secret.
 CREATE DATABASE SCOPED CREDENTIAL BlobCredential 
 WITH IDENTITY = 'SHARED ACCESS SIGNATURE', 
-SECRET = '';
+SECRET = 'st=2018-07-02T08%3A25%3A53Z&se=2018-07-03T08%3A25%3A53Z&sp=rwdl&sv=2017-07-29&sr=c&sig=%2FbiyZD3SzB547Gvsih1%2BJ8y0CiGL0XiM2DZ%2BzeVGriE%3D';
 
 ---- Create an external data source with CREDENTIAL option.
 CREATE EXTERNAL DATA SOURCE BlobStorage WITH (
@@ -62,7 +62,7 @@ GO
 
 BULK INSERT LearnerImport 
 FROM 'learners.csv'
-WITH (DATA_SOURCE = 'BlobStorage', FORMAT = 'CSV', FIRSTROW= 2)
+WITH (DATA_SOURCE = 'BlobStorage', FORMAT = 'CSV', FIRSTROW= 2, CODEPAGE='65001')
 
 INSERT INTO Ilrs (CreatedAt, ULN, LearnRefNumber, GivenNames, FamilyName, UKPRN, StdCode, LearnStartDate, EPAOrgID, FundingModel, ApprenticeshipId, EmployerAccountId, CompletionStatus, Source)
 SELECT 
