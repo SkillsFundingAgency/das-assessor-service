@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SFA.AssessorService.Paging;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Domain.Entities;
 
@@ -17,6 +18,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<Certificate> Update(Certificate certificate, string username, string action);
         Task UpdateStatuses(UpdateCertificatesBatchToIndicatePrintedRequest updateCertificatesBatchToIndicatePrintedRequest);
         Task<List<CertificateLog>> GetCertificateLogsFor(Guid certificateId);
-        Task<List<Certificate>> GetCertificateHistory();
+        Task<PaginatedList<Certificate>> GetCertificateHistory(int pageIndex, int pageSize);
     }
 }

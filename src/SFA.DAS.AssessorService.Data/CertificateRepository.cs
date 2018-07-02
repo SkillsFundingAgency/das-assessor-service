@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using SFA.AssessorService.Paging;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
@@ -74,6 +75,7 @@ namespace SFA.DAS.AssessorService.Data
             {
                 return await _context.Certificates
                     .Include(q => q.Organisation)
+                    .AsNoTracking()
                     .ToListAsync();
             }
             else
@@ -81,11 +83,12 @@ namespace SFA.DAS.AssessorService.Data
                 return await _context.Certificates
                     .Include(q => q.Organisation)
                     .Where(x => statuses.Contains(x.Status))
+                    .AsNoTracking()
                     .ToListAsync();
             }
         }
 
-        public async Task<List<Certificate>> GetCertificateHistory()
+        public async Task<PaginatedList<Certificate>> GetCertificateHistory(int pageIndex, int pageSize)
         {
             var statuses = new List<string>
             {
@@ -94,11 +97,17 @@ namespace SFA.DAS.AssessorService.Data
                 CertificateStatus.Reprint
             };
 
-            return await _context.Certificates
+            var count = await _context.Certificates.CountAsync();          
+          
+            var certificates = await _context.Certificates
                 .Include(q => q.Organisation)
                 .Where(x => statuses.Contains(x.Status))
-                .ToListAsync();
+                .OrderByDescending(q => q.UpdatedAt)
+                .AsNoTracking()
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize).ToListAsync();
 
+            return new PaginatedList<Certificate>(certificates, count, pageIndex < 0 ? 1 : pageIndex, pageSize);
         }
 
         public async Task<Certificate> Update(Certificate certificate, string username, string action)
@@ -160,7 +169,9 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<List<CertificateLog>> GetCertificateLogsFor(Guid certificateId)
         {
-            return await _context.CertificateLogs.Where(l => l.CertificateId == certificateId).OrderByDescending(l => l.EventTime).ToListAsync();
+            return await _context.CertificateLogs.Where(l => l.CertificateId == certificateId).OrderByDescending(l => l.EventTime)
+                .AsNoTracking()
+                .ToListAsync();
         }
     }
 }

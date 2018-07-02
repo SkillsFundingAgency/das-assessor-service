@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.AssessorService.Paging;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
@@ -43,11 +44,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpGet("history", Name = "GetCertificatesHistory")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<CertificateHistoryResponse>))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(PaginatedList<CertificateHistoryResponse>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetCertificatesHistory()
+        public async Task<IActionResult> GetCertificatesHistory(int pageIndex)
         {
-            return Ok(await _mediator.Send(new GetCertificateHistoryRequest {}));
+            return Ok(await _mediator.Send(new GetCertificateHistoryRequest { PageIndex = pageIndex }));
         }
     }
 }

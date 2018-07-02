@@ -93,7 +93,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                 context.Contacts.Add(thirdContact);
                 context.SaveChanges();
 
-                for (int i = 0; i <=3; i++)
+                for (int i = 0; i <=40; i++)
                 {
                     var firstCertificateData = new CertificateData
                     {
@@ -190,10 +190,10 @@ namespace SFA.DAS.AssessorService.Data.TestData
                         Uln = 1111111111,
                         GivenNames = "Karla",
                         FamilyName = "Hawkins",
-                        UkPrn = 10009931,
+                        UkPrn = 10022712,
                         StdCode = 90,
                         LearnStartDate = new DateTime(2015, 8, 9),
-                        EpaOrgId = "EPA000011",
+                        EpaOrgId = "EPA0001",
                         CreatedAt = new DateTime(2018,1,1)
                     },
                     new Ilr()
@@ -201,10 +201,10 @@ namespace SFA.DAS.AssessorService.Data.TestData
                         Uln = 1111111111,
                         GivenNames = "Karla",
                         FamilyName = "Hawkins",
-                        UkPrn = 10009931,
+                        UkPrn = 10022712,
                         StdCode = 93,
                         LearnStartDate = new DateTime(2015, 3, 2),
-                        EpaOrgId = "EPA000011",
+                        EpaOrgId = "EPA0001",
                         CreatedAt = new DateTime(2018,1,1)
                     },
                     new Ilr()
@@ -212,10 +212,10 @@ namespace SFA.DAS.AssessorService.Data.TestData
                         Uln = 2222222222,
                         GivenNames = "Karla",
                         FamilyName = "Hawkins",
-                        UkPrn = 10009931,
+                        UkPrn = 10022712,
                         StdCode = 33,
                         LearnStartDate = new DateTime(2015, 8, 9),
-                        EpaOrgId = "EPA000011",
+                        EpaOrgId = "EPA0001",
                         CreatedAt = new DateTime(2018,1,1)
                     }
 

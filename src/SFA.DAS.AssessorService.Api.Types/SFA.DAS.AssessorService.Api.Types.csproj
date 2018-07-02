@@ -9,6 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SFA.AssessorService.Paging\SFA.AssessorService.Paging.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Domain\SFA.DAS.AssessorService.Domain.csproj" />
   </ItemGroup>
 
