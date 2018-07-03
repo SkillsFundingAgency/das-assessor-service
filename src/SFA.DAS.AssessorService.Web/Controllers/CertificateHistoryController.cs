@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
             var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
-            var certificateHistory = await _certificateApiClient.GetCertificateHistory(pageIndex ?? 1);
+            var certificateHistory = await _certificateApiClient.GetCertificateHistory(pageIndex ?? 1, username);
             return View("Index", certificateHistory);
         }
 

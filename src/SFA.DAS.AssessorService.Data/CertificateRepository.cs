@@ -88,7 +88,7 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        public async Task<PaginatedList<Certificate>> GetCertificateHistory(int pageIndex, int pageSize)
+        public async Task<PaginatedList<Certificate>> GetCertificateHistory(Guid organisationId, int pageIndex, int pageSize)
         {
             var statuses = new List<string>
             {
@@ -97,11 +97,13 @@ namespace SFA.DAS.AssessorService.Data
                 CertificateStatus.Reprint
             };
 
-            var count = await _context.Certificates.CountAsync();          
+            var count = await _context.Certificates
+                .Where(q => q.OrganisationId == organisationId)
+                .CountAsync();          
           
             var certificates = await _context.Certificates
                 .Include(q => q.Organisation)
-                .Where(x => statuses.Contains(x.Status))
+                .Where(x => statuses.Contains(x.Status) && x.OrganisationId == organisationId)
                 .OrderByDescending(q => q.UpdatedAt)
                 .AsNoTracking()
                 .Skip((pageIndex - 1) * pageSize)
