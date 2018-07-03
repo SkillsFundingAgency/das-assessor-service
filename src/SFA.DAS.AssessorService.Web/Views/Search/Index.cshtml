@@ -10,6 +10,10 @@
 <div class="grid-row">
     <div class="column-two-thirds">
         <!-- <a class="link-back" asp-controller="Search" asp-action="Index">Back</a> -->
+        
+        <div>
+            @{await Html.RenderPartialAsync("_SearchNavigation"); }         
+        </div>
 
         @if (Model?.SearchResults != null)
         {

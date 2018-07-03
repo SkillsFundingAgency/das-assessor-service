@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using SFA.AssessorService.Paging;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Domain.Entities;
 
@@ -34,6 +35,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Put, "api/v1/certificates/update"))
             {
                 return await PostPutRequestWithResponse<UpdateCertificateRequest, Certificate >(httpRequest, certificateRequest);
+            }
+        }
+
+        public async Task<PaginatedList<CertificateHistoryResponse>> GetCertificateHistory(int pageIndex)
+        {
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/certificates/history/?pageIndex={pageIndex}"))
+            {
+                return await RequestAndDeserialiseAsync<PaginatedList<CertificateHistoryResponse>>(httpRequest, "Could not get Certificate History");
             }
         }
     }

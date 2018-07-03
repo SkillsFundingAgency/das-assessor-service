@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             const int pageSize = 10;
 
             var certificates = await _certificateRepository.GetCertificateHistory(
-                request.PageIndex,
+                request.PageIndex ?? 1,
                 pageSize);
 
             // Please Note:- Cannot seem to automap this with custom value/type converters

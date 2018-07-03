@@ -1,0 +1,66 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@using Microsoft.AspNetCore.Mvc.Localization
+@model SFA.AssessorService.Paging.PaginatedList<SFA.DAS.AssessorService.Api.Types.Models.Certificates.CertificateHistoryResponse>
+
+@{
+    //ViewBag.Title = (Model?.SearchResults != null && !Model.SearchResults.Any() ? "0 results found: " : !ViewData.ModelState.IsValid ? "Error: " : "") + "Search for an apprentice";
+    Layout = "_Layout";
+}
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <!-- <a class="link-back" asp-controller="Search" asp-action="Index">Back</a> -->
+
+        <div>
+            @{await Html.RenderPartialAsync("_SearchNavigation"); }
+        </div>
+
+        <div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            Apprentice
+                        </th>
+                        <th>
+                            ULN
+                        </th>
+                        <th>
+                            Employer
+                        </th>
+                        <th>
+                            Training Provider
+                        </th>
+                        <th>
+                            Date Requested
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.FullName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Uln)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ContactOrganisation)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.TrainingProvider)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.CreatedAt)
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+

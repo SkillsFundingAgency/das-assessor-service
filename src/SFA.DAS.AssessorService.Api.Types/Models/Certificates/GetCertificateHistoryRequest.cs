@@ -9,6 +9,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
         {            
         }
 
-        public int PageIndex { get; set; }                
+        public int? PageIndex { get; set; }                
     }
 }
