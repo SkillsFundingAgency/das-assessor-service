@@ -58,8 +58,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                         if (q.Organisation.EndPointAssessorUkprn.HasValue)
                         {
                             //var provider = _assessmentOrgsApiClient
-                            //    .GetProvider(q.Organisation.EndPointAssessorUkprn.Value).GetAwaiter()
+                            //    .GetProvider(q.ProviderUkPrn).GetAwaiter()
                             //    .GetResult();
+                            // Temporary value for now pending deployment
                             var provider = _assessmentOrgsApiClient
                                 .GetProvider(10000268).GetAwaiter()
                                 .GetResult();
