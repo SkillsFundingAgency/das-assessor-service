@@ -65,7 +65,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.NLo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Application.Api.ReprintTest", "SFA.DAS.AssessorService.Application.Api.ReprintTest\SFA.DAS.AssessorService.Application.Api.ReprintTest.csproj", "{B674CFBA-A620-435E-8A04-A4DA6A0E764A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.AssessorService.Paging", "SFA.AssessorService.Paging\SFA.AssessorService.Paging.csproj", "{E77C5D6D-1254-4B58-9CBA-7647FA12DF9B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.AssessorService.Paging", "SFA.AssessorService.Paging\SFA.AssessorService.Paging.csproj", "{E77C5D6D-1254-4B58-9CBA-7647FA12DF9B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
