@@ -11,7 +11,7 @@ namespace SFA.AssessorService.Paging
 
         public List<T> Items { get; } = new List<T>();       
 
-        private int TotalPages { get; }
+        public int TotalPages { get; set; }
 
         public PaginatedList(List<T> items, int count, int pageIndex, int pageSize)
         {
