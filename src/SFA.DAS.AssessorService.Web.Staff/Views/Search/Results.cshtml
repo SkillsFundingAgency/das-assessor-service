@@ -1,14 +1,37 @@
 ﻿@model List<SFA.DAS.AssessorService.Api.Types.Models.SearchResult>
 
 @{
-    
+
 }
 
 <h2>Results</h2>
 
+<a asp-action="Index" class="button">Search Again</a>
 
-@foreach (var result in Model)
-{
-    <br />@result.FamilyName
-          <br/>@result.CertificateReference
-}
+<table class="table">
+    <thead>
+        <tr>
+            <th>Surname</th>
+            <th>First Name</th>
+            <th>Uln</th>
+            <th>Standard</th>
+            <th>Certificate Reference</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var result in Model)
+        {
+            <tr>
+                <td>@result.FamilyName</td>
+                <td>@result.GivenNames</td>
+                <td>@result.Uln</td>
+                <td>@result.Standard</td>
+                <td>@result.CertificateReference</td>
+                <td><a class="button" asp-action="Select" asp-route-stdcode="@result.StdCode" asp-route-uln="@result.Uln">Select</a></td>
+            </tr>
+        }
+    </tbody>
+
+</table>
+

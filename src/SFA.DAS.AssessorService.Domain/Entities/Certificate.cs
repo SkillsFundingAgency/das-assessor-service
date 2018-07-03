@@ -31,5 +31,8 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string UpdatedBy { get; set; }
         public string DeletedBy { get; set; }
         public string LearnRefNumber { get; set; }
+
+        [JsonIgnore]
+        pro
     }
 }

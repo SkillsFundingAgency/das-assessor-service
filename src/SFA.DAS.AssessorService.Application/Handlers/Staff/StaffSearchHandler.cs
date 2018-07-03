@@ -110,22 +110,24 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
         private List<SearchResult> MatchUpExistingCompletedStandards(List<SearchResult> searchResults)
         {
+            _logger.LogInformation("MatchUpExistingCompletedStandards Before Get Certificates for uln from db");
+            var completedCertificates = _certificateRepository.GetCompletedCertificatesFor(searchResults.Select(r => r.Uln).ToArray()).Result;
+            _logger.LogInformation("MatchUpExistingCompletedStandards After Get Certificates for uln from db");
+
+            var certificateLogs = _certificateRepository.GetCertificateLogsFor(completedCertificates.Select(c => c.Id).ToArray()).Result;
+            _logger.LogInformation("MatchUpExistingCompletedStandards After GetCertificateLogsFor");
+
             foreach (var searchResult in searchResults)
             {
-                _logger.LogInformation("MatchUpExistingCompletedStandards Before Get Certificates for uln from db");
-                var completedCertificates = _certificateRepository.GetCompletedCertificatesFor(searchResult.Uln).Result;
-                _logger.LogInformation("MatchUpExistingCompletedStandards After Get Certificates for uln from db");
-
-                var certificate = completedCertificates.SingleOrDefault(s => s.StandardCode == searchResult.StdCode);
+                var certificate = completedCertificates.SingleOrDefault(s => s.StandardCode == searchResult.StdCode && s.Uln == searchResult.Uln);
                 if (certificate == null) continue;
 
                 var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
                 searchResult.CertificateReference = certificate.CertificateReference;
                 searchResult.LearnStartDate = certificateData.LearningStartDate == DateTime.MinValue ? null : new DateTime?(certificateData.LearningStartDate);
 
-                var certificateLogs = _certificateRepository.GetCertificateLogsFor(certificate.Id).Result;
-                _logger.LogInformation("MatchUpExistingCompletedStandards After GetCertificateLogsFor");
-                var submittedLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Submitted);
+                
+                var submittedLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Submitted && l.CertificateId == certificate.Id);
                 if (submittedLogEntry == null) continue;
 
                 var submittingContact = _contactRepository.GetContact(submittedLogEntry.Username).Result;

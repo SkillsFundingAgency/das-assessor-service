@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
@@ -11,17 +12,18 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
     {
         private readonly ILogger<SearchController> _logger;
         private readonly ApiClient _apiClient;
+        private readonly ISessionService _sessionService;
 
-        public SearchController(ILogger<SearchController> logger, ApiClient apiClient)
+        public SearchController(ILogger<SearchController> logger, ApiClient apiClient, ISessionService sessionService)
         {
             _logger = logger;
             _apiClient = apiClient;
+            _sessionService = sessionService;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-
             return View();
         }
 
@@ -29,15 +31,22 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         public async Task<IActionResult> Index([FromForm]SearchViewModel searchRequest)
         {
             var searchResults = await _apiClient.Search(searchRequest.SearchString);
-            TempData["SearchResults"] = searchResults;
+
+            _sessionService.Set("SearchResults", searchResults);
+
             return RedirectToAction("Results");
         }
 
         [HttpGet("results")]
         public async Task<IActionResult> Results()
         {
-            List<SearchResult> results = (List<SearchResult>)TempData["SearchResults"];
+            var results = _sessionService.Get<List<SearchResult>>("SearchResults");
             return View(results);
+        }
+
+        public IActionResult Select()
+        {
+            throw new System.NotImplementedException();
         }
     }
 
