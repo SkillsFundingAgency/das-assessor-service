@@ -5,6 +5,7 @@ CREATE TABLE [ao].[StandardDeliveryArea]
 	[EPAOrganisationIdentifier] [nvarchar](7) NOT NULL, 
 	[StandardCode] [int] NOT NULL,
 	[DeliveryAreaId] [uniqueidentifier] NOT NULL,
+	[Comments] [NVARCHAR] (500) NULL,
 	CONSTRAINT [PK_StandardDeliveryArea] PRIMARY KEY ([Id]),
 	) ON [PRIMARY] 
 GO

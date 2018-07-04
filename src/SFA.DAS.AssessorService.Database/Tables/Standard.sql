@@ -8,7 +8,8 @@
 	[ContactName] [nvarchar](200) NULL,
 	[ContactPhoneNumber] [nvarchar] (20) NULL,
 	[ContactEmail] [nvarchar] (200) NULL, 
-	[DateStandardApproviedOnRegister] [DateTime] NULL,
+	[DateStandardApprovedOnRegister] [DateTime] NULL,
+	[Comments] [NVARCHAR] (500) NULL,
 	CONSTRAINT [PK_Standard] PRIMARY KEY ([Id]),
 ) ON [PRIMARY]
 
