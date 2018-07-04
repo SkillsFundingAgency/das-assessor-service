@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Web.Infrastructure;
-using SFA.DAS.AssessorService.Web.ViewModels.Search;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -41,29 +40,5 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var certificateHistory = await _certificateApiClient.GetCertificateHistory(pageIndex ?? 1, username);
             return View("Index", certificateHistory);
         }
-
-        [HttpPost]
-        [Route("/[controller]/")]
-        public async Task<IActionResult> Index([FromForm] SearchRequestViewModel vm)
-        {
-            //if (!ModelState.IsValid)
-            //{
-            //    return View(vm);
-            //}
-
-            //var result = await _searchOrchestrator.Search(vm);
-            //if (!result.SearchResults.Any()) return View("Index", vm);
-
-            //_sessionService.Set("SearchResults", result);
-            
-            //if (result.SearchResults.Count() > 1)
-            //{
-            //    GetChooseStandardViewModel(vm);
-            //    return RedirectToAction("ChooseStandard");
-            //}
-
-            //GetSelectedStandardViewModel(result);
-            return RedirectToAction("Result");
-        }       
     }
 }
