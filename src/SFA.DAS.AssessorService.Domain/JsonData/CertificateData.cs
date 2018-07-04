@@ -16,6 +16,7 @@ namespace SFA.DAS.AssessorService.Domain.JsonData
         public string ContactAddLine3 { get; set; }
         public string ContactAddLine4 { get; set; }
         public string ContactPostCode { get; set; }
+        public string ProviderName { get; set; }
         public string Registration { get; set; }
         public DateTime LearningStartDate { get; set; }
 

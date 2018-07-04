@@ -109,7 +109,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                         CourseOption = "French",
                         LearnerFamilyName = "Gouge",
                         LearnerGivenNames = "David",
-
+                        ProviderName = "Test Provider",
                         OverallGrade = "PASS",
 
                         Registration = "Registered",

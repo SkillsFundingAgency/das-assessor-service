@@ -34,10 +34,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
         public async Task<PaginatedList<CertificateHistoryResponse>> Handle(GetCertificateHistoryRequest request, CancellationToken cancellationToken)
         {
-            const int pageSize = 10;         
+            const int pageSize = 10;
 
             var certificates = await _certificateRepository.GetCertificateHistory(
-                request.Username,             
+                request.Username,
                 request.PageIndex ?? 1,
                 pageSize);
 
@@ -60,14 +60,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                     {
                         if (q.Organisation.EndPointAssessorUkprn.HasValue)
                         {
-                            //var provider = _assessmentOrgsApiClient
-                            //    .GetProvider(q.ProviderUkPrn).GetAwaiter()
-                            //    .GetResult();
-                            // Temporary value for now pending deployment
-                            var provider = _assessmentOrgsApiClient
-                                .GetProvider(10000268).GetAwaiter()
-                                .GetResult();
-                            trainingProviderName = provider.ProviderName;
+                            if (certificateData.ProviderName == null)
+                            {
+                                var provider = _assessmentOrgsApiClient
+                                    .GetProvider(q.ProviderUkPrn).GetAwaiter()
+                                    .GetResult();
+                                trainingProviderName = provider.ProviderName;
+                            }
+                            else
+                            {
+                                trainingProviderName = certificateData.ProviderName;
+                            }
                         }
                     }
                     catch (EntityNotFoundException e)
