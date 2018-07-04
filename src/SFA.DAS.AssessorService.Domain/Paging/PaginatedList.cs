@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Domain.Paging
 {
-    public class PaginatedList<T> // : List<T>
+    public class PaginatedList<T> 
     {
         public int PageIndex { get; set; }
         public int PageSize { get; set; }
@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Domain.Paging
             Items.AddRange(items);
         }
  
-        public bool HasPreviousPage => (PageIndex > 1);
-        public bool HasNextPage => (PageIndex < TotalPages);
+        public bool HasPreviousPage => (PageIndex > 0);
+        public bool HasNextPage => (PageIndex < TotalPages - 1);
     }
 }

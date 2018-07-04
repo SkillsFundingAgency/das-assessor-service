@@ -1,4 +1,4 @@
-﻿@model List<SFA.DAS.AssessorService.Api.Types.Models.StaffSearchResult>
+﻿@model SFA.DAS.AssessorService.Web.Staff.Controllers.SearchViewModel
 
 @{
 
@@ -7,6 +7,8 @@
 <h2>Results</h2>
 
 <a asp-action="Index" class="button">Search Again</a>
+
+<b>Number of results: </b> @Model.PaginatedList.TotalRecordCount
 
 <table class="table">
     <thead>
@@ -21,7 +23,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var result in Model)
+        @foreach (var result in Model.PaginatedList.Items)
         {
             <tr>
                 <td>@result.FamilyName</td>
@@ -35,6 +37,24 @@
             </tr>
         }
     </tbody>
-
 </table>
 
+@if (Model.PaginatedList.HasPreviousPage)
+{
+    <form asp-controller="Search" asp-action="Index">
+        @Html.HiddenFor(m => m.SearchString)
+        <input type="hidden" id="Page" name="Page" value="@( Model.PaginatedList.PageIndex - 1)" />
+        <button class="button">Previous</button>
+    </form>
+
+}
+
+@if (Model.PaginatedList.HasNextPage)
+{
+    <form asp-controller="Search" asp-action="Index">
+        @Html.HiddenFor(m => m.SearchString)
+        <input type="hidden" id="Page" name="Page" value="@( Model.PaginatedList.PageIndex + 1)" />
+        <button class="button">Next</button>
+    </form>
+
+}

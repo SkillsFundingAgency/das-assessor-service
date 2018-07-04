@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
@@ -30,18 +31,22 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         [HttpPost]
         public async Task<IActionResult> Index([FromForm]SearchViewModel searchRequest)
         {
-            var searchResults = await _apiClient.Search(searchRequest.SearchString);
+            var searchResults = await _apiClient.Search(searchRequest.SearchString, searchRequest.Page);
 
             _sessionService.Set("SearchResults", searchResults);
-
+            _sessionService.Set("SearchRequest", searchRequest);
             return RedirectToAction("Results");
         }
 
         [HttpGet("results")]
         public async Task<IActionResult> Results()
         {
-            var results = _sessionService.Get<List<StaffSearchResult>>("SearchResults");
-            return View(results);
+            var viewModel = _sessionService.Get<SearchViewModel>("SearchRequest");
+            var results = _sessionService.Get<PaginatedList<StaffSearchResult>>("SearchResults");
+
+            viewModel.PaginatedList = results;
+
+            return View(viewModel);
         }
 
         [HttpGet("select")]
@@ -55,5 +60,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
     public class SearchViewModel
     {
         public string SearchString { get; set; }
+        public int Page { get; set; }
+        public PaginatedList<StaffSearchResult> PaginatedList { get; set; }
     }
 }

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Domain.Paging;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
 {
@@ -25,10 +26,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             return await res.Content.ReadAsAsync<List<CertificateResponse>>();
         }
 
-        public async Task<List<StaffSearchResult>> Search(string searchString)
+        public async Task<PaginatedList<StaffSearchResult>> Search(string searchString, int page)
         {
-            var res = await _client.GetAsync(new Uri($"/api/v1/staffsearch?searchQuery={searchString}", UriKind.Relative));
-            return await res.Content.ReadAsAsync<List<StaffSearchResult>>();
+            var res = await _client.GetAsync(new Uri($"/api/v1/staffsearch?searchQuery={searchString}&page={page}", UriKind.Relative));
+            return await res.Content.ReadAsAsync<PaginatedList<StaffSearchResult>>();
         }
 
         public async Task<LearnerDetail> GetLearner(int stdCode, long uln)

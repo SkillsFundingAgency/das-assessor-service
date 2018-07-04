@@ -38,27 +38,5 @@ namespace SFA.DAS.AssessorService.Data
             return await _context.Ilrs.Where(r => r.FamilyName == searchQuery || r.GivenNames == searchQuery || r.Uln == long.Parse(searchQuery))
                 .ToListAsync();
         }
-
-        public async Task<IEnumerable<Ilr>> SearchForLearnerByCertificateReference(string certRef)
-        {
-            var cert = await _context.Certificates.FirstOrDefaultAsync(c => c.CertificateReference == certRef);
-            IEnumerable<Ilr> results =
-                cert != null 
-                    ? new List<Ilr> {await Get(cert.Uln, cert.StandardCode)} 
-                    : new List<Ilr>();
-
-            return results;
-        }
-
-        public async Task<IEnumerable<Ilr>> SearchForLearnerByName(string learnerName)
-        {
-            var deSpacedLearnerName = learnerName.Replace(" ", "");
-            return await _context.Ilrs.Where(i =>
-                    i.FamilyName.Replace(" ", "") == deSpacedLearnerName ||
-                    i.GivenNames.Replace(" ", "") == deSpacedLearnerName)
-                .OrderBy(i => i.FamilyName)
-                .ThenBy(i => i.GivenNames)
-                .ToListAsync();
-        }
     }
 }
