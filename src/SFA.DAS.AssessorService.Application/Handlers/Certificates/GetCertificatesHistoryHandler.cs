@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -35,12 +34,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
         public async Task<PaginatedList<CertificateHistoryResponse>> Handle(GetCertificateHistoryRequest request, CancellationToken cancellationToken)
         {
-            const int pageSize = 10;
-
-            var contact = await _contactQueryRepository.GetContact(request.Username);
+            const int pageSize = 10;         
 
             var certificates = await _certificateRepository.GetCertificateHistory(
-                contact.OrganisationId.Value,
+                request.Username,             
                 request.PageIndex ?? 1,
                 pageSize);
 

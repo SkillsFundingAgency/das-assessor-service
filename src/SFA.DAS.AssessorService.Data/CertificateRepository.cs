@@ -88,7 +88,7 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        public async Task<PaginatedList<Certificate>> GetCertificateHistory(Guid organisationId, int pageIndex, int pageSize)
+        public async Task<PaginatedList<Certificate>> GetCertificateHistory(string userName, int pageIndex, int pageSize)
         {
             var statuses = new List<string>
             {
@@ -97,18 +97,26 @@ namespace SFA.DAS.AssessorService.Data
                 CertificateStatus.Reprint
             };
 
-            var count = await _context.Certificates
-                .Where(q => q.OrganisationId == organisationId)
-                .CountAsync();          
-          
-            var certificates = await _context.Certificates
-                .Include(q => q.Organisation)
-                .Where(x => statuses.Contains(x.Status) && x.OrganisationId == organisationId)
-                .OrderByDescending(q => q.UpdatedAt)
-                .AsNoTracking()
-                .Skip((pageIndex - 1) * pageSize)
-                .Take(pageSize).ToListAsync();
+            var count = await (from contact in _context.Contacts
+                               join organisation in _context.Organisations on
+                                 contact.OrganisationId equals organisation.Id
+                               join certificate in _context.Certificates on
+                                 organisation.Id equals certificate.OrganisationId
+                               where contact.Username == userName
+                               select certificate).CountAsync();
 
+            var certificates = await (from contact in _context.Contacts                                      
+                                      join organisation in _context.Organisations on
+                                        contact.OrganisationId equals organisation.Id
+                                      join certificate in _context.Certificates on
+                                        organisation.Id equals certificate.OrganisationId
+                                      where contact.Username == userName                                      
+                                      select certificate)
+                                        .AsNoTracking()
+                                        .Include(q => q.Organisation)
+                                        .Skip((pageIndex - 1) * pageSize)
+                                        .Take(pageSize).ToListAsync();
+                                        
             return new PaginatedList<Certificate>(certificates, count, pageIndex < 0 ? 1 : pageIndex, pageSize);
         }
 
