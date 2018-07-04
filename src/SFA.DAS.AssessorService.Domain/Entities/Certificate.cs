@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
 
@@ -31,5 +32,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string UpdatedBy { get; set; }
         public string DeletedBy { get; set; }
         public string LearnRefNumber { get; set; }
+
+        public virtual ICollection<CertificateLog> CertificateLogs { get; set; } = new List<CertificateLog>();
     }
 }

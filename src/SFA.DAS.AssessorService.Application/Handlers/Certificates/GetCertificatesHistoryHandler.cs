@@ -51,19 +51,22 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
         private PaginatedList<CertificateHistoryResponse> MapCertificates(PaginatedList<Certificate> certificates)
         {
             var trainingProviderName = string.Empty;
+            var recordedBy = string.Empty;
             var certificateResponses = certificates.Items.Select(
-                q =>
+                certificate =>
                 {
-                    var certificateData = JsonConvert.DeserializeObject<CertificateData>(q.CertificateData);
+                    var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+                    recordedBy = certificate.CertificateLogs
+                        .FirstOrDefault(certificateLog => certificateLog.Status == Domain.Consts.CertificateStatus.Submitted)?.Username;
 
                     try
                     {
-                        if (q.Organisation.EndPointAssessorUkprn.HasValue)
+                        if (certificate.Organisation.EndPointAssessorUkprn.HasValue)
                         {
                             if (certificateData.ProviderName == null)
                             {
                                 var provider = _assessmentOrgsApiClient
-                                    .GetProvider(q.ProviderUkPrn).GetAwaiter()
+                                    .GetProvider(certificate.ProviderUkPrn).GetAwaiter()
                                     .GetResult();
                                 trainingProviderName = provider.ProviderName;
                             }
@@ -76,22 +79,24 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                     catch (EntityNotFoundException e)
                     {
                         _logger.LogInformation(
-                            $"Cannot find training provider for ukprn {q.Organisation.EndPointAssessorUkprn.Value}");
+                            $"Cannot find training provider for ukprn {certificate.Organisation.EndPointAssessorUkprn.Value}");
                     }
 
                     return new CertificateHistoryResponse
                     {
-                        CertificateReference = q.CertificateReference,
-                        Uln = q.Uln,
-                        CreatedAt = q.CreatedAt,
-                        ContactOrganisation = q.Organisation.EndPointAssessorName,
+                        CertificateReference = certificate.CertificateReference,
+                        Uln = certificate.Uln,
+                        CreatedAt = certificate.CreatedAt,
+                        ContactOrganisation = certificate.Organisation.EndPointAssessorName,
                         ContactName = certificateData.ContactName,
                         TrainingProvider = trainingProviderName,
+                        RecordedBy = recordedBy,
                         CourseOption = certificateData.CourseOption,
                         FullName = certificateData.FullName,
                         OverallGrade = certificateData.OverallGrade,
                         StandardName = certificateData.StandardName,
                         AchievementDate = certificateData.AchievementDate,
+                        LearningStartDate = certificateData.LearningStartDate,
                         ContactAddLine1 = certificateData.ContactAddLine1,
                         ContactAddLine2 = certificateData.ContactAddLine2,
                         ContactAddLine3 = certificateData.ContactAddLine3,

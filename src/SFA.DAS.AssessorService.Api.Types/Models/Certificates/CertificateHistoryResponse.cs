@@ -5,6 +5,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
     public class CertificateHistoryResponse
     {
         public string CertificateReference { get; set; }
+        public string RecordedBy { get; set; }
         public long Uln { get; set; }
         public string FullName { get; set; }
         public string TrainingProvider { get; set; }
@@ -13,6 +14,8 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
         public string StandardName { get; set; }
         public string OverallGrade { get; set; }
         public string CourseOption { get; set; }
+
+        public DateTime? LearningStartDate { get; set; }
         public DateTime? AchievementDate { get; set; }
 
         public string ContactOrganisation { get; set; }

@@ -120,6 +120,9 @@
   <data name="AchievementDate" xml:space="preserve">
     <value>Achievement Date</value>
   </data>
+  <data name="AchievementStartDate" xml:space="preserve">
+    <value>Achievement Start Date</value>
+  </data>
   <data name="Apprentice" xml:space="preserve">
     <value>Apprentice</value>
   </data>
@@ -149,6 +152,9 @@
   </data>
   <data name="Previous" xml:space="preserve">
     <value>Previous</value>
+  </data>
+  <data name="RecordedBy" xml:space="preserve">
+    <value>Recorded By</value>
   </data>
   <data name="Standard" xml:space="preserve">
     <value>Standard</value>

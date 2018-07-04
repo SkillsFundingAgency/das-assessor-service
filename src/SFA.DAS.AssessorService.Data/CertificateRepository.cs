@@ -97,26 +97,32 @@ namespace SFA.DAS.AssessorService.Data
                 CertificateStatus.Reprint
             };
 
-            var count = await (from contact in _context.Contacts
+            var count = await (from certificate in _context.Certificates
                                join organisation in _context.Organisations on
-                                 contact.OrganisationId equals organisation.Id
-                               join certificate in _context.Certificates on
-                                 organisation.Id equals certificate.OrganisationId
+                                 certificate.OrganisationId equals organisation.Id
+                               join contact in _context.Contacts on
+                                 organisation.Id equals contact.OrganisationId
                                where contact.Username == userName
+                                  && statuses.Contains(certificate.Status)
                                select certificate).CountAsync();
 
-            var certificates = await (from contact in _context.Contacts                                      
+            var certificates = await (from certificate in _context.Certificates
                                       join organisation in _context.Organisations on
-                                        contact.OrganisationId equals organisation.Id
-                                      join certificate in _context.Certificates on
-                                        organisation.Id equals certificate.OrganisationId
-                                      where contact.Username == userName                                      
+                                        certificate.OrganisationId equals organisation.Id
+                                      join contact in _context.Contacts on
+                                        organisation.Id equals contact.OrganisationId
+                                      join certificateLog in _context.CertificateLogs on
+                                          certificate.Id equals certificateLog.CertificateId
+                                      where contact.Username == userName
+                                        && statuses.Contains(certificate.Status)
+                                      orderby certificate.CreatedAt descending
                                       select certificate)
                                         .AsNoTracking()
                                         .Include(q => q.Organisation)
+                                        .Include(q => q.CertificateLogs)
                                         .Skip((pageIndex - 1) * pageSize)
                                         .Take(pageSize).ToListAsync();
-                                        
+
             return new PaginatedList<Certificate>(certificates, count, pageIndex < 0 ? 1 : pageIndex, pageSize);
         }
 

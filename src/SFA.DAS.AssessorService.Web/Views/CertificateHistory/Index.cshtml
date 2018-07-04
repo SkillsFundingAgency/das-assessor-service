@@ -60,6 +60,9 @@
                                 <h2 class="heading-medium error-summary-heading">@Localizer["AssessmentDetails"]</h2>
                                 <ul>
                                     <li>
+                                        <p><span class="bold">@Localizer["RecordedBy"]:</span> @Html.DisplayFor(modelItem => item.RecordedBy)</p>
+                                    </li>
+                                    <li>
                                         <p><span class="bold">@Localizer["Standard"]:</span> @Html.DisplayFor(modelItem => item.StandardName)</p>
                                     </li>
                                     <li>
@@ -71,7 +74,16 @@
                                     </li>
                                     <li>
                                         <p>
-                                            <span class="bold">Achievement Date:</span>
+                                            <span class="bold">@Localizer["AchievementStartDate"]:</span>
+                                            @{
+                                                var achievementStartDate = item.LearningStartDate.HasValue ? item.LearningStartDate.Value.ToString("dd/MM/yyyy") : "";
+                                            }
+                                            @achievementStartDate
+                                        </p>
+                                    </li>
+                                    <li>
+                                        <p>
+                                            <span class="bold">@Localizer["AchievementDate"]:</span>
                                             @{
                                                 var achievementDate = item.AchievementDate.HasValue ? item.AchievementDate.Value.ToString("dd/MM/yyyy") : "";
                                             }
