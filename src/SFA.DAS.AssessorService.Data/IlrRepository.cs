@@ -56,6 +56,8 @@ namespace SFA.DAS.AssessorService.Data
             return await _context.Ilrs.Where(i =>
                     i.FamilyName.Replace(" ", "") == deSpacedLearnerName ||
                     i.GivenNames.Replace(" ", "") == deSpacedLearnerName)
+                .OrderBy(i => i.FamilyName)
+                .ThenBy(i => i.GivenNames)
                 .ToListAsync();
         }
     }

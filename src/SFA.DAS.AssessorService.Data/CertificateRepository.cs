@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlTypes;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -18,12 +16,10 @@ namespace SFA.DAS.AssessorService.Data
     public class CertificateRepository : ICertificateRepository
     {
         private readonly AssessorDbContext _context;
-        private readonly IDbConnection _connection;
 
-        public CertificateRepository(AssessorDbContext context, IDbConnection connection)
+        public CertificateRepository(AssessorDbContext context)
         {
             _context = context;
-            _connection = connection;
         }
 
         public async Task<Certificate> New(Certificate certificate)
@@ -63,12 +59,6 @@ namespace SFA.DAS.AssessorService.Data
         {
             var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
             return (certificateData.AchievementDate == achievementDate && certificateData.LearnerFamilyName == lastName);
-        }
-
-        public async Task<List<Certificate>> GetCompletedCertificatesFor(long[] uln)
-        {
-            return await _context.Certificates.Where(c => uln.Contains(c.Uln) && (c.Status == CertificateStatus.Printed || c.Status == CertificateStatus.Submitted))
-                .ToListAsync();
         }
 
         public async Task<List<Certificate>> GetCompletedCertificatesFor(long uln)

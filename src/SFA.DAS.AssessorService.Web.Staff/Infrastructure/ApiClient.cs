@@ -25,10 +25,16 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             return await res.Content.ReadAsAsync<List<CertificateResponse>>();
         }
 
-        public async Task<List<SearchResult>> Search(string searchString)
+        public async Task<List<StaffSearchResult>> Search(string searchString)
         {
             var res = await _client.GetAsync(new Uri($"/api/v1/staffsearch?searchQuery={searchString}", UriKind.Relative));
-            return await res.Content.ReadAsAsync<List<SearchResult>>();
+            return await res.Content.ReadAsAsync<List<StaffSearchResult>>();
+        }
+
+        public async Task<LearnerDetail> GetLearner(int stdCode, long uln)
+        {
+            var res = await _client.GetAsync(new Uri($"/api/v1/learnerDetails?stdCode={stdCode}&uln={uln}", UriKind.Relative));
+            return await res.Content.ReadAsAsync<LearnerDetail>();
         }
     }
 }

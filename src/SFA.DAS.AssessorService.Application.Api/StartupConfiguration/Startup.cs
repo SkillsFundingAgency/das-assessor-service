@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Globalization;
 using System.IO;
 using FluentValidation.AspNetCore;
@@ -149,7 +151,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 option.UseSqlServer(Configuration.SqlConnectionString);
 
                 config.For<AssessorDbContext>().Use(c => new AssessorDbContext(option.Options));
-
+                config.For<IDbConnection>().Use(() => new SqlConnection(Configuration.SqlConnectionString));
                 config.Populate(services);
             });
 

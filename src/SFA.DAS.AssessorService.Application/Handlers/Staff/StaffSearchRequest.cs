@@ -4,7 +4,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 {
-    public class StaffSearchRequest : IRequest<List<SearchResult>>
+    public class StaffSearchRequest : IRequest<List<StaffSearchResult>>
     {
         public StaffSearchRequest(string searchQuery)
         {

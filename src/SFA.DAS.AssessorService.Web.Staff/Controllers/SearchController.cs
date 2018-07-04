@@ -40,13 +40,15 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         [HttpGet("results")]
         public async Task<IActionResult> Results()
         {
-            var results = _sessionService.Get<List<SearchResult>>("SearchResults");
+            var results = _sessionService.Get<List<StaffSearchResult>>("SearchResults");
             return View(results);
         }
 
-        public IActionResult Select()
+        [HttpGet("select")]
+        public async Task<IActionResult> Select(int stdCode, long uln)
         {
-            throw new System.NotImplementedException();
+            var learner = await _apiClient.GetLearner(stdCode, uln);
+            return View(learner);
         }
     }
 

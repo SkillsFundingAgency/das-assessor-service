@@ -1,0 +1,71 @@
+﻿@model SFA.DAS.AssessorService.Api.Types.Models.LearnerDetail
+@{
+    Layout = "_Layout";
+}
+
+<h1 class="heading-large">Apprentice details</h1>
+<div class="form-group">
+    <fieldset>
+        <ul>
+            <li>
+                <p><span class="bold">Name:</span> @Model.GivenNames @Model.FamilyName</p>
+            </li>
+            <li>
+                <p><span class="bold"><abbr title="Unique learner number">ULN</abbr>:</span> @Model.Uln</p>
+            </li>
+            <li>
+                <p><span class="bold">Standard:</span> @Model.Standard</p>
+            </li>
+            <li>
+                <p><span class="bold">Level:</span> @Model.Level</p>
+            </li>
+
+            @if (Model.CertificateReference != null)
+            {
+                <li>
+                    <p><span class="bold">Certificate number:</span> @Model.CertificateReference</p>
+                </li>
+                <li>
+                    <p><span class="bold">Status:</span> @Model.CertificateStatus</p>
+                </li>
+                <li>
+                    <p><span class="bold">Achievement Date:</span> @Model.AchievementDate</p>
+                </li>
+                <li>
+                    <p><span class="bold">Grade:</span> @Model.OverallGrade</p>
+                </li>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Action</th>
+                            <th>By</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var log in Model.CertificateLogs)
+                        {
+                            <tr>
+                                <td>@log.EventTime</td>
+                                <td>@log.Action</td>
+                                <td>@log.ActionBy</td>
+                                <td>@log.Status</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </ul>
+        <h2 class="heading-medium">What do you want to do next?</h2>
+        <ul class="list list-bullet">
+            @if (Model.CertificateReference != null)
+            {
+                <li><a href="#">request duplicate certificate</a></li>
+                <li><a href="#">amend certificate information</a></li>
+            }
+            <li><a asp-controller="Search" asp-action="Index">search for another apprentice</a></li>
+        </ul>
+    </fieldset>
+</div>

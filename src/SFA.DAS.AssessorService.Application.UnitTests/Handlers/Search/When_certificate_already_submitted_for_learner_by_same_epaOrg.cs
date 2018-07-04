@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 
             var certificateId = Guid.NewGuid();
 
-            CertificateRepository.Setup(r => r.GetCompletedCertificatesFor(new long[]{1111111111}))
+            CertificateRepository.Setup(r => r.GetCompletedCertificatesFor(1111111111))
                 .ReturnsAsync(new List<Certificate>
                 {
                     new Certificate
@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                     }
                 });
 
-            CertificateRepository.Setup(r => r.GetCertificateLogsFor(new Guid[]{ certificateId}))
+            CertificateRepository.Setup(r => r.GetCertificateLogsFor(certificateId))
                 .ReturnsAsync(new List<CertificateLog>()
                 {
                     new CertificateLog()

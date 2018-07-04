@@ -1,4 +1,4 @@
-﻿@model List<SFA.DAS.AssessorService.Api.Types.Models.SearchResult>
+﻿@model List<SFA.DAS.AssessorService.Api.Types.Models.StaffSearchResult>
 
 @{
 
@@ -16,7 +16,8 @@
             <th>Uln</th>
             <th>Standard</th>
             <th>Certificate Reference</th>
-            <th></th>
+            <th>Current Status</th>
+            <th>Last Updated</th>
         </tr>
     </thead>
     <tbody>
@@ -28,7 +29,9 @@
                 <td>@result.Uln</td>
                 <td>@result.Standard</td>
                 <td>@result.CertificateReference</td>
-                <td><a class="button" asp-action="Select" asp-route-stdcode="@result.StdCode" asp-route-uln="@result.Uln">Select</a></td>
+                <td>@result.CertificateStatus</td>
+                <td>@result.LastUpdatedAt?.ToShortDateString()</td>
+                <td><a class="button" asp-action="Select" asp-route-stdcode="@result.StandardCode" asp-route-uln="@result.Uln">Select</a></td>
             </tr>
         }
     </tbody>

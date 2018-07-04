@@ -19,23 +19,23 @@ using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 {
-    public class StaffSearchHandler : IRequestHandler<StaffSearchRequest, List<SearchResult>>
+    public class StaffSearchHandler : IRequestHandler<StaffSearchRequest, List<StaffSearchResult>>
     {
         private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
         private readonly IOrganisationQueryRepository _organisationRepository;
         private readonly IIlrRepository _ilrRepository;
-        private readonly ICertificateRepository _certificateRepository;
+        private readonly IStaffCertificateRepository _staffCertificateRepository;
         private readonly ILogger<SearchHandler> _logger;
         private readonly IContactQueryRepository _contactRepository;
         private Dictionary<char, char[]> _alternates;
 
         public StaffSearchHandler(IAssessmentOrgsApiClient assessmentOrgsApiClient, IOrganisationQueryRepository organisationRepository,
-            IIlrRepository ilrRepository, ICertificateRepository certificateRepository, ILogger<SearchHandler> logger, IContactQueryRepository contactRepository)
+            IIlrRepository ilrRepository, IStaffCertificateRepository staffCertificateRepository, ILogger<SearchHandler> logger, IContactQueryRepository contactRepository)
         {
             _assessmentOrgsApiClient = assessmentOrgsApiClient;
             _organisationRepository = organisationRepository;
             _ilrRepository = ilrRepository;
-            _certificateRepository = certificateRepository;
+            _staffCertificateRepository = staffCertificateRepository;
             _logger = logger;
             _contactRepository = contactRepository;
 
@@ -56,16 +56,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             };
         }
 
-        public async Task<List<SearchResult>> Handle(StaffSearchRequest request, CancellationToken cancellationToken)
+        public async Task<List<StaffSearchResult>> Handle(StaffSearchRequest request, CancellationToken cancellationToken)
         {
             var ilrResults = await Search(request);
 
             _logger.LogInformation(ilrResults.Any() ? LoggingConstants.SearchSuccess : LoggingConstants.SearchFailure);
 
-            var searchResults = Mapper.Map<List<SearchResult>>(ilrResults);
+            var searchResults = Mapper.Map<List<StaffSearchResult>>(ilrResults);
 
-            searchResults = MatchUpExistingCompletedStandards(searchResults)
-                .PopulateStandards(_assessmentOrgsApiClient, _logger);
+            searchResults = MatchUpExistingCompletedStandards(searchResults);
+            searchResults = PopulateStandards(searchResults, _assessmentOrgsApiClient, _logger);
 
             return searchResults;
         }
@@ -108,37 +108,45 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             return _alternates.Where(kvp => surname.Contains(kvp.Key)).Select(kvp => kvp.Key).ToArray();
         }
 
-        private List<SearchResult> MatchUpExistingCompletedStandards(List<SearchResult> searchResults)
+        private List<StaffSearchResult> MatchUpExistingCompletedStandards(List<StaffSearchResult> searchResults)
         {
             _logger.LogInformation("MatchUpExistingCompletedStandards Before Get Certificates for uln from db");
-            var completedCertificates = _certificateRepository.GetCompletedCertificatesFor(searchResults.Select(r => r.Uln).ToArray()).Result;
+            var completedCertificates = _staffCertificateRepository.GetCertificatesFor(searchResults.Select(r => r.Uln).ToArray()).Result;
             _logger.LogInformation("MatchUpExistingCompletedStandards After Get Certificates for uln from db");
+            
+            foreach (var searchResult in searchResults)
+            {
+                var certificate = completedCertificates.SingleOrDefault(s => s.StandardCode == searchResult.StandardCode && s.Uln == searchResult.Uln);
+                if (certificate == null) continue;
 
-            var certificateLogs = _certificateRepository.GetCertificateLogsFor(completedCertificates.Select(c => c.Id).ToArray()).Result;
-            _logger.LogInformation("MatchUpExistingCompletedStandards After GetCertificateLogsFor");
+                searchResult.CertificateReference = certificate.CertificateReference;
+                searchResult.CertificateStatus = certificate.Status;
+                searchResult.LastUpdatedAt = certificate.LastUpdatedAt?.ToLocalTime();
+                //searchResult.LearnStartDate = certificate.LearningStartDate == DateTime.MinValue ? null : new DateTime?(certificate.LearningStartDate);
+                //searchResult.ShowExtraInfo = true;
+                //searchResult.OverallGrade = certificate.OverallGrade;
+                //searchResult.SubmittedBy = certificate.SubmittedBy; // This needs to be contact real name
+                //searchResult.SubmittedAt = certificate.SubmittedAt.ToLocalTime(); // This needs to be local time 
+                //searchResult.AchDate = certificate.AchievementDate;
+            }
+            return searchResults;
+        }
+
+        private List<StaffSearchResult> PopulateStandards(List<StaffSearchResult> searchResults, IAssessmentOrgsApiClient assessmentOrgsApiClient, ILogger<SearchHandler> logger)
+        {
+            var allStandards = assessmentOrgsApiClient.GetAllStandards().Result;
 
             foreach (var searchResult in searchResults)
             {
-                var certificate = completedCertificates.SingleOrDefault(s => s.StandardCode == searchResult.StdCode && s.Uln == searchResult.Uln);
-                if (certificate == null) continue;
-
-                var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-                searchResult.CertificateReference = certificate.CertificateReference;
-                searchResult.LearnStartDate = certificateData.LearningStartDate == DateTime.MinValue ? null : new DateTime?(certificateData.LearningStartDate);
-
-                
-                var submittedLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Submitted && l.CertificateId == certificate.Id);
-                if (submittedLogEntry == null) continue;
-
-                var submittingContact = _contactRepository.GetContact(submittedLogEntry.Username).Result;
-                _logger.LogInformation("MatchUpExistingCompletedStandards After GetContact");
-
-                searchResult.ShowExtraInfo = true;
-                searchResult.OverallGrade = certificateData.OverallGrade;
-                searchResult.SubmittedBy = submittingContact.DisplayName; // This needs to be contact real name
-                searchResult.SubmittedAt = submittedLogEntry.EventTime.ToLocalTime(); // This needs to be local time 
-                searchResult.AchDate = certificateData.AchievementDate;
+                var standard = allStandards.SingleOrDefault(s => s.Id == searchResult.StandardCode);
+                if (standard == null)
+                {
+                    standard = assessmentOrgsApiClient.GetStandard(searchResult.StandardCode).Result;
+                }
+                searchResult.Standard = standard.Title;
+                //searchResult.Level = standard.Level;
             }
+
             return searchResults;
         }
     }

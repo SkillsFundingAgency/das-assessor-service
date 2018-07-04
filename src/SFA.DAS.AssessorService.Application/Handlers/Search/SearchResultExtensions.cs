@@ -15,13 +15,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
     {
         public static List<SearchResult> PopulateStandards(this List<SearchResult> searchResults, IAssessmentOrgsApiClient assessmentOrgsApiClient, ILogger<SearchHandler> logger)
         {
+            var allStandards = assessmentOrgsApiClient.GetAllStandards().Result;
+
             foreach (var searchResult in searchResults)
             {
-                // Yes, I know this is calling out to an API in a tight loop, but there will be very few searchResults.  Usually only one.
-                // Obviously if this does become a perf issue, then it'll need changing.
-                logger.LogInformation("PopulateStandards Before Get Standard from api");
-                var standard = assessmentOrgsApiClient.GetStandard(searchResult.StdCode).Result;
-                logger.LogInformation("PopulateStandards After Get Standard from api");
+                var standard = allStandards.SingleOrDefault(s => s.Id == searchResult.StdCode);
+                if (standard == null)
+                {
+                    standard = assessmentOrgsApiClient.GetStandard(searchResult.StdCode).Result;
+                }
                 searchResult.Standard = standard.Title;
                 searchResult.Level = standard.Level;
             }
@@ -32,7 +34,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
         public static List<SearchResult> MatchUpExistingCompletedStandards(this List<SearchResult> searchResults, SearchQuery request, ICertificateRepository certificateRepository, IContactQueryRepository contactRepository, ILogger<SearchHandler> logger)
         {
             logger.LogInformation("MatchUpExistingCompletedStandards Before Get Certificates for uln from db");
-            var completedCertificates = certificateRepository.GetCompletedCertificatesFor(new long[]{ request.Uln}).Result;
+            var completedCertificates = certificateRepository.GetCompletedCertificatesFor(request.Uln).Result;
             logger.LogInformation("MatchUpExistingCompletedStandards After Get Certificates for uln from db");
             foreach (var searchResult in searchResults.Where(r => completedCertificates.Select(s => s.StandardCode).Contains(r.StdCode)))
             {
@@ -41,7 +43,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 searchResult.CertificateReference = certificate.CertificateReference;
                 searchResult.LearnStartDate = certificateData.LearningStartDate == DateTime.MinValue ? null : new DateTime?(certificateData.LearningStartDate) ;
 
-                var certificateLogs = certificateRepository.GetCertificateLogsFor(new Guid[]{ certificate.Id}).Result;
+                var certificateLogs = certificateRepository.GetCertificateLogsFor(certificate.Id).Result;
                 logger.LogInformation("MatchUpExistingCompletedStandards After GetCertificateLogsFor");
                 var submittedLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Submitted);
                 if (submittedLogEntry == null) continue;
