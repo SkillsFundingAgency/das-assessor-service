@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using OfficeOpenXml;
 using SFA.DAS.AssessorService.AssessmentOrgsImport.exceptions;
@@ -181,6 +182,50 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
             return standards;
         }
 
+        public List<EpaStandard> HarvestEpaStandards(ExcelPackage package, List<EpaOrganisation> epaOrganisations, List<Standard> standards)
+        {
+            var epaStandards = new List<EpaStandard>();
+            var worksheet = GetWorksheet(package, EpaStandardsWorkSheetName);
+            for (var i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
+            {
+                var epaOrganisationIdentifier = worksheet.Cells[i, 1].Value?.ToString();
+
+                if (epaOrganisationIdentifier == null || epaOrganisations.All(x => x.EpaOrganisationIdentifier != epaOrganisationIdentifier))
+                    continue;
+                
+
+                var standardCode = ProcessNullableIntValue(worksheet.Cells[i, 3].Value?.ToString());
+
+                if (standardCode == null || standards.All(x => x.StandardCode != standardCode))
+                    continue;
+                
+
+                var effectiveFrom = ProcessValueAsDateTime(worksheet.Cells[i, 5].Value?.ToString(), "EffectiveFrom", StandardsWorkSheetName, i);
+                var effectiveTo = ProcessNullableDateValue(worksheet.Cells[i, 6].Value?.ToString());
+                var contactName = worksheet.Cells[i, 7].Value?.ToString();
+                var contactPhoneNumber = worksheet.Cells[i, 8].Value?.ToString();
+                var contactEmail = worksheet.Cells[i, 9].Value?.ToString();
+                var dateStandardApprovedOnRegister = ProcessNullableDateValue(worksheet.Cells[i, 10].Value?.ToString());
+                var comments = worksheet.Cells[i, 11].Value?.ToString();
+
+                epaStandards.Add(
+                    new EpaStandard
+                    {
+                        Id = Guid.NewGuid(),
+                        EpaOrganisationIdentifier =  epaOrganisationIdentifier,
+                        StandardCode = standardCode.Value,
+                        EffectiveFrom = effectiveFrom,
+                        EffectiveTo = effectiveTo,
+                        ContactName = contactName,
+                        ContactPhoneNumber = contactPhoneNumber,
+                        ContactEmail = contactEmail,
+                        DateStandardApprovedOnRegister = dateStandardApprovedOnRegister,
+                        Comments = comments                       
+                    }
+                    );
+            }
+            return epaStandards;
+        }
         private static bool? ProcessYesNoValuesIntoBoolean(string integratedDegreeStandardValue)
         {
             bool? integratedDegreeStandard = null;

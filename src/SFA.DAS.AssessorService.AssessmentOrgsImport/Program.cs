@@ -34,7 +34,6 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
             {
                 using (var stream = new MemoryStream(_webClient.DownloadData(new Uri(ConfigurationWrapper.AssessmentOrgsUrl))))
                 {
-                    var q = new ExcelPackage();
                     using (var package = new ExcelPackage(stream))
                     {
                         var deliveryAreas = reader.HarvestDeliveryAreas(package);
@@ -46,7 +45,7 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                         repo.WriteOrganisations(organisations);
                         var standards = reader.HarvestStandards(package);
                         repo.WriteStandards(standards);
-                        // import Standards
+                        var epaStandards = reader.HarvestEpaStandards(package, organisations, standards);
                         // import EPAStandards
                         // import StandardDeliveryAreas
                     }

@@ -114,8 +114,7 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                 var currentNumber = connection.ExecuteScalar("select count(0) from [ao].[Standard]").ToString();
                 if (currentNumber == "0")
                 {
-                    foreach (var standard in standards)
-                    {
+                   
                         connection.Execute(@"INSERT INTO [ao].[Standard]
                                    ([id]
                                    ,[StandardCode]
@@ -153,7 +152,6 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                                    ,@ModifiedOn
                                    ,@ModifiedBy)",
                             standards);
-                    }
                 }
                 connection.Close();
             }
