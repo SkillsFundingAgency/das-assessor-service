@@ -11,6 +11,7 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
     {
         private const string LookupsWorkSheetName = "Lookups";
         private const string OrganisationsWorkSheetName = "Register - Organisations";
+        private const string StandardsWorkSheetName = "Register - Standards";
         private const int LookupsColumnDeliveryArea = 1;
         private const int LookupsColumnOrganisationType = 2;
 
@@ -38,9 +39,6 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
 
             return deliveryAreas;
         }
-
-       
-
 
         public List<TypeOfOrganisation> HarvestOrganisationTypes(ExcelPackage package)
         {
@@ -126,9 +124,18 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
             }
 
             return organisations;
+
         }
 
-        private string ProcessPostcodeForExcessSpaces(object postcodeIn)
+        public List<EpaStandard> HarvestEpaStandards(ExcelPackage package)
+        {
+            var standards = new List<EpaStandard>();
+            var worksheet = GetWorksheet(package, OrganisationsWorkSheetName);
+        
+
+            return standards;
+        }
+        private static string ProcessPostcodeForExcessSpaces(object postcodeIn)
         {
             var postcode = postcodeIn?.ToString().Trim();
 
@@ -155,7 +162,6 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
 
             return postcode;
         }
-
 
         private static ExcelWorksheet GetWorksheet(ExcelPackage package, string worksheetname)
         {
