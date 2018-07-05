@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.ConstrainedExecution;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -106,25 +107,29 @@ namespace SFA.DAS.AssessorService.Data
                                   && statuses.Contains(certificate.Status)
                                select certificate).CountAsync();
 
-            var certificates = await (from certificate in _context.Certificates
-                                      join organisation in _context.Organisations on
-                                        certificate.OrganisationId equals organisation.Id
-                                      join contact in _context.Contacts on
-                                        organisation.Id equals contact.OrganisationId
-                                      join certificateLog in _context.CertificateLogs on
-                                          certificate.Id equals certificateLog.CertificateId
-                                      where contact.Username == userName
-                                        && statuses.Contains(certificate.Status)
-                                      orderby certificate.CreatedAt descending
-                                      select certificate)
-                                        .AsNoTracking()
-                                        .Include(q => q.Organisation)
-                                        .Include(q => q.CertificateLogs)
+            var ids = await (from certificate in _context.Certificates
+                             join organisation in _context.Organisations on
+                               certificate.OrganisationId equals organisation.Id
+                             join contact in _context.Contacts on
+                               organisation.Id equals contact.OrganisationId
+                             join certificateLog in _context.CertificateLogs on
+                                 certificate.Id equals certificateLog.CertificateId
+                             where contact.Username == userName
+                               && statuses.Contains(certificate.Status)
+                             group certificate by new { certificate.Id, certificate.CreatedAt } into result
+                             orderby result.Key.CreatedAt descending
+                             select result.FirstOrDefault().Id)
                                         .Skip((pageIndex - 1) * pageSize)
                                         .Take(pageSize).ToListAsync();
 
+            var certificates = await _context.Certificates.Where(q => ids.Contains(q.Id))
+                .Include(q => q.Organisation)
+                .Include(q => q.CertificateLogs)
+                .OrderByDescending(q => q.CreatedAt)
+                .ToListAsync();
+
             return new PaginatedList<Certificate>(certificates, count, pageIndex < 0 ? 1 : pageIndex, pageSize);
-        }
+        }       
 
         public async Task<Certificate> Update(Certificate certificate, string username, string action)
         {
@@ -133,7 +138,6 @@ namespace SFA.DAS.AssessorService.Data
             cert.CertificateData = certificate.CertificateData;
             cert.UpdatedBy = username;
             cert.Status = certificate.Status;
-            cert.UpdatedBy = certificate.UpdatedBy;
             cert.UpdatedAt = certificate.UpdatedAt;
 
             await UpdateCertificateLog(cert, action, username);
@@ -141,6 +145,19 @@ namespace SFA.DAS.AssessorService.Data
             await _context.SaveChangesAsync();
 
             return cert;
+        }
+
+        public Task<Certificate> UpdateProviderName(Guid id, string providerName)
+        {
+            var certificate = GetCertificate(id).GetAwaiter().GetResult();
+
+            var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+            certificateData.ProviderName = providerName;
+
+            certificate.CertificateData = JsonConvert.SerializeObject(certificateData);           
+            _context.SaveChanges();
+
+            return Task.FromResult(certificate);
         }
 
         private async Task UpdateCertificateLog(Certificate cert, string action, string username)

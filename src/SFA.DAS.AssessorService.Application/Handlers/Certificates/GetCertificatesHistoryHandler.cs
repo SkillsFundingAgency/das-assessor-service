@@ -57,23 +57,22 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                 {
                     var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
                     recordedBy = certificate.CertificateLogs
-                        .FirstOrDefault(certificateLog => certificateLog.Status == Domain.Consts.CertificateStatus.Submitted)?.Username;
-
+                        .FirstOrDefault(certificateLog =>
+                            certificateLog.Status == Domain.Consts.CertificateStatus.Submitted)?.Username;
                     try
                     {
-                        if (certificate.Organisation.EndPointAssessorUkprn.HasValue)
+                        if (certificateData.ProviderName == null)
                         {
-                            if (certificateData.ProviderName == null)
-                            {
-                                var provider = _assessmentOrgsApiClient
-                                    .GetProvider(certificate.ProviderUkPrn).GetAwaiter()
-                                    .GetResult();
-                                trainingProviderName = provider.ProviderName;
-                            }
-                            else
-                            {
-                                trainingProviderName = certificateData.ProviderName;
-                            }
+                            var provider = _assessmentOrgsApiClient
+                                .GetProvider(certificate.ProviderUkPrn).GetAwaiter()
+                                .GetResult();
+
+                            trainingProviderName = provider.ProviderName;
+                            _certificateRepository.UpdateProviderName(certificate.Id, trainingProviderName);
+                        }
+                        else
+                        {
+                            trainingProviderName = certificateData.ProviderName;
                         }
                     }
                     catch (EntityNotFoundException e)
