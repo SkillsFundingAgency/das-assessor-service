@@ -9,13 +9,6 @@ CREATE TABLE [ao].[StandardDeliveryArea]
 	) ON [PRIMARY] 
 GO
 
-	
-ALTER TABLE [ao].[StandardDeliveryArea]
-ADD CONSTRAINT FK_StandardStandardDeliveryArea
-FOREIGN KEY (StandardCode) REFERENCES [ao].[Standard] (StandardCode);
-
-GO
-
 ALTER TABLE [ao].[StandardDeliveryArea]
 ADD CONSTRAINT FK_DeliveryAreaIdStandardDeliveryArea
 FOREIGN KEY (DeliveryAreaId) REFERENCES [ao].[DeliveryArea] (Id);
