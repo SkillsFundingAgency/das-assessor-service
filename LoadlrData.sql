@@ -62,22 +62,26 @@ GO
 
 BULK INSERT LearnerImport 
 FROM 'learners.csv'
-WITH (DATA_SOURCE = 'BlobStorage', FORMAT = 'CSV', FIRSTROW= 2)
+WITH (DATA_SOURCE = 'BlobStorage', FORMAT = 'CSV', FIRSTROW= 2, DATAFILETYPE='char', CODEPAGE='1252')
 
-INSERT INTO Ilrs (CreatedAt, ULN, LearnRefNumber, GivenNames, FamilyName, UKPRN, StdCode, LearnStartDate, EPAOrgID, FundingModel, ApprenticeshipId, EmployerAccountId, CompletionStatus, Source)
+MERGE INTO Ilrs AS i
+USING (
 SELECT 
 	GETDATE() AS CreatedAt, 
-	li.ULN, li.LearnRefNumber, li.GivenNames, li.FamilyName, li.UKPRN, li.StdCode, li.LearnStartDate, li.EPAOrgID, li.FundingModel, li.ApprenticeshipId, 0 AS EmployerAccountId,
-	li.CompletionStatus, '1718' AS Source
-	FROM LearnerImport li
-	LEFT OUTER JOIN Ilrs i ON i.Uln = li.ULN AND i.LearnRefNumber = li.LearnRefNumber AND i.StdCode = li.StdCode AND i.UkPrn = li.UKPRN AND i.LearnStartDate = li.LearnStartDate
-	WHERE i.Uln IS NULL
+	ULN, LearnRefNumber, GivenNames, FamilyName, UKPRN, StdCode, LearnStartDate, EPAOrgID, FundingModel, ApprenticeshipId, 0 AS EmployerAccountId, CompletionStatus, '1718' AS Source
+	FROM LearnerImport) as li
+ON (i.Uln = li.ULN AND i.LearnRefNumber = li.LearnRefNumber AND i.StdCode = li.StdCode AND i.UkPrn = li.UKPRN AND i.LearnStartDate = li.LearnStartDate AND i.Source = li.Source)
+	WHEN NOT MATCHED THEN 
+   INSERT (CreatedAt, ULN, LearnRefNumber, GivenNames, FamilyName, UKPRN, StdCode, LearnStartDate, EPAOrgID, FundingModel, ApprenticeshipId, EmployerAccountId, CompletionStatus, Source)
+   VALUES (li.CreatedAt, li.ULN, li.LearnRefNumber, li.GivenNames, li.FamilyName, li.UKPRN, li.StdCode, li.LearnStartDate, li.EPAOrgID, li.FundingModel, li.ApprenticeshipId, li.EmployerAccountId, li.CompletionStatus, li.Source);
+   
 
 UPDATE Ilrs SET FamilyName = REPLACE(REPLACE(REPLACE(FamilyName, '`',''''),'’',''''),'–','-'), GivenNames = REPLACE(REPLACE(REPLACE(GivenNames, '`',''''),'’',''''),'–','-')
 
-UPDATE ilrs
-SET source = '1617'
-WHERE source IS NULL
+UPDATE Ilrs SET FamilyName = REPLACE(FamilyName,NCHAR(0x00A0),' ') WHERE CHARINDEX(NCHAR(0x00A0),FamilyName) > 0
+
+UPDATE Ilrs SET GivenNames = REPLACE(GivenNames,NCHAR(0x00A0),' ') WHERE CHARINDEX(NCHAR(0x00A0),GivenNames) > 0
+
 
 DROP EXTERNAL DATA SOURCE BlobStorage
 DROP DATABASE SCOPED CREDENTIAL BlobCredential 
