@@ -1,31 +1,21 @@
 ﻿CREATE TABLE [ao].[Standard]
 (
-	[Id] [uniqueidentifier] NOT NULL DEFAULT NEWID(),
-	[EPAOrganisationIdentifier] [nvarchar](7) NOT NULL, 
-	[StandardCode] [int] NOT NULL,
-	[EffectiveFrom] [DateTime] NOT NULL,
-	[EffectiveTo] [DateTime] NULL,
-	[ContactName] [nvarchar](200) NULL,
-	[ContactPhoneNumber] [nvarchar] (20) NULL,
-	[ContactEmail] [nvarchar] (200) NULL, 
-	[DateStandardApprovedOnRegister] [DateTime] NULL,
-	[Comments] [NVARCHAR] (500) NULL,
-	CONSTRAINT [PK_Standard] PRIMARY KEY ([Id]),
-) ON [PRIMARY]
+	[StandardCode] INT NOT NULL PRIMARY KEY,
+	[Version] INT NOT NULL,
+	[StandardName] [NVARCHAR] (256) NOT NULL,
+	[StandardSectorCode] INT NOT NULL,
+	[NotionalEndLevel] INT NOT NULL,
+	[EffectiveFrom] DATETIME NOT NULL,
+	[EffectiveTo] DATETIME NULL,
+	[LastDateStarts] DATETIME NULL,
+	[UrlLink] [NVARCHAR] (256) NULL,
+	SectorSubjectAreaTier1 INT NULL,
+	SectorSubjectAreaTier2 [NVARCHAR] (10) NULL, 
+    [IntegratedDegreeStandard] BIT NULL, 
+    [CreatedOn] DATETIME NULL, 
+    [CreatedBy] NVARCHAR(50) NULL, 
+    [ModifiedOn] DATETIME NULL, 
+    [ModifiedBy] NVARCHAR(50) NULL,
 
-GO
 
-
-ALTER TABLE [ao].[Standard]
-ADD CONSTRAINT FK_OrganisationIdentifierStandard
-FOREIGN KEY (EPAOrganisationIdentifier) REFERENCES [ao].[EPAOrganisation] (EPAOrganisationIdentifier);
-
-GO
-
-CREATE INDEX IX_standardOrgIdStandardCode
-   ON [ao].[Standard] (EPAOrganisationIdentifier, StandardCode);
-
-GO
-
-CREATE UNIQUE NONCLUSTERED INDEX IX_standardOrgIdStandardCodeEffectiveFrom
-   ON [ao].[Standard] (EPAOrganisationIdentifier, StandardCode, EffectiveFrom);   
+)

@@ -75,8 +75,9 @@
     <Build Include="Tables\DeliveryArea.sql" />
     <Build Include="Tables\OrganisationType.sql" />
     <Build Include="Tables\EPAOrganisation.sql" />
-    <Build Include="Tables\Standard.sql" />
+    <Build Include="Tables\EPAStandard.sql" />
     <Build Include="Tables\StandardDeliveryArea.sql" />
+    <Build Include="Tables\Standard.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
