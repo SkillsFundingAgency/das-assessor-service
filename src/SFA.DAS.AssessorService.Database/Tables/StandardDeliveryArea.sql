@@ -2,9 +2,8 @@
 CREATE TABLE [ao].[StandardDeliveryArea]
 (
 	[Id] [uniqueidentifier] NOT NULL DEFAULT NEWID(),
-	[EPAOrganisationIdentifier] [nvarchar](7) NOT NULL, 
-	[StandardCode] [int] NOT NULL,
-	[DeliveryAreaId] [uniqueidentifier] NOT NULL,
+	[StandardId] [uniqueidentifier] NOT NULL, 
+	[DeliveryAreaId] [UNIQUEIDENTIFIER] NOT NULL,
 	[Comments] [NVARCHAR] (500) NULL,
 	CONSTRAINT [PK_StandardDeliveryArea] PRIMARY KEY ([Id]),
 	) ON [PRIMARY] 
@@ -13,7 +12,7 @@ GO
 	
 ALTER TABLE [ao].[StandardDeliveryArea]
 ADD CONSTRAINT FK_StandardStandardDeliveryArea
-FOREIGN KEY (EPAOrganisationIdentifier,StandardCode) REFERENCES [ao].[Standard] (EPAOrganisationIdentifier, StandardCode);
+FOREIGN KEY (StandardId) REFERENCES [ao].[Standard] (Id);
 
 GO
 

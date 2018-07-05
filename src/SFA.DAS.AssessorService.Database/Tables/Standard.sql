@@ -22,6 +22,10 @@ FOREIGN KEY (EPAOrganisationIdentifier) REFERENCES [ao].[EPAOrganisation] (EPAOr
 
 GO
 
-CREATE UNIQUE NONCLUSTERED INDEX IX_standardOrgIdStandardCode
+CREATE INDEX IX_standardOrgIdStandardCode
    ON [ao].[Standard] (EPAOrganisationIdentifier, StandardCode);
-   
+
+GO
+
+CREATE UNIQUE NONCLUSTERED INDEX IX_standardOrgIdStandardCodeEffectiveFrom
+   ON [ao].[Standard] (EPAOrganisationIdentifier, StandardCode, EffectiveFrom);   
