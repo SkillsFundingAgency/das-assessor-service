@@ -47,6 +47,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             var organisation = await _organisationQueryRepository.GetByUkPrn(request.UkPrn);
             _logger.LogInformation("CreateNewCertificate Before Get Standard from API");
             var standard = await _assessmentOrgsApiClient.GetStandard(ilr.StdCode);
+            _logger.LogInformation("CreateNewCertificate Before Get Provider from API");
+            var provider = await _assessmentOrgsApiClient.GetProvider(ilr.UkPrn);
             var certData = new CertificateData()
             {
                 LearnerGivenNames = ilr.GivenNames,
@@ -55,7 +57,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                 LearningStartDate = ilr.LearnStartDate, 
                 StandardLevel = standard.Level,
                 StandardPublicationDate = standard.EffectiveFrom,
-                FullName = $"{ilr.GivenNames} {ilr.FamilyName}"
+                FullName = $"{ilr.GivenNames} {ilr.FamilyName}",
+                ProviderName = provider.ProviderName
             };
             
             _logger.LogInformation("CreateNewCertificate Before create new Certificate");

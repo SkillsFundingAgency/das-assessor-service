@@ -51,6 +51,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             var assessmentOrgsApiClient = new Mock<IAssessmentOrgsApiClient>();
             assessmentOrgsApiClient.Setup(c => c.GetStandard(30))
                 .ReturnsAsync(new Standard() {Title = "Standard Name"});
+            assessmentOrgsApiClient.Setup(c => c.GetProvider(It.IsAny<long>()))
+                .ReturnsAsync(new Provider {ProviderName = "A Provider"});
 
             _startCertificateHandler = new StartCertificateHandler(_certificateRepository.Object,
                 ilrRepository.Object, assessmentOrgsApiClient.Object,
