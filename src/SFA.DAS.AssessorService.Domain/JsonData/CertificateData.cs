@@ -24,6 +24,6 @@ namespace SFA.DAS.AssessorService.Domain.JsonData
         public string CourseOption { get; set; }
         public string OverallGrade { get; set; }
         public string Department { get; set; }
-        public string FullName { get; set; }
+        public string FullName { get; set; }    
     }
 }

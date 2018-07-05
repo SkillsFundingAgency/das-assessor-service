@@ -179,15 +179,9 @@ namespace SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs
             }
         }
 
-        /// <summary>
-        /// Get a provider
-        /// GET /assessment-organisations/providers/{ukprn}
-        /// </summary>
-        /// /// <param name="ukprn">a ukprn id</param>
-        /// <returns>a provider</returns>
-        public async Task<Provider> GetProvider(int ukprn)
+        public async Task<Provider> GetProvider(long providerUkPrn)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/providers/{ukprn}"))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/providers/{providerUkPrn}"))
             {
                 return await RequestAndDeserialiseAsync<Provider>(request);
             }

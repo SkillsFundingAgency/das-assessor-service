@@ -2,7 +2,11 @@
 {
     public class Provider
     {
-        public string Ukprn { get; set; }
+        /// <summary>
+        /// UK provider reference number which is not unique
+        /// </summary>
+        public long Ukprn { get; set; }
+
         public string ProviderName { get; set; }
     }
 }
