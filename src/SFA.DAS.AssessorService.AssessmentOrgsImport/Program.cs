@@ -44,7 +44,10 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                         repo.WriteOrganisationTypes(organisationTypes);
                         var organisations = reader.HarvestEpaOrganisations(package, organisationTypes);
                         repo.WriteOrganisations(organisations);
+                        var standards = reader.HarvestStandards(package);
+                        repo.WriteStandards(standards);
                         // import Standards
+                        // import EPAStandards
                         // import StandardDeliveryAreas
                     }
                 }

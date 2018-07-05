@@ -11,7 +11,8 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
     {
         private const string LookupsWorkSheetName = "Lookups";
         private const string OrganisationsWorkSheetName = "Register - Organisations";
-        private const string StandardsWorkSheetName = "Register - Standards";
+        private const string EpaStandardsWorkSheetName = "Register - Standards";
+        private const string StandardsWorkSheetName = "Standards Lookup (LARS copy)";
         private const int LookupsColumnDeliveryArea = 1;
         private const int LookupsColumnOrganisationType = 2;
 
@@ -98,11 +99,8 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                 var postcode = ProcessPostcodeForExcessSpaces(contactPostcode);
 
                 var ukprnRead = worksheet.Cells[i, 10].Value != null ? worksheet.Cells[i, 10].Value.ToString() : string.Empty; 
-                int.TryParse(ukprnRead, out int ukprnAsInt);
-                int? ukprn = null;
-                if (ukprnAsInt > 0)
-                    ukprn = ukprnAsInt;
-                    
+                var ukprn = ProcessNullableIntValue(ukprnRead);
+
                 var legalName = worksheet.Cells[i, 11].Value != null ? worksheet.Cells[i, 11].Value.ToString() : string.Empty; 
 
                 organisations.Add(
@@ -126,15 +124,107 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
             return organisations;
 
         }
-
-        public List<EpaStandard> HarvestEpaStandards(ExcelPackage package)
-        {
-            var standards = new List<EpaStandard>();
-            var worksheet = GetWorksheet(package, OrganisationsWorkSheetName);
         
+        public List<Standard> HarvestStandards(ExcelPackage package)
+        {
+            var standards = new List<Standard>();
+            var worksheet = GetWorksheet(package, StandardsWorkSheetName);
+
+            for (var i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
+            {
+                var standardCode = ProcessNullableIntValue(worksheet.Cells[i, 1].Value?.ToString());
+
+                if (standardCode == null)
+                    continue;
+
+                var version = ProcessValueAsInt(worksheet.Cells[i, 2].Value?.ToString(), "Version", StandardsWorkSheetName, i);
+                var standardName = worksheet.Cells[i, 3].Value?.ToString();
+                var standardSectorCode = ProcessValueAsInt(worksheet.Cells[i, 4].Value?.ToString(), "StandardSectorCode", StandardsWorkSheetName, i);
+                var notionalEndLevel = ProcessValueAsInt(worksheet.Cells[i, 5].Value?.ToString(), "NotionalEndLevel", StandardsWorkSheetName, i);
+                var effectiveFrom = ProcessValueAsDateTime(worksheet.Cells[i, 6].Value?.ToString(),"EffectiveFrom", StandardsWorkSheetName, i);
+                var effectiveTo = ProcessNullableDateValue(worksheet.Cells[i, 7].Value?.ToString());
+                var lastDateStarts = ProcessNullableDateValue(worksheet.Cells[i, 8].Value?.ToString());
+                var urlLink = worksheet.Cells[i, 9].Value?.ToString();
+                var sectorSubjectAreaTier1 = ProcessNullableIntValue(worksheet.Cells[i, 10].Value?.ToString());
+                var sectorSubjectAreaTier2 = worksheet.Cells[i, 11].Value?.ToString();
+                var integratedDegreeStandard = ProcessYesNoValuesIntoBoolean(worksheet.Cells[i, 12].Value?.ToString());
+
+                var createdOn = ProcessNullableDateValue(worksheet.Cells[i, 13].Value?.ToString());
+                var createdBy = worksheet.Cells[i, 14].Value?.ToString();
+
+                var modifiedOn = ProcessNullableDateValue(worksheet.Cells[i, 15].Value?.ToString());
+                var modifiedBy = worksheet.Cells[i, 16].Value?.ToString();
+
+                standards.Add(
+                    new Standard
+                    {
+                        Id = Guid.NewGuid(),
+                        StandardCode = standardCode.Value,
+                        Version = version,
+                        StandardName = standardName,
+                        StandardSectorCode = standardSectorCode,
+                        NotionalEndLevel = notionalEndLevel,
+                        EffectiveFrom = effectiveFrom,
+                        EffectiveTo = effectiveTo,
+                        LastDateStarts = lastDateStarts,
+                        UrlLink = urlLink,
+                        SectorSubjectAreaTier1 = sectorSubjectAreaTier1,
+                        SectorSubjectAreaTier2 = sectorSubjectAreaTier2,
+                        IntegratedDegreeStandard = integratedDegreeStandard,
+                        CreatedOn = createdOn,
+                        CreatedBy = createdBy,
+                        ModifiedOn = modifiedOn,
+                        ModifiedBy = modifiedBy
+                    });
+            }
 
             return standards;
         }
+
+        private static bool? ProcessYesNoValuesIntoBoolean(string integratedDegreeStandardValue)
+        {
+            bool? integratedDegreeStandard = null;
+         if (integratedDegreeStandardValue == "N")
+                integratedDegreeStandard = false;
+            if (integratedDegreeStandardValue == "Y")
+                integratedDegreeStandard = true;
+            return integratedDegreeStandard;
+        }
+
+
+        private DateTime ProcessValueAsDateTime(string valueIn, string fieldName, string worksheetName, int rowNumber)
+        {
+            if (DateTime.TryParse(valueIn, out DateTime valueParsed))
+                return valueParsed;
+
+                throw new MissingMandatoryDataException(
+                    $"Worksheet [{worksheetName}] has no suitable value for '{fieldName}' in row {rowNumber}");
+
+        }
+
+        private static DateTime? ProcessNullableDateValue(string valueIn)
+        {
+            if (DateTime.TryParse(valueIn, out DateTime valueParsed))
+                return valueParsed;
+
+            return null;
+        }
+
+        private static int? ProcessNullableIntValue(string valueIn)
+        {
+            if (int.TryParse(valueIn, out int valueParsed) && valueParsed > 0)
+                return valueParsed;
+
+            return null;
+        }
+        private static int ProcessValueAsInt(string valueIn, string fieldName, string worksheetName, int rowNumber)
+        {
+            if (int.TryParse(valueIn, out int valueParsed) && valueParsed > 0)
+                return valueParsed;
+            
+            throw new MissingMandatoryDataException($"Worksheet [{worksheetName}] has no suitable value for '{fieldName}' in row {rowNumber}");        
+        }
+
         private static string ProcessPostcodeForExcessSpaces(object postcodeIn)
         {
             var postcode = postcodeIn?.ToString().Trim();
