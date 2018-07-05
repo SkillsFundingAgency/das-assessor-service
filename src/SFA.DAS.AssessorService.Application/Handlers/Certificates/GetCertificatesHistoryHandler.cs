@@ -17,17 +17,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
     public class GetCertificatesHistoryHandler : IRequestHandler<GetCertificateHistoryRequest, PaginatedList<CertificateHistoryResponse>>
     {
         private readonly ICertificateRepository _certificateRepository;
-        private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
         private readonly ILogger<GetCertificatesHistoryHandler> _logger;
 
         public GetCertificatesHistoryHandler(ICertificateRepository certificateRepository,
-            IContactQueryRepository contactQueryRepository,
             IAssessmentOrgsApiClient assessmentOrgsApiClient,
             ILogger<GetCertificatesHistoryHandler> logger)
         {
             _certificateRepository = certificateRepository;
-            _contactQueryRepository = contactQueryRepository;
             _assessmentOrgsApiClient = assessmentOrgsApiClient;
             _logger = logger;
         }
