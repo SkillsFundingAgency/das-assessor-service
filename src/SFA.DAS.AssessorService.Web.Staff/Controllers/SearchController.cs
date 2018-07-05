@@ -28,33 +28,51 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             return View();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Index([FromForm]SearchViewModel searchRequest)
-        {
-            var searchResults = await _apiClient.Search(searchRequest.SearchString, searchRequest.Page);
+        //[HttpPost]
+        //public async Task<IActionResult> Index([FromForm]SearchViewModel searchRequest)
+        //{
+        //    var searchResults = await _apiClient.Search(searchRequest.SearchString, searchRequest.Page);
 
-            _sessionService.Set("SearchResults", searchResults);
-            _sessionService.Set("SearchRequest", searchRequest);
-            return RedirectToAction("Results");
-        }
+        //    _sessionService.Set("SearchResults", searchResults);
+        //    _sessionService.Set("SearchRequest", searchRequest);
+        //    return RedirectToAction("Results");
+        //}
 
         [HttpGet("results")]
-        public async Task<IActionResult> Results()
+        public async Task<IActionResult> Results(string searchString, int page = 0)
         {
-            var viewModel = _sessionService.Get<SearchViewModel>("SearchRequest");
-            var results = _sessionService.Get<PaginatedList<StaffSearchResult>>("SearchResults");
+            var searchResults = await _apiClient.Search(searchString, page);
+            var searchViewModel = new SearchViewModel
+            {
+                PaginatedList = searchResults,
+                SearchString = searchString,
+                Page = page
+            };
 
-            viewModel.PaginatedList = results;
-
-            return View(viewModel);
+            return View(searchViewModel);
         }
 
         [HttpGet("select")]
-        public async Task<IActionResult> Select(int stdCode, long uln)
+        public async Task<IActionResult> Select(int stdCode, long uln, string searchString, int page = 0)
         {
             var learner = await _apiClient.GetLearner(stdCode, uln);
-            return View(learner);
+
+            var vm = new LearnerDetailViewModel
+            {
+                Learner = learner,
+                SearchString = searchString,
+                Page = page
+            };
+
+            return View(vm);
         }
+    }
+
+    public class LearnerDetailViewModel
+    {
+        public LearnerDetail Learner { get; set; }
+        public string SearchString { get; set; }
+        public int Page { get; set; }
     }
 
     public class SearchViewModel

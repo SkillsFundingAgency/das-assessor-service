@@ -10,6 +10,5 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<Ilr> Get(long uln, int standardCode);
         Task StoreSearchLog(SearchLog log);
         Task<IEnumerable<Ilr>> Search(string searchQuery);
-        
     }
 }

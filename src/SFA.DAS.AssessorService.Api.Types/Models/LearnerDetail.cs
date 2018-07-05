@@ -12,13 +12,17 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public string FamilyName { get; set; }
         public int StandardCode { get; set; }
         public string Standard { get; set; }
+        public int Level { get; set; }
+        public int FundingModel { get; set; }
+        public string Option { get; set; }
+        public string OrganisationName { get; set; }
         public string CertificateReference { get; set; }
         public string CertificateStatus { get; set; }
         public DateTime? LastUpdatedAt { get; set; }
         public DateTime? LearnStartDate { get; set; }
         public string OverallGrade { get; set; }
         public DateTime? AchievementDate { get; set; }
-        public int Level { get; set; }
+        
 
         public List<CertificateLogSummary> CertificateLogs { get; set; }
     }

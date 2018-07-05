@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -59,6 +60,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
         private async Task<IEnumerable<Ilr>> Search(StaffSearchRequest request)
         {
             // Naive decision on what is being searched.
+
+            var regex = new Regex(@"\b(EPA)[0-9]{4}\b");
+            if (regex.IsMatch(request.SearchQuery))
+            {
+                return await _staffIlrRepository.SearchForLearnerByEpaOrgId(request.SearchQuery);
+            }
+
             if (request.SearchQuery.Length == 10 && long.TryParse(request.SearchQuery, out var uln))
             {
                 // Search string is a long of 10 length so must be a uln.
@@ -70,7 +78,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 // Search string is 8 chars and is a valid long so must be a CertificateReference
                 return await _staffIlrRepository.SearchForLearnerByCertificateReference(request.SearchQuery);
             }
-
+            
             return new List<Ilr>();
         }
 

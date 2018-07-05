@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
 using Microsoft.EntityFrameworkCore;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -11,11 +13,13 @@ namespace SFA.DAS.AssessorService.Data.Staff
     {
         private readonly AssessorDbContext _context;
         private readonly IIlrRepository _ilrRepository;
+        private readonly IDbConnection _connection;
 
-        public StaffIlrRepository(AssessorDbContext context, IIlrRepository ilrRepository)
+        public StaffIlrRepository(AssessorDbContext context, IIlrRepository ilrRepository, IDbConnection connection)
         {
             _context = context;
             _ilrRepository = ilrRepository;
+            _connection = connection;
         }
 
         public async Task<IEnumerable<Ilr>> SearchForLearnerByCertificateReference(string certRef)
@@ -50,6 +54,14 @@ namespace SFA.DAS.AssessorService.Data.Staff
                 .CountAsync(i => i.FamilyName.Replace(" ", "") == deSpacedLearnerName ||
                                  i.GivenNames.Replace(" ", "") == deSpacedLearnerName ||
                    i.GivenNames.Replace(" ", "") + i.FamilyName.Replace(" ", "") == deSpacedLearnerName);
+        }
+
+        public async Task<IEnumerable<Ilr>> SearchForLearnerByEpaOrgId(string epaOrgId)
+        {
+            return (await _connection.QueryAsync<Ilr>(@"SELECT ilr.* FROM Certificates cert
+                                                        INNER JOIN Organisations org ON org.Id = cert.OrganisationId
+                                                        INNER JOIN Ilrs ilr ON ilr.Uln = cert.Uln AND ilr.StdCode = cert.StandardCode
+                                                        WHERE org.EndPointAssessorOrganisationId = @epaOrgId", new {epaOrgId})).ToList();
         }
     }
 }

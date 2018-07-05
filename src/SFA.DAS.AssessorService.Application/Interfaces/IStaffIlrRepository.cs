@@ -9,5 +9,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<IEnumerable<Ilr>> SearchForLearnerByCertificateReference(string certRef);
         Task<IEnumerable<Ilr>> SearchForLearnerByName(string learnerName, int page, int pageSize);
         Task<int> CountLearnersByName(string learnerName);
+        Task<IEnumerable<Ilr>> SearchForLearnerByEpaOrgId(string epaOrgId);
     }
 }

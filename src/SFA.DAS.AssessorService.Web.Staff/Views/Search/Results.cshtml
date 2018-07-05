@@ -4,17 +4,18 @@
 
 }
 
-<h2>Results</h2>
+<a asp-action="Index" class="link-back">Search Again</a>
 
-<a asp-action="Index" class="button">Search Again</a>
+<div>
+    <span class="bold">Number of results: </span> @Model.PaginatedList.TotalRecordCount
+</div>
 
-<b>Number of results: </b> @Model.PaginatedList.TotalRecordCount
 
 <table class="table">
     <thead>
         <tr>
-            <th>Surname</th>
             <th>First Name</th>
+            <th>Surname</th>
             <th>Uln</th>
             <th>Standard</th>
             <th>Certificate Reference</th>
@@ -25,36 +26,26 @@
     <tbody>
         @foreach (var result in Model.PaginatedList.Items)
         {
-            <tr>
-                <td>@result.FamilyName</td>
-                <td>@result.GivenNames</td>
-                <td>@result.Uln</td>
-                <td>@result.Standard</td>
-                <td>@result.CertificateReference</td>
-                <td>@result.CertificateStatus</td>
-                <td>@result.LastUpdatedAt?.ToShortDateString()</td>
-                <td><a class="button" asp-action="Select" asp-route-stdcode="@result.StandardCode" asp-route-uln="@result.Uln">Select</a></td>
-            </tr>
+        <tr>
+            <td>@result.GivenNames</td>
+            <td>@result.FamilyName</td>
+            <td>@result.Uln</td>
+            <td>@result.Standard (@result.StandardCode)</td>
+            <td>@result.CertificateReference</td>
+            <td>@result.CertificateStatus</td>
+            <td>@result.LastUpdatedAt?.ToShortDateString()</td>
+            <td><a class="button" asp-action="Select" asp-route-stdcode="@result.StandardCode" asp-route-uln="@result.Uln" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.PaginatedList.PageIndex">Select</a></td>
+        </tr>
         }
     </tbody>
 </table>
 
 @if (Model.PaginatedList.HasPreviousPage)
 {
-    <form asp-controller="Search" asp-action="Index">
-        @Html.HiddenFor(m => m.SearchString)
-        <input type="hidden" id="Page" name="Page" value="@( Model.PaginatedList.PageIndex - 1)" />
-        <button class="button">Previous</button>
-    </form>
-
+    <a class="button" asp-action="Results" asp-controller="Search" asp-route-searchstring="@Model.SearchString" asp-route-page="@( Model.PaginatedList.PageIndex - 1)">Previous</a>
 }
 
 @if (Model.PaginatedList.HasNextPage)
 {
-    <form asp-controller="Search" asp-action="Index">
-        @Html.HiddenFor(m => m.SearchString)
-        <input type="hidden" id="Page" name="Page" value="@( Model.PaginatedList.PageIndex + 1)" />
-        <button class="button">Next</button>
-    </form>
-
+    <a class="button" asp-action="Results" asp-controller="Search" asp-route-searchstring="@Model.SearchString" asp-route-page="@( Model.PaginatedList.PageIndex + 1)">Next</a>
 }
