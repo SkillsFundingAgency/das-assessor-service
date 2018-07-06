@@ -226,6 +226,13 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
             }
             return epaStandards;
         }
+
+        public List<StandardDeliveryArea> HarvestStandardDeliveryAreas(ExcelPackage package,
+            List<DeliveryArea> deliveryAreas)
+        {
+            return null;
+        }
+
         private static bool? ProcessYesNoValuesIntoBoolean(string integratedDegreeStandardValue)
         {
             bool? integratedDegreeStandard = null;
@@ -235,8 +242,6 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                 integratedDegreeStandard = true;
             return integratedDegreeStandard;
         }
-
-
         private DateTime ProcessValueAsDateTime(string valueIn, string fieldName, string worksheetName, int rowNumber)
         {
             if (DateTime.TryParse(valueIn, out DateTime valueParsed))
@@ -246,7 +251,6 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                     $"Worksheet [{worksheetName}] has no suitable value for '{fieldName}' in row {rowNumber}");
 
         }
-
         private static DateTime? ProcessNullableDateValue(string valueIn)
         {
             if (DateTime.TryParse(valueIn, out DateTime valueParsed))

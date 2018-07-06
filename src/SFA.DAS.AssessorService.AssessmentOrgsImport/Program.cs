@@ -47,7 +47,6 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                         repo.WriteStandards(standards);
                         var epaStandards = reader.HarvestEpaStandards(package, organisations, standards);
                         repo.WriteEpaStandards(epaStandards);
-                        // import EPAStandards
                         // import StandardDeliveryAreas
                     }
                 }
