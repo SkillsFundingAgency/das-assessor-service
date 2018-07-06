@@ -6,7 +6,7 @@
 	[EffectiveFrom] [DateTime] NOT NULL,
 	[EffectiveTo] [DateTime] NULL,
 	[ContactName] [nvarchar](200) NULL,
-	[ContactPhoneNumber] [nvarchar] (20) NULL,
+	[ContactPhoneNumber] [nvarchar] (50) NULL,
 	[ContactEmail] [nvarchar] (200) NULL, 
 	[DateStandardApprovedOnRegister] [DateTime] NULL,
 	[Comments] [NVARCHAR] (500) NULL,
