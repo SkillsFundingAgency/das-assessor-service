@@ -19,9 +19,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly ISessionService _sessionService;
 
         public CertificateHistoryController(
-            ILogger<CertificateController> logger, 
-            IHttpContextAccessor contextAccessor, 
-            ICertificateApiClient certificateApiClient, 
+            ILogger<CertificateController> logger,
+            IHttpContextAccessor contextAccessor,
+            ICertificateApiClient certificateApiClient,
             ISessionService sessionService)
         {
             _logger = logger;
@@ -34,7 +34,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [Route("/[controller]/")]
         public async Task<IActionResult> Index(int? pageIndex)
         {
-            var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
             var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
             var certificateHistory = await _certificateApiClient.GetCertificateHistory(pageIndex ?? 1, username);
