@@ -14,6 +14,7 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
         private const string OrganisationsWorkSheetName = "Register - Organisations";
         private const string EpaStandardsWorkSheetName = "Register - Standards";
         private const string StandardsWorkSheetName = "Standards Lookup (LARS copy)";
+        private const string DeliveryAreasWorkSheetName = "Register - Delivery areas";
         private const int LookupsColumnDeliveryArea = 1;
         private const int LookupsColumnOrganisationType = 2;
 
@@ -227,10 +228,65 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
             return epaStandards;
         }
 
-        public List<StandardDeliveryArea> HarvestStandardDeliveryAreas(ExcelPackage package,
-            List<DeliveryArea> deliveryAreas)
+        public List<StandardDeliveryArea> HarvestStandardDeliveryAreas(ExcelPackage package, List<EpaOrganisation> epaOrganisations, List<Standard> standards, List<DeliveryArea> deliveryAreas)
         {
-            return null;
+            var standardDeliveryAreas = new List<StandardDeliveryArea>();
+            var worksheet = GetWorksheet(package, DeliveryAreasWorkSheetName);
+            for (var i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
+            {
+
+                var epaOrganisationIdentifier = worksheet.Cells[i, 1].Value?.ToString();
+
+                if (epaOrganisationIdentifier == null || epaOrganisations.All(x => x.EpaOrganisationIdentifier != epaOrganisationIdentifier))
+                    continue;
+
+
+                var standardCode = ProcessNullableIntValue(worksheet.Cells[i, 3].Value?.ToString());
+
+                if (standardCode == null)
+                {
+                    var standardName = worksheet.Cells[i, 4].Value?.ToString();
+                    var res = standards.Where(x => x.StandardName == standardName).ToList();
+                    
+                    if (res.Count() == 1)
+                    {
+                        standardCode = res?.First()?.StandardCode;
+                    }
+                }
+
+
+                if (standardCode == null || standards.All(x => x.StandardCode != standardCode))
+                    continue;
+
+                var deliveryArea = worksheet.Cells[i, 5].Value != null
+                    ? worksheet.Cells[i, 5].Value.ToString().Trim()
+                    : string.Empty;
+
+                var comments = worksheet.Cells[i, 6].Value != null
+                    ? worksheet.Cells[i, 6].Value.ToString().Trim()
+                    : string.Empty;
+
+
+                foreach (var delArea in deliveryAreas.Where(x => deliveryArea.Contains(x.Area) || deliveryArea == "All"))
+                {
+                    var standardDeliveryArea = new StandardDeliveryArea
+                    {
+                        Id = Guid.NewGuid(),
+                        EpaOrganisationIdentifier = epaOrganisationIdentifier,
+                        StandardCode = standardCode.Value,
+                        DeliveryAreaId = delArea.Id,
+                        Comments = comments
+                    };
+
+                    if (!standardDeliveryAreas.Any(x => x.EpaOrganisationIdentifier == standardDeliveryArea.EpaOrganisationIdentifier
+                                                        && x.StandardCode == standardDeliveryArea.StandardCode
+                                                        && x.DeliveryAreaId == standardDeliveryArea.DeliveryAreaId))
+                                            {
+                                                standardDeliveryAreas.Add(standardDeliveryArea);
+                                            }
+                }
+            }
+            return standardDeliveryAreas;
         }
 
         private static bool? ProcessYesNoValuesIntoBoolean(string integratedDegreeStandardValue)

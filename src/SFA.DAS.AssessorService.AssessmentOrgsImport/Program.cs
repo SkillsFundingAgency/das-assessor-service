@@ -16,10 +16,28 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
             var reader = new AssessmentOrganisationsReader();
             var repo = new AssessmentOrganisationsRepository();
             _webClient = new WebClient();
+            
+            _teardown = false;
 
-            _teardown = true;
-               
-          
+            foreach (var arg in args)
+            {
+                if (arg == "-c")
+                {
+                    _teardown = true;
+                }
+
+                if (arg == "-h" || arg == "/h")
+                {
+                    Console.WriteLine("-c will tear down all the tables in the [ao] Schema.\nTHIS SHOULD ONLY BE USED AT FIRST DEPLOYMENT OR IF YOU WANT TO LOSE ALL DATA IN THOSE TABLES");
+                    Console.Read();
+                    return;
+                }
+
+            }
+
+
+
+
             var credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{ConfigurationWrapper.GitUserName}:{ConfigurationWrapper.GitPassword}"));
             _webClient.Headers[HttpRequestHeader.Authorization] = $"Basic {credentials}";
 
@@ -47,7 +65,9 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                         repo.WriteStandards(standards);
                         var epaStandards = reader.HarvestEpaStandards(package, organisations, standards);
                         repo.WriteEpaStandards(epaStandards);
-                        // import StandardDeliveryAreas
+                        var standardDeliveryAreas =
+                            reader.HarvestStandardDeliveryAreas(package, organisations, standards, deliveryAreas);
+                        repo.WriteStandardDeliveryAreas(standardDeliveryAreas);
                     }
                 }
             }

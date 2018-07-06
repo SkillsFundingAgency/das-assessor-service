@@ -201,6 +201,34 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
 
         }
 
+        public void WriteStandardDeliveryAreas(List<StandardDeliveryArea> standardDeliveryAreas)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    connection.Open();
+
+                var currentNumber = connection.ExecuteScalar("select count(0) from [ao].[StandardDeliveryArea]").ToString();
+                if (currentNumber == "0")
+                {
+                    connection.Execute(@"INSERT INTO [ao].[StandardDeliveryArea]
+                                           ([Id]
+                                           ,[EPAOrganisationIdentifier]
+                                           ,[StandardCode]
+                                           ,[DeliveryAreaId]
+                                           ,[Comments])
+                                     VALUES
+                                           (@Id
+                                           ,@EPAOrganisationIdentifier
+                                           ,@StandardCode
+                                           ,@DeliveryAreaId
+                                           ,@Comments)",
+                                            standardDeliveryAreas);
+                }
+                connection.Close();
+            }
+
+        }
     }
 
 }
