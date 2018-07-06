@@ -157,5 +157,50 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
             }
 
         }
+
+        public void WriteEpaStandards(List<EpaStandard> standards)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    connection.Open();
+
+                var currentNumber = connection.ExecuteScalar("select count(0) from [ao].[EpaStandard]").ToString();
+                if (currentNumber == "0")
+                {
+
+                    foreach (var standard in standards)
+                    {
+                        connection.Execute(@"INSERT INTO [ao].[EpaStandard]
+                                       ([Id]
+                                       ,[EPAOrganisationIdentifier]
+                                       ,[StandardCode]
+                                       ,[EffectiveFrom]
+                                       ,[EffectiveTo]
+                                       ,[ContactName]
+                                       ,[ContactPhoneNumber]
+                                       ,[ContactEmail]
+                                       ,[DateStandardApprovedOnRegister]
+                                       ,[Comments])
+                                 VALUES
+                                       (@Id
+                                       ,@EPAOrganisationIdentifier
+                                       ,@StandardCode
+                                       ,@EffectiveFrom
+                                       ,@EffectiveTo
+                                       ,@ContactName
+                                       ,@ContactPhoneNumber
+                                       ,@ContactEmail
+                                       ,@DateStandardApprovedOnRegister
+                                       ,@Comments)",
+                            standard);
+                    }
+                }
+                connection.Close();
+            }
+
+        }
+
     }
+
 }
