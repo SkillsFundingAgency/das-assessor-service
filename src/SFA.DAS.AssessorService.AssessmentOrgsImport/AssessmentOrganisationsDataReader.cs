@@ -70,7 +70,6 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
             var worksheet = GetWorksheet(package, OrganisationsWorkSheetName);
             for (var i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
             {
-
                 var epaOrganisationIdentifier = worksheet.Cells[i, 1].Value != null ? worksheet.Cells[i, 1].Value.ToString().Trim() : string.Empty;
                 if (epaOrganisationIdentifier == string.Empty)
                         {
@@ -124,7 +123,6 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
             }
 
             return organisations;
-
         }
         
         public List<Standard> HarvestStandards(ExcelPackage package)
@@ -198,8 +196,7 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                 var standardCode = ProcessNullableIntValue(worksheet.Cells[i, 3].Value?.ToString());
 
                 if (standardCode == null || standards.All(x => x.StandardCode != standardCode))
-                    continue;
-                
+                    continue;               
 
                 var effectiveFrom = ProcessValueAsDateTime(worksheet.Cells[i, 5].Value?.ToString(), "EffectiveFrom", StandardsWorkSheetName, i);
                 var effectiveTo = ProcessNullableDateValue(worksheet.Cells[i, 6].Value?.ToString());
@@ -240,7 +237,6 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                 if (epaOrganisationIdentifier == null || epaOrganisations.All(x => x.EpaOrganisationIdentifier != epaOrganisationIdentifier))
                     continue;
 
-
                 var standardCode = ProcessNullableIntValue(worksheet.Cells[i, 3].Value?.ToString());
 
                 if (standardCode == null)
@@ -254,7 +250,6 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                     }
                 }
 
-
                 if (standardCode == null || standards.All(x => x.StandardCode != standardCode))
                     continue;
 
@@ -265,7 +260,6 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                 var comments = worksheet.Cells[i, 6].Value != null
                     ? worksheet.Cells[i, 6].Value.ToString().Trim()
                     : string.Empty;
-
 
                 foreach (var delArea in deliveryAreas.Where(x => deliveryArea.Contains(x.Area) || deliveryArea == "All"))
                 {
@@ -357,7 +351,6 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
 
             return postcode;
         }
-
         private static ExcelWorksheet GetWorksheet(ExcelPackage package, string worksheetname)
         {
             var worksheet = package.Workbook.Worksheets.FirstOrDefault(x => x.Name == worksheetname);

@@ -32,21 +32,15 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                     Console.Read();
                     return;
                 }
-
             }
-
-
-
-
-            var credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{ConfigurationWrapper.GitUserName}:{ConfigurationWrapper.GitPassword}"));
-            _webClient.Headers[HttpRequestHeader.Authorization] = $"Basic {credentials}";
-
-
+            
             if (_teardown)
             {
                 repo.TearDownData();
             }
-           
+
+            var credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{ConfigurationWrapper.GitUserName}:{ConfigurationWrapper.GitPassword}"));
+            _webClient.Headers[HttpRequestHeader.Authorization] = $"Basic {credentials}";
 
             try
             {
@@ -59,12 +53,16 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
 
                         var organisationTypes = reader.HarvestOrganisationTypes(package);
                         repo.WriteOrganisationTypes(organisationTypes);
+
                         var organisations = reader.HarvestEpaOrganisations(package, organisationTypes);
                         repo.WriteOrganisations(organisations);
+
                         var standards = reader.HarvestStandards(package);
                         repo.WriteStandards(standards);
+
                         var epaStandards = reader.HarvestEpaStandards(package, organisations, standards);
                         repo.WriteEpaStandards(epaStandards);
+
                         var standardDeliveryAreas =
                             reader.HarvestStandardDeliveryAreas(package, organisations, standards, deliveryAreas);
                         repo.WriteStandardDeliveryAreas(standardDeliveryAreas);
@@ -76,6 +74,5 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                 var z = ex.Message;
             }      
         }
-
     }
 }
