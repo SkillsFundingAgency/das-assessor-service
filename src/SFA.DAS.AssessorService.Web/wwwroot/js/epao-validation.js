@@ -38,6 +38,7 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
       errorElement: 'span',
       errorClass: 'error-message',
       highlight: function(element) {
+        console.log(element.closest('fieldset'));
         if ($(element).hasClass('date-input')) {
           $(element).addClass('form-control-error');
           return false;
