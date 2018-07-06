@@ -55,6 +55,12 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             {
                 //services.AddApplicationInsightsTelemetry();
 
+                services.AddMvc()
+                    .AddJsonOptions(options =>
+                    {                                       
+                        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                    });
+
                 services.AddAuthentication(sharedOptions =>
                 {
                     sharedOptions.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;

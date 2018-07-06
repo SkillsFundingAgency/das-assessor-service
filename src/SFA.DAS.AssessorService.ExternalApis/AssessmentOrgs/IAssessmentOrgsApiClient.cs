@@ -102,5 +102,6 @@ namespace SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs
         Task<IEnumerable<StandardOrganisationSummary>> FindAllStandardsByOrganisationIdAsync(string organisationId);
 
         Task<Standard> GetStandard(int standardId);
+        Task<Provider> GetProvider(long providerUkPrn);
     }
 }

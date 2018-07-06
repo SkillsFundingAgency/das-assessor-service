@@ -70,7 +70,11 @@
     <Build Include="Tables\EMailTemplates.sql" />
     <Build Include="Tables\BatchLogs.sql" />
     <Build Include="Tables\ScheduleConfigurations.sql" />
+<<<<<<< HEAD
     <Build Include="StoredProcedures\GetPreviousAddresses.sql" />
+=======
+    <Build Include="Tables\SearchLogs.sql" />
+>>>>>>> master
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
