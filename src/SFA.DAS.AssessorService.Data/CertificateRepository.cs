@@ -160,5 +160,33 @@ namespace SFA.DAS.AssessorService.Data
                 commandType: CommandType.StoredProcedure);
             return addresses.ToList();
         }
+
+        public async Task<CertificateAddress> GetContactPreviousAddress(string userName)
+        {
+            var statuses = new List<string>
+            {
+                CertificateStatus.Submitted,
+                CertificateStatus.Printed,
+                CertificateStatus.Reprint
+            };
+
+            var certificateAddress = await (from certificateLog in _context.CertificateLogs
+                join certificate in _context.Certificates on certificateLog.CertificateId equals certificate.Id
+                where statuses.Contains(certificate.Status) && certificateLog.Username == userName
+                let certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData)
+                orderby certificate.UpdatedAt descending 
+                select new CertificateAddress
+                {
+                    OrganisationId = certificate.OrganisationId,
+                    CreatedAt = certificate.CreatedAt,
+                    AddressLine1 = certificateData.ContactAddLine1,
+                    AddressLine2 = certificateData.ContactAddLine2,
+                    AddressLine3 = certificateData.ContactAddLine3,
+                    City = certificateData.ContactAddLine4,
+                    PostCode = certificateData.ContactPostCode
+                }).FirstOrDefaultAsync();
+
+            return certificateAddress;
+        }
     }
 }
