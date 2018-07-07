@@ -138,8 +138,14 @@
   <data name="DeptHint" xml:space="preserve">
     <value>For example, human resources</value>
   </data>
+  <data name="EditThisAddress" xml:space="preserve">
+    <value>Edit This Address</value>
+  </data>
   <data name="Employer" xml:space="preserve">
     <value>Organisation name</value>
+  </data>
+  <data name="FindANewAddress" xml:space="preserve">
+    <value>Find a New Address</value>
   </data>
   <data name="Heading" xml:space="preserve">
     <value>Search for Employers Address</value>

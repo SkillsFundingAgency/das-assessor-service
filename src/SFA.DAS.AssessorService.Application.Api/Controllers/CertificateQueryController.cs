@@ -58,9 +58,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [HttpGet("contact/previousaddress", Name = "GetContactPreviousAddress")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(CertificateAddress))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetContactPreviousAddress([FromQuery] string userName)
+        public async Task<IActionResult> GetContactPreviousAddress([FromQuery] string username)
         {
-            var address = await _mediator.Send(new GetContactPreviousAddressesRequest { Username = userName });
+            var address = await _mediator.Send(new GetContactPreviousAddressesRequest { Username = username });
             if (address == null)
                 throw new ResourceNotFoundException();
             return Ok(address);

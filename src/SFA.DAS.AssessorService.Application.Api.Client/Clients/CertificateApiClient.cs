@@ -36,5 +36,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 return await PostPutRequestWithResponse<UpdateCertificateRequest, Certificate >(httpRequest, certificateRequest);
             }
         }
+
+        public async Task<CertificateAddress> GetContactPreviousAddress(string userName)
+        {
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/certificates/contact/previousaddress?username={userName}"))
+            {
+                return await RequestAndDeserialiseAsync<CertificateAddress>(httpRequest, "Could not get Certificate Address");
+            }
+        }
     }
 }

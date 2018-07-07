@@ -17,7 +17,6 @@
         {
             <a asp-controller="CertificateDate" asp-action="Date" class="link-back">Back</a>
         }
-        
 
         <form class="apprentice-address-form" type="post" asp-controller="CertificateAddress">
             @Html.HiddenFor(c => c.Id)
@@ -51,37 +50,22 @@
                         @*<span class="heading-secondary">@Model.GivenNames @Model.FamilyName</span>*@
                         @Localizer["Heading"]
                     </h1>
-                    <p>Certificates should go to the apprentice's employer.</p>
                 </legend>
-                
-                
 
-               
-                
-                <div id="address-lookup" class="hide-nojs disabled">
-                    <div class="form-group form-group-compound" id="addressInputWrapper">
-                        <label for="postcode-search" class="form-label">Start typing the company name or postcode</label>
-                        <input id="postcode-search" type="text" class="form-control" spellcheck="false" autocorrect="off" disabled="disabled" />
-                        <span class="visuallyhidden" id="ariaAddressEntered" aria-live="polite"></span>
-                    </div>
-                    <div id="address-manual" class="form-group form-group-compound">
-                        <a href="#" id="enterAddressManually">Or enter the address manually</a>
-                        <span class="toggle-content loading-text" id="addressLoading">Loading address...</span>
-                        <p id="postcodeServiceUnavailable" class="error toggle-content text">Service is currently unavailable, please enter the address manually</p>
-                    </div>
-                </div>
+                <div class="bold"><b>@Localizer["UsePreviousAddress"]</b></div>
+                <input type="checkbox" />&nbsp;
+                <span>@Model.CertificatePreviousAddress</span>
 
                 <div id="addressManualWrapper">
                     <div id="address-details" class="address-manual-input">
-                        
-                        <div class="form-group-compound address-item form-group" sfa-validation-for="Employer" sfa-validationerror-class="form-group-error">
+                        <div class="form-group" sfa-validation-for="Employer" sfa-validationerror-class="form-group-error">
                             <label for="Employer">
                                 <span class="form-label-bold">@Localizer["Employer"]</span>
                                 <span class="error-message" asp-validation-for="Employer"></span>
                             </label>
-                            <input autocomplete="off" class="form-control" name="Employer" sfa-validation-for="Employer" sfa-validationerror-class="form-control-error" asp-for="Employer" type="text"/>
+                            <input class="form-control form-control-3-4" name="Employer" sfa-validation-for="Employer" sfa-validationerror-class="form-control-error" asp-for="Employer" type="text" />
                         </div>
-
+                       
                         <div class="form-group-compound address-item form-group" sfa-validation-for="AddressLine1" sfa-validationerror-class="form-group-error">
                             <label for="AddressLine1">
                                 <span class="form-label-bold">@Localizer["Address"]</span>

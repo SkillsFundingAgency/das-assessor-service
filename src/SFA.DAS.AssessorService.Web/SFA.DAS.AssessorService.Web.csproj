@@ -68,6 +68,9 @@
     <EmbeddedResource Update="Resources\Validators\SearchQueryViewModelValidator.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Certificate\AddressSummary.en.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="Resources\Views\Certificate\Recipient.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>

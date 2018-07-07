@@ -10,5 +10,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<Certificate> Start(StartCertificateRequest request);
         Task<Certificate> GetCertificate(Guid certificateId);
         Task<Certificate> UpdateCertificate(UpdateCertificateRequest updateGradeRequest);
+        Task<CertificateAddress> GetContactPreviousAddress(string userName);
     }
 }
