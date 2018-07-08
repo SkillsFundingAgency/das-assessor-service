@@ -68,7 +68,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var certificatePreviousAddress = await _certificateApiClient.GetContactPreviousAddress(username);
             var viewResult = certificateAddressViewModel as ViewResult;
             var certificateAddress = viewResult.Model as CertificateAddressViewModel;
-            certificateAddress.CertificatePreviousAddress = certificatePreviousAddress.StringifyAddress();
+            certificateAddress.CertificateContactPreviousAddress = new CertificatePreviousAddressViewModel(certificatePreviousAddress);
 
             return viewResult;
         }

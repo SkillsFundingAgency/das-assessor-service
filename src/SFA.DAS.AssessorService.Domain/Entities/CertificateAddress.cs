@@ -11,36 +11,5 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string City { get; set; }
         public string PostCode { get; set; }
         public DateTime CreatedAt { get; set; }
-
-        public string StringifyAddress()
-        {
-            var result = string.Empty;
-            if (!string.IsNullOrEmpty(this.AddressLine1))
-            {
-                result += (this.AddressLine1);
-            }
-
-            if (!string.IsNullOrEmpty(this.AddressLine2))
-            {
-                result += $", {this.AddressLine2}";
-            }
-
-            if (!string.IsNullOrEmpty(this.AddressLine3))
-            {
-                result += $", {this.AddressLine3}";
-            }
-
-            if (!string.IsNullOrEmpty(this.City))
-            {
-                result += $", {this.City}";
-            }
-
-            if (!string.IsNullOrEmpty(this.PostCode))
-            {
-                result += $", {this.PostCode}";
-            }
-
-            return result;
-        }
     }
 }
