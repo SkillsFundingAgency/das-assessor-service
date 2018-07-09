@@ -51,6 +51,16 @@
                         @Localizer["Heading"]
                     </h1>
                 </legend>
+                
+                <div class="form-group">
+                    <label for="CertificatePreviousAddresses">
+                        <span class="form-label-bold">@Localizer["UsePreviousAddress"]</span>
+                    </label>
+                    <div class="col-md-5">
+                        @Html.DropDownListFor(x => Model.CertificatePreviousAddressViewModels, new SelectList(Model.CertificatePreviousAddressViewModels, "HashCode", "StringifiedAddress"), htmlAttributes: new { @class = "form-control", Name = "CertificatePreviousAddresses" })
+                        @Html.ValidationMessageFor(x => x.SelectedCertificatePreviousAddressViewModel, "", new { @class = "text-danger" })
+                    </div>
+                </div>
 
                 <div class="bold"><b>@Localizer["UsePreviousAddress"]</b></div>
                 <input type="checkbox" />&nbsp;

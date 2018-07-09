@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -66,9 +67,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             string  username)
         {
             var certificatePreviousAddress = await _certificateApiClient.GetContactPreviousAddress(username);
+            var certificatePreviousAddresses = await _certificateApiClient.GetPreviousAddressess(username);
+            
             var viewResult = certificateAddressViewModel as ViewResult;
             var certificateAddress = viewResult.Model as CertificateAddressViewModel;
             certificateAddress.CertificateContactPreviousAddress = new CertificatePreviousAddressViewModel(certificatePreviousAddress);
+            certificateAddress.CertificatePreviousAddressViewModels =
+                certificatePreviousAddresses.Select(q => new CertificatePreviousAddressViewModel(q)).ToList();
 
             return viewResult;
         }

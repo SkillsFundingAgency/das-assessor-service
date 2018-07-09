@@ -19,7 +19,8 @@ BEGIN
       ,JSON_VALUE([CertificateData],'$.ContactPostCode') AS PostCode
 	  ,MAX(c.CreatedAt) As CreatedAt
 	FROM [dbo].[Certificates] c
-	group by  c.OrganisationId, JSON_VALUE([CertificateData],'$.ContactAddLine1'),
+	group by  c.OrganisationId, c.CreatedBy, 
+	JSON_VALUE([CertificateData],'$.ContactAddLine1'),
 	JSON_VALUE([CertificateData],'$.ContactAddLine2'),
 	JSON_VALUE([CertificateData],'$.ContactAddLine3'),
 	JSON_VALUE([CertificateData],'$.ContactAddLine4'),

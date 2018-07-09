@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -21,7 +22,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
         public async Task<List<CertificateAddress>> Handle(GetPreviousAddressesRequest request, CancellationToken cancellationToken)
         {
             var certificateAddresses = await _certificateRepository.GetPreviousAddresses(request.Username);
-            return certificateAddresses;
+            return certificateAddresses.ToList()
+                .OrderBy(q => q.AddressLine1)
+                .ThenBy(q => q.AddressLine2)
+                .ThenBy(q => q.AddressLine3)
+                .ThenBy(q => q.City)
+                .ThenBy(q => q.PostCode)
+                .ToList();
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
@@ -13,6 +15,10 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         public string Postcode { get; set; }
 
         public CertificatePreviousAddressViewModel CertificateContactPreviousAddress { get; set; }
+
+        public List<CertificatePreviousAddressViewModel> CertificatePreviousAddressViewModels { get; set; }
+
+        public string SelectedCertificatePreviousAddressViewModel { get; set; }
 
         public void FromCertificate(Domain.Entities.Certificate cert)
         {

@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
+﻿using SFA.DAS.AssessorService.Web.Extensions;
+
+namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 {
     public class CertificatePreviousAddressViewModel
     {       
@@ -10,6 +12,8 @@
 
         public string StringifiedAddress { get; set; }
 
+        public long HashCode { get; set; }
+
         public CertificatePreviousAddressViewModel(Domain.Entities.CertificateAddress certificateAddress)
         {
             AddressLine1 = certificateAddress.AddressLine1;
@@ -19,6 +23,8 @@
             Postcode = certificateAddress.PostCode;
 
             StringifiedAddress = StringifyAddress();
+
+            HashCode = StringifiedAddress.GetInt64HashCode();
         }
 
         private string StringifyAddress()
