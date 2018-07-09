@@ -1,5 +1,5 @@
 ﻿
-CREATE TABLE [ao].[StandardDeliveryArea]
+CREATE TABLE [ao].[EpaOrganisationStandardDeliveryArea]
 (
 	[Id] [uniqueidentifier] NOT NULL DEFAULT NEWID(),
 	[EPAOrganisationIdentifier] [nvarchar](7) NOT NULL,
@@ -10,12 +10,12 @@ CREATE TABLE [ao].[StandardDeliveryArea]
 	) ON [PRIMARY] 
 GO
 
-ALTER TABLE [ao].[StandardDeliveryArea]
+ALTER TABLE [ao].[EpaOrganisationStandardDeliveryArea]
 ADD CONSTRAINT FK_DeliveryAreaIdStandardDeliveryArea
 FOREIGN KEY (DeliveryAreaId) REFERENCES [ao].[DeliveryArea] (Id);
 
 GO
 
 CREATE UNIQUE INDEX IX_standardDeliveryAreaCoveredIndex
-   ON [ao].[StandardDeliveryArea] ([EPAOrganisationIdentifier], [StandardCode], [DeliveryAreaId]);
+   ON [ao].[EpaOrganisationStandardDeliveryArea] ([EPAOrganisationIdentifier], [StandardCode], [DeliveryAreaId]);
 
