@@ -106,4 +106,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Views\CertificateAddressSummary\" />
+  </ItemGroup>
 </Project>

@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> AddressSummary()
         {
-            var certificateAddressViewModel = await LoadViewModel<CertificateAddressViewModel>("~/Views/CertificateAddressSummary/AddressSummary.cshtml");
+            var certificateAddressViewModel = await LoadViewModel<CertificateAddressViewModel>("~/Views/Certificate/AddressSummary.cshtml");
             return certificateAddressViewModel;
         }
 

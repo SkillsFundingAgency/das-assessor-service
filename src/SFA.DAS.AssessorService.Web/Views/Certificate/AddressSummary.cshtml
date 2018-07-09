@@ -58,7 +58,7 @@
                         <span class="form-label-bold">@Localizer["Employer"]</span>
                         <span class="error-message" asp-validation-for="Employer"></span>
                     </label>
-                    <input autocomplete="off" class="form-control" name="Employer" sfa-validation-for="Employer" sfa-validationerror-class="form-control-error" asp-for="Employer" type="text" />
+                    <span>@Model.Employer</span>
                 </div>
                 
                 <button type="submit" class="button">@Localizer["ContinueButton"]</button>

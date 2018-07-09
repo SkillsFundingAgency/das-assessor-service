@@ -18,7 +18,8 @@
             <a asp-controller="CertificateDate" asp-action="Date" class="link-back">Back</a>
         }
 
-        <form class="apprentice-address-form" type="post" asp-controller="CertificateAddress">
+        <form class="apprentice-address-form" type="post" asp-controller="CertificateAddress"
+              asp-action="Address">
             @Html.HiddenFor(c => c.Id)
 
             @* hidden with css by default *@

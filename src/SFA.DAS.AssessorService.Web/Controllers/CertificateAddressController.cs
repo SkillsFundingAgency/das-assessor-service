@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -33,8 +34,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
             var certificateAddressViewModel  = await LoadViewModel<CertificateAddressViewModel>("~/Views/Certificate/Address.cshtml");
-
-            certificateAddressViewModel = await UpdatePreviousAddresssesForViewModel(certificateAddressViewModel, username);
+            certificateAddressViewModel = await InitialisePreviousAddresssesForView(certificateAddressViewModel, username);
 
             return certificateAddressViewModel;
         }
@@ -45,10 +45,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
             var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
-            var viewModel = new CertificateAddressViewModel();
+            var viewModel = await LoadViewModel<CertificateAddressViewModel>("~/Views/Certificate/Address.cshtml");
+            var viewResult = viewModel as ViewResult;
+            var certificateAddress = viewResult.Model as CertificateAddressViewModel;
 
-            var certificateAddressViewModel = View("~/Views/Certificate/Address.cshtml", viewModel);
-            certificateAddressViewModel = await UpdatePreviousAddresssesForViewModel(certificateAddressViewModel, username);
+            certificateAddress.AddressLine1 = String.Empty;
+            certificateAddress.AddressLine2 = String.Empty;
+            certificateAddress.AddressLine3 = String.Empty;
+            certificateAddress.City = String.Empty;
+            certificateAddress.Postcode = String.Empty;
+
+            var certificateAddressViewModel = View("~/Views/Certificate/Address.cshtml", certificateAddress);
+            certificateAddressViewModel = await InitialisePreviousAddresssesForView(certificateAddressViewModel, username);
 
             return certificateAddressViewModel;
         }
@@ -56,12 +64,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpPost(Name = "Address")]
         public async Task<IActionResult> Address(CertificateAddressViewModel vm)
         {
-            if (vm.SelectPreviousAddress)
-            {
-                var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
-                var certificatePreviousAddress = await _certificateApiClient.GetContactPreviousAddress(username);
+            var username = _contextAccessor.HttpContext.User
+                .FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
-                vm = UpdateViewModelWithPreviousAddress(vm, certificatePreviousAddress);
+            if (vm.SelectPreviousAddress)
+            {             
+                var certificatePreviousAddress = await _certificateApiClient.GetContactPreviousAddress(username);
+                vm = UpdateViewModelWithPreviousAddress(vm, certificatePreviousAddress);             
+            }
+
+            if (!ModelState.IsValid)
+            {             
+                vm = await InitialisePreviousAddresssesForViewModel(vm, username);
             }
 
             return await SaveViewModel(vm,
@@ -81,7 +95,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return vm;
         }
 
-        private async Task<ViewResult> UpdatePreviousAddresssesForViewModel(IActionResult certificateAddressViewModel,
+        private async Task<ViewResult> InitialisePreviousAddresssesForView(IActionResult certificateAddressViewModel,
             string  username)
         {
             var certificatePreviousAddress = await _certificateApiClient.GetContactPreviousAddress(username);
@@ -94,6 +108,19 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 certificatePreviousAddresses.Select(q => new CertificatePreviousAddressViewModel(q)).ToList();
 
             return viewResult;
+        }
+
+        private async Task<CertificateAddressViewModel> InitialisePreviousAddresssesForViewModel(CertificateAddressViewModel certificateAddressViewModel,
+            string username)
+        {
+            var certificatePreviousAddress = await _certificateApiClient.GetContactPreviousAddress(username);
+            var certificatePreviousAddresses = await _certificateApiClient.GetPreviousAddressess(username);
+
+            certificateAddressViewModel.CertificateContactPreviousAddress = new CertificatePreviousAddressViewModel(certificatePreviousAddress);
+            certificateAddressViewModel.CertificatePreviousAddressViewModels =
+                certificatePreviousAddresses.Select(q => new CertificatePreviousAddressViewModel(q)).ToList();
+
+            return certificateAddressViewModel;
         }
     }
 }
