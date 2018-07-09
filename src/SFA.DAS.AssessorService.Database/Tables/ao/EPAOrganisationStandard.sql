@@ -2,15 +2,16 @@
 (
 	[Id] [uniqueidentifier] NOT NULL DEFAULT NEWID(),
 	[EPAOrganisationIdentifier] [nvarchar](7) NOT NULL, 
-	[StandardCode] [int] NOT NULL,
-	[EffectiveFrom] [DateTime] NOT NULL,
+	[StandardCode] NVARCHAR(10) NOT NULL,
+	[EffectiveFrom] [DateTime] NULL,
 	[EffectiveTo] [DateTime] NULL,
 	[ContactName] [nvarchar](200) NULL,
 	[ContactPhoneNumber] [nvarchar] (50) NULL,
 	[ContactEmail] [nvarchar] (200) NULL, 
 	[DateStandardApprovedOnRegister] [DateTime] NULL,
 	[Comments] [NVARCHAR] (500) NULL,
-	CONSTRAINT [PK_Standard] PRIMARY KEY ([Id]),
+	[StatusId] INT NOT NULL, 
+    CONSTRAINT [PK_Standard] PRIMARY KEY ([Id]),
 ) ON [PRIMARY]
 
 GO
