@@ -3,7 +3,7 @@ CREATE TABLE [ao].[EpaOrganisationStandardDeliveryArea]
 (
 	[Id] [uniqueidentifier] NOT NULL DEFAULT NEWID(),
 	[EPAOrganisationIdentifier] [nvarchar](7) NOT NULL,
-	[StandardCode] [INT] NOT NULL, 
+	[StandardCode] NVARCHAR(10) NOT NULL, 
 	[DeliveryAreaId] [UNIQUEIDENTIFIER] NOT NULL,
 	[Comments] [NVARCHAR] (500) NULL,
 	CONSTRAINT [PK_StandardDeliveryArea] PRIMARY KEY ([Id]),
