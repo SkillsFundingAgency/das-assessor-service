@@ -19,8 +19,8 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                 if (connection.State != ConnectionState.Open)
                     connection.Open();
                 
-                connection.Execute("DELETE FROM [ao].[StandardDeliveryArea]");
-                connection.Execute("DELETE FROM [ao].[EPAStandard]");
+                connection.Execute("DELETE FROM [ao].[EpaOrganisationStandardDeliveryArea]");
+                connection.Execute("DELETE FROM [ao].[EPAOrganisationStandard]");
                 connection.Execute("DELETE FROM [ao].[EPAOrganisation]");
                 connection.Execute("DELETE FROM [ao].[OrganisationType]");
                 connection.Execute("DELETE FROM [ao].[DeliveryArea]");
@@ -158,20 +158,20 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
 
         }
 
-        public void WriteEpaStandards(List<EpaStandard> standards)
+        public void WriteEpaOrganisationStandards(List<EpaOrganisationStandard> standards)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 if (connection.State != ConnectionState.Open)
                     connection.Open();
 
-                var currentNumber = connection.ExecuteScalar("select count(0) from [ao].[EpaStandard]").ToString();
+                var currentNumber = connection.ExecuteScalar("select count(0) from [ao].[EpaOrganisationStandard]").ToString();
                 if (currentNumber == "0")
                 {
 
                     foreach (var standard in standards)
                     {
-                        connection.Execute(@"INSERT INTO [ao].[EpaStandard]
+                        connection.Execute(@"INSERT INTO [ao].[EpaOrganisationStandard]
                                        ([Id]
                                        ,[EPAOrganisationIdentifier]
                                        ,[StandardCode]
@@ -201,17 +201,17 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
 
         }
 
-        public void WriteStandardDeliveryAreas(List<StandardDeliveryArea> standardDeliveryAreas)
+        public void WriteStandardDeliveryAreas(List<EpaOrganisationStandardDeliveryArea> organisationStandardDeliveryAreas)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 if (connection.State != ConnectionState.Open)
                     connection.Open();
 
-                var currentNumber = connection.ExecuteScalar("select count(0) from [ao].[StandardDeliveryArea]").ToString();
+                var currentNumber = connection.ExecuteScalar("select count(0) from [ao].[EpaOrganisationStandardDeliveryArea]").ToString();
                 if (currentNumber == "0")
                 {
-                    connection.Execute(@"INSERT INTO [ao].[StandardDeliveryArea]
+                    connection.Execute(@"INSERT INTO [ao].[EpaOrganisationStandardDeliveryArea]
                                            ([Id]
                                            ,[EPAOrganisationIdentifier]
                                            ,[StandardCode]
@@ -223,7 +223,7 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                                            ,@StandardCode
                                            ,@DeliveryAreaId
                                            ,@Comments)",
-                                            standardDeliveryAreas);
+                                            organisationStandardDeliveryAreas);
                 }
                 connection.Close();
             }

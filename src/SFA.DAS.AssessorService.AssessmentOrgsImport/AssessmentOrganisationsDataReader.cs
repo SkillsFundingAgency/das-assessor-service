@@ -181,9 +181,9 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
             return standards;
         }
 
-        public List<EpaStandard> HarvestEpaStandards(ExcelPackage package, List<EpaOrganisation> epaOrganisations, List<Standard> standards)
+        public List<EpaOrganisationStandard> HarvestEpaStandards(ExcelPackage package, List<EpaOrganisation> epaOrganisations, List<Standard> standards)
         {
-            var epaStandards = new List<EpaStandard>();
+            var epaStandards = new List<EpaOrganisationStandard>();
             var worksheet = GetWorksheet(package, EpaStandardsWorkSheetName);
             for (var i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
             {
@@ -207,7 +207,7 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                 var comments = worksheet.Cells[i, 11].Value?.ToString();
 
                 epaStandards.Add(
-                    new EpaStandard
+                    new EpaOrganisationStandard
                     {
                         Id = Guid.NewGuid(),
                         EpaOrganisationIdentifier =  epaOrganisationIdentifier,
@@ -225,9 +225,9 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
             return epaStandards;
         }
 
-        public List<StandardDeliveryArea> HarvestStandardDeliveryAreas(ExcelPackage package, List<EpaOrganisation> epaOrganisations, List<Standard> standards, List<DeliveryArea> deliveryAreas)
+        public List<EpaOrganisationStandardDeliveryArea> HarvestStandardDeliveryAreas(ExcelPackage package, List<EpaOrganisation> epaOrganisations, List<Standard> standards, List<DeliveryArea> deliveryAreas)
         {
-            var standardDeliveryAreas = new List<StandardDeliveryArea>();
+            var standardDeliveryAreas = new List<EpaOrganisationStandardDeliveryArea>();
             var worksheet = GetWorksheet(package, DeliveryAreasWorkSheetName);
             for (var i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
             {
@@ -263,7 +263,7 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
 
                 foreach (var delArea in deliveryAreas.Where(x => deliveryArea.Contains(x.Area) || deliveryArea == "All"))
                 {
-                    var standardDeliveryArea = new StandardDeliveryArea
+                    var standardDeliveryArea = new EpaOrganisationStandardDeliveryArea
                     {
                         Id = Guid.NewGuid(),
                         EpaOrganisationIdentifier = epaOrganisationIdentifier,
