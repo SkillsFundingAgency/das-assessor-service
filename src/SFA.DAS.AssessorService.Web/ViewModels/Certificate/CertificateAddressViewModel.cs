@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
@@ -45,6 +46,27 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             certificate.CertificateData = JsonConvert.SerializeObject(data);
 
             return certificate;
+        }
+
+        public void EmptyAddressDetails()
+        {
+            this.AddressLine1 = String.Empty;
+            this.AddressLine2 = String.Empty;
+            this.AddressLine3 = String.Empty;
+            this.City = String.Empty;
+            this.Postcode = String.Empty;
+        }
+
+        public CertificateAddressViewModel CopyFromCertificateAddress(
+            CertificateAddress certificatePreviousAddress)
+        {
+            this.AddressLine1 = certificatePreviousAddress.AddressLine1;
+            this.AddressLine2 = certificatePreviousAddress.AddressLine2;
+            this.AddressLine3 = certificatePreviousAddress.AddressLine3;
+            this.City = certificatePreviousAddress.City;
+            this.Postcode = certificatePreviousAddress.PostCode;
+
+            return this;
         }
     }
 }
