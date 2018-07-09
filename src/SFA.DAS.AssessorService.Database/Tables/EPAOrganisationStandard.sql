@@ -1,4 +1,4 @@
-﻿CREATE TABLE [ao].[EpaStandard]
+﻿CREATE TABLE [ao].[EpaOrganisationStandard]
 (
 	[Id] [uniqueidentifier] NOT NULL DEFAULT NEWID(),
 	[EPAOrganisationIdentifier] [nvarchar](7) NOT NULL, 
@@ -16,17 +16,17 @@
 GO
 
 
-ALTER TABLE [ao].[EpaStandard]
+ALTER TABLE [ao].[EpaOrganisationStandard]
 ADD CONSTRAINT FK_OrganisationIdentifierStandard
 FOREIGN KEY (EPAOrganisationIdentifier) REFERENCES [ao].[EPAOrganisation] (EPAOrganisationIdentifier);
 
 GO
 
 CREATE INDEX IX_standardOrgIdStandardCode
-   ON [ao].[EpaStandard] (EPAOrganisationIdentifier, StandardCode);
+   ON [ao].[EpaOrganisationStandard] (EPAOrganisationIdentifier, StandardCode);
 
 GO
 
 
 CREATE UNIQUE NONCLUSTERED INDEX IX_standardOrgIdStandardCodeEffectiveFrom
-   ON [ao].[EpaStandard] (EPAOrganisationIdentifier, StandardCode, EffectiveFrom);   
+   ON [ao].[EpaOrganisationStandard] (EPAOrganisationIdentifier, StandardCode, EffectiveFrom);   
