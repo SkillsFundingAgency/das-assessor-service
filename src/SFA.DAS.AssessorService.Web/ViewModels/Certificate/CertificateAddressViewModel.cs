@@ -14,6 +14,8 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         public string City { get; set; }
         public string Postcode { get; set; }
 
+        public bool SelectPreviousAddress { get; set; }
+
         public CertificatePreviousAddressViewModel CertificateContactPreviousAddress { get; set; }
 
         public List<CertificatePreviousAddressViewModel> CertificatePreviousAddressViewModels { get; set; }

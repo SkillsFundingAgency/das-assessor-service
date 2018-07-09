@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
 
@@ -33,7 +34,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             var certificateAddressViewModel  = await LoadViewModel<CertificateAddressViewModel>("~/Views/Certificate/Address.cshtml");
 
-            certificateAddressViewModel = await UpdateViewModelWithPreviousAddress(certificateAddressViewModel, username);
+            certificateAddressViewModel = await UpdatePreviousAddresssesForViewModel(certificateAddressViewModel, username);
 
             return certificateAddressViewModel;
         }
@@ -47,23 +48,40 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var viewModel = new CertificateAddressViewModel();
 
             var certificateAddressViewModel = View("~/Views/Certificate/Address.cshtml", viewModel);
-            certificateAddressViewModel = await UpdateViewModelWithPreviousAddress(certificateAddressViewModel, username);
+            certificateAddressViewModel = await UpdatePreviousAddresssesForViewModel(certificateAddressViewModel, username);
 
             return certificateAddressViewModel;
         }
 
-
         [HttpPost(Name = "Address")]
         public async Task<IActionResult> Address(CertificateAddressViewModel vm)
         {
-            //TempData.Put("AddressInformation", vm);
-            //return RedirectToAction("AddressSummary", "CertificateAddressSummary");
+            if (vm.SelectPreviousAddress)
+            {
+                var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
+                var certificatePreviousAddress = await _certificateApiClient.GetContactPreviousAddress(username);
+
+                vm = UpdateViewModelWithPreviousAddress(vm, certificatePreviousAddress);
+            }
+
             return await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/Certificate/Address.cshtml",
                 nextAction: RedirectToAction("AddressSummary", "CertificateAddressSummary"), action: CertificateActions.Address);
         }
 
-        private async Task<ViewResult> UpdateViewModelWithPreviousAddress(IActionResult certificateAddressViewModel,
+        private CertificateAddressViewModel UpdateViewModelWithPreviousAddress(CertificateAddressViewModel vm,
+            CertificateAddress certificatePreviousAddress)
+        {
+            vm.AddressLine1 = certificatePreviousAddress.AddressLine1;
+            vm.AddressLine2 = certificatePreviousAddress.AddressLine2;
+            vm.AddressLine3 = certificatePreviousAddress.AddressLine3;
+            vm.City = certificatePreviousAddress.City;
+            vm.Postcode = certificatePreviousAddress.PostCode;
+
+            return vm;
+        }
+
+        private async Task<ViewResult> UpdatePreviousAddresssesForViewModel(IActionResult certificateAddressViewModel,
             string  username)
         {
             var certificatePreviousAddress = await _certificateApiClient.GetContactPreviousAddress(username);
