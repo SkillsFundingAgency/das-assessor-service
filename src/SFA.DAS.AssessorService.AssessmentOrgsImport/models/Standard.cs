@@ -5,7 +5,7 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport.models
     public class Standard
     {
         public Guid Id { get; set; }
-        public int StandardCode { get; set; }
+        public string StandardCode { get; set; }
         public int Version { get; set; }
         public string StandardName { get; set; }
         public int StandardSectorCode { get; set; }
@@ -22,5 +22,6 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport.models
         public string CreatedBy { get; set; }
         public DateTime? ModifiedOn { get; set; }
         public string ModifiedBy { get; set; }
+        public int StatusId { get; set; }
     }
 }

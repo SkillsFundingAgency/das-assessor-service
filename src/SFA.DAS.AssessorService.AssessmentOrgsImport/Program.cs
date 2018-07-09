@@ -48,24 +48,25 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                 {
                     using (var package = new ExcelPackage(stream))
                     {
+                        var statusCodes = repo.WriteStatusCodes();
                         var deliveryAreas = reader.HarvestDeliveryAreas(package);
                         repo.WriteDeliveryAreas(deliveryAreas);
 
                         var organisationTypes = reader.HarvestOrganisationTypes(package);
                         repo.WriteOrganisationTypes(organisationTypes);
 
-                        var organisations = reader.HarvestEpaOrganisations(package, organisationTypes);
+                        var organisations = reader.HarvestEpaOrganisations(package, organisationTypes, statusCodes);
                         repo.WriteOrganisations(organisations);
 
-                        var standards = reader.HarvestStandards(package);
+                        var standards = reader.HarvestStandards(package, statusCodes);
                         repo.WriteStandards(standards);
 
-                        var epaStandards = reader.HarvestEpaStandards(package, organisations, standards);
+                        var epaStandards = reader.HarvestEpaStandards(package, organisations, standards, statusCodes);
                         repo.WriteEpaOrganisationStandards(epaStandards);
 
-                        var standardDeliveryAreas =
-                            reader.HarvestStandardDeliveryAreas(package, organisations, standards, deliveryAreas);
-                        repo.WriteStandardDeliveryAreas(standardDeliveryAreas);
+                        //var standardDeliveryAreas =
+                        //    reader.HarvestStandardDeliveryAreas(package, organisations, standards, deliveryAreas);
+                        //repo.WriteStandardDeliveryAreas(standardDeliveryAreas);
                     }
                 }
             }

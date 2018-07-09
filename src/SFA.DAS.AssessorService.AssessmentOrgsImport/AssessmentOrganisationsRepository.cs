@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
@@ -46,6 +47,33 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
             }
         }
 
+        public List<Status> WriteStatusCodes()
+        {
+            var statuses = new List<Status>
+            {
+                new Status {Id = 1, StatusName = "active"},
+                new Status {Id = 2, StatusName = "not released"},
+                new Status {Id = 3, StatusName = "deleted"}
+            };
+
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    connection.Open();
+
+                var currentNumber = connection.ExecuteScalar("select count(0) from [ao].[Status]").ToString();
+                if (currentNumber == "0")
+                {
+                    connection.Execute("INSERT INTO [ao].[Status] ([Id] ,[StatusName]) VALUES (@id, @StatusName)",
+                        statuses);
+                }
+                connection.Close();
+            }
+
+
+            return statuses;
+        }
+
         public void WriteOrganisationTypes(List<TypeOfOrganisation> organisationTypes)
         {
             using (var connection = new SqlConnection(_connectionString))
@@ -84,7 +112,8 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                                         ,[ContactAddress4]
                                         ,[ContactPostcode]
                                         ,[UKPRN]
-                                        ,[LegalName])
+                                        ,[LegalName]
+                                        ,[StatusId])
                                     VALUES
                                         (@Id
                                         ,@EpaOrganisationIdentifier
@@ -97,7 +126,8 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                                         ,@ContactAddress4
                                         ,@ContactPostcode
                                         ,@Ukprn
-                                        ,@LegalName)", 
+                                        ,@LegalName
+                                        ,@StatusId)", 
                                         organisations);
                 }
                 connection.Close();
@@ -132,7 +162,8 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                                    ,[CreatedOn]
                                    ,[CreatedBy]
                                    ,[ModifiedOn]
-                                   ,[ModifiedBy])
+                                   ,[ModifiedBy]
+                                   ,[StatusId])
                              VALUES
                                    (@Id
                                    ,@StandardCode
@@ -150,7 +181,8 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                                    ,@CreatedOn
                                    ,@CreatedBy
                                    ,@ModifiedOn
-                                   ,@ModifiedBy)",
+                                   ,@ModifiedBy
+                                   ,@StatusId)",
                             standards);
                 }
                 connection.Close();
@@ -181,7 +213,8 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                                        ,[ContactPhoneNumber]
                                        ,[ContactEmail]
                                        ,[DateStandardApprovedOnRegister]
-                                       ,[Comments])
+                                       ,[Comments]
+                                        ,[StatusId])
                                  VALUES
                                        (@Id
                                        ,@EPAOrganisationIdentifier
@@ -192,7 +225,8 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                                        ,@ContactPhoneNumber
                                        ,@ContactEmail
                                        ,@DateStandardApprovedOnRegister
-                                       ,@Comments)",
+                                       ,@Comments
+                                        ,@StatusId)",
                             standard);
                     }
                 }

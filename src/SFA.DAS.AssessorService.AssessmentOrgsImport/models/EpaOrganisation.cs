@@ -16,5 +16,6 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport.models
         public string ContactPostcode { get; set; }
         public int? Ukprn { get; set; }
         public string  LegalName { get; set; }
+        public int StatusId { get; set; }
     }
 }
