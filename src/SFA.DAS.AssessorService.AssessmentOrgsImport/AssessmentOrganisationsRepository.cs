@@ -26,6 +26,7 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                 connection.Execute("DELETE FROM [ao].[OrganisationType]");
                 connection.Execute("DELETE FROM [ao].[DeliveryArea]");
                 connection.Execute("DELETE FROM [ao].[Standard]");
+                connection.Execute("DELETE FROM [ao].[Status]");
 
                 connection.Close();
             }

@@ -64,9 +64,10 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                         var epaStandards = reader.HarvestEpaStandards(package, organisations, standards, statusCodes);
                         repo.WriteEpaOrganisationStandards(epaStandards);
 
-                        //var standardDeliveryAreas =
-                        //    reader.HarvestStandardDeliveryAreas(package, organisations, standards, deliveryAreas);
-                        //repo.WriteStandardDeliveryAreas(standardDeliveryAreas);
+                        var standardDeliveryAreas =
+                            reader.HarvestStandardDeliveryAreas(package, organisations, standards, deliveryAreas);
+
+                        repo.WriteStandardDeliveryAreas(standardDeliveryAreas);
                     }
                 }
             }
