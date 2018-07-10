@@ -9,13 +9,9 @@
     <None Remove="Services\**" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="inactive_app_offline_private_beta.htm" />
     <None Remove="inactive_app_offline_public_beta.htm" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="inactive_app_offline_private_beta.htm">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="inactive_app_offline_public_beta.htm">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
