@@ -179,11 +179,19 @@ namespace SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs
             }
         }
 
+<<<<<<< HEAD
         public async Task<List<Standard>> GetAllStandards()
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/standards"))
             {
                 return await RequestAndDeserialiseAsync<List<Standard>>(request);
+=======
+        public async Task<Provider> GetProvider(long providerUkPrn)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/providers/{providerUkPrn}"))
+            {
+                return await RequestAndDeserialiseAsync<Provider>(request);
+>>>>>>> master
             }
         }
     }
