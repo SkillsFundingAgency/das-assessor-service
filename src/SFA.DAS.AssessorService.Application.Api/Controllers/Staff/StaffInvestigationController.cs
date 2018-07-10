@@ -4,35 +4,33 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Handlers.Staff;
-using SFA.DAS.AssessorService.Domain.Paging;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
 {
     [Authorize]
-    [Route("api/v1/staffsearch")]
+    [Route("api/v1/staffinvestigation")]
     [ValidateBadRequest]
-    public class StaffSearchController : Controller
+    public class StaffInvestigationController : Controller
     {
         private readonly IMediator _mediator;
         
 
-        public StaffSearchController(IMediator mediator)
+        public StaffInvestigationController(IMediator mediator)
         {
             _mediator = mediator;
         }
 
-        [HttpGet(Name="StaffSearch")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(PaginatedList<StaffSearchResult>))]
+        [HttpGet]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(InvestigationResult))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> StaffSearch(string searchQuery, int page = 0)
+        public async Task<IActionResult> InvestigateSearch(string surname, long uln, string epaorgid, string username)
         {
-            return Ok(await _mediator.Send(new StaffSearchRequest(searchQuery, page)));
+            return Ok(await _mediator.Send(new InvestigateSearchRequest(surname, uln, epaorgid, username)));
         }
     }
 }
