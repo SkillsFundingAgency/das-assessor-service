@@ -12,6 +12,7 @@ using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
+using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 {
@@ -48,7 +49,20 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             _logger.LogInformation("CreateNewCertificate Before Get Standard from API");
             var standard = await _assessmentOrgsApiClient.GetStandard(ilr.StdCode);
             _logger.LogInformation("CreateNewCertificate Before Get Provider from API");
-            var provider = await _assessmentOrgsApiClient.GetProvider(ilr.UkPrn);
+            Provider provider;
+            try
+            {
+                provider = await _assessmentOrgsApiClient.GetProvider(ilr.UkPrn);
+            }
+            catch (Exception e)
+            {
+                // see whether there are any previous certificates with this ukrpn and a ProviderName....
+                var previousProviderName = await _certificateRepository.GetPreviousProviderName(ilr.UkPrn);
+                provider = previousProviderName != null
+                    ? new Provider {ProviderName = previousProviderName}
+                    : new Provider {ProviderName = "Unknown"};
+            }
+            
             var certData = new CertificateData()
             {
                 LearnerGivenNames = ilr.GivenNames,
