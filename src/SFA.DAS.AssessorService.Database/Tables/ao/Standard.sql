@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [ao].[Standard]
 (
-	[id] uniqueidentifier NOT NULL PRIMARY KEY,
+	[Id] [int] IDENTITY (1,1) PRIMARY KEY,
 	[StandardCode] NVARCHAR(10) NOT NULL,
 	[Version] INT NULL,
 	[StandardName] [NVARCHAR] (256) NOT NULL,
