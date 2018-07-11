@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -65,9 +66,29 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 }
                 else
                 {
-                    
+                    // If surname is good, get epao's standards and check standard code against ilr record.
+                    var standards =
+                        (await _assessmentOrgsApiClient.FindAllStandardsByOrganisationIdAsync(
+                            org.EndPointAssessorOrganisationId)).Select(s => s.StandardCode).ToList();
+
+                    var intStandards = new List<int>();
+                    standards.ForEach(s =>
+                    {
+                        if (int.TryParse(s, out var intStandard))
+                        {
+                            intStandards.Add(intStandard);
+                        }
+                    });
+
+                    if (!intStandards.Contains(resultByIlr.First().StdCode))
+                    {
+                        return new InvestigationResult()
+                        {
+                            Explanation =
+                                $"ULN exists, but EPAO does not offer Standard Code: {resultByIlr.First().StdCode} as found on the learner record."
+                        };
+                    }
                 }
-            // If surname is good, get epao's standards and check standard code against ilr record.
             }
 
 
