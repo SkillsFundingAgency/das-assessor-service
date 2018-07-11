@@ -4,7 +4,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
 {
     public class OrganisationTypeResponse
     {
-        public Guid Id { get; set; }
+        public int Id { get; set; }
         public string OrganisationType { get; set; }
     }
 }

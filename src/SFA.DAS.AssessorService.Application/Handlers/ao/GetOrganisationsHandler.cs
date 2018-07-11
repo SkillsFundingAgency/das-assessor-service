@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -15,8 +12,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
         {
             var organisationTypes = new List<OrganisationTypeResponse>
             {
-                new OrganisationTypeResponse {Id = Guid.NewGuid(), OrganisationType = "abc"},
-                new OrganisationTypeResponse {Id = Guid.NewGuid(), OrganisationType = "def"}
+                new OrganisationTypeResponse {Id = 1, OrganisationType = "abc"},
+                new OrganisationTypeResponse {Id = 2, OrganisationType = "def"}
             };
 
             return organisationTypes;
