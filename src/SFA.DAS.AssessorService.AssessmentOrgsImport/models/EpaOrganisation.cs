@@ -4,10 +4,10 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport.models
 {
     public class EpaOrganisation
     {
-        public Guid Id { get; set; }
+        public int Id { get; set; }
         public string EpaOrganisationIdentifier { get; set; }
         public string EpaOrganisationName {get; set;}
-        public Guid OrganisationTypeId { get; set; }
+        public int OrganisationTypeId { get; set; }
         public string WebsiteLink { get; set; }
         public string ContactAddress1 { get; set; }
         public string ContactAddress2 { get; set; }

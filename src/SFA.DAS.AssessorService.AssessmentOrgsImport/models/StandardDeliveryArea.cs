@@ -4,10 +4,10 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport.models
 {
     public class EpaOrganisationStandardDeliveryArea
     {
-        public Guid Id { get; set; }
+        public int Id { get; set; }
         public string EpaOrganisationIdentifier { get; set; }
         public string StandardCode { get; set; }
-        public Guid DeliveryAreaId { get; set; }
+        public int DeliveryAreaId { get; set; }
         public string Comments { get; set; }
     }
 }

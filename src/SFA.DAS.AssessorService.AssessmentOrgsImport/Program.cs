@@ -49,25 +49,12 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                     using (var package = new ExcelPackage(stream))
                     {
                         var statusCodes = repo.WriteStatusCodes();
-                        var deliveryAreas = reader.HarvestDeliveryAreas(package);
-                        repo.WriteDeliveryAreas(deliveryAreas);
-
-                        var organisationTypes = reader.HarvestOrganisationTypes(package);
-                        repo.WriteOrganisationTypes(organisationTypes);
-
-                        var organisations = reader.HarvestEpaOrganisations(package, organisationTypes, statusCodes);
-                        repo.WriteOrganisations(organisations);
-
-                        var standards = reader.HarvestStandards(package, statusCodes);
-                        repo.WriteStandards(standards);
-
-                        var epaStandards = reader.HarvestEpaStandards(package, organisations, standards, statusCodes);
-                        repo.WriteEpaOrganisationStandards(epaStandards);
-
-                        var standardDeliveryAreas =
-                            reader.HarvestStandardDeliveryAreas(package, organisations, standards, deliveryAreas);
-
-                        repo.WriteStandardDeliveryAreas(standardDeliveryAreas);
+                        var deliveryAreas = repo.WriteDeliveryAreas(reader.HarvestDeliveryAreas(package));
+                        var organisationTypes = repo.WriteOrganisationTypes(reader.HarvestOrganisationTypes(package));
+                        var organisations = repo.WriteOrganisations(reader.HarvestEpaOrganisations(package, organisationTypes, statusCodes));
+                        var standards = repo.WriteStandards(reader.HarvestStandards(package, statusCodes));
+                        repo.WriteEpaOrganisationStandards(reader.HarvestEpaOrganisationStandards(package, organisations, standards, statusCodes));
+                        repo.WriteStandardDeliveryAreas(reader.HarvestStandardDeliveryAreas(package, organisations, standards, deliveryAreas));
                     }
                 }
             }

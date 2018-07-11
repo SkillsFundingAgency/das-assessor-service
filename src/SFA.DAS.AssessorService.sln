@@ -65,7 +65,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.NLo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Application.Api.ReprintTest", "SFA.DAS.AssessorService.Application.Api.ReprintTest\SFA.DAS.AssessorService.Application.Api.ReprintTest.csproj", "{B674CFBA-A620-435E-8A04-A4DA6A0E764A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.AssessmentOrgsImport", "SFA.DAS.AssessorService.AssessmentOrgsImport\SFA.DAS.AssessorService.AssessmentOrgsImport.csproj", "{E38C445C-9273-4F44-97DE-61D396711048}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.AssessmentOrgsImport", "SFA.DAS.AssessorService.AssessmentOrgsImport\SFA.DAS.AssessorService.AssessmentOrgsImport.csproj", "{E38C445C-9273-4F44-97DE-61D396711048}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
+using System.Linq;
 using Dapper;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 using SFA.DAS.AssessorService.AssessmentOrgsImport.models;
@@ -32,8 +33,9 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
             }
         }
 
-        public void WriteDeliveryAreas(List<DeliveryArea> deliveryAreas)
+        public List<DeliveryArea> WriteDeliveryAreas(List<DeliveryArea> deliveryAreas)
         {
+
             using (var connection = new SqlConnection(_connectionString))
             {
                 if (connection.State != ConnectionState.Open)
@@ -42,9 +44,13 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                 var currentNumber = connection.ExecuteScalar("select count(0) from [ao].[DeliveryArea]").ToString();
                 if (currentNumber == "0")
                 {
-                    connection.Execute("INSERT INTO [ao].[DeliveryArea] ([Id] ,[Area]) VALUES (@id, @Area)", deliveryAreas);
-                }
+                    connection.Execute("INSERT INTO [ao].[DeliveryArea] ([Area]) VALUES (@Area)", deliveryAreas);
+                 }
+                var delivAreas = connection.Query<DeliveryArea>("select * from [ao].[DeliveryArea]").ToList();
+
                 connection.Close();
+
+                return delivAreas;
             }
         }
 
@@ -75,7 +81,7 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
             return statuses;
         }
 
-        public void WriteOrganisationTypes(List<TypeOfOrganisation> organisationTypes)
+        public List<TypeOfOrganisation> WriteOrganisationTypes(List<TypeOfOrganisation> organisationTypes)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -85,13 +91,17 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                 var currentNumber = connection.ExecuteScalar("select count(0) from [ao].[OrganisationType]").ToString();
                 if (currentNumber == "0")
                 {
-                    connection.Execute("INSERT INTO [ao].[OrganisationType] ([Id] ,[OrganisationType]) VALUES (@id, @OrganisationType)", organisationTypes);
+                    connection.Execute("INSERT INTO [ao].[OrganisationType] ([OrganisationType]) VALUES (@OrganisationType)", organisationTypes);
                 }
+
+                var orgTypes = connection.Query<TypeOfOrganisation>("select * from [ao].[OrganisationType]").ToList();
                 connection.Close();
+
+                return orgTypes;
             }
         }
 
-        public void WriteOrganisations(List<EpaOrganisation> organisations)
+        public List<EpaOrganisation> WriteOrganisations(List<EpaOrganisation> organisations)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -102,8 +112,8 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                 if (currentNumber == "0")
                 {
                     connection.Execute(@"INSERT INTO [ao].[EPAOrganisation]
-                                        ([Id]
-                                        ,[EPAOrganisationIdentifier]
+                                        (
+                                        [EPAOrganisationIdentifier]
                                         ,[EPAOrganisationName]
                                         ,[OrganisationTypeId]
                                         ,[WebsiteLink]
@@ -116,8 +126,8 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                                         ,[LegalName]
                                         ,[StatusId])
                                     VALUES
-                                        (@Id
-                                        ,@EpaOrganisationIdentifier
+                                         (
+                                        @EpaOrganisationIdentifier
                                         ,@EpaOrganisationName
                                         ,@OrganisationTypeId
                                         ,@WebsiteLink
@@ -131,11 +141,14 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                                         ,@StatusId)", 
                                         organisations);
                 }
+                var orgs = connection.Query<EpaOrganisation>("select * from [ao].[EPAOrganisation]").ToList();
                 connection.Close();
+
+                return orgs;
             }
         }
 
-        public void WriteStandards(List<Standard> standards)
+        public List<Standard> WriteStandards(List<Standard> standards)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -147,8 +160,7 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                 {
                    
                         connection.Execute(@"INSERT INTO [ao].[Standard]
-                                   ([id]
-                                   ,[StandardCode]
+                                   ([StandardCode]
                                    ,[Version]
                                    ,[StandardName]
                                    ,[StandardSectorCode]
@@ -166,8 +178,7 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                                    ,[ModifiedBy]
                                    ,[StatusId])
                              VALUES
-                                   (@Id
-                                   ,@StandardCode
+                                   (@StandardCode
                                    ,@Version
                                    ,@StandardName
                                    ,@StandardSectorCode
@@ -186,12 +197,16 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                                    ,@StatusId)",
                             standards);
                 }
+
+                var standrds = connection.Query<Standard>("select * from [ao].[Standard]").ToList();
                 connection.Close();
+
+                return standrds;
             }
 
         }
 
-        public void WriteEpaOrganisationStandards(List<EpaOrganisationStandard> standards)
+        public void WriteEpaOrganisationStandards(List<EpaOrganisationStandard> orgStandards)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -202,11 +217,10 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                 if (currentNumber == "0")
                 {
 
-                    foreach (var standard in standards)
+                    foreach (var standard in orgStandards)
                     {
                         connection.Execute(@"INSERT INTO [ao].[EpaOrganisationStandard]
-                                       ([Id]
-                                       ,[EPAOrganisationIdentifier]
+                                       ([EPAOrganisationIdentifier]
                                        ,[StandardCode]
                                        ,[EffectiveFrom]
                                        ,[EffectiveTo]
@@ -214,11 +228,9 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                                        ,[ContactPhoneNumber]
                                        ,[ContactEmail]
                                        ,[DateStandardApprovedOnRegister]
-                                       ,[Comments]
-                                        ,[StatusId])
+                                       ,[Comments])
                                  VALUES
-                                       (@Id
-                                       ,@EPAOrganisationIdentifier
+                                       (@EPAOrganisationIdentifier
                                        ,@StandardCode
                                        ,@EffectiveFrom
                                        ,@EffectiveTo
@@ -226,12 +238,11 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                                        ,@ContactPhoneNumber
                                        ,@ContactEmail
                                        ,@DateStandardApprovedOnRegister
-                                       ,@Comments
-                                        ,@StatusId)",
+                                       ,@Comments)",
                             standard);
                     }
                 }
-                connection.Close();
+                   connection.Close();
             }
 
         }
@@ -247,19 +258,18 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                 if (currentNumber == "0")
                 {
                     connection.Execute(@"INSERT INTO [ao].[EpaOrganisationStandardDeliveryArea]
-                                           ([Id]
-                                           ,[EPAOrganisationIdentifier]
+                                           ([EPAOrganisationIdentifier]
                                            ,[StandardCode]
                                            ,[DeliveryAreaId]
                                            ,[Comments])
                                      VALUES
-                                           (@Id
-                                           ,@EPAOrganisationIdentifier
+                                           (@EPAOrganisationIdentifier
                                            ,@StandardCode
                                            ,@DeliveryAreaId
                                            ,@Comments)",
                                             organisationStandardDeliveryAreas);
                 }
+
                 connection.Close();
             }
 

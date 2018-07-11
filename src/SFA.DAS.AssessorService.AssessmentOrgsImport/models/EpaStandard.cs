@@ -4,7 +4,7 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport.models
 {
     public class EpaOrganisationStandard
     {
-        public Guid Id { get; set; }
+        public int Id { get; set; }
         public string EpaOrganisationIdentifier { get; set; }
         public string StandardCode { get; set; }
         public DateTime EffectiveFrom { get; set; }
@@ -13,8 +13,6 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport.models
         public string ContactPhoneNumber { get; set; }
         public string ContactEmail { get; set; }
         public DateTime? DateStandardApprovedOnRegister { get; set; }
-        public string Comments { get; set; }  
-        public int StatusId { get; set; }
-        
+        public string Comments { get; set; }        
     }
 }

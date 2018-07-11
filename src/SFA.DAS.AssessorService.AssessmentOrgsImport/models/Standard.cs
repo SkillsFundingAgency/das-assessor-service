@@ -4,7 +4,7 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport.models
 {
     public class Standard
     {
-        public Guid Id { get; set; }
+        public int Id { get; set; }
         public string StandardCode { get; set; }
         public int Version { get; set; }
         public string StandardName { get; set; }
