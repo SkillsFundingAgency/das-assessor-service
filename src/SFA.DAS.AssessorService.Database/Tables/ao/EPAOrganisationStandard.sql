@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [ao].[EpaOrganisationStandard]
 (
-	[Id] [uniqueidentifier] NOT NULL DEFAULT NEWID(),
+	[Id] [int] IDENTITY (1,1) PRIMARY KEY,
 	[EPAOrganisationIdentifier] [nvarchar](7) NOT NULL, 
 	[StandardCode] NVARCHAR(10) NOT NULL,
 	[EffectiveFrom] [DateTime] NULL,
@@ -10,8 +10,6 @@
 	[ContactEmail] [nvarchar] (200) NULL, 
 	[DateStandardApprovedOnRegister] [DateTime] NULL,
 	[Comments] [NVARCHAR] (500) NULL,
-	[StatusId] INT NOT NULL, 
-    CONSTRAINT [PK_Standard] PRIMARY KEY ([Id]),
 ) ON [PRIMARY]
 
 GO

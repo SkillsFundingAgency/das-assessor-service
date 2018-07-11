@@ -1,5 +1,4 @@
 ﻿CREATE TABLE [ao].[DeliveryArea](
-	[Id] [uniqueidentifier] NOT NULL DEFAULT NEWID(),
-	[Area] [nvarchar](256) NOT NULL,
-	CONSTRAINT [PK_DeliveryAreas] PRIMARY KEY ([Id]),
+	[Id] [int] IDENTITY (1,1) PRIMARY KEY,
+	[Area] [nvarchar](256) NOT NULL
 ) ON [PRIMARY] 
