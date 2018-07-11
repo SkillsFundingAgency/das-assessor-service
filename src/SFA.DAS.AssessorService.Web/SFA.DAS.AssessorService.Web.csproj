@@ -9,6 +9,14 @@
     <None Remove="Services\**" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="inactive_app_offline_public_beta.htm" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="inactive_app_offline_public_beta.htm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="6.2.2" />
     <PackageReference Include="BuildBundlerMinifier" Version="2.6.362" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="7.5.0" />

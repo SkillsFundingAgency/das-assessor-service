@@ -1,9 +1,9 @@
 ﻿CREATE TABLE [ao].[EPAOrganisation]
 (
-	[Id] [uniqueidentifier] NOT NULL DEFAULT NEWID(),
+	[Id] [int] IDENTITY (1,1) PRIMARY KEY,
 	[EPAOrganisationIdentifier] [nvarchar](7) NOT NULL, 
 	[EPAOrganisationName] [nvarchar](256) NOT NULL,
-	[OrganisationTypeId] [uniqueidentifier] NULL,   
+	[OrganisationTypeId] [int] NULL,   
 	[WebsiteLink] [nvarchar](256) NULL,
 	[ContactAddress1] [nvarchar](50) NULL,
 	[ContactAddress2] [nvarchar](50) NULL,
@@ -13,7 +13,6 @@
 	[UKPRN] [int] NULL,
 	[LegalName] [nvarchar](256) NULL,
 	[StatusId] int NOT NULL,
-	CONSTRAINT [PK_Organisation] PRIMARY KEY ([Id]),
 	CONSTRAINT IX_EPAOrganisationIdentifierOrganisation UNIQUE (EPAOrganisationIdentifier),
 	INDEX IX_OrganisationTypeId  (OrganisationTypeId),
 ) ON [PRIMARY] 
