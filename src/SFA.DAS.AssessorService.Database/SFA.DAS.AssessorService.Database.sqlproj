@@ -59,8 +59,6 @@
   <ItemGroup>
     <Folder Include="Properties" />
     <Folder Include="Tables" />
-    <Folder Include="Schema" />
-    <Folder Include="Tables\ao" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\CertificateLogs.sql" />
@@ -72,14 +70,10 @@
     <Build Include="Tables\BatchLogs.sql" />
     <Build Include="Tables\ScheduleConfigurations.sql" />
     <Build Include="Tables\SearchLogs.sql" />
-    <Build Include="schema\CreateSchema_ao.sql" />
-    <Build Include="Tables\ao\EPAOrganisation.sql" />
-    <Build Include="Tables\ao\EPAOrganisationStandard.sql" />
-    <Build Include="Tables\ao\EpaOrganisationStandardDeliveryArea.sql" />
-    <Build Include="Tables\ao\Standard.sql" />
-    <Build Include="Tables\ao\Status.sql" />
-    <Build Include="Tables\ao\DeliveryArea.sql" />
-    <Build Include="Tables\ao\OrganisationType.sql" />
+    <Build Include="Tables\DeliveryArea.sql" />
+    <Build Include="Tables\OrganisationStandard.sql" />
+    <Build Include="Tables\OrganisationStandardDeliveryArea.sql" />
+    <Build Include="Tables\OrganisationType.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
