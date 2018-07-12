@@ -1,22 +1,30 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoMapper;
 using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Entities.ao;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ao
 {
-    public class GetOrganisationsHandler : IRequestHandler<GetOrganisationsRequest, List<OrganisationTypeResponse>>
+  
+    public class GetOrganisationsHandler : IRequestHandler<GetOrganisationsRequest, List<EpaOrganisationType>>
     {
-        public async Task<List<OrganisationTypeResponse>> Handle(GetOrganisationsRequest request, CancellationToken cancellationToken)
-        {
-            var organisationTypes = new List<OrganisationTypeResponse>
-            {
-                new OrganisationTypeResponse {Id = 1, OrganisationType = "abc"},
-                new OrganisationTypeResponse {Id = 2, OrganisationType = "def"}
-            };
+        private readonly IRegisterRepository _registerRepository;
 
-            return organisationTypes;
+        public GetOrganisationsHandler(IRegisterRepository registerRepository)
+        {
+            _registerRepository = registerRepository;
+        }
+
+
+        public async Task<List<EpaOrganisationType>> Handle(GetOrganisationsRequest request, CancellationToken cancellationToken)
+        {
+            var res = await _registerRepository.GetOrganisationTypes();
+            return res.ToList();
         }
     }
 }

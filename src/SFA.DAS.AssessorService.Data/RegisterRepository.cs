@@ -8,7 +8,10 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Text;
 using System.Threading.Tasks;
+using Dapper;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -21,21 +24,24 @@ namespace SFA.DAS.AssessorService.Data
             _assessorDbContext = assessorDbContext;
         }
 
-        public Task<List<EpaOrganisationType>> GetOrganisationTypes()
+        public async Task<IEnumerable<EpaOrganisationType>> GetOrganisationTypes()
         {
             var connectionString = _assessorDbContext.Database.GetDbConnection().ConnectionString;
 
+           
+
+
+
             using (var connection = new SqlConnection(connectionString))
-                {
-                    if (connection.State != ConnectionState.Open)
-                        connection.Open();
-                    //connection.Query()
-                    var orgTypes = connection.Query<EpaOrganisationType>("select * from [ao].[OrganisationType]").ToList();
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
 
-                    connection.Close();
+                var orgTypes = connection.QueryAsync<EpaOrganisationType>("select * from [ao].[OrganisationType]").Result;
+                return orgTypes;
+            }
 
-                    return orgTypes;
-                }
+
         }
     }
 }
