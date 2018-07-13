@@ -151,7 +151,9 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 option.UseSqlServer(Configuration.SqlConnectionString);
 
                 config.For<AssessorDbContext>().Use(c => new AssessorDbContext(option.Options));
-                config.For<IDbConnection>().Use(() => new SqlConnection(Configuration.SqlConnectionString));
+
+                config.For<IDbConnection>().Use(c => new SqlConnection(Configuration.SqlConnectionString));
+
                 config.Populate(services);
             });
 

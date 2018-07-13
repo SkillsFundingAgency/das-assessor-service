@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
@@ -16,10 +19,12 @@ namespace SFA.DAS.AssessorService.Data
     public class CertificateRepository : ICertificateRepository
     {
         private readonly AssessorDbContext _context;
+        private readonly IDbConnection _connection;
 
-        public CertificateRepository(AssessorDbContext context)
+        public CertificateRepository(AssessorDbContext context, IDbConnection connection)
         {
             _context = context;
+            _connection = connection;
         }
 
         public async Task<Certificate> New(Certificate certificate)
@@ -148,6 +153,15 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<List<CertificateLog>> GetCertificateLogsFor(Guid certificateId)
         {
             return await _context.CertificateLogs.Where(l => l.CertificateId == certificateId).OrderByDescending(l => l.EventTime).ToListAsync();
+        }
+
+        public Task<string> GetPreviousProviderName(int providerUkPrn)
+        {
+            return _connection.QueryFirstOrDefaultAsync<string>(@"SELECT TOP(1) JSON_VALUE(CertificateData, '$.ProviderName') 
+                                                                  FROM Certificates 
+                                                                  WHERE ProviderUkPrn = @providerUkPrn 
+                                                                  AND JSON_VALUE(CertificateData, '$.ProviderName') IS NOT NULL 
+                                                                  ORDER BY CreatedAt DESC", new {providerUkPrn});
         }
     }
 }
