@@ -9,12 +9,7 @@
 	[Status] [nvarchar](10) NOT NULL,
 	[UpdatedAt] [datetime2](7) NULL,
 	[Username] [nvarchar](30) NOT NULL,
-	[PhoneNumber] [NVARCHAR] (50) NULL,
-	[Address1] [NVARCHAR](50) NULL,
-	[Address2] [nvarchar](50) NULL,
-	[Address3] [nvarchar](50) NULL,
-	[Address4] [nvarchar](50) NULL,
-	[Postcode] [nvarchar](8) NULL,
+	[PhoneNumber] [NVARCHAR] (50) NULL
  CONSTRAINT [PK_Contacts] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
