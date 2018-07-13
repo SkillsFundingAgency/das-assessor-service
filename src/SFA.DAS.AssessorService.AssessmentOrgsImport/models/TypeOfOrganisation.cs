@@ -6,5 +6,6 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport.models
     {
         public int Id { get; set; }
         public string OrganisationType { get; set; }
+        public string Status { get; set; }
     }
 }

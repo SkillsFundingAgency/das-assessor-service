@@ -13,7 +13,5 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
 
         public static string AccessorDbConnectionString =>
             @"Data Source=(localdb)\ProjectsV13;Initial Catalog=SFA.DAS.AssessorService.Database;Integrated Security=True; MultipleActiveResultSets=True;";
-
     }
-
 }

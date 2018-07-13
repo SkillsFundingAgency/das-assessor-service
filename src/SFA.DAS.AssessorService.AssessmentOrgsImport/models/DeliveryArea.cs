@@ -1,3 +1,4 @@
+using SFA.DAS.AssessorService.Domain.Consts;
 using System;
 
 namespace SFA.DAS.AssessorService.AssessmentOrgsImport.models
@@ -6,5 +7,6 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport.models
     {
         public int Id { get; set; }
         public string Area { get; set; }
+        public string Status {get; set;}
     }
 }

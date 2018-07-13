@@ -5,19 +5,21 @@ using System.Linq;
 using OfficeOpenXml;
 using SFA.DAS.AssessorService.AssessmentOrgsImport.exceptions;
 using SFA.DAS.AssessorService.AssessmentOrgsImport.models;
+using SFA.DAS.AssessorService.Domain.Consts;
 
 namespace SFA.DAS.AssessorService.AssessmentOrgsImport
 {
-    public class AssessmentOrganisationsReader
+    public class AssessmentOrganisationsDataHandler
     {
         private const string LookupsWorkSheetName = "Lookups";
         private const string OrganisationsWorkSheetName = "Register - Organisations";
         private const string EpaStandardsWorkSheetName = "Register - Standards";
         private const string StandardsWorkSheetName = "Standards Lookup (LARS copy)";
+
         private const string DeliveryAreasWorkSheetName = "Register - Delivery areas";
         private const int LookupsColumnDeliveryArea = 1;
         private const int LookupsColumnOrganisationType = 2;
-
+    
         public List<DeliveryArea> HarvestDeliveryAreas(ExcelPackage package)
         {
             var deliveryAreas = new List<DeliveryArea>();
@@ -31,7 +33,7 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                 if (area.ToString().ToLower() != "all")
                 {
                     
-                    deliveryAreas.Add(new DeliveryArea { Id = i -1, Area = area.ToString()});
+                    deliveryAreas.Add(new DeliveryArea { Id = i -1, Area = area.ToString(), Status = "Live" });
                 }
             }
 
@@ -53,7 +55,7 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
             {
                 var organisationType = worksheet.Cells[i, LookupsColumnOrganisationType].Value;
                 if (organisationType is null) break;
-                organisationTypes.Add(new TypeOfOrganisation {  OrganisationType = organisationType.ToString() });
+                organisationTypes.Add(new TypeOfOrganisation {  OrganisationType = organisationType.ToString(), Status = "Live" });
             }
 
             if (organisationTypes.Count == 0)
@@ -64,10 +66,9 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
             return organisationTypes;
         }
 
-        public List<EpaOrganisation> HarvestEpaOrganisations(ExcelPackage package, List<TypeOfOrganisation> organisationTypes, List<Status> statusCodes)
+        public List<EpaOrganisation> HarvestEpaOrganisations(ExcelPackage package, List<TypeOfOrganisation> organisationTypes)
         {
-            var activeStatusId = statusCodes.First(x => x.StatusName == "active").Id;
-
+          
             var organisations = new List<EpaOrganisation>();
             var worksheet = GetWorksheet(package, OrganisationsWorkSheetName);
             for (var i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
@@ -109,8 +110,8 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                 organisations.Add(
                         new EpaOrganisation
                         {
-                            EpaOrganisationIdentifier = epaOrganisationIdentifier,
-                            EpaOrganisationName = epaOrganisationName,
+                            EndPointAssessorOrganisationId = epaOrganisationIdentifier,
+                            EndPointAssessorName = epaOrganisationName,
                             OrganisationTypeId = organisationTypeId,
                             WebsiteLink = websiteLink,
                             ContactAddress1 = contactAddress1,
@@ -118,19 +119,17 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                             ContactAddress3 = contactAddress3,
                             ContactAddress4 = contactAddress4,
                             ContactPostcode = postcode,
-                            Ukprn = ukprn,
+                            EndPointAssessorUkprn = ukprn,
                             LegalName = legalName,
-                            StatusId = activeStatusId
+                            Status = "Live"
                         });
             }
 
             return organisations;
         }
         
-        public List<Standard> HarvestStandards(ExcelPackage package, List<Status> statusCodes)
-        {
-            var activeStatusId = statusCodes.First(x => x.StatusName == "active").Id;
-
+        public List<Standard> HarvestStandards(ExcelPackage package)
+        { 
             var standards = new List<Standard>();
             var worksheet = GetWorksheet(package, StandardsWorkSheetName);
 
@@ -178,32 +177,32 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                         CreatedBy = createdBy,
                         ModifiedOn = modifiedOn,
                         ModifiedBy = modifiedBy,
-                        StatusId = activeStatusId
+                        Status = "Live"
                     });
             }
 
             // This is a special case, found on row 482 of the worksheet 'Register Standards'
-            var notReleasedStatusCode = statusCodes.First(x => x.StatusName == "not released").Id;
+            
             standards.Add(new Standard
             {
                 StandardCode = "ST0597",
                 StandardName = "Technician Scientist",
                 EffectiveFrom = new DateTime(2018, 10, 01),
-                StatusId = notReleasedStatusCode
+                Status = "New"
             });
                 
             return standards;
         }
 
-        public List<EpaOrganisationStandard> HarvestEpaOrganisationStandards(ExcelPackage package, List<EpaOrganisation> epaOrganisations, List<Standard> standards, List<Status> statusCodes)
+        public List<EpaOrganisationStandard> HarvestEpaOrganisationStandards(ExcelPackage package, List<EpaOrganisation> epaOrganisations, List<Standard> standards)
         {
             var epaOrganisationStandards = new List<EpaOrganisationStandard>();
             var worksheet = GetWorksheet(package, EpaStandardsWorkSheetName);
             for (var i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
             {
                 var epaOrganisationIdentifier = worksheet.Cells[i, 1].Value?.ToString();
-
-                if (epaOrganisationIdentifier == null || epaOrganisations.All(x => x.EpaOrganisationIdentifier != epaOrganisationIdentifier))
+                var status = "Live";
+                if (epaOrganisationIdentifier == null || epaOrganisations.All(x => x.EndPointAssessorOrganisationId != epaOrganisationIdentifier))
                     continue;
 
            
@@ -212,6 +211,7 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                 if (standardName == "Technician Scientist")
                 {
                     standardCode = standards.First(x => x.StandardName == "Technician Scientist").StandardCode;
+                    status = "New";
                 }
                 else
                 {
@@ -227,10 +227,11 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                 var dateStandardApprovedOnRegister = ProcessNullableDateValue(worksheet.Cells[i, 10].Value?.ToString());
                 var comments = worksheet.Cells[i, 11].Value?.ToString();
 
+
                 epaOrganisationStandards.Add(
                     new EpaOrganisationStandard
                     {
-                        EpaOrganisationIdentifier =  epaOrganisationIdentifier,
+                        EndPointAssessorOrganisationId =  epaOrganisationIdentifier,
                         StandardCode = standardCode,
                         EffectiveFrom = effectiveFrom,
                         EffectiveTo = effectiveTo,
@@ -238,7 +239,8 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                         ContactPhoneNumber = contactPhoneNumber,
                         ContactEmail = contactEmail,
                         DateStandardApprovedOnRegister = dateStandardApprovedOnRegister,
-                        Comments = comments
+                        Comments = comments,
+                        Status = status
                     }
                     );
             }
@@ -254,7 +256,7 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
 
                 var epaOrganisationIdentifier = worksheet.Cells[i, 1].Value?.ToString();
 
-                if (epaOrganisationIdentifier == null || epaOrganisations.All(x => x.EpaOrganisationIdentifier != epaOrganisationIdentifier))
+                if (epaOrganisationIdentifier == null || epaOrganisations.All(x => x.EndPointAssessorOrganisationId != epaOrganisationIdentifier))
                     continue;
 
                 var standardCode = worksheet.Cells[i, 3].Value?.ToString();
@@ -285,13 +287,14 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                 {
                     var standardDeliveryArea = new EpaOrganisationStandardDeliveryArea
                     {
-                        EpaOrganisationIdentifier = epaOrganisationIdentifier,
+                        EndPointAssessorOrganisationId = epaOrganisationIdentifier,
                         StandardCode = standardCode,
                         DeliveryAreaId = delArea.Id,
-                        Comments = comments
+                        Comments = comments,
+                        Status = "Live"
                     };
 
-                    if (!standardDeliveryAreas.Any(x => x.EpaOrganisationIdentifier == standardDeliveryArea.EpaOrganisationIdentifier
+                    if (!standardDeliveryAreas.Any(x => x.EndPointAssessorOrganisationId == standardDeliveryArea.EndPointAssessorOrganisationId
                                                         && x.StandardCode == standardDeliveryArea.StandardCode
                                                         && x.DeliveryAreaId == standardDeliveryArea.DeliveryAreaId))
                                             {
@@ -300,6 +303,38 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                 }
             }
             return standardDeliveryAreas;
+        }
+
+        public List<OrganisationContact> GatherOrganisationContacts(List<EpaOrganisation> organisations,List<EpaOrganisationStandard> organisationStandards)
+        {
+            var contacts = new List<OrganisationContact>();
+
+            foreach (var org in organisations)
+            {
+                contacts.Add(new OrganisationContact
+                {
+                    OrganisationId = org.Id,
+                    EndPointAssessorOrganisationId = org.EndPointAssessorOrganisationId,
+                    Address1 = org.ContactAddress1,
+                    Address2 = org.ContactAddress2,
+                    Address3 = org.ContactAddress3,
+                    Address4 = org.ContactAddress4,
+                    Postcode = org.ContactPostcode,
+                    Status = "Live"
+                });
+            }
+
+            foreach (var contact in contacts)
+            {
+                var matchingOrgStandard =
+                    organisationStandards.FirstOrDefault(
+                        x => x.EndPointAssessorOrganisationId == contact.EndPointAssessorOrganisationId);
+                contact.Email = matchingOrgStandard?.ContactEmail;
+                contact.DisplayName = matchingOrgStandard?.ContactName ?? "unknown";
+                contact.PhoneNumber = matchingOrgStandard?.ContactPhoneNumber;
+            }
+
+            return contacts;
         }
 
         private static bool? ProcessYesNoValuesIntoBoolean(string integratedDegreeStandardValue)
@@ -327,7 +362,6 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
 
             return null;
         }
-
         private static int? ProcessNullableIntValue(string valueIn)
         {
             if (int.TryParse(valueIn, out int valueParsed) && valueParsed > 0)
@@ -342,7 +376,6 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
             
             throw new MissingMandatoryDataException($"Worksheet [{worksheetName}] has no suitable value for '{fieldName}' in row {rowNumber}");        
         }
-
         private static string ProcessPostcodeForExcessSpaces(object postcodeIn)
         {
             var postcode = postcodeIn?.ToString().Trim();

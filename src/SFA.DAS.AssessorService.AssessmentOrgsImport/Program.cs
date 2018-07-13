@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
 
         static void Main(string[] args)
         {
-            var reader = new AssessmentOrganisationsReader();
+            var dataHandler = new AssessmentOrganisationsDataHandler();
             var repo = new AssessmentOrganisationsRepository();
             _webClient = new WebClient();
             
@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
 
                 if (arg == "-h" || arg == "/h")
                 {
-                    Console.WriteLine("-c will tear down all the tables in the [ao] Schema.\nTHIS SHOULD ONLY BE USED AT FIRST DEPLOYMENT OR IF YOU WANT TO LOSE ALL DATA IN THOSE TABLES");
+                    Console.WriteLine("-c will tear down all the tables that are exclusive to this import.\nTHIS SHOULD ONLY BE USED AT FIRST DEPLOYMENT OR IF YOU WANT TO LOSE ALL DATA IN THOSE TABLES");
                     Console.Read();
                     return;
                 }
@@ -47,14 +47,16 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                 using (var stream = new MemoryStream(_webClient.DownloadData(new Uri(ConfigurationWrapper.AssessmentOrgsUrl))))
                 {
                     using (var package = new ExcelPackage(stream))
-                    {
-                        var statusCodes = repo.WriteStatusCodes();
-                        var deliveryAreas = repo.WriteDeliveryAreas(reader.HarvestDeliveryAreas(package));
-                        var organisationTypes = repo.WriteOrganisationTypes(reader.HarvestOrganisationTypes(package));
-                        var organisations = repo.WriteOrganisations(reader.HarvestEpaOrganisations(package, organisationTypes, statusCodes));
-                        var standards = repo.WriteStandards(reader.HarvestStandards(package, statusCodes));
-                        repo.WriteEpaOrganisationStandards(reader.HarvestEpaOrganisationStandards(package, organisations, standards, statusCodes));
-                        repo.WriteStandardDeliveryAreas(reader.HarvestStandardDeliveryAreas(package, organisations, standards, deliveryAreas));
+                    {   
+                        var deliveryAreas = repo.WriteDeliveryAreas(dataHandler.HarvestDeliveryAreas(package));
+                        var organisationTypes = repo.WriteOrganisationTypes(dataHandler.HarvestOrganisationTypes(package));
+                        var organisations = repo.WriteOrganisations(dataHandler.HarvestEpaOrganisations(package, organisationTypes));
+                        var standards = dataHandler.HarvestStandards(package);
+                        var organisationStandards = dataHandler.HarvestEpaOrganisationStandards(package, organisations, standards);
+                        repo.WriteEpaOrganisationStandards(organisationStandards);
+                        repo.WriteStandardDeliveryAreas(dataHandler.HarvestStandardDeliveryAreas(package, organisations, standards, deliveryAreas));
+                        var contacts = dataHandler.GatherOrganisationContacts(organisations, organisationStandards);
+                        repo.WriteOrganisationContacts(contacts);
                     }
                 }
             }
