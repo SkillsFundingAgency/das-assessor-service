@@ -121,7 +121,7 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                             ContactPostcode = postcode,
                             EndPointAssessorUkprn = ukprn,
                             LegalName = legalName,
-                            Status = "Live"
+                            Status = "New"
                         });
             }
 

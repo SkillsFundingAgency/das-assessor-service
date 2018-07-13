@@ -5,15 +5,20 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using Dapper;
+using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 using SFA.DAS.AssessorService.AssessmentOrgsImport.models;
+using SFA.DAS.AssessorService.Data;
 
 namespace SFA.DAS.AssessorService.AssessmentOrgsImport
 {
     public class AssessmentOrganisationsRepository
     {
+        
+
         private readonly string _connectionString = ConfigurationWrapper.AccessorDbConnectionString;
 
+   
         public void TearDownData()
         {
             using (var connection = new SqlConnection(_connectionString))
@@ -25,7 +30,7 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                 connection.Execute("DELETE FROM [OrganisationStandard]");
                 connection.Execute("DELETE FROM [OrganisationType]");
                 connection.Execute("DELETE FROM [DeliveryArea]");
-
+                connection.Execute("delete from contacts where username like 'unknown%'");
                 connection.Close();
             }
         }
@@ -108,7 +113,7 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                                         ,@EndPointAssessorUkprn
                                         ,null
                                         ,@Status
-                                        ,getdate()
+                                        ,null
                                         ,@WebsiteLink
                                         ,@OrganisationTypeId
                                         ,@LegalName)",
