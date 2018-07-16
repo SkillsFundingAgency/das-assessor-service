@@ -51,7 +51,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
                 var searchingContact = contactRepository.GetContact(request.Username).Result;
 
-                if (submittingContact.OrganisationId == searchingContact.OrganisationId)
+                if (submittingContact != null && submittingContact.OrganisationId == searchingContact.OrganisationId)
                 {
                     searchResult.ShowExtraInfo = true;
                     searchResult.OverallGrade = certificateData.OverallGrade;

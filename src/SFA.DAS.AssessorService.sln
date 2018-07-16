@@ -63,7 +63,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Pri
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.NLog.Targets.Redis", "SFA.DAS.AssessorService.NLog.Targets.Redis\SFA.DAS.AssessorService.NLog.Targets.Redis.csproj", "{93FFBB83-E16E-4F7E-93F8-446175CCF965}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.Application.Api.ReprintTest", "SFA.DAS.AssessorService.Application.Api.ReprintTest\SFA.DAS.AssessorService.Application.Api.ReprintTest.csproj", "{B674CFBA-A620-435E-8A04-A4DA6A0E764A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Application.Api.ReprintTest", "SFA.DAS.AssessorService.Application.Api.ReprintTest\SFA.DAS.AssessorService.Application.Api.ReprintTest.csproj", "{B674CFBA-A620-435E-8A04-A4DA6A0E764A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
