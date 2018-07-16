@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "SFA.DAS.AssessorService.AssessmentOrgsImport": {
+      "commandName": "Project",
+      "commandLineArgs": "-c"
+    }
+  }
+}
