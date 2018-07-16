@@ -67,6 +67,7 @@
                             <th>Action</th>
                             <th>By</th>
                             <th>Status</th>
+                            <th>Batch</th>
                             <th>Changed</th>
                         </tr>
                     </thead>
@@ -78,6 +79,7 @@
                                 <td>@log.Action</td>
                                 <td>@log.ActionBy</td>
                                 <td>@log.Status</td>
+                                <td>@log.BatchNumber</td>
                                 <td>@foreach (var change in log.DifferencesToPrevious)
                                     {
                                         <span class="bold">@(change.Key)<text>:</text></span> @change.Value<br />

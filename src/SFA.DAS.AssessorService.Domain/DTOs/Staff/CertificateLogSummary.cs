@@ -11,5 +11,6 @@ namespace SFA.DAS.AssessorService.Domain.DTOs.Staff
         public string Status { get; set; }
         public string CertificateData { get; set; }
         public Dictionary<string, string> DifferencesToPrevious { get; set; }
+        public int? BatchNumber { get; set; }
     }
 }

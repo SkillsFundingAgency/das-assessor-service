@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Data.Staff
         public async Task<List<CertificateLogSummary>> GetCertificateLogsFor(Guid certificateId)
         {
             return (await _connection.QueryAsync<CertificateLogSummary>(
-                @"SELECT EventTime, Action, c.DisplayName AS ActionBy, logs.Status, logs.CertificateData 
+                @"SELECT EventTime, Action, c.DisplayName AS ActionBy, logs.Status, logs.CertificateData, logs.BatchNumber 
                     FROM CertificateLogs logs
                     INNER JOIN Contacts c ON c.Username = logs.Username
                     WHERE CertificateId = @certificateId
