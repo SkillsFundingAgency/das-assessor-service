@@ -37,7 +37,7 @@ namespace SFA.DAS.AssessorService.Data
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
-                var orgTypes = connection.QueryAsync<EpaOrganisationType>("select * from [ao].[OrganisationType]").Result;
+                var orgTypes = connection.QueryAsync<EpaOrganisationType>("select * from [OrganisationType]").Result;
                 return orgTypes;
             }
 
