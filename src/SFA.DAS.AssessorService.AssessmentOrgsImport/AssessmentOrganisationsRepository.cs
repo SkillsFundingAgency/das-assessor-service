@@ -31,6 +31,7 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                 connection.Execute("DELETE FROM [OrganisationType]");
                 connection.Execute("DELETE FROM [DeliveryArea]");
                 connection.Execute("delete from contacts where username like 'unknown%'");
+                connection.Execute("delete from organisations where  status = 'New'");   // and check not in contacts
                 connection.Close();
             }
         }
@@ -102,7 +103,13 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                                        ,[UpdatedAt]
                                        ,[WebsiteLink]
                                        ,[OrganisationTypeId]
-                                       ,[LegalName])
+                                       ,[LegalName]
+                                        ,Address1
+                                        ,Address2
+                                        ,Address3
+                                        ,Address4
+                                        ,Postcode
+                                        )
                                     VALUES
                                          (
                                         newid()
@@ -116,7 +123,12 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                                         ,null
                                         ,@WebsiteLink
                                         ,@OrganisationTypeId
-                                        ,@LegalName)",
+                                        ,@LegalName 
+                                        ,@Address1
+                                        ,@Address2
+                                        ,@Address3
+                                        ,@Address4
+                                        ,@Postcode)",
                             organisation);
                     }
                 }
@@ -129,11 +141,11 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                     var matchingOrg = organisations
                         .FirstOrDefault(x => x.EndPointAssessorOrganisationId == org.EndPointAssessorOrganisationId);
 
-                    org.ContactAddress1 = matchingOrg?.ContactAddress1;
-                    org.ContactAddress2 = matchingOrg?.ContactAddress2;
-                    org.ContactAddress3 = matchingOrg?.ContactAddress3;
-                    org.ContactAddress4 = matchingOrg?.ContactAddress4;
-                    org.ContactPostcode = matchingOrg?.ContactPostcode;
+                    org.Address1 = matchingOrg?.Address1;
+                    org.Address2 = matchingOrg?.Address2;
+                    org.Address3 = matchingOrg?.Address3;
+                    org.Address4 = matchingOrg?.Address4;
+                    org.Postcode = matchingOrg?.Postcode;
                 }
 
                 return orgs;
@@ -214,7 +226,7 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                     connection.Open();
                 foreach (var contact in contacts)
                 {
-                    var numberOfMatches = connection.ExecuteScalar("select count(0) from [Contacts] where [EndPointAssessorOrganisationId] = @EndPointAssessorOrganisationId", contact).ToString();
+                    var numberOfMatches = connection.ExecuteScalar("select count(0) from [Contacts] where [EndPointAssessorOrganisationId] = @EndPointAssessorOrganisationId and email = @email", contact).ToString();
                     if (numberOfMatches == "0")
                     {
                         connection.Execute(@"INSERT INTO [Contacts]
@@ -229,11 +241,7 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                                                    ,[UpdatedAt]
                                                    ,[Username]
                                                    ,[PhoneNumber]
-                                                   ,[Address1]
-                                                   ,[Address2]
-                                                   ,[Address3]
-                                                   ,[Address4]
-                                                   ,[Postcode])
+                                                   )
                                          VALUES
                                                (newid()
                                                ,getdate()
@@ -244,13 +252,8 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                                                ,@OrganisationId
                                                ,@Status
                                                ,getdate()
-                                               ,'unknown-' + @EndPointAssessorOrganisationId
-                                               ,@PhoneNumber
-                                               ,@Address1
-                                               ,@Address2 
-                                               ,@Address3 
-                                               ,@Address4
-                                               ,@Postcode)",
+                                               ,@Username
+                                               ,@PhoneNumber)",
                                                 contact);
                     }
                 }

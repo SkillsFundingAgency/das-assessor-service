@@ -114,11 +114,11 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                             EndPointAssessorName = epaOrganisationName,
                             OrganisationTypeId = organisationTypeId,
                             WebsiteLink = websiteLink,
-                            ContactAddress1 = contactAddress1,
-                            ContactAddress2 = contactAddress2,
-                            ContactAddress3 = contactAddress3,
-                            ContactAddress4 = contactAddress4,
-                            ContactPostcode = postcode,
+                            Address1 = contactAddress1,
+                            Address2 = contactAddress2,
+                            Address3 = contactAddress3,
+                            Address4 = contactAddress4,
+                            Postcode = postcode,
                             EndPointAssessorUkprn = ukprn,
                             LegalName = legalName,
                             Status = "New"
@@ -307,31 +307,48 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
 
         public List<OrganisationContact> GatherOrganisationContacts(List<EpaOrganisation> organisations,List<EpaOrganisationStandard> organisationStandards)
         {
-            var contacts = new List<OrganisationContact>();
+           
+           var distinctContacts = (from orgStandard in organisationStandards
+                                    .Where(o => !(string.IsNullOrEmpty(o?.ContactName?.Trim()) 
+                                                    && string.IsNullOrEmpty(o?.ContactEmail?.Trim())))
+                select new OrganisationContact
+                 {
+                     DisplayName = orgStandard?.ContactName?.Trim() ?? "unknown",
+                     Email = orgStandard?.ContactEmail?.Trim(),
+                     PhoneNumber = orgStandard?.ContactPhoneNumber,
+                     OrganisationId = organisations.First(x => x.EndPointAssessorOrganisationId == orgStandard.EndPointAssessorOrganisationId).Id,
+                     EndPointAssessorOrganisationId = orgStandard.EndPointAssessorOrganisationId,
+                     Status = "New",
+                 }).GroupBy(o => new
+                 {
+                     o.DisplayName,
+                     o.Email,
+                     o.PhoneNumber,
+                     o.OrganisationId,
+                     o.EndPointAssessorOrganisationId,
+                     o.Status
+                 });
 
-            foreach (var org in organisations)
-            {
-                contacts.Add(new OrganisationContact
-                {
-                    OrganisationId = org.Id,
-                    EndPointAssessorOrganisationId = org.EndPointAssessorOrganisationId,
-                    Address1 = org.ContactAddress1,
-                    Address2 = org.ContactAddress2,
-                    Address3 = org.ContactAddress3,
-                    Address4 = org.ContactAddress4,
-                    Postcode = org.ContactPostcode,
-                    Status = "Live"
-                });
-            }
+            var contacts = new List<OrganisationContact>(); ;
 
-            foreach (var contact in contacts)
+            var ctr = 0;
+            foreach (var cont in distinctContacts.ToList())
             {
-                var matchingOrgStandard =
-                    organisationStandards.FirstOrDefault(
-                        x => x.EndPointAssessorOrganisationId == contact.EndPointAssessorOrganisationId);
-                contact.Email = matchingOrgStandard?.ContactEmail;
-                contact.DisplayName = matchingOrgStandard?.ContactName ?? "unknown";
-                contact.PhoneNumber = matchingOrgStandard?.ContactPhoneNumber;
+
+                var contact = cont.Key;
+                ctr++;
+                contacts.Add(
+                    new OrganisationContact
+                        {
+                            DisplayName = contact.DisplayName,
+                            Email = contact.Email,
+                            EndPointAssessorOrganisationId = contact.EndPointAssessorOrganisationId,
+                            OrganisationId = contact.OrganisationId,
+                            PhoneNumber = contact.PhoneNumber,
+                            Status = contact.Status,
+                            Username = $"unknown-{ctr}"
+                        }
+                    );
             }
 
             return contacts;
