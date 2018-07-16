@@ -14,16 +14,34 @@
         "apiAppServiceName": {
             "type": "string"
         },
+        "manageAppServiceName": {
+            "type": "string"
+        },
+        "externalApiAppServiceName": {
+            "type": "string"
+        },
         "uiKeyvaultCertificateName": {
             "type": "string"
         },
         "apiKeyvaultCertificateName": {
             "type": "string"
         },
+        "manageKeyvaultCertificateName": {
+            "type": "string"
+        },
+        "externalAPiKeyvaultCertificateName": {
+            "type": "string"
+        },
         "uiCustomHostname": {
             "type": "string"
         },
         "apiCustomHostname": {
+            "type": "string"
+        },
+        "manageCustomHostname": {
+            "type": "string"
+        },
+        "externalApiCustomHostname": {
             "type": "string"
         },
         "functionAppNames": {
@@ -134,6 +152,82 @@
                     },
                     "customHostname": {
                         "value": "[parameters('apiCustomHostname')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "[concat('AppService-', parameters('manageAppServiceName'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('appServiceTemplateUri')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "appServiceName": {
+                        "value": "[parameters('manageAppServiceName')]"
+                    },
+                    "appServicePlanId": {
+                        "value": "[variables('sharedAppServicePlanId')]"
+                    },
+                    "configurationStorageConnectionString": {
+                        "value": "[parameters('configurationStorageConnectionString')]"
+                    },
+                    "configEnvironmentName": {
+                        "value": "[parameters('environmentName')]"
+                    },
+                    "loggingRedisConnectionString": {
+                        "value": "[parameters('loggingRedisConnectionString')]"
+                    },
+                    "keyvaultCertificateName": {
+                        "value": "[parameters('manageKeyvaultCertificateName')]"
+                    },
+                    "sharedAppServicePlanResourceGroup": {
+                        "value": "[parameters('sharedAppServicePlanResourceGroup')]"
+                    },
+                    "customHostname": {
+                        "value": "[parameters('manageCustomHostname')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "[concat('AppService-', parameters('externalApiAppServiceName'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('appServiceTemplateUri')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "appServiceName": {
+                        "value": "[parameters('externalApiAppServiceName')]"
+                    },
+                    "appServicePlanId": {
+                        "value": "[variables('sharedAppServicePlanId')]"
+                    },
+                    "configurationStorageConnectionString": {
+                        "value": "[parameters('configurationStorageConnectionString')]"
+                    },
+                    "configEnvironmentName": {
+                        "value": "[parameters('environmentName')]"
+                    },
+                    "loggingRedisConnectionString": {
+                        "value": "[parameters('loggingRedisConnectionString')]"
+                    },
+                    "keyvaultCertificateName": {
+                        "value": "[parameters('externalApiKeyvaultCertificateName')]"
+                    },
+                    "sharedAppServicePlanResourceGroup": {
+                        "value": "[parameters('sharedAppServicePlanResourceGroup')]"
+                    },
+                    "customHostname": {
+                        "value": "[parameters('externalApiCustomHostname')]"
                     }
                 }
             }
