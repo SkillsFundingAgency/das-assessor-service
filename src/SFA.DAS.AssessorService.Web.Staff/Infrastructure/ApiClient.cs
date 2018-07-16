@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
@@ -36,6 +37,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         {
             var res = await _client.GetAsync(new Uri($"/api/v1/learnerDetails?stdCode={stdCode}&uln={uln}", UriKind.Relative));
             return await res.Content.ReadAsAsync<LearnerDetail>();
+        }
+
+        public async Task<Certificate> GetCertificate(Guid certificateId)
+        {
+            var res = await _client.GetAsync(new Uri($"api/v1/certificates/{certificateId}", UriKind.Relative));
+            return await res.Content.ReadAsAsync<Certificate>();
         }
     }
 }
