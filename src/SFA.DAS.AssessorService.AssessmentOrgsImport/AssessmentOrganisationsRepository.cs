@@ -28,10 +28,10 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                 
                 connection.Execute("DELETE FROM [OrganisationStandardDeliveryArea]");
                 connection.Execute("DELETE FROM [OrganisationStandard]");
-                connection.Execute("DELETE FROM [OrganisationType]");
                 connection.Execute("DELETE FROM [DeliveryArea]");
                 connection.Execute("delete from contacts where username like 'unknown%'");
-                connection.Execute("delete from organisations where  status = 'New'");   // and check not in contacts
+                connection.Execute("delete from organisations where  status = 'New' and Id not in (select organisationid from contacts)");  
+                connection.Execute("DELETE FROM [OrganisationType] where id not in (select organisationtypeid from organisations)");
                 connection.Close();
             }
         }
@@ -64,12 +64,16 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                 if (connection.State != ConnectionState.Open)
                     connection.Open();
 
-                var currentNumber = connection.ExecuteScalar("select count(0) from [OrganisationType]").ToString();
-                if (currentNumber == "0")
-                {
-                    connection.Execute("INSERT INTO [OrganisationType] ([OrganisationType], [Status]) VALUES (@OrganisationType, @Status)", organisationTypes);
-                }
 
+                foreach(var organisationType in organisationTypes) {
+                    var currentNumber = connection.ExecuteScalar("select count(0) from [OrganisationType] where OrganisationType = @OrganisationType", organisationType).ToString();
+                    if (currentNumber == "0")
+                    {
+                        connection.Execute(
+                            "INSERT INTO [OrganisationType] ([OrganisationType], [Status]) VALUES (@OrganisationType, @Status)",
+                            organisationType);
+                    }
+                }
                 var orgTypes = connection.Query<TypeOfOrganisation>("select * from [OrganisationType]").ToList();
                 connection.Close();
 
