@@ -9,6 +9,11 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public bool IsComplete { get; set; }
         public long? Interval { get; set; }
         public bool IsRecurring { get; set; }
-        public int ScheduleType { get; set; }
+        public ScheduleType ScheduleType { get; set; }
+    }
+
+    public enum ScheduleType
+    {
+        PrintRun = 1
     }
 }

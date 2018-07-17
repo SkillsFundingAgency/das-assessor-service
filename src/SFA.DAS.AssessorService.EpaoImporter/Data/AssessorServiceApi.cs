@@ -132,5 +132,12 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
 
             return emailTemplate;
         }
+
+        public async Task<ScheduleRun> GetSchedule(ScheduleType scheduleType)
+        {
+            var response = await _httpClient.GetAsync($"/api/v1/schedule?scheduleType={(int) scheduleType}");
+            var schedule = await response.Content.ReadAsAsync<ScheduleRun>();
+            return schedule;
+        }
     }
 }
