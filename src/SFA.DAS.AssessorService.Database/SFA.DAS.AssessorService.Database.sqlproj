@@ -70,6 +70,7 @@
     <Build Include="Tables\BatchLogs.sql" />
     <Build Include="Tables\ScheduleConfigurations.sql" />
     <Build Include="Tables\SearchLogs.sql" />
+    <Build Include="Tables\ScheduleRuns.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
