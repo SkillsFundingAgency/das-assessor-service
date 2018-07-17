@@ -155,7 +155,7 @@
             class="previous @prevDisabled">
                 <i class="arrow-button icon-left-open">&#xe800;</i>
                 <span class="description">Previous <span class="hide-mob">page</span></span>
-                <span class="counter">Page <span class="prevPage">@(Model.PageIndex - 1)</span> of <span class="totalPage">10</span></span>
+                <span class="counter">Page <span class="prevPage">@(Model.PageIndex - 1)</span> of <span class="totalPage">@(Model.TotalPages)</span></span>
             </a>
             <a asp-controller="CertificateHistory"
             asp-action="Index"
@@ -163,7 +163,7 @@
             class="next @nextDisabled">
                 <i class="arrow-button icon-right-open">&#xe801;</i>
                 <span class="description">Next <span class="hide-mob">page</span></span>
-                <span class="counter">Page <span class="nextPage">@(Model.PageIndex + 1)</span> of <span class="totalPage">10</span></span>
+                <span class="counter">Page <span class="nextPage">@(Model.PageIndex + 1)</span> of <span class="totalPage">@(Model.TotalPages)</span></span>
             </a>
         </div>
     </div>
