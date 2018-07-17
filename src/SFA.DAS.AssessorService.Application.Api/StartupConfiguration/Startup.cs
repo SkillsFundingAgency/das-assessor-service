@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Globalization;
 using System.IO;
 using FluentValidation.AspNetCore;
@@ -155,6 +157,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
                 config.For<AssessorDbContext>().Use(c => new AssessorDbContext(option.Options));
 
+                config.For<IDbConnection>().Use(c => new SqlConnection(Configuration.SqlConnectionString));
+
                 config.Populate(services);
             });
 
@@ -177,7 +181,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     })
                     .UseAuthentication();
 
-                app.UseMiddleware(typeof(ErrorHandlingMiddleware));
+                //TODO: put this back, but it's a bugger when coding.
+                //app.UseMiddleware(typeof(ErrorHandlingMiddleware));
                 app.UseMvc();
             }
             catch (Exception e)

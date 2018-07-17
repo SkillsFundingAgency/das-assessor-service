@@ -10,6 +10,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<IEnumerable<Organisation>> GetAllOrganisations();
         Task<Organisation> GetByUkPrn(int ukprn);
         Task<Organisation> Get(string endPointAssessorOrganisationId);
+        Task<Organisation> Get(Guid id);
 
         Task<bool> CheckIfAlreadyExists(string endPointAssessorOrganisationId);
         Task<bool> CheckIfAlreadyExists(Guid organisationId);

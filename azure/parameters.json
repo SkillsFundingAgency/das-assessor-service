@@ -14,16 +14,34 @@
         "apiAppServiceName": {
             "value": ""
         },
+        "manageAppServiceName": {
+            "value": ""
+        },
+        "externalApiAppServiceName": {
+            "value": ""
+        },
         "uiKeyvaultCertificateName": {
             "value": ""
         },
         "apiKeyvaultCertificateName": {
             "value": ""
         },
+        "manageKeyvaultCertificateName": {
+            "value": ""
+        },
+        "externalApiKeyvaultCertificateName": {
+            "value": ""
+        },
         "uiCustomHostname": {
             "value": ""
         },
         "apiCustomHostname": {
+            "value": ""
+        },
+        "manageCustomHostname": {
+            "value": ""
+        },
+        "externalApiCustomHostname": {
             "value": ""
         },
         "functionAppNames": {

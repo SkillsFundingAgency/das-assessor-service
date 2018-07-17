@@ -12,5 +12,6 @@
         string IFATemplateStorageConnectionString { get; set; }
         string SqlConnectionString { get; set; }
         string SessionRedisConnectionString { get; set; }
+        AuthSettings StaffAuthentication { get; set; }
     }
 }
