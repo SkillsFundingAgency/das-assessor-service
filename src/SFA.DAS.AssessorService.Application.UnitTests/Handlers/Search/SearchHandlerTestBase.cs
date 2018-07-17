@@ -22,6 +22,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
             MappingBootstrapper.Initialize();
 
             AssessmentOrgsApiClient = new Mock<IAssessmentOrgsApiClient>();
+            AssessmentOrgsApiClient.Setup(c => c.GetAllStandards())
+                .ReturnsAsync(new List<Standard> { new Standard{Title = "Standard Name 12", Level = 2}, new Standard{Title = "Standard Name 13", Level = 3} });
             AssessmentOrgsApiClient.Setup(c => c.FindAllStandardsByOrganisationIdAsync("EPA001"))
                 .ReturnsAsync(new List<StandardOrganisationSummary>
                 {

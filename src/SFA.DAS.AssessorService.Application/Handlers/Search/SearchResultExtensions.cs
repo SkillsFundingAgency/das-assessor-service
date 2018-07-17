@@ -15,13 +15,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
     {
         public static List<SearchResult> PopulateStandards(this List<SearchResult> searchResults, IAssessmentOrgsApiClient assessmentOrgsApiClient, ILogger<SearchHandler> logger)
         {
+            var allStandards = assessmentOrgsApiClient.GetAllStandards().Result;
+
             foreach (var searchResult in searchResults)
             {
-                // Yes, I know this is calling out to an API in a tight loop, but there will be very few searchResults.  Usually only one.
-                // Obviously if this does become a perf issue, then it'll need changing.
-                logger.LogInformation("PopulateStandards Before Get Standard from api");
-                var standard = assessmentOrgsApiClient.GetStandard(searchResult.StdCode).Result;
-                logger.LogInformation("PopulateStandards After Get Standard from api");
+                var standard = allStandards.SingleOrDefault(s => s.Id == searchResult.StdCode);
+                if (standard == null)
+                {
+                    standard = assessmentOrgsApiClient.GetStandard(searchResult.StdCode).Result;
+                }
                 searchResult.Standard = standard.Title;
                 searchResult.Level = standard.Level;
             }

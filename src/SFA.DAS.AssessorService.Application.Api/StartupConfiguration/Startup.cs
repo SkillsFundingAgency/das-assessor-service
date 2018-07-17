@@ -175,7 +175,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     })
                     .UseAuthentication();
 
-                app.UseMiddleware(typeof(ErrorHandlingMiddleware));
+                //TODO: put this back, but it's a bugger when coding.
+                //app.UseMiddleware(typeof(ErrorHandlingMiddleware));
                 app.UseMvc();
             }
             catch (Exception e)
