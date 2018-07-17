@@ -16,8 +16,7 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
         {
             var dataHandler = new AssessmentOrganisationsDataHandler();
             var repo = new AssessmentOrganisationsRepository();
-            _webClient = new WebClient();
-            
+
 
             foreach (var arg in args)
             {
