@@ -7,13 +7,21 @@
     Layout = "_Layout";
 }
 
+<div>
+    <nav class="app-navigation govuk-clearfix">
+        <ul class="app-navigation__list">
+            <li class="app-navigation--current-page">
+                <a asp-controller="Search" asp-action="Index">Search</a>
+            </li>
+            <li>
+                <a asp-controller="CertificateHistory" asp-action="Index">Previous Assessments</a>
+            </li>
+        </ul>
+    </nav>
+</div>    
+
 <div class="grid-row">
     <div class="column-two-thirds">
-        <!-- <a class="link-back" asp-controller="Search" asp-action="Index">Back</a> -->
-        
-        <div>
-            @{await Html.RenderPartialAsync("_SearchNavigation"); }         
-        </div>
 
         @if (Model?.SearchResults != null)
         {

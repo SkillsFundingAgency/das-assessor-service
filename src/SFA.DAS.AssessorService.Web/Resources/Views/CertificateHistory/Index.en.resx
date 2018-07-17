@@ -121,19 +121,19 @@
     <value>Achievement Date</value>
   </data>
   <data name="AchievementStartDate" xml:space="preserve">
-    <value>Achievement Start Date</value>
+    <value>Achievement start date</value>
   </data>
   <data name="Apprentice" xml:space="preserve">
     <value>Apprentice</value>
   </data>
   <data name="AssessmentDetails" xml:space="preserve">
-    <value>Assessment Details</value>
+    <value>Assessment details</value>
   </data>
   <data name="CertificateNumber" xml:space="preserve">
-    <value>Certificate Number</value>
+    <value>Certificate number</value>
   </data>
   <data name="DateRequested" xml:space="preserve">
-    <value>Date Requested</value>
+    <value>Date requested</value>
   </data>
   <data name="Employer" xml:space="preserve">
     <value>Employer</value>
@@ -148,19 +148,19 @@
     <value>Option</value>
   </data>
   <data name="PostageDetails" xml:space="preserve">
-    <value>Postage Details</value>
+    <value>Postage details</value>
   </data>
   <data name="Previous" xml:space="preserve">
     <value>Previous</value>
   </data>
   <data name="RecordedBy" xml:space="preserve">
-    <value>Recorded By</value>
+    <value>Recorded by</value>
   </data>
   <data name="Standard" xml:space="preserve">
     <value>Standard</value>
   </data>
   <data name="TrainingProvider" xml:space="preserve">
-    <value>Training Provider</value>
+    <value>Training provider</value>
   </data>
   <data name="ULN" xml:space="preserve">
     <value>ULN</value>

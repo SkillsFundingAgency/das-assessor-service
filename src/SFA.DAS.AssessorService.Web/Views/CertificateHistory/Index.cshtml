@@ -4,34 +4,44 @@
 @model SFA.AssessorService.Paging.PaginatedList<SFA.DAS.AssessorService.Api.Types.Models.Certificates.CertificateHistoryResponse>
 
 @{
-    //ViewBag.Title = (Model?.SearchResults != null && !Model.SearchResults.Any() ? "0 results found: " : !ViewData.ModelState.IsValid ? "Error: " : "") + "Search for an apprentice";
+    ViewBag.Title = "Certificate history";
     Layout = "_Layout";
 }
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <!-- <a class="link-back" asp-controller="Search" asp-action="Index">Back</a> -->
-        <div>
-            @{await Html.RenderPartialAsync("_SearchNavigation"); }
-        </div>
 
-        <div>
-            <table class="table">
+<div>
+    <nav class="app-navigation govuk-clearfix">
+        <ul class="app-navigation__list">
+            <li>
+                <a asp-controller="Search" asp-action="Index">Search</a>
+            </li>
+            <li class="app-navigation--current-page">
+                <a asp-controller="CertificateHistory" asp-action="Index">Previous Assessments</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<div class="grid-row">
+    <div class="column-full">
+        <h1 class="heading-large">Previous assessments</h1>
+
+            <table class="table responsive">
                 <thead>
                     <tr>
                         <th>
-                            @Localizer["Apprentice"]                           
+                            @Localizer["Apprentice"]
                         </th>
                         <th>
-                            @Localizer["ULN"]                              
+                            @Localizer["ULN"]
                         </th>
                         <th>
-                            @Localizer["Employer"]                             
+                            @Localizer["Employer"]
                         </th>
                         <th>
-                            @Localizer["TrainingProvider"]                                
+                            @Localizer["TrainingProvider"]
                         </th>
                         <th>
-                            @Localizer["DateRequested"]                             
+                            @Localizer["DateRequested"]
                         </th>
                     </tr>
                 </thead>
@@ -39,120 +49,122 @@
                     @foreach (var item in Model.Items)
                     {
                         <tr>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.FullName)
+                            <td data-label="@Localizer["Apprentice"]" class="nowrap">
+                                <div role="button" class="js-expand-table-row expand-table-row" data-uln="@Html.DisplayFor(modelItem => item.Uln)"><i class="arrow arrow-closed">►</i> <span>@Html.DisplayFor(modelItem => item.FullName)</span></div>
                             </td>
-                            <td>
+                            <td data-label="@Localizer["ULN"]">
                                 @Html.DisplayFor(modelItem => item.Uln)
                             </td>
-                            <td>
+                            <td data-label="@Localizer["Employer"]">
                                 @Html.DisplayFor(modelItem => item.ContactOrganisation)
                             </td>
-                            <td>
+                            <td data-label="@Localizer["TrainingProvider"]">
                                 @Html.DisplayFor(modelItem => item.TrainingProvider)
                             </td>
-                            <td>
+                            <td data-label="@Localizer["DateRequested"]">
                                 @item.CreatedAt.ToString("dd/MM/yyyy") 
                             </td>
                         </tr>
-                        <tr>
+                        <tr class="js-history-details-expandble js-hidden history-details-expandble" aria-hidden="true">
                             <td colspan="5">
-                                <h2 class="heading-medium error-summary-heading">@Localizer["AssessmentDetails"]</h2>
-                                <ul>
-                                    <li>
-                                        <p><span class="bold">@Localizer["RecordedBy"]:</span> @Html.DisplayFor(modelItem => item.RecordedBy)</p>
-                                    </li>
-                                    <li>
-                                        <p><span class="bold">@Localizer["Standard"]:</span> @Html.DisplayFor(modelItem => item.StandardName)</p>
-                                    </li>
-                                    <li>
-                                        <p><span class="bold">@Localizer["Grade"]:</span> @Html.DisplayFor(modelItem => item.OverallGrade)</p>
-                                    </li>
+                                <div class="history-details-content">
+                                    <h2 class="heading-medium history-details-content--first-heading">@Localizer["AssessmentDetails"]</h2>
+                                    <ul>
+                                        <li>
+                                            <p><span class="bold">@Localizer["RecordedBy"]:</span> @Html.DisplayFor(modelItem => item.RecordedBy)</p>
+                                        </li>
+                                        <li>
+                                            <p><span class="bold">@Localizer["Standard"]:</span> @Html.DisplayFor(modelItem => item.StandardName)</p>
+                                        </li>
+                                        <li>
+                                            <p><span class="bold">@Localizer["Grade"]:</span> @Html.DisplayFor(modelItem => item.OverallGrade)</p>
+                                        </li>
 
-                                    <li>
-                                        <p><span class="bold">@Localizer["Option"]:</span> @Html.DisplayFor(modelItem => item.CourseOption)</p>
-                                    </li>
-                                    <li>
-                                        <p>
-                                            <span class="bold">@Localizer["AchievementStartDate"]:</span>
-                                            @{
-                                                var achievementStartDate = item.LearningStartDate.HasValue ? item.LearningStartDate.Value.ToString("dd/MM/yyyy") : "";
-                                            }
-                                            @achievementStartDate
-                                        </p>
-                                    </li>
-                                    <li>
-                                        <p>
-                                            <span class="bold">@Localizer["AchievementDate"]:</span>
-                                            @{
-                                                var achievementDate = item.AchievementDate.HasValue ? item.AchievementDate.Value.ToString("dd/MM/yyyy") : "";
-                                            }
-                                            @achievementDate
-                                        </p>
-                                    </li>
-                                    <li>
-                                        <p><span class="bold">@Localizer["CertificateNumber"]:</span> @Html.DisplayFor(modelItem => item.CertificateReference)</p>
-                                    </li>
-                                </ul>
+                                        <li>
+                                            <p><span class="bold">@Localizer["Option"]:</span> @Html.DisplayFor(modelItem => item.CourseOption)</p>
+                                        </li>
+                                        <li>
+                                            <p>
+                                                <span class="bold">@Localizer["AchievementStartDate"]:</span>
+                                                @{
+                                                    var achievementStartDate = item.LearningStartDate.HasValue ? item.LearningStartDate.Value.ToString("dd/MM/yyyy") : "";
+                                                }
+                                                @achievementStartDate
+                                            </p>
+                                        </li>
+                                        <li>
+                                            <p>
+                                                <span class="bold">@Localizer["AchievementDate"]:</span>
+                                                @{
+                                                    var achievementDate = item.AchievementDate.HasValue ? item.AchievementDate.Value.ToString("dd/MM/yyyy") : "";
+                                                }
+                                                @achievementDate
+                                            </p>
+                                        </li>
+                                        <li>
+                                            <p><span class="bold">@Localizer["CertificateNumber"]:</span> @Html.DisplayFor(modelItem => item.CertificateReference)</p>
+                                        </li>
+                                    </ul>
 
-                                <h2 class="heading-medium error-summary-heading">@Localizer["PostageDetails"]</h2>
-                                <p>
-                                    <i>The certificate was posted to this address</i>
-                                </p>
-                                <ul>
-                                    <li>
-                                        <p>@Html.DisplayFor(modelItem => item.ContactName)</p>
-                                    </li>
-                                    <li>
-                                        <p>@Html.DisplayFor(modelItem => item.ContactOrganisation)</p>
-                                    </li>
-                                    <li>
-                                        <p>@Html.DisplayFor(modelItem => item.ContactAddLine1)</p>
-                                    </li>
-                                    <li>
-                                        <p>@Html.DisplayFor(modelItem => item.ContactAddLine2)</p>
-                                    </li>
-                                    <li>
-                                        <p>@Html.DisplayFor(modelItem => item.ContactAddLine3)</p>
-                                    </li>
-                                    <li>
-                                        <p>@Html.DisplayFor(modelItem => item.ContactAddLine4)</p>
-                                    </li>
-                                    <li>
-                                        <p>@Html.DisplayFor(modelItem => item.ContactPostCode)</p>
-                                    </li>
-                                </ul>
+                                    <h2 class="heading-medium">@Localizer["PostageDetails"]</h2>
+                                    <p>
+                                        The certificate was posted to this address.
+                                    </p>
+                                    <ul>
+                                        <li>
+                                            @Html.DisplayFor(modelItem => item.ContactName)
+                                        </li>
+                                        <li>
+                                            @Html.DisplayFor(modelItem => item.ContactOrganisation)
+                                        </li>
+                                        <li>
+                                            @Html.DisplayFor(modelItem => item.ContactAddLine1)
+                                        </li>
+                                        <li>
+                                            @Html.DisplayFor(modelItem => item.ContactAddLine2)
+                                        </li>
+                                        <li>
+                                            @Html.DisplayFor(modelItem => item.ContactAddLine3)
+                                        </li>
+                                        <li>
+                                            @Html.DisplayFor(modelItem => item.ContactAddLine4)
+                                        </li>
+                                        <li>
+                                            @Html.DisplayFor(modelItem => item.ContactPostCode)
+                                        </li>
+                                    </ul>
+                                </div>
                             </td>
                         </tr>
                     }
                 </tbody>
             </table>
-        </div>
     </div>
-    <div class="grid-row">
-        <div class="column-two-thirds">
-            @{
-                var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
-                var nextDisabled = !Model.HasNextPage ? "disabled" : "";
-            }
+</div>
 
+<div class="grid-row">
+    <div class="column-full">
+        @{
+            var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+            var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+        }
+        <div class="page-navigation">
             <a asp-action="Index"
-               asp-controller="CertificateHistory"
-               asp-route-pageIndex="@(Model.PageIndex - 1)"
-               class="button @prevDisabled">
-                @Localizer["Previous"]
+            asp-controller="CertificateHistory"
+            asp-route-pageIndex="@(Model.PageIndex - 1)"
+            class="previous @prevDisabled">
+                <i class="arrow-button icon-left-open">&#xe800;</i>
+                <span class="description">Previous <span class="hide-mob">page</span></span>
+                <span class="counter">Page <span class="prevPage">@(Model.PageIndex - 1)</span> of <span class="totalPage">10</span></span>
             </a>
-            &nbsp;
             <a asp-controller="CertificateHistory"
-               asp-action="Index"
-               asp-route-pageIndex="@(Model.PageIndex + 1)"
-               class="button @nextDisabled">
-                @Localizer["Next"]
+            asp-action="Index"
+            asp-route-pageIndex="@(Model.PageIndex + 1)"
+            class="next @nextDisabled">
+                <i class="arrow-button icon-right-open">&#xe801;</i>
+                <span class="description">Next <span class="hide-mob">page</span></span>
+                <span class="counter">Page <span class="nextPage">@(Model.PageIndex + 1)</span> of <span class="totalPage">10</span></span>
             </a>
         </div>
     </div>
 </div>
-
-
-
-
