@@ -1,45 +1,61 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using SFA.DAS.AssessorService.Application.Interfaces;
+using System;
 using System.Data;
-using System.Data.Common;
 using System.Data.SqlClient;
-using System.Linq;
+using AutoMapper.Configuration;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
-using SFA.DAS.AssessorService.AssessmentOrgsImport.models;
-using SFA.DAS.AssessorService.Data;
+using SFA.DAS.AssessorService.Data.Configuration;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace SFA.DAS.AssessorService.AssessmentOrgsImport
+namespace SFA.DAS.AssessorService.Data
 {
-    public class AssessmentOrganisationsRepository
+    public class AssessmentOrgsRepository : IAssessmentOrgsRepository
     {
-        
-
-        private readonly string _connectionString = ConfigurationWrapper.AccessorDbConnectionString;
-
-   
-        public void TearDownData()
+        private readonly IConfigurationWrapper _configurationWrapper;
+     
+        public AssessmentOrgsRepository(IConfigurationWrapper configurationWrapper)
         {
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    connection.Open();
-                
-                connection.Execute("DELETE FROM [OrganisationStandardDeliveryArea]");
-                connection.Execute("DELETE FROM [OrganisationStandard]");
-                connection.Execute("DELETE FROM [DeliveryArea]");
-                connection.Execute("delete from contacts where username like 'unknown%'");
-                connection.Execute("delete from organisations where  status = 'New' and Id not in (select organisationid from contacts)");  
-                connection.Execute("DELETE FROM [OrganisationType] where id not in (select organisationtypeid from organisations)");
-                connection.Close();
-            }
+            _configurationWrapper = configurationWrapper;
         }
 
-        public List<EPAODeliveryArea> WriteDeliveryAreas(List<EPAODeliveryArea> deliveryAreas)
-        {
 
-            using (var connection = new SqlConnection(_connectionString))
+        public void TearDownData()
+        {
+            try
+            {
+
+                var connectionString = _configurationWrapper.DbConnectionString;
+
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    if (connection.State != ConnectionState.Open)
+                        connection.Open();
+
+                    connection.Execute("DELETE FROM [OrganisationStandardDeliveryArea]");
+                    connection.Execute("DELETE FROM [OrganisationStandard]");
+                    connection.Execute("DELETE FROM [DeliveryArea]");
+                    connection.Execute("DELETE FROM [contacts] WHERE username LIKE 'unknown%'");
+                    connection.Execute(
+                        "DELETE FROM [organisations] where  status = 'New' and Id not in (select organisationid from [contacts])");
+                    connection.Execute(
+                        "DELETE FROM [OrganisationType] where id not in (select organisationtypeid from [organisations] where organisationtypeid is not null)");
+                    connection.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+
+        }
+        public List<DeliveryArea> WriteDeliveryAreas(List<DeliveryArea> deliveryAreas)
+        {
+            var connectionString = _configurationWrapper.DbConnectionString;
+
+            using (var connection = new SqlConnection(connectionString))
             {
                 if (connection.State != ConnectionState.Open)
                     connection.Open();
@@ -48,24 +64,26 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                 if (currentNumber == "0")
                 {
                     connection.Execute("INSERT INTO [DeliveryArea] ([Area],[Status]) VALUES (@Area, @Status)", deliveryAreas);
-                 }
-                var delivAreas = connection.Query<EPAODeliveryArea>("select * from [DeliveryArea]").ToList();
+                }
+                var delivAreas = connection.Query<DeliveryArea>("select * from [DeliveryArea]").ToList();
 
                 connection.Close();
 
                 return delivAreas;
             }
         }
-        
+
         public List<TypeOfOrganisation> WriteOrganisationTypes(List<TypeOfOrganisation> organisationTypes)
         {
-            using (var connection = new SqlConnection(_connectionString))
+            var connectionString = _configurationWrapper.DbConnectionString;
+            using (var connection = new SqlConnection(connectionString))
             {
                 if (connection.State != ConnectionState.Open)
                     connection.Open();
 
 
-                foreach(var organisationType in organisationTypes) {
+                foreach (var organisationType in organisationTypes)
+                {
                     var currentNumber = connection.ExecuteScalar("select count(0) from [OrganisationType] where OrganisationType = @OrganisationType", organisationType).ToString();
                     if (currentNumber == "0")
                     {
@@ -83,7 +101,8 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
 
         public List<EpaOrganisation> WriteOrganisations(List<EpaOrganisation> organisations)
         {
-            using (var connection = new SqlConnection(_connectionString))
+            var connectionString = _configurationWrapper.DbConnectionString;
+            using (var connection = new SqlConnection(connectionString))
             {
                 if (connection.State != ConnectionState.Open)
                     connection.Open();
@@ -158,7 +177,9 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
 
         public void WriteEpaOrganisationStandards(List<EpaOrganisationStandard> orgStandards)
         {
-            using (var connection = new SqlConnection(_connectionString))
+            var connectionString = _configurationWrapper.DbConnectionString;
+
+            using (var connection = new SqlConnection(connectionString))
             {
                 if (connection.State != ConnectionState.Open)
                     connection.Open();
@@ -167,8 +188,8 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                 if (currentNumber == "0")
                 {
 
-                    
-                        connection.Execute(@"INSERT INTO [OrganisationStandard]
+
+                    connection.Execute(@"INSERT INTO [OrganisationStandard]
                                        ([EndPointAssessorOrganisationId]
                                        ,[StandardCode]
                                        ,[EffectiveFrom]
@@ -184,17 +205,19 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                                        ,@DateStandardApprovedOnRegister
                                        ,@Comments,
                                         @Status)",
-                            orgStandards);
-                    
+                        orgStandards);
+
                 }
-                   connection.Close();
+                connection.Close();
             }
 
         }
 
         public void WriteStandardDeliveryAreas(List<EpaOrganisationStandardDeliveryArea> organisationStandardDeliveryAreas)
         {
-            using (var connection = new SqlConnection(_connectionString))
+            var connectionString = _configurationWrapper.DbConnectionString;
+
+            using (var connection = new SqlConnection(connectionString))
             {
                 if (connection.State != ConnectionState.Open)
                     connection.Open();
@@ -214,7 +237,7 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                                            ,@DeliveryAreaId
                                            ,@Comments
                                             ,@Status)",
-                                            organisationStandardDeliveryAreas);
+                        organisationStandardDeliveryAreas);
                 }
 
                 connection.Close();
@@ -224,7 +247,9 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
 
         public void WriteOrganisationContacts(List<OrganisationContact> contacts)
         {
-            using (var connection = new SqlConnection(_connectionString))
+            var connectionString = _configurationWrapper.DbConnectionString;
+
+            using (var connection = new SqlConnection(connectionString))
             {
                 if (connection.State != ConnectionState.Open)
                     connection.Open();
@@ -258,12 +283,11 @@ namespace SFA.DAS.AssessorService.AssessmentOrgsImport
                                                ,getdate()
                                                ,@Username
                                                ,@PhoneNumber)",
-                                                contact);
+                            contact);
                     }
                 }
                 connection.Close();
             }
         }
     }
-
 }

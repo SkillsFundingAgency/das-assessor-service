@@ -3,7 +3,7 @@ using System;
 
 namespace SFA.DAS.AssessorService.AssessmentOrgsImport.models
 {
-    public struct DeliveryArea
+    public struct EPAODeliveryArea
     {
         public int Id { get; set; }
         public string Area { get; set; }

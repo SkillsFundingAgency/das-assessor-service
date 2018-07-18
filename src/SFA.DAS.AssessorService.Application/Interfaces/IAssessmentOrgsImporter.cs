@@ -8,14 +8,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 {
     public interface IAssessmentOrgsImporter
     {
-       Task<AssessmentOrgsImportResponse> ImportAssessmentOrganisations();
-    }
-
-    public class AssessmentOrgsImporter : IAssessmentOrgsImporter
-    {
-        public async Task<AssessmentOrgsImportResponse> ImportAssessmentOrganisations()
-        {
-            return new AssessmentOrgsImportResponse {Status = "ok2"};
-        }
+       Task<AssessmentOrgsImportResponse> ImportAssessmentOrganisations(string operation);
     }
 }

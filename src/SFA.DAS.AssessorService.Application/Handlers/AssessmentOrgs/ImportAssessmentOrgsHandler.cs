@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models;
@@ -21,9 +18,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.AssessmentOrgs
 
         public async Task<AssessmentOrgsImportResponse> Handle(AssessmentOrgsImportRequest request, CancellationToken cancellationToken)
         {
-            return await _assessmentOrgsImporter.ImportAssessmentOrganisations();
-
-
+           return await _assessmentOrgsImporter.ImportAssessmentOrganisations(request.Operation);
         }
     }
 }

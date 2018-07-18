@@ -4,6 +4,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
 {
     public class AssessmentOrgsImportRequest: IRequest<AssessmentOrgsImportResponse>
     {
-        public string Status { get; set; }
+        public string Operation { get; set; }
     }
 }
