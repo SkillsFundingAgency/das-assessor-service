@@ -61,10 +61,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
             var intStandards = await GetEpaoStandards(thisEpao);
 
-            var ilrResults = await _ilrRepository.SearchForLearner(new SearchRequest
-            {
-                Uln = request.Uln
-            });
+            var ilrResults = await _ilrRepository.SearchForLearnerByUln(request.Uln);
 
             var likedSurname = request.Surname.Replace(" ","");
 

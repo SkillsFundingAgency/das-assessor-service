@@ -38,6 +38,11 @@ namespace SFA.DAS.AssessorService.Data
             return organisation;
         }
 
+        public async Task<Organisation> Get(Guid id)
+        {
+            return await _assessorDbContext.Organisations.SingleAsync(o => o.Id == id);
+        }
+
         public async Task<bool> CheckIfAlreadyExists(string endPointAssessorOrganisationId)
         {
             var organisation = await _assessorDbContext.Organisations
