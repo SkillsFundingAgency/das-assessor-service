@@ -128,9 +128,9 @@ namespace SFA.DAS.AssessorService.Data
             return organisations;
         }
 
-        public List<Standard> HarvestStandards(ExcelPackage package)
+        public List<ApprenticeshipStandard> HarvestStandards(ExcelPackage package)
         {
-            var standards = new List<Standard>();
+            var standards = new List<ApprenticeshipStandard>();
             var worksheet = GetWorksheet(package, StandardsWorkSheetName);
 
             for (var i = worksheet.Dimension.Start.Row + 4; i <= worksheet.Dimension.End.Row; i++)
@@ -159,7 +159,7 @@ namespace SFA.DAS.AssessorService.Data
                 var modifiedBy = worksheet.Cells[i, 16].Value?.ToString();
 
                 standards.Add(
-                    new Standard
+                    new ApprenticeshipStandard
                     {
                         StandardCode = standardCode,
                         Version = version,
@@ -183,7 +183,7 @@ namespace SFA.DAS.AssessorService.Data
 
             // This is a special case, found on row 482 of the worksheet 'Register Standards'
 
-            standards.Add(new Standard
+            standards.Add(new ApprenticeshipStandard
             {
                 StandardCode = "ST0597",
                 StandardName = "Technician Scientist",
@@ -194,7 +194,7 @@ namespace SFA.DAS.AssessorService.Data
             return standards;
         }
 
-        public List<EpaOrganisationStandard> HarvestEpaOrganisationStandards(ExcelPackage package, List<EpaOrganisation> epaOrganisations, List<Standard> standards)
+        public List<EpaOrganisationStandard> HarvestEpaOrganisationStandards(ExcelPackage package, List<EpaOrganisation> epaOrganisations, List<ApprenticeshipStandard> standards)
         {
             var epaOrganisationStandards = new List<EpaOrganisationStandard>();
             var worksheet = GetWorksheet(package, EpaStandardsWorkSheetName);
@@ -247,7 +247,7 @@ namespace SFA.DAS.AssessorService.Data
             return epaOrganisationStandards;
         }
 
-        public List<EpaOrganisationStandardDeliveryArea> HarvestStandardDeliveryAreas(ExcelPackage package, List<EpaOrganisation> epaOrganisations, List<Standard> standards, List<DeliveryArea> deliveryAreas)
+        public List<EpaOrganisationStandardDeliveryArea> HarvestStandardDeliveryAreas(ExcelPackage package, List<EpaOrganisation> epaOrganisations, List<ApprenticeshipStandard> standards, List<DeliveryArea> deliveryAreas)
         {
             var standardDeliveryAreas = new List<EpaOrganisationStandardDeliveryArea>();
             var worksheet = GetWorksheet(package, DeliveryAreasWorkSheetName);

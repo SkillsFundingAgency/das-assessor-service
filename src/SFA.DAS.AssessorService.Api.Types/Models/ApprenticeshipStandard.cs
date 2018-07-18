@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    public class Standard
+    public class ApprenticeshipStandard
     {
         public int Id { get; set; }
         public string StandardCode { get; set; }
