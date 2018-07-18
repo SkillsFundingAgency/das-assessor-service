@@ -31,6 +31,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
 
             _certificateRepository = new CertificateRepository(_mockDbContext.Object,
                 _mockDbConnection.Object);
+            _certificateRepository = new CertificateRepository(_mockDbContext.Object, new Mock<IDbConnection>().Object);
             _result = _certificateRepository.GetCertificates(null).Result;
         }
 

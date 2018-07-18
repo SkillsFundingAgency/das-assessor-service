@@ -1,0 +1,16 @@
+﻿@using SFA.DAS.AssessorService.Web.Staff.Controllers
+@model SFA.DAS.AssessorService.Web.Staff.Controllers.SearchViewModel
+
+@{
+
+}
+
+
+<h1 class="heading-large">ILR and Certificate Search</h1>
+
+<form asp-action="Results" asp-controller="Search" method="get">
+    @Html.HiddenFor(m => m.Page)
+    <label for="SearchString">Search (Learner name, ULN, Certificate reference, EPAOrg Id)</label><br/>
+    <input asp-for="SearchString" />
+    <button class="button" type="submit">Search</button>
+</form>

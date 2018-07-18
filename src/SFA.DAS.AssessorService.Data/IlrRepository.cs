@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -16,11 +17,9 @@ namespace SFA.DAS.AssessorService.Data
             _context = context;
         }
 
-        public async Task<IEnumerable<Ilr>> SearchForLearner(SearchRequest searchRequest)
+        public async Task<IEnumerable<Ilr>> SearchForLearnerByUln(long uln)
         {
-            //Ilrs.Where(r => r.Uln == 1111111111).GroupBy(r => r.StdCode).Select(g => g.OrderByDescending(l => l.Id).First()).ToList()
-
-            return await _context.Ilrs.Where(r => r.Uln == searchRequest.Uln).GroupBy(r => r.StdCode).Select(g => g.OrderByDescending(l => l.Id).First()).ToListAsync();
+            return await _context.Ilrs.Where(r => r.Uln == uln).GroupBy(r => r.StdCode).Select(g => g.OrderByDescending(l => l.Id).First()).ToListAsync();
         }
 
         public async Task<Ilr> Get(long uln, int standardCode)
@@ -32,6 +31,12 @@ namespace SFA.DAS.AssessorService.Data
         {
             await _context.SearchLogs.AddAsync(log);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<Ilr>> Search(string searchQuery)
+        {
+            return await _context.Ilrs.Where(r => r.FamilyName == searchQuery || r.GivenNames == searchQuery || r.Uln == long.Parse(searchQuery))
+                .ToListAsync();
         }
     }
 }

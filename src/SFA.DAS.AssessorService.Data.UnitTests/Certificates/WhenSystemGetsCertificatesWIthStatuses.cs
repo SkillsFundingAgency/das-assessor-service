@@ -27,6 +27,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
             var mockSet = CreateCertificateMockDbSet();
             _mockDbContext = CreateMockDbContext(mockSet);
 
+            _certificateRepository = new CertificateRepository(_mockDbContext.Object, new Mock<IDbConnection>().Object);
             _mockDbConnection = new Mock<IDbConnection>();
 
             _certificateRepository = new CertificateRepository(_mockDbContext.Object, _mockDbConnection.Object);
