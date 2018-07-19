@@ -68,8 +68,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<List<Certificate>> GetCompletedCertificatesFor(long uln)
         {
-            return await _context.Certificates.Where(c =>
-                    c.Uln == uln && (c.Status == CertificateStatus.Printed || c.Status == CertificateStatus.Submitted))
+            return await _context.Certificates.Where(c => c.Uln == uln && (c.Status == CertificateStatus.Printed || c.Status == CertificateStatus.Submitted))
                 .ToListAsync();
         }
 
@@ -147,6 +146,10 @@ namespace SFA.DAS.AssessorService.Data
             await _context.SaveChangesAsync();
         }
 
+        public async Task<List<CertificateLog>> GetCertificateLogsFor(Guid[] certificateIds)
+        {
+            return await _context.CertificateLogs.Where(l => certificateIds.Contains(l.CertificateId)).OrderByDescending(l => l.EventTime).ToListAsync();
+        }
         public async Task<List<CertificateLog>> GetCertificateLogsFor(Guid certificateId)
         {
             return await _context.CertificateLogs.Where(l => l.CertificateId == certificateId).OrderByDescending(l => l.EventTime).ToListAsync();

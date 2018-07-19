@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace SFA.DAS.AssessorService.Domain.Entities
 {
