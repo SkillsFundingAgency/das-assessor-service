@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.Web
             try
             {
                 logger.Info("Starting up host");
-                BuildWebHost(args).Run();
+                CreateWebHostBuilder(args).Build().Run();
             }
             catch (Exception ex)
             {
@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Web
             }
         }
 
-        public static IWebHost BuildWebHost(string[] args)
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
             IHostingEnvironment hostingEnvironment = null;
 
@@ -39,20 +39,9 @@ namespace SFA.DAS.AssessorService.Web
                             .Select(x => (IHostingEnvironment) x.ImplementationInstance)
                             .First();
                     })
-                .UseKestrel(options =>
-                {
-                    options.AddServerHeader = false;
-                    if (hostingEnvironment.IsDevelopment())
-                    {
-                        options.Listen(IPAddress.Loopback, 5015, listenOptions =>
-                        {
-                            listenOptions.UseHttps("sfa.das.assessorservice.pfx", "C0ventry18");
-                        });
-                    }
-                })
                 .UseStartup<Startup>()
-                .UseNLog()
-                .Build();
+                .UseUrls("https://localhost:5015")
+                .UseNLog();
         }
     }
 }
