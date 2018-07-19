@@ -15,7 +15,7 @@ using SFA.DAS.AssessorService.EpaoImporter.Sftp;
 
 namespace SFA.DAS.AssessorService.EpaoImporter
 {
-    public class PrintProcessFlowCommand : ICommand
+    public class PrintProcessCommand : ICommand
     {
         private readonly IAggregateLogger _aggregateLogger;
         private readonly ISanitiserService _sanitiserService;
@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
         private readonly IDateTimeZoneInformation _dateTimeZoneInformation;
         private readonly IFileTransferClient _fileTransferClient;
 
-        public PrintProcessFlowCommand(IAggregateLogger aggregateLogger,
+        public PrintProcessCommand(IAggregateLogger aggregateLogger,
             ISanitiserService sanitiserService,
             ICoverLetterService coverLetterService,
             IIFACertificateService ifaCertificateService,

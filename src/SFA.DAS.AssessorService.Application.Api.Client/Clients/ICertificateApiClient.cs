@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using SFA.AssessorService.Paging;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Paging;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {

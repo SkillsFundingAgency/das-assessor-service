@@ -4,11 +4,11 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using SFA.AssessorService.Paging;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
+using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.ExternalApis;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 
@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
             var certificates = await _certificateRepository.GetCertificateHistory(
                 request.Username,
-                request.PageIndex ?? 1,
+                request.PageIndex ?? 0,
                 pageSize);
 
             // Please Note:- Cannot seem to automap this with custom value/type converters

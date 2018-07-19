@@ -8,19 +8,19 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using SFA.AssessorService.Paging;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Handlers.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
+using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Query
 {
-    public class WhenGetCertificateHistoryHander
+    public class WhenGetCertificateHistoryHandler
     {                     
         private Mock<ICertificateRepository> _certificateRepositoryMock;
         private Mock<IAssessmentOrgsApiClient> _assessmentOrgsApiClientMock;

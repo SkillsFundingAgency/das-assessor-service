@@ -1,7 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
 @inject IViewLocalizer Localizer
 @using Microsoft.AspNetCore.Mvc.Localization
-@model SFA.AssessorService.Paging.PaginatedList<SFA.DAS.AssessorService.Api.Types.Models.Certificates.CertificateHistoryResponse>
+@using SFA.DAS.AssessorService.Domain.Paging
+@model SFA.DAS.AssessorService.Domain.Paging.PaginatedList<SFA.DAS.AssessorService.Api.Types.Models.Certificates.CertificateHistoryResponse>
 
 @{
     ViewBag.Title = "Certificate history";

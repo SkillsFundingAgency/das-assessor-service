@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests
 {
     public class WhenSystemSchedulesDate
     {
-        private PrintProcessFlowCommand _printProcessFlowCommand;
+        private PrintProcessCommand _printProcessCommand;
         private Mock<IAggregateLogger> _aggregateLogger;
         private Mock<ICoverLetterService> _coverLetterServiceMock;
         private Mock<IIFACertificateService> _ifaCertificateService;
@@ -46,7 +46,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests
             _dateTimeZoneInformationMock = new Mock<IDateTimeZoneInformation>();
             _fileTransferClient = new Mock<IFileTransferClient>();
 
-            _printProcessFlowCommand = new PrintProcessFlowCommand(
+            _printProcessCommand = new PrintProcessCommand(
                 _aggregateLogger.Object,
                 _sanitizerServiceMock.Object,
                 _coverLetterServiceMock.Object,
@@ -99,7 +99,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests
                     })
                 }));
 
-            _printProcessFlowCommand.Execute().GetAwaiter().GetResult();
+            _printProcessCommand.Execute().GetAwaiter().GetResult();
         }
 
         [Test]

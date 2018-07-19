@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlTypes;
 using System.Linq;
-using System.Runtime.ConstrainedExecution;
 using System.Threading.Tasks;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using SFA.AssessorService.Paging;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
+using SFA.DAS.AssessorService.Domain.Paging;
 using CertificateStatus = SFA.DAS.AssessorService.Domain.Consts.CertificateStatus;
 
 namespace SFA.DAS.AssessorService.Data
@@ -123,7 +121,7 @@ namespace SFA.DAS.AssessorService.Data
                              group certificate by new { certificate.Id, certificate.CreatedAt } into result
                              orderby result.Key.CreatedAt descending
                              select result.FirstOrDefault().Id)
-                                        .Skip((pageIndex - 1) * pageSize)
+                                        .Skip((pageIndex) * pageSize)
                                         .Take(pageSize).ToListAsync();
 
             var certificates = await _context.Certificates.Where(q => ids.Contains(q.Id))
@@ -132,7 +130,7 @@ namespace SFA.DAS.AssessorService.Data
                 .OrderByDescending(q => q.CreatedAt)
                 .ToListAsync();
 
-            return new PaginatedList<Certificate>(certificates, count, pageIndex < 0 ? 1 : pageIndex, pageSize);
+            return new PaginatedList<Certificate>(certificates, count, pageIndex < 0 ? 0 : pageIndex, pageSize);
         }       
 
         public async Task<Certificate> Update(Certificate certificate, string username, string action)
@@ -196,9 +194,9 @@ namespace SFA.DAS.AssessorService.Data
                 certificate.BatchNumber = updateCertificatesBatchToIndicatePrintedRequest.BatchNumber;
                 certificate.Status = CertificateStatus.Printed;
                 certificate.ToBePrinted = toBePrintedDate;
-                certificate.UpdatedBy = UpdatedBy.PrintFunctionFlow;
+                certificate.UpdatedBy = UpdatedBy.PrintFunction;
 
-                await UpdateCertificateLog(certificate, CertificateActions.Printed, UpdatedBy.PrintFunctionFlow);
+                await UpdateCertificateLog(certificate, CertificateActions.Printed, UpdatedBy.PrintFunction);
             }
 
             await _context.SaveChangesAsync();
