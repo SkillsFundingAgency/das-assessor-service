@@ -45,6 +45,11 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests
 
             var certificateResponses = Builder<CertificateResponse>.CreateListOfSize(10).Build();
 
+            foreach (var certificateResponse in certificateResponses)
+            {
+                certificateResponse.CertificateData = Builder<CertificateDataResponse>.CreateNew().Build();
+            }
+
             _aggregateLogger.Setup(q => q.LogInfo(Moq.It.IsAny<string>()));
 
             _assessorServiceApi.Setup(q => q.GetCertificatesToBePrinted()
@@ -91,7 +96,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests
 
 
         [Test]
-        public void ItShouldStausesOnCertificates()
+        public void ItShouldSetStatusOnCertificates()
         {
             _assessorServiceApi.Verify(q =>
                 q.ChangeStatusToPrinted(It.IsAny<int>(), It.IsAny<List<CertificateResponse>>()), Times.Once());
