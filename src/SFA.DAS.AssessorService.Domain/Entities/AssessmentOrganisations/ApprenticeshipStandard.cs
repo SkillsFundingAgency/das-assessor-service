@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SFA.DAS.AssessorService.Api.Types.Models
+namespace SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations
 {
     public class ApprenticeshipStandard
     {

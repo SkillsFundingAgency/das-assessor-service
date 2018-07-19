@@ -2,10 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mime;
 using System.Text;
 using OfficeOpenXml;
 using SFA.DAS.AssessorService.Data.Exceptions;
-using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -80,7 +81,7 @@ namespace SFA.DAS.AssessorService.Data
                 }
                 var epaOrganisationName = worksheet.Cells[i, 2].Value != null ? worksheet.Cells[i, 2].Value.ToString() : string.Empty;
                 var epaOrganisationType = worksheet.Cells[i, 3].Value != null ? worksheet.Cells[i, 3].Value.ToString() : string.Empty;
-                var epaOrganisationTypeDetails = organisationTypes.First(x => string.Equals(x.OrganisationType,
+                var epaOrganisationTypeDetails = organisationTypes.FirstOrDefault(x => string.Equals(x.OrganisationType,
                     epaOrganisationType?.ToString(), StringComparison.CurrentCultureIgnoreCase));
                 if (epaOrganisationType == string.Empty || epaOrganisationTypeDetails.OrganisationType == string.Empty)
                 {
@@ -219,7 +220,7 @@ namespace SFA.DAS.AssessorService.Data
                         continue;
                 }
 
-                var effectiveFrom = ProcessValueAsDateTime(worksheet.Cells[i, 5].Value?.ToString(), "EffectiveFrom", StandardsWorkSheetName, i);
+                var effectiveFrom = ProcessNullableDateValue(worksheet.Cells[i, 5].Value?.ToString());
                 var effectiveTo = ProcessNullableDateValue(worksheet.Cells[i, 6].Value?.ToString());
                 var contactName = worksheet.Cells[i, 7].Value?.ToString();
                 var contactPhoneNumber = worksheet.Cells[i, 8].Value?.ToString();

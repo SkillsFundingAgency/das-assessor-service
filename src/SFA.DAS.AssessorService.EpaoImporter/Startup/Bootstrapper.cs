@@ -8,7 +8,6 @@ using SFA.DAS.AssessorService.EpaoImporter.InfrastructureServices;
 using SFA.DAS.AssessorService.EpaoImporter.Interfaces;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
 using SFA.DAS.AssessorService.EpaoImporter.Notification;
-using SFA.DAS.AssessorService.EpaoImporter.services;
 using SFA.DAS.AssessorService.EpaoImporter.Sftp;
 using SFA.DAS.AssessorService.EpaoImporter.Startup.DependencyResolution;
 using SFA.DAS.AssessorService.Settings;

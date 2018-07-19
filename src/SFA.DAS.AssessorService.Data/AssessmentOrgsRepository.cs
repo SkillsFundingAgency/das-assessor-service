@@ -9,13 +9,15 @@ using SFA.DAS.AssessorService.Data.Configuration;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations;
 
 namespace SFA.DAS.AssessorService.Data
 {
     public class AssessmentOrgsRepository : IAssessmentOrgsRepository
     {
         private readonly IConfigurationWrapper _configurationWrapper;
-     
+
         public AssessmentOrgsRepository(IConfigurationWrapper configurationWrapper)
         {
             _configurationWrapper = configurationWrapper;
@@ -51,6 +53,7 @@ namespace SFA.DAS.AssessorService.Data
             }
 
         }
+
         public List<DeliveryArea> WriteDeliveryAreas(List<DeliveryArea> deliveryAreas)
         {
             var connectionString = _configurationWrapper.DbConnectionString;
@@ -63,7 +66,10 @@ namespace SFA.DAS.AssessorService.Data
                 var currentNumber = connection.ExecuteScalar("select count(0) from [DeliveryArea]").ToString();
                 if (currentNumber == "0")
                 {
-                    connection.Execute("INSERT INTO [DeliveryArea] ([Area],[Status]) VALUES (@Area, @Status)", deliveryAreas);
+                    IDbTransaction transaction = connection.BeginTransaction();
+                    connection.Execute("INSERT INTO [DeliveryArea] ([Area],[Status]) VALUES (@Area, @Status)",
+                        deliveryAreas, transaction);
+                    transaction.Commit();
                 }
                 var delivAreas = connection.Query<DeliveryArea>("select * from [DeliveryArea]").ToList();
 
@@ -82,16 +88,26 @@ namespace SFA.DAS.AssessorService.Data
                     connection.Open();
 
 
+                var organisationTypesToInsert = new List<TypeOfOrganisation>();
+
                 foreach (var organisationType in organisationTypes)
                 {
-                    var currentNumber = connection.ExecuteScalar("select count(0) from [OrganisationType] where OrganisationType = @OrganisationType", organisationType).ToString();
+                    var currentNumber = connection
+                        .ExecuteScalar(
+                            "select count(0) from [OrganisationType] where OrganisationType = @OrganisationType",
+                            organisationType).ToString();
                     if (currentNumber == "0")
                     {
-                        connection.Execute(
-                            "INSERT INTO [OrganisationType] ([OrganisationType], [Status]) VALUES (@OrganisationType, @Status)",
-                            organisationType);
+                        organisationTypesToInsert.Add(organisationType);
                     }
                 }
+
+                IDbTransaction transaction = connection.BeginTransaction();
+                connection.Execute(
+                    "INSERT INTO [OrganisationType] ([OrganisationType], [Status]) VALUES (@OrganisationType, @Status)",
+                    organisationTypesToInsert, transaction);
+                transaction.Commit();
+
                 var orgTypes = connection.Query<TypeOfOrganisation>("select * from [OrganisationType]").ToList();
                 connection.Close();
 
@@ -107,13 +123,23 @@ namespace SFA.DAS.AssessorService.Data
                 if (connection.State != ConnectionState.Open)
                     connection.Open();
 
+                var organisationsToInsert = new List<EpaOrganisation>();
+
                 foreach (var organisation in organisations)
                 {
-                    var currentCount = connection.ExecuteScalar("select count(0) from [Organisations] where EndPointAssessorOrganisationId = @EndPointAssessorOrganisationId", organisation)
+                    var currentCount = connection
+                        .ExecuteScalar(
+                            "select count(0) from [Organisations] where EndPointAssessorOrganisationId = @EndPointAssessorOrganisationId",
+                            organisation)
                         .ToString();
                     if (currentCount == "0")
                     {
-                        connection.Execute(@"INSERT INTO [Organisations]
+                        organisationsToInsert.Add(organisation);
+                    }
+                }
+
+                IDbTransaction transaction = connection.BeginTransaction();
+                connection.Execute(@"INSERT INTO [Organisations]
                                         (
                                         [Id]
                                        ,[CreatedAt]
@@ -152,9 +178,9 @@ namespace SFA.DAS.AssessorService.Data
                                         ,@Address3
                                         ,@Address4
                                         ,@Postcode)",
-                            organisation);
-                    }
-                }
+                    organisationsToInsert, transaction);
+                    transaction.Commit();
+
                 var orgs = connection.Query<EpaOrganisation>("select * from [Organisations]").ToList();
 
                 connection.Close();
@@ -183,63 +209,103 @@ namespace SFA.DAS.AssessorService.Data
             {
                 if (connection.State != ConnectionState.Open)
                     connection.Open();
+                var sql = new StringBuilder();
 
                 var currentNumber = connection.ExecuteScalar("select count(0) from [OrganisationStandard]").ToString();
                 if (currentNumber == "0")
                 {
+                    foreach (var organisationStandard in orgStandards)
+                    {
+
+                        var comments = ConvertStringToSqlValueString(organisationStandard.Comments);
+                        var effectiveFrom = ConvertDateToSqlValueString(organisationStandard.EffectiveFrom);
+                        var effectiveTo = ConvertDateToSqlValueString(organisationStandard.EffectiveTo);
+                        var dateStandardApprovedOnRegister =
+                            ConvertDateToSqlValueString(organisationStandard.DateStandardApprovedOnRegister);
 
 
-                    connection.Execute(@"INSERT INTO [OrganisationStandard]
-                                       ([EndPointAssessorOrganisationId]
-                                       ,[StandardCode]
-                                       ,[EffectiveFrom]
-                                       ,[EffectiveTo]
-                                       ,[DateStandardApprovedOnRegister]
-                                       ,[Comments]
-                                       ,[Status])
-                                 VALUES
-                                       (@EndPointAssessorOrganisationId
-                                       ,@StandardCode
-                                       ,@EffectiveFrom
-                                       ,@EffectiveTo
-                                       ,@DateStandardApprovedOnRegister
-                                       ,@Comments,
-                                        @Status)",
-                        orgStandards);
+                        sql.Append("INSERT INTO [OrganisationStandard] ([EndPointAssessorOrganisationId],[StandardCode],[EffectiveFrom],[EffectiveTo],[DateStandardApprovedOnRegister],[Comments],[Status])" +
+                            $"VALUES ('{organisationStandard.EndPointAssessorOrganisationId}' ,'{organisationStandard.StandardCode}' ,{effectiveFrom} ,{effectiveTo} ,{dateStandardApprovedOnRegister} ,{comments} ,'{organisationStandard.Status}'); ");
+                    }
+                    connection.Execute(sql.ToString());
 
+                    //IDbTransaction transaction = connection.BeginTransaction();
+                    //connection.Execute(@"INSERT INTO [OrganisationStandard]
+                    //                   ([EndPointAssessorOrganisationId]
+                    //                   ,[StandardCode]
+                    //                   ,[EffectiveFrom]
+                    //                   ,[EffectiveTo]
+                    //                   ,[DateStandardApprovedOnRegister]
+                    //                   ,[Comments]
+                    //                   ,[Status])
+                    //             VALUES
+                    //                   (@EndPointAssessorOrganisationId
+                    //                   ,@StandardCode
+                    //                   ,@EffectiveFrom
+                    //                   ,@EffectiveTo
+                    //                   ,@DateStandardApprovedOnRegister
+                    //                   ,@Comments,
+                    //                    @Status)",
+                    //   orgStandards,transaction);
+                    //transaction.Commit();
+
+
+                    connection.Close();
                 }
-                connection.Close();
             }
-
         }
 
-        public void WriteStandardDeliveryAreas(List<EpaOrganisationStandardDeliveryArea> organisationStandardDeliveryAreas)
+      
+
+        public void WriteStandardDeliveryAreas(
+            List<EpaOrganisationStandardDeliveryArea> organisationStandardDeliveryAreas)
         {
             var connectionString = _configurationWrapper.DbConnectionString;
-
+            var sql = new StringBuilder();
             using (var connection = new SqlConnection(connectionString))
             {
                 if (connection.State != ConnectionState.Open)
                     connection.Open();
 
-                var currentNumber = connection.ExecuteScalar("select count(0) from [OrganisationStandardDeliveryArea]").ToString();
+                var currentNumber = connection.ExecuteScalar("select count(0) from [OrganisationStandardDeliveryArea]")
+                    .ToString();
                 if (currentNumber == "0")
                 {
-                    connection.Execute(@"INSERT INTO [OrganisationStandardDeliveryArea]
+                    foreach (var organisationStandardDeliveryArea in organisationStandardDeliveryAreas)
+                    {
+                        sql.Append($@"INSERT INTO [OrganisationStandardDeliveryArea]
                                            ([EndPointAssessorOrganisationId]
                                            ,[StandardCode]
                                            ,[DeliveryAreaId]
                                            ,[Comments]
                                             ,[Status])
                                      VALUES
-                                           (@EndPointAssessorOrganisationId
-                                           ,@StandardCode
-                                           ,@DeliveryAreaId
-                                           ,@Comments
-                                            ,@Status)",
-                        organisationStandardDeliveryAreas);
-                }
+                                           ('{organisationStandardDeliveryArea.EndPointAssessorOrganisationId}'
+                                           , '{organisationStandardDeliveryArea.StandardCode}'
+                                           , {organisationStandardDeliveryArea.DeliveryAreaId}
+                                           , '{organisationStandardDeliveryArea.Comments}'
+                                            , '{organisationStandardDeliveryArea.Status}'); ");
 
+                    }
+                    connection.Execute(sql.ToString());
+
+                    //IDbTransaction transaction = connection.BeginTransaction();
+                    //connection.Execute(@"INSERT INTO [OrganisationStandardDeliveryArea]
+                    //                       ([EndPointAssessorOrganisationId]
+                    //                       ,[StandardCode]
+                    //                       ,[DeliveryAreaId]
+                    //                       ,[Comments]
+                    //                        ,[Status])
+                    //                 VALUES
+                    //                       (@EndPointAssessorOrganisationId
+                    //                       ,@StandardCode
+                    //                       ,@DeliveryAreaId
+                    //                       ,@Comments
+                    //                        ,@Status)",
+                    //    organisationStandardDeliveryAreas, transaction);
+                    //transaction.Commit();
+
+                }
                 connection.Close();
             }
 
@@ -253,12 +319,22 @@ namespace SFA.DAS.AssessorService.Data
             {
                 if (connection.State != ConnectionState.Open)
                     connection.Open();
+
+                var contactsToInsert = new List<OrganisationContact>();
                 foreach (var contact in contacts)
                 {
-                    var numberOfMatches = connection.ExecuteScalar("select count(0) from [Contacts] where [EndPointAssessorOrganisationId] = @EndPointAssessorOrganisationId and email = @email", contact).ToString();
+                    var numberOfMatches = connection
+                        .ExecuteScalar(
+                            "select count(0) from [Contacts] where [EndPointAssessorOrganisationId] = @EndPointAssessorOrganisationId and email = @email",
+                            contact).ToString();
                     if (numberOfMatches == "0")
                     {
-                        connection.Execute(@"INSERT INTO [Contacts]
+                        contactsToInsert.Add(contact);
+                    }
+                }
+
+                IDbTransaction transaction = connection.BeginTransaction();
+                connection.Execute(@"INSERT INTO [Contacts]
                                                 ([Id]
                                                    ,[CreatedAt]
                                                    ,[DeletedAt]
@@ -283,11 +359,25 @@ namespace SFA.DAS.AssessorService.Data
                                                ,getdate()
                                                ,@Username
                                                ,@PhoneNumber)",
-                            contact);
-                    }
-                }
+                    contactsToInsert, transaction);
+                transaction.Commit();
+
                 connection.Close();
             }
+        }
+
+        private static string ConvertStringToSqlValueString(string stringToProcess)
+        {
+            return stringToProcess == null
+                ? "null"
+                : $@"'{stringToProcess.Replace("'","''")}'";
+        }
+
+        private static string  ConvertDateToSqlValueString (DateTime? dateToProcess)
+        {           
+                return dateToProcess == null
+                    ? "null"
+                    : $"'{dateToProcess.Value:yyyy-MM-dd}'";       
         }
     }
 }
