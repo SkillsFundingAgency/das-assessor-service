@@ -69,7 +69,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Web
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Web.Staff.Tests", "SFA.DAS.AssessorService.Web.Staff.Tests\SFA.DAS.AssessorService.Web.Staff.Tests.csproj", "{05449B49-D2B3-4F63-B981-544F0AF7B4FF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.Application.Api.External", "SFA.DAS.AssessorService.Application.Api.External\SFA.DAS.AssessorService.Application.Api.External.csproj", "{EFEC1E75-6DD4-41A2-B1CB-106BAC3E3EBD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Application.Api.External", "SFA.DAS.AssessorService.Application.Api.External\SFA.DAS.AssessorService.Application.Api.External.csproj", "{EFEC1E75-6DD4-41A2-B1CB-106BAC3E3EBD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

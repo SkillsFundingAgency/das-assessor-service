@@ -38,27 +38,35 @@ namespace SFA.DAS.AssessorService.Application.Api.External
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
-
-            services.AddHttpClient<ApiClient>("ApiClient", config =>
+            try
             {
-                config.BaseAddress = new Uri(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
-                config.DefaultRequestHeaders.Add("Accept", "Application/json");
-            });
+                ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new Info { Title = "SFA.DAS.AssessorService.Application.Api.External", Version = "v1" });
-
-                if (_env.IsDevelopment())
+                services.AddHttpClient<ApiClient>("ApiClient", config =>
                 {
-                    var basePath = AppContext.BaseDirectory;
-                    var xmlPath = Path.Combine(basePath, "SFA.DAS.AssessorService.Application.Api.External.xml");
-                    c.IncludeXmlComments(xmlPath);
-                }
+                    config.BaseAddress = new Uri(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
+                    config.DefaultRequestHeaders.Add("Accept", "Application/json");
+                });
+
+                services.AddSwaggerGen(c =>
+                {
+                    c.SwaggerDoc("v1", new Info { Title = "SFA.DAS.AssessorService.Application.Api.External", Version = "v1" });
+
+                //if (_env.IsDevelopment())
+                //{
+                //    var basePath = AppContext.BaseDirectory;
+                //    var xmlPath = Path.Combine(basePath, "SFA.DAS.AssessorService.Application.Api.External.xml");
+                //    c.IncludeXmlComments(xmlPath);
+                //}
             });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+                services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error during Startup Configure Services");
+                throw;
+            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -66,8 +74,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External
         {
             try
             {
-                //MappingStartup.AddMappings();
-
                 if (env.IsDevelopment())
                 {
                     app.UseDeveloperExceptionPage();

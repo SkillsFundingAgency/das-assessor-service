@@ -19,8 +19,8 @@
     },
     "SFA.DAS.AssessorService.Application.Api.External": {
       "commandName": "Project",
-      "launchUrl": "http://localhost:12726/swagger",
-      "applicationUrl": "http://localhost:12726/",
+      "launchUrl": "api/values",
+      "applicationUrl": "https://localhost:12727/;http://localhost:12726/",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
