@@ -47,8 +47,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Startup
                     c => new SftpClient(configuration.Sftp.RemoteHost, Convert.ToInt32(configuration.Sftp.Port),
                         configuration.Sftp.Username, configuration.Sftp.Password));
                 configure.AddRegistry<NotificationsRegistry>();
-                configure.For<IAssessmentOrgsImportService>().Use<AssessmentOrgsImportService>();
-
+        
                 _logger.LogInfo("Calling http registry and getting the token ....");
                 configure.AddRegistry<HttpRegistry>();
             });

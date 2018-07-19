@@ -5,6 +5,7 @@ using System.Text;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using OfficeOpenXml;
 using SFA.DAS.AssessorService.Data.Configuration;
 
@@ -16,13 +17,18 @@ namespace SFA.DAS.AssessorService.Data
         private static WebClient _webClient;
         private readonly IAssessmentOrgsSpreadsheetReader _spreadsheetReader;
         private readonly IConfigurationWrapper _configurationWrapper;
+        private readonly ILogger<AssessmentOrgsImporter> _logger;
 
 
-        public AssessmentOrgsImporter(IAssessmentOrgsRepository assessmentOrgsRepository, IConfigurationWrapper configurationWrapper, IAssessmentOrgsSpreadsheetReader spreadsheetReader)
+        public AssessmentOrgsImporter(IAssessmentOrgsRepository assessmentOrgsRepository, 
+                                        IConfigurationWrapper configurationWrapper, 
+                                        IAssessmentOrgsSpreadsheetReader spreadsheetReader, 
+                                        ILogger<AssessmentOrgsImporter> logger)
         {
             _assessmentOrgsRepository = assessmentOrgsRepository;
             _configurationWrapper = configurationWrapper;
             _spreadsheetReader = spreadsheetReader;
+            _logger = logger;
         }
 
         public async Task<AssessmentOrgsImportResponse> ImportAssessmentOrganisations(string action)
@@ -42,18 +48,26 @@ namespace SFA.DAS.AssessorService.Data
             }
             if (teardown)
             {
-                // LOGGING
+                _logger.LogInformation($"Teardown process started");
                 _assessmentOrgsRepository.TearDownData();
-                // LOGGING
+                _logger.LogInformation($"Teardown process stopped");
             }
 
-            _webClient = new WebClient();
+            if (!buildup)
+            {
+                _logger.LogInformation($"Operations completed without build up");
+                return new AssessmentOrgsImportResponse {Status = action};
+            }
+     
+
+        _webClient = new WebClient();
             var credentials =
                 Convert.ToBase64String(
                     Encoding.ASCII.GetBytes(
                         $"{_configurationWrapper.GitUserName}:{_configurationWrapper.GitPassword}"));
             _webClient.Headers[HttpRequestHeader.Authorization] = $"Basic {credentials}";
 
+            _logger.LogInformation($"Buildup  process started");
             try
 
             {
@@ -62,9 +76,12 @@ namespace SFA.DAS.AssessorService.Data
                 {
                     using (var package = new ExcelPackage(stream))
                     {
-                        var deliveryAreas = _assessmentOrgsRepository.WriteDeliveryAreas(_spreadsheetReader.HarvestDeliveryAreas(package));
+                        var deliveryAreas =
+                            _assessmentOrgsRepository.WriteDeliveryAreas(
+                                _spreadsheetReader.HarvestDeliveryAreas(package));
                         var organisationTypes =
-                            _assessmentOrgsRepository.WriteOrganisationTypes(_spreadsheetReader.HarvestOrganisationTypes(package));
+                            _assessmentOrgsRepository.WriteOrganisationTypes(_spreadsheetReader
+                                .HarvestOrganisationTypes(package));
                         var organisations =
                             _assessmentOrgsRepository.WriteOrganisations(
                                 _spreadsheetReader.HarvestEpaOrganisations(package, organisationTypes));
@@ -75,19 +92,21 @@ namespace SFA.DAS.AssessorService.Data
                         _assessmentOrgsRepository.WriteStandardDeliveryAreas(
                             _spreadsheetReader.HarvestStandardDeliveryAreas(package, organisations, standards,
                                 deliveryAreas));
-                        var contacts = _spreadsheetReader.GatherOrganisationContacts(organisations, organisationStandards);
+                        var contacts =
+                            _spreadsheetReader.GatherOrganisationContacts(organisations, organisationStandards);
                         _assessmentOrgsRepository.WriteOrganisationContacts(contacts);
                     }
                 }
 
-                Console.WriteLine("Build up completed.");
-            }
+              }
             catch (Exception ex)
             {
                 var message = "Program stopped with exception message: " + ex.Message;
-                Console.WriteLine(message);
-                Console.Read();
+                _logger.LogInformation(message);
+                throw;
             }
+            _logger.LogInformation("Operations completed with build up");
+
             return new AssessmentOrgsImportResponse {Status = action};
         }
     }

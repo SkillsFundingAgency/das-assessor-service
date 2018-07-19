@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             
 
-            _logger.LogInformation("Get Organisation Types");
+            _logger.LogInformation($"Requested migration of EPAO spreadsheet: [{operation}]");
             var response = await _mediator.Send(new AssessmentOrgsImportRequest {Operation = operation });
 
             return Ok(response);
