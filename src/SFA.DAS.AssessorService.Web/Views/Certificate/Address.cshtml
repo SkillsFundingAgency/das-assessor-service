@@ -52,20 +52,23 @@
                             @Localizer["Heading"]
                         </h1>
                     </legend>
-
-                    <div class="form-group">
-                        <label for="CertificatePreviousAddresses">
-                            <span class="form-label-bold">@Localizer["UsePreviousAddress"]</span>
-                        </label>
-                        <div class="col-md-5">
-                            @Html.DropDownListFor(x => Model.CertificatePreviousAddressViewModels, new SelectList(Model.CertificatePreviousAddressViewModels, "HashCode", "StringifiedAddress"), htmlAttributes: new { @class = "form-control", Name = "CertificatePreviousAddresses" })
-                            @Html.ValidationMessageFor(x => x.SelectedCertificatePreviousAddressViewModel, "", new { @class = "text-danger" })
+                
+                    @if (Model.CertificatePreviousAddressViewModels.Count > 0)
+                    {
+                        <div class="form-group">
+                            <label for="CertificatePreviousAddresses">
+                                <span class="form-label-bold">@Localizer["UsePreviousAddress"]</span>
+                            </label>
+                            <div class="col-md-5">
+                                @Html.DropDownListFor(x => Model.CertificatePreviousAddressViewModels, new SelectList(Model.CertificatePreviousAddressViewModels, "HashCode", "StringifiedAddress"), htmlAttributes: new {@class = "form-control", Name = "CertificatePreviousAddresses"})
+                                @Html.ValidationMessageFor(x => x.SelectedCertificatePreviousAddressViewModel, "", new {@class = "text-danger"})
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="bold"><b>@Localizer["UsePreviousAddress"]</b></div>                    
-                    <input name="SelectPreviousAddress" asp-for="SelectPreviousAddress" type="checkbox" />
-                    <span>@Model.CertificateContactPreviousAddress.StringifiedAddress</span>
+                        <div class="bold"><b>@Localizer["UsePreviousAddress"]</b></div>
+                        <input name="SelectPreviousAddress" asp-for="SelectPreviousAddress" type="checkbox"/>
+                        <span>@Model.CertificateContactPreviousAddress.StringifiedAddress</span>
+                    }
 
                     <div id="addressManualWrapper">
                         <div id="address-details" class="address-manual-input">
