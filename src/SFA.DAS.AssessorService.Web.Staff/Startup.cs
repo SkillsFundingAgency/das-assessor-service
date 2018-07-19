@@ -12,8 +12,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
+using StructureMap;
 
 namespace SFA.DAS.AssessorService.Web.Staff
 {
@@ -34,7 +36,7 @@ namespace SFA.DAS.AssessorService.Web.Staff
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.Configure<CookiePolicyOptions>(options =>
             {
@@ -45,15 +47,13 @@ namespace SFA.DAS.AssessorService.Web.Staff
 
             ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
 
+            
+
             services.AddHttpClient<ApiClient>("ApiClient", config =>
             {
                 config.BaseAddress = new Uri(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
                 config.DefaultRequestHeaders.Add("Accept", "Application/json");
             });
-            
-
-            services.AddScoped<ISessionService>(provider =>
-                new SessionService(provider.GetService<IHttpContextAccessor>(), _env.EnvironmentName));
 
             AddAuthentication(services);
 
@@ -78,7 +78,31 @@ namespace SFA.DAS.AssessorService.Web.Staff
             //        throw;
             //    }
             //}
-            
+
+            return ConfigureIoC(services);
+
+        }
+
+        private IServiceProvider ConfigureIoC(IServiceCollection services)
+        {
+            var container = new Container();
+
+            container.Configure(config =>
+            {
+                config.Scan(_ =>
+                {
+                    _.AssemblyContainingType(typeof(Startup));
+                    _.WithDefaultConventions();
+                });
+
+                config.For<ITokenService>().Use<TokenService>();
+                config.For<IWebConfiguration>().Use(ApplicationConfiguration);
+                config.For<ISessionService>().Use<SessionService>().Ctor<string>().Is(_env.EnvironmentName);
+
+                config.Populate(services);
+            });
+
+            return container.GetInstance<IServiceProvider>();
         }
 
         private void AddAuthentication(IServiceCollection services)
