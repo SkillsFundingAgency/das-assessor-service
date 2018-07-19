@@ -6,8 +6,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.External.Infrastructure;
 using SFA.DAS.AssessorService.Settings;
+using StructureMap;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace SFA.DAS.AssessorService.Application.Api.External
@@ -31,7 +33,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
         public IWebConfiguration ApplicationConfiguration { get; set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             try
             {
@@ -56,12 +58,35 @@ namespace SFA.DAS.AssessorService.Application.Api.External
             });
 
                 services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+                return ConfigureIoC(services);
             }
             catch (Exception e)
             {
                 _logger.LogError(e, "Error during Startup Configure Services");
                 throw;
             }
+        }
+
+        private IServiceProvider ConfigureIoC(IServiceCollection services)
+        {
+            var container = new Container();
+
+            container.Configure(config =>
+            {
+                config.Scan(_ =>
+                {
+                    _.AssemblyContainingType(typeof(Startup));
+                    _.WithDefaultConventions();
+                });
+
+                config.For<ITokenService>().Use<TokenService>();
+                config.For<IWebConfiguration>().Use(ApplicationConfiguration);
+
+                config.Populate(services);
+            });
+
+            return container.GetInstance<IServiceProvider>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
