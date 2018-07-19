@@ -9,7 +9,6 @@ using OfficeOpenXml.Style;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Extensions;
-using SFA.DAS.AssessorService.EpaoImporter.Data;
 using SFA.DAS.AssessorService.EpaoImporter.Interfaces;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
 using SFA.DAS.AssessorService.EpaoImporter.Sftp;
@@ -17,15 +16,14 @@ using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 {
-    public class IFACertificateService : IIFACertificateService
+    public class PrintingSpreadsheetCreator : IPrintingSpreadsheetCreator
     {
         private readonly IAggregateLogger _aggregateLogger;
         private readonly IFileTransferClient _fileTransferClient;
         private readonly IWebConfiguration _webConfiguration;
         private IEnumerable<CertificateResponse> _certificates;
-        private CoverLettersProduced _coverLettersProduced;
 
-        public IFACertificateService(
+        public PrintingSpreadsheetCreator(
             IAggregateLogger aggregateLogger,
             IFileTransferClient fileTransferClient,
             IWebConfiguration webConfiguration)
@@ -35,13 +33,9 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             _webConfiguration = webConfiguration;
         }
 
-        public async Task Create(int batchNumber,
-            IEnumerable<CertificateResponse> certificates,
-            CoverLettersProduced coverLettersProduced)
+        public async Task Create(int batchNumber, IEnumerable<CertificateResponse> certificates)
         {
-            _aggregateLogger.LogInfo("Created Excel Spreadsheet ....");
-
-            _coverLettersProduced = coverLettersProduced;
+            _aggregateLogger.LogInfo("Creating Excel Spreadsheet ....");
 
             var memoryStream = new MemoryStream();
 
@@ -225,8 +219,6 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 
                 if (certificateData.ContactPostCode != null)
                     worksheet.Cells[row, 18].Value = certificateData.ContactPostCode;
-
-                worksheet.Cells[row, 19].Value = _coverLettersProduced.CoverLetterCertificates[certificate.CertificateReference];
 
                 _aggregateLogger.LogInfo($"Processing Certificate For IFA Certificate - {certificate.CertificateReference}");
 

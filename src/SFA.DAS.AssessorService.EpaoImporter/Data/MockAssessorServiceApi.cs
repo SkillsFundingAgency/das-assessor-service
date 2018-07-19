@@ -62,6 +62,11 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
             throw new NotImplementedException();
         }
 
+        public Task CompleteSchedule(Guid scheduleRunId)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<int> GenerateBatchNumber()
         {
             return Task.FromResult(1);
