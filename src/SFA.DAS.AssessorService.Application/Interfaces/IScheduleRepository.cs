@@ -10,5 +10,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task CompleteScheduleRun(Guid scheduleRunId);
         Task QueueImmediateRun(int scheduleType);
         Task SetScheduleRun(ScheduleRun scheduleRun);
+        Task DeleteScheduleRun(Guid scheduleRunId);
     }
 }

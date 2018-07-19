@@ -57,6 +57,11 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
             return Task.FromResult<EMailTemplate>(emailTemplate);
         }
 
+        public Task<ScheduleRun> GetSchedule(ScheduleType scheduleType)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<int> GenerateBatchNumber()
         {
             return Task.FromResult(1);

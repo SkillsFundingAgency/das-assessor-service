@@ -42,5 +42,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             await _scheduleRepository.SetScheduleRun(scheduleRun);
             return Ok();
         }
+
+        [HttpDelete("api/v1/schedule",Name="DeleteScheduleRun")]
+        public async Task<IActionResult> DeleteScheduleRun(Guid scheduleRunId)
+        {
+            await _scheduleRepository.DeleteScheduleRun(scheduleRunId);
+            return Ok();
+        }
     }
 }

@@ -51,7 +51,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task SetScheduleRun(ScheduleRun scheduleRun)
         {
-            var currentScheduleRun = await GetNextScheduleRun(scheduleRun.ScheduleType);
+            var currentScheduleRun = await GetNextScheduleRun((int)scheduleRun.ScheduleType);
             if (currentScheduleRun == null)
             {
                 await _connection.ExecuteAsync(
@@ -65,6 +65,11 @@ namespace SFA.DAS.AssessorService.Data
                                WHERE Id = @Id",
                     new {currentScheduleRun.Id, scheduleRun.RunTime, scheduleRun.Interval, scheduleRun.IsRecurring});
             }
+        }
+
+        public async Task DeleteScheduleRun(Guid scheduleRunId)
+        {
+            await _connection.ExecuteAsync("DELETE ScheduleRuns WHERE Id = @scheduleRunId", new {scheduleRunId});
         }
     }
 }
