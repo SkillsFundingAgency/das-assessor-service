@@ -5,12 +5,9 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Client;
-using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.Paging;
 
-namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
+namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 {
     public class ApiClient
     {
@@ -32,24 +29,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             return await res.Content.ReadAsAsync<T>();
         }
 
-        public async Task<List<CertificateResponse>> GetCertificates()
+        public async Task<List<OrganisationResponse>> GetAllOrganisations()
         {
-            return await Get<List<CertificateResponse>>("/api/v1/certificates?statusses=Submitted");
-        }
-
-        public async Task<PaginatedList<StaffSearchResult>> Search(string searchString, int page)
-        {
-            return await Get<PaginatedList<StaffSearchResult>>($"/api/v1/staffsearch?searchQuery={searchString}&page={page}");
-        }
-
-        public async Task<LearnerDetail> GetLearner(int stdCode, long uln)
-        {
-            return await Get<LearnerDetail>($"/api/v1/learnerDetails?stdCode={stdCode}&uln={uln}");
-        }
-
-        public async Task<Certificate> GetCertificate(Guid certificateId)
-        {
-            return await Get<Certificate>($"api/v1/certificates/{certificateId}");
+            return await Get<List<OrganisationResponse>>("/api/v1/organisations/");
         }
     }
 }
