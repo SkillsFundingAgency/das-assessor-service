@@ -5,6 +5,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -53,7 +54,8 @@ namespace SFA.DAS.AssessorService.Web
                 .AddControllersAsServices()
                 .AddSessionStateTempDataProvider()
                 .AddViewLocalization(opts => { opts.ResourcesPath = "Resources"; })
-                .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
+                .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);;
 
 
             services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Assessors.AntiForgery", HttpOnly = true });
@@ -64,8 +66,6 @@ namespace SFA.DAS.AssessorService.Web
             }
             else
             {
-                //if (!string.IsNullOrEmpty(Configuration.SessionRedisConnectionString))
-                //{
                 try
                 {
                     services.AddDistributedRedisCache(options =>
@@ -78,12 +78,6 @@ namespace SFA.DAS.AssessorService.Web
                     _logger.LogError(e, $"Error setting redis for session.  Conn: {Configuration.SessionRedisConnectionString}");
                     throw;
                 }
-                    
-                //}
-                //else
-                //{
-                //    services.AddDistributedMemoryCache();
-                //}
             }
 
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
@@ -124,14 +118,15 @@ namespace SFA.DAS.AssessorService.Web
             MappingStartup.AddMappings();
             if (env.IsDevelopment())
             {
-                app.UseBrowserLink();
                 app.UseDeveloperExceptionPage();
             }
             else
             {
                 app.UseExceptionHandler("/Home/Error");
+                app.UseHsts();
             }
 
+            app.UseHttpsRedirection();
             app.UseStaticFiles()
                 .UseSession(new SessionOptions() { Cookie = new CookieBuilder() { Name = ".Assessors.Session", HttpOnly = true } })
                 .UseAuthentication()

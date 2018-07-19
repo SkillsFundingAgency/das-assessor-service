@@ -56,7 +56,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
             ContactRepository.Setup(cr => cr.GetContact("username"))
                 .ReturnsAsync(new Contact() {DisplayName = "EPAO User from same EAPOrg"});
 
-            IlrRepository.Setup(r => r.SearchForLearner(It.IsAny<SearchRequest>()))
+            IlrRepository.Setup(r => r.SearchForLearnerByUln(It.IsAny<long>()))
                 .ReturnsAsync(new List<Ilr> {new Ilr() {StdCode = 12, FamilyName = "Lamora"}});
         }
 
