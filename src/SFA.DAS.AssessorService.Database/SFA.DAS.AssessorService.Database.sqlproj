@@ -68,7 +68,6 @@
     <Build Include="Tables\Ilrs.sql" />
     <Build Include="Tables\EMailTemplates.sql" />
     <Build Include="Tables\BatchLogs.sql" />
-    <Build Include="Tables\ScheduleConfigurations.sql" />
     <Build Include="Tables\SearchLogs.sql" />
     <Build Include="Tables\ScheduleRuns.sql" />
   </ItemGroup>
