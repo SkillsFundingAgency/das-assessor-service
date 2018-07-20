@@ -27,18 +27,50 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet("api/ao/update-assessment-orgs/{operation}", Name = "UpdateAssessmentOrganisations")]
+        [HttpDelete("api/ao/assessment-organisations", Name = "TearDownAssessmentOrganisations")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(AssessmentOrgsImportResponse))]
         [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> UpdateAssessmentOrganisations(string operation)
+        public async Task<IActionResult> TearDownAssessmentOrganisations()
         {
-            
 
-            _logger.LogInformation($"Migration of EPAO spreadsheet requested: [{operation}]");
+            var operation = "teardown";
+            _logger.LogInformation($"Teardown of Register Data requested");
             var response = await _mediator.Send(new AssessmentOrgsImportRequest {Operation = operation });
 
+           
             return Ok(response);
-        }    
+        }
+
+        [HttpPatch("api/ao/assessment-organisations", Name = "BuildUpAssessmentOrganisations")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(AssessmentOrgsImportResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> BuildUpAssessmentOrganisations()
+        {
+
+            var operation = "buildup";
+            _logger.LogInformation($"Migration of EPAO spreadsheet requested: [{operation}]");
+            var response = await _mediator.Send(new AssessmentOrgsImportRequest { Operation = operation });
+
+
+            return Ok(response);
+        }
+
+
+        [HttpPatch("api/ao/assessment-organisations-alt", Name = "BuildUpAssessmentOrganisationsAlternative")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(AssessmentOrgsImportResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> BuildUpAssessmentOrganisationsAlternative()
+        {
+
+            var operation = "buildup-x";
+            _logger.LogInformation($"Migration of EPAO spreadsheet requested: [{operation}]");
+            var response = await _mediator.Send(new AssessmentOrgsImportRequest { Operation = operation });
+
+
+            return Ok(response);
+        }
     }
 }

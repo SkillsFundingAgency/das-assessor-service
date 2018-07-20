@@ -27,14 +27,14 @@ namespace SFA.DAS.AssessorService.Data
 
             var worksheet = GetWorksheet(package, LookupsWorkSheetName);
 
-            for (var i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
+            for (var i = worksheet.Dimension.Start.Row + 2; i <= worksheet.Dimension.End.Row; i++)
             {
                 var area = worksheet.Cells[i, LookupsColumnDeliveryArea].Value;
                 if (area is null) break;
                 if (area.ToString().ToLower() != "all")
                 {
 
-                    deliveryAreas.Add(new DeliveryArea { Id = i - 1, Area = area.ToString(), Status = "Live" });
+                    deliveryAreas.Add(new DeliveryArea { Id = i - 2, Area = area.ToString(), Status = "Live" });
                 }
             }
 
@@ -56,7 +56,7 @@ namespace SFA.DAS.AssessorService.Data
             {
                 var organisationType = worksheet.Cells[i, LookupsColumnOrganisationType].Value;
                 if (organisationType is null) break;
-                organisationTypes.Add(new TypeOfOrganisation { OrganisationType = organisationType.ToString(), Status = "Live" });
+                organisationTypes.Add(new TypeOfOrganisation { Id = i - 2, OrganisationType = organisationType.ToString(), Status = "Live" });
             }
 
             if (organisationTypes.Count == 0)
@@ -111,6 +111,7 @@ namespace SFA.DAS.AssessorService.Data
                 organisations.Add(
                     new EpaOrganisation
                     {
+                        Id = Guid.NewGuid(),
                         EndPointAssessorOrganisationId = epaOrganisationIdentifier,
                         EndPointAssessorName = epaOrganisationName,
                         OrganisationTypeId = organisationTypeId,

@@ -5,11 +5,13 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 {
     public interface IAssessmentOrgsRepository
     {
-        void TearDownData();
-        List<DeliveryArea> WriteDeliveryAreas(List<DeliveryArea> deliveryAreas);
-        List<TypeOfOrganisation> WriteOrganisationTypes(List<TypeOfOrganisation> organisationTypes);
+        string TearDownData();
 
-        List<EpaOrganisation> WriteOrganisations(List<EpaOrganisation> organisations);
+        void SetBuildAction(bool useStringBuilder);
+        void WriteDeliveryAreas(List<DeliveryArea> deliveryAreas);
+        void WriteOrganisationTypes(List<TypeOfOrganisation> organisationTypes);
+
+        void WriteOrganisations(List<EpaOrganisation> organisations);
         void WriteEpaOrganisationStandards(List<EpaOrganisationStandard> orgStandards);
         void WriteStandardDeliveryAreas(List<EpaOrganisationStandardDeliveryArea> organisationStandardDeliveryAreas);
         void WriteOrganisationContacts(List<OrganisationContact> contacts);

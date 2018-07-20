@@ -7,7 +7,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using OfficeOpenXml;
-using SFA.DAS.AssessorService.Data.Configuration;
+using SFA.DAS.AssessorService.Domain.DTOs;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -18,8 +18,7 @@ namespace SFA.DAS.AssessorService.Data
         private readonly IAssessmentOrgsSpreadsheetReader _spreadsheetReader;
         private readonly IConfigurationWrapper _configurationWrapper;
         private readonly ILogger<AssessmentOrgsImporter> _logger;
-
-
+    
         public AssessmentOrgsImporter(IAssessmentOrgsRepository assessmentOrgsRepository, 
                                         IConfigurationWrapper configurationWrapper, 
                                         IAssessmentOrgsSpreadsheetReader spreadsheetReader, 
@@ -33,81 +32,158 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<AssessmentOrgsImportResponse> ImportAssessmentOrganisations(string action)
         {
-            var teardown = false;
-            var buildup = false;
+            var spreadsheetDto = new AssessmentOrganisationsSpreadsheetDto();
+            
+            var progressStatus = new StringBuilder();
+
+            bool buildup;
 
             switch (action.ToLower())
             {
                 case "buildup":
-                    teardown = true;
+                    progressStatus.Append($"BUILDUP instituted at [{DateTime.Now.ToLongTimeString()}]; ");
+                    buildup = true;
+                    break;
+                case "buildup-x":
+                    progressStatus.Append($"BUILDUP without string building instituted at [{DateTime.Now.ToLongTimeString()}]; ");
                     buildup = true;
                     break;
                 case "teardown":
-                    teardown = true;
+                    progressStatus.Append($"TEARDOWN instituted at [{DateTime.Now.ToLongTimeString()}]; ");
+                    buildup = false;
                     break;
+                default:
+                    progressStatus.Append($"NO ACTION instituted - action [{action.ToLower()}] not understood; ");
+                    return new AssessmentOrgsImportResponse { Status = progressStatus.ToString() };
             }
-            if (teardown)
-            {
-                _logger.LogInformation($"Teardown process started");
-                _assessmentOrgsRepository.TearDownData();
-                _logger.LogInformation($"Teardown process stopped");
-            }
+            
+                HarvestSpreadsheetData(spreadsheetDto, progressStatus);
+
+                TearDownDatabase(progressStatus);
 
             if (!buildup)
             {
-                _logger.LogInformation($"Operations completed without build up");
-                return new AssessmentOrgsImportResponse {Status = action};
+                var message = $"Operations completed without build up  at [{DateTime.Now.ToLongTimeString()}]; ";
+                _logger.LogInformation(message);
+                progressStatus.Append(message);
+                return new AssessmentOrgsImportResponse {Status = progressStatus.ToString()};
             }
-     
+      
+               BuildUpDatabase(spreadsheetDto, progressStatus, action);
+      
+            return new AssessmentOrgsImportResponse {Status = progressStatus.ToString()};
+        }
 
-        _webClient = new WebClient();
-            var credentials =
-                Convert.ToBase64String(
-                    Encoding.ASCII.GetBytes(
-                        $"{_configurationWrapper.GitUserName}:{_configurationWrapper.GitPassword}"));
-            _webClient.Headers[HttpRequestHeader.Authorization] = $"Basic {credentials}";
-
-            _logger.LogInformation($"Buildup  process started");
+        private void BuildUpDatabase(AssessmentOrganisationsSpreadsheetDto spreadsheetDto, StringBuilder progressStatus, string action)
+        {
             try
-
             {
+                var buildupStartMessage = $"BUILD UP [{action}] process started; ";
+                _logger.LogInformation(buildupStartMessage);
+                progressStatus.Append(buildupStartMessage);
+
+                bool useStringbuilder = !(action == "buildup-x");
+
+                _assessmentOrgsRepository.SetBuildAction(useStringbuilder);
+
+                var message = "WRITING TO DATABASE: Delivery Areas; ";
+                progressStatus.Append(message); _logger.LogInformation(message);
+                _assessmentOrgsRepository.WriteDeliveryAreas(spreadsheetDto.DeliveryAreas);
+
+
+                message = "WRITING TO DATABASE: Organisation Types; ";
+                progressStatus.Append(message); _logger.LogInformation(message);
+                _assessmentOrgsRepository.WriteOrganisationTypes(spreadsheetDto.OrganisationTypes);
+
+                message = "WRITING TO DATABASE: Organisations; ";
+                progressStatus.Append(message); _logger.LogInformation(message);
+                _assessmentOrgsRepository.WriteOrganisations(spreadsheetDto.Organisations);
+
+                message = "WRITING TO DATABASE: Organisation-Standards; ";
+                progressStatus.Append(message); _logger.LogInformation(message);
+                _assessmentOrgsRepository.WriteEpaOrganisationStandards(spreadsheetDto.OrganisationStandards);
+
+                 message = "WRITING TO DATABASE: Organisation-Standard-Delivery Areas;  ";
+                progressStatus.Append(message); _logger.LogInformation(message);
+                _assessmentOrgsRepository.WriteStandardDeliveryAreas(spreadsheetDto.OrganisationStandardDeliveryAreas);
+               
+                message = "WRITING TO DATABASE: Contacts;  ";
+                progressStatus.Append(message); _logger.LogInformation(message);
+                _assessmentOrgsRepository.WriteOrganisationContacts(spreadsheetDto.Contacts);
+
+                var buildupFinishedMessage = $"BUILD UP process completed  at [{DateTime.Now.ToLongTimeString()}]; ";
+                _logger.LogInformation(buildupFinishedMessage);
+                progressStatus.Append(buildupFinishedMessage);
+
+            }
+            catch (Exception ex)
+            {
+                var message = $"Program stopped with exception message: {ex.Message}; ";
+                _logger.LogInformation(message);
+                progressStatus.Append(message);
+                throw;
+            }
+        }
+
+        private void TearDownDatabase(StringBuilder progressStatus)
+        {
+            _logger.LogInformation($"Teardown process started; ");
+            var progress = _assessmentOrgsRepository.TearDownData();
+            progressStatus.Append((string) progress);
+            _logger.LogInformation(progress);
+            _logger.LogInformation($"Teardown process stopped; ");
+        }
+
+        private void HarvestSpreadsheetData(AssessmentOrganisationsSpreadsheetDto spreadsheetDto, StringBuilder progressStatus)
+        {
+
+            try
+            {
+                _webClient = new WebClient();
+                var credentials =
+                    Convert.ToBase64String(
+                        Encoding.ASCII.GetBytes(
+                            $"{_configurationWrapper.GitUserName}:{_configurationWrapper.GitPassword}"));
+                _webClient.Headers[HttpRequestHeader.Authorization] = $"Basic {credentials}";
+
+                progressStatus.Append($"Downloading spreadsheet: [{_configurationWrapper.AssessmentOrgsUrl}]; ");
+
                 using (var stream =
                     new MemoryStream(_webClient.DownloadData(new Uri(_configurationWrapper.AssessmentOrgsUrl))))
                 {
+                    progressStatus.Append("Opening spreadsheet as a stream; ");
+
                     using (var package = new ExcelPackage(stream))
                     {
-                        var deliveryAreas =
-                            _assessmentOrgsRepository.WriteDeliveryAreas(
-                                _spreadsheetReader.HarvestDeliveryAreas(package));
-                        var organisationTypes =
-                            _assessmentOrgsRepository.WriteOrganisationTypes(_spreadsheetReader
-                                .HarvestOrganisationTypes(package));
-                        var organisations =
-                            _assessmentOrgsRepository.WriteOrganisations(
-                                _spreadsheetReader.HarvestEpaOrganisations(package, organisationTypes));
+                        progressStatus.Append("Reading from spreadsheet: Delivery Areas; ");
+                        spreadsheetDto.DeliveryAreas = _spreadsheetReader.HarvestDeliveryAreas(package);
+                        progressStatus.Append("Reading from spreadsheet: Organisation Types; ");
+                        spreadsheetDto.OrganisationTypes = _spreadsheetReader.HarvestOrganisationTypes(package);
+                        progressStatus.Append("Reading from spreadsheet: Organisations; ");
+                        spreadsheetDto.Organisations =
+                            _spreadsheetReader.HarvestEpaOrganisations(package, spreadsheetDto.OrganisationTypes);
+                        progressStatus.Append("Reading from spreadsheet: Standards; ");
                         var standards = _spreadsheetReader.HarvestStandards(package);
-                        var organisationStandards =
-                            _spreadsheetReader.HarvestEpaOrganisationStandards(package, organisations, standards);
-                        _assessmentOrgsRepository.WriteEpaOrganisationStandards(organisationStandards);
-                        _assessmentOrgsRepository.WriteStandardDeliveryAreas(
-                            _spreadsheetReader.HarvestStandardDeliveryAreas(package, organisations, standards,
-                                deliveryAreas));
-                        var contacts =
-                            _spreadsheetReader.GatherOrganisationContacts(organisations, organisationStandards);
-                        _assessmentOrgsRepository.WriteOrganisationContacts(contacts);
+                        progressStatus.Append("Reading from spreadsheet: Organisation-Standards; ");
+                        spreadsheetDto.OrganisationStandards =
+                            _spreadsheetReader.HarvestEpaOrganisationStandards(package, spreadsheetDto.Organisations,
+                                standards);
+                        progressStatus.Append("Reading from spreadsheet: Organisation-Standards-Delivery Areas; ");
+                        spreadsheetDto.OrganisationStandardDeliveryAreas =
+                            _spreadsheetReader.HarvestStandardDeliveryAreas(package, spreadsheetDto.Organisations, standards,
+                                spreadsheetDto.DeliveryAreas);
+                        progressStatus.Append("Reading from spreadsheet: Contacts; ");
+                        spreadsheetDto.Contacts = _spreadsheetReader.GatherOrganisationContacts(spreadsheetDto.Organisations,
+                            spreadsheetDto.OrganisationStandards);
                     }
                 }
-
-              }
-            catch (Exception ex)
+            }
+            catch (Exception e)
             {
-                var message = "Program stopped with exception message: " + ex.Message;
-                _logger.LogInformation(message);
+                progressStatus.Append("Error reading spreadsheet; ");
+                _logger.LogError($"Progress details:  {progressStatus}", e);
                 throw;
             }
-            _logger.LogInformation("Operations completed with build up");
-
-            return new AssessmentOrgsImportResponse {Status = action};
         }
     }
 }
