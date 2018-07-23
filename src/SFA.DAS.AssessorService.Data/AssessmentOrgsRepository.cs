@@ -231,9 +231,10 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        public void WriteEpaOrganisationStandards(List<EpaOrganisationStandard> orgStandards)
+        public List<EpaOrganisationStandard> WriteEpaOrganisationStandards(List<EpaOrganisationStandard> orgStandards)
         {
             var connectionString = _configurationWrapper.DbConnectionString;
+            var organisationStandardsFromDatabase = new List<EpaOrganisationStandard>();
 
             using (var connection = new SqlConnection(connectionString))
             {
@@ -285,16 +286,24 @@ namespace SFA.DAS.AssessorService.Data
                         transaction.Commit();
                     }
 
+                    organisationStandardsFromDatabase = connection.QueryAsync<EpaOrganisationStandard>("select * from [OrganisationStandard]").Result.ToList();
+                    
                     connection.Close();
+
+                 
                 }
             }
+
+            return organisationStandardsFromDatabase.ToList();
         }
 
         public void WriteStandardDeliveryAreas(
-            List<EpaOrganisationStandardDeliveryArea> organisationStandardDeliveryAreas)
+            List<EpaOrganisationStandardDeliveryArea> organisationStandardDeliveryAreas,
+            List<EpaOrganisationStandard> organisationStandards)
         {
             var connectionString = _configurationWrapper.DbConnectionString;
             var sql = new StringBuilder();
+
             using (var connection = new SqlConnection(connectionString))
             {
                 if (connection.State != ConnectionState.Open)
@@ -304,47 +313,60 @@ namespace SFA.DAS.AssessorService.Data
                     .ToString();
                 if (currentNumber == "0")
                 {
-                    if (UseStringBuilder)
+
+                    foreach (var orgStandardDeliveryArea in organisationStandardDeliveryAreas)
                     {
 
+                        var orgStandard = organisationStandards.FirstOrDefault(
+                            x => x.EndPointAssessorOrganisationId ==
+                                 orgStandardDeliveryArea.EndPointAssessorOrganisationId &&
+                                 x.StandardCode == orgStandardDeliveryArea.StandardCode);
 
-                        foreach (var organisationStandardDeliveryArea in organisationStandardDeliveryAreas)
+                        if (orgStandard != null)
                         {
-                            sql.Append($@"INSERT INTO [OrganisationStandardDeliveryArea]
-                                           ([EndPointAssessorOrganisationId]
-                                           ,[StandardCode]
+                            orgStandardDeliveryArea.OrganisationStandardId = orgStandard.Id;
+                        }
+                    }
+                }
+
+                var orgStandardDeliveryAreasToProcess =
+                    organisationStandardDeliveryAreas.Where(x => x.OrganisationStandardId != 0);
+
+                if (UseStringBuilder)
+                {
+                    foreach (var organisationStandardDeliveryArea in orgStandardDeliveryAreasToProcess)
+                    {
+                        sql.Append($@"INSERT INTO [OrganisationStandardDeliveryArea]
+                                           ([OrganisationStandardId]
                                            ,[DeliveryAreaId]
                                            ,[Comments]
                                             ,[Status])
                                      VALUES
-                                           ('{organisationStandardDeliveryArea.EndPointAssessorOrganisationId}'
-                                           , '{organisationStandardDeliveryArea.StandardCode}'
+                                           ('{organisationStandardDeliveryArea.OrganisationStandardId}'
                                            , {organisationStandardDeliveryArea.DeliveryAreaId}
                                            , '{organisationStandardDeliveryArea.Comments}'
                                             , '{organisationStandardDeliveryArea.Status}'); ");
 
-                        }
-                        connection.Execute(sql.ToString());
                     }
-                    else
-                    {
-                        IDbTransaction transaction = connection.BeginTransaction();
-                        connection.Execute(@"INSERT INTO [OrganisationStandardDeliveryArea]
-                                               ([EndPointAssessorOrganisationId]
-                                               ,[StandardCode]
+                    connection.Execute(sql.ToString());
+                }
+                else
+                {
+                    IDbTransaction transaction = connection.BeginTransaction();
+                    connection.Execute(@"INSERT INTO [OrganisationStandardDeliveryArea]
+                                               ([OrganisationStandardId]
                                                ,[DeliveryAreaId]
                                                ,[Comments]
                                                 ,[Status])
                                          VALUES
-                                               (@EndPointAssessorOrganisationId
-                                               ,@StandardCode
+                                               (@OrganisationStandardId
                                                ,@DeliveryAreaId
                                                ,@Comments
                                                 ,@Status)",
-                            organisationStandardDeliveryAreas, transaction);
-                        transaction.Commit();
-                    }
+                        orgStandardDeliveryAreasToProcess, transaction);
+                    transaction.Commit();
                 }
+
                 connection.Close();
             }
 

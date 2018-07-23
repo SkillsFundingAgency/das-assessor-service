@@ -5,7 +5,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations
     public class ApprenticeshipStandard
     {
         public int Id { get; set; }
-        public string StandardCode { get; set; }
+        public int StandardCode { get; set; }
         public int Version { get; set; }
         public string StandardName { get; set; }
         public int StandardSectorCode { get; set; }

@@ -101,11 +101,11 @@ namespace SFA.DAS.AssessorService.Data
 
                 message = "WRITING TO DATABASE: Organisation-Standards; ";
                 progressStatus.Append(message); _logger.LogInformation(message);
-                _assessmentOrgsRepository.WriteEpaOrganisationStandards(spreadsheetDto.OrganisationStandards);
+                var organisationStandards = _assessmentOrgsRepository.WriteEpaOrganisationStandards(spreadsheetDto.OrganisationStandards);
 
                  message = "WRITING TO DATABASE: Organisation-Standard-Delivery Areas;  ";
                 progressStatus.Append(message); _logger.LogInformation(message);
-                _assessmentOrgsRepository.WriteStandardDeliveryAreas(spreadsheetDto.OrganisationStandardDeliveryAreas);
+                _assessmentOrgsRepository.WriteStandardDeliveryAreas(spreadsheetDto.OrganisationStandardDeliveryAreas, organisationStandards);
                
                 message = "WRITING TO DATABASE: Contacts;  ";
                 progressStatus.Append(message); _logger.LogInformation(message);

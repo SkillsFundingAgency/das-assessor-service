@@ -137,7 +137,7 @@ namespace SFA.DAS.AssessorService.Data
 
             for (var i = worksheet.Dimension.Start.Row + 4; i <= worksheet.Dimension.End.Row; i++)
             {
-                var standardCode = worksheet.Cells[i, 1].Value?.ToString();
+                var standardCode = ProcessValueAsInt(worksheet.Cells[i, 1].Value?.ToString(), "StandardCode", StandardsWorkSheetName, i);
 
                 if (standardCode == null)
                     continue;
@@ -183,15 +183,15 @@ namespace SFA.DAS.AssessorService.Data
                     });
             }
 
-            // This is a special case, found on row 482 of the worksheet 'Register Standards'
+            //// This is a special case, found on row 482 of the worksheet 'Register Standards'
 
-            standards.Add(new ApprenticeshipStandard
-            {
-                StandardCode = "ST0597",
-                StandardName = "Technician Scientist",
-                EffectiveFrom = new DateTime(2018, 10, 01),
-                Status = "New"
-            });
+            //standards.Add(new ApprenticeshipStandard
+            //{
+            //    StandardCode = "ST0597",
+            //    StandardName = "Technician Scientist",
+            //    EffectiveFrom = new DateTime(2018, 10, 01),
+            //    Status = "New"
+            //});
 
             return standards;
         }
@@ -208,18 +208,12 @@ namespace SFA.DAS.AssessorService.Data
                     continue;
 
 
-                var standardCode = worksheet.Cells[i, 3].Value?.ToString();
+                var standardCode = ProcessNullableIntValue(worksheet.Cells[i, 3].Value?.ToString());
                 var standardName = worksheet.Cells[i, 4].Value?.ToString();
-                if (standardName == "Technician Scientist")
-                {
-                    standardCode = standards.First(x => x.StandardName == "Technician Scientist").StandardCode;
-                    status = "New";
-                }
-                else
-                {
-                    if (standardCode == null || standards.All(x => x.StandardCode != standardCode))
-                        continue;
-                }
+                
+                if (standardCode == null || standards.All(x => x.StandardCode != standardCode))
+                    continue;
+               
 
                 var effectiveFrom = ProcessNullableDateValue(worksheet.Cells[i, 5].Value?.ToString());
                 var effectiveTo = ProcessNullableDateValue(worksheet.Cells[i, 6].Value?.ToString());
@@ -234,7 +228,7 @@ namespace SFA.DAS.AssessorService.Data
                     new EpaOrganisationStandard
                     {
                         EndPointAssessorOrganisationId = epaOrganisationIdentifier,
-                        StandardCode = standardCode,
+                        StandardCode = standardCode.Value,
                         EffectiveFrom = effectiveFrom,
                         EffectiveTo = effectiveTo,
                         ContactName = contactName,
@@ -261,7 +255,7 @@ namespace SFA.DAS.AssessorService.Data
                 if (epaOrganisationIdentifier == null || epaOrganisations.All(x => x.EndPointAssessorOrganisationId != epaOrganisationIdentifier))
                     continue;
 
-                var standardCode = worksheet.Cells[i, 3].Value?.ToString();
+                var standardCode = ProcessNullableIntValue(worksheet.Cells[i, 3].Value?.ToString());
 
                 if (standardCode == null)
                 {
@@ -274,7 +268,7 @@ namespace SFA.DAS.AssessorService.Data
                     }
                 }
 
-                if (standardCode == null || standards.All(x => x.StandardCode != standardCode))
+                if (standardCode == null || standards.All(x => x.StandardCode != standardCode.Value))
                     continue;
 
                 var deliveryArea = worksheet.Cells[i, 5].Value != null
@@ -290,7 +284,7 @@ namespace SFA.DAS.AssessorService.Data
                     var standardDeliveryArea = new EpaOrganisationStandardDeliveryArea
                     {
                         EndPointAssessorOrganisationId = epaOrganisationIdentifier,
-                        StandardCode = standardCode,
+                        StandardCode = standardCode.Value,
                         DeliveryAreaId = delArea.Id,
                         Comments = comments,
                         Status = "Live"

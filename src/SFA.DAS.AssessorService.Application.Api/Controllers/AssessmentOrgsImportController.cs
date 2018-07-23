@@ -50,6 +50,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
 
             var operation = "buildup";
+            //operation = "buildup-x"; // if you need to do the longer version
             _logger.LogInformation($"Migration of EPAO spreadsheet requested: [{operation}]");
             var response = await _mediator.Send(new AssessmentOrgsImportRequest { Operation = operation });
 
@@ -58,19 +59,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
 
-        [HttpPatch("api/ao/assessment-organisations-alt", Name = "BuildUpAssessmentOrganisationsAlternative")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(AssessmentOrgsImportResponse))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> BuildUpAssessmentOrganisationsAlternative()
-        {
-
-            var operation = "buildup-x";
-            _logger.LogInformation($"Migration of EPAO spreadsheet requested: [{operation}]");
-            var response = await _mediator.Send(new AssessmentOrgsImportRequest { Operation = operation });
-
-
-            return Ok(response);
-        }
+       
     }
 }
