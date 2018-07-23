@@ -89,7 +89,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
 
         public async Task<ScheduleRun> GetNextScheduledRun()
         {
-            return await Get<ScheduleRun>($"api/v1/schedule");
+            return await Get<ScheduleRun>($"api/v1/schedule?scheduleType=1");
         }
 
         public async Task<Certificate> PostReprintRequest(StaffUIReprintRequest staffUiReprintRequest)

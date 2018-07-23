@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using MediatR;
@@ -25,13 +26,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
             _mediator = mediator;
         }
 
-        [HttpGet(Name= "StaffCertificateReprint")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(PaginatedList<StaffSearchResult>))]
+        [HttpPost(Name= "StaffCertificateReprint")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(StaffUIReprintResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> StaffCertificateReprint(StaffUIReprintRequest staffUiReprintRequest)
+        public async Task<IActionResult> StaffCertificateReprint([FromBody] StaffUIReprintRequest staffUiReprintRequest)
         {
-            return Ok(await _mediator.Send(new StaffUIReprintRequest(staffUiReprintRequest.Id, staffUiReprintRequest.Username)));
+            return Ok(await _mediator.Send(staffUiReprintRequest));
         }
     }
 }

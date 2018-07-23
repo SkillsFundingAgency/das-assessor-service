@@ -22,20 +22,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
         {
             var certificate = await _certificateRepository.GetCertificate(request.Id);
             if (certificate == null)
-                throw new NotFound();
+                throw new NotFound();          
 
-            if (certificate.Status == Domain.Consts.CertificateStatus.Reprint)
-            {
-                return null;
-            }
-
-            if (certificate.Status == Domain.Consts.CertificateStatus.Printed)
+            if (certificate.Status == Domain.Consts.CertificateStatus.Printed
+                || certificate.Status == Domain.Consts.CertificateStatus.Reprint)
             {
                 certificate.Status = Domain.Consts.CertificateStatus.Reprint;
                 await _certificateRepository.Update(certificate, request.Username,
                     action: SFA.DAS.AssessorService.Domain.Consts.CertificateActions.Reprint);
 
-                StaffUIReprintResponse staffUiReprintResponse = new StaffUIReprintResponse
+                var staffUiReprintResponse = new StaffUIReprintResponse
                 {
                     Certificate = certificate
                 };
