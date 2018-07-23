@@ -67,7 +67,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Notification
                     "numberOfCertificatesToBePrinted",
                     $"Number Of Certificates to be Printed:- {certificateResponses.Count}"
                 },
-                {"numberOfCoverLetters", "Number of Cover Letters:- 0"},
+                {"numberOfCoverLetters", ""},
                 {"sftpUploadDirectory", $"{_webConfiguration.Sftp.UploadDirectory}"},
                 {"proofDirectory", $"{_webConfiguration.Sftp.ProofDirectory}"}
             };

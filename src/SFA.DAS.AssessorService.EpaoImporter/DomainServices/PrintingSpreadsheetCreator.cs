@@ -135,9 +135,8 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             worksheet.Cells[2, 16].Value = "Address Line 3";
             worksheet.Cells[2, 17].Value = "Address Line 4";
             worksheet.Cells[2, 18].Value = "Post Code";
-            worksheet.Cells[2, 19].Value = "Cover Letter Filename";
 
-            using (var range = worksheet.Cells[2, 1, 2, 19])
+            using (var range = worksheet.Cells[2, 1, 2, 18])
             {
                 range.Style.Font.Bold = true;
                 range.Style.Fill.PatternType = ExcelFillStyle.Solid;
