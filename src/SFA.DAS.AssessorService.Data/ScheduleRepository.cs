@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        public async Task QueueImmediateRun(int scheduleType)
+        public async Task QueueImmediateRun(int scheduleType) 
         {
             await _connection.ExecuteAsync(
                 "INSERT ScheduleRuns (RunTime, ScheduleType) VALUES (@runTime, @scheduleType)",
