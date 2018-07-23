@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Address" xml:space="preserve">
-    <value>Address</value>
+    <value>Street address</value>
   </data>
   <data name="AddressLine2" xml:space="preserve">
     <value />
@@ -127,7 +127,7 @@
     <value />
   </data>
   <data name="City" xml:space="preserve">
-    <value>City or town</value>
+    <value>Town or city</value>
   </data>
   <data name="ContinueButton" xml:space="preserve">
     <value>Continue</value>
@@ -142,7 +142,7 @@
     <value>Organisation name</value>
   </data>
   <data name="Heading" xml:space="preserve">
-    <value>Search for Employers Address</value>
+    <value>Search for employer's address</value>
   </data>
   <data name="LoadingAddress" xml:space="preserve">
     <value>Loading address...</value>
@@ -166,6 +166,9 @@
     <value>Service is currently unavailable, enter the address manually</value>
   </data>
   <data name="UsePreviousAddress" xml:space="preserve">
+    <value>Use a previous address</value>
+  </data>
+  <data name="UseLastAddress" xml:space="preserve">
     <value>Use the address you used last time</value>
   </data>
 </root>

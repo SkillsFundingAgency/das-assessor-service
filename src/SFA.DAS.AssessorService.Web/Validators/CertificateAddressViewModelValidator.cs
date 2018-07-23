@@ -10,9 +10,6 @@ namespace SFA.DAS.AssessorService.Web.Validators
         {
             When(vm => !vm.SelectPreviousAddress, () =>
             {
-                RuleFor(vm => vm.Employer)
-                    .NotEmpty()
-                    .WithMessage(localizer["EmployerCannotBeEmpty"]);
                 RuleFor(vm => vm.Postcode).NotEmpty()
                     .WithMessage(localizer["PostcodeCannotBeEmpty"]);
                 RuleFor(vm => vm.Postcode)

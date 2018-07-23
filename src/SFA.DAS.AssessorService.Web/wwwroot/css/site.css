@@ -28,7 +28,6 @@
 
 .header-user {
   background: #005ea5;
-  margin-top: -10px;
   position: relative;
   z-index: 1;
 }
@@ -311,7 +310,8 @@ fieldset.after-error-summary {
 .error-summary,
 .info-summary,
 .success-summary,
-.warning-summary {
+.warning-summary,
+.info-highlighted {
   border-width: 4px;
   border-style: solid;
   margin-top: 15px;
@@ -323,7 +323,8 @@ fieldset.after-error-summary {
   .error-summary,
   .info-summary,
   .success-summary,
-  .warning-summary {
+  .warning-summary,
+  .info-highlighted {
     border-width: 5px;
     border-style: solid;
     margin-top: 30px;
@@ -368,6 +369,13 @@ fieldset.after-error-summary {
 
 .info-summary {
   border-color: #2b8cc4;
+}
+
+.info-highlighted {
+  max-width: 30em;
+  background: #eaebf3;
+  border: none;
+  border-left: solid 10px #2e358b;
 }
 
 @media (min-width: 641px) {
