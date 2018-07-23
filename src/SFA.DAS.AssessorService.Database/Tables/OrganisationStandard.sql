@@ -15,7 +15,8 @@ GO
 
 ALTER TABLE [OrganisationStandard]
 ADD CONSTRAINT FK_OrganisationIdentifierStandard
-FOREIGN KEY (EndPointAssessorOrganisationId) REFERENCES [Organisations] ([EndPointAssessorOrganisationId]);
+FOREIGN KEY (EndPointAssessorOrganisationId) REFERENCES [Organisations] ([EndPointAssessorOrganisationId])
+ON DELETE CASCADE;
 
 GO
 
