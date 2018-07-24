@@ -121,7 +121,7 @@ namespace SFA.DAS.AssessorService.Data
                              group certificate by new { certificate.Id, certificate.CreatedAt } into result
                              orderby result.Key.CreatedAt descending
                              select result.FirstOrDefault().Id)
-                                        .Skip((pageIndex) * pageSize)
+                                        .Skip((pageIndex - 1) * pageSize)
                                         .Take(pageSize).ToListAsync();
 
             var certificates = await _context.Certificates.Where(q => ids.Contains(q.Id))
@@ -130,7 +130,7 @@ namespace SFA.DAS.AssessorService.Data
                 .OrderByDescending(q => q.CreatedAt)
                 .ToListAsync();
 
-            return new PaginatedList<Certificate>(certificates, count, pageIndex < 0 ? 0 : pageIndex, pageSize);
+            return new PaginatedList<Certificate>(certificates, count, pageIndex, pageSize);
         }       
 
         public async Task<Certificate> Update(Certificate certificate, string username, string action)

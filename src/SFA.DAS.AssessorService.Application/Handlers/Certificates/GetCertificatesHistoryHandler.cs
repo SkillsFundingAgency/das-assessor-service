@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
             var certificates = await _certificateRepository.GetCertificateHistory(
                 request.Username,
-                request.PageIndex ?? 0,
+                request.PageIndex ?? 1,
                 pageSize);
 
             // Please Note:- Cannot seem to automap this with custom value/type converters
@@ -83,7 +83,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                         CertificateReference = certificate.CertificateReference,
                         Uln = certificate.Uln,
                         CreatedAt = certificate.CreatedAt,
-                        ContactOrganisation = certificate.Organisation.EndPointAssessorName,
+                        ContactOrganisation = certificateData.ContactOrganisation,
                         ContactName = certificateData.ContactName,
                         TrainingProvider = trainingProviderName,
                         RecordedBy = recordedBy,

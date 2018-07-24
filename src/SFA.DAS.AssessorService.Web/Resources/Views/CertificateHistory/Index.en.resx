@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AchievementDate" xml:space="preserve">
-    <value>Achievement Date</value>
+    <value>Achievement date</value>
   </data>
   <data name="AchievementStartDate" xml:space="preserve">
-    <value>Achievement start date</value>
+    <value>Apprenticeship start date</value>
   </data>
   <data name="Apprentice" xml:space="preserve">
     <value>Apprentice</value>
