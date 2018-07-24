@@ -82,10 +82,6 @@ namespace SFA.DAS.AssessorService.Data
                 _logger.LogInformation(buildupStartMessage);
                 progressStatus.Append(buildupStartMessage);
 
-                bool useStringbuilder = !(action == "buildup-x");
-
-                _assessmentOrgsRepository.SetBuildAction(useStringbuilder);
-
                 var message = "WRITING TO DATABASE: Delivery Areas; ";
                 progressStatus.Append(message); _logger.LogInformation(message);
                 _assessmentOrgsRepository.WriteDeliveryAreas(spreadsheetDto.DeliveryAreas);

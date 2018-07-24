@@ -115,14 +115,16 @@ namespace SFA.DAS.AssessorService.Data
                         EndPointAssessorOrganisationId = epaOrganisationIdentifier,
                         EndPointAssessorName = epaOrganisationName,
                         OrganisationTypeId = organisationTypeId,
-                        WebsiteLink = websiteLink,
-                        Address1 = contactAddress1,
-                        Address2 = contactAddress2,
-                        Address3 = contactAddress3,
-                        Address4 = contactAddress4,
-                        Postcode = postcode,
+                        OrganisationData = new OrganisationData {
+                                                                LegalName = legalName,
+                                                                WebsiteLink = websiteLink,
+                                                                Address1 = contactAddress1,
+                                                                Address2 = contactAddress2,
+                                                                Address3 = contactAddress3,
+                                                                Address4 = contactAddress4,
+                                                                Postcode = postcode},
                         EndPointAssessorUkprn = ukprn,
-                        LegalName = legalName,
+                       
                         Status = "New"
                     });
             }

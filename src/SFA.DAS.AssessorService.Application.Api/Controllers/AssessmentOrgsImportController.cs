@@ -36,9 +36,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             var operation = "teardown";
             _logger.LogInformation($"Teardown of Register Data requested");
-            var response = await _mediator.Send(new AssessmentOrgsImportRequest {Operation = operation });
-
-           
+            var response = await _mediator.Send(new AssessmentOrgsImportRequest {Operation = operation });      
             return Ok(response);
         }
 
@@ -50,11 +48,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
 
             var operation = "buildup";
-            //operation = "buildup-x"; // if you need to do the longer version
             _logger.LogInformation($"Migration of EPAO spreadsheet requested: [{operation}]");
             var response = await _mediator.Send(new AssessmentOrgsImportRequest { Operation = operation });
-
-
             return Ok(response);
         }
 

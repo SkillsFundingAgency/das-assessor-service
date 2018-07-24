@@ -6,8 +6,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
     public interface IAssessmentOrgsRepository
     {
         string TearDownData();
-
-        void SetBuildAction(bool useStringBuilder);
         void WriteDeliveryAreas(List<DeliveryArea> deliveryAreas);
         void WriteOrganisationTypes(List<TypeOfOrganisation> organisationTypes);
 
