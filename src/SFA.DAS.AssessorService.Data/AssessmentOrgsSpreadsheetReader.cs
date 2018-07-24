@@ -303,7 +303,7 @@ namespace SFA.DAS.AssessorService.Data
             return standardDeliveryAreas;
         }
 
-        public List<OrganisationContact> GatherOrganisationContacts(List<EpaOrganisation> organisations, List<EpaOrganisationStandard> organisationStandards)
+        public List<OrganisationContact> HarvestOrganisationContacts(List<EpaOrganisation> organisations, List<EpaOrganisationStandard> organisationStandards)
         {
 
             var distinctContacts = (from orgStandard in organisationStandards

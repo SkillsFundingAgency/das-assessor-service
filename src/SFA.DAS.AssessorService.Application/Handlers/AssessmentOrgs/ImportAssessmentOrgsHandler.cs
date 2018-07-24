@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.AssessmentOrgs
 
         public async Task<AssessmentOrgsImportResponse> Handle(AssessmentOrgsImportRequest request, CancellationToken cancellationToken)
         {
-           return await _assessmentOrgsImporter.ImportAssessmentOrganisations(request.Operation);
+           return _assessmentOrgsImporter.ImportAssessmentOrganisations(request.Operation);
         }
     }
 }
