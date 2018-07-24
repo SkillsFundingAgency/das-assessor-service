@@ -139,16 +139,16 @@
     <value>For example, human resources</value>
   </data>
   <data name="EditThisAddress" xml:space="preserve">
-    <value>Edit This Address</value>
-  </data>
-  <data name="Employer" xml:space="preserve">
-    <value>Organisation name</value>
+    <value>Manually edit this address</value>
   </data>
   <data name="FindANewAddress" xml:space="preserve">
-    <value>Find a New Address</value>
+    <value>Search for a different address</value>
   </data>
-  <data name="Heading" xml:space="preserve">
-    <value>Search for Employers Address</value>
+  <data name="Employer" xml:space="preserve">
+    <value>Company name</value>
+  </data>
+    <data name="Heading" xml:space="preserve">
+    <value>Confirm the employer's address</value>
   </data>
   <data name="LoadingAddress" xml:space="preserve">
     <value>Loading address...</value>
@@ -166,12 +166,12 @@
     <value>Postcode</value>
   </data>
   <data name="PostcodeLookup" xml:space="preserve">
-    <value>Start typing the postcode or address</value>
+    <value>Start typing the company name, postcode or address</value>
   </data>
   <data name="ServiceUnavailable" xml:space="preserve">
     <value>Service is currently unavailable, enter the address manually</value>
   </data>
   <data name="UsePreviousAddress" xml:space="preserve">
-    <value>Use the address you used last time</value>
+    <value>Use the address from your last certificate request</value>
   </data>
 </root>

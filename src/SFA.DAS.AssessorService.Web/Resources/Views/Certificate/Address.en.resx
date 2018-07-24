@@ -142,7 +142,10 @@
     <value>Organisation name</value>
   </data>
   <data name="Heading" xml:space="preserve">
-    <value>Search for employer's address</value>
+    <value>Search for the employer's address</value>
+  </data>
+  <data name="Lead" xml:space="preserve">
+    <value>Certificates should go to the apprentice's employer.</value>
   </data>
   <data name="LoadingAddress" xml:space="preserve">
     <value>Loading address...</value>
@@ -160,7 +163,7 @@
     <value>Postcode</value>
   </data>
   <data name="PostcodeLookup" xml:space="preserve">
-    <value>Start typing the postcode or address</value>
+    <value>Start typing the company name, postcode or address</value>
   </data>
   <data name="ServiceUnavailable" xml:space="preserve">
     <value>Service is currently unavailable, enter the address manually</value>
@@ -169,6 +172,6 @@
     <value>Use a previous address</value>
   </data>
   <data name="UseLastAddress" xml:space="preserve">
-    <value>Use the address you used last time</value>
+    <value>Use the address from your last certificate request</value>
   </data>
 </root>
