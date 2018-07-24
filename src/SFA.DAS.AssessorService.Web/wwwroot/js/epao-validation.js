@@ -110,9 +110,7 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
   $.validator.addMethod(
     'isValidDate',
     function(value, element, params) {
-      console.log(value, element.name, params);
       var dateString = getFullDate();
-      console.log(parseDate(dateString.toString()));
       return dateString
         ? this.optional(element) || parseDate(dateString.toString())
         : true;
@@ -125,7 +123,6 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
     'noFutureDate',
     function(value, element) {
       var now = new Date().getTime();
-      console.log(getFullDate());
       var userDate = parseDate(getFullDate())
         ? parseDate(getFullDate()).getTime()
         : false;

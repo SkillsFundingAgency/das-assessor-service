@@ -50,6 +50,8 @@
                     @Localizer["Heading"]
                 </h1>
 
+                <span class="body-text">@Localizer["Lead"]</span>
+
                 <div id="address-lookup" class="hide-nojs form-group disabled">
                     <div class="form-group form-group-compound" id="addressInputWrapper">
                         <label for="postcode-search" class="form-label">Start typing the company name or postcode</label>
@@ -57,15 +59,14 @@
                         <span class="visuallyhidden" id="ariaAddressEntered" aria-live="polite"></span>
                     </div>
                     <div id="address-manual" class="form-group form-group-compound">
-                        <a href="#" id="enterAddressManually">Or enter the address manually</a>
+                        <a href="#" id="enterAddressManually">Enter the address manually</a>
                         <span class="toggle-content loading-text" id="addressLoading">Loading address...</span>
                         <p id="postcodeServiceUnavailable" class="error toggle-content text">Service is currently unavailable, please enter the address manually</p>
                     </div>
                 </div>
 
                 <div class="info-highlighted js-address-panel hidden">
-                    <ul>
-                    </ul>
+                    <ul></ul>
                 </div>
 
                 <div id="addressManualWrapper">
@@ -121,7 +122,7 @@
                 @if (Model.CertificatePreviousAddressViewModels.Count > 0)
                 {
                     <div class="form-group">
-                        <span class="form-label-bold">@Localizer["UseLastAddress"]</span>
+                        <span class="bold body-text">@Localizer["UseLastAddress"]</span>
                         <div class="multiple-choice">
                             <input name="SelectPreviousAddress" asp-for="SelectPreviousAddress" type="checkbox"/>
                             <label for="SelectPreviousAddress">@Model.CertificateContactPreviousAddress.StringifiedAddress</label>
