@@ -31,7 +31,6 @@ namespace SFA.DAS.AssessorService.Data
             var progressStatus = new StringBuilder();
             try
             {
-
                 var connectionString = _configuration.SqlConnectionString;
 
                 progressStatus.Append("Teardown: Opening connection to database; ");
@@ -100,7 +99,6 @@ namespace SFA.DAS.AssessorService.Data
                 if (connection.State != ConnectionState.Open)
                     connection.Open();
 
-
                 var organisationTypesToInsert = new List<TypeOfOrganisation>();
 
                 foreach (var organisationType in organisationTypes)
@@ -157,7 +155,6 @@ namespace SFA.DAS.AssessorService.Data
                         organisationsToInsert.Add(organisation);
                     }
                 }
-
               
                 var sql = new StringBuilder();
 
@@ -177,8 +174,7 @@ namespace SFA.DAS.AssessorService.Data
                         $@"{ukprn}, null, '{org.Status}', null,  {org.OrganisationTypeId}, '{organisationData}' ); ";
                     sql.Append(sqlToAppend);
                 }
-                connection.Execute(sql.ToString());
-                
+                connection.Execute(sql.ToString());              
               
                 connection.Close();
             }
@@ -214,9 +210,7 @@ namespace SFA.DAS.AssessorService.Data
                                 $"VALUES ('{organisationStandard.EndPointAssessorOrganisationId}' ,'{organisationStandard.StandardCode}' ,{effectiveFrom} ,{effectiveTo} ,{dateStandardApprovedOnRegister} ,{comments} ,'{organisationStandard.Status}'); ");
                         }
                     connection.Execute(sql.ToString());
-
-                    organisationStandardsFromDatabase = connection.QueryAsync<EpaOrganisationStandard>("select * from [OrganisationStandard]").Result.ToList();
-                    
+                    organisationStandardsFromDatabase = connection.QueryAsync<EpaOrganisationStandard>("select * from [OrganisationStandard]").Result.ToList();                
                     connection.Close();
                 }
             }
@@ -240,7 +234,6 @@ namespace SFA.DAS.AssessorService.Data
                     .ToString();
                 if (currentNumber == "0")
                 {
-
                     foreach (var orgStandardDeliveryArea in organisationStandardDeliveryAreas)
                     {
 
@@ -258,7 +251,6 @@ namespace SFA.DAS.AssessorService.Data
 
                 var orgStandardDeliveryAreasToProcess =
                     organisationStandardDeliveryAreas.Where(x => x.OrganisationStandardId != 0);
-
               
                 foreach (var organisationStandardDeliveryArea in orgStandardDeliveryAreasToProcess)
                 {
@@ -275,10 +267,8 @@ namespace SFA.DAS.AssessorService.Data
 
                 }
                 connection.Execute(sql.ToString());
-
                 connection.Close();
             }
-
         }
 
         public void WriteOrganisationContacts(List<OrganisationContact> contacts)
@@ -316,7 +306,6 @@ namespace SFA.DAS.AssessorService.Data
                     var userName = ConvertStringToSqlValueString(contact.Username);
                     var phoneNumber = ConvertStringToSqlValueString(contact.PhoneNumber);
 
-
                     sql.Append(
                         "INSERT INTO [Contacts] ([Id] ,[CreatedAt] ,[DeletedAt] ,[DisplayName] ,[Email] ,[EndPointAssessorOrganisationId] ,[OrganisationId],  " +
                         "[Status], [UpdatedAt], [Username] ,[PhoneNumber]) VALUES " +
@@ -324,7 +313,6 @@ namespace SFA.DAS.AssessorService.Data
                         $@"'{contact.Status}', getdate(), {userName}, {phoneNumber}); ");
                 }
                 connection.Execute(sql.ToString());
-                
                 connection.Close();
             }
         }
@@ -352,9 +340,9 @@ namespace SFA.DAS.AssessorService.Data
 
         private static string  ConvertDateToSqlValueString (DateTime? dateToProcess)
         {           
-                return dateToProcess == null
-                    ? "null"
-                    : $"'{dateToProcess.Value:yyyy-MM-dd}'";       
+            return dateToProcess == null
+                ? "null"
+                : $"'{dateToProcess.Value:yyyy-MM-dd}'";       
         }   
     }
 }

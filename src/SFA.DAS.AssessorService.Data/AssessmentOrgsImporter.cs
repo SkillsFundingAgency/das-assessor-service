@@ -144,7 +144,6 @@ namespace SFA.DAS.AssessorService.Data
                 progressStatus.Append(message); _logger.LogInformation(message);
                 _assessmentOrgsRepository.WriteDeliveryAreas(spreadsheetDto.DeliveryAreas);
 
-
                 message = "WRITING TO DATABASE: Organisation Types; ";
                 progressStatus.Append(message); _logger.LogInformation(message);
                 _assessmentOrgsRepository.WriteOrganisationTypes(spreadsheetDto.OrganisationTypes);
@@ -168,7 +167,6 @@ namespace SFA.DAS.AssessorService.Data
                 var buildupFinishedMessage = $"BUILD UP process completed  at [{DateTime.Now.ToLongTimeString()}]; ";
                 _logger.LogInformation(buildupFinishedMessage);
                 progressStatus.Append(buildupFinishedMessage);
-
             }
             catch (Exception ex)
             {
@@ -178,6 +176,5 @@ namespace SFA.DAS.AssessorService.Data
                 throw;
             }
         }
-
     }
 }

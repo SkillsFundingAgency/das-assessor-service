@@ -16,7 +16,6 @@ namespace SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations
         public string UrlLink { get; set; }
         public int? SectorSubjectAreaTier1 { get; set; }
         public string SectorSubjectAreaTier2 { get; set; }
-
         public bool? IntegratedDegreeStandard { get; set; }
         public DateTime? CreatedOn { get; set; }
         public string CreatedBy { get; set; }

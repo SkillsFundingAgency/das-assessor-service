@@ -8,7 +8,6 @@
         public int StandardCode { get; set; }
         public int DeliveryAreaId { get; set; }
         public string Comments { get; set; }
-
         public string Status { get; set; }
     }
 }

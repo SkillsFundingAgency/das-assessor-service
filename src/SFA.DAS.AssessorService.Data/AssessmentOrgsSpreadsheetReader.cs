@@ -33,7 +33,6 @@ namespace SFA.DAS.AssessorService.Data
                 if (area is null) break;
                 if (area.ToString().ToLower() != "all")
                 {
-
                     deliveryAreas.Add(new DeliveryArea { Id = i - 2, Area = area.ToString(), Status = "Live" });
                 }
             }
@@ -123,8 +122,7 @@ namespace SFA.DAS.AssessorService.Data
                                                                 Address3 = contactAddress3,
                                                                 Address4 = contactAddress4,
                                                                 Postcode = postcode},
-                        EndPointAssessorUkprn = ukprn,
-                       
+                        EndPointAssessorUkprn = ukprn,                    
                         Status = "New"
                     });
             }
@@ -140,10 +138,6 @@ namespace SFA.DAS.AssessorService.Data
             for (var i = worksheet.Dimension.Start.Row + 4; i <= worksheet.Dimension.End.Row; i++)
             {
                 var standardCode = ProcessValueAsInt(worksheet.Cells[i, 1].Value?.ToString(), "StandardCode", StandardsWorkSheetName, i);
-
-                if (standardCode == null)
-                    continue;
-
                 var version = ProcessValueAsInt(worksheet.Cells[i, 2].Value?.ToString(), "Version", StandardsWorkSheetName, i);
                 var standardName = worksheet.Cells[i, 3].Value?.ToString();
                 var standardSectorCode = ProcessValueAsInt(worksheet.Cells[i, 4].Value?.ToString(), "StandardSectorCode", StandardsWorkSheetName, i);
@@ -185,16 +179,6 @@ namespace SFA.DAS.AssessorService.Data
                     });
             }
 
-            //// This is a special case, found on row 482 of the worksheet 'Register Standards'
-
-            //standards.Add(new ApprenticeshipStandard
-            //{
-            //    StandardCode = "ST0597",
-            //    StandardName = "Technician Scientist",
-            //    EffectiveFrom = new DateTime(2018, 10, 01),
-            //    Status = "New"
-            //});
-
             return standards;
         }
 
@@ -209,13 +193,10 @@ namespace SFA.DAS.AssessorService.Data
                 if (epaOrganisationIdentifier == null || epaOrganisations.All(x => x.EndPointAssessorOrganisationId != epaOrganisationIdentifier))
                     continue;
 
-
                 var standardCode = ProcessNullableIntValue(worksheet.Cells[i, 3].Value?.ToString());
-                var standardName = worksheet.Cells[i, 4].Value?.ToString();
-                
+                 
                 if (standardCode == null || standards.All(x => x.StandardCode != standardCode))
                     continue;
-               
 
                 var effectiveFrom = ProcessNullableDateValue(worksheet.Cells[i, 5].Value?.ToString());
                 var effectiveTo = ProcessNullableDateValue(worksheet.Cells[i, 6].Value?.ToString());
@@ -224,7 +205,6 @@ namespace SFA.DAS.AssessorService.Data
                 var contactEmail = worksheet.Cells[i, 9].Value?.ToString();
                 var dateStandardApprovedOnRegister = ProcessNullableDateValue(worksheet.Cells[i, 10].Value?.ToString());
                 var comments = worksheet.Cells[i, 11].Value?.ToString();
-
 
                 epaOrganisationStandards.Add(
                     new EpaOrganisationStandard
@@ -251,9 +231,7 @@ namespace SFA.DAS.AssessorService.Data
             var worksheet = GetWorksheet(package, DeliveryAreasWorkSheetName);
             for (var i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
             {
-
                 var epaOrganisationIdentifier = worksheet.Cells[i, 1].Value?.ToString();
-
                 if (epaOrganisationIdentifier == null || epaOrganisations.All(x => x.EndPointAssessorOrganisationId != epaOrganisationIdentifier))
                     continue;
 
@@ -295,9 +273,9 @@ namespace SFA.DAS.AssessorService.Data
                     if (!standardDeliveryAreas.Any(x => x.EndPointAssessorOrganisationId == standardDeliveryArea.EndPointAssessorOrganisationId
                                                         && x.StandardCode == standardDeliveryArea.StandardCode
                                                         && x.DeliveryAreaId == standardDeliveryArea.DeliveryAreaId))
-                    {
-                        standardDeliveryAreas.Add(standardDeliveryArea);
-                    }
+                                {
+                                standardDeliveryAreas.Add(standardDeliveryArea);
+                                }
                 }
             }
             return standardDeliveryAreas;
@@ -361,7 +339,7 @@ namespace SFA.DAS.AssessorService.Data
                 integratedDegreeStandard = true;
             return integratedDegreeStandard;
         }
-        private DateTime ProcessValueAsDateTime(string valueIn, string fieldName, string worksheetName, int rowNumber)
+        private static DateTime ProcessValueAsDateTime(string valueIn, string fieldName, string worksheetName, int rowNumber)
         {
             if (DateTime.TryParse(valueIn, out DateTime valueParsed))
                 return valueParsed;
@@ -418,6 +396,7 @@ namespace SFA.DAS.AssessorService.Data
 
             return postcode;
         }
+
         private static ExcelWorksheet GetWorksheet(ExcelPackage package, string worksheetname)
         {
             var worksheet = package.Workbook.Worksheets.FirstOrDefault(x => x.Name == worksheetname);

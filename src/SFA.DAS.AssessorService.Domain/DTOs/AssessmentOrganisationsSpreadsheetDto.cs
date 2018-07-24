@@ -3,7 +3,6 @@ using SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations;
 
 namespace SFA.DAS.AssessorService.Domain.DTOs
 {
-   
         public class AssessmentOrganisationsSpreadsheetDto
         {
             public List<DeliveryArea> DeliveryAreas { get; set; }

@@ -26,9 +26,7 @@ namespace SFA.DAS.AssessorService.Settings
 
         [JsonRequired] public AuthSettings StaffAuthentication { get; set; }
         [JsonRequired] public string GitUsername { get; set; }
-
         [JsonRequired] public string GitPassword { get; set; }
-
         [JsonRequired] public string AssessmentOrgsUrl { get; set; }
     }
 }
