@@ -10,18 +10,19 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations;
+using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Data
 {
     public class AssessmentOrgsRepository : IAssessmentOrgsRepository
     {
-        private readonly IConfigurationWrapper _configurationWrapper;
+        private readonly IWebConfiguration _configuration;
         private readonly ILogger<AssessmentOrgsRepository> _logger;
 
 
-        public AssessmentOrgsRepository(IConfigurationWrapper configurationWrapper, ILogger<AssessmentOrgsRepository> logger)
+        public AssessmentOrgsRepository(IWebConfiguration configuration, ILogger<AssessmentOrgsRepository> logger)
         {
-            _configurationWrapper = configurationWrapper;
+            _configuration = configuration;
             _logger = logger;
         }
 
@@ -31,7 +32,7 @@ namespace SFA.DAS.AssessorService.Data
             try
             {
 
-                var connectionString = _configurationWrapper.DbConnectionString;
+                var connectionString = _configuration.SqlConnectionString;
 
                 progressStatus.Append("Teardown: Opening connection to database; ");
                 using (var connection = new SqlConnection(connectionString))
@@ -71,7 +72,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public void WriteDeliveryAreas(List<DeliveryArea> deliveryAreas)
         {
-            var connectionString = _configurationWrapper.DbConnectionString;
+            var connectionString = _configuration.SqlConnectionString;
             using (var connection = new SqlConnection(connectionString))
             {
                 if (connection.State != ConnectionState.Open)
@@ -93,7 +94,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public void WriteOrganisationTypes(List<TypeOfOrganisation> organisationTypes)
         {
-            var connectionString = _configurationWrapper.DbConnectionString;
+            var connectionString = _configuration.SqlConnectionString;
             using (var connection = new SqlConnection(connectionString))
             {
                 if (connection.State != ConnectionState.Open)
@@ -126,7 +127,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public void WriteOrganisations(List<EpaOrganisation> organisations)
         {
-            var connectionString = _configurationWrapper.DbConnectionString;
+            var connectionString = _configuration.SqlConnectionString;
             using (var connection = new SqlConnection(connectionString))
             {
                 if (connection.State != ConnectionState.Open)
@@ -185,7 +186,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public List<EpaOrganisationStandard> WriteEpaOrganisationStandards(List<EpaOrganisationStandard> orgStandards)
         {
-            var connectionString = _configurationWrapper.DbConnectionString;
+            var connectionString = _configuration.SqlConnectionString;
             var organisationStandardsFromDatabase = new List<EpaOrganisationStandard>();
 
             using (var connection = new SqlConnection(connectionString))
@@ -227,7 +228,7 @@ namespace SFA.DAS.AssessorService.Data
             List<EpaOrganisationStandardDeliveryArea> organisationStandardDeliveryAreas,
             List<EpaOrganisationStandard> organisationStandards)
         {
-            var connectionString = _configurationWrapper.DbConnectionString;
+            var connectionString = _configuration.SqlConnectionString;
             var sql = new StringBuilder();
 
             using (var connection = new SqlConnection(connectionString))
@@ -282,7 +283,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public void WriteOrganisationContacts(List<OrganisationContact> contacts)
         {
-            var connectionString = _configurationWrapper.DbConnectionString;
+            var connectionString = _configuration.SqlConnectionString;
 
             using (var connection = new SqlConnection(connectionString))
             {

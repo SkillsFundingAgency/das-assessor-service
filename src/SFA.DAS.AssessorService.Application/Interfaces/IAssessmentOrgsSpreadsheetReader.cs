@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using OfficeOpenXml;
-using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations;
 
 namespace SFA.DAS.AssessorService.Application.Interfaces
@@ -19,6 +16,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         List<EpaOrganisationStandardDeliveryArea> HarvestStandardDeliveryAreas(ExcelPackage package,
             List<EpaOrganisation> epaOrganisations, List<ApprenticeshipStandard> standards, List<DeliveryArea> deliveryAreas);
 
-        List<OrganisationContact> GatherOrganisationContacts(List<EpaOrganisation> organisations, List<EpaOrganisationStandard> organisationStandards);
+        List<OrganisationContact> GatherOrganisationContacts(List<EpaOrganisation> organisations, 
+                                                             List<EpaOrganisationStandard> organisationStandards);
     }
 }

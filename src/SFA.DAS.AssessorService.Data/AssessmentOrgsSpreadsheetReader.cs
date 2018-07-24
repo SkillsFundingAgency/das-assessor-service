@@ -56,7 +56,7 @@ namespace SFA.DAS.AssessorService.Data
             {
                 var organisationType = worksheet.Cells[i, LookupsColumnOrganisationType].Value;
                 if (organisationType is null) break;
-                organisationTypes.Add(new TypeOfOrganisation { Id = i - 2, OrganisationType = organisationType.ToString(), Status = "Live" });
+                organisationTypes.Add(new TypeOfOrganisation { Id = i - 1, OrganisationType = organisationType.ToString(), Status = "Live" });
             }
 
             if (organisationTypes.Count == 0)

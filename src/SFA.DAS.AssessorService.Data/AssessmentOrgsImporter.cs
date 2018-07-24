@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using OfficeOpenXml;
 using SFA.DAS.AssessorService.Domain.DTOs;
+using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -16,18 +17,18 @@ namespace SFA.DAS.AssessorService.Data
         private readonly IAssessmentOrgsRepository _assessmentOrgsRepository;
         private static WebClient _webClient;
         private readonly IAssessmentOrgsSpreadsheetReader _spreadsheetReader;
-        private readonly IConfigurationWrapper _configurationWrapper;
+        private readonly IWebConfiguration _configuration;
         private readonly ILogger<AssessmentOrgsImporter> _logger;
     
         public AssessmentOrgsImporter(IAssessmentOrgsRepository assessmentOrgsRepository, 
-                                        IConfigurationWrapper configurationWrapper, 
                                         IAssessmentOrgsSpreadsheetReader spreadsheetReader, 
-                                        ILogger<AssessmentOrgsImporter> logger)
+                                        ILogger<AssessmentOrgsImporter> logger,
+                                        IWebConfiguration configuration)
         {
             _assessmentOrgsRepository = assessmentOrgsRepository;
-            _configurationWrapper = configurationWrapper;
             _spreadsheetReader = spreadsheetReader;
             _logger = logger;
+            _configuration = configuration;
         }
 
         public async Task<AssessmentOrgsImportResponse> ImportAssessmentOrganisations(string action)
@@ -139,13 +140,13 @@ namespace SFA.DAS.AssessorService.Data
                 var credentials =
                     Convert.ToBase64String(
                         Encoding.ASCII.GetBytes(
-                            $"{_configurationWrapper.GitUserName}:{_configurationWrapper.GitPassword}"));
+                            $"{_configuration.GitUsername}:{_configuration.GitPassword}"));
                 _webClient.Headers[HttpRequestHeader.Authorization] = $"Basic {credentials}";
 
-                progressStatus.Append($"Downloading spreadsheet: [{_configurationWrapper.AssessmentOrgsUrl}]; ");
+                progressStatus.Append($"Downloading spreadsheet: [{_configuration.AssessmentOrgsUrl}]; ");
 
                 using (var stream =
-                    new MemoryStream(_webClient.DownloadData(new Uri(_configurationWrapper.AssessmentOrgsUrl))))
+                    new MemoryStream(_webClient.DownloadData(new Uri(_configuration.AssessmentOrgsUrl))))
                 {
                     progressStatus.Append("Opening spreadsheet as a stream; ");
 
