@@ -64,9 +64,19 @@
                 </div>
 
                 <div class="info-highlighted js-address-panel hidden">
-                    <ul>
-                    </ul>
+                    <ul></ul>
                 </div>
+                
+                @if (!String.IsNullOrEmpty(Model.PreviousAddress?.StringifiedAddress))
+                {
+                    <div class="form-group">
+                        <span class="form-label-bold">@Localizer["UseLastAddress"]</span>
+                        <div class="multiple-choice">
+                            <input name="SelectPreviousAddress" asp-for="SelectPreviousAddress" type="checkbox" />
+                            <label for="SelectPreviousAddress">@Model.PreviousAddress.StringifiedAddress</label>
+                        </div>
+                    </div>                  
+                }
 
                 <div id="addressManualWrapper">
                     <div id="address-details" class="address-manual-input js-hidden">
@@ -117,31 +127,6 @@
 
                     </div>
                 </div>
-
-                @if (Model.CertificatePreviousAddressViewModels.Count > 0)
-                {
-                    <div class="form-group">
-                        <span class="form-label-bold">@Localizer["UseLastAddress"]</span>
-                        <div class="multiple-choice">
-                            <input name="SelectPreviousAddress" asp-for="SelectPreviousAddress" type="checkbox"/>
-                            <label for="SelectPreviousAddress">@Model.CertificateContactPreviousAddress.StringifiedAddress</label>
-                        </div>
-                    </div>
-               
-                    @*
-                    <div class="form-group hide-nojs">
-                        <label for="CertificatePreviousAddresses">
-                            <span class="form-label-bold">@Localizer["UsePreviousAddress"]</span>
-                        </label>
-                        @Html.DropDownListFor(x => Model.CertificatePreviousAddressViewModels, new SelectList(Model.CertificatePreviousAddressViewModels, "HashCode", "StringifiedAddress"), htmlAttributes: new {@class = "form-control", @Name = "CertificatePreviousAddresses"})
-                        @Html.ValidationMessageFor(x => x.SelectedCertificatePreviousAddressViewModel, "", new {@class = "text-danger"})
-                    </div>
-                    *@
-                }
-
-
-
-                
             </div>
 
             <button type="submit" class="button">@Localizer["ContinueButton"]</button>
@@ -151,5 +136,5 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-    @{await Html.RenderPartialAsync("~/Views/Certificate/_AddressScriptsPartial.cshtml"); }
+        @{await Html.RenderPartialAsync("~/Views/Certificate/_AddressScriptsPartial.cshtml"); }
 }

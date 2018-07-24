@@ -64,13 +64,18 @@
         </p>
 
 
-        <div class="form-group" sfa-validation-for="Employer" sfa-validationerror-class="form-group-error">
-            <label for="Employer">
-                <span class="form-label-bold">@Localizer["Employer"]</span>
-                <span class="error-message" asp-validation-for="Employer"></span>
-            </label>
-            <span>@Model.Employer</span>
-        </div>
+            <div class="form-group" sfa-validation-for="Employer" sfa-validationerror-class="form-group-error">
+                @if (String.IsNullOrEmpty(@Model.Employer))               
+                {
+                    <div class="form-group-compound address-item form-group" sfa-validation-for="Employer" sfa-validationerror-class="form-group-error">
+                        <label for="Employer">
+                            <span class="form-label-bold">@Localizer["Employer"]</span>
+                            <span class="error-message" asp-validation-for="Employer"></span>
+                        </label>
+                        <input autocomplete="off" class="form-control" name="City" sfa-validation-for="Employer" sfa-validationerror-class="form-control-error" asp-for="Employer" type="text" />
+                    </div>
+                }
+            </div>
             
             <button type="submit" class="button">@Localizer["ContinueButton"]</button>
         </form>

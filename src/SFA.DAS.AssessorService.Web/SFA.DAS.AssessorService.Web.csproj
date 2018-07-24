@@ -4,9 +4,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Services\**" />
+    <Compile Remove="Views\CertificateAddressSummary\**" />
     <Content Remove="Services\**" />
+    <Content Remove="Views\CertificateAddressSummary\**" />
     <EmbeddedResource Remove="Services\**" />
+    <EmbeddedResource Remove="Views\CertificateAddressSummary\**" />
     <None Remove="Services\**" />
+    <None Remove="Views\CertificateAddressSummary\**" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="inactive_app_offline_public_beta.htm" />
@@ -115,8 +119,5 @@
     <EmbeddedResource Update="Resources\Views\Search\Index.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Views\CertificateAddressSummary\" />
   </ItemGroup>
 </Project>

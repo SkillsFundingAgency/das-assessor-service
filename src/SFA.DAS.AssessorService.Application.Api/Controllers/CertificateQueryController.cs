@@ -42,18 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> GetCertificates([FromQuery] List<string> statuses)
         {
             return Ok(await _mediator.Send(new GetCertificatesRequest { Statuses = statuses }));
-        }
-
-        [HttpGet("addresses", Name = "GetPreviousAddresses")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<CertificateAddress>))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetPreviousAddresses([FromQuery] string userName)
-        {
-            var addresses = await _mediator.Send(new GetPreviousAddressesRequest { Username = userName });
-            if (addresses.Count == 0)
-                throw new ResourceNotFoundException();
-            return Ok(addresses);
-        }
+        }        
 
         [HttpGet("contact/previousaddress", Name = "GetContactPreviousAddress")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(CertificateAddress))]

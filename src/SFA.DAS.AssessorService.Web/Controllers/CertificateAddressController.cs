@@ -67,6 +67,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             {
                 var certificatePreviousAddress = await _certificateApiClient.GetContactPreviousAddress(username);
                 vm = vm.CopyFromCertificateAddress(certificatePreviousAddress);
+                vm.Employer = null;
             }
 
             if (!ModelState.IsValid)
@@ -102,22 +103,17 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             try
             {
-                var certificatePreviousAddress = await _certificateApiClient.GetContactPreviousAddress(username);
-                var certificatePreviousAddresses = await _certificateApiClient.GetPreviousAddressess(username);
+                var certificatePreviousAddress = await _certificateApiClient.GetContactPreviousAddress(username);               
 
-                certificateAddress.CertificateContactPreviousAddress =
+                certificateAddress.PreviousAddress =
                     new CertificatePreviousAddressViewModel(certificatePreviousAddress);
-                certificateAddress.CertificatePreviousAddressViewModels =
-                    certificatePreviousAddresses.Select(q => new CertificatePreviousAddressViewModel(q)).ToList();
+               
             }
             catch (EntityNotFoundException e)
             {
                 var certificatePreviousAddress = new CertificateAddress();
-                certificateAddress.CertificateContactPreviousAddress =
-                    new CertificatePreviousAddressViewModel(certificatePreviousAddress);
-
-                var certificatePreviousAddresses = new List<CertificatePreviousAddressViewModel>();
-                certificateAddress.CertificatePreviousAddressViewModels = certificatePreviousAddresses;                   
+                certificateAddress.PreviousAddress =
+                    new CertificatePreviousAddressViewModel(certificatePreviousAddress);             
             }
         }
     }
