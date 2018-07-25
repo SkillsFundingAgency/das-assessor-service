@@ -86,19 +86,16 @@
                 <a asp-controller="CertificateAddress" asp-action="ResetAddress">@Localizer["FindANewAddress"]</a>
             </p>
 
-
-            <div class="form-group" sfa-validation-for="Employer" sfa-validationerror-class="form-group-error">
-                @if (String.IsNullOrEmpty(@Model.Employer))
-                {
-                    <div class="form-group-compound address-item form-group" sfa-validation-for="Employer" sfa-validationerror-class="form-group-error">
-                        <label for="Employer">
-                            <span class="form-label-bold">@Localizer["Employer"]</span>
-                            <span class="error-message" asp-validation-for="Employer"></span>
-                        </label>
-                        <input autocomplete="off" class="form-control" name="Employer" sfa-validation-for="Employer" sfa-validationerror-class="form-control-error" asp-for="Employer" type="text" />
-                    </div>
-                }
-            </div>
+            @if (String.IsNullOrEmpty(@Model.Employer))
+            {
+                <div class="form-group address-item" sfa-validation-for="Employer" sfa-validationerror-class="form-group-error">
+                    <label for="Employer">
+                        <span class="form-label-bold">@Localizer["Employer"]</span>
+                        <span class="error-message" asp-validation-for="Employer"></span>
+                    </label>
+                    <input autocomplete="off" class="form-control" name="Employer" sfa-validation-for="Employer" sfa-validationerror-class="form-control-error" asp-for="Employer" type="text" />
+                </div>
+            }
 
             <button type="submit" class="button">@Localizer["ContinueButton"]</button>
         </form>

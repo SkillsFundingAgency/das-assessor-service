@@ -163,7 +163,7 @@
     <value>Postcode</value>
   </data>
   <data name="PostcodeLookup" xml:space="preserve">
-    <value>Start typing the company name, postcode or address</value>
+    <value>Start typing the company name, address or postcode</value>
   </data>
   <data name="ServiceUnavailable" xml:space="preserve">
     <value>Service is currently unavailable, enter the address manually</value>

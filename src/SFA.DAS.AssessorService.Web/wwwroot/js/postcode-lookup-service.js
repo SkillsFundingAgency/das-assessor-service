@@ -16,15 +16,18 @@
   $('#enterAddressManually').on('click', function(e) {
     e.preventDefault();
     $('#addressManualWrapper').unbind('click');
-    $('.js-address-panel').addClass('hidden');
+    $('.js-address-panel, .js-select-previous-address').addClass('hidden');
+    $('#address-lookup')
+      .removeClass('hide-nojs')
+      .addClass('hidden');
 
     $('#address-details').removeClass('js-hidden');
-    $('#AddressLine1').focus();
+    $('#Employer').focus();
   });
 
   $('#addressManualWrapper, button[type=submit]').bind('click', function() {
     $(this).unbind('click');
-    $('#AddressLine1').focus();
+    $('#Employer').focus();
   });
 
   $('#postcode-search').keyup(function() {
@@ -157,6 +160,7 @@
       success: function(data) {
         if (data.Items.length) {
           $('#addressLoading').hide();
+          $('.js-select-previous-address').hide();
           $('#enterAddressManually').show();
           $('#addressManualWrapper').unbind('click');
           $('#postcode-search').val('');
