@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Web.Validators
     {
         public CertificateAddressViewModelValidator(IStringLocalizer<CertificateAddressViewModelValidator> localizer)
         {
-            When(vm => !vm.SelectPreviousAddress, () =>
+            When(vm => (!vm.SelectPreviousAddress && !vm.ValidateEmployee), () =>
             {
                 RuleFor(vm => vm.Postcode).NotEmpty()
                     .WithMessage(localizer["PostcodeCannotBeEmpty"]);
@@ -20,6 +20,12 @@ namespace SFA.DAS.AssessorService.Web.Validators
                     .WithMessage(localizer["AddressLine1CannotBeEmpty"]);
                 RuleFor(vm => vm.City).NotEmpty()
                     .WithMessage(localizer["CityCannotBeEmpty"]);
+            });
+
+            When(vm => vm.ValidateEmployee, () =>
+            {
+                RuleFor(vm => vm.Employer).NotEmpty()
+                    .WithMessage(localizer["EmployerCannotBeEmpty"]);
             });
         }
     }

@@ -33,6 +33,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpPost(Name = "AddressSummary")]
         public IActionResult AddressSummary(CertificateAddressViewModel vm)
         {
+            if (!ModelState.IsValid)
+            {
+                return View("~/Views/Certificate/AddressSummary.cshtml", vm);
+            }
+
             return RedirectToAction("Recipient", "CertificateRecipient");
         }
     }
