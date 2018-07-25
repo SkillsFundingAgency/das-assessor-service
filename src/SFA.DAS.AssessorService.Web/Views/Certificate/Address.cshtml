@@ -69,7 +69,7 @@
                     <ul></ul>
                 </div>
                 
-                @if (!String.IsNullOrEmpty(Model.PreviousAddress?.StringifiedAddress))
+                @if (!String.IsNullOrEmpty(Model.PreviousAddress?.StringifiedAddress) && Model.ShowPreviousAddress)
                 {
                     <div class="form-group js-select-previous-address">
                         <span class="form-label-bold">@Localizer["UseLastAddress"]</span>

@@ -16,11 +16,11 @@
     <div class="column-two-thirds">
         @if (Model.BackToCheckPage)
         {
-            <a class="link-back" asp-controller="CertificateCheck" asp-action="Check">Back</a>
+        <a class="link-back" asp-controller="CertificateCheck" asp-action="Check">Back</a>
         }
         else
         {
-            <a class="link-back" asp-controller="CertificateAddress" asp-action="Address">Back</a>
+        <a class="link-back" asp-controller="CertificateAddress" asp-action="Address">Back</a>
         }
 
         <form class="apprentice-address-form" type="post" asp-controller="CertificateAddressSummary">
@@ -42,14 +42,14 @@
 
             @if (!ViewData.ModelState.IsValid)
             {
-                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                        There's a problem
-                    </h2>
-                    <ul class="error-summary-list">
-                        <li><a sfa-validation-for="Employer"></a></li>
-                    </ul>
-                </div>
+            <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                    There's a problem
+                </h2>
+                <ul class="error-summary-list">
+                    <li><a sfa-validation-for="Employer"></a></li>
+                </ul>
+            </div>
             }
 
             <h1 class="heading-large">
@@ -79,11 +79,18 @@
                 </ul>
             </div>
 
+            @{
+                var parms = new Dictionary<string, string>
+                {
+                    { "showPreviousAddress", "false" }
+                };
+            }
+
             <p>
-                <a asp-controller="CertificateAddress" asp-action="Address">@Localizer["EditThisAddress"]</a>
+                <a asp-controller="CertificateAddress" asp-action="Address" asp-all-route-data="parms">@Localizer["EditThisAddress"]</a>
             </p>
             <p>
-                <a asp-controller="CertificateAddress" asp-action="ResetAddress">@Localizer["FindANewAddress"]</a>
+                <a asp-controller="CertificateAddress" asp-action="ResetAddress" asp-all-route-data="parms">@Localizer["FindANewAddress"]</a>
             </p>
 
             @if (String.IsNullOrEmpty(@Model.Employer))
