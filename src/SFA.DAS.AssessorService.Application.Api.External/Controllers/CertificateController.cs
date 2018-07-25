@@ -24,11 +24,13 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
     public class CertificateController : ControllerBase
     {
         private readonly ILogger<CertificateController> _logger;
+        private readonly IHeaderInfo _headerInfo;
         private readonly ApiClient _apiClient;
 
-        public CertificateController(ILogger<CertificateController> logger, ApiClient apiClient)
+        public CertificateController(ILogger<CertificateController> logger, IHeaderInfo headerInfo, ApiClient apiClient)
         {
             _logger = logger;
+            _headerInfo = headerInfo;
             _apiClient = apiClient;
         }
 
@@ -37,15 +39,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> CreateDraft([FromBody] List<CertificateRequest> request)
         {
-            HttpContext.Request.Headers.TryGetValue("x-username", out var usernameHeaderValue);
-            HttpContext.Request.Headers.TryGetValue("x-ukprn", out var ukprnHeaderValue);
-
-            int.TryParse(ukprnHeaderValue.FirstOrDefault(), out int ukprn);
-            string username = usernameHeaderValue.FirstOrDefault() ?? string.Empty;
-
             List<CertificateResponse> response = new List<CertificateResponse>();
 
-            foreach (var validatedCertificate in await ValidateCertificateRequest(request, ukprn, username))
+            foreach (var validatedCertificate in await ValidateCertificateRequest(request, _headerInfo.Ukprn, _headerInfo.Username))
             {
                 CertificateResponse certificateResponse = new CertificateResponse
                 {
@@ -64,11 +60,11 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
                 }
                 else
                 {
-                    var scr = new AssessorService.Api.Types.Models.Certificates.StartCertificateRequest { Uln = validatedCertificate.Uln, StandardCode = validatedCertificate.StdCode, UkPrn = ukprn, Username = username };
+                    var scr = new AssessorService.Api.Types.Models.Certificates.StartCertificateRequest { Uln = validatedCertificate.Uln, StandardCode = validatedCertificate.StdCode, UkPrn = _headerInfo.Ukprn, Username = _headerInfo.Username };
 
                     Certificate startCertificate = await _apiClient.StartCertificate(scr);
 
-                    CertificateResponse updateCertificateResponse = await UpdateDraftCertificate(startCertificate, validatedCertificate.CertificateData, username, CertificateStatus.Draft, CertificateActions.Start);
+                    CertificateResponse updateCertificateResponse = await UpdateDraftCertificate(startCertificate, validatedCertificate.CertificateData, _headerInfo.Username, CertificateStatus.Draft, CertificateActions.Start);
 
                     certificateResponse.Certificate = updateCertificateResponse.Certificate;
                     certificateResponse.Status = updateCertificateResponse.Status;
@@ -86,15 +82,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> UpdateDraft([FromBody] List<CertificateRequest> request)
         {
-            HttpContext.Request.Headers.TryGetValue("x-username", out var usernameHeaderValue);
-            HttpContext.Request.Headers.TryGetValue("x-ukprn", out var ukprnHeaderValue);
-
-            int.TryParse(ukprnHeaderValue.FirstOrDefault(), out int ukprn);
-            string username = usernameHeaderValue.FirstOrDefault() ?? string.Empty;
-
             List<CertificateResponse> response = new List<CertificateResponse>();
 
-            foreach (var validatedCertificate in await ValidateCertificateRequest(request, ukprn, username))
+            foreach (var validatedCertificate in await ValidateCertificateRequest(request, _headerInfo.Ukprn, _headerInfo.Username))
             {
                 CertificateResponse certificateResponse = new CertificateResponse
                 {
@@ -117,7 +107,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
 
                     Certificate certificate = await _apiClient.GetCertificateForUln(gcfuRequest);
 
-                    CertificateResponse updateCertificateResponse = await UpdateDraftCertificate(certificate, validatedCertificate.CertificateData, username, CertificateStatus.Draft, CertificateActions.Start);
+                    CertificateResponse updateCertificateResponse = await UpdateDraftCertificate(certificate, validatedCertificate.CertificateData, _headerInfo.Username, CertificateStatus.Draft, CertificateActions.Start);
 
                     certificateResponse.Certificate = updateCertificateResponse.Certificate;
                     certificateResponse.Status = updateCertificateResponse.Status;
@@ -135,12 +125,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> SubmitDraft([FromBody] List<CertificateRequest> request)
         {
-            HttpContext.Request.Headers.TryGetValue("x-username", out var usernameHeaderValue);
-            HttpContext.Request.Headers.TryGetValue("x-ukprn", out var ukprnHeaderValue);
-
-            int.TryParse(ukprnHeaderValue.FirstOrDefault(), out int ukprn);
-            string username = usernameHeaderValue.FirstOrDefault() ?? string.Empty;
-
             List<CertificateResponse> response = new List<CertificateResponse>();
 
             foreach (var cert in request)
@@ -160,7 +144,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
                     ValidationErrors = new List<string>()
                 };
 
-                CertificateResponse updateCertificateResponse = await UpdateDraftCertificate(certificate, null, username, CertificateStatus.Submitted, CertificateActions.Submit);
+                CertificateResponse updateCertificateResponse = await UpdateDraftCertificate(certificate, null, _headerInfo.Username, CertificateStatus.Submitted, CertificateActions.Submit);
 
                 certificateResponse.Certificate = updateCertificateResponse.Certificate;
                 certificateResponse.Status = updateCertificateResponse.Status;
@@ -178,12 +162,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> DeleteDraft(long uln, string lastname, int stdCode)
         {
-            HttpContext.Request.Headers.TryGetValue("x-username", out var usernameHeaderValue);
-            HttpContext.Request.Headers.TryGetValue("x-ukprn", out var ukprnHeaderValue);
-
-            int.TryParse(ukprnHeaderValue.FirstOrDefault(), out int ukprn);
-            string username = usernameHeaderValue.FirstOrDefault() ?? string.Empty;
-
             var gcfuRequest = new AssessorService.Api.Types.Models.Certificates.GetCertificateForUlnRequest { Uln = uln, StandardCode = stdCode };
 
             Certificate cert = await _apiClient.GetCertificateForUln(gcfuRequest);
@@ -202,7 +180,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
 
                 var ucRequest = new AssessorService.Api.Types.Models.Certificates.UpdateCertificateRequest(cert);
                 ucRequest.Action = CertificateActions.Start;
-                ucRequest.Username = username;
+                ucRequest.Username = _headerInfo.Username;
 
                 Certificate updatedCertificate = await _apiClient.UpdateCertificate(ucRequest);
 

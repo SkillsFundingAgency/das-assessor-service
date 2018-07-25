@@ -18,11 +18,13 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
     public class LearnerController : ControllerBase
     {
         private readonly ILogger<LearnerController> _logger;
+        private readonly IHeaderInfo _headerInfo;
         private readonly ApiClient _apiClient;
 
-        public LearnerController(ILogger<LearnerController> logger, ApiClient apiClient)
+        public LearnerController(ILogger<LearnerController> logger, IHeaderInfo headerInfo, ApiClient apiClient)
         {
             _logger = logger;
+            _headerInfo = headerInfo;
             _apiClient = apiClient;
         }
 
@@ -31,18 +33,12 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> Get(long uln, string lastname, int? stdCode = null)
         {            
-            HttpContext.Request.Headers.TryGetValue("x-username", out var usernameHeaderValue);
-            HttpContext.Request.Headers.TryGetValue("x-ukprn", out var ukprnHeaderValue);
-
-            int.TryParse(ukprnHeaderValue.FirstOrDefault(), out int ukprn);
-            string username = usernameHeaderValue.FirstOrDefault() ?? string.Empty;
-
             SearchQuery searchQuery = new SearchQuery
             {
                 Uln = uln,
                 Surname = lastname,
-                UkPrn = ukprn,
-                Username = username
+                UkPrn = _headerInfo.Ukprn,
+                Username = _headerInfo.Username
             };
 
             List<SearchResult> results = await _apiClient.Search(searchQuery, stdCode);

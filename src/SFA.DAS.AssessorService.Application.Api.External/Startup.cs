@@ -3,6 +3,7 @@ using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -15,7 +16,6 @@ using Swashbuckle.AspNetCore.Swagger;
 
 namespace SFA.DAS.AssessorService.Application.Api.External
 {
-    //TODO: This all needs configuring correctly as I don't know what I'm supposed to put in here
     public class Startup
     {
         private readonly IHostingEnvironment _env;
@@ -46,6 +46,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                     config.DefaultRequestHeaders.Add("Accept", "Application/json");
                 });
 
+               
+
                 services.AddSwaggerGen(c =>
                 {
                     c.SwaggerDoc("v1", new Info { Title = "SFA.DAS.AssessorService.Application.Api.External", Version = "v1" });
@@ -56,7 +58,10 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                 //    var xmlPath = Path.Combine(basePath, "SFA.DAS.AssessorService.Application.Api.External.xml");
                 //    c.IncludeXmlComments(xmlPath);
                 //}
-            });
+                });
+
+                services.AddScoped<IHeaderInfo, HeaderInfo>();
+                services.AddHttpContextAccessor();
 
                 services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
@@ -111,8 +116,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                     })
                     .UseAuthentication();
 
+                app.UseMiddleware<GetHeadersMiddleware>();
                 app.UseMiddleware<ErrorHandlingMiddleware>();
-
+                
                 app.UseHttpsRedirection();
                 app.UseMvc();
             }
