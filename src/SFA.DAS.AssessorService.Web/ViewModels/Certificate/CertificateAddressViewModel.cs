@@ -17,6 +17,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         public bool SelectPreviousAddress { get; set; }
 
         public bool ValidateEmployee { get; set; }
+        public bool ShowPreviousAddress { get; set; }
 
         public CertificatePreviousAddressViewModel PreviousAddress { get; set; }
 
