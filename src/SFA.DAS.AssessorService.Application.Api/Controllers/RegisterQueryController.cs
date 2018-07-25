@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> GetOrganisationTypes()
         {
             _logger.LogInformation("Get Organisation Types");
-            return Ok(await _mediator.Send(new GetOrganisationsRequest()));
+            return Ok(await _mediator.Send(new GetOrganisationTypesRequest()));
         }
     }
 }

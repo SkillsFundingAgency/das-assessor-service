@@ -39,7 +39,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
             };
 
             _mediator.Setup(m =>
-                m.Send(It.IsAny<GetOrganisationsRequest>(),
+                m.Send(It.IsAny<GetOrganisationTypesRequest>(),
                     new CancellationToken())).ReturnsAsync(_expectedOrganisationTypes);
             _queryController = new RegisterQueryController(_mediator.Object, _logger.Object);
 
@@ -49,15 +49,13 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         [Test]
         public void GetOrganisationTypesReturnExpectedTResult()
         {
-           // _result = _queryController.GetOrganisationTypes().Result;
             _result.Should().BeAssignableTo<IActionResult>();
         }
 
         [Test]
         public void GetOrganisationTypesCallsExpectedMediatorSend()
         {
-           // _result = _queryController.GetOrganisationTypes().Result;
-            _mediator.Verify(m => m.Send(It.IsAny<GetOrganisationsRequest>(), new CancellationToken()));
+            _mediator.Verify(m => m.Send(It.IsAny<GetOrganisationTypesRequest>(), new CancellationToken()));
         }
 
 
@@ -68,13 +66,13 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         }
 
         [Test]
-        public void Then_model_should_contain_search_results()
+        public void ResultsAreOfTypeListEpaOrganisationType()
         {
             ((OkObjectResult)_result).Value.Should().BeOfType<List<EpaOrganisationType>>();
         }
 
         [Test]
-        public void Then_search_results_should_be_correct()
+        public void ResultsMatchExpectedResults()
         {
             var organisationTypes = ((OkObjectResult)_result).Value as List<EpaOrganisationType>;
             organisationTypes.Count.Should().Be(2);
