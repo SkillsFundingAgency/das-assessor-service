@@ -1,11 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Client;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 {
@@ -14,6 +20,12 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
         private readonly HttpClient _client;
         private readonly ILogger<ApiClient> _logger;
         private readonly ITokenService _tokenService;
+
+        private readonly JsonSerializerSettings _jsonSettings = new JsonSerializerSettings
+        {
+            ContractResolver = new CamelCasePropertyNamesContractResolver(),
+            NullValueHandling = NullValueHandling.Ignore
+        };
 
         public ApiClient(HttpClient client, ILogger<ApiClient> logger, ITokenService tokenService)
         {
@@ -29,9 +41,61 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             return await res.Content.ReadAsAsync<T>();
         }
 
-        public async Task<List<OrganisationResponse>> GetAllOrganisations()
+        protected async Task<U> PostPutRequestWithResponse<T, U>(HttpRequestMessage requestMessage, T model)
         {
-            return await Get<List<OrganisationResponse>>("/api/v1/organisations/");
+            var serializeObject = JsonConvert.SerializeObject(model);
+            requestMessage.Content = new StringContent(serializeObject,
+                System.Text.Encoding.UTF8, "application/json");
+
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+
+            using (var response = await _client.SendAsync(requestMessage))
+            {
+                var json = await response.Content.ReadAsStringAsync();
+
+                if (response.StatusCode == HttpStatusCode.OK
+                    || response.StatusCode == HttpStatusCode.Created
+                    || response.StatusCode == HttpStatusCode.NoContent)
+                {
+                    return await Task.Factory.StartNew<U>(() => JsonConvert.DeserializeObject<U>(json, _jsonSettings));
+                }
+                else
+                {
+                    _logger.LogInformation($"HttpRequestException: Status Code: {response.StatusCode} Body: {json}");
+                    throw new HttpRequestException(json);
+                }
+            }
+        }
+
+        public async Task<List<SearchResult>> Search(SearchQuery searchQuery, int? stdCodeFilter = null)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/search"))
+            {
+                List<SearchResult> results = await PostPutRequestWithResponse<SearchQuery, List<SearchResult>>(request, searchQuery);
+
+                return results.Where(s => !stdCodeFilter.HasValue || s.StdCode == stdCodeFilter).ToList();
+            }
+        }
+
+        public async Task<Certificate> StartCertificate(StartCertificateRequest request)
+        {
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Post, "api/v1/certificates/start"))
+            {
+                return await PostPutRequestWithResponse<StartCertificateRequest, Certificate>(httpRequest, request);
+            }
+        }
+
+        public async Task<Certificate>GetCertificateForUln(GetCertificateForUlnRequest request)
+        {
+            return await Get<Certificate> ($"/api/v1/certificates/{request.Uln}/{request.StandardCode}");
+        }
+
+        public async Task<Certificate> UpdateCertificate(UpdateCertificateRequest certificateRequest)
+        {
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Put, "api/v1/certificates/update"))
+            {
+                return await PostPutRequestWithResponse<UpdateCertificateRequest, Certificate>(httpRequest, certificateRequest);
+            }
         }
     }
 }

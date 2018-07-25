@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.External.Infrastructure;
+using SFA.DAS.AssessorService.Application.Api.External.Middleware;
 using SFA.DAS.AssessorService.Settings;
 using StructureMap;
 using Swashbuckle.AspNetCore.Swagger;
@@ -109,6 +110,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                         c.SwaggerEndpoint("/swagger/v1/swagger.json", "SFA.DAS.AssessorService.Application.Api.External v1");
                     })
                     .UseAuthentication();
+
+                app.UseMiddleware<ErrorHandlingMiddleware>();
 
                 app.UseHttpsRedirection();
                 app.UseMvc();
