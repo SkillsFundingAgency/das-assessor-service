@@ -2,7 +2,16 @@
 (function($) {
   var searchContext = '',
     uri = $('form').attr('action'),
-    findAddressVal = $('#postcode-search').val();
+    findAddressVal = $('#postcode-search').val(),
+    queryStrings = window.location.search;
+
+  if (queryStrings.indexOf('showPreviousAddress=false') !== -1) {
+    $('#address-lookup')
+      .removeClass('hide-nojs')
+      .addClass('hidden');
+
+    $('#address-details').removeClass('js-hidden');
+  }
 
   // enable when service is available
   $('#address-lookup').removeClass('disabled');
@@ -140,6 +149,18 @@
         return $(this).val();
       }).length > 0
     );
+  }
+
+  function getQueryVariable(variable) {
+    var query = window.location.search.substring(1);
+    var vars = query.split('&');
+    for (var i = 0; i < vars.length; i++) {
+      var pair = vars[i].split('=');
+      if (pair[0] == variable) {
+        return pair[1];
+      }
+    }
+    return false;
   }
 
   function retrieveAddress(id) {
