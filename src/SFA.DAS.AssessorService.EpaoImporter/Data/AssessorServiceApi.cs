@@ -4,16 +4,10 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using FluentDateTime;
-using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.Extensions;
-using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.EpaoImporter.Const;
-using SFA.DAS.AssessorService.EpaoImporter.Extensions;
-using SFA.DAS.AssessorService.EpaoImporter.Helpers;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
 
 namespace SFA.DAS.AssessorService.EpaoImporter.Data
@@ -21,15 +15,12 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
     public class AssessorServiceApi : IAssessorServiceApi
     {
         private readonly IAggregateLogger _aggregateLogger;
-        private readonly ISchedulingConfigurationService _schedulingConfigurationService;
         private readonly HttpClient _httpClient;
 
         public AssessorServiceApi(IAggregateLogger aggregateLogger,
-            ISchedulingConfigurationService schedulingConfigurationService,
             HttpClient httpClient)
         {
             _aggregateLogger = aggregateLogger;
-            _schedulingConfigurationService = schedulingConfigurationService;
             _httpClient = httpClient;
         }
 
@@ -37,8 +28,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
         {
             var responseMessage = await _httpClient.PostAsJsonAsync(
                 $"/api/v1/batches", createBatchLogRequest);
-
-            return responseMessage.Deserialise<BatchLogResponse>();
+            return await responseMessage.Content.ReadAsAsync<BatchLogResponse>();
         }
 
         public async Task<IEnumerable<CertificateResponse>> GetCertificatesToBePrinted()
@@ -46,7 +36,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
             var response = await _httpClient.GetAsync(
                 "/api/v1/certificates?statuses=Submitted&statuses=Reprint");
          
-            var certificates = response.Deserialise<List<CertificateResponse>>();
+            var certificates = await response.Content.ReadAsAsync<List<CertificateResponse>>();
             if (response.IsSuccessStatusCode)
             {
                 _aggregateLogger.LogInfo($"Getting Certificates to be printed - Status code returned: {response.StatusCode}. Content: {response.Content.ReadAsStringAsync().Result}");
@@ -61,38 +51,18 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
 
         public async Task<BatchLogResponse> GetCurrentBatchLog()
         {
-            var schedulingConfiguration = await _schedulingConfigurationService.GetSchedulingConfiguration();
-            var schedulingConfigurationData = JsonConvert.DeserializeObject<SchedulingConfiguraionData>(schedulingConfiguration.Data);
-
             var response = await _httpClient.GetAsync(
                 "/api/v1/batches/latest");
 
             if (response.StatusCode == HttpStatusCode.NoContent)
             {
-                DateTime nextDate;
-               
-                if (DateTime.UtcNow.UtcToTimeZoneTime().DayOfWeek == (DayOfWeek)schedulingConfigurationData.DayOfWeek)
-                {
-                    nextDate = DateTime.UtcNow.UtcToTimeZoneTime().AddDays(-7).Date;
-                }
-                else
-                {
-                    nextDate = DateTime.UtcNow.UtcToTimeZoneTime()
-                        .Previous(ScheduledDates.GetDayOfWeek(schedulingConfigurationData.DayOfWeek))
-                        .Date.AddDays(-7);
-                }
-
-                var hourDate = nextDate.AddHours(schedulingConfigurationData.Hour);
-                var scheduledDate = hourDate.AddMinutes(schedulingConfigurationData.Minute);             
-
                 return new BatchLogResponse
                 {
-                    BatchNumber = 0,
-                    ScheduledDate = scheduledDate.UtcFromTimeZoneTime()
+                    BatchNumber = 0
                 };
             }
 
-            return response.Deserialise<BatchLogResponse>();
+            return await response.Content.ReadAsAsync<BatchLogResponse>();
         }
 
         public async Task ChangeStatusToPrinted(int batchNumber, IEnumerable<CertificateResponse> responses)
@@ -110,8 +80,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
                 CertificateStatuses = certificateStatuses
             };
 
-            var responseMessage = await _httpClient.PutAsJsonAsync(
-                $"/api/v1/certificates/{batchNumber.ToString()}", updateCertificatesBatchToIndicatePrintedRequest);
+            await _httpClient.PutAsJsonAsync($"/api/v1/certificates/{batchNumber}", updateCertificatesBatchToIndicatePrintedRequest);
         }
 
         public async Task<EMailTemplate> GetEmailTemplate()
@@ -120,7 +89,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
             var response = await _httpClient.GetAsync(
                 $"/api/v1/emailTemplates/{templateName}");
 
-            var emailTemplate = response.Deserialise<EMailTemplate>();
+            var emailTemplate = await response.Content.ReadAsAsync<EMailTemplate>();
             if (response.IsSuccessStatusCode)
             {
                 _aggregateLogger.LogInfo($"Status code returned: {response.StatusCode}. Content: {response.Content.ReadAsStringAsync().Result}");
@@ -131,6 +100,18 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
             }
 
             return emailTemplate;
+        }
+
+        public async Task<ScheduleRun> GetSchedule(ScheduleType scheduleType)
+        {
+            var response = await _httpClient.GetAsync($"/api/v1/schedule?scheduleType={(int) scheduleType}");
+            var schedule = await response.Content.ReadAsAsync<ScheduleRun>();
+            return schedule;
+        }
+
+        public async Task CompleteSchedule(Guid scheduleRunId)
+        {
+            await _httpClient.PostAsync($"/api/v1/schedule?scheduleRunId={scheduleRunId}", null);
         }
     }
 }

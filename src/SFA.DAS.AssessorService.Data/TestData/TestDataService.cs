@@ -164,19 +164,6 @@ namespace SFA.DAS.AssessorService.Data.TestData
                 context.EMailTemplates.Add(emailTemplate);
                 context.SaveChanges();
 
-                var schedulingConfigData = new SFA.DAS.AssessorService.Domain.JsonData.SchedulingConfiguraionData
-                {
-                    DayOfWeek = 5,
-                    Hour = 9,
-                    Minute = 0
-                };
-
-                var schedulingConfiguration = new ScheduleConfiguration
-                {
-                    Data = JsonConvert.SerializeObject(schedulingConfigData)
-                };
-
-                context.ScheduleConfigurations.Add(schedulingConfiguration);
                 context.SaveChanges();
             }
 

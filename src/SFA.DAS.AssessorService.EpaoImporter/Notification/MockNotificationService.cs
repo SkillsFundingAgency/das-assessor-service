@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
-using SFA.DAS.AssessorService.EpaoImporter.Data;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
 
 namespace SFA.DAS.AssessorService.EpaoImporter.Notification
@@ -15,7 +14,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Notification
             _logger = logger;
         }
 
-        public Task Send(int batchNumber, List<CertificateResponse> certificates, CoverLettersProduced coverLettersProduced)
+        public Task Send(int batchNumber, List<CertificateResponse> certificates)
         {
             _logger.LogInfo("Sending Notification ..");
             return Task.CompletedTask;
