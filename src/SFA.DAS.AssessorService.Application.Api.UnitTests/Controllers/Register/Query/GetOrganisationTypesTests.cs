@@ -21,15 +21,21 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         private static Mock<IMediator> _mediator;
         private static Mock<ILogger<RegisterQueryController>> _logger;
         private List<EpaOrganisationType> _expectedOrganisationTypes;
+        private EpaOrganisationType _epaOrganisationType1;
+        private EpaOrganisationType _epaOrganisationType2;
+
         [SetUp]
         public void Arrange()
         {
             _mediator = new Mock<IMediator>();
             _logger = new Mock<ILogger<RegisterQueryController>>();
+            _epaOrganisationType1 = new EpaOrganisationType {Id = 1, OrganisationType = "Type 1"};
+            _epaOrganisationType2 = new EpaOrganisationType {Id = 2, OrganisationType = "Another Type"};
+
             _expectedOrganisationTypes = new List<EpaOrganisationType>
             {
-                new EpaOrganisationType {Id = 1, OrganisationType = "Type 1"},
-                new EpaOrganisationType {Id = 2, OrganisationType = "Another Type"},
+                _epaOrganisationType1,
+                _epaOrganisationType2
             };
 
             _mediator.Setup(m =>
@@ -41,22 +47,22 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         }
 
         [Test]
-        public void Returns_A_Result()
+        public void GetOrganisationTypesReturnExpectedTResult()
         {
-            _result = _queryController.GetOrganisationTypes().Result;
+           // _result = _queryController.GetOrganisationTypes().Result;
             _result.Should().BeAssignableTo<IActionResult>();
         }
 
         [Test]
-        public void Sends_A_Message_To_Start_Import()
+        public void GetOrganisationTypesCallsExpectedMediatorSend()
         {
-            _result = _queryController.GetOrganisationTypes().Result;
+           // _result = _queryController.GetOrganisationTypes().Result;
             _mediator.Verify(m => m.Send(It.IsAny<GetOrganisationsRequest>(), new CancellationToken()));
         }
 
 
         [Test]
-        public void Then_OK_should_be_returned()
+        public void GetOrganisationTypesShouldReturnOk()
         {
             _result.Should().BeOfType<OkObjectResult>();
         }
@@ -72,9 +78,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         {
             var organisationTypes = ((OkObjectResult)_result).Value as List<EpaOrganisationType>;
             organisationTypes.Count.Should().Be(2);
-            organisationTypes.Should().AllBeEquivalentTo(_expectedOrganisationTypes);
-            //searchResults.First().FamilyName.Should().Be("Smith");
-            //searchResults.First().Standard.Should().Be("Standard Name 20");
+            organisationTypes.Should().Contain(_epaOrganisationType1);
+            organisationTypes.Should().Contain(_epaOrganisationType2);
         }
     }
 }
