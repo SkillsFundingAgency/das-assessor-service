@@ -63,8 +63,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Pri
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.NLog.Targets.Redis", "SFA.DAS.AssessorService.NLog.Targets.Redis\SFA.DAS.AssessorService.NLog.Targets.Redis.csproj", "{93FFBB83-E16E-4F7E-93F8-446175CCF965}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Application.Api.ReprintTest", "SFA.DAS.AssessorService.Application.Api.ReprintTest\SFA.DAS.AssessorService.Application.Api.ReprintTest.csproj", "{B674CFBA-A620-435E-8A04-A4DA6A0E764A}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Application.Api.External", "SFA.DAS.AssessorService.Application.Api.External\SFA.DAS.AssessorService.Application.Api.External.csproj", "{EFEC1E75-6DD4-41A2-B1CB-106BAC3E3EBD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Web.Staff", "SFA.DAS.AssessorService.Web.Staff\SFA.DAS.AssessorService.Web.Staff.csproj", "{A995D460-3B2B-4F2F-A49A-D240B07D57E7}"
@@ -157,10 +155,6 @@ Global
 		{93FFBB83-E16E-4F7E-93F8-446175CCF965}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{93FFBB83-E16E-4F7E-93F8-446175CCF965}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{93FFBB83-E16E-4F7E-93F8-446175CCF965}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B674CFBA-A620-435E-8A04-A4DA6A0E764A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B674CFBA-A620-435E-8A04-A4DA6A0E764A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B674CFBA-A620-435E-8A04-A4DA6A0E764A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B674CFBA-A620-435E-8A04-A4DA6A0E764A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EFEC1E75-6DD4-41A2-B1CB-106BAC3E3EBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EFEC1E75-6DD4-41A2-B1CB-106BAC3E3EBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EFEC1E75-6DD4-41A2-B1CB-106BAC3E3EBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
