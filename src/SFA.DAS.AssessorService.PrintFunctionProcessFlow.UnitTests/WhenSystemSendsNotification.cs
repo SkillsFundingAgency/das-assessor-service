@@ -41,8 +41,6 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests
                 certificateResponse.CertificateData = Builder<CertificateDataResponse>.CreateNew().Build();
             }
 
-            var coverLettersProduced = Builder<CoverLettersProduced>.CreateNew().Build();
-
             webConfigurationMock.SetupGet(q => q.Sftp)
                 .Returns(new SftpSettings
                 {
@@ -66,7 +64,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests
                     Id = Guid.NewGuid()
                 }));
 
-            notificationService.Send(1, certificateResponses, coverLettersProduced).GetAwaiter().GetResult();
+            notificationService.Send(1, certificateResponses).GetAwaiter().GetResult();
         }
 
         [Test]
