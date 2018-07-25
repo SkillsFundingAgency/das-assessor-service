@@ -148,7 +148,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 config.For<IDateTimeProvider>().Use<UtcDateTimeProvider>();
 
                 var option = new DbContextOptionsBuilder<AssessorDbContext>();
-                option.UseSqlServer(Configuration.SqlConnectionString);
+                option.UseSqlServer(Configuration.SqlConnectionString, options => options.EnableRetryOnFailure(3));
 
                 config.For<AssessorDbContext>().Use(c => new AssessorDbContext(option.Options));
 
