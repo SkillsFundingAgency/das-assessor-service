@@ -1,0 +1,21 @@
+﻿@using SFA.DAS.AssessorService.Web.Staff.Controllers
+@model SFA.DAS.AssessorService.Web.Staff.Controllers.DuplicateRequestViewModel
+
+@{
+    ViewBag.Title = "title";
+}
+
+@if (!Model.IsConfirmed)
+{
+    <p>Requesting duplicate print of the following certificate:</p>
+    @Model.Certificate.CertificateReference
+    <form asp-action="Index" asp-controller="DuplicateRequest" method="post">
+        @Html.HiddenFor(m => m.Certificate.Id)
+        <button class="button">Confirm</button>
+    </form>
+}
+else
+{
+    <p>Certificate reprint requested.</p>
+    <p>Will be processed in next Print Run scheduled for ***********</p>
+}

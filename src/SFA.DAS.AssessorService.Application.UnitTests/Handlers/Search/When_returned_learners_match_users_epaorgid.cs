@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
             
             var ilrRepository = new Mock<IIlrRepository>();
 
-            ilrRepository.Setup(r => r.SearchForLearner(It.IsAny<SearchRequest>()))
+            ilrRepository.Setup(r => r.SearchForLearnerByUln(It.IsAny<long>()))
                 .ReturnsAsync(new List<Ilr>
                 {
                     new Ilr{ EpaOrgId = "EPA0001", StdCode = 1, FamilyName = "James"},
@@ -36,6 +36,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                 });
 
             var assessmentOrgsApiClient = new Mock<IAssessmentOrgsApiClient>();
+            assessmentOrgsApiClient.Setup(c => c.GetAllStandards())
+                .ReturnsAsync(new List<Standard> { new Standard{Title = "Standard Title", Level = 2}});
             assessmentOrgsApiClient.Setup(c => c.FindAllStandardsByOrganisationIdAsync("EPA0001"))
                 .ReturnsAsync(new List<StandardOrganisationSummary>(){new StandardOrganisationSummary(){StandardCode = "5"}});
             assessmentOrgsApiClient.Setup(c => c.GetStandard(It.IsAny<int>()))
