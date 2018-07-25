@@ -24,7 +24,6 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     .ForMember(q => q.StandardCode, opts => {opts.MapFrom(i => i.StdCode);});
                 cfg.CreateMap<CreateBatchLogRequest, BatchLog>();
                 cfg.CreateMap<BatchLog, BatchLogResponse>();
-                cfg.CreateMap<ScheduleConfiguration, ScheduleConfigurationResponse>();
 
                 cfg.CreateMap<Certificate, CertificateResponse>()
                     .ForMember(q => q.EndPointAssessorOrganisationId,
