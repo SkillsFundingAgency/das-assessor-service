@@ -347,6 +347,7 @@ namespace SFA.DAS.AssessorService.Data
                         $@"[EndPointAssessorOrganisationId] = {endPointAssessorOrganisationId} and email = {email}; "
                     );
                 }
+
                 connection.Execute(sql.ToString());
                 connection.Close();
             }
