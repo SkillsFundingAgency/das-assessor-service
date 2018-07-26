@@ -10,11 +10,11 @@ using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Data
 {
-    public class RegisterRepository : IRegisterRepository
+    public class RegisterQueryRepository : IRegisterQueryRepository
     {
         private readonly IWebConfiguration _configuration;
 
-        public RegisterRepository(IWebConfiguration configuration)
+        public RegisterQueryRepository(IWebConfiguration configuration)
         {
             _configuration = configuration;
         }

@@ -29,8 +29,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _logger = logger;
         }
 
-
-
         [HttpGet("organisation-types", Name = "GetOrganisationTypes")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<EpaOrganisationType>))]
         [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]

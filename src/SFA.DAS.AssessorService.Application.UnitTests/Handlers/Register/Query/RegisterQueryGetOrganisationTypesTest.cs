@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
     [TestFixture]
     public class RegisterQueryGetOrganisationTypesTest
     {
-        protected Mock<IRegisterRepository> RegisterRepository;
+        protected Mock<IRegisterQueryRepository> RegisterQueryRepository;
         protected GetOrganisationTypesHandler GetOrganisationTypesHandler;
         protected Mock<ILogger<GetOrganisationTypesHandler>> Logger;
         private List<EpaOrganisationType> _expectedOrganisationTypes;
@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         [SetUp]
         public void Setup()
         {
-            RegisterRepository = new Mock<IRegisterRepository>();
+            RegisterQueryRepository = new Mock<IRegisterQueryRepository>();
             _epaOrganisationType1 = new EpaOrganisationType { Id = 1, OrganisationType = "Type 1" };
             _epaOrganisationType2 = new EpaOrganisationType { Id = 2, OrganisationType = "Another Type" };
 
@@ -41,17 +41,17 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
                 _epaOrganisationType2
             };
 
-            RegisterRepository.Setup(r => r.GetOrganisationTypes())
+            RegisterQueryRepository.Setup(r => r.GetOrganisationTypes())
                 .Returns(Task.FromResult(_expectedOrganisationTypes.AsEnumerable()));
 
-            GetOrganisationTypesHandler = new GetOrganisationTypesHandler(RegisterRepository.Object, Logger.Object);
+            GetOrganisationTypesHandler = new GetOrganisationTypesHandler(RegisterQueryRepository.Object, Logger.Object);
         }
 
         [Test]
         public void GetOrganisationTypesIsCalled()
         {
             GetOrganisationTypesHandler.Handle(new GetOrganisationTypesRequest(), new CancellationToken()).Wait();
-            RegisterRepository.Verify(r => r.GetOrganisationTypes());
+            RegisterQueryRepository.Verify(r => r.GetOrganisationTypes());
         }
 
         [Test]
