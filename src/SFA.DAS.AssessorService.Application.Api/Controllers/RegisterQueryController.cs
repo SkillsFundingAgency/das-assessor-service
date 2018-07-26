@@ -15,7 +15,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
     [Authorize]
-    //[Route("api/ao")]
+    [Route("api/ao")]
     [ValidateBadRequest]
     public class RegisterQueryController : Controller
     {
@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
 
 
-        [HttpGet("/api/ao/organisation-types", Name = "GetOrganisationTypes")]
+        [HttpGet("organisation-types", Name = "GetOrganisationTypes")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<EpaOrganisationType>))]
         [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
