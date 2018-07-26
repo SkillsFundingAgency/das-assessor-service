@@ -55,7 +55,7 @@ namespace SFA.DAS.AssessorService.Data
             {
                 var organisationType = worksheet.Cells[i, LookupsColumnOrganisationType].Value;
                 if (organisationType is null) break;
-                organisationTypes.Add(new TypeOfOrganisation { Id = i - 1, OrganisationType = organisationType.ToString(), Status = "Live" });
+                organisationTypes.Add(new TypeOfOrganisation { Id = i - 1, Type = organisationType.ToString(), Status = "Live" });
             }
 
             if (organisationTypes.Count == 0)
@@ -80,9 +80,9 @@ namespace SFA.DAS.AssessorService.Data
                 }
                 var epaOrganisationName = worksheet.Cells[i, 2].Value != null ? worksheet.Cells[i, 2].Value.ToString() : string.Empty;
                 var epaOrganisationType = worksheet.Cells[i, 3].Value != null ? worksheet.Cells[i, 3].Value.ToString() : string.Empty;
-                var epaOrganisationTypeDetails = organisationTypes.FirstOrDefault(x => string.Equals(x.OrganisationType,
+                var epaOrganisationTypeDetails = organisationTypes.FirstOrDefault(x => string.Equals(x.Type,
                     epaOrganisationType?.ToString(), StringComparison.CurrentCultureIgnoreCase));
-                if (epaOrganisationType == string.Empty || epaOrganisationTypeDetails.OrganisationType == string.Empty)
+                if (epaOrganisationType == string.Empty || epaOrganisationTypeDetails.Type == string.Empty)
                 {
                     if (epaOrganisationType == string.Empty)
                     {
