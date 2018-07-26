@@ -1,7 +1,5 @@
 ﻿using System;
-using System.IdentityModel.Tokens.Jwt;
 using FluentAssertions;
-using Microsoft.IdentityModel.Tokens;
 using NUnit.Framework;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.TokenServiceTests
