@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace SFA.DAS.AssessorService.Domain.Entities.ao
+﻿namespace SFA.DAS.AssessorService.Api.Types.Models.AO
 {
     public class EpaOrganisationType
     {

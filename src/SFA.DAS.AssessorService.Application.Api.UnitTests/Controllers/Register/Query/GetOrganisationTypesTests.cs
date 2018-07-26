@@ -7,8 +7,8 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
-using SFA.DAS.AssessorService.Domain.Entities.ao;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register.Query
 {
@@ -47,13 +47,13 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         }
 
         [Test]
-        public void GetOrganisationTypesReturnExpectedTResult()
+        public void GetOrganisationTypesReturnExpectedActionResult()
         {
             _result.Should().BeAssignableTo<IActionResult>();
         }
 
         [Test]
-        public void GetOrganisationTypesCallsExpectedMediatorSend()
+        public void MediatorSendsExpectedGetOrganisationTypesRequest()
         {
             _mediator.Verify(m => m.Send(It.IsAny<GetOrganisationTypesRequest>(), new CancellationToken()));
         }
@@ -72,7 +72,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         }
 
         [Test]
-        public void ResultsMatchExpectedResults()
+        public void ResultsMatchExpectedListOfEpaOrganisationTypes()
         {
             var organisationTypes = ((OkObjectResult)_result).Value as List<EpaOrganisationType>;
             organisationTypes.Count.Should().Be(2);
