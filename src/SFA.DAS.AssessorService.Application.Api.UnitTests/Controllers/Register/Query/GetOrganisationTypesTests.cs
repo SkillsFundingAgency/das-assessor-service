@@ -20,22 +20,22 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         private static object _result;
         private static Mock<IMediator> _mediator;
         private static Mock<ILogger<RegisterQueryController>> _logger;
-        private List<EpaOrganisationType> _expectedOrganisationTypes;
-        private EpaOrganisationType _epaOrganisationType1;
-        private EpaOrganisationType _epaOrganisationType2;
+        private List<OrganisationType> _expectedOrganisationTypes;
+        private OrganisationType _organisationType1;
+        private OrganisationType _organisationType2;
 
         [SetUp]
         public void Arrange()
         {
             _mediator = new Mock<IMediator>();
             _logger = new Mock<ILogger<RegisterQueryController>>();
-            _epaOrganisationType1 = new EpaOrganisationType {Id = 1, OrganisationType = "Type 1"};
-            _epaOrganisationType2 = new EpaOrganisationType {Id = 2, OrganisationType = "Another Type"};
+            _organisationType1 = new OrganisationType {Id = 1, Type = "Type 1"};
+            _organisationType2 = new OrganisationType {Id = 2, Type = "Another Type"};
 
-            _expectedOrganisationTypes = new List<EpaOrganisationType>
+            _expectedOrganisationTypes = new List<OrganisationType>
             {
-                _epaOrganisationType1,
-                _epaOrganisationType2
+                _organisationType1,
+                _organisationType2
             };
 
             _mediator.Setup(m =>
@@ -66,18 +66,18 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         }
 
         [Test]
-        public void ResultsAreOfTypeListEpaOrganisationType()
+        public void ResultsAreOfTypeListOrganisationType()
         {
-            ((OkObjectResult)_result).Value.Should().BeOfType<List<EpaOrganisationType>>();
+            ((OkObjectResult)_result).Value.Should().BeOfType<List<OrganisationType>>();
         }
 
         [Test]
-        public void ResultsMatchExpectedListOfEpaOrganisationTypes()
+        public void ResultsMatchExpectedListOfOrganisationTypes()
         {
-            var organisationTypes = ((OkObjectResult)_result).Value as List<EpaOrganisationType>;
+            var organisationTypes = ((OkObjectResult)_result).Value as List<OrganisationType>;
             organisationTypes.Count.Should().Be(2);
-            organisationTypes.Should().Contain(_epaOrganisationType1);
-            organisationTypes.Should().Contain(_epaOrganisationType2);
+            organisationTypes.Should().Contain(_organisationType1);
+            organisationTypes.Should().Contain(_organisationType2);
         }
     }
 }

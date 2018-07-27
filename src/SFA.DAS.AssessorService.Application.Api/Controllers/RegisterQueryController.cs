@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpGet("organisation-types", Name = "GetOrganisationTypes")]
-        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<EpaOrganisationType>))]
+        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<OrganisationType>))]
         [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetOrganisationTypes()

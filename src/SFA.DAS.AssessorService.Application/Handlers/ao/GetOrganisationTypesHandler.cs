@@ -10,7 +10,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ao
 {
-    public class GetOrganisationTypesHandler : IRequestHandler<GetOrganisationTypesRequest, List<EpaOrganisationType>>
+    public class GetOrganisationTypesHandler : IRequestHandler<GetOrganisationTypesRequest, List<OrganisationType>>
     {
         private readonly IRegisterQueryRepository _registerQueryRepository;
         private readonly ILogger<GetOrganisationTypesHandler> _logger;
@@ -21,7 +21,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             _logger = logger;
         }
 
-        public async Task<List<EpaOrganisationType>> Handle(GetOrganisationTypesRequest request, CancellationToken cancellationToken)
+        public async Task<List<OrganisationType>> Handle(GetOrganisationTypesRequest request, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Handling GetOrganisationsType Request");
             var res = await _registerQueryRepository.GetOrganisationTypes();

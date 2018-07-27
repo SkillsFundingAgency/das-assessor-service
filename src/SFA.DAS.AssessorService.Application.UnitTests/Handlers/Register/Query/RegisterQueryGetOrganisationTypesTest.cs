@@ -22,23 +22,23 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         protected Mock<IRegisterQueryRepository> RegisterQueryRepository;
         protected GetOrganisationTypesHandler GetOrganisationTypesHandler;
         protected Mock<ILogger<GetOrganisationTypesHandler>> Logger;
-        private List<EpaOrganisationType> _expectedOrganisationTypes;
-        private EpaOrganisationType _epaOrganisationType1;
-        private EpaOrganisationType _epaOrganisationType2;
+        private List<OrganisationType> _expectedOrganisationTypes;
+        private OrganisationType _organisationType1;
+        private OrganisationType _organisationType2;
 
         [SetUp]
         public void Setup()
         {
             RegisterQueryRepository = new Mock<IRegisterQueryRepository>();
-            _epaOrganisationType1 = new EpaOrganisationType { Id = 1, OrganisationType = "Type 1" };
-            _epaOrganisationType2 = new EpaOrganisationType { Id = 2, OrganisationType = "Another Type" };
+            _organisationType1 = new OrganisationType { Id = 1, Type = "Type 1" };
+            _organisationType2 = new OrganisationType { Id = 2, Type = "Another Type" };
 
             Logger = new Mock<ILogger<GetOrganisationTypesHandler>>();
           
-            _expectedOrganisationTypes = new List<EpaOrganisationType>
+            _expectedOrganisationTypes = new List<OrganisationType>
             {
-                _epaOrganisationType1,
-                _epaOrganisationType2
+                _organisationType1,
+                _organisationType2
             };
 
             RegisterQueryRepository.Setup(r => r.GetOrganisationTypes())
@@ -59,8 +59,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         {
             var organisationTypes = GetOrganisationTypesHandler.Handle(new GetOrganisationTypesRequest(), new CancellationToken()).Result;
             organisationTypes.Count.Should().Be(2);
-            organisationTypes.Should().Contain(_epaOrganisationType1);
-            organisationTypes.Should().Contain(_epaOrganisationType2);
+            organisationTypes.Should().Contain(_organisationType1);
+            organisationTypes.Should().Contain(_organisationType2);
         }
     }
 }

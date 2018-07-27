@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Data
         }
 
 
-        public async Task<IEnumerable<EpaOrganisationType>> GetOrganisationTypes()
+        public async Task<IEnumerable<OrganisationType>> GetOrganisationTypes()
         {
             var connectionString = _configuration.SqlConnectionString;
             
@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Data
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
-                var orgTypes = await connection.QueryAsync<EpaOrganisationType>("select * from [OrganisationType]");
+                var orgTypes = await connection.QueryAsync<OrganisationType>("select * from [OrganisationType]");
                 return orgTypes;
             }
         }
