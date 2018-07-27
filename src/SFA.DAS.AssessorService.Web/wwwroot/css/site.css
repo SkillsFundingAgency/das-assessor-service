@@ -22,13 +22,13 @@
   list-style-type: none;
 }
 
-.global-header-bar--white {
+.global-header-bar--dark-blue {
   background-color: #004274 !important;
 }
 
 .header-user {
   background: #005ea5;
-  margin-top: -10px;
+  /* margin-top: -10px; */
   position: relative;
   z-index: 1;
 }
@@ -761,7 +761,7 @@ fieldset.after-error-summary {
   color: #005ea5;
   cursor: pointer;
   position: relative;
-  margin-bottom: 0.26316em;
+  /* margin-bottom: 0.26316em; */
 }
 
 .expand-table-row span {
@@ -1030,6 +1030,11 @@ table.responsive tr.total {
 
 .page-navigation .next {
   text-align: right;
+  width: 100%;
+}
+
+.page-navigation .previous + .next {
+  width: 50%;
 }
 
 .page-navigation .disabled,

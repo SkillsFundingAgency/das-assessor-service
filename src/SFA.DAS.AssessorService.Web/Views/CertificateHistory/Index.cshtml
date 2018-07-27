@@ -5,7 +5,7 @@
 @model SFA.DAS.AssessorService.Domain.Paging.PaginatedList<SFA.DAS.AssessorService.Api.Types.Models.Certificates.CertificateHistoryResponse>
 
 @{
-    ViewBag.Title = "Certificate history";
+    ViewBag.Title = "Previous assessments";
     Layout = "_Layout";
 }
 
@@ -16,7 +16,7 @@
                 <a asp-controller="Search" asp-action="Index">Search</a>
             </li>
             <li class="app-navigation--current-page">
-                <a asp-controller="CertificateHistory" asp-action="Index">Previous Assessments</a>
+                <a asp-controller="CertificateHistory" asp-action="Index">Previous assessments</a>
             </li>
         </ul>
     </nav>
@@ -51,7 +51,7 @@
                     {
                         <tr>
                             <td data-label="@Localizer["Apprentice"]" class="nowrap">
-                                <div role="button" class="js-expand-table-row expand-table-row" data-uln="@Html.DisplayFor(modelItem => item.Uln)"><i class="arrow arrow-closed">►</i> <span>@Html.DisplayFor(modelItem => item.FullName)</span></div>
+                                <div role="button" tabindex="0" class="js-expand-table-row expand-table-row" data-uln="@Html.DisplayFor(modelItem => item.Uln)"><i class="arrow arrow-closed">►</i> <span>@Html.DisplayFor(modelItem => item.FullName)</span></div>
                             </td>
                             <td data-label="@Localizer["ULN"]">
                                 @Html.DisplayFor(modelItem => item.Uln)
@@ -145,27 +145,36 @@
 
 <div class="grid-row">
     <div class="column-full">
-        @{
-            var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
-            var nextDisabled = !Model.HasNextPage ? "disabled" : "";
-        }
         <div class="page-navigation">
-            <a asp-action="Index"
-            asp-controller="CertificateHistory"
-            asp-route-pageIndex="@(Model.PageIndex - 1)"
-            class="previous @prevDisabled">
-                <i class="arrow-button icon-left-open">&#xe800;</i>
-                <span class="description">Previous <span class="hide-mob">page</span></span>
-                <span class="counter">Page <span class="prevPage">@(Model.PageIndex - 1)</span> of <span class="totalPage">@(Model.TotalPages)</span></span>
-            </a>
-            <a asp-controller="CertificateHistory"
-            asp-action="Index"
-            asp-route-pageIndex="@(Model.PageIndex + 1)"
-            class="next @nextDisabled">
-                <i class="arrow-button icon-right-open">&#xe801;</i>
-                <span class="description">Next <span class="hide-mob">page</span></span>
-                <span class="counter">Page <span class="nextPage">@(Model.PageIndex + 1)</span> of <span class="totalPage">@(Model.TotalPages)</span></span>
-            </a>
+
+            @if (Model.HasPreviousPage)
+            {
+                <a 
+                    asp-action="Index"
+                    asp-controller="CertificateHistory"
+                    asp-route-pageIndex="@(Model.PageIndex - 1)"
+                    class="previous"
+                >
+                    <i class="arrow-button icon-left-open">&#xe800;</i>
+                    <span class="description">Previous <span class="hide-mob">page</span></span>
+                    <span class="counter">Page <span class="prevPage">@(Model.PageIndex - 1)</span> of <span class="totalPage">@(Model.TotalPages)</span></span>
+                </a>
+            }
+
+            @if (Model.HasNextPage)
+            {
+                <a 
+                    asp-controller="CertificateHistory"
+                    asp-action="Index"
+                    asp-route-pageIndex="@(Model.PageIndex + 1)"
+                    class="next"
+                >
+                    <i class="arrow-button icon-right-open">&#xe801;</i>
+                    <span class="description">Next <span class="hide-mob">page</span></span>
+                    <span class="counter">Page <span class="nextPage">@(Model.PageIndex + 1)</span> of <span class="totalPage">@(Model.TotalPages)</span></span>
+                </a>
+            }
+
         </div>
     </div>
 </div>

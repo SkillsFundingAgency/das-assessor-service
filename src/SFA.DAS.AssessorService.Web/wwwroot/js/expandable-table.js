@@ -1,4 +1,4 @@
-;(function(global) {
+(function(global) {
   'use strict';
 
   var $ = global.jQuery;
@@ -23,8 +23,9 @@
         $arrow.attr('aria-hidden', 'true');
 
         // show and hide based on click and update aria tags
-        $(this).on('click', function(event) {
+        $(this).on('click keypress', function(event) {
           event.preventDefault();
+          if (event.type === 'keypress' && event.keyCode !== 13) return;
           if ($expandable.hasClass('js-hidden')) {
             // SHOW CONTENT
             $(this).attr({
