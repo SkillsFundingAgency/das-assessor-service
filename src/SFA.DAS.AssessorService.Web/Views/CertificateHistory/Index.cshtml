@@ -143,6 +143,8 @@
     </div>
 </div>
 
+@if (Model.HasPreviousPage || Model.HasNextPage)
+{
 <div class="grid-row">
     <div class="column-full">
         <div class="page-navigation">
@@ -178,3 +180,4 @@
         </div>
     </div>
 </div>
+}
