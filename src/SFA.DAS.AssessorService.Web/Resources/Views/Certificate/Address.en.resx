@@ -174,4 +174,7 @@
   <data name="UseLastAddress" xml:space="preserve">
     <value>Use the address from your last certificate request</value>
   </data>
+  <data name="EditEmployersAddress" xml:space="preserve">
+    <value>Edit the employer’s address</value>
+  </data>
 </root>

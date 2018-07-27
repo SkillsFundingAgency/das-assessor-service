@@ -47,7 +47,7 @@
 
             <div sfa-anyvalidationerror-class="after-error-summary">
                 <h1 class="heading-large">
-                    @Localizer["Heading"]
+                    @(!Model.EditForm ? Localizer["Heading"] : Localizer["EditEmployersAddress"])
                 </h1>
 
                 <span class="body-text">@Localizer["Lead"]</span>
@@ -69,7 +69,7 @@
                     <ul></ul>
                 </div>
                 
-                @if (!String.IsNullOrEmpty(Model.PreviousAddress?.StringifiedAddress) && Model.ShowPreviousAddress)
+                @if (!String.IsNullOrEmpty(Model.PreviousAddress?.StringifiedAddress) && (!Model.EditForm && !Model.ResetForm))
                 {
                     <div class="form-group js-select-previous-address">
                         <span class="form-label-bold">@Localizer["UseLastAddress"]</span>
