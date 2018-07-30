@@ -4,6 +4,7 @@
     {
         public const string Start = "Start";
         public const string Address = "Address";
+        public const string AddressSummary = "AddressSummary";
         public const string Date = "Date";
         public const string Grade = "Grade";
         public const string Option = "Option";
