@@ -1,5 +1,4 @@
-﻿@using SFA.DAS.AssessorService.Domain.Consts
-@using SFA.DAS.AssessorService.Web.Staff.Controllers
+﻿@using SFA.DAS.AssessorService.Web.Staff.Controllers
 @model SFA.DAS.AssessorService.Web.Staff.Controllers.LearnerDetailViewModel
 @{
     Layout = "_Layout";
@@ -102,10 +101,7 @@ else
 <ul class="list list-bullet">
     @if (Model.Learner.CertificateReference != null)
     {
-        if (Model.Learner.CertificateStatus == CertificateStatus.Printed)
-        {
-            <li><a asp-action="Index" asp-controller="DuplicateRequest" asp-route-certificateId="@Model.Learner.CertificateId">request duplicate certificate</a></li>    
-        }
+        <li><a asp-action="Index" asp-controller="DuplicateRequest" asp-route-certificateId="@Model.Learner.CertificateId">request duplicate certificate</a></li>
         <li><a href="#">amend certificate information</a></li>
     }
     <li><a asp-controller="Search" asp-action="Index">search for another apprentice</a></li>
