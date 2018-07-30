@@ -9,12 +9,12 @@
 var epaoAddressFormElement = $('.apprentice-address-form');
 var epaoAddressValidationRulesObject = {
   rules: {
+    postcodeSearch: {
+      required: true
+    },
     Name: {
       required: true
     },
-    // Employer: {
-    //   required: true
-    // },
     AddressLine1: {
       required: true
     },
@@ -27,12 +27,12 @@ var epaoAddressValidationRulesObject = {
     }
   },
   messages: {
+    postcodeSearch: {
+      required: 'Please search for an address'
+    },
     Name: {
       required: 'Enter a name'
     },
-    // Employer: {
-    //   required: 'Enter an organisation'
-    // },
     AddressLine1: {
       required: 'Enter an address'
     },

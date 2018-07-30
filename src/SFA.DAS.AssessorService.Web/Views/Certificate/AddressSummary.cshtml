@@ -23,7 +23,7 @@
             <a class="link-back" asp-controller="CertificateAddress" asp-action="Address">Back</a>
         }
 
-        <form class="apprentice-address-form" type="post" asp-controller="CertificateAddressSummary">
+        <form class="apprentice-address-summary-form" type="post" asp-controller="CertificateAddressSummary">
             @Html.HiddenFor(c => c.Id)
             @Html.HiddenFor(c => c.ValidateEmployee)
             @Html.HiddenFor(c => c.AddressLine1)
@@ -111,11 +111,10 @@
 
             <button type="submit" class="button">@Localizer["ContinueButton"]</button>
         </form>
-
     </div>
 </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-    @{await Html.RenderPartialAsync("~/Views/Certificate/_AddressScriptsPartial.cshtml"); }
+    @{await Html.RenderPartialAsync("~/Views/Certificate/_AddressSummaryScriptsPartial.cshtml"); }
 }
