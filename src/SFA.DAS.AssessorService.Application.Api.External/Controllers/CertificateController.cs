@@ -16,6 +16,8 @@ using SFA.DAS.AssessorService.Application.Api.External.Validators;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using SearchQuery = SFA.DAS.AssessorService.Application.Api.External.Models.Search.SearchQuery;
+using SearchResult = SFA.DAS.AssessorService.Application.Api.External.Models.Search.SearchResult;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
 {
@@ -34,7 +36,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             _apiClient = apiClient;
         }
 
-        [HttpPost(Name = "Post")]
+        [HttpPut(Name = "Put")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<CertificateResponse>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> CreateDraft([FromBody] List<CertificateRequest> request)
@@ -77,7 +79,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             return Ok(response);
         }
 
-        [HttpPut(Name = "Put")]
+        [HttpPost(Name = "Post")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<CertificateResponse>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> UpdateDraft([FromBody] List<CertificateRequest> request)

@@ -8,10 +8,11 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SearchQuery = SFA.DAS.AssessorService.Application.Api.External.Models.Search.SearchQuery;
+using SearchResult = SFA.DAS.AssessorService.Application.Api.External.Models.Search.SearchResult;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 {
@@ -34,7 +35,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             _tokenService = tokenService;
         }
 
-        private async Task<T> Get<T>(string uri)
+        protected async Task<T> Get<T>(string uri)
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
             var res = await _client.GetAsync(new Uri(uri, UriKind.Relative));
@@ -67,13 +68,13 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             }
         }
 
-        public async Task<List<SearchResult>> Search(SearchQuery searchQuery, int? stdCodeFilter = null)
+        public virtual async Task<List<SearchResult>> Search(SearchQuery searchQuery, int? stdCodeFilter = null)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/search"))
             {
                 List<SearchResult> results = await PostPutRequestWithResponse<SearchQuery, List<SearchResult>>(request, searchQuery);
 
-                return results.Where(s => !stdCodeFilter.HasValue || s.StdCode == stdCodeFilter).ToList();
+                return results.Where(s => stdCodeFilter is null || s.StdCode == stdCodeFilter).ToList();
             }
         }
 
