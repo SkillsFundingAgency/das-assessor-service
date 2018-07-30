@@ -273,6 +273,3 @@ src/Tools/PhantomJS/tools/phantomjs/ChangeLog
 #Specflow Generated screen shots
 src/SFA.DAS.AssessorService.Web.Specflow.Tests/Project/**/*.*
 src/SFA.DAS.AssessorService.Web/wwwroot/js/*.min.js
-
-src/SFA.DAS.AssessorService.Web/appsettings.Development.json
-src/SFA.DAS.AssessorService.Application.Api/appsettings.Development.json
