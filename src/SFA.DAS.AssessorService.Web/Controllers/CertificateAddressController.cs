@@ -35,12 +35,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
             var certificateAddressViewModel = await LoadViewModel<CertificateAddressViewModel>("~/Views/Certificate/Address.cshtml");
+            if (AddressAlreadyInitialised(certificateAddressViewModel) && (edit ?? false) == false)
+                return RedirectToAction("AddressSummary", "CertificateAddressSummary");
+
             certificateAddressViewModel = await InitialisePreviousAddresssForView(resetMode: reset ?? false,
                 editMode: edit ?? false,
                 certificateAddressViewModel: certificateAddressViewModel, username: username);
 
             return certificateAddressViewModel;
-        }
+        }       
 
         [HttpGet("resetaddress", Name = "ResetAddress")]
         public async Task<IActionResult> ResetAddress(bool? redirectToCheck = false,
@@ -124,6 +127,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 certificateAddress.PreviousAddress =
                     new CertificatePreviousAddressViewModel(certificatePreviousAddress);
             }
+        }
+
+        private bool AddressAlreadyInitialised(IActionResult certificateAddressViewModel)
+        {
+            var viewResult = certificateAddressViewModel as ViewResult;
+            var certificateAddress = viewResult.Model as CertificateAddressViewModel;
+
+            return !string.IsNullOrEmpty(certificateAddress.AddressLine1) 
+                   && !string.IsNullOrEmpty(certificateAddress.Postcode);
         }
     }
 }
