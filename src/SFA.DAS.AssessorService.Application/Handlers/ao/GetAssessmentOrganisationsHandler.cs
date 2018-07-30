@@ -16,9 +16,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
     public class GetAssessmentOrganisationsHandler : IRequestHandler<GetAssessmentOrganisationsRequest, List<AssessmentOrganisationSummary>>
     {
         private readonly IRegisterQueryRepository _registerQueryRepository;
-        private readonly ILogger<GetDeliveryAreasHandler> _logger;
+        private readonly ILogger<GetAssessmentOrganisationsHandler> _logger;
 
-        public GetAssessmentOrganisationsHandler(IRegisterQueryRepository registerQueryRepository, ILogger<GetDeliveryAreasHandler> logger)
+        public GetAssessmentOrganisationsHandler(IRegisterQueryRepository registerQueryRepository, ILogger<GetAssessmentOrganisationsHandler> logger)
         {
             _registerQueryRepository = registerQueryRepository;
             _logger = logger;
