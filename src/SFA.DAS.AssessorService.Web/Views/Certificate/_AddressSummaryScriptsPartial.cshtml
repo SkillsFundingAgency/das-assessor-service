@@ -1,0 +1,19 @@
+<script>
+
+var epaoAddressFormElement = $('.apprentice-address-summary-form');
+var epaoAddressValidationRulesObject = {
+  rules: {
+    Employer: {
+      required: true
+    }
+  },
+  messages: {
+    Employer: {
+      required: 'Enter an organisation'
+    }
+  }
+};
+
+GOVUK.epaoValidate(epaoAddressFormElement, epaoAddressValidationRulesObject);
+
+</script>

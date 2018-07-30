@@ -52,22 +52,25 @@
 
                 <span class="body-text">@Localizer["Lead"]</span>
 
-                <div id="address-lookup" class="hide-nojs form-group disabled">
-                    <div class="form-group form-group-compound" id="addressInputWrapper">
-                        <label for="postcode-search" class="form-label-bold">@Localizer["PostcodeLookup"]</label>
-                        <input id="postcode-search" type="text" class="form-control" spellcheck="false" autocorrect="off" disabled="disabled" />
-                        <span class="visuallyhidden" id="ariaAddressEntered" aria-live="polite"></span>
+                @if (!Model.EditForm)
+                {
+                    <div id="address-lookup" class="hide-nojs form-group disabled">
+                        <div class="form-group form-group-compound" id="addressInputWrapper">
+                            <label for="postcode-search" class="form-label-bold">@Localizer["PostcodeLookup"]</label>
+                            <input id="postcode-search" name="postcodeSearch" type="text" class="form-control" spellcheck="false" autocorrect="off" disabled="disabled" />
+                            <span class="visuallyhidden" id="ariaAddressEntered" aria-live="polite"></span>
+                        </div>
+                        <div id="address-manual" class="form-group form-group-compound">
+                            <a href="#" id="enterAddressManually">Enter the address manually</a>
+                            <span class="toggle-content loading-text" id="addressLoading">Loading address...</span>
+                            <p id="postcodeServiceUnavailable" class="error toggle-content text">Service is currently unavailable, please enter the address manually</p>
+                        </div>
                     </div>
-                    <div id="address-manual" class="form-group form-group-compound">
-                        <a href="#" id="enterAddressManually">Enter the address manually</a>
-                        <span class="toggle-content loading-text" id="addressLoading">Loading address...</span>
-                        <p id="postcodeServiceUnavailable" class="error toggle-content text">Service is currently unavailable, please enter the address manually</p>
-                    </div>
-                </div>
 
-                <div class="info-highlighted js-address-panel hidden">
-                    <ul></ul>
-                </div>
+                    <div class="info-highlighted js-address-panel hidden">
+                        <ul></ul>
+                    </div>
+                }
                 
                 @if (!String.IsNullOrEmpty(Model.PreviousAddress?.StringifiedAddress) && (!Model.EditForm && !Model.ResetForm))
                 {
@@ -138,5 +141,5 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-        @{await Html.RenderPartialAsync("~/Views/Certificate/_AddressScriptsPartial.cshtml"); }
+    @{await Html.RenderPartialAsync("~/Views/Certificate/_AddressScriptsPartial.cshtml"); }
 }

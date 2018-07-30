@@ -5,11 +5,7 @@
     findAddressVal = $('#postcode-search').val(),
     queryStrings = window.location.search;
 
-  if (queryStrings.indexOf('showPreviousAddress=false') !== -1) {
-    $('#address-lookup')
-      .removeClass('hide-nojs')
-      .addClass('hidden');
-
+  if (queryStrings.indexOf('edit=true') !== -1) {
     $('#address-details').removeClass('js-hidden');
   }
 
@@ -75,7 +71,7 @@
               $.map(data.Items, function(suggestion) {
                 return {
                   label: suggestion.Text,
-                  value: '',
+                  value: suggestion.Text,
                   data: suggestion
                 };
               })
@@ -184,7 +180,7 @@
           $('.js-select-previous-address').hide();
           $('#enterAddressManually').show();
           $('#addressManualWrapper').unbind('click');
-          $('#postcode-search').val('');
+          // $('#postcode-search').val('');
           populateAddress(data.Items[0]);
         }
       },
