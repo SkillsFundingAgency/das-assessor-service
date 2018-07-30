@@ -39,7 +39,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         public async Task<IActionResult> Index(DuplicateRequestViewModel duplicateRequestViewModel)
         {
             var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
-            var certificate = await _apiClient.PostReprintRequest(new StaffUIReprintRequest
+            var certificate = await _apiClient.PostReprintRequest(new CertificateReprintRequest
             {
                 Id = duplicateRequestViewModel.Certificate.Id,
                 Username = username

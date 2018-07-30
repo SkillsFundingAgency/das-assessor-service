@@ -3,7 +3,7 @@ using MediatR;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    public class StaffUIReprintRequest : IRequest<StaffUIReprintResponse>
+    public class CertificateReprintRequest : IRequest<CertificateReprintResponse>
     {        
         public Guid Id { get; set;  }
         public string Username { get; set; }
