@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
@@ -27,19 +25,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         {
             return View();
         }
-
-        //[HttpPost]
-        //public async Task<IActionResult> Index([FromForm]SearchViewModel searchRequest)
-        //{
-        //    var searchResults = await _apiClient.Search(searchRequest.SearchString, searchRequest.Page);
-
-        //    _sessionService.Set("SearchResults", searchResults);
-        //    _sessionService.Set("SearchRequest", searchRequest);
-        //    return RedirectToAction("Results");
-        //}
-
+        
         [HttpGet("results")]
-        public async Task<IActionResult> Results(string searchString, int page = 0)
+        public async Task<IActionResult> Results(string searchString, int page = 1)
         {
             var searchResults = await _apiClient.Search(searchString, page);
             var searchViewModel = new SearchViewModel
@@ -53,7 +41,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         }
 
         [HttpGet("select")]
-        public async Task<IActionResult> Select(int stdCode, long uln, string searchString, int page = 0)
+        public async Task<IActionResult> Select(int stdCode, long uln, string searchString, int page = 1)
         {
             var learner = await _apiClient.GetLearner(stdCode, uln);
 
