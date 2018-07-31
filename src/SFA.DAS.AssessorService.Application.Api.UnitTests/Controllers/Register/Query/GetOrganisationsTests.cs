@@ -77,10 +77,10 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         [Test]
         public void ResultsMatchExpectedListOfAssessmentOrganisationSummaries()
         {
-            var organisationTypes = ((OkObjectResult)_result).Value as List<AssessmentOrganisationSummary>;
-            organisationTypes.Count.Should().Be(2);
-            organisationTypes.Should().Contain(_assOrgSummary1);
-            organisationTypes.Should().Contain(_assOrgSummary2);
+            var organisations = ((OkObjectResult)_result).Value as List<AssessmentOrganisationSummary>;
+            organisations.Count.Should().Be(2);
+            organisations.Should().Contain(_assOrgSummary1);
+            organisations.Should().Contain(_assOrgSummary2);
         }
     }
 }
