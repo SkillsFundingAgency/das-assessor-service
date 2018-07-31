@@ -40,12 +40,29 @@
     </tbody>
 </table>
 
-@if (Model.PaginatedList.HasPreviousPage)
-{
-    <a class="button" asp-action="Results" asp-controller="Search" asp-route-searchstring="@Model.SearchString" asp-route-page="@( Model.PaginatedList.PageIndex - 1)">Previous</a>
-}
+<div class="page-navigation">
+    @{
+        var prevDisabled = !Model.PaginatedList.HasPreviousPage ? "disabled" : "";
+        var nextDisabled = !Model.PaginatedList.HasNextPage ? "disabled" : "";
+    }
 
-@if (Model.PaginatedList.HasNextPage)
-{
-    <a class="button" asp-action="Results" asp-controller="Search" asp-route-searchstring="@Model.SearchString" asp-route-page="@( Model.PaginatedList.PageIndex + 1)">Next</a>
-}
+    <a asp-action="Results" 
+       asp-controller="Search" 
+       asp-route-searchstring="@Model.SearchString" 
+       asp-route-page="@( Model.PaginatedList.PageIndex - 1)"
+       class="previous @prevDisabled">
+        <i class="arrow-button icon-left-open">&#xe800;</i>
+        <span class="description">Previous <span class="hide-mob">page</span></span>
+        <span class="counter">Page <span class="prevPage">@(Model.PaginatedList.PageIndex - 1)</span> of <span class="totalPage">@(Model.PaginatedList.TotalPages)</span></span>
+    </a>
+  
+    <a asp-action="Results" 
+       asp-controller="Search" 
+       asp-route-searchstring="@Model.SearchString" 
+       asp-route-page="@( Model.PaginatedList.PageIndex + 1)"
+       class="next @nextDisabled">
+        <i class="arrow-button icon-right-open">&#xe801;</i>
+        <span class="description">Next <span class="hide-mob">page</span></span>
+        <span class="counter">Page <span class="nextPage">@(Model.PaginatedList.PageIndex + 1)</span> of <span class="totalPage">@(Model.PaginatedList.TotalPages)</span></span>
+    </a>
+</div>
