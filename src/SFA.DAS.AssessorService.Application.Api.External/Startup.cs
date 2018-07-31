@@ -46,18 +46,16 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                     config.DefaultRequestHeaders.Add("Accept", "Application/json");
                 });
 
-               
-
                 services.AddSwaggerGen(c =>
                 {
                     c.SwaggerDoc("v1", new Info { Title = "SFA.DAS.AssessorService.Application.Api.External", Version = "v1" });
 
-                //if (_env.IsDevelopment())
-                //{
-                //    var basePath = AppContext.BaseDirectory;
-                //    var xmlPath = Path.Combine(basePath, "SFA.DAS.AssessorService.Application.Api.External.xml");
-                //    c.IncludeXmlComments(xmlPath);
-                //}
+                    //if (_env.IsDevelopment())
+                    //{
+                    //    var basePath = AppContext.BaseDirectory;
+                    //    var xmlPath = Path.Combine(basePath, "SFA.DAS.AssessorService.Application.Api.External.xml");
+                    //    c.IncludeXmlComments(xmlPath);
+                    //}
                 });
 
                 services.AddScoped<IHeaderInfo, HeaderInfo>();
@@ -117,7 +115,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                     .UseAuthentication();
 
                 app.UseMiddleware<GetHeadersMiddleware>();
-                app.UseMiddleware<ErrorHandlingMiddleware>();
                 
                 app.UseHttpsRedirection();
                 app.UseMvc();

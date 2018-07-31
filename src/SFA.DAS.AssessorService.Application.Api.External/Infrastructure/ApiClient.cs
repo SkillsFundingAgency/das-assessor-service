@@ -38,65 +38,39 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
         protected async Task<T> Get<T>(string uri)
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-            var res = await _client.GetAsync(new Uri(uri, UriKind.Relative));
-            return await res.Content.ReadAsAsync<T>();
+
+            using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
+            {
+                return await response.Content.ReadAsAsync<T>();
+            }
         }
 
-        protected async Task<U> PostPutRequestWithResponse<T, U>(HttpRequestMessage requestMessage, T model)
+        protected async Task<U> Post<T, U>(string uri, T model)
         {
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
             var serializeObject = JsonConvert.SerializeObject(model);
-            requestMessage.Content = new StringContent(serializeObject,
-                System.Text.Encoding.UTF8, "application/json");
 
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-
-            using (var response = await _client.SendAsync(requestMessage))
+            using (var response = await _client.PostAsync(new Uri(uri, UriKind.Relative), new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
             {
-                var json = await response.Content.ReadAsStringAsync();
-
-                if (response.StatusCode == HttpStatusCode.OK
-                    || response.StatusCode == HttpStatusCode.Created
-                    || response.StatusCode == HttpStatusCode.NoContent)
-                {
-                    return await Task.Factory.StartNew<U>(() => JsonConvert.DeserializeObject<U>(json, _jsonSettings));
-                }
-                else
-                {
-                    _logger.LogInformation($"HttpRequestException: Status Code: {response.StatusCode} Body: {json}");
-                    throw new HttpRequestException(json);
-                }
+                return await response.Content.ReadAsAsync<U>();
             }
         }
 
-        public virtual async Task<List<SearchResult>> Search(SearchQuery searchQuery, int? stdCodeFilter = null)
+        protected async Task<U> Put<T, U>(string uri, T model)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/search"))
-            {
-                List<SearchResult> results = await PostPutRequestWithResponse<SearchQuery, List<SearchResult>>(request, searchQuery);
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            var serializeObject = JsonConvert.SerializeObject(model);
 
-                return results.Where(s => stdCodeFilter is null || s.StdCode == stdCodeFilter).ToList();
+            using (var response = await _client.PutAsync(new Uri(uri, UriKind.Relative), new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
+            {
+                return await response.Content.ReadAsAsync<U>();
             }
         }
 
-        public async Task<Certificate> StartCertificate(StartCertificateRequest request)
+        public async Task<List<SearchResult>> Search(SearchQuery searchQuery, int? stdCodeFilter = null)
         {
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Post, "api/v1/certificates/start"))
-            {
-                return await PostPutRequestWithResponse<StartCertificateRequest, Certificate>(httpRequest, request);
-            }
-        }
-
-        public async Task<Certificate>GetCertificateForUln(GetCertificateForUlnRequest request)
-        {
-            return await Get<Certificate> ($"/api/v1/certificates/{request.Uln}/{request.StandardCode}");
-        }
-
-        public async Task<Certificate> UpdateCertificate(UpdateCertificateRequest certificateRequest)
-        {
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Put, "api/v1/certificates/update"))
-            {
-                return await PostPutRequestWithResponse<UpdateCertificateRequest, Certificate>(httpRequest, certificateRequest);
-            }
+            List<SearchResult> results = await Post<SearchQuery, List<SearchResult>>("/api/v1/search", searchQuery);
+            return results.Where(s => stdCodeFilter is null || s.StdCode == stdCodeFilter).ToList();
         }
     }
 }

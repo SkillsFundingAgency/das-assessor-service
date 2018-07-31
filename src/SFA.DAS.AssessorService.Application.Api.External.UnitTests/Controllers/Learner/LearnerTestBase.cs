@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
+using RichardSzalay.MockHttp;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.External.Controllers;
 using SFA.DAS.AssessorService.Application.Api.External.Infrastructure;
@@ -15,23 +16,17 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
     {
         protected Mock<ILogger<LearnerController>> LoggerMock;
         protected ApiClient ApiClientMock;
-        protected Mock<HeaderInfo> HeaderInfoMock;
+        protected HeaderInfo HeaderInfoMock;
         protected LearnerController ControllerMock;
-        protected Mock<FakeHttpMessageHandler> FakeHttpMessageHandlerMock;
+        protected MockHttpMessageHandler MockHttp;
 
-        public void Setup()
+        protected void Setup()
         {
             BuildLoggerMock();
             BuildApiClientMock();
             BuildHeaderInfoMock();
 
-            ControllerMock = new LearnerController(LoggerMock.Object, HeaderInfoMock.Object, ApiClientMock);
-        }
-
-        public void SetHeaderInfo(string username, int ukprn)
-        {
-            HeaderInfoMock.Object.Username = username;
-            HeaderInfoMock.Object.Ukprn = ukprn;
+            ControllerMock = new LearnerController(LoggerMock.Object, HeaderInfoMock, ApiClientMock);
         }
 
         private void BuildLoggerMock()
@@ -41,32 +36,24 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
 
         private void BuildApiClientMock()
         {
-            FakeHttpMessageHandlerMock = new Mock<FakeHttpMessageHandler> { CallBase = true };
+            MockHttp = new MockHttpMessageHandler();
 
-            var httpClient = new HttpClient(FakeHttpMessageHandlerMock.Object)
-            {
-                BaseAddress = new Uri("http://loopback/")
-            };
             var apiClientLogger = new Mock<ILogger<ApiClient>>();
             var tokenService = new Mock<ITokenService>();
+
+            var httpClient = MockHttp.ToHttpClient();
+            httpClient.BaseAddress = new Uri("http://localhost:12726/");
 
             ApiClientMock = new ApiClient(httpClient, apiClientLogger.Object, tokenService.Object);
         }
 
         private void BuildHeaderInfoMock()
         {
-            HeaderInfoMock = new Mock<HeaderInfo>();
-            SetHeaderInfo(string.Empty, 0);
-        }
-
-        protected void SetFakeHttpMessageHandlerResponse(HttpStatusCode status, object content)
-        {
-            FakeHttpMessageHandlerMock.Setup(f => f.Send(It.IsAny<HttpRequestMessage>())).Returns(
-                new HttpResponseMessage
-                {
-                    StatusCode = status,
-                    Content = new StringContent(JsonConvert.SerializeObject(content))
-                });
+            HeaderInfoMock = new HeaderInfo
+            {
+                Username = string.Empty,
+                Ukprn = 0
+            };
         }
     }
 }

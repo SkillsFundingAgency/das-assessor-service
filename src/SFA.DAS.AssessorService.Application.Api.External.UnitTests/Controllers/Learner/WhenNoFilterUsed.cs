@@ -1,8 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using NUnit.Framework;
+using RichardSzalay.MockHttp;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Search;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers.Learner
 {
@@ -22,7 +26,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
                 new SearchResult { Uln = 1234, FamilyName = "test", StdCode = 9999, UkPrn = 0 }
             };
 
-            base.SetFakeHttpMessageHandlerResponse(System.Net.HttpStatusCode.OK, _items);
+            MockHttp.When(HttpMethod.Post, "http://localhost:12726/api/v1/search")
+                .Respond(HttpStatusCode.OK, "application/json", JsonConvert.SerializeObject(_items));
         }
 
         [Test]

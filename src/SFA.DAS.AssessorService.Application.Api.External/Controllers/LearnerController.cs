@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
 
         [HttpGet("{uln}/{lastname}/{stdCode:int?}", Name = "Get")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<SearchResult>))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
         public async Task<IActionResult> Get(long uln, string lastname, int? stdCode = null)
         {            
             SearchQuery searchQuery = new SearchQuery
