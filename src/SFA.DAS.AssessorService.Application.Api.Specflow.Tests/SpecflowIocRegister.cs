@@ -25,6 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests
 
             var sqlConnection = new SqlConnection(configuration.SpecflowDBTestConnectionString);
             objectContainer.RegisterInstanceAs<IDbConnection>(sqlConnection);
+            objectContainer.RegisterInstanceAs<IWebConfiguration>(configuration);
         }
     }
 }
