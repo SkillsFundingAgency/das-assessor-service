@@ -54,10 +54,10 @@ using Microsoft.Extensions.Logging;
             [Test]
             public void GetAssessmentOrganisationSummarysReturnedExpectedResults()
             {
-                var organisationTypes = GetAssessmentOrganisationSummarysHandler.Handle(new GetAssessmentOrganisationsRequest(), new CancellationToken()).Result;
-                organisationTypes.Count.Should().Be(2);
-                organisationTypes.Should().Contain(_assessmentOrganisationSummary1);
-                organisationTypes.Should().Contain(_assessmentOrganisationSummary2);
+                var organisations = GetAssessmentOrganisationSummarysHandler.Handle(new GetAssessmentOrganisationsRequest(), new CancellationToken()).Result;
+                organisations.Count.Should().Be(2);
+                organisations.Should().Contain(_assessmentOrganisationSummary1);
+                organisations.Should().Contain(_assessmentOrganisationSummary2);
             }
         }
     }
