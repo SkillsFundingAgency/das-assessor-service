@@ -121,10 +121,10 @@
     <value>Address</value>
   </data>
   <data name="AddressLine2" xml:space="preserve">
-    <value />
+    <value>Address 2</value>
   </data>
   <data name="AddressLine3" xml:space="preserve">
-    <value />
+    <value>Address 3</value>
   </data>
   <data name="City" xml:space="preserve">
     <value>City or town</value>
