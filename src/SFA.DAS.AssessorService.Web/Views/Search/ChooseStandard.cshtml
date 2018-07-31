@@ -35,8 +35,8 @@
                 </div>
             }
 
-            <fieldset sfa-anyvalidationerror-class="after-error-summary">
-                <legend id="SelectedStandardCode">
+            <div sfa-anyvalidationerror-class="after-error-summary">
+                <div id="SelectedStandardCode">
                     <h1 class="heading-large">@Localizer["PageHeading"]</h1>
                     <p>@Localizer["PageDescription"]</p>
                     <ul class="list">
@@ -50,7 +50,7 @@
                     <div class="error-message-container" sfa-validation-for="SelectedStandardCode" sfa-validationerror-class="form-group-error">
                         <span class="error-message" asp-validation-for="SelectedStandardCode"></span>
                     </div>
-                </legend>
+                </div>
 
                 <div class="form-group" sfa-validation-for="SelectedStandardCode" sfa-validationerror-class="form-group-error">
                     @if (Model.SearchResults.Any(sr => sr.CertificateReference == null))
@@ -85,7 +85,7 @@
                         }
                     }
                 </div>
-            </fieldset>
+            </div>
             <div class="form-group">
                 <button class="button" type="submit">@Localizer["SelectStandardButton"]</button>
             </div>
