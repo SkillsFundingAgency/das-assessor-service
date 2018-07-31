@@ -1,4 +1,8 @@
-﻿details {
+﻿a:focus {
+  outline-offset: 0;
+}
+
+details {
   margin-bottom: 30px;
 }
 
