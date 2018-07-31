@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -25,9 +23,31 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
 
         public async Task<AssessmentOrganisationDetails> Handle(GetAssessmentOrganisationRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($@"Handling AssessmentOrganisation Request for [{request.OrganisationId}]");
-            var res = await _registerQueryRepository.GetAssessmentOrganisation(request.OrganisationId);
-            return res;
+            var organisationId = request.OrganisationId;
+            _logger.LogInformation($@"Handling AssessmentOrganisation Request for [{organisationId}]");
+            var org = await _registerQueryRepository.GetAssessmentOrganisation(organisationId);
+
+            var addresses = await _registerQueryRepository.GetAssessmentOrganisationAddresses(organisationId);
+            org.Address = addresses.FirstOrDefault();
+
+            var contact = await GetPrimaryOrFirstContact(organisationId);
+
+            if (contact == null) return org;
+
+            org.Email = contact.Email;
+            org.Phone = contact.PhoneNumber;
+            return org;
+        }
+
+        private async Task<AssessmentOrganisationContact> GetPrimaryOrFirstContact(string organisationId)
+        {
+            var contacts = await _registerQueryRepository.GetAssessmentOrganisationContacts(organisationId);
+            var assessmentOrganisationContacts = contacts as IList<AssessmentOrganisationContact> ?? contacts.ToList();
+            var contact = assessmentOrganisationContacts.Any(x => x.IsPrimaryContact) 
+                    ? assessmentOrganisationContacts.First(x => x.IsPrimaryContact) 
+                    : assessmentOrganisationContacts.FirstOrDefault();
+
+            return contact;
         }
     }
 }

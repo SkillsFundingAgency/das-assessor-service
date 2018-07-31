@@ -65,23 +65,10 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<AssessmentOrganisationDetails> GetAssessmentOrganisation(string organisationId)
         {
 
-           
-           
-
-
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
-
-                var comm = new SqlCommand
-                {
-                    Connection = connection,
-                    CommandText =
-                        $@"DBCC CLONEDATABASE ('SFA.DAS.AssessorService.Database', 'SFA.DAS.AssessorService.DatabaseTest')"
-                };
-
-                comm.ExecuteReader();
 
                 var sqlForMainDetails =
                     "select EndPointAssessorOrganisationId as Id, EndPointAssessorName as Name, EndPointAssessorUkprn as ukprn, " +
@@ -91,31 +78,8 @@ namespace SFA.DAS.AssessorService.Data
                 var orgs = await connection.QueryAsync<AssessmentOrganisationDetails>(sqlForMainDetails);
                 var org = orgs.FirstOrDefault();
 
-                var addresses = await GetAssessmentOrganisationAddresses(organisationId);
-                org.Address = addresses.FirstOrDefault();
-
-                var contact = await GetPrimaryOrFirstContact(organisationId);
-
-                if (contact == null) return org;
-
-                org.Email = contact.Email;
-                org.Phone = contact.PhoneNumber;
                 return org;
             }   
-        }
-
-        private async Task<AssessmentOrganisationContact> GetPrimaryOrFirstContact(string organisationId)
-        {
-            var contacts = await GetAssessmentOrganisationContacts(organisationId);
-
-            var assessmentOrganisationContacts = contacts as IList<AssessmentOrganisationContact> ?? contacts.ToList();
-            AssessmentOrganisationContact contact;
-
-            if (assessmentOrganisationContacts.Where(x => x.IsPrimaryContact == true).Count() > 0)
-                contact = assessmentOrganisationContacts.Where(x => x.IsPrimaryContact == true).First();
-            else
-                contact = assessmentOrganisationContacts.FirstOrDefault();
-            return contact;
         }
 
         public async Task<IEnumerable<AssessmentOrganisationAddress>> GetAssessmentOrganisationAddresses(string organisationId)
