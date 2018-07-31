@@ -1,0 +1,188 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model SFA.DAS.AssessorService.Web.Staff.ViewModels.CertificateCheckViewModel
+
+@{
+    ViewBag.Title = "Check and approve the assessment details";
+    Layout = "_Layout";
+}
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <a class="link-back" asp-controller="Search" asp-action="Select">Back</a>
+
+        <h1 class="heading-large">@Localizer["Heading"]</h1>
+
+        <div class="info-summary">
+            <h2 class="heading-medium">@Localizer["InfoHeader"]</h2>
+            <p>@Localizer["InfoLine1"]</p>
+            <p>If the name, standard or level is incorrect, you need to agree on the correct details along with the training provider and the employer. The training provider needs to then update the Individualised Learner Record (<abbr title="Individualised Learner Record">ILR</abbr>).</p>
+        </div>
+
+        <h2 class="heading-medium">
+            Apprentice details
+        </h2>
+
+        <dl class="govuk-check-your-answers cya-questions-short">
+            <div>
+                <dt class="cya-question">
+                    Name
+                </dt>
+                <dd class="cya-answer">
+                    @Model.GivenNames @Model.FamilyName
+                </dd>
+            </div>
+            <div>
+                <dt class="cya-question">
+                    <abbr title="Unique learner number">ULN</abbr>
+                </dt>
+                <dd class="cya-answer">
+                    @Model.Uln
+                </dd>
+            </div>
+        </dl>
+
+
+        <h2 class="heading-medium">
+            Apprenticeship details
+        </h2>
+
+        <dl class="govuk-check-your-answers cya-questions-short">
+            <div>
+                <dt class="cya-question">
+                    Standard
+                </dt>
+                <dd class="cya-answer">
+                    @Model.Standard
+                </dd>
+                <dd class="cya-change">
+
+                </dd>
+            </div>
+            <div>
+                <dt class="cya-question">
+                    Level
+                </dt>
+                <dd class="cya-answer">
+                    @Model.Level
+                </dd>
+                <dd class="cya-change">
+
+                </dd>
+            </div>
+            <div>
+                <dt class="cya-question">
+                    Grade
+                </dt>
+                <dd class="cya-answer">
+                    @Model.SelectedGrade
+                </dd>
+                <dd class="cya-change">
+                    <a asp-controller="CertificateGrade" asp-action="Grade" asp-route-redirecttocheck="true">
+                        Change<span class="visually-hidden"> grade</span>
+                    </a>
+                </dd>
+            </div>
+            <div>
+                <dt class="cya-question">
+                    Option
+                </dt>
+                <dd class="cya-answer">
+                    @Model.Option
+                </dd>
+                <dd class="cya-change">
+                    <a asp-controller="CertificateOption" asp-action="Option" asp-route-redirecttocheck="true">
+                        Change<span class="visually-hidden"> option</span>
+                    </a>
+                </dd>
+            </div>
+            <div>
+                <dt class="cya-question">
+                    Achievement date
+                </dt>
+                <dd class="cya-answer">
+                    @Model.AchievementDate.ToShortDateString()
+                </dd>
+                <dd class="cya-change">
+                    <a asp-controller="CertificateDate" asp-action="Date" asp-route-redirecttocheck="true">
+                        Change<span class="visually-hidden"> achievement date</span>
+                    </a>
+                </dd>
+            </div>
+        </dl>
+
+        <h2 class="heading-medium">
+            We'll send the certificate to:
+        </h2>
+
+        <dl class="govuk-check-your-answers cya-questions-short form-group">
+            <div>
+                <dt class="cya-question">
+                    Name
+                </dt>
+                <dd class="cya-answer">
+                    @Model.Name
+                </dd>
+                <dd class="cya-change">
+                    <a asp-controller="CertificateAddress" asp-action="Address" asp-route-redirecttocheck="true">
+                        Change<span class="visually-hidden"> name</span>
+                    </a>
+                </dd>
+            </div>
+            <div>
+                <dt class="cya-question">
+                    Department
+                </dt>
+                <dd class="cya-answer">
+                    @Model.Dept
+                </dd>
+                <dd class="cya-change">
+                    <a asp-controller="CertificateAddress" asp-action="Address" asp-route-redirecttocheck="true">
+                        Change<span class="visually-hidden"> department</span>
+                    </a>
+                </dd>
+            </div>
+            <div>
+                <dt class="cya-question">
+                    Organisation
+                </dt>
+                <dd class="cya-answer">
+                    @Model.Employer
+                </dd>
+                <dd class="cya-change">
+                    <a asp-controller="CertificateAddress" asp-action="Address" asp-route-redirecttocheck="true">
+                        Change<span class="visually-hidden"> organisation</span>
+                    </a>
+                </dd>
+            </div>
+            <div>
+                <dt class="cya-question">
+                    Address
+                </dt>
+                <dd class="cya-answer">
+                    @Model.AddressLine1<br />
+                    @if (@Model.AddressLine2 != null)
+                    {
+                        @Model.AddressLine2<br />
+                    }
+                    @if (@Model.AddressLine3 != null)
+                    {
+                        @Model.AddressLine3<br />
+                    }
+                    @Model.City<br />
+                    @Model.Postcode
+                </dd>
+                <dd class="cya-change">
+                    <a asp-controller="CertificateAddress" asp-action="Address" asp-route-redirecttocheck="true">
+                        Change<span class="visually-hidden"> address</span>
+                    </a>
+                </dd>
+            </div>
+        </dl>
+
+        <form type="post" asp-controller="CertificateCheck">
+            @Html.HiddenFor(c => c.Id)
+            <button type="submit" class="button">@Localizer["ContinueButton"]</button>
+        </form>
+    </div>
+</div>

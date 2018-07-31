@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.WsFederation;
 using Microsoft.AspNetCore.Builder;
@@ -56,6 +58,19 @@ namespace SFA.DAS.AssessorService.Web.Staff
             });
 
             AddAuthentication(services);
+
+            services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });            
+            services.Configure<RequestLocalizationOptions>(options =>
+            {
+                options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("en-GB");
+                options.SupportedCultures = new List<CultureInfo> { new CultureInfo("en-GB") };
+                options.RequestCultureProviders.Clear();
+            });
+
+            services.AddMvc(options => { options.Filters.Add<CheckSessionFilter>(); })               
+                .AddViewLocalization(opts => { opts.ResourcesPath = "Resources"; })
+                .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1); ;
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
