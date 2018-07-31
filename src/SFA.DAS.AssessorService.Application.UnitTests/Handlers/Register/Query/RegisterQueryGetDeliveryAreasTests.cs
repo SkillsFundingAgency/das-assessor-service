@@ -54,10 +54,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         [Test]
         public void GetDeliveryAreasReturnedExpectedResults()
         {
-            var organisationTypes = GetDeliveryAreasHandler.Handle(new GetDeliveryAreasRequest(), new CancellationToken()).Result;
-            organisationTypes.Count.Should().Be(2);
-            organisationTypes.Should().Contain(_deliveryArea1);
-            organisationTypes.Should().Contain(_deliveryArea2);
+            var deliveryAreas = GetDeliveryAreasHandler.Handle(new GetDeliveryAreasRequest(), new CancellationToken()).Result;
+            deliveryAreas.Count.Should().Be(2);
+            deliveryAreas.Should().Contain(_deliveryArea1);
+            deliveryAreas.Should().Contain(_deliveryArea2);
         }
     }
 }
