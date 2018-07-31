@@ -27,12 +27,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
         }
 
         [HttpPost(Name= "StaffCertificateReprint")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(StaffUIReprintResponse))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(CertificateReprintResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> StaffCertificateReprint([FromBody] StaffUIReprintRequest staffUiReprintRequest)
+        public async Task<IActionResult> StaffCertificateReprint([FromBody] CertificateReprintRequest certificateReprintRequest)
         {
-            return Ok(await _mediator.Send(staffUiReprintRequest));
+            return Ok(await _mediator.Send(certificateReprintRequest));
         }
     }
 }

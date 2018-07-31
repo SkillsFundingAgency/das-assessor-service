@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    public class StaffUIReprintResponse
+    public class CertificateReprintResponse
     {      
         public Certificate Certificate { get; set; }
     }
