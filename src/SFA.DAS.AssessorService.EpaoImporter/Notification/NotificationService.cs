@@ -29,14 +29,13 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Notification
             _assessorServiceApi = assessorServiceApi;
         }
 
-        public async Task Send(int batchNumber, List<CertificateResponse> certificateResponses,
-            CoverLettersProduced coverLettersProduced)
+        public async Task Send(int batchNumber, List<CertificateResponse> certificateResponses)
         {
             var emailTemplate = await _assessorServiceApi.GetEmailTemplate();
 
             var certificatesFileName = $"IFA-Certificate-{GetMonthYear()}-{batchNumber.ToString().PadLeft(3, '0')}.xlsx";
 
-            var personalisation = CreatePersonalisationTokens(certificateResponses, coverLettersProduced.CoverLetterFileNames, certificatesFileName);
+            var personalisation = CreatePersonalisationTokens(certificateResponses, certificatesFileName);
 
             _aggregateLogger.LogInfo("Send Email");
             _aggregateLogger.LogInfo($"Base Url = {_webConfiguration.NotificationsApiClientConfiguration.ApiBaseUrl}");
@@ -59,8 +58,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Notification
             }
         }
 
-        private Dictionary<string, string> CreatePersonalisationTokens(List<CertificateResponse> certificateResponses,
-            List<string> coverLetterFileNames, string certificatesFileName)
+        private Dictionary<string, string> CreatePersonalisationTokens(List<CertificateResponse> certificateResponses, string certificatesFileName)
         {
             var personalisation = new Dictionary<string, string>
             {
@@ -69,7 +67,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Notification
                     "numberOfCertificatesToBePrinted",
                     $"Number Of Certificates to be Printed:- {certificateResponses.Count}"
                 },
-                {"numberOfCoverLetters", $"Number of Cover Letters:- {coverLetterFileNames.Count}"},
+                {"numberOfCoverLetters", ""},
                 {"sftpUploadDirectory", $"{_webConfiguration.Sftp.UploadDirectory}"},
                 {"proofDirectory", $"{_webConfiguration.Sftp.ProofDirectory}"}
             };
