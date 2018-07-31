@@ -73,10 +73,10 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         [Test]
         public void ResultsMatchExpectedListOfDeliveryAreas()
         {
-            var organisationTypes = ((OkObjectResult)_result).Value as List<DeliveryArea>;
-            organisationTypes.Count.Should().Be(2);
-            organisationTypes.Should().Contain(_deliveryArea1);
-            organisationTypes.Should().Contain(_deliveryArea2);
+            var deliveryAreas = ((OkObjectResult)_result).Value as List<DeliveryArea>;
+            deliveryAreas.Count.Should().Be(2);
+            deliveryAreas.Should().Contain(_deliveryArea1);
+            deliveryAreas.Should().Contain(_deliveryArea2);
         }
     }
 }
