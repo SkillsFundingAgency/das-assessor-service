@@ -11,13 +11,14 @@ $(document).ready(function() {
   var showHideContent = new GOVUK.ShowHideContent();
   showHideContent.init();
 
+  GOVUK.expandableTable.init();
+
   // Use GOV.UK shim-links-with-button-role.js to trigger a link styled to look like a button,
   // with role="button" when the space key is pressed.
   GOVUK.shimLinksWithButtonRole.init();
 
   // Details/summary polyfill from frontend toolkit
   GOVUK.details.init();
-
 });
 
 $(window).load(function() {
@@ -27,7 +28,9 @@ $(window).load(function() {
     $('.error-summary a').click(function(e) {
       e.preventDefault();
       var href = $(this).attr('href');
-      $(href).is(':visible') ? $(href).focus() : $('input.form-control:first').focus();
+      $(href).is(':visible')
+        ? $(href).focus()
+        : $('input.form-control:first').focus();
     });
   } else {
     // Otherwise, set focus to the field with the error
