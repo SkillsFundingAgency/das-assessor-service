@@ -24,7 +24,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         private static Mock<IMediator> _mediator;
         private static Mock<ILogger<RegisterQueryController>> _logger;
         private AssessmentOrganisationDetails _expectedAssessmentOrganisationDetails;
-        private static readonly string OrganisationId = "ABC123";
+        private const string OrganisationId = "ABC123";
+
         [SetUp]
         public void Arrange()
         {

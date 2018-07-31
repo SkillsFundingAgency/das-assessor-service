@@ -65,10 +65,23 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<AssessmentOrganisationDetails> GetAssessmentOrganisation(string organisationId)
         {
 
+           
+           
+
+
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
+
+                var comm = new SqlCommand
+                {
+                    Connection = connection,
+                    CommandText =
+                        $@"DBCC CLONEDATABASE ('SFA.DAS.AssessorService.Database', 'SFA.DAS.AssessorService.DatabaseTest')"
+                };
+
+                comm.ExecuteReader();
 
                 var sqlForMainDetails =
                     "select EndPointAssessorOrganisationId as Id, EndPointAssessorName as Name, EndPointAssessorUkprn as ukprn, " +
