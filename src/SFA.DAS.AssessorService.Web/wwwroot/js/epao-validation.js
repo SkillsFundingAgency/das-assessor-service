@@ -47,17 +47,6 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
           .addClass('form-control-error')
           .closest('.form-group')
           .addClass('form-group-error');
-
-        if (
-          $(element)
-            .closest('fieldset')
-            .prev()
-            .hasClass('js-error-summary')
-        ) {
-          $(element)
-            .closest('fieldset')
-            .addClass('after-error-summary');
-        }
       },
       unhighlight: function(element) {
         if ($(element).hasClass('date-input')) {
@@ -69,17 +58,6 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
           .removeClass('form-control-error')
           .closest('.form-group')
           .removeClass('form-group-error');
-
-        if (
-          $(element)
-            .closest('fieldset')
-            .prev()
-            .hasClass('js-error-summary')
-        ) {
-          $(element)
-            .closest('fieldset')
-            .removeClass('after-error-summary');
-        }
       },
       rules: validationRulesObject.rules,
       groups: validationRulesObject.groups,
@@ -91,7 +69,6 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
             .show()
             .append(error);
         } else if (element.hasClass('date-input')) {
-          console.log(error, element);
           $('.error-message-container')
             .addClass('form-group-error')
             .show()
@@ -110,9 +87,7 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
   $.validator.addMethod(
     'isValidDate',
     function(value, element, params) {
-      console.log(value, element.name, params);
       var dateString = getFullDate();
-      console.log(parseDate(dateString.toString()));
       return dateString
         ? this.optional(element) || parseDate(dateString.toString())
         : true;
@@ -125,7 +100,6 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
     'noFutureDate',
     function(value, element) {
       var now = new Date().getTime();
-      console.log(getFullDate());
       var userDate = parseDate(getFullDate())
         ? parseDate(getFullDate()).getTime()
         : false;
