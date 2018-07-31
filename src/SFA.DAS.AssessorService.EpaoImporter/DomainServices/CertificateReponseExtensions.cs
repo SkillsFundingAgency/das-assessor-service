@@ -4,16 +4,9 @@ using SFA.DAS.AssessorService.EpaoImporter.Logger;
 
 namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 {
-    public class SanitiserService : ISanitiserService
+    public static class CertificateReponseExtensions
     {
-        private readonly IAggregateLogger _aggregateLogger;
-
-        public SanitiserService(IAggregateLogger aggregateLogger)
-        {
-            _aggregateLogger = aggregateLogger;
-        }
-
-        public List<CertificateResponse> Sanitise(List<CertificateResponse> certificateResponses)
+        public static List<CertificateResponse> Sanitise(this List<CertificateResponse> certificateResponses, IAggregateLogger logger)
         {
             var sanitisedCertificateResponse = new List<CertificateResponse>();
 
@@ -21,7 +14,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             {
                 var errorFlag = false;
 
-                _aggregateLogger.LogInfo($"Sanitising Certificate - {certificateResponse.CertificateReference} ...");
+                logger.LogInfo($"Sanitising Certificate - {certificateResponse.CertificateReference} ...");
 
                 var certificateData = certificateResponse.CertificateData;      
                 if (string.IsNullOrEmpty(certificateData.ContactAddLine1))
@@ -39,12 +32,12 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                     if (!string.IsNullOrEmpty(certificateData.LearnerGivenNames)
                         && !string.IsNullOrEmpty(certificateData.LearnerFamilyName))
                     {
-                        _aggregateLogger.LogInfo(
+                        logger.LogInfo(
                             $"Unprintable Certificate -> Given Names = {certificateData.LearnerGivenNames} Family Name = {certificateData.LearnerFamilyName} - Cannot be processed");
                     }
                     else
                     {
-                        _aggregateLogger.LogInfo($"Unprintable Certificate - Cannot be processed");
+                        logger.LogInfo($"Unprintable Certificate - Cannot be processed");
                     }
                 }
                 else
