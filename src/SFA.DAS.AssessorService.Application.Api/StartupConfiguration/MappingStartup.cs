@@ -35,6 +35,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
                 cfg.CreateMap<string, CertificateDataResponse>()
                     .ConvertUsing<JsonMappingConverter<CertificateDataResponse>>();
+
+                cfg.CreateMap<Certificate, CertificateHistoryResponse>();                
             });
         }
     }

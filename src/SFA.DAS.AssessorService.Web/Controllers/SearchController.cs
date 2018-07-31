@@ -2,11 +2,9 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Orchestrators.Search;
-using SFA.DAS.AssessorService.Web.Utils;
 using SFA.DAS.AssessorService.Web.ViewModels.Search;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
