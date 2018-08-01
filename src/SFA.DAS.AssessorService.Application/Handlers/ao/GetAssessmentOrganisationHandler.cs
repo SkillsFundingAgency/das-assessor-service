@@ -27,6 +27,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             _logger.LogInformation($@"Handling AssessmentOrganisation Request for [{organisationId}]");
             var org = await _registerQueryRepository.GetAssessmentOrganisation(organisationId);
 
+            if (org == null) return null;
+
             var addresses = await _registerQueryRepository.GetAssessmentOrganisationAddresses(organisationId);
             org.Address = addresses.FirstOrDefault();
 
