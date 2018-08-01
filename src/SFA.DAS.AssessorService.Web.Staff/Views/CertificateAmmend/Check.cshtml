@@ -113,7 +113,7 @@
                     @Model.AchievementDate.ToShortDateString()
                 </dd>
                 <dd class="cya-change">
-                    <a asp-controller="CertificateDate" asp-action="Date" asp-route-redirecttocheck="true">
+                    <a asp-controller="CertificateDate" asp-action="Date" asp-route-certificateid=@Model.Id>
                         Change<span class="visually-hidden"> achievement date</span>
                     </a>
                 </dd>
