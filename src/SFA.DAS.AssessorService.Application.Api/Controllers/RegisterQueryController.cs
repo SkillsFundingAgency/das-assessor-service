@@ -71,5 +71,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _logger.LogInformation($@"Get Assessment Organisation [{organisationId}]");
             return Ok(await _mediator.Send(new GetAssessmentOrganisationRequest {OrganisationId = organisationId }));         
         }
+
+        [HttpHead("assessment-organisations/{organisationId}", Name = "GetAssessmentOrganisationHead")]
+        [SwaggerResponse((int)HttpStatusCode.NoContent)]
+        [SwaggerResponse((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> Head(string organisationId)
+        {
+            _logger.LogInformation($@"HEAD Assessment Organisation [{organisationId}]");
+            await GetAssessmentOrganisation(organisationId);
+            return NoContent();
+        }
+
     }
 }
