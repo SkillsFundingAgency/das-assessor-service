@@ -1,7 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
-@using SFA.DAS.AssessorService.Web.Utils
+
 @inject IViewLocalizer Localizer
-@model SFA.DAS.AssessorService.Web.ViewModels.Search.ChooseStandardViewModel
+@model SFA.DAS.AssessorService.Web.Staff.ViewModels.ChooseStandardViewModel
 
 @{
     ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Choose an apprenticeship";
@@ -13,7 +13,7 @@
     <div class="column-two-thirds">
         <a class="link-back" asp-controller="Search" asp-action="Index">Back</a>
 
-        <form class="apprentice-choose-standard-form" asp-controller="Search" asp-action="ChooseStandard" method="post">
+        <form class="apprentice-choose-standard-form" asp-controller="CertificateChooseStandard" asp-action="ChooseStandard" method="post">
 
             @* hidden with css by default *@
             <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
@@ -35,7 +35,7 @@
                 </div>
             }
 
-            <div sfa-anyvalidationerror-class="after-error-summary">
+            @*<div sfa-anyvalidationerror-class="after-error-summary">
                 <div id="SelectedStandardCode">
                     <h1 class="heading-large">@Localizer["PageHeading"]</h1>
                     <p>@Localizer["PageDescription"]</p>
@@ -88,7 +88,7 @@
             </div>
             <div class="form-group">
                 <button class="button" type="submit">@Localizer["SelectStandardButton"]</button>
-            </div>
+            </div>*@
         </form>
 
         <p><a asp-controller="Search" asp-action="Index">Search again</a> if this isn’t the correct apprentice.</p>
@@ -97,5 +97,5 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-    @{await Html.RenderPartialAsync("~/Views/Search/_ChooseStandardScriptsPartial.cshtml"); }
+    @{await Html.RenderPartialAsync("~/Views/CertificateAmmend/_ChooseStandardScriptsPartial.cshtml"); }
 }
