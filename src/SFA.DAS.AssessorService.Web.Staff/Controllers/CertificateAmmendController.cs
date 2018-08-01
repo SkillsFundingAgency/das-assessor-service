@@ -11,11 +11,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {
     public class CertificateAmmendController : CertificateBaseController
     {       
-        public CertificateAmmendController(ILogger<CertificateBaseController> logger,
+        public CertificateAmmendController(ILogger<CertificateAmmendController> logger,
             IHttpContextAccessor contextAccessor,
             ApiClient apiClient) : base(logger, contextAccessor, apiClient)
         {
-
 
         }      
 

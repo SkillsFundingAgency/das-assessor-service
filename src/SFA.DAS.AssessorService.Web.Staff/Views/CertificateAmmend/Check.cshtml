@@ -31,6 +31,11 @@
                 <dd class="cya-answer">
                     @Model.GivenNames @Model.FamilyName
                 </dd>
+                <dd class="cya-change">
+                    <a asp-controller="CertificateGrade" asp-action="Grade">
+                        Change<span class="visually-hidden"> grade</span>
+                    </a>
+                </dd>
             </div>
             <div>
                 <dt class="cya-question">
@@ -56,7 +61,9 @@
                     @Model.Standard
                 </dd>
                 <dd class="cya-change">
-
+                    <a asp-controller="CertificateGrade" asp-action="Grade" asp-route-certificateid=@Model.Id asp-route-redirecttocheck="true">
+                        Change<span class="visually-hidden"> grade</span>
+                    </a>
                 </dd>
             </div>
             <div>
@@ -67,7 +74,9 @@
                     @Model.Level
                 </dd>
                 <dd class="cya-change">
-
+                    <a asp-controller="CertificateGrade" asp-action="Grade" asp-route-certificateid=@Model.Id>
+                        Change<span class="visually-hidden"> grade</span>
+                    </a>
                 </dd>
             </div>
             <div>
@@ -78,7 +87,7 @@
                     @Model.SelectedGrade
                 </dd>
                 <dd class="cya-change">
-                    <a asp-controller="CertificateGrade" asp-action="Grade" asp-route-redirecttocheck="true">
+                    <a asp-controller="CertificateGrade" asp-action="Grade" asp-route-certificateid=@Model.Id>
                         Change<span class="visually-hidden"> grade</span>
                     </a>
                 </dd>
@@ -163,11 +172,11 @@
                     @Model.AddressLine1<br />
                     @if (@Model.AddressLine2 != null)
                     {
-                        @Model.AddressLine2<br />
+                    @Model.AddressLine2<br />
                     }
                     @if (@Model.AddressLine3 != null)
                     {
-                        @Model.AddressLine3<br />
+                    @Model.AddressLine3<br />
                     }
                     @Model.City<br />
                     @Model.Postcode
