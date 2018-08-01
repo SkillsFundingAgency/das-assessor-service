@@ -1,7 +1,10 @@
-﻿using System.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
+using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
 {
@@ -51,6 +54,17 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
                 if (connection.State != ConnectionState.Open)
                     connection.Open();             
                 connection.Execute(sql);
+                connection.Close();
+            }
+        }
+
+        public void Execute(string sql, TestModel model)
+        {
+            using (var connection = new SqlConnection(SqlTestConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    connection.Open();
+                connection.Execute(sql, model);
                 connection.Close();
             }
         }

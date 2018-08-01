@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -52,8 +53,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 OrganisationData = null
             };
 
-            OrganisationHandler.InsertRecord(_organisation1);
-            OrganisationHandler.InsertRecord(_organisation2);
+            OrganisationHandler.InsertRecords(new List<OrganisationModel> {_organisation1, _organisation2});
         }
 
         [Test]
@@ -94,11 +94,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [TearDown]
         public void TearDownOrganisationTests()
         {
-            OrganisationHandler.DeleteRecord(_organisation1.Id);
-            OrganisationHandler.DeleteRecord(_organisation2.Id);
-           
+            OrganisationHandler.DeleteRecords(new List<Guid>{_organisation1.Id, _organisation2.Id});
         }
-
-        
     }
 }

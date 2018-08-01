@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests.Models
 {
-    public class OrganisationModel
+    public class OrganisationModel: TestModel
     {
         public Guid Id { get; set; }
         public DateTime CreatedAt { get; set; }

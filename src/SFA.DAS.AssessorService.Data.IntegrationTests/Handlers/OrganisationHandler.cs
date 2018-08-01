@@ -13,23 +13,20 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
       
         public static void InsertRecord(OrganisationModel organisation)
         {
-            var id = SqlStringService.ConvertStringToSqlValueString(organisation.Id.ToString());
-            var createdAt = SqlStringService.ConvertDateToSqlValueString(organisation.CreatedAt);
-            var deletedAt = SqlStringService.ConvertDateToSqlValueString(organisation.DeletedAt);
-            var assessorName = SqlStringService.ConvertStringToSqlValueString(organisation.EndPointAssessorName);
-            var organisationId = SqlStringService.ConvertStringToSqlValueString(organisation.EndPointAssessorOrganisationId);
-            var ukprn = SqlStringService.ConvertIntToSqlValueString(organisation.EndPointAssessorUkprn);
-            var primaryContact = SqlStringService.ConvertStringToSqlValueString(organisation.PrimaryContact);
-            var status = SqlStringService.ConvertStringToSqlValueString(organisation.Status);
-            var updatedAt = SqlStringService.ConvertDateToSqlValueString(organisation.UpdatedAt);
-            var organisationTypeId = SqlStringService.ConvertIntToSqlValueString(organisation.OrganisationTypeId);
-            var organisationData = SqlStringService.ConvertStringToSqlValueString(organisation.OrganisationData);
             var sql =
                 "INSERT INTO [Organisations] ([Id] ,[CreatedAt],[DeletedAt],[EndPointAssessorName],[EndPointAssessorOrganisationId],  " +
                 "[EndPointAssessorUkprn],[PrimaryContact],[Status],[UpdatedAt],[OrganisationTypeId],[OrganisationData]) VALUES " +
-                $@"({id},{createdAt}, {deletedAt}, {assessorName}, {organisationId}, {ukprn}, {primaryContact}, {status}, {updatedAt}, {organisationTypeId}, {organisationData}); ";
+                $@"(@id,@createdAt, @deletedAt, @endPointAssessorName, @endPointAssessorOrganisationId, @endPointAssessorUkprn, @primaryContact, @status, @updatedAt, @organisationTypeId, @organisationData); ";
 
-            DatabaseService.Execute(sql);
+            DatabaseService.Execute(sql,organisation);
+        }
+
+        public static void InsertRecords(List<OrganisationModel> organisations)
+        {
+            foreach (var org in organisations)
+            {
+                InsertRecord(org);
+            }
         }
 
         public static void DeleteRecord(Guid id)
@@ -37,6 +34,15 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
             var idToDelete = SqlStringService.ConvertStringToSqlValueString(id.ToString());
             var sql = $@"DELETE from Organisations where id = {idToDelete}";
             DatabaseService.Execute(sql);
+        }
+
+
+        public static void DeleteRecords(List<Guid> ids)
+        {
+            foreach (var id in ids)
+            {
+                DeleteRecord(id);
+            }
         }
     }
 }
