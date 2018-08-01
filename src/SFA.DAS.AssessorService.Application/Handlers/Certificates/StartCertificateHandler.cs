@@ -54,7 +54,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             {
                 provider = await _assessmentOrgsApiClient.GetProvider(ilr.UkPrn);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // see whether there are any previous certificates with this ukrpn and a ProviderName....
                 var previousProviderName = await _certificateRepository.GetPreviousProviderName(ilr.UkPrn);
