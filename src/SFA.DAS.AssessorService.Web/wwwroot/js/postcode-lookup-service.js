@@ -1,22 +1,10 @@
-// provides the matching addresses from postcode
 (function($) {
-  var searchContext = '',
-    uri = $('form').attr('action'),
-    findAddressVal = $('#postcode-search').val(),
-    queryStrings = window.location.search;
-
-  if (queryStrings.indexOf('edit=true') !== -1) {
-    $('#address-details').removeClass('js-hidden');
-  }
+  var searchContext = '';
+  var findAddressVal = $('#postcode-search').val();
 
   // enable when service is available
   $('#address-lookup').removeClass('disabled');
   $('#postcode-search').prop('disabled', false);
-
-  // grey out manual input
-  // if (!hasValue('#address-details input')) {
-  // $('#address-details').addClass('hidden');
-  // }
 
   $('#enterAddressManually').on('click', function(e) {
     e.preventDefault();
@@ -32,7 +20,6 @@
 
   $('#addressManualWrapper, button[type=submit]').bind('click', function() {
     $(this).unbind('click');
-    $('#Employer').focus();
   });
 
   $('#postcode-search').keyup(function() {
@@ -71,7 +58,7 @@
               $.map(data.Items, function(suggestion) {
                 return {
                   label: suggestion.Text,
-                  value: suggestion.Text,
+                  value: '',
                   data: suggestion
                 };
               })
@@ -126,7 +113,7 @@
           }
         }
       },
-      focus: function(event, ui) {
+      focus: function(_, ui) {
         $('#addressInputWrapper')
           .find('.ui-helper-hidden-accessible')
           .text('To select ' + ui.item.label + ', press enter');
@@ -138,26 +125,6 @@
     .focus(function() {
       searchContext = '';
     });
-
-  function hasValue(elem) {
-    return (
-      $(elem).filter(function() {
-        return $(this).val();
-      }).length > 0
-    );
-  }
-
-  function getQueryVariable(variable) {
-    var query = window.location.search.substring(1);
-    var vars = query.split('&');
-    for (var i = 0; i < vars.length; i++) {
-      var pair = vars[i].split('=');
-      if (pair[0] == variable) {
-        return pair[1];
-      }
-    }
-    return false;
-  }
 
   function retrieveAddress(id) {
     $('#addressLoading').show();

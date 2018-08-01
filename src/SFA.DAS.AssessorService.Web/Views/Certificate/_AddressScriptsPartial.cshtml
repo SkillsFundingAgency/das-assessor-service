@@ -1,3 +1,5 @@
+
+
 <environment include="Development">
   <script src="~/lib/jquery-ui/dist/jquery-ui.min.js"></script>
   <script src="~/js/postcode-lookup-service.js"></script>
@@ -6,10 +8,17 @@
   <script src="~/js/postcode-lookup-service.min.js"></script>
 </environment>
 <script>
+
 var epaoAddressFormElement = $('.apprentice-address-form');
 var epaoAddressValidationRulesObject = {
   rules: {
     postcodeSearch: {
+      required: function () {
+        return !$('#SelectPreviousAddress').is(':checked') ? !$('.info-highlighted').is(':visible') : false
+      },
+      addressFound: true
+    },
+    Employer: {
       required: true
     },
     Name: {
@@ -28,7 +37,11 @@ var epaoAddressValidationRulesObject = {
   },
   messages: {
     postcodeSearch: {
-      required: 'Please search for an address'
+      required: 'Enter a company name, address or postcode',
+      addressFound: 'Select an address or enter one manually'
+    },
+    Employer: {
+      required: 'Enter an employer'
     },
     Name: {
       required: 'Enter a name'
@@ -47,6 +60,11 @@ var epaoAddressValidationRulesObject = {
 };
 
 GOVUK.epaoValidate(epaoAddressFormElement, epaoAddressValidationRulesObject);
+
+// Run this before doc. ready
+if (window.location.search.indexOf('edit=true') !== -1) {
+  $('#address-details').removeClass('js-hidden');
+}
 
 $(document).ready(function () {
     // Only allow alphanumerics

@@ -139,7 +139,7 @@
     <value>For example, human resources</value>
   </data>
   <data name="Employer" xml:space="preserve">
-    <value>Organisation name</value>
+    <value>Company name</value>
   </data>
   <data name="Heading" xml:space="preserve">
     <value>Search for the employer's address</value>
