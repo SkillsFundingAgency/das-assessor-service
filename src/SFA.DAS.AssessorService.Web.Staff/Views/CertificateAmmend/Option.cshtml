@@ -1,0 +1,92 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model SFA.DAS.AssessorService.Web.Staff.ViewModels.CertificateOptionViewModel
+
+@{
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Learning option";
+    Layout = "_Layout";
+}
+
+<div class="grid-row">
+    <div class="column-two-thirds">     
+        <a class="link-back" asp-controller="CertificateAmmend" asp-action="Check" asp-route-certificateid=@Model.Id>Back</a>
+
+        <form type="post" asp-controller="Certificate" asp-method="Options" class="apprentice-option-form">
+            @Html.HiddenFor(c => c.Id)
+
+            @* hidden with css by default *@
+            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                    <text>There's a problem</text>
+                </h2>
+                <ul class="js-error-summary-list error-summary-list"></ul>
+            </div>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+            <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                    There's a problem
+                </h2>
+                <ul class="error-summary-list">
+                    <li><a sfa-validation-for="HasAdditionalLearningOption"></a></li>
+                    <li><a sfa-validation-for="Option"></a></li>
+                    @*<li><a href="#Pass">You need to specify an achievement grade for this apprentice</a></li>*@
+                </ul>
+            </div>
+            }
+
+            <div sfa-anyvalidationerror-class="after-error-summary">
+                <div id="HasAdditionalLearningOption">
+                    <h1 class="heading-medium">
+                        @*<span class="heading-secondary">@Model.GivenNames @Model.FamilyName</span>*@
+                        @Localizer["Heading"]
+                    </h1>
+                    <p>You may know options as 'occupational options', 'pathways', 'specialisms' or 'specialist functions'.</p>
+                    <p>The option will appear on the certificate.</p>
+                    <div class="error-message-container" sfa-validation-for="HasAdditionalLearningOption" sfa-validationerror-class="form-group-error">
+                        <span class="error-message" asp-validation-for="HasAdditionalLearningOption"></span>
+                    </div>
+                </div>
+                <div class="form-group" sfa-anyvalidationerror-class="form-group-error">
+                    <div class="multiple-choice" data-target="show-option-input">
+                        <input asp-for="HasAdditionalLearningOption" id="options_yes" type="radio" value="True" />
+                        <label for="options_yes">
+                            Yes
+                        </label>
+                    </div>
+                    <div class="panel panel-border-narrow js-hidden" id="show-option-input">
+                        <label class="form-label" for="surname">
+                            <span class="form-label">What was the option?</span>
+                            <span class="error-message" asp-validation-for="Option"></span>
+                        </label>
+                        <input class="form-control" sfa-validation-for="Option" sfa-validationerror-class="form-control-error" asp-for="Option" type="text" />
+                    </div>
+
+                    <div class="multiple-choice">
+                        <input asp-for="HasAdditionalLearningOption" id="options_no" type="radio" value="False" />
+                        <label for="options_no">
+                            No
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <details>
+                <summary><span class="summary">@Localizer["InfoHeader"]</span></summary>
+                <div class="panel panel-border-narrow" id="what-is-a-learning-option">
+                    <p>
+                        @Localizer["InfoBody"]
+                    </p>
+                </div>
+            </details>
+
+            <button type="submit" class="button">@Localizer["ContinueButton"]</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    @{await Html.RenderPartialAsync("~/Views/CertificateAmmend/_OptionScriptsPartial.cshtml"); }
+}
