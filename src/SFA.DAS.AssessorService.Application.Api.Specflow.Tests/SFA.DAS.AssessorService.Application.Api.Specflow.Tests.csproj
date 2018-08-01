@@ -95,7 +95,7 @@
   <ItemGroup>
     <Compile Include="BaseRestServce.cs" />
     <Compile Include="Bootstrapper.cs" />
-    <Compile Include="consts\PersistenceNames.cs" />
+    <Compile Include="consts\Configuration.cs" />
     <Compile Include="consts\RestParameters.cs" />
     <Compile Include="Contacts\Maintenance\ContactMaintenance.feature.cs">
       <AutoGen>True</AutoGen>
@@ -183,6 +183,10 @@
     <ProjectReference Include="..\SFA.DAS.AssessorService.Domain\SFA.DAS.AssessorService.Domain.csproj">
       <Project>{95283279-6151-4580-a781-93903696a1a2}</Project>
       <Name>SFA.DAS.AssessorService.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SFA.DAS.AssessorService.Settings\SFA.DAS.AssessorService.Settings.csproj">
+      <Project>{16e01083-f698-4e7f-9822-b76d251b8655}</Project>
+      <Name>SFA.DAS.AssessorService.Settings</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
