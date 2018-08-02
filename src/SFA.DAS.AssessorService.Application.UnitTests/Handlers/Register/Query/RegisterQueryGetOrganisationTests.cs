@@ -91,8 +91,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             RegisterQueryRepository.Setup(r => r.GetAssessmentOrganisationAddresses(OrganisationId))
                 .Returns(Task.FromResult(_expectedAddresses.AsEnumerable()));
 
-            RegisterQueryRepository.Setup(r => r.GetAssessmentOrganisationContacts(OrganisationId))
-                .Returns(Task.FromResult(_expectedContacts.AsEnumerable()));
+            RegisterQueryRepository.Setup(r => r.GetPrimaryOrFirstContact(OrganisationId))
+                .Returns(Task.FromResult(_expectedContact));
 
             var expectedOrganisationDetails = new AssessmentOrganisationDetails
             {
@@ -114,8 +114,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             RegisterQueryRepository.Setup(r => r.GetAssessmentOrganisationAddresses(OrganisationId))
                 .Returns(Task.FromResult(new List<AssessmentOrganisationAddress>().AsEnumerable()));
 
-            RegisterQueryRepository.Setup(r => r.GetAssessmentOrganisationContacts(OrganisationId))
-                .Returns(Task.FromResult(_expectedContacts.AsEnumerable()));
+            RegisterQueryRepository.Setup(r => r.GetPrimaryOrFirstContact(OrganisationId))
+                .Returns(Task.FromResult(_expectedContact));
 
             var expectedOrganisationDetails = new AssessmentOrganisationDetails
             {
@@ -126,6 +126,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
                 Phone = _expectedContact.PhoneNumber,
                 Address = null
             };
+
             var organisation = GetAssessmentOrganisationDetailsHandler.Handle(_requestDetails, new CancellationToken()).Result;
             organisation.Should().BeEquivalentTo(expectedOrganisationDetails);
         }
@@ -136,8 +137,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             RegisterQueryRepository.Setup(r => r.GetAssessmentOrganisationAddresses(OrganisationId))
                 .Returns(Task.FromResult(_expectedAddresses.AsEnumerable()));
 
-            RegisterQueryRepository.Setup(r => r.GetAssessmentOrganisationContacts(OrganisationId))
-                .Returns(Task.FromResult(new List<AssessmentOrganisationContact>().AsEnumerable()));
+            RegisterQueryRepository.Setup(r => r.GetPrimaryOrFirstContact(OrganisationId))
+                .Returns(Task.FromResult(new AssessmentOrganisationContact()));
 
             var expectedOrganisationDetails = new AssessmentOrganisationDetails
             {
@@ -166,8 +167,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             RegisterQueryRepository.Setup(r => r.GetAssessmentOrganisationAddresses(OrganisationId))
                 .Returns(Task.FromResult(expectedAddresses.AsEnumerable()));
 
-            RegisterQueryRepository.Setup(r => r.GetAssessmentOrganisationContacts(OrganisationId))
-                .Returns(Task.FromResult(_expectedContacts.AsEnumerable()));
+            RegisterQueryRepository.Setup(r => r.GetPrimaryOrFirstContact(OrganisationId))
+                .Returns(Task.FromResult(_expectedContact));
 
             var expectedOrganisationDetails = new AssessmentOrganisationDetails
             {
@@ -197,11 +198,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             RegisterQueryRepository.Setup(r => r.GetAssessmentOrganisationAddresses(OrganisationId))
                 .Returns(Task.FromResult(_expectedAddresses.AsEnumerable()));
 
-            RegisterQueryRepository.Setup(r => r.GetAssessmentOrganisationContacts(OrganisationId))
-                .Returns(Task.FromResult(expectedContacts.AsEnumerable()));
-
             var expectedContact = expectedContacts.First();
 
+            RegisterQueryRepository.Setup(r => r.GetPrimaryOrFirstContact(OrganisationId))
+                .Returns(Task.FromResult(expectedContact));
+          
             var expectedOrganisationDetails = new AssessmentOrganisationDetails
             {
                 Id = OrganisationId,
@@ -231,16 +232,16 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
 
             var expectedContacts = new List<AssessmentOrganisationContact>
             {
-                new AssessmentOrganisationContact { OrganisationId = OrganisationId, PhoneNumber = "123 456", Email = "testy@mctestface.com"},
                 contactWithPrimaryContactSet,
+                new AssessmentOrganisationContact { OrganisationId = OrganisationId, PhoneNumber = "123 456", Email = "testy@mctestface.com"},
                 new AssessmentOrganisationContact { OrganisationId = OrganisationId, PhoneNumber = "111222", Email = "testmark@mctestface.com"}
             };
 
             RegisterQueryRepository.Setup(r => r.GetAssessmentOrganisationAddresses(OrganisationId))
                 .Returns(Task.FromResult(_expectedAddresses.AsEnumerable()));
 
-            RegisterQueryRepository.Setup(r => r.GetAssessmentOrganisationContacts(OrganisationId))
-                .Returns(Task.FromResult(expectedContacts.AsEnumerable()));
+            RegisterQueryRepository.Setup(r => r.GetPrimaryOrFirstContact(OrganisationId))
+                .Returns(Task.FromResult(expectedContacts.First()));
 
             var expectedContact = contactWithPrimaryContactSet;
 
