@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public DateTime? LearnStartDate { get; set; }
         public string OverallGrade { get; set; }
         public DateTime? AchievementDate { get; set; }
-        public Guid CertificateId { get; set; }
+        public Guid? CertificateId { get; set; }
 
         public List<CertificateLogSummary> CertificateLogs { get; set; }
     }

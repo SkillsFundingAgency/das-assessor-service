@@ -2,6 +2,6 @@
 {
     public class UpdatedBy
     {
-        public const string PrintFunctionFlow = "PrintFunctionFlow";      
+        public const string PrintFunction = "PrintFunction";      
     }
 }
