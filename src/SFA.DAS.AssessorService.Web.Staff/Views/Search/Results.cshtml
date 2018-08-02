@@ -1,68 +1,94 @@
 ﻿@model SFA.DAS.AssessorService.Web.Staff.Controllers.SearchViewModel
 
 @{
-
+    ViewBag.Title = "Search results";
+    Layout = "_Layout";
 }
 
-<a asp-action="Index" class="link-back">Search Again</a>
 
-<div>
-    <span class="bold">Number of results: </span> @Model.PaginatedList.TotalRecordCount
-</div>
+<div class="grid-row">
+    <div class="column-full">
+        <a asp-action="Index" class="link-back">Search Again</a>
 
+        <h1 class="heading-large">Search results</h1>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>First Name</th>
-            <th>Surname</th>
-            <th>Uln</th>
-            <th>Standard</th>
-            <th>Certificate Reference</th>
-            <th>Current Status</th>
-            <th>Last Updated</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var result in Model.PaginatedList.Items)
+        <div class="form-group">
+            <span class="bold">Number of results: </span> @Model.PaginatedList.TotalRecordCount
+        </div>
+
+        @if (@Model.PaginatedList.TotalRecordCount > 0)
         {
-        <tr>
-            <td>@result.GivenNames</td>
-            <td>@result.FamilyName</td>
-            <td>@result.Uln</td>
-            <td>@result.Standard (@result.StandardCode)</td>
-            <td>@result.CertificateReference</td>
-            <td>@result.CertificateStatus</td>
-            <td>@result.LastUpdatedAt?.ToShortDateString()</td>
-            <td><a class="button" asp-action="Select" asp-route-stdcode="@result.StandardCode" asp-route-uln="@result.Uln" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.PaginatedList.PageIndex">Select</a></td>
-        </tr>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>First name</th>
+                    <th>Surname</th>
+                    <th>ULN</th>
+                    <th>Standard</th>
+                    <th>Certificate reference</th>
+                    <th>Current status</th>
+                    <th>Last updated</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var result in Model.PaginatedList.Items)
+                {
+                <tr>
+                    <td>@result.GivenNames</td>
+                    <td>@result.FamilyName</td>
+                    <td>@result.Uln</td>
+                    <td>@result.Standard (@result.StandardCode)</td>
+                    <td>@result.CertificateReference</td>
+                    <td>@result.CertificateStatus</td>
+                    <td>@result.LastUpdatedAt?.ToShortDateString()</td>
+                    <td><a asp-action="Select" asp-route-stdcode="@result.StandardCode" asp-route-uln="@result.Uln" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.PaginatedList.PageIndex">Select</a></td>
+                </tr>
+                }
+            </tbody>
+        </table>
         }
-    </tbody>
-</table>
 
-<div class="page-navigation">
-    @{
-        var prevDisabled = !Model.PaginatedList.HasPreviousPage ? "disabled" : "";
-        var nextDisabled = !Model.PaginatedList.HasNextPage ? "disabled" : "";
-    }
-
-    <a asp-action="Results" 
-       asp-controller="Search" 
-       asp-route-searchstring="@Model.SearchString" 
-       asp-route-page="@( Model.PaginatedList.PageIndex - 1)"
-       class="previous @prevDisabled">
-        <i class="arrow-button icon-left-open">&#xe800;</i>
-        <span class="description">Previous <span class="hide-mob">page</span></span>
-        <span class="counter">Page <span class="prevPage">@(Model.PaginatedList.PageIndex - 1)</span> of <span class="totalPage">@(Model.PaginatedList.TotalPages)</span></span>
-    </a>
-  
-    <a asp-action="Results" 
-       asp-controller="Search" 
-       asp-route-searchstring="@Model.SearchString" 
-       asp-route-page="@( Model.PaginatedList.PageIndex + 1)"
-       class="next @nextDisabled">
-        <i class="arrow-button icon-right-open">&#xe801;</i>
-        <span class="description">Next <span class="hide-mob">page</span></span>
-        <span class="counter">Page <span class="nextPage">@(Model.PaginatedList.PageIndex + 1)</span> of <span class="totalPage">@(Model.PaginatedList.TotalPages)</span></span>
-    </a>
+    </div>
 </div>
+
+@if (Model.PaginatedList.HasPreviousPage || Model.PaginatedList.HasNextPage)
+{
+<div class="grid-row">
+    <div class="column-full">
+        <div class="page-navigation">
+
+            @if (Model.PaginatedList.HasPreviousPage)
+            {
+                <a 
+                    asp-action="Results" 
+                    asp-controller="Search" 
+                    asp-route-searchstring="@Model.SearchString" 
+                    asp-route-page="@( Model.PaginatedList.PageIndex - 1)"
+                    class="previous"
+                >
+                    <i class="arrow-button icon-left-open">&#xe800;</i>
+                    <span class="description">Previous <span class="hide-mob">page</span></span>
+                    <span class="counter">Page <span class="prevPage">@(Model.PaginatedList.PageIndex - 1)</span> of <span class="totalPage">@(Model.PaginatedList.TotalPages)</span></span>
+                </a>
+            }
+
+            @if (Model.PaginatedList.HasNextPage)
+            {
+                <a
+                    asp-action="Results" 
+                    asp-controller="Search" 
+                    asp-route-searchstring="@Model.SearchString" 
+                    asp-route-page="@( Model.PaginatedList.PageIndex + 1)"
+                    class="next"
+                >
+                    <i class="arrow-button icon-right-open">&#xe801;</i>
+                    <span class="description">Next <span class="hide-mob">page</span></span>
+                    <span class="counter">Page <span class="nextPage">@(Model.PaginatedList.PageIndex + 1)</span> of <span class="totalPage">@(Model.PaginatedList.TotalPages)</span></span>
+                </a>
+            }
+
+        </div>
+    </div>
+</div>
+}
