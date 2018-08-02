@@ -73,6 +73,10 @@
     <Build Include="StoredProcedures\GetPreviousAddresses.sql" />
     <Build Include="Tables\SearchLogs.sql" />
     <Build Include="Tables\ScheduleRuns.sql" />
+    <Build Include="Tables\DeliveryArea.sql" />
+    <Build Include="Tables\OrganisationStandard.sql" />
+    <Build Include="Tables\OrganisationStandardDeliveryArea.sql" />
+    <Build Include="Tables\OrganisationType.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
