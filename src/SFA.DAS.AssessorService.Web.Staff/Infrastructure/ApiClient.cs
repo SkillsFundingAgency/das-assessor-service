@@ -4,11 +4,13 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
+using CertificateReprintRequest = SFA.DAS.AssessorService.Api.Types.Models.CertificateReprintRequest;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
 {
@@ -32,6 +34,18 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             return await res.Content.ReadAsAsync<T>();
         }
 
+        protected async Task<U> Post<T, U>(string uri, T model)
+        {
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+
+            var serializeObject = JsonConvert.SerializeObject(model);
+            
+            using (var response = await _client.PostAsync(new Uri(uri, UriKind.Relative), new StringContent(serializeObject,System.Text.Encoding.UTF8, "application/json")))
+            {
+                return await response.Content.ReadAsAsync<U>();
+            }
+        }
+
         public async Task<List<CertificateResponse>> GetCertificates()
         {
             return await Get<List<CertificateResponse>>("/api/v1/certificates?statusses=Submitted");
@@ -50,6 +64,21 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         public async Task<Certificate> GetCertificate(Guid certificateId)
         {
             return await Get<Certificate>($"api/v1/certificates/{certificateId}");
+        }
+
+        public async Task<ScheduleRun> GetNextScheduleToRunNow()
+        {
+            return await Get<ScheduleRun>($"api/v1/schedule?scheduleType=1");
+        }
+
+        public async Task<ScheduleRun> GetNextScheduledRun()
+        {
+            return await Get<ScheduleRun>($"api/v1/schedule/next?scheduleType=1");
+        }
+
+        public async Task<Certificate> PostReprintRequest(CertificateReprintRequest certificateReprintRequest)
+        {
+            return await Post<CertificateReprintRequest, Certificate>("api/v1/staffcertificatereprint", certificateReprintRequest);   
         }
     }
 }
