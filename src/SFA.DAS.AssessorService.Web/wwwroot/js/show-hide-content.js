@@ -80,7 +80,10 @@
     function handleRadioContent($control, $content) {
       // All radios in this group which control content
       var selector =
-        selectors.radio + '[name=' + escapeElementName($control.attr('name')) + '][aria-controls]';
+        selectors.radio +
+        '[name=' +
+        escapeElementName($control.attr('name')) +
+        '][aria-controls]';
       var $form = $control.closest('form');
       var $radios = $form.length ? $form.find(selector) : $(selector);
 
@@ -149,12 +152,22 @@
 
     // Set up radio show/hide content for container
     self.showHideRadioToggledContent = function($container) {
-      init($container, selectors.radio, getEventSelectorsForRadioGroups(), handleRadioContent);
+      init(
+        $container,
+        selectors.radio,
+        getEventSelectorsForRadioGroups(),
+        handleRadioContent
+      );
     };
 
     // Set up checkbox show/hide content for container
     self.showHideCheckboxToggledContent = function($container) {
-      init($container, selectors.checkbox, [selectors.checkbox], handleCheckboxContent);
+      init(
+        $container,
+        selectors.checkbox,
+        [selectors.checkbox],
+        handleCheckboxContent
+      );
     };
 
     // Remove event handlers
@@ -171,4 +184,4 @@
 
   GOVUK.ShowHideContent = ShowHideContent;
   global.GOVUK = GOVUK;
-})(window)
+})(window);

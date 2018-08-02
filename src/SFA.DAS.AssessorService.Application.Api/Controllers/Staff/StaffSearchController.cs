@@ -30,9 +30,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(PaginatedList<StaffSearchResult>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> StaffSearch(string searchQuery, int page = 0)
-        {
-            return Ok(await _mediator.Send(new StaffSearchRequest(searchQuery, page)));
+        public async Task<IActionResult> StaffSearch(string searchQuery, int? page = 1)
+        {            
+            return Ok(await _mediator.Send(new StaffSearchRequest(searchQuery, page.Value)));
         }
     }
 }

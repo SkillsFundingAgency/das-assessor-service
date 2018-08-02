@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Data.Staff
                     i.GivenNames.Replace(" ", "") + i.FamilyName.Replace(" ", "") == deSpacedLearnerName)
                 .OrderBy(i => i.FamilyName)
                 .ThenBy(i => i.GivenNames)
-                .Skip(page * pageSize)
+                .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
         }
