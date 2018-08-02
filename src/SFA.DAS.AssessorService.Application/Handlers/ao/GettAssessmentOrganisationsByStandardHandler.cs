@@ -25,35 +25,21 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
         {
             var standardId = request.StandardId;
             _logger.LogInformation($@"Handling AssessmentOrganisations Request for StandardId [{standardId}]");
-            //var org = await _registerQueryRepository.GetAssessmentOrganisation(organisationId);
+            var organisations = await _registerQueryRepository.GetAssessmentOrganisationsByStandardId(request.StandardId);
 
-            //if (org == null) return null;
+           foreach (var org in organisations)
+            {
+                var addresses = await _registerQueryRepository.GetAssessmentOrganisationAddresses(org.Id);
+                org.Address = addresses.FirstOrDefault();
+                var contact = await _registerQueryRepository.GetPrimaryOrFirstContact(org.Id);
+                if (contact == null) continue;
+                org.Email = contact.Email;
+                org.Phone = contact.PhoneNumber;
+            }
 
-            //var addresses = await _registerQueryRepository.GetAssessmentOrganisationAddresses(organisationId);
-            //org.Address = addresses.FirstOrDefault();
-
-            //var contact = await GetPrimaryOrFirstContact(organisationId);
-
-            //if (contact == null) return org;
-
-            //org.Email = contact.Email;
-            //org.Phone = contact.PhoneNumber;
-            //return org;
-
-            return null;
+            return organisations.ToList();
         }
 
-        // This is duplicate code, clean it up
-        private async Task<AssessmentOrganisationContact> GetPrimaryOrFirstContact(string organisationId)
-        {
-            var contacts = await _registerQueryRepository.GetAssessmentOrganisationContacts(organisationId);
-            var assessmentOrganisationContacts = contacts as IList<AssessmentOrganisationContact> ?? contacts.ToList();
-            var contact = assessmentOrganisationContacts.Any(x => x.IsPrimaryContact)
-                ? assessmentOrganisationContacts.First(x => x.IsPrimaryContact)
-                : assessmentOrganisationContacts.FirstOrDefault();
-
-            return contact;
-        }
     }
 }
 

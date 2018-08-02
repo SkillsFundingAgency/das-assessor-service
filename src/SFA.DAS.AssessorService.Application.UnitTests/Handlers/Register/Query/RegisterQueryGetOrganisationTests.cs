@@ -107,7 +107,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             organisation.Should().BeEquivalentTo(expectedOrganisationDetails);
         }
 
-
         [Test]
         public void GetOrganisationDetailsExpectedForNoAddressAndOneContact()
         {

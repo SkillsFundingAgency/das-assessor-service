@@ -139,5 +139,23 @@ namespace SFA.DAS.AssessorService.Data
                 return await connection.QuerySingleAsync<AssessmentOrganisationContact>(sql);
             }
         }
+
+        public async Task<IEnumerable<AssessmentOrganisationDetails>>
+            GetAssessmentOrganisationsByStandardId(int standardId)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                var sqlForOrganisationsByStandardId =
+                    "select O.EndPointAssessorOrganisationId as Id, EndPointAssessorName as Name, EndPointAssessorUkprn as ukprn, " +
+                    "O.OrganisationTypeId, OT.Type OrganisationType, JSON_VALUE(OrganisationData, '$.WebsiteLink') AS Website, O.Status " +
+                    "FROM [Organisations] O LEFT OUTER JOIN [OrganisationType] OT ON O.OrganisationTypeId = OT.Id " +
+                    "JOIN OrganisationStandard  OS ON OS.EndPointAssessorOrganisationId = O.EndPointAssessorOrganisationId " +
+                    $@"WHERE StandardCode = {standardId}";
+                return await connection.QueryAsync<AssessmentOrganisationDetails>(sqlForOrganisationsByStandardId);
+            }
+        }
     }
 }
