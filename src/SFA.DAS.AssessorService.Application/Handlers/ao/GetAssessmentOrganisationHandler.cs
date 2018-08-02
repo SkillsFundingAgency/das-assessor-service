@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -32,7 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             var addresses = await _registerQueryRepository.GetAssessmentOrganisationAddresses(organisationId);
             org.Address = addresses.FirstOrDefault();
 
-            var contact = await GetPrimaryOrFirstContact(organisationId);
+            var contact = await _registerQueryRepository.GetPrimaryOrFirstContact(organisationId);
 
             if (contact == null) return org;
 
@@ -41,15 +40,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             return org;
         }
 
-        private async Task<AssessmentOrganisationContact> GetPrimaryOrFirstContact(string organisationId)
-        {
-            var contacts = await _registerQueryRepository.GetAssessmentOrganisationContacts(organisationId);
-            var assessmentOrganisationContacts = contacts as IList<AssessmentOrganisationContact> ?? contacts.ToList();
-            var contact = assessmentOrganisationContacts.Any(x => x.IsPrimaryContact) 
-                    ? assessmentOrganisationContacts.First(x => x.IsPrimaryContact) 
-                    : assessmentOrganisationContacts.FirstOrDefault();
-
-            return contact;
-        }
+       
     }
 }
