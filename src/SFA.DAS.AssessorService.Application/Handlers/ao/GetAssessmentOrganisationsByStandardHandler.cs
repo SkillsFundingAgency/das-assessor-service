@@ -10,12 +10,12 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ao
 {
-    public class GettAssessmentOrganisationsByStandardHandler : IRequestHandler<GetAssessmentOrganisationsbyStandardRequest, List<AssessmentOrganisationDetails>>
+    public class GetAssessmentOrganisationsByStandardHandler : IRequestHandler<GetAssessmentOrganisationsbyStandardRequest, List<AssessmentOrganisationDetails>>
     {
         private readonly IRegisterQueryRepository _registerQueryRepository;
-        private readonly ILogger<GetAssessmentOrganisationHandler> _logger;
+        private readonly ILogger<GetAssessmentOrganisationsByStandardHandler> _logger;
 
-        public GettAssessmentOrganisationsByStandardHandler(IRegisterQueryRepository registerQueryRepository, ILogger<GetAssessmentOrganisationHandler> logger)
+        public GetAssessmentOrganisationsByStandardHandler(IRegisterQueryRepository registerQueryRepository, ILogger<GetAssessmentOrganisationsByStandardHandler> logger)
         {
             _registerQueryRepository = registerQueryRepository;
             _logger = logger;
