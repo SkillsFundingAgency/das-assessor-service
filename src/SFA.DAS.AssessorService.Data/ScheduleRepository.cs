@@ -16,13 +16,22 @@ namespace SFA.DAS.AssessorService.Data
             _connection = connection;
         }
 
-        public async Task<ScheduleRun> GetNextScheduleRun(int scheduleType)
+        public async Task<ScheduleRun> GetNextScheduleToRunNow(int scheduleType)
         {
             return await _connection.QueryFirstOrDefaultAsync<ScheduleRun>(@"SELECT TOP(1) * 
                                     FROM ScheduleRuns 
                                     WHERE ScheduleType = @scheduleType 
                                     AND IsComplete = 0 
                                     AND RunTime <= GetUtcDate()
+                                    ORDER BY RunTime", new {scheduleType});
+        }
+
+        public async Task<ScheduleRun> GetNextScheduledRun(int scheduleType)
+        {
+            return await _connection.QueryFirstOrDefaultAsync<ScheduleRun>(@"SELECT TOP(1) * 
+                                    FROM ScheduleRuns 
+                                    WHERE ScheduleType = @scheduleType 
+                                    AND IsComplete = 0 
                                     ORDER BY RunTime", new {scheduleType});
         }
 
@@ -51,7 +60,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task SetScheduleRun(ScheduleRun scheduleRun)
         {
-            var currentScheduleRun = await GetNextScheduleRun((int)scheduleRun.ScheduleType);
+            var currentScheduleRun = await GetNextScheduleToRunNow((int)scheduleRun.ScheduleType);
             if (currentScheduleRun == null)
             {
                 await _connection.ExecuteAsync(
