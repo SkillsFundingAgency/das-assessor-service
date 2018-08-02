@@ -272,4 +272,7 @@ src/Tools/PhantomJS/tools/phantomjs/ChangeLog
 
 #Specflow Generated screen shots
 src/SFA.DAS.AssessorService.Web.Specflow.Tests/Project/**/*.*
+
+# Minified css and js
+src/SFA.DAS.AssessorService.Web/wwwroot/css/*.min.css
 src/SFA.DAS.AssessorService.Web/wwwroot/js/*.min.js
