@@ -52,19 +52,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             IServiceProvider serviceProvider;
             //services.AddAndConfigureAuthentication(Configuration);
             try
-            {
-                //services.AddApplicationInsightsTelemetry();
-                services.AddMvc()
-                    .AddJsonOptions(options =>
-                    {                                     
-                        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-                    });
-
-                services.AddMvc()
-                    .AddJsonOptions(options =>
-                    {                                       
-                        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-                    });
+            {             
 
                 services.AddAuthentication(sharedOptions =>
                 {
@@ -186,7 +174,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     })
                     .UseAuthentication();
 
-                app.UseMiddleware(typeof(ErrorHandlingMiddleware));
+                //app.UseMiddleware(typeof(ErrorHandlingMiddleware));
                 app.UseMvc();
             }
             catch (Exception e)
