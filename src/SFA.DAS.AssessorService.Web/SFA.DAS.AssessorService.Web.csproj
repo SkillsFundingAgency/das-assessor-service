@@ -89,6 +89,9 @@
     <EmbeddedResource Update="Resources\Views\Certificate\Recipient.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\CertificateHistory\CertificateHistory.en.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="Resources\Views\Certificate\Confirmation.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>

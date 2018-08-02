@@ -47,17 +47,6 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
           .addClass('form-control-error')
           .closest('.form-group')
           .addClass('form-group-error');
-
-        if (
-          $(element)
-            .closest('fieldset')
-            .prev()
-            .hasClass('js-error-summary')
-        ) {
-          $(element)
-            .closest('fieldset')
-            .addClass('after-error-summary');
-        }
       },
       unhighlight: function(element) {
         if ($(element).hasClass('date-input')) {
@@ -69,17 +58,6 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
           .removeClass('form-control-error')
           .closest('.form-group')
           .removeClass('form-group-error');
-
-        if (
-          $(element)
-            .closest('fieldset')
-            .prev()
-            .hasClass('js-error-summary')
-        ) {
-          $(element)
-            .closest('fieldset')
-            .removeClass('after-error-summary');
-        }
       },
       rules: validationRulesObject.rules,
       groups: validationRulesObject.groups,

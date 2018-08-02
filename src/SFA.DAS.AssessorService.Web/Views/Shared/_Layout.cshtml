@@ -118,16 +118,20 @@
         </div>
     </header>
 
+    @if (!User.Identity.IsAuthenticated) {
+    <div id="global-header-bar"></div>
+    }
+
     @if (User.Identity.IsAuthenticated) {
     <div class="header-user">
-        <div id="global-header-bar" class="global-header-bar--white"></div>
+        <div id="global-header-bar" class="global-header-bar--dark-blue"></div>
         <div class="header-inner">
             <div id="header-user--nav" class="grid-row">
                 <div class="column-two-thirds">
                     <p class="heading-small">
                         @SessionService.Get("OrganisationName")
                         <span class="heading-secondary">
-                            <span class="visuallyhidden">Logged in as </span>@User.Identity.Name
+                            <span class="visually-hidden">Logged in as </span>@User.Identity.Name
                         </span>
                     </p>
                 </div>
@@ -162,48 +166,32 @@
     <footer class="group js-footer" id="footer" role="contentinfo">
 
         <div class="footer-wrapper">
-
-
             <div class="footer-meta">
+
                 <div class="footer-meta-inner">
-                    <h2 class="visuallyhidden">Support links</h2>
+                    <h2 class="visually-hidden">Support links</h2>
                     <ul>
-                        @*
-                        <li>
-                            <a href="/feedback">Give feedback</a>
-                        </li>
-                        <li>
-                            <a href="/helpdesk">Contact</a>
-                        </li>
-                        *@
                         <li>
                             <a asp-controller="Home" asp-action="Cookies">Cookies</a>
                         </li>
                         <li>
                             <a asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-                        @*
-                        <li>Built by the
-                            <a href="https://www.gov.uk/sfa">Skills Funding Agency</a>
-                        </li>
-                        *@
                     </ul>
-
 
                     <div class="open-government-licence">
                         <p class="logo">
                             <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license">Open Government Licence</a>
                         </p>
-
                         <p>All content is available under the
                             <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license">Open Government Licence v3.0</a>, except where otherwise stated</p>
-
                     </div>
                 </div>
 
                 <div class="copyright">
                     <a href="https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/copyright-and-re-use/crown-copyright/">© Crown copyright</a>
                 </div>
+
             </div>
         </div>
     </footer>
@@ -216,6 +204,7 @@
         <script src="~/js/details.polyfill.js" asp-append-version="true"></script>
         <script src="~/js/shim-links-with-button-role.js" asp-append-version="true"></script>
         <script src="~/js/show-hide-content.js" asp-append-version="true"></script>
+        <script src="~/js/expandable-table.js" asp-append-version="true"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
     </environment>
 

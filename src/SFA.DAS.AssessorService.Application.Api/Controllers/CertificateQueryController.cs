@@ -11,6 +11,7 @@ using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Paging;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
@@ -53,6 +54,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             if (address == null)
                 throw new ResourceNotFoundException();
             return Ok(address);
+        }
+        
+
+        [HttpGet("history", Name = "GetCertificatesHistory")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(PaginatedList<CertificateHistoryResponse>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetCertificatesHistory(int pageIndex,
+            string userName)
+        {
+            return Ok(await _mediator.Send(new GetCertificateHistoryRequest { PageIndex = pageIndex, Username = userName }));
         }
     }
 }

@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests
 {
     public class WhenSystemSchedulesDate
     {
-        private PrintProcessFlowCommand _printProcessFlowCommand;
+        private PrintProcessCommand _printProcessCommand;
         private Mock<IAggregateLogger> _aggregateLogger;
         private Mock<IPrintingSpreadsheetCreator> _printingSpreadsheetCreator;
         private Mock<IAssessorServiceApi> _assessorServiceApi;
@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests
             _notificationService = new Mock<INotificationService>();
             _fileTransferClient = new Mock<IFileTransferClient>();
 
-            _printProcessFlowCommand = new PrintProcessFlowCommand(
+            _printProcessCommand = new PrintProcessCommand(
                 _aggregateLogger.Object,
                 _printingSpreadsheetCreator.Object,
                 _assessorServiceApi.Object,
@@ -71,7 +71,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests
             _assessorServiceApi.Setup(api => api.GetSchedule(ScheduleType.PrintRun))
                 .ReturnsAsync(new ScheduleRun() { Id = Guid.NewGuid() });
 
-            _printProcessFlowCommand.Execute().GetAwaiter().GetResult();
+            _printProcessCommand.Execute().GetAwaiter().GetResult();
         }
 
         [Test]

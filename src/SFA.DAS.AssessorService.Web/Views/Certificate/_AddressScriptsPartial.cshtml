@@ -69,9 +69,9 @@ if (window.location.search.indexOf('edit=true') !== -1) {
 $(document).ready(function () {
     // Only allow alphanumerics
     $('.js-no-special-chars').on('keydown', function (e) {
-      // Allow: backspace, delete, tab, escape and enter
+      // Allow: space, backspace, delete, tab, escape and enter
       if (
-        $.inArray(e.keyCode, [46, 8, 9, 27, 13]) !== -1 ||
+        $.inArray(e.keyCode, [32, 46, 8, 9, 27, 13]) !== -1 ||
         // Allow: Ctrl/cmd+A
         (e.keyCode == 65 && (e.ctrlKey === true || e.metaKey === true)) ||
         // Allow: Ctrl/cmd+C
