@@ -2,15 +2,24 @@
 @model SFA.DAS.AssessorService.Web.Staff.Controllers.SearchViewModel
 
 @{
-
+    ViewBag.Title = "ILR and certificate search";
+    Layout = "_Layout";
 }
 
-
-<h1 class="heading-large">ILR and Certificate Search</h1>
-
-<form asp-action="Results" asp-controller="Search" method="get">
-    @Html.HiddenFor(m => m.Page)
-    <label for="SearchString">Search (Learner name, ULN, Certificate reference, EPAOrg Id)</label><br/>
-    <input asp-for="SearchString" />
-    <button class="button" type="submit">Search</button>
-</form>
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <form asp-action="Results" asp-controller="Search" method="get">
+            @Html.HiddenFor(m => m.Page)
+            <div class="form-group">
+                <h1>
+                    <label class="form-label" for="SearchString">
+                        <span class="heading-large">ILR and certificate search</span>
+                        <span class="form-hint">You can search by learner name, ULN, certificate reference and EPAOrg Id</span>
+                    </label>
+                </h1>
+                <input class="form-control" asp-for="SearchString" />
+            </div>
+            <button class="button" type="submit">Search</button>
+        </form>
+    </div>
+</div>
