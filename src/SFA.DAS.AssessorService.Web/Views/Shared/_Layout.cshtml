@@ -117,11 +117,14 @@
             </div>
         </div>
     </header>
+
+    @if (!User.Identity.IsAuthenticated) {
     <div id="global-header-bar"></div>
+    }
 
     @if (User.Identity.IsAuthenticated) {
     <div class="header-user">
-        <div id="global-header-bar" class="global-header-bar--white"></div>
+        <div id="global-header-bar" class="global-header-bar--dark-blue"></div>
         <div class="header-inner">
             <div id="header-user--nav" class="grid-row">
                 <div class="column-two-thirds">
@@ -201,6 +204,7 @@
         <script src="~/js/details.polyfill.js" asp-append-version="true"></script>
         <script src="~/js/shim-links-with-button-role.js" asp-append-version="true"></script>
         <script src="~/js/show-hide-content.js" asp-append-version="true"></script>
+        <script src="~/js/expandable-table.js" asp-append-version="true"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
     </environment>
 
