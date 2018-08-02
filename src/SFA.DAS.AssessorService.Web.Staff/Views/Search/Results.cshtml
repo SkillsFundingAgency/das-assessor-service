@@ -10,11 +10,10 @@
     <div class="column-full">
         <a asp-action="Index" class="link-back">Search Again</a>
 
-        <h1 class="heading-large">Search results</h1>
-
-        <div class="form-group">
-            <span class="bold">Number of results: </span> @Model.PaginatedList.TotalRecordCount
-        </div>
+        <h1 class="heading-xlarge">
+            Search results
+            <span class="heading-secondary">Number of results: @Model.PaginatedList.TotalRecordCount</span>
+        </h1>
 
         @if (@Model.PaginatedList.TotalRecordCount > 0)
         {

@@ -1,0 +1,16 @@
+<script>
+  var historyTableRows = $('.js-history-table tr');
+  var showHistoryButton = $('.js-show-all-history');
+  $(historyTableRows).each(function(index) {
+    if (index <= 5) return
+    $(this).addClass('hidden');
+  })
+
+  showHistoryButton.removeClass('js-hidden')
+
+  showHistoryButton.on('click', function(event) {
+    event.preventDefault();
+    historyTableRows.removeClass('hidden');
+    $(this).addClass('js-hidden');
+  })
+</script>
