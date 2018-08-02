@@ -54,6 +54,11 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             try
             {
                 //services.AddApplicationInsightsTelemetry();
+                services.AddMvc()
+                    .AddJsonOptions(options =>
+                    {                                     
+                        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                    });
 
                 services.AddAuthentication(sharedOptions =>
                 {
@@ -164,6 +169,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
         {
             try
             {
+
                 MappingStartup.AddMappings();
 
                 if (env.IsDevelopment()) app.UseDeveloperExceptionPage();

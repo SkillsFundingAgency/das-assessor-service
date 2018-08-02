@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     @*<environment exclude="Development">
@@ -115,7 +115,10 @@
             </div>
         </div>
     </header>
-    <div id="global-header-bar"></div>
+    @if (!User.Identity.IsAuthenticated)
+    {
+        <div id="global-header-bar"></div>
+    }
 
     @if (User.Identity.IsAuthenticated)
     {
