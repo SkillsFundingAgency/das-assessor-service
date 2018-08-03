@@ -9,13 +9,13 @@ Post-Deployment Script Template
                SELECT * FROM [$(TableName)]					
 --------------------------------------------------------------------------------------
 */
-INSERT INTO Organisations
-SELECT        *
-FROM            TmpOrganisations
+--INSERT INTO Organisations
+--SELECT        *
+--FROM            TmpOrganisations
 
-INSERT INTO Contacts
-SELECT        *
-FROM            TmpContacts
+--INSERT INTO Contacts
+--SELECT        *
+--FROM            TmpContacts
 
-DROP TABLE TmpOrganisations
-DROP TABLE TmpContacts
+--DROP TABLE TmpOrganisations
+--DROP TABLE TmpContacts

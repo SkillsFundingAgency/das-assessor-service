@@ -10,25 +10,25 @@
 --------------------------------------------------------------------------------------
 */
 
-IF (EXISTS (SELECT * 
-                 FROM INFORMATION_SCHEMA.TABLES 
-                 WHERE TABLE_SCHEMA = 'dbo' 
-                 AND  TABLE_NAME = 'TmpContacts'))
-BEGIN
-    DROP TABLE TmpContacts
-END
+--IF (EXISTS (SELECT * 
+--                 FROM INFORMATION_SCHEMA.TABLES 
+--                 WHERE TABLE_SCHEMA = 'dbo' 
+--                 AND  TABLE_NAME = 'TmpContacts'))
+--BEGIN
+--    DROP TABLE TmpContacts
+--END
 
-IF (EXISTS (SELECT * 
-                 FROM INFORMATION_SCHEMA.TABLES 
-                 WHERE TABLE_SCHEMA = 'dbo' 
-                 AND  TABLE_NAME = 'TmpOrganisations'))
-BEGIN
-    DROP TABLE TmpOrganisations
-END
+--IF (EXISTS (SELECT * 
+--                 FROM INFORMATION_SCHEMA.TABLES 
+--                 WHERE TABLE_SCHEMA = 'dbo' 
+--                 AND  TABLE_NAME = 'TmpOrganisations'))
+--BEGIN
+--    DROP TABLE TmpOrganisations
+--END
 
 
-SELECT * INTO TmpContacts FROM Contacts
-SELECT * INTO TmpOrganisations FROM Organisations
+--SELECT * INTO TmpContacts FROM Contacts
+--SELECT * INTO TmpOrganisations FROM Organisations
 
-DELETE Contacts
-DELETE Organisations
+--DELETE Contacts
+--DELETE Organisations
