@@ -157,5 +157,34 @@ namespace SFA.DAS.AssessorService.Data
                 return await connection.QueryAsync<AssessmentOrganisationDetails>(sqlForOrganisationsByStandardId);
             }
         }
+
+
+        public async Task<IEnumerable<OrganisationStandardSummary>> GetOrganisationStandardByOrganisationId(string organisationId)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                var sqlForStandardByOrganisationId =
+                    "SELECT distinct EndPointAssessorOrganisationId as organisationId, StandardCode "+
+                    $@"FROM [OrganisationStandard] WHERE EndPointAssessorOrganisationId = '{organisationId}'";
+                return await connection.QueryAsync<OrganisationStandardSummary>(sqlForStandardByOrganisationId);
+            }
+        }
+
+        public async Task<IEnumerable<OrganisationStandardPeriod>> GetOrganisatonStandardPeriodsByOrganisationStandard(string organisationId, int standardId)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                var sql =
+                    "SELECT EffectiveFrom, EffectiveTo " +
+                    $@"FROM [OrganisationStandard] WHERE EndPointAssessorOrganisationId = '{organisationId}' and StandardCode = {standardId}";
+                return await connection.QueryAsync<OrganisationStandardPeriod>(sql);
+            }
+        }
     }
 }

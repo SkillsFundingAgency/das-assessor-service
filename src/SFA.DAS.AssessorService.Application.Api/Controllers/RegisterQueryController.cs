@@ -88,6 +88,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(res);
         }
 
+        [HttpGet("assessment-organisations/{organisationId}/standards", Name = "GetOrganisationStandardsByOrganisation")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<OrganisationStandardSummary>))]
+        [SwaggerResponse((int)HttpStatusCode.NotFound, null)]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetOrganisationStandardsByOrganisation(string organisationId)
+        {
+            _logger.LogInformation($@"Get Organisations Standards by OrganisationId [{organisationId}]");
+            var res = await _mediator.Send(new GetStandardsByOrganisationRequest { OrganisationId = organisationId });
+            if (res == null) return NotFound();
+            return Ok(res);
+        }
+
         [HttpHead("assessment-organisations/{organisationId}", Name = "GetAssessmentOrganisationHead")]
         [SwaggerResponse((int)HttpStatusCode.NoContent, Type = typeof(AssessmentOrganisationSummary))]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
