@@ -10,9 +10,7 @@ using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
-{
-    [Authorize]
-    [Route("certificate/grade")]
+{   
     public class CertificateChooseStandardController : CertificateBaseController
     {
         public CertificateChooseStandardController(ILogger<CertificateAmmendController> logger,

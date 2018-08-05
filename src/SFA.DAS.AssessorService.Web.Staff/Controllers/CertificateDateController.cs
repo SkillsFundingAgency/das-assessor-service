@@ -13,9 +13,7 @@ using SFA.DAS.AssessorService.Web.Staff.Validators;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
-{
-    [Authorize]
-    [Route("certificate/date")]
+{    
     public class CertificateDateController : CertificateBaseController
     {
         private readonly CertificateDateViewModelValidator _validator;
