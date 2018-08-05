@@ -32,6 +32,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             var viewModel = new T();           
 
             var certificate = await ApiClient.GetCertificate(id);
+            var organisation = await ApiClient.GetOrganisation(certificate.OrganisationId);
+            certificate.Organisation = organisation;
 
             Logger.LogInformation($"Got Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id}");
 

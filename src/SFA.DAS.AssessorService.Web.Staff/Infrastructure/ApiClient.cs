@@ -51,5 +51,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         {
             return await Get<Certificate>($"api/v1/certificates/{certificateId}");
         }
+
+        public async Task<Organisation> GetOrganisation(Guid id)
+        {            
+            return await Get<Organisation>($"/api/v1/organisations/{id}");         
+        }
     }
 }

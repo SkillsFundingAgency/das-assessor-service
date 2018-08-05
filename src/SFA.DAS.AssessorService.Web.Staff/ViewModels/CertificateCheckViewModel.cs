@@ -8,6 +8,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
     public class CertificateCheckViewModel : CertificateBaseViewModel, ICertificateViewModel
     {
         public long Uln { get; set; }
+        public int? Ukprn { get; set; }
         public int Level { get; set; }
         public string Option { get; set; }
         public string SelectedGrade { get; set; }
@@ -27,6 +28,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
             BaseFromCertificate(cert);
 
             Uln = cert.Uln;
+            Ukprn = cert.Organisation.EndPointAssessorUkprn;
+
             Level = CertificateData.StandardLevel;
             Option = CertificateData.CourseOption;
             SelectedGrade = CertificateData.OverallGrade;
