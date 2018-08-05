@@ -4,11 +4,13 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
+using SFA.DAS.AssessorService.Web.Staff.ViewModels;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
 {
@@ -31,6 +33,19 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             var res = await _client.GetAsync(new Uri(uri, UriKind.Relative));
             return await res.Content.ReadAsAsync<T>();
         }
+
+        protected async Task<U> Post<T, U>(string uri, T model)
+        {
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+
+            var serializeObject = JsonConvert.SerializeObject(model);
+
+            using (var response = await _client.PostAsync(new Uri(uri, UriKind.Relative), new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
+            {
+                return await response.Content.ReadAsAsync<U>();
+            }
+        }
+
 
         public async Task<List<CertificateResponse>> GetCertificates()
         {
@@ -55,6 +70,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         public async Task<Organisation> GetOrganisation(Guid id)
         {            
             return await Get<Organisation>($"/api/v1/organisations/{id}");         
+        }
+
+        public async Task<List<StandardSearchResult>> SearchForStandards(StandardViewModelRequest searchQuery)
+        {
+            return await Post<StandardViewModelRequest, List<StandardSearchResult>>("/api/v1/search", searchQuery);
         }
     }
 }

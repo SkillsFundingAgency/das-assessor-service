@@ -94,6 +94,8 @@ namespace SFA.DAS.AssessorService.Web.Staff
             //    }
             //}
 
+            MappingStartup.AddMappings();
+
             return ConfigureIoC(services);
 
         }

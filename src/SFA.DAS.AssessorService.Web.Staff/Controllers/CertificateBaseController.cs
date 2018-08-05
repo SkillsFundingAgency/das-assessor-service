@@ -12,7 +12,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
     public class CertificateBaseController : Controller
     {
         protected readonly ILogger<CertificateAmmendController> Logger;
-        private readonly IHttpContextAccessor _contextAccessor;
+        protected readonly IHttpContextAccessor ContextAccessor;
         protected readonly ApiClient ApiClient;     
 
         public CertificateBaseController(ILogger<CertificateAmmendController> logger, 
@@ -20,12 +20,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             ApiClient apiClient)
         {
             Logger = logger;
-            _contextAccessor = contextAccessor;
+            ContextAccessor = contextAccessor;
             ApiClient = apiClient;           
         }
         protected async Task<IActionResult> LoadViewModel<T>(Guid id, string view) where T : ICertificateViewModel, new()
         {
-            var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
+            var username = ContextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
             Logger.LogInformation($"Load View Model for {typeof(T).Name} for {username}");
             

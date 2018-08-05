@@ -61,7 +61,7 @@
                     @Model.Standard
                 </dd>
                 <dd class="cya-change">
-                    <a asp-controller="CertificateGrade" asp-action="Grade" asp-route-certificateid=@Model.Id asp-route-redirecttocheck="true">
+                    <a asp-controller="CertificateChooseStandard" asp-action="ChooseStandard" asp-route-uln=@Model.Uln asp-route-ukprn=@Model.Ukprn asp-route-surname=@Model.FamilyName >
                         Change<span class="visually-hidden"> grade</span>
                     </a>
                 </dd>

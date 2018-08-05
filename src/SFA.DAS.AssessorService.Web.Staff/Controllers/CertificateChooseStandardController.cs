@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,9 +22,21 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         { }
 
         [HttpGet]
-        public async Task<IActionResult> ChooseStandard(Guid certificateid)
+        public async Task<IActionResult> ChooseStandard(SearchRequestViewModel vm)
         {
-            return await LoadViewModel<CertificateGradeViewModel>(certificateid, "~/Views/CertificateAmmend/Grade.cshtml");
+            var username = ContextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
+
+            var results = await ApiClient.SearchForStandards(new StandardViewModelRequest()
+            {
+                Surname = vm.Surname,
+                Uln = long.Parse(vm.Uln),
+                UkPrn = int.Parse(vm.Ukprn.Value.ToString()),
+                Username = "jcoxhead"
+            });
+
+            vm.SearchResults = Mapper.Map<List<ResultViewModel>>(results);
+
+            throw new NotImplementedException();
         }
 
         [HttpPost(Name = "ChooseStandard")]
