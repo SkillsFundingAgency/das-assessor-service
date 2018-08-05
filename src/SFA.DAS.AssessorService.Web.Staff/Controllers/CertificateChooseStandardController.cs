@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 
             vm.SearchResults = Mapper.Map<List<ResultViewModel>>(results);
 
-            throw new NotImplementedException();
+            return View("~/Views/CertificateAmmend/ChooseStandard.cshtml", vm);
         }
 
         [HttpPost(Name = "ChooseStandard")]

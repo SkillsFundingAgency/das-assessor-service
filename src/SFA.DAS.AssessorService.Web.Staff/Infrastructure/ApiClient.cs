@@ -46,7 +46,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             }
         }
 
-
         public async Task<List<CertificateResponse>> GetCertificates()
         {
             return await Get<List<CertificateResponse>>("/api/v1/certificates?statusses=Submitted");

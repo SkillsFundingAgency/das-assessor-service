@@ -133,7 +133,7 @@
                     @Model.Name
                 </dd>
                 <dd class="cya-change">
-                    <a asp-controller="CertificateAddress" asp-action="Address" asp-route-redirecttocheck="true">
+                    <a asp-controller="CertificateRecipient" asp-action="Recipient" asp-route-certificateid=@Model.Id>
                         Change<span class="visually-hidden"> name</span>
                     </a>
                 </dd>
@@ -146,7 +146,7 @@
                     @Model.Dept
                 </dd>
                 <dd class="cya-change">
-                    <a asp-controller="CertificateAddress" asp-action="Address" asp-route-redirecttocheck="true">
+                    <a asp-controller="CertificateRecipient" asp-action="Recipient" asp-route-certificateid=@Model.Id>
                         Change<span class="visually-hidden"> department</span>
                     </a>
                 </dd>
