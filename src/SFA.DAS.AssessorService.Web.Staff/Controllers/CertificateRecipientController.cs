@@ -29,8 +29,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         public async Task<IActionResult> Recipient(CertificateRecipientViewModel vm)
         {
             return await SaveViewModel(vm,
-                returnToIfModelNotValid: "~/Views/CertificateAmmend/Recipent.cshtml",
-                nextAction: RedirectToAction("Check", "CertificateAmmend"), action: CertificateActions.Grade);
+                returnToIfModelNotValid: "~/Views/CertificateAmmend/Recipient.cshtml",
+                nextAction: RedirectToAction("Check", "CertificateAmmend", new { certificateid = vm.Id }), action: CertificateActions.Recipient);
         }
     }
 }

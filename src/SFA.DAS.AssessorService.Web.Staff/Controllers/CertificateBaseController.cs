@@ -49,8 +49,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 
         protected async Task<IActionResult> SaveViewModel<T>(T vm, string returnToIfModelNotValid, RedirectToActionResult nextAction, string action) where T : ICertificateViewModel
         {
-            var username = ContextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
-
+            //var username = ContextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
+            var username = "jcoxhead";
             Logger.LogInformation($"Save View Model for {typeof(T).Name} for {username} with values: {GetModelValues(vm)}");
 
             var certificate = await ApiClient.GetCertificate(vm.Id);
@@ -66,7 +66,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 
             var updatedCertificate = vm.GetCertificateFromViewModel(certificate, certData);
 
-            //await ApiClient.UpdateCertificate(new UpdateCertificateRequest(updatedCertificate) { Username = username, Action = action });
+            await ApiClient.UpdateCertificate(new UpdateCertificateRequest(updatedCertificate) { Username = username, Action = action });
 
             Logger.LogInformation($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} updated.");
 

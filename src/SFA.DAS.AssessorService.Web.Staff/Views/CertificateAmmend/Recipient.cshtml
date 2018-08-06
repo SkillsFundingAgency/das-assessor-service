@@ -38,15 +38,15 @@
                 <legend id="Name">
                     <h1 class="heading-large">
                         @*<span class="heading-secondary">@Model.GivenNames @Model.FamilyName</span>*@
-                        @Localizer["Heading"]
+                        Where will the certificate be sent?
                     </h1>
                 </legend>
 
                 <div class="form-group" sfa-validation-for="Name" sfa-validationerror-class="form-group-error">
                     <label for="Name">
-                        <span class="form-label-bold">@Localizer["Name"]</span>
+                        <span class="form-label-bold">Name</span>
                         <span class="form-hint">
-                            @Localizer["NameHint"]
+                            For example, Joanna Smith]
                         </span>
                         <span class="error-message" asp-validation-for="Name"></span>
                     </label>
@@ -55,9 +55,9 @@
 
                 <div class="form-group" sfa-validation-for="Dept" sfa-validationerror-class="form-group-error">
                     <label for="Dept">
-                        <span class="form-label-bold">@Localizer["Dept"]</span>
+                        <span class="form-label-bold">Department (optional)</span>
                         <span class="form-hint">
-                            @Localizer["DeptHint"]
+                            For example, human resources
                         </span>
                         <span class="error-message" asp-validation-for="Dept"></span>
                     </label>
@@ -66,7 +66,7 @@
 
             </fieldset>
 
-            <button type="submit" class="button">@Localizer["ContinueButton"]</button>
+            <button type="submit" class="button">Continue</button>
         </form>
     </div>
 </div>

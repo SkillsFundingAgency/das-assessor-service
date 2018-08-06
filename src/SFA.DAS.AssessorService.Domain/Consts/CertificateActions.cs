@@ -11,5 +11,6 @@
         public const string Declaration = "Declaration";
         public const string Printed = "Printed";
         public const string Reprint = "Reprint";
+        public const string Recipient = "Recipient";
     }
 } 

@@ -20,6 +20,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
         public string FamilyName { get; set; }
         public string GivenNames { get; set; }
         public string Standard { get; set; }
+        public string Username { get; set; }
         public bool BackToCheckPage { get; set; }
     }
 }

@@ -37,10 +37,20 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         protected async Task<U> Post<T, U>(string uri, T model)
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-
             var serializeObject = JsonConvert.SerializeObject(model);
 
             using (var response = await _client.PostAsync(new Uri(uri, UriKind.Relative), new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
+            {
+                return await response.Content.ReadAsAsync<U>();
+            }
+        }
+
+        protected async Task<U> Put<T, U>(string uri, T model)
+        {
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            var serializeObject = JsonConvert.SerializeObject(model);
+
+            using (var response = await _client.PutAsync(new Uri(uri, UriKind.Relative), new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
             {
                 return await response.Content.ReadAsAsync<U>();
             }
@@ -67,13 +77,18 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         }
 
         public async Task<Organisation> GetOrganisation(Guid id)
-        {            
-            return await Get<Organisation>($"/api/v1/organisations/{id}");         
+        {
+            return await Get<Organisation>($"/api/v1/organisations/{id}");
         }
 
         public async Task<List<StandardSearchResult>> SearchForStandards(StandardViewModelRequest searchQuery)
         {
             return await Post<StandardViewModelRequest, List<StandardSearchResult>>("/api/v1/search", searchQuery);
+        }
+
+        public async Task<Certificate> UpdateCertificate(UpdateCertificateRequest certificateRequest)
+        {
+            return await Put<UpdateCertificateRequest, Certificate>("api/v1/certificates/update", certificateRequest);
         }
     }
 }
