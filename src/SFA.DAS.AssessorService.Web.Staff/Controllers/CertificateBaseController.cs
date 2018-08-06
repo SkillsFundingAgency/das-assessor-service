@@ -4,6 +4,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels;
 
@@ -46,31 +49,29 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 
         protected async Task<IActionResult> SaveViewModel<T>(T vm, string returnToIfModelNotValid, RedirectToActionResult nextAction, string action) where T : ICertificateViewModel
         {
-            //var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
-            
-            //Logger.LogInformation($"Save View Model for {typeof(T).Name} for {username} with values: {GetModelValues(vm)}");
+            var username = ContextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
-            //var certificate = await ApiClient.GetCertificate(vm.Id);
-            //var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+            Logger.LogInformation($"Save View Model for {typeof(T).Name} for {username} with values: {GetModelValues(vm)}");
 
-            //if (!ModelState.IsValid)
-            //{
-            //    vm.FamilyName = certData.LearnerFamilyName;
-            //    vm.GivenNames = certData.LearnerGivenNames;
-            //    Logger.LogInformation($"Model State not valid for {typeof(T).Name} requested by {username} with Id {certificate.Id}. Errors: {ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)}");
-            //    return View(returnToIfModelNotValid, vm);
-            //}
+            var certificate = await ApiClient.GetCertificate(vm.Id);
+            var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 
-            //var updatedCertificate = vm.GetCertificateFromViewModel(certificate, certData);
+            if (!ModelState.IsValid)
+            {
+                vm.FamilyName = certData.LearnerFamilyName;
+                vm.GivenNames = certData.LearnerGivenNames;
+                Logger.LogInformation($"Model State not valid for {typeof(T).Name} requested by {username} with Id {certificate.Id}. Errors: {ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)}");
+                return View(returnToIfModelNotValid, vm);
+            }
 
-            //await ApiClient.UpdateCertificate(new UpdateCertificateRequest(updatedCertificate) { Username = username, Action = action});
+            var updatedCertificate = vm.GetCertificateFromViewModel(certificate, certData);
 
-            //Logger.LogInformation($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} updated.");
-           
-            //Logger.LogInformation($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} redirecting to {nextAction.ControllerName} {nextAction.ActionName}");
-            //return nextAction;
+            //await ApiClient.UpdateCertificate(new UpdateCertificateRequest(updatedCertificate) { Username = username, Action = action });
 
-            throw new NotImplementedException();
+            Logger.LogInformation($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} updated.");
+
+            Logger.LogInformation($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} redirecting to {nextAction.ControllerName} {nextAction.ActionName}");
+            return nextAction;           
         }
 
         private string GetModelValues<T>(T viewModel)

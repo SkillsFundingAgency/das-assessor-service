@@ -32,8 +32,8 @@
                     @Model.GivenNames @Model.FamilyName
                 </dd>
                 <dd class="cya-change">
-                    <a asp-controller="CertificateGrade" asp-action="Grade">
-                        Change<span class="visually-hidden"> grade</span>
+                    <a asp-controller="CertificateApprenticeDetails" asp-action="ApprenticeDetail" asp-route-certificateid=@Model.Id>
+                        Change<span class="visually-hidden"> name</span>
                     </a>
                 </dd>
             </div>
@@ -60,10 +60,7 @@
                 <dd class="cya-answer">
                     @Model.Standard
                 </dd>
-                <dd class="cya-change">
-                    <a asp-controller="CertificateChooseStandard" asp-action="ChooseStandard" asp-route-uln=@Model.Uln asp-route-ukprn=@Model.Ukprn asp-route-surname=@Model.FamilyName >
-                        Change<span class="visually-hidden"> grade</span>
-                    </a>
+                <dd class="cya-change">                   
                 </dd>
             </div>
             <div>
@@ -73,10 +70,7 @@
                 <dd class="cya-answer">
                     @Model.Level
                 </dd>
-                <dd class="cya-change">
-                    <a asp-controller="CertificateGrade" asp-action="Grade" asp-route-certificateid=@Model.Id>
-                        Change<span class="visually-hidden"> grade</span>
-                    </a>
+                <dd class="cya-change">                   
                 </dd>
             </div>
             <div>
