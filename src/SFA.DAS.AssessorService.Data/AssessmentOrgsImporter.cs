@@ -91,9 +91,9 @@ namespace SFA.DAS.AssessorService.Data
                     using (var package = new ExcelPackage(stream))
                     {
                         progressStatus.Append("Reading from spreadsheet: Delivery Areas; ");
-                        spreadsheetDto.DeliveryAreas = _spreadsheetReader.HarvestDeliveryAreas(package);
+                        spreadsheetDto.DeliveryAreas = _spreadsheetReader.HarvestDeliveryAreas();
                         progressStatus.Append("Reading from spreadsheet: Organisation Types; ");
-                        spreadsheetDto.OrganisationTypes = _spreadsheetReader.HarvestOrganisationTypes(package);
+                        spreadsheetDto.OrganisationTypes = _spreadsheetReader.HarvestOrganisationTypes();
                         progressStatus.Append("Reading from spreadsheet: Organisations; ");
                         spreadsheetDto.Organisations =
                             _spreadsheetReader.HarvestEpaOrganisations(package, spreadsheetDto.OrganisationTypes);

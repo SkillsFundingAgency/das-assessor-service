@@ -21,47 +21,39 @@ namespace SFA.DAS.AssessorService.Data
         private const int LookupsColumnDeliveryArea = 1;
         private const int LookupsColumnOrganisationType = 2;
 
-        public List<DeliveryArea> HarvestDeliveryAreas(ExcelPackage package)
+        public List<DeliveryArea> HarvestDeliveryAreas()
         {
-            var deliveryAreas = new List<DeliveryArea>();
-
-            var worksheet = GetWorksheet(package, LookupsWorkSheetName);
-
-            for (var i = worksheet.Dimension.Start.Row + 2; i <= worksheet.Dimension.End.Row; i++)
+            var deliveryAreas = new List<DeliveryArea>
             {
-                var area = worksheet.Cells[i, LookupsColumnDeliveryArea].Value;
-                if (area is null) break;
-                if (area.ToString().ToLower() != "all")
-                {
-                    deliveryAreas.Add(new DeliveryArea { Id = i - 2, Area = area.ToString(), Status = "Live" });
-                }
-            }
-
-            if (deliveryAreas.Count == 0)
-            {
-                throw new NoDataPresentException("Worksheet [{LookupsWorkSheetName}]  contains no delivery areas");
-            }
+                new DeliveryArea {Id = 1, Area = "East Midlands", Status = "Live"},
+                new DeliveryArea {Id = 2, Area = "East of England", Status = "Live"},
+                new DeliveryArea {Id = 3, Area = "London", Status = "Live"},
+                new DeliveryArea {Id = 4, Area = "North East", Status = "Live"},
+                new DeliveryArea {Id = 5, Area = "North West", Status = "Live"},
+                new DeliveryArea {Id = 6, Area = "South East", Status = "Live"},
+                new DeliveryArea {Id = 7, Area = "South West", Status = "Live"},
+                new DeliveryArea {Id = 8, Area = "West Midlands", Status = "Live"},
+                new DeliveryArea {Id = 9, Area = "Yorkshire and the Humber", Status = "Live"}
+            };
 
             return deliveryAreas;
         }
 
-        public List<TypeOfOrganisation> HarvestOrganisationTypes(ExcelPackage package)
+        public List<TypeOfOrganisation> HarvestOrganisationTypes()
         {
-            var organisationTypes = new List<TypeOfOrganisation>();
-
-            var worksheet = GetWorksheet(package, LookupsWorkSheetName);
-
-            for (var i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
+            var organisationTypes = new List<TypeOfOrganisation>
             {
-                var organisationType = worksheet.Cells[i, LookupsColumnOrganisationType].Value;
-                if (organisationType is null) break;
-                organisationTypes.Add(new TypeOfOrganisation { Id = i - 1, Type = organisationType.ToString(), Status = "Live" });
-            }
+                new TypeOfOrganisation {Id = 1, Type = "Awarding Organisation", Status = "Live"},
+                new TypeOfOrganisation {Id = 2, Type = "Assessment Organisation", Status = "Live"},
+                new TypeOfOrganisation {Id = 3, Type = "Employer or trade body", Status = "Live"},
+                new TypeOfOrganisation {Id = 4, Type = "Professional Body", Status = "Live"},
+                new TypeOfOrganisation {Id = 5, Type = "Higher Education Institution", Status = "Live"},
+                new TypeOfOrganisation {Id = 6, Type = "Sector Skills Council", Status = "Live"},
+                new TypeOfOrganisation {Id = 7, Type = "Training Provider", Status = "Live"},
+                new TypeOfOrganisation {Id = 8, Type = "Other", Status = "Live"},
+                new TypeOfOrganisation {Id = 9, Type = "Non-departmental public body", Status = "Live"}
+            };
 
-            if (organisationTypes.Count == 0)
-            {
-                throw new NoDataPresentException("Worksheet [{LookupsWorkSheetName}]  contains no organisation types");
-            }
 
             return organisationTypes;
         }

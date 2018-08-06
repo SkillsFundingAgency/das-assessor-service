@@ -7,8 +7,8 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 {
     public interface IAssessmentOrgsSpreadsheetReader
     {
-        List<DeliveryArea> HarvestDeliveryAreas(ExcelPackage package);
-        List<TypeOfOrganisation> HarvestOrganisationTypes(ExcelPackage package);
+        List<DeliveryArea> HarvestDeliveryAreas();
+        List<TypeOfOrganisation> HarvestOrganisationTypes();
         List<EpaOrganisation> HarvestEpaOrganisations(ExcelPackage package, List<TypeOfOrganisation> organisationTypes);
         List<ApprenticeshipStandard> HarvestStandards(ExcelPackage package);
         List<EpaOrganisationStandard> HarvestEpaOrganisationStandards(ExcelPackage package,
