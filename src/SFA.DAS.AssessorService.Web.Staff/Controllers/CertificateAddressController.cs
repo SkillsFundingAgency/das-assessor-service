@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         {
             return await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/CertificateAmmend/Address.cshtml",
-                nextAction: RedirectToAction("Check", "CertificateAmmend"), action: CertificateActions.Grade);
+                nextAction: RedirectToAction("Check", "CertificateAmmend", new { certificateid = vm.Id }), action: CertificateActions.Address);
         }
     }
 }
