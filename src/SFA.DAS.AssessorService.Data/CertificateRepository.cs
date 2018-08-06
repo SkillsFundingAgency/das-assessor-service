@@ -133,7 +133,7 @@ namespace SFA.DAS.AssessorService.Data
             return new PaginatedList<Certificate>(certificates, count, pageIndex, pageSize);
         }       
 
-        public async Task<Certificate> Update(Certificate certificate, string username, string action)
+        public async Task<Certificate> Update(Certificate certificate, string username, string action, bool updateLog = true)
         {
             var cert = await GetCertificate(certificate.Id);
 
@@ -142,8 +142,11 @@ namespace SFA.DAS.AssessorService.Data
             cert.Status = certificate.Status;
             cert.UpdatedAt = certificate.UpdatedAt;
 
-            await UpdateCertificateLog(cert, action, username);
-
+            if (updateLog)
+            {
+                await UpdateCertificateLog(cert, action, username);
+            }
+            
             await _context.SaveChangesAsync();
 
             return cert;
