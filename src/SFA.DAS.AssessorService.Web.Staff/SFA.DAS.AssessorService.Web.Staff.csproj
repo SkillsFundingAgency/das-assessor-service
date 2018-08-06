@@ -32,9 +32,6 @@
     <Content Update="Views\CertificateAmmend\Address.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\CertificateAmmend\ChooseStandard.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
     <Content Update="Views\CertificateAmmend\Date.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
@@ -48,9 +45,6 @@
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\CertificateAmmend\Option.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Views\CertificateAmmend\_ChooseStandardScriptsPartial.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\CertificateAmmend\_DateScriptsPartial.cshtml">

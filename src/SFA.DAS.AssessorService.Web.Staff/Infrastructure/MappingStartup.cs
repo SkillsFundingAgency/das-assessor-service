@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Web.Staff.ViewModels;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
 {
@@ -10,7 +8,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         {
             Mapper.Initialize(cfg =>
             {
-                cfg.CreateMap<ResultViewModel, StandardSearchResult>();
+            
             });
         }
     }

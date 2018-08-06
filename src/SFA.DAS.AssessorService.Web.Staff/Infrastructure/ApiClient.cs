@@ -79,12 +79,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         public async Task<Organisation> GetOrganisation(Guid id)
         {
             return await Get<Organisation>($"/api/v1/organisations/{id}");
-        }
-
-        public async Task<List<StandardSearchResult>> SearchForStandards(StandardViewModelRequest searchQuery)
-        {
-            return await Post<StandardViewModelRequest, List<StandardSearchResult>>("/api/v1/search", searchQuery);
-        }
+        }   
 
         public async Task<Certificate> UpdateCertificate(UpdateCertificateRequest certificateRequest)
         {
