@@ -10,7 +10,6 @@ using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
-using CertificateReprintRequest = SFA.DAS.AssessorService.Api.Types.Models.CertificateReprintRequest;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
 {
@@ -76,9 +75,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             return await Get<ScheduleRun>($"api/v1/schedule/next?scheduleType=1");
         }
 
-        public async Task<Certificate> PostReprintRequest(CertificateReprintRequest certificateReprintRequest)
+        public async Task<Certificate> PostReprintRequest(StaffCertificateDuplicateRequest staffCertificateDuplicateRequest)
         {
-            return await Post<CertificateReprintRequest, Certificate>("api/v1/staffcertificatereprint", certificateReprintRequest);   
+            return await Post<StaffCertificateDuplicateRequest, Certificate>("api/v1/staffcertificatereprint", staffCertificateDuplicateRequest);   
         }
     }
 }
