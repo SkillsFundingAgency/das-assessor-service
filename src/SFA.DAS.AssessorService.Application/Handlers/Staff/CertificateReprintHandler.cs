@@ -4,12 +4,11 @@ using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using CertificateReprintRequest = SFA.DAS.AssessorService.Api.Types.Models.CertificateReprintRequest;
 using NotFound = SFA.DAS.AssessorService.Domain.Exceptions.NotFound;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 {
-    public class CertificateReprintHandler : IRequestHandler<CertificateReprintRequest, CertificateReprintResponse>
+    public class CertificateReprintHandler : IRequestHandler<StaffCertificateDuplicateRequest, CertificateReprintResponse>
     {
         private readonly ICertificateRepository _certificateRepository;
 
@@ -18,7 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             _certificateRepository = certificateRepository;
         }
 
-        public async Task<CertificateReprintResponse> Handle(CertificateReprintRequest request,
+        public async Task<CertificateReprintResponse> Handle(StaffCertificateDuplicateRequest request,
             CancellationToken cancellationToken)
         {
             var certificate = await _certificateRepository.GetCertificate(request.Id);
