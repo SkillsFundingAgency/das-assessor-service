@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         private readonly DatabaseService _databaseService = new DatabaseService();
         private OrganisationQueryRepository _repository;
 
-        [SetUp]
+        [OneTimeSetUp]
         public void SetupOrganisationTests()
         {
             _repository = new OrganisationQueryRepository(_databaseService.TestContext);
@@ -91,7 +91,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             Assert.AreEqual(_organisation2.EndPointAssessorOrganisationId, organisation.EndPointAssessorOrganisationId, "The organisation Ids do not match");
         }
 
-        [TearDown]
+        [OneTimeTearDown]
         public void TearDownOrganisationTests()
         {
             OrganisationHandler.DeleteRecords(new List<Guid>{_organisation1.Id, _organisation2.Id});

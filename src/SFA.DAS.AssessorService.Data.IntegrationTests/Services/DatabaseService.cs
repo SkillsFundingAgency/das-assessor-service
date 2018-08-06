@@ -1,28 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
 {
     public class DatabaseService
     {
-       // A typical connectionString stored in our config: "Data Source=(localdb)\ProjectsV13;Initial Catalog=SFA.DAS.AssessorService.Database;Integrated Security=True; MultipleActiveResultSets=True;";
-        private readonly string _sqlConnectionStringWithoutMars =
-            $@"Data Source = (localdb)\ProjectsV13; Initial Catalog = SFA.DAS.AssessorService.Database; Integrated Security = True; MultipleActiveResultSets = False;";
+       //// A typical connectionString stored in our config: "Data Source=(localdb)\ProjectsV13;Initial Catalog=SFA.DAS.AssessorService.Database;Integrated Security=True; MultipleActiveResultSets=True;";
+       // private readonly string _sqlConnectionStringWithoutMars =
+       //     $@"Data Source = (localdb)\ProjectsV13; Initial Catalog = SFA.DAS.AssessorService.Database; Integrated Security = True; MultipleActiveResultSets = False;";
 
-        public string SqlTestConnectionString { get; } =
-            $@"Data Source=(localdb)\ProjectsV13;Initial Catalog=SFA.DAS.AssessorService.Database.Test;Integrated Security=True; MultipleActiveResultSets=True;";
+       // public string _sqlTestConnectionString { get; } =
+       //     $@"Data Source=(localdb)\ProjectsV13;Initial Catalog=SFA.DAS.AssessorService.Database.Test;Integrated Security=True; MultipleActiveResultSets=True;";
+        private readonly IConfiguration _configuration;
+
+        public DatabaseService()
+        {
+            _configuration = new ConfigurationBuilder()
+                .AddJsonFile("connectionStrings.Local.json")
+                .Build();
+        }
 
         public AssessorDbContext TestContext
         {
             get
             {
+                var sqlConnectionStringTest = _configuration.GetConnectionString("SqlConnectionStringTest");
                 var option = new DbContextOptionsBuilder<AssessorDbContext>();
-                option.UseSqlServer(new DatabaseService().SqlTestConnectionString, options => options.EnableRetryOnFailure(3));
+                option.UseSqlServer(sqlConnectionStringTest, options => options.EnableRetryOnFailure(3));
                 return new AssessorDbContext(option.Options);
             }
         }
@@ -30,7 +41,9 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
         {
             DropDatabase();
 
-            using (var connection = new SqlConnection(_sqlConnectionStringWithoutMars))
+            var sqlConnectionStringWithoutMars = _configuration.GetConnectionString("SqlConnectionString");
+
+            using (var connection = new SqlConnection(sqlConnectionStringWithoutMars))
             {
 
                 if (connection.State != ConnectionState.Open)
@@ -49,7 +62,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
 
         public void Execute(string sql)
         {
-            using (var connection = new SqlConnection(SqlTestConnectionString))
+            var sqlTestConnectionString = _configuration.GetConnectionString("SqlConnectionStringTest");
+            using (var connection = new SqlConnection(sqlTestConnectionString))
             {
                 if (connection.State != ConnectionState.Open)
                     connection.Open();             
@@ -60,7 +74,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
 
         public void Execute(string sql, TestModel model)
         {
-            using (var connection = new SqlConnection(SqlTestConnectionString))
+            var sqlTestConnectionString = _configuration.GetConnectionString("SqlConnectionStringTest");
+            using (var connection = new SqlConnection(sqlTestConnectionString))
             {
                 if (connection.State != ConnectionState.Open)
                     connection.Open();
@@ -71,7 +86,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
 
         public void DropDatabase()
         {
-            using (var connection = new SqlConnection(_sqlConnectionStringWithoutMars))
+            var sqlConnectionStringWithoutMars = _configuration.GetConnectionString("SqlConnectionString");
+            using (var connection = new SqlConnection(sqlConnectionStringWithoutMars))
             {
                 if (connection.State != ConnectionState.Open)
                     connection.Open();
@@ -80,7 +96,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
                 {
                     Connection = connection,
                     CommandText =
-                        $@"if exists(select * from sys.databases where name = 'SFA.DAS.AssessorService.Database.Test') DROP DATABASE [SFA.DAS.AssessorService.Database.Test];"
+                        $@"if exists(select * from sys.databases where name = 'SFA.DAS.AssessorService.Database.Test') BEGIN ALTER DATABASE [SFA.DAS.AssessorService.Database.Test] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;  DROP DATABASE [SFA.DAS.AssessorService.Database.Test]; END"
                 };
                 var reader = comm.ExecuteReader();
                 reader.Close();
