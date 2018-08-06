@@ -10,7 +10,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
     {
         private static readonly DatabaseService DatabaseService = new DatabaseService();
 
-      
         public static void InsertRecord(OrganisationModel organisation)
         {
             var sql =
@@ -35,7 +34,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
             var sql = $@"DELETE from Organisations where id = {idToDelete}";
             DatabaseService.Execute(sql);
         }
-
 
         public static void DeleteRecords(List<Guid> ids)
         {

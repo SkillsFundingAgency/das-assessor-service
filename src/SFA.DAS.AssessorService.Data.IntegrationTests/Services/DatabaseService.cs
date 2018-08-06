@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
@@ -12,12 +9,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
 {
     public class DatabaseService
     {
-       //// A typical connectionString stored in our config: "Data Source=(localdb)\ProjectsV13;Initial Catalog=SFA.DAS.AssessorService.Database;Integrated Security=True; MultipleActiveResultSets=True;";
-       // private readonly string _sqlConnectionStringWithoutMars =
-       //     $@"Data Source = (localdb)\ProjectsV13; Initial Catalog = SFA.DAS.AssessorService.Database; Integrated Security = True; MultipleActiveResultSets = False;";
-
-       // public string _sqlTestConnectionString { get; } =
-       //     $@"Data Source=(localdb)\ProjectsV13;Initial Catalog=SFA.DAS.AssessorService.Database.Test;Integrated Security=True; MultipleActiveResultSets=True;";
         private readonly IConfiguration _configuration;
 
         public DatabaseService()
@@ -40,12 +31,9 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
         public void SetupDatabase()
         {
             DropDatabase();
-
-            var sqlConnectionStringWithoutMars = _configuration.GetConnectionString("SqlConnectionString");
-
-            using (var connection = new SqlConnection(sqlConnectionStringWithoutMars))
+  
+            using (var connection = new SqlConnection(_configuration.GetConnectionString("SqlConnectionString")))
             {
-
                 if (connection.State != ConnectionState.Open)
                     connection.Open();
 
@@ -62,8 +50,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
 
         public void Execute(string sql)
         {
-            var sqlTestConnectionString = _configuration.GetConnectionString("SqlConnectionStringTest");
-            using (var connection = new SqlConnection(sqlTestConnectionString))
+            using (var connection = new SqlConnection(_configuration.GetConnectionString("SqlConnectionStringTest")))
             {
                 if (connection.State != ConnectionState.Open)
                     connection.Open();             
@@ -74,8 +61,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
 
         public void Execute(string sql, TestModel model)
         {
-            var sqlTestConnectionString = _configuration.GetConnectionString("SqlConnectionStringTest");
-            using (var connection = new SqlConnection(sqlTestConnectionString))
+            using (var connection = new SqlConnection(_configuration.GetConnectionString("SqlConnectionStringTest")))
             {
                 if (connection.State != ConnectionState.Open)
                     connection.Open();
@@ -86,8 +72,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
 
         public void DropDatabase()
         {
-            var sqlConnectionStringWithoutMars = _configuration.GetConnectionString("SqlConnectionString");
-            using (var connection = new SqlConnection(sqlConnectionStringWithoutMars))
+            using (var connection = new SqlConnection(_configuration.GetConnectionString("SqlConnectionString")))
             {
                 if (connection.State != ConnectionState.Open)
                     connection.Open();

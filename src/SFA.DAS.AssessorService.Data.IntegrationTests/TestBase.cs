@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests
@@ -12,7 +9,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         public void Setup()
         {
             new DatabaseService().SetupDatabase();
-
         }
 
         [OneTimeTearDown]
