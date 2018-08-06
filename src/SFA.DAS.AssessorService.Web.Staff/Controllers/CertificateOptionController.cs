@@ -12,7 +12,7 @@ using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
-{  
+{
     public class CertificateOptionController : CertificateBaseController
     {
         public CertificateOptionController(ILogger<CertificateAmmendController> logger,
@@ -32,8 +32,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public async Task<IActionResult> Option(CertificateOptionViewModel vm)
         {
             return await SaveViewModel(vm,
-                returnToIfModelNotValid: "~/Views/Certificate/Option.cshtml",
-                nextAction: RedirectToAction("Date", "CertificateDate"), action: CertificateActions.Option);
+                returnToIfModelNotValid: "~/Views/CertificateAmmend/Option.cshtml",
+                nextAction: RedirectToAction("Check", "CertificateAmmend", new { certificateid = vm.Id }), action: CertificateActions.Option);
         }
     }
 }
