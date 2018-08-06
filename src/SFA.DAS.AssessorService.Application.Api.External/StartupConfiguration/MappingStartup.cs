@@ -12,6 +12,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.StartupConfiguration
             Mapper.Initialize(cfg =>
             {
                 cfg.AddProfile<CertificateDataProfile>();
+                cfg.AddProfile<CertificateProfile>();
                 cfg.AddProfile<BatchCertificateRequestProfile>();
                 cfg.AddProfile<BatchCertificateResponseProfile>();
             });
