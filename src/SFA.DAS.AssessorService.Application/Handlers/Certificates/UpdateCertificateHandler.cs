@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -27,6 +28,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             {
                 _logger.LogInformation(LoggingConstants.CertificateSubmitted);
                 _logger.LogInformation($"Certificate with ID: {request.Certificate.Id} Submitted with reference of {request.Certificate.CertificateReference}");
+            }
+
+            var logs = await _certificateRepository.GetCertificateLogsFor(request.Certificate.Id);
+            var latestLogEntry = logs.OrderByDescending(l => l.EventTime).FirstOrDefault();
+            if (latestLogEntry != null && latestLogEntry.Action == request.Action)
+            {
+                return await _certificateRepository.Update(request.Certificate, request.Username, request.Action, updateLog:false);
             }
             return await _certificateRepository.Update(request.Certificate, request.Username, request.Action);
         }
