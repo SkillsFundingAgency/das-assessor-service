@@ -102,6 +102,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Search
 
         public static bool operator ==(SearchResult left, SearchResult right)
         {
+            if (left is null) return right is null;
             return left.Equals(right);
         }
 

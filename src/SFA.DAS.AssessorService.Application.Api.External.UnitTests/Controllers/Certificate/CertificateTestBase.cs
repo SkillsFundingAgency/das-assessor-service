@@ -7,14 +7,14 @@ using SFA.DAS.AssessorService.Application.Api.External.Infrastructure;
 using SFA.DAS.AssessorService.Application.Api.External.Middleware;
 using System;
 
-namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers.Learner
+namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers.Certificate
 {
-    public class LearnerTestBase
+    public class CertificateTestBase
     {
-        protected Mock<ILogger<LearnerController>> LoggerMock;
+        protected Mock<ILogger<CertificateController>> LoggerMock;
         protected ApiClient ApiClientMock;
         protected HeaderInfo HeaderInfoMock;
-        protected LearnerController ControllerMock;
+        protected CertificateController ControllerMock;
         protected MockHttpMessageHandler MockHttp;
 
         protected void Setup()
@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
             BuildApiClientMock();
             BuildHeaderInfoMock();
 
-            ControllerMock = new LearnerController(LoggerMock.Object, HeaderInfoMock, ApiClientMock);
+            ControllerMock = new CertificateController(LoggerMock.Object, HeaderInfoMock, ApiClientMock);
         }
 
         private static void BuildAutoMapper()
@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
 
         private void BuildLoggerMock()
         {
-            LoggerMock = new Mock<ILogger<LearnerController>>();
+            LoggerMock = new Mock<ILogger<CertificateController>>();
         }
 
         private void BuildApiClientMock()

@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.External.Infrastructure;
 using SFA.DAS.AssessorService.Application.Api.External.Middleware;
+using SFA.DAS.AssessorService.Application.Api.External.StartupConfiguration;
 using SFA.DAS.AssessorService.Settings;
 using StructureMap;
 using Swashbuckle.AspNetCore.Swagger;
@@ -98,6 +99,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External
         {
             try
             {
+                MappingStartup.AddMappings();
+
                 if (env.IsDevelopment())
                 {
                     app.UseDeveloperExceptionPage();

@@ -10,9 +10,11 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Client;
+using SFA.DAS.AssessorService.Application.Api.External.Messages;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SearchQuery = SFA.DAS.AssessorService.Application.Api.External.Models.Search.SearchQuery;
 using SearchResult = SFA.DAS.AssessorService.Application.Api.External.Models.Search.SearchResult;
+using AutoMapper;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 {
@@ -71,6 +73,15 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
         {
             List<SearchResult> results = await Post<SearchQuery, List<SearchResult>>("/api/v1/search", searchQuery);
             return results.Where(s => stdCodeFilter is null || s.StdCode == stdCodeFilter).ToList();
+        }
+
+        public async Task<IEnumerable<BatchCertificateResponse>> CreateCertificates(IEnumerable<BatchCertificateRequest> request)
+        {
+            var apiRequest = Mapper.Map<IEnumerable<BatchCertificateRequest>,IEnumerable<AssessorService.Api.Types.Models.Certificates.Batch.BatchCertificateRequest>>(request);
+
+            var apiResponse = await Put<IEnumerable<AssessorService.Api.Types.Models.Certificates.Batch.BatchCertificateRequest>, IEnumerable<AssessorService.Api.Types.Models.Certificates.Batch.BatchCertificateResponse>>("/api/v1/certificates/batch", apiRequest);
+
+            return Mapper.Map<IEnumerable<AssessorService.Api.Types.Models.Certificates.Batch.BatchCertificateResponse>, IEnumerable<BatchCertificateResponse>>(apiResponse);
         }
     }
 }
