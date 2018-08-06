@@ -37,6 +37,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
         public async Task<PaginatedList<StaffSearchResult>> Handle(StaffSearchRequest request, CancellationToken cancellationToken)
         {
+            if (string.IsNullOrWhiteSpace(request.SearchQuery))
+                return new PaginatedList<StaffSearchResult>(new List<StaffSearchResult>(), 0, request.Page, 10);
+
             var pageSize = 10;
             var ilrResults = await Search(request);
             var totalRecordCount = ilrResults.Count();
