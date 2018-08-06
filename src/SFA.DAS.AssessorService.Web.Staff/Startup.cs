@@ -17,6 +17,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
+using SFA.DAS.AssessorService.Web.Staff.Validators;
 using StructureMap;
 
 namespace SFA.DAS.AssessorService.Web.Staff
@@ -115,6 +116,7 @@ namespace SFA.DAS.AssessorService.Web.Staff
                 config.For<ITokenService>().Use<TokenService>();
                 config.For<IWebConfiguration>().Use(ApplicationConfiguration);
                 config.For<ISessionService>().Use<SessionService>().Ctor<string>().Is(_env.EnvironmentName);
+                config.For<CertificateDateViewModelValidator>().Use<CertificateDateViewModelValidator>();
 
                 config.Populate(services);
             });

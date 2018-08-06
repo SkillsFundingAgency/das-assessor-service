@@ -1,6 +1,5 @@
 ﻿using System;
 using FluentValidation;
-using Microsoft.Extensions.Localization;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels;
 
@@ -8,29 +7,29 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators
 {
     public class CertificateDateViewModelValidator : AbstractValidator<CertificateDateViewModel>
     {
-        public CertificateDateViewModelValidator(IStringLocalizer<CertificateDateViewModelValidator> localizer)
+        public CertificateDateViewModelValidator()
         {
-            RuleFor(vm => vm.Day).NotEmpty().WithMessage(localizer["DayRequired"]).DependentRules(() =>
+            RuleFor(vm => vm.Day).NotEmpty().WithMessage("Enter the achievement day").DependentRules(() =>
             {
-                RuleFor(vm => vm.Day).Must(BeANumber).WithMessage(localizer["DayNumber"]).DependentRules(() =>
+                RuleFor(vm => vm.Day).Must(BeANumber).WithMessage("Day must be a number").DependentRules(() =>
                 {
-                    RuleFor(vm => vm.Day).Must(BeInValidDayRange).WithMessage(localizer["DayRange"]);
+                    RuleFor(vm => vm.Day).Must(BeInValidDayRange).WithMessage("Enter a valid day");
                 });
             });
 
-            RuleFor(vm => vm.Month).NotEmpty().WithMessage(localizer["MonthRequired"]).DependentRules(() =>
+            RuleFor(vm => vm.Month).NotEmpty().WithMessage("Enter the achievement month").DependentRules(() =>
             {
-                RuleFor(vm => vm.Month).Must(BeANumber).WithMessage(localizer["MonthNumber"]).DependentRules(() =>
+                RuleFor(vm => vm.Month).Must(BeANumber).WithMessage("Month must be a number").DependentRules(() =>
                 {
-                    RuleFor(vm => vm.Month).Must(BeInValidMonthRange).WithMessage(localizer["MonthRange"]);
+                    RuleFor(vm => vm.Month).Must(BeInValidMonthRange).WithMessage("Enter a valid month");
                 });
             });
 
-            RuleFor(vm => vm.Year).NotEmpty().WithMessage(localizer["YearRequired"]).DependentRules(() =>
+            RuleFor(vm => vm.Year).NotEmpty().WithMessage("Enter a valid month").DependentRules(() =>
             {
-                RuleFor(vm => vm.Year).Length(4).WithMessage(localizer["YearRange"]).DependentRules(() =>
+                RuleFor(vm => vm.Year).Length(4).WithMessage("Enter a valid year").DependentRules(() =>
                 {
-                    RuleFor(vm => vm.Year).Must(BeANumber).WithMessage(localizer["YearNumber"]);
+                    RuleFor(vm => vm.Year).Must(BeANumber).WithMessage("Year must be a number");
                 });
             });
 
@@ -44,18 +43,18 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators
 
                     if (achievementDate > SystemTime.UtcNow())
                     {
-                        context.AddFailure("Date", localizer["DateMustNotBeInFuture"]);
+                        context.AddFailure("Date", "An achievement date cannot be in the future");
                     }
 
                     var achievementStartDate = new DateTime(2017, 1, 1);
                     if (achievementDate < achievementStartDate)
                     {
-                        context.AddFailure("Date", localizer["DateMustNotBeBeforeStartDate"]);
+                        context.AddFailure("Date", "An achievement date cannot be before 01 01 2017");
                     }
                 }
                 catch (ArgumentOutOfRangeException)
                 {
-                    context.AddFailure("Date", localizer["IncorrectFormat"]);
+                    context.AddFailure("Date", "Enter a valid date");
                 }
             });
         }
@@ -72,25 +71,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators
             return day >= 1 && day <= 31;
         }
 
-
         private bool BeANumber(string datePart)
         {
             return int.TryParse(datePart, out int _);
-        }
-
-        //private bool BeAtLeastTwelveMonthsFromStartDate(CertificateDateViewModel vm)
-        //{
-        //    if (int.TryParse(vm.Day, out var day) && int.TryParse(vm.Month, out var month) &&
-        //        int.TryParse(vm.Year, out var year))
-        //    {
-        //        var achievementDate = new DateTime(year, month, day);
-        //        if (achievementDate < vm.StartDate.AddMonths(12) && vm.WarningShown == "false")
-        //        {
-        //            return false;
-        //        }
-        //    }
-
-        //    return true;
-        //}
+        }      
     }
 }
