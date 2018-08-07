@@ -1,8 +1,7 @@
 ﻿using FluentValidation;
-using Microsoft.Extensions.Localization;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels;
 
-namespace SFA.DAS.AssessorService.Web.Validators
+namespace SFA.DAS.AssessorService.Web.Staff.Validators
 {
     public class CertificateAddressViewModelValidator : AbstractValidator<CertificateAddressViewModel>
     {

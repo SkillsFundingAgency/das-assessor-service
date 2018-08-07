@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.WsFederation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -59,41 +54,18 @@ namespace SFA.DAS.AssessorService.Web.Staff
             });
 
             AddAuthentication(services);
-
-            services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });            
-            services.Configure<RequestLocalizationOptions>(options =>
-            {
-                options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("en-GB");
-                options.SupportedCultures = new List<CultureInfo> { new CultureInfo("en-GB") };
-                options.RequestCultureProviders.Clear();
-            });
-
-            services.AddMvc(options => { options.Filters.Add<CheckSessionFilter>(); })               
-                .AddViewLocalization(opts => { opts.ResourcesPath = "Resources"; })
+           
+            services.AddMvc(options => { options.Filters.Add<CheckSessionFilter>(); })                          
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1); ;
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
-            //if (_env.IsDevelopment())
-            //{
-            //    services.AddDistributedMemoryCache();
-            //}
-            //else
-            //{
-            //    try
-            //    {
+            
             services.AddDistributedRedisCache(options =>
             {
                 options.Configuration = ApplicationConfiguration.SessionRedisConnectionString;
-            });
-            //    }
-            //    catch (Exception e)
-            //    {
-            //        _logger.LogError(e, $"Error setting redis for session.  Conn: {ApplicationConfiguration.SessionRedisConnectionString}");
-            //        throw;
-            //    }
-            //}
+            });          
 
             MappingStartup.AddMappings();
 

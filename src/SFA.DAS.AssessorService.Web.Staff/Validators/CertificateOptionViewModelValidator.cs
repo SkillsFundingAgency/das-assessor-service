@@ -6,7 +6,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators
 {
     public class CertificateOptionViewModelValidator : AbstractValidator<CertificateOptionViewModel>
     {
-        public CertificateOptionViewModelValidator(IStringLocalizer<CertificateOptionViewModelValidator> localizer)
+        public CertificateOptionViewModelValidator()
         {
             RuleFor(vm => vm).Custom((vm, context) =>
             {
