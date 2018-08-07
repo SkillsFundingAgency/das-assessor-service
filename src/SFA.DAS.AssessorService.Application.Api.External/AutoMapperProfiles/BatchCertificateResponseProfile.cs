@@ -8,6 +8,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
         {
             CreateMap<AssessorService.Api.Types.Models.Certificates.Batch.BatchCertificateResponse, Messages.BatchCertificateResponse>()
                     .ForMember(x => x.ProvidedCertificateData, opt => opt.MapFrom(source => Mapper.Map<Domain.JsonData.CertificateData, Models.Certificates.CertificateData>(source.ProvidedCertificateData)))
+                    .ForPath(x => x.ProvidedCertificateData.CertificateReference, opt => opt.MapFrom(source => source.ProvidedCertificateReference))
                     .ForPath(x => x.ProvidedCertificateData.Learner.Uln, opt => opt.MapFrom(source => source.Uln))
                     .ForPath(x => x.ProvidedCertificateData.Learner.FamilyName, opt => opt.MapFrom(source => source.FamilyName))
                     .ForPath(x => x.ProvidedCertificateData.LearningDetails.StandardCode, opt => opt.MapFrom(source => source.StandardCode))

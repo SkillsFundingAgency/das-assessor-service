@@ -1,15 +1,13 @@
 ﻿using FluentValidation;
-using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates.Batch;
-using SFA.DAS.AssessorService.Application.Interfaces;
 using System;
 
-namespace SFA.DAS.AssessorService.Application.Api.Validators
+namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
 {
     public class BatchCertificateRequestValidator : AbstractValidator<BatchCertificateRequest>
     {
-        public BatchCertificateRequestValidator(IStringLocalizer<BatchCertificateRequestValidator> localiser, ICertificateRepository certificateRepository)
+        public BatchCertificateRequestValidator(IStringLocalizer<BatchCertificateRequestValidator> localiser)
         {
             RuleFor(m => m.Uln).LessThanOrEqualTo(9999999999);
             RuleFor(m => m.FamilyName).NotEmpty();
@@ -25,17 +23,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
 
             RuleFor(m => m.CertificateData.AchievementDate).NotNull().GreaterThanOrEqualTo(m => m.CertificateData.LearningStartDate).LessThanOrEqualTo(m => DateTime.UtcNow);
             RuleFor(m => m.CertificateData.OverallGrade).NotEmpty();
-
-            RuleFor(m => m)
-                .Custom((m, context) =>
-                {
-                    var existingCertificate = certificateRepository.GetCertificate(m.Uln, m.StandardCode).Result;
-
-                    if (existingCertificate != null)
-                    {
-                        context.AddFailure(new ValidationFailure("CertificateData", $"Certificate already exists: {existingCertificate.CertificateReference}"));
-                    }
-                });
 
             // TODO: Add validator for : 'Supplied UkPrn is allowed to access the given endPointAssessorOrganisationId'
             // The following isn't correct. Was dicussed in tech demo to do this later

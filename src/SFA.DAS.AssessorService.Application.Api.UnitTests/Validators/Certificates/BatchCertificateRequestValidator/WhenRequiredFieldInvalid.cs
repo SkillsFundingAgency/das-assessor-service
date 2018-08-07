@@ -5,9 +5,9 @@ using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates.Batch;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
-namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certificates.Batch
+namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certificates.BatchCertificateRequestValidator
 {
-    public class WhenRequiredFieldinvalid : BatchCertificateRequestValidatorBase
+    public class WhenRequiredFieldInvalid : BatchCertificateRequestValidatorTestBase
     {
         private ValidationResult _validationResult;
 
@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
                                 .Build())
                 .Build();
 
-            _validationResult = BatchCertificateRequestValidator.Validate(request);
+            _validationResult = Validator.Validate(request);
         }
 
         [Test]

@@ -39,5 +39,16 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             return Ok(results);
         }
 
+        [HttpPost(Name = "'UpdateCertificates")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<BatchCertificateResponse>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> UpdateCertificates([FromBody] IEnumerable<CertificateData> request)
+        {
+            IEnumerable<BatchCertificateRequest> bcRequest = request.Select(req => new BatchCertificateRequest { UkPrn = _headerInfo.Ukprn, Username = _headerInfo.Username, CertificateData = req });
+
+            var results = await _apiClient.UpdateCertificates(bcRequest);
+
+            return Ok(results);
+        }
     }
 }

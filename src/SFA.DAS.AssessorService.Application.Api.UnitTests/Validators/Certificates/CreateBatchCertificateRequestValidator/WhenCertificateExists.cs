@@ -6,9 +6,9 @@ using SFA.DAS.AssessorService.Api.Types.Models.Certificates.Batch;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using System;
 
-namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certificates.Batch
+namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certificates.CreateBatchCertificateRequestValidator
 {
-    public class WhenCertificateExists : BatchCertificateRequestValidatorBase
+    public class WhenCertificateExists : CreateBatchCertificateRequestValidatorTestBase
     {
         private ValidationResult _validationResult;
 
@@ -17,17 +17,24 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
         {
             Setup();
 
-            BatchCertificateRequest request = Builder<BatchCertificateRequest>.CreateNew()
-                .With(i => i.Uln = Uln_Certificate)
-                .With(i => i.StandardCode = StandardCode_Certificate)
+            long uln = 1234;
+            int standardCode = 1234;
+            string certificateReference = "1234";
+
+            AddMockCertificate(uln, standardCode, certificateReference);
+
+            CreateBatchCertificateRequest request = Builder<CreateBatchCertificateRequest>.CreateNew()
+                .With(i => i.Uln = uln)
+                .With(i => i.StandardCode = standardCode)
                 .With(i => i.UkPrn = 10000000)
+                .With(i => i.CertificateReference = null)
                 .With(i => i.CertificateData = Builder<CertificateData>.CreateNew()
                                 .With(cd => cd.ContactPostCode = "AA11AA")
                                 .With(cd => cd.AchievementDate = DateTime.UtcNow)
                                 .Build())
                 .Build();
 
-            _validationResult = BatchCertificateRequestValidator.Validate(request);
+            _validationResult = Validator.Validate(request);
         }
 
         [Test]
