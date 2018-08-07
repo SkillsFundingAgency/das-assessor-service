@@ -19,8 +19,6 @@
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.3.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.NLogTarget" Version="2.6.4" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" Version="2.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.1" />
     <!--<PackageReference Include="NBuilder" Version="5.0.0" />-->
     <PackageReference Include="Nlog.Web.AspNetCore" Version="4.5.4" />
     <PackageReference Include="SFA.DAS.NLog.Targets.Redis" Version="1.1.5" />

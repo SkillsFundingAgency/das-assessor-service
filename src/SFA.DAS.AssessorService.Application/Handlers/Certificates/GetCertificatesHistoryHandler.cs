@@ -72,7 +72,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                             trainingProviderName = certificateData.ProviderName;
                         }
                     }
-                    catch (EntityNotFoundException e)
+                    catch (EntityNotFoundException)
                     {
                         _logger.LogInformation(
                             $"Cannot find training provider for ukprn {certificate.Organisation.EndPointAssessorUkprn.Value}");

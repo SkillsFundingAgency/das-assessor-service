@@ -70,7 +70,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                             $"IFA-Certificate-{DateTime.UtcNow.UtcToTimeZoneTime():MMyy}-{batchNumber.ToString().PadLeft(3, '0')}.xlsx"
                     };
 
-                    await _printingSpreadsheetCreator.Create(batchNumber, certificates);
+                    _printingSpreadsheetCreator.Create(batchNumber, certificates);
 
                     await _notificationService.Send(batchNumber, certificates);
 
