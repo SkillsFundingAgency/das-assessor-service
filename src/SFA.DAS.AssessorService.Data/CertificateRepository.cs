@@ -234,6 +234,7 @@ namespace SFA.DAS.AssessorService.Data
                 select new CertificateAddress
                 {
                     OrganisationId = certificate.OrganisationId,
+                    ContactOrganisation = certificateData.ContactOrganisation,
                     CreatedAt = certificate.CreatedAt,
                     AddressLine1 = certificateData.ContactAddLine1,
                     AddressLine2 = certificateData.ContactAddLine2,

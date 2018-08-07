@@ -60,6 +60,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 
         public CertificateAddressViewModel CopyFromCertificateAddress(CertificateAddress certificatePreviousAddress)
         {
+            this.Employer = certificatePreviousAddress.ContactOrganisation;
             this.AddressLine1 = certificatePreviousAddress.AddressLine1;
             this.AddressLine2 = certificatePreviousAddress.AddressLine2;
             this.AddressLine3 = certificatePreviousAddress.AddressLine3;

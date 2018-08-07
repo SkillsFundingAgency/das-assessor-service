@@ -73,8 +73,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             if (vm.SelectPreviousAddress)
             {
                 var certificatePreviousAddress = await _certificateApiClient.GetContactPreviousAddress(username);
-                vm = vm.CopyFromCertificateAddress(certificatePreviousAddress);
-                vm.Employer = null;
+                vm = vm.CopyFromCertificateAddress(certificatePreviousAddress);             
             }
 
             if (!ModelState.IsValid)

@@ -9,8 +9,15 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <a asp-controller="CertificateAddressSummary" asp-action="AddressSummary" class="link-back">Back</a>
-
+        @if (Model.BackToCheckPage)
+        {
+            <a class="link-back" asp-controller="CertificateCheck" asp-action="Check">Back</a>
+        }
+        else
+        {
+            <a asp-controller="CertificateAddressSummary" asp-action="AddressSummary" class="link-back">Back</a>
+        }
+   
         <form class="apprentice-address-form" type="post" asp-controller="CertificateRecipient">
             @Html.HiddenFor(c => c.Id)
 
@@ -33,7 +40,7 @@
                     </ul>
                 </div>
             }
-            
+
             <fieldset sfa-anyvalidationerror-class="after-error-summary">
                 <legend id="Name">
                     <h1 class="heading-large">
@@ -41,7 +48,7 @@
                         @Localizer["Heading"]
                     </h1>
                 </legend>
-                
+
                 <div class="form-group" sfa-validation-for="Name" sfa-validationerror-class="form-group-error">
                     <label for="Name">
                         <span class="form-label-bold">@Localizer["Name"]</span>
@@ -62,8 +69,8 @@
                         <span class="error-message" asp-validation-for="Dept"></span>
                     </label>
                     <input class="form-control" name="Dept" sfa-validation-for="Dept" sfa-validationerror-class="form-control-error" asp-for="Dept" type="text"/>
-                </div>             
-               
+                </div>
+
             </fieldset>
 
             <button type="submit" class="button">@Localizer["ContinueButton"]</button>
