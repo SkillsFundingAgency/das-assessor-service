@@ -37,9 +37,6 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.WindowsAzure.Configuration">
-      <HintPath>..\..\..\..\..\Users\jcoxh\.nuget\packages\microsoft.windowsazure.configurationmanager\3.2.3\lib\net40\Microsoft.WindowsAzure.Configuration.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Update="nlog.printing.config">
