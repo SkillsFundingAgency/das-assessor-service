@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         {            
             var actionResult = await SaveViewModel(vm, 
                 returnToIfModelNotValid: "~/Views/CertificateAmmend/ApprenticeDetail.cshtml",
-                nextAction: RedirectToAction("Address", "CertificateAddress"), action: CertificateActions.Date);
+                nextAction: RedirectToAction("Check", "CertificateAmmend", new { certificateid = vm.Id }), action: CertificateActions.Name);
 
 
             return actionResult;

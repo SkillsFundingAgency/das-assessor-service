@@ -183,9 +183,9 @@
             </div>
         </dl>
 
-        <form type="post" asp-controller="CertificateCheck">
+        <form type="post" asp-controller="CertificateAmmend" asp-action="ConfirmAndSubmit" asp-route-certificateId="@Model.Id">
             @Html.HiddenFor(c => c.Id)
-            <button type="submit" class="button">@Localizer["ContinueButton"]</button>
+            <button type="submit" class="button">Confirm and submit</button>
         </form>
     </div>
 </div>

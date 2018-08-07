@@ -10,26 +10,24 @@ using SFA.DAS.AssessorService.Web.Staff.ViewModels;
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {
     public class CertificateAmmendController : CertificateBaseController
-    {       
+    {
         public CertificateAmmendController(ILogger<CertificateAmmendController> logger,
             IHttpContextAccessor contextAccessor,
             ApiClient apiClient) : base(logger, contextAccessor, apiClient)
         {
 
-        }      
+        }
 
         [HttpGet]
         public async Task<IActionResult> Check(Guid certificateid)
         {
             return await LoadViewModel<CertificateCheckViewModel>(certificateid, "~/Views/CertificateAmmend/Check.cshtml");
-        }
+        }     
 
         [HttpPost(Name = "Check")]
-        public async Task<IActionResult> Check(CertificateCheckViewModel vm)
+        public async Task<IActionResult> ConfirmAndSubmit(CertificateCheckViewModel vm)
         {
-            return await SaveViewModel(vm,
-                returnToIfModelNotValid: "~/Views/CertificateAmmend/Check.cshtml",
-                nextAction: RedirectToAction("Confirm", "CertificateConfirmation"), action: CertificateActions.Submit);
+            return RedirectToAction("Index", "DuplicateRequest", new { certificateid = vm.Id });
         }
     }
 }
