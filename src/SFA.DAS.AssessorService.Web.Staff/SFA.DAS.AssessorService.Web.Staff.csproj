@@ -58,4 +58,8 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Resources\Validators\" />
+  </ItemGroup>
+
 </Project>

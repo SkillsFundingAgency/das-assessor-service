@@ -36,17 +36,16 @@
 
             <fieldset sfa-anyvalidationerror-class="after-error-summary">
                 <legend id="Name">
-                    <h1 class="heading-large">
-                        @*<span class="heading-secondary">@Model.GivenNames @Model.FamilyName</span>*@
-                        @Localizer["Heading"]
+                    <h1 class="heading-large">                        
+                       Enter Family Name
                     </h1>
                 </legend>
 
                 <div class="form-group" sfa-validation-for="Name" sfa-validationerror-class="form-group-error">
                     <label for="Name">
-                        <span class="form-label-bold">@Localizer["LearnerFamilyName"]</span>
+                        <span class="form-label-bold">Learner Family Name</span>
                         <span class="form-hint">
-                            @Localizer["LearnerFamilyNameHint"]
+                            For example, Hawkins
                         </span>
                         <span class="error-message" asp-validation-for="FamilyName"></span>
                     </label>
@@ -55,7 +54,7 @@
 
             </fieldset>
 
-            <button type="submit" class="button">@Localizer["ContinueButton"]</button>
+            <button type="submit" class="button">Continue</button>
         </form>
     </div>
 </div>
