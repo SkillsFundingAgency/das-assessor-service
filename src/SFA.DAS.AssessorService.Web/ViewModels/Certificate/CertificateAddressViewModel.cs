@@ -8,6 +8,9 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
     public class CertificateAddressViewModel : CertificateBaseViewModel, ICertificateViewModel
     {
         public string Employer { get; set; }
+        public string Name { get; set; }
+        public string Dept { get; set; }
+
         public string AddressLine1 { get; set; }
         public string AddressLine2 { get; set; }
         public string AddressLine3 { get; set; }
@@ -26,7 +29,11 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         public void FromCertificate(Domain.Entities.Certificate cert)
         {
             BaseFromCertificate(cert);
+
             Employer = CertificateData.ContactOrganisation;
+            Name = CertificateData.ContactName;
+            Dept = CertificateData.Department;
+
             AddressLine1 = CertificateData.ContactAddLine1;
             AddressLine2 = CertificateData.ContactAddLine2;
             AddressLine3 = CertificateData.ContactAddLine3;
@@ -47,6 +54,9 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         public Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData data)
         {
             data.ContactOrganisation = Employer;
+            data.ContactName = Name;
+            data.Department = Dept;
+
             data.ContactAddLine1 = AddressLine1;
             data.ContactAddLine2 = AddressLine2;
             data.ContactAddLine3 = AddressLine3;
@@ -61,6 +71,9 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         public CertificateAddressViewModel CopyFromCertificateAddress(CertificateAddress certificatePreviousAddress)
         {
             this.Employer = certificatePreviousAddress.ContactOrganisation;
+            this.Name = certificatePreviousAddress.ContactName;
+            this.Dept = certificatePreviousAddress.Department;
+
             this.AddressLine1 = certificatePreviousAddress.AddressLine1;
             this.AddressLine2 = certificatePreviousAddress.AddressLine2;
             this.AddressLine3 = certificatePreviousAddress.AddressLine3;

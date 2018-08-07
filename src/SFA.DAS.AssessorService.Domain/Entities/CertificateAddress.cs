@@ -5,7 +5,11 @@ namespace SFA.DAS.AssessorService.Domain.Entities
     public class CertificateAddress
     {
         public Guid OrganisationId { get; set; }
+
         public string ContactOrganisation { get; set; }
+        public string ContactName { get; set; }
+        public string Department { get; set; }
+
         public string AddressLine1 { get; set; }
         public string AddressLine2 { get; set; }
         public string AddressLine3 { get; set; }

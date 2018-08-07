@@ -235,6 +235,8 @@ namespace SFA.DAS.AssessorService.Data
                 {
                     OrganisationId = certificate.OrganisationId,
                     ContactOrganisation = certificateData.ContactOrganisation,
+                    ContactName = certificateData.ContactName,
+                    Department = certificateData.Department,
                     CreatedAt = certificate.CreatedAt,
                     AddressLine1 = certificateData.ContactAddLine1,
                     AddressLine2 = certificateData.ContactAddLine2,
