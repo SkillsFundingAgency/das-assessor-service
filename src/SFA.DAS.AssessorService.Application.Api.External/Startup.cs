@@ -3,18 +3,19 @@ using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.External.Infrastructure;
+using SFA.DAS.AssessorService.Application.Api.External.Middleware;
 using SFA.DAS.AssessorService.Settings;
 using StructureMap;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace SFA.DAS.AssessorService.Application.Api.External
 {
-    //TODO: This all needs configuring correctly as I don't know what I'm supposed to put in here
     public class Startup
     {
         private readonly IHostingEnvironment _env;
@@ -49,13 +50,16 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                 {
                     c.SwaggerDoc("v1", new Info { Title = "SFA.DAS.AssessorService.Application.Api.External", Version = "v1" });
 
-                //if (_env.IsDevelopment())
-                //{
-                //    var basePath = AppContext.BaseDirectory;
-                //    var xmlPath = Path.Combine(basePath, "SFA.DAS.AssessorService.Application.Api.External.xml");
-                //    c.IncludeXmlComments(xmlPath);
-                //}
-            });
+                    //if (_env.IsDevelopment())
+                    //{
+                    //    var basePath = AppContext.BaseDirectory;
+                    //    var xmlPath = Path.Combine(basePath, "SFA.DAS.AssessorService.Application.Api.External.xml");
+                    //    c.IncludeXmlComments(xmlPath);
+                    //}
+                });
+
+                services.AddScoped<IHeaderInfo, HeaderInfo>();
+                services.AddHttpContextAccessor();
 
                 services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
@@ -110,6 +114,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                     })
                     .UseAuthentication();
 
+                app.UseMiddleware<GetHeadersMiddleware>();
+                
                 app.UseHttpsRedirection();
                 app.UseMvc();
             }
