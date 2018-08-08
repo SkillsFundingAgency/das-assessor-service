@@ -1,39 +1,45 @@
-﻿@using SFA.DAS.AssessorService.Web.Staff.Controllers
+﻿@using SFA.DAS.AssessorService.Domain.Consts
+@using SFA.DAS.AssessorService.Web.Staff.Controllers
 @model SFA.DAS.AssessorService.Web.Staff.Controllers.LearnerDetailViewModel
+
 @{
+    ViewBag.Title = "Certificate details";
     Layout = "_Layout";
 }
 
-<a class="link-back" asp-action="Results" asp-controller="Search" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.Page">Back</a>
-
-<h1 class="heading-large">Apprentice details</h1>
-<div class="form-group">
-    <fieldset>
-        <ul>
-            <li>
-                <p><span class="bold">Name:</span> @Model.Learner.GivenNames @Model.Learner.FamilyName</p>
-            </li>
-            <li>
-                <p><span class="bold"><abbr title="Unique learner number">ULN</abbr>:</span> @Model.Learner.Uln</p>
-            </li>
-            <li>
-                <p><span class="bold">Standard:</span> @Model.Learner.Standard (@Model.Learner.StandardCode)</p>
-            </li>
-            <li>
-                <p><span class="bold">Learner Start Date:</span> @Model.Learner.LearnStartDate?.ToShortDateString()</p>
-            </li>
-            <li>
-                <p><span class="bold">Funding Model:</span> @Model.Learner.FundingModel</p>
-            </li>
-        </ul>
-    </fieldset>
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <a class="link-back" asp-action="Results" asp-controller="Search" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.Page">Back</a>
+        <h1 class="heading-large">Certificate: @Model.Learner.CertificateReference</h1>
+    </div>
 </div>
-<h1 class="heading-large">Certificate details</h1>
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <h2 class="heading-medium">Apprentice details</h2>
+        <div class="form-group">
+            <ul>
+                <li>
+                    <p><span class="bold">Name:</span> @Model.Learner.GivenNames @Model.Learner.FamilyName</p>
+                </li>
+                <li>
+                    <p><span class="bold"><abbr title="Unique learner number">ULN</abbr>:</span> @Model.Learner.Uln</p>
+                </li>
+                
+                <li>
+                    <p><span class="bold">Funding model:</span> @Model.Learner.FundingModel</p>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
 
 @if (Model.Learner.CertificateReference != null)
 {
-    <div class="form-group">
-        <fieldset>
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <h2 class="heading-medium">Certificate details</h2>
+        <div class="form-group">
             <ul>
                 <li>
                     <p><span class="bold">Certificate number:</span> @Model.Learner.CertificateReference</p>
@@ -54,49 +60,65 @@
                     <p><span class="bold">Grade:</span> @Model.Learner.OverallGrade</p>
                 </li>
                 <li>
-                    <p><span class="bold">Achievement Date:</span> @Model.Learner.AchievementDate?.ToShortDateString()</p>
+                    <p><span class="bold">Learner start date:</span> @Model.Learner.LearnStartDate?.ToShortDateString()</p>
+                </li>
+                <li>
+                    <p><span class="bold">Achievement date:</span> @Model.Learner.AchievementDate?.ToShortDateString()</p>
                 </li>
                 <li>
                     <p><span class="bold">Status:</span> @Model.Learner.CertificateStatus</p>
                 </li>
-                <h2 class="heading-medium">History</h2>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Time</th>
-                            <th>Action</th>
-                            <th>By</th>
-                            <th>Status</th>
-                            <th>Batch</th>
-                            <th>Changed</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var log in Model.Learner.CertificateLogs)
-                        {
-                            <tr>
-                                <td>@log.EventTime</td>
-                                <td>@log.Action</td>
-                                <td>@log.ActionBy</td>
-                                <td>@log.Status</td>
-                                <td>@log.BatchNumber</td>
-                                <td>@foreach (var change in log.DifferencesToPrevious)
-                                    {
-                                        <span class="bold">@(change.Key)<text>:</text></span> @change.Value<br />
-
-                                    }</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
             </ul>
-        </fieldset>
+        </div>
     </div>
+</div>
+
+<div class="grid-row">
+    <div class="column-full">
+        <h2 class="heading-medium">History</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Action</th>
+                    <th>By</th>
+                    <th>Status</th>
+                    <th>Batch</th>
+                    <th>Changed</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var log in Model.Learner.CertificateLogs)
+                {
+                    <tr>
+                        <td>@log.EventTime</td>
+                        <td>@log.Action</td>
+                        <td>@log.ActionBy</td>
+                        <td>@log.Status</td>
+                        <td>@log.BatchNumber</td>
+                        <td>
+                            @foreach (var change in log.DifferencesToPrevious)
+                            {
+                                <span class="bold">@(change.Key)<text>:</text></span> @change.Value<br />
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
 }
 else
 {
-    <h2 class="heading-medium">No Certificate requested</h2>
+    <div class="grid-row">
+        <div class="column-two-thirds">
+            <h2 class="heading-medium">No Certificate requested</h2>
+        </div>
+    </div>
 }
+
 <h2 class="heading-medium">What do you want to do next?</h2>
 <ul class="list list-bullet">
     @if (Model.Learner.CertificateReference != null)

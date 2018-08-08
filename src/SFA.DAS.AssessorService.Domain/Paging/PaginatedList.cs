@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.Domain.Paging
 
             Items.AddRange(items);
         }
-
+ 
         public bool HasPreviousPage => (PageIndex > 1);
         public bool HasNextPage => (PageIndex < TotalPages);
     }

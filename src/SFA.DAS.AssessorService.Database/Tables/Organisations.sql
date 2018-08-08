@@ -8,6 +8,9 @@
 	[PrimaryContact] [nvarchar](30) NULL,
 	[Status] [nvarchar](10) NOT NULL,
 	[UpdatedAt] [datetime2](7) NULL,
+	[OrganisationTypeId] [int] NULL,  
+	OrganisationData [nvarchar](max) NULL,
+
  CONSTRAINT [PK_Organisations] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC

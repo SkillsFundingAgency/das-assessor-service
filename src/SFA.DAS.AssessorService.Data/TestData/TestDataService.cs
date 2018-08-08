@@ -100,7 +100,7 @@ namespace SFA.DAS.AssessorService.Data.TestData
                 context.Contacts.Add(thirdContact);
                 context.SaveChanges();
 
-                for (var i = 0; i <= 30; i++)
+                for (int i = 0; i <=40; i++)
                 {
                     var certificateData = new CertificateData
                     {
@@ -114,9 +114,9 @@ namespace SFA.DAS.AssessorService.Data.TestData
                         ContactAddLine4 = "Worcs",
                         ContactPostCode = "B60 2TY",
                         CourseOption = "French",
-                        LearnerFamilyName = "Karla",
-                        LearnerGivenNames = "Hawkins",
-
+                        LearnerFamilyName = "Gouge",
+                        LearnerGivenNames = "David",
+                        ProviderName = "Test Provider",
                         OverallGrade = "PASS",
 
                         Registration = "Registered",

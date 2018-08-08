@@ -13,7 +13,7 @@ using SFA.DAS.AssessorService.EpaoImporter.Sftp;
 
 namespace SFA.DAS.AssessorService.EpaoImporter
 {
-    public class PrintProcessFlowCommand : ICommand
+    public class PrintProcessCommand : ICommand
     {
         private readonly IAggregateLogger _aggregateLogger;
         private readonly IPrintingSpreadsheetCreator _printingSpreadsheetCreator;
@@ -21,7 +21,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
         private readonly INotificationService _notificationService;
         private readonly IFileTransferClient _fileTransferClient;
 
-        public PrintProcessFlowCommand(IAggregateLogger aggregateLogger,
+        public PrintProcessCommand(IAggregateLogger aggregateLogger,
             IPrintingSpreadsheetCreator printingSpreadsheetCreator,
             IAssessorServiceApi assessorServiceApi,
             INotificationService notificationService,
@@ -70,7 +70,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                             $"IFA-Certificate-{DateTime.UtcNow.UtcToTimeZoneTime():MMyy}-{batchNumber.ToString().PadLeft(3, '0')}.xlsx"
                     };
 
-                    await _printingSpreadsheetCreator.Create(batchNumber, certificates);
+                    _printingSpreadsheetCreator.Create(batchNumber, certificates);
 
                     await _notificationService.Send(batchNumber, certificates);
 
