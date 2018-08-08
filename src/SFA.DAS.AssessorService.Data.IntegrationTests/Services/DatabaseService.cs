@@ -1,38 +1,46 @@
-﻿using System.Data;
+﻿using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
+using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
 {
-    public class DatabaseService
+    public partial class DatabaseService
     {
-        private readonly IConfiguration _configuration;
-
+     
         public DatabaseService()
         {
-            _configuration = new ConfigurationBuilder()
+            WebConfiguration = new TestWebConfiguration();
+            Configuration = new ConfigurationBuilder()
                 .AddJsonFile("connectionStrings.Local.json")
                 .Build();
+            WebConfiguration.SqlConnectionString = Configuration.GetConnectionString("SqlConnectionStringTest");    
         }
 
         public AssessorDbContext TestContext
         {
             get
             {
-                var sqlConnectionStringTest = _configuration.GetConnectionString("SqlConnectionStringTest");
+                var sqlConnectionStringTest = Configuration.GetConnectionString("SqlConnectionStringTest");
                 var option = new DbContextOptionsBuilder<AssessorDbContext>();
                 option.UseSqlServer(sqlConnectionStringTest, options => options.EnableRetryOnFailure(3));
                 return new AssessorDbContext(option.Options);
             }
         }
+
+
+        public IConfiguration Configuration { get; }
+        public IWebConfiguration WebConfiguration;
+
         public void SetupDatabase()
         {
             DropDatabase();
   
-            using (var connection = new SqlConnection(_configuration.GetConnectionString("SqlConnectionString")))
+            using (var connection = new SqlConnection(Configuration.GetConnectionString("SqlConnectionString")))
             {
                 if (connection.State != ConnectionState.Open)
                     connection.Open();
@@ -50,7 +58,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
 
         public void Execute(string sql)
         {
-            using (var connection = new SqlConnection(_configuration.GetConnectionString("SqlConnectionStringTest")))
+            using (var connection = new SqlConnection(Configuration.GetConnectionString("SqlConnectionStringTest")))
             {
                 if (connection.State != ConnectionState.Open)
                     connection.Open();             
@@ -61,7 +69,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
 
         public void Execute(string sql, TestModel model)
         {
-            using (var connection = new SqlConnection(_configuration.GetConnectionString("SqlConnectionStringTest")))
+            using (var connection = new SqlConnection(Configuration.GetConnectionString("SqlConnectionStringTest")))
             {
                 if (connection.State != ConnectionState.Open)
                     connection.Open();
@@ -72,7 +80,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
 
         public void DropDatabase()
         {
-            using (var connection = new SqlConnection(_configuration.GetConnectionString("SqlConnectionString")))
+            using (var connection = new SqlConnection(Configuration.GetConnectionString("SqlConnectionString")))
             {
                 if (connection.State != ConnectionState.Open)
                     connection.Open();
