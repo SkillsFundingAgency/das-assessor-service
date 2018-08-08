@@ -66,12 +66,12 @@ namespace SFA.DAS.AssessorService.Data
             for (var i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
             {
                 var epaOrganisationIdentifier = worksheet.Cells[i, 1].Value != null ? worksheet.Cells[i, 1].Value.ToString().Trim() : string.Empty;
-                if (epaOrganisationIdentifier == string.Empty)
+                var epaOrganisationName = worksheet.Cells[i, 2].Value != null ? worksheet.Cells[i, 2].Value.ToString() : string.Empty;
+                if (epaOrganisationIdentifier == string.Empty || epaOrganisationName == string.Empty)
                 {
                     break;
                 }
-                var epaOrganisationName = worksheet.Cells[i, 2].Value != null ? worksheet.Cells[i, 2].Value.ToString() : string.Empty;
-                var epaOrganisationType = worksheet.Cells[i, 3].Value != null ? worksheet.Cells[i, 3].Value.ToString() : string.Empty;
+                     var epaOrganisationType = worksheet.Cells[i, 3].Value != null ? worksheet.Cells[i, 3].Value.ToString() : string.Empty;
                 var epaOrganisationTypeDetails = organisationTypes.FirstOrDefault(x => string.Equals(x.Type,
                     epaOrganisationType?.ToString(), StringComparison.CurrentCultureIgnoreCase));
                 if (epaOrganisationType == string.Empty || epaOrganisationTypeDetails.Type == string.Empty)
