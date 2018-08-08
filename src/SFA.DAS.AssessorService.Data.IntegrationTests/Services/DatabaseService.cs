@@ -9,16 +9,19 @@ using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
 {
-    public partial class DatabaseService
+    public class DatabaseService
     {
      
         public DatabaseService()
         {
-            WebConfiguration = new TestWebConfiguration();
+           
             Configuration = new ConfigurationBuilder()
                 .AddJsonFile("connectionStrings.Local.json")
                 .Build();
-            WebConfiguration.SqlConnectionString = Configuration.GetConnectionString("SqlConnectionStringTest");    
+            WebConfiguration = new TestWebConfiguration
+            {
+                SqlConnectionString = Configuration.GetConnectionString("SqlConnectionStringTest")
+            };
         }
 
         public AssessorDbContext TestContext
@@ -34,7 +37,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
 
 
         public IConfiguration Configuration { get; }
-        public IWebConfiguration WebConfiguration;
+        public TestWebConfiguration WebConfiguration;
 
         public void SetupDatabase()
         {
