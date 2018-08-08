@@ -10,5 +10,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
     {
         Task<EpaOrganisation> CreateEpaOrganisation(EpaOrganisation organisation);
         Task<EpaOrganisation> GetEpaOrganisationById(Guid epaOrganisationId);
+        Task<EpaOrganisation> GetEpaOrganisationByOrganisationId(int organisationId);
     }
 }

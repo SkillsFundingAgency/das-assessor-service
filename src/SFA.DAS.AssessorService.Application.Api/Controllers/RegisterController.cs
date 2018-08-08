@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.FileProviders.Physical;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
+using SFA.DAS.AssessorService.Application.Exceptions;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
@@ -38,7 +40,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> CreateOrganisation([FromBody] CreateEpaOrganisationRequest request)
         {
-            return Ok(await _mediator.Send(request));
+            try
+            {
+                var result = await _mediator.Send(request);
+
+                return Ok(result);
+            }
+            catch (AlreadyExistsException ex)
+            {
+                return BadRequest(ex);
+            }
+
         }
     }
 }

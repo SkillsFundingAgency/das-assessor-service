@@ -8,8 +8,10 @@ using System.Threading.Tasks;
 using Dapper;
 using Newtonsoft.Json;
 using System.Linq;
+using System.Net.Mime;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 using SFA.DAS.AssessorService.Data.Services;
+using SFA.DAS.AssessorService.Application.Exceptions;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -59,6 +61,10 @@ namespace SFA.DAS.AssessorService.Data
                     $@"VALUES ({id}, getdate(), {name}, {organisationId},{ukprn}, '{organisation.Status}', {organisationTypeId}, " +
                     $@"'{orgData}')";
 
+                var organisationAlreadyExists = await GetEpaOrganisationByOrganisationId(organisation.OrganisationId);
+                if (organisationAlreadyExists != null)
+                    throw new AlreadyExistsException($@"There is already an entry for [{organisation.OrganisationId}]");
+
                 var res = connection.Execute(sqlToInsert);
 
                 if (res == 1)
@@ -70,11 +76,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<EpaOrganisation> GetEpaOrganisationById(Guid epaOrganisationId)
         {
-
-           
-            var connectionString = _configuration.SqlConnectionString;
-
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
@@ -83,6 +85,23 @@ namespace SFA.DAS.AssessorService.Data
                     "primaryContact, Status, UpdatedAt, OrganisationTypeId, OrganisationData " +
                     " FROM [Organisations] " +
                     $@"WHERE Id = '{epaOrganisationId}'";
+                var orgs = await connection.QueryAsync<EpaOrganisation>(sqlForMainDetails);
+                var org = orgs.FirstOrDefault();
+                return org;
+            }
+        }
+
+        public async Task<EpaOrganisation> GetEpaOrganisationByOrganisationId(int organisationId)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+                var sqlForMainDetails =
+                    "select Id, CreatedAt, DeletedAt, EndPointAssessorName as Name,  EndPointAssessorOrganisationId as OrganisationId, EndPointAssessorUkprn as ukprn, " +
+                    "primaryContact, Status, UpdatedAt, OrganisationTypeId, OrganisationData " +
+                    " FROM [Organisations] " +
+                    $@"WHERE EndPointAssessorOrganisationId = '{organisationId}'";
                 var orgs = await connection.QueryAsync<EpaOrganisation>(sqlForMainDetails);
                 var org = orgs.FirstOrDefault();
                 return org;
