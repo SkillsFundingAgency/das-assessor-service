@@ -35,12 +35,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         {
             var result = _validator.Validate(vm);
 
-            if (!result.IsValid && result.Errors.Any(e => e.Severity == Severity.Warning))
-            {
-                vm.WarningShown = "true";
-                return View("~/Views/CertificateAmmend/Date.cshtml", vm);
-            }
-
             var actionResult = await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/CertificateAmmend/Date.cshtml",
                 nextAction: RedirectToAction("Check", "CertificateAmmend", new { certificateid = vm.Id }), action: CertificateActions.Date);

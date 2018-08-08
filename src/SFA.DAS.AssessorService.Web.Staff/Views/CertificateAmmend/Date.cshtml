@@ -26,12 +26,12 @@
 
             @if (!ViewData.ModelState.IsValid)
             {
-                if (Model.WarningShown == "true")
+                @*if (Model.WarningShown == "true")
                 {
             <text>There is a warning!!</text>
                 }
                 else
-                {
+                {*@
             <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
                 <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
                     There's a problem
@@ -43,7 +43,7 @@
                     <li><a sfa-validation-for="Year"></a></li>
                 </ul>
             </div>
-                }
+                //}
             }
 
             <div sfa-anyvalidationerror-class="after-error-summary">
