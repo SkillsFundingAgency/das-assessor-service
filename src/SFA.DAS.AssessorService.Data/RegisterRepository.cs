@@ -10,71 +10,45 @@ using Newtonsoft.Json;
 using System.Linq;
 using System.Net.Mime;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
-using SFA.DAS.AssessorService.Data.Services;
 using SFA.DAS.AssessorService.Application.Exceptions;
 
 namespace SFA.DAS.AssessorService.Data
 {
     public class RegisterRepository : IRegisterRepository
     {
-        private readonly ISqlStringProcessingService _stringProcessingService;
 
         private readonly IWebConfiguration _configuration;
-        public RegisterRepository(IWebConfiguration configuration, ISqlStringProcessingService stringProcessingService)
+        public RegisterRepository(IWebConfiguration configuration)
         {
             _configuration = configuration;
-            _stringProcessingService = stringProcessingService;
-
             SqlMapper.AddTypeHandler(typeof(OrganisationData), new OrganisationDataHandler());
         }
 
-        public async Task<EpaOrganisation> CreateEpaOrganisation(EpaOrganisation organisation)
+        public async Task<EpaOrganisation> CreateEpaOrganisation(EpaOrganisation org)
         {
-
-            var connectionString = _configuration.SqlConnectionString;
-
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
-                var organisationData = new OrganisationData
-                {
-                    WebsiteLink = _stringProcessingService.MakeStringSuitableForJson(organisation.OrganisationData?.WebsiteLink),
-                    LegalName = _stringProcessingService.MakeStringSuitableForJson(organisation.OrganisationData?.LegalName),
-                    Address1 = _stringProcessingService.MakeStringSuitableForJson(organisation.OrganisationData?.Address1),
-                    Address2 = _stringProcessingService.MakeStringSuitableForJson(organisation.OrganisationData?.Address2),
-                    Address3 = _stringProcessingService.MakeStringSuitableForJson(organisation.OrganisationData?.Address3),
-                    Address4 = _stringProcessingService.MakeStringSuitableForJson(organisation.OrganisationData?.Address4),
-                    Postcode = _stringProcessingService.MakeStringSuitableForJson(organisation.OrganisationData?.Postcode)
-                };
 
-                var orgData = JsonConvert.SerializeObject(organisationData);
+                var organisationAlreadyExists = await GetEpaOrganisationByOrganisationId(org.OrganisationId);
+                if (organisationAlreadyExists != null)
+                    throw new AlreadyExistsException($@"There is already an entry for [{org.OrganisationId}]");
+             
+                var orgData = JsonConvert.SerializeObject(org.OrganisationData);
 
-                var id = _stringProcessingService.ConvertStringToSqlValueString(organisation.Id.ToString());
-                var ukprn = _stringProcessingService.ConvertLongToSqlValueString(organisation.Ukprn);
-                var name = _stringProcessingService.ConvertStringToSqlValueString(organisation.Name);
-                var organisationTypeId = _stringProcessingService.ConvertIntToSqlValueString(organisation.OrganisationTypeId);
-                var organisationId = _stringProcessingService.ConvertStringToSqlValueString(organisation.OrganisationId);
-                var sqlToInsert =
+                connection.Execute(
                     "INSERT INTO [Organisations] ([Id],[CreatedAt],[EndPointAssessorName],[EndPointAssessorOrganisationId], " +
                     "[EndPointAssessorUkprn],[Status],[OrganisationTypeId],[OrganisationData]) " +
-                    $@"VALUES ({id}, getdate(), {name}, {organisationId},{ukprn}, '{organisation.Status}', {organisationTypeId}, " +
-                    $@"'{orgData}')";
+                    $@"VALUES (@id, getdate(), @name, @organisationId, @ukprn, @status, @organisationTypeId,  @orgData)",
+                    new {org.Id, org.Name,org.OrganisationId, org.Ukprn,org.Status,org.OrganisationTypeId,orgData}
+                );
 
-                var organisationAlreadyExists = await GetEpaOrganisationByOrganisationId(organisation.OrganisationId);
-                if (organisationAlreadyExists != null)
-                    throw new AlreadyExistsException($@"There is already an entry for [{organisation.OrganisationId}]");
-
-                var res = connection.Execute(sqlToInsert);
-
-                if (res == 1)
-                    return await GetEpaOrganisationById(organisation.Id);
+                return await GetEpaOrganisationById(org.Id);
             }
-
-            return null;
         }
 
-        public async Task<EpaOrganisation> GetEpaOrganisationById(Guid epaOrganisationId)
+        public async Task<EpaOrganisation> GetEpaOrganisationById(Guid id)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
@@ -84,14 +58,14 @@ namespace SFA.DAS.AssessorService.Data
                     "select Id, CreatedAt, DeletedAt, EndPointAssessorName as Name,  EndPointAssessorOrganisationId as OrganisationId, EndPointAssessorUkprn as ukprn, " +
                     "primaryContact, Status, UpdatedAt, OrganisationTypeId, OrganisationData " +
                     " FROM [Organisations] " +
-                    $@"WHERE Id = '{epaOrganisationId}'";
+                    $@"WHERE Id = '{id}'";
                 var orgs = await connection.QueryAsync<EpaOrganisation>(sqlForMainDetails);
                 var org = orgs.FirstOrDefault();
                 return org;
             }
         }
 
-        public async Task<EpaOrganisation> GetEpaOrganisationByOrganisationId(int organisationId)
+        public async Task<EpaOrganisation> GetEpaOrganisationByOrganisationId(string organisationId)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {

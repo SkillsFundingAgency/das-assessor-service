@@ -36,6 +36,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpPost(Name = "CreateEpaOrganisation")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EpaOrganisation))]
+        [SwaggerResponse((int)HttpStatusCode.Conflict, Type = typeof(AlreadyExistsException))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> CreateOrganisation([FromBody] CreateEpaOrganisationRequest request)
@@ -46,9 +47,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
                 return Ok(result);
             }
+            
             catch (AlreadyExistsException ex)
             {
-                return BadRequest(ex);
+                return Conflict(ex.Message);
+            }
+            catch (BadRequestException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
             }
 
         }
