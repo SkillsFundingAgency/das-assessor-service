@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
             long uln = 1234;
             int standardCode = 1234;
 
-            CreateBatchCertificateRequest request = Builder<CreateBatchCertificateRequest>.CreateNew()
+            UpdateBatchCertificateRequest request = Builder<UpdateBatchCertificateRequest>.CreateNew()
                 .With(i => i.Uln = uln)
                 .With(i => i.StandardCode = standardCode)
                 .With(i => i.UkPrn = 10000000)
