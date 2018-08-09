@@ -3,22 +3,24 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Domain.JsonData;
+using SFA.DAS.AssessorService.Web.Staff.Controllers;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels;
 
-namespace SFA.DAS.AssessorService.Web.Staff.Tests
+namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers
 {
-    public class WhenUserLoadsAmmendsGradePage : ContractAmmendQueryBase
+    public class WhenUserLoadsAmmendGradePage : ContractAmmendQueryBase
     {     
         private IActionResult _result;
 
         [SetUp]
         public void Arrange()
-        {                              
-            _result = CertificateGradeController.Grade(Certificate.Id).GetAwaiter().GetResult();           
+        {
+            var certificateGradeController = new CertificateGradeController(MockedLogger.Object, MockHttpContextAccessor.Object, ApiClient);
+            _result = certificateGradeController.Grade(Certificate.Id).GetAwaiter().GetResult();           
         }
 
         [Test]
-        public void ThenShouldreturnValidViewModel()
+        public void ThenShouldReturnValidViewModel()
         {
             var result = _result as ViewResult;
             var model = result.Model as CertificateGradeViewModel;

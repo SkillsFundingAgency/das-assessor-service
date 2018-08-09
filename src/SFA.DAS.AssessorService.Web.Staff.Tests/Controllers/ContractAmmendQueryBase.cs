@@ -12,22 +12,26 @@ using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Web.Staff.Controllers;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 
-namespace SFA.DAS.AssessorService.Web.Staff.Tests
+namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers
 {
     public class ContractAmmendQueryBase
-    {
-        protected CertificateGradeController CertificateGradeController;        
+    {        
+        protected Mock<ILogger<CertificateAmmendController>> MockedLogger;
+        protected Mock<IHttpContextAccessor> MockHttpContextAccessor;
+        protected ApiClient ApiClient;
+
         protected Certificate Certificate;
+        protected CertificateData CertificateData;
 
         public ContractAmmendQueryBase()
         {
-           var mockedLogger = new Mock<ILogger<CertificateAmmendController>>();
-            var mockedApiClientLogger = new Mock<ILogger<ApiClient>>();
+           MockedLogger = new Mock<ILogger<CertificateAmmendController>>();
+           var mockedApiClientLogger = new Mock<ILogger<ApiClient>>();
 
-            var mockHttpContextAccessor = SetupMockedHttpContextAccessor();
-            var apiClient = SetupApiClient(mockedApiClientLogger);
-         
-            CertificateGradeController = new CertificateGradeController(mockedLogger.Object, mockHttpContextAccessor.Object, apiClient);
+            MockHttpContextAccessor = SetupMockedHttpContextAccessor();
+            ApiClient = SetupApiClient(mockedApiClientLogger);
+
+            CertificateData = JsonConvert.DeserializeObject<CertificateData>(Certificate.CertificateData);
         }        
 
         private static Mock<IHttpContextAccessor> SetupMockedHttpContextAccessor()
@@ -70,7 +74,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests
         {
             var certificateId = Guid.NewGuid();
             var certificate = new Builder().CreateNew<Certificate>()
-                .With(q => q.CertificateData = JsonConvert.SerializeObject(new Builder().CreateNew<CertificateData>().Build()))
+                .With(q => q.CertificateData = JsonConvert.SerializeObject(new Builder()
+                    .CreateNew<CertificateData>()
+                    .With(x => x.AchievementDate = DateTime.Now)
+                    .Build()))                
                 .Build();
 
             var organisaionId = Guid.NewGuid();
@@ -79,7 +86,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests
             var organisation = new Builder().CreateNew<Organisation>()
                 .Build();
 
-            certificate.Organisation = organisation;
+            certificate.Organisation = organisation;       
 
             return certificate;
         }
