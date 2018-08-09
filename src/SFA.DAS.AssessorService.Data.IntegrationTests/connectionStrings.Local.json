@@ -1,6 +1,0 @@
-{
-  "ConnectionStrings": {
-    "SqlConnectionString": "Data Source=(localdb)\\ProjectsV13;Initial Catalog=SFA.DAS.AssessorService.Database;Integrated Security=True;",
-    "SqlConnectionStringTest": "Data Source=(localdb)\\ProjectsV13;Initial Catalog=SFA.DAS.AssessorService.Database.Test;Integrated Security=True;"
-  }
-}
