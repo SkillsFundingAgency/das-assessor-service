@@ -16,7 +16,7 @@ using SFA.DAS.AssessorService.Domain.Consts;
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register.Command
 {
     [TestFixture]
-    public class CreateBewOrganisationHasInvalidDataTests
+    public class CreateNewOrganisationHasInvalidDataTests
     {
         private static RegisterController _controller;
         private static Mock<IMediator> _mediator;

@@ -31,10 +31,6 @@ namespace SFA.DAS.AssessorService.Data
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
-                var organisationAlreadyExists = await GetEpaOrganisationByOrganisationId(org.OrganisationId);
-                if (organisationAlreadyExists != null)
-                    throw new AlreadyExistsException($@"There is already an entry for [{org.OrganisationId}]");
-             
                 var orgData = JsonConvert.SerializeObject(org.OrganisationData);
 
                 connection.Execute(
@@ -48,6 +44,32 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
+        public async Task<bool> EpaOrganisationExistsWithOrganisationId(string organisationId)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+                var sqlToCheckExists =
+                    "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Organisations] " +
+                    $@"WHERE EndPointAssessorOrganisationId = '{organisationId}'";
+                return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists);
+            }
+        }
+
+        public async Task<bool> EpaOrganisationExistsWithUkprn(long ukprn)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+                var sqlToCheckExists =
+                    "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Organisations] " +
+                    $@"WHERE EndPointAssessorUkprn = {ukprn}";
+                return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists);
+            }
+        }
+      
         public async Task<EpaOrganisation> GetEpaOrganisationById(Guid id)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
