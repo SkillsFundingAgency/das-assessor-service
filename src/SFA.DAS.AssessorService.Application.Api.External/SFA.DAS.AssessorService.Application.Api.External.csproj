@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Messages\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 

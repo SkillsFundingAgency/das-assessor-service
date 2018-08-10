@@ -9,7 +9,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
             CreateMap<Messages.BatchCertificateRequest, AssessorService.Api.Types.Models.Certificates.Batch.BatchCertificateRequest>()
                 .Include<Messages.BatchCertificateRequest, AssessorService.Api.Types.Models.Certificates.Batch.CreateBatchCertificateRequest>()
                 .Include<Messages.BatchCertificateRequest, AssessorService.Api.Types.Models.Certificates.Batch.UpdateBatchCertificateRequest>()
-                .Include<Messages.BatchCertificateRequest, AssessorService.Api.Types.Models.Certificates.Batch.SubmitBatchCertificateRequest>()
 
                 .ForMember(x=> x.CertificateReference, opt => opt.MapFrom(source => source.CertificateData.CertificateReference))
                 .ForMember(x => x.CertificateData, opt => opt.MapFrom(source => Mapper.Map<Models.Certificates.CertificateData, Domain.JsonData.CertificateData>(source.CertificateData)))
@@ -22,7 +21,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
 
             CreateMap<Messages.BatchCertificateRequest, AssessorService.Api.Types.Models.Certificates.Batch.CreateBatchCertificateRequest>();
             CreateMap<Messages.BatchCertificateRequest, AssessorService.Api.Types.Models.Certificates.Batch.UpdateBatchCertificateRequest>();
-            CreateMap<Messages.BatchCertificateRequest, AssessorService.Api.Types.Models.Certificates.Batch.SubmitBatchCertificateRequest>();
         }
     }
 }

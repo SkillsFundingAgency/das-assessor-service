@@ -52,13 +52,13 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         }
 
         [HttpPost("submit")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<BatchCertificateResponse>))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<SubmitBatchCertificateResponse>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> SubmitCertificates([FromBody] IEnumerable<CertificateData> request)
+        public async Task<IActionResult> SubmitCertificates([FromBody] IEnumerable<SubmitCertificate> request)
         {
-            IEnumerable<BatchCertificateRequest> bcRequest = request.Select(req => new BatchCertificateRequest { UkPrn = _headerInfo.Ukprn, Username = _headerInfo.Username, CertificateData = req });
+            IEnumerable<SubmitBatchCertificateRequest> scRequest = request.Select(req => new SubmitBatchCertificateRequest { UkPrn = _headerInfo.Ukprn, Username = _headerInfo.Username, Uln = req.Uln, StandardCode = req.StandardCode, FamilyName = req.FamilyName });
 
-            var results = await _apiClient.SubmitCertificates(bcRequest);
+            var results = await _apiClient.SubmitCertificates(scRequest);
 
             return Ok(results);
         }
