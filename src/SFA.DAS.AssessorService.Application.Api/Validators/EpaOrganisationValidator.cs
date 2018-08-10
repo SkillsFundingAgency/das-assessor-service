@@ -9,22 +9,32 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
     public class EpaOrganisationValidator: IEpaOrganisationValidator
     {
         private readonly IRegisterRepository _registerRepository;
+
+        public string ErrorMessageNoOrganisationId { get; } = "There is no organisation Id; ";
+        public string ErrorMessageOrganisationIdTooLong { get; } = "The length of the organisation Id is too long; ";
+
+        public string ErrorMessageOrganisationNameEmpty { get; } = "There is no organisation name; ";
+
+        public string ErrorMessageOrganisationIdAlreadyUsed { get; } = "There is already an entry for this organisation Id; ";
+
+        public string ErrorMessageUkprnAlreadyUsed { get; } = "There is already an organisation with this ukrpn; ";
+
         public EpaOrganisationValidator( IRegisterRepository registerRepository)
         {
             _registerRepository = registerRepository;
         }
 
+        
         public string CheckOrganisationId(string organisationId)
-        {
-            
+        {           
             if (string.IsNullOrEmpty(organisationId) || organisationId.Trim().Length==0)
             {
-               return "There is no organisation Id; ";
+               return ErrorMessageNoOrganisationId;
             }
 
             if (organisationId.Trim().Length > 12)
             {
-                return  "The length of the organisation Id is too long; ";
+                return ErrorMessageOrganisationIdTooLong;
             }
 
             return string.Empty;
@@ -33,7 +43,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         public string CheckOrganisationName(string organisationName)
         {
             if (string.IsNullOrEmpty(organisationName) || organisationName.Trim().Length==0)
-                return "There is no organisation name; ";
+                return ErrorMessageOrganisationNameEmpty;
 
             return string.Empty;
         }
@@ -42,13 +52,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         {
             if (organisationId == null ||
                 !await _registerRepository.EpaOrganisationExistsWithOrganisationId(organisationId)) return string.Empty;
-            return $@"There is already an entry for [{organisationId}]; ";
+            return ErrorMessageOrganisationIdAlreadyUsed;
         }
 
         public async Task<string> CheckIfOrganisationUkprnExists(long? ukprn)
         {
             if (ukprn == null || !await _registerRepository.EpaOrganisationExistsWithUkprn(ukprn.Value)) return string.Empty;
-            return $@"There is already an organisation with ukprn: [{ukprn.Value}]; ";
+            return ErrorMessageUkprnAlreadyUsed;
         }
     }
 }
