@@ -10,6 +10,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Exceptions;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Domain.Paging;
 using CertificateStatus = SFA.DAS.AssessorService.Domain.Consts.CertificateStatus;
@@ -150,6 +151,24 @@ namespace SFA.DAS.AssessorService.Data
             await _context.SaveChangesAsync();
 
             return cert;
+        }
+
+        public async Task Delete(long uln, int standardCode, string username)
+        {
+            var cert = await GetCertificate(uln, standardCode);
+
+            if (cert == null) throw new NotFound();
+
+            // If already deleted ignore
+            if (cert.Status == ContactStatus.Deleted)
+                return;
+
+            cert.Status = CertificateStatus.Deleted;
+            cert.DeletedBy = username;
+            cert.DeletedAt = DateTime.UtcNow;
+
+            _context.MarkAsModified(cert);
+            await _context.SaveChangesAsync();
         }
 
         public Task<Certificate> UpdateProviderName(Guid id, string providerName)

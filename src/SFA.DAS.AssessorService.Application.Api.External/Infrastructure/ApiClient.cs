@@ -15,6 +15,7 @@ using SFA.DAS.AssessorService.Domain.Entities;
 using SearchQuery = SFA.DAS.AssessorService.Application.Api.External.Models.Search.SearchQuery;
 using SearchResult = SFA.DAS.AssessorService.Application.Api.External.Models.Search.SearchResult;
 using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 {
@@ -69,6 +70,16 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             }
         }
 
+        protected async Task<T> Delete<T>(string uri)
+        {
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+
+            using (var response = await _client.DeleteAsync(new Uri(uri, UriKind.Relative)))
+            {
+                return await response.Content.ReadAsAsync<T>();
+            }
+        }
+
         public async Task<List<SearchResult>> Search(SearchQuery searchQuery, int? stdCodeFilter = null)
         {
             List<SearchResult> results = await Post<SearchQuery, List<SearchResult>>("/api/v1/search", searchQuery);
@@ -100,6 +111,13 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             var apiResponse = await Post<IEnumerable<AssessorService.Api.Types.Models.Certificates.Batch.SubmitBatchCertificateRequest>, IEnumerable<AssessorService.Api.Types.Models.Certificates.Batch.SubmitBatchCertificateResponse>>("/api/v1/certificates/batch", apiRequest);
 
             return Mapper.Map<IEnumerable<AssessorService.Api.Types.Models.Certificates.Batch.SubmitBatchCertificateResponse>, IEnumerable<SubmitBatchCertificateResponse>>(apiResponse);
+        }
+
+        public async Task<IActionResult> DeleteCertificate(DeleteCertificateRequest request)
+        {
+            var apiResponse = await Delete<IActionResult>($"/api/v1/certificates/batch/{request.Uln}/{request.Lastname}/{request.StandardCode}/{request.UkPrn}/{request.Username}");
+
+            return apiResponse;
         }
     }
 }
