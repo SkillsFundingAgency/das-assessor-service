@@ -23,8 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         private readonly ILogger<RegisterController> _logger;
         private readonly IMediator _mediator;
 
-        public RegisterController(IMediator mediator, ILogger<RegisterController> logger
-        )
+        public RegisterController(IMediator mediator, ILogger<RegisterController> logger)
         {
             _mediator = mediator;
             _logger = logger;

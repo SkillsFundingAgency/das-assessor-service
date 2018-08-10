@@ -36,7 +36,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
 
             _requestNoIssues = BuildRequest("name 1",_organisationId,123321);
             _expectedOrganisationNoIssues = BuildOrganisation(_requestNoIssues);
-
      
             _registerRepository.Setup(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()))
                 .Returns(Task.FromResult(_expectedOrganisationNoIssues));
@@ -46,8 +45,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             _validator.Setup(v => v.CheckIfOrganisationIdExists(_requestNoIssues.OrganisationId)).Returns(Task.FromResult(string.Empty));
             _validator.Setup(v => v.CheckIfOrganisationUkprnExists(_requestNoIssues.Ukprn)).Returns(Task.FromResult(string.Empty));
 
-
-      
             _createEpaOrganisationHandler = new CreateEpaOrganisationHandler(_registerRepository.Object, _validator.Object,_logger.Object);
           }
 
@@ -75,7 +72,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             _returnedOrganisation.Should().BeEquivalentTo(_expectedOrganisationNoIssues);
         }
 
-
         [Test]
         public void GetBadRequestExceptionWhenNoNameValidationOccurs()
         {
@@ -87,7 +83,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             _registerRepository.Verify(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()),Times.Never);
             _validator.Verify(v => v.CheckOrganisationName(requestNoName.Name));
         }
-
 
         [Test]
         public void GetBadRequestExceptionWhenNoOrganisationIdValidationOccurs()

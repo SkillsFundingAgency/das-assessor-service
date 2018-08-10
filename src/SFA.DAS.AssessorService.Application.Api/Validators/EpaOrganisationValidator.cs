@@ -12,18 +12,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
 
         public string ErrorMessageNoOrganisationId { get; } = "There is no organisation Id; ";
         public string ErrorMessageOrganisationIdTooLong { get; } = "The length of the organisation Id is too long; ";
-
         public string ErrorMessageOrganisationNameEmpty { get; } = "There is no organisation name; ";
-
         public string ErrorMessageOrganisationIdAlreadyUsed { get; } = "There is already an entry for this organisation Id; ";
-
         public string ErrorMessageUkprnAlreadyUsed { get; } = "There is already an organisation with this ukrpn; ";
 
         public EpaOrganisationValidator( IRegisterRepository registerRepository)
         {
             _registerRepository = registerRepository;
         }
-
         
         public string CheckOrganisationId(string organisationId)
         {           
