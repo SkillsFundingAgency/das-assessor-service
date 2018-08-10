@@ -70,6 +70,19 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
             }
         }
 
+        public object ExecuteScalar(string sql)
+        {
+            using (var connection = new SqlConnection(Configuration.GetConnectionString("SqlConnectionStringTest")))
+            {
+                if (connection.State != ConnectionState.Open)
+                    connection.Open();
+                var res = connection.ExecuteScalar(sql);
+                connection.Close();
+
+                return res;
+            }
+        }
+
         public void Execute(string sql, TestModel model)
         {
             using (var connection = new SqlConnection(Configuration.GetConnectionString("SqlConnectionStringTest")))

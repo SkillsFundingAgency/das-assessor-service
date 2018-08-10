@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Text;
+using System.Threading.Tasks;
+using Dapper;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
 
@@ -28,10 +32,25 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
             }
         }
 
+        public static bool EpaOrganisationExistsWithOrganisationId(string organisationId)
+        {
+            var sqlToCheckExists =
+                    "select CONVERT(BIT,CASE count(0) WHEN 0 THEN 0 else 1 end) FROM [Organisations] " +
+                    $@"WHERE EndPointAssessorOrganisationId = '{organisationId}'";
+            return (bool) DatabaseService.ExecuteScalar(sqlToCheckExists);
+        }
+
         public static void DeleteRecord(Guid id)
         {
             var idToDelete = SqlStringService.ConvertStringToSqlValueString(id.ToString());
             var sql = $@"DELETE from Organisations where id = {idToDelete}";
+            DatabaseService.Execute(sql);
+        }
+
+        public static void DeleteRecordByOrganisationId(string organisationId)
+        {
+            var idToDelete = SqlStringService.ConvertStringToSqlValueString(organisationId);
+            var sql = $@"DELETE from Organisations where [EndPointAssessorOrganisationId] = {idToDelete}";
             DatabaseService.Execute(sql);
         }
 
