@@ -34,9 +34,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             certificate.Status = CertificateStatus.Submitted;
 
             _logger.LogInformation("SubmitCertificate Before Update Cert in db");
-            await _certificateRepository.Update(certificate, request.Username, CertificateActions.Submit);
-
-            return certificate;
+            return await _certificateRepository.Update(certificate, request.Username, CertificateActions.Submit);
         }
     }
 }

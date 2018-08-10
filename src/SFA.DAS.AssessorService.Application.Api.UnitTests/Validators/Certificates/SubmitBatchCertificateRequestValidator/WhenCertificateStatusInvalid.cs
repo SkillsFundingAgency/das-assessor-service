@@ -6,7 +6,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Certificates.Batch;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certificates.SubmitBatchCertificateRequestValidator
 {
-    public class WhenCertificateNotFound : SubmitBatchCertificateRequestValidatorTestBase
+    public class WhenCertificateStatusInvalid : SubmitBatchCertificateRequestValidatorTestBase
     {
         private ValidationResult _validationResult;
 
@@ -16,7 +16,11 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
             Setup();
 
             long uln = 12345;
-            int standardCode = 543210;
+            int standardCode = 54321;
+            string certificateReference = "submit-status-invalid-test";
+            string status = "Printed";
+
+            AddMockCertificate(uln, standardCode, certificateReference, status);
 
             SubmitBatchCertificateRequest request = Builder<SubmitBatchCertificateRequest>.CreateNew()
                 .With(i => i.Uln = uln)
@@ -33,4 +37,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
             _validationResult.IsValid.Should().BeFalse();
         }
     }
+
+
 }
