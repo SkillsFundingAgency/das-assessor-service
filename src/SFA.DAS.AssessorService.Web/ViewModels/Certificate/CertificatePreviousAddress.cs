@@ -3,7 +3,8 @@
 namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 {
     public class CertificatePreviousAddressViewModel
-    {       
+    {
+        public string ContactOrganisation { get; set; }
         public string AddressLine1 { get; }
         public string AddressLine2 { get; }
         public string AddressLine3 { get; }
@@ -16,6 +17,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 
         public CertificatePreviousAddressViewModel(Domain.Entities.CertificateAddress certificateAddress)
         {
+            ContactOrganisation = certificateAddress.ContactOrganisation;
             AddressLine1 = certificateAddress.AddressLine1;
             AddressLine2 = certificateAddress.AddressLine2;
             AddressLine3 = certificateAddress.AddressLine3;
@@ -30,9 +32,14 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         private string StringifyAddress()
         {
             var result = string.Empty;
+            if (!string.IsNullOrEmpty(this.ContactOrganisation))
+            {
+                result += (this.ContactOrganisation);
+            }
+
             if (!string.IsNullOrEmpty(this.AddressLine1))
             {
-                result += (this.AddressLine1);
+                result += $", {this.AddressLine1}";
             }
 
             if (!string.IsNullOrEmpty(this.AddressLine2))
