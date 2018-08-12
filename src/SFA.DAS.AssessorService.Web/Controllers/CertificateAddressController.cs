@@ -35,34 +35,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
             var certificateAddressViewModel = await LoadViewModel<CertificateAddressViewModel>("~/Views/Certificate/Address.cshtml");
-            if (AddressAlreadyInitialised(certificateAddressViewModel) && (edit ?? false) == false)
-                return RedirectToAction("AddressSummary", "CertificateAddressSummary");
+            //if (AddressAlreadyInitialised(certificateAddressViewModel) && (edit ?? false) == false)
+            //    return RedirectToAction("AddressSummary", "CertificateAddressSummary");
 
-            certificateAddressViewModel = await InitialisePreviousAddresssForView(resetMode: reset ?? false,
-                editMode: edit ?? false,
+            certificateAddressViewModel = await InitialisePreviousAddresssForView(
                 certificateAddressViewModel: certificateAddressViewModel, username: username);
 
             return certificateAddressViewModel;
         }       
-
-        [HttpGet("resetaddress", Name = "ResetAddress")]
-        public async Task<IActionResult> ResetAddress(bool? redirectToCheck = false,
-            bool edit = false,
-            bool reset = false)
-        {
-            var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
-
-            var viewModel = await LoadViewModel<CertificateAddressViewModel>("~/Views/Certificate/Address.cshtml");
-            var viewResult = viewModel as ViewResult;
-            var certificateAddress = viewResult.Model as CertificateAddressViewModel;
-
-            certificateAddress.EmptyAddressDetails();
-
-            var certificateAddressViewModel = View("~/Views/Certificate/Address.cshtml", certificateAddress);
-            certificateAddressViewModel = await InitialisePreviousAddresssForView(resetMode: reset, editMode: edit, certificateAddressViewModel: certificateAddressViewModel, username: username);
-
-            return certificateAddressViewModel;
-        }
 
         [HttpPost(Name = "Address")]
         public async Task<IActionResult> Address(CertificateAddressViewModel vm)
@@ -82,20 +62,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
 
             return await SaveViewModel(vm,
-                returnToIfModelNotValid: "~/Views/Certificate/Address.cshtml",
-                nextAction: RedirectToAction("AddressSummary", "CertificateAddressSummary"), action: CertificateActions.Address);
+                returnToIfModelNotValid: "~/Views/Certificate/Recipient.cshtml",
+                nextAction: RedirectToAction("Recipient", "CertificateRecipient"), action: CertificateActions.Address);
         }
 
-        private async Task<ViewResult> InitialisePreviousAddresssForView(bool resetMode,
-            bool editMode,
+        private async Task<ViewResult> InitialisePreviousAddresssForView(
             IActionResult certificateAddressViewModel,
             string username)
         {
             var viewResult = certificateAddressViewModel as ViewResult;
             var certificateAddress = viewResult.Model as CertificateAddressViewModel;
-
-            certificateAddress.EditForm = editMode;
-            certificateAddress.ResetForm = resetMode;
 
             await InitialisePreviousAddresses(username, certificateAddress);
 
@@ -126,15 +102,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 certificateAddress.PreviousAddress =
                     new CertificatePreviousAddressViewModel(certificatePreviousAddress);
             }
-        }
-
-        private bool AddressAlreadyInitialised(IActionResult certificateAddressViewModel)
-        {
-            var viewResult = certificateAddressViewModel as ViewResult;
-            var certificateAddress = viewResult.Model as CertificateAddressViewModel;
-
-            return !string.IsNullOrEmpty(certificateAddress.AddressLine1) 
-                   && !string.IsNullOrEmpty(certificateAddress.Postcode);
-        }
+        }     
     }
 }

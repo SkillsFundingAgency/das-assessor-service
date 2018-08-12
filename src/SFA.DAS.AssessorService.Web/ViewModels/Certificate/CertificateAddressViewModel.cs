@@ -19,10 +19,8 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 
         public bool SelectPreviousAddress { get; set; }
 
-        public bool ValidateEmployee { get; set; }
-
-        public bool EditForm { get; set; } = false;
-        public bool ResetForm { get; set; } = false;
+        //public bool EditForm { get; set; } = false;
+        //public bool ResetForm { get; set; } = false;
 
         public CertificatePreviousAddressViewModel PreviousAddress { get; set; }
 
@@ -54,8 +52,6 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         public Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData data)
         {
             data.ContactOrganisation = Employer;
-            data.ContactName = Name;
-            data.Department = Dept;
 
             data.ContactAddLine1 = AddressLine1;
             data.ContactAddLine2 = AddressLine2;
@@ -71,9 +67,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         public CertificateAddressViewModel CopyFromCertificateAddress(CertificateAddress certificatePreviousAddress)
         {
             this.Employer = certificatePreviousAddress.ContactOrganisation;
-            this.Name = certificatePreviousAddress.ContactName;
-            this.Dept = certificatePreviousAddress.Department;
-
+           
             this.AddressLine1 = certificatePreviousAddress.AddressLine1;
             this.AddressLine2 = certificatePreviousAddress.AddressLine2;
             this.AddressLine3 = certificatePreviousAddress.AddressLine3;
