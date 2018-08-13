@@ -10,6 +10,17 @@ CREATE TABLE [OrganisationStandardDeliveryArea]
 GO
 
 
+ALTER TABLE [OrganisationStandardDeliveryArea]
+ADD CONSTRAINT FK_DeliveryAreaIdStandardDeliveryArea
+FOREIGN KEY (DeliveryAreaId) REFERENCES [DeliveryArea] (Id);
+GO
+
+ALTER TABLE [OrganisationStandardDeliveryArea]
+ADD CONSTRAINT FK_OrganisationStandardId
+FOREIGN KEY ([OrganisationStandardId]) REFERENCES [OrganisationStandard] ([Id]);
+
+GO
+
 CREATE UNIQUE INDEX IX_standardDeliveryAreaCoveredIndex
    ON [OrganisationStandardDeliveryArea] ([OrganisationStandardId], [DeliveryAreaId]);
 

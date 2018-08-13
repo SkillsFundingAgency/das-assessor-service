@@ -17,6 +17,10 @@ CREATE INDEX IX_standardOrgIdStandardCode
 
 GO
 
+ALTER TABLE [OrganisationStandard]
+ADD CONSTRAINT FK_OrganisationIdentifierStandard
+FOREIGN KEY (EndPointAssessorOrganisationId) REFERENCES [Organisations] ([EndPointAssessorOrganisationId]);
+GO
 
 CREATE UNIQUE NONCLUSTERED INDEX IX_standardOrgIdStandardCodeEffectiveFrom
    ON [OrganisationStandard] (EndPointAssessorOrganisationId, StandardCode, EffectiveFrom);   
