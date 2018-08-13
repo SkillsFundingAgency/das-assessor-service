@@ -11,5 +11,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<EpaOrganisation> GetEpaOrganisationByOrganisationId(string organisationId);
         Task<bool> EpaOrganisationExistsWithOrganisationId(string organisationId);
         Task<bool> EpaOrganisationExistsWithUkprn(long ukprn);
+
+        Task<bool> OrganisationTypeExists(int organisationTypeId);
     }
 }

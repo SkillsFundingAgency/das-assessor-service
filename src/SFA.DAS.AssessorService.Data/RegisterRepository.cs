@@ -69,7 +69,20 @@ namespace SFA.DAS.AssessorService.Data
                 return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists);
             }
         }
-      
+
+        public async Task<bool> OrganisationTypeExists(int organisationTypeId)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+                var sqlToCheckExists =
+                    "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [OrganisationType] " +
+                    $@"WHERE Id = {organisationTypeId}";
+                return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists);
+            }
+        }
+
         public async Task<EpaOrganisation> GetEpaOrganisationById(Guid id)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))

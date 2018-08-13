@@ -16,6 +16,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         public string ErrorMessageOrganisationIdAlreadyUsed { get; } = "There is already an entry for this organisation Id; ";
         public string ErrorMessageUkprnAlreadyUsed { get; } = "There is already an organisation with this ukrpn; ";
 
+        public string ErrorMessageOrganisationTypeIsInvalid { get; } = "There is no organisation type with this Id; ";
+
         public EpaOrganisationValidator( IRegisterRepository registerRepository)
         {
             _registerRepository = registerRepository;
@@ -44,17 +46,24 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             return string.Empty;
         }
 
-        public async Task<string> CheckIfOrganisationIdExists(string organisationId)
+        public string CheckIfOrganisationIdExists(string organisationId)
         {
             if (organisationId == null ||
-                !await _registerRepository.EpaOrganisationExistsWithOrganisationId(organisationId)) return string.Empty;
+                !_registerRepository.EpaOrganisationExistsWithOrganisationId(organisationId).Result) return string.Empty;
             return ErrorMessageOrganisationIdAlreadyUsed;
         }
 
-        public async Task<string> CheckIfOrganisationUkprnExists(long? ukprn)
+        public string CheckIfOrganisationUkprnExists(long? ukprn)
         {
-            if (ukprn == null || !await _registerRepository.EpaOrganisationExistsWithUkprn(ukprn.Value)) return string.Empty;
+            if (ukprn == null || !_registerRepository.EpaOrganisationExistsWithUkprn(ukprn.Value).Result) return string.Empty;
             return ErrorMessageUkprnAlreadyUsed;
+        }
+
+        public string CheckOrganisationTypeIsNullOrExists(int? organisationTypeId)
+        {
+            if (organisationTypeId == null|| _registerRepository.OrganisationTypeExists(organisationTypeId.Value).Result) return string.Empty;
+
+            return ErrorMessageOrganisationTypeIsInvalid;
         }
     }
 }

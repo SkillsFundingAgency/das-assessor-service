@@ -32,14 +32,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             
             errorDetails.Append(_validator.CheckOrganisationId(request.OrganisationId));
             errorDetails.Append(_validator.CheckOrganisationName(request.Name));
+            errorDetails.Append(_validator.CheckOrganisationTypeIsNullOrExists(request.OrganisationTypeId));
             if (errorDetails.Length > 0)
             {
                 _logger.LogError(errorDetails.ToString());
                 throw new BadRequestException(errorDetails.ToString());
             }
 
-            errorDetails.Append(await _validator.CheckIfOrganisationIdExists(request.OrganisationId));
-            errorDetails.Append(await _validator.CheckIfOrganisationUkprnExists(request.Ukprn));
+            errorDetails.Append(_validator.CheckIfOrganisationIdExists(request.OrganisationId));
+            errorDetails.Append(_validator.CheckIfOrganisationUkprnExists(request.Ukprn));
             if (errorDetails.Length > 0)
             {
                 _logger.LogError(errorDetails.ToString());
