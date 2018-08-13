@@ -46,7 +46,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         {
             _registerRepository.Setup(r => r.EpaOrganisationExistsWithOrganisationId(It.IsAny<string>()))
                 .Returns(Task.FromResult(alreadyPresent));
-            var noMessageReturned = _validator.CheckIfOrganisationIdExists("id here").Result.Length>0;
+            var noMessageReturned = _validator.CheckIfOrganisationIdExists("id here").Length>0;
             Assert.AreEqual(noMessageReturned, alreadyPresent);
         }
 
@@ -55,7 +55,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         {
             _registerRepository.Setup(r => r.EpaOrganisationExistsWithOrganisationId(It.IsAny<string>()))
                 .Returns(Task.FromResult(false));
-            var noMessageReturned = _validator.CheckIfOrganisationIdExists(null).Result.Length > 0;
+            var noMessageReturned = _validator.CheckIfOrganisationIdExists(null).Length > 0;
             Assert.AreEqual(noMessageReturned, false);
             _registerRepository.Verify(r => r.EpaOrganisationExistsWithOrganisationId(It.IsAny<string>()), Times.Never);
         }
@@ -66,8 +66,18 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         {
             _registerRepository.Setup(r => r.EpaOrganisationExistsWithUkprn(It.IsAny<long>()))
                 .Returns(Task.FromResult(alreadyPresent));
-            var noMessageReturned = _validator.CheckIfOrganisationUkprnExists(1234).Result.Length > 0;
-            Assert.AreEqual(noMessageReturned, alreadyPresent);
+            var messageReturned = _validator.CheckIfOrganisationUkprnExists(1234).Length > 0;
+            Assert.AreEqual(messageReturned, alreadyPresent);
+        }
+
+        [TestCase(true, false)]
+        [TestCase(false, true)]
+        public void CheckIfObjectTypeInvalidReturnsExpectedMessage(bool exists, bool messageShown)
+        {
+            _registerRepository.Setup(r => r.OrganisationTypeExists(It.IsAny<int>()))
+                .Returns(Task.FromResult(exists));
+            var noMessageReturned = _validator.CheckOrganisationTypeIsNullOrExists(1234).Length == 0;
+            Assert.AreEqual(noMessageReturned, exists);
         }
 
         [Test]
@@ -75,8 +85,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         {
             _registerRepository.Setup(r => r.EpaOrganisationExistsWithUkprn(It.IsAny<long>()))
                 .Returns(Task.FromResult(false));
-            var noMessageReturned = _validator.CheckIfOrganisationUkprnExists(null).Result.Length > 0;
-            Assert.AreEqual(noMessageReturned, false);
+            var messageReturned = _validator.CheckIfOrganisationUkprnExists(null).Length > 0;
+            Assert.AreEqual(messageReturned, false);
             _registerRepository.Verify(r => r.EpaOrganisationExistsWithUkprn(It.IsAny<long>()), Times.Never);
         }
     }

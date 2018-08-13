@@ -42,8 +42,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
 
             _validator.Setup(v => v.CheckOrganisationId(_requestNoIssues.OrganisationId)).Returns(string.Empty);
             _validator.Setup(v => v.CheckOrganisationName(_requestNoIssues.Name)).Returns(string.Empty);
-            _validator.Setup(v => v.CheckIfOrganisationIdExists(_requestNoIssues.OrganisationId)).Returns(Task.FromResult(string.Empty));
-            _validator.Setup(v => v.CheckIfOrganisationUkprnExists(_requestNoIssues.Ukprn)).Returns(Task.FromResult(string.Empty));
+            _validator.Setup(v => v.CheckIfOrganisationIdExists(_requestNoIssues.OrganisationId)).Returns(string.Empty);
+            _validator.Setup(v => v.CheckIfOrganisationUkprnExists(_requestNoIssues.Ukprn)).Returns(string.Empty);
+            _validator.Setup(v => v.CheckOrganisationTypeIsNullOrExists(_requestNoIssues.OrganisationTypeId)).Returns(string.Empty);
+
 
             _createEpaOrganisationHandler = new CreateEpaOrganisationHandler(_registerRepository.Object, _validator.Object,_logger.Object);
           }
@@ -63,6 +65,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             _validator.Verify(v => v.CheckOrganisationName(_requestNoIssues.Name));
             _validator.Verify(v => v.CheckIfOrganisationIdExists(_requestNoIssues.OrganisationId));
             _validator.Verify(v => v.CheckIfOrganisationUkprnExists(_requestNoIssues.Ukprn));
+            _validator.Verify(v => v.CheckOrganisationTypeIsNullOrExists(_requestNoIssues.OrganisationTypeId));
         }
 
         [Test]
@@ -113,7 +116,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
         {
             const string errorMessage = "id already exists";
             var requestNoOrgId = BuildRequest("name", "EPA888", 123321);
-            _validator.Setup(v => v.CheckIfOrganisationIdExists(requestNoOrgId.OrganisationId)).Returns(Task.FromResult(errorMessage));
+            _validator.Setup(v => v.CheckIfOrganisationIdExists(requestNoOrgId.OrganisationId)).Returns(errorMessage);
             var ex = Assert.ThrowsAsync<AlreadyExistsException>(() => _createEpaOrganisationHandler.Handle(requestNoOrgId, new CancellationToken()));
             Assert.AreEqual(errorMessage, ex.Message);
             _registerRepository.Verify(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Never);
@@ -125,11 +128,24 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
         {
             const string errorMessage = "ukprn already exists";
             var requestNoUkprn = BuildRequest("name", "EPA888", 123321);
-            _validator.Setup(v => v.CheckIfOrganisationUkprnExists(requestNoUkprn.Ukprn)).Returns(Task.FromResult(errorMessage));
+            _validator.Setup(v => v.CheckIfOrganisationUkprnExists(requestNoUkprn.Ukprn)).Returns(errorMessage);
             var ex = Assert.ThrowsAsync<AlreadyExistsException>(() => _createEpaOrganisationHandler.Handle(requestNoUkprn, new CancellationToken()));
             Assert.AreEqual(errorMessage, ex.Message);
             _registerRepository.Verify(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Never);
             _validator.Verify(v => v.CheckIfOrganisationUkprnExists(requestNoUkprn.Ukprn));
+        }
+
+
+        [Test]
+        public void GetBadRequestExceptionWheOrganisationTypeIdValidationOccurs()
+        {
+            const string errorMessage = "organisation type is invalid";
+            var requestUnknownOrganisationTypeId = BuildRequest("name", "EPA888", 123321);
+            _validator.Setup(v => v.CheckOrganisationTypeIsNullOrExists(requestUnknownOrganisationTypeId.OrganisationTypeId)).Returns(errorMessage);
+            var ex = Assert.ThrowsAsync<BadRequestException>(() => _createEpaOrganisationHandler.Handle(requestUnknownOrganisationTypeId, new CancellationToken()));
+            Assert.AreEqual(errorMessage, ex.Message);
+            _registerRepository.Verify(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Never);
+            _validator.Verify(v => v.CheckOrganisationTypeIsNullOrExists(requestUnknownOrganisationTypeId.OrganisationTypeId));
         }
         private CreateEpaOrganisationRequest BuildRequest(string name, string organisationId, long? ukprn)
         {
