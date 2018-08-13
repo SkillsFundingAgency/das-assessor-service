@@ -9,17 +9,6 @@ CREATE TABLE [OrganisationStandardDeliveryArea]
 	) ON [PRIMARY] 
 GO
 
-ALTER TABLE [OrganisationStandardDeliveryArea]
-ADD CONSTRAINT FK_DeliveryAreaIdStandardDeliveryArea
-FOREIGN KEY (DeliveryAreaId) REFERENCES [DeliveryArea] (Id);
-GO
-
-ALTER TABLE [OrganisationStandardDeliveryArea]
-ADD Constraint FK_OrganisationStandardId
-FOREIGN KEY ([OrganisationStandardId]) REFERENCES [OrganisationStandard] ([Id])
-ON DELETE CASCADE;
-
-GO
 
 CREATE UNIQUE INDEX IX_standardDeliveryAreaCoveredIndex
    ON [OrganisationStandardDeliveryArea] ([OrganisationStandardId], [DeliveryAreaId]);

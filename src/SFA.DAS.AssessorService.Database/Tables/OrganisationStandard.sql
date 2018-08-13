@@ -12,14 +12,6 @@
 
 GO
 
-
-ALTER TABLE [OrganisationStandard]
-ADD CONSTRAINT FK_OrganisationIdentifierStandard
-FOREIGN KEY (EndPointAssessorOrganisationId) REFERENCES [Organisations] ([EndPointAssessorOrganisationId])
-ON DELETE CASCADE;
-
-GO
-
 CREATE INDEX IX_standardOrgIdStandardCode
    ON [OrganisationStandard] (EndPointAssessorOrganisationId, StandardCode);
 
