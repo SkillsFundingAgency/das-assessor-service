@@ -141,6 +141,9 @@
   <data name="Grade" xml:space="preserve">
     <value>Grade</value>
   </data>
+  <data name="Level" xml:space="preserve">
+    <value>Level</value>
+  </data>
   <data name="Next" xml:space="preserve">
     <value>Next</value>
   </data>
