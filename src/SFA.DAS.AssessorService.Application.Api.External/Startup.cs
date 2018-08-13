@@ -1,12 +1,11 @@
-﻿using System;
-using System.IO;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.External.Infrastructure;
 using SFA.DAS.AssessorService.Application.Api.External.Middleware;
@@ -14,6 +13,10 @@ using SFA.DAS.AssessorService.Application.Api.External.StartupConfiguration;
 using SFA.DAS.AssessorService.Settings;
 using StructureMap;
 using Swashbuckle.AspNetCore.Swagger;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 
 namespace SFA.DAS.AssessorService.Application.Api.External
 {
@@ -51,18 +54,33 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                 {
                     c.SwaggerDoc("v1", new Info { Title = "SFA.DAS.AssessorService.Application.Api.External", Version = "v1" });
 
-                    //if (_env.IsDevelopment())
-                    //{
-                    //    var basePath = AppContext.BaseDirectory;
-                    //    var xmlPath = Path.Combine(basePath, "SFA.DAS.AssessorService.Application.Api.External.xml");
-                    //    c.IncludeXmlComments(xmlPath);
-                    //}
+                    if (_env.IsDevelopment())
+                    {
+                        var basePath = AppContext.BaseDirectory;
+                        var xmlPath = Path.Combine(basePath, "SFA.DAS.AssessorService.Application.Api.External.xml");
+                        c.IncludeXmlComments(xmlPath);
+                    }
                 });
 
                 services.AddScoped<IHeaderInfo, HeaderInfo>();
                 services.AddHttpContextAccessor();
 
-                services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+                services.AddMvc()
+                    .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                    .AddJsonOptions(options =>
+                    {
+                        options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                    });
+
+                services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
+
+                services.Configure<RequestLocalizationOptions>(
+                    options =>
+                    {
+                        options.DefaultRequestCulture = new RequestCulture("en-GB");
+                        options.SupportedCultures = new List<CultureInfo> { new CultureInfo("en-GB") };
+                        options.RequestCultureProviders.Clear();
+                    });
 
                 return ConfigureIoC(services);
             }

@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
             RuleFor(m => m)
                 .Custom((m, context) =>
                 {
-                    var existingCertificate = certificateRepository.GetCertificate(m.Uln, m.StandardCode).Result; // TODO: is this the correct method to use?? .GetCertificate(m.CertificateReference, m.FamilyName, null)
+                    var existingCertificate = certificateRepository.GetCertificate(m.Uln, m.StandardCode).Result;
 
                     if (existingCertificate == null || !string.Equals(existingCertificate.CertificateReference, m.CertificateReference))
                     {
