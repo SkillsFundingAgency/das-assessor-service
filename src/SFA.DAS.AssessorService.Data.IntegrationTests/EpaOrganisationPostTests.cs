@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
+using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
 using SFA.DAS.AssessorService.Domain.Consts;
 
@@ -15,6 +16,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         private string _organisationIdCreated;
         private int _ukprnCreated;
         private EpaOrganisation _organisation;
+        private int _organisationTypeId;
 
         [OneTimeSetUp]
         public void SetUpOrganisationTests()
@@ -22,7 +24,10 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
            _repository = new RegisterRepository(_databaseService.WebConfiguration);
             _organisationIdCreated = "EPA987";
             _ukprnCreated = 123321;
+            _organisationTypeId = 5;
+            OrganisationTypeHandler.InsertRecord(new OrganisationTypeModel {Id = _organisationTypeId, Status = "new", Type = "organisation type 1"});
 
+        
             _organisation = new EpaOrganisation
             {
                 Id = Guid.NewGuid(),
@@ -32,7 +37,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 Ukprn = _ukprnCreated,
                 PrimaryContact = null,
                 Status = OrganisationStatus.New,
-                OrganisationTypeId = 5,
+                OrganisationTypeId = _organisationTypeId,
                 OrganisationData = new OrganisationData
                 {
                     LegalName = " legal name",
@@ -63,7 +68,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             Assert.AreEqual(_organisation.Ukprn, returnedOrganisation.Ukprn);
             Assert.IsTrue(isOrgByOrgIdPresentAfterInsert);
 
-             Assert.IsTrue(isOrgByUkprnPresentAfterInsert);
+            Assert.IsTrue(isOrgByUkprnPresentAfterInsert);
             Assert.AreEqual(_ukprnCreated, returnedOrganisationByGetById.Ukprn);
             Assert.AreEqual(_ukprnCreated, returnedOrganisationByGetByOrganisationId.Ukprn);
         }
@@ -74,6 +79,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         public void TearDownOrganisationTests()
         {
             OrganisationHandler.DeleteRecordByOrganisationId(_organisationIdCreated);
+            OrganisationTypeHandler.DeleteRecord(_organisationTypeId);
         }
     }
 }
