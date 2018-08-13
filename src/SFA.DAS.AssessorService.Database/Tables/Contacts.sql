@@ -21,10 +21,9 @@
 ) ON [PRIMARY]
 GO
 
-ALTER TABLE [dbo].[Contacts] ADD CONSTRAINT [FK_Contacts_Organisations_OrganisationId] FOREIGN KEY([OrganisationId])
-REFERENCES [dbo].[Organisations] ([Id])
-ON DELETE CASCADE
-GO
 
-ALTER TABLE [dbo].[Contacts] CHECK CONSTRAINT [FK_Contacts_Organisations_OrganisationId]
+ALTER TABLE [dbo].[Contacts] ADD CONSTRAINT [FK_Contacts_Organisations_OrganisationId] FOREIGN KEY([OrganisationId])
+REFERENCES [dbo].[Organisations] ([Id]);
+GO
+ ALTER TABLE [dbo].[Contacts] CHECK CONSTRAINT [FK_Contacts_Organisations_OrganisationId];
 GO
