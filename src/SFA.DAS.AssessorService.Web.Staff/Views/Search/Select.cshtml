@@ -96,7 +96,7 @@
                     @foreach (var log in Model.Learner.CertificateLogs)
                     {
                         <tr>
-                            <td>@log.EventTime</td>
+                            <td>@log.EventTime.ToLocalTime()</td>
                             <td>@log.Action</td>
                             <td>@log.ActionBy</td>
                             <td>@log.Status</td>
