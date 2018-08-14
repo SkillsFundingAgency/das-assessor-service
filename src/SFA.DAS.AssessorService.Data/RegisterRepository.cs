@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Data
                 connection.Execute(
                     "INSERT INTO [Organisations] ([Id],[CreatedAt],[EndPointAssessorName],[EndPointAssessorOrganisationId], " +
                     "[EndPointAssessorUkprn],[Status],[OrganisationTypeId],[OrganisationData]) " +
-                    $@"VALUES (@id, getdate(), @name, @organisationId, @ukprn, @status, @organisationTypeId,  @orgData)",
+                    $@"VALUES (@id, getdate(), @name, @organisationId, @ukprn, 'new', @organisationTypeId,  @orgData)",
                     new {org.Id, org.Name,org.OrganisationId, org.Ukprn,org.Status,org.OrganisationTypeId,orgData}
                 );
 
