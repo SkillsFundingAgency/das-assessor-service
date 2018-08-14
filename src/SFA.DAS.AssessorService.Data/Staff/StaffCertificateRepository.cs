@@ -31,14 +31,28 @@ namespace SFA.DAS.AssessorService.Data.Staff
                 new {ulns})).ToList();
         }
 
-        public async Task<List<CertificateLogSummary>> GetCertificateLogsFor(Guid certificateId)
+        public async Task<List<CertificateLogSummary>> GetCertificateLogsFor(Guid certificateId,
+            bool allRecords=false)
         {
-            return (await _connection.QueryAsync<CertificateLogSummary>(
-                @"SELECT EventTime, Action, c.DisplayName AS ActionBy, logs.Status, logs.CertificateData, logs.BatchNumber 
+            if (allRecords)
+            {
+                return (await _connection.QueryAsync<CertificateLogSummary>(
+                    @"SELECT EventTime, Action, c.DisplayName AS ActionBy, logs.Status, logs.CertificateData, logs.BatchNumber 
                     FROM CertificateLogs logs
                     INNER JOIN Contacts c ON c.Username = logs.Username
                     WHERE CertificateId = @certificateId
                     ORDER BY EventTime DESC", new {certificateId})).ToList();
+            }
+            else
+            {
+                return (await _connection.QueryAsync<CertificateLogSummary>(
+                    @"SELECT EventTime, Action, c.DisplayName AS ActionBy, logs.Status, logs.CertificateData, logs.BatchNumber 
+                    FROM CertificateLogs logs
+                    INNER JOIN Contacts c ON c.Username = logs.Username
+                    WHERE CertificateId = @certificateId
+                        AND (logs.Action = 'Printed' OR logs.Action = 'Reprint' OR logs.Action = 'Submitted')
+                    ORDER BY EventTime DESC", new { certificateId })).ToList();
+            }
         }
     }
 }
