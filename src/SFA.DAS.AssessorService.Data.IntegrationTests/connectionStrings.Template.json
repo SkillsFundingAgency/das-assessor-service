@@ -1,0 +1,8 @@
+{
+  "ConnectionStrings": {
+    "SqlConnectionString": "Data Source={Local db server};Initial Catalog=SFA.DAS.AssessorService.Database;Integrated Security=True;",
+    "SqlConnectionStringTest": "Data Source={local db server};Initial Catalog=SFA.DAS.AssessorService.Database.Test;Integrated Security=True;"
+  }
+}
+// Instructions
+// Make a copy of this, named connectionStrings.Local.json and enter your local datasource in the placeholder
