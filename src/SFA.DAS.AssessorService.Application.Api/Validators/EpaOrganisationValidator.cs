@@ -17,6 +17,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         public string ErrorMessageUkprnAlreadyUsed { get; } = "There is already an organisation with this ukrpn; ";
 
         public string ErrorMessageOrganisationTypeIsInvalid { get; } = "There is no organisation type with this Id; ";
+        public string ErrorMessageAnotherOrganisationUsingTheUkprn { get; } = "The ukprn entered is already used by another organisation; ";
+        public string ErrorMessageOrganisationNotFound { get; } = "There is no organisation for the this organisation Id; ";
 
         public EpaOrganisationValidator( IRegisterRepository registerRepository)
         {
@@ -64,6 +66,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             if (organisationTypeId == null|| _registerRepository.OrganisationTypeExists(organisationTypeId.Value).Result) return string.Empty;
 
             return ErrorMessageOrganisationTypeIsInvalid;
+        }
+
+        public string CheckIfOrganisationUkprnExistsForOtherOrganisations(long? ukprn, string organisationIdToIgnore)
+        {
+            if (ukprn == null || !_registerRepository.EpaOrganisationAlreadyUsingUkprn(ukprn.Value, organisationIdToIgnore).Result) return string.Empty;
+            return ErrorMessageUkprnAlreadyUsed;
+        }
+
+        public string CheckIfOrganisationNotFound(string organisationId)
+        {
+            return _registerRepository.EpaOrganisationExistsWithOrganisationId(organisationId).Result 
+                ? string.Empty : 
+                ErrorMessageOrganisationNotFound;
         }
     }
 }

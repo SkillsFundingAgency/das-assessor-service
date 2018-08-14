@@ -116,5 +116,40 @@ namespace SFA.DAS.AssessorService.Data
                 return org;
             }
         }
+
+        public async Task<EpaOrganisation> UpdateEpaOrganisation(EpaOrganisation org)
+        {
+            //using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            //{
+            //    if (connection.State != ConnectionState.Open)
+            //        await connection.OpenAsync();
+
+            //    var orgData = JsonConvert.SerializeObject(org.OrganisationData);
+
+            //    connection.Execute(
+            //        $@"UPDATE [Organisations] ([Id],[CreatedAt],[EndPointAssessorName],[EndPointAssessorOrganisationId], " +
+            //        $@"[EndPointAssessorUkprn],[Status],[OrganisationTypeId],[OrganisationData]) WHERE [EndPointAssessorOrganisationId] = '{org.OrganisationId}'" +
+            //        $@"VALUES (@id, getdate(), @name, @organisationId, @ukprn, @status, @organisationTypeId,  @orgData)",
+            //        new { org.Id, org.Name, org.OrganisationId, org.Ukprn, org.Status, org.OrganisationTypeId, orgData }
+            //    );
+
+            //    return await GetEpaOrganisationById(org.Id);
+            //}
+
+            return null;
+        }
+
+        public async Task<bool> EpaOrganisationAlreadyUsingUkprn(long ukprn, string organisationIdToExclude)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+                var sqlToCheckExists =
+                    "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Organisations] " +
+                    $@"WHERE EndPointAssessorOrganisationId != '{organisationIdToExclude}' and EndPointAssessorUkprn = {ukprn}";
+                return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists);
+            }
+        }
     }
 }
