@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using MediatR;
+﻿using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Register
@@ -19,6 +16,5 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Register
         public string Address3 { get; set; }
         public string Address4 { get; set; }
         public string Postcode { get; set; }
-        public string Status { get; set; }
     }
 }

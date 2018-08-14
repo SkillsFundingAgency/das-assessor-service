@@ -41,6 +41,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 cfg.CreateMap<Certificate, CertificateHistoryResponse>();
 
                 cfg.CreateMap<CreateEpaOrganisationRequest, EpaOrganisation>();
+                cfg.CreateMap<UpdateEpaOrganisationRequest, EpaOrganisation>();
             });
         }
     }

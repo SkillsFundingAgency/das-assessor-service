@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Dapper;
 using Newtonsoft.Json;
 using System.Linq;
-using System.Net.Mime;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 using SFA.DAS.AssessorService.Application.Exceptions;
 
@@ -36,7 +35,7 @@ namespace SFA.DAS.AssessorService.Data
                 connection.Execute(
                     "INSERT INTO [Organisations] ([Id],[CreatedAt],[EndPointAssessorName],[EndPointAssessorOrganisationId], " +
                     "[EndPointAssessorUkprn],[Status],[OrganisationTypeId],[OrganisationData]) " +
-                    $@"VALUES (@id, getdate(), @name, @organisationId, @ukprn, @status, @organisationTypeId,  @orgData)",
+                    $@"VALUES (@id, getdate(), @name, @organisationId, @ukprn, 'New', @organisationTypeId,  @orgData)",
                     new {org.Id, org.Name,org.OrganisationId, org.Ukprn,org.Status,org.OrganisationTypeId,orgData}
                 );
 
@@ -119,24 +118,21 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<EpaOrganisation> UpdateEpaOrganisation(EpaOrganisation org)
         {
-            //using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            //{
-            //    if (connection.State != ConnectionState.Open)
-            //        await connection.OpenAsync();
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
 
-            //    var orgData = JsonConvert.SerializeObject(org.OrganisationData);
+                var orgData = JsonConvert.SerializeObject(org.OrganisationData);
 
-            //    connection.Execute(
-            //        $@"UPDATE [Organisations] ([Id],[CreatedAt],[EndPointAssessorName],[EndPointAssessorOrganisationId], " +
-            //        $@"[EndPointAssessorUkprn],[Status],[OrganisationTypeId],[OrganisationData]) WHERE [EndPointAssessorOrganisationId] = '{org.OrganisationId}'" +
-            //        $@"VALUES (@id, getdate(), @name, @organisationId, @ukprn, @status, @organisationTypeId,  @orgData)",
-            //        new { org.Id, org.Name, org.OrganisationId, org.Ukprn, org.Status, org.OrganisationTypeId, orgData }
-            //    );
+                connection.Execute(
+                    "UPDATE [Organisations] SET [UpdatedAt] = getdate(), [EndPointAssessorName] = @Name, " +
+                    "[EndPointAssessorUkprn] = @ukprn, [OrganisationTypeId] = @organisationTypeId, " +
+                    "[OrganisationData] = @orgData WHERE [EndPointAssessorOrganisationId] = @organisationId",
+                    new {org.Name, org.Ukprn, org.OrganisationTypeId, orgData, org.OrganisationId});
 
-            //    return await GetEpaOrganisationById(org.Id);
-            //}
-
-            return null;
+                return await GetEpaOrganisationByOrganisationId(org.OrganisationId);
+            }
         }
 
         public async Task<bool> EpaOrganisationAlreadyUsingUkprn(long ukprn, string organisationIdToExclude)

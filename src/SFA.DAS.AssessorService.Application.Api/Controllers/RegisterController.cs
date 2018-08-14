@@ -77,7 +77,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             catch (NotFound ex)
             {
                 _logger.LogError($@"Record is not available for organisation ID: [{request.OrganisationId}]");
-                return Conflict(ex.Message);
+                return NotFound(ex.Message);
             }
             catch (BadRequestException ex)
             {
