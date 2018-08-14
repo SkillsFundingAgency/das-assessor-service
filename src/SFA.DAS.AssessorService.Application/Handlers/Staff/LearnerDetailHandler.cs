@@ -47,7 +47,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             var epao = new Organisation();
             if (certificate != null)
             {
-                logs = await _staffCertificateRepository.GetCertificateLogsFor(certificate.Id);
+                logs = await _staffCertificateRepository.GetCertificateLogsFor(certificate.Id,
+                    request.AllRecords);
                 if (logs.Count() > 1)
                 {
                     CalculateDifferences(logs);
