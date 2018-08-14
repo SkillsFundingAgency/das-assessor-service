@@ -10,7 +10,12 @@
 <div class="grid-row">
     <div class="column-two-thirds">
         <a class="link-back" asp-action="Results" asp-controller="Search" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.Page">Back</a>
-        <h1 class="heading-large">Certificate: @Model.Learner.CertificateReference</h1>
+        <h1 class="heading-xlarge">
+            Certificate: @Model.Learner.CertificateReference
+            <span class="heading-secondary">Status: @Model.Learner.CertificateStatus</span>
+        </h1>
+
+        <h2 class="heading-large">Apprentice details</h2>
     </div>
 </div>
 
@@ -155,3 +160,6 @@ else
     </div>
 </div>
 
+@section Scripts {
+    @{await Html.RenderPartialAsync("~/Views/Search/_SelectScriptsPartial.cshtml"); }
+}
