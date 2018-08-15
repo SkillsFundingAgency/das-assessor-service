@@ -88,7 +88,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         }
 
         [Test]
-        public void CreateOrganisationThatDoesntExistAndCheckItIsThere()
+        public void UpdateOrganisationAndCheckUpdatesHaveHappened()
         {
             var initialOrganisationDetails = _repository.CreateEpaOrganisation(_initialOrganisationDetails).Result;
             initialOrganisationDetails.Name = _nameUpdated;
