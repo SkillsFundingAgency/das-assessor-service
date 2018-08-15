@@ -9,8 +9,13 @@ Post-Deployment Script Template
                SELECT * FROM [$(TableName)]					
 --------------------------------------------------------------------------------------
 */
+INSERT INTO Organisations
+SELECT        *
+FROM            TmpOrganisations
 
-IF NOT EXISTS(SELECT * FROM ScheduleRuns)
-BEGIN
-	INSERT INTO ScheduleRuns (RunTime, IsComplete, Interval, IsRecurring, ScheduleType) VALUES ('2018-08-17 08:00:00', 0, 10080, 1, 1)
-END
+INSERT INTO Contacts
+SELECT        *
+FROM            TmpContacts
+
+DROP TABLE TmpOrganisations
+DROP TABLE TmpContacts
