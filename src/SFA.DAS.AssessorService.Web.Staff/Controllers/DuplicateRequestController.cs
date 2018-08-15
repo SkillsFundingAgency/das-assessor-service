@@ -45,7 +45,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 Username = username
             });
 
-            var nextScheduledRun = await _apiClient.GetNextScheduledRun();
+            var nextScheduledRun = await _apiClient.GetNextScheduledRun((int)ScheduleType.PrintRun);
             var vm = new DuplicateRequestViewModel
             {
                 Certificate = certificate,

@@ -1,0 +1,55 @@
+﻿@using SFA.DAS.AssessorService.Web.Staff.Controllers
+@model SFA.DAS.AssessorService.Domain.Entities.ScheduleRun
+@{
+    ViewBag.Title = "Delete Schedule";
+    Layout = "_Layout";
+}
+
+<div class="grid-row">
+    <div class="column-full">
+        <a asp-action="Index" class="link-back">Go Back</a>
+
+        <h1 class="heading-large">Delete Schedule</h1>
+
+        @if (@Model != null && @Model.Id != Guid.Empty)
+        {
+            <div class="form-group">
+                <span class="bold">Please Confirm Deletion: </span>
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Schedule Type</th>
+                        <th>Is Recurring</th>
+                        <th>Interval</th>
+                        <th>Run time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>@Model.ScheduleType.ToString()</td>
+                        <td>@Model.IsRecurring</td>
+                        <td>@Model.Interval</td>
+                        <td>@Model.RunTime.ToString("dd/MM/yyyy")</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div>
+                <form asp-action="Delete" asp-controller="ScheduleConfig" method="post">
+                    @Html.HiddenFor(m => m.Id)
+                    @Html.HiddenFor(m => m.ScheduleType)
+                    <button class="button">Confirm</button>
+                </form>
+            </div>
+        }
+        else
+        {
+            <div class="form-group">
+                <span class="bold">No Schedule Found.</span>
+            </div>
+        }
+
+    </div>
+</div>

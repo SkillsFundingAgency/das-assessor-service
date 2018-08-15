@@ -1,0 +1,42 @@
+﻿@using SFA.DAS.AssessorService.Web.Staff.Controllers
+@model SFA.DAS.AssessorService.Domain.Entities.ScheduleRun
+@{
+    ViewBag.Title = "Run Schedule";
+    Layout = "_Layout";
+}
+
+<div class="grid-row">
+    <div class="column-full">
+        <a asp-action="Index" class="link-back">Go Back</a>
+
+        <h1 class="heading-large">Run Schedule Now</h1>
+
+        <div class="form-group">
+            <span class="bold">Please Confirm Run Now: </span>
+        </div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Schedule Type</th>
+                    <th>Run time</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>@Model.ScheduleType.ToString()</td>
+                    <td>@Model.RunTime.ToString("dd/MM/yyyy")</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div>
+            <form asp-action="RunNow" asp-controller="ScheduleConfig" method="post">
+                @Html.HiddenFor(m => m.Id)
+                @Html.HiddenFor(m => m.ScheduleType)
+                @Html.HiddenFor(m => m.RunTime)
+                <button class="button">Confirm</button>
+            </form>
+        </div>
+    </div>
+</div>

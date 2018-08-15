@@ -1,0 +1,44 @@
+﻿@model SFA.DAS.AssessorService.Domain.Entities.ScheduleRun
+@{
+    ViewBag.Title = "Create Schedule";
+    Layout = "_Layout";
+    Model.RunTime = DateTime.UtcNow;
+}
+
+<div class="grid-row">
+    <div class="column-full">
+        <a asp-action="Index" class="link-back">Go Back</a>
+
+        <h1 class="heading-large">Create Schedule</h1>
+
+        <form asp-action="Create" asp-controller="ScheduleConfig" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Schedule Type</th>
+                        <th>Is Recurring</th>
+                        <th>Interval</th>
+                        <th>Run Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input asp-for="ScheduleType" value="@Model.ScheduleType.ToString()" readonly class="form-control" /></td>
+                        <td><input asp-for="IsRecurring" /></td>
+                        <td><input type="number" asp-for="Interval" class="form-control" /></td>
+                        <td><input type="date" asp-for="RunTime" class="form-control" /></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="button" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

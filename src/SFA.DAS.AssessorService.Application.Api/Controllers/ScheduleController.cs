@@ -15,10 +15,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _scheduleRepository = scheduleRepository;
         }
 
-        [HttpGet("api/v1/schedule", Name="GetNextScheduleToRunNow")]
-        public async Task<IActionResult> GetNextScheduleToRunNow(int scheduleType)
+        [HttpGet("api/v1/schedule", Name = "GetScheduleRun")]
+        public async Task<IActionResult> GetScheduleRun(Guid scheduleRunId)
         {
-            var scheduleRun = await _scheduleRepository.GetNextScheduleToRunNow(scheduleType);
+            var scheduleRun = await _scheduleRepository.GetScheduleRun(scheduleRunId);
             return Ok(scheduleRun);
         }
 
@@ -26,6 +26,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> GetNextScheduledRun(int scheduleType)
         {
             var scheduleRun = await _scheduleRepository.GetNextScheduledRun(scheduleType);
+            return Ok(scheduleRun);
+        }
+
+        [HttpGet("api/v1/schedule/all", Name = "GetAllScheduledRun")]
+        public async Task<IActionResult> GetAllScheduledRun(int scheduleType)
+        {
+            var scheduleRun = await _scheduleRepository.GetAllScheduleRun(scheduleType);
             return Ok(scheduleRun);
         }
 

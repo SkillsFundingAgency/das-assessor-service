@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 using Dapper;
@@ -14,6 +15,20 @@ namespace SFA.DAS.AssessorService.Data
         public ScheduleRepository(IDbConnection connection)
         {
             _connection = connection;
+        }
+
+        public async Task<ScheduleRun> GetScheduleRun(Guid scheduleRunId)
+        {
+            return await _connection.QuerySingleAsync<ScheduleRun>("SELECT * FROM ScheduleRuns WHERE Id = @scheduleRunId", new { scheduleRunId });
+        }
+
+        public async Task<IEnumerable<ScheduleRun>> GetAllScheduleRun(int scheduleType)
+        {
+            return await _connection.QueryAsync<ScheduleRun>(@"SELECT *
+                                    FROM ScheduleRuns
+                                    WHERE ScheduleType = @scheduleType
+                                    AND IsComplete = 0
+                                    ORDER BY RunTime", new { scheduleType });
         }
 
         public async Task<ScheduleRun> GetNextScheduleToRunNow(int scheduleType)
