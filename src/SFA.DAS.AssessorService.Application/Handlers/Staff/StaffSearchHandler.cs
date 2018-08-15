@@ -67,7 +67,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             var regex = new Regex(@"\b(EPA|epa)[0-9]{4}\b");
             if (regex.IsMatch(request.SearchQuery))
             {
-                return await _staffIlrRepository.SearchForLearnerByEpaOrgId(request.SearchQuery);
+                return await _staffIlrRepository.SearchForLearnerByEpaOrgId(request);
             }
 
             if (request.SearchQuery.Length == 10 && long.TryParse(request.SearchQuery, out var uln))
@@ -99,7 +99,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
                 searchResult.CertificateReference = certificate.CertificateReference;
                 searchResult.CertificateStatus = certificate.Status;
-                searchResult.LastUpdatedAt = certificate.LastUpdatedAt?.ToLocalTime();
+                if (searchResult.LastUpdatedAt == null)
+                {
+                    searchResult.LastUpdatedAt = certificate.LastUpdatedAt?.ToLocalTime();
+                }
             }
             return searchResults;
         }

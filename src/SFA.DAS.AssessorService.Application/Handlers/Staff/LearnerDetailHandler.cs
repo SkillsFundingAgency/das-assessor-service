@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,7 +8,6 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.DTOs.Staff;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
@@ -114,7 +112,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 {
                     if (DateTime.TryParse(thisProperty, out var result))
                     {
-                        thisProperty = result.ToShortDateString();
+                        thisProperty = result.ToLocalTime().ToShortDateString();
                     }
 
                     differences.Add(propertyInfo.Name.Spaceyfy(), string.IsNullOrEmpty(thisProperty) ? "<Empty>" : thisProperty);
