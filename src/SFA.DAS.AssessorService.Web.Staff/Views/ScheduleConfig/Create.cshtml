@@ -1,8 +1,7 @@
-﻿@model SFA.DAS.AssessorService.Domain.Entities.ScheduleRun
+﻿@model SFA.DAS.AssessorService.Web.Staff.Controllers.ScheduleConfigViewModel
 @{
     ViewBag.Title = "Create Schedule";
     Layout = "_Layout";
-    Model.RunTime = DateTime.UtcNow;
 }
 
 <div class="grid-row">
@@ -24,10 +23,17 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td><input asp-for="ScheduleType" value="@Model.ScheduleType.ToString()" readonly class="form-control" /></td>
+                        <td>
+                            <select asp-for="ScheduleInterval" asp-items="Html.GetEnumSelectList<SFA.DAS.AssessorService.Web.Staff.Controllers.ScheduleJobType>()">
+                            </select>
+                        </td>
                         <td><input asp-for="IsRecurring" /></td>
-                        <td><input type="number" asp-for="Interval" class="form-control" /></td>
-                        <td><input type="date" asp-for="RunTime" class="form-control" /></td>
+                        <td>
+                            <select asp-for="ScheduleInterval" asp-items="Html.GetEnumSelectList<SFA.DAS.AssessorService.Web.Staff.Controllers.ScheduleInterval>()">
+                                <option value="">-- Not Specified --</option>
+                            </select>
+                        </td>
+                        <td><input type="date" asp-for="RunTime" /></td>
                     </tr>
                 </tbody>
             </table>

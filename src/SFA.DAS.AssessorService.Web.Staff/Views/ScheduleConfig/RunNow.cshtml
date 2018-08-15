@@ -1,5 +1,5 @@
 ﻿@using SFA.DAS.AssessorService.Web.Staff.Controllers
-@model SFA.DAS.AssessorService.Domain.Entities.ScheduleRun
+@model SFA.DAS.AssessorService.Web.Staff.Controllers.ScheduleConfigViewModel
 @{
     ViewBag.Title = "Run Schedule";
     Layout = "_Layout";
@@ -24,7 +24,7 @@
             </thead>
             <tbody>
                 <tr>
-                    <td>@Model.ScheduleType.ToString()</td>
+                    <td>@Model.ScheduleType.GetDisplayName()</td>
                     <td>@Model.RunTime.ToString("dd/MM/yyyy")</td>
                 </tr>
             </tbody>

@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
@@ -21,9 +23,28 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var schedules = await _apiClient.GetAllScheduledRun(1);
+            List<ScheduleConfigViewModel> viewModels = new List<ScheduleConfigViewModel>();
 
-            return View(schedules);
+            foreach(var schedule in await _apiClient.GetAllScheduledRun(1))
+            {
+                ScheduleConfigViewModel viewModel = new ScheduleConfigViewModel
+                {
+                    Id = schedule.Id,
+                    RunTime = schedule.RunTime,
+                    Interval = schedule.Interval,
+                    IsRecurring = schedule.IsRecurring,
+                    ScheduleType = (ScheduleJobType)schedule.ScheduleType,
+                };
+
+                if (Enum.TryParse<ScheduleInterval>(schedule.Interval.ToString(), out var scheduleInterval))
+                {
+                    viewModel.ScheduleInterval = scheduleInterval;
+                }
+
+                viewModels.Add(viewModel);
+            }
+
+            return View(viewModels);
         }
 
         [HttpGet]
@@ -31,15 +52,29 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         {
             var schedule = await _apiClient.GetScheduleRun(scheduleRunId);
 
-            return View(schedule);
+            ScheduleConfigViewModel viewModel = new ScheduleConfigViewModel
+            {
+                Id = schedule.Id,
+                RunTime = schedule.RunTime,
+                Interval = schedule.Interval,
+                IsRecurring = schedule.IsRecurring,
+                ScheduleType = (ScheduleJobType)schedule.ScheduleType,
+            };
+
+            if(Enum.TryParse<ScheduleInterval>(schedule.Interval.ToString(), out var scheduleInterval))
+            {
+                viewModel.ScheduleInterval = scheduleInterval;
+            }
+
+            return View(viewModel);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Delete(ScheduleRun schedule)
+        public async Task<IActionResult> Delete(ScheduleConfigViewModel viewModel)
         {
-            if (schedule != null)
+            if (viewModel != null)
             {
-                await _apiClient.DeleteScheduleRun(schedule.Id);
+                await _apiClient.DeleteScheduleRun(viewModel.Id);
             }
 
             return RedirectToAction("Index");
@@ -48,19 +83,29 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            var schedule = new ScheduleRun
+            var viewModel = new ScheduleConfigViewModel
             {
-                ScheduleType = ScheduleType.PrintRun
+                ScheduleType = ScheduleJobType.PrintRun,
+                RunTime = DateTime.UtcNow,
+                IsRecurring = false,   
             };
 
-            return View(schedule);
+            return View(viewModel);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(ScheduleRun schedule)
+        public async Task<IActionResult> Create(ScheduleConfigViewModel viewModel)
         {
-            if (schedule != null)
+            if (viewModel != null)
             {
+                ScheduleRun schedule = new ScheduleRun
+                {
+                    ScheduleType = (ScheduleType)viewModel.ScheduleType,
+                    RunTime = viewModel.RunTime,
+                    IsRecurring = viewModel.IsRecurring,
+                    Interval = (int?)viewModel.ScheduleInterval
+                };
+
                 await _apiClient.CreateScheduleRun(schedule);
             }
 
@@ -70,24 +115,47 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         [HttpGet]
         public async Task<IActionResult> RunNow(int scheduleType)
         {
-            ScheduleRun runNow = new ScheduleRun
+            var viewModel = new ScheduleConfigViewModel
             {
-                ScheduleType = (ScheduleType)scheduleType,
-                RunTime = DateTime.UtcNow
+                ScheduleType = (ScheduleJobType)scheduleType,
+                RunTime = DateTime.UtcNow,
             };
 
-            return View(runNow);
+            return View(viewModel);
         }
 
         [HttpPost]
-        public async Task<IActionResult> RunNow(ScheduleRun schedule)
+        public async Task<IActionResult> RunNow(ScheduleConfigViewModel viewModel)
         {
-            if (schedule != null)
+            if (viewModel != null)
             {
-                await _apiClient.RunNowScheduledRun((int)schedule.ScheduleType);
+                await _apiClient.RunNowScheduledRun((int)viewModel.ScheduleType);
             }
 
             return RedirectToAction("Index");
         }
+    }
+
+    public enum ScheduleInterval
+    {
+        Hourly = 60,
+        Daily = 1440,
+        Weekly = 10080
+    }
+
+    public enum ScheduleJobType
+    {
+        [Display(Name="Print Run")]
+        PrintRun = 1
+    }
+
+    public class ScheduleConfigViewModel
+    {
+        public Guid Id { get; set; }
+        public DateTime RunTime { get; set; }
+        public long? Interval { get; set; }
+        public ScheduleInterval? ScheduleInterval { get; set; }
+        public bool IsRecurring { get; set; }
+        public ScheduleJobType ScheduleType { get; set; }
     }
 }

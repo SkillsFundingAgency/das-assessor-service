@@ -1,5 +1,5 @@
 ﻿@using SFA.DAS.AssessorService.Web.Staff.Controllers
-@model IList<SFA.DAS.AssessorService.Domain.Entities.ScheduleRun>
+@model IList<SFA.DAS.AssessorService.Web.Staff.Controllers.ScheduleConfigViewModel>
 @{
     ViewBag.Title = "Print Schedule";
     Layout = "_Layout";
@@ -35,13 +35,13 @@
                     <tbody>
                         @foreach (var result in @Model)
                         {
-                            <tr>
-                                <td>@result.ScheduleType.ToString()</td>
-                                <td>@result.IsRecurring</td>
-                                <td>@result.Interval</td>
-                                <td>@result.RunTime.ToString("dd/MM/yyyy")</td>
-                                <td><a asp-action="Delete" asp-route-scheduleRunId="@result.Id">Delete</a></td>
-                            </tr>
+                        <tr>
+                            <td>@result.ScheduleType.GetDisplayName()</td>
+                            <td>@result.IsRecurring</td>
+                            <td>@(result.ScheduleInterval.HasValue ? result.ScheduleInterval.GetDisplayName() : result.Interval.ToString())</td>
+                            <td>@result.RunTime.ToString("dd/MM/yyyy")</td>
+                            <td><a asp-action="Delete" asp-route-scheduleRunId="@result.Id">Delete</a></td>
+                        </tr>
                         }
                     </tbody>
                 </table>
