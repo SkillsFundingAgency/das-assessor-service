@@ -35,8 +35,8 @@ namespace SFA.DAS.AssessorService.Data
                 connection.Execute(
                     "INSERT INTO [Organisations] ([Id],[CreatedAt],[EndPointAssessorName],[EndPointAssessorOrganisationId], " +
                     "[EndPointAssessorUkprn],[Status],[OrganisationTypeId],[OrganisationData]) " +
-                    $@"VALUES (@id, getdate(), @name, @organisationId, @ukprn, 'New', @organisationTypeId,  @orgData)",
-                    new {org.Id, org.Name,org.OrganisationId, org.Ukprn,org.Status,org.OrganisationTypeId,orgData}
+                    $@"VALUES (@id, @createdAt, @name, @organisationId, @ukprn, 'New', @organisationTypeId,  @orgData)",
+                    new {org.Id, org.CreatedAt, org.Name,org.OrganisationId, org.Ukprn,org.Status,org.OrganisationTypeId,orgData}
                 );
 
                 return await GetEpaOrganisationById(org.Id);
@@ -126,10 +126,10 @@ namespace SFA.DAS.AssessorService.Data
                 var orgData = JsonConvert.SerializeObject(org.OrganisationData);
 
                 connection.Execute(
-                    "UPDATE [Organisations] SET [UpdatedAt] = getdate(), [EndPointAssessorName] = @Name, " +
+                    "UPDATE [Organisations] SET [UpdatedAt] = @updatedAt, [EndPointAssessorName] = @Name, " +
                     "[EndPointAssessorUkprn] = @ukprn, [OrganisationTypeId] = @organisationTypeId, " +
                     "[OrganisationData] = @orgData WHERE [EndPointAssessorOrganisationId] = @organisationId",
-                    new {org.Name, org.Ukprn, org.OrganisationTypeId, orgData, org.OrganisationId});
+                    new {org.UpdatedAt, org.Name, org.Ukprn, org.OrganisationTypeId, orgData, org.OrganisationId});
 
                 return await GetEpaOrganisationByOrganisationId(org.OrganisationId);
             }

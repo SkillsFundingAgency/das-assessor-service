@@ -57,6 +57,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 Name = request.Name.Trim(),
                 OrganisationId = request.OrganisationId.Trim(),
                 OrganisationTypeId = request.OrganisationTypeId,
+                UpdatedAt = DateTime.Now,
                 Ukprn = request.Ukprn,
                 OrganisationData = new OrganisationData
                 {
