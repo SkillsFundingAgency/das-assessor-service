@@ -82,7 +82,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             catch (BadRequestException ex)
             {
                 _logger.LogError(ex.Message);
-                return BadRequest(ex.Message);
+                return BadRequest(ex);
             }
             catch (Exception ex)
             {

@@ -89,5 +89,50 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
             Assert.AreEqual(messageReturned, false);
             _registerRepository.Verify(r => r.EpaOrganisationExistsWithUkprn(It.IsAny<long>()), Times.Never);
         }
+
+
+        [Test]
+        public void CheckIfOrganisationUkprnExistsForOtherOrganisationsWhenUkprnIsNull()
+        {
+            var isMessageReturned =
+                _validator.CheckIfOrganisationUkprnExistsForOtherOrganisations(null, "123445").Length > 0;
+            Assert.IsFalse(isMessageReturned);
+            _registerRepository.Verify(r => r.EpaOrganisationAlreadyUsingUkprn(It.IsAny<long>(), It.IsAny<string>()), Times.Never);
+        }
+
+        [Test]
+        public void CheckIfOrganisationUkprnExistsForOtherOrganisationsWhenUkprnIsNotUsedElsewhere()
+        {
+            _registerRepository.Setup(r => r.EpaOrganisationAlreadyUsingUkprn(It.IsAny<long>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(false));
+            var isMessageReturned =
+                _validator.CheckIfOrganisationUkprnExistsForOtherOrganisations(123456, "123445").Length > 0;
+            Assert.IsFalse(isMessageReturned);
+            _registerRepository.Verify(r => r.EpaOrganisationAlreadyUsingUkprn(It.IsAny<long>(), It.IsAny<string>()), Times.Once);
+        }
+
+        [Test]
+        public void CheckIfOrganisationUkprnExistsForOtherOrganisationsWhenUkprnIsUsedElsewhere()
+        {
+            _registerRepository.Setup(r => r.EpaOrganisationAlreadyUsingUkprn(It.IsAny<long>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(true));
+            var isMessageReturned =
+                _validator.CheckIfOrganisationUkprnExistsForOtherOrganisations(123456, "123445").Length > 0;
+            Assert.IsTrue(isMessageReturned);
+            _registerRepository.Verify(r => r.EpaOrganisationAlreadyUsingUkprn(It.IsAny<long>(), It.IsAny<string>()), Times.Once);
+        }
+
+        [TestCase(false, false)]
+        [TestCase(true, true)]
+        public void CheckIfOrganisationNotFoundReturnsAnErrorMessage(bool exists, bool noMessageReturned)
+        {
+            _registerRepository.Setup(r => r.EpaOrganisationExistsWithOrganisationId(It.IsAny<string>()))
+                .Returns(Task.FromResult(exists));
+            var isMessageReturned =
+                _validator.CheckIfOrganisationNotFound("123445").Length > 0;
+            Assert.AreEqual(noMessageReturned, exists);
+            _registerRepository.Verify(r => r.EpaOrganisationExistsWithOrganisationId(It.IsAny<string>()), Times.Once);
+        }
+
     }
 }
