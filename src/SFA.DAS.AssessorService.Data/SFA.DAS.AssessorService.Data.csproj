@@ -22,6 +22,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="2.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.0.1" />
+    <PackageReference Include="WindowsAzure.Storage" Version="9.0.0" />
   </ItemGroup>
 
 </Project>

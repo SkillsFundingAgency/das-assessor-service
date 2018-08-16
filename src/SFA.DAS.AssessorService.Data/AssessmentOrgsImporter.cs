@@ -2,9 +2,13 @@
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using Microsoft.Extensions.Logging;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Blob;
+using Microsoft.WindowsAzure.Storage.RetryPolicies;
 using OfficeOpenXml;
 using SFA.DAS.AssessorService.Domain.DTOs;
 using SFA.DAS.AssessorService.Settings;
@@ -18,7 +22,8 @@ namespace SFA.DAS.AssessorService.Data
         private readonly IAssessmentOrgsSpreadsheetReader _spreadsheetReader;
         private readonly IWebConfiguration _configuration;
         private readonly ILogger<AssessmentOrgsImporter> _logger;
-    
+        private readonly string TemplateFile ="assessmentOrgs.xlsx";
+
         public AssessmentOrgsImporter(IAssessmentOrgsRepository assessmentOrgsRepository, 
                                         IAssessmentOrgsSpreadsheetReader spreadsheetReader, 
                                         ILogger<AssessmentOrgsImporter> logger,
@@ -70,57 +75,98 @@ namespace SFA.DAS.AssessorService.Data
       
         private AssessmentOrganisationsSpreadsheetDto HarvestSpreadsheetData( StringBuilder progressStatus)
         {
-            try
+            //try
+            //{
+            //    var spreadsheetDto = new AssessmentOrganisationsSpreadsheetDto();
+
+            //    _webClient = new WebClient();
+            //    var credentials =
+            //        Convert.ToBase64String(
+            //            Encoding.ASCII.GetBytes(
+            //                $"{_configuration.GitUsername}:{_configuration.GitPassword}"));
+            //    _webClient.Headers[HttpRequestHeader.Authorization] = $"Basic {credentials}";
+
+            //    progressStatus.Append($"Downloading spreadsheet: [{_configuration.AssessmentOrgsUrl}]; ");
+
+            //    using (var stream =
+            //        new MemoryStream(_webClient.DownloadData(new Uri(_configuration.AssessmentOrgsUrl))))
+            //    {
+            //        progressStatus.Append("Opening spreadsheet as a stream; ");
+
+            //        using (var package = new ExcelPackage(stream))
+            //        {
+            //            progressStatus.Append("Reading from spreadsheet: Delivery Areas; ");
+            //            spreadsheetDto.DeliveryAreas = _spreadsheetReader.HarvestDeliveryAreas();
+            //            progressStatus.Append("Reading from spreadsheet: Organisation Types; ");
+            //            spreadsheetDto.OrganisationTypes = _spreadsheetReader.HarvestOrganisationTypes();
+            //            progressStatus.Append("Reading from spreadsheet: Organisations; ");
+            //            spreadsheetDto.Organisations =
+            //                _spreadsheetReader.HarvestEpaOrganisations(package, spreadsheetDto.OrganisationTypes);
+            //            progressStatus.Append("Reading from spreadsheet: Standards; ");
+            //            var standards = _spreadsheetReader.HarvestStandards(package);
+            //            progressStatus.Append("Reading from spreadsheet: Organisation-Standards; ");
+            //            spreadsheetDto.OrganisationStandards =
+            //                _spreadsheetReader.HarvestEpaOrganisationStandards(package, spreadsheetDto.Organisations,
+            //                    standards);
+            //            progressStatus.Append("Reading from spreadsheet: Organisation-Standards-Delivery Areas; ");
+            //            spreadsheetDto.OrganisationStandardDeliveryAreas =
+            //                _spreadsheetReader.HarvestStandardDeliveryAreas(package, spreadsheetDto.Organisations, standards,
+            //                    spreadsheetDto.DeliveryAreas);
+            //            progressStatus.Append("Reading from spreadsheet: Contacts; ");
+            //            spreadsheetDto.Contacts = _spreadsheetReader.HarvestOrganisationContacts(spreadsheetDto.Organisations,
+            //                spreadsheetDto.OrganisationStandards);
+
+            //            return spreadsheetDto;
+            //        }
+            //    }
+            //}
+            //catch (Exception e)
+            //{
+            //    progressStatus.Append("Error reading spreadsheet; ");
+            //    _logger.LogError($"Progress details:  {progressStatus}", e);
+            //    throw;
+            //}
+
+
+            var spreadsheetDto = new AssessmentOrganisationsSpreadsheetDto();
+
+            var containerName = "assessmentorgs";
+            var _initialiseContainer = new BlobContainerHelper(_configuration);
+
+            var container = _initialiseContainer.GetContainer(containerName).Result;
+
+            
+            var blob = container.GetBlockBlobReference(TemplateFile);
+            var memoryStream = new MemoryStream();
+            blob.DownloadToStreamAsync(memoryStream);
+
+            //_aggregateLogger.LogInfo($"Downloaded memory stream length = {blob.Properties.Length}");
+
+            using (var package = new ExcelPackage(memoryStream))
             {
-                var spreadsheetDto = new AssessmentOrganisationsSpreadsheetDto();
-
-                _webClient = new WebClient();
-                var credentials =
-                    Convert.ToBase64String(
-                        Encoding.ASCII.GetBytes(
-                            $"{_configuration.GitUsername}:{_configuration.GitPassword}"));
-                _webClient.Headers[HttpRequestHeader.Authorization] = $"Basic {credentials}";
-
-                progressStatus.Append($"Downloading spreadsheet: [{_configuration.AssessmentOrgsUrl}]; ");
-
-                using (var stream =
-                    new MemoryStream(_webClient.DownloadData(new Uri(_configuration.AssessmentOrgsUrl))))
-                {
-                    progressStatus.Append("Opening spreadsheet as a stream; ");
-
-                    using (var package = new ExcelPackage(stream))
-                    {
-                        progressStatus.Append("Reading from spreadsheet: Delivery Areas; ");
-                        spreadsheetDto.DeliveryAreas = _spreadsheetReader.HarvestDeliveryAreas();
-                        progressStatus.Append("Reading from spreadsheet: Organisation Types; ");
-                        spreadsheetDto.OrganisationTypes = _spreadsheetReader.HarvestOrganisationTypes();
-                        progressStatus.Append("Reading from spreadsheet: Organisations; ");
-                        spreadsheetDto.Organisations =
-                            _spreadsheetReader.HarvestEpaOrganisations(package, spreadsheetDto.OrganisationTypes);
-                        progressStatus.Append("Reading from spreadsheet: Standards; ");
-                        var standards = _spreadsheetReader.HarvestStandards(package);
-                        progressStatus.Append("Reading from spreadsheet: Organisation-Standards; ");
-                        spreadsheetDto.OrganisationStandards =
-                            _spreadsheetReader.HarvestEpaOrganisationStandards(package, spreadsheetDto.Organisations,
-                                standards);
-                        progressStatus.Append("Reading from spreadsheet: Organisation-Standards-Delivery Areas; ");
-                        spreadsheetDto.OrganisationStandardDeliveryAreas =
-                            _spreadsheetReader.HarvestStandardDeliveryAreas(package, spreadsheetDto.Organisations, standards,
-                                spreadsheetDto.DeliveryAreas);
-                        progressStatus.Append("Reading from spreadsheet: Contacts; ");
-                        spreadsheetDto.Contacts = _spreadsheetReader.HarvestOrganisationContacts(spreadsheetDto.Organisations,
-                            spreadsheetDto.OrganisationStandards);
-
-                        return spreadsheetDto;
-                    }
-                }
+                progressStatus.Append("Reading from spreadsheet: Delivery Areas; ");
+                spreadsheetDto.DeliveryAreas = _spreadsheetReader.HarvestDeliveryAreas();
+                progressStatus.Append("Reading from spreadsheet: Organisation Types; ");
+                spreadsheetDto.OrganisationTypes = _spreadsheetReader.HarvestOrganisationTypes();
+                progressStatus.Append("Reading from spreadsheet: Organisations; ");
+                spreadsheetDto.Organisations =
+                    _spreadsheetReader.HarvestEpaOrganisations(package, spreadsheetDto.OrganisationTypes);
+                progressStatus.Append("Reading from spreadsheet: Standards; ");
+                var standards = _spreadsheetReader.HarvestStandards(package);
+                progressStatus.Append("Reading from spreadsheet: Organisation-Standards; ");
+                spreadsheetDto.OrganisationStandards =
+                    _spreadsheetReader.HarvestEpaOrganisationStandards(package, spreadsheetDto.Organisations,
+                        standards);
+                progressStatus.Append("Reading from spreadsheet: Organisation-Standards-Delivery Areas; ");
+                spreadsheetDto.OrganisationStandardDeliveryAreas =
+                    _spreadsheetReader.HarvestStandardDeliveryAreas(package, spreadsheetDto.Organisations, standards,
+                        spreadsheetDto.DeliveryAreas);
+                progressStatus.Append("Reading from spreadsheet: Contacts; ");
+                spreadsheetDto.Contacts = _spreadsheetReader.HarvestOrganisationContacts(spreadsheetDto.Organisations,
+                    spreadsheetDto.OrganisationStandards);
             }
-            catch (Exception e)
-            {
-                progressStatus.Append("Error reading spreadsheet; ");
-                _logger.LogError($"Progress details:  {progressStatus}", e);
-                throw;
-            }
+            return spreadsheetDto;
+
         }
 
         private void TearDownDatabase(StringBuilder progressStatus)
@@ -175,6 +221,30 @@ namespace SFA.DAS.AssessorService.Data
                 progressStatus.Append(message);
                 throw;
             }
+        }
+    }
+
+
+    public class BlobContainerHelper
+    {
+        private readonly IWebConfiguration _webConfiguration;
+
+        public BlobContainerHelper(IWebConfiguration webConfiguration)
+        {
+            _webConfiguration = webConfiguration;
+        }
+        public async Task<CloudBlobContainer> GetContainer(string containerName)
+        {
+            var storageAccount = CloudStorageAccount.Parse(_webConfiguration.IFATemplateStorageConnectionString);
+
+            var client = storageAccount.CreateCloudBlobClient();
+
+            var blobContainer = client.GetContainerReference(containerName);
+
+            var requestOptions = new BlobRequestOptions() { RetryPolicy = new NoRetry() };
+            await blobContainer.CreateIfNotExistsAsync(requestOptions, null);
+
+            return blobContainer;
         }
     }
 }
