@@ -13,11 +13,11 @@
         <h1 class="heading-large">Create Schedule</h1>
 
         <form asp-action="Create" asp-controller="ScheduleConfig" method="post">
+            @Html.HiddenFor(m => m.ScheduleType)
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Schedule Type</th>
                         <th>Is Recurring</th>
                         <th>Interval</th>
                         <th>Run Time</th>
@@ -25,17 +25,13 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>
-                            <select asp-for="ScheduleType" asp-items="Html.GetEnumSelectList<ScheduleJobType>()">
-                            </select>
-                        </td>
                         <td><input asp-for="IsRecurring" /></td>
                         <td>
                             <select asp-for="ScheduleInterval" asp-items="Html.GetEnumSelectList<ScheduleInterval>()">
                                 <option value="">-- Not Specified --</option>
                             </select>
                         </td>
-                        <td><input type="date" asp-for="RunTime" /></td>
+                        <td><input asp-for="RunTime" /></td>
                     </tr>
                 </tbody>
             </table>

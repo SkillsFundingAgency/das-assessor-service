@@ -21,18 +21,16 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Schedule Type</th>
                         <th>Is Recurring</th>
                         <th>Interval</th>
-                        <th>Run time</th>
+                        <th>Run Time</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>@Model.ScheduleType.Humanize(LetterCasing.Title)</td>
                         <td>@Model.IsRecurring</td>
                         <td>@(Model.ScheduleInterval.HasValue ? Model.ScheduleInterval.Humanize(LetterCasing.Title) : Model.Interval)</td>
-                        <td>@Model.RunTime.ToString("dd/MM/yyyy")</td>
+                        <td>@Model.RunTime</td>
                     </tr>
                 </tbody>
             </table>

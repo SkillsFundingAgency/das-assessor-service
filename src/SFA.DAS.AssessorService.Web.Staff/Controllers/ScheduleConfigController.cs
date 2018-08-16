@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using System;
 using System.Collections.Generic;
@@ -31,7 +32,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 ScheduleConfigViewModel viewModel = new ScheduleConfigViewModel
                 {
                     Id = schedule.Id,
-                    RunTime = schedule.RunTime,
+                    RunTime = schedule.RunTime.UtcToTimeZoneTime(),
                     Interval = schedule.Interval.HasValue ? TimeSpan.FromMinutes(schedule.Interval.Value).Humanize().Titleize() : "-",
                     IsRecurring = schedule.IsRecurring,
                     ScheduleType = (ScheduleJobType)schedule.ScheduleType,
@@ -56,7 +57,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             ScheduleConfigViewModel viewModel = new ScheduleConfigViewModel
             {
                 Id = schedule.Id,
-                RunTime = schedule.RunTime,
+                RunTime = schedule.RunTime.UtcToTimeZoneTime(),
                 Interval = schedule.Interval.HasValue ? TimeSpan.FromMinutes(schedule.Interval.Value).Humanize().Titleize() : "-",
                 IsRecurring = schedule.IsRecurring,
                 ScheduleType = (ScheduleJobType)schedule.ScheduleType,
@@ -87,7 +88,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             var viewModel = new ScheduleConfigViewModel
             {
                 ScheduleType = ScheduleJobType.PrintRun,
-                RunTime = DateTime.UtcNow,
+                RunTime = DateTime.UtcNow.UtcToTimeZoneTime(),
                 IsRecurring = false,   
             };
 
@@ -102,7 +103,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 ScheduleRun schedule = new ScheduleRun
                 {
                     ScheduleType = (ScheduleType)viewModel.ScheduleType,
-                    RunTime = viewModel.RunTime,
+                    RunTime = viewModel.RunTime.UtcFromTimeZoneTime(),
                     IsRecurring = viewModel.IsRecurring,
                     Interval = (int?)viewModel.ScheduleInterval
                 };
@@ -119,7 +120,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             var viewModel = new ScheduleConfigViewModel
             {
                 ScheduleType = (ScheduleJobType)scheduleType,
-                RunTime = DateTime.UtcNow,
+                RunTime = DateTime.UtcNow.UtcToTimeZoneTime(),
             };
 
             return View(viewModel);

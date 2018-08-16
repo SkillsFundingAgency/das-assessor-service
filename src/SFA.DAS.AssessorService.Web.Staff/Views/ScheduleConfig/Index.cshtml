@@ -15,21 +15,23 @@
         @if (@Model.Any())
         {
             <div class="form-group">
-                <span class="bold">Next schedule: </span>@Model.First().RunTime.ToString("dd/MM/yyyy")
+                <span class="bold">Next schedule: </span>@Model.First().RunTime
 
+                @if (!@Model.Where(m => !m.IsRecurring && m.RunTime <= DateTime.Now).Any())
+                {
                 <div>
                     <a asp-action="RunNow" asp-route-scheduleType="1" class="button">Run Now</a>
                 </div>
+                }
             </div>
 
             <div>
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Schedule Type</th>
                             <th>Is Recurring</th>
                             <th>Interval</th>
-                            <th>Run time</th>
+                            <th>Run Time</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -37,10 +39,9 @@
                         @foreach (var result in @Model)
                         {
                             <tr>
-                                <td>@result.ScheduleType.Humanize(LetterCasing.Title)</td>
                                 <td>@result.IsRecurring</td>
                                 <td>@(result.ScheduleInterval.HasValue ? result.ScheduleInterval.Humanize(LetterCasing.Title) : result.Interval)</td>
-                                <td>@result.RunTime.ToString("dd/MM/yyyy")</td>
+                                <td>@result.RunTime</td>
                                 <td><a asp-action="Delete" asp-route-scheduleRunId="@result.Id">Delete</a></td>
                             </tr>
                         }
