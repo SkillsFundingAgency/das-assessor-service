@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         {
             List<ScheduleConfigViewModel> viewModels = new List<ScheduleConfigViewModel>();
 
-            foreach(var schedule in await _apiClient.GetAllScheduledRun(1))
+            foreach(var schedule in await _apiClient.GetAllScheduledRun((int)ScheduleJobType.PrintRun))
             {
                 ScheduleConfigViewModel viewModel = new ScheduleConfigViewModel
                 {
@@ -37,7 +37,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                     ScheduleType = (ScheduleJobType)schedule.ScheduleType,
                 };
 
-                if (Enum.TryParse<ScheduleInterval>(schedule.Interval.ToString(), out var scheduleInterval))
+                if (Enum.TryParse<ScheduleInterval>(schedule.Interval.ToString(), out var scheduleInterval) && Enum.IsDefined(typeof(ScheduleInterval), scheduleInterval))
                 {
                     viewModel.ScheduleInterval = scheduleInterval;
                 }
@@ -62,7 +62,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 ScheduleType = (ScheduleJobType)schedule.ScheduleType,
             };
 
-            if(Enum.TryParse<ScheduleInterval>(schedule.Interval.ToString(), out var scheduleInterval))
+            if(Enum.TryParse<ScheduleInterval>(schedule.Interval.ToString(), out var scheduleInterval) && Enum.IsDefined(typeof(ScheduleInterval), scheduleInterval))
             {
                 viewModel.ScheduleInterval = scheduleInterval;
             }
