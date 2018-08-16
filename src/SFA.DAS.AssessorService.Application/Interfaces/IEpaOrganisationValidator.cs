@@ -9,5 +9,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         string CheckIfOrganisationIdExists(string organisationId);
         string CheckIfOrganisationUkprnExists(long? ukprn);
         string CheckOrganisationTypeIsNullOrExists(int? organisationTypeId);
+
+        string CheckUkprnIsValid(long? ukprn);
     }
 }

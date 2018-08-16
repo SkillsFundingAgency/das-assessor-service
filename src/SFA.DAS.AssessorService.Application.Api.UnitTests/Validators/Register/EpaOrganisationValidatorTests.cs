@@ -40,6 +40,17 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
             Assert.AreEqual(isAcceptable, noMessageReturned);
         }
 
+        [TestCase(null, true)]
+        [TestCase(10000000, true)]
+        [TestCase(99999999, true)]
+        [TestCase(9999999, false)]
+        [TestCase(100000000, false)]
+        public void CheckUkprnIsValid(long? ukprn, bool isValid)
+        {
+            var noMessageReturned = _validator.CheckUkprnIsValid(ukprn).Length == 0;
+            Assert.AreEqual(isValid,noMessageReturned);
+        }
+
         [TestCase(false, false)]
         [TestCase(true, true)]
         public void CheckIfOrganisationIdAlreadyUsedReturnExpectedMessage(bool alreadyPresent, bool messageShown)

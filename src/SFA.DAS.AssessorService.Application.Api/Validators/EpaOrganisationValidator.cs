@@ -14,9 +14,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         public string ErrorMessageOrganisationIdTooLong { get; } = "The length of the organisation Id is too long; ";
         public string ErrorMessageOrganisationNameEmpty { get; } = "There is no organisation name; ";
         public string ErrorMessageOrganisationIdAlreadyUsed { get; } = "There is already an entry for this organisation Id; ";
-        public string ErrorMessageUkprnAlreadyUsed { get; } = "There is already an organisation with this ukrpn; ";
-
+        public string ErrorMessageUkprnAlreadyUsed { get; } = "There is already an organisation with this ukprn; ";
         public string ErrorMessageOrganisationTypeIsInvalid { get; } = "There is no organisation type with this Id; ";
+        public string ErrorMessageUkprnIsInvalid { get; } = "The ukprn is not the correct format or length; ";
 
         public EpaOrganisationValidator( IRegisterRepository registerRepository)
         {
@@ -64,6 +64,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             if (organisationTypeId == null|| _registerRepository.OrganisationTypeExists(organisationTypeId.Value).Result) return string.Empty;
 
             return ErrorMessageOrganisationTypeIsInvalid;
+        }
+
+        public string CheckUkprnIsValid(long? ukprn)
+        {
+            if (ukprn == null) return string.Empty;
+            var isValid = ukprn >= 10000000 && ukprn <= 99999999;
+            return isValid ? string.Empty : ErrorMessageUkprnIsInvalid;
         }
     }
 }
