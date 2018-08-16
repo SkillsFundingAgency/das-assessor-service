@@ -1,4 +1,6 @@
-﻿@model SFA.DAS.AssessorService.Web.Staff.Controllers.ScheduleConfigViewModel
+﻿@using SFA.DAS.AssessorService.Web.Staff.Controllers
+@using Humanizer
+@model ScheduleConfigViewModel
 @{
     ViewBag.Title = "Create Schedule";
     Layout = "_Layout";
@@ -24,12 +26,12 @@
                 <tbody>
                     <tr>
                         <td>
-                            <select asp-for="ScheduleInterval" asp-items="Html.GetEnumSelectList<SFA.DAS.AssessorService.Web.Staff.Controllers.ScheduleJobType>()">
+                            <select asp-for="ScheduleType" asp-items="Html.GetEnumSelectList<ScheduleJobType>()">
                             </select>
                         </td>
                         <td><input asp-for="IsRecurring" /></td>
                         <td>
-                            <select asp-for="ScheduleInterval" asp-items="Html.GetEnumSelectList<SFA.DAS.AssessorService.Web.Staff.Controllers.ScheduleInterval>()">
+                            <select asp-for="ScheduleInterval" asp-items="Html.GetEnumSelectList<ScheduleInterval>()">
                                 <option value="">-- Not Specified --</option>
                             </select>
                         </td>

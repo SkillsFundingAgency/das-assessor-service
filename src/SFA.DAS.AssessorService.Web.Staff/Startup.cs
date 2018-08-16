@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Settings;
+using SFA.DAS.AssessorService.Web.Staff.Helpers;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using StructureMap;
 
@@ -57,7 +58,9 @@ namespace SFA.DAS.AssessorService.Web.Staff
 
             AddAuthentication(services);
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc()
+                .AddMvcOptions(m => m.ModelMetadataDetailsProviders.Add(new HumanizerMetadataProvider()))
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
             //if (_env.IsDevelopment())
             //{

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Humanizer;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
@@ -31,7 +32,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 {
                     Id = schedule.Id,
                     RunTime = schedule.RunTime,
-                    Interval = schedule.Interval,
+                    Interval = schedule.Interval.HasValue ? TimeSpan.FromMinutes(schedule.Interval.Value).Humanize().Titleize() : "-",
                     IsRecurring = schedule.IsRecurring,
                     ScheduleType = (ScheduleJobType)schedule.ScheduleType,
                 };
@@ -56,7 +57,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             {
                 Id = schedule.Id,
                 RunTime = schedule.RunTime,
-                Interval = schedule.Interval,
+                Interval = schedule.Interval.HasValue ? TimeSpan.FromMinutes(schedule.Interval.Value).Humanize().Titleize() : "-",
                 IsRecurring = schedule.IsRecurring,
                 ScheduleType = (ScheduleJobType)schedule.ScheduleType,
             };
@@ -153,7 +154,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
     {
         public Guid Id { get; set; }
         public DateTime RunTime { get; set; }
-        public long? Interval { get; set; }
+        public string Interval { get; set; }
         public ScheduleInterval? ScheduleInterval { get; set; }
         public bool IsRecurring { get; set; }
         public ScheduleJobType ScheduleType { get; set; }
