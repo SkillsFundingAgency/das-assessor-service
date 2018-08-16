@@ -11,6 +11,7 @@ using SFA.DAS.AssessorService.Application.Handlers.Search;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Logging;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
@@ -101,7 +102,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 searchResult.CertificateStatus = certificate.Status;
                 if (searchResult.LastUpdatedAt == null)
                 {
-                    searchResult.LastUpdatedAt = certificate.LastUpdatedAt?.ToLocalTime();
+                    searchResult.LastUpdatedAt = certificate.LastUpdatedAt?.UtcToTimeZoneTime();
                 }
             }
             return searchResults;

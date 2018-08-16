@@ -10,6 +10,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.DTOs.Staff;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 
@@ -69,7 +70,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 CertificateStatus = certificate?.Status, 
                 Level = standard.Level,
                 OverallGrade = certificateData.OverallGrade,
-                AchievementDate = certificateData.AchievementDate?.ToLocalTime(),
+                AchievementDate = certificateData.AchievementDate?.UtcToTimeZoneTime(),
                 Option = certificateData.CourseOption, 
                 OrganisationName = epao.EndPointAssessorName,
                 CertificateLogs = logs,
@@ -112,7 +113,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 {
                     if (DateTime.TryParse(thisProperty, out var result))
                     {
-                        thisProperty = result.ToLocalTime().ToShortDateString();
+                        thisProperty = result.UtcToTimeZoneTime().ToShortDateString();
                     }
 
                     differences.Add(propertyInfo.Name.Spaceyfy(), string.IsNullOrEmpty(thisProperty) ? "<Empty>" : thisProperty);

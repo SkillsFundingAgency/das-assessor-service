@@ -1,4 +1,5 @@
 ﻿@using SFA.DAS.AssessorService.Domain.Consts
+@using SFA.DAS.AssessorService.Domain.Extensions
 @using SFA.DAS.AssessorService.Web.Staff.Controllers
 @model SFA.DAS.AssessorService.Web.Staff.Controllers.LearnerDetailViewModel
 
@@ -96,7 +97,7 @@
                     @foreach (var log in Model.Learner.CertificateLogs)
                     {
                         <tr>
-                            <td>@log.EventTime.ToLocalTime()</td>
+                            <td>@log.EventTime.UtcToTimeZoneTime()</td>
                             <td>@log.Action</td>
                             <td>@log.ActionBy</td>
                             <td>@log.Status</td>
