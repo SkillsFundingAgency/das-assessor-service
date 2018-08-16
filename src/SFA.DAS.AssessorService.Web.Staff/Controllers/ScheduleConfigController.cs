@@ -1,4 +1,5 @@
 ﻿using Humanizer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {
+    [Authorize]
     public class ScheduleConfigController : Controller
     {
         private readonly ApiClient _apiClient;
