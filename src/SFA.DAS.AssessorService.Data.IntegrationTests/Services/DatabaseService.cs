@@ -13,10 +13,10 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
 {
     public class DatabaseService
     {
-
+     
         public DatabaseService()
         {
-
+           
             Configuration = new ConfigurationBuilder()
                 .AddJsonFile("connectionStrings.Local.json")
                 .Build();
