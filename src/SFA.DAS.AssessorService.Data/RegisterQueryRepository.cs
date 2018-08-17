@@ -19,7 +19,6 @@ namespace SFA.DAS.AssessorService.Data
             _configuration = configuration;
         }
 
-
         public async Task<IEnumerable<OrganisationType>> GetOrganisationTypes()
         {
             var connectionString = _configuration.SqlConnectionString;
@@ -31,6 +30,20 @@ namespace SFA.DAS.AssessorService.Data
 
                 var orgTypes = await connection.QueryAsync<OrganisationType>("select * from [OrganisationType]");
                 return orgTypes;
+            }
+        }
+
+        public async Task<IEnumerable<DeliveryArea>> GetDeliveryAreas()
+        {
+            var connectionString = _configuration.SqlConnectionString;
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                var deliveryAreas = await connection.QueryAsync<DeliveryArea>("select * from [DeliveryArea]");
+                return deliveryAreas;
             }
         }
     }
