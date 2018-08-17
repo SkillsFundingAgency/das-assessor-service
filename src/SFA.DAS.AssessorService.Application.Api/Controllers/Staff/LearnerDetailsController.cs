@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,9 +21,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get(int stdCode, long uln)
+        public async Task<IActionResult> Get(int stdCode, 
+            long uln,
+            bool allLogs=false)
         {
-            return Ok(await _mediator.Send(new LearnerDetailRequest(stdCode,uln)));
+            return Ok(await _mediator.Send(new LearnerDetailRequest(stdCode,uln,
+                allLogs)));
         }
     }
 }

@@ -3,7 +3,7 @@ using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
 {
-
+    
     public class TestWebConfiguration : IWebConfiguration
     {
         public AuthSettings Authentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
