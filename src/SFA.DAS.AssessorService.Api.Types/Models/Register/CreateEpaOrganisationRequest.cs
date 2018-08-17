@@ -6,11 +6,10 @@ using SFA.DAS.AssessorService.Api.Types.Models.AO;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Register
 {
-    public class CreateEpaOrganisationRequest: IRequest<EpaOrganisation>
+    public class CreateEpaOrganisationRequest: IRequest<string>
     {
         public string Name { get; set; }
         public string OrganisationId { get; set; }
-        public DateTime CreatedAt { get; set; }
         public long? Ukprn { get; set; }
         public int? OrganisationTypeId { get; set; }
         public string LegalName { get; set; }

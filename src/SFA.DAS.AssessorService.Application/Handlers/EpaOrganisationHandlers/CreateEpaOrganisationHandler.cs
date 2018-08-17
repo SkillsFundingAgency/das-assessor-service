@@ -13,7 +13,7 @@ using SFA.DAS.AssessorService.Domain.Consts;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 {
-    public class CreateEpaOrganisationHandler : IRequestHandler<CreateEpaOrganisationRequest, EpaOrganisation>
+    public class CreateEpaOrganisationHandler : IRequestHandler<CreateEpaOrganisationRequest, string>
     {
         private readonly IRegisterRepository _registerRepository;
         private readonly ILogger<CreateEpaOrganisationHandler> _logger;
@@ -26,13 +26,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             _validator = validator;
         }
 
-        public async Task<EpaOrganisation> Handle(CreateEpaOrganisationRequest request, CancellationToken cancellationToken)
+        public async Task<string> Handle(CreateEpaOrganisationRequest request, CancellationToken cancellationToken)
         {
             var errorDetails = new StringBuilder();
             
             errorDetails.Append(_validator.CheckOrganisationId(request.OrganisationId));
             errorDetails.Append(_validator.CheckOrganisationName(request.Name));
             errorDetails.Append(_validator.CheckOrganisationTypeIsNullOrExists(request.OrganisationTypeId));
+            errorDetails.Append(_validator.CheckUkprnIsValid(request.Ukprn));
             if (errorDetails.Length > 0)
             {
                 _logger.LogError(errorDetails.ToString());
@@ -60,7 +61,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 OrganisationId = request.OrganisationId.Trim(),
                 OrganisationTypeId = request.OrganisationTypeId,
                 Ukprn = request.Ukprn,
-                CreatedAt = request.CreatedAt,
                 Id = Guid.NewGuid(),
                 OrganisationData = new OrganisationData
                 {

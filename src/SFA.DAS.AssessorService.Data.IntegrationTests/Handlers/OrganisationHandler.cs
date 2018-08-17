@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dapper;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
 
@@ -31,6 +34,14 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                 InsertRecord(org);
             }
         }
+
+        public static EpaOrganisation GetOrganisationByOrgId(string orgId)
+        {
+            SqlMapper.AddTypeHandler(typeof(OrganisationData), new OrganisationDataHandler());
+            var organisation = DatabaseService.Get<EpaOrganisation>($@"select id,createdAt,deletedAt, EndpointAssessorName as Name, EndPointAssessorOrganisationId as OrganisationId, EndPointAssessorUkprn as ukprn, PrimaryContact, Status, UpdatedAt,OrganisationTypeId, OrganisationData  from Organisations where endpointassessororganisationid = '{orgId}'");
+            return organisation;
+        }
+
 
         public static bool EpaOrganisationExistsWithOrganisationId(string organisationId)
         {

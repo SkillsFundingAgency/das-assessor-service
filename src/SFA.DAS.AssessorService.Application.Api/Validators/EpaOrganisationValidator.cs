@@ -8,19 +8,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
 {
     public class EpaOrganisationValidator: IEpaOrganisationValidator
     {
-        private readonly IRegisterRepository _registerRepository;
+        private readonly IRegisterQueryRepository _registerRepository;
 
         public string ErrorMessageNoOrganisationId { get; } = "There is no organisation Id; ";
         public string ErrorMessageOrganisationIdTooLong { get; } = "The length of the organisation Id is too long; ";
         public string ErrorMessageOrganisationNameEmpty { get; } = "There is no organisation name; ";
         public string ErrorMessageOrganisationIdAlreadyUsed { get; } = "There is already an entry for this organisation Id; ";
-        public string ErrorMessageUkprnAlreadyUsed { get; } = "There is already an organisation with this ukrpn; ";
-
+        public string ErrorMessageUkprnAlreadyUsed { get; } = "There is already an organisation with this ukprn; ";
         public string ErrorMessageOrganisationTypeIsInvalid { get; } = "There is no organisation type with this Id; ";
         public string ErrorMessageAnotherOrganisationUsingTheUkprn { get; } = "The ukprn entered is already used by another organisation; ";
+        public string ErrorMessageUkprnIsInvalid { get; } = "The ukprn is not the correct format or length; ";
         public string ErrorMessageOrganisationNotFound { get; } = "There is no organisation for the this organisation Id; ";
 
-        public EpaOrganisationValidator( IRegisterRepository registerRepository)
+        public EpaOrganisationValidator( IRegisterQueryRepository registerRepository)
         {
             _registerRepository = registerRepository;
         }
@@ -68,9 +68,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             return ErrorMessageOrganisationTypeIsInvalid;
         }
 
+        public string CheckUkprnIsValid(long? ukprn)
+        {
+            if (ukprn == null) return string.Empty;
+            var isValid = ukprn >= 10000000 && ukprn <= 99999999;
+            return isValid ? string.Empty : ErrorMessageUkprnIsInvalid;
+        }
+
         public string CheckIfOrganisationUkprnExistsForOtherOrganisations(long? ukprn, string organisationIdToIgnore)
         {
-            if (ukprn == null || !_registerRepository.EpaOrganisationAlreadyUsingUkprn(ukprn.Value, organisationIdToIgnore).Result) return string.Empty;
+        if (ukprn == null || !_registerRepository.EpaOrganisationAlreadyUsingUkprn(ukprn.Value, organisationIdToIgnore).Result) return string.Empty;
             return ErrorMessageUkprnAlreadyUsed;
         }
 

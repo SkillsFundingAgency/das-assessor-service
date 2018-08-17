@@ -3,7 +3,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.AO;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Register
 {
-    public class UpdateEpaOrganisationRequest : IRequest<EpaOrganisation>
+    public class UpdateEpaOrganisationRequest : IRequest<string>
     {
         public string Name { get; set; }
         public string OrganisationId { get; set; }

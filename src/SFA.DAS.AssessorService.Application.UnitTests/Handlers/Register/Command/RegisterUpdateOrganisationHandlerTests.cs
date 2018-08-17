@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
     {
         private Mock<IRegisterRepository> _registerRepository;
         private UpdateEpaOrganisationHandler _updateEpaOrganisationHandler;
-        private EpaOrganisation _returnedOrganisation;
+        private string _returnedOrganisationId;
         private Mock<IEpaOrganisationValidator> _validator;
         private Mock<ILogger<UpdateEpaOrganisationHandler>> _logger;
         private UpdateEpaOrganisationRequest _requestNoIssues;
@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             _expectedOrganisationNoIssues = BuildOrganisation(_requestNoIssues);
 
             _registerRepository.Setup(r => r.UpdateEpaOrganisation(It.IsAny<EpaOrganisation>()))
-                .Returns(Task.FromResult(_expectedOrganisationNoIssues));
+                .Returns(Task.FromResult(_expectedOrganisationNoIssues.OrganisationId));
 
             _validator.Setup(v => v.CheckOrganisationId(_requestNoIssues.OrganisationId)).Returns(string.Empty);
             _validator.Setup(v => v.CheckOrganisationName(_requestNoIssues.Name)).Returns(string.Empty);
@@ -70,8 +70,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
         [Test]
         public void GetOrganisationDetailsWhenOrganisationUpdated()
         {
-            _returnedOrganisation = _updateEpaOrganisationHandler.Handle(_requestNoIssues, new CancellationToken()).Result;
-            _returnedOrganisation.Should().BeEquivalentTo(_expectedOrganisationNoIssues);
+            _returnedOrganisationId = _updateEpaOrganisationHandler.Handle(_requestNoIssues, new CancellationToken()).Result;
+            _returnedOrganisationId.Should().BeEquivalentTo(_expectedOrganisationNoIssues.OrganisationId);
         }
 
         [Test]

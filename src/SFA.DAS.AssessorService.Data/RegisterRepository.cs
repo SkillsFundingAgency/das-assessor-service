@@ -17,13 +17,14 @@ namespace SFA.DAS.AssessorService.Data
     {
 
         private readonly IWebConfiguration _configuration;
+
         public RegisterRepository(IWebConfiguration configuration)
         {
             _configuration = configuration;
             SqlMapper.AddTypeHandler(typeof(OrganisationData), new OrganisationDataHandler());
         }
 
-        public async Task<EpaOrganisation> CreateEpaOrganisation(EpaOrganisation org)
+        public async Task<string> CreateEpaOrganisation(EpaOrganisation org)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
@@ -35,88 +36,14 @@ namespace SFA.DAS.AssessorService.Data
                 connection.Execute(
                     "INSERT INTO [Organisations] ([Id],[CreatedAt],[EndPointAssessorName],[EndPointAssessorOrganisationId], " +
                     "[EndPointAssessorUkprn],[Status],[OrganisationTypeId],[OrganisationData]) " +
-                    $@"VALUES (@id, @createdAt, @name, @organisationId, @ukprn, 'New', @organisationTypeId,  @orgData)",
-                    new {org.Id, org.CreatedAt, org.Name,org.OrganisationId, org.Ukprn,org.Status,org.OrganisationTypeId,orgData}
+                    $@"VALUES (@id, getdate(), @name, @organisationId, @ukprn, 'New', @organisationTypeId,  @orgData)",
+                    new {org.Id, org.Name,org.OrganisationId, org.Ukprn,org.Status,org.OrganisationTypeId,orgData}
                 );
 
-                return await GetEpaOrganisationById(org.Id);
+                return org.OrganisationId;
             }
         }
-
-        public async Task<bool> EpaOrganisationExistsWithOrganisationId(string organisationId)
-        {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-                var sqlToCheckExists =
-                    "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Organisations] " +
-                    $@"WHERE EndPointAssessorOrganisationId = '{organisationId}'";
-                return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists);
-            }
-        }
-
-        public async Task<bool> EpaOrganisationExistsWithUkprn(long ukprn)
-        {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-                var sqlToCheckExists =
-                    "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Organisations] " +
-                    $@"WHERE EndPointAssessorUkprn = {ukprn}";
-                return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists);
-            }
-        }
-
-        public async Task<bool> OrganisationTypeExists(int organisationTypeId)
-        {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-                var sqlToCheckExists =
-                    "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [OrganisationType] " +
-                    $@"WHERE Id = {organisationTypeId}";
-                return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists);
-            }
-        }
-
-        public async Task<EpaOrganisation> GetEpaOrganisationById(Guid id)
-        {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-                var sqlForMainDetails =
-                    "select Id, CreatedAt, DeletedAt, EndPointAssessorName as Name,  EndPointAssessorOrganisationId as OrganisationId, EndPointAssessorUkprn as ukprn, " +
-                    "primaryContact, Status, UpdatedAt, OrganisationTypeId, OrganisationData " +
-                    " FROM [Organisations] " +
-                    $@"WHERE Id = '{id}'";
-                var orgs = await connection.QueryAsync<EpaOrganisation>(sqlForMainDetails);
-                var org = orgs.FirstOrDefault();
-                return org;
-            }
-        }
-
-        public async Task<EpaOrganisation> GetEpaOrganisationByOrganisationId(string organisationId)
-        {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-                var sqlForMainDetails =
-                    "select Id, CreatedAt, DeletedAt, EndPointAssessorName as Name,  EndPointAssessorOrganisationId as OrganisationId, EndPointAssessorUkprn as ukprn, " +
-                    "primaryContact, Status, UpdatedAt, OrganisationTypeId, OrganisationData " +
-                    " FROM [Organisations] " +
-                    $@"WHERE EndPointAssessorOrganisationId = '{organisationId}'";
-                var orgs = await connection.QueryAsync<EpaOrganisation>(sqlForMainDetails);
-                var org = orgs.FirstOrDefault();
-                return org;
-            }
-        }
-
-        public async Task<EpaOrganisation> UpdateEpaOrganisation(EpaOrganisation org)
+        public async Task<string> UpdateEpaOrganisation(EpaOrganisation org)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
@@ -126,25 +53,12 @@ namespace SFA.DAS.AssessorService.Data
                 var orgData = JsonConvert.SerializeObject(org.OrganisationData);
 
                 connection.Execute(
-                    "UPDATE [Organisations] SET [UpdatedAt] = @updatedAt, [EndPointAssessorName] = @Name, " +
+                    "UPDATE [Organisations] SET [UpdatedAt] = GetDate(), [EndPointAssessorName] = @Name, " +
                     "[EndPointAssessorUkprn] = @ukprn, [OrganisationTypeId] = @organisationTypeId, " +
                     "[OrganisationData] = @orgData WHERE [EndPointAssessorOrganisationId] = @organisationId",
-                    new {org.UpdatedAt, org.Name, org.Ukprn, org.OrganisationTypeId, orgData, org.OrganisationId});
+                    new {org.Name, org.Ukprn, org.OrganisationTypeId, orgData, org.OrganisationId});
 
-                return await GetEpaOrganisationByOrganisationId(org.OrganisationId);
-            }
-        }
-
-        public async Task<bool> EpaOrganisationAlreadyUsingUkprn(long ukprn, string organisationIdToExclude)
-        {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-                var sqlToCheckExists =
-                    "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Organisations] " +
-                    $@"WHERE EndPointAssessorOrganisationId != '{organisationIdToExclude}' and EndPointAssessorUkprn = {ukprn}";
-                return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists);
+                return org.OrganisationId;
             }
         }
     }

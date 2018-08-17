@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
     {
         private Mock<IRegisterRepository> _registerRepository;
         private CreateEpaOrganisationHandler _createEpaOrganisationHandler;
-        private EpaOrganisation _returnedOrganisation;
+        private string _returnedOrganisationId;
         private Mock<IEpaOrganisationValidator> _validator;
         private Mock<ILogger<CreateEpaOrganisationHandler>> _logger;
         private CreateEpaOrganisationRequest _requestNoIssues;
@@ -38,14 +38,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             _expectedOrganisationNoIssues = BuildOrganisation(_requestNoIssues);
      
             _registerRepository.Setup(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()))
-                .Returns(Task.FromResult(_expectedOrganisationNoIssues));
+                .Returns(Task.FromResult(_expectedOrganisationNoIssues.OrganisationId));
 
             _validator.Setup(v => v.CheckOrganisationId(_requestNoIssues.OrganisationId)).Returns(string.Empty);
             _validator.Setup(v => v.CheckOrganisationName(_requestNoIssues.Name)).Returns(string.Empty);
             _validator.Setup(v => v.CheckIfOrganisationIdExists(_requestNoIssues.OrganisationId)).Returns(string.Empty);
             _validator.Setup(v => v.CheckIfOrganisationUkprnExists(_requestNoIssues.Ukprn)).Returns(string.Empty);
             _validator.Setup(v => v.CheckOrganisationTypeIsNullOrExists(_requestNoIssues.OrganisationTypeId)).Returns(string.Empty);
-
+            _validator.Setup(v => v.CheckUkprnIsValid(_requestNoIssues.Ukprn)).Returns(string.Empty);
 
             _createEpaOrganisationHandler = new CreateEpaOrganisationHandler(_registerRepository.Object, _validator.Object,_logger.Object);
           }
@@ -66,13 +66,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             _validator.Verify(v => v.CheckIfOrganisationIdExists(_requestNoIssues.OrganisationId));
             _validator.Verify(v => v.CheckIfOrganisationUkprnExists(_requestNoIssues.Ukprn));
             _validator.Verify(v => v.CheckOrganisationTypeIsNullOrExists(_requestNoIssues.OrganisationTypeId));
+            _validator.Verify(v => v.CheckUkprnIsValid(_requestNoIssues.Ukprn));
         }
 
         [Test]
         public void GetOrganisationDetailsWhenOrganisationCreated()
         {
-            _returnedOrganisation = _createEpaOrganisationHandler.Handle(_requestNoIssues, new CancellationToken()).Result;
-            _returnedOrganisation.Should().BeEquivalentTo(_expectedOrganisationNoIssues);
+            _returnedOrganisationId = _createEpaOrganisationHandler.Handle(_requestNoIssues, new CancellationToken()).Result;
+            _returnedOrganisationId.Should().BeEquivalentTo(_expectedOrganisationNoIssues.OrganisationId);
         }
 
         [Test]
@@ -110,6 +111,19 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             _registerRepository.Verify(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Never);
             _validator.Verify(v => v.CheckOrganisationId(requestNoOrgId.OrganisationId));
         }
+
+        [Test]
+        public void GetBadRequestExceptionWhenUkprnInvalidFormatOccurs()
+        {
+            const string errorMessage = "invalid ukprn";
+            var requestInvalidUkprn = BuildRequest("name", "fdfsdf", 123321);
+            _validator.Setup(v => v.CheckUkprnIsValid(requestInvalidUkprn.Ukprn)).Returns(errorMessage);
+            var ex = Assert.ThrowsAsync<BadRequestException>(() => _createEpaOrganisationHandler.Handle(requestInvalidUkprn, new CancellationToken()));
+            Assert.AreEqual(errorMessage, ex.Message);
+            _registerRepository.Verify(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Never);
+            _validator.Verify(v => v.CheckUkprnIsValid(requestInvalidUkprn.Ukprn));
+        }
+        
 
         [Test]
         public void GetBadRequestExceptionWhenOrganisationIdAlreadyExistsValidationOccurs()

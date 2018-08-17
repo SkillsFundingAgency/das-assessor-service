@@ -14,6 +14,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
     {
         private readonly DatabaseService _databaseService = new DatabaseService();
         private RegisterRepository _repository;
+
         private string _organisationIdCreated;
         private int _ukprnBefore;
         private EpaOrganisation _initialOrganisationDetails;
@@ -90,14 +91,19 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [Test]
         public void UpdateOrganisationAndCheckUpdatesHaveHappened()
         {
-            var initialOrganisationDetails = _repository.CreateEpaOrganisation(_initialOrganisationDetails).Result;
-            initialOrganisationDetails.Name = _nameUpdated;
-            initialOrganisationDetails.Ukprn = _ukprnAfter;
-            initialOrganisationDetails.UpdatedAt = _updatedAt;
-            initialOrganisationDetails.OrganisationTypeId = _organisationTypeIdAfter;
-            initialOrganisationDetails.OrganisationData = _updatedOrgData;
-            var updatedOrganisationDetails = _repository.UpdateEpaOrganisation(initialOrganisationDetails).Result;
-            _expectedOrganisationDetails.Should().BeEquivalentTo(updatedOrganisationDetails);
+            var expectedOrgId = _repository.CreateEpaOrganisation(_initialOrganisationDetails).Result;
+            var initialResults = OrganisationHandler.GetOrganisationByOrgId(_organisationIdCreated);
+            initialResults.Name = _nameUpdated;
+            initialResults.Ukprn = _ukprnAfter;
+            initialResults.UpdatedAt = _updatedAt;
+            initialResults.OrganisationTypeId = _organisationTypeIdAfter;
+            initialResults.OrganisationData = _updatedOrgData;
+            var upatedOrgId = _repository.UpdateEpaOrganisation(initialResults).Result;
+            var updatedResults = OrganisationHandler.GetOrganisationByOrgId(_organisationIdCreated);
+
+            updatedResults.CreatedAt = _createdAt;
+            updatedResults.UpdatedAt = _updatedAt;
+            _expectedOrganisationDetails.Should().BeEquivalentTo(updatedResults);
         }
 
 

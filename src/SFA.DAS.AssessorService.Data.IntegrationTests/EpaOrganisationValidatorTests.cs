@@ -11,7 +11,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
     public class RegisterRepositoryEpaOrganisationAlreadyUsingUkprnTests: TestBase
     {
         private readonly DatabaseService _databaseService = new DatabaseService();
-        private RegisterRepository _repository;
+        private RegisterQueryRepository _repository;
         private OrganisationModel _organisation2;
         private OrganisationModel _organisation1;
         private string _orgId1;
@@ -21,7 +21,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [OneTimeSetUp]
         public void SetUpOrganisationTests()
         {
-            _repository = new RegisterRepository(_databaseService.WebConfiguration);
+            _repository = new RegisterQueryRepository(_databaseService.WebConfiguration);
             _orgId1 = "EPA0088";
             _ukprn1 = 876533;
             _ukprn2 = 9888;

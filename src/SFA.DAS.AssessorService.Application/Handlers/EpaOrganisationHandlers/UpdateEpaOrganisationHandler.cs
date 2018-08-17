@@ -11,7 +11,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 {
-    public class UpdateEpaOrganisationHandler : IRequestHandler<UpdateEpaOrganisationRequest, EpaOrganisation>
+    public class UpdateEpaOrganisationHandler : IRequestHandler<UpdateEpaOrganisationRequest, string>
     {
         private readonly IRegisterRepository _registerRepository;
         private readonly ILogger<UpdateEpaOrganisationHandler> _logger;
@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             _validator = validator;
         }
 
-        public async Task<EpaOrganisation> Handle(UpdateEpaOrganisationRequest request, CancellationToken cancellationToken)
+        public async Task<string> Handle(UpdateEpaOrganisationRequest request, CancellationToken cancellationToken)
         {
             var errorDetails = new StringBuilder();
             errorDetails.Append(_validator.CheckIfOrganisationNotFound(request.OrganisationId));
@@ -39,6 +39,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             errorDetails.Append(_validator.CheckOrganisationName(request.Name));
             errorDetails.Append(_validator.CheckOrganisationTypeIsNullOrExists(request.OrganisationTypeId));
             errorDetails.Append(_validator.CheckIfOrganisationUkprnExistsForOtherOrganisations(request.Ukprn, request.OrganisationId));
+            errorDetails.Append(_validator.CheckUkprnIsValid(request.Ukprn));
             if (errorDetails.Length > 0)
             {
                 _logger.LogError(errorDetails.ToString());
@@ -57,7 +58,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 Name = request.Name.Trim(),
                 OrganisationId = request.OrganisationId.Trim(),
                 OrganisationTypeId = request.OrganisationTypeId,
-                UpdatedAt = DateTime.Now,
                 Ukprn = request.Ukprn,
                 OrganisationData = new OrganisationData
                 {
