@@ -13,7 +13,7 @@ using SFA.DAS.AssessorService.Domain.Consts;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 {
-    public class CreateEpaOrganisationHandler : IRequestHandler<CreateEpaOrganisationRequest, EpaOrganisation>
+    public class CreateEpaOrganisationHandler : IRequestHandler<CreateEpaOrganisationRequest, string>
     {
         private readonly IRegisterRepository _registerRepository;
         private readonly ILogger<CreateEpaOrganisationHandler> _logger;
@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             _validator = validator;
         }
 
-        public async Task<EpaOrganisation> Handle(CreateEpaOrganisationRequest request, CancellationToken cancellationToken)
+        public async Task<string> Handle(CreateEpaOrganisationRequest request, CancellationToken cancellationToken)
         {
             var errorDetails = new StringBuilder();
             
@@ -41,16 +41,19 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             }
 
             errorDetails.Append(_validator.CheckIfOrganisationIdExists(request.OrganisationId));
+            ThrowAlreadyExistsExceptionIfErrorPresent(errorDetails);
             errorDetails.Append(_validator.CheckIfOrganisationUkprnExists(request.Ukprn));
-            if (errorDetails.Length > 0)
-            {
-                _logger.LogError(errorDetails.ToString());
-                throw new AlreadyExistsException(errorDetails.ToString());
-            }
+            ThrowAlreadyExistsExceptionIfErrorPresent(errorDetails);
 
             var organisation = MapOrganisationRequestToOrganisation(request);
-
             return await _registerRepository.CreateEpaOrganisation(organisation);
+        }
+
+        private void ThrowAlreadyExistsExceptionIfErrorPresent(StringBuilder errorDetails)
+        {
+            if (errorDetails.Length == 0) return;
+            _logger.LogError(errorDetails.ToString());
+            throw new AlreadyExistsException(errorDetails.ToString());
         }
 
         private static EpaOrganisation MapOrganisationRequestToOrganisation(CreateEpaOrganisationRequest request)

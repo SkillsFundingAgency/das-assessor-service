@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
 {
     public class EpaOrganisationValidator: IEpaOrganisationValidator
     {
-        private readonly IRegisterRepository _registerRepository;
+        private readonly IRegisterQueryRepository _registerRepository;
 
         public string ErrorMessageNoOrganisationId { get; } = "There is no organisation Id; ";
         public string ErrorMessageOrganisationIdTooLong { get; } = "The length of the organisation Id is too long; ";
@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         public string ErrorMessageOrganisationTypeIsInvalid { get; } = "There is no organisation type with this Id; ";
         public string ErrorMessageUkprnIsInvalid { get; } = "The ukprn is not the correct format or length; ";
 
-        public EpaOrganisationValidator( IRegisterRepository registerRepository)
+        public EpaOrganisationValidator(IRegisterQueryRepository registerRepository)
         {
             _registerRepository = registerRepository;
         }
