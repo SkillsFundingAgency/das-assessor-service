@@ -41,8 +41,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
             var organisation = DatabaseService.Get<EpaOrganisation>($@"select id,createdAt,deletedAt, EndpointAssessorName as Name, EndPointAssessorOrganisationId as OrganisationId, EndPointAssessorUkprn as ukprn, PrimaryContact, Status, UpdatedAt,OrganisationTypeId, OrganisationData  from Organisations where endpointassessororganisationid = '{orgId}'");
             return organisation;
         }
-
-
         public static bool EpaOrganisationExistsWithOrganisationId(string organisationId)
         {
             var sqlToCheckExists =

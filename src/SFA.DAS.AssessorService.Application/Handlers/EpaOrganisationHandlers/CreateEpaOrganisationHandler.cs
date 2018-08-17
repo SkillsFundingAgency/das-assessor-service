@@ -41,16 +41,19 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             }
 
             errorDetails.Append(_validator.CheckIfOrganisationIdExists(request.OrganisationId));
+            ThrowAlreadyExistsExceptionIfErrorPresent(errorDetails);
             errorDetails.Append(_validator.CheckIfOrganisationUkprnExists(request.Ukprn));
-            if (errorDetails.Length > 0)
-            {
-                _logger.LogError(errorDetails.ToString());
-                throw new AlreadyExistsException(errorDetails.ToString());
-            }
+            ThrowAlreadyExistsExceptionIfErrorPresent(errorDetails);
 
             var organisation = MapOrganisationRequestToOrganisation(request);
-
             return await _registerRepository.CreateEpaOrganisation(organisation);
+        }
+
+        private void ThrowAlreadyExistsExceptionIfErrorPresent(StringBuilder errorDetails)
+        {
+            if (errorDetails.Length == 0) return;
+            _logger.LogError(errorDetails.ToString());
+            throw new AlreadyExistsException(errorDetails.ToString());
         }
 
         private static EpaOrganisation MapOrganisationRequestToOrganisation(CreateEpaOrganisationRequest request)

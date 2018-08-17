@@ -37,12 +37,14 @@ namespace SFA.DAS.AssessorService.Data
                     "INSERT INTO [Organisations] ([Id],[CreatedAt],[EndPointAssessorName],[EndPointAssessorOrganisationId], " +
                     "[EndPointAssessorUkprn],[Status],[OrganisationTypeId],[OrganisationData]) " +
                     $@"VALUES (@id, getdate(), @name, @organisationId, @ukprn, 'New', @organisationTypeId,  @orgData)",
-                    new {org.Id, org.Name,org.OrganisationId, org.Ukprn,org.Status,org.OrganisationTypeId,orgData}
+                    new {org.Id, org.Name, org.OrganisationId, org.Ukprn, org.Status, org.OrganisationTypeId, orgData}
                 );
 
                 return org.OrganisationId;
+
             }
         }
+
         public async Task<string> UpdateEpaOrganisation(EpaOrganisation org)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
@@ -57,7 +59,7 @@ namespace SFA.DAS.AssessorService.Data
                     "[EndPointAssessorUkprn] = @ukprn, [OrganisationTypeId] = @organisationTypeId, " +
                     "[OrganisationData] = @orgData WHERE [EndPointAssessorOrganisationId] = @organisationId",
                     new {org.Name, org.Ukprn, org.OrganisationTypeId, orgData, org.OrganisationId});
-
+       
                 return org.OrganisationId;
             }
         }

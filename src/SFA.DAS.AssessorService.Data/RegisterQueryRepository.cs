@@ -74,7 +74,6 @@ namespace SFA.DAS.AssessorService.Data
                 return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists);
             }
         }
-       
 
         public async Task<EpaOrganisation> GetEpaOrganisationById(Guid id)
         {
@@ -122,7 +121,5 @@ namespace SFA.DAS.AssessorService.Data
                 return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists);
             }
         }
-
-       
     }
 }

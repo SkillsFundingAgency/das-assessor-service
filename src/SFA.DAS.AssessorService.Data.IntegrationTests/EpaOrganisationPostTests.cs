@@ -9,10 +9,10 @@ using SFA.DAS.AssessorService.Domain.Consts;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests
 {
-    public class EpaOrganisationPostTests: TestBase
+    public class EpaOrganisationPostTests : TestBase
     {
         private readonly DatabaseService _databaseService = new DatabaseService();
-        private  RegisterRepository _repository;
+        private RegisterRepository _repository;
         private RegisterQueryRepository _queryRepository;
         private string _organisationIdCreated;
         private int _ukprnCreated;

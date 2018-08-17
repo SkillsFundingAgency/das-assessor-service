@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Handlers;
@@ -8,7 +7,7 @@ using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests
 {
-    public class RegisterRepositoryEpaOrganisationAlreadyUsingUkprnTests: TestBase
+    public class RegisterRepositoryEpaOrganisationAlreadyUsingUkprnTests : TestBase
     {
         private readonly DatabaseService _databaseService = new DatabaseService();
         private RegisterQueryRepository _repository;
@@ -41,7 +40,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 OrganisationData = null
             };
 
-                _organisation2 = new OrganisationModel
+            _organisation2 = new OrganisationModel
             {
                 Id = Guid.NewGuid(),
                 CreatedAt = DateTime.Now.AddMonths(-1).Date,

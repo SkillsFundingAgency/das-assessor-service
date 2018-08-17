@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 
 namespace SFA.DAS.AssessorService.Application.Interfaces
@@ -9,6 +8,5 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<string> CreateEpaOrganisation(EpaOrganisation organisation);
         Task<string> UpdateEpaOrganisation(EpaOrganisation organisation);
 
-        
     }
 }

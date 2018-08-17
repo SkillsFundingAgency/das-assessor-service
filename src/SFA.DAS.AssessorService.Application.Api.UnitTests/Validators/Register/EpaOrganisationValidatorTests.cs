@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
             _validator = new EpaOrganisationValidator(_registerRepository.Object);
         }
 
-        [TestCase("EPA000",true)]
+        [TestCase("EPA000", true)]
         [TestCase("    ", false)]
         [TestCase("", false)]
         [TestCase(null, false)]
@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         [TestCase("Twelve_chars", true)]
         public void CheckOrganisationIdReturnsExpectedMessage(string organisationId, bool isAcceptable)
         {
-            var noMessageReturned = _validator.CheckOrganisationId(organisationId).Length==0;
+            var noMessageReturned = _validator.CheckOrganisationId(organisationId).Length == 0;
             Assert.AreEqual(isAcceptable, noMessageReturned);
         }
 
@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         [TestCase(null, false)]
         public void CheckOrganisationNameReturnsExpectedMessage(string name, bool isAcceptable)
         {
-            var noMessageReturned = _validator.CheckOrganisationName(name).Length==0;
+            var noMessageReturned = _validator.CheckOrganisationName(name).Length == 0;
             Assert.AreEqual(isAcceptable, noMessageReturned);
         }
 
@@ -48,7 +48,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         public void CheckUkprnIsValid(long? ukprn, bool isValid)
         {
             var noMessageReturned = _validator.CheckUkprnIsValid(ukprn).Length == 0;
-            Assert.AreEqual(isValid,noMessageReturned);
+            Assert.AreEqual(isValid, noMessageReturned);
         }
 
         [TestCase(false, false)]
@@ -57,7 +57,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         {
             _registerRepository.Setup(r => r.EpaOrganisationExistsWithOrganisationId(It.IsAny<string>()))
                 .Returns(Task.FromResult(alreadyPresent));
-            var noMessageReturned = _validator.CheckIfOrganisationIdExists("id here").Length>0;
+            var noMessageReturned = _validator.CheckIfOrganisationIdExists("id here").Length > 0;
             Assert.AreEqual(noMessageReturned, alreadyPresent);
         }
 
@@ -99,7 +99,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
             var messageReturned = _validator.CheckIfOrganisationUkprnExists(null).Length > 0;
             Assert.AreEqual(messageReturned, false);
             _registerRepository.Verify(r => r.EpaOrganisationExistsWithUkprn(It.IsAny<long>()), Times.Never);
-        }
+        }    
 
 
         [Test]
