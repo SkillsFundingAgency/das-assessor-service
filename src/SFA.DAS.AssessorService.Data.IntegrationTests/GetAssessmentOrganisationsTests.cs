@@ -71,8 +71,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             Assert.AreEqual(1, organisationsReturned.Count(x => x.Id == _organisation2.EndPointAssessorOrganisationId), "Organisation 2 Id was not found");
         }
 
-       
-
         [Test]
         public void GetOrganisationByIdAndCheckTheOrganisationIsReturned()
         {
