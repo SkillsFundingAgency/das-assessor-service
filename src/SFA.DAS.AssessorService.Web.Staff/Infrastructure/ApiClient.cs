@@ -65,9 +65,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             return await Get<PaginatedList<StaffSearchResult>>($"/api/v1/staffsearch?searchQuery={searchString}&page={page}");
         }
 
-        public async Task<LearnerDetail> GetLearner(int stdCode, long uln)
+        public async Task<LearnerDetail> GetLearner(int stdCode, long uln, bool allLogs)
         {
-            return await Get<LearnerDetail>($"/api/v1/learnerDetails?stdCode={stdCode}&uln={uln}");
+            return await Get<LearnerDetail>($"/api/v1/learnerDetails?stdCode={stdCode}&uln={uln}&alllogs={allLogs}");
         }
 
         public async Task<Certificate> GetCertificate(Guid certificateId)

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.WsFederation;
@@ -54,12 +56,19 @@ namespace SFA.DAS.AssessorService.Web.Staff
             });
 
             AddAuthentication(services);
+
+            services.Configure<RequestLocalizationOptions>(options =>
+            {
+                options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("en-GB");
+                options.SupportedCultures = new List<CultureInfo> { new CultureInfo("en-GB") };
+                options.RequestCultureProviders.Clear();
+            });
+
            
             services.AddMvc(options => { options.Filters.Add<CheckSessionFilter>(); })                          
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1); ;
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
             
             services.AddDistributedRedisCache(options =>
@@ -129,6 +138,8 @@ namespace SFA.DAS.AssessorService.Web.Staff
             app.UseCookiePolicy();
             app.UseAuthentication();
             app.UseSession();
+
+            app.UseRequestLocalization();
 
             app.UseMvc(routes =>
             {
