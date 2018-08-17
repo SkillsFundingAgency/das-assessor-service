@@ -7,5 +7,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
     public interface IRegisterQueryRepository
     {
         Task<IEnumerable<OrganisationType>> GetOrganisationTypes();
+        Task<IEnumerable<DeliveryArea>> GetDeliveryAreas();
     }
 }
