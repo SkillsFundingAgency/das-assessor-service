@@ -5,6 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="Messages\" />
+    <Folder Include="Validators\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
