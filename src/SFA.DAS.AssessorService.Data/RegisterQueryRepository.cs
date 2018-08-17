@@ -21,7 +21,6 @@ namespace SFA.DAS.AssessorService.Data
             _configuration = configuration;
         }
 
-
         public async Task<IEnumerable<OrganisationType>> GetOrganisationTypes()
         {
             var connectionString = _configuration.SqlConnectionString;
@@ -49,6 +48,20 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
+        public async Task<IEnumerable<DeliveryArea>> GetDeliveryAreas()
+        {
+            var connectionString = _configuration.SqlConnectionString;
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                var deliveryAreas = await connection.QueryAsync<DeliveryArea>("select * from [DeliveryArea]");
+                return deliveryAreas;
+            }
+         }
+        
         public async Task<bool> EpaOrganisationExistsWithUkprn(long ukprn)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
