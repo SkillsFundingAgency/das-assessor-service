@@ -23,7 +23,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
     {
         private readonly ILogger<RegisterQueryController> _logger;
         private readonly IMediator _mediator;
-
         public RegisterQueryController(IMediator mediator, ILogger<RegisterQueryController> logger
         )
         {
@@ -60,7 +59,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _logger.LogInformation("Get Assessment Organisations");
             return Ok(await _mediator.Send(new GetAssessmentOrganisationsRequest()));
         }
-
 
         [HttpGet("assessment-organisations/{organisationId}", Name = "GetAssessmentOrganisation")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(AssessmentOrganisationSummary))]

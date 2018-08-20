@@ -42,7 +42,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
                     Address1 = "address 1"
                 }
             };
-           
 
             _mediator.Setup(m =>
                 m.Send(It.IsAny<GetAssessmentOrganisationRequest>(),
@@ -64,7 +63,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
             _mediator.Verify(m => m.Send(It.IsAny<GetAssessmentOrganisationRequest>(), new CancellationToken()));
         }
 
-
         [Test]
         public void GetAssessmentOrganisationsShouldReturnOk()
         {
@@ -84,6 +82,4 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
             organisation.Should().BeEquivalentTo(_expectedAssessmentOrganisationDetails);
         }
     }
-
-  
 }
