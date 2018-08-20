@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         private static object _result;
         private static Mock<IMediator> _mediator;
         private static Mock<ILogger<RegisterQueryController>> _logger;
-        private AssessmentOrganisationDetails _expectedAssessmentOrganisationDetails;
+        private EpaOrganisation _expectedAssessmentOrganisationDetails;
         private const string OrganisationId = "ABC123";
 
         [SetUp]
@@ -31,17 +31,11 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         {
             _mediator = new Mock<IMediator>();
             _logger = new Mock<ILogger<RegisterQueryController>>();
-            _expectedAssessmentOrganisationDetails = new AssessmentOrganisationDetails
+            _expectedAssessmentOrganisationDetails = new EpaOrganisation
             {
-                Id = OrganisationId,
+                OrganisationId = OrganisationId,
                 Name = "Organisation X",
-                Ukprn = 123456,
-                Email = "test@test.com",
-                Phone = "123",
-                Address = new AssessmentOrganisationAddress
-                {
-                    Primary = "primary 1"
-                }
+                Ukprn = 123456
             };
 
 

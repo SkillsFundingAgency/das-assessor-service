@@ -10,7 +10,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ao
 {
-    public class GetAssessmentOrganisationsByStandardHandler : IRequestHandler<GetAssessmentOrganisationsbyStandardRequest, List<AssessmentOrganisationDetails>>
+    public class GetAssessmentOrganisationsByStandardHandler : IRequestHandler<GetAssessmentOrganisationsbyStandardRequest, List<EpaOrganisation>>
     {
         private readonly IRegisterQueryRepository _registerQueryRepository;
         private readonly ILogger<GetAssessmentOrganisationsByStandardHandler> _logger;
@@ -21,25 +21,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             _logger = logger;
         }
 
-        public async Task<List<AssessmentOrganisationDetails>> Handle(GetAssessmentOrganisationsbyStandardRequest request, CancellationToken cancellationToken)
+        public async Task<List<EpaOrganisation>> Handle(GetAssessmentOrganisationsbyStandardRequest request, CancellationToken cancellationToken)
         {
             var standardId = request.StandardId;
             _logger.LogInformation($@"Handling AssessmentOrganisations Request for StandardId [{standardId}]");
             var organisations = await _registerQueryRepository.GetAssessmentOrganisationsByStandardId(request.StandardId);
-
-           foreach (var org in organisations)
-            {
-                var addresses = await _registerQueryRepository.GetAssessmentOrganisationAddresses(org.Id);
-                org.Address = addresses.FirstOrDefault();
-                var contact = await _registerQueryRepository.GetPrimaryOrFirstContact(org.Id);
-                if (contact == null) continue;
-                org.Email = contact.Email;
-                org.Phone = contact.PhoneNumber;
-            }
-
             return organisations.ToList();
         }
-
     }
 }
 

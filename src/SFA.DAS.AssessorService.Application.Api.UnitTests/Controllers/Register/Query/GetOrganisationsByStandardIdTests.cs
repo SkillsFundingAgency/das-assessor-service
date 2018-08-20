@@ -23,9 +23,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         private static object _result;
         private static Mock<IMediator> _mediator;
         private static Mock<ILogger<RegisterQueryController>> _logger;
-        private List<AssessmentOrganisationDetails> _expectedAssessmentOrganisationSetOfDetails;
-        private AssessmentOrganisationDetails _assOrgDetails1;
-        private AssessmentOrganisationDetails _assOrgDetails2;
+        private List<EpaOrganisation> _expectedAssessmentOrganisationSetOfDetails;
+        private EpaOrganisation _assOrgDetails1;
+        private EpaOrganisation _assOrgDetails2;
         private int standardId = 1;
 
         [SetUp]
@@ -34,10 +34,10 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
             _mediator = new Mock<IMediator>();
             _logger = new Mock<ILogger<RegisterQueryController>>();
             // needs more details
-            _assOrgDetails1 = new AssessmentOrganisationDetails { Id = "Id1", Name = "Name 9", Ukprn = 9999999 };
-            _assOrgDetails2 = new AssessmentOrganisationDetails { Id = "Id2", Name = "Name 2", Ukprn = 8888888 };
+            _assOrgDetails1 = new EpaOrganisation { OrganisationId = "Id1", Name = "Name 9", Ukprn = 9999999 };
+            _assOrgDetails2 = new EpaOrganisation { OrganisationId = "Id2", Name = "Name 2", Ukprn = 8888888 };
 
-            _expectedAssessmentOrganisationSetOfDetails = new List<AssessmentOrganisationDetails>
+            _expectedAssessmentOrganisationSetOfDetails = new List<EpaOrganisation>
             {
                 _assOrgDetails1,
                 _assOrgDetails2
@@ -73,13 +73,13 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         [Test]
         public void ResultsAreOfTypeListAssessmentOrganisationDetails()
         {
-            ((OkObjectResult)_result).Value.Should().BeOfType<List<AssessmentOrganisationDetails>>();
+            ((OkObjectResult)_result).Value.Should().BeOfType<List<EpaOrganisation>>();
         }
 
         [Test]
         public void ResultsMatchExpectedListOfAssessmentOrganisationDetails()
         {
-            var organisations = ((OkObjectResult)_result).Value as List<AssessmentOrganisationDetails>;
+            var organisations = ((OkObjectResult)_result).Value as List<EpaOrganisation>;
             organisations.Count.Should().Be(2);
             organisations.Should().Contain(_assOrgDetails1);
             organisations.Should().Contain(_assOrgDetails2);
