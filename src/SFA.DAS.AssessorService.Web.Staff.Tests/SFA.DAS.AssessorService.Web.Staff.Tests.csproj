@@ -1,18 +1,11 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="microsoft.aspnetcore" Version="2.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.1.0" />
-    <PackageReference Include="microsoft.aspnetcore.cookiepolicy" Version="2.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.HttpsPolicy" Version="2.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="2.1.0" />
-    <PackageReference Include="microsoft.aspnetcore.session" Version="2.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.1.0" />
-    <PackageReference Include="microsoft.extensions.http" Version="2.1.0" />
+  <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.NET.Test.sdk" Version="15.7.2" />
     <PackageReference Include="nunit" Version="3.10.1" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.10.0" />
