@@ -67,6 +67,14 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 });
 
                 services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
+                
+                services.Configure<RequestLocalizationOptions>(options =>
+                {
+                    options.DefaultRequestCulture = new RequestCulture("en-GB");
+                    options.SupportedCultures = new List<CultureInfo> { new CultureInfo("en-GB") };
+                    options.SupportedUICultures = new List<CultureInfo> { new CultureInfo("en-GB") };
+                    options.RequestCultureProviders.Clear();
+                });
 
                 IMvcBuilder mvcBuilder;
                 if (_env.IsDevelopment())
@@ -93,18 +101,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     }
                 });
 
-                services.Configure<RequestLocalizationOptions>(
-                    opts =>
-                    {
-                        var supportedCultures = new List<CultureInfo>
-                        {
-                        new CultureInfo("en-GB")
-                        };
-
-                        opts.DefaultRequestCulture = new RequestCulture("en-GB");
-                        opts.SupportedCultures = supportedCultures;
-                        opts.SupportedUICultures = supportedCultures;
-                    });
+                
 
                 serviceProvider = ConfigureIOC(services);
 
@@ -175,6 +172,9 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     .UseAuthentication();
 
                 app.UseMiddleware(typeof(ErrorHandlingMiddleware));
+                
+                app.UseRequestLocalization();
+
                 app.UseMvc();
             }
             catch (Exception e)
