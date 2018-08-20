@@ -1,0 +1,106 @@
+﻿@using SFA.DAS.AssessorService.Domain.Extensions;
+@model SFA.DAS.AssessorService.Web.Staff.Controllers.BatchSearchViewModel
+
+@{
+    ViewBag.Title = "Search results";
+    Layout = "_Layout";
+}
+
+
+<div class="grid-row">
+    <div class="column-full">
+        <a asp-action="Index" class="link-back">Search Again</a>
+
+        <h1 class="heading-xlarge">
+            Search results
+            <span class="heading-secondary">Number of results: @Model.PaginatedList.TotalRecordCount</span>
+        </h1>
+
+        @if (@Model.PaginatedList.TotalRecordCount > 0)
+        {
+            <div class="grid-row">
+                <div class="column-two-thirds">
+                    <h2 class="heading-medium">Batch details</h2>
+                    <div class="form-group">
+                        <ul>
+                            <li>
+                                <p><span class="bold">Batch Number:</span> @Model.PaginatedList.Items.First().BatchNumber</p>
+                            </li>
+                            <li>
+                                <p><span class="bold">Print Date:</span> @Model.PaginatedList.Items.First().BatchPrintDate.UtcToTimeZoneTime()</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-row">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>ULN</th>
+                            <th>Standard</th>
+                            <th>Certificate Reference</th>
+                            <th>Status</th>
+                            <th>Overall Grade</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var result in Model.PaginatedList.Items)
+                        {
+                        <tr>
+                            <td>@result.CertificateData.LearnerGivenNames @result.CertificateData.LearnerFamilyName</td>
+                            <td>@result.Uln</td>
+                            <td>@result.CertificateData.StandardName (@result.StandardCode)</td>
+                            <td>@result.CertificateReference</td>
+                            <td>@result.Status</td>
+                            <td>@result.CertificateData.OverallGrade</td>
+                            <td><a asp-controller="Search" asp-action="Select" asp-route-stdcode="@result.StandardCode" asp-route-uln="@result.Uln" asp-route-searchstring="@result.CertificateReference">View</a></td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+
+    </div>
+</div>
+
+@if (Model.PaginatedList.HasPreviousPage || Model.PaginatedList.HasNextPage)
+{
+    <div class="grid-row">
+        <div class="column-full">
+            <div class="page-navigation">
+
+                @if (Model.PaginatedList.HasPreviousPage)
+                {
+                    <a asp-action="Results"
+                       asp-controller="BatchSearch"
+                       asp-route-batchNumber="@Model.BatchNumber"
+                       asp-route-page="@( Model.PaginatedList.PageIndex - 1)"
+                       class="previous">
+                        <i class="arrow-button icon-left-open">&#xe800;</i>
+                        <span class="description">Previous <span class="hide-mob">page</span></span>
+                        <span class="counter">Page <span class="prevPage">@(Model.PaginatedList.PageIndex - 1)</span> of <span class="totalPage">@(Model.PaginatedList.TotalPages)</span></span>
+                    </a>
+                }
+
+                @if (Model.PaginatedList.HasNextPage)
+                {
+                    <a asp-action="Results"
+                       asp-controller="BatchSearch"
+                       asp-route-batchNumber="@Model.BatchNumber"
+                       asp-route-page="@( Model.PaginatedList.PageIndex + 1)"
+                       class="next">
+                        <i class="arrow-button icon-right-open">&#xe801;</i>
+                        <span class="description">Next <span class="hide-mob">page</span></span>
+                        <span class="counter">Page <span class="nextPage">@(Model.PaginatedList.PageIndex + 1)</span> of <span class="totalPage">@(Model.PaginatedList.TotalPages)</span></span>
+                    </a>
+                }
+
+            </div>
+        </div>
+    </div>
+}

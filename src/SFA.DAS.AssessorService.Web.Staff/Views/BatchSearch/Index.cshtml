@@ -1,0 +1,25 @@
+﻿@using SFA.DAS.AssessorService.Web.Staff.Controllers
+@model BatchSearchViewModel
+
+@{
+    ViewBag.Title = "Batch search";
+    Layout = "_Layout";
+}
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <form asp-action="Results" asp-controller="BatchSearch" method="get">
+            @Html.HiddenFor(m => m.Page)
+            <div class="form-group">
+                <h1>
+                    <label class="form-label" for="SearchString">
+                        <span class="heading-xlarge">Batch search</span>
+                        <span class="form-hint">Search by Batch Number</span>
+                    </label>
+                </h1>
+                <input class="form-control" asp-for="BatchNumber" type="number" />
+            </div>
+            <button class="button" type="submit">Search</button>
+        </form>
+    </div>
+</div>

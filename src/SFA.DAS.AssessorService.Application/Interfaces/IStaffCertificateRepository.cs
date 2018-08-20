@@ -11,5 +11,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<List<CertificateForSearch>> GetCertificatesFor(long[] ulns);
         Task<List<CertificateLogSummary>> GetCertificateLogsFor(Guid certificateId,
             bool allRecords);
+
+        Task<List<CertificateLog>> GetCertificateLogsForBatch(int batchNumber);
     }
 }
