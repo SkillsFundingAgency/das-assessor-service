@@ -10,5 +10,6 @@
         public const string NoCertificate = "NoCertificate";
         public const string Deleted = "Deleted";
         public const string Reprint = "Reprint";
+        public const string Error = "Error";
     }
 }
