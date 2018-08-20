@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
+using SFA.DAS.AssessorService.Application.Handlers.Staff;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 
@@ -48,7 +49,7 @@ namespace SFA.DAS.AssessorService.Data.Staff
         }
 
         public async Task<int> CountLearnersByName(string learnerName)
-        {
+        {   
             var deSpacedLearnerName = learnerName.Replace(" ", "");
             return await _context.Ilrs
                 .CountAsync(i => i.FamilyName.Replace(" ", "") == deSpacedLearnerName ||
@@ -56,12 +57,16 @@ namespace SFA.DAS.AssessorService.Data.Staff
                    i.GivenNames.Replace(" ", "") + i.FamilyName.Replace(" ", "") == deSpacedLearnerName);
         }
 
-        public async Task<IEnumerable<Ilr>> SearchForLearnerByEpaOrgId(string epaOrgId)
+        public async Task<IEnumerable<Ilr>> SearchForLearnerByEpaOrgId(StaffSearchRequest searchRequest)
         {
-            return (await _connection.QueryAsync<Ilr>(@"SELECT ilr.* FROM Certificates cert
-                                                        INNER JOIN Organisations org ON org.Id = cert.OrganisationId
-                                                        INNER JOIN Ilrs ilr ON ilr.Uln = cert.Uln AND ilr.StdCode = cert.StandardCode
-                                                        WHERE org.EndPointAssessorOrganisationId = @epaOrgId", new {epaOrgId})).ToList();
+            return (await _connection.QueryAsync<Ilr>(@"SELECT ilr.Uln, ilr.GivenNames, ilr.FamilyName, ilr.StdCode, cert.UpdatedAt 
+		FROM Certificates cert
+        INNER JOIN Organisations org ON org.Id = cert.OrganisationId
+        INNER JOIN Ilrs ilr ON ilr.Uln = cert.Uln AND ilr.StdCode = cert.StandardCode
+        WHERE org.EndPointAssessorOrganisationId = @epaOrgId
+		ORDER BY cert.UpdatedAt DESC
+		OFFSET @skip ROWS 
+		FETCH NEXT @take ROWS ONLY", new {epaOrgId = searchRequest.SearchQuery, skip = (searchRequest.Page - 1) * 10, take = 10})).ToList();
         }
     }
 }

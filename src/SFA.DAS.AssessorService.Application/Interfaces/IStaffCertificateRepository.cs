@@ -9,6 +9,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
     public interface IStaffCertificateRepository
     {
         Task<List<CertificateForSearch>> GetCertificatesFor(long[] ulns);
-        Task<List<CertificateLogSummary>> GetCertificateLogsFor(Guid certificateId);
+        Task<List<CertificateLogSummary>> GetCertificateLogsFor(Guid certificateId,
+            bool allRecords);
     }
 }
