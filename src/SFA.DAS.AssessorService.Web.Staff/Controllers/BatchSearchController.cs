@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
+using SFA.DAS.AssessorService.Web.Staff.Models;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
@@ -41,12 +40,5 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 
             return View(batchSearchViewModel);
         }
-    }
-
-    public class BatchSearchViewModel
-    {
-        public int BatchNumber { get; set; }
-        public int Page { get; set; }
-        public PaginatedList<StaffBatchSearchResult> PaginatedList { get; set; }
     }
 }
