@@ -4,10 +4,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Extensions;
+using SFA.DAS.AssessorService.Web.Staff.Domain;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
+using SFA.DAS.AssessorService.Web.Staff.Models;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
@@ -138,28 +139,5 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 
             return RedirectToAction("Index");
         }
-    }
-
-    public enum ScheduleInterval
-    {
-        Hourly = 60,
-        Daily = 1440,
-        Weekly = 10080
-    }
-
-    public enum ScheduleJobType
-    {
-        [Display(Name="Print Run")]
-        PrintRun = 1
-    }
-
-    public class ScheduleConfigViewModel
-    {
-        public Guid Id { get; set; }
-        public DateTime RunTime { get; set; }
-        public string Interval { get; set; }
-        public ScheduleInterval? ScheduleInterval { get; set; }
-        public bool IsRecurring { get; set; }
-        public ScheduleJobType ScheduleType { get; set; }
     }
 }
