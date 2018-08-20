@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             _webConfiguration = webConfiguration;
         }
 
-        public async Task Create(int batchNumber, IEnumerable<CertificateResponse> certificates)
+        public void Create(int batchNumber, IEnumerable<CertificateResponse> certificates)
         {
             _aggregateLogger.LogInfo("Creating Excel Spreadsheet ....");
 

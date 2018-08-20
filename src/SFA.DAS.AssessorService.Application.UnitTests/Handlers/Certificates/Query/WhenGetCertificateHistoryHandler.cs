@@ -25,7 +25,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Qu
         private Mock<ICertificateRepository> _certificateRepositoryMock;
         private Mock<IAssessmentOrgsApiClient> _assessmentOrgsApiClientMock;
         private Mock<ILogger<GetCertificatesHistoryHandler>> _loggermock;
-        private Mock<IContactQueryRepository> _contactQueryRepositoryMock;
 
         private PaginatedList<CertificateHistoryResponse> _result;
 
