@@ -21,22 +21,23 @@
 </div>
 
 <div class="grid-row">
-    <div class="column-two-thirds">
-        <h2 class="heading-medium">Apprentice details</h2>
-        <div class="form-group">
-            <ul>
-                <li>
-                    <p><span class="bold">Name:</span> @Model.Learner.GivenNames @Model.Learner.FamilyName</p>
-                </li>
-                <li>
-                    <p><span class="bold"><abbr title="Unique learner number">ULN</abbr>:</span> @Model.Learner.Uln</p>
-                </li>
-
-                <li>
-                    <p><span class="bold">Funding model:</span> @Model.Learner.FundingModel</p>
-                </li>
-            </ul>
-        </div>
+    <div class="column-one-half">
+        <table>
+            <tbody>
+                <tr>
+                    <td class="bold">Name</td>
+                    <td>@Model.Learner.GivenNames @Model.Learner.FamilyName</td>
+                </tr>
+                <tr>
+                    <td class="bold"><abbr title="Unique learner number">ULN</abbr></td>
+                    <td>@Model.Learner.Uln</td>
+                </tr>
+                <tr>
+                    <td class="bold">Funding model</td>
+                    <td>@Model.Learner.FundingModel</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>
 
@@ -44,80 +45,91 @@
 {
     <div class="grid-row">
         <div class="column-two-thirds">
-            <h2 class="heading-medium">Certificate details</h2>
-            <div class="form-group">
-                <ul>
-                    <li>
-                        <p><span class="bold">Certificate number:</span> @Model.Learner.CertificateReference</p>
-                    </li>
-                    <li>
-                        <p><span class="bold">EPAO:</span> @Model.Learner.OrganisationName</p>
-                    </li>
-                    <li>
-                        <p><span class="bold">Standard:</span> @Model.Learner.Standard (@Model.Learner.StandardCode)</p>
-                    </li>
-                    <li>
-                        <p><span class="bold">Level:</span> @Model.Learner.Level</p>
-                    </li>
-                    <li>
-                        <p><span class="bold">Option:</span> @Model.Learner.Option</p>
-                    </li>
-                    <li>
-                        <p><span class="bold">Grade:</span> @Model.Learner.OverallGrade</p>
-                    </li>
-                    <li>
-                        <p><span class="bold">Learner start date:</span> @Model.Learner.LearnStartDate?.ToShortDateString()</p>
-                    </li>
-                    <li>
-                        <p><span class="bold">Achievement date:</span> @Model.Learner.AchievementDate?.ToShortDateString()</p>
-                    </li>
-                    <li>
-                        <p><span class="bold">Status:</span> @Model.Learner.CertificateStatus</p>
-                    </li>
-                </ul>
-            </div>
+            <table>
+                <caption class="heading-large">Certificate details</caption>
+                <tbody>
+                    <tr>
+                        <td><span class="bold">Certificate number</span></td>
+                        <td>@Model.Learner.CertificateReference</td>
+                    </tr>
+                    <tr>
+                        <td><span class="bold">EPAO</span></td>
+                        <td>@Model.Learner.OrganisationName</td>
+                    </tr>
+                    <tr>
+                        <td><span class="bold">Standard</span></td>
+                        <td>@Model.Learner.Standard (@Model.Learner.StandardCode)</td>
+                    </tr>
+                    <tr>
+                        <td><span class="bold">Level</span></td>
+                        <td>@Model.Learner.Level</td>
+                    </tr>
+                    <tr>
+                        <td><span class="bold">Option</span></td>
+                        <td>@Model.Learner.Option</td>
+                    </tr>
+                    <tr>
+                        <td><span class="bold">Grade</span></td>
+                        <td>@Model.Learner.OverallGrade</td>
+                    </tr>
+                    <tr>
+                        <td><span class="bold">Learner start date</span></td>
+                        <td>@Model.Learner.LearnStartDate?.ToShortDateString()</td>
+                    </tr>
+                    <tr>
+                        <td><span class="bold">Achievement date</span></td>
+                        <td>@Model.Learner.AchievementDate?.ToShortDateString()</td>
+                    </tr>
+                    <tr>
+                        <td><span class="bold">Status</span></td>
+                        <td>@Model.Learner.CertificateStatus</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 
     <div class="grid-row">
         <div class="column-full">
-            <h2 class="heading-medium">History</h2>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Time</th>
-                        <th>Action</th>
-                        <th>By</th>
-                        <th>Status</th>
-                        <th>Batch</th>
-                        <th>Changed</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var log in Model.Learner.CertificateLogs)
-                    {
+            <h2 class="heading-large">History</h2>
+            <div class="form-group">
+                <table class="table js-history-table">
+                    <thead>
                         <tr>
-                            <td>@log.EventTime.UtcToTimeZoneTime()</td>
-                            <td>@log.Action</td>
-                            <td>@log.ActionBy</td>
-                            <td>@log.Status</td>
-                            <td>@log.BatchNumber</td>
-                            <td>
-                                @{
-                                    if (Model.Learner.CertificateLogs.Count() > 1)
-                                    {
-                                        foreach (var change in log.DifferencesToPrevious)
+                            <th>Date and time</th>
+                            <th>Action</th>
+                            <th>By</th>
+                            <th>Status</th>
+                            <th>Batch</th>
+                            <th>Changed</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var log in Model.Learner.CertificateLogs)
+                        {
+                            <tr>
+                                <td>@log.EventTime.UtcToTimeZoneTime()</td>
+                                <td>@log.Action</td>
+                                <td>@log.ActionBy</td>
+                                <td>@log.Status</td>
+                                <td>@log.BatchNumber</td>
+                                <td>
+                                    @{
+                                        if (Model.Learner.CertificateLogs.Count() > 1)
                                         {
-                                            <span class="bold">@(change.Key)<text>:</text></span>
-                                            @change.Value<br />
+                                            foreach (var change in log.DifferencesToPrevious)
+                                            {
+                                                <span class="bold">@(change.Key)<text>:</text></span>
+                                                @change.Value<br />
+                                            }
                                         }
                                     }
-                                }
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -135,11 +147,11 @@ else
     <div class="column-two-thirds">
         @if (Model.ShowDetail)
         {
-            <a class="button" style="width: 200px" asp-action="Select" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString" asp-route-alllogs=true>Show all History</a>
+            <a class="button" asp-action="Select" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString" asp-route-alllogs=true>Show all History</a>
         }
         else
         {
-            <a class="button" style="width: 200px" asp-action="Select" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString" asp-route-alllogs=false>Show Summary</a>
+            <a class="button" asp-action="Select" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString" asp-route-alllogs=false>Show Summary</a>
         }
     </div>
 </div>
@@ -157,7 +169,3 @@ else
         </ul>
     </div>
 </div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("~/Views/Search/_SelectScriptsPartial.cshtml"); }
-}
