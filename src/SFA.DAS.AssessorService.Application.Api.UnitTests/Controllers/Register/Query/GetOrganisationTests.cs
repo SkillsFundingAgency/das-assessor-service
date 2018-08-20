@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         private static object _result;
         private static Mock<IMediator> _mediator;
         private static Mock<ILogger<RegisterQueryController>> _logger;
-        private AssessmentOrganisationDetails _expectedAssessmentOrganisationDetails;
+        private EpaOrganisation _expectedAssessmentOrganisationDetails;
         private const string OrganisationId = "ABC123";
 
         [SetUp]
@@ -31,15 +31,15 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         {
             _mediator = new Mock<IMediator>();
             _logger = new Mock<ILogger<RegisterQueryController>>();
-            _expectedAssessmentOrganisationDetails = new AssessmentOrganisationDetails
+            _expectedAssessmentOrganisationDetails = new EpaOrganisation
             {
-                Id = OrganisationId,
+                OrganisationId = OrganisationId,
                 Name = "Organisation X",
                 Ukprn = 123456,
-                Email = "test@test.com",
-                Phone = "123",
-                Address = new AssessmentOrganisationAddress {
-                    Primary = "primary 1"
+                OrganisationData = new OrganisationData
+                {
+                    LegalName = "legal name",
+                    Address1 = "address 1"
                 }
             };
            
@@ -74,13 +74,13 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         [Test]
         public void ResultsAreOfTypeAssessmentOrganisationDetails()
         {
-            ((OkObjectResult)_result).Value.Should().BeOfType<AssessmentOrganisationDetails>();
+            ((OkObjectResult)_result).Value.Should().BeOfType<EpaOrganisation>();
         }
 
         [Test]
         public void ResultsMatchExpectedOrganisationDetails()
         {
-            var organisation = ((OkObjectResult)_result).Value as AssessmentOrganisationDetails;
+            var organisation = ((OkObjectResult)_result).Value as EpaOrganisation;
             organisation.Should().BeEquivalentTo(_expectedAssessmentOrganisationDetails);
         }
     }
