@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using MediatR;
+﻿using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Staff
@@ -8,11 +7,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
     {
         public int StdCode { get; }
         public long Uln { get; }
+        public bool AllRecords { get; }
 
-        public LearnerDetailRequest(int stdCode, long uln)
+        public LearnerDetailRequest(int stdCode,
+            long uln,
+            bool allRecords
+            )
         {
             StdCode = stdCode;
             Uln = uln;
+            AllRecords = allRecords;
         }
     }
 }

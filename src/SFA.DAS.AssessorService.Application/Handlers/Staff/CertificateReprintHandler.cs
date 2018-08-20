@@ -21,18 +21,20 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             CancellationToken cancellationToken)
         {
             var certificate = await _certificateRepository.GetCertificate(request.Id);
-            
-            certificate.Status = Domain.Consts.CertificateStatus.Reprint;
-            await _certificateRepository.Update(certificate, request.Username,
-                action: SFA.DAS.AssessorService.Domain.Consts.CertificateActions.Reprint);
+
+            if (certificate.Status == Domain.Consts.CertificateStatus.Printed)
+            {
+                certificate.Status = Domain.Consts.CertificateStatus.Reprint;
+                await _certificateRepository.Update(certificate, request.Username,
+                    action: SFA.DAS.AssessorService.Domain.Consts.CertificateActions.Reprint);
+            }
 
             var staffUiReprintResponse = new CertificateReprintResponse
             {
                 Certificate = certificate
             };
-             
+
             return staffUiReprintResponse;
-            
         }
     }
 }
