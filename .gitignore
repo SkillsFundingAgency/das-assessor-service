@@ -7,6 +7,7 @@
 *.userosscache
 *.sln.docstates
 connectionStrings.Local.json
+min
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -277,3 +278,5 @@ src/SFA.DAS.AssessorService.Web.Specflow.Tests/Project/**/*.*
 # Minified css and js
 src/SFA.DAS.AssessorService.Web/wwwroot/css/*.min.css
 src/SFA.DAS.AssessorService.Web/wwwroot/js/*.min.js
+src/SFA.DAS.AssessorService.Web.Staff/wwwroot/css/*.min.css
+src/SFA.DAS.AssessorService.Web.Staff/wwwroot/js/*.min.js

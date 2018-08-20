@@ -19,22 +19,22 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         protected Mock<IRegisterQueryRepository> RegisterQueryRepository;
         protected GetAssessmentOrganisationsByStandardHandler GetAssessmentOrganisationsByStandardHandler;
         protected Mock<ILogger<GetAssessmentOrganisationsByStandardHandler>> Logger;
-        private List<AssessmentOrganisationDetails> _expectedOrganisationListOfDetails;
-        private AssessmentOrganisationDetails _assessmentOrganisationDetails1;
-        private AssessmentOrganisationDetails _assessmentOrganisationDetails2;
+        private List<EpaOrganisation> _expectedOrganisationListOfDetails;
+        private EpaOrganisation _assessmentOrganisationDetails1;
+        private EpaOrganisation _assessmentOrganisationDetails2;
         private readonly int _standardId = 1;
         private GetAssessmentOrganisationsbyStandardRequest _request;
         [SetUp]
         public void Setup()
         {
             RegisterQueryRepository = new Mock<IRegisterQueryRepository>();
-            _assessmentOrganisationDetails1 = new AssessmentOrganisationDetails { Id = "EPA9999", Name = "Name 100", Ukprn = 777777 };
-            _assessmentOrganisationDetails2 = new AssessmentOrganisationDetails { Id = "EPA8888", Name = "Name 10" };
+            _assessmentOrganisationDetails1 = new EpaOrganisation { OrganisationId = "EPA9999", Name = "Name 100", Ukprn = 777777 };
+            _assessmentOrganisationDetails2 = new EpaOrganisation { OrganisationId = "EPA8888", Name = "Name 10" };
             _request = new GetAssessmentOrganisationsbyStandardRequest {StandardId = _standardId};
 
             Logger = new Mock<ILogger<GetAssessmentOrganisationsByStandardHandler>>();
 
-            _expectedOrganisationListOfDetails = new List<AssessmentOrganisationDetails>
+            _expectedOrganisationListOfDetails = new List<EpaOrganisation>
             {
                 _assessmentOrganisationDetails1,
                 _assessmentOrganisationDetails2
