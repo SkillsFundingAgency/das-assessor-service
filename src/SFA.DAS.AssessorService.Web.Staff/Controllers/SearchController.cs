@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
@@ -7,6 +8,7 @@ using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {
+    [Authorize]
     public class SearchController : Controller
     {
         private readonly ILogger<SearchController> _logger;
@@ -41,15 +43,20 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         }
 
         [HttpGet("select")]
-        public async Task<IActionResult> Select(int stdCode, long uln, string searchString, int page = 1)
+        public async Task<IActionResult> Select(int stdCode, 
+            long uln, 
+            string searchString, 
+            int page = 1, 
+            bool allLogs = false)         
         {
-            var learner = await _apiClient.GetLearner(stdCode, uln);
+            var learner = await _apiClient.GetLearner(stdCode, uln, allLogs);
 
             var vm = new LearnerDetailViewModel
             {
                 Learner = learner,
                 SearchString = searchString,
-                Page = page
+                Page = page,
+                ShowDetail = !allLogs
             };
 
             return View(vm);
@@ -61,6 +68,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         public LearnerDetail Learner { get; set; }
         public string SearchString { get; set; }
         public int Page { get; set; }
+        public bool ShowDetail { get; set; }
     }
 
     public class SearchViewModel
