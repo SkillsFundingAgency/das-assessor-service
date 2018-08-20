@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -9,7 +8,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ao
 {
-    public class GetAssessmentOrganisationHandler : IRequestHandler<GetAssessmentOrganisationRequest, AssessmentOrganisationDetails>
+    public class GetAssessmentOrganisationHandler : IRequestHandler<GetAssessmentOrganisationRequest, EpaOrganisation>
     {
         private readonly IRegisterQueryRepository _registerQueryRepository;
         private readonly ILogger<GetAssessmentOrganisationHandler> _logger;
@@ -20,26 +19,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             _logger = logger;
         }
 
-        public async Task<AssessmentOrganisationDetails> Handle(GetAssessmentOrganisationRequest request, CancellationToken cancellationToken)
+        public async Task<EpaOrganisation> Handle(GetAssessmentOrganisationRequest request, CancellationToken cancellationToken)
         {
             var organisationId = request.OrganisationId;
             _logger.LogInformation($@"Handling AssessmentOrganisation Request for [{organisationId}]");
-            var org = await _registerQueryRepository.GetAssessmentOrganisation(organisationId);
+            var org = await _registerQueryRepository.GetEpaOrganisationByOrganisationId(organisationId);
 
-            if (org == null) return null;
-
-            var addresses = await _registerQueryRepository.GetAssessmentOrganisationAddresses(organisationId);
-            org.Address = addresses.FirstOrDefault();
-
-            var contact = await _registerQueryRepository.GetPrimaryOrFirstContact(organisationId);
-
-            if (contact == null) return org;
-
-            org.Email = contact.Email;
-            org.Phone = contact.PhoneNumber;
-            return org;
-        }
-
-       
+            return org ?? null;
+        }  
     }
 }
