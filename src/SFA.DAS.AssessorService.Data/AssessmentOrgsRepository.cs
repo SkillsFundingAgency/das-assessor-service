@@ -75,6 +75,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public void WriteDeliveryAreas(List<DeliveryArea> deliveryAreas)
         {
+            // MFCMFC sanity check
             var connectionString = _configuration.SqlConnectionString;
             using (var connection = new SqlConnection(connectionString))
             {
@@ -97,6 +98,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public void WriteOrganisationTypes(List<TypeOfOrganisation> organisationTypes)
         {
+            // MFCMFC sanity check
             var connectionString = _configuration.SqlConnectionString;
             using (var connection = new SqlConnection(connectionString))
             {
@@ -129,6 +131,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public void WriteOrganisations(List<EpaOrganisation> organisations)
         {
+            //MFCMFC sanity check  -- only inserting new ones, only updating existing ones with new data
             var connectionString = _configuration.SqlConnectionString;
             using (var connection = new SqlConnection(connectionString))
             {
@@ -203,6 +206,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public List<EpaOrganisationStandard> WriteEpaOrganisationStandards(List<EpaOrganisationStandard> orgStandards)
         {
+            //MFCMFC sanity check only insert standards if none exist? Should this be cleverer?
             var connectionString = _configuration.SqlConnectionString;
             var organisationStandardsFromDatabase = new List<EpaOrganisationStandard>();
 
@@ -243,6 +247,7 @@ namespace SFA.DAS.AssessorService.Data
             List<EpaOrganisationStandardDeliveryArea> organisationStandardDeliveryAreas,
             List<EpaOrganisationStandard> organisationStandards)
         {
+            //MFCMFC only write if there are none present... does this need to be cleverer?
             var connectionString = _configuration.SqlConnectionString;
             var sql = new StringBuilder();
 
@@ -294,6 +299,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public void WriteOrganisationContacts(List<OrganisationContact> contacts)
         {
+            // MFC insert new records if email /organisationId isn't present, otherwise update phonenumber - does this need to be refined to only update if phonenumber is null???
             var connectionString = _configuration.SqlConnectionString;
 
             using (var connection = new SqlConnection(connectionString))
