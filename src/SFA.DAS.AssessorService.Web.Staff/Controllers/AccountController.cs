@@ -29,37 +29,31 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> PostSignIn()
+        public IActionResult PostSignIn()
         {
             return RedirectToAction("Index", "Search");
         }
 
-        //[HttpGet]
-        //public IActionResult SignOut()
-        //{
-        //    var callbackUrl = Url.Action(nameof(SignedOut), "Account", values: null, protocol: Request.Scheme);
+        [HttpGet]
+        public IActionResult SignOut()
+        {
+            var callbackUrl = Url.Action(nameof(SignedOut), "Account", values: null, protocol: Request.Scheme);
 
-        //    foreach (var cookie in Request.Cookies.Keys)
-        //    {
-        //        Response.Cookies.Delete(cookie);
-        //    }
-            
-        //    return SignOut(
-        //        new AuthenticationProperties { RedirectUri = callbackUrl },
-        //        CookieAuthenticationDefaults.AuthenticationScheme,
-        //        WsFederationDefaults.AuthenticationScheme);
-        //}
+            foreach (var cookie in Request.Cookies.Keys)
+            {
+                Response.Cookies.Delete(cookie);
+            }
 
-        //[HttpGet]
-        //public IActionResult SignedOut()
-        //{
-        //    if (User.Identity.IsAuthenticated)
-        //    {
-        //        // Redirect to home page if the user is authenticated.
-        //        return RedirectToAction(nameof(HomeController.Index), "Home");
-        //    }
+            return SignOut(
+                new AuthenticationProperties { RedirectUri = callbackUrl },
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                WsFederationDefaults.AuthenticationScheme);
+        }
 
-        //    return View();
-        //}
+        [HttpGet]
+        public IActionResult SignedOut()
+        {
+            return RedirectToAction(nameof(HomeController.Index), "Home");
+        }
     }
 }
