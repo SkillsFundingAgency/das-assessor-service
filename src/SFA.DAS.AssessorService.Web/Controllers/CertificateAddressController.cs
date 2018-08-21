@@ -61,9 +61,37 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 vm = await InitialisePreviousAddresssesForViewModel(vm, username);
             }
 
-            return await SaveViewModel(vm,
-                returnToIfModelNotValid: "~/Views/Certificate/Recipient.cshtml",
-                nextAction: RedirectToAction("Recipient", "CertificateRecipient"), action: CertificateActions.Address);
+            if (vm.SelectPreviousAddress)
+            {
+                return await SaveViewModel(vm,
+                    returnToIfModelNotValid: "~/Views/Certificate/Address.cshtml",
+                    nextAction: RedirectToAction("Recipient", "CertificateRecipient"),
+                    action: CertificateActions.Address);
+            }
+            else
+            {
+                return await SaveViewModel(vm,
+                    returnToIfModelNotValid: "~/Views/Certificate/Address.cshtml",
+                    nextAction: RedirectToAction("AddressSummary", "CertificateAddressSummary"),
+                    action: CertificateActions.Address);
+            }
+        }
+
+        [HttpGet("resetaddress", Name = "ResetAddress")]
+        public async Task<IActionResult> ResetAddress(bool? redirectToCheck = false)
+        {
+            var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
+
+            var viewModel = await LoadViewModel<CertificateAddressViewModel>("~/Views/Certificate/Address.cshtml");
+            var viewResult = viewModel as ViewResult;
+            var certificateAddress = viewResult.Model as CertificateAddressViewModel;
+
+            certificateAddress.EmptyAddressDetails();
+
+            var certificateAddressViewModel = View("~/Views/Certificate/Address.cshtml", certificateAddress);
+            certificateAddressViewModel = await InitialisePreviousAddresssForView(certificateAddressViewModel, username);
+
+            return certificateAddressViewModel;
         }
 
         private async Task<ViewResult> InitialisePreviousAddresssForView(
