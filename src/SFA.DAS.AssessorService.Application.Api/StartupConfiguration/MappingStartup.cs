@@ -42,6 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
                 cfg.CreateMap<CreateEpaOrganisationRequest, string>();
                 cfg.CreateMap<UpdateEpaOrganisationRequest, string>();
+                cfg.CreateMap<CreateEpaOrganisationStandardRequest, int>();
             });
         }
     }

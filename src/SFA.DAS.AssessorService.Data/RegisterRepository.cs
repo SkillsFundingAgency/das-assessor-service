@@ -63,5 +63,25 @@ namespace SFA.DAS.AssessorService.Data
                 return org.OrganisationId;
             }
         }
+
+        public async Task<int>CreateEpaOrganisationStandard(EpaOrganisationStandard organisationStandard)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+             
+                var res = connection.Query<int>(
+                    "INSERT INTO [dbo].[OrganisationStandard] ([EndPointAssessorOrganisationId],[StandardCode],[EffectiveFrom],[EffectiveTo],[DateStandardApprovedOnRegister] ,[Comments],[Status]) VALUES (" +
+                    "@organisationId, @standardcode, @effectiveFrom, @effectiveTo, @dateStandardApprovedOnRegister, @comments, 'New'); SELECT CAST(SCOPE_IDENTITY() as int); ",
+                    new
+                    {
+                        organisationStandard.OrganisationId, organisationStandard.StandardCode, organisationStandard.EffectiveFrom, organisationStandard.EffectiveTo,
+                        organisationStandard.DateStandardApprovedOnRegister, organisationStandard.Comments}).Single();
+
+                return res;
+            }
+        }
     }
 }

@@ -3,13 +3,14 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 
 namespace SFA.DAS.AssessorService.Application.Api.Validators
 {
     public class EpaOrganisationValidator: IEpaOrganisationValidator
     {
         private readonly IRegisterQueryRepository _registerRepository;
-
+      
         public string ErrorMessageNoOrganisationId { get; } = "There is no organisation Id; ";
         public string ErrorMessageOrganisationIdTooLong { get; } = "The length of the organisation Id is too long; ";
         public string ErrorMessageOrganisationNameEmpty { get; } = "There is no organisation name; ";
@@ -18,14 +19,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         public string ErrorMessageOrganisationTypeIsInvalid { get; } = "There is no organisation type with this Id; ";
         public string ErrorMessageAnotherOrganisationUsingTheUkprn { get; } = "The ukprn entered is already used by another organisation; ";
         public string ErrorMessageUkprnIsInvalid { get; } = "The ukprn is not the correct format or length; ";
-        public string ErrorMessageOrganisationNotFound { get; } = "There is no organisation for the this organisation Id; ";
+        public string ErrorMessageOrganisationNotFound { get; } = "There is no organisation for this organisation Id; ";
+
+        public string ErrorMessageTheOrganisationStandardAlreadyExists { get; } =
+            "This organisation/standard already exists";
+        public string ErrorMessageStandardNotFound { get; } =
+            "There is no standard present for the given standard code; ";
+
 
         public EpaOrganisationValidator( IRegisterQueryRepository registerRepository)
         {
             _registerRepository = registerRepository;
         }
         
-        public string CheckOrganisationId(string organisationId)
+        public string CheckOrganisationIdIsPresentAndValid(string organisationId)
         {           
             if (string.IsNullOrEmpty(organisationId) || organisationId.Trim().Length==0)
             {
@@ -48,7 +55,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             return string.Empty;
         }
 
-        public string CheckIfOrganisationIdExists(string organisationId)
+        public string CheckIfOrganisationAlreadyExists(string organisationId)
         {
             if (organisationId == null ||
                 !_registerRepository.EpaOrganisationExistsWithOrganisationId(organisationId).Result) return string.Empty;
@@ -86,6 +93,28 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             return _registerRepository.EpaOrganisationExistsWithOrganisationId(organisationId).Result 
                 ? string.Empty : 
                 ErrorMessageOrganisationNotFound;
+        }
+
+        public string CheckIfStandardNotFound(int standardCode)
+        {
+            var apiClient = new AssessmentOrgsApiClient();
+
+            try
+            {
+                var res = apiClient.GetStandard(standardCode).Result;
+                return string.Empty;
+            }
+            catch
+            {
+                return ErrorMessageStandardNotFound;
+            }
+        }
+
+        public string CheckIfOrganisationStandardAlreadyExists(string organisationId, int standardCode)
+        {
+            return _registerRepository.EpaOrganisationStandardExists(organisationId, standardCode).Result
+                ? ErrorMessageTheOrganisationStandardAlreadyExists
+                : string.Empty;
         }
     }
 }

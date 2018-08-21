@@ -24,9 +24,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         [TestCase(null, false)]
         [TestCase("ThirteenChars", false)]
         [TestCase("Twelve_chars", true)]
-        public void CheckOrganisationIdReturnsExpectedMessage(string organisationId, bool isAcceptable)
+        public void CheckOrganisationIdIsPresentAndValidReturnsExpectedMessage(string organisationId, bool isAcceptable)
         {
-            var noMessageReturned = _validator.CheckOrganisationId(organisationId).Length == 0;
+            var noMessageReturned = _validator.CheckOrganisationIdIsPresentAndValid(organisationId).Length == 0;
             Assert.AreEqual(isAcceptable, noMessageReturned);
         }
 
@@ -57,7 +57,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         {
             _registerRepository.Setup(r => r.EpaOrganisationExistsWithOrganisationId(It.IsAny<string>()))
                 .Returns(Task.FromResult(alreadyPresent));
-            var noMessageReturned = _validator.CheckIfOrganisationIdExists("id here").Length > 0;
+            var noMessageReturned = _validator.CheckIfOrganisationAlreadyExists("id here").Length > 0;
             Assert.AreEqual(noMessageReturned, alreadyPresent);
         }
 
@@ -66,7 +66,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         {
             _registerRepository.Setup(r => r.EpaOrganisationExistsWithOrganisationId(It.IsAny<string>()))
                 .Returns(Task.FromResult(false));
-            var noMessageReturned = _validator.CheckIfOrganisationIdExists(null).Length > 0;
+            var noMessageReturned = _validator.CheckIfOrganisationAlreadyExists(null).Length > 0;
             Assert.AreEqual(noMessageReturned, false);
             _registerRepository.Verify(r => r.EpaOrganisationExistsWithOrganisationId(It.IsAny<string>()), Times.Never);
         }

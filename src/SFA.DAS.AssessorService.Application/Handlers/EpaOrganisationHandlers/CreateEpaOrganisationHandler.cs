@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
         {
             var errorDetails = new StringBuilder();
             
-            errorDetails.Append(_validator.CheckOrganisationId(request.OrganisationId));
+            errorDetails.Append(_validator.CheckOrganisationIdIsPresentAndValid(request.OrganisationId));
             errorDetails.Append(_validator.CheckOrganisationName(request.Name));
             errorDetails.Append(_validator.CheckOrganisationTypeIsNullOrExists(request.OrganisationTypeId));
             errorDetails.Append(_validator.CheckUkprnIsValid(request.Ukprn));
@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 throw new BadRequestException(errorDetails.ToString());
             }
 
-            errorDetails.Append(_validator.CheckIfOrganisationIdExists(request.OrganisationId));
+            errorDetails.Append(_validator.CheckIfOrganisationAlreadyExists(request.OrganisationId));
             ThrowAlreadyExistsExceptionIfErrorPresent(errorDetails);
             errorDetails.Append(_validator.CheckIfOrganisationUkprnExists(request.Ukprn));
             ThrowAlreadyExistsExceptionIfErrorPresent(errorDetails);
