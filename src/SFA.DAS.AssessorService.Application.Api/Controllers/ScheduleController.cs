@@ -43,6 +43,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok();
         }
 
+        [HttpGet("api/v1/schedule/runnow", Name = "GetNextScheduleToRunNow")]
+        public async Task<IActionResult> GetNextScheduleToRunNow(int scheduleType)
+        {
+            var scheduleRun = await _scheduleRepository.GetNextScheduleToRunNow(scheduleType);
+            return Ok(scheduleRun);
+        }
+
         [HttpPost("api/v1/schedule/runnow", Name="RunNow")]
         public async Task<IActionResult> RunNow(int scheduleType)
         {
