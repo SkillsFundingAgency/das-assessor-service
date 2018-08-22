@@ -82,12 +82,18 @@ namespace SFA.DAS.AssessorService.Data.Staff
             }
         }
 
-        public async Task<List<CertificateLog>> GetCertificateLogsForBatch(int batchNumber)
+        public async Task<StaffReposBatchSearchResult> GetCertificateLogsForBatch(int batchNumber, int page, int pageSize)
         {
-            return await _context.CertificateLogs.Where(cl => cl.BatchNumber == batchNumber && cl.Action == CertificateActions.Printed)
+            var results = await _context.CertificateLogs.Where(cl => cl.BatchNumber == batchNumber && cl.Action == CertificateActions.Printed)
                 .Include(cl => cl.Certificate)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .OrderByDescending(cl => cl.EventTime)
                 .ToListAsync();
+
+            var count = await _context.CertificateLogs.Where(cl => cl.BatchNumber == batchNumber && cl.Action == CertificateActions.Printed).CountAsync();
+
+            return new StaffReposBatchSearchResult { PageOfResults = results, TotalCount = count };
         }
     }
 }

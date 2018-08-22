@@ -27,14 +27,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
         {
             int pageSize = 10;
 
-            var logs = await _staffCertificateRepository.GetCertificateLogsForBatch(request.BatchNumber);
-            int totalRecordCount = logs.Count();
+            var result = await _staffCertificateRepository.GetCertificateLogsForBatch(request.BatchNumber, request.Page, pageSize);
 
-            _logger.LogInformation(logs.Any() ? LoggingConstants.SearchSuccess : LoggingConstants.SearchFailure);
+            _logger.LogInformation(result.PageOfResults.Any() ? LoggingConstants.SearchSuccess : LoggingConstants.SearchFailure);
 
-            var logsWeAreInterestedIn = logs.Skip((request.Page - 1) * pageSize).Take(pageSize);
-
-            var searchResults = logsWeAreInterestedIn.Select(sr =>
+            var searchResults = result.PageOfResults.Select(sr =>
                     new StaffBatchSearchResult
                     {
                         BatchNumber = sr.BatchNumber,
@@ -46,7 +43,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                         StandardCode = sr.Certificate?.StandardCode ?? 0
                     }).ToList();
 
-            return new PaginatedList<StaffBatchSearchResult>(searchResults, totalRecordCount, request.Page, pageSize);
+            return new PaginatedList<StaffBatchSearchResult>(searchResults, result.TotalCount, request.Page, pageSize);
         }
     }
 }
