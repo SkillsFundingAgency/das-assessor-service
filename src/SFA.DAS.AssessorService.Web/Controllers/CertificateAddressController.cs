@@ -130,6 +130,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 certificateAddress.PreviousAddress =
                     new CertificatePreviousAddressViewModel(certificatePreviousAddress);
             }
-        }     
+        }
+
+        private bool AddressAlreadyInitialised(IActionResult certificateAddressViewModel)
+        {
+            var viewResult = certificateAddressViewModel as ViewResult;
+            var certificateAddress = viewResult.Model as CertificateAddressViewModel;
+
+            return !string.IsNullOrEmpty(certificateAddress.AddressLine1)
+                   && !string.IsNullOrEmpty(certificateAddress.Postcode);
+        }
     }
 }
