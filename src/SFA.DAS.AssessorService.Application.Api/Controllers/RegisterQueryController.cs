@@ -38,5 +38,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _logger.LogInformation("Get Organisation Types");
             return Ok(await _mediator.Send(new GetOrganisationTypesRequest()));
         }
+
+        [HttpGet("delivery-areas", Name = "GetDeliveryAreas")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<DeliveryArea>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetDeliveryAreas()
+        {
+            _logger.LogInformation("Get Delivery Areas");
+            return Ok(await _mediator.Send(new GetDeliveryAreasRequest()));
+        }
     }
 }
