@@ -11,11 +11,11 @@
     <div class="column-two-thirds">
         @if (Model.BackToCheckPage)
         {
-        <a class="link-back" asp-controller="CertificateCheck" asp-action="Check">Back</a>
+            <a class="link-back" asp-controller="CertificateCheck" asp-action="Check">Back</a>
         }
         else
         {
-        <a class="link-back" asp-controller="CertificateAddress" asp-action="Address">Back</a>
+            <a class="link-back" asp-controller="CertificateAddress" asp-action="Address" asp-route-edit="true">Back</a>
         }
 
         <form class="apprentice-address-form" type="post" asp-controller="CertificateAddressSummary">
@@ -57,7 +57,7 @@
             </div>
 
             <p>
-                <a asp-controller="CertificateAddress" asp-action="Address">@Localizer["EditThisAddress"]</a>
+                <a asp-controller="CertificateAddress" asp-action="Address" asp-route-edit="true">@Localizer["EditThisAddress"]</a>                
             </p>
             <p>
                 <a asp-controller="CertificateAddress" asp-action="ResetAddress">@Localizer["FindANewAddress"]</a>

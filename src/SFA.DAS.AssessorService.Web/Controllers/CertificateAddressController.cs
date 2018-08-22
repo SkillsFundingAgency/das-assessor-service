@@ -34,13 +34,17 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
-            var certificateAddressViewModel = await LoadViewModel<CertificateAddressViewModel>("~/Views/Certificate/Address.cshtml");
-            //if (AddressAlreadyInitialised(certificateAddressViewModel) && (edit ?? false) == false)
-            //    return RedirectToAction("AddressSummary", "CertificateAddressSummary");
+            var certificateAddressViewModel = await LoadViewModel<CertificateAddressViewModel>("~/Views/Certificate/Address.cshtml");            
 
             certificateAddressViewModel = await InitialisePreviousAddresssForView(
                 certificateAddressViewModel: certificateAddressViewModel, username: username);
 
+            if (AddressAlreadyInitialised(certificateAddressViewModel) && (edit ?? false) == false)
+                return RedirectToAction("AddressSummary", "CertificateAddressSummary");
+
+            var viewResult = certificateAddressViewModel as ViewResult;
+            (viewResult.Model as CertificateAddressViewModel).EditForm = edit ?? false;
+            
             return certificateAddressViewModel;
         }       
 
@@ -92,7 +96,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             certificateAddressViewModel = await InitialisePreviousAddresssForView(certificateAddressViewModel, username);
 
             return certificateAddressViewModel;
-        }
+        }       
 
         private async Task<ViewResult> InitialisePreviousAddresssForView(
             IActionResult certificateAddressViewModel,
