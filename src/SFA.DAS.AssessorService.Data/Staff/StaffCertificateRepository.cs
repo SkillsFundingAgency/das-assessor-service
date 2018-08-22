@@ -75,7 +75,7 @@ namespace SFA.DAS.AssessorService.Data.Staff
                         SELECT TOP(1) EventTime, Action, ISNULL(c.DisplayName, logs.Username) AS ActionBy, logs.Status, logs.CertificateData, logs.BatchNumber
                         FROM CertificateLogs logs
                             LEFT OUTER JOIN Contacts c ON c.Username = logs.Username
-                        WHERE CertificateId = 'B6FCC747-2487-4DF3-E316-08D5F923E443'
+                        WHERE CertificateId = @certificateId
                         ORDER BY EventTime DESC", new {certificateId})).ToList();
 
                 }
