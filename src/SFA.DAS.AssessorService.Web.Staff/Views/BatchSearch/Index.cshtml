@@ -1,5 +1,5 @@
-﻿@model BatchSearchViewModel
-
+﻿@using SFA.DAS.AssessorService.Domain.Extensions;
+@model BatchLogViewModel
 @{
     ViewBag.Title = "Batch search";
     Layout = "_Layout";
@@ -22,3 +22,77 @@
         </form>
     </div>
 </div>
+
+
+<div class="grid-row">
+    <div class="column-full">
+
+        <h2 class="heading-medium">Current batches</h2>
+
+        @if (@Model.PaginatedList.TotalRecordCount > 0)
+        {
+            <div class="grid-row">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Batch</th>
+                            <th>Scheduled Date</th>
+                            <th>Certificates</th>
+                            <th>Cover Letters</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var result in Model.PaginatedList.Items)
+                        {
+                            <tr>
+                                <td>@result.BatchNumber</td>
+                                <td>@result.ScheduledDate.UtcToTimeZoneTime()</td>
+                                <td>@result.NumberOfCertificates</td>
+                                <td>@result.NumberOfCoverLetters</td>
+                                <td><a asp-controller="BatchSearch" asp-action="Results" asp-route-batchNumber="@result.BatchNumber">View</a></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+@if (Model.PaginatedList.HasPreviousPage || Model.PaginatedList.HasNextPage)
+{
+    <div class="grid-row">
+        <div class="column-full">
+            <div class="page-navigation">
+
+                @if (Model.PaginatedList.HasPreviousPage)
+                {
+                    <a asp-action="Index"
+                       asp-controller="BatchSearch"
+                       asp-route-batchNumber="@Model.BatchNumber"
+                       asp-route-page="@( Model.PaginatedList.PageIndex - 1)"
+                       class="previous">
+                        <i class="arrow-button icon-left-open">&#xe800;</i>
+                        <span class="description">Previous <span class="hide-mob">page</span></span>
+                        <span class="counter">Page <span class="prevPage">@(Model.PaginatedList.PageIndex - 1)</span> of <span class="totalPage">@(Model.PaginatedList.TotalPages)</span></span>
+                    </a>
+                }
+
+                @if (Model.PaginatedList.HasNextPage)
+                {
+                    <a asp-action="Index"
+                       asp-controller="BatchSearch"
+                       asp-route-batchNumber="@Model.BatchNumber"
+                       asp-route-page="@( Model.PaginatedList.PageIndex + 1)"
+                       class="next">
+                        <i class="arrow-button icon-right-open">&#xe801;</i>
+                        <span class="description">Next <span class="hide-mob">page</span></span>
+                        <span class="counter">Page <span class="nextPage">@(Model.PaginatedList.PageIndex + 1)</span> of <span class="totalPage">@(Model.PaginatedList.TotalPages)</span></span>
+                    </a>
+                }
+
+            </div>
+        </div>
+    </div>
+}

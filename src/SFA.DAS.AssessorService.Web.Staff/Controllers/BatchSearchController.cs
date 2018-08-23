@@ -22,9 +22,17 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index(int page = 1)
         {
-            return View();
+            var searchResults = await _apiClient.BatchLog(page);
+
+            var batchLogViewModel = new BatchLogViewModel
+            {
+                PaginatedList = searchResults,
+                Page = page
+            };
+
+            return View(batchLogViewModel);
         }
 
         [HttpGet]

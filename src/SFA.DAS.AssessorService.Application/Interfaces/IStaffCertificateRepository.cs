@@ -13,12 +13,20 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
             bool allRecords);
 
         Task<StaffReposBatchSearchResult> GetCertificateLogsForBatch(int batchNumber, int page, int pageSize);
+        Task<StaffReposBatchLogResult> GetBatchLogs(int page, int pageSize);
     }
 
 
     public class StaffReposBatchSearchResult
     {
         public IEnumerable<CertificateLog> PageOfResults { get; set; }
+
+        public int TotalCount { get; set; }
+    }
+
+    public class StaffReposBatchLogResult
+    {
+        public IEnumerable<BatchLog> PageOfResults { get; set; }
 
         public int TotalCount { get; set; }
     }
