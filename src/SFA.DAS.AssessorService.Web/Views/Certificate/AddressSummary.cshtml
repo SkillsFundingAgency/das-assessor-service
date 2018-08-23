@@ -64,8 +64,7 @@
             </p>
 
 
-            <div class="form-group" sfa-validation-for="Employer" sfa-validationerror-class="form-group-error">
-                @Html.HiddenFor(x => x.Employer)
+            <div class="form-group" sfa-validation-for="Employer" sfa-validationerror-class="form-group-error">              
                 @Html.HiddenFor(x => x.Name)
                 @Html.HiddenFor(x => x.AddressLine1)
                 @Html.HiddenFor(x => x.AddressLine2)
@@ -83,6 +82,10 @@
                         <input autocomplete="off" class="form-control" name="Employer" sfa-validation-for="Employer" sfa-validationerror-class="form-control-error" asp-for="Employer" type="text" />
                     </div>
                 }
+                @*else
+                {
+                    @Html.HiddenFor(x => x.Employer)
+                }*@
             </div>
 
             <button type="submit" class="button">@Localizer["ContinueButton"]</button>
