@@ -67,98 +67,71 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
         }
 
         [Test]
-        public void GetOrganisationDetailsWhenOrganisationStandardCreated()
+        public void GetOrganisationStandardWhenOrganisationStandardCreated()
         {
             var returnedId = _createEpaOrganisationStandardHandler.Handle(_requestNoIssues, new CancellationToken()).Result;
             returnedId.Should().Be(_expectedOrganisationStandardNoIssues.Id);
         }
 
-        //[Test]
-        //public void GetBadRequestExceptionWhenNoNameValidationOccurs()
-        //{
-        //    const string errorMessage = "No Name issue";
-        //    var requestNoName = BuildRequest("", _organisationId, 123321);
-        //    _validator.Setup(v => v.CheckOrganisationName(requestNoName.Name)).Returns(errorMessage);
-        //    var ex = Assert.ThrowsAsync<BadRequestException>(() => _createEpaOrganisationHandler.Handle(requestNoName, new CancellationToken()));
-        //    Assert.AreEqual(errorMessage, ex.Message);
-        //    _registerRepository.Verify(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Never);
-        //    _validator.Verify(v => v.CheckOrganisationName(requestNoName.Name));
-        //}
+        [Test]
+        public void GetBadRequestExceptionWhenOrganisationIdIssueValidationOccurs()
+        {
+            const string errorMessage = "no organisation Id";
+            var requestNoOrgId = BuildRequest("", 1);
+            _validator.Setup(v => v.CheckOrganisationIdIsPresentAndValid(requestNoOrgId.OrganisationId)).Returns(errorMessage);
+            var ex = Assert.ThrowsAsync<BadRequestException>(() => _createEpaOrganisationStandardHandler.Handle(requestNoOrgId, new CancellationToken()));
+            Assert.AreEqual(errorMessage, ex.Message);
+            _registerRepository.Verify(r => r.CreateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>()), Times.Never);
+            _validator.Verify(v => v.CheckOrganisationIdIsPresentAndValid(requestNoOrgId.OrganisationId));
+        }
 
-        //[Test]
-        //public void GetBadRequestExceptionWhenNoOrganisationIdValidationOccurs()
-        //{
-        //    const string errorMessage = "No id issue";
-        //    var requestNoOrgId = BuildRequest("name", "", 123321);
-        //    _validator.Setup(v => v.CheckOrganisationIdIsPresentAndValid(requestNoOrgId.OrganisationId)).Returns(errorMessage);
-        //    var ex = Assert.ThrowsAsync<BadRequestException>(() => _createEpaOrganisationHandler.Handle(requestNoOrgId, new CancellationToken()));
-        //    Assert.AreEqual(errorMessage, ex.Message);
-        //    _registerRepository.Verify(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Never);
-        //    _validator.Verify(v => v.CheckOrganisationIdIsPresentAndValid(requestNoOrgId.OrganisationId));
-        //}
+        [Test]
+        public void GetBadRequestExceptionWhenStandardCodeIssueValidationOccurs()
+        {
+            const string errorMessage = "no standard code";
+            var requestNoOrgId = BuildRequest("org id", -1);
+            _validator.Setup(v => v.CheckOrganisationIdIsPresentAndValid(requestNoOrgId.OrganisationId)).Returns(errorMessage);
+            var ex = Assert.ThrowsAsync<BadRequestException>(() => _createEpaOrganisationStandardHandler.Handle(requestNoOrgId, new CancellationToken()));
+            Assert.AreEqual(errorMessage, ex.Message);
+            _registerRepository.Verify(r => r.CreateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>()), Times.Never);
+            _validator.Verify(v => v.CheckOrganisationIdIsPresentAndValid(requestNoOrgId.OrganisationId));
+        }
 
-        //[Test]
-        //public void GetBadRequestExceptionWhenOrganisationIdIssueValidationOccurs()
-        //{
-        //    const string errorMessage = "id issue";
-        //    var requestNoOrgId = BuildRequest("name", "", 123321);
-        //    _validator.Setup(v => v.CheckOrganisationIdIsPresentAndValid(requestNoOrgId.OrganisationId)).Returns(errorMessage);
-        //    var ex = Assert.ThrowsAsync<BadRequestException>(() => _createEpaOrganisationHandler.Handle(requestNoOrgId, new CancellationToken()));
-        //    Assert.AreEqual(errorMessage, ex.Message);
-        //    _registerRepository.Verify(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Never);
-        //    _validator.Verify(v => v.CheckOrganisationIdIsPresentAndValid(requestNoOrgId.OrganisationId));
-        //}
+        [Test]
+        public void GetBadRequestExceptionWhenNoOrganisationIdValidationOccurs()
+        {
+            const string errorMessage = "No id issue";
+            var requestNoOrgId = BuildRequest("orgid1", 123321);
+            _validator.Setup(v => v.CheckIfOrganisationNotFound(requestNoOrgId.OrganisationId)).Returns(errorMessage);
+            var ex = Assert.ThrowsAsync<NotFound>(() => _createEpaOrganisationStandardHandler.Handle(requestNoOrgId, new CancellationToken()));
+            Assert.AreEqual(errorMessage, ex.Message);
+            _registerRepository.Verify(r => r.CreateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>()), Times.Never);
+            _validator.Verify(v => v.CheckIfOrganisationNotFound(requestNoOrgId.OrganisationId));
+        }
 
-        //[Test]
-        //public void GetBadRequestExceptionWhenUkprnInvalidFormatOccurs()
-        //{
-        //    const string errorMessage = "invalid ukprn";
-        //    var requestInvalidUkprn = BuildRequest("name", "fdfsdf", 123321);
-        //    _validator.Setup(v => v.CheckUkprnIsValid(requestInvalidUkprn.Ukprn)).Returns(errorMessage);
-        //    var ex = Assert.ThrowsAsync<BadRequestException>(() => _createEpaOrganisationHandler.Handle(requestInvalidUkprn, new CancellationToken()));
-        //    Assert.AreEqual(errorMessage, ex.Message);
-        //    _registerRepository.Verify(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Never);
-        //    _validator.Verify(v => v.CheckUkprnIsValid(requestInvalidUkprn.Ukprn));
-        //}
+        [Test]
+        public void GetBadRequestExceptionWhenNoStandardCodeValidationOccurs()
+        {
+            const string errorMessage = "No id issue";
+            var requestNoOrgId = BuildRequest("orgid1", 1);
+            _validator.Setup(v => v.CheckIfStandardNotFound(requestNoOrgId.StandardCode)).Returns(errorMessage);
+            var ex = Assert.ThrowsAsync<NotFound>(() => _createEpaOrganisationStandardHandler.Handle(requestNoOrgId, new CancellationToken()));
+            Assert.AreEqual(errorMessage, ex.Message);
+            _registerRepository.Verify(r => r.CreateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>()), Times.Never);
+            _validator.Verify(v => v.CheckIfStandardNotFound(requestNoOrgId.StandardCode));
+        }
 
-
-        //[Test]
-        //public void GetBadRequestExceptionWhenOrganisationIdAlreadyExistsValidationOccurs()
-        //{
-        //    const string errorMessage = "id already exists";
-        //    var requestNoOrgId = BuildRequest("name", "EPA888", 123321);
-        //    _validator.Setup(v => v.CheckIfOrganisationAlreadyExists(requestNoOrgId.OrganisationId)).Returns(errorMessage);
-        //    var ex = Assert.ThrowsAsync<AlreadyExistsException>(() => _createEpaOrganisationHandler.Handle(requestNoOrgId, new CancellationToken()));
-        //    Assert.AreEqual(errorMessage, ex.Message);
-        //    _registerRepository.Verify(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Never);
-        //    _validator.Verify(v => v.CheckIfOrganisationAlreadyExists(requestNoOrgId.OrganisationId));
-        //}
-
-        //[Test]
-        //public void GetBadRequestExceptionWhenukprnAlreadyExistsValidationOccurs()
-        //{
-        //    const string errorMessage = "ukprn already exists";
-        //    var requestNoUkprn = BuildRequest("name", "EPA888", 123321);
-        //    _validator.Setup(v => v.CheckIfOrganisationUkprnExists(requestNoUkprn.Ukprn)).Returns(errorMessage);
-        //    var ex = Assert.ThrowsAsync<AlreadyExistsException>(() => _createEpaOrganisationHandler.Handle(requestNoUkprn, new CancellationToken()));
-        //    Assert.AreEqual(errorMessage, ex.Message);
-        //    _registerRepository.Verify(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Never);
-        //    _validator.Verify(v => v.CheckIfOrganisationUkprnExists(requestNoUkprn.Ukprn));
-        //}
-
-
-        //[Test]
-        //public void GetBadRequestExceptionWheOrganisationTypeIdValidationOccurs()
-        //{
-        //    const string errorMessage = "organisation type is invalid";
-        //    var requestUnknownOrganisationTypeId = BuildRequest("name", "EPA888", 123321);
-        //    _validator.Setup(v => v.CheckOrganisationTypeIsNullOrExists(requestUnknownOrganisationTypeId.OrganisationTypeId)).Returns(errorMessage);
-        //    var ex = Assert.ThrowsAsync<BadRequestException>(() => _createEpaOrganisationHandler.Handle(requestUnknownOrganisationTypeId, new CancellationToken()));
-        //    Assert.AreEqual(errorMessage, ex.Message);
-        //    _registerRepository.Verify(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Never);
-        //    _validator.Verify(v => v.CheckOrganisationTypeIsNullOrExists(requestUnknownOrganisationTypeId.OrganisationTypeId));
-        //}
-
+        [Test]
+        public void GetBadRequestExceptionWhenOrganisationIdAlreadyExistsValidationOccurs()
+        {
+            const string errorMessage = "id already exists";
+            var requestOrgStandardlreadyExists = BuildRequest("EPA888", 123321);
+            _validator.Setup(v => v.CheckIfOrganisationStandardAlreadyExists(requestOrgStandardlreadyExists.OrganisationId, requestOrgStandardlreadyExists.StandardCode)).Returns(errorMessage);
+            var ex = Assert.ThrowsAsync<AlreadyExistsException>(() => _createEpaOrganisationStandardHandler.Handle(requestOrgStandardlreadyExists, new CancellationToken()));
+            Assert.AreEqual(errorMessage, ex.Message);
+            _registerRepository.Verify(r => r.CreateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>()), Times.Never);
+            _validator.Verify(v => v.CheckIfOrganisationStandardAlreadyExists(requestOrgStandardlreadyExists.OrganisationId, requestOrgStandardlreadyExists.StandardCode));
+        }
 
         private CreateEpaOrganisationStandardRequest BuildRequest(string organisationId, int standardCode)
         {
