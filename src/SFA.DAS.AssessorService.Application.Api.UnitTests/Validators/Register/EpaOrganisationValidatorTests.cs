@@ -145,5 +145,18 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
             _registerRepository.Verify(r => r.EpaOrganisationExistsWithOrganisationId(It.IsAny<string>()), Times.Once);
         }
 
+
+        [TestCase(false, false)]
+        [TestCase(true, true)]
+        public void CheckIfOrganisationStandardAlreadyEReturnsAnErrorMessage(bool exists, bool noMessageReturned)
+        {
+            _registerRepository.Setup(r => r.EpaOrganisationStandardExists(It.IsAny<string>(), It.IsAny<int>()))
+                .Returns(Task.FromResult(exists));
+            var isMessageReturned =
+                _validator.CheckIfOrganisationStandardAlreadyExists("orgId",5).Length > 0;
+            Assert.AreEqual(noMessageReturned, exists);
+            _registerRepository.Verify(r => r.EpaOrganisationStandardExists(It.IsAny<string>(), It.IsAny<int>()), Times.Once);
+        }
+
     }
 }
