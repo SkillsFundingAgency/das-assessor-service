@@ -11,6 +11,5 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
         public DateTime? DateStandardApprovedOnRegister { get; set; }
         public string Comments { get; set; }
         public string Status { get; set; }
-
     }
 }
