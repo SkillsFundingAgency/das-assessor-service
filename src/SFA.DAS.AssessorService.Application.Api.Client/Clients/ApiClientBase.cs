@@ -25,10 +25,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         protected ApiClientBase(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger)
         {
             TokenService = tokenService;
-            _logger = logger;
-            //HttpClient = new HttpClient { BaseAddress = new Uri($"{baseUri}") };
-            HttpClient = httpClient;
-            //httpClient.BaseAddress = new Uri($"{baseUri}");
+            _logger = logger;            
+            HttpClient = httpClient;            
         }
 
         protected static void RaiseResponseError(string message, HttpRequestMessage failedRequest, HttpResponseMessage failedResponse)
@@ -112,47 +110,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-
-        //protected bool Exists(HttpRequestMessage request)
-        //{
-        //    using (var response = HttpClient.SendAsync(request))
-        //    {
-        //        var result = response.Result;
-        //        if (result.StatusCode == HttpStatusCode.NoContent)
-        //        {
-        //            return true;
-        //        }
-        //        if (result.StatusCode == HttpStatusCode.NotFound)
-        //        {
-        //            return false;
-        //        }
-
-        //        RaiseResponseError(request, result);
-        //    }
-
-        //    return false;
-        //}
-
-        //protected async Task<bool> ExistsAsync(HttpRequestMessage request)
-        //{
-        //    using (var response = HttpClient.SendAsync(request))
-        //    {
-        //        var result = await response;
-        //        if (result.StatusCode == HttpStatusCode.NoContent)
-        //        {
-        //            return true;
-        //        }
-        //        if (result.StatusCode == HttpStatusCode.NotFound)
-        //        {
-        //            return false;
-        //        }
-
-        //        RaiseResponseError(request, result);
-        //    }
-
-        //    return false;
-        //}
-
         protected async Task PostPutRequest<T>(HttpRequestMessage requestMessage, T model)
         {
             var serializeObject = JsonConvert.SerializeObject(model);
@@ -192,30 +149,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 throw new HttpRequestException();
             }
         }
-
-        //internal T RequestAndDeserialise<T>(HttpRequestMessage request, string missing = null) where T : class
-
-        //{
-        //    request.Headers.Add("Accept", "application/json");
-
-        //    using (var response = HttpClient.SendAsync(request))
-        //    {
-        //        var result = response.Result;
-        //        if (result.StatusCode == HttpStatusCode.OK)
-        //        {
-        //            return JsonConvert.DeserializeObject<T>(result.Content.ReadAsStringAsync().Result, _jsonSettings);
-        //        }
-        //        if (result.StatusCode == HttpStatusCode.NotFound)
-        //        {
-        //            RaiseResponseError(missing, request, result);
-        //        }
-
-        //        RaiseResponseError(request, result);
-        //    }
-
-        //    return null;
-        //}
-
+        
         public void Dispose()
         {
             HttpClient?.Dispose();

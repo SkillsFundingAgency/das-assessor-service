@@ -31,9 +31,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> StaffSearch(string searchQuery, int? page = 1)
-        {
-            return NotFound();
-            //return Ok(await _mediator.Send(new StaffSearchRequest(searchQuery, page.Value)));
+        {            
+            return Ok(await _mediator.Send(new StaffSearchRequest(searchQuery, page.Value)));
         }
     }
 }
