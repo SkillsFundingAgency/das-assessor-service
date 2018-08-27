@@ -22,11 +22,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             NullValueHandling = NullValueHandling.Ignore
         };
 
-        protected ApiClientBase(string baseUri, ITokenService tokenService, ILogger<ApiClientBase> logger)
+        protected ApiClientBase(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger)
         {
             TokenService = tokenService;
             _logger = logger;
-            HttpClient = new HttpClient { BaseAddress = new Uri($"{baseUri}") };
+            //HttpClient = new HttpClient { BaseAddress = new Uri($"{baseUri}") };
+            HttpClient = httpClient;
+            //httpClient.BaseAddress = new Uri($"{baseUri}");
         }
 
         protected static void RaiseResponseError(string message, HttpRequestMessage failedRequest, HttpResponseMessage failedResponse)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Net.Http;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -9,6 +10,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Polly;
+using Polly.Extensions.Http;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Settings;
@@ -55,7 +58,7 @@ namespace SFA.DAS.AssessorService.Web
                 .AddSessionStateTempDataProvider()
                 .AddViewLocalization(opts => { opts.ResourcesPath = "Resources"; })
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);;
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
 
             services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Assessors.AntiForgery", HttpOnly = true });
@@ -82,7 +85,26 @@ namespace SFA.DAS.AssessorService.Web
 
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
 
+            AddHttpClientService<ICertificateApiClient, CertificateApiClient>(services);
+            AddHttpClientService<ILoginApiClient, LoginApiClient>(services);
+            AddHttpClientService<ISearchApiClient, SearchApiClient>(services);
+            AddHttpClientService<IContactsApiClient, ContactsApiClient>(services);
+            AddHttpClientService<IOrganisationsApiClient, OrganisationsApiClient>(services);
+
             return ConfigureIOC(services);
+        }
+
+        public void AddHttpClientService<T, U>(IServiceCollection services)
+            where T: class
+            where U: ApiClientBase, T
+        {
+            services.AddHttpClient<T, U> (config =>
+                {
+                    config.BaseAddress = new Uri(Configuration.ClientApiAuthentication.ApiBaseAddress);
+                    config.DefaultRequestHeaders.Add("Accept", "Application/json");
+                })
+                .SetHandlerLifetime(TimeSpan.FromMinutes(5))  //Set lifetime to five minutes
+                .AddPolicyHandler(GetRetryPolicy());
         }
 
         private IServiceProvider ConfigureIOC(IServiceCollection services)
@@ -100,11 +122,12 @@ namespace SFA.DAS.AssessorService.Web
                 //config.For<ICache>().Use<SessionCache>();
                 config.For<ITokenService>().Use<TokenService>();
                 config.For<IWebConfiguration>().Use(Configuration);
-                config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
-                config.For<IContactsApiClient>().Use<ContactsApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
-                config.For<ISearchApiClient>().Use<SearchApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
-                config.For<ICertificateApiClient>().Use<CertificateApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
-                config.For<ILoginApiClient>().Use<LoginApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
+                //config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
+                //config.For<IContactsApiClient>().Use<ContactsApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
+                //config.For<ISearchApiClient>().Use<SearchApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
+                //config.For<IApiClient>().Use<ApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
+                //config.For<ICertificateApiClient>().Use<CertificateApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
+                //config.For<ILoginApiClient>().Use<LoginApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<ISessionService>().Use<SessionService>().Ctor<string>().Is(_env.EnvironmentName);
 
                 config.Populate(services);
@@ -137,6 +160,15 @@ namespace SFA.DAS.AssessorService.Web
                         name: "default",
                         template: "{controller=Home}/{action=Index}/{id?}");
                 });
+        }
+
+        static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
+        {
+            return HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2,
+                    retryAttempt)));
         }
     }
 }

@@ -58,7 +58,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> GetCertificatesHistory(int pageIndex,
             string userName)
         {
-            return Ok(await _mediator.Send(new GetCertificateHistoryRequest { PageIndex = pageIndex, Username = userName }));
+            return NotFound();
+            //return Ok(await _mediator.Send(new GetCertificateHistoryRequest { PageIndex = pageIndex, Username = userName }));
         }
     }
 }
