@@ -57,9 +57,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetCertificatesHistory(int pageIndex,
             string userName)
-        {
-            return NotFound();
-            //return Ok(await _mediator.Send(new GetCertificateHistoryRequest { PageIndex = pageIndex, Username = userName }));
+        {            
+            return Ok(await _mediator.Send(new GetCertificateHistoryRequest { PageIndex = pageIndex, Username = userName }));
         }
     }
 }
