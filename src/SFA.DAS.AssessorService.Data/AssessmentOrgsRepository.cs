@@ -230,9 +230,10 @@ namespace SFA.DAS.AssessorService.Data
                                 ConvertDateToSqlValueString(organisationStandard.DateStandardApprovedOnRegister);
 
 
-                            sql.Append(
-                                "INSERT INTO [OrganisationStandard] ([EndPointAssessorOrganisationId],[StandardCode],[EffectiveFrom],[EffectiveTo],[DateStandardApprovedOnRegister],[Comments],[Status])" +
-                                $"VALUES ('{organisationStandard.EndPointAssessorOrganisationId}' ,'{organisationStandard.StandardCode}' ,{effectiveFrom} ,{effectiveTo} ,{dateStandardApprovedOnRegister} ,{comments} ,'{organisationStandard.Status}'); ");
+                            var sqlToInsert = "INSERT INTO [OrganisationStandard] ([EndPointAssessorOrganisationId],[StandardCode],[EffectiveFrom],[EffectiveTo],[DateStandardApprovedOnRegister],[Comments],[Status])" +
+                                $"VALUES ('{organisationStandard.EndPointAssessorOrganisationId}' ,'{organisationStandard.StandardCode}' ,{effectiveFrom} ,{effectiveTo} ,{dateStandardApprovedOnRegister} ,{comments} ,'{organisationStandard.Status}'); ";
+
+                            sql.Append(sqlToInsert);
                         }
                     connection.Execute(sql.ToString());
                     organisationStandardsFromDatabase = connection.QueryAsync<EpaOrganisationStandard>("select * from [OrganisationStandard]").Result.ToList();                
@@ -386,9 +387,12 @@ namespace SFA.DAS.AssessorService.Data
 
         private static string  ConvertDateToSqlValueString (DateTime? dateToProcess)
         {           
-            return dateToProcess == null
-                ? "null"
-                : $"'{dateToProcess.Value:yyyy-MM-dd}'";       
+            if (dateToProcess == null)
+                return  "null";
+
+            return dateToProcess.Value< new DateTime(1980,1,1) 
+                ? "null" 
+                : $"'{dateToProcess.Value:yyyy-MM-dd}'";
         }   
     }
 }
