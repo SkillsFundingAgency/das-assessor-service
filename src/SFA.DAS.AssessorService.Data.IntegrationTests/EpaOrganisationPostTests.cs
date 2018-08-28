@@ -19,14 +19,16 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         private EpaOrganisation _organisation;
         private int _organisationTypeId;
         private Guid _id;
+        private EpaOrganisation _organisation2;
 
         [OneTimeSetUp]
         public void SetUpOrganisationTests()
         {
             _repository = new RegisterRepository(_databaseService.WebConfiguration);
             _queryRepository = new RegisterQueryRepository(_databaseService.WebConfiguration);
-            _organisationIdCreated = "EPA987";
+            _organisationIdCreated = "EPA0987";
             _ukprnCreated = 123321;
+            var org2IdCreated = "EPA0001";
             _organisationTypeId = 5;
             OrganisationTypeHandler.InsertRecord(new OrganisationTypeModel { Id = _organisationTypeId, Status = "new", Type = "organisation type 1" });
             _id = Guid.NewGuid();
@@ -35,7 +37,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             {
                 Id = _id,
                 CreatedAt = DateTime.Now,
-                Name = "name 1",
+                Name = "name 2",
                 OrganisationId = _organisationIdCreated,
                 Ukprn = _ukprnCreated,
                 PrimaryContact = null,
@@ -51,20 +53,34 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                     Postcode = "postcode"
                 }
             };
+
+            _organisation2 = new EpaOrganisation
+            {
+                Id = Guid.NewGuid(),
+                Name = "name 1",
+                OrganisationId = org2IdCreated,
+                Status = OrganisationStatus.New,
+                OrganisationTypeId = null
+            };
         }
 
         [Test]
         public void CreateOrganisationThatDoesntExistAndCheckItIsThere()
         {
+            var maxOrgWithNoData = _queryRepository.EpaOrganisationIdCurrentMaximum().Result;
+
             var isOrgByOrgIdPresentBeforeInsert = _queryRepository.EpaOrganisationExistsWithOrganisationId(_organisationIdCreated).Result;
             var isOrgByUkprnPresentBeforeInsert = _queryRepository.EpaOrganisationExistsWithUkprn(_ukprnCreated).Result;
             var returnedOrganisationId = _repository.CreateEpaOrganisation(_organisation).Result;
+            var org2 = _repository.CreateEpaOrganisation(_organisation2).Result;
             var isOrgByOrgIdPresentAfterInsert = _queryRepository.EpaOrganisationExistsWithOrganisationId(_organisationIdCreated).Result;
             var isOrgByUkprnPresentAfterInsert = _queryRepository.EpaOrganisationExistsWithUkprn(_ukprnCreated).Result;
             var returnedOrganisationByGetById = _queryRepository.GetEpaOrganisationById(_id).Result;
             var returnedOrganisationByGetByOrganisationId =
                 _queryRepository.GetEpaOrganisationByOrganisationId(_organisationIdCreated).Result;
+            var maxOrgWithData = _queryRepository.EpaOrganisationIdCurrentMaximum().Result;
 
+            Assert.IsNull(maxOrgWithNoData);
             Assert.IsFalse(isOrgByOrgIdPresentBeforeInsert);
             Assert.IsFalse(isOrgByUkprnPresentBeforeInsert);
 
@@ -74,6 +90,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             Assert.IsTrue(isOrgByUkprnPresentAfterInsert);
             Assert.AreEqual(_ukprnCreated, returnedOrganisationByGetById.Ukprn);
             Assert.AreEqual(_ukprnCreated, returnedOrganisationByGetByOrganisationId.Ukprn);
+            Assert.AreEqual(maxOrgWithData, _organisationIdCreated);
         }
 
 

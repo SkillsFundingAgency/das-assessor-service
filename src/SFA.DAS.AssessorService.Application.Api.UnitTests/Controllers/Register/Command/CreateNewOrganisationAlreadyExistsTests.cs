@@ -24,17 +24,19 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         private object _result;
         private EpaOrganisation _returnedOrganisation;
         private CreateEpaOrganisationRequest _request;
+        private string organsiationId = "EPA999";
+        private string _organisationId;
 
         [SetUp]
         public void Arrange()
         {
             _mediator = new Mock<IMediator>();
             _logger = new Mock<ILogger<RegisterController>>();
+            _organisationId = "EPA999";
 
             _request = new CreateEpaOrganisationRequest
             {
                 Name = "name 1",
-                OrganisationId = "EPA999",
                 Ukprn = 123321,
                 OrganisationTypeId = 5,
                 LegalName = "legal name 1",
@@ -51,7 +53,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
                 Id = Guid.NewGuid(),
                 CreatedAt = DateTime.Now,
                 Name = _request.Name,
-                OrganisationId = _request.OrganisationId,
+                OrganisationId = _organisationId,
                 Ukprn = _request.Ukprn,
                 PrimaryContact = null,
                 Status = OrganisationStatus.New,
