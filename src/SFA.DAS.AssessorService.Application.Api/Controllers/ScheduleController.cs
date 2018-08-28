@@ -57,10 +57,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok();
         }
 
-        [HttpPut("api/v1/schedule/set", Name="Set")]
-        public async Task<IActionResult> Set([FromBody]ScheduleRun scheduleRun)
+        [HttpPut("api/v1/schedule/create", Name="Set")]
+        public async Task<IActionResult> Create([FromBody]ScheduleRun scheduleRun)
         {
-            await _scheduleRepository.SetScheduleRun(scheduleRun);
+            await _scheduleRepository.CreateScheduleRun(scheduleRun);
             return Ok();
         }
 

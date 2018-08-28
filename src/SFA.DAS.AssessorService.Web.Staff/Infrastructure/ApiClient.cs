@@ -100,7 +100,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
 
         public async Task<object> CreateScheduleRun(ScheduleRun schedule)
         {
-            return await Put<ScheduleRun, object>($"api/v1/schedule/set", schedule);
+            return await Put<ScheduleRun, object>($"api/v1/schedule/create", schedule);
         }
 
         public async Task<ScheduleRun> GetScheduleRun(Guid scheduleRunId)
