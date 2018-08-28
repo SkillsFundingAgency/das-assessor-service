@@ -9,7 +9,7 @@
     <div class="column-two-thirds">
         <a class="link-back" asp-controller="CertificateAmmend" asp-action="Check" asp-route-certificateid=@Model.Id>Back</a>
 
-        <form class="apprentice-address-form" type="post" asp-controller="CertificateRecipient">
+        <form class="apprentice-address-form" type="post" asp-controller="CertificateRecipient" asp-method="Recipient">
             @Html.HiddenFor(c => c.Id)
 
             @* hidden with css by default *@

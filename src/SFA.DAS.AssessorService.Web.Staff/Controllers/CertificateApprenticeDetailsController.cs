@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             return await LoadViewModel<CertificateApprenticeDetailsViewModel>(certificateid, "~/Views/CertificateAmmend/ApprenticeDetail.cshtml");
         }
         
-        [HttpPost(Name = "Date")]
+        [HttpPost(Name = "ApprenticeDetail")]
         public async Task<IActionResult> ApprenticeDetail(CertificateApprenticeDetailsViewModel vm)
         {            
             var actionResult = await SaveViewModel(vm, 

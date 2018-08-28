@@ -14,6 +14,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
         public Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData data)
         {
             data.LearnerFamilyName = FamilyName;
+            data.LearnerGivenNames = GivenNames;
+
             certificate.CertificateData = JsonConvert.SerializeObject(data);
 
             return certificate;

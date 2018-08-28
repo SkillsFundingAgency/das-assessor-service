@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             return await LoadViewModel<CertificateRecipientViewModel>(certificateid, "~/Views/CertificateAmmend/Recipient.cshtml");
         }
 
-        [HttpPost(Name = "Grade")]
+        [HttpPost(Name = "Recipient")]
         public async Task<IActionResult> Recipient(CertificateRecipientViewModel vm)
         {
             return await SaveViewModel(vm,
