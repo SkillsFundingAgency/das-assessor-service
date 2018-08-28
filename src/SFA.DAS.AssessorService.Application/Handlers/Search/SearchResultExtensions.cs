@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 
@@ -65,10 +66,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                     searchResult.ShowExtraInfo = true;
                     searchResult.OverallGrade = certificateData.OverallGrade;
                     searchResult.SubmittedBy = submittingContact.DisplayName; // This needs to be contact real name
-                    searchResult.SubmittedAt = submittedLogEntry.EventTime.ToLocalTime(); // This needs to be local time 
+                    searchResult.SubmittedAt = submittedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time 
                     searchResult.AchDate = certificateData.AchievementDate;
                     searchResult.UpdatedBy = lastUpdatedContact.DisplayName; // This needs to be contact real name
-                    searchResult.UpdatedAt = lastUpdatedLogEntry.EventTime.ToLocalTime(); // This needs to be local time
+                    searchResult.UpdatedAt = lastUpdatedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time
                 }
                 else
                 {

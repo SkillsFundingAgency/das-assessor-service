@@ -1,12 +1,18 @@
 ﻿@{
-    ViewData["Title"] = "Sign in";
+    ViewData["Title"] = "EPAO certification administration";
+    Layout = "_Layout";
 }
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <h1 class="heading-large">View certificates</h1>
+        <h1 class="heading-xlarge">EPAO certification administration</h1>
+        <p>Use this service to:</p>
+        <ul class="list list-bullet">
+            <li>amend certificate information</li>
+            <li>request duplicate certificates</li>
+        </ul>
         <div class="form-group">
-            <a asp-action="SignIn" asp-controller="Account" class="button">Sign In</a>
+            <a asp-action="SignIn" asp-controller="Account" class="button button-start">Start now</a>
         </div>
     </div>
 </div>

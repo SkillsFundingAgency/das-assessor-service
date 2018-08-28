@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Globalization;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.WsFederation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -58,6 +56,14 @@ namespace SFA.DAS.AssessorService.Web.Staff
 
             AddAuthentication(services);
 
+            services.Configure<RequestLocalizationOptions>(options =>
+            {
+                options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("en-GB");
+                options.SupportedCultures = new List<CultureInfo> { new CultureInfo("en-GB") };
+                options.RequestCultureProviders.Clear();
+            });
+
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddMvc()
                 .AddMvcOptions(m => m.ModelMetadataDetailsProviders.Add(new HumanizerMetadataProvider()))
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
@@ -141,6 +147,8 @@ namespace SFA.DAS.AssessorService.Web.Staff
             app.UseCookiePolicy();
             app.UseAuthentication();
             app.UseSession();
+
+            app.UseRequestLocalization();
 
             app.UseMvc(routes =>
             {
