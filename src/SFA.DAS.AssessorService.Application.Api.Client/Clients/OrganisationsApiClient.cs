@@ -11,7 +11,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
     public class OrganisationsApiClient : ApiClientBase, IOrganisationsApiClient
     {
-        public OrganisationsApiClient(HttpClient httpClient, ITokenService tokenService, ILogger<OrganisationsApiClient> logger) : base(httpClient, tokenService, logger)
+        public OrganisationsApiClient(string baseUri, ITokenService tokenService, ILogger<OrganisationsApiClient> logger) : base(baseUri, tokenService, logger)
         {
         }
 

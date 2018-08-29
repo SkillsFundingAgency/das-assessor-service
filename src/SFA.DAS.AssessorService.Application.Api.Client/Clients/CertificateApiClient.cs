@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public class CertificateApiClient : ApiClientBase, ICertificateApiClient
     {
-        public CertificateApiClient(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger) : base(httpClient, tokenService, logger)
+        public CertificateApiClient(string baseUri, ITokenService tokenService, ILogger<ApiClientBase> logger) : base(baseUri, tokenService, logger)
         {
         }
 
@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Put, "api/v1/certificates/update"))
             {
-                return await PostPutRequestWithResponse<UpdateCertificateRequest, Certificate >(httpRequest, certificateRequest);
+                return await PostPutRequestWithResponse<UpdateCertificateRequest, Certificate>(httpRequest, certificateRequest);
             }
         }
 

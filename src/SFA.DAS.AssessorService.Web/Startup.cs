@@ -12,7 +12,6 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Settings;
-using SFA.DAS.AssessorService.Web.Extensions;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using StructureMap;
@@ -63,6 +62,7 @@ namespace SFA.DAS.AssessorService.Web
             if (_env.IsDevelopment())
             {
                 services.AddDistributedMemoryCache();
+                
             }
             else
             {
@@ -81,13 +81,7 @@ namespace SFA.DAS.AssessorService.Web
             }
 
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
-
-            services.AddHttpClientServiceWithRetry<ICertificateApiClient, CertificateApiClient>(Configuration.ClientApiAuthentication.ApiBaseAddress);
-            services.AddHttpClientServiceWithRetry<ILoginApiClient, LoginApiClient>(Configuration.ClientApiAuthentication.ApiBaseAddress);
-            services.AddHttpClientServiceWithRetry<ISearchApiClient, SearchApiClient>(Configuration.ClientApiAuthentication.ApiBaseAddress);
-            services.AddHttpClientServiceWithRetry<IContactsApiClient, ContactsApiClient>(Configuration.ClientApiAuthentication.ApiBaseAddress);
-            services.AddHttpClientServiceWithRetry<IOrganisationsApiClient, OrganisationsApiClient>(Configuration.ClientApiAuthentication.ApiBaseAddress);
-
+            
             return ConfigureIOC(services);
         }        
 
@@ -107,6 +101,11 @@ namespace SFA.DAS.AssessorService.Web
                 config.For<ITokenService>().Use<TokenService>();
                 config.For<IWebConfiguration>().Use(Configuration);
                 config.For<ISessionService>().Use<SessionService>().Ctor<string>().Is(_env.EnvironmentName);
+                config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
+                config.For<IContactsApiClient>().Use<ContactsApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
+                config.For<ISearchApiClient>().Use<SearchApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
+                config.For<ICertificateApiClient>().Use<CertificateApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
+                config.For<ILoginApiClient>().Use<LoginApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
 
                 config.Populate(services);
             });
@@ -119,7 +118,7 @@ namespace SFA.DAS.AssessorService.Web
             MappingStartup.AddMappings();
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                app.UseDeveloperExceptionPage();                
             }
             else
             {

@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public class SearchApiClient : ApiClientBase, ISearchApiClient
     {
-        public SearchApiClient(HttpClient httpClient, ITokenService tokenService, ILogger<SearchApiClient> logger) : base(httpClient, tokenService, logger)
+        public SearchApiClient(string baseUri, ITokenService tokenService, ILogger<SearchApiClient> logger) : base(baseUri, tokenService, logger)
         {
         }
 
