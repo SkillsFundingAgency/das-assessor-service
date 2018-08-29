@@ -9,5 +9,8 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<IEnumerable<OrganisationType>> GetOrganisationTypes();
         Task<IEnumerable<DeliveryArea>> GetDeliveryAreas();
         Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisations();
+        Task<EpaOrganisation> GetEpaOrganisationByOrganisationId(string organisationId);
+        Task<IEnumerable<AssessmentOrganisationContact>> GetAssessmentOrganisationContacts(string organisationId);
+        Task<AssessmentOrganisationContact> GetPrimaryOrFirstContact(string organisationId);
     }
 }
