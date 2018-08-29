@@ -134,8 +134,9 @@ namespace SFA.DAS.AssessorService.Data
                 return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists);
             }
         }
-
-        public async Task<bool> EpaOrganisationStandardExists(string organisationId, int standardCode)
+        
+        
+          public async Task<bool> EpaOrganisationStandardExists(string organisationId, int standardCode)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
@@ -145,6 +146,18 @@ namespace SFA.DAS.AssessorService.Data
                     "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [OrganisationStandard] " +
                     $@"WHERE EndPointAssessorOrganisationId = '{organisationId}' and standardCode = {standardCode}";
                 return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists);
+            }
+        }
+
+        public async Task<string> EpaOrganisationIdCurrentMaximum()
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+                const string sqlToGetHighestOrganisationId = "select max(EndPointAssessorOrganisationId) OrgId from organisations where EndPointAssessorOrganisationId like 'EPA%' " + 
+                                                " and isnumeric(replace(EndPointAssessorOrganisationId,'EPA','')) = 1";
+                return await connection.ExecuteScalarAsync<string>(sqlToGetHighestOrganisationId);
             }
         }
     }

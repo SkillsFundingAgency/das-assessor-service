@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             
             catch (AlreadyExistsException ex)
             {
-                _logger.LogError($@"Record already exists for organisation [{request.OrganisationId}]");
+                _logger.LogError($@"Record already exists for organisation [{ex.Message}]");
                 return Conflict(ex.Message);
             }
             catch (BadRequestException ex)
