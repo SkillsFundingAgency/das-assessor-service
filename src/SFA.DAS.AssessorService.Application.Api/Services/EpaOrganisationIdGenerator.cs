@@ -18,12 +18,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             if (currentMaxId == null)
                 return "EPA0200";
 
-
             return int.TryParse(currentMaxId.Replace("EPA", string.Empty), out int currentIntValue) 
                 ? $@"EPA{currentIntValue + 1:D4}" : 
                 string.Empty;
         }
     }
-
-
 }

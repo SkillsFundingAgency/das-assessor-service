@@ -45,8 +45,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             errorDetails.Append(_validator.CheckIfOrganisationUkprnExists(request.Ukprn));
             ThrowAlreadyExistsExceptionIfErrorPresent(errorDetails);
 
-            var newOrgsanisationId = _orgIdGenerator.GetNextOrganisationId();
-            var organisation = MapOrganisationRequestToOrganisation(request, newOrgsanisationId);
+            var newOrganisationId = _orgIdGenerator.GetNextOrganisationId();
+            if (newOrganisationId == string.Empty)
+                throw new Exception("A valid organisation Id could not be generated");
+
+            var organisation = MapOrganisationRequestToOrganisation(request, newOrganisationId);
             return await _registerRepository.CreateEpaOrganisation(organisation);
         }
 

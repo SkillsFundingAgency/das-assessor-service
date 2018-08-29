@@ -82,6 +82,18 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
         }
 
         [Test]
+        public void GetExceptionWhenNoValidOrganisationIdIsGenerated()
+        {
+            const string errorMessage = "A valid organisation Id could not be generated";
+            var requestWithNoIdGenerated = BuildRequest("org without id coming", 123322);
+            _idGenerator.Setup(g => g.GetNextOrganisationId()).Returns(string.Empty);
+            var ex = Assert.ThrowsAsync<Exception>(() => _createEpaOrganisationHandler.Handle(requestWithNoIdGenerated, new CancellationToken()));
+            Assert.AreEqual(errorMessage, ex.Message);
+            _registerRepository.Verify(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Never);
+           _idGenerator.Verify(v => v.GetNextOrganisationId());
+        }
+
+        [Test]
         public void GetBadRequestExceptionWhenNoNameValidationOccurs()
         {
             const string errorMessage = "No Name issue";
