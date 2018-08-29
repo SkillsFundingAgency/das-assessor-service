@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -69,6 +70,19 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
                 connection.Close();
             }
         }
+
+        public T Get<T>(string sql)
+        {
+            using (var connection = new SqlConnection(Configuration.GetConnectionString("SqlConnectionStringTest")))
+            {
+                if (connection.State != ConnectionState.Open)
+                    connection.Open();
+                var res = connection.Query<T>(sql);
+                connection.Close();
+                return res.FirstOrDefault();
+            }
+        }
+
 
         public void Execute(string sql, TestModel model)
         {
