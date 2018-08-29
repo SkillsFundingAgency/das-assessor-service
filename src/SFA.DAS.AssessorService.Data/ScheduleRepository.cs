@@ -77,7 +77,7 @@ namespace SFA.DAS.AssessorService.Data
         {
             await _connection.ExecuteAsync(
                 @"INSERT ScheduleRuns (RunTime, Interval, IsRecurring, ScheduleType) 
-                               VALUES (@runTime, @interval, 1, @scheduleType)", scheduleRun);
+                               VALUES (@runTime, @interval, @isRecurring, @scheduleType)", scheduleRun);
         }
 
         public async Task DeleteScheduleRun(Guid scheduleRunId)

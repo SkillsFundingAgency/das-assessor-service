@@ -88,11 +88,18 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
+            DateTime now = DateTime.UtcNow.UtcToTimeZoneTime();
+
             var viewModel = new ScheduleConfigViewModel
             {
                 ScheduleType = ScheduleJobType.PrintRun,
-                RunTime = DateTime.UtcNow.UtcToTimeZoneTime(),
-                IsRecurring = false,   
+                RunTime = now,
+                Year = now.Year,
+                Month = now.Month,
+                Day = now.Day,
+                Hour = now.Hour,
+                Minute = now.Minute,
+                IsRecurring = false,
             };
 
             return View(viewModel);
@@ -103,11 +110,26 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         {
             if (viewModel != null)
             {
+                viewModel.RunTime = new DateTime(viewModel.Year, viewModel.Month, viewModel.Day, viewModel.Hour, viewModel.Minute, 0);
+
+                if (viewModel.RunTime.UtcFromTimeZoneTime() < DateTime.UtcNow.AddMinutes(-5))
+                {
+                    ViewData.ModelState.AddModelError(nameof(viewModel.RunTime), "The Run Time must be in the future");
+                }
+
+                // Binding to a nullable enum will cause a ModelState error
+                ViewData.ModelState.Remove(nameof(viewModel.ScheduleInterval));
+
+                if (!ViewData.ModelState.IsValid)
+                {
+                    return View(viewModel);
+                }
+
                 ScheduleRun schedule = new ScheduleRun
                 {
                     ScheduleType = (ScheduleType)viewModel.ScheduleType,
                     RunTime = viewModel.RunTime.UtcFromTimeZoneTime(),
-                    IsRecurring = viewModel.IsRecurring,
+                    IsRecurring = viewModel.ScheduleInterval.HasValue,
                     Interval = (int?)viewModel.ScheduleInterval
                 };
 
