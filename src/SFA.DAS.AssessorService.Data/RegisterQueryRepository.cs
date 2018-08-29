@@ -134,5 +134,17 @@ namespace SFA.DAS.AssessorService.Data
                 return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists);
             }
         }
+
+        public async Task<string> EpaOrganisationIdCurrentMaximum()
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+                const string sqlToGetHighestOrganisationId = "select max(EndPointAssessorOrganisationId) OrgId from organisations where EndPointAssessorOrganisationId like 'EPA%' " + 
+                                                " and isnumeric(replace(EndPointAssessorOrganisationId,'EPA','')) = 1";
+                return await connection.ExecuteScalarAsync<string>(sqlToGetHighestOrganisationId);
+            }
+        }
     }
 }

@@ -34,7 +34,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
             _request = new CreateEpaOrganisationRequest
             {
                 Name = "name 1",
-                OrganisationId = _orgId,
                 Ukprn = 123321,
                 OrganisationTypeId = 5,
                 LegalName = "legal name 1",
