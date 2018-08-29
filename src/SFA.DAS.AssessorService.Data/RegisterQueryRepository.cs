@@ -142,9 +142,9 @@ namespace SFA.DAS.AssessorService.Data
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
-                const string sqlToCheckExists = "select max(EndPointAssessorOrganisationId) OrgId from organisations where EndPointAssessorOrganisationId like 'EPA%' " + 
+                const string sqlToGetHighestOrganisationId = "select max(EndPointAssessorOrganisationId) OrgId from organisations where EndPointAssessorOrganisationId like 'EPA%' " + 
                                                 " and isnumeric(replace(EndPointAssessorOrganisationId,'EPA','')) = 1";
-                return await connection.ExecuteScalarAsync<string>(sqlToCheckExists);
+                return await connection.ExecuteScalarAsync<string>(sqlToGetHighestOrganisationId);
             }
         }
     }
