@@ -1,0 +1,81 @@
+﻿@using SFA.DAS.AssessorService.Domain.Paging;
+@using SFA.DAS.AssessorService.Web.Staff.Models.Azure;
+@model PaginatedList<User>
+@{
+    ViewBag.Title = "Azure API Users";
+    Layout = "_Layout";
+}
+
+<div class="grid-row">
+    <div class="column-full">
+        <a asp-action="Index">Refresh</a>
+
+        <h1 class="heading-large">Azure API Users</h1>
+
+        <div class="form-group">
+            <a asp-action="CreateUser" class="button">Create New User</a>
+        </div>
+
+        @if (@Model.TotalRecordCount > 0)
+        {
+            <div class="grid-row">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>UKPRN</th>
+                            <th>Email</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in @Model.Items)
+                        {
+                        <tr>
+                            <td>@user.FirstName @user.LastName</td>
+                            <td>@user.Note</td>
+                            <td>@user.Email</td>
+                            <td><a asp-action="GetUser" asp-route-userId="@user.Id">View Details</a></td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="form-group">
+                <span class="bold">No Users present</span>
+            </div>
+        }
+    </div>
+</div>
+
+@if (Model.HasPreviousPage || Model.HasNextPage)
+{
+    <div class="grid-row">
+        <div class="column-full">
+            <div class="page-navigation">
+
+                @if (Model.HasPreviousPage)
+                {
+                    <a asp-action="Index" asp-controller="Azure" asp-route-page="@(Model.PageIndex - 1)" class="previous">
+                        <i class="arrow-button icon-left-open">&#xe800;</i>
+                        <span class="description">Previous <span class="hide-mob">page</span></span>
+                        <span class="counter">Page <span class="prevPage">@(Model.PageIndex - 1)</span> of <span class="totalPage">@(Model.TotalPages)</span></span>
+                    </a>
+                }
+
+                @if (Model.HasNextPage)
+                {
+                    <a asp-action="Index" asp-controller="Azure" asp-route-page="@(Model.PageIndex + 1)" class="next">
+                        <i class="arrow-button icon-right-open">&#xe801;</i>
+                        <span class="description">Next <span class="hide-mob">page</span></span>
+                        <span class="counter">Page <span class="nextPage">@(Model.PageIndex + 1)</span> of <span class="totalPage">@(Model.TotalPages)</span></span>
+                    </a>
+                }
+
+            </div>
+        </div>
+    </div>
+}

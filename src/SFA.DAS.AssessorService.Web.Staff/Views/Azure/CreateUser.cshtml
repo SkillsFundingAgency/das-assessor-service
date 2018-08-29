@@ -1,0 +1,50 @@
+﻿@using SFA.DAS.AssessorService.Web.Staff.Models.Azure;
+@model CreateAzureUserViewModel
+@{
+    ViewBag.Title = "Create New User";
+    Layout = "_Layout";
+}
+
+<div class="grid-row">
+    <div class="column-full">
+        <a asp-action="Index" class="link-back">Go Back</a>
+
+        <h1 class="heading-large">Create New User</h1>
+
+        <form asp-action="CreateUser" asp-controller="Azure" method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                        <th>UKPRN</th>
+                        <th>Product</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input asp-for="FirstName" required /></td>
+                        <td><input asp-for="LastName" required /></td>
+                        <td><input asp-for="Email" required /></td>
+                        <td><input asp-for="UkPrn" required /></td>
+                        <td>
+                            <select asp-for="ProductId" asp-items="@(new SelectList(Model.Products, "Id", "Id"))">
+                                <option>-- Please Select --</option>
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="button" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

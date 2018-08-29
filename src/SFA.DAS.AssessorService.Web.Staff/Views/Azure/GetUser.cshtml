@@ -1,0 +1,100 @@
+﻿@using SFA.DAS.AssessorService.Web.Staff.Models.Azure;
+@using SFA.DAS.AssessorService.Domain.Extensions
+@model User
+@{
+    ViewBag.Title = "Azure API User Details";
+    Layout = "_Layout";
+}
+
+<div class="grid-row">
+    <div class="column-full">
+        <a asp-action="Index" class="link-back">Go Back</a>
+
+        <h1 class="heading-large">User Details</h1>
+
+        <div class="grid-row">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>UKPRN</th>
+                        <th>Email</th>
+                        <th>Registration Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>@Model.FirstName @Model.LastName</td>
+                        <td>@Model.Note</td>
+                        <td>@Model.Email</td>
+                        <td>@Model.RegistrationDate.UtcToTimeZoneTime()</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        @if(Model.Subscriptions.Any())
+        {
+        <h1 class="heading-large">Subscriptions</h1>
+        <div class="grid-row">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Primary Key</th>
+                        <th></th>
+                        <th>Secondary Key</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var subscription in Model.Subscriptions)
+                    {
+                    <tr>
+                        <td>@subscription.ProductId</td>
+                        <td>@subscription.PrimaryKey</td>
+                        <td>
+                            <form asp-action="RenewPrimaryKey" asp-controller="Azure" asp-route-subscriptionId="@subscription.Id" asp-route-userId="@Model.Id" method="post">
+                                <input type="submit" value="Renew" class="button" />
+                            </form>
+                        </td>
+                        <td>@subscription.SecondaryKey</td>
+                        <td>
+                            <form asp-action="RenewSecondaryKey" asp-controller="Azure" asp-route-subscriptionId="@subscription.Id" asp-route-userId="@Model.Id" method="post">
+                                <input type="submit" value="Renew" class="button" />
+                            </form>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        }
+
+        @if(Model.Identities.Any())
+        {
+        <h1 class="heading-large">Identities</h1>
+
+        <div class="grid-row">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Provider</th>
+                        <th>Username</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var identity in Model.Identities)
+                    {
+                    <tr>
+                        <td>@identity.Provider</td>
+                        <td>@identity.Id</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        }
+    </div>
+</div>

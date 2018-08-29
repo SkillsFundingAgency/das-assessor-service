@@ -53,6 +53,13 @@ namespace SFA.DAS.AssessorService.Web.Staff
                 config.DefaultRequestHeaders.Add("Accept", "Application/json");
             });
 
+            services.AddHttpClient<AzureApiClient>("AzureApiClient", config =>
+            {
+                config.BaseAddress = new Uri(ApplicationConfiguration.AzureApiAuthentication.ApiBaseAddress);
+                config.DefaultRequestHeaders.Add("Accept", "Application/json");
+            });
+
+
             AddAuthentication(services);
 
             services.Configure<RequestLocalizationOptions>(options =>
@@ -62,7 +69,13 @@ namespace SFA.DAS.AssessorService.Web.Staff
                 options.RequestCultureProviders.Clear();
             });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                .AddJsonOptions(options =>
+                {
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                });
+
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
             //if (_env.IsDevelopment())
             //{
@@ -100,6 +113,7 @@ namespace SFA.DAS.AssessorService.Web.Staff
                     _.WithDefaultConventions();
                 });
 
+                config.For<IAzureTokenService>().Use<AzureTokenService>();
                 config.For<ITokenService>().Use<TokenService>();
                 config.For<IWebConfiguration>().Use(ApplicationConfiguration);
                 config.For<ISessionService>().Use<SessionService>().Ctor<string>().Is(_env.EnvironmentName);
