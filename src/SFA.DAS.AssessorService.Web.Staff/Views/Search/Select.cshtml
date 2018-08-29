@@ -10,7 +10,15 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <a class="link-back" asp-action="Results" asp-controller="Search" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.Page">Back</a>
+        @if (Model.BatchNumber.HasValue)
+        {
+            <a class="link-back" asp-action="Results" asp-controller="BatchSearch" asp-route-batchNumber="@Model.BatchNumber">Back</a>
+        }
+        else
+        {
+            <a class="link-back" asp-action="Results" asp-controller="Search" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.Page">Back</a>
+        }
+
         <h1 class="heading-xlarge">
             Certificate: @Model.Learner.CertificateReference
             <span class="heading-secondary">Status: @Model.Learner.CertificateStatus</span>

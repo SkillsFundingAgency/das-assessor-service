@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                     new StaffBatchLogResult
                     {
                         BatchNumber = sr.BatchNumber,
-                        ScheduledDate = sr.ScheduledDate,
+                        ScheduledDate = sr.BatchCreated,
                         NumberOfCertificates = sr.NumberOfCertificates,
                         NumberOfCoverLetters = sr.NumberOfCoverLetters
                     }).ToList();

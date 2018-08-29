@@ -58,7 +58,7 @@
                                 <td>@result.CertificateReference</td>
                                 <td>@result.Status</td>
                                 <td>@result.CertificateData.OverallGrade</td>
-                                <td><a asp-controller="Search" asp-action="Select" asp-route-stdcode="@result.StandardCode" asp-route-uln="@result.Uln" asp-route-searchstring="@result.CertificateReference">View</a></td>
+                                <td><a asp-controller="Search" asp-action="Select" asp-route-stdcode="@result.StandardCode" asp-route-uln="@result.Uln" asp-route-searchstring="@result.CertificateReference" asp-route-batchNumber="@result.BatchNumber">View</a></td>
                             </tr>
                         }
                     </tbody>
