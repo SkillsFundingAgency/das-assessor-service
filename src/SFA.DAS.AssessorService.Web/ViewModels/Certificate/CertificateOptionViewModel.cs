@@ -1,30 +1,26 @@
+using System.Collections.Generic;
 using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 {
-    public class CertificateOptionViewModel : CertificateBaseViewModel, ICertificateViewModel
+    public class CertificateOptionViewModel : CertificateBaseViewModel
     {
-        public bool? HasAdditionalLearningOption { get; set; }
+        
         public string Option { get; set; }
-        public void FromCertificate(Domain.Entities.Certificate cert)
+        public List<Option> Options { get; set; }
+
+        public void FromCertificate(Domain.Entities.Certificate cert, List<Option> options)
         {
             BaseFromCertificate(cert);
             Option = CertificateData.CourseOption;
-
-            if (CertificateData.CourseOption == null)
-            {
-                HasAdditionalLearningOption = null;
-            }
-            else
-            {
-                HasAdditionalLearningOption = CertificateData.CourseOption != "";
-            }
+            Options = options;
         }
 
         public Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData data)
         {
-            data.CourseOption = HasAdditionalLearningOption.Value ? Option : "";
+            data.CourseOption = Option;
             certificate.CertificateData = JsonConvert.SerializeObject(data);
 
             return certificate;

@@ -224,5 +224,11 @@ namespace SFA.DAS.AssessorService.Data
                                                                   AND JSON_VALUE(CertificateData, '$.ProviderName') IS NOT NULL 
                                                                   ORDER BY CreatedAt DESC", new {providerUkPrn});
         }
+
+        public async Task<List<Option>> GetOptions(int stdCode)
+        {
+            return (await _connection.QueryAsync<Option>("SELECT * FROM Options WHERE LarsCode = @stdCode",
+                new {stdCode})).ToList();
+        }
     }
 }

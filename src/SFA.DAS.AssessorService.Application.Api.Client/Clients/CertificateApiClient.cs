@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -43,6 +44,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/certificates/history/?pageIndex={pageIndex}&userName={userName}"))
             {
                 return await RequestAndDeserialiseAsync<PaginatedList<CertificateHistoryResponse>>(httpRequest, "Could not get Certificate History");
+            }
+        }
+
+        public async Task<List<Option>> GetOptions(int stdCode)
+        {
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/certificates/options/?stdCode={stdCode}"))
+            {
+                return await RequestAndDeserialiseAsync<List<Option>>(httpRequest, "Could not get Options");
             }
         }
     }
