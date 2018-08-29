@@ -129,5 +129,44 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             }
         }
 
+        [HttpPut("standards", Name = "UpdateEpaOrganisationStandard")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(int))]
+        [SwaggerResponse((int)HttpStatusCode.NotFound, typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.Conflict, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> UpdateOrganisationStandard([FromBody] UpdateEpaOrganisationStandardRequest request)
+        {
+            //try
+            //{
+            //    _logger.LogInformation($@"Updating Organisation Standard [{request.OrganisationId}, {request.StandardCode}]");
+            //    var result = await _mediator.Send(request);
+            //    return Ok(result);
+            //}
+            //catch (NotFound ex)
+            //{
+            //    _logger.LogError($@"Record is not available for organisation / standard: [{request.OrganisationId}, {request.StandardCode}]");
+            //    return NotFound(ex.Message);
+            //}
+            //catch (AlreadyExistsException ex)
+            //{
+            //    _logger.LogError($@"Record already exists for organisation/standard [{request.OrganisationId}, {request.StandardCode}]");
+            //    return Conflict(ex.Message);
+            //}
+            //catch (BadRequestException ex)
+            //{
+            //    _logger.LogError(ex.Message);
+            //    return BadRequest(ex.Message);
+            //}
+            //catch (Exception ex)
+            //{
+            //    _logger.LogError($@"Bad request, Message: [{ex.Message}]");
+            //    return BadRequest();
+            //}
+
+
+            return BadRequest();
+        }
+
     }
 }
