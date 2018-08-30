@@ -151,7 +151,7 @@
     <value>Where will the certificate be sent?</value>
   </data>
   <data name="ManualHeading" xml:space="preserve">
-    <value>Add the employers addresss</value>
+    <value>Add the employer's address</value>
   </data>
   <data name="Lead" xml:space="preserve">
     <value>Certificates should go to the apprentice's employer.</value>
