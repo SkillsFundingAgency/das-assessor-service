@@ -43,19 +43,19 @@
             }
 
             <div sfa-anyvalidationerror-class="after-error-summary">
-                <div id="HasAdditionalLearningOption">
+                <div id="Option">
                     <h1 class="heading-medium">
                         @*<span class="heading-secondary">@Model.GivenNames @Model.FamilyName</span>*@
                         @Localizer["Heading"]
                     </h1>
                     <p>You may know options as 'occupational options', 'pathways', 'specialisms' or 'specialist functions'.</p>
                     <p>The option will appear on the certificate.</p>
-                    <p>Select an option</p>
-                    @*<div class="error-message-container" sfa-validation-for="HasAdditionalLearningOption" sfa-validationerror-class="form-group-error">
-                        <span class="error-message" asp-validation-for="HasAdditionalLearningOption"></span>
-                    </div>*@
                 </div>
                 <div class="form-group" sfa-anyvalidationerror-class="form-group-error">
+                    <span class="form-label-bold">Select an option</span>
+                    <div class="error-message-container" sfa-validation-for="Option">
+                        <span class="error-message" asp-validation-for="Option"></span>
+                    </div>
                     @foreach (var option in Model.Options)
                     {
                         <div class="multiple-choice" data-target="show-option-input">

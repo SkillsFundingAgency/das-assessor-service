@@ -65,7 +65,6 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
       errorPlacement: function(error, element) {
         if (element.attr('type') == 'radio') {
           $('.error-message-container')
-            .addClass('form-group-error')
             .show()
             .append(error);
         } else if (element.hasClass('date-input')) {
