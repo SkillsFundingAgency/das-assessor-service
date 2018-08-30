@@ -12,5 +12,7 @@
         string CheckUkprnIsValid(long? ukprn);
         string CheckIfStandardNotFound(int standardCode);
         string CheckIfOrganisationStandardAlreadyExists(string organisationId, int standardCode);
+
+        string CheckIfOrganisationStandardDoesNotExist(string organisationId, int standardCode);
     }
 }

@@ -23,6 +23,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
 
         public string ErrorMessageTheOrganisationStandardAlreadyExists { get; } =
             "This organisation/standard already exists";
+
+        public string ErrorMessageTheOrganisationStandardDoesNotExist { get; } =
+            "This organisation/standard does not exist";
+
         public string ErrorMessageStandardNotFound { get; } =
             "There is no standard present for the given standard code; ";
 
@@ -115,6 +119,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             return _registerRepository.EpaOrganisationStandardExists(organisationId, standardCode).Result
                 ? ErrorMessageTheOrganisationStandardAlreadyExists
                 : string.Empty;
+        }
+
+        public string CheckIfOrganisationStandardDoesNotExist(string organisationId, int standardCode)
+        {
+            return _registerRepository.EpaOrganisationStandardExists(organisationId, standardCode).Result
+                ? string.Empty
+                : ErrorMessageTheOrganisationStandardDoesNotExist;
         }
     }
 }
