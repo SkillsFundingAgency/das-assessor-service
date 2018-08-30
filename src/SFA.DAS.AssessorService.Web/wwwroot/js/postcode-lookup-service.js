@@ -3,18 +3,19 @@
   var findAddressVal = $('#postcode-search').val();
 
   // enable when service is available
+  $('.js-search-address-heading').removeClass('hidden');
   $('#address-lookup').removeClass('disabled');
   $('#postcode-search').prop('disabled', false);
 
   $('#enterAddressManually').on('click', function(e) {
     e.preventDefault();
     $('#addressManualWrapper').unbind('click');
-    $('.js-address-panel, .js-select-previous-address').addClass('hidden');
-    $('#address-lookup')
-      .removeClass('hide-nojs')
-      .addClass('hidden');
-
-    $('#address-details').removeClass('js-hidden');
+    $(
+      '.js-address-panel, .js-select-previous-address, .js-search-address-heading, #address-lookup'
+    ).addClass('hidden');
+    $('.js-manual-address-heading').removeClass('hidden');
+    $('#address-lookup').removeClass('hide-nojs');
+    $('.address-manual-input').removeClass('js-hidden');
     $('#Employer').focus();
   });
 

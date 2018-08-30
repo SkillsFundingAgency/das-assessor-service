@@ -151,7 +151,7 @@
     <value>Or enter the address manually</value>
   </data>
   <data name="Name" xml:space="preserve">
-    <value />
+    <value>Recipient's name</value>
   </data>
   <data name="NameHint" xml:space="preserve">
     <value>For example, Joanna Smith</value>

@@ -141,8 +141,17 @@
   <data name="Employer" xml:space="preserve">
     <value>Company name</value>
   </data>
-  <data name="Heading" xml:space="preserve">
+  <data name="SearchHeading" xml:space="preserve">
     <value>Search for the employer's address</value>
+  </data>
+  <data name="EditHeading" xml:space="preserve">
+    <value>Edit the employer's address</value>
+  </data>
+  <data name="NoJsHeading" xml:space="preserve">
+    <value>Where will the certificate be sent?</value>
+  </data>
+  <data name="ManualHeading" xml:space="preserve">
+    <value>Add the employers addresss</value>
   </data>
   <data name="Lead" xml:space="preserve">
     <value>Certificates should go to the apprentice's employer.</value>
