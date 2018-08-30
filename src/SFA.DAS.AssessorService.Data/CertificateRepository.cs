@@ -29,6 +29,14 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<Certificate> New(Certificate certificate)
         {
+            // Another check closer to INSERT that there isn't already a cert for this uln / std code
+            var existingCert = await _context.Certificates.FirstOrDefaultAsync(c =>
+                c.Uln == certificate.Uln && c.StandardCode == certificate.StandardCode);
+            if (existingCert != null)
+            {
+                return existingCert;
+            }
+
             await _context.Certificates.AddAsync(certificate);
 
             await UpdateCertificateLog(certificate, CertificateActions.Start, certificate.CreatedBy);
