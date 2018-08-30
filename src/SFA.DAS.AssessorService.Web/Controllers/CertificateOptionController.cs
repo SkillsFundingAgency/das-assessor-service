@@ -62,9 +62,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
             var certSession = JsonConvert.DeserializeObject<CertificateSession>(sessionString);
 
-            var options = await CertificateApiClient.GetOptions(certSession.StandardCode);
-            if (!options.Any())
+            if (!certSession.Options.Any())
             {
+                if (ContextAccessor.HttpContext.Request.Query.ContainsKey("fromback"))
+                {
+                    return RedirectToAction("Grade", "CertificateGrade");    
+                }
                 return RedirectToAction("Date", "CertificateDate");
             }
 
@@ -72,7 +75,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             Logger.LogInformation($"Got Certificate for CertificateOptionViewModel requested by {username} with Id {certificate.Id}");
 
-            viewModel.FromCertificate(certificate, options);
+            viewModel.FromCertificate(certificate, certSession.Options);
 
             Logger.LogInformation($"Got View Model of type CertificateOptionViewModel requested by {username}");
 
@@ -96,10 +99,19 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var certificate = await CertificateApiClient.GetCertificate(vm.Id);
             var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 
+            var sessionString = SessionService.Get("CertificateSession");
+            if (sessionString == null)
+            {
+                Logger.LogInformation($"Session for CertificateOptionViewModel requested by {username} has been lost. Redirecting to Search Index");
+                return RedirectToAction("Index", "Search");
+            }
+            var certSession = JsonConvert.DeserializeObject<CertificateSession>(sessionString);
+
             if (!ModelState.IsValid)
             {
                 vm.FamilyName = certData.LearnerFamilyName;
                 vm.GivenNames = certData.LearnerGivenNames;
+                vm.Options = certSession.Options;
                 Logger.LogInformation($"Model State not valid for CertificateOptionViewModel requested by {username} with Id {certificate.Id}. Errors: {ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)}");
                 return View(returnToIfModelNotValid, vm);
             }

@@ -227,7 +227,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<List<Option>> GetOptions(int stdCode)
         {
-            return (await _connection.QueryAsync<Option>("SELECT * FROM Options WHERE LarsCode = @stdCode",
+            return (await _connection.QueryAsync<Option>("SELECT * FROM Options WHERE StdCode = @stdCode",
                 new {stdCode})).ToList();
         }
     }
