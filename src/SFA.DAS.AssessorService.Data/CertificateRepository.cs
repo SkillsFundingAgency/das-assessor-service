@@ -42,6 +42,7 @@ namespace SFA.DAS.AssessorService.Data
                 _context.SaveChanges();
                 await UpdateCertificateLog(certificate, CertificateActions.Start, certificate.CreatedBy);
                 _context.SaveChanges();
+                return certificate;
             }
             return existingCert;
         }
