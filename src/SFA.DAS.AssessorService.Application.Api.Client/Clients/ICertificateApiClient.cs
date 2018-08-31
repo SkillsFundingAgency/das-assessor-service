@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -12,5 +13,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<Certificate> GetCertificate(Guid certificateId);
         Task<Certificate> UpdateCertificate(UpdateCertificateRequest updateGradeRequest);
         Task<PaginatedList<CertificateHistoryResponse>> GetCertificateHistory(int pageIndex, string userName);
+        Task<CertificateAddress> GetContactPreviousAddress(string userName);
+        Task<List<CertificateAddress>> GetPreviousAddressess(string userName);
     }
 }

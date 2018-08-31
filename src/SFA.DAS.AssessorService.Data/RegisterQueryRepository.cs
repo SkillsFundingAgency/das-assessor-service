@@ -46,5 +46,19 @@ namespace SFA.DAS.AssessorService.Data
                 return deliveryAreas;
             }
         }
+
+        public async Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisations()
+        {
+            var connectionString = _configuration.SqlConnectionString;
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                var assessmentOrganisationSummaries = await connection.QueryAsync<AssessmentOrganisationSummary>("select EndPointAssessorOrganisationId as Id, EndPointAssessorName as Name, EndPointAssessorUkprn as ukprn from [Organisations]");
+                return assessmentOrganisationSummaries;
+            }
+        }
     }
 }

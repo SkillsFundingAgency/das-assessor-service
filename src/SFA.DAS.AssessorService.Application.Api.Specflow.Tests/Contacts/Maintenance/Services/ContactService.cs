@@ -1,6 +1,7 @@
 ﻿using System;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Extensions;
+using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Maintenance.Services
 {
@@ -8,7 +9,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Mainte
     {
         private readonly RestClientResult _restClientResult;
 
-        public ContactService(RestClientResult restClientResult)
+        public ContactService(RestClientResult restClientResult,
+            IWebConfiguration webConfiguration) : base(webConfiguration)
         {
             _restClientResult = restClientResult;
         }

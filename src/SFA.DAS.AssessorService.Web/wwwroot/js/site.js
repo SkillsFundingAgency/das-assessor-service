@@ -19,6 +19,10 @@ $(document).ready(function() {
 
   // Details/summary polyfill from frontend toolkit
   GOVUK.details.init();
+
+  $('button.button[type=submit]').dblclick(function(e) {
+    e.preventDefault();
+  });
 });
 
 $(window).load(function() {
@@ -36,4 +40,11 @@ $(window).load(function() {
     // Otherwise, set focus to the field with the error
     $('input.form-control:first').focus();
   }
+});
+
+// trim fields on submit
+$('main#content form').on('submit', function() {
+  $('input[type=text]').val(function(_, value) {
+    return $.trim(value);
+  });
 });

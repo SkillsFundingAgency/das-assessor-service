@@ -24,6 +24,8 @@ namespace SFA.DAS.AssessorService.Settings
 
         [JsonRequired] public string SqlConnectionString { get; set; }
 
+        public string SpecflowDBTestConnectionString { get; set; }
+
         [JsonRequired] public string SessionRedisConnectionString { get; set; }
         [JsonRequired] public AuthSettings StaffAuthentication { get; set; }
     }

@@ -52,13 +52,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             IServiceProvider serviceProvider;
             //services.AddAndConfigureAuthentication(Configuration);
             try
-            {
-                //services.AddApplicationInsightsTelemetry();
-                services.AddMvc()
-                    .AddJsonOptions(options =>
-                    {                                     
-                        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-                    });
+            {             
 
                 services.AddAuthentication(sharedOptions =>
                 {
@@ -153,9 +147,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 option.UseSqlServer(Configuration.SqlConnectionString, options => options.EnableRetryOnFailure(3));
 
                 config.For<AssessorDbContext>().Use(c => new AssessorDbContext(option.Options));
-
                 config.For<IDbConnection>().Use(c => new SqlConnection(Configuration.SqlConnectionString));
-
+              
                 config.Populate(services);
             });
 

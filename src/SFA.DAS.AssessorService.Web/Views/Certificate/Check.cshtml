@@ -9,7 +9,7 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <a class="link-back" asp-controller="CertificateAddress" asp-action="Address">Back</a>
+        <a class="link-back" asp-controller="CertificateRecipient" asp-action="Recipient">Back</a>
 
         <h1 class="heading-large">@Localizer["Heading"]</h1>
         
@@ -124,7 +124,7 @@
                     @Model.Name
                 </dd>
                 <dd class="cya-change">
-                    <a asp-controller="CertificateAddress" asp-action="Address" asp-route-redirecttocheck="true">
+                    <a asp-controller="CertificateRecipient" asp-action="Recipient" asp-route-redirecttocheck="true">
                         Change<span class="visually-hidden"> name</span>
                     </a>
                 </dd>
@@ -137,7 +137,7 @@
                     @Model.Dept
                 </dd>
                 <dd class="cya-change">
-                    <a asp-controller="CertificateAddress" asp-action="Address" asp-route-redirecttocheck="true">
+                    <a asp-controller="CertificateRecipient" asp-action="Recipient" asp-route-redirecttocheck="true">
                         Change<span class="visually-hidden"> department</span>
                     </a>
                 </dd>
@@ -150,7 +150,7 @@
                     @Model.Employer
                 </dd>
                 <dd class="cya-change">
-                    <a asp-controller="CertificateAddress" asp-action="Address" asp-route-redirecttocheck="true">
+                    <a asp-controller="CertificateAddress" asp-action="Address" asp-route-redirecttocheck="true" asp-route-edit="true">
                         Change<span class="visually-hidden"> organisation</span>
                     </a>
                 </dd>
@@ -173,7 +173,7 @@
                     @Model.Postcode
                 </dd>
                 <dd class="cya-change">
-                    <a asp-controller="CertificateAddress" asp-action="Address" asp-route-redirecttocheck="true">
+                    <a asp-controller="CertificateAddress" asp-action="Address" asp-route-redirecttocheck="true" asp-route-edit="true">
                         Change<span class="visually-hidden"> address</span>
                     </a>
                 </dd>
