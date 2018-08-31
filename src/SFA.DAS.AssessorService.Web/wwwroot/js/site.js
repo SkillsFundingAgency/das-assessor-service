@@ -19,6 +19,10 @@ $(document).ready(function() {
 
   // Details/summary polyfill from frontend toolkit
   GOVUK.details.init();
+
+  $('button.button[type=submit]').dblclick(function(e) {
+    e.preventDefault();
+  });
 });
 
 $(window).load(function() {
