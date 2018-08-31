@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             if (_validator.IsValidEpaOrganisationId(searchstring))
             {
                 _logger.LogInformation($@"Searching AssessmentOrganisations based on organisationId: [{searchstring}]");
-                var result = await _registerQueryRepository.GetAssessmentOrganisations();
+                var result = await _registerQueryRepository.GetAssessmentOrganisationsByOrganisationId(searchstring);
                 return result.ToList();
             }
 
@@ -49,8 +49,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
                 return result.ToList();
             }
 
-            // base search on name
-            var res = await _registerQueryRepository.GetAssessmentOrganisations();
+            _logger.LogInformation($@"Searching AssessmentOrganisations based on name wildcard: [{searchstring}]");
+            var res = await _registerQueryRepository.GetAssessmentOrganisationsbyName(searchstring);
             return res.ToList();
         }
     }
