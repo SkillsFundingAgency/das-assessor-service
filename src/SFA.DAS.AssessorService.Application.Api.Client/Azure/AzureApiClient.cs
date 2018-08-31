@@ -12,11 +12,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
 {
     public class AzureApiClient : AzureApiClientBase, IAzureApiClient
     {
+        private readonly string _productId;
         protected readonly IOrganisationsApiClient _organisationsApiClient;
         protected readonly IContactsApiClient _contactsApiClient;
 
-        public AzureApiClient(string baseUri, IAzureTokenService tokenService, ILogger<AzureApiClientBase> logger, IOrganisationsApiClient organisationsApiClient, IContactsApiClient contactsApiClient) : base(baseUri, tokenService, logger)
+        public AzureApiClient(string baseUri, string productId, IAzureTokenService tokenService, ILogger<AzureApiClientBase> logger, IOrganisationsApiClient organisationsApiClient, IContactsApiClient contactsApiClient) : base(baseUri, tokenService, logger)
         {
+            _productId = productId;
             _organisationsApiClient = organisationsApiClient;
             _contactsApiClient = contactsApiClient;
         }
@@ -95,7 +97,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
             }            
         }
 
-        public async Task<AzureUser> CreateUser(string ukprn, string username, string productId)
+        public async Task<AzureUser> CreateUser(string ukprn, string username)
         {
             var userId = Guid.NewGuid();
             var organisation = await _organisationsApiClient.Get(ukprn);
@@ -121,7 +123,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
 
             if (user.AzureId != null)
             {
-                var subscription = await SubscribeUserToProduct(user.Id, productId);
+                var subscription = await SubscribeUserToProduct(user.Id, _productId);
                 user.Subscriptions.Add(subscription);
             }
 

@@ -12,5 +12,8 @@ namespace SFA.DAS.AssessorService.Settings
 
         //[JsonRequired]
         public string ApiBaseAddress { get; set; } = @"https://apim-mh-poc.management.azure-api.net";
+
+        //[JsonRequired]
+        public string ProductId { get; set; } = @"starter";
     }
 }

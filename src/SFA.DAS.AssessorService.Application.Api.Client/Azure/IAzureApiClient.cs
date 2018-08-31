@@ -7,7 +7,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
 {
     public interface IAzureApiClient
     {
-        Task<AzureUser> CreateUser(string ukprn, string username, string productId);
+        Task<AzureUser> CreateUser(string ukprn, string username);
         Task EnableUser(string userId);
         Task DisableUser(string userId);
         Task DeleteUser(string userId);

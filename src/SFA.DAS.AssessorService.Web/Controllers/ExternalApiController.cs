@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models.Azure;
 using SFA.DAS.AssessorService.Application.Api.Client.Azure;
 using SFA.DAS.AssessorService.Web.Infrastructure;
-using SFA.DAS.AssessorService.Web.ViewModels.ExternalApi;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -31,35 +31,30 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             var ukprn = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "http://schemas.portal.com/ukprn")?.Value;
 
-            var viewModel = new ExternalApiDetailsViewModel
-            {
-                User = await _apiClient.GetUserDetailsByUkprn(ukprn, true),
-                AvailableProducts = await _apiClient.ListProducts()
-            };
-
-            return View(viewModel);
+            var user = await _apiClient.GetUserDetailsByUkprn(ukprn, true);
+            return View(user);
         }
 
 
         [HttpPost]
-        public async Task<IActionResult> EnableAccess(ExternalApiDetailsViewModel viewModel)
+        public async Task<IActionResult> EnableAccess()
         {
             var ukprn = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "http://schemas.portal.com/ukprn")?.Value;
             var username = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
-            var result = await _apiClient.CreateUser(ukprn, username, viewModel.SelectedProductId);
+            var result = await _apiClient.CreateUser(ukprn, username);
             return RedirectToAction("Index");
         }
 
         [HttpPost]
-        public async Task<IActionResult> RemoveAccess(ExternalApiDetailsViewModel viewModel)
+        public async Task<IActionResult> RemoveAccess(AzureUser viewModel)
         {
             var ukprn = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "http://schemas.portal.com/ukprn")?.Value;
             var username = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
-            if (!string.Equals(viewModel.User.State, "blocked"))
+            if (!string.Equals(viewModel.State, "blocked"))
             {
-                await _apiClient.DeleteUser(viewModel.User.Id);
+                await _apiClient.DeleteUser(viewModel.Id);
             }
 
             return RedirectToAction("Index");

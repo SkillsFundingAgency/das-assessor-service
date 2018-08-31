@@ -113,7 +113,8 @@ namespace SFA.DAS.AssessorService.Web.Staff
                 config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<IContactsApiClient>().Use<ContactsApiClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<IAzureTokenService>().Use<AzureTokenService>();
-                config.For<IAzureApiClient>().Use<AzureApiClient>().Ctor<string>().Is(ApplicationConfiguration.AzureApiAuthentication.ApiBaseAddress);
+                config.For<IAzureApiClient>().Use<AzureApiClient>().Ctor<string>("baseUri").Is(ApplicationConfiguration.AzureApiAuthentication.ApiBaseAddress)
+                                                                   .Ctor<string>("productId").Is(ApplicationConfiguration.AzureApiAuthentication.ProductId);
 
                 config.Populate(services);
             });
