@@ -1,11 +1,4 @@
-﻿
-/****** Object:  StoredProcedure [dbo].[SearchCertificates]    Script Date: 31/08/2018 11:30:22 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE PROCEDURE [dbo].[StaffSearchCertificates]
+﻿CREATE PROCEDURE [dbo].[StaffSearchCertificates]
 	 @Search nvarchar(50),
 	 @Skip int,
 	 @Take int
