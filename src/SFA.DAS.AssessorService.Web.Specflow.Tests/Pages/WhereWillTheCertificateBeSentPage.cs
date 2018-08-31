@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
 {
     public class WhereWillTheCertificateBeSentPage : BasePage
     {
-        private static String PAGE_TITLE = "Where will the certificate be sent?";
+        private static String PAGE_TITLE = "Search for the employer's address";
 
         public WhereWillTheCertificateBeSentPage(IWebDriver webDriver) : base(webDriver)
         {
@@ -20,10 +20,7 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
             return PageInteractionHelper.VerifyPageHeading(this.GetPageHeading(), PAGE_TITLE);
         }
 
-        private readonly By _nameBy = By.Name("Name");
-        private readonly By _departmentBy = By.Name("Dept");
-        private readonly By _employerBy = By.Name("Employer");
-        private readonly By _postCodeBy = By.Id("postcode-search");
+        private readonly By _employerBy = By.Name("Employer");        
 
         private readonly By _enterAddressManuallyBy = By.Id("enterAddressManually");
 
@@ -36,15 +33,12 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.Pages
         private readonly By _continueButton = By.XPath("//*[@id=\"content\"]/div/div/form/button");
 
         internal void EnterDetails()
-        {
-            FormCompletionHelper.EnterText(_nameBy, "Paul Jones");
-            FormCompletionHelper.EnterText(_departmentBy, "Test Deparment");
-            FormCompletionHelper.EnterText(_employerBy, "Jongo Ltd");
-            FormCompletionHelper.EnterText(_postCodeBy, "B50 3DE");
-
-            Thread.Sleep(3000);
+        {          
             FormCompletionHelper.ClickElement(_enterAddressManuallyBy);
+            Thread.Sleep(3000);
 
+            FormCompletionHelper.EnterText(_employerBy, "Jongo Ltd");          
+          
             FormCompletionHelper.EnterText(_addressLine1By, "1 Anchor Drive");
             FormCompletionHelper.EnterText(_addressLine2By, "Enfield");
             FormCompletionHelper.EnterText(_addressLine3By, "Westminster");

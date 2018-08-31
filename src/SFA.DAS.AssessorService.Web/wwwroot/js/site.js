@@ -44,3 +44,10 @@ $(window).load(function() {
     $('input.form-control:first').focus();
   }
 });
+
+// trim fields on submit
+$('main#content form').on('submit', function() {
+  $('input[type=text]').val(function(_, value) {
+    return $.trim(value);
+  });
+});

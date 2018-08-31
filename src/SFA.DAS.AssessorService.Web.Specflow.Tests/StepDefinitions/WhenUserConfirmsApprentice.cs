@@ -8,12 +8,12 @@ namespace SFA.DAS.AssessorService.Web.Specflow.Tests.StepDefinitions
     public class WhenUserConfirmsApprentice : BaseTest
     {
         private ConfirmApprenticePage _confirmApprenticePage;
-
-        [Given(@"I'm on the Confirm Apprentice Page")]
-        public void GivenImOnTheConfirmApprenticeage()
+      
+        [Then(@"I'm on the Confirm Apprentice Page")]
+        public void ThenIMOnTheConfirmApprenticePage()
         {
             _confirmApprenticePage = new ConfirmApprenticePage(webDriver);
-        }
+        }              
 
         [When(@"I click on the Start Recording Assessment Button")]
         public void WhenIClickOnTheStartRecordingAssessmentButton()

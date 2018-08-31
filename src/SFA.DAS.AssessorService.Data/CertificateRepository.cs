@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Data.Consts;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
@@ -24,11 +25,12 @@ namespace SFA.DAS.AssessorService.Data
         private readonly IDbConnection _connection;
         private readonly ILogger<CertificateRepository> _logger;
 
-        public CertificateRepository(AssessorDbContext context, IDbConnection connection, ILogger<CertificateRepository> logger)
+
+        public CertificateRepository(AssessorDbContext context,
+            IDbConnection connection)
         {
             _context = context;
             _connection = connection;
-            _logger = logger;
         }
 
         public async Task<Certificate> New(Certificate certificate)
@@ -42,7 +44,10 @@ namespace SFA.DAS.AssessorService.Data
                 _context.SaveChanges();
                 await UpdateCertificateLog(certificate, CertificateActions.Start, certificate.CreatedBy);
                 _context.SaveChanges();
+
+                return certificate;
             }
+
             return existingCert;
         }
 
@@ -94,7 +99,6 @@ namespace SFA.DAS.AssessorService.Data
                 return await _context.Certificates
                     .Include(q => q.Organisation)
                     .Where(x => statuses.Contains(x.Status))
-                    .AsNoTracking()
                     .ToListAsync();
             }
         }
@@ -222,6 +226,37 @@ namespace SFA.DAS.AssessorService.Data
             return await _context.CertificateLogs.Where(l => l.CertificateId == certificateId).OrderByDescending(l => l.EventTime)
                 .AsNoTracking()
                 .ToListAsync();
+        }
+       
+        public async Task<CertificateAddress> GetContactPreviousAddress(string userName)
+        {
+            var statuses = new List<string>
+            {
+                CertificateStatus.Submitted,
+                CertificateStatus.Printed,
+                CertificateStatus.Reprint
+            };
+
+            var certificateAddress = await (from certificateLog in _context.CertificateLogs
+                join certificate in _context.Certificates on certificateLog.CertificateId equals certificate.Id
+                where statuses.Contains(certificate.Status) && certificateLog.Username == userName
+                let certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData)
+                orderby certificate.UpdatedAt descending 
+                select new CertificateAddress
+                {
+                    OrganisationId = certificate.OrganisationId,
+                    ContactOrganisation = certificateData.ContactOrganisation,
+                    ContactName = certificateData.ContactName,
+                    Department = certificateData.Department,
+                    CreatedAt = certificate.CreatedAt,
+                    AddressLine1 = certificateData.ContactAddLine1,
+                    AddressLine2 = certificateData.ContactAddLine2,
+                    AddressLine3 = certificateData.ContactAddLine3,
+                    City = certificateData.ContactAddLine4,
+                    PostCode = certificateData.ContactPostCode
+                }).FirstOrDefaultAsync();
+
+            return certificateAddress;
         }
 
         public Task<string> GetPreviousProviderName(int providerUkPrn)
