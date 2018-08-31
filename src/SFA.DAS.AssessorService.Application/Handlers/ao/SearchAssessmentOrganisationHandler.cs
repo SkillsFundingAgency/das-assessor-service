@@ -45,7 +45,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             if (_validator.IsValidUkprn(searchstring))
             {
                 _logger.LogInformation($@"Searching AssessmentOrganisations based on ukprn: [{searchstring}]");
-                var result = await _registerQueryRepository.GetAssessmentOrganisations();
+                var result = await _registerQueryRepository.GetAssessmentOrganisationsByUkprn(searchstring);
                 return result.ToList();
             }
 

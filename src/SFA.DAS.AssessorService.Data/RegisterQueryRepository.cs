@@ -60,5 +60,53 @@ namespace SFA.DAS.AssessorService.Data
                 return assessmentOrganisationSummaries;
             }
         }
+
+        public async Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsByUkprn(string ukprn)
+        {
+            var connectionString = _configuration.SqlConnectionString;
+
+            if (!int.TryParse(ukprn, out int ukrpnNumeric))
+            {
+                return new List<AssessmentOrganisationSummary>();
+            }
+            ;
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                var assessmentOrganisationSummaries = await connection.QueryAsync<AssessmentOrganisationSummary>($@"select EndPointAssessorOrganisationId as Id, EndPointAssessorName as Name, EndPointAssessorUkprn as ukprn from [Organisations] where EndPointAssessorUkprn = {ukrpnNumeric}");
+                return assessmentOrganisationSummaries;
+            }
+        }
+
+        public async Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsByOrganisationId(string organisationId)
+        {
+            var connectionString = _configuration.SqlConnectionString;
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                var assessmentOrganisationSummaries = await connection.QueryAsync<AssessmentOrganisationSummary>("select EndPointAssessorOrganisationId as Id, EndPointAssessorName as Name, EndPointAssessorUkprn as ukprn from [Organisations]");
+                return assessmentOrganisationSummaries;
+            }
+        }
+
+        public async Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsbyName(string organisationName)
+        {
+            var connectionString = _configuration.SqlConnectionString;
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                var assessmentOrganisationSummaries = await connection.QueryAsync<AssessmentOrganisationSummary>("select EndPointAssessorOrganisationId as Id, EndPointAssessorName as Name, EndPointAssessorUkprn as ukprn from [Organisations]");
+                return assessmentOrganisationSummaries;
+            }
+        }
     }
 }
