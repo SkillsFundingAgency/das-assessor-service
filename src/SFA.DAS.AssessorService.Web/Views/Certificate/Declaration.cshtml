@@ -24,7 +24,7 @@
             <li>@Localizer["InfoLine4"]</li>
         </ul>
 
-        <form type="post" asp-controller="CertificateDeclaration">
+        <form class="js-disable-on-submit" method="post" asp-controller="CertificateDeclaration">
             @Html.HiddenFor(c => c.Id)
             <button type="submit" class="button">@Localizer["ContinueButton"]</button>
         </form>
