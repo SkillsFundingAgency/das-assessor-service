@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
@@ -20,22 +22,29 @@ namespace SFA.DAS.AssessorService.Data
     {
         private readonly AssessorDbContext _context;
         private readonly IDbConnection _connection;
+        private readonly ILogger<CertificateRepository> _logger;
 
-        public CertificateRepository(AssessorDbContext context, IDbConnection connection)
+        public CertificateRepository(AssessorDbContext context, IDbConnection connection, ILogger<CertificateRepository> logger)
         {
             _context = context;
             _connection = connection;
+            _logger = logger;
         }
 
         public async Task<Certificate> New(Certificate certificate)
         {
-            await _context.Certificates.AddAsync(certificate);
-
-            await UpdateCertificateLog(certificate, CertificateActions.Start, certificate.CreatedBy);
-
-            await _context.SaveChangesAsync();
-
-            return certificate;
+            // Another check closer to INSERT that there isn't already a cert for this uln / std code
+            var existingCert = await _context.Certificates.FirstOrDefaultAsync(c =>
+                c.Uln == certificate.Uln && c.StandardCode == certificate.StandardCode);
+            if (existingCert == null)
+            {
+                _context.Certificates.Add(certificate);
+                _context.SaveChanges();
+                await UpdateCertificateLog(certificate, CertificateActions.Start, certificate.CreatedBy);
+                _context.SaveChanges();
+                return certificate;
+            }
+            return existingCert;
         }
 
         public async Task<Certificate> GetCertificate(Guid id)
