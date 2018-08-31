@@ -21,7 +21,7 @@ $(document).ready(function() {
   GOVUK.details.init();
 
   // Prevent multiple form submissions
-  $('form').on('submit', function() {
+  $('form.js-disable-on-submit').on('submit', function() {
     if (!$.validator || $(this).valid()) {
       $('form .button[type=submit]').prop('disabled', true);
     }
