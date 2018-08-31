@@ -61,8 +61,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             var learnerDetail = new LearnerDetail()
             {
                 Uln = learner.Uln,
-                FamilyName = learner.FamilyName,
-                GivenNames = learner.GivenNames,
+                FamilyName = certificateData.LearnerFamilyName ?? learner.FamilyName,
+                GivenNames = certificateData.LearnerGivenNames ?? learner.GivenNames,
                 LearnStartDate = learner.LearnStartDate,
                 StandardCode = learner.StdCode,
                 Standard = standard.Title,
@@ -70,7 +70,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 CertificateStatus = certificate?.Status, 
                 Level = standard.Level,
                 OverallGrade = certificateData.OverallGrade,
-                AchievementDate = certificateData.AchievementDate, // ?.UtcToTimeZoneTime(),
+                AchievementDate = certificateData.AchievementDate?.UtcToTimeZoneTime(),
                 Option = certificateData.CourseOption, 
                 OrganisationName = epao.EndPointAssessorName,
                 CertificateLogs = logs,

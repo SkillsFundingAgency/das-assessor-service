@@ -35,7 +35,7 @@ WHERE (REPLACE(FamilyName, ' ','') = @Search
         OR REPLACE(JSON_VALUE(c.CertificateData, '$.LearnerGivenNames'),' ','') + REPLACE(JSON_VALUE(c.CertificateData, '$.LearnerFamilyName'),' ','') = REPLACE(@Search, ' ','')
         )
         ) AS Learners
-        ORDER BY FamilyName, GivenNames
+        ORDER BY CertificateReference
         OFFSET @Skip ROWS 
         FETCH NEXT @Take ROWS ONLY
 END
