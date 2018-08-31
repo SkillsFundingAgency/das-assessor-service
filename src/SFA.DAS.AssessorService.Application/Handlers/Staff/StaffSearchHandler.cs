@@ -48,7 +48,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             if (searchResult.TotalCount == 0)
             {
                 totalRecordCount = await _staffIlrRepository.CountLearnersByName(request.SearchQuery);
-                searchResult.PageOfResults = await _staffIlrRepository.SearchForLearnerByName(request.SearchQuery, request.Page, pageSize);   
+               searchResult.PageOfResults = await _staffIlrRepository.SearchForLearnerByName(request.SearchQuery, request.Page, pageSize);   
             }
 
             _logger.LogInformation(searchResult.PageOfResults.Any() ? LoggingConstants.SearchSuccess : LoggingConstants.SearchFailure);
@@ -77,7 +77,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 var sr = new StaffReposSearchResult
                 {
                     TotalCount = (await _ilrRepository.SearchForLearnerByUln(uln)).Count(),
-                    PageOfResults = await _ilrRepository.SearchForLearnerByUln(uln)
+                    PageOfResults = await _staffIlrRepository.SearchForLearnerByUln(request)
                 };
                 return sr;
             }
@@ -109,6 +109,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
                 searchResult.CertificateReference = certificate.CertificateReference;
                 searchResult.CertificateStatus = certificate.Status;
+                searchResult.GivenNames = certificate.GivenNames;
+                searchResult.FamilyName = certificate.FamilyName;
+
                 if (searchResult.LastUpdatedAt == null)
                 {
                     searchResult.LastUpdatedAt = certificate.LastUpdatedAt?.UtcToTimeZoneTime();
