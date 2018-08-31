@@ -1,12 +1,14 @@
-﻿namespace SFA.DAS.AssessorService.Web.Staff.Models.Azure
+﻿namespace SFA.DAS.AssessorService.Api.Types.Models.Azure
 {
+    using Newtonsoft.Json;
+
     // https://docs.microsoft.com/en-us/rest/api/apimanagement/apimanagementrest/azure-api-management-rest-api-contract-reference#Group
     // https://docs.microsoft.com/en-us/rest/api/apimanagement/apimanagementrest/azure-api-management-rest-api-group-entity
-    public class Group
+    public class AzureGroup
     {
-        [Newtonsoft.Json.JsonProperty("id")]
+        [JsonProperty("id")]
         public string AzureId { get; set; }
-
+        [JsonIgnore]
         public string Id => AzureId?.Replace("/groups/", string.Empty);
         public string Name { get; set; }
         public string Description { get; set; }

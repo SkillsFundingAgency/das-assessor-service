@@ -1,8 +1,8 @@
 ﻿@using SFA.DAS.AssessorService.Domain.Paging;
-@using SFA.DAS.AssessorService.Web.Staff.Models.Azure;
-@model PaginatedList<User>
+@using SFA.DAS.AssessorService.Api.Types.Models.Azure;
+@model PaginatedList<AzureUser>
 @{
-    ViewBag.Title = "Azure API Users";
+    ViewBag.Title = "External API Users";
     Layout = "_Layout";
 }
 
@@ -10,11 +10,7 @@
     <div class="column-full">
         <a asp-action="Index">Refresh</a>
 
-        <h1 class="heading-large">Azure API Users</h1>
-
-        <div class="form-group">
-            <a asp-action="CreateUser" class="button">Create New User</a>
-        </div>
+        <h1 class="heading-large">External API Users</h1>
 
         @if (@Model.TotalRecordCount > 0)
         {
@@ -22,9 +18,10 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Name</th>
                             <th>UKPRN</th>
                             <th>Email</th>
+                            <th>Name</th>
+                            <th>Access</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -32,10 +29,11 @@
                         @foreach (var user in @Model.Items)
                         {
                         <tr>
-                            <td>@user.FirstName @user.LastName</td>
                             <td>@user.Note</td>
                             <td>@user.Email</td>
-                            <td><a asp-action="GetUser" asp-route-userId="@user.Id">View Details</a></td>
+                            <td>@user.FirstName</td>
+                            <td>@Html.Raw(string.Equals(user.State, "blocked") ? "Disabled" : "Enabled")</td>
+                            <td><a asp-action="UserDetails" asp-controller="ExternalApi" asp-route-userId="@user.Id">View Details</a></td>
                         </tr>
                         }
                     </tbody>
@@ -59,7 +57,7 @@
 
                 @if (Model.HasPreviousPage)
                 {
-                    <a asp-action="Index" asp-controller="Azure" asp-route-page="@(Model.PageIndex - 1)" class="previous">
+                    <a asp-action="Index" asp-controller="ExternalApi" asp-route-page="@(Model.PageIndex - 1)" class="previous">
                         <i class="arrow-button icon-left-open">&#xe800;</i>
                         <span class="description">Previous <span class="hide-mob">page</span></span>
                         <span class="counter">Page <span class="prevPage">@(Model.PageIndex - 1)</span> of <span class="totalPage">@(Model.TotalPages)</span></span>
@@ -68,7 +66,7 @@
 
                 @if (Model.HasNextPage)
                 {
-                    <a asp-action="Index" asp-controller="Azure" asp-route-page="@(Model.PageIndex + 1)" class="next">
+                    <a asp-action="Index" asp-controller="ExternalApi" asp-route-page="@(Model.PageIndex + 1)" class="next">
                         <i class="arrow-button icon-right-open">&#xe801;</i>
                         <span class="description">Next <span class="hide-mob">page</span></span>
                         <span class="counter">Page <span class="nextPage">@(Model.PageIndex + 1)</span> of <span class="totalPage">@(Model.TotalPages)</span></span>

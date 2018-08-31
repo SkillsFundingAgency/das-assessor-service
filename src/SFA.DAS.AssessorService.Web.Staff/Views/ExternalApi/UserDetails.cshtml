@@ -1,0 +1,118 @@
+﻿@using SFA.DAS.AssessorService.Api.Types.Models.Azure;
+@using SFA.DAS.AssessorService.Domain.Extensions
+@model AzureUser
+@{
+    ViewBag.Title = "External API User Details";
+    Layout = "_Layout";
+}
+
+<div class="grid-row">
+    <div class="column-full">
+        <a asp-action="Index" class="link-back">Go Back</a>
+
+        <h1 class="heading-large">User Details</h1>
+
+        <div class="grid-row">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>UKPRN</th>
+                        <th>Email</th>
+                        <th>Registration Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>@Model.FirstName @Model.LastName</td>
+                        <td>@Model.Note</td>
+                        <td>@Model.Email</td>
+                        <td>@Model.RegistrationDate.UtcToTimeZoneTime()</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        @if (Model.Subscriptions.Any())
+        {
+            <h1 class="heading-large">Subscriptions</h1>
+            <div class="grid-row">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Primary Key</th>
+                            <th></th>
+                            <th>Secondary Key</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var subscription in Model.Subscriptions)
+                        {
+                            <tr>
+                                <td>@subscription.ProductId</td>
+                                <td>@subscription.PrimaryKey</td>
+                                <td>
+                                    <form asp-action="RenewPrimaryKey" asp-controller="ExternalApi" asp-route-subscriptionId="@subscription.Id" asp-route-userId="@Model.Id" method="post">
+                                        <input type="submit" value="Renew" class="button" />
+                                    </form>
+                                </td>
+                                <td>@subscription.SecondaryKey</td>
+                                <td>
+                                    <form asp-action="RenewSecondaryKey" asp-controller="ExternalApi" asp-route-subscriptionId="@subscription.Id" asp-route-userId="@Model.Id" method="post">
+                                        <input type="submit" value="Renew" class="button" />
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+
+        <br />
+        <div>
+            <div class="form-group">
+                <div class="form-group">
+                    <h1>
+                        <label class="form-label">
+                            <span class="heading-large">Change Access?</span>
+                            <span class="form-hint">Note that this will be immediate.</span>
+                        </label>
+                    </h1>
+
+                    <div class="form-group">
+                        <label class="form-label" for="State">
+                            <span class="bold">Current Status:</span>
+                            @Html.Raw(string.Equals(Model.State, "blocked") ? "Disabled" : "Enabled")
+                        </label>
+
+                        @if (string.Equals(Model.State, "blocked"))
+                        {
+                            <div>
+                                <form asp-action="EnableUser" asp-controller="ExternalApi" asp-route-userId="@Model.Id" method="post">
+                                    <button class="button" type="submit">Enable Access</button>
+                                </form>
+                            </div>
+                        }
+                        else
+                        {
+                            <div>
+                                <form asp-action="DisableUser" asp-controller="ExternalApi" asp-route-userId="@Model.Id" method="post">
+                                    <button class="button" type="submit">Disable Access</button>
+                                </form>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <form asp-action="DeleteUser" asp-controller="ExternalApi" asp-route-userId="@Model.Id" method="post">
+                            <button class="button" style="background-color:red" type="submit">Remove Access</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

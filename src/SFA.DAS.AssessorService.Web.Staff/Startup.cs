@@ -11,6 +11,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.Client;
+using SFA.DAS.AssessorService.Application.Api.Client.Azure;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using StructureMap;
@@ -45,20 +47,11 @@ namespace SFA.DAS.AssessorService.Web.Staff
 
             ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
 
-            
-
             services.AddHttpClient<ApiClient>("ApiClient", config =>
             {
                 config.BaseAddress = new Uri(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
                 config.DefaultRequestHeaders.Add("Accept", "Application/json");
             });
-
-            services.AddHttpClient<AzureApiClient>("AzureApiClient", config =>
-            {
-                config.BaseAddress = new Uri(ApplicationConfiguration.AzureApiAuthentication.ApiBaseAddress);
-                config.DefaultRequestHeaders.Add("Accept", "Application/json");
-            });
-
 
             AddAuthentication(services);
 
@@ -113,10 +106,14 @@ namespace SFA.DAS.AssessorService.Web.Staff
                     _.WithDefaultConventions();
                 });
 
-                config.For<IAzureTokenService>().Use<AzureTokenService>();
                 config.For<ITokenService>().Use<TokenService>();
                 config.For<IWebConfiguration>().Use(ApplicationConfiguration);
                 config.For<ISessionService>().Use<SessionService>().Ctor<string>().Is(_env.EnvironmentName);
+
+                config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
+                config.For<IContactsApiClient>().Use<ContactsApiClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
+                config.For<IAzureTokenService>().Use<AzureTokenService>();
+                config.For<IAzureApiClient>().Use<AzureApiClient>().Ctor<string>().Is(ApplicationConfiguration.AzureApiAuthentication.ApiBaseAddress);
 
                 config.Populate(services);
             });

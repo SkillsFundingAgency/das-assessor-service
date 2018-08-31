@@ -1,20 +1,24 @@
-﻿using System;
-
-namespace SFA.DAS.AssessorService.Web.Staff.Models.Azure
+﻿namespace SFA.DAS.AssessorService.Api.Types.Models.Azure
 {
-    https://docs.microsoft.com/en-us/rest/api/apimanagement/apimanagementrest/azure-api-management-rest-api-contract-reference#Subscription
+    using Newtonsoft.Json;
+    using System;
+
+    // https://docs.microsoft.com/en-us/rest/api/apimanagement/apimanagementrest/azure-api-management-rest-api-contract-reference#Subscription
     // https://docs.microsoft.com/en-us/rest/api/apimanagement/apimanagementrest/azure-api-management-rest-api-subscription-entity
-    public class Subscription
+    public class AzureSubscription
     {
-        [Newtonsoft.Json.JsonProperty("id")]
+        [JsonProperty("id")]
         public string AzureId { get; set; }
-        [Newtonsoft.Json.JsonProperty("userId")]
+        [JsonProperty("userId")]
         public string AzureUserId { get; set; }
-        [Newtonsoft.Json.JsonProperty("productId")]
+        [JsonProperty("productId")]
         public string AzureProductId { get; set; }
 
+        [JsonIgnore]
         public string Id => AzureId?.Replace("/subscriptions/", string.Empty);
+        [JsonIgnore]
         public string UserId => AzureUserId?.Replace("/users/", string.Empty);
+        [JsonIgnore]
         public string ProductId => AzureProductId?.Replace("/products/", string.Empty);
         public string Name { get; set; }
         public string State { get; set; }

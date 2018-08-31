@@ -4,7 +4,8 @@ using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
+
+namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
 {
     public class AzureTokenService : IAzureTokenService
     {
@@ -15,8 +16,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             _configuration = configuration;
         }
 
-        public string CreateSharedAccessToken(DateTime expiry)
+        public string GetToken()
         {
+            DateTime expiry = DateTime.UtcNow.AddDays(1);
             string id = _configuration.AzureApiAuthentication.Id;
             string key = _configuration.AzureApiAuthentication.Key;
 
@@ -32,4 +34,3 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         }
     }
 }
-

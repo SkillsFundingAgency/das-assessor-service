@@ -1,0 +1,123 @@
+﻿@using SFA.DAS.AssessorService.Web.ViewModels.ExternalApi;
+@using SFA.DAS.AssessorService.Domain.Extensions;
+@model ExternalApiDetailsViewModel
+@{
+    ViewBag.Title = "External API Details";
+    Layout = "_Layout";
+}
+
+<div class="grid-row">
+    <div class="column-full">
+        <h1 class="heading-large">External API Details</h1>
+        @if (Model.User == null)
+        {
+            <span class="form-hint">By enabling access you will be the primary contact.</span>
+
+            <form asp-action="EnableAccess" asp-controller="ExternalApi" method="post">
+                <div>
+                    <div class="form-group">
+                        <div class="form-group">
+                            <h1>
+                                <label class="form-label" for="Subscription">
+                                    <span class="heading-medium">Select subscription</span>
+                                    <span class="form-hint">Note that this may require approval.</span>
+                                </label>
+                            </h1>
+                        </div>
+
+                        <div class="form-group">
+                            <div>
+                                <select asp-for="SelectedProductId" class="form-control" asp-items="@(new SelectList(Model.AvailableProducts, "Id", "Id"))"></select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="button" type="submit">Enable</button>
+            </form>
+        }
+        else
+        {
+            <div class="grid-row">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>UKPRN</th>
+                            <th>Email</th>
+                            <th>Registration Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>@Model.User.FirstName @Model.User.LastName</td>
+                            <td>@Model.User.Note</td>
+                            <td>@Model.User.Email</td>
+                            <td>@Model.User.RegistrationDate.UtcToTimeZoneTime()</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            @if (Model.User.Subscriptions.Any())
+            {
+                <h1 class="heading-large">Subscription Details</h1>
+                <div class="grid-row">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Primary Key</th>
+                                <th></th>
+                                <th>Secondary Key</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var subscription in Model.User.Subscriptions)
+                            {
+                                <tr>
+                                    <td>@subscription.ProductId</td>
+                                    <td>@subscription.PrimaryKey</td>
+                                    <td>
+                                        <form asp-action="RenewPrimaryKey" asp-controller="ExternalApi" asp-route-subscriptionId="@subscription.Id" asp-route-userId="@Model.User.Id" method="post">
+                                            <input type="submit" value="Renew" class="button" />
+                                        </form>
+                                    </td>
+                                    <td>@subscription.SecondaryKey</td>
+                                    <td>
+                                        <form asp-action="RenewSecondaryKey" asp-controller="ExternalApi" asp-route-subscriptionId="@subscription.Id" asp-route-userId="@Model.User.Id" method="post">
+                                            <input type="submit" value="Renew" class="button" />
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+
+            @if (!string.Equals(Model.User.State, "blocked"))
+            {
+                <form asp-action="RemoveAccess" asp-controller="ExternalApi" method="post">
+                    @Html.HiddenFor(m => m.User.Id)
+                    @Html.HiddenFor(m => m.User.State)
+                    <br />
+                    <div>
+                        <div class="form-group">
+                            <div class="form-group">
+                                <h1>
+                                    <label class="form-label">
+                                        <span class="heading-large">Remove access?</span>
+                                        <span class="form-hint">Note that this will be immediate.</span>
+                                    </label>
+                                </h1>
+                                <button class="button" type="submit">Remove Access</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            }
+        }
+    </div>
+</div>
