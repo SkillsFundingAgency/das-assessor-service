@@ -46,7 +46,7 @@ namespace SFA.DAS.AssessorService.Data.Staff
 
         public async Task<IEnumerable<Ilr>> SearchForLearnerByName(string learnerName, int page, int pageSize)
         {
-            var result = await _connection.QueryAsync<Ilr>("SearchCertificates",
+            var result = await _connection.QueryAsync<Ilr>("StaffSearchCertificates",
                 new { Search = learnerName, Skip = (page - 1) * 10, Take = 10 },
                 commandType: CommandType.StoredProcedure);
             return result;
