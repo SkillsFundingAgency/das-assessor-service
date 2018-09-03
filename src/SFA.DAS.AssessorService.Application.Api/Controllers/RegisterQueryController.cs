@@ -66,7 +66,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<AssessmentOrganisationSummary>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> SearchtAssessmentOrganisations(string searchstring)
+        public async Task<IActionResult> SearchAssessmentOrganisations(string searchstring)
         {
             _logger.LogInformation($@"Search Assessment Organisations for [{searchstring}]");
             return Ok(await _mediator.Send(new SearchAssessmentOrganisationsRequest{Searchstring = searchstring}));
