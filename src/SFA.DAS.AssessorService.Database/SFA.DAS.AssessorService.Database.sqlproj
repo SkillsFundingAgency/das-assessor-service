@@ -69,7 +69,6 @@
     <Build Include="Tables\Ilrs.sql" />
     <Build Include="Tables\EMailTemplates.sql" />
     <Build Include="Tables\BatchLogs.sql" />
-   
     <Build Include="StoredProcedures\GetPreviousAddresses.sql" />
     <Build Include="Tables\SearchLogs.sql" />
     <Build Include="Tables\ScheduleRuns.sql" />
@@ -83,5 +82,8 @@
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <PreDeploy Include="Script.PreDeployment1.sql" />
   </ItemGroup>
 </Project>
