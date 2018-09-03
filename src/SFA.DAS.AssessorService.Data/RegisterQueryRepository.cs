@@ -69,7 +69,6 @@ namespace SFA.DAS.AssessorService.Data
             {
                 return new List<AssessmentOrganisationSummary>();
             }
-            ;
 
             using (var connection = new SqlConnection(connectionString))
             {
