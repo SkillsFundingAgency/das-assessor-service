@@ -1,0 +1,75 @@
+<script>
+  var epaoDateFormElement = $('.apprentice-date-form');
+  var epaoDateValidationRulesObject = {
+    rules: {
+      Day: {
+        required: true,
+        number: true,
+        range: [1, 31],
+        isValidDate: {
+          depends: function() {
+            var year = $('#Year').val().length;
+            return year === 4;
+          }
+        },
+        noFutureDate: false,
+        earliestDate: '1/1/2018'
+      },
+      Month: {
+        required: true,
+        number: true,
+        range: [1, 12]
+      },
+      Year: {
+        required: true,
+        number: true,
+        minlength: 4,
+        maxlength: 4
+      },
+      Hour: {
+        required: true,
+        number: true,
+        range: [1, 12]
+        },
+      Minute: {
+        required: true,
+        number: true,
+        range: [0, 59]
+      }
+    },
+    messages: {
+      Day: {
+        required: 'Enter the day',
+        number: 'Day must be a number',
+        range: 'Enter a valid day',
+        isValidDate: 'Enter a valid date',
+        noFutureDate: 'Date cannot be in the future',
+        earliestDate: 'Date cannot be before 01 01 2018'
+      },
+      Month: {
+        required: 'Enter the month',
+        number: 'Month must be a number',
+        range: 'Enter a valid month'
+      },
+      Year: {
+        required: 'Enter the year',
+        number: 'Year must be a number',
+        minlength: 'Enter a valid year',
+        maxlength: 'Enter a valid year'
+      },
+      Hour: {
+        required: 'Enter the hour',
+        number: 'Hour must be a number',
+        range: 'Enter a valid hour'
+      },
+      Minute: {
+        required: 'Enter the minute',
+        number: 'Minute must be a number',
+        range: 'Enter a valid minute'
+      }
+    }
+  };
+
+  GOVUK.epaoValidate(epaoDateFormElement, epaoDateValidationRulesObject);
+
+</script>

@@ -110,13 +110,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         {
             if (viewModel != null)
             {
-                viewModel.RunTime = new DateTime(viewModel.Year, viewModel.Month, viewModel.Day, viewModel.Hour, viewModel.Minute, 0);
-
-                if (viewModel.RunTime.UtcFromTimeZoneTime() < DateTime.UtcNow.AddMinutes(-5))
-                {
-                    ViewData.ModelState.AddModelError(nameof(viewModel.RunTime), "The Run Time must be in the future");
-                }
-
                 // Binding to a nullable enum will cause a ModelState error
                 ViewData.ModelState.Remove(nameof(viewModel.ScheduleInterval));
 
@@ -128,7 +121,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 ScheduleRun schedule = new ScheduleRun
                 {
                     ScheduleType = (ScheduleType)viewModel.ScheduleType,
-                    RunTime = viewModel.RunTime.UtcFromTimeZoneTime(),
+                    RunTime = viewModel.Date.UtcFromTimeZoneTime(),
                     IsRecurring = viewModel.ScheduleInterval.HasValue,
                     Interval = (int?)viewModel.ScheduleInterval
                 };

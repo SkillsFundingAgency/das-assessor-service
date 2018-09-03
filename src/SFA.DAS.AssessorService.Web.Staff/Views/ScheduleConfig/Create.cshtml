@@ -1,55 +1,85 @@
-﻿@using SFA.DAS.AssessorService.Web.Staff.Domain
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, SFA.DAS.AssessorService.Web.Staff
+
+@using SFA.DAS.AssessorService.Web.Staff.Domain
 @model ScheduleConfigViewModel
 @{
-    ViewBag.Title = "Create Schedule";
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Create Schedule";
     Layout = "_Layout";
 }
 
 <div class="grid-row">
-    <div class="column-full">
+    <div class="column-two-thirds">
         <a asp-action="Index" class="link-back">Go Back</a>
 
         <h1 class="heading-large">Create Schedule</h1>
 
-        <form asp-action="Create" asp-controller="ScheduleConfig" method="post">
+        <form class="apprentice-date-form" asp-action="Create" asp-controller="ScheduleConfig" method="post">
             @Html.HiddenFor(m => m.ScheduleType)
-            <div asp-validation-summary="All" class="text-danger"></div>
 
-            <div>
+            @* hidden with css by default *@
+            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                    There's a problem
+                </h2>
+                
+                <ul class="js-error-summary-list error-summary-list"></ul>
+            </div>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+            <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                    There's a problem
+                </h2>
+                <ul class="error-summary-list">
+                    <li><a sfa-validation-for="Date"></a></li>
+                    <li><a sfa-validation-for="Day"></a></li>
+                    <li><a sfa-validation-for="Month"></a></li>
+                    <li><a sfa-validation-for="Year"></a></li>
+                    <li><a sfa-validation-for="Hour"></a></li>
+                    <li><a sfa-validation-for="Minute"></a></li>
+                </ul>
+            </div>
+            }
+
+
+
+            <div sfa-anyvalidationerror-class="after-error-summary">
                 <div id="Date">
                     <h1 class="heading-medium">
                         What's the Run Time date?
                     </h1>
                 </div>
 
-                <div class="form-group error-message-container">
+                <div class="form-group error-message-container" sfa-anyvalidationerror-class="form-group-error">
                     <span class="form-hint">
-                        For example, 15-10-2017 12:00
+                        For example, @(DateTime.UtcNow.AddDays(7).ToString("dd-MM-yyyy 12:00"))
                     </span>
                     <div class="form-date">
                         <div class="form-group form-group-day">
                             <label for="Day">Day</label>
-                            <input class="form-control date-input js-integers-only" asp-for="Day" maxlength="2" />
+                            <input class="form-control date-input js-integers-only" sfa-validation-for="Day" sfa-validationerror-class="form-control-error" asp-for="Day" maxlength="2" />
                         </div>
 
                         <div class="form-group form-group-month">
                             <label for="Month">Month</label>
-                            <input class="form-control date-input js-integers-only" asp-for="Month" maxlength="2" />
+                            <input class="form-control date-input js-integers-only" sfa-validation-for="Month" sfa-validationerror-class="form-control-error" asp-for="Month" maxlength="2" />
                         </div>
 
                         <div class="form-group form-group-year">
                             <label for="Year">Year</label>
-                            <input class="form-control date-input js-integers-only" asp-for="Year" maxlength="4" />
+                            <input class="form-control date-input js-integers-only" sfa-validation-for="Year" sfa-validationerror-class="form-control-error" asp-for="Year" maxlength="4" />
                         </div>
 
                         <div class="form-group form-group-hour">
                             <label for="Day">Hour</label>
-                            <input class="form-control date-input js-integers-only" asp-for="Hour" maxlength="2" />
+                            <input class="form-control date-input js-integers-only" sfa-validation-for="Hour" sfa-validationerror-class="form-control-error" asp-for="Hour" maxlength="2" />
                         </div>
 
                         <div class="form-group form-group-minute">
                             <label for="Month">Minute</label>
-                            <input class="form-control date-input js-integers-only" asp-for="Minute" maxlength="2" />
+                            <input class="form-control date-input js-integers-only" sfa-validation-for="Minute" sfa-validationerror-class="form-control-error" asp-for="Minute" maxlength="2" />
                         </div>
                     </div>
                 </div>
@@ -62,7 +92,7 @@
                     </h1>
                 </div>
 
-                <div class="form-group error-message-container">
+                <div class="form-group">
                     <span class="form-hint">
                         For example, Daily
                     </span>
@@ -84,4 +114,5 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{await Html.RenderPartialAsync("~/Views/ScheduleConfig/_DateScriptsPartial.cshtml"); }
 }
