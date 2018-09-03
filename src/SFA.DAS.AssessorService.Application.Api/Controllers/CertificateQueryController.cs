@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
+using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Handlers.Certificates;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
@@ -51,7 +53,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> GetCertificates([FromQuery] List<string> statuses)
         {
             return Ok(await _mediator.Send(new GetCertificatesRequest { Statuses = statuses }));
+        }        
+
+        [HttpGet("contact/previousaddress", Name = "GetContactPreviousAddress")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(CertificateAddress))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetContactPreviousAddress([FromQuery] string username)
+        {
+            var address = await _mediator.Send(new GetContactPreviousAddressesRequest { Username = username });
+            if (address == null)
+                throw new ResourceNotFoundException();
+            return Ok(address);
         }
+        
 
         [HttpGet("history", Name = "GetCertificatesHistory")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(PaginatedList<CertificateHistoryResponse>))]

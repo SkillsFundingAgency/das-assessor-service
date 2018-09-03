@@ -19,7 +19,7 @@
         }
         
 
-        <form type="post" asp-controller="Certificate" asp-method="Options" class="apprentice-option-form">
+        <form class="apprentice-option-form js-disable-on-submit" method="post" asp-controller="Certificate" asp-method="Options">
             @Html.HiddenFor(c => c.Id)
 
             @* hidden with css by default *@

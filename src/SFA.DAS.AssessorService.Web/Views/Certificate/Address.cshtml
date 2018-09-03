@@ -11,15 +11,15 @@
     <div class="column-two-thirds">
         @if (Model.BackToCheckPage)
         {
-            <a class="link-back" asp-controller="CertificateCheck" asp-action="Check">Back</a>
+            <a asp-controller="CertificateCheck" asp-action="Check" class="link-back">Back</a>
         }
         else
         {
             <a asp-controller="CertificateDate" asp-action="Date" class="link-back">Back</a>
         }
-        
 
-        <form class="apprentice-address-form" type="post" asp-controller="CertificateAddress">
+        <form class="apprentice-address-form js-disable-on-submit" method="post" asp-controller="CertificateAddress"
+              asp-action="Address">
             @Html.HiddenFor(c => c.Id)
 
             @* hidden with css by default *@
@@ -37,7 +37,6 @@
                         There's a problem
                     </h2>
                     <ul class="error-summary-list">
-                        <li><a sfa-validation-for="Name"></a></li>
                         <li><a sfa-validation-for="Employer"></a></li>
                         <li><a sfa-validation-for="AddressLine1"></a></li>
                         <li><a sfa-validation-for="City"></a></li>
@@ -47,59 +46,64 @@
             }
 
             <div sfa-anyvalidationerror-class="after-error-summary">
-                <div>
-                    <h1 class="heading-large">
-                        @*<span class="heading-secondary">@Model.GivenNames @Model.FamilyName</span>*@
-                        @Localizer["Heading"]
-                    </h1>
-                    <p>Certificates should go to the apprentice's employer.</p>
-                </div>
+                    @if (Model.EditForm)
+                    {
+                        <h1 class="heading-large">
+                            @(Localizer["EditHeading"])
+                        </h1>
+                    }
+                    else
+                    {
+                        <h1 class="heading-large">
+                            <span class="js-search-address-heading hidden">@(Localizer["SearchHeading"])</span>
+                            <span class="js-manual-address-heading hidden">@(Localizer["ManualHeading"])</span>
+                            <span class="js-hidden">@(Localizer["NoJsHeading"])</span>
+                        </h1>
+                        <span class="body-text">@Localizer["Lead"]</span>
+                    }
 
-                <div class="form-group" sfa-validation-for="Name" sfa-validationerror-class="form-group-error">
-                    <label for="Name">
-                        <span class="form-label-bold">@Localizer["Name"]</span>
-                        <span class="form-hint">
-                            @Localizer["NameHint"]
-                        </span>
-                        <span class="error-message" asp-validation-for="Name"></span>
-                    </label>
-                    <input class="form-control" name="Name" sfa-validation-for="Name" sfa-validationerror-class="form-control-error" asp-for="Name" type="text" />
-                </div>
 
-                <div class="form-group" sfa-validation-for="Dept" sfa-validationerror-class="form-group-error">
-                    <label for="Dept">
-                        <span class="form-label-bold">@Localizer["Dept"]</span>
-                        <span class="form-hint">
-                            @Localizer["DeptHint"]
-                        </span>
-                        <span class="error-message" asp-validation-for="Dept"></span>
-                    </label>
-                    <input class="form-control" name="Dept" sfa-validation-for="Dept" sfa-validationerror-class="form-control-error" asp-for="Dept" type="text" />
-                </div>
-
-                <div class="form-group" sfa-validation-for="Employer" sfa-validationerror-class="form-group-error">
-                    <label for="Employer">
-                        <span class="form-label-bold">@Localizer["Employer"]</span>
-                        <span class="error-message" asp-validation-for="Employer"></span>
-                    </label>
-                    <input class="form-control form-control-3-4" name="Employer" sfa-validation-for="Employer" sfa-validationerror-class="form-control-error" asp-for="Employer" type="text" />
-                </div>
-
-                <div id="address-lookup" class="hide-nojs disabled">
-                    <div class="form-group form-group-compound" id="addressInputWrapper">
-                        <label for="postcode-search" class="form-label">Start typing the company name or postcode</label>
-                        <input id="postcode-search" type="text" class="form-control" spellcheck="false" autocorrect="off" disabled="disabled" />
-                        <span class="visually-hidden" id="ariaAddressEntered" aria-live="polite"></span>
+                @if (!Model.EditForm)
+                {
+                    <div id="address-lookup" class="hide-nojs form-group disabled">
+                        <div class="form-group form-group-compound" id="addressInputWrapper">
+                            <label for="postcode-search" class="form-label-bold">@Localizer["PostcodeLookup"]</label>
+                            <input id="postcode-search" name="postcodeSearch" type="text" class="form-control" spellcheck="false" autocomplete="off" autocorrect="off" disabled="disabled"/>
+                            <span class="visuallyhidden" id="ariaAddressEntered" aria-live="polite"></span>
+                        </div>
+                        <div id="address-manual" class="form-group form-group-compound">
+                            <a href="#" id="enterAddressManually">Enter the address manually</a>
+                            <span class="toggle-content loading-text" id="addressLoading">Loading address...</span>
+                            <p id="postcodeServiceUnavailable" class="error toggle-content text">Service is currently unavailable, please enter the address manually</p>
+                        </div>
                     </div>
-                    <div id="address-manual" class="form-group form-group-compound">
-                        <a href="#" id="enterAddressManually">Or enter the address manually</a>
-                        <span class="toggle-content loading-text" id="addressLoading">Loading address...</span>
-                        <p id="postcodeServiceUnavailable" class="error toggle-content text">Service is currently unavailable, please enter the address manually</p>
+
+                    <div class="info-highlighted js-address-panel hidden">
+                        <ul></ul>
                     </div>
-                </div>
+
+
+                     if (!String.IsNullOrEmpty(Model.PreviousAddress?.StringifiedAddress))
+                     {
+                         <div class="form-group js-select-previous-address">
+                             <span class="form-label-bold">@Localizer["UseLastAddress"]</span>
+                             <div class="multiple-choice">
+                                 <input name="SelectPreviousAddress" asp-for="SelectPreviousAddress" type="checkbox"/>
+                                 <label for="SelectPreviousAddress">@Model.PreviousAddress.StringifiedAddress</label>
+                             </div>
+                         </div>
+                     }
+                }
 
                 <div id="addressManualWrapper">
-                    <div id="address-details" class="address-manual-input">
+                    <div id="address-details" class="address-manual-input js-hidden">
+                        <div class="form-group" sfa-validation-for="Employer" sfa-validationerror-class="form-group-error">
+                            <label for="Employer">
+                                <span class="form-label-bold">@Localizer["Employer"]</span>
+                                <span class="error-message" asp-validation-for="Employer"></span>
+                            </label>
+                            <input class="form-control" name="Employer" sfa-validation-for="Employer" sfa-validationerror-class="form-control-error" asp-for="Employer" type="text" />
+                        </div>
 
                         <div class="form-group-compound address-item form-group" sfa-validation-for="AddressLine1" sfa-validationerror-class="form-group-error">
                             <label for="AddressLine1">
