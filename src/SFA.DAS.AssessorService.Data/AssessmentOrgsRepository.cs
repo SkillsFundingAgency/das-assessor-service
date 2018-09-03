@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Transactions;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Application.Interfaces;
@@ -43,8 +44,7 @@ namespace SFA.DAS.AssessorService.Data
                     connection.Execute("DELETE FROM [OrganisationStandardDeliveryArea]");
                     progressStatus.Append("Teardown: DELETING all items in [OrganisationStandard]; ");
                     connection.Execute("DELETE FROM [OrganisationStandard]");
-                    progressStatus.Append("Teardown: DELETING all items in [DeliveryArea]; ");
-                    connection.Execute("DELETE FROM [DeliveryArea]");
+                    
 
                     // MFCMFC FIrst point of deletion with logic
                     progressStatus.Append("Teardown: DELETING selected [Contacts]; ");
@@ -52,10 +52,7 @@ namespace SFA.DAS.AssessorService.Data
                     progressStatus.Append("Teardown: DELETING selected [Organisations]; ");
                     // MFCMFC Second point of deleteion with logic
                     connection.Execute("DELETE FROM [organisations] where OrganisationTypeId is not null and Id not in (select organisationid from [contacts])");
-                    // MFCMFC third point of deletion with logic
-                    progressStatus.Append("Teardown: DELETING selected [OrganisationType]; ");
-                    connection.Execute("DELETE FROM [OrganisationType] where id not in (select organisationtypeid from [organisations] where organisationtypeid is not null)");
-                    connection.Close();
+
                 }
             }
             catch (Exception e)

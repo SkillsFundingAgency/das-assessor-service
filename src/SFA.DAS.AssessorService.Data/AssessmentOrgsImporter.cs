@@ -12,6 +12,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -35,38 +36,23 @@ namespace SFA.DAS.AssessorService.Data
             _configuration = configuration;
         }
 
-        public AssessmentOrgsImportResponse ImportAssessmentOrganisations(string action)
+        public AssessmentOrgsImportResponse ImportAssessmentOrganisations()
         {
             var progressStatus = new StringBuilder();
-            bool buildup;
-
-            switch (action.ToLower())
-            {
-                case "buildup":
-                    progressStatus.Append($"BUILDUP instituted at [{DateTime.Now.ToLongTimeString()}]; ");
-                    buildup = true;
-                    break;
-                case "teardown":
-                    progressStatus.Append($"TEARDOWN instituted at [{DateTime.Now.ToLongTimeString()}]; ");
-                    buildup = false;
-                    break;
-                default:
-                    progressStatus.Append($"NO ACTION instituted - action [{action.ToLower()}] not understood; ");
-                    return new AssessmentOrgsImportResponse { Status = progressStatus.ToString() };
-            }
+           
+            progressStatus.Append($"BUILDUP instituted at [{DateTime.Now.ToLongTimeString()}]; ");
+            
+            
 
             var spreadsheetDto = HarvestSpreadsheetData(progressStatus).Result;
-            TearDownDatabase(progressStatus);
+            using (var transactionScope = new TransactionScope())
+            { 
+                TearDownDatabase(progressStatus);
+            
+                BuildUpDatabase(spreadsheetDto, progressStatus);
 
-            if (!buildup)
-            {
-                var message = $"Operations completed without build up  at [{DateTime.Now.ToLongTimeString()}]; ";
-                _logger.LogInformation(message);
-                progressStatus.Append(message);
-                return new AssessmentOrgsImportResponse { Status = progressStatus.ToString() };
+                transactionScope.Complete();
             }
-
-            BuildUpDatabase(spreadsheetDto, progressStatus, action);
 
             return new AssessmentOrgsImportResponse { Status = progressStatus.ToString() };
         }
@@ -121,11 +107,11 @@ namespace SFA.DAS.AssessorService.Data
             _logger.LogInformation($"Teardown process stopped; ");
         }
 
-        private void BuildUpDatabase(AssessmentOrganisationsSpreadsheetDto spreadsheetDto, StringBuilder progressStatus, string action)
+        private void BuildUpDatabase(AssessmentOrganisationsSpreadsheetDto spreadsheetDto, StringBuilder progressStatus)
         {
             try
             {
-                var buildupStartMessage = $"BUILD UP [{action}] process started; ";
+                var buildupStartMessage = $"BUILD UP process started; ";
                 _logger.LogInformation(buildupStartMessage);
                 progressStatus.Append(buildupStartMessage);
 
