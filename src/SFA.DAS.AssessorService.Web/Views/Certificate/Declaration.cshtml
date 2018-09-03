@@ -24,9 +24,18 @@
             <li>@Localizer["InfoLine4"]</li>
         </ul>
 
-        <form class="js-disable-on-submit" method="post" asp-controller="CertificateDeclaration">
-            @Html.HiddenFor(c => c.Id)
-            <button type="submit" class="button">@Localizer["ContinueButton"]</button>
-        </form>
+        @if (Model.IsPrivatelyFunded)
+        {
+            <form class="js-disable-on-submit" method="post" asp-action="StartPrivate" asp-controller="Certificate">
+                <button type="submit" class="button">@Localizer["ContinueButton"]</button>
+            </form>
+        }
+        else
+        {
+            <form class="js-disable-on-submit" method="post" asp-controller="CertificateDeclaration">
+                @Html.HiddenFor(c => c.Id)
+                <button type="submit" class="button">@Localizer["ContinueButton"]</button>
+            </form>
+        }
     </div>
 </div>

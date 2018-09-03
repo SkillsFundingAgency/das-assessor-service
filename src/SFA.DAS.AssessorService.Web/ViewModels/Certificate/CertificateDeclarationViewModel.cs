@@ -6,6 +6,8 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 {
     public class CertificateDeclarationViewModel : CertificateBaseViewModel, ICertificateViewModel
     {
+        public bool IsPrivatelyFunded { get; set; }
+
         public void FromCertificate(Domain.Entities.Certificate cert)
         {
             BaseFromCertificate(cert);           

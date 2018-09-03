@@ -43,6 +43,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return View(vm);
             }
 
+            if (vm.IsPrivatelyFunded)
+            {
+                return RedirectToAction("Index", "CertificatePrivateDeclaration");
+            }
+
             var result = await _searchOrchestrator.Search(vm);
             if (!result.SearchResults.Any()) return View("Index", vm);
 

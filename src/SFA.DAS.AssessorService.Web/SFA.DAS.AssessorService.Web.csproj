@@ -46,17 +46,15 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>CertificateRecipientViewModelValidator.resx</DependentUpon>
     </Compile>
-    <Compile Update="Resources\Views\Certificate\Declaration.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Declaration.resx</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Update="nlog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="Views\Certificate\AddressSummary.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Certificate\FirstName.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
   </ItemGroup>
@@ -99,7 +97,7 @@
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Views\Certificate\Declaration.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Declaration.Designer.cs</LastGenOutput>
+      <LastGenOutput>Declaration - Copy.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Views\Certificate\Check.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>

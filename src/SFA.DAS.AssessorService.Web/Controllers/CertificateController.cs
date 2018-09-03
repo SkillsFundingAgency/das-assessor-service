@@ -20,7 +20,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly ICertificateApiClient _certificateApiClient;
         private readonly ISessionService _sessionService;
 
-        public CertificateController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor, ICertificateApiClient certificateApiClient, ISessionService sessionService)
+        public CertificateController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor,
+            ICertificateApiClient certificateApiClient, ISessionService sessionService)
         {
             _logger = logger;
             _contextAccessor = contextAccessor;
@@ -33,9 +34,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             _sessionService.Remove("CertificateSession");
             var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
-            var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
+            var username = _contextAccessor.HttpContext.User
+                .FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
-            _logger.LogInformation($"Start of Certificate Start for ULN {vm.Uln} and Standard Code: {vm.StdCode} by user {username}");
+            _logger.LogInformation(
+                $"Start of Certificate Start for ULN {vm.Uln} and Standard Code: {vm.StdCode} by user {username}");
 
             var cert = await _certificateApiClient.Start(new StartCertificateRequest()
             {
@@ -52,9 +55,43 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 StandardCode = vm.StdCode
             });
 
-            _logger.LogInformation($"New Certificate received for ULN {vm.Uln} and Standard Code: {vm.StdCode} with ID {cert.Id}");
+            _logger.LogInformation(
+                $"New Certificate received for ULN {vm.Uln} and Standard Code: {vm.StdCode} with ID {cert.Id}");
 
             return RedirectToAction("Declare", "CertificateDeclaration");
+        }
+
+        [HttpPost]
+        [Route("certificate/private")]
+        public async Task<IActionResult> StartPrivate()
+        {
+            _sessionService.Remove("CertificateSession");
+            var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
+            var username = _contextAccessor.HttpContext.User
+                .FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
+
+            _logger.LogInformation(
+                $"Start of Private Certificate");
+
+            //var cert = await _certificateApiClient.Start(new StartCertificateRequest()
+            //{
+            //    UkPrn = int.Parse(ukprn),
+            //    StandardCode = vm.StdCode,
+            //    Uln = vm.Uln,
+            //    Username = username
+            //});
+
+            //_sessionService.Set("CertificateSession", new CertificateSession()
+            //{
+            //    CertificateId = cert.Id,
+            //    Uln = vm.Uln,
+            //    StandardCode = vm.StdCode
+            //});
+
+            //_logger.LogInformation(
+            //    $"New Certificate received for ULN {vm.Uln} and Standard Code: {vm.StdCode} with ID {cert.Id}");
+
+            return RedirectToAction("FirstName", "CertificateFirstName");
         }
     }
 }
