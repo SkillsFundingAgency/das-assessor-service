@@ -10,6 +10,12 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<IEnumerable<Ilr>> SearchForLearnerByCertificateReference(string certRef);
         Task<IEnumerable<Ilr>> SearchForLearnerByName(string learnerName, int page, int pageSize);
         Task<int> CountLearnersByName(string learnerName);
-        Task<IEnumerable<Ilr>> SearchForLearnerByEpaOrgId(StaffSearchRequest searchRequest);
+        Task<StaffReposSearchResult> SearchForLearnerByEpaOrgId(StaffSearchRequest searchRequest);
+    }
+
+    public class StaffReposSearchResult
+    {
+        public IEnumerable<Ilr> PageOfResults { get; set; }
+        public int TotalCount { get; set; }
     }
 }

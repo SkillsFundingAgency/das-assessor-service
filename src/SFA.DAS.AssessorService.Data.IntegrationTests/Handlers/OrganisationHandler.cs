@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Dapper;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Models;
 using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
 
@@ -26,6 +28,12 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
             {
                 InsertRecord(org);
             }
+        }
+
+        public static AssessmentOrganisationSummary GetOrganisationSummaryByOrgId(string orgId)
+        {
+             var organisation = DatabaseService.Get<AssessmentOrganisationSummary>($@"select EndpointAssessorName as Name, EndPointAssessorOrganisationId as Id, EndPointAssessorUkprn as ukprn from Organisations where endpointassessororganisationid = '{orgId}'");
+            return organisation;
         }
 
         public static void DeleteRecord(Guid id)
