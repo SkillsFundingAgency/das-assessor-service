@@ -59,6 +59,7 @@
   <ItemGroup>
     <Folder Include="Properties" />
     <Folder Include="Tables" />
+    <Folder Include="StoredProcedures" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\CertificateLogs.sql" />
@@ -68,6 +69,8 @@
     <Build Include="Tables\Ilrs.sql" />
     <Build Include="Tables\EMailTemplates.sql" />
     <Build Include="Tables\BatchLogs.sql" />
+   
+    <Build Include="StoredProcedures\GetPreviousAddresses.sql" />
     <Build Include="Tables\SearchLogs.sql" />
     <Build Include="Tables\ScheduleRuns.sql" />
     <Build Include="Tables\DeliveryArea.sql" />

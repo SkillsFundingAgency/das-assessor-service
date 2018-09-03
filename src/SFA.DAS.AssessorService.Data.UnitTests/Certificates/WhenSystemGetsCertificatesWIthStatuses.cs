@@ -15,6 +15,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
     {
         private CertificateRepository _certificateRepository;
         private Mock<AssessorDbContext> _mockDbContext;
+        private Mock<IDbConnection> _mockDbConnection;
         private List<Certificate> _result;
 
         [SetUp]
@@ -27,7 +28,10 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
             var mockSet = CreateCertificateMockDbSet();
             _mockDbContext = CreateMockDbContext(mockSet);
 
-            _certificateRepository = new CertificateRepository(_mockDbContext.Object, new Mock<IDbConnection>().Object, new Mock<ILogger<CertificateRepository>>().Object);
+            _certificateRepository = new CertificateRepository(_mockDbContext.Object, new Mock<IDbConnection>().Object);
+            _mockDbConnection = new Mock<IDbConnection>();
+
+            _certificateRepository = new CertificateRepository(_mockDbContext.Object, _mockDbConnection.Object);
             _result = _certificateRepository.GetCertificates(new List<string>{ "Reprint", "Submitted" }).Result;
         }
 
