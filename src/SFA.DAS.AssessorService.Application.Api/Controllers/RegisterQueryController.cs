@@ -23,7 +23,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
     {
         private readonly ILogger<RegisterQueryController> _logger;
         private readonly IMediator _mediator;
-
         public RegisterQueryController(IMediator mediator, ILogger<RegisterQueryController> logger
         )
         {
@@ -32,9 +31,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpGet("organisation-types", Name = "GetOrganisationTypes")]
-        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<OrganisationType>))]
-        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<OrganisationType>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetOrganisationTypes()
         {
             _logger.LogInformation("Get Organisation Types");
@@ -60,5 +59,30 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _logger.LogInformation("Get Assessment Organisations");
             return Ok(await _mediator.Send(new GetAssessmentOrganisationsRequest()));
         }
+
+        [HttpGet("assessment-organisations/{organisationId}", Name = "GetAssessmentOrganisation")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EpaOrganisation))]
+        [SwaggerResponse((int)HttpStatusCode.NotFound, null)]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetAssessmentOrganisation(string organisationId)
+        {
+            _logger.LogInformation($@"Get Assessment Organisation [{organisationId}]");
+            var res = await _mediator.Send(new GetAssessmentOrganisationRequest { OrganisationId = organisationId });
+            if (res == null) return NotFound();
+            return Ok(res);
+        }
+
+        [HttpHead("assessment-organisations/{organisationId}", Name = "GetAssessmentOrganisationHead")]
+        [SwaggerResponse((int)HttpStatusCode.NoContent)]
+        [SwaggerResponse((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> Head(string organisationId)
+        {
+            _logger.LogInformation($@"HEAD Assessment Organisation [{organisationId}]");
+            var res = await _mediator.Send(new GetAssessmentOrganisationRequest { OrganisationId = organisationId });
+            if (res == null) return NotFound();
+            return NoContent();
+        }
+
     }
 }
