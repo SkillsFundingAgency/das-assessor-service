@@ -13,17 +13,11 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
         [SetUp]
         public void Arrange()
         {
-            Setup();
-
-            long uln = 99999;
-            int standardCode = 99999;
-            string familyName = "test";
-
             DeleteBatchCertificateRequest request = Builder<DeleteBatchCertificateRequest>.CreateNew()
-                .With(i => i.Uln = uln)
-                .With(i => i.StandardCode = standardCode)
-                .With(i => i. FamilyName = familyName)
-                .With(i => i.UkPrn = 10000000)
+                .With(i => i.Uln = 1234567890)
+                .With(i => i.StandardCode = 99)
+                .With(i => i.UkPrn = 12345678)
+                .With(i => i.FamilyName = "Test")
                 .Build();
 
             _validationResult = Validator.Validate(request);

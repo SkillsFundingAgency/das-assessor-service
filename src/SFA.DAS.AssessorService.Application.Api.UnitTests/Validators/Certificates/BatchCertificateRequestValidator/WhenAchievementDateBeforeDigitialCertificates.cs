@@ -6,24 +6,24 @@ using SFA.DAS.AssessorService.Api.Types.Models.Certificates.Batch;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using System;
 
-namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certificates.CreateBatchCertificateRequestValidator
+namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certificates.BatchCertificateRequestValidator
 {
-    public class WhenCertificateExists : CreateBatchCertificateRequestValidatorTestBase
+    public class WhenAchievementDateBeforeDigitialCertificates : BatchCertificateRequestValidatorTestBase
     {
         private ValidationResult _validationResult;
 
         [SetUp]
         public void Arrange()
         {
-            CreateBatchCertificateRequest request = Builder<CreateBatchCertificateRequest>.CreateNew()
+            BatchCertificateRequest request = Builder<BatchCertificateRequest>.CreateNew()
                 .With(i => i.Uln = 1234567890)
-                .With(i => i.StandardCode = 1)
+                .With(i => i.StandardCode = 99)
                 .With(i => i.UkPrn = 12345678)
                 .With(i => i.FamilyName = "Test")
                 .With(i => i.CertificateReference = null)
                 .With(i => i.CertificateData = Builder<CertificateData>.CreateNew()
                                 .With(cd => cd.ContactPostCode = "AA11AA")
-                                .With(cd => cd.AchievementDate = DateTime.UtcNow)
+                                .With(cd => cd.AchievementDate = new DateTime(2017, 1, 1).AddHours(-1))
                                 .Build())
                 .Build();
 
