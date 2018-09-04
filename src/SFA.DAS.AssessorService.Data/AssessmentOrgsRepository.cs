@@ -317,7 +317,13 @@ namespace SFA.DAS.AssessorService.Data
                             contact).ToString();
                     if (numberOfMatches == "0")
                     {
-                        contactsToInsert.Add(contact);
+                        if (contactsToInsert.Where(c => c.Username == contact.Username).Count()==0)
+                            contactsToInsert.Add(contact);
+                        else
+                        {                        
+                            var matchingContacts = contactsToInsert.Where(c => c.Username == contact.Username);
+                            var x = "stay here";
+                        }
                     }
                     else
                     {
