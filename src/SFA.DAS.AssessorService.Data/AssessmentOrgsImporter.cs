@@ -41,17 +41,26 @@ namespace SFA.DAS.AssessorService.Data
             var progressStatus = new StringBuilder();
            
             progressStatus.Append($"BUILDUP instituted at [{DateTime.Now.ToLongTimeString()}]; ");
-            
-            
 
             var spreadsheetDto = HarvestSpreadsheetData(progressStatus).Result;
             using (var transactionScope = new TransactionScope())
-            { 
-                TearDownDatabase(progressStatus);
-            
-                BuildUpDatabase(spreadsheetDto, progressStatus);
+            {
+                try
+                {
+                    TearDownDatabase(progressStatus);
+                    BuildUpDatabase(spreadsheetDto, progressStatus);
+                    transactionScope.Complete();
+                    progressStatus.Append("Entire Teardown/buildup transaction completed; ");
+                }
+                catch (Exception ex)
+                {
+                    transactionScope.Dispose();
+                    var message = $"Error, transaction aborted: [{ex.Message}]; ";
+                    _logger.LogError(message, ex);
+                    progressStatus.Append(message);
+                    throw;
 
-                transactionScope.Complete();
+                }
             }
 
             return new AssessmentOrgsImportResponse { Status = progressStatus.ToString() };
@@ -146,7 +155,7 @@ namespace SFA.DAS.AssessorService.Data
             catch (Exception ex)
             {
                 var message = $"Program stopped with exception message: {ex.Message}; ";
-                _logger.LogInformation(message);
+                _logger.LogError(message, ex);
                 progressStatus.Append(message);
                 throw;
             }

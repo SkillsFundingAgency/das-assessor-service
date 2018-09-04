@@ -39,18 +39,18 @@ namespace SFA.DAS.AssessorService.Data
                 {
                     if (connection.State != ConnectionState.Open)
                         connection.Open();
-
+                    
                     progressStatus.Append("Teardown: DELETING all items in [OrganisationStandardDeliveryArea]; ");
                     connection.Execute("DELETE FROM [OrganisationStandardDeliveryArea]");
                     progressStatus.Append("Teardown: DELETING all items in [OrganisationStandard]; ");
                     connection.Execute("DELETE FROM [OrganisationStandard]");
-                    
 
-                    // MFCMFC FIrst point of deletion with logic
+
+                    //// MFCMFC FIrst point of deletion with logic
                     progressStatus.Append("Teardown: DELETING selected [Contacts]; ");
-                    connection.Execute("DELETE FROM [contacts] WHERE username LIKE 'unknown%'");
+                    connection.Execute("DELETE FROM [contacts] WHERE Status= 'New' and [updatedAt] is null and username not in (select primarycontact from Organisations)");
+                    //// MFCMFC Second point of deleteion with logic
                     progressStatus.Append("Teardown: DELETING selected [Organisations]; ");
-                    // MFCMFC Second point of deleteion with logic
                     connection.Execute("DELETE FROM [organisations] where OrganisationTypeId is not null and Id not in (select organisationid from [contacts])");
 
                 }
@@ -71,23 +71,30 @@ namespace SFA.DAS.AssessorService.Data
         }
 
         public void WriteDeliveryAreas(List<DeliveryArea> deliveryAreas)
-        {
-            // MFCMFC sanity check
+        { 
             var connectionString = _configuration.SqlConnectionString;
             using (var connection = new SqlConnection(connectionString))
             {
                 if (connection.State != ConnectionState.Open)
                     connection.Open();
 
-                var currentNumber = connection.ExecuteScalar("select count(0) from [DeliveryArea]").ToString();
-                if (currentNumber == "0")
+                var deliveryAreasToInsert = new List<DeliveryArea>();
+
+                foreach (var deliveryArea in deliveryAreas)
                 {
-                    IDbTransaction transaction = connection.BeginTransaction();
+                    var currentNumber = connection
+                        .ExecuteScalar(
+                            "select count(0) from [DeliveryArea] where Area = @area",  deliveryArea).ToString();
+                    if (currentNumber == "0")
+                    {
+                        deliveryAreasToInsert.Add(deliveryArea);
+                    }
+                }
+
+                 if (deliveryAreasToInsert.Count > 0)
                     connection.Execute(
                         "set identity_insert [DeliveryArea] ON; INSERT INTO [DeliveryArea] ([id], [Area],[Status]) VALUES (@Id, @Area, @Status); set identity_insert[DeliveryArea] OFF; ",
-                        deliveryAreas, transaction);
-                    transaction.Commit();
-                }
+                        deliveryAreasToInsert);
 
                 connection.Close();
             }
@@ -95,7 +102,6 @@ namespace SFA.DAS.AssessorService.Data
 
         public void WriteOrganisationTypes(List<TypeOfOrganisation> organisationTypes)
         {
-            // MFCMFC sanity check
             var connectionString = _configuration.SqlConnectionString;
             using (var connection = new SqlConnection(connectionString))
             {
@@ -108,19 +114,17 @@ namespace SFA.DAS.AssessorService.Data
                 {
                     var currentNumber = connection
                         .ExecuteScalar(
-                            "select count(0) from [OrganisationType] where Type = @Type",
-                            organisationType).ToString();
+                            "select count(0) from [OrganisationType] where Type = @Type", organisationType).ToString();
                     if (currentNumber == "0")
                     {
                         organisationTypesToInsert.Add(organisationType);
                     }
                 }
 
-                IDbTransaction transaction = connection.BeginTransaction();
-                connection.Execute(
-                    "set identity_insert [OrganisationType] ON; INSERT INTO [OrganisationType] (Id, [Type], [Status]) VALUES (@Id, @Type, @Status); set identity_insert [OrganisationType] OFF; ",
-                    organisationTypesToInsert, transaction);
-                transaction.Commit();
+                if (organisationTypesToInsert.Count>0)
+                    connection.Execute(
+                        "set identity_insert [OrganisationType] ON; INSERT INTO [OrganisationType] (Id, [Type], [Status]) VALUES (@Id, @Type, @Status); set identity_insert [OrganisationType] OFF; ",
+                        organisationTypesToInsert);
              
                connection.Close();
             }
@@ -128,7 +132,6 @@ namespace SFA.DAS.AssessorService.Data
 
         public void WriteOrganisations(List<EpaOrganisation> organisations)
         {
-            //MFCMFC sanity check  -- only inserting new ones, only updating existing ones with new data
             var connectionString = _configuration.SqlConnectionString;
             using (var connection = new SqlConnection(connectionString))
             {
@@ -179,7 +182,7 @@ namespace SFA.DAS.AssessorService.Data
                     var endPointAssessorName = ConvertStringToSqlValueString(org.EndPointAssessorName);
 
                     var sqlToAppend =
-                        "INSERT INTO [Organisations] ([Id] ,[CreatedAt] ,[DeletedAt],[EndPointAssessorName] ,[EndPointAssessorOrganisationId], " +
+                        "INSERT INTO [Organisations] ([Id],[CreatedAt],[DeletedAt],[EndPointAssessorName],[EndPointAssessorOrganisationId], " +
                         "[EndPointAssessorUkprn],[PrimaryContact],[Status],[UpdatedAt],[OrganisationTypeId],[OrganisationData]) VALUES (" +
                         $@" {id}, getdate(), null, {endPointAssessorName}, '{org.EndPointAssessorOrganisationId}'," +
                         $@"{ukprn}, null, '{org.Status}', null,  {org.OrganisationTypeId}, '{organisationData}' ); ";
@@ -225,7 +228,6 @@ namespace SFA.DAS.AssessorService.Data
                             var effectiveTo = ConvertDateToSqlValueString(organisationStandard.EffectiveTo);
                             var dateStandardApprovedOnRegister =
                                 ConvertDateToSqlValueString(organisationStandard.DateStandardApprovedOnRegister);
-
 
                             var sqlToInsert = "INSERT INTO [OrganisationStandard] ([EndPointAssessorOrganisationId],[StandardCode],[EffectiveFrom],[EffectiveTo],[DateStandardApprovedOnRegister],[Comments],[Status])" +
                                 $"VALUES ('{organisationStandard.EndPointAssessorOrganisationId}' ,'{organisationStandard.StandardCode}' ,{effectiveFrom} ,{effectiveTo} ,{dateStandardApprovedOnRegister} ,{comments} ,'{organisationStandard.Status}'); ";
@@ -297,7 +299,6 @@ namespace SFA.DAS.AssessorService.Data
 
         public void WriteOrganisationContacts(List<OrganisationContact> contacts)
         {
-            // MFC insert new records if email /organisationId isn't present, otherwise update phonenumber - does this need to be refined to only update if phonenumber is null???
             var connectionString = _configuration.SqlConnectionString;
 
             using (var connection = new SqlConnection(connectionString))

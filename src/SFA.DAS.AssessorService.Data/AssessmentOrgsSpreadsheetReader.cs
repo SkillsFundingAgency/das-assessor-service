@@ -313,13 +313,13 @@ namespace SFA.DAS.AssessorService.Data
 
             var contacts = new List<OrganisationContact>(); ;
 
-            var ctr = 0;
+            //var ctr = 0;
             // MFCMFC had to inject in a unique username from somewhere...
             foreach (var cont in distinctContacts.ToList())
             {
 
                 var contact = cont.Key;
-                ctr++;
+                //ctr++;
                 contacts.Add(
                     new OrganisationContact
                     {
@@ -329,7 +329,7 @@ namespace SFA.DAS.AssessorService.Data
                         OrganisationId = contact.OrganisationId,
                         PhoneNumber = contact.PhoneNumber,
                         Status = contact.Status,
-                        Username = $"unknown-{ctr}"
+                        Username = $"ISP-{contact.EndPointAssessorOrganisationId.ToLower()}{contact.DisplayName.Substring(0,1).ToLower()}"
                     }
                 );
             }
