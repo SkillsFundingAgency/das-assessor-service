@@ -9,7 +9,7 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <a class="link-back" asp-controller="CertificateAddress" asp-action="Address">Back</a>
+        <a class="link-back" asp-controller="CertificateRecipient" asp-action="Recipient">Back</a>
 
         <h1 class="heading-large">@Localizer["Heading"]</h1>
         
@@ -83,19 +83,23 @@
                     </a>
                 </dd>
             </div>
-            <div>
-                <dt class="cya-question">
-                    Option
-                </dt>
-                <dd class="cya-answer">
-                    @Model.Option
-                </dd>
-                <dd class="cya-change">
-                    <a asp-controller="CertificateOption" asp-action="Option" asp-route-redirecttocheck="true">
-                        Change<span class="visually-hidden"> option</span>
-                    </a>
-                </dd>
-            </div>
+            @if ((bool) TempData["HideOption"] == false)
+            {
+                <div>
+                    <dt class="cya-question">
+                        Option
+                    </dt>
+                    <dd class="cya-answer">
+                        @Model.Option
+                    </dd>
+                    <dd class="cya-change">
+                        <a asp-controller="CertificateOption" asp-action="Option" asp-route-redirecttocheck="true">
+                            Change<span class="visually-hidden"> option</span>
+                        </a>
+                    </dd>
+                </div>
+            }
+            
             <div>
                 <dt class="cya-question">
                     Achievement date
@@ -124,7 +128,7 @@
                     @Model.Name
                 </dd>
                 <dd class="cya-change">
-                    <a asp-controller="CertificateAddress" asp-action="Address" asp-route-redirecttocheck="true">
+                    <a asp-controller="CertificateRecipient" asp-action="Recipient" asp-route-redirecttocheck="true">
                         Change<span class="visually-hidden"> name</span>
                     </a>
                 </dd>
@@ -137,7 +141,7 @@
                     @Model.Dept
                 </dd>
                 <dd class="cya-change">
-                    <a asp-controller="CertificateAddress" asp-action="Address" asp-route-redirecttocheck="true">
+                    <a asp-controller="CertificateRecipient" asp-action="Recipient" asp-route-redirecttocheck="true">
                         Change<span class="visually-hidden"> department</span>
                     </a>
                 </dd>
@@ -150,7 +154,7 @@
                     @Model.Employer
                 </dd>
                 <dd class="cya-change">
-                    <a asp-controller="CertificateAddress" asp-action="Address" asp-route-redirecttocheck="true">
+                    <a asp-controller="CertificateAddress" asp-action="Address" asp-route-redirecttocheck="true" asp-route-edit="true">
                         Change<span class="visually-hidden"> organisation</span>
                     </a>
                 </dd>
@@ -173,14 +177,14 @@
                     @Model.Postcode
                 </dd>
                 <dd class="cya-change">
-                    <a asp-controller="CertificateAddress" asp-action="Address" asp-route-redirecttocheck="true">
+                    <a asp-controller="CertificateAddress" asp-action="Address" asp-route-redirecttocheck="true" asp-route-edit="true">
                         Change<span class="visually-hidden"> address</span>
                     </a>
                 </dd>
             </div>
         </dl>
 
-        <form type="post" asp-controller="CertificateCheck">
+        <form class="js-disable-on-submit" method="post" asp-controller="CertificateCheck">
             @Html.HiddenFor(c => c.Id)
             <button type="submit" class="button">@Localizer["ContinueButton"]</button>
         </form>

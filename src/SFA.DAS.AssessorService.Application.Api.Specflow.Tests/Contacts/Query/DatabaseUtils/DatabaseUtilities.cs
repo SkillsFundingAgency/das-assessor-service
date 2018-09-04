@@ -3,6 +3,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.consts;
+using Configuration = SFA.DAS.AssessorService.Application.Api.Specflow.Tests.consts.Configuration;
 
 namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.DatabaseUtils
 {
@@ -14,11 +15,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.DatabaseUtils
 
         public DatabaseUtilities()
         {
-            var settings = ConfigurationManager.ConnectionStrings[PersistenceNames.AccessorDBConnectionString];
+            var settings = ConfigurationManager.ConnectionStrings[Configuration.AccessorDBConnectionString];
             _connection = new SqlConnection(settings.ConnectionString);
 
-            _databaseBackupLocation = ConfigurationManager.AppSettings[PersistenceNames.RestoreDatabase];
-            _databaseName = ConfigurationManager.AppSettings[PersistenceNames.DatabaseName];
+            _databaseBackupLocation = ConfigurationManager.AppSettings[Configuration.RestoreDatabase];
+            _databaseName = ConfigurationManager.AppSettings[Configuration.DatabaseName];
         }
 
         public void Backup()

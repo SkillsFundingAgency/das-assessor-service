@@ -10,25 +10,47 @@
 --------------------------------------------------------------------------------------
 */
 
-IF (EXISTS (SELECT * 
-                 FROM INFORMATION_SCHEMA.TABLES 
-                 WHERE TABLE_SCHEMA = 'dbo' 
-                 AND  TABLE_NAME = 'TmpContacts'))
+IF EXISTS (
+  SELECT * 
+  FROM   sys.columns 
+  WHERE  object_id = OBJECT_ID(N'[dbo].[Certificates]') 
+         AND name = 'CreateDay'
+)
 BEGIN
-    DROP TABLE TmpContacts
+	SET NOEXEC ON;
 END
+ALTER TABLE [Certificates] 
+ADD [CreateDay] date NULL;
+GO
+-- Step 2
+UPDATE [Certificates] 
+SET [CreateDay] = CONVERT(date, CreatedAt)
+WHERE CertificateReferenceId >= 10000;
 
-IF (EXISTS (SELECT * 
-                 FROM INFORMATION_SCHEMA.TABLES 
-                 WHERE TABLE_SCHEMA = 'dbo' 
-                 AND  TABLE_NAME = 'TmpOrganisations'))
-BEGIN
-    DROP TABLE TmpOrganisations
-END
+MERGE INTO [Certificates] ce1
+USING (
+select cl.CertificateId, cl.EventTime from CertificateLogs cl
+where cl.CertificateId in
+(
+	SELECT id
+	FROM [dbo].Certificates
+	WHERE CertificateReferenceId < 10000
+	)
+and cl.Action = 'submit' ) ab1
+ON (ce1.id = ab1.Certificateid)
+WHEN MATCHED THEN UPDATE 
+SET [CreateDay] = CONVERT(date, ab1.EventTime);
 
+-- Step 3
+UPDATE Certificates 
+SET Uln = 0-CertificateReferenceId
+where Uln = 0;
 
-SELECT * INTO TmpContacts FROM Contacts
-SELECT * INTO TmpOrganisations FROM Organisations
+-- Step 4
+ALTER TABLE [Certificates] 
+ALTER COLUMN [CreateDay] date NOT NULL;
+GO
 
-DELETE Contacts
-DELETE Organisations
+CREATE UNIQUE INDEX [IXU_Certificates] ON [Certificates] ([Uln], [StandardCode], [CreateDay]);
+	
+SET NOEXEC OFF;

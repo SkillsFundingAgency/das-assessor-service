@@ -11,6 +11,7 @@ using SFA.DAS.AssessorService.Application.Handlers.Search;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Logging;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
@@ -41,18 +42,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 return new PaginatedList<StaffSearchResult>(new List<StaffSearchResult>(), 0, request.Page, 10);
 
             var pageSize = 10;
-            var ilrResults = await Search(request);
-            var totalRecordCount = ilrResults.Count();
+            var searchResult = await Search(request);
+            var totalRecordCount = searchResult.TotalCount;
 
-            if (!ilrResults.Any())
+            if (searchResult.TotalCount == 0)
             {
                 totalRecordCount = await _staffIlrRepository.CountLearnersByName(request.SearchQuery);
-                ilrResults = await _staffIlrRepository.SearchForLearnerByName(request.SearchQuery, request.Page, pageSize);   
+                searchResult.PageOfResults = await _staffIlrRepository.SearchForLearnerByName(request.SearchQuery, request.Page, pageSize);   
             }
 
-            _logger.LogInformation(ilrResults.Any() ? LoggingConstants.SearchSuccess : LoggingConstants.SearchFailure);
+            _logger.LogInformation(searchResult.PageOfResults.Any() ? LoggingConstants.SearchSuccess : LoggingConstants.SearchFailure);
 
-            var searchResults = Mapper.Map<List<StaffSearchResult>>(ilrResults);
+            var searchResults = Mapper.Map<List<StaffSearchResult>>(searchResult.PageOfResults);
 
             searchResults = MatchUpExistingCompletedStandards(searchResults);
             searchResults = PopulateStandards(searchResults, _assessmentOrgsApiClient, _logger);
@@ -60,29 +61,38 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             return new PaginatedList<StaffSearchResult>(searchResults, totalRecordCount, request.Page, pageSize);
         }
 
-        private async Task<IEnumerable<Ilr>> Search(StaffSearchRequest request)
+        private async Task<StaffReposSearchResult> Search(StaffSearchRequest request)
         {
             // Naive decision on what is being searched.
 
-            var regex = new Regex(@"\b(EPA)[0-9]{4}\b");
+            var regex = new Regex(@"\b(EPA|epa)[0-9]{4}\b");
             if (regex.IsMatch(request.SearchQuery))
             {
-                return await _staffIlrRepository.SearchForLearnerByEpaOrgId(request.SearchQuery);
+                return await _staffIlrRepository.SearchForLearnerByEpaOrgId(request);
             }
 
             if (request.SearchQuery.Length == 10 && long.TryParse(request.SearchQuery, out var uln))
             {
                 // Search string is a long of 10 length so must be a uln.
-                return await _ilrRepository.SearchForLearnerByUln(uln);
+                var sr = new StaffReposSearchResult
+                {
+                    TotalCount = (await _ilrRepository.SearchForLearnerByUln(uln)).Count(),
+                    PageOfResults = await _ilrRepository.SearchForLearnerByUln(uln)
+                };
+                return sr;
             }
 
             if (request.SearchQuery.Length == 8 && long.TryParse(request.SearchQuery, out var certRef))
             {
-                // Search string is 8 chars and is a valid long so must be a CertificateReference
-                return await _staffIlrRepository.SearchForLearnerByCertificateReference(request.SearchQuery);
+                var sr = new StaffReposSearchResult
+                {
+                    TotalCount = (await _staffIlrRepository.SearchForLearnerByCertificateReference(request.SearchQuery)).Count(),
+                    PageOfResults = await _staffIlrRepository.SearchForLearnerByCertificateReference(request.SearchQuery)
+                };
+                return sr;
             }
-            
-            return new List<Ilr>();
+
+            return new StaffReposSearchResult() {PageOfResults = new List<Ilr>(), TotalCount = 0};
         }
 
 
@@ -99,7 +109,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
                 searchResult.CertificateReference = certificate.CertificateReference;
                 searchResult.CertificateStatus = certificate.Status;
-                searchResult.LastUpdatedAt = certificate.LastUpdatedAt?.ToLocalTime();
+                if (searchResult.LastUpdatedAt == null)
+                {
+                    searchResult.LastUpdatedAt = certificate.LastUpdatedAt?.UtcToTimeZoneTime();
+                }
             }
             return searchResults;
         }

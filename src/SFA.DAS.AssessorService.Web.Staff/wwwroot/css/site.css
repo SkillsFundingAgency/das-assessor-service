@@ -67,7 +67,7 @@
   margin: 0;
 }
 
-label > .heading-large {
+label > .heading-xlarge {
   display: block;
 }
 
@@ -717,6 +717,11 @@ fieldset.after-error-summary {
 
 .page-navigation .next {
   text-align: right;
+  width: 100%;
+}
+
+.page-navigation .previous + .next {
+  width: 50%;
 }
 
 .page-navigation .disabled,

@@ -4,6 +4,7 @@ using System.Linq;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -14,6 +15,7 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
     {
         private CertificateRepository _certificateRepository;
         private Mock<AssessorDbContext> _mockDbContext;
+        private Mock<IDbConnection> _mockDbConnection;
         private List<Certificate> _result;
 
         [SetUp]
@@ -27,6 +29,9 @@ namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
             _mockDbContext = CreateMockDbContext(mockSet);
 
             _certificateRepository = new CertificateRepository(_mockDbContext.Object, new Mock<IDbConnection>().Object);
+            _mockDbConnection = new Mock<IDbConnection>();
+
+            _certificateRepository = new CertificateRepository(_mockDbContext.Object, _mockDbConnection.Object);
             _result = _certificateRepository.GetCertificates(new List<string>{ "Reprint", "Submitted" }).Result;
         }
 
