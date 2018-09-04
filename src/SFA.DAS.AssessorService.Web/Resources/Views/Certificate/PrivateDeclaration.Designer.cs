@@ -22,14 +22,14 @@ namespace SFA.DAS.AssessorService.Web.Resources.Views.Certificate {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Declaration {
+    internal class PrivateDeclaration {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Declaration() {
+        internal PrivateDeclaration() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace SFA.DAS.AssessorService.Web.Resources.Views.Certificate {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SFA.DAS.AssessorService.Web.Resources.Views.Certificate.Declaration", typeof(Declaration).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SFA.DAS.AssessorService.Web.Resources.Views.Certificate.PrivateDeclaration", typeof(PrivateDeclaration).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,7 +61,7 @@ namespace SFA.DAS.AssessorService.Web.Resources.Views.Certificate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Apply for certificate.
+        ///   Looks up a localized string similar to Confirm and apply for a certificate.
         /// </summary>
         internal static string ContinueButton {
             get {
@@ -97,7 +97,7 @@ namespace SFA.DAS.AssessorService.Web.Resources.Views.Certificate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to the assessment was independent of both the provider and employer.
+        ///   Looks up a localized string similar to the assessment was independent of both the training provider and employer.
         /// </summary>
         internal static string InfoLine2 {
             get {

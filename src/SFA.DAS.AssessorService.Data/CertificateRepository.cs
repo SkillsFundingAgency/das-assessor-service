@@ -62,6 +62,12 @@ namespace SFA.DAS.AssessorService.Data
                 c.Uln == uln && c.StandardCode == standardCode);
         }
 
+        public async Task<Certificate> GetPrivateCertificate(long uln, string lastName)
+        {
+            return await _context.Certificates.SingleOrDefaultAsync(c =>
+                c.Uln == uln && c.IsPrivatelyFunded && CheckLastName(c.CertificateData, lastName));
+        }
+
         public async Task<Certificate> GetCertificate(
             string certificateReference,
             string lastName,
@@ -143,7 +149,7 @@ namespace SFA.DAS.AssessorService.Data
                 .ToListAsync();
 
             return new PaginatedList<Certificate>(certificates, count, pageIndex, pageSize);
-        }       
+        }
 
         public async Task<Certificate> Update(Certificate certificate, string username, string action, bool updateLog = true)
         {
@@ -158,7 +164,7 @@ namespace SFA.DAS.AssessorService.Data
             {
                 await UpdateCertificateLog(cert, action, username);
             }
-            
+
             await _context.SaveChangesAsync();
 
             return cert;
@@ -171,7 +177,7 @@ namespace SFA.DAS.AssessorService.Data
             var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
             certificateData.ProviderName = providerName;
 
-            certificate.CertificateData = JsonConvert.SerializeObject(certificateData);           
+            certificate.CertificateData = JsonConvert.SerializeObject(certificateData);
             _context.SaveChanges();
 
             return Task.FromResult(certificate);
@@ -227,7 +233,7 @@ namespace SFA.DAS.AssessorService.Data
                 .AsNoTracking()
                 .ToListAsync();
         }
-       
+
         public async Task<CertificateAddress> GetContactPreviousAddress(string userName)
         {
             var statuses = new List<string>
@@ -238,23 +244,23 @@ namespace SFA.DAS.AssessorService.Data
             };
 
             var certificateAddress = await (from certificateLog in _context.CertificateLogs
-                join certificate in _context.Certificates on certificateLog.CertificateId equals certificate.Id
-                where statuses.Contains(certificate.Status) && certificateLog.Username == userName
-                let certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData)
-                orderby certificate.UpdatedAt descending 
-                select new CertificateAddress
-                {
-                    OrganisationId = certificate.OrganisationId,
-                    ContactOrganisation = certificateData.ContactOrganisation,
-                    ContactName = certificateData.ContactName,
-                    Department = certificateData.Department,
-                    CreatedAt = certificate.CreatedAt,
-                    AddressLine1 = certificateData.ContactAddLine1,
-                    AddressLine2 = certificateData.ContactAddLine2,
-                    AddressLine3 = certificateData.ContactAddLine3,
-                    City = certificateData.ContactAddLine4,
-                    PostCode = certificateData.ContactPostCode
-                }).FirstOrDefaultAsync();
+                                            join certificate in _context.Certificates on certificateLog.CertificateId equals certificate.Id
+                                            where statuses.Contains(certificate.Status) && certificateLog.Username == userName
+                                            let certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData)
+                                            orderby certificate.UpdatedAt descending
+                                            select new CertificateAddress
+                                            {
+                                                OrganisationId = certificate.OrganisationId,
+                                                ContactOrganisation = certificateData.ContactOrganisation,
+                                                ContactName = certificateData.ContactName,
+                                                Department = certificateData.Department,
+                                                CreatedAt = certificate.CreatedAt,
+                                                AddressLine1 = certificateData.ContactAddLine1,
+                                                AddressLine2 = certificateData.ContactAddLine2,
+                                                AddressLine3 = certificateData.ContactAddLine3,
+                                                City = certificateData.ContactAddLine4,
+                                                PostCode = certificateData.ContactPostCode
+                                            }).FirstOrDefaultAsync();
 
             return certificateAddress;
         }
@@ -265,7 +271,13 @@ namespace SFA.DAS.AssessorService.Data
                                                                   FROM Certificates 
                                                                   WHERE ProviderUkPrn = @providerUkPrn 
                                                                   AND JSON_VALUE(CertificateData, '$.ProviderName') IS NOT NULL 
-                                                                  ORDER BY CreatedAt DESC", new {providerUkPrn});
+                                                                  ORDER BY CreatedAt DESC", new { providerUkPrn });
+        }
+
+        private bool CheckLastName(string data, string lastName)
+        {
+            var certificateData = JsonConvert.DeserializeObject<CertificateData>(data);
+            return certificateData.LearnerFamilyName == lastName;
         }
     }
 }

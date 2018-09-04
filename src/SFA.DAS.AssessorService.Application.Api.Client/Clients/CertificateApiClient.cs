@@ -23,6 +23,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task<Certificate> StartPrivate(StartCertificatePrivateRequest request)
+        {
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Post, "api/v1/certificates/startprivate"))
+            {
+                return await PostPutRequestWithResponse<StartCertificatePrivateRequest, Certificate>(httpRequest, request);
+            }
+        }
+
         public async Task<Certificate> GetCertificate(Guid certificateId)
         {
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/certificates/{certificateId}"))

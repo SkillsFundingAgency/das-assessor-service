@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
+using SFA.DAS.AssessorService.Web.ViewModels.Search;
 
-namespace SFA.DAS.AssessorService.Web.Controllers
+namespace SFA.DAS.AssessorService.Web.Controllers.Private
 {
     [Authorize]
     [Route("certificate/privatedeclaration")]
@@ -13,13 +13,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {}
 
         [HttpGet]
-        public IActionResult Index()
-        {
-            CertificateDeclarationViewModel certificateDeclarationViewModel = new CertificateDeclarationViewModel();
-
-            certificateDeclarationViewModel.IsPrivatelyFunded = true;
-
-            return View("~/Views/Certificate/Declaration.cshtml", certificateDeclarationViewModel);            
+        public IActionResult Index(SearchRequestViewModel searchRequestViewModel)
+        {           
+            return View("~/Views/Certificate/PrivateDeclaration.cshtml", searchRequestViewModel);            
         }                
     }
 }

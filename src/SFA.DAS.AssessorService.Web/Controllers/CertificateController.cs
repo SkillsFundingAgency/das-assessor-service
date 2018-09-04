@@ -7,6 +7,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
+using SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -63,7 +64,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         [HttpPost]
         [Route("certificate/private")]
-        public async Task<IActionResult> StartPrivate()
+        public async Task<IActionResult> StartPrivate(CertificateStartPrivateViewModel certificateStartPrivateViewModel)
         {
             _sessionService.Remove("CertificateSession");
             var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
@@ -73,23 +74,21 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             _logger.LogInformation(
                 $"Start of Private Certificate");
 
-            //var cert = await _certificateApiClient.Start(new StartCertificateRequest()
-            //{
-            //    UkPrn = int.Parse(ukprn),
-            //    StandardCode = vm.StdCode,
-            //    Uln = vm.Uln,
-            //    Username = username
-            //});
+            var cert = await _certificateApiClient.StartPrivate(new StartCertificatePrivateRequest()
+            {
+                Uln = certificateStartPrivateViewModel.Uln,
+                LastName = certificateStartPrivateViewModel.Surname,
+                Username = username
+            });
 
-            //_sessionService.Set("CertificateSession", new CertificateSession()
-            //{
-            //    CertificateId = cert.Id,
-            //    Uln = vm.Uln,
-            //    StandardCode = vm.StdCode
-            //});
+            _sessionService.Set("CertificateSession", new CertificateSession()
+            {
+                CertificateId = cert.Id,
+                Uln = certificateStartPrivateViewModel.Uln
+            });
 
-            //_logger.LogInformation(
-            //    $"New Certificate received for ULN {vm.Uln} and Standard Code: {vm.StdCode} with ID {cert.Id}");
+            _logger.LogInformation(
+                $"New Private Certificate received with ID {cert.Id}");
 
             return RedirectToAction("FirstName", "CertificateFirstName");
         }

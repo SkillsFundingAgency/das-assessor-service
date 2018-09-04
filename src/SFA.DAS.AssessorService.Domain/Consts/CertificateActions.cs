@@ -6,6 +6,7 @@
         public const string Address = "Address";
         public const string AddressSummary = "AddressSummary";
         public const string Date = "Date";
+        public const string LearningStartDate = "LearningStartDate";
         public const string Grade = "Grade";
         public const string Option = "Option";
         public const string Submit = "Submit";

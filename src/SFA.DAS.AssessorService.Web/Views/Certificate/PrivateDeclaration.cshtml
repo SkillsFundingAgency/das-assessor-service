@@ -1,6 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
 @inject IViewLocalizer Localizer
-@model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateDeclarationViewModel
+@model SFA.DAS.AssessorService.Web.ViewModels.Search.SearchRequestViewModel
 
 @{
     ViewBag.Title = "Declaration";
@@ -24,9 +24,14 @@
             <li>@Localizer["InfoLine4"]</li>
         </ul>
 
-        <form class="js-disable-on-submit" method="post" asp-controller="CertificateDeclaration">
-            @Html.HiddenFor(c => c.Id)
+
+        <form class="js-disable-on-submit" method="post" asp-action="StartPrivate" asp-controller="Certificate">
+            @Html.HiddenFor(c => c.Uln)
+            @Html.HiddenFor(c => c.Surname)
+            @Html.HiddenFor(c => c.SearchResults)
+            @Html.HiddenFor(c => c.IsPrivatelyFunded)
             <button type="submit" class="button">@Localizer["ContinueButton"]</button>
         </form>
+
     </div>
 </div>
