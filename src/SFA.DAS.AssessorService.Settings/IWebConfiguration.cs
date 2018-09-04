@@ -11,6 +11,7 @@
         string AssessmentOrgsApiClientBaseUrl { get; set; }
         string IFATemplateStorageConnectionString { get; set; }
         string SqlConnectionString { get; set; }
+        string SpecflowDBTestConnectionString { get; set; }
         string SessionRedisConnectionString { get; set; }
         AuthSettings StaffAuthentication { get; set; }
     }
