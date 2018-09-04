@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -45,11 +46,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 Username = username
             });
 
+            var options = (await _certificateApiClient.GetOptions(cert.StandardCode)).Select(o => o.OptionName).ToList();
+
             _sessionService.Set("CertificateSession", new CertificateSession()
             {
                 CertificateId = cert.Id,
                 Uln = vm.Uln,
-                StandardCode = vm.StdCode
+                StandardCode = vm.StdCode,
+                Options = options
             });
 
             _logger.LogInformation($"New Certificate received for ULN {vm.Uln} and Standard Code: {vm.StdCode} with ID {cert.Id}");

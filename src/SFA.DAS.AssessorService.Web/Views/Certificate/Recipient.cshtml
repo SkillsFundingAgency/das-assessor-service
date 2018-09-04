@@ -18,7 +18,7 @@
             <a asp-controller="CertificateAddress" asp-action="Address" class="link-back">Back</a>
         }
    
-        <form class="apprentice-address-form" type="post" asp-controller="CertificateRecipient">
+        <form class="apprentice-address-form js-disable-on-submit" method="post" asp-controller="CertificateRecipient">
             @Html.HiddenFor(c => c.Id)
 
             @* hidden with css by default *@

@@ -21,6 +21,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<List<CertificateLog>> GetCertificateLogsFor(Guid certificateId);
         Task<PaginatedList<Certificate>> GetCertificateHistory(string userName, int pageIndex, int pageSize);
         Task<string> GetPreviousProviderName(int providerUkPrn);      
-        Task<CertificateAddress> GetContactPreviousAddress(string userName);        
+        Task<CertificateAddress> GetContactPreviousAddress(string userName);    
+        Task<List<Option>> GetOptions(int stdCode);
     }
 }

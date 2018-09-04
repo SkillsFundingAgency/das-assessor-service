@@ -69,7 +69,6 @@
     <Build Include="Tables\Ilrs.sql" />
     <Build Include="Tables\EMailTemplates.sql" />
     <Build Include="Tables\BatchLogs.sql" />
-   
     <Build Include="StoredProcedures\GetPreviousAddresses.sql" />
     <Build Include="Tables\SearchLogs.sql" />
     <Build Include="Tables\ScheduleRuns.sql" />
@@ -77,11 +76,15 @@
     <Build Include="Tables\OrganisationStandard.sql" />
     <Build Include="Tables\OrganisationStandardDeliveryArea.sql" />
     <Build Include="Tables\OrganisationType.sql" />
+    <Build Include="Tables\Options.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <PreDeploy Include="Script.PreDeployment1.sql" />
   </ItemGroup>
 </Project>

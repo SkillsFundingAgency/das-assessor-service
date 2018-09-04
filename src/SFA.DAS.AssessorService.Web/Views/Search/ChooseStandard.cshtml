@@ -13,7 +13,7 @@
     <div class="column-two-thirds">
         <a class="link-back" asp-controller="Search" asp-action="Index">Back</a>
 
-        <form class="apprentice-choose-standard-form" asp-controller="Search" asp-action="ChooseStandard" method="post">
+        <form class="apprentice-choose-standard-form js-disable-on-submit" asp-controller="Search" asp-action="ChooseStandard" method="post">
 
             @* hidden with css by default *@
             <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
@@ -47,17 +47,16 @@
                             <p><span class="bold"><abbr title="Unique learner number">ULN</abbr>:</span> @Model.SearchResults.First().Uln</p>
                         </li>
                     </ul>
-                    <div class="error-message-container" sfa-validation-for="SelectedStandardCode" sfa-validationerror-class="form-group-error">
-                        <span class="error-message" asp-validation-for="SelectedStandardCode"></span>
-                    </div>
+                    
                 </div>
 
                 <div class="form-group" sfa-validation-for="SelectedStandardCode" sfa-validationerror-class="form-group-error">
+                    <div class="error-message-container" sfa-validation-for="SelectedStandardCode" >
+                        <span class="error-message" asp-validation-for="SelectedStandardCode"></span>
+                    </div>
                     @if (Model.SearchResults.Any(sr => sr.CertificateReference == null))
                     {
-                        <div class="form-block">
-                            <span class="bold-medium">@Localizer.Pluralize("AssessmentsNotRecordedYet", Model.SearchResults.Count(sr => sr.CertificateReference == null) > 1)</span>
-                        </div>
+                        <span class="form-label-bold">@Localizer.Pluralize("AssessmentsNotRecordedYet", Model.SearchResults.Count(sr => sr.CertificateReference == null) > 1)</span>
                         foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference == null))
                         {
                             <div class="multiple-choice">
@@ -70,10 +69,7 @@
                     }
                     @if (Model.SearchResults.Any(sr => sr.CertificateReference != null))
                     {
-
-                        <div class="form-block">
-                            <span class="bold-medium">@Localizer.Pluralize("PreviouslyRecordedAssessments", Model.SearchResults.Count(sr => sr.CertificateReference != null) > 1)</span>
-                        </div>
+                        <span class="form-label-bold">@Localizer.Pluralize("PreviouslyRecordedAssessments", Model.SearchResults.Count(sr => sr.CertificateReference != null) > 1)</span>
                         foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference != null))
                         {
                             <div class="multiple-choice">

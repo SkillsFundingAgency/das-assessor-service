@@ -83,19 +83,23 @@
                     </a>
                 </dd>
             </div>
-            <div>
-                <dt class="cya-question">
-                    Option
-                </dt>
-                <dd class="cya-answer">
-                    @Model.Option
-                </dd>
-                <dd class="cya-change">
-                    <a asp-controller="CertificateOption" asp-action="Option" asp-route-redirecttocheck="true">
-                        Change<span class="visually-hidden"> option</span>
-                    </a>
-                </dd>
-            </div>
+            @if ((bool) TempData["HideOption"] == false)
+            {
+                <div>
+                    <dt class="cya-question">
+                        Option
+                    </dt>
+                    <dd class="cya-answer">
+                        @Model.Option
+                    </dd>
+                    <dd class="cya-change">
+                        <a asp-controller="CertificateOption" asp-action="Option" asp-route-redirecttocheck="true">
+                            Change<span class="visually-hidden"> option</span>
+                        </a>
+                    </dd>
+                </div>
+            }
+            
             <div>
                 <dt class="cya-question">
                     Achievement date
@@ -180,7 +184,7 @@
             </div>
         </dl>
 
-        <form type="post" asp-controller="CertificateCheck">
+        <form class="js-disable-on-submit" method="post" asp-controller="CertificateCheck">
             @Html.HiddenFor(c => c.Id)
             <button type="submit" class="button">@Localizer["ContinueButton"]</button>
         </form>
