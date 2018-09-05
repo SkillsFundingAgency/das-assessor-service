@@ -68,7 +68,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             _registerQueryRepository.Verify(r => r.GetAssessmentOrganisationsByOrganisationId(searchstring));
             organisations.Count.Should().Be(2);
             organisations.Should().Contain(_assessmentOrganisationDetails1);
-            organisations.Should().Contain(_assessmentOrganisationDetails1);
+            organisations.Should().Contain(_assessmentOrganisationDetails2);
         }
 
         [Test]
@@ -91,7 +91,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
 
             organisations.Count.Should().Be(2);
             organisations.Should().Contain(_assessmentOrganisationDetails1);
-            organisations.Should().Contain(_assessmentOrganisationDetails1);
+            organisations.Should().Contain(_assessmentOrganisationDetails2);
         }
 
         [Test]
@@ -118,7 +118,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
 
             organisations.Count.Should().Be(2);
             organisations.Should().Contain(_assessmentOrganisationDetails1);
-            organisations.Should().Contain(_assessmentOrganisationDetails1);
+            organisations.Should().Contain(_assessmentOrganisationDetails2);
         }
     }
 }
