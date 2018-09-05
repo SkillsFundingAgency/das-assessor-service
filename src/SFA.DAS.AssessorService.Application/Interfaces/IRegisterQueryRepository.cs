@@ -16,5 +16,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<bool> OrganisationTypeExists(int organisationTypeId);
         Task<bool> EpaOrganisationAlreadyUsingUkprn(long ukprn, string organisationId);
         Task<string> EpaOrganisationIdCurrentMaximum();
+        Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisations();
     }
 }

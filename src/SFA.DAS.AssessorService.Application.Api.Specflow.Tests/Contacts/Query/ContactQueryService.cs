@@ -1,10 +1,13 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Query
+﻿using SFA.DAS.AssessorService.Settings;
+
+namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Contacts.Query
 {
     public class ContactQueryService : BaseRestServce
     {
         private readonly RestClientResult _restClientResult;
 
-        public ContactQueryService(RestClientResult restClientResult)
+        public ContactQueryService(RestClientResult restClientResult,
+            IWebConfiguration webConfiguration) : base(webConfiguration)
         {
             _restClientResult = restClientResult;
         }

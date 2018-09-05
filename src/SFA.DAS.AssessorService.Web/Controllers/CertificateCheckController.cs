@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.Infrastructure;
@@ -21,6 +23,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Check()
         {
+            var sessionString = SessionService.Get("CertificateSession");
+            if (sessionString == null)
+            {
+                return RedirectToAction("Index", "Search");
+            }
+            var certSession = JsonConvert.DeserializeObject<CertificateSession>(sessionString);
+            TempData["HideOption"] = !certSession.Options.Any();
+
             return await LoadViewModel<CertificateCheckViewModel>("~/Views/Certificate/Check.cshtml");
         }
         

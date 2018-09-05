@@ -11,15 +11,15 @@
     <div class="column-two-thirds">
         @if (Model.BackToCheckPage)
         {
-            <a class="link-back" asp-controller="CertificateCheck" asp-action="Check">Back</a>
+            <a class="link-back" asp-controller="CertificateCheck" asp-action="Check" >Back</a>
         }
         else
         {
-            <a class="link-back" asp-controller="CertificateOption" asp-action="Option">Back</a>
+            <a class="link-back" asp-controller="CertificateOption" asp-action="Option" asp-route-fromback="true">Back</a>
         }
         
 
-        <form class="apprentice-date-form" type="post" asp-controller="CertificateDate">
+        <form class="apprentice-date-form js-disable-on-submit" method="post" asp-controller="CertificateDate">
             <input type="hidden" name="fullDate" id="fullDate" class="date-input" />
             @Html.HiddenFor(c => c.Id)
             @Html.HiddenFor(m => m.StartDate)
