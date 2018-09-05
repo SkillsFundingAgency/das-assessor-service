@@ -11,7 +11,7 @@ using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Validators;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private;
 
-namespace SFA.DAS.AssessorService.Web.Controllers
+namespace SFA.DAS.AssessorService.Web.Controllers.Private
 {
     [Authorize]
     [Route("certificate/learningstartdate")]

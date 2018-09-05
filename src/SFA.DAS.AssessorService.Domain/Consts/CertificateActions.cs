@@ -6,6 +6,7 @@
         public const string Address = "Address";
         public const string AddressSummary = "AddressSummary";
         public const string Date = "Date";
+        public const string FirstName = "FirstName";
         public const string LearningStartDate = "LearningStartDate";
         public const string Grade = "Grade";
         public const string Option = "Option";
@@ -14,5 +15,6 @@
         public const string Printed = "Printed";
         public const string Recipient = "Recipient";
         public const string Reprint = "Reprint";
+        public const string Ukprn = "Ukprn";
     }
 } 

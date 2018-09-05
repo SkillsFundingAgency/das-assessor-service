@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Handlers.Certificates;
+using SFA.DAS.AssessorService.Application.Handlers.Staff;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Logging;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -73,7 +74,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Private
                     CreatedBy = request.Username,
                     CertificateData = JsonConvert.SerializeObject(certData),
                     Status = Domain.Consts.CertificateStatus.Draft,
-                    CertificateReference = ""
+                    CertificateReference = "",
+                    IsPrivatelyFunded = true
                 });
 
             newCertificate.CertificateReference = newCertificate.CertificateReferenceId.ToString().PadLeft(8, '0');

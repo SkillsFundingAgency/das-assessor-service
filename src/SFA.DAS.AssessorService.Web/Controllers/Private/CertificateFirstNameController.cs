@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.Infrastructure;
-using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
+using SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.Private
 {
@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
         {
             return await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/Certificate/FirstName.cshtml",
-                nextAction: RedirectToAction("LearnerStartDate", "CertificateLearnerStartDate"), action: CertificateActions.Grade);
+                nextAction: RedirectToAction("Ukprn", "CertificateProviderUkprn"), action: CertificateActions.FirstName);
         }
     }
 }

@@ -120,16 +120,7 @@
   <data name="ContinueButton" xml:space="preserve">
     <value>Continue</value>
   </data>
-  <data name="DateHint" xml:space="preserve">
-    <value>For example, 15 10 2017</value>
-  </data>
   <data name="Heading" xml:space="preserve">
-    <value>What's the learner start date?</value>
-  </data>
-  <data name="InfoBody" xml:space="preserve">
-    <value>The learner start date is the date you confirmed the apprentice started the apprenticeship.</value>
-  </data>
-  <data name="InfoHeader" xml:space="preserve">
-    <value>What’s an leaner start date?</value>
+    <value>Please select Ukprn?</value>
   </data>
 </root>

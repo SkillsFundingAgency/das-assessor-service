@@ -1,36 +1,59 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.Web.Infrastructure;
-using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
+using SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private;
 
 namespace SFA.DAS.AssessorService.Web.Controllers.Private
 {
     [Authorize]
-    [Route("certificate/firstname")]
+    [Route("certificate/ukprns")]
     public class CertificateProviderUkprnController : CertificateBaseController
     {
-        public CertificateProviderUkprnController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor, ICertificateApiClient certificateApiClient, ISessionService sessionService)
+        private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
+
+        public CertificateProviderUkprnController(ILogger<CertificateController> logger, 
+            IHttpContextAccessor contextAccessor,
+            IAssessmentOrgsApiClient assessmentOrgsApiClient,
+            ICertificateApiClient certificateApiClient, ISessionService sessionService)
             : base(logger, contextAccessor, certificateApiClient, sessionService)
-        { }
+        {
+            _assessmentOrgsApiClient = assessmentOrgsApiClient;
+        }
 
         [HttpGet]
         public async Task<IActionResult> Ukprn(bool? redirectToCheck = false)
         {
-            CertificateFirstNameViewModel vm = new CertificateFirstNameViewModel();
-            return await LoadViewModel<CertificateFirstNameViewModel>("~/Views/Certificate/FirstName.cshtml");
+
+            var ukprns = (await _assessmentOrgsApiClient.GetProviders())
+                .Select(q => new SelectListItem {Value = q.Ukprn.ToString(), Text = q.Ukprn.ToString()});
+           
+
+            var viewResult = await LoadViewModel<CertificateUkprnListViewModel>("~/Views/Certificate/Ukprn.cshtml");
+            var vm = ((viewResult as ViewResult).Model) as CertificateUkprnListViewModel;
+            vm.Ukprns = ukprns;
+
+            return viewResult;
         }
 
         [HttpPost(Name = "Ukprn")]
-        public async Task<IActionResult> Ukprn(CertificateFirstNameViewModel vm)
+        public async Task<IActionResult> Ukprn(CertificateUkprnListViewModel vm)
         {
+
+            var ukprns = (await _assessmentOrgsApiClient.GetProviders())
+                .Select(q => new SelectListItem { Value = q.Ukprn.ToString(), Text = q.Ukprn.ToString() });
+            vm.Ukprns = ukprns;
+
             return await SaveViewModel(vm,
-                returnToIfModelNotValid: "~/Views/Certificate/FirstName.cshtml",
-                nextAction: RedirectToAction("LearnerStartDate", "CertificateLearnerStartDate"), action: CertificateActions.Grade);
+                returnToIfModelNotValid: "~/Views/Certificate/Ukprn.cshtml",
+                nextAction: RedirectToAction("LearnerStartDate", "CertificateLearnerStartDate"), action: CertificateActions.LearningStartDate);
         }
     }
 }

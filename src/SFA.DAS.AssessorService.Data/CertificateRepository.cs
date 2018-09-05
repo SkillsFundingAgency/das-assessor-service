@@ -159,6 +159,7 @@ namespace SFA.DAS.AssessorService.Data
             cert.UpdatedBy = username;
             cert.Status = certificate.Status;
             cert.UpdatedAt = certificate.UpdatedAt;
+            cert.ProviderUkPrn = certificate.ProviderUkPrn;
 
             if (updateLog)
             {

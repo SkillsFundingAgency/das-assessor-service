@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private
 @inject IViewLocalizer Localizer
-@model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateFirstNameViewModel
+@model SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private.CertificateFirstNameViewModel
 
 @{
     ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Recipient's name";
@@ -11,11 +12,11 @@
     <div class="column-two-thirds">
         @if (Model.BackToCheckPage)
         {
-            <a class="link-back" asp-controller="CertificateCheck" asp-action="Check">Back</a>
+            <a class="link-back" asp-controller="CertificatePrivateDeclaration" asp-action="Index">Back</a>
         }
         else
         {
-            <a asp-controller="CertificateAddress" asp-action="Address" class="link-back">Back</a>
+            <a asp-controller="CertificatePrivateDeclaration" asp-action="Index" class="link-back">Back</a>
         }
 
         <form class="apprentice-firstname-form js-disable-on-submit" method="post" asp-action="FirstName" asp-controller="CertificateFirstName">
