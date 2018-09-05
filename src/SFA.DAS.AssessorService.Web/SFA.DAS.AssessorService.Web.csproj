@@ -4,9 +4,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Services\**" />
+    <Compile Remove="Views\CertificateAddressSummary\**" />
     <Content Remove="Services\**" />
+    <Content Remove="Views\CertificateAddressSummary\**" />
     <EmbeddedResource Remove="Services\**" />
+    <EmbeddedResource Remove="Views\CertificateAddressSummary\**" />
     <None Remove="Services\**" />
+    <None Remove="Views\CertificateAddressSummary\**" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="inactive_app_offline_public_beta.htm" />
@@ -39,6 +43,11 @@
     <ProjectReference Include="..\SFA.DAS.AssessorService.Settings\SFA.DAS.AssessorService.Settings.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="Resources\Validators\CertificateRecipientViewModelValidator.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>CertificateRecipientViewModelValidator.resx</DependentUpon>
+    </Compile>
     <Compile Update="Resources\Views\Certificate\Declaration.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -49,8 +58,20 @@
     <Content Update="nlog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Update="Views\Certificate\AddressSummary.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
   </ItemGroup>
   <ItemGroup>
+    <Content Update="Views\Certificate\Recipient.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\Validators\CertificateRecipientViewModelValidator.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>CertificateRecipientViewModelValidator.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Update="Resources\Validators\CertificateAddressViewModelValidator.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
@@ -64,6 +85,12 @@
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Validators\SearchQueryViewModelValidator.en.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Certificate\AddressSummary.en.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Certificate\Recipient.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Views\CertificateHistory\CertificateHistory.en.resx">

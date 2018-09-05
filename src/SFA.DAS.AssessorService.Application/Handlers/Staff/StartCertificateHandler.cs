@@ -87,7 +87,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                     CertificateData = JsonConvert.SerializeObject(certData),
                     Status = Domain.Consts.CertificateStatus.Draft,
                     CertificateReference = "",
-                    LearnRefNumber = ilr.LearnRefNumber
+                    LearnRefNumber = ilr.LearnRefNumber,
+                    CreateDay = DateTime.UtcNow.Date
                 });
 
             newCertificate.CertificateReference = newCertificate.CertificateReferenceId.ToString().PadLeft(8,'0');
