@@ -16,19 +16,13 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<bool> OrganisationTypeExists(int organisationTypeId);
         Task<string> EpaOrganisationIdCurrentMaximum();
         Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisations();
-
-
-
-
-
-
-
-
-
+        Task<IEnumerable<EpaOrganisation>> GetAssessmentOrganisationsByStandardId(int standardId);
+        Task<IEnumerable<AssessmentOrganisationContact>> GetAssessmentOrganisationContacts(string organisationId);
+        Task<AssessmentOrganisationContact> GetPrimaryOrFirstContact(string organisationId);
+        Task<IEnumerable<OrganisationStandardSummary>> GetOrganisationStandardByOrganisationId(string organisationId);
+        Task<IEnumerable<OrganisationStandardPeriod>> GetOrganisatonStandardPeriodsByOrganisationStandard(string organisationId, int standardId);
         Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsByUkprn(string ukprn);
         Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsByOrganisationId(string organisationId);
         Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsbyName(string organisationName);
-
-
     }
 }
