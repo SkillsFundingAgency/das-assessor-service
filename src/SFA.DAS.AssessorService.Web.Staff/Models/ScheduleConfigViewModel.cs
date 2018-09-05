@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Models
         public ScheduleJobType ScheduleType { get; set; }
 
         [FutureDate(GracePeriodInMinutes = 5, ErrorMessage = "Please enter a future date")]
-        public DateTime Date => new DateTime(Year, Month, Day, Hour, Minute, 0);
+        public DateTime Date => DateTime.MinValue.AddYears(Year).AddMonths(Month).AddDays(Day).AddHours(Hour).AddMinutes(Minute);
         [Range(1, 31, ErrorMessage = "Please enter a valid Day")]
         public int Day { get; set; }
         [Range(1, 12, ErrorMessage = "Please enter a valid Month")]
