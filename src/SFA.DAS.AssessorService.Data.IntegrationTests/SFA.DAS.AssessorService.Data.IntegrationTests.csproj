@@ -28,10 +28,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="connectionStrings.Template.json">
+    <None Update="connectionStrings.Local.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="connectionStrings.Local.json">
+    <None Update="connectionStrings.Template.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

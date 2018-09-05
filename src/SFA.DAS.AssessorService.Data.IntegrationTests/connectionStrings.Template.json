@@ -6,3 +6,5 @@
 }
 // Instructions
 // Make a copy of this, named connectionStrings.Local.json and enter your local datasource in the placeholder
+
+// Go to the properties of this new file and set the property 'Copy to Output Directory' to 'Copy Always'
