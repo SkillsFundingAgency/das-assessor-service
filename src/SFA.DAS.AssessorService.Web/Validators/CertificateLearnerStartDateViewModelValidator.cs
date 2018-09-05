@@ -46,12 +46,6 @@ namespace SFA.DAS.AssessorService.Web.Validators
                     {
                         context.AddFailure("Date", localizer["DateMustNotBeInFuture"]);
                     }
-
-                    var achievementStartDate = new DateTime(2017, 1, 1);
-                    if (achievementDate < achievementStartDate)
-                    {
-                        context.AddFailure("Date", localizer["DateMustNotBeBeforeStartDate"]);
-                    }
                 }
                 catch (ArgumentOutOfRangeException)
                 {
@@ -77,20 +71,5 @@ namespace SFA.DAS.AssessorService.Web.Validators
         {
             return int.TryParse(datePart, out int _);
         }
-
-        //private bool BeAtLeastTwelveMonthsFromStartDate(CertificateDateViewModel vm)
-        //{
-        //    if (int.TryParse(vm.Day, out var day) && int.TryParse(vm.Month, out var month) &&
-        //        int.TryParse(vm.Year, out var year))
-        //    {
-        //        var achievementDate = new DateTime(year, month, day);
-        //        if (achievementDate < vm.StartDate.AddMonths(12) && vm.WarningShown == "false")
-        //        {
-        //            return false;
-        //        }
-        //    }
-
-        //    return true;
-        //}
     }
 }
