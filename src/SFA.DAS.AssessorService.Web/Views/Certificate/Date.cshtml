@@ -11,11 +11,11 @@
     <div class="column-two-thirds">
         @if (Model.BackToCheckPage)
         {
-            <a class="link-back" asp-controller="CertificateCheck" asp-action="Check">Back</a>
+            <a class="link-back" asp-controller="CertificateCheck" asp-action="Check" >Back</a>
         }
         else
         {
-            <a class="link-back" asp-controller="CertificateOption" asp-action="Option">Back</a>
+            <a class="link-back" asp-controller="CertificateOption" asp-action="Option" asp-route-fromback="true">Back</a>
         }
         
 

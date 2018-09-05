@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -37,18 +38,30 @@ namespace SFA.DAS.AssessorService.Data
         {
             // Another check closer to INSERT that there isn't already a cert for this uln / std code
             var existingCert = await _context.Certificates.FirstOrDefaultAsync(c =>
-                c.Uln == certificate.Uln && c.StandardCode == certificate.StandardCode);
-            if (existingCert == null)
+                c.Uln == certificate.Uln && c.StandardCode == certificate.StandardCode && c.CreateDay == certificate.CreateDay);
+            if (existingCert != null) return existingCert;
+            
+            _context.Certificates.Add(certificate);
+            try
             {
-                _context.Certificates.Add(certificate);
                 _context.SaveChanges();
-                await UpdateCertificateLog(certificate, CertificateActions.Start, certificate.CreatedBy);
-                _context.SaveChanges();
-
-                return certificate;
             }
+            catch (Exception e)
+            {
+                if (!(e.InnerException is SqlException sqlException)) throw;
 
-            return existingCert;
+                if (sqlException.Number == 2601 || sqlException.Number == 2627)
+                {
+                    return await _context.Certificates.FirstOrDefaultAsync(c =>
+                        c.Uln == certificate.Uln && c.StandardCode == certificate.StandardCode && c.CreateDay == certificate.CreateDay);
+                }
+                throw;
+            }
+                
+            await UpdateCertificateLog(certificate, CertificateActions.Start, certificate.CreatedBy);
+            _context.SaveChanges();
+
+            return certificate;
         }
 
         public async Task<Certificate> GetCertificate(Guid id)
@@ -266,6 +279,12 @@ namespace SFA.DAS.AssessorService.Data
                                                                   WHERE ProviderUkPrn = @providerUkPrn 
                                                                   AND JSON_VALUE(CertificateData, '$.ProviderName') IS NOT NULL 
                                                                   ORDER BY CreatedAt DESC", new {providerUkPrn});
+        }
+
+        public async Task<List<Option>> GetOptions(int stdCode)
+        {
+            return (await _connection.QueryAsync<Option>("SELECT * FROM Options WHERE StdCode = @stdCode",
+                new {stdCode})).ToList();
         }
     }
 }
