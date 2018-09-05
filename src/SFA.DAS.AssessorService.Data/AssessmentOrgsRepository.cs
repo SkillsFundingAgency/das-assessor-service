@@ -320,13 +320,23 @@ namespace SFA.DAS.AssessorService.Data
                         if (contactsToInsert.Where(c => c.Username == contact.Username).Count()==0)
                             contactsToInsert.Add(contact);
                         else
-                        {                        
-                            var matchingContacts = contactsToInsert.Where(c => c.Username == contact.Username);
-                            var x = "stay here";
+                        {
+                            var incrementer = 2;
+                            while (contactsToInsert.Where(c => c.Username == contact.Username + incrementer.ToString()).Count() > 0 && incrementer < 5)
+                            {
+                                incrementer++;
+                            }
+                            contact.Username += incrementer.ToString();
+                            if (incrementer <5 )
+                                contactsToInsert.Add(contact);
                         }
                     }
                     else
                     {
+                        var username = connection
+                            .ExecuteScalar("select username from [Contacts] where [EndPointAssessorOrganisationId] = @EndPointAssessorOrganisationId and email = @email",
+                                contact).ToString();
+                        contact.Username = username;
                         contactsToUpdate.Add(contact);
                     }
                 }
@@ -352,14 +362,12 @@ namespace SFA.DAS.AssessorService.Data
 
                 foreach (var contact in contactsToUpdate)
                 {
-                    var email = ConvertStringToSqlValueString(contact.Email);
-                    var endPointAssessorOrganisationId =
-                        ConvertStringToSqlValueString(contact.EndPointAssessorOrganisationId);
+                    var username = ConvertStringToSqlValueString(contact.Username);
                     var phoneNumber = ConvertStringToSqlValueString(contact.PhoneNumber);
 
                     sql.Append(
                         $@"UPDATE [Contacts] Set [PhoneNumber] = {phoneNumber} WHERE "+
-                        $@"[EndPointAssessorOrganisationId] = {endPointAssessorOrganisationId} and email = {email}; "
+                        $@"[username] = {username}; "
                     );
                 }
 
