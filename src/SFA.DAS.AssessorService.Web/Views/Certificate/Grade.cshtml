@@ -49,11 +49,11 @@
                         @*<span class="heading-secondary">@Model.GivenNames @Model.FamilyName</span>*@
                         @Localizer["Heading"]
                     </h1>
-                    <div class="error-message-container" sfa-validation-for="SelectedGrade" sfa-validationerror-class="form-group-error">
-                        <span class="error-message" asp-validation-for="SelectedGrade"></span>
-                    </div>
                 </div>
                 <div class="form-group" sfa-validation-for="SelectedGrade" sfa-validationerror-class="form-group-error">
+                    <div class="error-message-container" sfa-validation-for="SelectedGrade">
+                        <span class="error-message" asp-validation-for="SelectedGrade"></span>
+                    </div>
                     @foreach (var grade in Model.Grades)
                     {
                         <div class="multiple-choice">

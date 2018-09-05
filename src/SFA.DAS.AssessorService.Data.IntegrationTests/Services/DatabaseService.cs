@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using Dapper;
@@ -43,7 +42,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
         public void SetupDatabase()
         {
             DropDatabase();
-  
+
             using (var connection = new SqlConnection(Configuration.GetConnectionString("SqlConnectionString")))
             {
                 if (connection.State != ConnectionState.Open)
@@ -65,7 +64,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
             using (var connection = new SqlConnection(Configuration.GetConnectionString("SqlConnectionStringTest")))
             {
                 if (connection.State != ConnectionState.Open)
-                    connection.Open();             
+                    connection.Open();
                 connection.Execute(sql);
                 connection.Close();
             }
@@ -80,6 +79,20 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
                 var res = connection.Query<T>(sql);
                 connection.Close();
                 return res.FirstOrDefault();
+            }
+        }
+
+        
+        public object ExecuteScalar(string sql)
+        {
+            using (var connection = new SqlConnection(Configuration.GetConnectionString("SqlConnectionStringTest")))
+            {
+                if (connection.State != ConnectionState.Open)
+                    connection.Open();
+                var res = connection.ExecuteScalar(sql);
+                connection.Close();
+
+                return res;
             }
         }
 

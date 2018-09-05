@@ -15,5 +15,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<PaginatedList<CertificateHistoryResponse>> GetCertificateHistory(int pageIndex, string userName);
         Task<CertificateAddress> GetContactPreviousAddress(string userName);
         Task<List<CertificateAddress>> GetPreviousAddressess(string userName);
+        Task<List<Option>> GetOptions(int stdCode);
     }
 }
