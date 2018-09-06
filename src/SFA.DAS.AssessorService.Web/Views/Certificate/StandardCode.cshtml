@@ -1,7 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
 @using SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private
 @inject IViewLocalizer Localizer
-@model SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private.CertificateUkprnListViewModel
+@model SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private.CertificateStandardCodeListViewModel
 
 @{
     ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Select Ukprn";
@@ -16,10 +16,10 @@
         }
         else
         {
-        <a asp-controller="CertificatePrivateFirstName" asp-action="FirstName" class="link-back">Back</a>
+        <a asp-controller="CertificatePrivateLearnerStartDate" asp-action="LearnerStartDate" class="link-back">Back</a>
         }
 
-        <form class="apprentice-firstname-form js-disable-on-submit" method="post" asp-action="Ukprn" asp-controller="CertificatePrivateProviderUkprn">
+        <form class="apprentice-firstname-form js-disable-on-submit" method="post" asp-action="StandardCode" asp-controller="CertificatePrivateStandardCode">
             @Html.HiddenFor(c => c.Id)
 
             @* hidden with css by default *@
@@ -37,8 +37,8 @@
                     There's a problem
                 </h2>
                 <ul class="error-summary-list">
-                    <li><a sfa-validation-for="Ukprns"></a></li>
-                    <li><a sfa-validation-for="SelectedUkprn"></a></li>
+                    <li><a sfa-validation-for="StandardCodes"></a></li>
+                    <li><a sfa-validation-for="SelectedStandardCode"></a></li>
                 </ul>
             </div>
             }
@@ -51,16 +51,16 @@
                 </legend>
 
                 <div class="form-group">
-                    <label for="Ukprns">
-                        <span class="form-label-bold visually-hidden">@Localizer["Ukprns"]</span>                        
-                        <span class="error-message" asp-validation-for="Ukprns"></span>
+                    <label for="StandardCodes">
+                        <span class="form-label-bold visually-hidden">@Localizer["StandardCodes"]</span>
+                        <span class="error-message" asp-validation-for="StandardCodes"></span>
                     </label>
                     <div class="col-md-5">
-                        <select asp-for="SelectedUkprn" 
-                                asp-items="@(new SelectList(Model.Ukprns,"Value","Text"))">
+                        <select asp-for="SelectedStandardCode"
+                                asp-items="@(new SelectList(Model.StandardCodes,"Value","Text"))">
                             <option>Please select one</option>
                         </select>
-                     @*   <span class="form-control" sfa-validation-for="@Model.SelectedUkprn" sfa-validationerror-class="form-control-error" />*@                        
+                        @*   <span class="form-control" sfa-validation-for="@Model.SelectedUkprn" sfa-validationerror-class="form-control-error" />*@
                     </div>
                 </div>
             </fieldset>
@@ -72,5 +72,5 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
- @*   @{await Html.RenderPartialAsync("~/Views/Certificate/_FirstNameScriptsPartial.cshtml"); }*@
+    @*   @{await Html.RenderPartialAsync("~/Views/Certificate/_FirstNameScriptsPartial.cshtml"); }*@
 }

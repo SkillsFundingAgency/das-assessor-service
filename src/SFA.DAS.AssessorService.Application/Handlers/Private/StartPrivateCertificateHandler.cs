@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -43,12 +44,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Private
             //_logger.LogInformation("CreateNewCertificate Before Get Ilr from db");
             //var ilr = await _ilrRepository.Get(request.Uln, request.StandardCode);
             //_logger.LogInformation("CreateNewCertificate Before Get Organisation from db");
-            //var organisation = await _organisationQueryRepository.GetByUkPrn(request.UkPrn);
-            //_logger.LogInformation("CreateNewCertificate Before Get Standard from API");
+            var organisation = await _organisationQueryRepository.GetByUkPrn(request.UkPrn);
+            _logger.LogInformation("CreateNewCertificate Before Get Standard from API");
             //var standard = await _assessmentOrgsApiClient.GetStandard(ilr.StdCode);
             //_logger.LogInformation("CreateNewCertificate Before Get Provider from API");
             ////Provider provider;
-            //try
+            //trym
             //{
             //    provider = await _assessmentOrgsApiClient.GetProvider(ilr.UkPrn);
             //}
@@ -63,7 +64,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Private
 
             var certData = new CertificateData()
             {
-               LearnerFamilyName = request.LastName
+                LearnerFamilyName = request.LastName
             };
 
             _logger.LogInformation("CreateNewCertificate Before create new Certificate");
@@ -71,6 +72,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Private
                 new Certificate()
                 {
                     Uln = request.Uln,
+                    OrganisationId = organisation.Id,
                     CreatedBy = request.Username,
                     CertificateData = JsonConvert.SerializeObject(certData),
                     Status = Domain.Consts.CertificateStatus.Draft,

@@ -15,11 +15,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
 {
     [Authorize]
     [Route("certificate/learningstartdate")]
-    public class CertificateLearnerStartDateController : CertificateBaseController
+    public class CertificatePrivateLearnerStartDateController : CertificateBaseController
     {
         private readonly CertificateLearnerStartDateViewModelValidator _validator;
 
-        public CertificateLearnerStartDateController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor,
+        public CertificatePrivateLearnerStartDateController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor,
             ICertificateApiClient certificateApiClient, CertificateLearnerStartDateViewModelValidator validator, ISessionService sessionService) : base(logger, contextAccessor, certificateApiClient, sessionService)
         {
             _validator = validator;
@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
 
             var actionResult = await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/Certificate/LearnerStartDate.cshtml",
-                nextAction: RedirectToAction("Address", "CertificateAddress"), action: CertificateActions.Date);
+                nextAction: RedirectToAction("StandardCode", "CertificatePrivateStandardCode"), action: CertificateActions.Date);
 
             return actionResult;
         }

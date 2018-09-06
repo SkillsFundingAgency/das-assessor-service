@@ -17,7 +17,7 @@
     [ProviderUkPrn] INT NOT NULL, 
     [CertificateReferenceId] INT NOT NULL IDENTITY(10001,1), 
 	[LearnRefNumber] NVARCHAR(12) NULL,
-	[IsPrivatelyFunded] BIT NOT NULL, 
+	[IsPrivatelyFunded] BIT, 
     CONSTRAINT [PK_Certificates] PRIMARY KEY ([Id]),
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO

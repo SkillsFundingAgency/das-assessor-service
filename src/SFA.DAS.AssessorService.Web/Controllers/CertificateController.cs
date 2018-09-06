@@ -76,6 +76,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             var cert = await _certificateApiClient.StartPrivate(new StartCertificatePrivateRequest()
             {
+                UkPrn = int.Parse(ukprn),
                 Uln = certificateStartPrivateViewModel.Uln,
                 LastName = certificateStartPrivateViewModel.Surname,
                 Username = username
@@ -90,7 +91,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             _logger.LogInformation(
                 $"New Private Certificate received with ID {cert.Id}");
 
-            return RedirectToAction("FirstName", "CertificateFirstName");
+            return RedirectToAction("FirstName", "CertificatePrivateFirstName");
         }
     }
 }

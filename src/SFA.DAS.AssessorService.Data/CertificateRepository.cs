@@ -64,8 +64,9 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<Certificate> GetPrivateCertificate(long uln, string lastName)
         {
-            return await _context.Certificates.SingleOrDefaultAsync(c =>
+            var certificate = await _context.Certificates.SingleOrDefaultAsync(c =>
                 c.Uln == uln && c.IsPrivatelyFunded && CheckLastName(c.CertificateData, lastName));
+            return certificate;
         }
 
         public async Task<Certificate> GetCertificate(
@@ -156,10 +157,12 @@ namespace SFA.DAS.AssessorService.Data
             var cert = await GetCertificate(certificate.Id);
 
             cert.CertificateData = certificate.CertificateData;
+            cert.ProviderUkPrn = certificate.ProviderUkPrn;
+            cert.StandardCode = certificate.StandardCode;
             cert.UpdatedBy = username;
             cert.Status = certificate.Status;
             cert.UpdatedAt = certificate.UpdatedAt;
-            cert.ProviderUkPrn = certificate.ProviderUkPrn;
+      
 
             if (updateLog)
             {

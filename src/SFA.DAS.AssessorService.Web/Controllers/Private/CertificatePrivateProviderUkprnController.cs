@@ -15,11 +15,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
 {
     [Authorize]
     [Route("certificate/ukprns")]
-    public class CertificateProviderUkprnController : CertificateBaseController
+    public class CertificatePrivateProviderUkprnController : CertificateBaseController
     {
         private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
 
-        public CertificateProviderUkprnController(ILogger<CertificateController> logger, 
+        public CertificatePrivateProviderUkprnController(ILogger<CertificateController> logger, 
             IHttpContextAccessor contextAccessor,
             IAssessmentOrgsApiClient assessmentOrgsApiClient,
             ICertificateApiClient certificateApiClient, ISessionService sessionService)
@@ -53,7 +53,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
 
             return await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/Certificate/Ukprn.cshtml",
-                nextAction: RedirectToAction("LearnerStartDate", "CertificateLearnerStartDate"), action: CertificateActions.LearningStartDate);
+                nextAction: RedirectToAction("LearnerStartDate", "CertificatePrivateLearnerStartDate"), action: CertificateActions.LearningStartDate);
         }
     }
 }

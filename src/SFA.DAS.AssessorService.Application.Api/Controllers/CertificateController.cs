@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> StartPrivate([FromBody] StartCertificatePrivateRequest request)
         {
-            return Ok(await _mediator.Send(request));
+             return Ok(await _mediator.Send(request));
         }
 
         [HttpPut("update", Name = "Update")]

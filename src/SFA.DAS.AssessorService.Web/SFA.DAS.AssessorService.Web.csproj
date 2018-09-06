@@ -55,6 +55,9 @@
     <Content Update="Views\Certificate\AddressSummary.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Certificate\StandardCode.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Certificate\Ukprn.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
@@ -80,6 +83,14 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Update="Resources\Validators\CertificateUkprnListViewModelValidator.resx">
+      <LastGenOutput>CertificateUkprnListViewModelValidator.Designer.cs</LastGenOutput>
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Validators\CertificateStandardCodeViewModelValidator.resx">
+      <LastGenOutput>CertificateStandardCodeViewModelValidator - Copy.Designer.cs</LastGenOutput>
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="Resources\Validators\CertificateLearnerStartDateViewModelValidator.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
@@ -107,6 +118,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Views\Certificate\AddressSummary.en.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Certificate\StandardCode.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Views\Certificate\Ukprn.en.resx">

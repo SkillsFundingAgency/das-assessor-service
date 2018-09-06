@@ -12,9 +12,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
 {
     [Authorize]
     [Route("certificate/firstname")]
-    public class CertificateFirstNameController : CertificateBaseController
+    public class CertificatePrivateFirstNameController : CertificateBaseController
     {
-        public CertificateFirstNameController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor, ICertificateApiClient certificateApiClient, ISessionService sessionService)
+        public CertificatePrivateFirstNameController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor, ICertificateApiClient certificateApiClient, ISessionService sessionService)
             : base(logger, contextAccessor, certificateApiClient, sessionService)
         { }
 
@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
         {
             return await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/Certificate/FirstName.cshtml",
-                nextAction: RedirectToAction("Ukprn", "CertificateProviderUkprn"), action: CertificateActions.FirstName);
+                nextAction: RedirectToAction("Ukprn", "CertificatePrivateProviderUkprn"), action: CertificateActions.FirstName);
         }
     }
 }
