@@ -25,10 +25,6 @@ namespace SFA.DAS.AssessorService.Settings
         public string SpecflowDBTestConnectionString { get; set; }
 
         [JsonRequired] public string SessionRedisConnectionString { get; set; }
-
         [JsonRequired] public AuthSettings StaffAuthentication { get; set; }
-        [JsonRequired] public string GitUsername { get; set; }
-        [JsonRequired] public string GitPassword { get; set; }
-        [JsonRequired] public string AssessmentOrgsUrl { get; set; }
     }
 }
