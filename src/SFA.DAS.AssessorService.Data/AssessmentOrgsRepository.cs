@@ -20,7 +20,6 @@ namespace SFA.DAS.AssessorService.Data
         private readonly IWebConfiguration _configuration;
         private readonly ILogger<AssessmentOrgsRepository> _logger;
 
-
         public AssessmentOrgsRepository(IWebConfiguration configuration, ILogger<AssessmentOrgsRepository> logger)
         {
             _configuration = configuration;
@@ -58,7 +57,6 @@ namespace SFA.DAS.AssessorService.Data
             _logger.LogInformation($"Progress status: {progressStatus}");
 
             return progressStatus.ToString();
-
         }
 
         public void WriteDeliveryAreas(List<DeliveryArea> deliveryAreas)
@@ -99,7 +97,6 @@ namespace SFA.DAS.AssessorService.Data
                     connection.Open();
 
                 var organisationTypesToInsert = new List<TypeOfOrganisation>();
-
 
                 foreach (var organisationType in organisationTypes)
                 {
@@ -153,8 +150,7 @@ namespace SFA.DAS.AssessorService.Data
                     organisation.OrganisationData = organisationData;
 
                     if (currentCount == "0")
-                    {
-                      
+                    {                 
                         organisationsToInsert.Add(organisation);
                     }
                     else
@@ -207,27 +203,24 @@ namespace SFA.DAS.AssessorService.Data
                 var sql = new StringBuilder();
 
                 var currentNumber = connection.ExecuteScalar("select count(0) from [OrganisationStandard]").ToString();
-                if (currentNumber == "0")
+                if (currentNumber != "0") return organisationStandardsFromDatabase.ToList();
+                foreach (var organisationStandard in orgStandards)
                 {
-                   
-                        foreach (var organisationStandard in orgStandards)
-                        {
 
-                            var comments = ConvertStringToSqlValueString(organisationStandard.Comments);
-                            var effectiveFrom = ConvertDateToSqlValueString(organisationStandard.EffectiveFrom);
-                            var effectiveTo = ConvertDateToSqlValueString(organisationStandard.EffectiveTo);
-                            var dateStandardApprovedOnRegister =
-                                ConvertDateToSqlValueString(organisationStandard.DateStandardApprovedOnRegister);
+                    var comments = ConvertStringToSqlValueString(organisationStandard.Comments);
+                    var effectiveFrom = ConvertDateToSqlValueString(organisationStandard.EffectiveFrom);
+                    var effectiveTo = ConvertDateToSqlValueString(organisationStandard.EffectiveTo);
+                    var dateStandardApprovedOnRegister =
+                        ConvertDateToSqlValueString(organisationStandard.DateStandardApprovedOnRegister);
 
-                            var sqlToInsert = "INSERT INTO [OrganisationStandard] ([EndPointAssessorOrganisationId],[StandardCode],[EffectiveFrom],[EffectiveTo],[DateStandardApprovedOnRegister],[Comments],[Status])" +
-                                $"VALUES ('{organisationStandard.EndPointAssessorOrganisationId}' ,'{organisationStandard.StandardCode}' ,{effectiveFrom} ,{effectiveTo} ,{dateStandardApprovedOnRegister} ,{comments} ,'{organisationStandard.Status}'); ";
+                    var sqlToInsert = "INSERT INTO [OrganisationStandard] ([EndPointAssessorOrganisationId],[StandardCode],[EffectiveFrom],[EffectiveTo],[DateStandardApprovedOnRegister],[Comments],[Status])" +
+                                      $"VALUES ('{organisationStandard.EndPointAssessorOrganisationId}' ,'{organisationStandard.StandardCode}' ,{effectiveFrom} ,{effectiveTo} ,{dateStandardApprovedOnRegister} ,{comments} ,'{organisationStandard.Status}'); ";
 
-                            sql.Append(sqlToInsert);
-                        }
-                    connection.Execute(sql.ToString());
-                    organisationStandardsFromDatabase = connection.QueryAsync<EpaOrganisationStandard>("select * from [OrganisationStandard]").Result.ToList();                
-                    connection.Close();
+                    sql.Append(sqlToInsert);
                 }
+                connection.Execute(sql.ToString());
+                organisationStandardsFromDatabase = connection.QueryAsync<EpaOrganisationStandard>("select * from [OrganisationStandard]").Result.ToList();                
+                connection.Close();
             }
 
             return organisationStandardsFromDatabase.ToList();

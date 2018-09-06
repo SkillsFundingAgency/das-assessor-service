@@ -18,8 +18,6 @@ namespace SFA.DAS.AssessorService.Data
         private const string StandardsWorkSheetName = "Standards Lookup (LARS copy)";
 
         private const string DeliveryAreasWorkSheetName = "Register - Delivery areas";
-        private const int LookupsColumnDeliveryArea = 1;
-        private const int LookupsColumnOrganisationType = 2;
 
         public List<DeliveryArea> HarvestDeliveryAreas()
         {
@@ -53,7 +51,6 @@ namespace SFA.DAS.AssessorService.Data
                 new TypeOfOrganisation {Id = 8, Type = "Other", Status = "Live"},
                 new TypeOfOrganisation {Id = 9, Type = "Non-departmental public body", Status = "Live"}
             };
-
 
             return organisationTypes;
         }

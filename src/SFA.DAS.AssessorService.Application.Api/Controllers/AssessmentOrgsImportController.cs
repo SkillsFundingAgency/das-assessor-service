@@ -15,7 +15,6 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
     [Authorize]
-    [ValidateBadRequest]
     public class AssessmentOrgsImportController: Controller
     {
         private readonly ILogger<AssessmentOrgsImportController> _logger;
@@ -27,22 +26,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _mediator = mediator;
         }
 
-
-
         [HttpPatch("api/ao/assessment-organisations", Name = "BuildUpAssessmentOrganisations")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(AssessmentOrgsImportResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> BuildUpAssessmentOrganisations()
         {
-
-            var operation = "buildup";
             _logger.LogInformation($"Migration of EPAO spreadsheet requested");
             var response = await _mediator.Send(new AssessmentOrgsImportRequest());
             return Ok(response);
-        }
-
-
-       
+        }  
     }
 }
