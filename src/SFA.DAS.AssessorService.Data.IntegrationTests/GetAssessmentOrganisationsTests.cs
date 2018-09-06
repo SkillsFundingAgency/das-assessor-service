@@ -63,9 +63,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [Test]
         public void RunGetAllOrganisationsAndCheckAllOrganisationsExpectedAreReturned()
         {
-
             var organisationsReturned = _repository.GetAssessmentOrganisations().Result.ToList();
-
             Assert.AreEqual(2, organisationsReturned.Count(), $@"Expected 2 organisations back but got {organisationsReturned.Count()}");
             Assert.AreEqual(1, organisationsReturned.Count(x => x.Id == _organisation1.EndPointAssessorOrganisationId), "Organisation 1 Id was not found");
             Assert.AreEqual(1, organisationsReturned.Count(x => x.Id == _organisation2.EndPointAssessorOrganisationId), "Organisation 2 Id was not found");
