@@ -45,27 +45,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
                 Postcode = "postcode"
             };
 
-            _returnedOrganisation = new EpaOrganisation
-            {
-                Id = Guid.NewGuid(),
-                CreatedAt = DateTime.Now,
-                Name = _request.Name,
-                OrganisationId = _request.OrganisationId,
-                Ukprn = _request.Ukprn,
-                PrimaryContact = null,
-                Status = OrganisationStatus.New,
-                OrganisationTypeId = _request.OrganisationTypeId,
-                OrganisationData = new OrganisationData
-                {
-                    LegalName = _request.LegalName,
-                    Address1 = _request.Address1,
-                    Address2 = _request.Address2,
-                    Address3 = _request.Address3,
-                    Address4 = _request.Address4,
-                    Postcode = _request.Postcode
-                }
-            };
-
             _mediator.Setup(m =>
                 m.Send(_request, new CancellationToken())).Throws<NotFound>();
 
