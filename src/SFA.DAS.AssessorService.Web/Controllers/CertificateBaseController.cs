@@ -17,36 +17,36 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     public class CertificateBaseController : Controller
     {
         protected readonly ILogger<CertificateController> Logger;
-        private readonly IHttpContextAccessor _contextAccessor;
-        private readonly ICertificateApiClient _certificateApiClient;
-        private readonly ISessionService _sessionService;
+        protected readonly IHttpContextAccessor ContextAccessor;
+        protected readonly ICertificateApiClient CertificateApiClient;
+        protected readonly ISessionService SessionService;
 
         public CertificateBaseController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor, ICertificateApiClient certificateApiClient, ISessionService sessionService)
         {
             Logger = logger;
-            _contextAccessor = contextAccessor;
-            _certificateApiClient = certificateApiClient;
-            _sessionService = sessionService;
+            ContextAccessor = contextAccessor;
+            CertificateApiClient = certificateApiClient;
+            SessionService = sessionService;
         }
         protected async Task<IActionResult> LoadViewModel<T>(string view) where T : ICertificateViewModel, new()
         {
-            var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
+            var username = ContextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
             Logger.LogInformation($"Load View Model for {typeof(T).Name} for {username}");
             
             var viewModel = new T();
 
-            var query = _contextAccessor.HttpContext.Request.Query;
+            var query = ContextAccessor.HttpContext.Request.Query;
             if (query.ContainsKey("redirecttocheck") && bool.Parse(query["redirecttocheck"]))
             {
                 Logger.LogInformation($"RedirectToCheck for {typeof(T).Name} is true");
-                _sessionService.Set("redirecttocheck", "true");
+                SessionService.Set("redirecttocheck", "true");
                 viewModel.BackToCheckPage = true;
             }
             else
-                _sessionService.Remove("redirecttocheck");
+                SessionService.Remove("redirecttocheck");
                 
-            var sessionString = _sessionService.Get("CertificateSession");
+            var sessionString = SessionService.Get("CertificateSession");
             if (sessionString == null)
             {
                 Logger.LogInformation($"Session for {typeof(T).Name} requested by {username} has been lost. Redirecting to Search Index");
@@ -54,7 +54,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
             var certSession = JsonConvert.DeserializeObject<CertificateSession>(sessionString);
 
-            var certificate = await _certificateApiClient.GetCertificate(certSession.CertificateId);
+            var certificate = await CertificateApiClient.GetCertificate(certSession.CertificateId);
 
             Logger.LogInformation($"Got Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id}");
 
@@ -67,11 +67,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         protected async Task<IActionResult> SaveViewModel<T>(T vm, string returnToIfModelNotValid, RedirectToActionResult nextAction, string action) where T : ICertificateViewModel
         {
-            var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
+            var username = ContextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
             
             Logger.LogInformation($"Save View Model for {typeof(T).Name} for {username} with values: {GetModelValues(vm)}");
 
-            var certificate = await _certificateApiClient.GetCertificate(vm.Id);
+            var certificate = await CertificateApiClient.GetCertificate(vm.Id);
             var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 
             if (!ModelState.IsValid)
@@ -84,11 +84,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             var updatedCertificate = vm.GetCertificateFromViewModel(certificate, certData);
 
-            await _certificateApiClient.UpdateCertificate(new UpdateCertificateRequest(updatedCertificate) { Username = username, Action = action});
+            await CertificateApiClient.UpdateCertificate(new UpdateCertificateRequest(updatedCertificate) { Username = username, Action = action});
 
             Logger.LogInformation($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} updated.");
 
-            if (_sessionService.Exists("redirecttocheck") && bool.Parse(_sessionService.Get("redirecttocheck")))
+            if (SessionService.Exists("redirecttocheck") && bool.Parse(SessionService.Get("redirecttocheck")))
             {
                 Logger.LogInformation($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} redirecting back to Certificate Check.");
                 return new RedirectToActionResult("Check", "CertificateCheck", null);
