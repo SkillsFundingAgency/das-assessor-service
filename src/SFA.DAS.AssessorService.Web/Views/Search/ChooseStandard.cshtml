@@ -61,12 +61,12 @@
                         </div>
                         foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference == null))
                         {
-                                <div class="multiple-choice">
-                                    <input id=@("standard_" + result.StdCode) type="radio" name="SelectedStandardCode" value="@result.StdCode">
-                                    <label for=@("standard_" + result.StdCode)>
-                                        @result.Standard
-                                    </label>
-                                </div>
+                            <div class="multiple-choice">
+                                <input id=@("standard_" + result.StdCode) type="radio" name="SelectedStandardCode" value="@result.StdCode">
+                                <label for=@("standard_" + result.StdCode)>
+                                    @result.Standard
+                                </label>
+                            </div>
                         }
                     }
                     @if (Model.SearchResults.Any(sr => sr.CertificateReference != null))
@@ -76,13 +76,11 @@
                         </div>
                         foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference != null))
                         {
-                            <div class="form-group">
-                                <div class="multiple-choice">
-                                    <input id=@("standard_" + result.StdCode) type="radio" name="SelectedStandardCode" value="@result.StdCode">
-                                    <label for=@("standard_" + result.StdCode)>
-                                        @result.Standard
-                                    </label>
-                                </div>
+                            <div class="multiple-choice">
+                                <input id=@("standard_" + result.StdCode) type="radio" name="SelectedStandardCode" value="@result.StdCode">
+                                <label for=@("standard_" + result.StdCode)>
+                                    @result.Standard
+                                </label>
                             </div>
                         }
                     }
