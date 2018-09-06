@@ -29,8 +29,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         private async Task<T> Get<T>(string uri)
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-            var res = await _client.GetAsync(new Uri(uri, UriKind.Relative));
-            return await res.Content.ReadAsAsync<T>();
+            var result = await _client.GetAsync(new Uri(uri, UriKind.Relative));
+            return await result.Content.ReadAsAsync<T>();
         }
 
         protected async Task<U> Post<T, U>(string uri, T model)

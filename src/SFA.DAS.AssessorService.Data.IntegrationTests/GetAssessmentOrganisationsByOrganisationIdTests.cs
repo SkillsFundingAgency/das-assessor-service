@@ -18,16 +18,16 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         private OrganisationModel _organisation2;
         private readonly DatabaseService _databaseService = new DatabaseService();
         private RegisterQueryRepository _repository;
-        private string _orgId1;
-        private string _orgId2;
+        private string _organisationId1;
+        private string _organisationId2;
         private int _ukprn1;
 
         [OneTimeSetUp]
         public void SetupOrganisationTests()
         {
             _repository = new RegisterQueryRepository(_databaseService.WebConfiguration);
-            _orgId1 = "EPA0001";
-            _orgId2 = "EPA005";
+            _organisationId1 = "EPA0001";
+            _organisationId2 = "EPA005";
             _ukprn1 = 876544;
             _organisation1 = new OrganisationModel
             {
@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 CreatedAt = DateTime.Now.AddYears(-1).Date,
                 DeletedAt = null,
                 EndPointAssessorName = "Name 1",
-                EndPointAssessorOrganisationId = _orgId1,
+                EndPointAssessorOrganisationId = _organisationId1,
                 EndPointAssessorUkprn = _ukprn1,
                 PrimaryContact = null,
                 Status = "new",
@@ -50,7 +50,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 CreatedAt = DateTime.Now.AddMonths(-1).Date,
                 DeletedAt = null,
                 EndPointAssessorName = "Name 2",
-                EndPointAssessorOrganisationId = _orgId2,
+                EndPointAssessorOrganisationId = _organisationId2,
                 EndPointAssessorUkprn = 9888,
                 PrimaryContact = null,
                 Status = "new",

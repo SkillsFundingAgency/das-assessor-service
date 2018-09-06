@@ -24,11 +24,11 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         [TestCase("", false, null)]
         public void CheckEpaOrganisationIdIsAcceptable(string organisationIdToCheck, bool matching, string message)
         {
-            var res = _validator.IsValidEpaOrganisationId(organisationIdToCheck);
+            var result = _validator.IsValidEpaOrganisationId(organisationIdToCheck);
             if (message != null)
-                Assert.AreEqual(matching, res, message);
+                Assert.AreEqual(matching, result, message);
             else
-                Assert.AreEqual(matching, res);
+                Assert.AreEqual(matching, result);
         }
 
         [TestCase("10000000", true)]
@@ -40,8 +40,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         [TestCase("testtest", false)]
         public void CheckUkprnIsValid(string stringToCheck, bool matching)
         {
-            var res = _validator.IsValidUkprn(stringToCheck);
-            Assert.AreEqual(matching, res);
+            var result = _validator.IsValidUkprn(stringToCheck);
+            Assert.AreEqual(matching, result);
         }
     }
 }

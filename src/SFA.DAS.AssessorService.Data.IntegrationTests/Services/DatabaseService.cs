@@ -76,9 +76,9 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
             {
                 if (connection.State != ConnectionState.Open)
                     connection.Open();
-                var res = connection.Query<T>(sql);
+                var result = connection.Query<T>(sql);
                 connection.Close();
-                return res.FirstOrDefault();
+                return result.FirstOrDefault();
             }
         }
 
@@ -89,10 +89,10 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
             {
                 if (connection.State != ConnectionState.Open)
                     connection.Open();
-                var res = connection.ExecuteScalar(sql);
+                var result = connection.ExecuteScalar(sql);
                 connection.Close();
 
-                return res;
+                return result;
             }
         }
 
