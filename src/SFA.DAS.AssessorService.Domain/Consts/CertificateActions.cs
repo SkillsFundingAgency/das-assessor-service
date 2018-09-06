@@ -11,6 +11,7 @@
         public const string Grade = "Grade";
         public const string Option = "Option";
         public const string Submit = "Submit";
+        public const string StatusCode = "StatusCode";
         public const string Declaration = "Declaration";
         public const string Printed = "Printed";
         public const string Recipient = "Recipient";

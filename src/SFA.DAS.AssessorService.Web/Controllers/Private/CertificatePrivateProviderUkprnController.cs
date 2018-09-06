@@ -31,11 +31,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
         [HttpGet]
         public async Task<IActionResult> Ukprn(bool? redirectToCheck = false)
         {
-
             var ukprns = (await _assessmentOrgsApiClient.GetProviders())
                 .Select(q => new SelectListItem {Value = q.Ukprn.ToString(), Text = q.Ukprn.ToString()});
            
-
             var viewResult = await LoadViewModel<CertificateUkprnListViewModel>("~/Views/Certificate/Ukprn.cshtml");
             var vm = ((viewResult as ViewResult).Model) as CertificateUkprnListViewModel;
             vm.Ukprns = ukprns;

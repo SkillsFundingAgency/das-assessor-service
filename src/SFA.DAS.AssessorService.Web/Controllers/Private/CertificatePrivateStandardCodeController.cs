@@ -44,13 +44,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
         [HttpPost(Name = "StandardCode")]
         public async Task<IActionResult> StandardCode(CertificateStandardCodeListViewModel vm)
         {
-            var ukprns = (await _assessmentOrgsApiClient.GetProviders())
-                .Select(q => new SelectListItem { Value = q.Ukprn.ToString(), Text = q.Ukprn.ToString() });
-            vm.StandardCodes = ukprns;
+            var standardCodes = (await _assessmentOrgsApiClient.GetAllStandards())
+                .Select(q => new SelectListItem { Value = q.Level.ToString(), Text = q.Title.ToString() });
+            vm.StandardCodes = standardCodes;
 
             return await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/Certificate/StandardCode.cshtml",
-                nextAction: RedirectToAction("Grade", "CertificateGrade"), action: CertificateActions.LearningStartDate);
+                nextAction: RedirectToAction("Grade", "CertificateGrade"), action: CertificateActions.StatusCode);
         }
     }
 }

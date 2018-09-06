@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private
         public void FromCertificate(Domain.Entities.Certificate cert)
         {
             BaseFromCertificate(cert);
-            SelectedStandardCode = cert.ProviderUkPrn;
+            SelectedStandardCode = cert.StandardCode;
         }
 
         public Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData data)
