@@ -22,7 +22,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         private static Mock<IMediator> _mediator;
         private static Mock<ILogger<RegisterController>> _logger;
         private object _result;
-        private EpaOrganisation _returnedOrganisation;
         private UpdateEpaOrganisationRequest _request;
 
         [SetUp]
