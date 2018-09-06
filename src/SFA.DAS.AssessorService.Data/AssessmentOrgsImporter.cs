@@ -173,12 +173,8 @@ namespace SFA.DAS.AssessorService.Data
         }
         public async Task<CloudBlobContainer> GetContainer(string containerName)
         {
-            // MFCMFC check the mecahnism to get to the storage account
-            var storageAccount = CloudStorageAccount.Parse(_webConfiguration.IFATemplateStorageConnectionString);
-            // MFCMFC var storageAccount = CloudStorageAccount.Parse("UseDevelopmentStorage=true");
-
+            var storageAccount = CloudStorageAccount.Parse(_webConfiguration.IFATemplateStorageConnectionString);     
             var client = storageAccount.CreateCloudBlobClient();
-
             var blobContainer = client.GetContainerReference(containerName);
 
             var requestOptions = new BlobRequestOptions() { RetryPolicy = new NoRetry() };

@@ -44,15 +44,6 @@ namespace SFA.DAS.AssessorService.Data
                     connection.Execute("DELETE FROM [OrganisationStandardDeliveryArea]");
                     progressStatus.Append("Teardown: DELETING all items in [OrganisationStandard]; ");
                     connection.Execute("DELETE FROM [OrganisationStandard]");
-
-
-                    //// MFCMFC FIrst point of deletion with logic
-                    progressStatus.Append("Teardown: DELETING selected [Contacts]; ");
-                    connection.Execute("DELETE FROM [contacts] WHERE Status= 'New' and [updatedAt] is null and username not in (select primarycontact from Organisations)");
-                    //// MFCMFC Second point of deleteion with logic
-                    progressStatus.Append("Teardown: DELETING selected [Organisations]; ");
-                    connection.Execute("DELETE FROM [organisations] where OrganisationTypeId is not null and Id not in (select organisationid from [contacts])");
-
                 }
             }
             catch (Exception e)
@@ -79,16 +70,15 @@ namespace SFA.DAS.AssessorService.Data
                     connection.Open();
 
                 var deliveryAreasToInsert = new List<DeliveryArea>();
-
+ 
                 foreach (var deliveryArea in deliveryAreas)
                 {
                     var currentNumber = connection
                         .ExecuteScalar(
-                            "select count(0) from [DeliveryArea] where Area = @area",  deliveryArea).ToString();
-                    if (currentNumber == "0")
-                    {
-                        deliveryAreasToInsert.Add(deliveryArea);
-                    }
+                            "select count(0) from [DeliveryArea] where Id = @Id",  deliveryArea).ToString();
+                    if (currentNumber != "0") continue;
+                    var delArea = deliveryArea;
+                    deliveryAreasToInsert.Add(delArea);
                 }
 
                  if (deliveryAreasToInsert.Count > 0)
@@ -110,15 +100,16 @@ namespace SFA.DAS.AssessorService.Data
 
                 var organisationTypesToInsert = new List<TypeOfOrganisation>();
 
+
                 foreach (var organisationType in organisationTypes)
                 {
                     var currentNumber = connection
                         .ExecuteScalar(
                             "select count(0) from [OrganisationType] where Type = @Type", organisationType).ToString();
-                    if (currentNumber == "0")
-                    {
-                        organisationTypesToInsert.Add(organisationType);
-                    }
+                  
+                    if (currentNumber != "0") continue;
+                    var orgType = organisationType;
+                    organisationTypesToInsert.Add(orgType);
                 }
 
                 if (organisationTypesToInsert.Count>0)
@@ -206,7 +197,6 @@ namespace SFA.DAS.AssessorService.Data
 
         public List<EpaOrganisationStandard> WriteEpaOrganisationStandards(List<EpaOrganisationStandard> orgStandards)
         {
-            //MFCMFC sanity check only insert standards if none exist? Should this be cleverer?
             var connectionString = _configuration.SqlConnectionString;
             var organisationStandardsFromDatabase = new List<EpaOrganisationStandard>();
 
@@ -247,7 +237,6 @@ namespace SFA.DAS.AssessorService.Data
             List<EpaOrganisationStandardDeliveryArea> organisationStandardDeliveryAreas,
             List<EpaOrganisationStandard> organisationStandards)
         {
-            //MFCMFC only write if there are none present... does this need to be cleverer?
             var connectionString = _configuration.SqlConnectionString;
             var sql = new StringBuilder();
 
@@ -317,19 +306,7 @@ namespace SFA.DAS.AssessorService.Data
                             contact).ToString();
                     if (numberOfMatches == "0")
                     {
-                        if (contactsToInsert.Where(c => c.Username == contact.Username).Count()==0)
-                            contactsToInsert.Add(contact);
-                        else
-                        {
-                            var incrementer = 2;
-                            while (contactsToInsert.Where(c => c.Username == contact.Username + incrementer.ToString()).Count() > 0 && incrementer < 5)
-                            {
-                                incrementer++;
-                            }
-                            contact.Username += incrementer.ToString();
-                            if (incrementer <5 )
-                                contactsToInsert.Add(contact);
-                        }
+                       contactsToInsert.Add(contact);              
                     }
                     else
                     {

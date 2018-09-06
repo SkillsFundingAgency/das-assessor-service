@@ -93,8 +93,6 @@ namespace SFA.DAS.AssessorService.Data
                 var contactAddress4 = worksheet.Cells[i, 8].Value != null ? worksheet.Cells[i, 8].Value.ToString() : string.Empty;
                 var contactPostcode = worksheet.Cells[i, 9].Value != null ? worksheet.Cells[i, 9].Value.ToString() : string.Empty;
 
-
-                // MFCMFC checks length and weird spaces to get it to maximum length or shorter 
                 var postcode = ProcessPostcodeForExcessSpaces(contactPostcode);
 
                 var ukprnRead = worksheet.Cells[i, 10].Value != null ? worksheet.Cells[i, 10].Value.ToString() : string.Empty;
@@ -102,9 +100,6 @@ namespace SFA.DAS.AssessorService.Data
 
                 var legalName = worksheet.Cells[i, 11].Value != null ? worksheet.Cells[i, 11].Value.ToString() : string.Empty;
 
-
-                // MFCMFC set every organisation as Status 'New'
-                // Any validation on website???
                 organisations.Add(
                     new EpaOrganisation
                     {
@@ -188,14 +183,12 @@ namespace SFA.DAS.AssessorService.Data
             {
                 var epaOrganisationIdentifier = worksheet.Cells[i, 1].Value?.ToString();
 
-                // MFCMFC set all status as live???
                 var status = "Live";
                 if (epaOrganisationIdentifier == null || epaOrganisations.All(x => x.EndPointAssessorOrganisationId != epaOrganisationIdentifier))
                     continue;
 
                 var standardCode = ProcessNullableIntValue(worksheet.Cells[i, 3].Value?.ToString());
                  
-                //MFCMFC jump out if null or already present
                 if (standardCode == null || standards.All(x => x.StandardCode != standardCode))
                     continue;
 
@@ -233,14 +226,13 @@ namespace SFA.DAS.AssessorService.Data
             for (var i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
             {
                 var epaOrganisationIdentifier = worksheet.Cells[i, 1].Value?.ToString();
-
-                // MFCMFC jump out if null or already present
+                
                 if (epaOrganisationIdentifier == null || epaOrganisations.All(x => x.EndPointAssessorOrganisationId != epaOrganisationIdentifier))
                     continue;
 
                 var standardCode = ProcessNullableIntValue(worksheet.Cells[i, 3].Value?.ToString());
 
-                // MFCMFC compare by name if standard code missing - this happens
+                // compare by name if standard code missing - this happens
                 if (standardCode == null)
                 {
                     var standardName = worksheet.Cells[i, 4].Value?.ToString();
@@ -252,7 +244,7 @@ namespace SFA.DAS.AssessorService.Data
                     }
                 }
 
-                // MFCMFC skip if standard code is null or standard not actually available
+                // skip if standard code is null or standard not actually available
                 if (standardCode == null || standards.All(x => x.StandardCode != standardCode.Value))
                     continue;
 
@@ -264,7 +256,6 @@ namespace SFA.DAS.AssessorService.Data
                     ? worksheet.Cells[i, 6].Value.ToString().Trim()
                     : string.Empty;
 
-                // MFCMFC set status as live???
                 foreach (var delArea in deliveryAreas.Where(x => deliveryArea.Contains(x.Area) || deliveryArea == "All"))
                 {
                     var standardDeliveryArea = new EpaOrganisationStandardDeliveryArea
@@ -289,7 +280,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public List<OrganisationContact> HarvestOrganisationContacts(List<EpaOrganisation> organisations, List<EpaOrganisationStandard> organisationStandards)
         {
-            // MFCMFC fancy cos wanted to inject in the guid id (we'll be losing this at some point?), and lose duplicates
+            // fancy cos wanted to inject in the guid id (we'll be losing this at some point?), and lose duplicates
             var distinctContacts = (from orgStandard in organisationStandards
                     .Where(o => !(string.IsNullOrEmpty(o?.ContactName?.Trim())
                                   && string.IsNullOrEmpty(o?.ContactEmail?.Trim())))
@@ -312,14 +303,12 @@ namespace SFA.DAS.AssessorService.Data
             });
 
             var contacts = new List<OrganisationContact>(); ;
+            var ctr = 1;
 
-            //var ctr = 0;
-            // MFCMFC had to inject in a unique username from somewhere...
             foreach (var cont in distinctContacts.ToList())
             {
 
                 var contact = cont.Key;
-                //ctr++;
                 contacts.Add(
                     new OrganisationContact
                     {
@@ -329,9 +318,10 @@ namespace SFA.DAS.AssessorService.Data
                         OrganisationId = contact.OrganisationId,
                         PhoneNumber = contact.PhoneNumber,
                         Status = contact.Status,
-                        Username = $"ISP-{contact.EndPointAssessorOrganisationId.ToLower()}{contact.DisplayName.Substring(0,1).ToLower()}"
+                        Username = $"unknown-{ctr}"
                     }
                 );
+                ctr++;
             }
 
             return contacts;
