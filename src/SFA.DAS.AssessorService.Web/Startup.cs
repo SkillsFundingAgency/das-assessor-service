@@ -15,7 +15,6 @@ using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using StructureMap;
-using SessionCache = SFA.DAS.AssessorService.Application.Api.Client.SessionCache;
 
 namespace SFA.DAS.AssessorService.Web
 {
@@ -55,7 +54,7 @@ namespace SFA.DAS.AssessorService.Web
                 .AddSessionStateTempDataProvider()
                 .AddViewLocalization(opts => { opts.ResourcesPath = "Resources"; })
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);;
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
 
             services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Assessors.AntiForgery", HttpOnly = true });
@@ -63,6 +62,7 @@ namespace SFA.DAS.AssessorService.Web
             if (_env.IsDevelopment())
             {
                 services.AddDistributedMemoryCache();
+                
             }
             else
             {
@@ -81,9 +81,9 @@ namespace SFA.DAS.AssessorService.Web
             }
 
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
-
+            
             return ConfigureIOC(services);
-        }
+        }        
 
         private IServiceProvider ConfigureIOC(IServiceCollection services)
         {
@@ -100,12 +100,12 @@ namespace SFA.DAS.AssessorService.Web
                 //config.For<ICache>().Use<SessionCache>();
                 config.For<ITokenService>().Use<TokenService>();
                 config.For<IWebConfiguration>().Use(Configuration);
+                config.For<ISessionService>().Use<SessionService>().Ctor<string>().Is(_env.EnvironmentName);
                 config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<IContactsApiClient>().Use<ContactsApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<ISearchApiClient>().Use<SearchApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<ICertificateApiClient>().Use<CertificateApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<ILoginApiClient>().Use<LoginApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
-                config.For<ISessionService>().Use<SessionService>().Ctor<string>().Is(_env.EnvironmentName);
 
                 config.Populate(services);
             });
@@ -118,7 +118,7 @@ namespace SFA.DAS.AssessorService.Web
             MappingStartup.AddMappings();
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                app.UseDeveloperExceptionPage();                
             }
             else
             {
@@ -137,6 +137,6 @@ namespace SFA.DAS.AssessorService.Web
                         name: "default",
                         template: "{controller=Home}/{action=Index}/{id?}");
                 });
-        }
+        }        
     }
 }
