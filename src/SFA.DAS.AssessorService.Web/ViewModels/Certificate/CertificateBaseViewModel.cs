@@ -14,12 +14,14 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             Id = cert.Id;
             GivenNames = CertificateData.LearnerGivenNames;
             FamilyName = CertificateData.LearnerFamilyName;
+            FullName = CertificateData.FullName;
             Standard = CertificateData.StandardName;
             IsPrivatelyFunded = cert.IsPrivatelyFunded;
         }
         public Guid Id { get; set; }
         public string FamilyName { get; set; }
         public string GivenNames { get; set; }
+        public string FullName { get; set; }
         public string Standard { get; set; }
         public bool BackToCheckPage { get; set; }
         public bool IsPrivatelyFunded { get; set; }

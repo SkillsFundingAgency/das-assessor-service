@@ -64,7 +64,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Private
 
             var certData = new CertificateData()
             {
-                LearnerFamilyName = request.LastName
+                LearnerFamilyName = request.LastName              
             };
 
             _logger.LogInformation("CreateNewCertificate Before create new Certificate");
