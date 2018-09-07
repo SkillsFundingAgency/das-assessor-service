@@ -6,31 +6,33 @@
 }
 
 <div class="grid-row">
+    <div class="column-two-thirds">
+        <a asp-action="Index" asp-controller="Dashboard" class="link-back">Return to dashboard</a>
+        <h1 class="heading-xlarge">
+            Print schedule
+            <span class="heading-secondary">Next run scheduled: @Model.First().RunTime</span>
+        </h1>
+    </div>
+</div>
+<div class="grid-row">
     <div class="column-full">
-        <a asp-action="Index">Refresh</a>
-
-        <h1 class="heading-large">Print Schedule</h1>
-
         @if (@Model.Any())
         {
             <div class="form-group">
-                <span class="bold">Next schedule: </span>@Model.First().RunTime
-
                 @if (!@Model.Where(m => !m.IsRecurring && m.RunTime <= DateTime.Now).Any())
                 {
-                <div>
-                    <a asp-action="RunNow" asp-route-scheduleType="1" class="button">Run Now</a>
-                </div>
+                    <a asp-action="RunNow" asp-route-scheduleType="1" class="button">Run now</a>
                 }
             </div>
+            <a asp-action="Index">Refresh table</a>
 
-            <div>
+            <div class="form-group">
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Is Recurring</th>
+                            <th>Is recurring</th>
                             <th>Interval</th>
-                            <th>Run Time</th>
+                            <th>Run time</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -41,7 +43,7 @@
                                 <td>@result.IsRecurring</td>
                                 <td>@(result.ScheduleInterval.HasValue ? result.ScheduleInterval.Humanize(LetterCasing.Title) : result.Interval)</td>
                                 <td>@result.RunTime</td>
-                                <td><a asp-action="Delete" asp-route-scheduleRunId="@result.Id">Delete</a></td>
+                                <td class="numeric"><a asp-action="Delete" asp-route-scheduleRunId="@result.Id">Delete</a></td>
                             </tr>
                         }
                     </tbody>
@@ -56,7 +58,7 @@
         }
 
         <div class="form-group">
-            <a asp-action="Create" class="button">Create New</a>
+            <a asp-action="Create" class="button">Create new</a>
         </div>
 
     </div>

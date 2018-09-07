@@ -6,35 +6,38 @@
 }
 
 <div class="grid-row">
-    <div class="column-full">
-        <a asp-action="Index" class="link-back">Go Back</a>
+    <div class="column-two-thirds">
+        <a asp-action="Index" class="link-back">Go back</a>
 
-        <h1 class="heading-large">Run Schedule Now</h1>
+        <h1 class="heading-xlarge">
+            Run schedule now
+            <span class="heading-secondary">Please confirm run now</span>
 
+        </h1>
+    </div>
+</div>
+<div class="grid-row">
+    <div class="column-one-third">
         <div class="form-group">
-            <span class="bold">Please Confirm Run Now: </span>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Run time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>@Model.RunTime</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Run Time</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>@Model.RunTime</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div>
-            <form asp-action="RunNow" asp-controller="ScheduleConfig" method="post">
-                @Html.HiddenFor(m => m.Id)
-                @Html.HiddenFor(m => m.ScheduleType)
-                @Html.HiddenFor(m => m.RunTime)
-                <button class="button">Confirm</button>
-            </form>
-        </div>
+        <form asp-action="RunNow" asp-controller="ScheduleConfig" method="post">
+            @Html.HiddenFor(m => m.Id)
+            @Html.HiddenFor(m => m.ScheduleType)
+            @Html.HiddenFor(m => m.RunTime)
+            <button class="button">Confirm</button>
+        </form>
     </div>
 </div>

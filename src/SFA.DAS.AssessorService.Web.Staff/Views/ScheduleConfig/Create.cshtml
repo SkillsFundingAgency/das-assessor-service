@@ -10,9 +10,9 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <a asp-action="Index" class="link-back">Go Back</a>
+        <a asp-action="Index" class="link-back">Go back</a>
 
-        <h1 class="heading-large">Create Schedule</h1>
+        <h1 class="heading-xlarge">Create schedule</h1>
 
         <form class="apprentice-date-form" asp-action="Create" asp-controller="ScheduleConfig" method="post">
             @Html.HiddenFor(m => m.ScheduleType)
@@ -47,15 +47,15 @@
 
             <div sfa-anyvalidationerror-class="after-error-summary">
                 <div id="Date">
-                    <h1 class="heading-medium">
-                        What's the Run Time date?
-                    </h1>
+                    <h2 class="heading-medium">
+                        Run time date
+                        <span class="form-hint">
+                            For example, @(DateTime.UtcNow.AddDays(7).ToString("dd-MM-yyyy 12:00"))
+                        </span>
+                    </h2>
                 </div>
 
                 <div class="form-group error-message-container" sfa-anyvalidationerror-class="form-group-error">
-                    <span class="form-hint">
-                        For example, @(DateTime.UtcNow.AddDays(7).ToString("dd-MM-yyyy 12:00"))
-                    </span>
                     <div class="form-date">
                         <div class="form-group form-group-day">
                             <label for="Day">Day</label>
@@ -85,25 +85,31 @@
                 </div>
             </div>
 
-            <div>
-                <div id="Recurrance">
-                    <h1 class="heading-medium">
-                        Is it a recurring job?
-                    </h1>
-                </div>
-
-                <div class="form-group">
-                    <span class="form-hint">
-                        For example, Daily
-                    </span>
-                    <div class="form-group">
-                        <div>
-                            <select asp-for="ScheduleInterval" asp-items="Html.GetEnumSelectList<ScheduleInterval>()">
-                                <option value="">-- None --</option>
-                            </select>
-                        </div>
+            <div class="form-group">
+                <fieldset class="inline">
+                    <legend>
+                        <h2 class="heading-medium">
+                            Is this a recurring job?
+                        </h2>
+                    </legend>
+                    <div class="multiple-choice">
+                        <input id="recur-hourly" type="radio" name="recurring-job" value="60">
+                        <label for="recur-hourly">Hourly</label>
                     </div>
-                </div>
+                    <div class="multiple-choice">
+                        <input id="recur-daily" type="radio" name="recurring-job" value="1440">
+                        <label for="recur-daily">Daily</label>
+                    </div>
+                    <div class="multiple-choice">
+                        <input id="recur-weekly" type="radio" name="recurring-job" value="10080">
+                        <label for="recur-weekly">Weekly</label>
+                    </div>
+                    <!-- <div>
+                        <select asp-for="ScheduleInterval" asp-items="Html.GetEnumSelectList<ScheduleInterval>()">
+                            <option value="">-- None --</option>
+                        </select>
+                    </div> -->
+                </fieldset>
             </div>
 
             <button type="submit" class="button">Continue</button>
