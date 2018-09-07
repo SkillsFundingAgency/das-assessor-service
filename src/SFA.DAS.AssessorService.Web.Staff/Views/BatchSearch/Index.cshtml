@@ -8,13 +8,14 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
+        <a asp-action="Index" asp-controller="Dashboard" class="link-back">Return to dashboard</a>
         <form asp-action="Results" asp-controller="BatchSearch" method="get">
             @Html.HiddenFor(m => m.Page)
             <div class="form-group">
                 <h1>
                     <label class="form-label" for="SearchString">
                         <span class="heading-xlarge">Batch search</span>
-                        <span class="form-hint">Search by Batch Number</span>
+                        <span class="form-hint">Search by batch number</span>
                     </label>
                 </h1>
                 <input class="form-control" asp-for="BatchNumber" type="number" />
@@ -24,42 +25,58 @@
     </div>
 </div>
 
-
-<div class="grid-row">
-    <div class="column-full">
-
-        <h2 class="heading-medium">Current batches</h2>
-
-        @if (@Model.PaginatedList.TotalRecordCount > 0)
-        {
-            <div class="grid-row">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Batch</th>
-                            <th>Scheduled Date</th>
-                            <th>Certificates</th>
-                            <th>Cover Letters</th>
-                            <th></th>
+@if (@Model.PaginatedList.TotalRecordCount > 0)
+{
+    <div class="grid-row">
+        <div class="column-full">
+            <h2 class="heading-large">Current batches</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Batch</th>
+                        <th>Scheduled date</th>
+                        <th>Certificates</th>
+                        <th>Cover letters</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                        <!-- <tr>
+                            <td>BatchNumber</td>
+                            <td>23/12/18</td>
+                            <td>NumberOfCertificates</td>
+                            <td>NumberOfCoverLetters</td>
+                            <td><a asp-controller="BatchSearch" asp-action="Results" asp-route-batchNumber="BatchNumber">View</a></td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var result in Model.PaginatedList.Items)
-                        {
                             <tr>
-                                <td>@result.BatchNumber</td>
-                                <td>@result.ScheduledDate.UtcToTimeZoneTime()</td>
-                                <td>@result.NumberOfCertificates</td>
-                                <td>@result.NumberOfCoverLetters</td>
-                                <td><a asp-controller="BatchSearch" asp-action="Results" asp-route-batchNumber="@result.BatchNumber">View</a></td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        }
+                            <td>BatchNumber</td>
+                            <td>23/12/18</td>
+                            <td>NumberOfCertificates</td>
+                            <td>NumberOfCoverLetters</td>
+                            <td><a asp-controller="BatchSearch" asp-action="Results" asp-route-batchNumber="BatchNumber">View</a></td>
+                        </tr>
+                            <tr>
+                            <td>BatchNumber</td>
+                            <td>23/12/18</td>
+                            <td>NumberOfCertificates</td>
+                            <td>NumberOfCoverLetters</td>
+                            <td><a asp-controller="BatchSearch" asp-action="Results" asp-route-batchNumber="BatchNumber">View</a></td>
+                        </tr> -->
+                    @foreach (var result in Model.PaginatedList.Items)
+                    {
+                        <tr>
+                            <td>@result.BatchNumber</td>
+                            <td>@result.ScheduledDate.UtcToTimeZoneTime()</td>
+                            <td>@result.NumberOfCertificates</td>
+                            <td>@result.NumberOfCoverLetters</td>
+                            <td><a asp-controller="BatchSearch" asp-action="Results" asp-route-batchNumber="@result.BatchNumber">View</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
+}
 
 @if (Model.PaginatedList.HasPreviousPage || Model.PaginatedList.HasNextPage)
 {

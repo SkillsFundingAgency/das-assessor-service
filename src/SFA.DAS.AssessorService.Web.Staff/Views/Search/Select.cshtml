@@ -19,12 +19,19 @@
             <a class="link-back" asp-action="Results" asp-controller="Search" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.Page">Back</a>
         }
 
-        <h1 class="heading-xlarge">
-            Certificate: @Model.Learner.CertificateReference
-            <span class="heading-secondary">Status: @Model.Learner.CertificateStatus</span>
-        </h1>
+        @if (Model.Learner.CertificateReference != null)
+        {
+            <h1 class="heading-xlarge">
+                Certificate: @Model.Learner.CertificateReference
+                <span class="heading-secondary">Status: @Model.Learner.CertificateStatus</span>
+            </h1>
+            <h2 class="heading-large">Apprentice details</h2>
+        }
+        else
+        {
+            <h1 class="heading-large">Apprentice details</h1>
+        }
 
-        <h2 class="heading-large">Apprentice details</h2>
     </div>
 </div>
 
@@ -74,7 +81,14 @@
                     </tr>
                     <tr>
                         <td><span class="bold">Option</span></td>
-                        <td>@Model.Learner.Option</td>
+                        @if (@Model.Learner.Option != null)
+                        {
+                            <td>@Model.Learner.Option</td>
+                        }
+                        else
+                        {
+                            <td>None</td>
+                        }
                     </tr>
                     <tr>
                         <td><span class="bold">Grade</span></td>
@@ -146,6 +160,31 @@ else
 {
     <div class="grid-row">
         <div class="column-two-thirds">
+            <table>
+                <caption class="heading-large">Course details</caption>
+                <tbody>
+                    <tr>
+                        <td><span class="bold">Standard</span></td>
+                        <td>@Model.Learner.Standard (@Model.Learner.StandardCode)</td>
+                    </tr>
+                    <tr>
+                        <td><span class="bold">Level</span></td>
+                        <td>@Model.Learner.Level</td>
+                    </tr>
+                    
+                        <tr>
+                            <td><span class="bold">Option</span></td>
+                            @if (@Model.Learner.Option != null)
+                            {
+                                <td>@Model.Learner.Option</td>
+                            }
+                            else
+                            {
+                                <td>None</td>
+                            }
+                        </tr>
+                </tbody>
+            </table>
             <h2 class="heading-medium">No Certificate requested</h2>
         </div>
     </div>
@@ -176,7 +215,7 @@ else
                 }
                 <li><a href="#">amend certificate information</a></li>
             }
-            <li><a asp-controller="Search" asp-action="Index">search for another apprentice</a></li>
+            <li><a asp-controller="Search" asp-action="Index">Search for another apprentice</a></li>
         </ul>
     </div>
 </div>
