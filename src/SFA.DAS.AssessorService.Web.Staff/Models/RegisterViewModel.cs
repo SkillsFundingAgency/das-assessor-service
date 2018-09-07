@@ -7,5 +7,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Models
     {
         public string SearchString { get; set; }
         public List<AssessmentOrganisationSummary> Results { get; set; }
+        public string ErrorMessage { get; set; }
     }
 }

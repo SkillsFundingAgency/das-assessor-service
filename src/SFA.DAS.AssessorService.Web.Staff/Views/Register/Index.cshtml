@@ -4,10 +4,9 @@
     ViewBag.Title = "Search Page";
     Layout = "_Layout";
 }
-
 <div class="grid-row">
     <div class="column-two-thirds">
-        <form asp-action="-register-results" asp-controller="Register" method="get">)
+        <form asp-action="Results" asp-controller="Register" method="get">
             <div class="form-group">
                 <h1>
                     <label class="form-label" for="SearchString">
@@ -17,8 +16,22 @@
                 </h1>
                 <input class="form-control" asp-for="SearchString" />
             </div>
+            @if (!string.IsNullOrEmpty(@Model.ErrorMessage))
+            {
+                <div id="validation-messages">
+                    @Model.ErrorMessage
+                </div>
+                <div>
+                    &nbsp;
+                </div>
+                <div>
+                    &nbsp;
+                </div>
+            }
             <button class="button" type="submit">Search</button>
+            
         </form>
-    </div>
-    <a href="#">Add New</a>
+        <div>&nbsp;</div>
+        <div><a class="button">Add New</a></div>
+    </div>  
 </div>

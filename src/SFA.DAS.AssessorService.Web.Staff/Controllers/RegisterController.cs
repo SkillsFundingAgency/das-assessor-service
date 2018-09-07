@@ -12,14 +12,19 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
     {
         public IActionResult Index()
         {
-            return View();
+            return View(new RegisterViewModel());
         }
 
-        [HttpGet("register-results")]
+        [HttpGet("register/results")]
         public async Task<IActionResult> Results(string searchString)
         {
             //var searchResults = await _apiClient.Search(searchString, page);
 
+            if (searchString.Trim().Length < 3)
+            {
+                var vm = new RegisterViewModel { ErrorMessage = "The expression entered is too short. Please enter 3 or more letters."};
+                return View("index",vm);
+            }
             var searchResults = new List<AssessmentOrganisationSummary>
             {
                 new AssessmentOrganisationSummary {Id = "EPA0001", Name = "test", Ukprn = 1111111},
