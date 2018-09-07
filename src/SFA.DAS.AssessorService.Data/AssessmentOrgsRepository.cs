@@ -362,17 +362,17 @@ namespace SFA.DAS.AssessorService.Data
 
         private static string ConvertIntToSqlValueString(int? intToProcess)
         {
-            return intToProcess == null
+            return !intToProcess.HasValue
                 ? "null"
                 : $@"{intToProcess}";
         }
 
         private static string  ConvertDateToSqlValueString (DateTime? dateToProcess)
         {           
-            if (dateToProcess == null)
+            if (!dateToProcess.HasValue)
                 return  "null";
 
-            return dateToProcess.Value< new DateTime(1980,1,1) 
+            return dateToProcess.Value < new DateTime(1980,1,1) 
                 ? "null" 
                 : $"'{dateToProcess.Value:yyyy-MM-dd}'";
         }   

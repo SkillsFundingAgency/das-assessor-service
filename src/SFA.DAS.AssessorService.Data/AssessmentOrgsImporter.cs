@@ -67,7 +67,7 @@ namespace SFA.DAS.AssessorService.Data
         }
 
         private async Task<AssessmentOrganisationsSpreadsheetDto> HarvestSpreadsheetData(StringBuilder progressStatus)
-        {        
+        {
             var spreadsheetDto = new AssessmentOrganisationsSpreadsheetDto();
 
             var containerName = "assessmentorgs";
@@ -77,31 +77,35 @@ namespace SFA.DAS.AssessorService.Data
 
             var blob = container.GetBlockBlobReference(TemplateFile);
 
-            var memoryStream = new MemoryStream();
-            await blob.DownloadToStreamAsync(memoryStream);
-
-            using (var package = new ExcelPackage(memoryStream))
+            using (var memoryStream = new MemoryStream())
             {
-                progressStatus.Append("Reading from spreadsheet: Delivery Areas; ");
-                spreadsheetDto.DeliveryAreas = _spreadsheetReader.HarvestDeliveryAreas();
-                progressStatus.Append("Reading from spreadsheet: Organisation Types; ");
-                spreadsheetDto.OrganisationTypes = _spreadsheetReader.HarvestOrganisationTypes();
-                progressStatus.Append("Reading from spreadsheet: Organisations; ");
-                spreadsheetDto.Organisations =
-                    _spreadsheetReader.HarvestEpaOrganisations(package, spreadsheetDto.OrganisationTypes);
-                progressStatus.Append("Reading from spreadsheet: Standards; ");
-                var standards = _spreadsheetReader.HarvestStandards(package);
-                progressStatus.Append("Reading from spreadsheet: Organisation-Standards; ");
-                spreadsheetDto.OrganisationStandards =
-                    _spreadsheetReader.HarvestEpaOrganisationStandards(package, spreadsheetDto.Organisations,
-                        standards);
-                progressStatus.Append("Reading from spreadsheet: Organisation-Standards-Delivery Areas; ");
-                spreadsheetDto.OrganisationStandardDeliveryAreas =
-                    _spreadsheetReader.HarvestStandardDeliveryAreas(package, spreadsheetDto.Organisations, standards,
-                        spreadsheetDto.DeliveryAreas);
-                progressStatus.Append("Reading from spreadsheet: Contacts; ");
-                spreadsheetDto.Contacts = _spreadsheetReader.HarvestOrganisationContacts(spreadsheetDto.Organisations,
-                    spreadsheetDto.OrganisationStandards);
+                await blob.DownloadToStreamAsync(memoryStream);
+
+                using (var package = new ExcelPackage(memoryStream))
+                {
+                    progressStatus.Append("Reading from spreadsheet: Delivery Areas; ");
+                    spreadsheetDto.DeliveryAreas = _spreadsheetReader.HarvestDeliveryAreas();
+                    progressStatus.Append("Reading from spreadsheet: Organisation Types; ");
+                    spreadsheetDto.OrganisationTypes = _spreadsheetReader.HarvestOrganisationTypes();
+                    progressStatus.Append("Reading from spreadsheet: Organisations; ");
+                    spreadsheetDto.Organisations =
+                        _spreadsheetReader.HarvestEpaOrganisations(package, spreadsheetDto.OrganisationTypes);
+                    progressStatus.Append("Reading from spreadsheet: Standards; ");
+                    var standards = _spreadsheetReader.HarvestStandards(package);
+                    progressStatus.Append("Reading from spreadsheet: Organisation-Standards; ");
+                    spreadsheetDto.OrganisationStandards =
+                        _spreadsheetReader.HarvestEpaOrganisationStandards(package, spreadsheetDto.Organisations,
+                            standards);
+                    progressStatus.Append("Reading from spreadsheet: Organisation-Standards-Delivery Areas; ");
+                    spreadsheetDto.OrganisationStandardDeliveryAreas =
+                        _spreadsheetReader.HarvestStandardDeliveryAreas(package, spreadsheetDto.Organisations,
+                            standards,
+                            spreadsheetDto.DeliveryAreas);
+                    progressStatus.Append("Reading from spreadsheet: Contacts; ");
+                    spreadsheetDto.Contacts = _spreadsheetReader.HarvestOrganisationContacts(
+                        spreadsheetDto.Organisations,
+                        spreadsheetDto.OrganisationStandards);
+                }
             }
             return spreadsheetDto;
 
@@ -111,7 +115,7 @@ namespace SFA.DAS.AssessorService.Data
         {
             _logger.LogInformation($"Teardown process started; ");
             var progress = _assessmentOrgsRepository.TearDownData();
-            progressStatus.Append((string)progress);
+            progressStatus.Append(progress);
             _logger.LogInformation(progress);
             _logger.LogInformation($"Teardown process stopped; ");
         }
