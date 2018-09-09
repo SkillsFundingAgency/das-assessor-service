@@ -10,11 +10,11 @@
     <div class="column-two-thirds">
         @if (Model.BackToCheckPage)
         {
-        <a class="link-back" asp-controller="CertificateCheck" asp-action="Check">Back</a>
+            <a class="link-back" asp-controller="CertificateCheck" asp-action="Check">Back</a>
         }
         else
         {
-        <a class="link-back" asp-controller="CertificatePrivateProviderUkprn" asp-action="Ukprn">Back</a>
+            <a class="link-back" asp-controller="CertificatePrivateProviderUkprn" asp-action="Ukprn">Back</a>
         }
 
         <form class="apprentice-learner-date-form js-disable-on-submit" method="post" asp-controller="CertificatePrivateLearnerStartDate">
@@ -35,21 +35,21 @@
             {
                 if (Model.WarningShown == "true")
                 {
-            <text>There is a warning!!</text>
+                    <text>There is a warning!!</text>
                 }
                 else
                 {
-            <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                    There's a problem
-                </h2>
-                <ul class="error-summary-list">
-                    <li><a sfa-validation-for="Date"></a></li>
-                    <li><a sfa-validation-for="Day"></a></li>
-                    <li><a sfa-validation-for="Month"></a></li>
-                    <li><a sfa-validation-for="Year"></a></li>
-                </ul>
-            </div>
+                    <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                        <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                            There's a problem
+                        </h2>
+                        <ul class="error-summary-list">
+                            <li><a sfa-validation-for="Date"></a></li>
+                            <li><a sfa-validation-for="Day"></a></li>
+                            <li><a sfa-validation-for="Month"></a></li>
+                            <li><a sfa-validation-for="Year"></a></li>
+                        </ul>
+                    </div>
                 }
             }
 

@@ -12,11 +12,11 @@
     <div class="column-two-thirds">
         @if (Model.BackToCheckPage)
         {
-        <a class="link-back" asp-controller="CertificateCheck" asp-action="Check">Back</a>
+            <a class="link-back" asp-controller="CertificateCheck" asp-action="Check">Back</a>
         }
         else
         {
-        <a asp-controller="CertificatePrivateLearnerStartDate" asp-action="LearnerStartDate" class="link-back">Back</a>
+            <a asp-controller="CertificatePrivateLearnerStartDate" asp-action="LearnerStartDate" class="link-back">Back</a>
         }
 
         <form class="apprentice-firstname-form js-disable-on-submit" method="post" asp-action="StandardCode" asp-controller="CertificatePrivateStandardCode">
@@ -32,15 +32,15 @@
 
             @if (!ViewData.ModelState.IsValid)
             {
-            <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                    There's a problem
-                </h2>
-                <ul class="error-summary-list">
-                    <li><a sfa-validation-for="StandardCodes"></a></li>
-                    <li><a sfa-validation-for="SelectedStandardCode"></a></li>
-                </ul>
-            </div>
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                        There's a problem
+                    </h2>
+                    <ul class="error-summary-list">
+                        <li><a sfa-validation-for="StandardCodes"></a></li>
+                        <li><a sfa-validation-for="SelectedStandardCode"></a></li>
+                    </ul>
+                </div>
             }
 
             <fieldset sfa-anyvalidationerror-class="after-error-summary">

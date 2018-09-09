@@ -12,11 +12,11 @@
     <div class="column-two-thirds">
         @if (Model.BackToCheckPage)
         {
-        <a class="link-back" asp-controller="CertificateCheck" asp-action="Check">Back</a>
+            <a class="link-back" asp-controller="CertificateCheck" asp-action="Check">Back</a>
         }
         else
         {
-        <a asp-controller="CertificatePrivateFirstName" asp-action="FirstName" class="link-back">Back</a>
+            <a asp-controller="CertificatePrivateFirstName" asp-action="FirstName" class="link-back">Back</a>
         }
 
         <form class="apprentice-firstname-form js-disable-on-submit" method="post" asp-action="Ukprn" asp-controller="CertificatePrivateProviderUkprn">

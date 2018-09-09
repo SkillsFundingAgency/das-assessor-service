@@ -48,6 +48,23 @@
         </h2>
 
         <dl class="govuk-check-your-answers cya-questions-short">
+            @if (Model.IsPrivatelyFunded)
+            {
+                <div>
+                    <dt class="cya-question">
+                        First Name
+                    </dt>
+                    <dd class="cya-answer">
+                        @Model.FirstName
+                    </dd>
+                    <dd class="cya-change">
+                        <a asp-controller="CertificatePrivateFirstName" asp-action="FirstName" asp-route-redirecttocheck="true">
+                            Change<span class="visually-hidden"> option</span>
+                        </a>
+                    </dd>
+                </div>
+            }
+
             <div>
                 <dt class="cya-question">
                     Standard

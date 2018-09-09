@@ -22,6 +22,8 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         public string City { get; set; }
         public string Postcode { get; set; }
 
+        public string FirstName { get; set; }
+
         public void FromCertificate(Domain.Entities.Certificate cert)
         {
             BaseFromCertificate(cert);
@@ -31,6 +33,8 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             Option = CertificateData.CourseOption;
             SelectedGrade = CertificateData.OverallGrade;
             AchievementDate = CertificateData.AchievementDate.Value;
+
+            FirstName = CertificateData.LearnerGivenNames;
 
             Name = CertificateData.ContactName;
             Dept = CertificateData.Department;
