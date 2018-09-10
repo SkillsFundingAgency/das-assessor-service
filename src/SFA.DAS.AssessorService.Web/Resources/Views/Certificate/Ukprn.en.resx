@@ -121,6 +121,9 @@
     <value>Continue</value>
   </data>
   <data name="Heading" xml:space="preserve">
-    <value>Please select Ukprn?</value>
+    <value>Whats's the provider UKPRN?</value>
+  </data>
+  <data name="UkprnNameHint" xml:space="preserve">
+    <value>A UKPRN is a unique 8 digit number given to training providers registered on the UK Register of Learning Providers (UKRLP)</value>
   </data>
 </root>

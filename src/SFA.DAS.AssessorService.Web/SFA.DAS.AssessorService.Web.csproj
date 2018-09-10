@@ -42,6 +42,11 @@
     <ProjectReference Include="..\SFA.DAS.AssessorService.Settings\SFA.DAS.AssessorService.Settings.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="Resources\Validators\CertificateUkprnViewModelValidator.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>CertificateUkprnViewModelValidator.resx</DependentUpon>
+    </Compile>
     <Compile Update="Resources\Views\Certificate\PrivateDeclaration.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -75,6 +80,9 @@
     <Content Update="Views\Certificate\Recipient.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Certificate\_UkprnScriptsPartial.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Certificate\_LearnerDateScriptsPartial.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
@@ -83,8 +91,8 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Update="Resources\Validators\CertificateUkprnListViewModelValidator.resx">
-      <LastGenOutput>CertificateUkprnListViewModelValidator.Designer.cs</LastGenOutput>
+    <EmbeddedResource Update="Resources\Validators\CertificateUkprnViewModelValidator.resx">
+      <LastGenOutput>CertificateUkprnViewModelValidator.Designer.cs</LastGenOutput>
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Validators\CertificateStandardCodeViewModelValidator.resx">

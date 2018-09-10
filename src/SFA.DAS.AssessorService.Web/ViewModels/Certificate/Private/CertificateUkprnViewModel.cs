@@ -1,24 +1,25 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private
 {
-    public class CertificateUkprnListViewModel : CertificateBaseViewModel, ICertificateViewModel
+    public class CertificateUkprnViewModel : CertificateBaseViewModel, ICertificateViewModel
     {
-        public int SelectedUkprn { get; set; }
-        public IEnumerable<SelectListItem> Ukprns { get; set; }
+        public string Ukprn { get; set; }
 
         public void FromCertificate(Domain.Entities.Certificate cert)
         {
             BaseFromCertificate(cert);
-            SelectedUkprn = cert.ProviderUkPrn;
+            Ukprn = cert.ProviderUkPrn.ToString();
         }
 
         public Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData data)
         {
-            certificate.ProviderUkPrn = SelectedUkprn;
+            certificate.ProviderUkPrn = Convert.ToInt32(Ukprn);
 
             certificate.CertificateData = JsonConvert.SerializeObject(data);
             return certificate;
