@@ -2,43 +2,42 @@
 @using SFA.DAS.AssessorService.Api.Types.Models.Azure;
 @model PaginatedList<AzureUser>
 @{
-    ViewBag.Title = "External API Users";
+    ViewBag.Title = "External API users";
     Layout = "_Layout";
 }
 
 <div class="grid-row">
     <div class="column-full">
-        <a asp-action="Index">Refresh</a>
+        <a asp-action="Index" asp-controller="Dashboard" class="link-back">Return to dashboard</a>
 
-        <h1 class="heading-large">External API Users</h1>
+        <h1 class="heading-xlarge">External API users</h1>
 
+        <a asp-action="Index">Refresh table</a>
         @if (@Model.TotalRecordCount > 0)
         {
-            <div class="grid-row">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>UKPRN</th>
-                            <th>Email</th>
-                            <th>Name</th>
-                            <th>Access</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var user in @Model.Items)
-                        {
-                        <tr>
-                            <td>@user.Note</td>
-                            <td>@user.Email</td>
-                            <td>@user.FirstName</td>
-                            <td>@Html.Raw(string.Equals(user.State, "blocked") ? "Disabled" : "Enabled")</td>
-                            <td><a asp-action="UserDetails" asp-controller="ExternalApi" asp-route-userId="@user.Id">View Details</a></td>
-                        </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+            <table class="table responsive table-font-xsmall">
+                <thead>
+                    <tr>
+                        <th>UKPRN</th>
+                        <th>Email</th>
+                        <th>Name</th>
+                        <th>Access</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in @Model.Items)
+                    {
+                    <tr>
+                        <td data-label="UKPRN">@user.Note</td>
+                        <td data-label="Email">@user.Email</td>
+                        <td data-label="Name">@user.FirstName</td>
+                        <td data-label="Access">@Html.Raw(string.Equals(user.State, "blocked") ? "Disabled" : "Enabled")</td>
+                        <td><a asp-action="UserDetails" asp-controller="ExternalApi" asp-route-userId="@user.Id">View details</a></td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
         }
         else
         {
