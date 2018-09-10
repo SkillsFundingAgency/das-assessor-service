@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
         {
             return await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/Certificate/FirstName.cshtml",
-                nextAction: RedirectToAction("Ukprn", "CertificatePrivateProviderUkprn"), action: CertificateActions.FirstName);
+                nextAction: RedirectToAction("StandardCode", "CertificatePrivateStandardCode"), action: CertificateActions.FirstName);
         }
     }
 }
