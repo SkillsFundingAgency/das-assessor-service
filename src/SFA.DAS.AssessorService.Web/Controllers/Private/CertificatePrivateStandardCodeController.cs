@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
         public async Task<IActionResult> StandardCode(bool? redirectToCheck = false)
         {
             var standardCodes = (await _assessmentOrgsApiClient.GetAllStandards())
-                .Select(q => new SelectListItem { Value = q.Level.ToString(), Text = q.Title.ToString() });
+                .Select(q => new SelectListItem { Value = q.Id.ToString(), Text = q.Title.ToString() });
 
             var viewResult = await LoadViewModel<CertificateStandardCodeListViewModel>("~/Views/Certificate/StandardCode.cshtml");
             var vm = ((viewResult as ViewResult).Model) as CertificateStandardCodeListViewModel;
@@ -44,8 +44,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
         [HttpPost(Name = "StandardCode")]
         public async Task<IActionResult> StandardCode(CertificateStandardCodeListViewModel vm)
         {
-            var standardCodes = (await _assessmentOrgsApiClient.GetAllStandards())
-                .Select(q => new SelectListItem { Value = q.Level.ToString(), Text = q.Title.ToString() });
+            var standards = (await _assessmentOrgsApiClient.GetAllStandards());
+
+            var selectedStandard = standards.First(q => q.Id == vm.SelectedStandardCode);
+            vm.Standard = selectedStandard.Title;
+            vm.Level = selectedStandard.Level;
+
+            var standardCodes = standards
+                .Select(q => new SelectListItem { Value = q.Id.ToString(), Text = q.Title.ToString() });
             vm.StandardCodes = standardCodes;
 
             return await SaveViewModel(vm,

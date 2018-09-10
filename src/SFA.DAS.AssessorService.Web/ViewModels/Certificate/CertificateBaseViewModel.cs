@@ -7,7 +7,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
     public class CertificateBaseViewModel
     {
         protected CertificateData CertificateData;
-        
+
         protected void BaseFromCertificate(Domain.Entities.Certificate cert)
         {
             CertificateData = JsonConvert.DeserializeObject<CertificateData>(cert.CertificateData);
@@ -16,6 +16,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             FamilyName = CertificateData.LearnerFamilyName;
             FullName = CertificateData.FullName;
             Standard = CertificateData.StandardName;
+            Level = CertificateData.StandardLevel;
             IsPrivatelyFunded = cert.IsPrivatelyFunded;
         }
         public Guid Id { get; set; }
@@ -23,6 +24,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         public string GivenNames { get; set; }
         public string FullName { get; set; }
         public string Standard { get; set; }
+        public int Level { get; set; }
         public bool BackToCheckPage { get; set; }
         public bool IsPrivatelyFunded { get; set; }
     }

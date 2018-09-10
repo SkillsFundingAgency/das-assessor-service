@@ -11,7 +11,10 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         public int Level { get; set; }
         public string Option { get; set; }
         public string SelectedGrade { get; set; }
+        public string SelectedUkPrn { get; set; }
+        public string SelectedStandard { get; set; }
         public DateTime AchievementDate { get; set; }
+        public DateTime LearnerStartDate { get; set; }
 
         public string Name { get; set; }
         public string Dept { get; set; }
@@ -32,10 +35,12 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             Level = CertificateData.StandardLevel;
             Option = CertificateData.CourseOption;
             SelectedGrade = CertificateData.OverallGrade;
-            AchievementDate = CertificateData.AchievementDate.Value;
-
+            SelectedStandard = cert.StandardCode.ToString();
+            SelectedUkPrn = cert.ProviderUkPrn.ToString();
             FirstName = CertificateData.LearnerGivenNames;
+            LearnerStartDate = CertificateData.LearningStartDate;
 
+            AchievementDate = CertificateData.AchievementDate.Value;            
             Name = CertificateData.ContactName;
             Dept = CertificateData.Department;
             Employer = CertificateData.ContactOrganisation;

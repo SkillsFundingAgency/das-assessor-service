@@ -12,7 +12,7 @@
         <a class="link-back" asp-controller="CertificateRecipient" asp-action="Recipient">Back</a>
 
         <h1 class="heading-large">@Localizer["Heading"]</h1>
-        
+
         <div class="info-summary">
             <h2 class="heading-medium">@Localizer["InfoHeader"]</h2>
             <p>@Localizer["InfoLine1"]</p>
@@ -50,19 +50,61 @@
         <dl class="govuk-check-your-answers cya-questions-short">
             @if (Model.IsPrivatelyFunded)
             {
-                <div>
-                    <dt class="cya-question">
-                        First Name
-                    </dt>
-                    <dd class="cya-answer">
-                        @Model.FirstName
-                    </dd>
-                    <dd class="cya-change">
-                        <a asp-controller="CertificatePrivateFirstName" asp-action="FirstName" asp-route-redirecttocheck="true">
-                            Change<span class="visually-hidden"> option</span>
-                        </a>
-                    </dd>
-                </div>
+            <div>
+                <dt class="cya-question">
+                    First Name
+                </dt>
+                <dd class="cya-answer">
+                    @Model.FirstName
+                </dd>
+                <dd class="cya-change">
+                    <a asp-controller="CertificatePrivateFirstName" asp-action="FirstName" asp-route-redirecttocheck="true">
+                        Change<span class="visually-hidden"> option</span>
+                    </a>
+                </dd>
+            </div>
+
+            <div>
+                <dt class="cya-question">
+                    Ukprns
+                </dt>
+                <dd class="cya-answer">
+                    @Model.SelectedUkPrn
+                </dd>
+                <dd class="cya-change">
+                    <a asp-controller="CertificatePrivateProviderUkprn" asp-action="Ukprn" asp-route-redirecttocheck="true">
+                        Change<span class="visually-hidden"> option</span>
+                    </a>
+                </dd>
+            </div>
+
+            <div>
+                <dt class="cya-question">
+                    Learner Start Date
+                </dt>
+                <dd class="cya-answer">
+                    @Model.LearnerStartDate.ToShortDateString()
+                </dd>
+                <dd class="cya-change">
+                    <a asp-controller="CertificatePrivateLearnerStartDate" asp-action="LearnerStartDate" asp-route-redirecttocheck="true">
+                        Change<span class="visually-hidden"> Start Date</span>
+                    </a>
+                </dd>
+            </div>
+
+            <div>
+                <dt class="cya-question">
+                    Standard Code
+                </dt>
+                <dd class="cya-answer">
+                    @Model.SelectedStandard
+                </dd>
+                <dd class="cya-change">
+                    <a asp-controller="CertificatePrivateStandardCode" asp-action="StandardCode" asp-route-redirecttocheck="true">
+                        Change<span class="visually-hidden"> Standard Code</span>
+                    </a>
+                </dd>
+            </div>
             }
 
             <div>
@@ -180,11 +222,11 @@
                     @Model.AddressLine1<br />
                     @if(@Model.AddressLine2 != null)
                     {
-                        @Model.AddressLine2<br />
+                    @Model.AddressLine2<br />
                     }
                     @if(@Model.AddressLine3 != null)
                     {
-                        @Model.AddressLine3<br />
+                    @Model.AddressLine3<br />
                     }
                     @Model.City<br />
                     @Model.Postcode
