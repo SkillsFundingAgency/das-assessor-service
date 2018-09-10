@@ -5,11 +5,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.SequenceSummary
 {
     public class SequenceSummaryRequest : IRequest<List<SequenceSummary>>
     {
-        private readonly int _userId;
+        public int UserId { get; }
 
         public SequenceSummaryRequest(int userId)
         {
-            _userId = userId;
+            UserId = userId;
         }
     }
 }
