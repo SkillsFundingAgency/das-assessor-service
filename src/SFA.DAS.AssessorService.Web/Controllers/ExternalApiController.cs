@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var ukprn = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "http://schemas.portal.com/ukprn")?.Value;
+            var ukprn = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.portal.com/ukprn")?.Value;
 
             var user = await _apiClient.GetUserDetailsByUkprn(ukprn, true);
             return View(user);
@@ -36,8 +36,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> EnableAccess()
         {
-            var ukprn = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "http://schemas.portal.com/ukprn")?.Value;
-            var username = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
+            var ukprn = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.portal.com/ukprn")?.Value;
+            var username = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
             var result = await _apiClient.CreateUser(ukprn, username);
             return RedirectToAction("Index");
@@ -46,8 +46,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> RemoveAccess(AzureUser viewModel)
         {
-            var ukprn = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "http://schemas.portal.com/ukprn")?.Value;
-            var username = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
+            var ukprn = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.portal.com/ukprn")?.Value;
+            var username = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
             if (!string.Equals(viewModel.State, "blocked"))
             {
