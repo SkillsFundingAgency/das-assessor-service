@@ -1,4 +1,4 @@
-namespace SFA.DAS.AssessorService.Application.Handlers.Apply.SequenceSummary
+namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
 {
     public class SequenceSummary
     {
@@ -6,6 +6,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.SequenceSummary
         public string Title { get; set; }
         public string LinkTitle { get; set; }
         public bool Active { get; set; }
-        public bool Completed { get; set; }
+        public bool Complete { get; set; }
     }
 }

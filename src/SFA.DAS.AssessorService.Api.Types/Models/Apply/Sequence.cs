@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Sequence
+namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
 {
     public class Sequence
     {
@@ -8,7 +8,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Sequence
         public string Title { get; set; }
         public string LinkTitle { get; set; }
         public bool Active { get; set; }
-        public bool Completed { get; set; }
+        public bool Complete { get; set; }
         public List<Section> Sections { get; set; }
+        public string NextSequenceId { get; set; }
     }
 }

@@ -1,0 +1,29 @@
+@model SFA.DAS.AssessorService.Api.Types.Models.Apply.Sequence
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<h1>@Model.Title</h1>
+
+@foreach (var sect in Model.Sections)
+{
+    <h2>@sect.Title</h2>
+    <ul>
+        @foreach (var pg in sect.Pages)
+        {
+            <li>
+                <dt>@pg.Title</dt>
+                @if (pg.Complete)
+                {
+                    <dd><a href="@Url.Action("Index", "Page", new {pageId = pg.PageId})">Change</a></dd>
+                }
+                else
+                {
+                    <dd><a href="@Url.Action("Index", "Page", new {pageId = pg.PageId})">Answer required</a></dd>
+                }
+            </li>
+        }
+    </ul>
+}

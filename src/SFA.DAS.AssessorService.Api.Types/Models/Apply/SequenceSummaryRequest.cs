@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 using MediatR;
 
-namespace SFA.DAS.AssessorService.Application.Handlers.Apply.SequenceSummary
+namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
 {
     public class SequenceSummaryRequest : IRequest<List<SequenceSummary>>
     {
-        public int UserId { get; }
+        public string UserId { get; }
 
-        public SequenceSummaryRequest(int userId)
+        public SequenceSummaryRequest(string userId)
         {
             UserId = userId;
         }

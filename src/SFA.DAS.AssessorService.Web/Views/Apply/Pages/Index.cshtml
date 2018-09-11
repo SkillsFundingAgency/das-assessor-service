@@ -1,0 +1,26 @@
+@model SFA.DAS.AssessorService.Web.Controllers.Apply.PageViewModel
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<h1>@Model.Title</h1>
+
+<ul>
+@foreach (var question in Model.Questions)
+{
+    <h2>@question.Title</h2>
+    foreach (var input in question.InputViewModels)
+    {
+        <label>@input.Label</label>
+        <p>@input.Hint</p>
+        switch (input.Type)
+         {
+             case "Text": <input type="text" id="@input.InputId" name="@input.InputId" value="@input.Value"></input>
+                 break;
+                 
+         }
+    }
+}
+</ul>

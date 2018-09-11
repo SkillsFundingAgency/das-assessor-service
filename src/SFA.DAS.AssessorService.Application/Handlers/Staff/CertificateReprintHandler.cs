@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             {
                 certificate.Status = Domain.Consts.CertificateStatus.Reprint;
                 await _certificateRepository.Update(certificate, request.Username,
-                    action: SFA.DAS.AssessorService.Domain.Consts.CertificateActions.Reprint);
+                    action: Domain.Consts.CertificateActions.Reprint);
             }
 
             var staffUiReprintResponse = new CertificateReprintResponse

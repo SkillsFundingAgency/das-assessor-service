@@ -2,9 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.AssessorService.Application.Handlers.Apply.Page;
-using SFA.DAS.AssessorService.Application.Handlers.Apply.Sequence;
-using SFA.DAS.AssessorService.Application.Handlers.Apply.SequenceSummary;
+using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
 {
@@ -19,24 +17,36 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
         }
 
         [HttpGet("summary/{userId}")]
-        public async Task<ActionResult<List<SequenceSummary>>> Summary(int userId)
+        public async Task<ActionResult<List<SequenceSummary>>> Summary(string userId)
         {
             var sequenceSummaries = await _mediator.Send(new SequenceSummaryRequest(userId));
             return sequenceSummaries;
         }
         
         [HttpGet("sequence/{userId}/{sequenceId}")]
-        public async Task<ActionResult<Sequence>> Section(int userId, string sequenceId)
+        public async Task<ActionResult<Sequence>> Section(string userId, string sequenceId)
         {
             var sequence = await _mediator.Send(new SequenceRequest(userId, sequenceId));
             return sequence;
         }
         
         [HttpGet("page/{userId}/{pageId}")]
-        public async Task<ActionResult<Page>> Page(int userId, string pageId)
+        public async Task<ActionResult<Page>> Page(string userId, string pageId)
         {
             var page = await _mediator.Send(new PageRequest(userId, pageId));
             return page;
         }
+
+        [HttpPost("page/{userId}/{pageId}")]
+        public async Task<ActionResult<Page>> Page(string userId, string pageId, [FromBody] List<Question> updatedQuestions)
+        {
+            var updatedPage = await _mediator.Send(new UpdatePageRequest(userId, pageId, updatedQuestions));
+            return updatedPage;
+        }
+    }
+
+    public class QuestionOutputUpdateRequest
+    {
+        public List<Question> Questions { get; set; }
     }
 }

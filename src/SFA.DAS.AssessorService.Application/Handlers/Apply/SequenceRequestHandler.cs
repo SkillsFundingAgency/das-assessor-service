@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -7,10 +6,9 @@ using System.Threading.Tasks;
 using Dapper;
 using MediatR;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using SFA.DAS.AssessorService.Application.Handlers.Apply.SequenceSummary;
+using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 
-namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Sequence
+namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 {
     public class SequenceRequestHandler : IRequestHandler<SequenceRequest, Sequence>
     {

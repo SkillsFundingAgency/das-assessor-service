@@ -25,16 +25,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             if (certificate == null)
                 throw new NotFound();
 
-            if (certificate.Status == SFA.DAS.AssessorService.Domain.Consts.CertificateStatus.Reprint)
+            if (certificate.Status == Domain.Consts.CertificateStatus.Reprint)
             {
                 return;
             }
 
-            if (certificate.Status == SFA.DAS.AssessorService.Domain.Consts.CertificateStatus.Printed)
+            if (certificate.Status == Domain.Consts.CertificateStatus.Printed)
             {
-                certificate.Status = SFA.DAS.AssessorService.Domain.Consts.CertificateStatus.Reprint;
+                certificate.Status = Domain.Consts.CertificateStatus.Reprint;
                 await _certificateRepository.Update(certificate, request.Username,
-                    SFA.DAS.AssessorService.Domain.Consts.CertificateActions.Reprint);
+                    Domain.Consts.CertificateActions.Reprint);
             }
             else
             {
