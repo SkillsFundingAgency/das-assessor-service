@@ -12,13 +12,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
     {
         private readonly ILogger<ExternalApiController> _logger;
         private readonly IAzureApiClient _apiClient;
-        private readonly ISessionService _sessionService;
 
-        public ExternalApiController(ILogger<ExternalApiController> logger, IAzureApiClient apiClient, ISessionService sessionService)
+        public ExternalApiController(ILogger<ExternalApiController> logger, IAzureApiClient apiClient)
         {
             _logger = logger;
             _apiClient = apiClient;
-            _sessionService = sessionService;
         }
 
         [HttpGet]

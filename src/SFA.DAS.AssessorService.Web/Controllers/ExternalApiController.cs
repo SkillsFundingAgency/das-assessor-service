@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.Azure;
 using SFA.DAS.AssessorService.Application.Api.Client.Azure;
-using SFA.DAS.AssessorService.Web.Infrastructure;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,14 +15,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly ILogger<ExternalApiController> _logger;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IAzureApiClient _apiClient;
-        private readonly ISessionService _sessionService;
 
-        public ExternalApiController(ILogger<ExternalApiController> logger, IHttpContextAccessor contextAccessor, IAzureApiClient apiClient, ISessionService sessionService)
+        public ExternalApiController(ILogger<ExternalApiController> logger, IHttpContextAccessor contextAccessor, IAzureApiClient apiClient)
         {
             _logger = logger;
             _contextAccessor = contextAccessor;
             _apiClient = apiClient;
-            _sessionService = sessionService;
         }
 
         [HttpGet]

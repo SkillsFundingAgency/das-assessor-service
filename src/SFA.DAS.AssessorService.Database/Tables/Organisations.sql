@@ -10,6 +10,8 @@
 	[UpdatedAt] [datetime2](7) NULL,
 	[OrganisationTypeId] [int] NULL,  
 	OrganisationData [nvarchar](max) NULL,
+	[ApiEnabled] [bit] NOT NULL DEFAULT 0,
+	[ApiUser] [nvarchar](30) NULL,
 
  CONSTRAINT [PK_Organisations] PRIMARY KEY CLUSTERED 
 (

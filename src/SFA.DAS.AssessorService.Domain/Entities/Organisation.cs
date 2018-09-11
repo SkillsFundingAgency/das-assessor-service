@@ -13,6 +13,9 @@ namespace SFA.DAS.AssessorService.Domain.Entities
 
         public string PrimaryContact { get; set; }
 
+        public bool ApiEnabled { get; set; }
+        public string ApiUser { get; set; }
+
         public string Status { get; set; }
 
         public virtual ICollection<Certificate> Certificates { get; set; } = new List<Certificate>();
