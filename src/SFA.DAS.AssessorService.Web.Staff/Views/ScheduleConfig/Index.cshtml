@@ -10,20 +10,20 @@
         <a asp-action="Index" asp-controller="Dashboard" class="link-back">Return to dashboard</a>
         <h1 class="heading-xlarge">
             Print schedule
-            <span class="heading-secondary">Next run scheduled: @Model.First().RunTime</span>
+            <span class="heading-secondary">Next run scheduled: @if (Model.Any()) { @Model.First().RunTime; } else { @Html.Raw("Not Applicable"); }</span>
         </h1>
     </div>
 </div>
 <div class="grid-row">
     <div class="column-full">
+        <div class="form-group">
+            @if (!@Model.Where(m => !m.IsRecurring && m.RunTime <= DateTime.Now).Any())
+            {
+                <a asp-action="RunNow" asp-route-scheduleType="1" class="button">Run now</a>
+            }
+        </div>
         @if (@Model.Any())
         {
-            <div class="form-group">
-                @if (!@Model.Where(m => !m.IsRecurring && m.RunTime <= DateTime.Now).Any())
-                {
-                    <a asp-action="RunNow" asp-route-scheduleType="1" class="button">Run now</a>
-                }
-            </div>
             <a asp-action="Index">Refresh table</a>
 
             <div class="form-group">
@@ -48,12 +48,6 @@
                         }
                     </tbody>
                 </table>
-            </div>
-        }
-        else
-        {
-            <div class="form-group">
-                <span class="bold">Next schedule: </span> Not Applicable
             </div>
         }
 
