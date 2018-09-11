@@ -11,7 +11,7 @@
 	[OrganisationTypeId] [int] NULL,  
 	OrganisationData [nvarchar](max) NULL,
 	[ApiEnabled] [bit] NOT NULL DEFAULT 0,
-	[ApiUser] [nvarchar](30) NULL,
+	[ApiUser] [nvarchar](100) NULL,
 
  CONSTRAINT [PK_Organisations] PRIMARY KEY CLUSTERED 
 (
