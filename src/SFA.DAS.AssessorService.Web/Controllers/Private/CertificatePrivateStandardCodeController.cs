@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -19,16 +20,19 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
     public class CertificatePrivateStandardCodeController : CertificateBaseController
     {
         private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
+        private readonly CacheHelper _cacheHelper;
         private readonly ICertificateApiClient _certificateApiClient;
         private readonly ISessionService _sessionService;
 
         public CertificatePrivateStandardCodeController(ILogger<CertificateController> logger,
             IHttpContextAccessor contextAccessor,
             IAssessmentOrgsApiClient assessmentOrgsApiClient,
+            CacheHelper cacheHelper,
             ICertificateApiClient certificateApiClient, ISessionService sessionService)
             : base(logger, contextAccessor, certificateApiClient, sessionService)
         {
             _assessmentOrgsApiClient = assessmentOrgsApiClient;
+            _cacheHelper = cacheHelper;
             _certificateApiClient = certificateApiClient;
             _sessionService = sessionService;
         }
@@ -36,12 +40,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
         [HttpGet]
         public async Task<IActionResult> StandardCode(bool? redirectToCheck = false)
         {
-            var standardCodes = (await _assessmentOrgsApiClient.GetAllStandards())
-                .Select(q => new SelectListItem { Value = q.Id.ToString(), Text = q.Title.ToString() });
+            var results = await GetStandardCodesSelectListItems();
 
             var viewResult = await LoadViewModel<CertificateStandardCodeListViewModel>("~/Views/Certificate/StandardCode.cshtml");
             var vm = ((viewResult as ViewResult).Model) as CertificateStandardCodeListViewModel;
-            vm.StandardCodes = standardCodes;
+            vm.StandardCodes = results;
 
             return viewResult;
         }
@@ -51,15 +54,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
         {
             var username = ContextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
-            var standards = (await _assessmentOrgsApiClient.GetAllStandards());
-
-            var selectedStandard = standards.First(q => q.Id == vm.SelectedStandardCode);
-            vm.Standard = selectedStandard.Title;
-            vm.Level = selectedStandard.Level;
-
-            var standardCodes = standards
-                .Select(q => new SelectListItem { Value = q.Id.ToString(), Text = q.Title.ToString() });
-            vm.StandardCodes = standardCodes;
+            var results = await GetStandardCodesSelectListItems();
+            vm.StandardCodes = results;
 
             var sessionString = SessionService.Get("CertificateSession");
             if (sessionString == null)
@@ -83,6 +79,41 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
             return await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/Certificate/StandardCode.cshtml",
                 nextAction: RedirectToAction("LearnerStartDate", "CertificatePrivateLearnerStartDate"), action: CertificateActions.StatusCode);
+        }
+
+        private async Task<IEnumerable<SelectListItem>> GetStandardCodesSelectListItems()
+        {
+            var filteredStandardCodes = await GetFilteredStatusCodes();
+            return await GetStandardCodesSelectListItems(filteredStandardCodes);
+        }
+      
+        private async Task<List<string>> GetFilteredStatusCodes()
+        {
+            var endPointAsessorOrganisationId = _sessionService.Get("EndPointAsessorOrganisationId");
+
+            var filteredStandardCodes =
+                (await _assessmentOrgsApiClient
+                    .FindAllStandardsByOrganisationIdAsync(endPointAsessorOrganisationId))
+                .Select(q => q.StandardCode).ToList();
+            return filteredStandardCodes;
+        }
+
+        private async Task<IEnumerable<SelectListItem>> GetStandardCodesSelectListItems(List<string> filteredStandardCodes)
+        {
+            var selectListItems = await _cacheHelper.RetrieveFromCache<List<SelectListItem>>("Standards");
+            if (selectListItems == null)
+            {
+                var standards = (await _assessmentOrgsApiClient.GetAllStandards())
+                    .Where(a => filteredStandardCodes.Contains(a.Id.ToString()))
+                    .Select(q => new SelectListItem { Value = q.Id.ToString(), Text = q.Title.ToString() }).ToList();
+                await _cacheHelper.SaveToCache("Standards", standards, 1);
+
+                selectListItems = standards;
+            }
+
+            var results = (selectListItems)
+                .Where(a => filteredStandardCodes.Contains(a.Value.ToString()));
+            return results;
         }
     }
 }

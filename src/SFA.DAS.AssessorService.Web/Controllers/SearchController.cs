@@ -30,6 +30,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             _sessionService.Remove("SearchResults");
             _sessionService.Remove("SelectedStandard");
             _sessionService.Remove("SearchResultsChooseStandard");
+            _sessionService.Remove("EndPointAsessorOrganisationId");
 
             return View("Index");
         }
