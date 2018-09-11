@@ -42,7 +42,7 @@
                     <td>@result.CertificateReference</td>
                     <td>@result.CertificateStatus</td>
                     <td>@result.LastUpdatedAt?.ToShortDateString()</td>
-                    <td><a class="button" asp-action="Select" asp-route-stdcode="@result.StandardCode" asp-route-uln="@result.Uln" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.PaginatedList.PageIndex">View</a></td>
+                    <td><a asp-action="Select" asp-route-stdcode="@result.StandardCode" asp-route-uln="@result.Uln" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.PaginatedList.PageIndex">View</a></td>
                 </tr>
                 }
             </tbody>
