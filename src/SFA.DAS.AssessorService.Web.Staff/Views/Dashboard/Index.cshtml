@@ -1,16 +1,23 @@
-﻿@{
-    ViewBag.Title = "Staff Dashboard";
-}
+﻿@{ ViewBag.Title = "Staff Dashboard"; }
 
-<h2>Staff Dashboard</h2>
-
-
-<div>
-    <a asp-controller="Search">Search</a>
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <h1 class="heading-xlarge">Staff Dashboard</h1>
+    </div>
 </div>
-<div>
-    <a href="#">Print Batches</a>
+<div class="grid-row">
+    <div class="column-one-third">
+        <h2 class="heading-medium"><a asp-controller="Search">Certificate search</a></h2>
+        <p>Search for certificates by learner name, ULN, certificate reference or EPAO ID.</p>
+    </div>
+    <div class="column-one-third">
+        <h2 class="heading-medium"><a asp-controller="BatchSearch">Batch search</a></h2>
+        <p>View current batches and search for certificates by batch number.</p>
+    </div>
 </div>
-<div>
-    <a asp-controller="ScheduleConfig">Print Schedule Config</a>
+<div class="grid-row">
+    <div class="column-one-third">
+        <h2 class="heading-medium"><a asp-controller="ScheduleConfig">Print schedule configuration</a></h2>
+        <p>Print certificates. Create, delete and view existing print schedules.
+    </div>
 </div>
