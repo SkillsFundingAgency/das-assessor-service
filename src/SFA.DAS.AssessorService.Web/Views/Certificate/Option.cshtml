@@ -37,46 +37,34 @@
                         There's a problem
                     </h2>
                     <ul class="error-summary-list">
-                        <li><a sfa-validation-for="HasAdditionalLearningOption"></a></li>
                         <li><a sfa-validation-for="Option"></a></li>
-                        @*<li><a href="#Pass">You need to specify an achievement grade for this apprentice</a></li>*@
                     </ul>
                 </div>
             }
 
             <div sfa-anyvalidationerror-class="after-error-summary">
-                <div id="HasAdditionalLearningOption">
+                <div id="Option">
                     <h1 class="heading-medium">
                         @*<span class="heading-secondary">@Model.GivenNames @Model.FamilyName</span>*@
                         @Localizer["Heading"]
                     </h1>
                     <p>You may know options as 'occupational options', 'pathways', 'specialisms' or 'specialist functions'.</p>
                     <p>The option will appear on the certificate.</p>
-                    <div class="error-message-container" sfa-validation-for="HasAdditionalLearningOption" sfa-validationerror-class="form-group-error">
-                        <span class="error-message" asp-validation-for="HasAdditionalLearningOption"></span>
-                    </div>
                 </div>
                 <div class="form-group" sfa-anyvalidationerror-class="form-group-error">
-                    <div class="multiple-choice" data-target="show-option-input">
-                        <input asp-for="HasAdditionalLearningOption" id="options_yes" type="radio" value="True" />
-                        <label for="options_yes">
-                            Yes
-                        </label>
+                    @*<span class="form-label-bold">Select an option</span>*@
+                    <div class="error-message-container" sfa-validation-for="Option">
+                        <span class="error-message" asp-validation-for="Option"></span>
                     </div>
-                    <div class="panel panel-border-narrow js-hidden" id="show-option-input">
-                        <label class="form-label" for="surname">
-                            <span class="form-label">What was the option?</span>
-                            <span class="error-message" asp-validation-for="Option"></span>
-                        </label>
-                        <input class="form-control" sfa-validation-for="Option" sfa-validationerror-class="form-control-error" asp-for="Option" type="text" />
-                    </div>
-
-                    <div class="multiple-choice">
-                        <input asp-for="HasAdditionalLearningOption" id="options_no" type="radio" value="False" />
-                        <label for="options_no">
-                            No
-                        </label>
-                    </div>
+                    @foreach (var option in Model.Options)
+                    {
+                        <div class="multiple-choice" data-target="show-option-input">
+                            <input asp-for="Option" id="options_@option.Replace(" ", "")" type="radio" value="@option"/>
+                            <label for="options_@option.Replace(" ", "")">
+                                @option
+                            </label>
+                        </div>
+                    }
                 </div>
             </div>
 

@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Domain.Paging
             TotalRecordCount = count;
             TotalPages = (int)Math.Ceiling(count / (double)pageSize);
 
-            Items.AddRange(items);
+            if(items != null) Items.AddRange(items);
         }
  
         public bool HasPreviousPage => (PageIndex > 1);

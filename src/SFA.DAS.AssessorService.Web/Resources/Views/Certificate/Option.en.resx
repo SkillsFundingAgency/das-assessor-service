@@ -121,10 +121,10 @@
     <value>Continue</value>
   </data>
   <data name="Heading" xml:space="preserve">
-    <value>Did the apprentice take a learning option?</value>
+    <value>Which learning option did the apprentice take?</value>
   </data>
   <data name="InfoBody" xml:space="preserve">
-    <value>For some standards, an apprentice can take different learning options. For example, the standard for professional accounting taxation technician has a tax option. If it applies, enter the option the apprentice achieved.</value>
+    <value>For some standards, an apprentice can take different learning options. For example, the standard for professional accounting taxation technician has a tax option.</value>
   </data>
   <data name="InfoHeader" xml:space="preserve">
     <value>What's a learning option?</value>

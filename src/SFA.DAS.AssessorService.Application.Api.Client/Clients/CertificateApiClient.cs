@@ -44,6 +44,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Put, "api/v1/certificates/update"))
             {
                 return await PostPutRequestWithResponse<UpdateCertificateRequest, Certificate>(httpRequest, certificateRequest);
+                return await PostPutRequestWithResponse<UpdateCertificateRequest, Certificate>(httpRequest, certificateRequest);
             }
         }
 
@@ -68,6 +69,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/certificates/history/?pageIndex={pageIndex}&userName={userName}"))
             {
                 return await RequestAndDeserialiseAsync<PaginatedList<CertificateHistoryResponse>>(httpRequest, "Could not get Certificate History");
+            }
+        }
+
+        public async Task<List<Option>> GetOptions(int stdCode)
+        {
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/certificates/options/?stdCode={stdCode}"))
+            {
+                return await RequestAndDeserialiseAsync<List<Option>>(httpRequest, "Could not get Options");
             }
         }
     }

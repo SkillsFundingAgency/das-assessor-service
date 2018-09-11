@@ -17,7 +17,7 @@
     [ProviderUkPrn] INT NOT NULL, 
     [CertificateReferenceId] INT NOT NULL IDENTITY(10001,1), 
 	[LearnRefNumber] NVARCHAR(12) NULL,
-	[IsPrivatelyFunded] BIT, 
+	[CreateDay] DATE NOT NULL,
     CONSTRAINT [PK_Certificates] PRIMARY KEY ([Id]),
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
@@ -27,3 +27,6 @@ REFERENCES [dbo].[Organisations] ([Id]);
 GO
  ALTER TABLE [dbo].[Certificates] CHECK CONSTRAINT [FK_Certificates_Organisations_OrganisationId]
 GO
+
+
+CREATE UNIQUE INDEX [IXU_Certificates] ON [Certificates] ([Uln], [StandardCode], [CreateDay])
