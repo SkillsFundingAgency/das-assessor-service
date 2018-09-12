@@ -45,10 +45,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             _searchAssessmentOrganisationsHandler = new SearchAssessmentOrganisationHandler(_registerQueryRepository.Object, _searchValidator.Object, _logger.Object);
         }
 
-        [Test]
-        public void SearchAssessmentOrganisationsThrowsBadRequestExceptionIfSearchStringTooShort()
+        [TestCase("A")]
+        [TestCase("A ")]
+        [TestCase("")]
+        [TestCase("A        ")]
+        [TestCase("   A  ")]
+        public void SearchAssessmentOrganisationsThrowsBadRequestExceptionIfSearchStringTooShort(string search)
         {
-            var request = new SearchAssessmentOrganisationsRequest { Searchstring = "AB " };
+            var request = new SearchAssessmentOrganisationsRequest { Searchstring = search };
             Assert.ThrowsAsync<BadRequestException>(() => _searchAssessmentOrganisationsHandler.Handle(request, new CancellationToken())); 
         }
 

@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             _logger.LogInformation("Handling Search AssessmentOrganisations Request");
             var searchstring = request.Searchstring.Trim().ToLower();
 
-            if (searchstring.Length < 3)
+            if (searchstring.Length < 2)
                 throw new BadRequestException("The searchstring is too short to do a valid search");
 
             if (_validator.IsValidEpaOrganisationId(searchstring))
