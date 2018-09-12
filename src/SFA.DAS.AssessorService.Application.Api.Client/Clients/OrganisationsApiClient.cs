@@ -15,6 +15,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
         }
 
+        public OrganisationsApiClient(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger) : base(httpClient, tokenService, logger)
+        {
+        }
+
         public async Task<IEnumerable<OrganisationResponse>> GetAll()
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/organisations/"))

@@ -49,6 +49,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>CertificateFirstNameViewModelValidator.resx</DependentUpon>
     </Compile>
+    <Compile Update="Resources\Validators\CertificateRecipientViewModelValidator.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>CertificateRecipientViewModelValidator.resx</DependentUpon>
+    </Compile>
     <Compile Update="Resources\Validators\CertificateStandardCodeViewModelValidator.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -120,7 +125,7 @@
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Validators\CertificateRecipientViewModelValidator.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>CertificateRecipientViewModelValidator - Copy.Designer.cs</LastGenOutput>
+      <LastGenOutput>CertificateRecipientViewModelValidator.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Validators\CertificateAddressViewModelValidator.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
