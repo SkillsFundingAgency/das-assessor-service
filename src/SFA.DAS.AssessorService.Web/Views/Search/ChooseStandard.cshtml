@@ -56,7 +56,9 @@
                     </div>
                     @if (Model.SearchResults.Any(sr => sr.CertificateReference == null))
                     {
-                        <span class="form-label-bold">@Localizer.Pluralize("AssessmentsNotRecordedYet", Model.SearchResults.Count(sr => sr.CertificateReference == null) > 1)</span>
+                        <div class="form-block">
+                            <span class="form-label-bold">@Localizer.Pluralize("AssessmentsNotRecordedYet", Model.SearchResults.Count(sr => sr.CertificateReference == null) > 1)</span>
+                        </div>
                         foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference == null))
                         {
                             <div class="multiple-choice">
@@ -69,7 +71,9 @@
                     }
                     @if (Model.SearchResults.Any(sr => sr.CertificateReference != null))
                     {
-                        <span class="form-label-bold">@Localizer.Pluralize("PreviouslyRecordedAssessments", Model.SearchResults.Count(sr => sr.CertificateReference != null) > 1)</span>
+                        <div class="form-block">
+                            <span class="form-label-bold">@Localizer.Pluralize("PreviouslyRecordedAssessments", Model.SearchResults.Count(sr => sr.CertificateReference != null) > 1)</span>
+                        </div>
                         foreach (var result in Model.SearchResults.Where(sr => sr.CertificateReference != null))
                         {
                             <div class="multiple-choice">
