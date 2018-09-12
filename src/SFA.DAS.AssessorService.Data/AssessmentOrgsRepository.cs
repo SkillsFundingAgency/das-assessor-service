@@ -171,7 +171,7 @@ namespace SFA.DAS.AssessorService.Data
                     var sqlToAppend =
                         "INSERT INTO [Organisations] ([Id],[CreatedAt],[DeletedAt],[EndPointAssessorName],[EndPointAssessorOrganisationId], " +
                         "[EndPointAssessorUkprn],[PrimaryContact],[Status],[UpdatedAt],[OrganisationTypeId],[OrganisationData]) VALUES (" +
-                        $@" {id}, getdate(), null, {endPointAssessorName}, '{org.EndPointAssessorOrganisationId}'," +
+                        $@" {id}, getutcdate(), null, {endPointAssessorName}, '{org.EndPointAssessorOrganisationId}'," +
                         $@"{ukprn}, null, '{org.Status}', null,  {org.OrganisationTypeId}, '{organisationData}' ); ";
                     sql.Append(sqlToAppend);
                 }
@@ -323,11 +323,13 @@ namespace SFA.DAS.AssessorService.Data
                     var userName = ConvertStringToSqlValueString(contact.Username);
                     var phoneNumber = ConvertStringToSqlValueString(contact.PhoneNumber);
 
-                    sql.Append(
+                    var detailsToInsert =
                         "INSERT INTO [Contacts] ([Id] ,[CreatedAt] ,[DeletedAt] ,[DisplayName] ,[Email] ,[EndPointAssessorOrganisationId] ,[OrganisationId],  " +
                         "[Status], [UpdatedAt], [Username] ,[PhoneNumber]) VALUES " +
-                        $@"(newid(), getdate(), null, {displayName}, {email}, {endPointAssessorOrganisationId}, {organisationId}, " +
-                        $@"'{contact.Status}', getdate(), {userName}, {phoneNumber}); ");
+                        $@"(newid(), getutcdate(), null, {displayName}, {email}, {endPointAssessorOrganisationId}, (select  id from organisations where EndPointAssessorOrganisationId = {endPointAssessorOrganisationId}), " +
+                        $@"'{contact.Status}', getutcdate(), {userName}, {phoneNumber}); ";
+
+                    sql.Append(detailsToInsert);
                 }
 
                 foreach (var contact in contactsToUpdate)
@@ -335,10 +337,11 @@ namespace SFA.DAS.AssessorService.Data
                     var username = ConvertStringToSqlValueString(contact.Username);
                     var phoneNumber = ConvertStringToSqlValueString(contact.PhoneNumber);
 
-                    sql.Append(
+                   var detailsToUpdate = 
                         $@"UPDATE [Contacts] Set [PhoneNumber] = {phoneNumber} WHERE "+
-                        $@"[username] = {username}; "
-                    );
+                        $@"[username] = {username}; ";
+
+                    sql.Append(detailsToUpdate);
                 }
 
                 connection.Execute(sql.ToString());
