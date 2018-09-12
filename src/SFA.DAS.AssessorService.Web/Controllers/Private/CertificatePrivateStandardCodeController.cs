@@ -43,8 +43,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
             var results = await GetStandardCodesSelectListItems();
 
             var viewResult = await LoadViewModel<CertificateStandardCodeListViewModel>("~/Views/Certificate/StandardCode.cshtml");
-            var vm = ((viewResult as ViewResult).Model) as CertificateStandardCodeListViewModel;
-            vm.StandardCodes = results;
+            if (viewResult is ViewResult)
+            {
+                var vm = ((viewResult as ViewResult).Model) as CertificateStandardCodeListViewModel;
+                vm.StandardCodes = results;
+            }
 
             return viewResult;
         }
@@ -86,7 +89,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
             var filteredStandardCodes = await GetFilteredStatusCodes();
             return await GetStandardCodesSelectListItems(filteredStandardCodes);
         }
-      
+
         private async Task<List<string>> GetFilteredStatusCodes()
         {
             var endPointAsessorOrganisationId = _sessionService.Get("EndPointAsessorOrganisationId");

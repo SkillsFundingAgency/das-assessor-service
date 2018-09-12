@@ -11,6 +11,10 @@ namespace SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs
         {
         }
 
+        public AssessmentOrgsApiClient(HttpClient httpClient) : base(httpClient)
+        {
+        }
+
         /// <summary>
         /// Get a single organisation details
         /// GET /assessmentorgs/{organisationId}

@@ -14,16 +14,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
     [Authorize]
     [Route("certificate/ukprns")]
     public class CertificatePrivateProviderUkprnController : CertificateBaseController
-    {
-        private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
-
+    { 
         public CertificatePrivateProviderUkprnController(ILogger<CertificateController> logger,
-            IHttpContextAccessor contextAccessor,
-            IAssessmentOrgsApiClient assessmentOrgsApiClient,
+            IHttpContextAccessor contextAccessor,         
             ICertificateApiClient certificateApiClient, ISessionService sessionService)
             : base(logger, contextAccessor, certificateApiClient, sessionService)
-        {
-            _assessmentOrgsApiClient = assessmentOrgsApiClient;
+        {     
         }
 
         [HttpGet]

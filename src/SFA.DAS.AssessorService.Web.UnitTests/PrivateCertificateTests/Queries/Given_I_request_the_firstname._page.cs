@@ -1,16 +1,14 @@
-﻿using FizzWare.NBuilder;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Domain.JsonData;
-using SFA.DAS.AssessorService.Web.Controllers;
 using SFA.DAS.AssessorService.Web.Controllers.Private;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private;
 
-namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests
+namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Queries
 {
-    public class Given_I_request_the_FirstName_Page : CertificateQueryBase
+    public class Given_I_request_the_firstname_page : CertificateQueryBase
     {
         private IActionResult _result;
         private CertificateFirstNameViewModel _viewModelResponse;
@@ -25,15 +23,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests
                     MockSession.Object
                     );
 
-            var certificateSession = Builder<CertificateSession>
-                .CreateNew()
-                .With(q => q.CertificateId = Certificate.Id)                
-                .Build();
-            var serialisedCertificateSession
-                = JsonConvert.SerializeObject(certificateSession);
-
-            MockSession.Setup(q => q.Get("CertificateSession"))
-                .Returns(serialisedCertificateSession);
+            SetupSession();
 
             _result = certificatePrivateFirstNameController.FirstName(false).GetAwaiter().GetResult();
 
@@ -48,7 +38,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests
 
             _viewModelResponse.Id.Should().Be(Certificate.Id);
             _viewModelResponse.FirstName.Should().Be(CertificateData.LearnerGivenNames);
-
         }
     }
 }

@@ -3,13 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Web.Controllers.Private;
 
-namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests
+namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Queries
 {
     public class Given_I_request_the_FirstName_Page_And_Session_Does_Not_Exist : CertificateQueryBase
     {       
         private RedirectToActionResult _result;
 
-        [SetUp]
+        [SetUp]  
         public void Arrange()
         {
             var certificatePrivateFirstNameController =
