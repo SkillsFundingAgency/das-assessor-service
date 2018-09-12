@@ -5,11 +5,12 @@
     Layout = "_Layout";
 }
 
-<h1>@Model.Title</h1>
+<h1 class="heading-large">@Model.Title</h1>
 
 @foreach (var sect in Model.Sections)
 {
-    <h2>@sect.Title</h2>
+    <h2 class="heading-medium">@sect.Title</h2>
+    <br/>
     <ul>
         @foreach (var pg in sect.Pages)
         {
@@ -17,13 +18,26 @@
                 <dt>@pg.Title</dt>
                 @if (pg.Complete)
                 {
-                    <dd><a href="@Url.Action("Index", "Page", new {pageId = pg.PageId})">Change</a></dd>
+                    <dd>
+                        <ul>
+                            @foreach (var answer in pg.Answers)
+                            {
+                                <li>@answer.Value</li>
+                            }
+                        </ul>
+                    </dd>
+                    <dd>
+                        <a href="@Url.Action("Index", "Page", new {pageId = pg.PageId})">Change</a>
+                    </dd>
                 }
                 else
                 {
-                    <dd><a href="@Url.Action("Index", "Page", new {pageId = pg.PageId})">Answer required</a></dd>
+                    <dd>
+                        <a href="@Url.Action("Index", "Page", new {pageId = pg.PageId})">Answer required</a>
+                    </dd>
                 }
             </li>
+            <br/>
         }
     </ul>
 }

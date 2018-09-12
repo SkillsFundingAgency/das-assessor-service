@@ -7,20 +7,35 @@
 
 <h1>@Model.Title</h1>
 
-<ul>
-@foreach (var question in Model.Questions)
-{
-    <h2>@question.Title</h2>
-    foreach (var input in question.InputViewModels)
-    {
-        <label>@input.Label</label>
-        <p>@input.Hint</p>
-        switch (input.Type)
-         {
-             case "Text": <input type="text" id="@input.InputId" name="@input.InputId" value="@input.Value"></input>
-                 break;
-                 
-         }
-    }
-}
-</ul>
+<form method="post" asp-action="Index" asp-controller="Page">
+    <ul>
+        @foreach (var question in Model.Questions)
+        {
+            <li>
+            <label>@question.Label</label>
+            <p>@question.Hint</p>
+            @switch (question.Type)
+            {
+                case "Text": <input type="text" id="@question.QuestionId" name="@question.QuestionId" value="@question.Value"></input>
+                    break;
+                case "Email": <input type="email" id="@question.QuestionId" name="@question.QuestionId" value="@question.Value"></input>
+                    break;
+                case "Checkbox":
+                    var chkd = question.Value == "Yes" ? "checked" : ""; 
+                    <input type="checkbox" id="@question.QuestionId" name="@question.QuestionId" @chkd></input>
+                    break;
+                case "SimpleRadio":
+                    for (int i = 0; i < question.Options.Count; i++)
+                    {
+                        <input type="radio" id="@(question.QuestionId + "_" + i)" name="@question.QuestionId" value="@question.Options[i]"/>
+                        <label for="@(question.QuestionId + "_" + i)">@question.Options[i]</label>
+                    }
+                    break;
+                     
+            }
+        </li>
+        }
+    </ul>
+    <button type="submit">Submit</button><br/>
+    <a href="@Url.Action("Sequence", "Sequence", new {Model.SequenceId})">Return to summary</a>
+</form>

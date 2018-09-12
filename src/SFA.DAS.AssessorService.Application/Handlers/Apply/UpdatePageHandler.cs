@@ -36,23 +36,23 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             }
 
             var page = section.Pages.Single(p => p.PageId == request.PageId);
-
-            foreach (var answeredQuestion in request.Questions)
+            page.Answers = new List<Answer>();
+            
+            foreach (var answer in request.Answers)
             {
-                var questionIdDb = page.Questions.Single(q => q.QuestionId == answeredQuestion.QuestionId);
+                var questionIdDb = page.Questions.SingleOrDefault(q => q.QuestionId == answer.QuestionId);
 
-                foreach (var answeredQuestionOutput in answeredQuestion.Outputs)
+                if (questionIdDb == null)
                 {
-                    foreach (var outputValue in answeredQuestionOutput.Values)
-                    {
-                        if (!questionIdDb.Inputs.Select(v => v.InputId).Contains(outputValue.InputId))
-                        {
-                            throw new BadRequestException($"{outputValue.InputId} is not an input on this page.");
-                        }
-                    }
+                    throw new BadRequestException($"{answer.QuestionId} is not an question on this page.");
+                }
+
+                if (questionIdDb.Input.Type == "Checkbox" && answer.Value == "on")
+                {
+                    answer.Value = "Yes";
                 }
                 
-                questionIdDb.Outputs = answeredQuestion.Outputs;
+                page.Answers.Add(answer);
                 questionIdDb.Complete = true;
             }
 

@@ -7,13 +7,13 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
     {
         public string UserId { get; }
         public string PageId { get; }
-        public List<Question> Questions { get; }
+        public List<Answer> Answers { get; }
 
-        public UpdatePageRequest(string userId, string pageId, List<Question> questions)
+        public UpdatePageRequest(string userId, string pageId, List<Answer> answers)
         {
             UserId = userId;
             PageId = pageId;
-            Questions = questions;
+            Answers = answers;
         }
     }
 }

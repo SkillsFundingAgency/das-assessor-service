@@ -27,6 +27,32 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             
             return View("~/Views/Apply/Pages/Index.cshtml", pageVm);
         }
+
+        [HttpPost("Page/{pageId}")]
+        public async Task<IActionResult> SaveAnswers(string pageId)
+        {
+            var userId = "1";
+
+            var answers = new List<Answer>();
+
+            foreach (var keyValuePair in HttpContext.Request.Form.Where(f => !f.Key.StartsWith("__")))
+            {
+                answers.Add(new Answer() {QuestionId = keyValuePair.Key, Value = keyValuePair.Value});
+            }
+
+            var page = await _apiClient.UpdatePage(userId, pageId, answers);
+            if (page.Next.Action == "NextPage")
+            {
+                return RedirectToAction("Index", new {pageId = page.Next.ReturnId});
+            }
+
+            if (page.Next.Action == "ReturnToSequence")
+            {
+                return RedirectToAction("Sequence", "Sequence", new {sequenceId = page.Next.ReturnId});
+            }
+
+            return RedirectToAction("Index", "Sequence");
+        }
     }
 
     public class PageViewModel
@@ -35,63 +61,39 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         {
             Title = page.Title;
             PageId = page.PageId;
+            SequenceId = page.SequenceId;
 
-            var inputs = page.Questions.SelectMany(q => q.Inputs);
-            var outputs = page.Questions.SelectMany(q => q.Outputs);
+            var questions = page.Questions;
+            var answers = page.Answers;
 
-            List<QuestionInputViewModel> inputViewModels = new List<QuestionInputViewModel>();
-
-            foreach (var pageQuestion in page.Questions)
+            Questions = new List<QuestionViewModel>();
+            
+            Questions.AddRange(questions.Select(q => new QuestionViewModel()
             {
-                if (!pageQuestion.AllowMultipleAnswers)
-                {
-                    inputViewModels.AddRange(pageQuestion.Inputs.Select(i => new QuestionInputViewModel()
-                    {
-                        QuestionId = pageQuestion.QuestionId,
-                        InputId = i.InputId,
-                        Type = i.Type,
-                        Label = i.Label,
-                        Hint = i.Hint,
-                        Value = outputs.SelectMany(o => o.Values).SingleOrDefault(v => v.InputId == i.InputId)?.Value
-                    }));
-                }
-                else
-                {
-                    
-                }
-            }
-
-            Questions = page.Questions.Select(q => new QuestionViewModel()
-            {
+                Label = q.Label,
                 QuestionId = q.QuestionId,
-                Title = q.Title,
-                InputViewModels = inputViewModels.Where(ivm => ivm.QuestionId == q.QuestionId).ToList()
-            }).ToList();
-
-
+                Type = q.Input.Type,
+                Hint = q.Hint,
+                Options = q.Input.Options,
+                Value = answers?.SingleOrDefault(a => a.QuestionId == q.QuestionId)?.Value
+            }));
         }
 
         public string PageId { get; set; }
         public string Title { get; set; }
         
         public List<QuestionViewModel> Questions { get; set; }
+        public string SequenceId { get; set; }
     }
 
 
     public class QuestionViewModel
     {
-        public string Title { get; set; }
         public string QuestionId { get; set; }
-        public List<QuestionInputViewModel> InputViewModels { get; set; }
-    }
-
-    public class QuestionInputViewModel
-    {
-        public string QuestionId { get; set; }
-        public string InputId { get; set; }
         public string Type { get; set; }
         public string Label { get; set; }
         public string Hint { get; set; }
         public string Value { get; set; }
+        public dynamic Options { get; set; }
     }
 }
