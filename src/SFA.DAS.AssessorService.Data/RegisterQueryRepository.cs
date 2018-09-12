@@ -289,7 +289,8 @@ namespace SFA.DAS.AssessorService.Data
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
-                var assessmentOrganisationSummaries = await connection.QueryAsync<AssessmentOrganisationSummary>($@"select EndPointAssessorOrganisationId as Id, EndPointAssessorName as Name, EndPointAssessorUkprn as ukprn from [Organisations] where EndPointAssessorName like '%{organisationName}%' ");
+                var assessmentOrganisationSummaries = await connection.QueryAsync<AssessmentOrganisationSummary>($@"select EndPointAssessorOrganisationId as Id, EndPointAssessorName as Name, EndPointAssessorUkprn as ukprn from [Organisations] where EndPointAssessorName like @organisationName", new {organisationName =$"%{organisationName}%"
+                } );
                 return assessmentOrganisationSummaries;
             }
         }
