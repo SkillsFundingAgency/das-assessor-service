@@ -92,23 +92,16 @@
                             Is this a recurring job?
                         </h2>
                     </legend>
-                    <div class="multiple-choice">
-                        <input id="recur-hourly" type="radio" name="recurring-job" value="60">
-                        <label for="recur-hourly">Hourly</label>
-                    </div>
-                    <div class="multiple-choice">
-                        <input id="recur-daily" type="radio" name="recurring-job" value="1440">
-                        <label for="recur-daily">Daily</label>
-                    </div>
-                    <div class="multiple-choice">
-                        <input id="recur-weekly" type="radio" name="recurring-job" value="10080">
-                        <label for="recur-weekly">Weekly</label>
-                    </div>
-                    <!-- <div>
-                        <select asp-for="ScheduleInterval" asp-items="Html.GetEnumSelectList<ScheduleInterval>()">
-                            <option value="">-- None --</option>
-                        </select>
-                    </div> -->
+
+                    @foreach (var option in @Html.GetEnumSelectList<ScheduleInterval>())
+                    {
+                        <div class="multiple-choice" data-target="show-option-input">
+                            <input asp-for="ScheduleInterval" id="options_@option.Text.Replace(" ", "")" type="radio" value="@option.Value" />
+                            <label for="options_@option.Text.Replace(" ", "")">
+                                @option.Text
+                            </label>
+                        </div>
+                    }
                 </fieldset>
             </div>
 
