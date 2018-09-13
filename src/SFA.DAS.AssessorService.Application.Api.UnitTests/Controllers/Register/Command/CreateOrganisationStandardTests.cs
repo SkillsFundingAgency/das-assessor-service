@@ -38,8 +38,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
                 OrganisationId = _orgId,
                 StandardCode = 3,
                EffectiveFrom = DateTime.Now,
-               Comments = "this is a comment",
-               Status = "New"
+               Comments = "this is a comment"
             };
 
             _mediator.Setup(m => m.Send(_request, new CancellationToken())).ReturnsAsync(_organisationStandardId);

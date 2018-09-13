@@ -99,7 +99,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
             var messageReturned = _validator.CheckIfOrganisationUkprnExists(null).Length > 0;
             Assert.AreEqual(messageReturned, false);
             _registerRepository.Verify(r => r.EpaOrganisationExistsWithUkprn(It.IsAny<long>()), Times.Never);
-        }    
+        }
 
 
         [Test]
@@ -148,14 +148,33 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
 
         [TestCase(false, false)]
         [TestCase(true, true)]
-        public void CheckIfOrganisationStandardAlreadyEReturnsAnErrorMessage(bool exists, bool noMessageReturned)
+        public void CheckIfOrganisationStandardAlreadyExistsReturnsAnErrorMessage(bool exists, bool noMessageReturned)
         {
             _registerRepository.Setup(r => r.EpaOrganisationStandardExists(It.IsAny<string>(), It.IsAny<int>()))
                 .Returns(Task.FromResult(exists));
             var isMessageReturned =
-                _validator.CheckIfOrganisationStandardAlreadyExists("orgId",5).Length > 0;
+                _validator.CheckIfOrganisationStandardAlreadyExists("orgId", 5).Length > 0;
             Assert.AreEqual(noMessageReturned, exists);
             _registerRepository.Verify(r => r.EpaOrganisationStandardExists(It.IsAny<string>(), It.IsAny<int>()), Times.Once);
+        }
+
+
+        [TestCase("", false, true)]
+        [TestCase(null,false,true)]
+        [TestCase("valid contact id", true, true)]
+        [TestCase("invalid contact id", true, true)]
+        public void CheckIfOrganisationStandardHasValidContactIdReturnsAnErrorMessage(string contactId, bool repositoryCheckResult, bool noMessageReturned)
+        {
+            _registerRepository.Setup(r => r.ContactIdIsValid(It.IsAny<string>()))
+                .Returns(Task.FromResult(repositoryCheckResult));
+            var isMessageReturned =
+                _validator.CheckIfContactIdIsEmptyOrValid(contactId).Length > 0;
+            Assert.AreEqual(noMessageReturned, !isMessageReturned);
+            if (repositoryCheckResult == false)
+                _registerRepository.Verify(r => r.ContactIdIsValid(It.IsAny<string>()), Times.Never);
+            else
+            _registerRepository.Verify(r => r.ContactIdIsValid(It.IsAny<string>()), Times.Once);
+
         }
 
     }

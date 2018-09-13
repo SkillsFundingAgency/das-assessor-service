@@ -21,6 +21,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         public string ErrorMessageUkprnIsInvalid { get; } = "The ukprn is not the correct format or length; ";
         public string ErrorMessageOrganisationNotFound { get; } = "There is no organisation for this organisation Id; ";
 
+        public string ErrorMessageContactId { get; } = "The contact Id entered is invalid";
+        
         public string ErrorMessageTheOrganisationStandardAlreadyExists { get; } =
             "This organisation/standard already exists";
         public string ErrorMessageStandardNotFound { get; } =
@@ -115,6 +117,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             return _registerRepository.EpaOrganisationStandardExists(organisationId, standardCode).Result
                 ? ErrorMessageTheOrganisationStandardAlreadyExists
                 : string.Empty;
+        }
+
+        public string CheckIfContactIdIsEmptyOrValid(string contactId)
+        {
+            if (string.IsNullOrEmpty(contactId)) return string.Empty;
+
+            return _registerRepository.ContactIdIsValid(contactId).Result
+                ?string.Empty 
+                : ErrorMessageContactId;
         }
     }
 }

@@ -9,8 +9,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Register
         public int StandardCode { get; set; }
         public DateTime? EffectiveFrom { get; set; }
         public DateTime? EffectiveTo { get; set; }
-        public DateTime? DateStandardApprovedOnRegister { get; set; }
         public string Comments { get; set; }
-        public string Status { get; set; }
+        public string ContactId { get; set; }
     }
 }

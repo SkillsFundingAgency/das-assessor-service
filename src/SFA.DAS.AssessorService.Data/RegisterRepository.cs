@@ -73,12 +73,12 @@ namespace SFA.DAS.AssessorService.Data
 
              
                 var res = connection.Query<int>(
-                    "INSERT INTO [dbo].[OrganisationStandard] ([EndPointAssessorOrganisationId],[StandardCode],[EffectiveFrom],[EffectiveTo],[DateStandardApprovedOnRegister] ,[Comments],[Status]) VALUES (" +
-                    "@organisationId, @standardcode, @effectiveFrom, @effectiveTo, @dateStandardApprovedOnRegister, @comments, 'New'); SELECT CAST(SCOPE_IDENTITY() as int); ",
+                    "INSERT INTO [dbo].[OrganisationStandard] ([EndPointAssessorOrganisationId],[StandardCode],[EffectiveFrom],[EffectiveTo],[DateStandardApprovedOnRegister] ,[Comments],[Status], [ContactId]) VALUES (" +
+                    "@organisationId, @standardcode, @effectiveFrom, @effectiveTo, null, @comments, 'New', @ContactId); SELECT CAST(SCOPE_IDENTITY() as int); ",
                     new
                     {
                         organisationStandard.OrganisationId, organisationStandard.StandardCode, organisationStandard.EffectiveFrom, organisationStandard.EffectiveTo,
-                        organisationStandard.DateStandardApprovedOnRegister, organisationStandard.Comments}).Single();
+                        organisationStandard.DateStandardApprovedOnRegister, organisationStandard.Comments, organisationStandard.ContactId}).Single();
 
                 return res;
             }
