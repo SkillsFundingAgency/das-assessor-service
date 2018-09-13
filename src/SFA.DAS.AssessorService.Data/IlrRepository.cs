@@ -19,7 +19,10 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<IEnumerable<Ilr>> SearchForLearnerByUln(long uln)
         {
-            return await _context.Ilrs.Where(r => r.Uln == uln).GroupBy(r => r.StdCode).Select(g => g.OrderByDescending(l => l.Id).First()).ToListAsync();
+            return await _context.Ilrs.Where(r => r.Uln == uln)
+                .GroupBy(r => new{ r.FamilyName, r.StdCode })
+                .Select(g => g.OrderByDescending(l => l.Id).First())
+                .ToListAsync();
         }
 
         public async Task<Ilr> Get(long uln, int standardCode)
