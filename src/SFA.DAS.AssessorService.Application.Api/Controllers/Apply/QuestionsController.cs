@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MediatR;
@@ -20,6 +21,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
         public async Task<ActionResult<List<SequenceSummary>>> Summary(string userId)
         {
             var sequenceSummaries = await _mediator.Send(new SequenceSummaryRequest(userId));
+            return sequenceSummaries;
+        }
+        
+        [HttpGet("summary/admin/{workflowId}")]
+        public async Task<ActionResult<List<SequenceSummary>>> Summary(Guid workflowId)
+        {
+            var sequenceSummaries = await _mediator.Send(new AdminSequenceSummaryRequest(workflowId));
             return sequenceSummaries;
         }
         

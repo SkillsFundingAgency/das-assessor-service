@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using MediatR;
 
@@ -10,6 +11,16 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
         public SequenceSummaryRequest(string userId)
         {
             UserId = userId;
+        }
+    }
+    
+    public class AdminSequenceSummaryRequest : IRequest<List<SequenceSummary>>
+    {
+        public Guid WorkflowId { get; }
+
+        public AdminSequenceSummaryRequest(Guid workflowId)
+        {
+            WorkflowId = workflowId;
         }
     }
 }

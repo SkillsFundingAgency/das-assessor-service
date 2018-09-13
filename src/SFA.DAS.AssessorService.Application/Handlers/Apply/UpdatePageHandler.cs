@@ -73,9 +73,20 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
         {
             sequence.Complete = section.Pages.All(p => p.Complete);
 
-            if (sequence.Complete)
+            if (!sequence.Complete) return;
+            
+            var nextSequence = sequence.NextSequence;
+            if (nextSequence.Condition != null)
             {
-                workflow.Single(w => w.SequenceId == sequence.NextSequenceId).Active = true;
+                var answers = sequence.Sections.SelectMany(s => s.Pages).SelectMany(p => p.Answers).ToList();
+                if (answers.Any(a => a.QuestionId == nextSequence.Condition.QuestionId && a.Value == nextSequence.Condition.MustEqual))
+                {
+                    workflow.Single(w => w.SequenceId == sequence.NextSequence.NextSequenceId).Active = true;
+                }
+            }
+            else
+            {
+                workflow.Single(w => w.SequenceId == sequence.NextSequence.NextSequenceId).Active = true;
             }
         }
 

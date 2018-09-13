@@ -25,12 +25,16 @@
                     <input type="checkbox" id="@question.QuestionId" name="@question.QuestionId" @chkd></input>
                     break;
                 case "SimpleRadio":
-                    for (int i = 0; i < question.Options.Count; i++)
-                    {
-                        var radioChecked = question.Value == question.Options[i].ToString() ? "checked" : "";    
-                        <input type="radio" id="@(question.QuestionId + "_" + i)" name="@question.QuestionId" value="@question.Options[i]" @radioChecked/>
-                        <label for="@(question.QuestionId + "_" + i)">@question.Options[i]</label>
-                    }
+                    <div class="form-group">
+                        @for (int i = 0; i < question.Options.Count; i++)
+                        {
+                            var radioChecked = question.Value == question.Options[i].ToString() ? "checked" : "";  
+                            <div class="multiple-choice" data-target="show-option-input">
+                                <input type="radio" id="@(question.QuestionId + "_" + i)" name="@question.QuestionId" value="@question.Options[i]" @radioChecked/>
+                                <label for="@(question.QuestionId + "_" + i)">@question.Options[i]</label>
+                            </div>
+                        }
+                    </div>
                     break;
                      
             }
