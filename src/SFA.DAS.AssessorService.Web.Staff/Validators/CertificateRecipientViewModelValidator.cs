@@ -7,7 +7,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators
     {
         public CertificateRecipientViewModelValidator()
         {
-            RuleFor(vm => vm.Name).NotEmpty().WithMessage("Name must be defined");           
+            RuleFor(vm => vm.Name).NotEmpty().WithMessage("Enter a name");           
         }
     }
 }

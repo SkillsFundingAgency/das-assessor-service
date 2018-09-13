@@ -9,7 +9,7 @@
     <div class="column-two-thirds">
         <a class="link-back" asp-controller="CertificateAmmend" asp-action="Check" asp-route-certificateid=@Model.Id>Back</a>
 
-        <form class="apprentice-address-form" type="post" asp-controller="CertificateApprenticeDetails" asp-method="ApprenticeDetail">
+        <form class="apprentice-apprentice-detail-form" type="post" asp-controller="CertificateApprenticeDetails" asp-method="ApprenticeDetail">
             @Html.HiddenFor(c => c.Id)
 
             @* hidden with css by default *@
@@ -36,13 +36,13 @@
             <fieldset sfa-anyvalidationerror-class="after-error-summary">
                 <legend id="Name">
                     <h1 class="heading-large">
-                        Enter Family Name
+                        Apprentice name
                     </h1>
                 </legend>
                 
                 <div class="form-group" sfa-validation-for="GivenNames" sfa-validationerror-class="form-group-error">
-                    <label for="Name">
-                        <span class="form-label-bold">Given Names</span>
+                    <label for="GivenNames">
+                        <span class="form-label-bold">First name</span>
                         <span class="form-hint">
                             For example, Karla D
                         </span>
@@ -52,8 +52,8 @@
                 </div>
 
                 <div class="form-group" sfa-validation-for="FamilyName" sfa-validationerror-class="form-group-error">
-                    <label for="Name">
-                        <span class="form-label-bold">Family Name</span>
+                    <label for="FamilyName">
+                        <span class="form-label-bold">Last name</span>
                         <span class="form-hint">
                             For example, Hawkins
                         </span>
@@ -70,5 +70,5 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-    @*@{await Html.RenderPartialAsync("~/Views/CertificateAmmend/_AddressScriptsPartial.cshtml"); }*@
+    @{await Html.RenderPartialAsync("~/Views/CertificateAmmend/_ApprenticeDetailScriptsPartial.cshtml"); }
 }

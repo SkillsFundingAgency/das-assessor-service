@@ -9,7 +9,7 @@
     <div class="column-two-thirds">
         <a class="link-back" asp-controller="CertificateAmmend" asp-action="Check" asp-route-certificateid=@Model.Id>Back</a>
 
-        <form class="apprentice-address-form" type="post" asp-controller="CertificateRecipient" asp-method="Recipient">
+        <form class="apprentice-recipient-form" type="post" asp-controller="CertificateRecipient" asp-method="Recipient">
             @Html.HiddenFor(c => c.Id)
 
             @* hidden with css by default *@
@@ -35,8 +35,7 @@
             <fieldset sfa-anyvalidationerror-class="after-error-summary">
                 <legend id="Name">
                     <h1 class="heading-large">
-                        @*<span class="heading-secondary">@Model.GivenNames @Model.FamilyName</span>*@
-                        Where will the certificate be sent?
+                        Who will the certificate be sent to?
                     </h1>
                 </legend>
 
@@ -44,7 +43,7 @@
                     <label for="Name">
                         <span class="form-label-bold">Name</span>
                         <span class="form-hint">
-                            For example, Joanna Smith]
+                            For example, Joanna Smith
                         </span>
                         <span class="error-message" asp-validation-for="Name"></span>
                     </label>
@@ -71,5 +70,5 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-    @{await Html.RenderPartialAsync("~/Views/CertificateAmmend/_AddressScriptsPartial.cshtml"); }
+    @{await Html.RenderPartialAsync("~/Views/CertificateAmmend/_RecipientScriptsPartial.cshtml"); }
 }

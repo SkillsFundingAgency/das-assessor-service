@@ -7,8 +7,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators
     {
         public CertificateApprenticeDetailsViewModelValidator()
         {
-            RuleFor(vm => vm.GivenNames).NotEmpty().WithMessage("Given names must be defined");
-            RuleFor(vm => vm.FamilyName).NotEmpty().WithMessage("Family Name must be defined");
+            RuleFor(vm => vm.GivenNames).NotEmpty().WithMessage("Enter a first name");
+            RuleFor(vm => vm.FamilyName).NotEmpty().WithMessage("Enter a last name");
         }
     }
 }
