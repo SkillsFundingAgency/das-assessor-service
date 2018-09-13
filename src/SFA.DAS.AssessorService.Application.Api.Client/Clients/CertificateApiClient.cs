@@ -47,8 +47,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Put, "api/v1/certificates/update"))
             {
-                return await PostPutRequestWithResponse<UpdateCertificateRequest, Certificate>(httpRequest, certificateRequest);
-                return await PostPutRequestWithResponse<UpdateCertificateRequest, Certificate>(httpRequest, certificateRequest);
+                return await PostPutRequestWithResponse<UpdateCertificateRequest, Certificate>(httpRequest, certificateRequest);                
             }
         }
 
