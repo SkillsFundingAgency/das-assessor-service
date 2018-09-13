@@ -35,10 +35,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                 });
 
             RuleFor(m => m)
-                .Custom(async (m, context) =>
+                .Custom((m, context) =>
                 {
-                    var requestedIlr = await ilrRepository.Get(m.Uln, m.StandardCode);
-                    var sumbittingEpao = await organisationQueryRepository.GetByUkPrn(m.UkPrn);
+                    var requestedIlr = ilrRepository.Get(m.Uln, m.StandardCode).GetAwaiter().GetResult();
+                    var sumbittingEpao = organisationQueryRepository.GetByUkPrn(m.UkPrn).GetAwaiter().GetResult();
 
                     if (requestedIlr == null || !string.Equals(requestedIlr.FamilyName, m.FamilyName))
                     {
@@ -50,7 +50,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                     }
                     else
                     {
-                        var providedStandards = await assessmentOrgsApiClient.FindAllStandardsByOrganisationIdAsync(sumbittingEpao.EndPointAssessorOrganisationId);
+                        var providedStandards = assessmentOrgsApiClient.FindAllStandardsByOrganisationIdAsync(sumbittingEpao.EndPointAssessorOrganisationId).GetAwaiter().GetResult();
 
                         if (!providedStandards.Where(s => s.StandardCode == m.StandardCode.ToString()).Any())
                         {
