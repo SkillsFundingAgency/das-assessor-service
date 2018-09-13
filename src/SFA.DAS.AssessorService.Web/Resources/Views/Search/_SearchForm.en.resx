@@ -132,4 +132,7 @@
   <data name="UlnHint" xml:space="preserve">
     <value>For example, 1234567890</value>
   </data>
+  <data name="PrivatelyFunded" xml:space="preserve">
+    <value>Privately funded</value>
+  </data>
 </root>
