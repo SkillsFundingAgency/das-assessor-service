@@ -8,6 +8,7 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
+        <a asp-action="Index" asp-controller="Dashboard" class="link-back">Return to dashboard</a>
         <form asp-action="Results" asp-controller="Search" method="get">
             @Html.HiddenFor(m => m.Page)
             <div class="form-group">
