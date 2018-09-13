@@ -14,7 +14,8 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private
         public void FromCertificate(Domain.Entities.Certificate cert)
         {
             BaseFromCertificate(cert);
-            Ukprn = cert.ProviderUkPrn.ToString();
+            Ukprn = cert.ProviderUkPrn != 0 ? 
+                cert.ProviderUkPrn.ToString() : string.Empty;
         }
 
         public Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData data)
