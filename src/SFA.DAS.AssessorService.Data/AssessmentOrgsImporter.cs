@@ -177,8 +177,9 @@ namespace SFA.DAS.AssessorService.Data
            foreach(var standard in orgStandards)
            {
                var contact = contacts
-                   .FirstOrDefault(x => x.EndPointAssessorOrganisationId == standard.EndPointAssessorOrganisationId && x.Email ==
-                                   standard.ContactEmail);
+                   .FirstOrDefault(x => x.EndPointAssessorOrganisationId == standard.EndPointAssessorOrganisationId &&
+                                        x.Email != null && standard.ContactEmail != null && x.Email.Trim().ToLower() ==
+                                   standard.ContactEmail.Trim().ToLower());
 
                if (contact != null)
                {

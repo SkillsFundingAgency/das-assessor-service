@@ -288,7 +288,7 @@ namespace SFA.DAS.AssessorService.Data
                     PhoneNumber = orgStandard?.ContactPhoneNumber,
                     OrganisationId = organisations.First(x => x.EndPointAssessorOrganisationId == orgStandard.EndPointAssessorOrganisationId).Id,
                     EndPointAssessorOrganisationId = orgStandard.EndPointAssessorOrganisationId,
-                    Status = "New",
+                    Status = "Live",
                 }).GroupBy(o => new
             {
                 o.DisplayName,
