@@ -2,7 +2,7 @@
 @inject IViewLocalizer Localizer
 @model SFA.DAS.AssessorService.Web.ViewModels.Search.SearchRequestViewModel
 
-<form class="apprentice-search-form" method="post" asp-controller="Search" asp-action="Index">
+<form class="apprentice-search-form js-disable-on-submit" method="post" asp-controller="Search" asp-action="Index">
 
     @* hidden with css by default *@
     <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">

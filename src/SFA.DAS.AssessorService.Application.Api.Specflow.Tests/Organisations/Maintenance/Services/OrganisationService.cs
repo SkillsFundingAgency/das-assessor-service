@@ -1,6 +1,7 @@
 ﻿using System;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Extensions;
+using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.Maintenance.Services
 {
@@ -8,7 +9,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.M
     {
         private readonly RestClientResult _restClientResult;
        
-        public OrganisationService(RestClientResult restClientResult)
+        public OrganisationService(RestClientResult restClientResult,
+            IWebConfiguration webConfiguration) : base(webConfiguration)
         {
             _restClientResult = restClientResult;
         }

@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Api.Types.Models.Staff;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
@@ -63,6 +64,16 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         public async Task<PaginatedList<StaffSearchResult>> Search(string searchString, int page)
         {
             return await Get<PaginatedList<StaffSearchResult>>($"/api/v1/staffsearch?searchQuery={searchString}&page={page}");
+        }
+
+        public async Task<PaginatedList<StaffBatchSearchResult>> BatchSearch(int batchNumber, int page)
+        {
+            return await Get<PaginatedList<StaffBatchSearchResult>>($"/api/v1/staffsearch/batch?batchNumber={batchNumber}&page={page}");
+        }
+
+        public async Task<PaginatedList<StaffBatchLogResult>> BatchLog(int page)
+        {
+            return await Get<PaginatedList<StaffBatchLogResult>>($"/api/v1/staffsearch/batchlog?page={page}");
         }
 
         public async Task<LearnerDetail> GetLearner(int stdCode, long uln, bool allLogs)
