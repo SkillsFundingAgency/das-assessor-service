@@ -208,13 +208,14 @@ namespace SFA.DAS.AssessorService.Data
                 {
 
                     var comments = ConvertStringToSqlValueString(organisationStandard.Comments);
+                    var contactId = ConvertGuidToSqlValueString(organisationStandard.ContactId);
                     var effectiveFrom = ConvertDateToSqlValueString(organisationStandard.EffectiveFrom);
                     var effectiveTo = ConvertDateToSqlValueString(organisationStandard.EffectiveTo);
                     var dateStandardApprovedOnRegister =
                         ConvertDateToSqlValueString(organisationStandard.DateStandardApprovedOnRegister);
 
-                    var sqlToInsert = "INSERT INTO [OrganisationStandard] ([EndPointAssessorOrganisationId],[StandardCode],[EffectiveFrom],[EffectiveTo],[DateStandardApprovedOnRegister],[Comments],[Status])" +
-                                      $"VALUES ('{organisationStandard.EndPointAssessorOrganisationId}' ,'{organisationStandard.StandardCode}' ,{effectiveFrom} ,{effectiveTo} ,{dateStandardApprovedOnRegister} ,{comments} ,'{organisationStandard.Status}'); ";
+                    var sqlToInsert = "INSERT INTO [OrganisationStandard] ([EndPointAssessorOrganisationId],[StandardCode],[EffectiveFrom],[EffectiveTo],[DateStandardApprovedOnRegister],[Comments],[Status], [ContactId])" +
+                                      $"VALUES ('{organisationStandard.EndPointAssessorOrganisationId}' ,'{organisationStandard.StandardCode}' ,{effectiveFrom} ,{effectiveTo} ,{dateStandardApprovedOnRegister} ,{comments} ,'{organisationStandard.Status}', {contactId}); ";
 
                     sql.Append(sqlToInsert);
                 }
@@ -279,9 +280,11 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        public void WriteOrganisationContacts(List<OrganisationContact> contacts)
+        public List<OrganisationContact>  UpsertThenGatherOrganisationContacts(List<OrganisationContact> contacts)
         {
             var connectionString = _configuration.SqlConnectionString;
+
+            var contactsFromDatabase = new List<OrganisationContact>();
 
             using (var connection = new SqlConnection(connectionString))
             {
@@ -319,7 +322,6 @@ namespace SFA.DAS.AssessorService.Data
                     var email = ConvertStringToSqlValueString(contact.Email);
                     var endPointAssessorOrganisationId =
                         ConvertStringToSqlValueString(contact.EndPointAssessorOrganisationId);
-                    var organisationId = ConvertStringToSqlValueString(contact.OrganisationId.ToString());
                     var userName = ConvertStringToSqlValueString(contact.Username);
                     var phoneNumber = ConvertStringToSqlValueString(contact.PhoneNumber);
 
@@ -345,8 +347,12 @@ namespace SFA.DAS.AssessorService.Data
                 }
 
                 connection.Execute(sql.ToString());
+
+                contactsFromDatabase = connection.QueryAsync<OrganisationContact>("select * from [Contacts]").Result.ToList();
                 connection.Close();
             }
+
+            return contactsFromDatabase;
         }
 
         private static string ConvertStringToSqlValueString(string stringToProcess)
@@ -354,6 +360,13 @@ namespace SFA.DAS.AssessorService.Data
             return stringToProcess == null
                 ? "null"
                 : $@"'{stringToProcess.Replace("'","''")}'";
+        }
+
+        private static string ConvertGuidToSqlValueString(Guid? stringToProcess)
+        {
+            return stringToProcess == null
+                ? "null"
+                : $@"'{stringToProcess}'";
         }
 
         private static string MakeStringSuitableForJson(string stringToProcess)

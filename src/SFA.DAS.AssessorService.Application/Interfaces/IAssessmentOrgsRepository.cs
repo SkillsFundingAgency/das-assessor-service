@@ -11,6 +11,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         void WriteOrganisations(List<EpaOrganisation> organisations);
         List<EpaOrganisationStandard> WriteEpaOrganisationStandards(List<EpaOrganisationStandard> orgStandards);
         void WriteStandardDeliveryAreas(List<EpaOrganisationStandardDeliveryArea> organisationStandardDeliveryAreas, List<EpaOrganisationStandard> organisationStandards);
-        void WriteOrganisationContacts(List<OrganisationContact> contacts);
+        List<OrganisationContact> UpsertThenGatherOrganisationContacts(List<OrganisationContact> contacts);
     }
 }

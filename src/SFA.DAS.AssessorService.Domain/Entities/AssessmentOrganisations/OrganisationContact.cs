@@ -4,6 +4,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations
 {
     public class OrganisationContact
     {
+        public Guid Id { get; set; }
         public string DisplayName { get; set; }
         public string Email { get; set; }
         public string EndPointAssessorOrganisationId { get; set; }

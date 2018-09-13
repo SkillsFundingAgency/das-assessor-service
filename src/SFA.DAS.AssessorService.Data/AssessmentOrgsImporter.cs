@@ -6,9 +6,12 @@ using OfficeOpenXml;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.DTOs;
+using SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations;
 using SFA.DAS.AssessorService.Settings;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
@@ -140,17 +143,21 @@ namespace SFA.DAS.AssessorService.Data
                 progressStatus.Append(message); _logger.LogInformation(message);
                 _assessmentOrgsRepository.WriteOrganisations(spreadsheetDto.Organisations);
 
+                message = "WRITING TO DATABASE: Contacts;  ";
+                progressStatus.Append(message); _logger.LogInformation(message);
+                var contactsFromDatabase = _assessmentOrgsRepository.UpsertThenGatherOrganisationContacts(spreadsheetDto.Contacts);
+
+                var orgStandards = spreadsheetDto.OrganisationStandards;
+
+                AttachContactsToOrganisationStandards(orgStandards, contactsFromDatabase);
+
                 message = "WRITING TO DATABASE: Organisation-Standards; ";
                 progressStatus.Append(message); _logger.LogInformation(message);
-                var organisationStandards = _assessmentOrgsRepository.WriteEpaOrganisationStandards(spreadsheetDto.OrganisationStandards);
+                var organisationStandards = _assessmentOrgsRepository.WriteEpaOrganisationStandards(orgStandards);
 
                 message = "WRITING TO DATABASE: Organisation-Standard-Delivery Areas;  ";
                 progressStatus.Append(message); _logger.LogInformation(message);
                 _assessmentOrgsRepository.WriteStandardDeliveryAreas(spreadsheetDto.OrganisationStandardDeliveryAreas, organisationStandards);
-
-                message = "WRITING TO DATABASE: Contacts;  ";
-                progressStatus.Append(message); _logger.LogInformation(message);
-                _assessmentOrgsRepository.WriteOrganisationContacts(spreadsheetDto.Contacts);
 
                 var buildupFinishedMessage = $"BUILD UP process completed  at [{DateTime.Now.ToLongTimeString()}]; ";
                 _logger.LogInformation(buildupFinishedMessage);
@@ -163,6 +170,22 @@ namespace SFA.DAS.AssessorService.Data
                 progressStatus.Append(message);
                 throw;
             }
+        }
+
+        private void AttachContactsToOrganisationStandards(List<EpaOrganisationStandard> orgStandards, List<OrganisationContact> contacts)
+        {
+           foreach(var standard in orgStandards)
+           {
+               var contact = contacts
+                   .FirstOrDefault(x => x.EndPointAssessorOrganisationId == standard.EndPointAssessorOrganisationId && x.Email ==
+                                   standard.ContactEmail);
+
+               if (contact != null)
+               {
+                   standard.ContactId = contact.Id;
+               }
+               
+           }
         }
     }
 
