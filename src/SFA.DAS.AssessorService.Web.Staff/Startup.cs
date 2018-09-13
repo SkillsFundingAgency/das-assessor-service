@@ -70,8 +70,11 @@ namespace SFA.DAS.AssessorService.Web.Staff
                 options.SupportedCultures = new List<CultureInfo> { new CultureInfo("en-GB") };
                 options.RequestCultureProviders.Clear();
             });
-             
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddMvc(options => { options.Filters.Add<CheckSessionFilter>(); })
+                .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1); ;
+
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
             
             services.AddDistributedRedisCache(options =>

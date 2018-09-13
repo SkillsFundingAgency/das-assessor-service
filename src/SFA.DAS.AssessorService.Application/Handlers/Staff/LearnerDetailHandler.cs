@@ -70,7 +70,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 CertificateStatus = certificate?.Status, 
                 Level = standard.Level,
                 OverallGrade = certificateData.OverallGrade,
-                AchievementDate = certificateData.AchievementDate?.UtcToTimeZoneTime(),
+                AchievementDate = certificateData.AchievementDate, //?.UtcToTimeZoneTime(),
                 Option = certificateData.CourseOption, 
                 OrganisationName = epao.EndPointAssessorName,
                 CertificateLogs = logs,
