@@ -20,7 +20,6 @@
         <table class="table responsive table-font-xsmall">
             <thead>
                 <tr>
-                    <th>Name</th>
                     <th>UKPRN</th>
                     <th>Email</th>
                     <th>Registration date</th>
@@ -28,7 +27,6 @@
             </thead>
             <tbody>
                 <tr>
-                    <td data-label="Name">@Model.FirstName @Model.LastName</td>
                     <td data-label="UKPRN">@Model.Note</td>
                     <td data-label="Email">@Model.Email</td>
                     <td data-label="Registration date">@Model.RegistrationDate.UtcToTimeZoneTime()</td>
@@ -65,47 +63,14 @@
     </div>
 }
 
-<!-- <table class="table responsive table-font-xsmall">
-    <thead>
-        <tr>
-            <th>Product</th>
-            <th>Primary key</th>
-            <th></th>
-            <th>Secondary key</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var subscription in Model.Subscriptions)
-        {
-            <tr>
-                <td data-label="Product">@subscription.ProductId</td>
-                <td data-label="Primary key"><span class="code">@subscription.PrimaryKey</span></td>
-                <td>
-                    <form asp-action="RenewPrimaryKey" asp-controller="ExternalApi" asp-route-subscriptionId="@subscription.Id" asp-route-userId="@Model.Id" method="post">
-                        <input class="button text-link" type="submit" value="Renew" />
-                    </form>
-                </td>
-                <td data-label="Secondary key"><span class="code">@subscription.SecondaryKey</span></td>
-                <td>
-                    <form asp-action="RenewSecondaryKey" asp-controller="ExternalApi" asp-route-subscriptionId="@subscription.Id" asp-route-userId="@Model.Id" method="post">
-                        <input class="button text-link" type="submit" value="Renew" />
-                    </form>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table> -->
-
 <div class="grid-row">
     <div class="column-two-thirds">
         <div class="form-group">
-                <h2 class="heading-large">Disable or remove access</h1>
-                <div class="notice">
-                    <i class="icon icon-important"><span class="visually-hidden">Warning</span></i>
-                    <strong class="bold-small">Note that this will be immediate.</strong>
-                </div>
-            </label>
+            <h2 class="heading-large">Disable or remove access</h1>
+            <div class="notice">
+                <i class="icon icon-important"><span class="visually-hidden">Warning</span></i>
+                <strong class="bold-small">Note that this will be immediate.</strong>
+            </div>
         </div>
 
         <div class="form-group">

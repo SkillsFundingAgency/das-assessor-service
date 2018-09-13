@@ -201,15 +201,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
                     await Delete(httpRequest);
                 }
 
-                var organisation = await _organisationsApiClient.Get(user.Note);
-                await _organisationsApiClient.Update(new UpdateOrganisationRequest
+                if (!string.IsNullOrWhiteSpace(user.Note))
                 {
-                    EndPointAssessorName = organisation.EndPointAssessorName,
-                    EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
-                    EndPointAssessorUkprn = organisation.EndPointAssessorUkprn,
-                    ApiEnabled = false,
-                    ApiUser = null
-                });
+                    var organisation = await _organisationsApiClient.Get(user.Note);
+                    await _organisationsApiClient.Update(new UpdateOrganisationRequest
+                    {
+                        EndPointAssessorName = organisation.EndPointAssessorName,
+                        EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
+                        EndPointAssessorUkprn = organisation.EndPointAssessorUkprn,
+                        ApiEnabled = false,
+                        ApiUser = null
+                    });
+                }
             }
 
         }
