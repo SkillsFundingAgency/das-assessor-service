@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
 {
-    class DeleteBatchCertificateHandler : IRequestHandler<DeleteBatchCertificateRequest>
+    public class DeleteBatchCertificateHandler : IRequestHandler<DeleteBatchCertificateRequest>
     {
         private readonly ICertificateRepository _certificateRepository;
         private readonly ILogger<DeleteBatchCertificateHandler> _logger;

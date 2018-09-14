@@ -185,14 +185,13 @@ namespace SFA.DAS.AssessorService.Data
             if (cert == null) throw new NotFound();
 
             // If already deleted ignore
-            if (cert.Status == ContactStatus.Deleted)
+            if (cert.Status == CertificateStatus.Deleted)
                 return;
 
             cert.Status = CertificateStatus.Deleted;
             cert.DeletedBy = username;
             cert.DeletedAt = DateTime.UtcNow;
 
-            _context.MarkAsModified(cert);
             await _context.SaveChangesAsync();
         }
 
