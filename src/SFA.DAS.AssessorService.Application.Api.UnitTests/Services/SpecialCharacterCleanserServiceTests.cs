@@ -15,8 +15,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
             _cleanser = new SpecialCharacterCleanserService();   
         }
 
-        [TestCase("Colleges’ ", "Colleges'")]
-        [TestCase("Colleges ", "Colleges")]
+        [TestCase("Colleges’ ", "Colleges' ")]
+        [TestCase("Colleges ", "Colleges ")]
         [TestCase("Raj o`intel - Technologies Ltd", "Raj o\'intel – Technologies Ltd")]
         public void GetCleansedStringFromOriginalString(string inputString, string outputString)
         {

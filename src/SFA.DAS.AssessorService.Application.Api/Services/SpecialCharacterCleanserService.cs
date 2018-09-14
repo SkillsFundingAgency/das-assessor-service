@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
         public string CleanseStringForSpecialCharacters(string inputString)
         {
-            var processedString = inputString.Trim();
+            var processedString = inputString;
 
             var specialCharacters = SpecialCharactersInString(processedString);
 

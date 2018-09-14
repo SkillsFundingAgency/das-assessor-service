@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
         {
             _logger.LogInformation("Handling Search AssessmentOrganisations Request");
             
-            var searchstring = _cleanser.CleanseStringForSpecialCharacters(request.Searchstring);
+            var searchstring = _cleanser.CleanseStringForSpecialCharacters(request.Searchstring.Trim());
 
             if (searchstring.Length < 2)
                 throw new BadRequestException("The searchstring is too short to do a valid search");
