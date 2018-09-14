@@ -1,0 +1,78 @@
+﻿@using SFA.DAS.AssessorService.Domain.Paging;
+@using SFA.DAS.AssessorService.Api.Types.Models.Azure;
+@model PaginatedList<AzureUser>
+@{
+    ViewBag.Title = "External API users";
+    Layout = "_Layout";
+}
+
+<div class="grid-row">
+    <div class="column-full">
+        <a asp-action="Index" asp-controller="Dashboard" class="link-back">Return to dashboard</a>
+
+        <h1 class="heading-xlarge">External API users</h1>
+
+        <a asp-action="Index">Refresh table</a>
+        @if (@Model.TotalRecordCount > 0)
+        {
+            <table class="table responsive table-font-xsmall">
+                <thead>
+                    <tr>
+                        <th>UKPRN</th>
+                        <th>Email</th>
+                        <th>Name</th>
+                        <th>Access</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in @Model.Items)
+                    {
+                    <tr>
+                        <td data-label="UKPRN">@user.Note</td>
+                        <td data-label="Email">@user.Email</td>
+                        <td data-label="Name">@user.FirstName</td>
+                        <td data-label="Access">@Html.Raw(string.Equals(user.State, "blocked") ? "Disabled" : "Enabled")</td>
+                        <td><a asp-action="UserDetails" asp-controller="ExternalApi" asp-route-userId="@user.Id">View details</a></td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="form-group">
+                <span class="bold">No Users present</span>
+            </div>
+        }
+    </div>
+</div>
+
+@if (Model.HasPreviousPage || Model.HasNextPage)
+{
+    <div class="grid-row">
+        <div class="column-full">
+            <div class="page-navigation">
+
+                @if (Model.HasPreviousPage)
+                {
+                    <a asp-action="Index" asp-controller="ExternalApi" asp-route-page="@(Model.PageIndex - 1)" class="previous">
+                        <i class="arrow-button icon-left-open">&#xe800;</i>
+                        <span class="description">Previous <span class="hide-mob">page</span></span>
+                        <span class="counter">Page <span class="prevPage">@(Model.PageIndex - 1)</span> of <span class="totalPage">@(Model.TotalPages)</span></span>
+                    </a>
+                }
+
+                @if (Model.HasNextPage)
+                {
+                    <a asp-action="Index" asp-controller="ExternalApi" asp-route-page="@(Model.PageIndex + 1)" class="next">
+                        <i class="arrow-button icon-right-open">&#xe801;</i>
+                        <span class="description">Next <span class="hide-mob">page</span></span>
+                        <span class="counter">Page <span class="nextPage">@(Model.PageIndex + 1)</span> of <span class="totalPage">@(Model.TotalPages)</span></span>
+                    </a>
+                }
+
+            </div>
+        </div>
+    </div>
+}

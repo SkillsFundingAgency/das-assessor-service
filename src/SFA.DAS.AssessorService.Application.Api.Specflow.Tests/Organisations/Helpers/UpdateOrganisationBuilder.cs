@@ -12,7 +12,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.H
                 PrimaryContact = organisation.PrimaryContact,
                 EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
                 EndPointAssessorName = organisation.EndPointAssessorName,
-                EndPointAssessorUkprn = organisation.EndPointAssessorUkprn
+                EndPointAssessorUkprn = organisation.EndPointAssessorUkprn,
+                ApiEnabled = organisation.ApiEnabled,
+                ApiUser = organisation.ApiUser
             };
 
             return updateOrganisation;
