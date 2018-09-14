@@ -16,6 +16,7 @@ using SearchQuery = SFA.DAS.AssessorService.Application.Api.External.Models.Sear
 using SearchResult = SFA.DAS.AssessorService.Application.Api.External.Models.Search.SearchResult;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.AssessorService.Application.Api.External.Middleware;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 {
@@ -113,9 +114,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             return Mapper.Map<IEnumerable<AssessorService.Api.Types.Models.Certificates.Batch.SubmitBatchCertificateResponse>, IEnumerable<SubmitBatchCertificateResponse>>(apiResponse);
         }
 
-        public async Task<IActionResult> DeleteCertificate(DeleteCertificateRequest request)
+        public async Task<ApiResponse> DeleteCertificate(DeleteCertificateRequest request)
         {
-            var apiResponse = await Delete<IActionResult>($"/api/v1/certificates/batch/{request.Uln}/{request.Lastname}/{request.StandardCode}/{request.UkPrn}/{request.Username}");
+            var apiResponse = await Delete<ApiResponse>($"/api/v1/certificates/batch/{request.Uln}/{request.Lastname}/{request.StandardCode}/{request.UkPrn}/{request.Username}");
 
             return apiResponse;
         }

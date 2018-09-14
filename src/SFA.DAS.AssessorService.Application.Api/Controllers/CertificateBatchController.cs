@@ -166,7 +166,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             }
             else
             {
-                ApiResponse response = new ApiResponse((int)HttpStatusCode.BadRequest, validationResult.Errors.ToString());
+                ApiResponse response = new ApiResponse((int)HttpStatusCode.BadRequest, string.Join(", ", validationResult.Errors));
                 return BadRequest(response);
             }
         }

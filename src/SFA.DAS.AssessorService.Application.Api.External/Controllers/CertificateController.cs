@@ -65,13 +65,20 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
 
         [HttpDelete("{uln}/{lastname}/{stdCode}")]
         [SwaggerResponse((int)HttpStatusCode.NoContent)]
-        [SwaggerResponse((int)HttpStatusCode.NotFound)]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
         public async Task<IActionResult> DeleteCertificate(long uln, string lastname, int stdCode)
         {
             DeleteCertificateRequest deleteRequest = new DeleteCertificateRequest { Uln = uln, Lastname = lastname, StandardCode = stdCode, UkPrn = _headerInfo.Ukprn, Username = _headerInfo.Username};
+            var error = await _apiClient.DeleteCertificate(deleteRequest);
 
-            return await _apiClient.DeleteCertificate(deleteRequest);
+            if (error == null)
+            {
+                return NoContent();
+            }
+            else
+            {
+                return BadRequest(error);
+            }
         }
     }
 }
