@@ -27,22 +27,45 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             _tokenService = tokenService;
         }
 
-        private async Task<T> Get<T>(string uri)
+        protected async Task<T> Get<T>(string uri)
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-            var res = await _client.GetAsync(new Uri(uri, UriKind.Relative));
-            return await res.Content.ReadAsAsync<T>();
+
+            using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
+            {
+                return await response.Content.ReadAsAsync<T>();
+            }
         }
 
         protected async Task<U> Post<T, U>(string uri, T model)
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-
             var serializeObject = JsonConvert.SerializeObject(model);
-            
-            using (var response = await _client.PostAsync(new Uri(uri, UriKind.Relative), new StringContent(serializeObject,System.Text.Encoding.UTF8, "application/json")))
+
+            using (var response = await _client.PostAsync(new Uri(uri, UriKind.Relative), new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
             {
                 return await response.Content.ReadAsAsync<U>();
+            }
+        }
+
+        protected async Task<U> Put<T, U>(string uri, T model)
+        {
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            var serializeObject = JsonConvert.SerializeObject(model);
+
+            using (var response = await _client.PutAsync(new Uri(uri, UriKind.Relative), new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
+            {
+                return await response.Content.ReadAsAsync<U>();
+            }
+        }
+
+        protected async Task<T> Delete<T>(string uri)
+        {
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+
+            using (var response = await _client.DeleteAsync(new Uri(uri, UriKind.Relative)))
+            {
+                return await response.Content.ReadAsAsync<T>();
             }
         }
 
@@ -76,14 +99,34 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             return await Get<Certificate>($"api/v1/certificates/{certificateId}");
         }
 
-        public async Task<ScheduleRun> GetNextScheduleToRunNow()
+        public async Task<ScheduleRun> GetNextScheduledRun(int scheduleType)
         {
-            return await Get<ScheduleRun>($"api/v1/schedule?scheduleType=1");
+            return await Get<ScheduleRun>($"api/v1/schedule/next?scheduleType={scheduleType}");
         }
 
-        public async Task<ScheduleRun> GetNextScheduledRun()
+        public async Task<object> RunNowScheduledRun(int scheduleType)
         {
-            return await Get<ScheduleRun>($"api/v1/schedule/next?scheduleType=1");
+            return await Post<object, object>($"api/v1/schedule/runnow?scheduleType={scheduleType}", default(object));
+        }
+
+        public async Task<object> CreateScheduleRun(ScheduleRun schedule)
+        {
+            return await Put<ScheduleRun, object>($"api/v1/schedule/create", schedule);
+        }
+
+        public async Task<ScheduleRun> GetScheduleRun(Guid scheduleRunId)
+        {
+            return await Get<ScheduleRun>($"api/v1/schedule?scheduleRunId={scheduleRunId}");
+        }
+
+        public async Task<IList<ScheduleRun>> GetAllScheduledRun(int scheduleType)
+        {
+            return await Get<IList<ScheduleRun>>($"api/v1/schedule/all?scheduleType={scheduleType}");
+        }
+
+        public async Task<object> DeleteScheduleRun(Guid scheduleRunId)
+        {
+            return await Delete<object>($"api/v1/schedule?scheduleRunId={scheduleRunId}");
         }
 
         public async Task<Certificate> PostReprintRequest(StaffCertificateDuplicateRequest staffCertificateDuplicateRequest)
