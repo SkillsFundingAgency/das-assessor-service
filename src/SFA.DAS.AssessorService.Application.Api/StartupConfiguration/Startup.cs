@@ -77,9 +77,9 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 });
 
                 IMvcBuilder mvcBuilder;
-                if (_env.IsDevelopment())
-                    mvcBuilder = services.AddMvc(opt => { opt.Filters.Add(new AllowAnonymousFilter()); });
-                else
+//                if (_env.IsDevelopment())
+                    //mvcBuilder = services.AddMvc(opt => { opt.Filters.Add(new AllowAnonymousFilter()); });
+                //else
                     mvcBuilder = services.AddMvc();
 
                 mvcBuilder
