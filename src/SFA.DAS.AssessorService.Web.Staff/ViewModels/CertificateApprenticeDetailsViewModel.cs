@@ -1,17 +1,18 @@
 ﻿using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
 {
     public class CertificateApprenticeDetailsViewModel : CertificateBaseViewModel, ICertificateViewModel
     {        
-        public void FromCertificate(Domain.Entities.Certificate cert)
+        public void FromCertificate(Certificate cert)
         {
             BaseFromCertificate(cert);
             FamilyName = CertificateData.LearnerFamilyName;
         }
 
-        public Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData data)
+        public Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData data)
         {
             data.LearnerFamilyName = FamilyName;
             data.LearnerGivenNames = GivenNames;

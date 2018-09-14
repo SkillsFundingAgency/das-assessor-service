@@ -1,5 +1,6 @@
 ﻿using System;
 using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
@@ -15,7 +16,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
 
 
 
-        public void FromCertificate(Domain.Entities.Certificate cert)
+        public void FromCertificate(Certificate cert)
         {
             BaseFromCertificate(cert);
             Employer = CertificateData.ContactOrganisation;
@@ -26,8 +27,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
             Postcode = CertificateData.ContactPostCode;
         }
         
-        public Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData data)
+        public AssessorService.Domain.Entities.Certificate GetCertificateFromViewModel(AssessorService.Domain.Entities.Certificate certificate, CertificateData data)
         {
+            if (certificate == null) throw new ArgumentNullException(nameof(certificate));
+            if (certificate == null) throw new ArgumentNullException(nameof(certificate));
             data.ContactOrganisation = Employer;
             data.ContactAddLine1 = AddressLine1;
             data.ContactAddLine2 = AddressLine2;

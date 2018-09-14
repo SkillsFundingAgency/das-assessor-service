@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
@@ -17,13 +18,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
             new SelectListItem {Text = "Pass with excellence", Value = "Pass with excellence"},
             new SelectListItem {Text = "No grade awarded", Value = "No grade awarded"}
         };
-        public void FromCertificate(Domain.Entities.Certificate cert)
+        public void FromCertificate(Certificate cert)
         {
             BaseFromCertificate(cert);
             SelectedGrade = CertificateData.OverallGrade;
         }
 
-        public Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData data)
+        public Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData data)
         {
             data.OverallGrade = SelectedGrade;
             certificate.CertificateData = JsonConvert.SerializeObject(data);

@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
@@ -7,7 +8,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
     {
         public bool? HasAdditionalLearningOption { get; set; }
         public string Option { get; set; }
-        public void FromCertificate(Domain.Entities.Certificate cert)
+        public void FromCertificate(Certificate cert)
         {
             BaseFromCertificate(cert);
             Option = CertificateData.CourseOption;
@@ -22,7 +23,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
             }
         }
 
-        public Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData data)
+        public Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData data)
         {
             data.CourseOption = HasAdditionalLearningOption.Value ? Option : "";
             certificate.CertificateData = JsonConvert.SerializeObject(data);

@@ -1,6 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
@@ -24,7 +25,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
         public string City { get; set; }
         public string Postcode { get; set; }
 
-        public void FromCertificate(Domain.Entities.Certificate cert)
+        public void FromCertificate(Certificate cert)
         {
             BaseFromCertificate(cert);
 
@@ -47,7 +48,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
             Postcode = CertificateData.ContactPostCode;
         }
 
-        public Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData data)
+        public Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData data)
         {
             certificate.Status = CertificateStatus.Submitted;
             certificate.CertificateData = JsonConvert.SerializeObject(data);
