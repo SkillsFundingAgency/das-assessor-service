@@ -36,39 +36,16 @@
                         <th>Batch</th>
                         <th>Scheduled date</th>
                         <th>Certificates</th>
-                        <th>Cover letters</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                        <!-- <tr>
-                            <td>BatchNumber</td>
-                            <td>23/12/18</td>
-                            <td>NumberOfCertificates</td>
-                            <td>NumberOfCoverLetters</td>
-                            <td><a asp-controller="BatchSearch" asp-action="Results" asp-route-batchNumber="BatchNumber">View</a></td>
-                        </tr>
-                            <tr>
-                            <td>BatchNumber</td>
-                            <td>23/12/18</td>
-                            <td>NumberOfCertificates</td>
-                            <td>NumberOfCoverLetters</td>
-                            <td><a asp-controller="BatchSearch" asp-action="Results" asp-route-batchNumber="BatchNumber">View</a></td>
-                        </tr>
-                            <tr>
-                            <td>BatchNumber</td>
-                            <td>23/12/18</td>
-                            <td>NumberOfCertificates</td>
-                            <td>NumberOfCoverLetters</td>
-                            <td><a asp-controller="BatchSearch" asp-action="Results" asp-route-batchNumber="BatchNumber">View</a></td>
-                        </tr> -->
                     @foreach (var result in Model.PaginatedList.Items)
                     {
                         <tr>
                             <td>@result.BatchNumber</td>
                             <td>@result.ScheduledDate.UtcToTimeZoneTime()</td>
                             <td>@result.NumberOfCertificates</td>
-                            <td>@result.NumberOfCoverLetters</td>
                             <td><a asp-controller="BatchSearch" asp-action="Results" asp-route-batchNumber="@result.BatchNumber">View</a></td>
                         </tr>
                     }

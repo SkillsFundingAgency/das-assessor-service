@@ -124,8 +124,8 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
     },
     'The entered date cannot be before the set date'
   );
-
-  // Ensures date is not in the future
+  
+  // Ensures address has been found
   jQuery.validator.addMethod(
     'addressFound',
     function(value, element) {
