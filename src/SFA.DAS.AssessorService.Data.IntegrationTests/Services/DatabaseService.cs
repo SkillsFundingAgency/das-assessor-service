@@ -84,6 +84,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
             }    
         }
 
+        
         public object ExecuteScalar(string sql)
         {
             using (var connection = new SqlConnection(Configuration.GetConnectionString("SqlConnectionStringTest")))
@@ -96,6 +97,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
                 return res;
             }
         }
+
 
         public void Execute(string sql, TestModel model)
         {

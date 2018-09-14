@@ -1,10 +1,13 @@
-﻿namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.Query.Services
+﻿using SFA.DAS.AssessorService.Settings;
+
+namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.Query.Services
 {
     public class OrganisationQueryService : BaseRestServce
     {
         private readonly RestClientResult _restClientResult;
 
-        public OrganisationQueryService(RestClientResult restClientResult)
+        public OrganisationQueryService(RestClientResult restClientResult,
+            IWebConfiguration webConfiguration) : base(webConfiguration)
         {
             _restClientResult = restClientResult;
         }

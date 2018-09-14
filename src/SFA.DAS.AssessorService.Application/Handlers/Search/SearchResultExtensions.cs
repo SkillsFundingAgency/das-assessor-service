@@ -68,7 +68,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                     searchResult.SubmittedBy = submittingContact.DisplayName; // This needs to be contact real name
                     searchResult.SubmittedAt = submittedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time 
                     searchResult.AchDate = certificateData.AchievementDate;
-                    searchResult.UpdatedBy = lastUpdatedContact.DisplayName; // This needs to be contact real name
+                    searchResult.UpdatedBy = lastUpdatedContact != null ? lastUpdatedContact.DisplayName : lastUpdatedLogEntry.Username; // This needs to be contact real name
                     searchResult.UpdatedAt = lastUpdatedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time
                 }
                 else

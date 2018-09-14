@@ -7,6 +7,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
     {
         public Guid Id { get; set; }
         public Guid CertificateId { get; set; }
+        [JsonIgnore]
         public virtual Certificate Certificate { get; set; }
 
         public string Action { get; set; }

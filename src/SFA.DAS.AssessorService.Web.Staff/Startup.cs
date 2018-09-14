@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Net.Http;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.WsFederation;
 using Microsoft.AspNetCore.Builder;
@@ -10,8 +11,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Polly;
+using Polly.Extensions.Http;
 using SFA.DAS.AssessorService.Application.Api.Client;
+using SFA.DAS.AssessorService.Application.Api.Client.Azure;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Settings;
+using SFA.DAS.AssessorService.Web.Staff.Helpers;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using StructureMap;
 
@@ -45,13 +51,13 @@ namespace SFA.DAS.AssessorService.Web.Staff
 
             ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
 
-            
-
             services.AddHttpClient<ApiClient>("ApiClient", config =>
             {
                 config.BaseAddress = new Uri(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
                 config.DefaultRequestHeaders.Add("Accept", "Application/json");
-            });
+            })
+                .SetHandlerLifetime(TimeSpan.FromMinutes(5))  //Set lifetime to five minutes
+                .AddPolicyHandler(GetRetryPolicy());
 
             AddAuthentication(services);
 
@@ -61,8 +67,16 @@ namespace SFA.DAS.AssessorService.Web.Staff
                 options.SupportedCultures = new List<CultureInfo> { new CultureInfo("en-GB") };
                 options.RequestCultureProviders.Clear();
             });
+             
+           
+            services.AddMvc()
+                .AddMvcOptions(m => m.ModelMetadataDetailsProviders.Add(new HumanizerMetadataProvider()))
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddJsonOptions(options =>
+                {
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
             //if (_env.IsDevelopment())
             //{
@@ -103,6 +117,12 @@ namespace SFA.DAS.AssessorService.Web.Staff
                 config.For<ITokenService>().Use<TokenService>();
                 config.For<IWebConfiguration>().Use(ApplicationConfiguration);
                 config.For<ISessionService>().Use<SessionService>().Ctor<string>().Is(_env.EnvironmentName);
+
+                config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
+                config.For<IContactsApiClient>().Use<ContactsApiClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
+                config.For<IAzureTokenService>().Use<AzureTokenService>();
+                config.For<IAzureApiClient>().Use<AzureApiClient>().Ctor<string>("baseUri").Is(ApplicationConfiguration.AzureApiAuthentication.ApiBaseAddress)
+                                                                   .Ctor<string>("productId").Is(ApplicationConfiguration.AzureApiAuthentication.ProductId);
 
                 config.Populate(services);
             });
@@ -152,6 +172,15 @@ namespace SFA.DAS.AssessorService.Web.Staff
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+        }
+
+        static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
+        {
+            return HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2,
+                    retryAttempt)));
         }
     }
 }

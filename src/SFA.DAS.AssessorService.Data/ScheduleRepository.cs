@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 using Dapper;
@@ -14,6 +15,20 @@ namespace SFA.DAS.AssessorService.Data
         public ScheduleRepository(IDbConnection connection)
         {
             _connection = connection;
+        }
+
+        public async Task<ScheduleRun> GetScheduleRun(Guid scheduleRunId)
+        {
+            return await _connection.QuerySingleAsync<ScheduleRun>("SELECT * FROM ScheduleRuns WHERE Id = @scheduleRunId", new { scheduleRunId });
+        }
+
+        public async Task<IEnumerable<ScheduleRun>> GetAllScheduleRun(int scheduleType)
+        {
+            return await _connection.QueryAsync<ScheduleRun>(@"SELECT *
+                                    FROM ScheduleRuns
+                                    WHERE ScheduleType = @scheduleType
+                                    AND IsComplete = 0
+                                    ORDER BY RunTime", new { scheduleType });
         }
 
         public async Task<ScheduleRun> GetNextScheduleToRunNow(int scheduleType)
@@ -58,22 +73,11 @@ namespace SFA.DAS.AssessorService.Data
                 new {runTime = DateTime.UtcNow, scheduleType});
         }
 
-        public async Task SetScheduleRun(ScheduleRun scheduleRun)
+        public async Task CreateScheduleRun(ScheduleRun scheduleRun)
         {
-            var currentScheduleRun = await GetNextScheduleToRunNow((int)scheduleRun.ScheduleType);
-            if (currentScheduleRun == null)
-            {
-                await _connection.ExecuteAsync(
-                    @"INSERT ScheduleRuns (RunTime, Interval, IsRecurring, ScheduleType) 
-                               VALUES (@runTime, @interval, 1, @scheduleType)", scheduleRun);
-            }
-            else
-            {
-                await _connection.ExecuteAsync(
-                    @"UPDATE ScheduleRuns SET RunTime = @runTime, Interval = @Interval, IsRecurring = @IsRecurring 
-                               WHERE Id = @Id",
-                    new {currentScheduleRun.Id, scheduleRun.RunTime, scheduleRun.Interval, scheduleRun.IsRecurring});
-            }
+            await _connection.ExecuteAsync(
+                @"INSERT ScheduleRuns (RunTime, Interval, IsRecurring, ScheduleType) 
+                               VALUES (@runTime, @interval, @isRecurring, @scheduleType)", scheduleRun);
         }
 
         public async Task DeleteScheduleRun(Guid scheduleRunId)

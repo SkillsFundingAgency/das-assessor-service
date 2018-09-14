@@ -123,7 +123,9 @@
     <Compile Include="Framework\Helpers\SqlDatabaseConnectionHelper.cs" />
     <Compile Include="Pages\AssessmentRecordedPage.cs" />
     <Compile Include="Pages\CheckAndApproveAssessmentDetails.cs" />
+    <Compile Include="Pages\AssessmentEnrolledOnMoreThanOneAssessmentPage.cs" />
     <Compile Include="Pages\DeclarationPage.cs" />
+    <Compile Include="Pages\RecipientDetailsPage.cs" />
     <Compile Include="Pages\WhereWillTheCertificateBeSentPage.cs" />
     <Compile Include="Pages\ApprenticeAchievementDatePage.cs" />
     <Compile Include="Pages\AddiitionalLearningOptionsPage.cs" />
@@ -148,6 +150,8 @@
     <Compile Include="SpecflowIocRegister.cs" />
     <Compile Include="StepDefinitions\ExampleSteps.cs" />
     <Compile Include="StepDefinitions\UserLogsInSuccesfully.cs" />
+    <Compile Include="StepDefinitions\WhenUserEntersRecipientDetails.cs" />
+    <Compile Include="StepDefinitions\WhenUserIsEnrolledOnMoreThanOneApprenticeship.cs" />
     <Compile Include="StepDefinitions\WhenUserDoesNotHaveAnAccountIsRedirectedToDoesNotHaveAccountPage.cs" />
     <Compile Include="StepDefinitions\WhenUserLogsInWithValidCredentialsandRedirectedToSearchForApprenticePage.cs" />
     <Compile Include="StepDefinitions\WhenUserForgetsPasswordandIsRedirectedToForgetPasswordPage.cs" />
