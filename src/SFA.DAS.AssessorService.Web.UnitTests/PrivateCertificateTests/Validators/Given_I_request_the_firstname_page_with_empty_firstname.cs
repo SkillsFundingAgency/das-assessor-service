@@ -10,7 +10,7 @@ using SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Validators
 {
-    public class Given_I_request_the_firstname_page_with_invalid_data : CertificateValidatorMockBase
+    public class Given_I_request_the_firstname_page_with_empty_data : CertificateValidatorMockBase
     {
         private ValidationResult _validationResult;
 
