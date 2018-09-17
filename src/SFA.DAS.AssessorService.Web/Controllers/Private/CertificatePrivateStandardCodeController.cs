@@ -99,13 +99,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
             return await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/Certificate/StandardCode.cshtml",
                 nextAction: RedirectToAction("LearnerStartDate", "CertificatePrivateLearnerStartDate"), action: CertificateActions.StatusCode);
-        }
-
-        //private async Task<IEnumerable<SelectListItem>> GetAllStandards()
-        //{
-        //    var filteredStandardCodes = await GetFilteredStatusCodes();
-        //    return await GetAllStandards(filteredStandardCodes);
-        //}
+        }      
 
         private async Task<List<string>> GetFilteredStatusCodes()
         {
@@ -123,16 +117,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
             var results = await _cacheHelper.RetrieveFromCache<IEnumerable<Standard>>("Standards");
             if (results == null)
             {
-                var standards = await _assessmentOrgsApiClient.GetAllStandards();
-                //.Where(a => filteredStandardCodes.Contains(a.Id.ToString()))
-                //.Select(q => new SelectListItem { Value = q.Id.ToString(), Text = q.Title.ToString() }).ToList();
+                var standards = await _assessmentOrgsApiClient.GetAllStandards();              
                 await _cacheHelper.SaveToCache("Standards", standards, 1);
 
                 results = standards;
             }
-
-            //var results = (selectListItems)
-            //    .Where(a => filteredStandardCodes.Contains(a.Value.ToString()));
+            
             return results;
         }
     }

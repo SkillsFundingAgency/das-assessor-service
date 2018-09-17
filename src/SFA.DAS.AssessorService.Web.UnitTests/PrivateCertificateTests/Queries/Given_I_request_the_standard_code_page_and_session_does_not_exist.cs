@@ -2,18 +2,16 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using Moq;
-using Newtonsoft.Json;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Web.Controllers.Private;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Queries
 {
-    public class Given_I_request_the_status_code_page : CertificateQueryBase
+    public class Given_I_request_the_standard_code_page_and_session_does_not_exist : CertificateQueryBase
     {
-        private IActionResult _result;
+        private RedirectToActionResult _result;
         private CertificateStandardCodeListViewModel _viewModelResponse;
 
         [SetUp]
@@ -29,22 +27,25 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Queries
                     MockCertificateApiClient,
                     MockSession.Object
                     );
+          
+            MockSession.Setup(q => q.Get("EndPointAsessorOrganisationId"))
+                .Returns("EPA00001");
+           
+            var result = certificatePrivateStandardCodeController.StandardCode(false).GetAwaiter().GetResult();
 
-            SetupSession();
-
-            _result = certificatePrivateStandardCodeController.StandardCode(false).GetAwaiter().GetResult();
-
-            var result = _result as ViewResult;
-            _viewModelResponse = result.Model as CertificateStandardCodeListViewModel;
+            _result = result as RedirectToActionResult;
         }
 
         [Test]
-        public void ThenShouldReturnFirstName()
+        public void ThenShouldRedirectToIndexController()
         {
-            var certificateData = JsonConvert.DeserializeObject<CertificateData>(Certificate.CertificateData);
+            _result.ActionName.Should().Be("Index");
+        }
 
-            _viewModelResponse.Id.Should().Be(Certificate.Id);
-            _viewModelResponse.SelectedStandardCode.Should().Be(Certificate.StandardCode);
+        [Test]
+        public void ThenShouldRedirectToIndexAction()
+        {
+            _result.ControllerName.Should().Be("Search");
         }
     }
 }

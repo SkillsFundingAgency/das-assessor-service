@@ -4,6 +4,7 @@
     {
         AuthSettings Authentication { get; set; }
         ApiAuthentication ApiAuthentication { get; set; }
+        AzureApiAuthentication AzureApiAuthentication { get; set; }
         ClientApiAuthentication ClientApiAuthentication { get; set; }
         NotificationsApiClientConfiguration NotificationsApiClientConfiguration { get; set; }
         CertificateDetails CertificateDetails { get; set; }

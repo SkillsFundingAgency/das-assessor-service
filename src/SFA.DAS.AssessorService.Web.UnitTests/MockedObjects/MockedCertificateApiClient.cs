@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using FizzWare.NBuilder;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
@@ -16,6 +18,9 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
         {
             var tokenServiceMock = new Mock<ITokenService>();
 
+            var options = Builder<Option>.CreateListOfSize(10)
+                .Build();
+
             var mockHttp = new MockHttpMessageHandler();
 
             var client = mockHttp.ToHttpClient();
@@ -26,6 +31,9 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
 
             mockHttp.When($"http://localhost:59022/api/v1/organisations/{certificate.OrganisationId}")
                 .Respond("application/json", JsonConvert.SerializeObject(certificate));
+
+            mockHttp.When($"http://localhost:59022/api/v1/certificates/options/?stdCode={93}")
+                .Respond("application/json", JsonConvert.SerializeObject(options));            
 
             var certificateFirstNameViewModel = new CertificateFirstNameViewModel
             {

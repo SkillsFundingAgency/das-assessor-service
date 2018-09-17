@@ -90,6 +90,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Posts
 
             MockHttpContextAccessor.Object.HttpContext.Request.Query =
                 new QueryCollection(queryString);
+
+            MockSession.Setup(q => q.Exists("redirecttocheck"))
+                .Returns(true);
+
+            MockSession.Setup(q => q.Get("redirecttocheck"))
+                .Returns("true");
         }
     }
 }

@@ -1,0 +1,19 @@
+<script>
+var epaoOptionFormElement = $('.apprentice-option-form');
+var epaoOptionValidationRulesObject = {
+  rules: {
+    HasAdditionalLearningOption: {
+      required: true
+    },
+    Option: {
+      required: '#options_yes[value="True"]:checked'
+    }
+  },
+  messages: {
+    HasAdditionalLearningOption  : 'Select yes or no',
+    Option  : 'Enter the learning option'
+  }
+};
+
+GOVUK.epaoValidate(epaoOptionFormElement, epaoOptionValidationRulesObject);
+</script>

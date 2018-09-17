@@ -9,15 +9,15 @@ using SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Queries
 {
-    public class Given_I_request_the_status_code_page_and_session_does_not_exist : CertificateQueryBase
+    public class Given_I_request_the_standard_code_page_on_redirect_to_check_page : CertificateQueryBase
     {
-        private RedirectToActionResult _result;
+        private ViewResult _result;
         private CertificateStandardCodeListViewModel _viewModelResponse;
 
         [SetUp]
         public void Arrange()
         {
-            Mock<IDistributedCache> mockDistributedCache = new Mock<IDistributedCache>();
+            var mockDistributedCache = new Mock<IDistributedCache>();
 
             var certificatePrivateStandardCodeController =
                 new CertificatePrivateStandardCodeController(MockLogger.Object,
@@ -27,25 +27,19 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Queries
                     MockCertificateApiClient,
                     MockSession.Object
                     );
-          
-            MockSession.Setup(q => q.Get("EndPointAsessorOrganisationId"))
-                .Returns("EPA00001");
-           
+
+            SetupSession();
+            AddRedirectCheck();
+
             var result = certificatePrivateStandardCodeController.StandardCode(false).GetAwaiter().GetResult();
 
-            _result = result as RedirectToActionResult;
+            _result = result as ViewResult;
         }
 
         [Test]
-        public void ThenShouldRedirectToIndexController()
+        public void ThenShouldHaveBackCheckFlagSet()
         {
-            _result.ActionName.Should().Be("Index");
-        }
-
-        [Test]
-        public void ThenShouldRedirectToIndexAction()
-        {
-            _result.ControllerName.Should().Be("Search");
+            (_result.Model as CertificateStandardCodeListViewModel).BackToCheckPage.Should().Be(true);
         }
     }
 }
