@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Net.Http;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.WsFederation;
 using Microsoft.AspNetCore.Builder;
@@ -19,8 +20,8 @@ using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Staff.Helpers;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
+using SFA.DAS.AssessorService.Web.Staff.Validators;
 using StructureMap;
-
 namespace SFA.DAS.AssessorService.Web.Staff
 {
     public class Startup
@@ -31,14 +32,12 @@ namespace SFA.DAS.AssessorService.Web.Staff
         private const string Version = "1.0";
         public IConfiguration Configuration { get; }
         public IWebConfiguration ApplicationConfiguration { get; set; }
-
         public Startup(IConfiguration configuration, IHostingEnvironment env, ILogger<Startup> logger)
         {
             _env = env;
             _logger = logger;
             Configuration = configuration;
         }
-
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
@@ -48,9 +47,7 @@ namespace SFA.DAS.AssessorService.Web.Staff
                 options.CheckConsentNeeded = context => false; // Default is true, make it false
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-
             ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
-
             services.AddHttpClient<ApiClient>("ApiClient", config =>
             {
                 config.BaseAddress = new Uri(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
@@ -58,54 +55,32 @@ namespace SFA.DAS.AssessorService.Web.Staff
             })
                 .SetHandlerLifetime(TimeSpan.FromMinutes(5))  //Set lifetime to five minutes
                 .AddPolicyHandler(GetRetryPolicy());
-
             AddAuthentication(services);
-
             services.Configure<RequestLocalizationOptions>(options =>
             {
                 options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("en-GB");
                 options.SupportedCultures = new List<CultureInfo> { new CultureInfo("en-GB") };
                 options.RequestCultureProviders.Clear();
             });
-             
-           
-            services.AddMvc()
-                .AddMvcOptions(m => m.ModelMetadataDetailsProviders.Add(new HumanizerMetadataProvider()))
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddJsonOptions(options =>
+            services.AddMvc(options => { options.Filters.Add<CheckSessionFilter>(); })
+                 .AddMvcOptions(m => m.ModelMetadataDetailsProviders.Add(new HumanizerMetadataProvider()))
+                .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
+                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddJsonOptions(options =>
                 {
                     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
                 });
-
-
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
-            //if (_env.IsDevelopment())
-            //{
-            //    services.AddDistributedMemoryCache();
-            //}
-            //else
-            //{
-            //    try
-            //    {
+            
             services.AddDistributedRedisCache(options =>
             {
                 options.Configuration = ApplicationConfiguration.SessionRedisConnectionString;
-            });
-            //    }
-            //    catch (Exception e)
-            //    {
-            //        _logger.LogError(e, $"Error setting redis for session.  Conn: {ApplicationConfiguration.SessionRedisConnectionString}");
-            //        throw;
-            //    }
-            //}
-
+            });          
+            MappingStartup.AddMappings();
             return ConfigureIoC(services);
-
         }
-
         private IServiceProvider ConfigureIoC(IServiceCollection services)
         {
             var container = new Container();
-
             container.Configure(config =>
             {
                 config.Scan(_ =>
@@ -113,23 +88,19 @@ namespace SFA.DAS.AssessorService.Web.Staff
                     _.AssemblyContainingType(typeof(Startup));
                     _.WithDefaultConventions();
                 });
-
                 config.For<ITokenService>().Use<TokenService>();
                 config.For<IWebConfiguration>().Use(ApplicationConfiguration);
                 config.For<ISessionService>().Use<SessionService>().Ctor<string>().Is(_env.EnvironmentName);
-
+                config.For<CertificateDateViewModelValidator>().Use<CertificateDateViewModelValidator>();
                 config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<IContactsApiClient>().Use<ContactsApiClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<IAzureTokenService>().Use<AzureTokenService>();
                 config.For<IAzureApiClient>().Use<AzureApiClient>().Ctor<string>("baseUri").Is(ApplicationConfiguration.AzureApiAuthentication.ApiBaseAddress)
                                                                    .Ctor<string>("productId").Is(ApplicationConfiguration.AzureApiAuthentication.ProductId);
-
                 config.Populate(services);
             });
-
             return container.GetInstance<IServiceProvider>();
         }
-
         private void AddAuthentication(IServiceCollection services)
         {
             services.AddAuthentication(sharedOptions =>
@@ -144,7 +115,6 @@ namespace SFA.DAS.AssessorService.Web.Staff
                 options.MetadataAddress = ApplicationConfiguration.StaffAuthentication.MetadataAddress;
             }).AddCookie();
         }
-
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
@@ -157,15 +127,12 @@ namespace SFA.DAS.AssessorService.Web.Staff
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
-
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseAuthentication();
             app.UseSession();
-
             app.UseRequestLocalization();
-
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
@@ -173,7 +140,6 @@ namespace SFA.DAS.AssessorService.Web.Staff
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
         }
-
         static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
         {
             return HttpPolicyExtensions
