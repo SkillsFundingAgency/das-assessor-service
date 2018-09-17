@@ -44,6 +44,8 @@ namespace SFA.DAS.AssessorService.Data
             organisationEntity.EndPointAssessorName = organisation.EndPointAssessorName;
             organisationEntity.Status = organisation.Status;
             organisationEntity.EndPointAssessorUkprn = organisation.EndPointAssessorUkprn;
+            organisationEntity.ApiEnabled = organisation.ApiEnabled ;
+            organisationEntity.ApiUser = organisation.ApiUser;
 
             // Workaround for Mocking
             _assessorDbContext.MarkAsModified(organisationEntity);
