@@ -10,7 +10,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Posts
     public class Given_I_post_the_firstname_with_invalid_model : CertificatePostBase
     {
         private ViewResult _result;
-        private CertificateFirstNameViewModel _viewModelResponse;
 
         [SetUp]
         public void Arrange()
@@ -20,7 +19,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Posts
                     MockHttpContextAccessor.Object,
                     MockCertificateApiClient,
                     MockSession.Object
-                    );
+                );
 
             var vm = new CertificateFirstNameViewModel
             {
@@ -33,7 +32,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Posts
                 Standard = "91",
                 IsPrivatelyFunded = true
             };
-            
+
             SetupSession();
          
             certificatePrivateFirstNameController.ModelState.AddModelError("", "Error");

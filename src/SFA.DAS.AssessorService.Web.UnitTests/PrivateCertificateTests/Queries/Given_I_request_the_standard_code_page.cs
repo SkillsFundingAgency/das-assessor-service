@@ -2,22 +2,24 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using Moq;
+using Newtonsoft.Json;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Web.Controllers.Private;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Queries
 {
-    public class Given_I_request_the_status_code_page_on_redirect_to_check_page : CertificateQueryBase
+    public class Given_I_request_the_standard_code_page : CertificateQueryBase
     {
-        private ViewResult _result;
+        private IActionResult _result;
         private CertificateStandardCodeListViewModel _viewModelResponse;
 
         [SetUp]
         public void Arrange()
         {
-            var mockDistributedCache = new Mock<IDistributedCache>();
+            Mock<IDistributedCache> mockDistributedCache = new Mock<IDistributedCache>();
 
             var certificatePrivateStandardCodeController =
                 new CertificatePrivateStandardCodeController(MockLogger.Object,
@@ -29,17 +31,20 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Queries
                     );
 
             SetupSession();
-            AddRedirectCheck();
 
-            var result = certificatePrivateStandardCodeController.StandardCode(false).GetAwaiter().GetResult();
+            _result = certificatePrivateStandardCodeController.StandardCode(false).GetAwaiter().GetResult();
 
-            _result = result as ViewResult;
+            var result = _result as ViewResult;
+            _viewModelResponse = result.Model as CertificateStandardCodeListViewModel;
         }
 
         [Test]
-        public void ThenShouldHaveBackCheckFlagSet()
+        public void ThenShouldReturnFirstName()
         {
-            (_result.Model as CertificateStandardCodeListViewModel).BackToCheckPage.Should().Be(true);
+            var certificateData = JsonConvert.DeserializeObject<CertificateData>(Certificate.CertificateData);
+
+            _viewModelResponse.Id.Should().Be(Certificate.Id);
+            _viewModelResponse.SelectedStandardCode.Should().Be(Certificate.StandardCode);
         }
     }
 }

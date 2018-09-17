@@ -8,8 +8,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Posts
 {
     public class Given_I_post_the_ukpen_page_on_redirect_to_check_page : CertificatePostBase
     {
-        private RedirectToActionResult _result;
-        private CertificateFirstNameViewModel _viewModelResponse;
+        private RedirectToActionResult _result;        
 
         [SetUp]
         public void Arrange()
