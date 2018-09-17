@@ -1,6 +1,6 @@
 <script>
-    var epaoDateFormElement = $('.apprentice-learner-date-form');
-    var epaoDateValidationRulesObject = {
+    var epaoLearnerDateFormElement = $('.apprentice-learner-date-form');
+    var epaoLearnerDateValidationRulesObject = {
         rules: {
             Day: {
                 required: true,
@@ -24,13 +24,12 @@
                 required: true,
                 number: true,
                 minlength: 4,
-                maxlength: 4,
-                // range: [1, 9999]
+                maxlength: 4
             }
         },
         messages: {
             Day: {
-                required: 'Enter the learner start day',
+                required: 'Enter the day',
                 number: 'Day must be a number',
                 range: 'Enter a valid day',
                 isValidDate: 'Enter a valid date',
@@ -38,12 +37,12 @@
                 earliestDate: 'An learner date cannot be before 01 01 2017'
             },
             Month: {
-                required: 'Enter the learner month',
+                required: 'Enter the month',
                 number: 'Month must be a number',
                 range: 'Enter a valid month',
             },
             Year: {
-                required: 'Enter the learner year',
+                required: 'Enter the year',
                 number: 'Year must be a number',
                 minlength: 'Enter a valid year',
                 maxlength: 'Enter a valid year',
@@ -51,6 +50,6 @@
         }
     };
 
-    GOVUK.epaoValidate(epaoDateFormElement, epaoDateValidationRulesObject);
+    GOVUK.epaoValidate(epaoLearnerDateFormElement, epaoLearnerDateValidationRulesObject);
 
 </script>

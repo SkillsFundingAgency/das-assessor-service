@@ -49,10 +49,12 @@
         <input class="form-control js-integers-only" name="Uln" autocomplete="off" asp-for="Uln" type="text" sfa-validation-for="Uln" sfa-validationerror-class="form-control-error" maxlength="10" />
     </div>
 
-    <!-- <div class="form-group">
-        <span class="form-label-bold">@Localizer["PrivatelyFunded"]</span>
-        <input name="IsPrivatelyFunded" asp-for="IsPrivatelyFunded" type="checkbox" />
-    </div> -->
+    <details>
+        <summary><span class="summary">What's a <abbr title="Unique learner number">ULN</abbr>?</span></summary>
+        <div class="panel panel-border-narrow" id="what-is-a-unique-learner-number">
+            <p>The <abbr title="Unique learner number">ULN</abbr> is a 10-digit reference number. It's used to access the online Personal Learning Record (<abbr title="Personal Learning Record">PLR</abbr>) of anyone aged 14 and over in UK education or training, including apprenticeships.</p>
+        </div>
+    </details>
 
     <div class="form-group">
         <div class="multiple-choice">
@@ -62,11 +64,10 @@
     </div>
 
     <details>
-        <summary><span class="summary">What's a <abbr title="Unique learner number">ULN</abbr>?</span></summary>
+        <summary><span class="summary">How do I know if the apprenticeship is privately funded?</summary>
         <div class="panel panel-border-narrow" id="what-is-a-unique-learner-number">
-            <p>
-                The <abbr title="Unique learner number">ULN</abbr> is a 10-digit reference number. It's used to access the online Personal Learning Record (<abbr title="Personal Learning Record">PLR</abbr>) of anyone aged 14 and over in UK education or training, including apprenticeships.
-            </p>
+            <p>The training provider and employer will know if the apprenticeship is privately funded.</p>
+            <p>A privately funded apprenticeship doesn't receive government funding and isn't subject to ESFA funding rules.</p>
         </div>
     </details>
 

@@ -1,0 +1,15 @@
+<script src="~/lib/accessible-autocomplete/accessible-autocomplete.min.js"></script>
+
+<script>
+
+  accessibleAutocomplete.enhanceSelectElement({
+    selectElement: document.querySelector('#SelectedStandardCode'),
+    name: 'StandardCodes',
+    defaultValue: '',
+    confirmOnBlur: false,
+    autoselect: false,
+    showAllValues: true,
+    // displayMenu: 'overlay'
+  })
+
+</script>
