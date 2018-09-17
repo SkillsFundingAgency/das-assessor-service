@@ -1,0 +1,56 @@
+<script>
+  var epaoDateFormElement = $('.apprentice-date-form');
+  var epaoDateValidationRulesObject = {
+    rules: {
+      Day: {
+        required: true,
+        number: true,
+        range: [1, 31],
+        isValidDate: {
+          depends: function() {
+            var year = $('#Year').val().length
+            return year === 4
+          }
+        },
+        noFutureDate: true,
+        earliestDate: '1/1/2017'
+      },
+      Month: {
+        required: true,
+        number: true,
+        range: [1, 12]
+      },
+      Year: {
+        required: true,
+        number: true,
+        minlength: 4,
+        maxlength: 4,
+        // range: [1, 9999]
+      }
+    },
+    messages: {
+      Day: {
+        required: 'Enter the achievement day',
+        number: 'Day must be a number',
+        range: 'Enter a valid day',
+        isValidDate: 'Enter a valid date',
+        noFutureDate: 'An achievement date cannot be in the future',
+        earliestDate: 'An achievement date cannot be before 01 01 2017'
+      },
+      Month: {
+        required: 'Enter the achievement month',
+        number: 'Month must be a number',
+        range: 'Enter a valid month',
+      },
+      Year: {
+        required: 'Enter the achievement year',
+        number: 'Year must be a number',
+        minlength: 'Enter a valid year',
+        maxlength: 'Enter a valid year',
+      }
+    }
+  };
+
+  GOVUK.epaoValidate(epaoDateFormElement, epaoDateValidationRulesObject);
+
+</script>

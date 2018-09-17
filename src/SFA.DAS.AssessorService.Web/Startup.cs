@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.Client;
+using SFA.DAS.AssessorService.Application.Api.Client.Azure;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.Settings;
@@ -108,6 +109,10 @@ namespace SFA.DAS.AssessorService.Web
                 config.For<ICertificateApiClient>().Use<CertificateApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<IAssessmentOrgsApiClient>().Use(() => new AssessmentOrgsApiClient(Configuration.AssessmentOrgsApiClientBaseUrl));
                 config.For<ILoginApiClient>().Use<LoginApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
+
+                config.For<IAzureTokenService>().Use<AzureTokenService>();
+                config.For<IAzureApiClient>().Use<AzureApiClient>().Ctor<string>("baseUri").Is(Configuration.AzureApiAuthentication.ApiBaseAddress)
+                                                                   .Ctor<string>("productId").Is(Configuration.AzureApiAuthentication.ProductId);
 
                 config.Populate(services);
             });
