@@ -16,9 +16,9 @@ using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.UnitTests.MockedObjects;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
-namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Posts
+namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Validators
 {
-    public class CertificatePostBase
+    public class CertificateValidatorMockBase
     {
         protected Mock<ILogger<CertificateController>> MockLogger;
         protected Mock<IHttpContextAccessor> MockHttpContextAccessor;
@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Posts
         protected Certificate Certificate;
         protected CertificateData CertificateData;
 
-        public CertificatePostBase()
+        public CertificateValidatorMockBase()
         {
             Certificate = SetupCertificate();
 
@@ -90,12 +90,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Posts
 
             MockHttpContextAccessor.Object.HttpContext.Request.Query =
                 new QueryCollection(queryString);
-
-            MockSession.Setup(q => q.Exists("redirecttocheck"))
-                .Returns(true);
-
-            MockSession.Setup(q => q.Get("redirecttocheck"))
-                .Returns("true");
         }
     }
 }
