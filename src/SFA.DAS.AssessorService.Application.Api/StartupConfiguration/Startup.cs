@@ -51,22 +51,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             IServiceProvider serviceProvider;
-            //services.AddAndConfigureAuthentication(Configuration);
             try
-            {             
-
-//                services.AddAuthentication(sharedOptions =>
-//                {
-//                    sharedOptions.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-//                }).AddJwtBearer(options => options.A)
-//                .AddAzureAdBearer(options =>
-//                {
-//                    options.ClientId = Configuration.ApiAuthentication.ClientId;
-//                    options.Instance = Configuration.ApiAuthentication.Instance;
-//                    options.TenantId = Configuration.ApiAuthentication.TenantId;
-//                    options.Audience = Configuration.ApiAuthentication.Audience;
-//                });
-
+            {            
                 services.AddAuthentication(o =>
                     {
                         o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -77,7 +63,6 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                         o.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                         {
                             RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
-                            // Both App ID URI and client id are valid audiences in the access token
                             ValidAudiences = new List<string>
                             {
                                 Configuration.ApiAuthentication.Audience,
@@ -101,9 +86,9 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 });
 
                 IMvcBuilder mvcBuilder;
-//                if (_env.IsDevelopment())
-                    //mvcBuilder = services.AddMvc(opt => { opt.Filters.Add(new AllowAnonymousFilter()); });
-                //else
+                if (_env.IsDevelopment())
+                    mvcBuilder = services.AddMvc(opt => { opt.Filters.Add(new AllowAnonymousFilter()); });
+                else
                     mvcBuilder = services.AddMvc();
 
                 mvcBuilder
