@@ -19,18 +19,21 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
         private readonly IRegisterQueryRepository _registerQueryRepository;
         private readonly ILogger<SearchAssessmentOrganisationHandler> _logger;
         private readonly IEpaOrganisationSearchValidator _validator;
-        public SearchAssessmentOrganisationHandler(IRegisterQueryRepository registerQueryRepository, IEpaOrganisationSearchValidator validator, ILogger<SearchAssessmentOrganisationHandler> logger)
+        private readonly ISpecialCharacterCleanserService _cleanser;
+
+        public SearchAssessmentOrganisationHandler(IRegisterQueryRepository registerQueryRepository, IEpaOrganisationSearchValidator validator, ILogger<SearchAssessmentOrganisationHandler> logger, ISpecialCharacterCleanserService cleanser)
         {
             _registerQueryRepository = registerQueryRepository;
             _validator = validator;
             _logger = logger;
-           
+            _cleanser = cleanser;
         }
 
         public async Task<List<AssessmentOrganisationSummary>> Handle(SearchAssessmentOrganisationsRequest request, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Handling Search AssessmentOrganisations Request");
-            var searchstring = request.Searchstring.Trim().ToLower();
+            
+            var searchstring = _cleanser.CleanseStringForSpecialCharacters(request.Searchstring.Trim());
 
             if (searchstring.Length < 2)
                 throw new BadRequestException("The searchstring is too short to do a valid search");
