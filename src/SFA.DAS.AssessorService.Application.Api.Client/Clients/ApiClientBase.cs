@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using Polly;
+using Polly.Extensions.Http;
+using Polly.Retry;
 using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
@@ -14,9 +17,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
     {
         protected readonly ITokenService TokenService;
         private readonly ILogger<ApiClientBase> _logger;
-        protected readonly HttpClient HttpClient;
+        protected HttpClient HttpClient;
 
-        protected readonly JsonSerializerSettings _jsonSettings = new JsonSerializerSettings
+        private readonly RetryPolicy<HttpResponseMessage> _retryPolicy;
+
+        protected readonly JsonSerializerSettings JsonSettings = new JsonSerializerSettings
         {
             ContractResolver = new CamelCasePropertyNamesContractResolver(),
             NullValueHandling = NullValueHandling.Ignore
@@ -26,7 +31,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             TokenService = tokenService;
             _logger = logger;
+
             HttpClient = new HttpClient { BaseAddress = new Uri($"{baseUri}") };
+
+            _retryPolicy = HttpPolicyExtensions
+                    .HandleTransientHttpError()
+                    .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2,
+                    retryAttempt)));
         }
 
         protected static void RaiseResponseError(string message, HttpRequestMessage failedRequest, HttpResponseMessage failedResponse)
@@ -56,111 +68,88 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         protected async Task<T> RequestAndDeserialiseAsync<T>(HttpRequestMessage request, string message = null) where T : class
         {
-            request.Headers.Add("Accept", "application/json");
-            
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
+            HttpRequestMessage clonedRequest = null;
 
-            using (var response = HttpClient.SendAsync(request))
+            var result = await _retryPolicy.ExecuteAsync(async () =>
             {
-                var result = await response;
-                if (result.StatusCode == HttpStatusCode.OK)
-                {
-                    var json = await result.Content.ReadAsStringAsync();
-                    return await Task.Factory.StartNew<T>(() => JsonConvert.DeserializeObject<T>(json, _jsonSettings));
-                }
-                if (result.StatusCode == HttpStatusCode.NotFound)
-                {
-                    if (message == null)
-                    {
-                        message = "Could not find " + request.RequestUri.PathAndQuery;
-                    }
+                clonedRequest = new HttpRequestMessage(request.Method, request.RequestUri);
+                clonedRequest.Headers.Add("Accept", "application/json");
+                clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
 
-                    RaiseResponseError(message, request, result);
-                }
+                return await HttpClient.SendAsync(clonedRequest);
 
-                RaiseResponseError(request, result);
+            });
+
+            if (result.StatusCode == HttpStatusCode.OK)
+            {
+                var json = await result.Content.ReadAsStringAsync();
+                return await Task.Factory.StartNew<T>(() => JsonConvert.DeserializeObject<T>(json, JsonSettings));
             }
 
+            if (result.StatusCode == HttpStatusCode.NotFound)
+            {
+                if (message == null)
+                {
+                    message = "Could not find " + request.RequestUri.PathAndQuery;
+                }
+
+                RaiseResponseError(message, clonedRequest, result);
+            }
+
+            RaiseResponseError(clonedRequest, result);
+
             return null;
+
         }
 
         protected async Task<U> PostPutRequestWithResponse<T, U>(HttpRequestMessage requestMessage, T model)
         {
             var serializeObject = JsonConvert.SerializeObject(model);
-            requestMessage.Content = new StringContent(serializeObject,
-                System.Text.Encoding.UTF8, "application/json");
-
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
-
-            using (var response = await HttpClient.SendAsync(requestMessage))
+          
+            HttpRequestMessage clonedRequest = null;
+            var response = await _retryPolicy.ExecuteAsync(async () =>
             {
-                var json = await response.Content.ReadAsStringAsync();
-                //var result = await response;
-                if (response.StatusCode == HttpStatusCode.OK 
-                    || response.StatusCode == HttpStatusCode.Created 
-                    || response.StatusCode == HttpStatusCode.NoContent)
-                {
-                    return await Task.Factory.StartNew<U>(() => JsonConvert.DeserializeObject<U>(json, _jsonSettings));
-                }
-                else
-                {
-                    _logger.LogInformation($"HttpRequestException: Status COde: {response.StatusCode} Body: {json}");
-                    throw new HttpRequestException(json);
-                }
+                clonedRequest = new HttpRequestMessage(requestMessage.Method, requestMessage.RequestUri);
+                clonedRequest.Headers.Add("Accept", "application/json");
+                clonedRequest.Content = new StringContent(serializeObject,
+                    System.Text.Encoding.UTF8, "application/json");
+                clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
+
+                return await HttpClient.SendAsync(clonedRequest);
+
+            });
+
+            var json = await response.Content.ReadAsStringAsync();
+            //var result = await response;
+            if (response.StatusCode == HttpStatusCode.OK
+                || response.StatusCode == HttpStatusCode.Created
+                || response.StatusCode == HttpStatusCode.NoContent)
+            {
+                return await Task.Factory.StartNew<U>(() => JsonConvert.DeserializeObject<U>(json, JsonSettings));
+            }
+            else
+            {
+                _logger.LogInformation($"HttpRequestException: Status Code: {response.StatusCode} Body: {json}");
+                throw new HttpRequestException(json);
             }
         }
 
-
-        //protected bool Exists(HttpRequestMessage request)
-        //{
-        //    using (var response = HttpClient.SendAsync(request))
-        //    {
-        //        var result = response.Result;
-        //        if (result.StatusCode == HttpStatusCode.NoContent)
-        //        {
-        //            return true;
-        //        }
-        //        if (result.StatusCode == HttpStatusCode.NotFound)
-        //        {
-        //            return false;
-        //        }
-
-        //        RaiseResponseError(request, result);
-        //    }
-
-        //    return false;
-        //}
-
-        //protected async Task<bool> ExistsAsync(HttpRequestMessage request)
-        //{
-        //    using (var response = HttpClient.SendAsync(request))
-        //    {
-        //        var result = await response;
-        //        if (result.StatusCode == HttpStatusCode.NoContent)
-        //        {
-        //            return true;
-        //        }
-        //        if (result.StatusCode == HttpStatusCode.NotFound)
-        //        {
-        //            return false;
-        //        }
-
-        //        RaiseResponseError(request, result);
-        //    }
-
-        //    return false;
-        //}
-
         protected async Task PostPutRequest<T>(HttpRequestMessage requestMessage, T model)
         {
-            var serializeObject = JsonConvert.SerializeObject(model);
-            requestMessage.Content = new StringContent(serializeObject,
-                System.Text.Encoding.UTF8, "application/json");
+            var serializeObject = JsonConvert.SerializeObject(model);                     
+            HttpRequestMessage clonedRequest = null;
+            var response = await _retryPolicy.ExecuteAsync(async () =>
+            {
+                clonedRequest = new HttpRequestMessage(requestMessage.Method, requestMessage.RequestUri);
+                clonedRequest.Headers.Add("Accept", "application/json");
+                clonedRequest.Content = new StringContent(serializeObject,
+                    System.Text.Encoding.UTF8, "application/json");
+                clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
 
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
+                return await HttpClient.SendAsync(clonedRequest);
 
-            var response = await HttpClient.SendAsync(requestMessage);
-
+            });
+           
             if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
                 throw new HttpRequestException();
@@ -168,10 +157,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         }
 
         protected async Task PostPutRequest(HttpRequestMessage requestMessage)
-        {
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
+        {           
+            HttpRequestMessage clonedRequest = null;
+            var response = await _retryPolicy.ExecuteAsync(async () =>
+            {
+                clonedRequest = new HttpRequestMessage(requestMessage.Method, requestMessage.RequestUri);               
+                clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
 
-            var response = await HttpClient.SendAsync(requestMessage);
+                return await HttpClient.SendAsync(clonedRequest);
+
+            });        
 
             if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
@@ -181,38 +176,21 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         protected async Task Delete(HttpRequestMessage requestMessage)
         {
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
+            HttpRequestMessage clonedRequest = null;
+            var response = await _retryPolicy.ExecuteAsync(async () =>
+            {
+                clonedRequest = new HttpRequestMessage(requestMessage.Method, requestMessage.RequestUri);
+                clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
 
-            var response = await HttpClient.SendAsync(requestMessage);
+                return await HttpClient.SendAsync(clonedRequest);
 
+            });
+            
             if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
                 throw new HttpRequestException();
             }
         }
-
-        //internal T RequestAndDeserialise<T>(HttpRequestMessage request, string missing = null) where T : class
-
-        //{
-        //    request.Headers.Add("Accept", "application/json");
-
-        //    using (var response = HttpClient.SendAsync(request))
-        //    {
-        //        var result = response.Result;
-        //        if (result.StatusCode == HttpStatusCode.OK)
-        //        {
-        //            return JsonConvert.DeserializeObject<T>(result.Content.ReadAsStringAsync().Result, _jsonSettings);
-        //        }
-        //        if (result.StatusCode == HttpStatusCode.NotFound)
-        //        {
-        //            RaiseResponseError(missing, request, result);
-        //        }
-
-        //        RaiseResponseError(request, result);
-        //    }
-
-        //    return null;
-        //}
 
         public void Dispose()
         {
