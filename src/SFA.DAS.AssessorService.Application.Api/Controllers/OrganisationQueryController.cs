@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -35,7 +36,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _localizer = localizer;
         }
 
-        [HttpGet("{ukprn}", Name = "GetOrganisation")]
+        [HttpGet("{ukprn}", Name = "SearchOrganisation")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(OrganisationResponse))]
         [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.NotFound, Type = typeof(string))]
@@ -70,6 +71,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 Mapper.Map<List<OrganisationResponse>>(await _organisationQueryRepository.GetAllOrganisations());
                 
             return Ok(organisations);
+        }
+
+        [HttpGet("{id}", Name = "GetOrganisation")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<OrganisationResponse>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetOrganisation(Guid id)
+        {
+            _logger.LogInformation($"Received request to retrieve Organisation {id}");
+
+            var organisation =
+                await _organisationQueryRepository.Get(id);
+
+            return Ok(organisation);
         }
     }
 }
