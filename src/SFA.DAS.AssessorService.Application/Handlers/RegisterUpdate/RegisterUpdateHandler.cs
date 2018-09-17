@@ -99,7 +99,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.RegisterUpdate
                 {
                     EndPointAssessorName = epaoSummary.Name,
                     EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
-                    EndPointAssessorUkprn = epaoSummary.Ukprn
+                    EndPointAssessorUkprn = epaoSummary.Ukprn,
+                    ApiEnabled = organisation.ApiEnabled,
+                    ApiUser = organisation.ApiUser
                 });
 
                 _response.OrganisationsUpdated++;
@@ -116,7 +118,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.RegisterUpdate
                 {
                     EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
                     EndPointAssessorName = organisation.EndPointAssessorName,
-                    EndPointAssessorUkprn = epaoSummary.Ukprn
+                    EndPointAssessorUkprn = epaoSummary.Ukprn,
+                    ApiEnabled = organisation.ApiEnabled,
+                    ApiUser = organisation.ApiUser
                 });
 
                 _response.OrganisationsUnDeleted++;
