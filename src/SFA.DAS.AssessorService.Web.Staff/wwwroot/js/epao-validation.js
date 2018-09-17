@@ -30,6 +30,9 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
       }
     })
     .validate({
+      normalizer: function(value) {
+        return $.trim(value);
+      },
       ignore: validationRulesObject.ignore,
       focusInvalid: false,
       onkeyup: false,
@@ -65,7 +68,6 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
       errorPlacement: function(error, element) {
         if (element.attr('type') == 'radio') {
           $('.error-message-container')
-            .addClass('form-group-error')
             .show()
             .append(error);
         } else if (element.hasClass('date-input')) {
@@ -84,7 +86,7 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
     });
 
   // Ensures date is valid
-  $.validator.addMethod(
+  jQuery.validator.addMethod(
     'isValidDate',
     function(value, element, params) {
       var dateString = getFullDate();
@@ -121,6 +123,16 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
         : true;
     },
     'The entered date cannot be before the set date'
+  );
+  
+  // Ensures address has been found
+  jQuery.validator.addMethod(
+    'addressFound',
+    function(value, element) {
+      var addressFound = $('.info-highlighted').is(':visible');
+      return this.optional(element) || addressFound;
+    },
+    'Please select an address'
   );
 
   // Matches UK postcode. Does not match to UK Channel Islands that have their own postcodes (non standard UK)
