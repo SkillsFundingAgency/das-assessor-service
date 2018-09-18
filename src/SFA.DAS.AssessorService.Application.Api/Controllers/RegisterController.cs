@@ -28,7 +28,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _mediator = mediator;
             _logger = logger;
         }
-
         [HttpPost(Name = "CreateEpaOrganisation")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EpaOrganisation))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(ApiResponse))]
@@ -59,5 +58,39 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 return BadRequest();
             }
         }
+
+
+        [HttpPut(Name = "UpdateEpaOrganisation")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EpaOrganisation))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.Gone, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> UpdateEpaOrganisation([FromBody] UpdateEpaOrganisationRequest request)
+        {
+            try
+            {
+                _logger.LogInformation($@"Updating Organisation [{request.OrganisationId}]");
+                var result = await _mediator.Send(request);
+                return Ok(result);
+            }
+
+            catch (NotFound ex)
+            {
+                _logger.LogError($@"Record is not available for organisation ID: [{request.OrganisationId}]");
+                return NotFound(ex.Message);
+            }
+            catch (BadRequestException ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($@"Bad request, Message: [{ex.Message}]");
+                return BadRequest();
+            }
+        }
+
+
     }
 }
