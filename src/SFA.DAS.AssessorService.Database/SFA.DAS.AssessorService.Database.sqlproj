@@ -76,6 +76,7 @@
     <Build Include="Tables\OrganisationStandard.sql" />
     <Build Include="Tables\OrganisationStandardDeliveryArea.sql" />
     <Build Include="Tables\OrganisationType.sql" />
+    <Build Include="StoredProcedures\StaffSearchCertificates.sql" />
     <Build Include="Tables\Options.sql" />
   </ItemGroup>
   <ItemGroup>
@@ -83,8 +84,5 @@
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <PreDeploy Include="Script.PreDeployment1.sql" />
   </ItemGroup>
 </Project>

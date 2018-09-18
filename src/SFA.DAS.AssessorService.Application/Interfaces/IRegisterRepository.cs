@@ -6,5 +6,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
     public interface IRegisterRepository
     {
         Task<string> CreateEpaOrganisation(EpaOrganisation organisation);
+        Task<string> UpdateEpaOrganisation(EpaOrganisation organisation);
+
     }
 }

@@ -1,0 +1,15 @@
+﻿using Newtonsoft.Json;
+
+namespace SFA.DAS.AssessorService.Settings
+{
+    public class AzureApiAuthentication : IAzureApiAuthentication
+    {
+        [JsonRequired] public string Id { get; set; }
+
+        [JsonRequired] public string Key { get; set; }
+
+        [JsonRequired] public string ApiBaseAddress { get; set; }
+
+        [JsonRequired] public string ProductId { get; set; }
+    }
+}

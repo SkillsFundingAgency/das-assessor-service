@@ -8,6 +8,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
     {
         public AuthSettings Authentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ApiAuthentication ApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public AzureApiAuthentication AzureApiAuthentication { get; set; }
         public ClientApiAuthentication ClientApiAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public NotificationsApiClientConfiguration NotificationsApiClientConfiguration { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public CertificateDetails CertificateDetails { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
