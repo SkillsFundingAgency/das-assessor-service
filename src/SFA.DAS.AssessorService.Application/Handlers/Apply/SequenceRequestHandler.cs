@@ -7,6 +7,7 @@ using Dapper;
 using MediatR;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
+using SFA.DAS.AssessorService.Application.Exceptions;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 {
@@ -26,8 +27,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             
             var workflow = JsonConvert.DeserializeObject<List<Sequence>>(userWorkflow.Workflow);
 
-            return workflow.Single(w => w.SequenceId == request.SequenceId);
-            //return sequenceSummaries;
+            var sequence = workflow.Single(w => w.SequenceId == request.SequenceId);
+
+            if (!sequence.Active)
+            {
+                throw new BadRequestException("This sequence is not active");
+            }
+            
+            return sequence;
         }
     }
     

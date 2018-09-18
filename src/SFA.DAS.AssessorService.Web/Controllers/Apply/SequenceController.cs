@@ -41,7 +41,17 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
         public async Task<IActionResult> Sequence(string sequenceId)
         {
             var userId = "1"; // From User / Session / Cookie etc.
-            var sequence = await _apiClient.GetSequence(userId, sequenceId);
+            Sequence sequence;
+            try
+            {
+                sequence = await _apiClient.GetSequence(userId, sequenceId);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            
             return View("~/Views/Apply/Sequences/Sequence.cshtml", sequence);
         }
     }

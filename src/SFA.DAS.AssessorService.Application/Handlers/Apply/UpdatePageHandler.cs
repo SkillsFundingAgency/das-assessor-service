@@ -53,12 +53,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
                 }
                 
                 page.Answers.Add(answer);
-                questionIdDb.Complete = true;
             }
 
-            MarkPageAsCompleteIfAllQuestionsComplete(page);
+            page.Complete = true;
 
-            MarkSequenceAsCompleteIfAllPagesComplete(sequence, section, workflow);
+            MarkSequenceAsCompleteIfAllPagesComplete(sequence, workflow);
             
             var workflowJson = JsonConvert.SerializeObject(workflow);
 
@@ -68,10 +67,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             return page;
         }
 
-        private static void MarkSequenceAsCompleteIfAllPagesComplete(Sequence sequence, Section section,
+        private static void MarkSequenceAsCompleteIfAllPagesComplete(Sequence sequence,
             List<Sequence> workflow)
         {
-            sequence.Complete = section.Pages.All(p => p.Complete);
+            sequence.Complete = sequence.Sections.SelectMany(s => s.Pages).All(p => p.Complete);
 
             if (!sequence.Complete) return;
             
@@ -88,11 +87,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             {
                 workflow.Single(w => w.SequenceId == sequence.NextSequence.NextSequenceId).Active = true;
             }
-        }
-
-        private static void MarkPageAsCompleteIfAllQuestionsComplete(Page page)
-        {
-            page.Complete = page.Questions.All(q => q.Complete);
         }
     }
 
