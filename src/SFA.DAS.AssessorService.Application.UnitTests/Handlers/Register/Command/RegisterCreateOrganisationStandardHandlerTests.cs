@@ -133,6 +133,18 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             _validator.Verify(v => v.CheckIfOrganisationStandardAlreadyExists(requestOrgStandardlreadyExists.OrganisationId, requestOrgStandardlreadyExists.StandardCode));
         }
 
+        [Test]
+        public void GetBadRequestExceptionWhenContactIdDoesntExistsValidationOccurs()
+        {
+            const string errorMessage = "bad contact id";
+            var requestOrgBadContactId = BuildRequest("EPA888", 123321);
+            requestOrgBadContactId.ContactId = "badContactId";
+            _validator.Setup(v => v.CheckIfContactIdIsEmptyOrValid(requestOrgBadContactId.ContactId)).Returns(errorMessage);
+            var ex = Assert.ThrowsAsync<BadRequestException>(() => _createEpaOrganisationStandardHandler.Handle(requestOrgBadContactId, new CancellationToken()));
+            Assert.AreEqual(errorMessage, ex.Message);
+            _validator.Verify(v => v.CheckIfContactIdIsEmptyOrValid(requestOrgBadContactId.ContactId));
+        }
+
         private CreateEpaOrganisationStandardRequest BuildRequest(string organisationId, int standardCode)
         {
             return new CreateEpaOrganisationStandardRequest
@@ -152,9 +164,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
                 StandardCode = request.StandardCode,
                 EffectiveFrom = request.EffectiveFrom,
                 EffectiveTo = request.EffectiveTo,
-                DateStandardApprovedOnRegister = request.DateStandardApprovedOnRegister,
-                Comments = request.Comments,
-                Status = request.Status
+                Comments = request.Comments
             };
         }
     }

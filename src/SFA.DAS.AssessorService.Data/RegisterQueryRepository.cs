@@ -221,6 +221,18 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
+           public async Task<bool> ContactIdIsValid(string contactId)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+                var sqlToCheckExists =
+                    "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Contacts] " +
+                    $@"WHERE convert(varchar(50),id)  = @ContactId";
+                return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new {contactId});
+            }
+        }
        
 
         public async Task<IEnumerable<EpaOrganisation>> GetAssessmentOrganisationsByStandardId(int standardId)

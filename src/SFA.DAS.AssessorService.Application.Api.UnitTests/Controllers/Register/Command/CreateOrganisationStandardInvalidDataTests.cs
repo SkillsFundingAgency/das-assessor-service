@@ -35,8 +35,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
                 OrganisationId = "EPA999",
                 StandardCode = 3,
                 EffectiveFrom = DateTime.Now,
-                Comments = "this is a comment",
-                Status = "New"
+                Comments = "this is a comment"
             };
 
             _mediator.Setup(m =>

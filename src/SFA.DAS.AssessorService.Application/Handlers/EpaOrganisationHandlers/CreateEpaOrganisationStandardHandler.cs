@@ -31,6 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             var errorDetails = new StringBuilder();
 
             errorDetails.Append(_validator.CheckOrganisationIdIsPresentAndValid(request.OrganisationId));
+            errorDetails.Append(_validator.CheckIfContactIdIsEmptyOrValid(request.ContactId));
             if (errorDetails.Length > 0)
             {
                 _logger.LogError(errorDetails.ToString());
@@ -69,14 +70,19 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
         private static  EpaOrganisationStandard MapOrganisationStandardRequestToOrganisationStandard(CreateEpaOrganisationStandardRequest request)
         {
+            Guid? contactId = null;
+            if (Guid.TryParse(request.ContactId, out Guid contactIdGuid))
+                contactId = contactIdGuid;
+
             var organisationStandard = new EpaOrganisationStandard
             {
                 OrganisationId = request.OrganisationId,
                 StandardCode = request.StandardCode,
                 EffectiveFrom = request.EffectiveFrom,
                 EffectiveTo = request.EffectiveTo,
-                DateStandardApprovedOnRegister = request.DateStandardApprovedOnRegister,
-                Comments = request.Comments
+                DateStandardApprovedOnRegister = null,
+                Comments = request.Comments,
+                ContactId = contactId
             };
             return organisationStandard;
         }

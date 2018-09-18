@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Data
                 connection.Execute(
                     "INSERT INTO [Organisations] ([Id],[CreatedAt],[EndPointAssessorName],[EndPointAssessorOrganisationId], " +
                     "[EndPointAssessorUkprn],[Status],[OrganisationTypeId],[OrganisationData]) " +
-                    $@"VALUES (@id, getdate(), @name, @organisationId, @ukprn, 'New', @organisationTypeId,  @orgData)",
+                    $@"VALUES (@id, GetUtcDate(), @name, @organisationId, @ukprn, 'New', @organisationTypeId,  @orgData)",
                     new {org.Id, org.Name, org.OrganisationId, org.Ukprn, org.Status, org.OrganisationTypeId, orgData}
                 );
 
@@ -55,7 +55,7 @@ namespace SFA.DAS.AssessorService.Data
                 var orgData = JsonConvert.SerializeObject(org.OrganisationData);
 
                 connection.Execute(
-                    "UPDATE [Organisations] SET [UpdatedAt] = GetDate(), [EndPointAssessorName] = @Name, " +
+                    "UPDATE [Organisations] SET [UpdatedAt] = GetUtcDate(), [EndPointAssessorName] = @Name, " +
                     "[EndPointAssessorUkprn] = @ukprn, [OrganisationTypeId] = @organisationTypeId, " +
                     "[OrganisationData] = @orgData WHERE [EndPointAssessorOrganisationId] = @organisationId",
                     new {org.Name, org.Ukprn, org.OrganisationTypeId, orgData, org.OrganisationId});
@@ -73,12 +73,12 @@ namespace SFA.DAS.AssessorService.Data
 
              
                 var res = connection.Query<int>(
-                    "INSERT INTO [dbo].[OrganisationStandard] ([EndPointAssessorOrganisationId],[StandardCode],[EffectiveFrom],[EffectiveTo],[DateStandardApprovedOnRegister] ,[Comments],[Status]) VALUES (" +
-                    "@organisationId, @standardcode, @effectiveFrom, @effectiveTo, @dateStandardApprovedOnRegister, @comments, 'New'); SELECT CAST(SCOPE_IDENTITY() as int); ",
+                    "INSERT INTO [dbo].[OrganisationStandard] ([EndPointAssessorOrganisationId],[StandardCode],[EffectiveFrom],[EffectiveTo],[DateStandardApprovedOnRegister] ,[Comments],[Status], [ContactId]) VALUES (" +
+                    "@organisationId, @standardcode, @effectiveFrom, @effectiveTo, null, @comments, 'New', @ContactId); SELECT CAST(SCOPE_IDENTITY() as int); ",
                     new
                     {
                         organisationStandard.OrganisationId, organisationStandard.StandardCode, organisationStandard.EffectiveFrom, organisationStandard.EffectiveTo,
-                        organisationStandard.DateStandardApprovedOnRegister, organisationStandard.Comments}).Single();
+                        organisationStandard.DateStandardApprovedOnRegister, organisationStandard.Comments, organisationStandard.ContactId}).Single();
 
                 return res;
             }

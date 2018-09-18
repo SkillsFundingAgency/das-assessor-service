@@ -13,6 +13,7 @@
         string CheckIfStandardNotFound(int standardCode);
         string CheckIfOrganisationStandardAlreadyExists(string organisationId, int standardCode);
 
+        string CheckIfContactIdIsEmptyOrValid(string contactId);
         string CheckIfOrganisationStandardDoesNotExist(string organisationId, int standardCode);
     }
 }
