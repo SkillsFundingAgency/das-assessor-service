@@ -1,25 +1,17 @@
-﻿using FizzWare.NBuilder;
-using Microsoft.Extensions.Localization;
+﻿using Microsoft.Extensions.Localization;
 using Moq;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certificates.BatchCertificateRequestValidator
 {
-    public class BatchCertificateRequestValidatorTestBase
+    public class BatchCertificateRequestValidatorTestBase : Certificates.BatchCertificateRequestValidatorTestBase
     {
-        protected static Api.Validators.Certificates.BatchCertificateRequestValidator Validator;
+        protected Api.Validators.Certificates.BatchCertificateRequestValidator Validator;
 
-        protected static void Setup()
-        {
-            var stringLocalizerMock = SetupStringLocaliserMock();
-            Validator = new Api.Validators.Certificates.BatchCertificateRequestValidator(stringLocalizerMock.Object);
-        }
-
-        private static Mock<IStringLocalizer<Api.Validators.Certificates.BatchCertificateRequestValidator>> SetupStringLocaliserMock()
+        public BatchCertificateRequestValidatorTestBase() : base()
         {
             var stringLocalizerMock = new Mock<IStringLocalizer<Api.Validators.Certificates.BatchCertificateRequestValidator>>();
-            return stringLocalizerMock;
+
+            Validator = new Api.Validators.Certificates.BatchCertificateRequestValidator(stringLocalizerMock.Object, OrganisationQueryRepositoryMock.Object, IlrRepositoryMock.Object, AssessmentOrgsApiClientMock.Object);
         }
     }
 }

@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<Ilr> Get(long uln, int standardCode)
         {
-            return await _context.Ilrs.FirstAsync(i => i.Uln == uln && i.StdCode == standardCode);
+            return await _context.Ilrs.FirstOrDefaultAsync(i => i.Uln == uln && i.StdCode == standardCode);
         }
 
         public async Task StoreSearchLog(SearchLog log)
