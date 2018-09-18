@@ -104,7 +104,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             Assert.AreEqual(_returnedOrganisationStandardId, _organisationStandardAfterUpdate.Id);
             Assert.AreEqual(_organisationStandardAfterUpdate.EffectiveFrom, _organisationStandardUpdates.EffectiveFrom);
             Assert.AreEqual(_organisationStandardAfterUpdate.EffectiveTo, _organisationStandardUpdates.EffectiveTo);
-            Assert.AreEqual(_organisationStandardAfterUpdate.DateStandardApprovedOnRegister, _organisationStandardUpdates.DateStandardApprovedOnRegister);
+            Assert.AreNotEqual(_organisationStandardAfterUpdate.DateStandardApprovedOnRegister, _organisationStandardUpdates.DateStandardApprovedOnRegister);
             Assert.AreEqual(_organisationStandardAfterUpdate.Comments, _organisationStandardUpdates.Comments);
         }
 
@@ -113,7 +113,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         {
             Assert.AreNotEqual(_organisationStandardBeforeUpdate.EffectiveFrom, _organisationStandardAfterUpdate.EffectiveFrom);
             Assert.AreNotEqual(_organisationStandardBeforeUpdate.EffectiveTo, _organisationStandardAfterUpdate.EffectiveTo);
-            Assert.AreNotEqual(_organisationStandardBeforeUpdate.DateStandardApprovedOnRegister, _organisationStandardAfterUpdate.DateStandardApprovedOnRegister);
+            Assert.AreEqual(_organisationStandardBeforeUpdate.DateStandardApprovedOnRegister, _organisationStandardAfterUpdate.DateStandardApprovedOnRegister);
             Assert.AreNotEqual(_organisationStandardBeforeUpdate.Comments, _organisationStandardAfterUpdate.Comments);
         }
 
