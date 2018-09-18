@@ -3,7 +3,7 @@ using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates.Batch
 {
-    public class SubmitBatchCertificateRequest : IRequest<Certificate> // TODO: Figure out what the response type should be!
+    public class SubmitBatchCertificateRequest : IRequest<Certificate>
     {
         public long Uln { get; set; }
         public int StandardCode { get; set; }

@@ -15,10 +15,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _scheduleRepository = scheduleRepository;
         }
 
-        [HttpGet("api/v1/schedule", Name="GetNextScheduleToRunNow")]
-        public async Task<IActionResult> GetNextScheduleToRunNow(int scheduleType)
+        [HttpGet("api/v1/schedule", Name = "GetScheduleRun")]
+        public async Task<IActionResult> GetScheduleRun(Guid scheduleRunId)
         {
-            var scheduleRun = await _scheduleRepository.GetNextScheduleToRunNow(scheduleType);
+            var scheduleRun = await _scheduleRepository.GetScheduleRun(scheduleRunId);
             return Ok(scheduleRun);
         }
 
@@ -29,11 +29,25 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(scheduleRun);
         }
 
+        [HttpGet("api/v1/schedule/all", Name = "GetAllScheduledRun")]
+        public async Task<IActionResult> GetAllScheduledRun(int scheduleType)
+        {
+            var scheduleRun = await _scheduleRepository.GetAllScheduleRun(scheduleType);
+            return Ok(scheduleRun);
+        }
+
         [HttpPost("api/v1/schedule",Name="CompleteScheduleRun")]
         public async Task<IActionResult> CompleteScheduleRun(Guid scheduleRunId)
         {
             await _scheduleRepository.CompleteScheduleRun(scheduleRunId);
             return Ok();
+        }
+
+        [HttpGet("api/v1/schedule/runnow", Name = "GetNextScheduleToRunNow")]
+        public async Task<IActionResult> GetNextScheduleToRunNow(int scheduleType)
+        {
+            var scheduleRun = await _scheduleRepository.GetNextScheduleToRunNow(scheduleType);
+            return Ok(scheduleRun);
         }
 
         [HttpPost("api/v1/schedule/runnow", Name="RunNow")]
@@ -43,10 +57,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok();
         }
 
-        [HttpPut("api/v1/schedule/set", Name="Set")]
-        public async Task<IActionResult> Set([FromBody]ScheduleRun scheduleRun)
+        [HttpPut("api/v1/schedule/create", Name="Set")]
+        public async Task<IActionResult> Create([FromBody]ScheduleRun scheduleRun)
         {
-            await _scheduleRepository.SetScheduleRun(scheduleRun);
+            await _scheduleRepository.CreateScheduleRun(scheduleRun);
             return Ok();
         }
 

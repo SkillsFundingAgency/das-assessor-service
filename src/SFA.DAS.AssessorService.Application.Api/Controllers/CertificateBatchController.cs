@@ -6,11 +6,13 @@ using SFA.DAS.AssessorService.Api.Types.Models.Certificates.Batch;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Api.Validators.Certificates;
+using SFA.DAS.AssessorService.Application.Exceptions;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using NotFound = SFA.DAS.AssessorService.Domain.Exceptions.NotFound;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -23,13 +25,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         private readonly CreateBatchCertificateRequestValidator _createValidator;
         private readonly UpdateBatchCertificateRequestValidator _updateValidator;
         private readonly SubmitBatchCertificateRequestValidator _submitValidator;
+        private readonly DeleteBatchCertificateRequestValidator _deleteValidator;
 
-        public CertificateBatchController(IMediator mediator, CreateBatchCertificateRequestValidator createValidator, UpdateBatchCertificateRequestValidator updateValidator, SubmitBatchCertificateRequestValidator submitValidator)
+        public CertificateBatchController(IMediator mediator, CreateBatchCertificateRequestValidator createValidator, UpdateBatchCertificateRequestValidator updateValidator, SubmitBatchCertificateRequestValidator submitValidator, DeleteBatchCertificateRequestValidator deleteValidator)
         {
             _mediator = mediator;
             _createValidator = createValidator;
             _updateValidator = updateValidator;
             _submitValidator = submitValidator;
+            _deleteValidator = deleteValidator;
         }
 
         [HttpPut]
@@ -129,6 +133,42 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             }
 
             return Ok(response);
+        }
+
+        [HttpDelete("{uln}/{lastname}/{standardcode}/{ukPrn}/{username}")]
+        [SwaggerResponse((int)HttpStatusCode.NoContent)]
+        [SwaggerResponse((int)HttpStatusCode.NotFound)]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> Delete(long uln, string lastname, int standardcode, int ukPrn, string username)
+        {
+            var request = new DeleteBatchCertificateRequest
+            {
+                Uln = uln,
+                FamilyName = lastname,
+                StandardCode = standardcode,
+                UkPrn = ukPrn,
+                Username = username
+            };
+
+            ValidationResult validationResult = _deleteValidator.Validate(request);
+
+            if (validationResult.IsValid)
+            {
+                try
+                {
+                    await _mediator.Send(request);
+                    return NoContent();
+                }
+                catch(NotFound)
+                {
+                    return NotFound();
+                }
+            }
+            else
+            {
+                ApiResponse response = new ApiResponse((int)HttpStatusCode.BadRequest, string.Join(", ", validationResult.Errors));
+                return BadRequest(response);
+            }
         }
     }
 }

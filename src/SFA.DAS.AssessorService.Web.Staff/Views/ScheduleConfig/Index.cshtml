@@ -1,0 +1,59 @@
+﻿@using Humanizer
+@model IList<ScheduleConfigViewModel>
+@{
+    ViewBag.Title = "Print Schedule";
+    Layout = "_Layout";
+}
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <a asp-action="Index" asp-controller="Dashboard" class="link-back">Return to dashboard</a>
+        <h1 class="heading-xlarge">
+            Print schedule
+            <span class="heading-secondary">Next run scheduled: @if (Model.Any()) { @Model.First().RunTime; } else { @Html.Raw("Not Applicable"); }</span>
+        </h1>
+    </div>
+</div>
+<div class="grid-row">
+    <div class="column-full">
+        <div class="form-group">
+            @if (!@Model.Where(m => !m.IsRecurring && m.RunTime <= DateTime.Now).Any())
+            {
+                <a asp-action="RunNow" asp-route-scheduleType="1" class="button">Run now</a>
+            }
+        </div>
+        @if (@Model.Any())
+        {
+            <a asp-action="Index">Refresh table</a>
+
+            <div class="form-group">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Is recurring</th>
+                            <th>Interval</th>
+                            <th>Run time</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var result in @Model)
+                        {
+                            <tr>
+                                <td>@result.IsRecurring</td>
+                                <td>@(result.ScheduleInterval.HasValue ? result.ScheduleInterval.Humanize(LetterCasing.Title) : result.Interval)</td>
+                                <td>@result.RunTime</td>
+                                <td class="numeric"><a asp-action="Delete" asp-route-scheduleRunId="@result.Id">Delete</a></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+
+        <div class="form-group">
+            <a asp-action="Create" class="button">Create new</a>
+        </div>
+
+    </div>
+</div>

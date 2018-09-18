@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models;
@@ -8,6 +9,7 @@ using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {
+    [Authorize]
     public class DuplicateRequestController : Controller
     {
         private readonly ApiClient _apiClient;
@@ -45,7 +47,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 Username = username
             });
 
-            var nextScheduledRun = await _apiClient.GetNextScheduledRun();
+            var nextScheduledRun = await _apiClient.GetNextScheduledRun((int)ScheduleType.PrintRun);
             var vm = new DuplicateRequestViewModel
             {
                 Certificate = certificate,

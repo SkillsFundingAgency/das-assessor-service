@@ -16,10 +16,13 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<List<Certificate>> GetCompletedCertificatesFor(long uln);
         Task<List<Certificate>> GetCertificates(List<string> statuses);
         Task<Certificate> Update(Certificate certificate, string username, string action, bool updateLog = true);
+        Task Delete(long uln, int standardCode, string username);
         Task<Certificate> UpdateProviderName(Guid id, string providerName);
         Task UpdateStatuses(UpdateCertificatesBatchToIndicatePrintedRequest updateCertificatesBatchToIndicatePrintedRequest);
         Task<List<CertificateLog>> GetCertificateLogsFor(Guid certificateId);
         Task<PaginatedList<Certificate>> GetCertificateHistory(string userName, int pageIndex, int pageSize);
-        Task<string> GetPreviousProviderName(int providerUkPrn);
+        Task<string> GetPreviousProviderName(int providerUkPrn);      
+        Task<CertificateAddress> GetContactPreviousAddress(string userName);    
+        Task<List<Option>> GetOptions(int stdCode);
     }
 }

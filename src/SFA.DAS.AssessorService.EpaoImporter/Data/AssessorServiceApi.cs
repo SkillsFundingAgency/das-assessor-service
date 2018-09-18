@@ -104,9 +104,12 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
 
         public async Task<ScheduleRun> GetSchedule(ScheduleType scheduleType)
         {
-            var response = await _httpClient.GetAsync($"/api/v1/schedule?scheduleType={(int) scheduleType}");
+            var response = await _httpClient.GetAsync($"/api/v1/schedule/runnow?scheduleType={(int) scheduleType}");
+            if (!response.IsSuccessStatusCode) return null;
+
             var schedule = await response.Content.ReadAsAsync<ScheduleRun>();
             return schedule;
+
         }
 
         public async Task CompleteSchedule(Guid scheduleRunId)

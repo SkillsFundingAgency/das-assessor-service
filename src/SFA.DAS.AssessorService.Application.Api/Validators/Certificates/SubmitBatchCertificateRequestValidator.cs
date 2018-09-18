@@ -4,17 +4,19 @@ using Microsoft.Extensions.Localization;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates.Batch;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
+using System.Linq;
 
 namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
 {
     public class SubmitBatchCertificateRequestValidator : AbstractValidator<SubmitBatchCertificateRequest>
     {
-        public SubmitBatchCertificateRequestValidator(IStringLocalizer<BatchCertificateRequestValidator> localiser, ICertificateRepository certificateRepository)
+        public SubmitBatchCertificateRequestValidator(IStringLocalizer<BatchCertificateRequestValidator> localiser, IOrganisationQueryRepository organisationQueryRepository, IIlrRepository ilrRepository, ICertificateRepository certificateRepository, IAssessmentOrgsApiClient assessmentOrgsApiClient)
         {
-            RuleFor(m => m.Uln).LessThanOrEqualTo(9999999999);
-            RuleFor(m => m.FamilyName).NotEmpty();
-            RuleFor(m => m.StandardCode).NotEmpty();
-            RuleFor(m => m.UkPrn).InclusiveBetween(10000000, 99999999);
+            RuleFor(m => m.Uln).InclusiveBetween(1000000000, 9999999999).WithMessage("The apprentice's ULN should contain exactly 10 numbers");
+            RuleFor(m => m.FamilyName).NotEmpty().WithMessage("Enter the apprentice's last name");
+            RuleFor(m => m.StandardCode).NotEmpty().WithMessage("A standard should be selected");
+            RuleFor(m => m.UkPrn).InclusiveBetween(10000000, 99999999).WithMessage("The UKPRN should contain exactly 8 numbers");
             RuleFor(m => m.Username).NotEmpty();
 
             RuleFor(m => m)
@@ -32,19 +34,30 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                     }
                 });
 
-            // TODO: Add validator for : 'Supplied UkPrn is allowed to access the given endPointAssessorOrganisationId'
-            // The following isn't correct. Was dicussed in tech demo to do this later
-            //RuleFor(m => m)
-            //    .Custom((m, context) =>
-            //    {
-            //        var sumbittingEpao = organisationQueryRepository.GetByUkPrn(m.UkPrn).Result;
-            //        var requestedIlr = ilrRepository.Get(m.Uln, m.StdCode).Result;
+            RuleFor(m => m)
+                .Custom((m, context) =>
+                {
+                    var requestedIlr = ilrRepository.Get(m.Uln, m.StandardCode).GetAwaiter().GetResult();
+                    var sumbittingEpao = organisationQueryRepository.GetByUkPrn(m.UkPrn).GetAwaiter().GetResult();
 
-            //        if (sumbittingEpao?.EndPointAssessorOrganisationId != requestedIlr?.EpaOrgId)
-            //        {
-            //            context.AddFailure(new ValidationFailure("UkPrn", "Denined access to the specified Uln"));
-            //        }
-            //    });
+                    if (requestedIlr == null || !string.Equals(requestedIlr.FamilyName, m.FamilyName))
+                    {
+                        context.AddFailure(new ValidationFailure("Uln", "Cannot find entry for specified Uln, FamilyName & StandardCode"));
+                    }
+                    else if (sumbittingEpao == null)
+                    {
+                        context.AddFailure(new ValidationFailure("UkPrn", "Cannot find EPAO for specified UkPrn"));
+                    }
+                    else
+                    {
+                        var providedStandards = assessmentOrgsApiClient.FindAllStandardsByOrganisationIdAsync(sumbittingEpao.EndPointAssessorOrganisationId).GetAwaiter().GetResult();
+
+                        if (!providedStandards.Where(s => s.StandardCode == m.StandardCode.ToString()).Any())
+                        {
+                            context.AddFailure(new ValidationFailure("StandardCode", "EPAO does not provide this Standard"));
+                        }
+                    }
+                });
         }
     }
 }

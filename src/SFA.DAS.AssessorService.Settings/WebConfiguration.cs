@@ -8,6 +8,8 @@ namespace SFA.DAS.AssessorService.Settings
 
         [JsonRequired] public ApiAuthentication ApiAuthentication { get; set; }
 
+        [JsonRequired] public AzureApiAuthentication AzureApiAuthentication { get; set; }
+
         [JsonRequired] public ClientApiAuthentication ClientApiAuthentication { get; set; }
 
         [JsonRequired] public NotificationsApiClientConfiguration NotificationsApiClientConfiguration { get; set; }
@@ -21,6 +23,8 @@ namespace SFA.DAS.AssessorService.Settings
         [JsonRequired] public string IFATemplateStorageConnectionString { get; set; }
 
         [JsonRequired] public string SqlConnectionString { get; set; }
+
+        public string SpecflowDBTestConnectionString { get; set; }
 
         [JsonRequired] public string SessionRedisConnectionString { get; set; }
         [JsonRequired] public AuthSettings StaffAuthentication { get; set; }

@@ -8,13 +8,14 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
+        <a asp-action="Index" asp-controller="Dashboard" class="link-back">Return to dashboard</a>
         <form asp-action="Results" asp-controller="Search" method="get">
             @Html.HiddenFor(m => m.Page)
             <div class="form-group">
                 <h1>
                     <label class="form-label" for="SearchString">
-                        <span class="heading-large">ILR and certificate search</span>
-                        <span class="form-hint">You can search by learner name, ULN, certificate reference and EPAOrg Id</span>
+                        <span class="heading-xlarge">Certificate search</span>
+                        <span class="form-hint">Search by learner name, ULN, certificate reference or EPAO ID</span>
                     </label>
                 </h1>
                 <input class="form-control" asp-for="SearchString" />

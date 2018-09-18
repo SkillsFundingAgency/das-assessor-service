@@ -15,18 +15,11 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
         [SetUp]
         public void Arrange()
         {
-            Setup();
-
-            long uln = 1234;
-            int standardCode = 1234;
-            string certificateReference = "1234";
-
-            AddMockCertificate(uln, standardCode, certificateReference);
-
             CreateBatchCertificateRequest request = Builder<CreateBatchCertificateRequest>.CreateNew()
-                .With(i => i.Uln = uln)
-                .With(i => i.StandardCode = standardCode)
-                .With(i => i.UkPrn = 10000000)
+                .With(i => i.Uln = 1234567890)
+                .With(i => i.StandardCode = 1)
+                .With(i => i.UkPrn = 12345678)
+                .With(i => i.FamilyName = "Test")
                 .With(i => i.CertificateReference = null)
                 .With(i => i.CertificateData = Builder<CertificateData>.CreateNew()
                                 .With(cd => cd.ContactPostCode = "AA11AA")
