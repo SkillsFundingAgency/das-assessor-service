@@ -1,0 +1,15 @@
+<script>
+var epaoRecipientFormElement = $('.apprentice-recipient-form');
+var epaoRecipientValidationRulesObject = {
+  rules: {
+    Name: {
+      required: true
+    },
+  },
+  messages: {
+    Name: 'Name must be defined',
+  }
+};
+
+GOVUK.epaoValidate(epaoRecipientFormElement, epaoRecipientValidationRulesObject);
+</script>
