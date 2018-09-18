@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         private RegisterQueryRepository _repository;
         private OrganisationModel _organisation2;
         private OrganisationModel _organisation1;
-        private string _orgId1;
+        private string _organisationId1;
         private int _ukprn1;
         private int _ukprn2;
 
@@ -21,7 +21,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         public void SetUpOrganisationTests()
         {
             _repository = new RegisterQueryRepository(_databaseService.WebConfiguration);
-            _orgId1 = "EPA0088";
+            _organisationId1 = "EPA0088";
             _ukprn1 = 876533;
             _ukprn2 = 9888;
 
@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 CreatedAt = DateTime.Now.AddYears(-1).Date,
                 DeletedAt = null,
                 EndPointAssessorName = "Name 1",
-                EndPointAssessorOrganisationId = _orgId1,
+                EndPointAssessorOrganisationId = _organisationId1,
                 EndPointAssessorUkprn = _ukprn1,
                 PrimaryContact = null,
                 Status = "new",
@@ -61,21 +61,21 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [Test]
         public void CheckEpaOrganisationIsntAlreadyUsingUkprnWhereUsingOrganisationsCurrentUkprn()
         {
-            var exists = _repository.EpaOrganisationAlreadyUsingUkprn(_ukprn1, _orgId1).Result;
+            var exists = _repository.EpaOrganisationAlreadyUsingUkprn(_ukprn1, _organisationId1).Result;
             Assert.IsFalse(exists);
         }
 
         [Test]
         public void CheckEpaOrganisationIsntAlreadyUsingUkprnWhenCheckingUnusedUkprn()
         {
-            var exists = _repository.EpaOrganisationAlreadyUsingUkprn(323454, _orgId1).Result;
+            var exists = _repository.EpaOrganisationAlreadyUsingUkprn(323454, _organisationId1).Result;
             Assert.IsFalse(exists);
         }
 
         [Test]
         public void CheckEpaOrganisationIsAlreadyUsingUkprnWhenCheckingUkprnUsedByAnotherOrganisation()
         {
-            var exists = _repository.EpaOrganisationAlreadyUsingUkprn(_ukprn2, _orgId1).Result;
+            var exists = _repository.EpaOrganisationAlreadyUsingUkprn(_ukprn2, _organisationId1).Result;
             Assert.IsTrue(exists);
         }
 

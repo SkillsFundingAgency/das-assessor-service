@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         private static Mock<ILogger<RegisterController>> _logger;
         private object _result;
         private CreateEpaOrganisationRequest _request;
-        private string _orgId;
+        private string _organisationId;
 
         [SetUp]
         public void Arrange()
@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
             _mediator = new Mock<IMediator>();
             _logger = new Mock<ILogger<RegisterController>>();
 
-            _orgId = "EPA999";
+            _organisationId = "EPA999";
             _request = new CreateEpaOrganisationRequest
             {
                 Name = "name 1",
@@ -46,7 +46,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
             };
 
             _mediator.Setup(m =>
-                m.Send(_request, new CancellationToken())).ReturnsAsync(_orgId);
+                m.Send(_request, new CancellationToken())).ReturnsAsync(_organisationId);
 
             _controller = new RegisterController(_mediator.Object, _logger.Object);
             _result = _controller.CreateOrganisation(_request).Result;
@@ -80,7 +80,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         public void ResultsMatchExpectedOrganisation()
         {
             var organisation = ((OkObjectResult)_result).Value as string;
-            organisation.Should().BeEquivalentTo(_orgId);
+            organisation.Should().BeEquivalentTo(_organisationId);
         }
     }
 }
