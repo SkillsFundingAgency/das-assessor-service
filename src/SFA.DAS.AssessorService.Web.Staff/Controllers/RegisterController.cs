@@ -26,29 +26,38 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         [HttpGet("register/results")]
         public async Task<IActionResult> Results(string searchString)
         {
-            //var searchResults = await _apiClient.Search(searchString, page);
+          
+            if (string.IsNullOrEmpty(searchString))
+            {
+                searchString = string.Empty;
+            }
+            else
+            {
+                searchString = searchString.Trim().ToLower();
+            }
 
-            if (searchString.Trim().Length < 2)
+            if (searchString.Length < 2)
             {
                 var vm = new RegisterViewModel { ErrorMessage = "The expression entered is too short. Please enter 2 or more letters."};
                 return View("index",vm);
             }
 
             var searchResults = new List<AssessmentOrganisationSummary>();
-            
-            if (searchString.Trim().ToLower()=="test")
+
+            if (searchString == "test")
                 searchResults = new List<AssessmentOrganisationSummary>
                 {
-                new AssessmentOrganisationSummary {Id = "EPA0001", Name = "test", Ukprn = 1111111},
-                new AssessmentOrganisationSummary {Id = "EPA0002", Name = "rest", Ukprn = 2222222}
+                    new AssessmentOrganisationSummary {Id = "EPA0001", Name = "test", Ukprn = 1111111},
+                    new AssessmentOrganisationSummary {Id = "EPA0002", Name = "rest", Ukprn = 2222222}
                 };
-
-            if (searchString.Trim().ToLower() != "empty")
+            else
             {
-                searchResults = await _apiClient.SearchOrganisations(searchString.Trim().ToLower());
+                if (searchString != "empty")
+                {
+                    searchResults = await _apiClient.SearchOrganisations(searchString.Trim().ToLower());
+                }
             }
-            
-            
+
             var registerViewModel = new RegisterViewModel
             {
                 Results = searchResults,
