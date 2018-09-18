@@ -12,7 +12,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "AssessorServiceInternalAPI")]
     [Route("api/v1/emailTemplates")]
     [ValidateBadRequest]
     public class EMailTemplateQueryController : Controller

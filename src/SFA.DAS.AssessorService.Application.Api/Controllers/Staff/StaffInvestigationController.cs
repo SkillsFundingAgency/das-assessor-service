@@ -11,7 +11,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
 {
-    [Authorize]
+    [Authorize(Roles = "AssessorServiceInternalAPI")]
     [Route("api/v1/staffinvestigation")]
     [ValidateBadRequest]
     public class StaffInvestigationController : Controller
