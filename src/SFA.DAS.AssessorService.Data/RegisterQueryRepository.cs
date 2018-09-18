@@ -91,7 +91,6 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-
         public async Task<EpaOrganisation> GetEpaOrganisationById(Guid id)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
