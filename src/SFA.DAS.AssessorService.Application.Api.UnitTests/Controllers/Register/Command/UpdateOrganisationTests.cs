@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
@@ -72,16 +73,16 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         }
 
         [Test]
-        public void ResultsAreOfTypeMessage()
+        public void ResultsAreOfTypeEpaOrganisationResponse()
         {
-            ((OkObjectResult)_result).Value.Should().BeOfType<string>();
+            ((OkObjectResult)_result).Value.Should().BeOfType<EpaOrganisationResponse>();
         }
 
         [Test]
         public void ResultsMatchExpectedOrganisation()
         {
-            var organisation = ((OkObjectResult)_result).Value as string;
-            organisation.Should().BeEquivalentTo(_orgId);
+            var organisation = ((OkObjectResult)_result).Value as EpaOrganisationResponse;
+            organisation.Details.Should().BeEquivalentTo(_orgId);
         }
     }
 }
