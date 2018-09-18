@@ -5,7 +5,7 @@
 @model SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private.CertificateStandardCodeListViewModel
 
 @{
-    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Select Ukprn";
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Select standard";
     Layout = "_Layout";
 }
 
@@ -56,14 +56,12 @@
                         <span class="form-label-bold visually-hidden">@Localizer["StandardCodes"]</span>
                         <span class="error-message" asp-validation-for="StandardCodes"></span>
                     </label>
-                    <div class="col-md-5">
-                        <select asp-for="SelectedStandardCode"
-                                asp-items="@(new SelectList(Model.StandardCodes,"Value","Text"))">
-                            <option>Please select one</option>
-                        </select>
-                        @*   <span class="form-control" sfa-validation-for="@Model.SelectedUkprn" sfa-validationerror-class="form-control-error" />*@
-                    </div>
+                    <select class="form-control" asp-for="SelectedStandardCode" asp-items="@(new SelectList(Model.StandardCodes,"Value","Text"))">
+                        <option value="">Please select one</option>
+                    </select>
+                    @*<span class="form-control" sfa-validation-for="@Model.SelectedUkprn" sfa-validationerror-class="form-control-error" />*@
                 </div>
+                
             </fieldset>
 
             <button type="submit" class="button">@Localizer["ContinueButton"]</button>
@@ -72,10 +70,11 @@
 </div>
 
 <script type="text/javascript">
-    var certificateStandardCodeListViewModel = @Html.Raw(JsonConvert.SerializeObject(Model));    
+    // var certificateStandardCodeListViewModel = @Html.Raw(JsonConvert.SerializeObject(Model));
+    // console.log(certificateStandardCodeListViewModel.StandardCodes);
 </script>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-    @*   @{await Html.RenderPartialAsync("~/Views/Certificate/_FirstNameScriptsPartial.cshtml"); }*@
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    @{ await Html.RenderPartialAsync("~/Views/Certificate/_StandardCodesScriptsPartial.cshtml"); }
 }

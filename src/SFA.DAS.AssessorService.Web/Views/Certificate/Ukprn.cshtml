@@ -19,7 +19,7 @@
             <a asp-controller="CertificatePrivateLearnerStartDate" asp-action="LearnerStartDate" class="link-back">Back</a>
         }
 
-        <form class="apprentice-firstname-form js-disable-on-submit" method="post" asp-action="Ukprn" asp-controller="CertificatePrivateProviderUkprn">
+        <form class="apprentice-ukprn-form js-disable-on-submit" method="post" asp-action="Ukprn" asp-controller="CertificatePrivateProviderUkprn">
             @Html.HiddenFor(c => c.Id)
 
             @* hidden with css by default *@
@@ -57,11 +57,18 @@
                         </span>
                         <span class="error-message" asp-validation-for="Ukprn"></span>
                     </label>
-                    <input class="form-control" name="Ukprn" sfa-validation-for="Ukprn" sfa-validationerror-class="form-control-error" asp-for="Ukprn" type="text" />
+                    <input class="form-control" name="Ukprn" sfa-validation-for="Ukprn" sfa-validationerror-class="form-control-error" asp-for="Ukprn" type="text" maxlength="8" />
                 </div>
 
 
             </fieldset>
+
+            <details>
+                <summary><span class="summary">What's a UKPRN?</summary>
+                <div class="panel panel-border-narrow" id="what-is-a-unique-learner-number">
+                    <p>A UKPRN is a unique 8 digit number given to training providers registered on the UK Register of Learning Providers (UKRLP).</p>
+                </div>
+            </details>
 
             <button type="submit" class="button">@Localizer["ContinueButton"]</button>
         </form>

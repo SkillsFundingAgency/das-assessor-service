@@ -1,53 +1,25 @@
-<environment include="Development">
-    <script src="~/lib/jquery-ui/dist/jquery-ui.min.js"></script>
-    <script src="~/js/postcode-lookup-service.js"></script>
-</environment>
-<environment exclude="Development">
-    <script src="~/js/postcode-lookup-service.min.js"></script>
-</environment>
 <script>
 
-    var epaoAddressFormElement = $('.apprentice-ukprn-form ');
-    var epaoAddressValidationRulesObject = {
-        rules: {
-            Ukprn: {
-                required: true
-            }
-        },
-        messages: {
-            FirstName: {
-                required: 'Enter a name'
-            }
+var epaoUkprnFormElement = $('.apprentice-ukprn-form ');
+var epaoUkprnValidationRulesObject = {
+    rules: {
+        Ukprn: {
+            required: true,
+            number: true,
+            minlength: 8,
+            maxlength: 8
         }
-    };
+    },
+    messages: {
+        Ukprn: {
+            required: 'Enter a Enter the training provider\'s UKPRN',
+            number: 'The UKPRN should contain 8 numbers',
+            minlength: 'The UKPRN should contain 8 numbers',
+            maxlength: 'The UKPRN should contain 8 numbers'
+        }
+    }
+};
 
-    GOVUK.epaoValidate(epaoAddressFormElement, epaoAddressValidationRulesObject);
-
-    $(document).ready(function () {
-        // Only allow alphanumerics
-        $('.js-no-special-chars').on('keydown', function (e) {
-            // Allow: space, backspace, delete, tab, escape and enter
-            if (
-                $.inArray(e.keyCode, [32, 46, 8, 9, 27, 13]) !== -1 ||
-                // Allow: Ctrl/cmd+A
-                (e.keyCode == 65 && (e.ctrlKey === true || e.metaKey === true)) ||
-                // Allow: Ctrl/cmd+C
-                (e.keyCode == 67 && (e.ctrlKey === true || e.metaKey === true)) ||
-                // Allow: Ctrl/cmd+V
-                (e.keyCode == 86 && (e.ctrlKey === true || e.metaKey === true)) ||
-                // Allow: Ctrl/cmd+X
-                (e.keyCode == 88 && (e.ctrlKey === true || e.metaKey === true)) ||
-                // Allow: home, end, left, right
-                (e.keyCode >= 35 && e.keyCode <= 39)
-            ) {
-                // let it happen, don't do anything
-                return;
-            }
-            // Ensure that it is alphanumeric and stop the keypress
-            if ((e.keyCode < 65 || e.keyCode > 90) && (e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
-                e.preventDefault();
-            }
-        });
-    });
+GOVUK.epaoValidate(epaoUkprnFormElement, epaoUkprnValidationRulesObject);
 
 </script>

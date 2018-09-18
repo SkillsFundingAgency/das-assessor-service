@@ -118,15 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NameCannotBeEmpty" xml:space="preserve">
-    <value>Enter a ukprn</value>
+    <value>Enter the training provider's UKPRN</value>
   </data>
   <data name="UkprnMustExist" xml:space="preserve">
-    <value>Ukprn is invalid does not exist</value>
+    <value>Enter the training provider's UKPRN</value>
   </data>
   <data name="UkprnNumber" xml:space="preserve">
-    <value>Must be a number</value>
+    <value>The UKPRN should contain 8 numbers</value>
   </data>
   <data name="UkprnNumberLength" xml:space="preserve">
-    <value>Must be 8 digits</value>
+    <value>The UKPRN should contain 8 numbers</value>
   </data>
 </root>
