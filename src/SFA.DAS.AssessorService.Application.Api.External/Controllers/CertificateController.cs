@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             _apiClient = apiClient;
         }
 
-        [HttpPut(Name = "CreateCertificates")]
+        [HttpPut]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<BatchCertificateResponse>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
         public async Task<IActionResult> CreateCertificates([FromBody] IEnumerable<CertificateData> request)
@@ -39,5 +39,46 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             return Ok(results);
         }
 
+        [HttpPost]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<BatchCertificateResponse>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> UpdateCertificates([FromBody] IEnumerable<CertificateData> request)
+        {
+            IEnumerable<BatchCertificateRequest> bcRequest = request.Select(req => new BatchCertificateRequest { UkPrn = _headerInfo.Ukprn, Username = _headerInfo.Username, CertificateData = req });
+
+            var results = await _apiClient.UpdateCertificates(bcRequest);
+
+            return Ok(results);
+        }
+
+        [HttpPost("submit")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<SubmitBatchCertificateResponse>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> SubmitCertificates([FromBody] IEnumerable<SubmitCertificate> request)
+        {
+            IEnumerable<SubmitBatchCertificateRequest> scRequest = request.Select(req => new SubmitBatchCertificateRequest { UkPrn = _headerInfo.Ukprn, Username = _headerInfo.Username, Uln = req.Uln, StandardCode = req.StandardCode, FamilyName = req.FamilyName });
+
+            var results = await _apiClient.SubmitCertificates(scRequest);
+
+            return Ok(results);
+        }
+
+        [HttpDelete("{uln}/{lastname}/{stdCode}")]
+        [SwaggerResponse((int)HttpStatusCode.NoContent)]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> DeleteCertificate(long uln, string lastname, int stdCode)
+        {
+            DeleteCertificateRequest deleteRequest = new DeleteCertificateRequest { Uln = uln, Lastname = lastname, StandardCode = stdCode, UkPrn = _headerInfo.Ukprn, Username = _headerInfo.Username};
+            var error = await _apiClient.DeleteCertificate(deleteRequest);
+
+            if (error == null)
+            {
+                return NoContent();
+            }
+            else
+            {
+                return BadRequest(error);
+            }
+        }
     }
 }

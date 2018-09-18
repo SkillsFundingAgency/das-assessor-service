@@ -13,13 +13,38 @@ namespace SFA.DAS.AssessorService.Domain.Extensions
 
         public static DateTime UtcToTimeZoneTime(this DateTime time, string timeZoneId = "GMT Standard Time")
         {
-            TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+            TimeZoneInfo tzi;
+            try
+            {
+                tzi = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+            }
+            catch (TimeZoneNotFoundException)
+            {
+                return time;
+            }
+            catch (InvalidTimeZoneException)
+            {
+                return time;
+            }
+            
             return TimeZoneInfo.ConvertTimeFromUtc(time, tzi);
         }
 
         public static DateTime UtcFromTimeZoneTime(this DateTime time, string timeZoneId = "GMT Standard Time")
         {
-            TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+            TimeZoneInfo tzi;
+            try
+            {
+                tzi = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+            }
+            catch (TimeZoneNotFoundException)
+            {
+                return time;
+            }
+            catch (InvalidTimeZoneException)
+            {
+                return time;
+            }
             return TimeZoneInfo.ConvertTimeToUtc(time, tzi);
         }
     }

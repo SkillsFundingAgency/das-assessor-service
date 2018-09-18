@@ -5,17 +5,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.H
 {
     public class UpdateOrganisationRequestBuilder
     {
-        public UpdateOrganisationRequest Build(Organisation organisationl)
+        public UpdateOrganisationRequest Build(Organisation organisation)
         {
-            var organisation = new UpdateOrganisationRequest
+            var updateOrganisation = new UpdateOrganisationRequest
             {
-                PrimaryContact = organisationl.PrimaryContact,
-                EndPointAssessorOrganisationId = organisationl.EndPointAssessorOrganisationId,
-                EndPointAssessorName = organisationl.EndPointAssessorName
-
+                PrimaryContact = organisation.PrimaryContact,
+                EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
+                EndPointAssessorName = organisation.EndPointAssessorName,
+                EndPointAssessorUkprn = organisation.EndPointAssessorUkprn,
+                ApiEnabled = organisation.ApiEnabled,
+                ApiUser = organisation.ApiUser
             };
 
-            return organisation;
+            return updateOrganisation;
         }
     }
 }

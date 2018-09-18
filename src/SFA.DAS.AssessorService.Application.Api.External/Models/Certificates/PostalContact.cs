@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
         public string AddressLine1 { get; set; }
         public string AddressLine2 { get; set; }
         public string AddressLine3 { get; set; }
-        public string AddressLine4 { get; set; }
+        public string City { get; set; }
         public string PostCode { get; set; }
 
         #region GetHashCode, Equals and IEquatable
@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
                 hash = (hash * multiplier) ^ (AddressLine1 is null ? 0 : AddressLine1.GetHashCode());
                 hash = (hash * multiplier) ^ (AddressLine2 is null ? 0 : AddressLine2.GetHashCode());
                 hash = (hash * multiplier) ^ (AddressLine3 is null ? 0 : AddressLine3.GetHashCode());
-                hash = (hash * multiplier) ^ (AddressLine4 is null ? 0 : AddressLine4.GetHashCode());
+                hash = (hash * multiplier) ^ (City is null ? 0 : City.GetHashCode());
                 hash = (hash * multiplier) ^ (PostCode is null ? 0 : PostCode.GetHashCode());
 
                 return hash;
@@ -58,7 +58,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
                 && string.Equals(AddressLine1, other.AddressLine1)
                 && string.Equals(AddressLine2, other.AddressLine2)
                 && string.Equals(AddressLine3, other.AddressLine3)
-                && string.Equals(AddressLine4, other.AddressLine4)
+                && string.Equals(City, other.City)
                 && string.Equals(PostCode, other.PostCode);
         }
 

@@ -1,28 +1,27 @@
-﻿@model dynamic
+﻿@{ ViewBag.Title = "Staff Dashboard"; }
 
-@{
-    ViewBag.Title = "title";
-}
-
-<h2>Staff Dashboard</h2>
-
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>Uln</th>
-            <th>Ref</th>
-            <th>Name</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var cert in Model)
-        {
-            <tr>
-                <td>@cert.Uln</td>
-                <td>@cert.CertificateReference</td>
-                <td>@cert.CertificateData.FullName</td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <h1 class="heading-xlarge">Staff Dashboard</h1>
+    </div>
+</div>
+<div class="grid-row">
+    <div class="column-one-third">
+        <h2 class="heading-medium"><a asp-controller="Search">Certificate search</a></h2>
+        <p>Search for certificates by learner name, ULN, certificate reference or EPAO ID.</p>
+    </div>
+    <div class="column-one-third">
+        <h2 class="heading-medium"><a asp-controller="BatchSearch">Batch search</a></h2>
+        <p>View current batches and search for certificates by batch number.</p>
+    </div>
+</div>
+<div class="grid-row">
+    <div class="column-one-third">
+        <h2 class="heading-medium"><a asp-controller="ScheduleConfig">Print schedule configuration</a></h2>
+        <p>Print certificates. Create, delete and view existing print schedules.</p>
+    </div>
+    <div class="column-one-third">
+        <h2 class="heading-medium"><a asp-controller="ExternalApi">External API</a></h2>
+        <p>Manage user's access and generate API keys.</p>
+    </div>
+</div>

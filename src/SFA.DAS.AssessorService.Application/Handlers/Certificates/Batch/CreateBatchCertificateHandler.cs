@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
 {
-    public class CreateBatchCertificateHandler : IRequestHandler<BatchCertificateRequest, Certificate>
+    public class CreateBatchCertificateHandler : IRequestHandler<CreateBatchCertificateRequest, Certificate>
     {
         private readonly ICertificateRepository _certificateRepository;
         private readonly IIlrRepository _ilrRepository;
@@ -33,13 +33,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             _logger = logger;
         }
 
-        public async Task<Certificate> Handle(BatchCertificateRequest request, CancellationToken cancellationToken)
+        public async Task<Certificate> Handle(CreateBatchCertificateRequest request, CancellationToken cancellationToken)
         {
             return await _certificateRepository.GetCertificate(request.Uln, request.StandardCode) ??
                    await CreateNewCertificate(request);
         }
 
-        private async Task<Certificate> CreateNewCertificate(BatchCertificateRequest request)
+        private async Task<Certificate> CreateNewCertificate(CreateBatchCertificateRequest request)
         {
             _logger.LogInformation("CreateNewCertificate Before Get Ilr from db");
             var ilr = await _ilrRepository.Get(request.Uln, request.StandardCode);
