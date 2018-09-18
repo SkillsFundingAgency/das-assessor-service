@@ -137,7 +137,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
                     EndPointAssessorName = organisation.EndPointAssessorName,
                     EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
                     PrimaryContact = contact.Username,
-                    EndPointAssessorUkprn = organisation.EndPointAssessorUkprn
+                    EndPointAssessorUkprn = organisation.EndPointAssessorUkprn,
+                    ApiEnabled = organisation.ApiEnabled,
+                    ApiUser = organisation.ApiUser
                 });
             }
         }
