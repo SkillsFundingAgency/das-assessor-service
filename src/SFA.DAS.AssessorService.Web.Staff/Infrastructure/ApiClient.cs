@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -99,6 +99,22 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             return await Get<Certificate>($"api/v1/certificates/{certificateId}");
         }
 
+        public async Task<Organisation> GetOrganisation(Guid id)
+        {
+            return await Get<Organisation>($"/api/v1/organisations/{id}");
+        }   
+
+        public async Task<Certificate> UpdateCertificate(UpdateCertificateRequest certificateRequest)
+        {
+            return await Put<UpdateCertificateRequest, Certificate>("api/v1/certificates/update", certificateRequest);
+        }
+      
+        public async Task<ScheduleRun> GetNextScheduleToRunNow()
+        {
+            return await Get<ScheduleRun>($"api/v1/schedule?scheduleType=1");
+        }
+          
+          
         public async Task<ScheduleRun> GetNextScheduledRun(int scheduleType)
         {
             return await Get<ScheduleRun>($"api/v1/schedule/next?scheduleType={scheduleType}");
