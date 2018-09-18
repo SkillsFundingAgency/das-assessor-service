@@ -128,8 +128,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             return _registerRepository.EpaOrganisationStandardExists(organisationId, standardCode).Result
                 ? string.Empty
                 : ErrorMessageTheOrganisationStandardDoesNotExist;
-                ?string.Empty 
-                : ErrorMessageContactId;
         }
         
          public string CheckIfContactIdIsEmptyOrValid(string contactId)

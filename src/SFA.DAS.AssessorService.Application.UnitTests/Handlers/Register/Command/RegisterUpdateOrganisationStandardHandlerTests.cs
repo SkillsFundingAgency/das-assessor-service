@@ -44,8 +44,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
                     .Returns(Task.FromResult(_expectedOrganisationStandardNoIssues.Id));
 
                 _validator.Setup(v => v.CheckIfOrganisationStandardDoesNotExist(_requestNoIssues.OrganisationId, _requestNoIssues.StandardCode)).Returns(string.Empty);
+                _validator.Setup(v => v.CheckIfContactIdIsEmptyOrValid(It.IsAny<string>())).Returns(string.Empty);
 
-                _updateEpaOrganisationStandardHandler = new UpdateEpaOrganisationStandardHandler(_registerRepository.Object, _validator.Object, _logger.Object);
+            _updateEpaOrganisationStandardHandler = new UpdateEpaOrganisationStandardHandler(_registerRepository.Object, _validator.Object, _logger.Object);
             }
 
 
@@ -101,7 +102,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
                     StandardCode = request.StandardCode,
                     EffectiveFrom = request.EffectiveFrom,
                     EffectiveTo = request.EffectiveTo,
-                    DateStandardApprovedOnRegister = request.DateStandardApprovedOnRegister,
                     Comments = request.Comments,
                     Status = "New"
                 };

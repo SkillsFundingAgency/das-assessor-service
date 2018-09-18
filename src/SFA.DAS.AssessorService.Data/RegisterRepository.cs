@@ -93,9 +93,9 @@ namespace SFA.DAS.AssessorService.Data
 
                 var res = connection.Query<int>(
                     "UPDATE [OrganisationStandard] SET [EffectiveFrom] = @effectiveFrom, [EffectiveTo] = @EffectiveTo, " +
-                    "[DateStandardApprovedOnRegister] = @dateStandardApprovedOnRegister, [Comments] = @comments " +
+                    "[Comments] = @comments, [ContactId] = @contactId " +
                     "WHERE [EndPointAssessorOrganisationId] = @organisationId and [StandardCode] = @standardCode; SELECT top 1 id from [organisationStandard] where  [EndPointAssessorOrganisationId] = @organisationId and [StandardCode] = @standardCode;",
-                    new {orgStandard.EffectiveFrom, orgStandard.EffectiveTo,orgStandard.DateStandardApprovedOnRegister, orgStandard.Comments, orgStandard.OrganisationId, orgStandard.StandardCode}).Single();
+                    new {orgStandard.EffectiveFrom, orgStandard.EffectiveTo, orgStandard.Comments, orgStandard.ContactId, orgStandard.OrganisationId, orgStandard.StandardCode}).Single();
 
                 return res;
             }

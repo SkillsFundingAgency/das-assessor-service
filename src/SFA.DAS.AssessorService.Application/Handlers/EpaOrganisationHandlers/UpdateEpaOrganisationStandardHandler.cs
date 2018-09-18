@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -28,6 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
         {
             var errorDetails = new StringBuilder();
             errorDetails.Append(_validator.CheckIfOrganisationStandardDoesNotExist(request.OrganisationId, request.StandardCode));
+            errorDetails.Append(_validator.CheckIfContactIdIsEmptyOrValid(request.ContactId));
 
             if (errorDetails.Length > 0)
             {
@@ -40,39 +42,20 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             return await _registerRepository.UpdateEpaOrganisationStandard(organisationStandard);
         }
 
-        private static EpaOrganisation MapOrganisationRequestToOrganisation(UpdateEpaOrganisationRequest request)
-        {
-            var organisation = new EpaOrganisation
-            {
-                Name = request.Name.Trim(),
-                OrganisationId = request.OrganisationId.Trim(),
-                OrganisationTypeId = request.OrganisationTypeId,
-                Ukprn = request.Ukprn,
-                OrganisationData = new OrganisationData
-                {
-                    Address1 = request.Address1,
-                    Address2 = request.Address2,
-                    Address3 = request.Address3,
-                    Address4 = request.Address4,
-                    LegalName = request.LegalName,
-                    Postcode = request.Postcode,
-                    WebsiteLink = request.WebsiteLink
-                }
-            };
-
-            return organisation;
-        }
-
         private static EpaOrganisationStandard MapOrganisationStandardRequestToOrganisationStandard(UpdateEpaOrganisationStandardRequest request)
         {
+            Guid? contactId = null;
+            if (!string.IsNullOrEmpty(request.ContactId)  && Guid.TryParse(request.ContactId, out Guid contactIdGuid))
+                contactId = contactIdGuid;
+
             var organisationStandard = new EpaOrganisationStandard
             {
                 OrganisationId = request.OrganisationId,
                 StandardCode = request.StandardCode,
                 EffectiveFrom = request.EffectiveFrom,
                 EffectiveTo = request.EffectiveTo,
-                DateStandardApprovedOnRegister = request.DateStandardApprovedOnRegister,
                 Comments = request.Comments,
+                ContactId = contactId
             };
             return organisationStandard;
         }
