@@ -8,7 +8,7 @@ using SFA.DAS.AssessorService.Application.Handlers.Staff;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
 {
-    [Authorize]
+    [Authorize(Roles = "AssessorServiceInternalAPI")]
     [Route("api/v1/learnerdetails")]
     [ValidateBadRequest]
     public class LearnerDetailsController : Controller

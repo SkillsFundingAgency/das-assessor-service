@@ -11,7 +11,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "AssessorServiceInternalAPI")]
     [ValidateBadRequest]
     [Route("api/v1/batches/")]
     public class BatchLogController : Controller
