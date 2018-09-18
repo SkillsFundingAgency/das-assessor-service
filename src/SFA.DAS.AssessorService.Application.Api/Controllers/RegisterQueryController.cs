@@ -16,7 +16,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "AssessorServiceInternalAPI")]
     [Route("api/ao")]
     [ValidateBadRequest]
     public class RegisterQueryController : Controller
