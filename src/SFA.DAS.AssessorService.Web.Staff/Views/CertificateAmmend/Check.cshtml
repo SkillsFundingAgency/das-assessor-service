@@ -107,7 +107,10 @@
                     Achievement date
                 </dt>
                 <dd class="cya-answer">
-                    @Model.AchievementDate.ToShortDateString()
+                    @{
+                        var achievementDate = Model.AchievementDate.HasValue ? Model.AchievementDate.Value.ToShortDateString() : "";
+                    }
+                    @achievementDate
                 </dd>
                 <dd class="cya-change">
                     <a asp-controller="CertificateDate" asp-action="Date" asp-route-certificateid=@Model.Id>
