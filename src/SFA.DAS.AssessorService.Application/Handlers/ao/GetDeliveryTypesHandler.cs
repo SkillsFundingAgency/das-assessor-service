@@ -24,8 +24,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
         public async Task<List<DeliveryArea>> Handle(GetDeliveryAreasRequest request, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Handling GetDeliveryAreas Request");
-            var res = await _registerQueryRepository.GetDeliveryAreas();
-            return res.ToList();
+            var result = await _registerQueryRepository.GetDeliveryAreas();
+            return result.ToList();
         }
     }
 }
