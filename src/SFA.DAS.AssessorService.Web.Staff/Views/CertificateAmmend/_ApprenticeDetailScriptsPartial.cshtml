@@ -1,0 +1,19 @@
+<script>
+var epaoApprenticeDetailFormElement = $('.apprentice-apprentice-detail-form');
+var epaoApprenticeDetailValidationRulesObject = {
+  rules: {
+    GivenNames: {
+      required: true
+    },
+    FamilyName: {
+      required: true
+    }
+  },
+  messages: {
+    GivenNames: 'First name must be defined',
+    FamilyName: 'Last name must be defined'
+  }
+};
+
+GOVUK.epaoValidate(epaoApprenticeDetailFormElement, epaoApprenticeDetailValidationRulesObject);
+</script>

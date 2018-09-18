@@ -1,0 +1,96 @@
+﻿
+
+<environment include="Development">
+    <script src="~/lib/jquery-ui/dist/jquery-ui.min.js"></script>
+    <script src="~/js/postcode-lookup-service.js"></script>
+</environment>
+<environment exclude="Development">
+    <script src="~/js/postcode-lookup-service.min.js"></script>
+</environment>
+<script>
+
+    var epaoAddressFormElement = $('.apprentice-address-form');
+    var epaoAddressValidationRulesObject = {
+        rules: {
+            postcodeSearch: {
+                required: function () {
+                    return !$('#SelectPreviousAddress').is(':checked') ? !$('.info-highlighted').is(':visible') : false
+                },
+                addressFound: true
+            },
+            Employer: {
+                required: true
+            },
+            Name: {
+                required: true
+            },
+            AddressLine1: {
+                required: true
+            },
+            City: {
+                required: true
+            },
+            Postcode: {
+                required: true,
+                postcodeUK: true
+            }
+        },
+        messages: {
+            postcodeSearch: {
+                required: 'Enter a company name, address or postcode',
+                addressFound: 'Select an address or enter one manually'
+            },
+            Employer: {
+                required: 'Enter an employer'
+            },
+            Name: {
+                required: 'Enter a name'
+            },
+            AddressLine1: {
+                required: 'Enter an address'
+            },
+            City: {
+                required: 'Enter a city or town'
+            },
+            Postcode: {
+                required: 'Enter a postcode',
+                postcodeUK: 'Enter a valid UK postcode'
+            }
+        }
+    };
+
+    GOVUK.epaoValidate(epaoAddressFormElement, epaoAddressValidationRulesObject);
+
+    // Run this before doc. ready
+    if (window.location.search.indexOf('edit=true') !== -1) {
+        $('#address-details').removeClass('js-hidden');
+    }
+
+    $(document).ready(function () {
+        // Only allow alphanumerics
+        $('.js-no-special-chars').on('keydown', function (e) {
+            // Allow: backspace, delete, tab, escape and enter
+            if (
+                $.inArray(e.keyCode, [46, 8, 9, 27, 13]) !== -1 ||
+                // Allow: Ctrl/cmd+A
+                (e.keyCode == 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+                // Allow: Ctrl/cmd+C
+                (e.keyCode == 67 && (e.ctrlKey === true || e.metaKey === true)) ||
+                // Allow: Ctrl/cmd+V
+                (e.keyCode == 86 && (e.ctrlKey === true || e.metaKey === true)) ||
+                // Allow: Ctrl/cmd+X
+                (e.keyCode == 88 && (e.ctrlKey === true || e.metaKey === true)) ||
+                // Allow: home, end, left, right
+                (e.keyCode >= 35 && e.keyCode <= 39)
+            ) {
+                // let it happen, don't do anything
+                return;
+            }
+            // Ensure that it is alphanumeric and stop the keypress
+            if ((e.keyCode < 65 || e.keyCode > 90) && (e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                e.preventDefault();
+            }
+        });
+    });
+
+</script>

@@ -1,0 +1,107 @@
+﻿@model SFA.DAS.AssessorService.Web.Staff.ViewModels.CertificateAddressViewModel
+
+@{
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Certificate destination";
+    Layout = "_Layout";
+}
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <a class="link-back" asp-controller="CertificateAmmend" asp-action="Check" asp-route-certificateid=@Model.Id>Back</a>
+
+        <form class="apprentice-address-form" type="post" asp-controller="CertificateAddress"
+              asp-action="Address">
+            @Html.HiddenFor(c => c.Id)
+
+            @* hidden with css by default *@
+            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                    There's a problem
+                </h2>
+                <ul class="js-error-summary-list error-summary-list"></ul>
+            </div>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                        There's a problem
+                    </h2>
+                    <ul class="error-summary-list">
+                        <li><a sfa-validation-for="Employer"></a></li>
+                        <li><a sfa-validation-for="AddressLine1"></a></li>
+                        <li><a sfa-validation-for="City"></a></li>
+                        <li><a sfa-validation-for="Postcode"></a></li>
+                    </ul>
+                </div>
+            }
+
+                <div sfa-anyvalidationerror-class="after-error-summary">
+
+                    <legend id="Name">
+                        <h1 class="heading-large">
+                            Where will the certificate be sent?
+                        </h1>
+                    </legend>
+
+                    
+                 
+                    <div id="address-details">
+                        <div class="form-group" sfa-validation-for="Employer" sfa-validationerror-class="form-group-error">
+                            <label for="Employer">
+                                <span class="form-label-bold">Organisation</span>
+                                <span class="error-message" asp-validation-for="Employer"></span>
+                            </label>
+                            <input class="form-control" name="Employer" sfa-validation-for="Employer" sfa-validationerror-class="form-control-error" asp-for="Employer" type="text" />
+                        </div>
+
+                        <div class="form-group-compound address-item form-group" sfa-validation-for="AddressLine1" sfa-validationerror-class="form-group-error">
+                            <label for="AddressLine1">
+                                <span class="form-label-bold">Address</span>
+                                <span class="error-message" asp-validation-for="AddressLine1"></span>
+                            </label>
+                            <input autocomplete="off" class="form-control" name="AddressLine1" sfa-validation-for="AddressLine1" sfa-validationerror-class="form-control-error" asp-for="AddressLine1" type="text" />
+                        </div>
+
+                        <div class="form-group-compound address-item form-group" sfa-validation-for="AddressLine2" sfa-validationerror-class="form-group-error">
+                            <label for="AddressLine2">
+                                <span class="form-label-bold">Address 2</span>
+                                <span class="error-message" asp-validation-for="AddressLine2"></span>
+                            </label>
+                            <input autocomplete="off" class="form-control" name="AddressLine2" sfa-validation-for="AddressLine2" sfa-validationerror-class="form-control-error" asp-for="AddressLine2" type="text" />
+                        </div>
+                        <div class="form-group-compound address-item form-group" sfa-validation-for="AddressLine3" sfa-validationerror-class="form-group-error">
+                            <label for="AddressLine3">
+                                <span class="form-label-bold">Address 3</span>
+                                <span class="error-message" asp-validation-for="AddressLine3"></span>
+                            </label>
+                            <input autocomplete="off" class="form-control" name="AddressLine3" sfa-validation-for="AddressLine3" sfa-validationerror-class="form-control-error" asp-for="AddressLine3" type="text" />
+                        </div>
+                        <div class="form-group-compound address-item form-group" sfa-validation-for="City" sfa-validationerror-class="form-group-error">
+                            <label for="City">
+                                <span class="form-label-bold">City or town</span>
+                                <span class="error-message" asp-validation-for="City"></span>
+                            </label>
+                            <input autocomplete="off" class="form-control" name="City" sfa-validation-for="City" sfa-validationerror-class="form-control-error" asp-for="City" type="text" />
+                        </div>
+                        <div class="address-item form-group" sfa-validation-for="Postcode" sfa-validationerror-class="form-group-error">
+                            <label for="Postcode">
+                                <span class="form-label-bold">Postcode</span>
+                                <span class="error-message" asp-validation-for="Postcode"></span>
+                            </label>
+                            <input autocomplete="off" class="form-control js-no-special-chars" name="Postcode" sfa-validation-for="Postcode" sfa-validationerror-class="form-control-error" asp-for="Postcode" type="text" />
+                        </div>
+
+                    </div>
+                </div>
+
+
+            <button type="submit" class="button">Continue</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    @{await Html.RenderPartialAsync("~/Views/CertificateAmmend/_AddressScriptsPartial.cshtml"); }
+}
