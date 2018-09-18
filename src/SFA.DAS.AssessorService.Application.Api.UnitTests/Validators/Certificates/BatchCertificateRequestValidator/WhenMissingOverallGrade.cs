@@ -24,6 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
                                 .With(cd => cd.ContactPostCode = "AA11AA")
                                 .With(cd => cd.AchievementDate = DateTime.UtcNow)
                                 .With(cd => cd.OverallGrade = null)
+                                .With(cd => cd.CourseOption = "English")
                                 .Build())
                 .Build();
 

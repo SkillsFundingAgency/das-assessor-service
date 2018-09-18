@@ -11,7 +11,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
 {
     public class BatchCertificateRequestValidator : AbstractValidator<BatchCertificateRequest>
     {
-        public BatchCertificateRequestValidator(IStringLocalizer<BatchCertificateRequestValidator> localiser, IOrganisationQueryRepository organisationQueryRepository, IIlrRepository ilrRepository, IAssessmentOrgsApiClient assessmentOrgsApiClient)
+        public BatchCertificateRequestValidator(IStringLocalizer<BatchCertificateRequestValidator> localiser, IOrganisationQueryRepository organisationQueryRepository, IIlrRepository ilrRepository, ICertificateRepository certificateRepository, IAssessmentOrgsApiClient assessmentOrgsApiClient)
         {
             RuleFor(m => m.Uln).InclusiveBetween(1000000000, 9999999999).WithMessage("The apprentice's ULN should contain exactly 10 numbers");
             RuleFor(m => m.FamilyName).NotEmpty().WithMessage("Enter the apprentice's last name");
@@ -26,7 +26,21 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
             RuleFor(m => m.CertificateData.ContactPostCode).NotEmpty().WithMessage("Enter a postcode");
             RuleFor(m => m.CertificateData.ContactPostCode).Matches("^(([gG][iI][rR] {0,}0[aA]{2})|((([a-pr-uwyzA-PR-UWYZ][a-hk-yA-HK-Y]?[0-9][0-9]?)|(([a-pr-uwyzA-PR-UWYZ][0-9][a-hjkstuwA-HJKSTUW])|([a-pr-uwyzA-PR-UWYZ][a-hk-yA-HK-Y][0-9][abehmnprv-yABEHMNPRV-Y]))) {0,}[0-9][abd-hjlnp-uw-zABD-HJLNP-UW-Z]{2}))$").WithMessage("Enter a valid UK postcode");
 
-            RuleFor(m => m.CertificateData.OverallGrade).NotEmpty().WithMessage("Select the grade the apprentice achieved");
+            RuleFor(m => m.CertificateData.OverallGrade)
+                .Custom((overallGrade, context) =>
+                {
+                    var grades = new string[] { "Pass", "Merit", "Distinction", "Pass with excellence", "No grade awarded" };
+
+                    if (string.IsNullOrWhiteSpace(overallGrade))
+                    {
+                        context.AddFailure(new ValidationFailure("OverallGrade", "Select the grade the apprentice achieved"));
+                    }
+                    else if (!grades.Any(g => g == overallGrade))
+                    {
+                        string gradesString = string.Join(", ", grades);
+                        context.AddFailure(new ValidationFailure("OverallGrade", $"The overall grade must one of the following: {gradesString}"));
+                    }
+                });
 
             RuleFor(m => m.CertificateData.AchievementDate)
                 .Custom((achievementDate, context) =>
@@ -62,10 +76,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                     else
                     {
                         var providedStandards = assessmentOrgsApiClient.FindAllStandardsByOrganisationIdAsync(sumbittingEpao.EndPointAssessorOrganisationId).GetAwaiter().GetResult();
+                        var courseOptions = certificateRepository.GetOptions(m.StandardCode).GetAwaiter().GetResult();
 
-                        if (!providedStandards.Where(s => s.StandardCode == m.StandardCode.ToString()).Any())
+                        if (!providedStandards.Any(s => s.StandardCode == m.StandardCode.ToString()))
                         {
                             context.AddFailure(new ValidationFailure("StandardCode", "EPAO does not provide this Standard"));
+                        }
+                        else if (courseOptions.Any() && !courseOptions.Any(o => o.OptionName == m.CertificateData.CourseOption))
+                        {
+                            string courseOptionsString = string.Join(", ", courseOptions.Select(o => o.OptionName));
+                            context.AddFailure(new ValidationFailure("CourseOption", $"The course option must one of the following: {courseOptionsString}"));
                         }
                     }
                 });

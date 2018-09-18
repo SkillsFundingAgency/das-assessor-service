@@ -24,6 +24,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
                 .With(i => i.CertificateData = Builder<CertificateData>.CreateNew()
                                 .With(cd => cd.ContactPostCode = "AA11AA")
                                 .With(cd => cd.AchievementDate = DateTime.UtcNow.AddHours(1))
+                                .With(cd => cd.OverallGrade = "Pass")
+                                .With(cd => cd.CourseOption = "English")
                                 .Build())
                 .Build();
 

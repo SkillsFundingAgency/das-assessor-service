@@ -34,6 +34,15 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
             certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 1)).ReturnsAsync(GenerateCertificate(1234567890, 1, "test", "Draft"));
             certificateRepositoryMock.Setup(q => q.GetCertificate(9999999999, 1)).ReturnsAsync(GenerateCertificate(9999999999, 1, "test", "Printed"));
 
+            certificateRepositoryMock.Setup(q => q.GetOptions(1)).ReturnsAsync(new List<Option>());
+
+            certificateRepositoryMock.Setup(q => q.GetOptions(99))
+                .ReturnsAsync(new List<Option>
+                {
+                   GenerateOption(99, "English"),
+                   GenerateOption(99, "French")
+                });
+
             return certificateRepositoryMock;
         }
 
@@ -97,6 +106,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
                 .With(i => i.CertificateReference = $"{uln}-{standardCode}")
                                 .With(i => i.CertificateData = JsonConvert.SerializeObject(Builder<CertificateData>.CreateNew()
                                 .With(cd => cd.LearnerFamilyName = familyName)
+                                .With(cd => cd.OverallGrade = "Pass")
                                 .Build()))
                 .Build();
         }
@@ -132,6 +142,14 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
                 .With(i => i.StdCode = standardCode)
                 .With(i => i.FamilyName = familyName)
                 .With(i => i.EpaOrgId = epaOrgId)
+                .Build();
+        }
+
+        private static Option GenerateOption(int standardCode, string optionName)
+        {
+            return Builder<Option>.CreateNew()
+                .With(o => o.StdCode = standardCode)
+                .With(o => o.OptionName = optionName)
                 .Build();
         }
     }
