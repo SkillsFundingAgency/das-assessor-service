@@ -7,12 +7,12 @@ using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
 {
-    [Route("api/v1/questions/")]
-    public class QuestionsController : Controller
+    [Route("api/v1/apply/")]
+    public class ApplyController : Controller
     {
         private readonly IMediator _mediator;
 
-        public QuestionsController(IMediator mediator)
+        public ApplyController(IMediator mediator)
         {
             _mediator = mediator;
         }

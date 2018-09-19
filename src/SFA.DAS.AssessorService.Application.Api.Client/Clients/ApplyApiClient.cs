@@ -16,7 +16,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         public async Task<List<SequenceSummary>> GetSequenceSummary(string userId)
         {
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/questions/summary/{userId}"))
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/apply/summary/{userId}"))
             {
                 return await RequestAndDeserialiseAsync<List<SequenceSummary>>(httpRequest, "Could not get Sequence Summary");
             }
@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         public async Task<Sequence> GetSequence(string userId, string sequenceId)
         {
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/questions/sequence/{userId}/{sequenceId}"))
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/apply/sequence/{userId}/{sequenceId}"))
             {
                 return await RequestAndDeserialiseAsync<Sequence>(httpRequest, "Could not get Sequence");
             }
@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         public async Task<Page> GetPage(string userId, string pageId)
         {
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/questions/page/{userId}/{pageId}"))
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/apply/page/{userId}/{pageId}"))
             {
                 return await RequestAndDeserialiseAsync<Page>(httpRequest, "Could not get Page");
             }
@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         public async Task<UpdatePageResult> UpdatePage(string userId, string pageId, List<Answer> answers)
         {
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Post, $"api/v1/questions/page/{userId}/{pageId}"))
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Post, $"api/v1/apply/page/{userId}/{pageId}"))
             {
                 return await PostPutRequestWithResponse<List<Answer>, UpdatePageResult>(httpRequest, answers);
             }
@@ -48,7 +48,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         public async Task<List<SequenceSummary>> GetAdminSequenceSummary(Guid workflowId)
         {
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/questions/summary/admin/{workflowId}"))
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/apply/summary/admin/{workflowId}"))
             {
                 return await RequestAndDeserialiseAsync<List<SequenceSummary>>(httpRequest, "Could not get Sequence Summary");
             }
