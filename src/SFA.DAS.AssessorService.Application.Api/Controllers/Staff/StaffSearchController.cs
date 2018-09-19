@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
 {
-    [Authorize]
+    [Authorize(Roles = "AssessorServiceInternalAPI")]
     [Route("api/v1/staffsearch/")]
     [ValidateBadRequest]
     public class StaffSearchController : Controller

@@ -24,8 +24,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
         public async Task<List<OrganisationType>> Handle(GetOrganisationTypesRequest request, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Handling GetOrganisationsType Request");
-            var res = await _registerQueryRepository.GetOrganisationTypes();
-            return res.ToList();
+            var result = await _registerQueryRepository.GetOrganisationTypes();
+            return result.ToList();
         }
     }
 }
