@@ -121,6 +121,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                     Uln = request.Uln,
                     StandardCode = request.StandardCode,
                     FamilyName = request.FamilyName,
+                    CertificateReference = request.CertificateReference,
                     ValidationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList()
                 };
 
@@ -135,17 +136,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(response);
         }
 
-        [HttpDelete("{uln}/{lastname}/{standardcode}/{ukPrn}/{username}")]
+        [HttpDelete("{uln}/{lastname}/{standardcode}/{certificateReference}/{ukPrn}/{username}")]
         [SwaggerResponse((int)HttpStatusCode.NoContent)]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> Delete(long uln, string lastname, int standardcode, int ukPrn, string username)
+        public async Task<IActionResult> Delete(long uln, string lastname, int standardcode, string certificateReference, int ukPrn, string username)
         {
             var request = new DeleteBatchCertificateRequest
             {
                 Uln = uln,
                 FamilyName = lastname,
                 StandardCode = standardcode,
+                CertificateReference = certificateReference,
                 UkPrn = ukPrn,
                 Username = username
             };
@@ -166,7 +168,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             }
             else
             {
-                ApiResponse response = new ApiResponse((int)HttpStatusCode.BadRequest, string.Join(", ", validationResult.Errors));
+                ApiResponse response = new ApiResponse((int)HttpStatusCode.BadRequest, string.Join("; ", validationResult.Errors));
                 return BadRequest(response);
             }
         }

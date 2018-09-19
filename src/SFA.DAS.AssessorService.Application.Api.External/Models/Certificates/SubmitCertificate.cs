@@ -7,6 +7,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
         public long Uln { get; set; }
         public int StandardCode { get; set; }
         public string FamilyName { get; set; }
+        public string CertificateReference { get; set; }
 
         #region GetHashCode, Equals and IEquatable
         public override int GetHashCode()
@@ -20,6 +21,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
                 hash = (hash * multiplier) ^ Uln.GetHashCode();
                 hash = (hash * multiplier) ^ StandardCode.GetHashCode();
                 hash = (hash * multiplier) ^ (FamilyName is null ? 0 : FamilyName.GetHashCode());
+                hash = (hash * multiplier) ^ (CertificateReference is null ? 0 : CertificateReference.GetHashCode());
 
                 return hash;
             }
@@ -44,7 +46,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
         {
             return Equals(Uln, other.Uln)
                 && Equals(StandardCode, other.StandardCode)
-                && string.Equals(FamilyName, other.FamilyName);
+                && string.Equals(FamilyName, other.FamilyName)
+                && string.Equals(CertificateReference, other.CertificateReference);
         }
 
         public static bool operator ==(SubmitCertificate left, SubmitCertificate right)

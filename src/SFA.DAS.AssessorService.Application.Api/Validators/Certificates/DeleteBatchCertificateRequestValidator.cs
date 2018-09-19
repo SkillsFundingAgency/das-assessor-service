@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                 {
                     var existingCertificate = certificateRepository.GetCertificate(m.Uln, m.StandardCode).Result;
 
-                    if (existingCertificate == null)
+                    if (existingCertificate == null || !string.Equals(existingCertificate.CertificateReference, m.CertificateReference))
                     {
                         context.AddFailure(new ValidationFailure("Certificate", $"Certificate not found"));
                     }

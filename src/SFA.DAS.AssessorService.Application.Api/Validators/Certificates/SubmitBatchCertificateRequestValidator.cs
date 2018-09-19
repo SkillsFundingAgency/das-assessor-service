@@ -24,13 +24,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                 {
                     var existingCertificate = certificateRepository.GetCertificate(m.Uln, m.StandardCode).Result;
 
-                    if (existingCertificate == null)
+                    if (existingCertificate == null || !string.Equals(existingCertificate.CertificateReference, m.CertificateReference))
                     {
                         context.AddFailure(new ValidationFailure("Certificate", $"Certificate not found"));
                     }
-                    else if (existingCertificate.Status != CertificateStatus.Draft && existingCertificate.Status != CertificateStatus.Ready)
+                    else if (existingCertificate.Status != CertificateStatus.Draft)
                     {
-                        context.AddFailure(new ValidationFailure("Certificate", $"Certificate is not in '{CertificateStatus.Draft}' or '{CertificateStatus.Ready}' status"));
+                        context.AddFailure(new ValidationFailure("Certificate", $"Certificate is not in '{CertificateStatus.Draft}' status"));
                     }
                 });
 

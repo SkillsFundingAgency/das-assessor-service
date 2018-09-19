@@ -56,22 +56,22 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
         public async Task<IActionResult> SubmitCertificates([FromBody] IEnumerable<SubmitCertificate> request)
         {
-            IEnumerable<SubmitBatchCertificateRequest> scRequest = request.Select(req => new SubmitBatchCertificateRequest { UkPrn = _headerInfo.Ukprn, Username = _headerInfo.Username, Uln = req.Uln, StandardCode = req.StandardCode, FamilyName = req.FamilyName });
+            IEnumerable<SubmitBatchCertificateRequest> scRequest = request.Select(req => new SubmitBatchCertificateRequest { UkPrn = _headerInfo.Ukprn, Username = _headerInfo.Username, Uln = req.Uln, StandardCode = req.StandardCode, FamilyName = req.FamilyName, CertificateReference = req.CertificateReference });
 
             var results = await _apiClient.SubmitCertificates(scRequest);
 
             return Ok(results);
         }
 
-        [HttpDelete("{uln}/{lastname}/{stdCode}")]
+        [HttpDelete("{uln}/{lastname}/{stdCode}/{certificateReference}")]
         [SwaggerResponse((int)HttpStatusCode.NoContent)]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> DeleteCertificate(long uln, string lastname, int stdCode)
+        public async Task<IActionResult> DeleteCertificate(long uln, string lastname, int stdCode, string certificateReference)
         {
-            DeleteCertificateRequest deleteRequest = new DeleteCertificateRequest { Uln = uln, Lastname = lastname, StandardCode = stdCode, UkPrn = _headerInfo.Ukprn, Username = _headerInfo.Username};
+            DeleteCertificateRequest deleteRequest = new DeleteCertificateRequest { UkPrn = _headerInfo.Ukprn, Username = _headerInfo.Username, Uln = uln, Lastname = lastname, StandardCode = stdCode, CertificateReference = certificateReference};
             var error = await _apiClient.DeleteCertificate(deleteRequest);
 
-            if (error == null)
+            if (error is null)
             {
                 return NoContent();
             }

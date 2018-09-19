@@ -18,6 +18,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
                 .With(i => i.StandardCode = 1)
                 .With(i => i.UkPrn = 12345678)
                 .With(i => i.FamilyName = "Test")
+                .With(i => i.CertificateReference = "9999999999-1")
                 .Build();
 
             _validationResult = Validator.Validate(request);
