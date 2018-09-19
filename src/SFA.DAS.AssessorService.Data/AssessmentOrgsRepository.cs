@@ -34,6 +34,7 @@ namespace SFA.DAS.AssessorService.Data
             {
                 var connectionString = _configuration.SqlConnectionString;
                 var obfConnectionString = connectionString.Substring(0,60);
+                connectionString = connectionString.Replace("MultipleActiveResultSets=True", "MultipleActiveResultSets=False");
                 if (obfConnectionString.ToLower().Contains("password"))
                     obfConnectionString = "obfuscation full";
 
@@ -43,7 +44,10 @@ namespace SFA.DAS.AssessorService.Data
                     LogProgress(progressStatus, $"Teardown: Using connectionString [{obfConnectionString}], Connection State: [{connection.State}]; ");
                     if (connection.State != ConnectionState.Open)
                     {
+                        LogProgress(progressStatus, $"Teardown: Using connectionString [{obfConnectionString}], attempting to open connection; ");
                         connection.Open();
+                        LogProgress(progressStatus, $"Teardown: Using connectionString [{obfConnectionString}], connection opened; ");
+
                     }
                     LogProgress(progressStatus, "Teardown: DELETING all items in [OrganisationStandardDeliveryArea]; ");
                     connection.Execute("DELETE FROM [OrganisationStandardDeliveryArea]");
