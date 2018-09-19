@@ -29,26 +29,32 @@ namespace SFA.DAS.AssessorService.Data
         public string TearDownData()
         {
             var progressStatus = new StringBuilder();
+            LogProgress(progressStatus, "Starting TearDownData()");
             try
             {
                 var connectionString = _configuration.SqlConnectionString;
+                var obfConnectionString = connectionString.Substring(0,60);
+                if (obfConnectionString.ToLower().Contains("password"))
+                    obfConnectionString = "obfuscation full";
 
-                progressStatus.Append("Teardown: Opening connection to database; ");
+                LogProgress(progressStatus, $"Teardown: Opening connection to database with connection string: [{obfConnectionString}]; ");
                 using (var connection = new SqlConnection(connectionString))
                 {
+                    LogProgress(progressStatus, $"Teardown: Using connectionString [{obfConnectionString}], Connection State: [{connection.State}]; ");
                     if (connection.State != ConnectionState.Open)
+                    {
                         connection.Open();
-                    
-                    progressStatus.Append("Teardown: DELETING all items in [OrganisationStandardDeliveryArea]; ");
+                    }
+                    LogProgress(progressStatus, "Teardown: DELETING all items in [OrganisationStandardDeliveryArea]; ");
                     connection.Execute("DELETE FROM [OrganisationStandardDeliveryArea]");
-                    progressStatus.Append("Teardown: DELETING all items in [OrganisationStandard]; ");
+                    LogProgress(progressStatus, "Teardown: DELETING all items in [OrganisationStandard]; ");
                     connection.Execute("DELETE FROM [OrganisationStandard]");
                 }
             }
             catch (Exception e)
             {
                 progressStatus.Append("Teardown: DELETION Error; ");
-                _logger.LogError($"Progress status: {progressStatus}",e);
+                _logger.LogError($"Progress status: {progressStatus}, Error Message: [{e.Message}]",e);
 
                 throw;
             }
@@ -353,6 +359,12 @@ namespace SFA.DAS.AssessorService.Data
             }
 
             return contactsFromDatabase;
+        }
+
+        private void LogProgress(StringBuilder progressStatus, string status)
+        {
+            progressStatus.Append(status);
+            _logger.LogInformation(status);
         }
 
         private static string ConvertStringToSqlValueString(string stringToProcess)
