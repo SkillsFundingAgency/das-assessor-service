@@ -6,5 +6,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
     {
         public string Type { get; set; }
         public dynamic Options { get; set; }
+        public List<ValidationDefinition> Validations { get; set; }
     }
 }

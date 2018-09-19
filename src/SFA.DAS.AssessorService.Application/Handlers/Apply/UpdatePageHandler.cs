@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -8,23 +9,27 @@ using MediatR;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Application.Exceptions;
+using SFA.DAS.AssessorService.Application.Handlers.Apply.Validation;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 {
-    public class UpdatePageHandler : IRequestHandler<UpdatePageRequest, Page>
+    public class UpdatePageHandler : IRequestHandler<UpdatePageRequest, UpdatePageResult>
     {
         private readonly IDbConnection _connection;
+        private IValidatorFactory _validatorFactory;
 
-        public UpdatePageHandler(IDbConnection connection)
+        public UpdatePageHandler(IDbConnection connection, IValidatorFactory validatorFactory)
         {
             _connection = connection;
+            _validatorFactory = validatorFactory;
         }
-        
-        public async Task<Page> Handle(UpdatePageRequest request, CancellationToken cancellationToken)
+
+        public async Task<UpdatePageResult> Handle(UpdatePageRequest request, CancellationToken cancellationToken)
         {
             var userWorkflow = await
-                _connection.QuerySingleAsync<UserWorkflow>("SELECT * FROM UserWorkflows WHERE UserId = @UserId", request);
-            
+                _connection.QuerySingleAsync<UserWorkflow>("SELECT * FROM UserWorkflows WHERE UserId = @UserId",
+                    request);
+
             var workflow = JsonConvert.DeserializeObject<List<Sequence>>(userWorkflow.Workflow);
 
             var sequence = workflow.Single(w => w.Sections.Any(s => s.Pages.Any(p => p.PageId == request.PageId)));
@@ -37,57 +42,89 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
             var page = section.Pages.Single(p => p.PageId == request.PageId);
             page.Answers = new List<Answer>();
-            
-            foreach (var answer in request.Answers)
+
+
+            var validationPassed = true;
+            var validationErrors = new List<KeyValuePair<string, string>>();
+
+            foreach (var question in page.Questions)
             {
-                var questionIdDb = page.Questions.SingleOrDefault(q => q.QuestionId == answer.QuestionId);
-
-                if (questionIdDb == null)
+                var answer = request.Answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
+                
+                var validators = _validatorFactory.Build(question);
+                foreach (var validator in validators)
                 {
-                    throw new BadRequestException($"{answer.QuestionId} is not an question on this page.");
-                }
-
-                if (questionIdDb.Input.Type == "Checkbox" && answer.Value == "on")
-                {
-                    answer.Value = "Yes";
+                    var errors = validator.Validate(question, answer);
+                
+                    if (errors.Any())
+                    {
+                        validationPassed = false;
+                        validationErrors.AddRange(errors);
+                    }
+                    else
+                    {
+                        if (question.Input.Type == "Checkbox" && answer.Value == "on")
+                        {
+                            answer.Value = "Yes";
+                        }
+                    }
+                    page.Answers.Add(answer);
                 }
                 
-                page.Answers.Add(answer);
             }
+//            
+//            foreach (var answer in request.Answers)
+//            {
+//                var questionIdDb = page.Questions.SingleOrDefault(q => q.QuestionId == answer.QuestionId);
+//
+//                
+//
+//                
+//            }
 
-            page.Complete = true;
+            if (validationPassed)
+            {
+                page.Complete = true;
 
-            MarkSequenceAsCompleteIfAllPagesComplete(sequence, workflow);
+                MarkSequenceAsCompleteIfAllPagesComplete(sequence, workflow);
+                var workflowJson = JsonConvert.SerializeObject(workflow);
+
+                await _connection.ExecuteAsync("UPDATE UserWorkflows SET Workflow = @Workflow WHERE UserId = @UserId",
+                    new {request.UserId, Workflow = workflowJson});
+                return new UpdatePageResult {Page = page, ValidationPassed = validationPassed};
+            }
+            else
+            {
+                return new UpdatePageResult {Page = page, ValidationPassed = validationPassed, ValidationErrors = validationErrors};
+            }
             
-            var workflowJson = JsonConvert.SerializeObject(workflow);
-
-            await _connection.ExecuteAsync("UPDATE UserWorkflows SET Workflow = @Workflow WHERE UserId = @UserId",
-                new {request.UserId, Workflow = workflowJson});
-
-            return page;
+            
         }
 
-        private static void MarkSequenceAsCompleteIfAllPagesComplete(Sequence sequence,
-            List<Sequence> workflow)
+        private static void MarkSequenceAsCompleteIfAllPagesComplete(Sequence sequence, List<Sequence> workflow)
         {
             sequence.Complete = sequence.Sections.SelectMany(s => s.Pages).All(p => p.Complete);
 
             if (!sequence.Complete) return;
-            
-            var nextSequence = sequence.NextSequence;
-            if (nextSequence.Condition != null)
+
+            var nextSequences = sequence.NextSequences;
+            foreach (var nextSequence in nextSequences)
             {
-                var answers = sequence.Sections.SelectMany(s => s.Pages).SelectMany(p => p.Answers).ToList();
-                if (answers.Any(a => a.QuestionId == nextSequence.Condition.QuestionId && a.Value == nextSequence.Condition.MustEqual))
+                if (nextSequence.Condition != null)
                 {
-                    workflow.Single(w => w.SequenceId == sequence.NextSequence.NextSequenceId).Active = true;
+                    var answers = sequence.Sections.SelectMany(s => s.Pages).SelectMany(p => p.Answers).ToList();
+                    if (answers.Any(a =>
+                        a.QuestionId == nextSequence.Condition.QuestionId &&
+                        a.Value == nextSequence.Condition.MustEqual))
+                    {
+                        workflow.Single(w => w.SequenceId == nextSequence.NextSequenceId).Active = true;
+                    }
                 }
-            }
-            else
-            {
-                workflow.Single(w => w.SequenceId == sequence.NextSequence.NextSequenceId).Active = true;
+                else
+                {
+                    workflow.Single(w => w.SequenceId == nextSequence.NextSequenceId).Active = true;
+                }
             }
         }
     }
-
 }

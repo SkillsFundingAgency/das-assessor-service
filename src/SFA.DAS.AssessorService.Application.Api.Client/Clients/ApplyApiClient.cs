@@ -38,11 +38,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<Page> UpdatePage(string userId, string pageId, List<Answer> answers)
+        public async Task<UpdatePageResult> UpdatePage(string userId, string pageId, List<Answer> answers)
         {
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Post, $"api/v1/questions/page/{userId}/{pageId}"))
             {
-                return await PostPutRequestWithResponse<List<Answer>, Page>(httpRequest, answers);
+                return await PostPutRequestWithResponse<List<Answer>, UpdatePageResult>(httpRequest, answers);
             }
         }
 
@@ -60,7 +60,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<List<SequenceSummary>> GetSequenceSummary(string userId);
         Task<Sequence> GetSequence(string userId, string sequenceId);
         Task<Page> GetPage(string userId, string pageId);
-        Task<Page> UpdatePage(string userId, string pageId, List<Answer> answers);
+        Task<UpdatePageResult> UpdatePage(string userId, string pageId, List<Answer> answers);
         Task<List<SequenceSummary>> GetAdminSequenceSummary(Guid workflowId);
     }
 }

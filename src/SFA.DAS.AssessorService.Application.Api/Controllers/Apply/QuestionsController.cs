@@ -46,7 +46,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
         }
 
         [HttpPost("page/{userId}/{pageId}")]
-        public async Task<ActionResult<Page>> Page(string userId, string pageId, [FromBody] List<Answer> answers)
+        public async Task<ActionResult<UpdatePageResult>> Page(string userId, string pageId, [FromBody] List<Answer> answers)
         {
             var updatedPage = await _mediator.Send(new UpdatePageRequest(userId, pageId, answers));
             return updatedPage;

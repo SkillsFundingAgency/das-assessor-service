@@ -18,4 +18,10 @@
     <ProjectReference Include="..\SFA.DAS.AssessorService.ExternalApis\SFA.DAS.AssessorService.ExternalApis.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="FluentValidation, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7de548da2fbae0f0">
+      <HintPath>..\..\..\..\Users\daveg\.nuget\packages\fluentvalidation\7.6.103\lib\netstandard2.0\FluentValidation.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

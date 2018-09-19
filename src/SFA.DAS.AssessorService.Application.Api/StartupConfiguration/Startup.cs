@@ -19,6 +19,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.Extensions;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
+using SFA.DAS.AssessorService.Application.Handlers.Apply.Validation;
 using SFA.DAS.AssessorService.Data;
 using SFA.DAS.AssessorService.Data.TestData;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
@@ -134,6 +135,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                     _.ConnectImplementationsToTypesClosing(typeof(IRequestHandler<>)); // Handlers with no response
                     _.ConnectImplementationsToTypesClosing(typeof(IRequestHandler<,>)); // Handlers with a response
                     _.ConnectImplementationsToTypesClosing(typeof(INotificationHandler<>));
+
+                    _.AddAllTypesOf<IValidator>();
                 });
 
                 config.For<IWebConfiguration>().Use(Configuration);
@@ -148,7 +151,9 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
 
                 config.For<AssessorDbContext>().Use(c => new AssessorDbContext(option.Options));
                 config.For<IDbConnection>().Use(c => new SqlConnection(Configuration.SqlConnectionString));
-              
+
+                config.For<IValidatorFactory>().Use<ValidatorFactory>();
+                
                 config.Populate(services);
             });
 

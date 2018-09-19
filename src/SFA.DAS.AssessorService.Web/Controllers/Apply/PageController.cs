@@ -40,18 +40,31 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 answers.Add(new Answer() {QuestionId = keyValuePair.Key, Value = keyValuePair.Value});
             }
 
-            var page = await _apiClient.UpdatePage(userId, pageId, answers);
-            if (page.Next.Action == "NextPage")
-            {
-                return RedirectToAction("Index", new {pageId = page.Next.ReturnId});
-            }
+            var updatePageResult = await _apiClient.UpdatePage(userId, pageId, answers);
 
-            if (page.Next.Action == "ReturnToSequence")
+            if (updatePageResult.ValidationPassed)
             {
-                return RedirectToAction("Sequence", "Sequence", new {sequenceId = page.Next.ReturnId});
-            }
+                var pageNext = updatePageResult.Page.Next;
+                
+                if (pageNext.Action == "NextPage")
+                {
+                    return RedirectToAction("Index", new {pageId = pageNext.ReturnId});
+                }
 
-            return RedirectToAction("Index", "Sequence");
+                return pageNext.Action == "ReturnToSequence"
+                    ? RedirectToAction("Sequence", "Sequence", new {sequenceId = pageNext.ReturnId})
+                    : RedirectToAction("Index", "Sequence");
+            }
+            else
+            {
+                foreach (var error in updatePageResult.ValidationErrors)
+                {
+                    ModelState.AddModelError(error.Key, error.Value);
+                }
+            }
+            
+            var pageVm = new PageViewModel(updatePageResult.Page);
+            return View("~/Views/Apply/Pages/Index.cshtml", pageVm);
         }
     }
 
@@ -75,7 +88,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 Type = q.Input.Type,
                 Hint = q.Hint,
                 Options = q.Input.Options,
-                Value = answers?.SingleOrDefault(a => a.QuestionId == q.QuestionId)?.Value
+                Value = answers?.SingleOrDefault(a => a?.QuestionId == q.QuestionId)?.Value
             }));
         }
 

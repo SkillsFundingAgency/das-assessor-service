@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
 {
@@ -12,5 +13,12 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
         public Next Next { get; set; }
         public bool Complete { get; set; }
         public bool AllowMultipleAnswers { get; set; }
+    }
+
+    public class UpdatePageResult
+    {
+        public Page Page { get; set; }
+        public bool ValidationPassed { get; set; }
+        public List<KeyValuePair<string, string>> ValidationErrors { get; set; }
     }
 }
