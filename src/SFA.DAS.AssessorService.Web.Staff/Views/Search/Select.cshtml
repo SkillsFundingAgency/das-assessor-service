@@ -209,7 +209,7 @@ else
         <ul class="list list-bullet">
             @if (Model.Learner.CertificateReference != null)
             {
-                <li><a asp-action="Index" asp-controller="DuplicateRequest" asp-route-certificateId="@Model.Learner.CertificateId">request duplicate certificate</a></li>
+                <li><a asp-action="Index" asp-controller="DuplicateRequest" asp-route-certificateId="@Model.Learner.CertificateId" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.Page">request duplicate certificate</a></li>
                 <li><a asp-action="Check" asp-controller="CertificateAmmend" asp-route-certificateId="@Model.Learner.CertificateId">amend certificate information</a></li>        
             }
             <li><a asp-controller="Search" asp-action="Index">Search for another apprentice</a></li>
