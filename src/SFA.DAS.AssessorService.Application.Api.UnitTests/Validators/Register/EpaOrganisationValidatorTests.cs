@@ -159,21 +159,20 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         }
 
 
-        [TestCase("", false, true)]
-        [TestCase(null,false,true)]
-        [TestCase("valid contact id", true, true)]
-        [TestCase("invalid contact id", true, true)]
-        public void CheckIfOrganisationStandardHasValidContactIdReturnsAnErrorMessage(string contactId, bool repositoryCheckResult, bool noMessageReturned)
+        [TestCase("", "",false, true)]
+        [TestCase(null,"",false,true)]
+        [TestCase("valid contact id", "valid org Id", true, true)]
+        public void CheckIfOrganisationStandardHasValidContactIdReturnsAnErrorMessage(string contactId, string organisationId, bool repositoryCheckResult, bool noMessageReturned)
         {
-            _registerRepository.Setup(r => r.ContactIdIsValid(It.IsAny<string>()))
+            _registerRepository.Setup(r => r.ContactIdIsValidForOrganisationId(It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(repositoryCheckResult));
             var isMessageReturned =
-                _validator.CheckIfContactIdIsEmptyOrValid(contactId).Length > 0;
+                _validator.CheckIfContactIdIsEmptyOrValid(contactId, organisationId).Length > 0;
             Assert.AreEqual(noMessageReturned, !isMessageReturned);
             if (repositoryCheckResult == false)
-                _registerRepository.Verify(r => r.ContactIdIsValid(It.IsAny<string>()), Times.Never);
+                _registerRepository.Verify(r => r.ContactIdIsValidForOrganisationId(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
             else
-            _registerRepository.Verify(r => r.ContactIdIsValid(It.IsAny<string>()), Times.Once);
+            _registerRepository.Verify(r => r.ContactIdIsValidForOrganisationId(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
 
         }
 

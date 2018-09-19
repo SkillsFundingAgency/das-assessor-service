@@ -39,7 +39,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             _expectedOrganisationStandardNoIssues = BuildOrganisationStandard(_requestNoIssues,_requestNoIssuesId);
 
             _registerRepository.Setup(r => r.CreateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>()))
-                .Returns(Task.FromResult(_expectedOrganisationStandardNoIssues.Id));
+                .Returns(Task.FromResult(_expectedOrganisationStandardNoIssues.Id.ToString()));
 
             _validator.Setup(v => v.CheckOrganisationIdIsPresentAndValid(_requestNoIssues.OrganisationId)).Returns(string.Empty);
             _validator.Setup(v => v.CheckIfOrganisationNotFound(_requestNoIssues.OrganisationId)).Returns(string.Empty);
@@ -70,7 +70,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
         public void GetOrganisationStandardWhenOrganisationStandardCreated()
         {
             var returnedId = _createEpaOrganisationStandardHandler.Handle(_requestNoIssues, new CancellationToken()).Result;
-            returnedId.Should().Be(_expectedOrganisationStandardNoIssues.Id);
+            returnedId.Should().Be(_expectedOrganisationStandardNoIssues.Id.ToString());
         }
 
         [Test]
@@ -139,10 +139,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             const string errorMessage = "bad contact id";
             var requestOrgBadContactId = BuildRequest("EPA888", 123321);
             requestOrgBadContactId.ContactId = "badContactId";
-            _validator.Setup(v => v.CheckIfContactIdIsEmptyOrValid(requestOrgBadContactId.ContactId)).Returns(errorMessage);
+            _validator.Setup(v => v.CheckIfContactIdIsEmptyOrValid(requestOrgBadContactId.ContactId, requestOrgBadContactId.OrganisationId)).Returns(errorMessage);
             var ex = Assert.ThrowsAsync<BadRequestException>(() => _createEpaOrganisationStandardHandler.Handle(requestOrgBadContactId, new CancellationToken()));
             Assert.AreEqual(errorMessage, ex.Message);
-            _validator.Verify(v => v.CheckIfContactIdIsEmptyOrValid(requestOrgBadContactId.ContactId));
+            _validator.Verify(v => v.CheckIfContactIdIsEmptyOrValid(requestOrgBadContactId.ContactId, requestOrgBadContactId.OrganisationId));
         }
 
         private CreateEpaOrganisationStandardRequest BuildRequest(string organisationId, int standardCode)

@@ -13,7 +13,7 @@ using SFA.DAS.AssessorService.Domain.Consts;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 {
-    public class CreateEpaOrganisationStandardHandler : IRequestHandler<CreateEpaOrganisationStandardRequest, int>
+    public class CreateEpaOrganisationStandardHandler : IRequestHandler<CreateEpaOrganisationStandardRequest, string>
     {
         private readonly IRegisterRepository _registerRepository;
         private readonly ILogger<CreateEpaOrganisationStandardHandler> _logger;
@@ -26,12 +26,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             _validator = validator;
         }
 
-        public async Task<int> Handle(CreateEpaOrganisationStandardRequest request, CancellationToken cancellationToken)
+        public async Task<string> Handle(CreateEpaOrganisationStandardRequest request, CancellationToken cancellationToken)
         {
             var errorDetails = new StringBuilder();
 
             errorDetails.Append(_validator.CheckOrganisationIdIsPresentAndValid(request.OrganisationId));
-            errorDetails.Append(_validator.CheckIfContactIdIsEmptyOrValid(request.ContactId));
+            errorDetails.Append(_validator.CheckIfContactIdIsEmptyOrValid(request.ContactId, request.OrganisationId));
             if (errorDetails.Length > 0)
             {
                 _logger.LogError(errorDetails.ToString());

@@ -234,7 +234,19 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
        
-
+        public async Task<bool> ContactIdIsValidForOrganisationId(string contactId, string organisationId)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+                var sqlToCheckExists =
+                    "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Contacts] " +
+                    $@"WHERE convert(varchar(50),id)  = @ContactId and EndPointAssessorOrganisationId = @organisationId";
+                return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new {contactId, organisationId});
+            }
+        }
+        
         public async Task<IEnumerable<EpaOrganisation>> GetAssessmentOrganisationsByStandardId(int standardId)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
@@ -278,6 +290,44 @@ namespace SFA.DAS.AssessorService.Data
                     "SELECT EffectiveFrom, EffectiveTo " +
                     $@"FROM [OrganisationStandard] WHERE EndPointAssessorOrganisationId = '{organisationId}' and StandardCode = {standardId}";
                 return await connection.QueryAsync<OrganisationStandardPeriod>(sql);
+            }
+        }
+
+        public async Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsByUkprn(string ukprn)
+        {
+            var connectionString = _configuration.SqlConnectionString;
+            if (!int.TryParse(ukprn.Replace(" ",""), out int ukprnNumeric))
+            {
+                return new List<AssessmentOrganisationSummary>();
+            }
+            using (var connection = new SqlConnection(connectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+                var assessmentOrganisationSummaries = await connection.QueryAsync<AssessmentOrganisationSummary>($@"select EndPointAssessorOrganisationId as Id, EndPointAssessorName as Name, EndPointAssessorUkprn as ukprn from [Organisations] where EndPointAssessorUkprn = @ukprnNumeric", new {ukprnNumeric});
+                return assessmentOrganisationSummaries;
+            }
+        }
+        public async Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsByOrganisationId(string organisationId)
+        {
+            var connectionString = _configuration.SqlConnectionString;
+            using (var connection = new SqlConnection(connectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+                var assessmentOrganisationSummaries = await connection.QueryAsync<AssessmentOrganisationSummary>($@"select EndPointAssessorOrganisationId as Id, EndPointAssessorName as Name, EndPointAssessorUkprn as ukprn from [Organisations] where EndPointAssessorOrganisationId like @organisationId", new {organisationId = $@"{organisationId.Replace(" ","")}%" });
+                return assessmentOrganisationSummaries;
+            }
+        }
+        public async Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsbyName(string organisationName)
+        {
+            var connectionString = _configuration.SqlConnectionString;
+            using (var connection = new SqlConnection(connectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+                var assessmentOrganisationSummaries = await connection.QueryAsync<AssessmentOrganisationSummary>($@"select EndPointAssessorOrganisationId as Id, EndPointAssessorName as Name, EndPointAssessorUkprn as ukprn from [Organisations] where replace(EndPointAssessorName, ' ','') like @organisationName", new {organisationName =$"%{organisationName.Replace(" ","")}%" } );
+                return assessmentOrganisationSummaries;
             }
         }
     }

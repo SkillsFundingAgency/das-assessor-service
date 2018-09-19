@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
@@ -15,7 +16,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
 
-    [Authorize]
+    [Authorize(Roles = "AssessorServiceInternalAPI")]
     [Route("api/ao/assessment-organisations")]
     [ValidateBadRequest]
     public class RegisterController : Controller
@@ -29,7 +30,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _logger = logger;
         }
         [HttpPost(Name = "CreateEpaOrganisation")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EpaOrganisation))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EpaOrganisationResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.Conflict, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
@@ -39,18 +40,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             {
                 _logger.LogInformation("Creating new Organisation");
                 var result = await _mediator.Send(request);
-                return Ok(result);
+                return Ok(new EpaOrganisationResponse(result));
             }
             
             catch (AlreadyExistsException ex)
             {
                 _logger.LogError($@"Record already exists for organisation [{ex.Message}]");
-                return Conflict(ex.Message);
+                return Conflict(new EpaOrganisationResponse(ex.Message));
             }
             catch (BadRequestException ex)
             {
                 _logger.LogError(ex.Message);
-                return BadRequest(ex.Message);
+                return BadRequest(new EpaOrganisationResponse(ex.Message));
             }
             catch (Exception ex)
             {
@@ -72,18 +73,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             {
                 _logger.LogInformation($@"Updating Organisation [{request.OrganisationId}]");
                 var result = await _mediator.Send(request);
-                return Ok(result);
+                return Ok(new EpaOrganisationResponse(result));
             }
 
             catch (NotFound ex)
             {
                 _logger.LogError($@"Record is not available for organisation ID: [{request.OrganisationId}]");
-                return NotFound(ex.Message);
+                return NotFound(new EpaOrganisationResponse(ex.Message));
             }
             catch (BadRequestException ex)
             {
                 _logger.LogError(ex.Message);
-                return BadRequest(ex.Message);
+                return BadRequest(new EpaOrganisationResponse(ex.Message));
             }
             catch (Exception ex)
             {
@@ -105,22 +106,22 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             {
                 _logger.LogInformation("Creating new Organisation Standard");
                 var result = await _mediator.Send(request);
-                return Ok(result);
+                return Ok(new EpaOrganisationStandardResponse(result));
             }
             catch (NotFound ex)
             {
                 _logger.LogError($@"Record is not available for organisation / standard: [{request.OrganisationId}, {request.StandardCode}]");
-                return NotFound(ex.Message);
+                return NotFound(new EpaOrganisationStandardResponse(ex.Message));
             }
             catch (AlreadyExistsException ex)
             {
                 _logger.LogError($@"Record already exists for organisation/standard [{request.OrganisationId}, {request.StandardCode}]");
-                return Conflict(ex.Message);
+                return Conflict(new EpaOrganisationStandardResponse(ex.Message));
             }
             catch (BadRequestException ex)
             {
                 _logger.LogError(ex.Message);
-                return BadRequest(ex.Message);
+                return BadRequest(new EpaOrganisationStandardResponse(ex.Message));
             }
             catch (Exception ex)
             {

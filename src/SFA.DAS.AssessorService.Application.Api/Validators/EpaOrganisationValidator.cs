@@ -10,22 +10,22 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
     public class EpaOrganisationValidator: IEpaOrganisationValidator
     {
         private readonly IRegisterQueryRepository _registerRepository;
-      
-        public string ErrorMessageNoOrganisationId { get; } = "There is no organisation Id; ";
-        public string ErrorMessageOrganisationIdTooLong { get; } = "The length of the organisation Id is too long; ";
-        public string ErrorMessageOrganisationNameEmpty { get; } = "There is no organisation name; ";
-        public string ErrorMessageOrganisationIdAlreadyUsed { get; } = "There is already an entry for this organisation Id; ";
-        public string ErrorMessageUkprnAlreadyUsed { get; } = "There is already an organisation with this ukprn; ";
-        public string ErrorMessageOrganisationTypeIsInvalid { get; } = "There is no organisation type with this Id; ";
-        public string ErrorMessageAnotherOrganisationUsingTheUkprn { get; } = "The ukprn entered is already used by another organisation; ";
-        public string ErrorMessageUkprnIsInvalid { get; } = "The ukprn is not the correct format or length; ";
-        public string ErrorMessageOrganisationNotFound { get; } = "There is no organisation for this organisation Id; ";
 
-        public string ErrorMessageContactId { get; } = "The contact Id entered is invalid";
+        private string ErrorMessageNoOrganisationId { get; } = "There is no organisation Id; ";
+        private string ErrorMessageOrganisationIdTooLong { get; } = "The length of the organisation Id is too long; ";
+        private string ErrorMessageOrganisationNameEmpty { get; } = "There is no organisation name; ";
+        private string ErrorMessageOrganisationIdAlreadyUsed { get; } = "There is already an entry for this organisation Id; ";
+        private string ErrorMessageUkprnAlreadyUsed { get; } = "There is already an organisation with this ukprn; ";
+        private string ErrorMessageOrganisationTypeIsInvalid { get; } = "There is no organisation type with this Id; ";
+        private string ErrorMessageAnotherOrganisationUsingTheUkprn { get; } = "The ukprn entered is already used by another organisation; ";
+        private string ErrorMessageUkprnIsInvalid { get; } = "The ukprn is not the correct format or length; ";
+        private string ErrorMessageOrganisationNotFound { get; } = "There is no organisation for this organisation Id; ";
+
+        private string ErrorMessageContactId { get; } = "The contact Id entered is invalid for the given organisation";
         
-        public string ErrorMessageTheOrganisationStandardAlreadyExists { get; } =
+        private string ErrorMessageTheOrganisationStandardAlreadyExists { get; } =
             "This organisation/standard already exists";
-        public string ErrorMessageStandardNotFound { get; } =
+        private string ErrorMessageStandardNotFound { get; } =
             "There is no standard present for the given standard code; ";
 
 
@@ -119,11 +119,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 : string.Empty;
         }
 
-        public string CheckIfContactIdIsEmptyOrValid(string contactId)
+        public string CheckIfContactIdIsEmptyOrValid(string contactId, string organisationId)
         {
             if (string.IsNullOrEmpty(contactId)) return string.Empty;
 
-            return _registerRepository.ContactIdIsValid(contactId).Result
+            return _registerRepository.ContactIdIsValidForOrganisationId(contactId, organisationId).Result
                 ?string.Empty 
                 : ErrorMessageContactId;
         }

@@ -71,7 +71,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
 
             Assert.IsFalse(isOrgStandardPresentBeforeInsert);
             Assert.IsTrue(isOrgStandardPresentAfterInsert);
-            Assert.AreEqual(returnedOrganisationStandardId, returnedOrganisationStandardByIds.Id);
+            Assert.AreEqual(returnedOrganisationStandardId, returnedOrganisationStandardByIds.Id.ToString());
         }
 
         [OneTimeTearDown]
