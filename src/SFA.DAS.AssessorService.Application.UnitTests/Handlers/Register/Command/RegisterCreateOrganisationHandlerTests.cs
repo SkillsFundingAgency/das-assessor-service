@@ -53,14 +53,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
         [Test]
         public void GetOrganisationDetailsRepoIsCalledWhenHandlerInvoked()
         {
-            var res = _createEpaOrganisationHandler.Handle(_requestNoIssues, new CancellationToken()).Result;
+            var result = _createEpaOrganisationHandler.Handle(_requestNoIssues, new CancellationToken()).Result;
             _registerRepository.Verify(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()));
         }
 
         [Test]
         public void CheckAllValidatorsAreCalledWhenHandlerInvoked()
         {
-           var res = _createEpaOrganisationHandler.Handle(_requestNoIssues, new CancellationToken()).Result;
+           var result = _createEpaOrganisationHandler.Handle(_requestNoIssues, new CancellationToken()).Result;
             _validator.Verify(v => v.CheckOrganisationName(_requestNoIssues.Name));
             _validator.Verify(v => v.CheckIfOrganisationUkprnExists(_requestNoIssues.Ukprn));
             _validator.Verify(v => v.CheckOrganisationTypeIsNullOrExists(_requestNoIssues.OrganisationTypeId));
@@ -70,7 +70,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
         [Test]
         public void CheckOrganisationIdGeneratorIsCalledWhenHandlerInvoked()
         {
-            var res = _createEpaOrganisationHandler.Handle(_requestNoIssues, new CancellationToken()).Result;
+            var result = _createEpaOrganisationHandler.Handle(_requestNoIssues, new CancellationToken()).Result;
             _idGenerator.Verify(g => g.GetNextOrganisationId());
         }
 

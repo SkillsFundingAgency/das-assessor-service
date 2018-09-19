@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         private OrganisationStandardModel _orgStandardModel;
         private bool _isOrgStandardPresentBeforeUpdate;
         private EpaOrganisationStandard _organisationStandardBeforeUpdate;
-        private int _returnedOrganisationStandardId;
+        private string _returnedOrganisationStandardId;
         private EpaOrganisationStandard _organisationStandardAfterUpdate;
 
         [OneTimeSetUp]
@@ -101,7 +101,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [Test]
         public void UpdateOrganisationStandardAndCheckAfterValuesAreAsExpected()
         {
-            Assert.AreEqual(_returnedOrganisationStandardId, _organisationStandardAfterUpdate.Id);
+            Assert.AreEqual(_returnedOrganisationStandardId, _organisationStandardAfterUpdate.Id.ToString());
             Assert.AreEqual(_organisationStandardAfterUpdate.EffectiveFrom, _organisationStandardUpdates.EffectiveFrom);
             Assert.AreEqual(_organisationStandardAfterUpdate.EffectiveTo, _organisationStandardUpdates.EffectiveTo);
             Assert.AreNotEqual(_organisationStandardAfterUpdate.DateStandardApprovedOnRegister, _organisationStandardUpdates.DateStandardApprovedOnRegister);

@@ -41,10 +41,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
                 _expectedOrganisationStandardNoIssues = BuildOrganisationStandard(_requestNoIssues, _requestNoIssuesId);
 
                 _registerRepository.Setup(r => r.UpdateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>()))
-                    .Returns(Task.FromResult(_expectedOrganisationStandardNoIssues.Id));
+                    .Returns(Task.FromResult(_expectedOrganisationStandardNoIssues.Id.ToString()));
 
                 _validator.Setup(v => v.CheckIfOrganisationStandardDoesNotExist(_requestNoIssues.OrganisationId, _requestNoIssues.StandardCode)).Returns(string.Empty);
-                _validator.Setup(v => v.CheckIfContactIdIsEmptyOrValid(It.IsAny<string>())).Returns(string.Empty);
+                _validator.Setup(v => v.CheckIfContactIdIsEmptyOrValid(It.IsAny<string>(), It.IsAny<string>())).Returns(string.Empty);
 
             _updateEpaOrganisationStandardHandler = new UpdateEpaOrganisationStandardHandler(_registerRepository.Object, _validator.Object, _logger.Object);
             }
@@ -68,7 +68,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             public void GetOrganisationStandardWhenOrganisationStandardUpdated()
             {
                 var returnedId = _updateEpaOrganisationStandardHandler.Handle(_requestNoIssues, new CancellationToken()).Result;
-                returnedId.Should().Be(_expectedOrganisationStandardNoIssues.Id);
+                returnedId.Should().Be(_expectedOrganisationStandardNoIssues.Id.ToString());
             }
 
             [Test]

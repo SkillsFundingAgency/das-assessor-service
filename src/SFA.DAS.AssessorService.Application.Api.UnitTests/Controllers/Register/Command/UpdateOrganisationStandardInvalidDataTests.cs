@@ -63,7 +63,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         [Test]
         public void UpdateOrganisationStandardShouldReturnBadRequest()
         {
-            _result.Should().BeOfType<BadRequestResult>();
+            _result.Should().BeOfType<BadRequestObjectResult>();
         }
     }
 }

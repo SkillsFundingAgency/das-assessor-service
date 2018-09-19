@@ -11,7 +11,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 {
-    public class UpdateEpaOrganisationStandardHandler : IRequestHandler<UpdateEpaOrganisationStandardRequest, int>
+    public class UpdateEpaOrganisationStandardHandler : IRequestHandler<UpdateEpaOrganisationStandardRequest, string>
     {
         private readonly IRegisterRepository _registerRepository;
         private readonly ILogger<UpdateEpaOrganisationStandardHandler> _logger;
@@ -25,11 +25,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
         }
 
 
-        public async Task<int> Handle(UpdateEpaOrganisationStandardRequest request, CancellationToken cancellationToken)
+        public async Task<string> Handle(UpdateEpaOrganisationStandardRequest request, CancellationToken cancellationToken)
         {
             var errorDetails = new StringBuilder();
             errorDetails.Append(_validator.CheckIfOrganisationStandardDoesNotExist(request.OrganisationId, request.StandardCode));
-            errorDetails.Append(_validator.CheckIfContactIdIsEmptyOrValid(request.ContactId));
+            errorDetails.Append(_validator.CheckIfContactIdIsEmptyOrValid(request.ContactId,request.OrganisationId));
 
             if (errorDetails.Length > 0)
             {

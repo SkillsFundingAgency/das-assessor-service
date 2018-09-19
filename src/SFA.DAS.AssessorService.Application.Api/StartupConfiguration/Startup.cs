@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
 using System.IO;
+using System.Threading.Tasks;
 using FluentValidation.AspNetCore;
 using JWT;
 using MediatR;
@@ -50,22 +51,30 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             IServiceProvider serviceProvider;
-            //services.AddAndConfigureAuthentication(Configuration);
             try
-            {             
-
-                services.AddAuthentication(sharedOptions =>
-                {
-                    sharedOptions.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddAzureAdBearer(options =>
-                {
-                    options.ClientId = Configuration.ApiAuthentication.ClientId;
-                    options.Instance = Configuration.ApiAuthentication.Instance;
-                    options.TenantId = Configuration.ApiAuthentication.TenantId;
-                    options.Audience = Configuration.ApiAuthentication.Audience;
-                });
-
+            {            
+                services.AddAuthentication(o =>
+                    {
+                        o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                    })
+                    .AddJwtBearer(o =>
+                    {
+                        o.Authority = $"https://login.microsoftonline.com/{Configuration.ApiAuthentication.TenantId}"; 
+                        o.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                        {
+                            RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                            ValidAudiences = new List<string>
+                            {
+                                Configuration.ApiAuthentication.Audience,
+                                Configuration.ApiAuthentication.ClientId
+                            }
+                        };
+                        o.Events = new JwtBearerEvents()
+                        {
+                            OnTokenValidated = context => { return Task.FromResult(0); }
+                        };
+                    });    
+                
                 services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
                 
                 services.Configure<RequestLocalizationOptions>(options =>

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
 
@@ -41,7 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
                 EffectiveTo = null
             };
 
-            _mediator.Setup(m => m.Send(_request, new CancellationToken())).ReturnsAsync(_organisationStandardId);
+            _mediator.Setup(m => m.Send(_request, new CancellationToken())).ReturnsAsync(_organisationStandardId.ToString());
 
             _controller = new RegisterController(_mediator.Object, _logger.Object);
             _result = _controller.UpdateOrganisationStandard(_request).Result;
@@ -69,14 +70,14 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         [Test]
         public void ResultsAreOfTypeOrganisationStandardId()
         {
-            ((OkObjectResult)_result).Value.Should().BeOfType<int>();
+            ((OkObjectResult)_result).Value.Should().BeOfType<EpaOrganisationStandardResponse>();
         }
 
         [Test]
         public void ResultsMatchExpectedOrganisationStandardId()
         {
-            var orgStandardId = ((OkObjectResult)_result).Value as int?;
-            orgStandardId.Value.Should().Be(_organisationStandardId);
+            var organisationStandardId = ((OkObjectResult)_result).Value as EpaOrganisationStandardResponse;
+            organisationStandardId.Details.Should().Be(_organisationStandardId.ToString());
         }
     }
 }

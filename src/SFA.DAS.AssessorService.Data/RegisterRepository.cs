@@ -64,7 +64,7 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        public async Task<int>CreateEpaOrganisationStandard(EpaOrganisationStandard organisationStandard)
+        public async Task<string>CreateEpaOrganisationStandard(EpaOrganisationStandard organisationStandard)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
@@ -72,9 +72,9 @@ namespace SFA.DAS.AssessorService.Data
                     await connection.OpenAsync();
 
              
-                var res = connection.Query<int>(
+                var res = connection.Query<string>(
                     "INSERT INTO [dbo].[OrganisationStandard] ([EndPointAssessorOrganisationId],[StandardCode],[EffectiveFrom],[EffectiveTo],[DateStandardApprovedOnRegister] ,[Comments],[Status], [ContactId]) VALUES (" +
-                    "@organisationId, @standardcode, @effectiveFrom, @effectiveTo, null, @comments, 'New', @ContactId); SELECT CAST(SCOPE_IDENTITY() as int); ",
+                    "@organisationId, @standardCode, @effectiveFrom, @effectiveTo, null, @comments, 'New', @ContactId); SELECT CAST(SCOPE_IDENTITY() as varchar); ",
                     new
                     {
                         organisationStandard.OrganisationId, organisationStandard.StandardCode, organisationStandard.EffectiveFrom, organisationStandard.EffectiveTo,
@@ -84,14 +84,14 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        public async Task<int> UpdateEpaOrganisationStandard(EpaOrganisationStandard orgStandard)
+        public async Task<string> UpdateEpaOrganisationStandard(EpaOrganisationStandard orgStandard)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
-                var res = connection.Query<int>(
+                var res = connection.Query<string>(
                     "UPDATE [OrganisationStandard] SET [EffectiveFrom] = @effectiveFrom, [EffectiveTo] = @EffectiveTo, " +
                     "[Comments] = @comments, [ContactId] = @contactId " +
                     "WHERE [EndPointAssessorOrganisationId] = @organisationId and [StandardCode] = @standardCode; SELECT top 1 id from [organisationStandard] where  [EndPointAssessorOrganisationId] = @organisationId and [StandardCode] = @standardCode;",

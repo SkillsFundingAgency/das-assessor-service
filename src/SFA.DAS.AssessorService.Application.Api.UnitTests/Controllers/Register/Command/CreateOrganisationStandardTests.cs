@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
@@ -23,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         private object _result;
         private CreateEpaOrganisationStandardRequest _request;
         private string _orgId;
-        private int _organisationStandardId;
+        private string _organisationStandardId;
 
         [SetUp]
         public void Arrange()
@@ -31,7 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
             _mediator = new Mock<IMediator>();
             _logger = new Mock<ILogger<RegisterController>>();
 
-            _organisationStandardId = 4000;
+            _organisationStandardId = "4000";
             _orgId = "EPA999";
             _request = new CreateEpaOrganisationStandardRequest
             {
@@ -66,16 +67,16 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         }
 
         [Test]
-        public void ResultsAreOfTypeEpaOrganisation()
+        public void ResultsAreOfTypeEpaOrganisationStandardResponse()
         {
-            ((OkObjectResult)_result).Value.Should().BeOfType<int>();
+            ((OkObjectResult)_result).Value.Should().BeOfType<EpaOrganisationStandardResponse>();
         }
 
         [Test]
         public void ResultsMatchExpectedOrganisationStandardId()
         {
-            var orgStandardId = ((OkObjectResult)_result).Value as int?;
-            orgStandardId.Value.Should().Be(_organisationStandardId);
+            var organisationStandardId = ((OkObjectResult)_result).Value as EpaOrganisationStandardResponse;
+            organisationStandardId.Details.Should().Be(_organisationStandardId);
         }
     }
 }
