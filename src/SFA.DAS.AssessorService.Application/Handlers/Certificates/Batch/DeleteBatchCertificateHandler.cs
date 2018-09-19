@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
         private async Task DeleteCertificate(DeleteBatchCertificateRequest request)
         {
             _logger.LogInformation("DeleteCertificate Before set Certificate to Deleted in db");
-            await _certificateRepository.Delete(request.Uln, request.StandardCode, request.Username);
+            await _certificateRepository.Delete(request.Uln, request.StandardCode, request.Username, null);
             _logger.LogInformation("DeleteCertificate Certificate set to Deleted in db");
         }
     }

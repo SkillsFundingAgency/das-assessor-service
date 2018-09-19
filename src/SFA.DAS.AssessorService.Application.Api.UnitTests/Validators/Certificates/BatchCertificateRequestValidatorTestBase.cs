@@ -32,9 +32,11 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
             var certificateRepositoryMock = new Mock<ICertificateRepository>();
 
             certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 1)).ReturnsAsync(GenerateCertificate(1234567890, 1, "test", "Draft"));
+            certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 98)).ReturnsAsync(GenerateCertificate(1234567890, 98, "test", "Deleted"));
             certificateRepositoryMock.Setup(q => q.GetCertificate(9999999999, 1)).ReturnsAsync(GenerateCertificate(9999999999, 1, "test", "Printed"));
 
             certificateRepositoryMock.Setup(q => q.GetOptions(1)).ReturnsAsync(new List<Option>());
+            certificateRepositoryMock.Setup(q => q.GetOptions(98)).ReturnsAsync(new List<Option>());
 
             certificateRepositoryMock.Setup(q => q.GetOptions(99))
                 .ReturnsAsync(new List<Option>
@@ -64,6 +66,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
                 .ReturnsAsync(new List<Standard>
                 {
                    GenerateStandard(1),
+                   GenerateStandard(98),
                    GenerateStandard(99)
                 });
 
@@ -71,6 +74,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
                 .ReturnsAsync(new List<StandardOrganisationSummary>
                 {
                     GenerateStandardOrganisationSummary(1),
+                    GenerateStandardOrganisationSummary(98),
                     GenerateStandardOrganisationSummary(99)
                 });
 
@@ -81,7 +85,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
                 });
 
             assessmentOrgsApiClientMock.Setup(c => c.GetStandard(1)).ReturnsAsync(GenerateStandard(1));
-            assessmentOrgsApiClientMock.Setup(c => c.GetStandard(13)).ReturnsAsync(GenerateStandard(99));
+            assessmentOrgsApiClientMock.Setup(c => c.GetStandard(98)).ReturnsAsync(GenerateStandard(98));
+            assessmentOrgsApiClientMock.Setup(c => c.GetStandard(99)).ReturnsAsync(GenerateStandard(99));
 
             return assessmentOrgsApiClientMock;
         }
@@ -91,6 +96,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
             var ilrRepositoryMock = new Mock<IIlrRepository>();
 
             ilrRepositoryMock.Setup(q => q.Get(1234567890, 1)).ReturnsAsync(GenerateIlr(1234567890, 1, "Test", "12345678"));
+            ilrRepositoryMock.Setup(q => q.Get(1234567890, 98)).ReturnsAsync(GenerateIlr(1234567890, 1, "Test", "12345678"));
             ilrRepositoryMock.Setup(q => q.Get(1234567890, 99)).ReturnsAsync(GenerateIlr(1234567890, 1, "Test", "12345678"));
             ilrRepositoryMock.Setup(q => q.Get(9999999999, 1)).ReturnsAsync(GenerateIlr(9999999999, 1, "Test", "99999999"));
 

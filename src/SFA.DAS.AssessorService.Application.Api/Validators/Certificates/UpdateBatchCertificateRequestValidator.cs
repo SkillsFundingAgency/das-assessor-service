@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                     {
                         context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate not found"));
                     }
-                    else if(existingCertificate.Status != CertificateStatus.Draft)
+                    else if(existingCertificate.Status != CertificateStatus.Draft && existingCertificate.Status != CertificateStatus.Deleted) // TODO: Unit Test
                     {
                         context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate is not in '{CertificateStatus.Draft}' status"));
                     }

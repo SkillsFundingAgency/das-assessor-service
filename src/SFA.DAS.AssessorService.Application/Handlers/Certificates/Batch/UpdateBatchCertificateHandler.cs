@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates.Batch;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System.Threading;
 using System.Threading.Tasks;
@@ -33,6 +34,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             _logger.LogInformation("UpdateCertificate Before Update CertificateData");
 
             certificate.CertificateData = JsonConvert.SerializeObject(request.CertificateData);
+
+            if(certificate.Status == CertificateStatus.Deleted)
+            {
+                certificate.Status = CertificateStatus.Draft;
+            }
 
             _logger.LogInformation("UpdateCertificate Before Update Cert in db");
             await _certificateRepository.Update(certificate, request.Username, null);

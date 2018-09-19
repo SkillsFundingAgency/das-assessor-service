@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                     else if (!grades.Any(g => g == overallGrade))
                     {
                         string gradesString = string.Join(", ", grades);
-                        context.AddFailure(new ValidationFailure("OverallGrade", $"The overall grade must one of the following: {gradesString}"));
+                        context.AddFailure(new ValidationFailure("OverallGrade", $"Invalid grade. Must one of the following: {gradesString}"));
                     }
                 });
 
@@ -82,10 +82,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                         {
                             context.AddFailure(new ValidationFailure("StandardCode", "EPAO does not provide this Standard"));
                         }
+                        else if (!courseOptions.Any() && !string.IsNullOrEmpty(m.CertificateData.CourseOption))
+                        {
+                            context.AddFailure(new ValidationFailure("CourseOption", $"Invalid course option for this Standard"));
+                        }
                         else if (courseOptions.Any() && !courseOptions.Any(o => o.OptionName == m.CertificateData.CourseOption))
                         {
                             string courseOptionsString = string.Join(", ", courseOptions.Select(o => o.OptionName));
-                            context.AddFailure(new ValidationFailure("CourseOption", $"The course option must one of the following: {courseOptionsString}"));
+                            context.AddFailure(new ValidationFailure("CourseOption", $"Invalid course option for this Standard. Must one of the following: {courseOptionsString}"));
                         }
                     }
                 });

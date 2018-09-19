@@ -164,9 +164,15 @@ namespace SFA.DAS.AssessorService.Data
             var cert = await GetCertificate(certificate.Id);
 
             cert.CertificateData = certificate.CertificateData;
-            cert.UpdatedBy = username;
             cert.Status = certificate.Status;
-            cert.UpdatedAt = certificate.UpdatedAt;
+            cert.UpdatedBy = username;
+            cert.UpdatedAt = DateTime.UtcNow;
+
+            if (certificate.Status != CertificateStatus.Deleted)
+            {
+                cert.DeletedBy =  null;
+                cert.DeletedAt = null;
+            }
 
             if (updateLog)
             {
@@ -178,7 +184,7 @@ namespace SFA.DAS.AssessorService.Data
             return cert;
         }
 
-        public async Task Delete(long uln, int standardCode, string username)
+        public async Task Delete(long uln, int standardCode, string username, string action, bool updateLog = true)
         {
             var cert = await GetCertificate(uln, standardCode);
 
@@ -191,6 +197,11 @@ namespace SFA.DAS.AssessorService.Data
             cert.Status = CertificateStatus.Deleted;
             cert.DeletedBy = username;
             cert.DeletedAt = DateTime.UtcNow;
+
+            if (updateLog)
+            {
+                await UpdateCertificateLog(cert, action, username);
+            }
 
             await _context.SaveChangesAsync();
         }
