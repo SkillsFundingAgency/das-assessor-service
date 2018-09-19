@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
         }
 
         [HttpGet(Name="StaffSearch")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(PaginatedList<StaffSearchResult>))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(PaginatedList<StaffSearchItems>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> StaffSearch(string searchQuery, int? page = 1)

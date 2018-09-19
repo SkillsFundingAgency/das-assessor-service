@@ -74,9 +74,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             return await Get<List<CertificateResponse>>("/api/v1/certificates?statusses=Submitted");
         }
 
-        public async Task<PaginatedList<StaffSearchResult>> Search(string searchString, int page)
+        public async Task<StaffSearchResult> Search(string searchString, int page)
         {
-            return await Get<PaginatedList<StaffSearchResult>>($"/api/v1/staffsearch?searchQuery={searchString}&page={page}");
+            return await Get<StaffSearchResult>($"/api/v1/staffsearch?searchQuery={searchString}&page={page}");
         }
 
         public async Task<PaginatedList<StaffBatchSearchResult>> BatchSearch(int batchNumber, int page)

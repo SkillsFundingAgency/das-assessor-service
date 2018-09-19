@@ -66,7 +66,7 @@ namespace SFA.DAS.AssessorService.Data.Staff
             var searchResult = new StaffReposSearchResult
             {
                 PageOfResults = (await _connection.QueryAsync<Ilr>(
-                        @"SELECT cert.Uln, JSON_VALUE(CertificateData, '$.LearnerGivenNames') AS GivenNames, JSON_VALUE(CertificateData, '$.LearnerFamilyName') AS FamilyName, cert.StandardCode AS StdCode, cert.UpdatedAt 
+                        @"SELECT org.EndPointAssessorOrganisationId, cert.Uln, JSON_VALUE(CertificateData, '$.LearnerGivenNames') AS GivenNames, JSON_VALUE(CertificateData, '$.LearnerFamilyName') AS FamilyName, cert.StandardCode AS StdCode, cert.UpdatedAt 
 		                    FROM Certificates cert
                             INNER JOIN Organisations org ON org.Id = cert.OrganisationId
                             INNER JOIN Ilrs ilr ON ilr.Uln = cert.Uln AND ilr.StdCode = cert.StandardCode
