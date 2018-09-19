@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
         {
             Include(new BatchCertificateRequestValidator(localiser, organisationQueryRepository, ilrRepository, certificateRepository, assessmentOrgsApiClient));
 
-            RuleFor(m => m.CertificateReference).NotEmpty();
+            RuleFor(m => m.CertificateReference).NotEmpty().WithMessage("Enter the certificate reference");
 
             RuleFor(m => m)
                 .Custom((m, context) =>

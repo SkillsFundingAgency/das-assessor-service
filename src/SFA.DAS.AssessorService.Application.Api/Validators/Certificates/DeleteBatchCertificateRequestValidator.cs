@@ -16,6 +16,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
             RuleFor(m => m.Uln).InclusiveBetween(1000000000, 9999999999).WithMessage("The apprentice's ULN should contain exactly 10 numbers");
             RuleFor(m => m.FamilyName).NotEmpty().WithMessage("Enter the apprentice's last name");
             RuleFor(m => m.StandardCode).NotEmpty().WithMessage("A standard should be selected");
+            RuleFor(m => m.CertificateReference).NotEmpty().WithMessage("Enter the certificate reference");
             RuleFor(m => m.UkPrn).InclusiveBetween(10000000, 99999999).WithMessage("The UKPRN should contain exactly 8 numbers");
             RuleFor(m => m.Username).NotEmpty();
 
