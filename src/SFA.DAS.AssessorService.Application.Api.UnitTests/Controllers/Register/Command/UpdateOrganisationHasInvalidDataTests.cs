@@ -10,20 +10,20 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
+using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 using SFA.DAS.AssessorService.Domain.Consts;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register.Command
 {
     [TestFixture]
-    public class CreateNewOrganisationTests
+    public class UpdateOrganisationHasInvalidDataTests
     {
         private static RegisterController _controller;
         private static Mock<IMediator> _mediator;
         private static Mock<ILogger<RegisterController>> _logger;
         private object _result;
-        private CreateEpaOrganisationRequest _request;
-        private string _organisationId;
+        private UpdateEpaOrganisationRequest _request;
 
         [SetUp]
         public void Arrange()
@@ -31,10 +31,10 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
             _mediator = new Mock<IMediator>();
             _logger = new Mock<ILogger<RegisterController>>();
 
-            _organisationId = "EPA999";
-            _request = new CreateEpaOrganisationRequest
+            _request = new UpdateEpaOrganisationRequest
             {
                 Name = "name 1",
+                OrganisationId = "EPA999",
                 Ukprn = 123321,
                 OrganisationTypeId = 5,
                 LegalName = "legal name 1",
@@ -45,43 +45,36 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
                 Address4 = "address 4",
                 Postcode = "postcode"
             };
-
+   
             _mediator.Setup(m =>
-                m.Send(_request, new CancellationToken())).ReturnsAsync(_organisationId);
+                m.Send(_request, new CancellationToken())).Throws<BadRequestException>();
 
             _controller = new RegisterController(_mediator.Object, _logger.Object);
-            _result = _controller.CreateOrganisation(_request).Result;
+            _result = _controller.UpdateEpaOrganisation(_request).Result;
         }
 
         [Test]
-        public void CreateEpaOrganisationReturnsExpectedActionResult()
+        public void CreateEpaOrganisationReturnsAnActionResult()
         {
             _result.Should().BeAssignableTo<IActionResult>();
         }
 
         [Test]
-        public void MediatorSendsExpectedOrganisationRequest()
+        public void MediatorSendsInvalidOrganisationRequest()
         {
-            _mediator.Verify(m => m.Send(It.IsAny<CreateEpaOrganisationRequest>(), new CancellationToken()));
+            _mediator.Verify(m => m.Send(It.IsAny<UpdateEpaOrganisationRequest>(), new CancellationToken()));
         }
 
         [Test]
-        public void CreateOrganisationShouldReturnOk()
+        public void CreateOrganisationBadRequestExceptionShouldReturnBadRequest()
         {
-            _result.Should().BeOfType<OkObjectResult>();
+            _result.Should().BeOfType<BadRequestObjectResult>();
         }
 
         [Test]
-        public void ResultsAreOfTypeEpaOrganisation()
+        public void BadRequestResultsAreOfTypeBadRequestException()
         {
-            ((OkObjectResult)_result).Value.Should().BeOfType<EpaOrganisationResponse>();
-        }
-
-        [Test]
-        public void ResultsMatchExpectedOrganisation()
-        {
-            var organisation = ((OkObjectResult)_result).Value as EpaOrganisationResponse;
-            organisation.Details.Should().BeEquivalentTo(_organisationId);
+            ((BadRequestObjectResult)_result).Value.Should().BeOfType<EpaOrganisationResponse>();
         }
     }
 }
