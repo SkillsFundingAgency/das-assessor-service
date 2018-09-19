@@ -60,54 +60,51 @@
 {
     <div class="grid-row">
         <div class="column-two-thirds">
-            <table>
-                <caption class="heading-large">Certificate details</caption>
-                <tbody>
-                    <tr>
-                        <td><span class="bold">Certificate number</span></td>
-                        <td>@Model.Learner.CertificateReference</td>
-                    </tr>
-                    <tr>
-                        <td><span class="bold">EPAO</span></td>
-                        <td>@Model.Learner.OrganisationName</td>
-                    </tr>
-                    <tr>
-                        <td><span class="bold">Standard</span></td>
-                        <td>@Model.Learner.Standard (@Model.Learner.StandardCode)</td>
-                    </tr>
-                    <tr>
-                        <td><span class="bold">Level</span></td>
-                        <td>@Model.Learner.Level</td>
-                    </tr>
-                    <tr>
-                        <td><span class="bold">Option</span></td>
-                        @if (@Model.Learner.Option != null)
-                        {
-                            <td>@Model.Learner.Option</td>
-                        }
-                        else
-                        {
-                            <td>None</td>
-                        }
-                    </tr>
-                    <tr>
-                        <td><span class="bold">Grade</span></td>
-                        <td>@Model.Learner.OverallGrade</td>
-                    </tr>
-                    <tr>
-                        <td><span class="bold">Learner start date</span></td>
-                        <td>@Model.Learner.LearnStartDate?.ToShortDateString()</td>
-                    </tr>
-                    <tr>
-                        <td><span class="bold">Achievement date</span></td>
-                        <td>@Model.Learner.AchievementDate?.ToShortDateString()</td>
-                    </tr>
-                    <tr>
-                        <td><span class="bold">Status</span></td>
-                        <td>@Model.Learner.CertificateStatus</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="form-group">
+                <table>
+                    <caption class="heading-large">Certificate details</caption>
+                    <tbody>
+                        <tr>
+                            <td><span class="bold">EPAO</span></td>
+                            <td>@Model.Learner.OrganisationName</td>
+                        </tr>
+                        <tr>
+                            <td><span class="bold">Standard</span></td>
+                            <td>@Model.Learner.Standard (@Model.Learner.StandardCode)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="bold">Level</span></td>
+                            <td>@Model.Learner.Level</td>
+                        </tr>
+                        <tr>
+                            <td><span class="bold">Option</span></td>
+                            @if (@Model.Learner.Option != null)
+                            {
+                                <td>@Model.Learner.Option</td>
+                            }
+                            else
+                            {
+                                <td>None</td>
+                            }
+                        </tr>
+                        <tr>
+                            <td><span class="bold">Grade</span></td>
+                            <td>@Model.Learner.OverallGrade</td>
+                        </tr>
+                        <tr>
+                            <td><span class="bold">Learner start date</span></td>
+                            <td>@Model.Learner.LearnStartDate?.ToShortDateString()</td>
+                        </tr>
+                        <tr>
+                            <td><span class="bold">Achievement date</span></td>
+                            <td>@Model.Learner.AchievementDate?.ToShortDateString()</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="form-group">
+                <a class="button" asp-action="Check" asp-controller="CertificateAmmend" asp-route-certificateId="@Model.Learner.CertificateId">Amend certificate information</a>
+            </div>
         </div>
     </div>
 
@@ -185,23 +182,28 @@ else
                         </tr>
                 </tbody>
             </table>
-            <h2 class="heading-medium">No Certificate requested</h2>
+            <h2 class="heading-large">No certificate requested</h2>
         </div>
     </div>
 }
 
+@if (Model.Learner.CertificateReference != null)
+{
 <div class="grid-row">
     <div class="column-two-thirds">
-        @if (Model.ShowDetail)
-        {
-            <a class="button" asp-action="Select" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString" asp-route-alllogs=true>Show all History</a>
-        }
-        else
-        {
-            <a class="button" asp-action="Select" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString" asp-route-alllogs=false>Show Summary</a>
-        }
+        <div class="form-group">
+            @if (Model.ShowDetail)
+            {
+                <a asp-action="Select" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString" asp-route-alllogs=true>Show all history</a>
+            }
+            else
+            {
+                <a asp-action="Select" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString" asp-route-alllogs=false>Show summary</a>
+            }
+        </div>
     </div>
 </div>
+}
 
 <div class="grid-row">
     <div class="column-two-thirds">
@@ -210,9 +212,8 @@ else
             @if (Model.Learner.CertificateReference != null)
             {
                 <li><a asp-action="Index" asp-controller="DuplicateRequest" asp-route-certificateId="@Model.Learner.CertificateId" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.Page">request duplicate certificate</a></li>
-                <li><a asp-action="Check" asp-controller="CertificateAmmend" asp-route-certificateId="@Model.Learner.CertificateId">amend certificate information</a></li>        
             }
-            <li><a asp-controller="Search" asp-action="Index">Search for another apprentice</a></li>
+            <li><a asp-controller="search" asp-action="Index">search for another apprentice</a></li>
         </ul>
     </div>
 </div>
