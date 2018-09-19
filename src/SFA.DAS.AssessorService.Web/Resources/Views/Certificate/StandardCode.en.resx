@@ -121,6 +121,9 @@
     <value>Continue</value>
   </data>
   <data name="Heading" xml:space="preserve">
-    <value>Please select a standard?</value>
+    <value>Search and select the standard</value>
+  </data>
+  <data name="StandardCodesHint" xml:space="preserve">
+    <value>For example, Assistant accountant</value>
   </data>
 </root>

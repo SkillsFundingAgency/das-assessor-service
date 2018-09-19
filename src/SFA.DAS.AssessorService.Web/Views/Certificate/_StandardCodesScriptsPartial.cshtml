@@ -2,14 +2,30 @@
 
 <script>
 
-  accessibleAutocomplete.enhanceSelectElement({
-    selectElement: document.querySelector('#SelectedStandardCode'),
-    name: 'StandardCodes',
-    defaultValue: '',
-    confirmOnBlur: false,
-    autoselect: false,
-    showAllValues: true,
-    // displayMenu: 'overlay'
-  })
+var epaoStandardCodesFormElement = $('.apprentice-standard-codes-form');
+var epaoStandardCodesValidationRulesObject = {
+  rules: {
+      StandardCodes: {
+          required: true
+      }
+  },
+  messages: {
+      StandardCodes: {
+          required: 'Select the standard'
+      }
+  }
+};
+
+GOVUK.epaoValidate(epaoStandardCodesFormElement, epaoStandardCodesValidationRulesObject);
+
+accessibleAutocomplete.enhanceSelectElement({
+  selectElement: document.querySelector('#SelectedStandardCode'),
+  name: 'StandardCodes',
+  defaultValue: '',
+  confirmOnBlur: false,
+  autoselect: false,
+  showAllValues: true,
+  // displayMenu: 'overlay'
+})
 
 </script>

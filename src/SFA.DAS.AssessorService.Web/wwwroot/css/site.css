@@ -1110,6 +1110,10 @@ table.responsive tr.total {
   cursor: pointer;
 }
 
+.autocomplete__dropdown-arrow-down-wrapper {
+  position: relative;
+}
+
 .autocomplete__dropdown-arrow-down {
   pointer-events: none;
   z-index: 1;
@@ -1118,7 +1122,7 @@ table.responsive tr.total {
   right: 8px;
   width: 24px;
   height: 24px;
-  top: 5px;
+  top: -26px;
 }
 
 .autocomplete__menu {

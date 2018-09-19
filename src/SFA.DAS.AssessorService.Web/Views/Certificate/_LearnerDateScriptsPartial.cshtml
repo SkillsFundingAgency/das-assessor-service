@@ -12,8 +12,7 @@
                         return year === 4
                     }
                 },
-                noFutureDate: true,
-                earliestDate: '1/1/2017'
+                noFutureDate: true
             },
             Month: {
                 required: true,
@@ -29,20 +28,19 @@
         },
         messages: {
             Day: {
-                required: 'Enter the day',
+                required: 'Enter the start day',
                 number: 'Day must be a number',
                 range: 'Enter a valid day',
                 isValidDate: 'Enter a valid date',
-                noFutureDate: 'An learner date cannot be in the future',
-                earliestDate: 'An learner date cannot be before 01 01 2017'
+                noFutureDate: 'A start date cannot be in the future'
             },
             Month: {
-                required: 'Enter the month',
+                required: 'Enter the start month',
                 number: 'Month must be a number',
                 range: 'Enter a valid month',
             },
             Year: {
-                required: 'Enter the year',
+                required: 'Enter the start year',
                 number: 'Year must be a number',
                 minlength: 'Enter a valid year',
                 maxlength: 'Enter a valid year',

@@ -36,7 +36,7 @@
             }
 
             <div sfa-anyvalidationerror-class="after-error-summary">
-                <div id="SelectedStandardCode">
+                <div>
                     <h1 class="heading-large">@Localizer["PageHeading"]</h1>
                     <p>@Localizer["PageDescription"]</p>
                     <ul class="list">
@@ -47,7 +47,6 @@
                             <p><span class="bold"><abbr title="Unique learner number">ULN</abbr>:</span> @Model.SearchResults.First().Uln</p>
                         </li>
                     </ul>
-                    
                 </div>
 
                 <div class="form-group" sfa-validation-for="SelectedStandardCode" sfa-validationerror-class="form-group-error">

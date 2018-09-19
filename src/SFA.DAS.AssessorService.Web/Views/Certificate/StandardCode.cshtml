@@ -20,7 +20,7 @@
             <a asp-controller="CertificatePrivateFirstName" asp-action="FirstName" class="link-back">Back</a>
         }
 
-        <form class="apprentice-firstname-form js-disable-on-submit" method="post" asp-action="StandardCode" asp-controller="CertificatePrivateStandardCode">
+        <form class="apprentice-standard-codes-form js-disable-on-submit" method="post" asp-action="StandardCode" asp-controller="CertificatePrivateStandardCode">
             @Html.HiddenFor(c => c.Id)
 
             @* hidden with css by default *@
@@ -44,25 +44,24 @@
                 </div>
             }
 
-            <fieldset sfa-anyvalidationerror-class="after-error-summary">
-                <legend id="Name">
-                    <h1 class="heading-large">
-                        @Localizer["Heading"]
-                    </h1>
-                </legend>
+            <div sfa-anyvalidationerror-class="after-error-summary">
+                <h1 class="heading-large">
+                    @Localizer["Heading"]
+                </h1>
 
-                <div class="form-group">
-                    <label for="StandardCodes">
+                <div class="form-group" sfa-validation-for="StandardCodes" sfa-validationerror-class="form-group-error">
+                    <label class="form-label" for="StandardCodes">
                         <span class="form-label-bold visually-hidden">@Localizer["StandardCodes"]</span>
-                        <span class="error-message" asp-validation-for="StandardCodes"></span>
+                        <span class="form-hint">
+                            @Localizer["StandardCodesHint"]
+                        </span>
                     </label>
                     <select class="form-control" asp-for="SelectedStandardCode" asp-items="@(new SelectList(Model.StandardCodes,"Value","Text"))">
                         <option value="">Please select one</option>
                     </select>
-                    @*<span class="form-control" sfa-validation-for="@Model.SelectedUkprn" sfa-validationerror-class="form-control-error" />*@
                 </div>
                 
-            </fieldset>
+            </div>
 
             <button type="submit" class="button">@Localizer["ContinueButton"]</button>
         </form>
