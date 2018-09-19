@@ -12,7 +12,7 @@ using SFA.DAS.AssessorService.Data.IntegrationTests.Services;
 
 namespace SFA.DAS.AssessorService.Data.IntegrationTests
 {
-    public class GetAssessmentOrganisationsTests : TestBase
+    public class GetOrganisationsByUkprnTests : TestBase
     {
         private OrganisationModel _organisation1;
         private OrganisationModel _organisation2;
@@ -20,6 +20,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         private RegisterQueryRepository _repository;
         private string _organisationId1;
         private string _organisationId2;
+        private int _ukprn1;
 
         [OneTimeSetUp]
         public void SetupOrganisationTests()
@@ -27,6 +28,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             _repository = new RegisterQueryRepository(_databaseService.WebConfiguration);
             _organisationId1 = "EPA0001";
             _organisationId2 = "EPA005";
+            _ukprn1 = 876544;
             _organisation1 = new OrganisationModel
             {
                 Id = Guid.NewGuid(),
@@ -34,7 +36,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 DeletedAt = null,
                 EndPointAssessorName = "Name 1",
                 EndPointAssessorOrganisationId = _organisationId1,
-                EndPointAssessorUkprn = 876544,
+                EndPointAssessorUkprn = _ukprn1,
                 PrimaryContact = null,
                 Status = "new",
                 UpdatedAt = null,
@@ -60,22 +62,16 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             OrganisationHandler.InsertRecords(new List<OrganisationModel> { _organisation1, _organisation2 });
         }
 
-        [Test]
-        public void RunGetAllOrganisationsAndCheckAllOrganisationsExpectedAreReturned()
+        [TestCase("876544", 1)]
+        [TestCase("12344321", 0)]
+        [TestCase("test", 0)]
+        public void RunGetAllOrganisationsAndCheckAllOrganisationsExpectedAreReturned(string ukprn, int expectedCount)
         {
-            var organisationsReturned = _repository.GetAssessmentOrganisations().Result.ToList();
-            Assert.AreEqual(2, organisationsReturned.Count(), $@"Expected 2 organisations back but got {organisationsReturned.Count()}");
-            Assert.AreEqual(1, organisationsReturned.Count(x => x.Id == _organisation1.EndPointAssessorOrganisationId), "Organisation 1 Id was not found");
-            Assert.AreEqual(1, organisationsReturned.Count(x => x.Id == _organisation2.EndPointAssessorOrganisationId), "Organisation 2 Id was not found");
+            var organisationsReturned = _repository.GetAssessmentOrganisationsByUkprn(ukprn).Result.ToList();
+            Assert.AreEqual(expectedCount, organisationsReturned.Count(), $@"Expected {expectedCount} organisations back but got {organisationsReturned.Count()}");
         }
 
-        [Test]
-        public void GetOrganisationByIdAndCheckTheOrganisationIsReturned()
-        {
-            var organisation = OrganisationHandler.GetOrganisationSummaryByOrgId(_organisationId2);
-            Assert.AreEqual(_organisation2.EndPointAssessorName, organisation.Name, "The organisation names do not match");
-            Assert.AreEqual(_organisation2.EndPointAssessorOrganisationId, organisation.Id, "The organisation Ids do not match");
-        }
+       
 
         [OneTimeTearDown]
         public void TearDownOrganisationTests()

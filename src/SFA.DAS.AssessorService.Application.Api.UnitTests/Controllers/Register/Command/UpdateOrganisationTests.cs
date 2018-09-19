@@ -16,13 +16,13 @@ using SFA.DAS.AssessorService.Domain.Consts;
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register.Command
 {
     [TestFixture]
-    public class CreateNewOrganisationTests
+    public class UpdateOrganisationTests
     {
         private static RegisterController _controller;
         private static Mock<IMediator> _mediator;
         private static Mock<ILogger<RegisterController>> _logger;
         private object _result;
-        private CreateEpaOrganisationRequest _request;
+        private UpdateEpaOrganisationRequest _request;
         private string _organisationId;
 
         [SetUp]
@@ -32,9 +32,10 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
             _logger = new Mock<ILogger<RegisterController>>();
 
             _organisationId = "EPA999";
-            _request = new CreateEpaOrganisationRequest
+            _request = new UpdateEpaOrganisationRequest
             {
                 Name = "name 1",
+                OrganisationId = _organisationId,
                 Ukprn = 123321,
                 OrganisationTypeId = 5,
                 LegalName = "legal name 1",
@@ -50,7 +51,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
                 m.Send(_request, new CancellationToken())).ReturnsAsync(_organisationId);
 
             _controller = new RegisterController(_mediator.Object, _logger.Object);
-            _result = _controller.CreateOrganisation(_request).Result;
+            _result = _controller.UpdateEpaOrganisation(_request).Result;
         }
 
         [Test]
@@ -62,7 +63,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         [Test]
         public void MediatorSendsExpectedOrganisationRequest()
         {
-            _mediator.Verify(m => m.Send(It.IsAny<CreateEpaOrganisationRequest>(), new CancellationToken()));
+            _mediator.Verify(m => m.Send(It.IsAny<UpdateEpaOrganisationRequest>(), new CancellationToken()));
         }
 
         [Test]
@@ -72,7 +73,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         }
 
         [Test]
-        public void ResultsAreOfTypeEpaOrganisation()
+        public void ResultsAreOfTypeEpaOrganisationResponse()
         {
             ((OkObjectResult)_result).Value.Should().BeOfType<EpaOrganisationResponse>();
         }
