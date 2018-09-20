@@ -528,20 +528,6 @@ fieldset.after-error-summary {
   }
 }
 
-/* .close-postcode-lookup {
-  font-weight: bold;
-  font-size: 20px;
-  position: absolute;
-  right: 24px;
-  margin-top: 8px;
-  text-decoration: none;
-  line-height: 1;
-} */
-
-/* .close-postcode-lookup:visited {
-  color: #0b0c0c;
-} */
-
 .hide-nojs {
   display: none;
 }
@@ -1122,14 +1108,13 @@ table.responsive tr.total {
   right: 8px;
   width: 24px;
   height: 24px;
-  top: -26px;
+  top: -30px;
 }
 
 .autocomplete__menu {
   background-color: #fff;
   border: 2px solid #0b0c0c;
   border-top: 0;
-  /* color: #34384b; */
   margin: 0;
   max-height: 342px;
   overflow-x: hidden;
@@ -1172,14 +1157,11 @@ table.responsive tr.total {
 
 .autocomplete__option:first-of-type {
   border-top-width: 0;
+  padding-top: 8px;
 }
 
 .autocomplete__option:last-of-type {
-  /* border-bottom-width: 0; */
-}
-
-.autocomplete__option--odd {
-  /* background-color: #fafafa; */
+  padding-bottom: 4px;
 }
 
 .autocomplete__option--focused,
@@ -1191,8 +1173,7 @@ table.responsive tr.total {
 }
 
 .autocomplete__option--no-results {
-  background-color: #fafafa;
-  color: #646b6f;
+  color: #6f777b;
   cursor: not-allowed;
 }
 
