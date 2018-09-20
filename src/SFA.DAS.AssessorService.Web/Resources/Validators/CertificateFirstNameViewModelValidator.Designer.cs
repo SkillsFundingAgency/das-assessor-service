@@ -62,7 +62,7 @@ namespace SFA.DAS.AssessorService.Web.Resources.Validators {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter a name.
+        ///   Looks up a localized string similar to Enter the apprentice’s first name.
         /// </summary>
         internal static string NameCannotBeEmpty {
             get {

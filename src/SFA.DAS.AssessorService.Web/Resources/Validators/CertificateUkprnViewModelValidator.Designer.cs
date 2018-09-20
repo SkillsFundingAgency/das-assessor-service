@@ -62,7 +62,7 @@ namespace SFA.DAS.AssessorService.Web.Resources.Validators {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter a ukprn.
+        ///   Looks up a localized string similar to Enter the training provider&apos;s UKPRN.
         /// </summary>
         internal static string NameCannotBeEmpty {
             get {
@@ -71,7 +71,7 @@ namespace SFA.DAS.AssessorService.Web.Resources.Validators {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ukprn is invalid does not exist.
+        ///   Looks up a localized string similar to Enter the training provider&apos;s UKPRN.
         /// </summary>
         internal static string UkprnMustExist {
             get {
@@ -80,7 +80,7 @@ namespace SFA.DAS.AssessorService.Web.Resources.Validators {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Must be a number.
+        ///   Looks up a localized string similar to The UKPRN should contain 8 numbers.
         /// </summary>
         internal static string UkprnNumber {
             get {
@@ -89,7 +89,7 @@ namespace SFA.DAS.AssessorService.Web.Resources.Validators {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Must be 8 digits.
+        ///   Looks up a localized string similar to The UKPRN should contain 8 numbers.
         /// </summary>
         internal static string UkprnNumberLength {
             get {
