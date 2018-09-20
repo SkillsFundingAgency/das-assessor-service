@@ -117,7 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="FirstNameCannotBeEmpty" xml:space="preserve">
-    <value>Enter the apprentice’s first name</value>
+  <data name="NameCannotBeEmpty" xml:space="preserve">
+    <value>Select the standard</value>
   </data>
 </root>

@@ -22,14 +22,14 @@ namespace SFA.DAS.AssessorService.Web.Resources.Validators {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class CertificateRecipientViewModelValidator {
+    internal class CertificateStandardCodeListViewModelValidator {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal CertificateRecipientViewModelValidator() {
+        internal CertificateStandardCodeListViewModelValidator() {
         }
         
         /// <summary>
@@ -39,8 +39,8 @@ namespace SFA.DAS.AssessorService.Web.Resources.Validators {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SFA.DAS.AssessorService.Web.Resources.Validators.CertificateRecipientViewModelVal" +
-                            "idator", typeof(CertificateRecipientViewModelValidator).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SFA.DAS.AssessorService.Web.Resources.Validators.CertificateStandardCodeListViewM" +
+                            "odelValidator", typeof(CertificateStandardCodeListViewModelValidator).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -62,7 +62,7 @@ namespace SFA.DAS.AssessorService.Web.Resources.Validators {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter a name.
+        ///   Looks up a localized string similar to Select the standard.
         /// </summary>
         internal static string NameCannotBeEmpty {
             get {
