@@ -59,6 +59,11 @@
                 </h1>
 
                 <div class="form-group error-message-container" sfa-anyvalidationerror-class="form-group-error">
+                    <span class="error-message" asp-validation-for="Date"></span>
+                    <span class="error-message" asp-validation-for="Day"></span>
+                    <span class="error-message" asp-validation-for="Month"></span>
+                    <span class="error-message" asp-validation-for="Year"></span>
+
                     <span class="form-hint">
                         @Localizer["DateHint"]
                     </span>

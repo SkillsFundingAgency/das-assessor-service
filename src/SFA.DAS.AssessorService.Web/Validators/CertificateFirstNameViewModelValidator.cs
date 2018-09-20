@@ -6,9 +6,9 @@ namespace SFA.DAS.AssessorService.Web.Validators
 {
     public class CertificateFirstNameViewModelValidator : AbstractValidator<CertificateFirstNameViewModel>
     {
-        public CertificateFirstNameViewModelValidator(IStringLocalizer<CertificateFirstNameViewModel> localizer)
+        public CertificateFirstNameViewModelValidator(IStringLocalizer<CertificateFirstNameViewModelValidator> localizer)
         {
-            RuleFor(vm => vm.FirstName).NotEmpty().WithMessage(localizer["NameCannotBeEmpty"]);
+            RuleFor(vm => vm.FirstName).NotEmpty().WithMessage(localizer["FirstNameCannotBeEmpty"]);
         }
     }
 }
