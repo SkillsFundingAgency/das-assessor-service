@@ -81,10 +81,10 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             }
         }
 
-        public async Task<List<SearchResult>> Search(SearchQuery searchQuery, int? stdCodeFilter = null)
+        public async Task<List<SearchResult>> Search(SearchQuery searchQuery, int? standardCode = null)
         {
             List<SearchResult> results = await Post<SearchQuery, List<SearchResult>>("/api/v1/search", searchQuery);
-            return results.Where(s => stdCodeFilter is null || s.StdCode == stdCodeFilter).ToList();
+            return results.Where(s => standardCode is null || s.StdCode == standardCode).ToList();
         }
 
         public async Task<IEnumerable<BatchCertificateResponse>> CreateCertificates(IEnumerable<BatchCertificateRequest> request)
@@ -116,7 +116,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
         public async Task<ApiResponse> DeleteCertificate(DeleteCertificateRequest request)
         {
-            var apiResponse = await Delete<ApiResponse>($"/api/v1/certificates/batch/{request.Uln}/{request.Lastname}/{request.StandardCode}/{request.CertificateReference}/{request.UkPrn}/{request.Username}");
+            var apiResponse = await Delete<ApiResponse>($"/api/v1/certificates/batch/{request.Uln}/{request.FamilyName}/{request.StandardCode}/{request.CertificateReference}/{request.UkPrn}/{request.Username}");
 
             return apiResponse;
         }

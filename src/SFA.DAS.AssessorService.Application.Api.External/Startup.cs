@@ -10,6 +10,7 @@ using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.External.Infrastructure;
 using SFA.DAS.AssessorService.Application.Api.External.Middleware;
 using SFA.DAS.AssessorService.Application.Api.External.StartupConfiguration;
+using SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers;
 using SFA.DAS.AssessorService.Settings;
 using StructureMap;
 using Swashbuckle.AspNetCore.Swagger;
@@ -53,6 +54,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                 services.AddSwaggerGen(c =>
                 {
                     c.SwaggerDoc("v1", new Info { Title = "SFA.DAS.AssessorService.Application.Api.External", Version = "v1" });
+                    c.EnableAnnotations();
+                    c.OperationFilter<AddAzureHeaderOperationFilter>();
 
                     if (_env.IsDevelopment())
                     {
