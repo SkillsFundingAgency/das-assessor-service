@@ -37,8 +37,7 @@
                     <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
                         There's a problem
                     </h2>
-                    <ul class="error-summary-list">
-                        <li><a sfa-validation-for="StandardCodes"></a></li>
+                    <ul class="error-summary-list">                        
                         <li><a sfa-validation-for="SelectedStandardCode"></a></li>
                     </ul>
                 </div>
@@ -56,9 +55,10 @@
                             @Localizer["StandardCodesHint"]
                         </span>
                     </label>
-                    <select class="form-control" asp-for="SelectedStandardCode" asp-items="@(new SelectList(Model.StandardCodes,"Value","Text"))">
+                    <select class="form-control" asp-for="SelectedStandardCode" sfa-validation-for="SelectedStandardCode" sfa-validationerror-class="form-control-error" asp-items="@(new SelectList(Model.StandardCodes,"Value","Text"))">
                         <option value="">Please select one</option>
                     </select>
+                    <span asp-validation-for="SelectedStandardCode">You must select a Standard Code</span>
                 </div>
                 
             </div>
