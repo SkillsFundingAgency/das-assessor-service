@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -59,35 +60,41 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
         [HttpPost(Name = "StandardCode")]
         public async Task<IActionResult> StandardCode(CertificateStandardCodeListViewModel vm)
         {
-            var username = ContextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
+            var username = ContextAccessor.HttpContext.User
+                .FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
             var filteredStandardCodes = await GetFilteredStatusCodes();
             var standards = (await GetAllStandards()).ToList();
 
             vm.StandardCodes = GetSelectListItems(standards, filteredStandardCodes);
+            if (!string.IsNullOrEmpty(vm.SelectedStandardCode))
+            {               
+                var selectedStandard = standards.First(q => q.Id == Convert.ToInt32(vm.SelectedStandardCode));
+                vm.Standard = selectedStandard.Title;
+                vm.Level = selectedStandard.Level;
 
-            var selectedStandard = standards.First(q => q.Id == vm.SelectedStandardCode);
-            vm.Standard = selectedStandard.Title;
-            vm.Level = selectedStandard.Level;
+                var sessionString = SessionService.Get("CertificateSession");
+                if (sessionString == null)
+                {
+                    Logger.LogInformation(
+                        $"Session for CertificateOptionViewModel requested by {username} has been lost. Redirecting to Search Index");
+                    return RedirectToAction("Index", "Search");
+                }
 
-            var sessionString = SessionService.Get("CertificateSession");
-            if (sessionString == null)
-            {
-                Logger.LogInformation($"Session for CertificateOptionViewModel requested by {username} has been lost. Redirecting to Search Index");
-                return RedirectToAction("Index", "Search");
+                var certificateSession = JsonConvert.DeserializeObject<CertificateSession>(sessionString);
+
+                var options = (await _certificateApiClient.GetOptions(Convert.ToInt32(vm.SelectedStandardCode)))
+                    .Select(o => o.OptionName).ToList();
+                certificateSession.Options = options;
+
+                _sessionService.Set("CertificateSession", new CertificateSession()
+                {
+                    CertificateId = certificateSession.CertificateId,
+                    Uln = certificateSession.Uln,
+                    StandardCode = Convert.ToInt32(vm.SelectedStandardCode),
+                    Options = options
+                });
             }
-            var certificateSession = JsonConvert.DeserializeObject<CertificateSession>(sessionString);
-
-            var options = (await _certificateApiClient.GetOptions(vm.SelectedStandardCode)).Select(o => o.OptionName).ToList();
-            certificateSession.Options = options;
-
-            _sessionService.Set("CertificateSession", new CertificateSession()
-            {
-                CertificateId = certificateSession.CertificateId,
-                Uln = certificateSession.Uln,
-                StandardCode = vm.SelectedStandardCode,
-                Options = options
-            });
 
             return await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/Certificate/StandardCode.cshtml",

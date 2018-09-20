@@ -118,13 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DateMustBeAtLeastTwelveMonthsFromStartDate" xml:space="preserve">
-    <value>An achievement date must be at least 12 months from the learner start date</value>
+    <value>The start date must be at least 12 months from the learner start date</value>
   </data>
   <data name="DateMustNotBeBeforeStartDate" xml:space="preserve">
-    <value>An achievement date cannot be before 01 01 2017</value>
+    <value>The start date cannot be before 01 01 2017</value>
   </data>
   <data name="DateMustNotBeInFuture" xml:space="preserve">
-    <value>An achievement date cannot be in the future</value>
+    <value>The start date cannot be in the future</value>
   </data>
   <data name="DayNumber" xml:space="preserve">
     <value>Day must be a number</value>
@@ -133,7 +133,7 @@
     <value>Enter a valid day</value>
   </data>
   <data name="DayRequired" xml:space="preserve">
-    <value>Enter the achievement day</value>
+    <value>Enter the start day</value>
   </data>
   <data name="IncorrectFormat" xml:space="preserve">
     <value>Enter a valid date</value>
@@ -145,7 +145,7 @@
     <value>Enter a valid month</value>
   </data>
   <data name="MonthRequired" xml:space="preserve">
-    <value>Enter the achievement month</value>
+    <value>Enter the start month</value>
   </data>
   <data name="YearNumber" xml:space="preserve">
     <value>Year must be a number</value>
@@ -154,6 +154,6 @@
     <value>Enter a valid year</value>
   </data>
   <data name="YearRequired" xml:space="preserve">
-    <value>Enter the achievement year</value>
+    <value>Enter the start year</value>
   </data>
 </root>

@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Posts
             {
                 Id = Certificate.Id,
                 FullName = "James Corley",
-                SelectedStandardCode = 93,
+                SelectedStandardCode = "93",
                 IsPrivatelyFunded = true
             };
             

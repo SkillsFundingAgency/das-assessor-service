@@ -54,12 +54,9 @@
             }
 
             <div sfa-anyvalidationerror-class="after-error-summary">
-                <div id="Date">
-                    <h1 class="heading-medium">
-                        @*<span class="heading-secondary">@Model.GivenNames @Model.FamilyName</span>*@
-                        @Localizer["Heading"]
-                    </h1>
-                </div>
+                <h1 class="heading-medium">
+                    @Localizer["Heading"]
+                </h1>
 
                 <div class="form-group error-message-container" sfa-anyvalidationerror-class="form-group-error">
                     <span class="form-hint">
@@ -86,7 +83,7 @@
 
             <details>
                 <summary><span class="summary">@Localizer["InfoHeader"]</span></summary>
-                <div class="panel panel-border-narrow" id="what-is-the-apprenticeship-achievement-date">
+                <div class="panel panel-border-narrow" id="what-is-the-apprenticeship-start-date">
                     <p>
                         @Localizer["InfoBody"]
                     </p>
