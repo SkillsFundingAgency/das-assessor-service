@@ -48,25 +48,25 @@ namespace SFA.DAS.AssessorService.Data
             var spreadsheetDto = HarvestSpreadsheetData(progressStatus).Result;
             LogProgress(progressStatus, $"Spreadsheet harvested at [{DateTime.Now.ToLongTimeString()}]; ");
 
-            //using (var transactionScope = new TransactionScope())
-            //{
-            try
+            using (var transactionScope = new TransactionScope())
+            {
+                try
                 {
                     TearDownDatabase(progressStatus);
                     BuildUpDatabase(spreadsheetDto, progressStatus);
-                    //transactionScope.Complete();
+                    transactionScope.Complete();
                     progressStatus.Append("Entire Teardown/buildup transaction completed; ");
                 }
                 catch (Exception ex)
                 {
-                    //transactionScope.Dispose();
+                    transactionScope.Dispose();
                     var message = $"Error, transaction aborted: [{ex.Message}]; ";
                     _logger.LogError(message, ex);
                     progressStatus.Append(message);
                     throw;
 
                 }
-            //}
+            }
 
             return new AssessmentOrgsImportResponse { Status = progressStatus.ToString() };
         }

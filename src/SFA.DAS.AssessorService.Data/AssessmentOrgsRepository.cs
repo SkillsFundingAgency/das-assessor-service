@@ -78,21 +78,24 @@ namespace SFA.DAS.AssessorService.Data
                     connection.Open();
 
                 var deliveryAreasToInsert = new List<DeliveryArea>();
- 
-                foreach (var deliveryArea in deliveryAreas)
-                {
-                    var currentNumber = connection
-                        .ExecuteScalar(
-                            "select count(0) from [DeliveryArea] where Id = @Id",  deliveryArea).ToString();
-                    if (currentNumber != "0") continue;
-                    var delArea = deliveryArea;
-                    deliveryAreasToInsert.Add(delArea);
-                }
 
-                 if (deliveryAreasToInsert.Count > 0)
-                    connection.Execute(
-                        "set identity_insert [DeliveryArea] ON; INSERT INTO [DeliveryArea] ([id], [Area],[Status]) VALUES (@Id, @Area, @Status); set identity_insert[DeliveryArea] OFF; ",
-                        deliveryAreasToInsert);
+                var currentNumber = connection
+                    .ExecuteScalar(
+                        "select count(0) from [DeliveryArea]").ToString();
+
+                if (currentNumber == "0")
+                {
+                    foreach (var deliveryArea in deliveryAreas)
+                    {
+                        var delArea = deliveryArea;
+                        deliveryAreasToInsert.Add(delArea);
+                    }
+
+                    if (deliveryAreasToInsert.Count > 0)
+                        connection.Execute(
+                            "set identity_insert [DeliveryArea] ON; INSERT INTO [DeliveryArea] ([id], [Area],[Status]) VALUES (@Id, @Area, @Status); set identity_insert[DeliveryArea] OFF; ",
+                            deliveryAreasToInsert);
+                }
 
                 connection.Close();
             }
@@ -108,23 +111,24 @@ namespace SFA.DAS.AssessorService.Data
 
                 var organisationTypesToInsert = new List<TypeOfOrganisation>();
 
-                foreach (var organisationType in organisationTypes)
-                {
-                    var currentNumber = connection
-                        .ExecuteScalar(
-                            "select count(0) from [OrganisationType] where Type = @Type", organisationType).ToString();
-                  
-                    if (currentNumber != "0") continue;
-                    var orgType = organisationType;
-                    organisationTypesToInsert.Add(orgType);
-                }
+                var currentNumber = connection
+                    .ExecuteScalar(
+                        "select count(0) from [OrganisationType]").ToString();
 
-                if (organisationTypesToInsert.Count>0)
-                    connection.Execute(
-                        "set identity_insert [OrganisationType] ON; INSERT INTO [OrganisationType] (Id, [Type], [Status]) VALUES (@Id, @Type, @Status); set identity_insert [OrganisationType] OFF; ",
-                        organisationTypesToInsert);
-             
-               connection.Close();
+                if (currentNumber == "0")
+                {
+                    foreach (var organisationType in organisationTypes)
+                    {
+                        var orgType = organisationType;
+                        organisationTypesToInsert.Add(orgType);
+                    }
+
+                    if (organisationTypesToInsert.Count > 0)
+                        connection.Execute(
+                            "set identity_insert [OrganisationType] ON; INSERT INTO [OrganisationType] (Id, [Type], [Status]) VALUES (@Id, @Type, @Status); set identity_insert [OrganisationType] OFF; ",
+                            organisationTypesToInsert);
+                }
+                connection.Close();
             }
         }
 
