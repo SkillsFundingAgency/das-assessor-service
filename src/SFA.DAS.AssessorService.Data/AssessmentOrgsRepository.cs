@@ -32,9 +32,9 @@ namespace SFA.DAS.AssessorService.Data
             LogProgress(progressStatus, "Starting TearDownData()");
             try
             {
-                var connectionString = _configuration.SqlConnectionString;
+                var connectionString = LocalConnectionString();
                 var obfConnectionString = connectionString.Substring(0,60);
-                connectionString = connectionString.Replace("MultipleActiveResultSets=True", "MultipleActiveResultSets=False");
+                //connectionString = connectionString.Replace("MultipleActiveResultSets=True", "MultipleActiveResultSets=False");
                 if (obfConnectionString.ToLower().Contains("password"))
                     obfConnectionString = "obfuscation full";
 
@@ -71,7 +71,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public void WriteDeliveryAreas(List<DeliveryArea> deliveryAreas)
         { 
-            var connectionString = _configuration.SqlConnectionString;
+            var connectionString = LocalConnectionString();
             using (var connection = new SqlConnection(connectionString))
             {
                 if (connection.State != ConnectionState.Open)
@@ -103,7 +103,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public void WriteOrganisationTypes(List<TypeOfOrganisation> organisationTypes)
         {
-            var connectionString = _configuration.SqlConnectionString;
+            var connectionString = LocalConnectionString();
             using (var connection = new SqlConnection(connectionString))
             {
                 if (connection.State != ConnectionState.Open)
@@ -134,7 +134,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public void WriteOrganisations(List<EpaOrganisation> organisations)
         {
-            var connectionString = _configuration.SqlConnectionString;
+            var connectionString = LocalConnectionString();
             using (var connection = new SqlConnection(connectionString))
             {
                 if (connection.State != ConnectionState.Open)
@@ -207,7 +207,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public List<EpaOrganisationStandard> WriteEpaOrganisationStandards(List<EpaOrganisationStandard> orgStandards)
         {
-            var connectionString = _configuration.SqlConnectionString;
+            var connectionString = LocalConnectionString();
             var organisationStandardsFromDatabase = new List<EpaOrganisationStandard>();
 
             using (var connection = new SqlConnection(connectionString))
@@ -245,7 +245,7 @@ namespace SFA.DAS.AssessorService.Data
             List<EpaOrganisationStandardDeliveryArea> organisationStandardDeliveryAreas,
             List<EpaOrganisationStandard> organisationStandards)
         {
-            var connectionString = _configuration.SqlConnectionString;
+            var connectionString = LocalConnectionString();
             var sql = new StringBuilder();
 
             using (var connection = new SqlConnection(connectionString))
@@ -296,7 +296,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public List<OrganisationContact>  UpsertThenGatherOrganisationContacts(List<OrganisationContact> contacts)
         {
-            var connectionString = _configuration.SqlConnectionString;
+            var connectionString = LocalConnectionString();
 
             var contactsFromDatabase = new List<OrganisationContact>();
 
@@ -368,7 +368,13 @@ namespace SFA.DAS.AssessorService.Data
 
             return contactsFromDatabase;
         }
-
+        private string LocalConnectionString()
+        {
+            var connectionString = _configuration.SqlConnectionString;
+            connectionString = connectionString.Replace("MultipleActiveResultSets=True", "MultipleActiveResultSets=False");
+            connectionString = connectionString.Replace("Pooling=False", "Pooling=True");
+            return connectionString;
+        }
         private void LogProgress(StringBuilder progressStatus, string status)
         {
             progressStatus.Append(status);
