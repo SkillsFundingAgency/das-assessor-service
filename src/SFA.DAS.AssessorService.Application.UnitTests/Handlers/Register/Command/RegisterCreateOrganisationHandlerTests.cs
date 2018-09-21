@@ -116,7 +116,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             _registerRepository.Verify(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Never);
             _validator.Verify(v => v.CheckUkprnIsValid(requestInvalidUkprn.Ukprn));
         }
-    
+
         [Test]
         public void GetBadRequestExceptionWhenukprnAlreadyExistsValidationOccurs()
         {
