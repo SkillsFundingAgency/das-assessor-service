@@ -1,8 +1,11 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.Extensions.Localization;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Application.Api.Consts;
 using SFA.DAS.AssessorService.Application.Api.Validators;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
 {
@@ -11,11 +14,40 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
     {
         private Mock<IRegisterQueryRepository> _registerRepository;
         private EpaOrganisationValidator _validator;
+        private Mock<IStringLocalizer<EpaOrganisationValidator>> _localizer;
         [SetUp]
         public void Setup()
         {
             _registerRepository = new Mock<IRegisterQueryRepository>();
-            _validator = new EpaOrganisationValidator(_registerRepository.Object);
+            _localizer = new Mock<IStringLocalizer<EpaOrganisationValidator>>();
+            _validator = new EpaOrganisationValidator(_registerRepository.Object, _localizer.Object);
+
+            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.OrganisationTypeIsInvalid])
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationTypeIsInvalid, "fail"));          
+            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.OrganisationIdAlreadyUsed])
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationIdAlreadyUsed, "fail"));          
+            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.NoOrganisationId])
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.NoOrganisationId, "fail"));           
+            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.OrganisationNotFound])
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationNotFound, "fail"));
+            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.OrganisationIdTooLong])
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationIdTooLong, "fail"));
+            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.OrganisationNameEmpty])
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationNameEmpty, "fail"));         
+            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.UkprnAlreadyUsed])
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.UkprnAlreadyUsed, "fail"));
+            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.AnotherOrganisationUsingTheUkprn])
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.AnotherOrganisationUsingTheUkprn, "fail"));
+            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.UkprnIsInvalid])
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.UkprnIsInvalid, "fail"));
+            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.ContactIdInvalidForOrganisationId])
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.ContactIdInvalidForOrganisationId, "fail"));
+            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.OrganisationStandardAlreadyExists])
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationStandardAlreadyExists, "fail"));
+            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.StandardNotFound])
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.StandardNotFound, "fail"));
+            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.OrganisationStandardDoesNotExist])
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationStandardDoesNotExist, "fail")); 
         }
 
         [TestCase("EPA000", true)]
@@ -87,6 +119,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         {
             _registerRepository.Setup(r => r.OrganisationTypeExists(It.IsAny<int>()))
                 .Returns(Task.FromResult(exists));
+      
+
+          
             var noMessageReturned = _validator.CheckOrganisationTypeIsNullOrExists(1234).Length == 0;
             Assert.AreEqual(noMessageReturned, exists);
         }
