@@ -106,7 +106,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
         {
             return standards
                 .Where(a => filteredStandardCodes.Contains(a.Id.ToString()))
-                .Select(q => new SelectListItem { Value = q.Id.ToString(), Text = q.Title.ToString() + ' (' + q.Id + ')' })
+                .Select(q => new SelectListItem { Value = q.Id.ToString(), Text = q.Title.ToString() + " (" + q.Id + ')' })
                 .ToList()
                 .OrderBy(q => q.Text);
         }

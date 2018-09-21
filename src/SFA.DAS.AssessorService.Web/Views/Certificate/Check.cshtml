@@ -52,7 +52,7 @@
             {
             <div>
                 <dt class="cya-question">
-                    First Name
+                    First name
                 </dt>
                 <dd class="cya-answer">
                     @Model.FirstName
@@ -66,7 +66,7 @@
 
             <div>
                 <dt class="cya-question">
-                    Ukprns
+                    UKPRN
                 </dt>
                 <dd class="cya-answer">
                     @Model.SelectedUkPrn
@@ -80,7 +80,7 @@
 
             <div>
                 <dt class="cya-question">
-                    Learner Start Date
+                    Learner start date
                 </dt>
                 <dd class="cya-answer">
                     @Model.LearnerStartDate.ToShortDateString()
@@ -88,20 +88,6 @@
                 <dd class="cya-change">
                     <a asp-controller="CertificatePrivateLearnerStartDate" asp-action="LearnerStartDate" asp-route-redirecttocheck="true">
                         Change<span class="visually-hidden"> Start Date</span>
-                    </a>
-                </dd>
-            </div>
-
-            <div>
-                <dt class="cya-question">
-                    Standard Code
-                </dt>
-                <dd class="cya-answer">
-                    @Model.SelectedStandard
-                </dd>
-                <dd class="cya-change">
-                    <a asp-controller="CertificatePrivateStandardCode" asp-action="StandardCode" asp-route-redirecttocheck="true">
-                        Change<span class="visually-hidden"> Standard Code</span>
                     </a>
                 </dd>
             </div>
@@ -115,10 +101,13 @@
                     @Model.Standard
                 </dd>
                 <dd class="cya-change">
-
+                    @if (Model.IsPrivatelyFunded)
+                    {
+                        <a asp-controller="CertificatePrivateStandardCode" asp-action="StandardCode" asp-route-redirecttocheck="true">
+                            Change<span class="visually-hidden"> Standard Code</span>
+                        </a>
+                    }
                 </dd>
-            </div>
-            <div>
                 <dt class="cya-question">
                     Level
                 </dt>
@@ -128,6 +117,18 @@
                 <dd class="cya-change">
 
                 </dd>
+                @if (Model.IsPrivatelyFunded)
+                {
+                    <dt class="cya-question">
+                        Standard code
+                    </dt>
+                    <dd class="cya-answer">
+                        @Model.SelectedStandard
+                    </dd>
+                    <dd class="cya-change">
+                        
+                    </dd>
+                }
             </div>
             <div>
                 <dt class="cya-question">
