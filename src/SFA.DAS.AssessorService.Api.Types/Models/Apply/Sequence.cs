@@ -12,5 +12,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
         public List<Section> Sections { get; set; }
         public List<NextSequence> NextSequences { get; set; }
         public string Actor { get; set; }
+        public int? Order { get; set; }
     }
 }

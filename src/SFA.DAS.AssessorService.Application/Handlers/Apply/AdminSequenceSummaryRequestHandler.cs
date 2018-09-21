@@ -8,20 +8,20 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 {
-    public class SequenceSummaryRequestHandler : IRequestHandler<SequenceSummaryRequest, List<SequenceSummary>>
+    public class AdminSequenceSummaryRequestHandler : IRequestHandler<AdminSequenceSummaryRequest, List<SequenceSummary>>
     {
         private readonly IApplyRepository _applyRepository;
 
-        public SequenceSummaryRequestHandler(IApplyRepository applyRepository)
+        public AdminSequenceSummaryRequestHandler(IApplyRepository applyRepository)
         {
             _applyRepository = applyRepository;
         }
         
-        public async Task<List<SequenceSummary>> Handle(SequenceSummaryRequest request, CancellationToken cancellationToken)
+        public async Task<List<SequenceSummary>> Handle(AdminSequenceSummaryRequest request, CancellationToken cancellationToken)
         {
-            var sequences = await _applyRepository.GetSequences(request.UserId);
+            var sequences = await _applyRepository.GetSequences(request.WorkflowId);
             
-            var sequenceSummaries = sequences.Where(ss => ss.Actor == "Applicant").Select(s => new SequenceSummary(s)).ToList();
+            var sequenceSummaries = sequences.Select(s => new SequenceSummary(s)).ToList();
             
             return sequenceSummaries;
         }
