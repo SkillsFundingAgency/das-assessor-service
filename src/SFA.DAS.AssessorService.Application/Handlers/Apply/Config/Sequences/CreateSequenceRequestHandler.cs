@@ -1,16 +1,14 @@
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Dapper;
 using MediatR;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
-using SFA.DAS.AssessorService.Api.Types.Models.Apply.Setup;
+using SFA.DAS.AssessorService.Api.Types.Models.Apply.Setup.Sequences;
 using SFA.DAS.AssessorService.Application.Interfaces;
 
-namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Config
+namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Config.Sequences
 {
     public class CreateSequenceRequestHandler : IRequestHandler<CreateSequenceRequest, Sequence>
     {

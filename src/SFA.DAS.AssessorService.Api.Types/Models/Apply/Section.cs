@@ -6,6 +6,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
     {
         public string SectionId { get; set; }
         public string Title { get; set; }
+        public int? Order { get; set; }
         public List<Page> Pages { get; set; }
     }
 }

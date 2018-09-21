@@ -13,6 +13,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Apply
         public Next Next { get; set; }
         public bool Complete { get; set; }
         public bool AllowMultipleAnswers { get; set; }
+        public int? Order { get; set; }
     }
 
     public class UpdatePageResult

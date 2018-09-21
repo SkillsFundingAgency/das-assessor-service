@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
-using SFA.DAS.AssessorService.Api.Types.Models.Apply.Setup;
+using SFA.DAS.AssessorService.Api.Types.Models.Apply.Setup.Sequences;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
@@ -42,5 +43,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Apply
             var createdSequence = await _mediator.Send(new CreateSequenceRequest(sequenceSummary));
             return Created(Url.Action("Get", new {sequenceId = createdSequence.SequenceId}),createdSequence);
         }
+
+        [HttpDelete("Apply/Sequences/{sequenceId}")]
+        public async Task<ActionResult> Delete(string sequenceId)
+        {
+            await _mediator.Send(new DeleteSequenceRequest(sequenceId));
+            return NoContent();
+        }
+        
     }
 }

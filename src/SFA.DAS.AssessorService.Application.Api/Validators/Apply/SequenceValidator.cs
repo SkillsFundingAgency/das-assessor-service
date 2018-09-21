@@ -5,7 +5,6 @@ using FluentValidation;
 using FluentValidation.Results;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
-using SFA.DAS.AssessorService.Api.Types.Models.Apply.Setup;
 using SFA.DAS.AssessorService.Application.Api.Consts;
 
 namespace SFA.DAS.AssessorService.Application.Api.Validators.Apply

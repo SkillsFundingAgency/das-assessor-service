@@ -4,10 +4,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
-using SFA.DAS.AssessorService.Api.Types.Models.Apply.Setup;
+using SFA.DAS.AssessorService.Api.Types.Models.Apply.Setup.Sequences;
 using SFA.DAS.AssessorService.Application.Interfaces;
 
-namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Config
+namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Config.Sequences
 {
     public class GetAllSequencesRequestHandler : IRequestHandler<GetAllSequencesRequest, List<SequenceSummary>>
     {
