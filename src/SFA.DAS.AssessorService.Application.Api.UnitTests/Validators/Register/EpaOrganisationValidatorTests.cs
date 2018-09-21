@@ -119,9 +119,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         {
             _registerRepository.Setup(r => r.OrganisationTypeExists(It.IsAny<int>()))
                 .Returns(Task.FromResult(exists));
-      
 
-          
             var noMessageReturned = _validator.CheckOrganisationTypeIsNullOrExists(1234).Length == 0;
             Assert.AreEqual(noMessageReturned, exists);
         }

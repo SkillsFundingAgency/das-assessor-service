@@ -118,7 +118,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
 
         private string FormatErrorMessage(string messageName)
         {
-            return _localizer[messageName].Value + "; ";
+            return $"{_localizer[messageName].Value}; ";
         }
     }
 }
