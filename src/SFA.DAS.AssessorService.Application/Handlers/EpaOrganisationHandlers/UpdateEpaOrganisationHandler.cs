@@ -16,17 +16,20 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
         private readonly IRegisterRepository _registerRepository;
         private readonly ILogger<UpdateEpaOrganisationHandler> _logger;
         private readonly IEpaOrganisationValidator _validator;
-
-        public UpdateEpaOrganisationHandler(IRegisterRepository registerRepository, IEpaOrganisationValidator validator, ILogger<UpdateEpaOrganisationHandler> logger)
+        private readonly ISpecialCharacterCleanserService _cleanser;
+        
+        public UpdateEpaOrganisationHandler(IRegisterRepository registerRepository, IEpaOrganisationValidator validator, ILogger<UpdateEpaOrganisationHandler> logger, ISpecialCharacterCleanserService cleanser)
         {
             _registerRepository = registerRepository;
             _logger = logger;
+            _cleanser = cleanser;
             _validator = validator;
         }
 
         public async Task<string> Handle(UpdateEpaOrganisationRequest request, CancellationToken cancellationToken)
         {
             var errorDetails = new StringBuilder();
+            ProcessRequestFieldsForSpecialCharacters(request);
             errorDetails.Append(_validator.CheckIfOrganisationNotFound(request.OrganisationId));
 
             if (errorDetails.Length > 0)
@@ -49,6 +52,19 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             var organisation = MapOrganisationRequestToOrganisation(request);
 
            return await _registerRepository.UpdateEpaOrganisation(organisation);
+        }
+
+        private void ProcessRequestFieldsForSpecialCharacters(UpdateEpaOrganisationRequest request)
+        {       
+            request.OrganisationId = _cleanser.CleanseStringForSpecialCharacters(request.OrganisationId?.Trim());  
+            request.Name = _cleanser.CleanseStringForSpecialCharacters(request.Name?.Trim());  
+            request.LegalName = _cleanser.CleanseStringForSpecialCharacters(request.LegalName?.Trim());
+            request.WebsiteLink = _cleanser.CleanseStringForSpecialCharacters(request.WebsiteLink?.Trim());
+            request.Address1 = _cleanser.CleanseStringForSpecialCharacters(request.Address1?.Trim());
+            request.Address2 = _cleanser.CleanseStringForSpecialCharacters(request.Address2?.Trim());
+            request.Address3 = _cleanser.CleanseStringForSpecialCharacters(request.Address3?.Trim());
+            request.Address4 = _cleanser.CleanseStringForSpecialCharacters(request.Address4?.Trim());
+            request.Postcode = _cleanser.CleanseStringForSpecialCharacters(request.Postcode?.Trim());
         }
 
         private static EpaOrganisation MapOrganisationRequestToOrganisation(UpdateEpaOrganisationRequest request)

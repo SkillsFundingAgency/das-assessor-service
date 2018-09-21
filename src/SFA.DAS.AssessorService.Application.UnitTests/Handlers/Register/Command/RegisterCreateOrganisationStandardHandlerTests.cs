@@ -19,6 +19,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
     {
         private Mock<IRegisterRepository> _registerRepository;
         private CreateEpaOrganisationStandardHandler _createEpaOrganisationStandardHandler;
+        private Mock<ISpecialCharacterCleanserService> _cleanserService;
         private Mock<IEpaOrganisationValidator> _validator;
         private Mock<ILogger<CreateEpaOrganisationStandardHandler>> _logger;
         private CreateEpaOrganisationStandardRequest _requestNoIssues;
@@ -30,6 +31,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
         public void Setup()
         {
             _registerRepository = new Mock<IRegisterRepository>();
+            _cleanserService = new Mock<ISpecialCharacterCleanserService>();
             _validator = new Mock<IEpaOrganisationValidator>();
             _logger = new Mock<ILogger<CreateEpaOrganisationStandardHandler>>();
             _organisationId = "EPA999";
@@ -45,8 +47,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             _validator.Setup(v => v.CheckIfOrganisationNotFound(_requestNoIssues.OrganisationId)).Returns(string.Empty);
             _validator.Setup(v => v.CheckIfStandardNotFound(_requestNoIssues.StandardCode)).Returns(string.Empty);
             _validator.Setup(v => v.CheckIfOrganisationStandardAlreadyExists(_requestNoIssues.OrganisationId, _requestNoIssues.StandardCode)).Returns(string.Empty);
-
-            _createEpaOrganisationStandardHandler = new CreateEpaOrganisationStandardHandler(_registerRepository.Object, _validator.Object, _logger.Object);
+            _cleanserService.Setup(c => c.CleanseStringForSpecialCharacters(It.IsAny<string>()))
+                .Returns((string s) => s);
+            
+            _createEpaOrganisationStandardHandler = new CreateEpaOrganisationStandardHandler(_registerRepository.Object, _validator.Object, _logger.Object, _cleanserService.Object);
         }
 
         [Test]

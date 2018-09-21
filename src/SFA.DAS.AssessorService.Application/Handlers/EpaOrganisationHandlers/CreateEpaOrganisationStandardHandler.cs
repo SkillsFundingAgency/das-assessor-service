@@ -18,18 +18,20 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
         private readonly IRegisterRepository _registerRepository;
         private readonly ILogger<CreateEpaOrganisationStandardHandler> _logger;
         private readonly IEpaOrganisationValidator _validator;
+        private readonly ISpecialCharacterCleanserService _cleanser;
 
-        public CreateEpaOrganisationStandardHandler(IRegisterRepository registerRepository, IEpaOrganisationValidator validator, ILogger<CreateEpaOrganisationStandardHandler> logger)
+        public CreateEpaOrganisationStandardHandler(IRegisterRepository registerRepository, IEpaOrganisationValidator validator, ILogger<CreateEpaOrganisationStandardHandler> logger, ISpecialCharacterCleanserService cleanser)
         {
             _registerRepository = registerRepository;
             _logger = logger;
+            _cleanser = cleanser;
             _validator = validator;
         }
 
         public async Task<string> Handle(CreateEpaOrganisationStandardRequest request, CancellationToken cancellationToken)
         {
             var errorDetails = new StringBuilder();
-
+            ProcessRequestFieldsForSpecialCharacters(request);
             errorDetails.Append(_validator.CheckOrganisationIdIsPresentAndValid(request.OrganisationId));
             errorDetails.Append(_validator.CheckIfContactIdIsEmptyOrValid(request.ContactId, request.OrganisationId));
             if (errorDetails.Length > 0)
@@ -52,6 +54,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             var organisationStandard = MapOrganisationStandardRequestToOrganisationStandard(request);
            
             return await _registerRepository.CreateEpaOrganisationStandard(organisationStandard);
+        }
+
+        private void ProcessRequestFieldsForSpecialCharacters(CreateEpaOrganisationStandardRequest request)
+        {
+            request.OrganisationId = _cleanser.CleanseStringForSpecialCharacters(request.OrganisationId?.Trim());           
+            request.Comments = _cleanser.CleanseStringForSpecialCharacters(request.Comments?.Trim());
+            request.ContactId = _cleanser.CleanseStringForSpecialCharacters(request.ContactId?.Trim());
         }
 
         private void ThrowAlreadyExistsExceptionIfErrorPresent(StringBuilder errorDetails)

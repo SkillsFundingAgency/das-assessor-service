@@ -20,6 +20,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
         {
             private Mock<IRegisterRepository> _registerRepository;
             private UpdateEpaOrganisationStandardHandler _updateEpaOrganisationStandardHandler;
+            private Mock<ISpecialCharacterCleanserService> _cleanserService;
             private Mock<IEpaOrganisationValidator> _validator;
             private Mock<ILogger<UpdateEpaOrganisationStandardHandler>> _logger;
             private UpdateEpaOrganisationStandardRequest _requestNoIssues;
@@ -32,6 +33,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             public void Setup()
             {
                 _registerRepository = new Mock<IRegisterRepository>();
+                _cleanserService = new Mock<ISpecialCharacterCleanserService>();
                 _validator = new Mock<IEpaOrganisationValidator>();
                 _logger = new Mock<ILogger<UpdateEpaOrganisationStandardHandler>>();
                 _organisationId = "EPA999";
@@ -45,8 +47,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
 
                 _validator.Setup(v => v.CheckIfOrganisationStandardDoesNotExist(_requestNoIssues.OrganisationId, _requestNoIssues.StandardCode)).Returns(string.Empty);
                 _validator.Setup(v => v.CheckIfContactIdIsEmptyOrValid(It.IsAny<string>(), It.IsAny<string>())).Returns(string.Empty);
-
-            _updateEpaOrganisationStandardHandler = new UpdateEpaOrganisationStandardHandler(_registerRepository.Object, _validator.Object, _logger.Object);
+                _cleanserService.Setup(c => c.CleanseStringForSpecialCharacters(It.IsAny<string>()))
+                    .Returns((string s) => s);
+                
+                _updateEpaOrganisationStandardHandler = new UpdateEpaOrganisationStandardHandler(_registerRepository.Object, _validator.Object, _logger.Object, _cleanserService.Object);
             }
 
 

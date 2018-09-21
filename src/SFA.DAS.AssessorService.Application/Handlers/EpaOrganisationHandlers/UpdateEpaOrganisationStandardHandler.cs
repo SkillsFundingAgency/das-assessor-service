@@ -16,18 +16,21 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
         private readonly IRegisterRepository _registerRepository;
         private readonly ILogger<UpdateEpaOrganisationStandardHandler> _logger;
         private readonly IEpaOrganisationValidator _validator;
-
-        public UpdateEpaOrganisationStandardHandler(IRegisterRepository registerRepository, IEpaOrganisationValidator validator, ILogger<UpdateEpaOrganisationStandardHandler> logger)
+        private readonly ISpecialCharacterCleanserService _cleanser;
+        
+        public UpdateEpaOrganisationStandardHandler(IRegisterRepository registerRepository, IEpaOrganisationValidator validator, ILogger<UpdateEpaOrganisationStandardHandler> logger, ISpecialCharacterCleanserService cleanser)
         {
             _registerRepository = registerRepository;
             _validator = validator;
             _logger = logger;
+            _cleanser = cleanser;
         }
 
 
         public async Task<string> Handle(UpdateEpaOrganisationStandardRequest request, CancellationToken cancellationToken)
         {
             var errorDetails = new StringBuilder();
+            ProcessRequestFieldsForSpecialCharacters(request);
             errorDetails.Append(_validator.CheckIfOrganisationStandardDoesNotExist(request.OrganisationId, request.StandardCode));
             errorDetails.Append(_validator.CheckIfContactIdIsEmptyOrValid(request.ContactId,request.OrganisationId));
 
@@ -40,6 +43,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             var organisationStandard = MapOrganisationStandardRequestToOrganisationStandard(request);
 
             return await _registerRepository.UpdateEpaOrganisationStandard(organisationStandard);
+        }
+
+        private void ProcessRequestFieldsForSpecialCharacters(UpdateEpaOrganisationStandardRequest request)
+        {
+            request.OrganisationId = _cleanser.CleanseStringForSpecialCharacters(request.OrganisationId?.Trim());           
+            request.Comments = _cleanser.CleanseStringForSpecialCharacters(request.Comments?.Trim());
+            request.ContactId = _cleanser.CleanseStringForSpecialCharacters(request.ContactId?.Trim());
         }
 
         private static EpaOrganisationStandard MapOrganisationStandardRequestToOrganisationStandard(UpdateEpaOrganisationStandardRequest request)
