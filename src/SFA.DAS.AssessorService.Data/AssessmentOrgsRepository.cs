@@ -371,7 +371,7 @@ namespace SFA.DAS.AssessorService.Data
         private string LocalConnectionString()
         {
             var connectionString = _configuration.SqlConnectionString;
-            connectionString = connectionString.Replace("MultipleActiveResultSets=True", "MultipleActiveResultSets=False");
+            //connectionString = connectionString.Replace("MultipleActiveResultSets=True", "MultipleActiveResultSets=False");
             connectionString = connectionString.Replace("Pooling=False", "Pooling=True");
             return connectionString;
         }
