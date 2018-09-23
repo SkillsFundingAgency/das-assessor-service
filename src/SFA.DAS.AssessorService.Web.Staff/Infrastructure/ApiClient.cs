@@ -101,7 +101,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
 
         public async Task<Organisation> GetOrganisation(Guid id)
         {
-            return await Get<Organisation>($"/api/v1/organisations/{id}");
+            return await Get<Organisation>($"/api/v1/organisations/organisation/{id}");
         }   
 
         public async Task<Certificate> UpdateCertificate(UpdateCertificateRequest certificateRequest)

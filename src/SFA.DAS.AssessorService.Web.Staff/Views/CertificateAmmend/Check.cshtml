@@ -71,6 +71,19 @@
             </div>
             <div>
                 <dt class="cya-question">
+                    Standard Code
+                </dt>
+                <dd class="cya-answer">
+                    @Model.StandardCode
+                </dd>
+                <dd class="cya-change">
+                    <a asp-controller="CertificatePrivateStandardCode" asp-action="StandardCode" asp-route-certificateid=@Model.Id>
+                        Change<span class="visually-hidden"> standard code</span>
+                    </a>
+                </dd>
+            </div>
+            <div>
+                <dt class="cya-question">
                     Standard
                 </dt>
                 <dd class="cya-answer">
