@@ -49,17 +49,17 @@
                     @Localizer["Heading"]
                 </h1>
 
-                <div class="form-group" sfa-validation-for="StandardCodes" sfa-validationerror-class="form-group-error">
-                    <label class="form-label" for="StandardCodes">
+                <div class="form-group" sfa-validation-for="SelectedStandardCode" sfa-validationerror-class="form-group-error">
+                    <label class="form-label" for="SelectedStandardCode">
                         <span class="form-label-bold visually-hidden">@Localizer["StandardCodes"]</span>
                         <span class="form-hint">
                             @Localizer["StandardCodesHint"]
                         </span>
+                        <span class="error-message" asp-validation-for="SelectedStandardCode"></span>
                     </label>
                     <select class="form-control" asp-for="SelectedStandardCode" sfa-validation-for="SelectedStandardCode" sfa-validationerror-class="form-control-error" asp-items="@(new SelectList(Model.StandardCodes,"Value","Text"))">
                         <option value="">Please select one</option>
                     </select>
-                    <span class="error-message" asp-validation-for="SelectedStandardCode"></span>
                 </div>
                 
             </div>
@@ -68,11 +68,6 @@
         </form>
     </div>
 </div>
-
-<script type="text/javascript">
-    // var certificateStandardCodeListViewModel = @Html.Raw(JsonConvert.SerializeObject(Model));
-    // console.log(certificateStandardCodeListViewModel.StandardCodes);
-</script>
 
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }

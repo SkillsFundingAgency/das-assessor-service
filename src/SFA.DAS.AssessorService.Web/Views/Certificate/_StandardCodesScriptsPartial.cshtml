@@ -1,7 +1,6 @@
 <script src="~/lib/accessible-autocomplete/accessible-autocomplete.min.js"></script>
 
 <script>
-
 var epaoStandardCodesFormElement = $('.apprentice-standard-codes-form');
 var epaoStandardCodesValidationRulesObject = {
   rules: {
@@ -22,10 +21,9 @@ accessibleAutocomplete.enhanceSelectElement({
   selectElement: document.querySelector('#SelectedStandardCode'),
   name: 'StandardCodes',
   defaultValue: '',
-  confirmOnBlur: false,
+//   confirmOnBlur: false,
   autoselect: false,
-  showAllValues: true,
-  // displayMenu: 'overlay'
+  showAllValues: true
 })
 
 </script>
