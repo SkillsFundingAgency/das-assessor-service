@@ -104,6 +104,19 @@
             </div>
             <div>
                 <dt class="cya-question">
+                    Ukprns
+                </dt>
+                <dd class="cya-answer">
+                    @Model.Ukprn
+                </dd>
+                <dd class="cya-change">
+                    <a asp-controller="CertificatePrivateProviderUkprn" asp-action="Ukprn" asp-route-certificateid=@Model.Id>
+                        Ukprn<span class="visually-hidden"> grade</span>
+                    </a>
+                </dd>
+            </div>
+            <div>
+                <dt class="cya-question">
                     Grade
                 </dt>
                 <dd class="cya-answer">

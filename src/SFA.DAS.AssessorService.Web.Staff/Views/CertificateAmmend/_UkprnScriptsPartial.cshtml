@@ -1,0 +1,25 @@
+<script>
+
+var epaoUkprnFormElement = $('.apprentice-ukprn-form');
+var epaoUkprnValidationRulesObject = {
+    rules: {
+        Ukprn: {
+            required: true,
+            number: true,
+            minlength: 8,
+            maxlength: 8
+        }
+    },
+    messages: {
+        Ukprn: {
+            required: 'Enter the training provider\'s UKPRN',
+            number: 'The UKPRN should contain 8 numbers',
+            minlength: 'The UKPRN should contain 8 numbers',
+            maxlength: 'The UKPRN should contain 8 numbers'
+        }
+    }
+};
+
+GOVUK.epaoValidate(epaoUkprnFormElement, epaoUkprnValidationRulesObject);
+
+</script>
