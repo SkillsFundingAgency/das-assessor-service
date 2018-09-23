@@ -58,6 +58,19 @@
         <dl class="govuk-check-your-answers cya-questions-short">
             <div>
                 <dt class="cya-question">
+                    First Name
+                </dt>
+                <dd class="cya-answer">
+                    @Model.FirstName
+                </dd>
+                <dd class="cya-change">
+                    <a asp-controller="CertificatePrivateFirstName" asp-action="FirstName" asp-route-certificateid=@Model.Id>
+                        Change<span class="visually-hidden"> first name</span>
+                    </a>
+                </dd>
+            </div>
+            <div>
+                <dt class="cya-question">
                     Standard
                 </dt>
                 <dd class="cya-answer">

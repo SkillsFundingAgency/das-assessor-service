@@ -16,6 +16,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
         public int StandardCode { get; set; }
         public DateTime AchievementDate { get; set; }
 
+        public string FirstName { get; set; }
         public string Name { get; set; }
         public string Dept { get; set; }
         public string Employer { get; set; }
@@ -23,7 +24,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
         public string AddressLine2 { get; set; }
         public string AddressLine3 { get; set; }
         public string City { get; set; }
-        public string Postcode { get; set; }
+        public string Postcode { get; set; }    
 
         public void FromCertificate(Certificate cert)
         {
@@ -38,6 +39,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
             StandardCode = cert.StandardCode;
             AchievementDate = CertificateData.AchievementDate.Value;
 
+            FirstName = CertificateData.LearnerGivenNames;
+
             Name = CertificateData.ContactName;
             Dept = CertificateData.Department;
             Employer = CertificateData.ContactOrganisation;
@@ -45,7 +48,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
             AddressLine2 = CertificateData.ContactAddLine2;
             AddressLine3 = CertificateData.ContactAddLine3;
             City = CertificateData.ContactAddLine4;
-            Postcode = CertificateData.ContactPostCode;
+            Postcode = CertificateData.ContactPostCode;         
         }
 
         public Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData data)
