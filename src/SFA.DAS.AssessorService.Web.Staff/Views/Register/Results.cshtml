@@ -1,0 +1,54 @@
+@model SFA.DAS.AssessorService.Web.Staff.Models.RegisterViewModel
+
+@{
+    ViewBag.Title = "Search results";
+    Layout = "_Layout";
+}
+
+
+<div class="grid-row">
+    <div class="column-full">
+        <a asp-action="Index" class="link-back">Search Again</a>
+
+        <h1 class="heading-xlarge">
+            Organisation Search results
+            @if (@Model.Results.Count > 0)
+            {
+                <span class="heading-secondary">Matching results for '@Model.SearchString': @Model.Results.Count</span>
+            }
+        </h1>
+
+        @if (@Model.Results.Count > 0)
+        {
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>ID</th>
+                    <th>ukprn</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var result in Model.Results.OrderBy(x => x.Name))
+                {
+                    <tr>
+                        <td>@result.Name</td>
+                        <td>@result.Id</td>
+                        <td>@result.Ukprn</td>
+                        <td><a class="button">Edit</a></td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div>There are no matching results for '@Model.SearchString'</div>
+        }
+
+    </div>
+    <div>&nbsp;</div>
+    <div>&nbsp;</div>
+    <div><a class="button" >Add New</a></div>
+</div>
