@@ -40,8 +40,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Private
         private async Task<Certificate> CreateNewCertificate(StartCertificatePrivateRequest request)
         {           
             var organisation = await _organisationQueryRepository.GetByUkPrn(request.UkPrn);
-            _logger.LogInformation("CreateNewCertificate Before Get Standard from API");
-         
+                     
             var certData = new CertificateData()
             {
                 LearnerFamilyName = request.LastName              
