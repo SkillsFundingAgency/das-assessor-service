@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 cfg.CreateMap<CreateContactRequest, Contact>().ReverseMap();
                 cfg.CreateMap<Contact, ContactResponse>();
                 cfg.CreateMap<Ilr, SearchResult>();
-                cfg.CreateMap<Ilr, StaffSearchResult>()
+                cfg.CreateMap<Ilr, StaffSearchItems>()
                     .ForMember(q => q.StandardCode, opts => {opts.MapFrom(i => i.StdCode);});
                 cfg.CreateMap<CreateBatchLogRequest, BatchLog>();
                 cfg.CreateMap<BatchLog, BatchLogResponse>();               

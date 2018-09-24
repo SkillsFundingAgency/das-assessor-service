@@ -1,11 +1,9 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
-using SFA.DAS.AssessorService.Application.Handlers.Certificates;
 using SFA.DAS.AssessorService.Application.Handlers.Staff;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Logging;
@@ -40,28 +38,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Private
         }
 
         private async Task<Certificate> CreateNewCertificate(StartCertificatePrivateRequest request)
-        {
-            //_logger.LogInformation("CreateNewCertificate Before Get Ilr from db");
-            //var ilr = await _ilrRepository.Get(request.Uln, request.StandardCode);
-            //_logger.LogInformation("CreateNewCertificate Before Get Organisation from db");
+        {           
             var organisation = await _organisationQueryRepository.GetByUkPrn(request.UkPrn);
             _logger.LogInformation("CreateNewCertificate Before Get Standard from API");
-            //var standard = await _assessmentOrgsApiClient.GetStandard(ilr.StdCode);
-            //_logger.LogInformation("CreateNewCertificate Before Get Provider from API");
-            ////Provider provider;
-            //trym
-            //{
-            //    provider = await _assessmentOrgsApiClient.GetProvider(ilr.UkPrn);
-            //}
-            //catch (Exception)
-            //{
-            //    // see whether there are any previous certificates with this ukrpn and a ProviderName....
-            //    var previousProviderName = await _certificateRepository.GetPreviousProviderName(ilr.UkPrn);
-            //    provider = previousProviderName != null
-            //        ? new Provider { ProviderName = previousProviderName }
-            //        : new Provider { ProviderName = "Unknown" };
-            //}
-
+         
             var certData = new CertificateData()
             {
                 LearnerFamilyName = request.LastName              

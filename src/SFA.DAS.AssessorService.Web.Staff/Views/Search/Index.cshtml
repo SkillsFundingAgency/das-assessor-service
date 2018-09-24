@@ -15,9 +15,15 @@
                 <h1>
                     <label class="form-label" for="SearchString">
                         <span class="heading-xlarge">Certificate search</span>
-                        <span class="form-hint">Search by learner name, ULN, certificate reference or EPAO ID</span>
                     </label>
                 </h1>
+                <p>Search using either the:</p>
+                <ul class="list list-bullet">
+                    <li>certificate reference number</li>
+                    <li>unique learner number (ULN)</li>
+                    <li>apprentice's name, or</li>
+                    <li>EPAO ID</li>
+                </ul>
                 <input class="form-control" asp-for="SearchString" />
             </div>
             <button class="button" type="submit">Search</button>
