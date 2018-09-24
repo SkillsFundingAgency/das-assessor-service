@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
             BaseFromCertificate(cert);
 
             Uln = cert.Uln;
-            Ukprn = cert.Organisation.EndPointAssessorUkprn;
+            Ukprn = cert.ProviderUkPrn;
 
             Level = CertificateData.StandardLevel;
             Option = CertificateData.CourseOption;
