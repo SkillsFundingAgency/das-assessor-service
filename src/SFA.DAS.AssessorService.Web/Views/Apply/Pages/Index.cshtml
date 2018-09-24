@@ -13,7 +13,7 @@
         <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
             There's a problem
         </h2>
-        
+
     </div>
 }
 
@@ -22,24 +22,10 @@
         @foreach (var question in Model.Questions)
         {
             <li>
-            <label>@question.Label</label>
-            <p>@question.Hint</p>
-            @switch (question.Type)
-            {
-                case "Text": <input sfa-validation-for-id="@question.QuestionId" sfa-validationerror-class="form-control-error" type="text" id="@question.QuestionId" name="@question.QuestionId" value="@question.Value"></input>
-                    break;
-                case "Email": <input sfa-validation-for-id="@question.QuestionId" sfa-validationerror-class="form-control-error" type="email" id="@question.QuestionId" name="@question.QuestionId" value="@question.Value"></input>
-                    break;
-                case "Checkbox":
-                    var chkd = question.Value == "Yes" ? "checked" : ""; 
-                    <input type="checkbox" id="@question.QuestionId" name="@question.QuestionId" @chkd></input>
-                    break;
-                case "SimpleRadio":
-                    Html.RenderPartial("~/Views/Apply/Pages/_SimpleRadio.cshtml",question);
-                    break;
-                     
-            }
-        </li>
+                <label>@question.Label</label>
+                <p>@question.Hint</p>
+                @Html.Partial($"~/Views/Apply/Pages/_{question.Type}.cshtml", question)
+            </li>
         }
     </ul>
     <button type="submit">Submit</button><br/>

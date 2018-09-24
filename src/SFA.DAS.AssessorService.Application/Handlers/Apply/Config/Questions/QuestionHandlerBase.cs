@@ -21,6 +21,21 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Config.Questions
         
         protected async Task<Page> GetPage(IQuestionRequest request)
         {
+            var section = await GetSection(request);
+
+            var page = section.Pages.FirstOrDefault(p => p.PageId == request.PageId);
+
+            if (page == null)
+            {
+                throw new BadRequestException(
+                    $"Page {request.PageId} does not exist in Section {request.SectionId} and Sequence {request.SequenceId}");
+            }
+
+            return page;
+        }
+
+        protected async Task<Section> GetSection(IQuestionRequest request)
+        {
             Sequences = await _applyRepository.GetWorkflowDefinition();
             var sequence = Sequences.FirstOrDefault(s => s.SequenceId == request.SequenceId);
 
@@ -36,15 +51,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply.Config.Questions
                 throw new BadRequestException($"Section {request.SectionId} does not exist in Sequence {request.SequenceId}");
             }
 
-            var page = section.Pages.FirstOrDefault(p => p.PageId == request.PageId);
-
-            if (page == null)
-            {
-                throw new BadRequestException(
-                    $"Page {request.PageId} does not exist in Section {request.SectionId} and Sequence {request.SequenceId}");
-            }
-
-            return page;
+            return section;
         }
 
         protected async Task StoreWorkflow()
