@@ -1,0 +1,72 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private
+@inject IViewLocalizer Localizer
+@model SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private.CertificateFirstNameViewModel
+
+@{
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Apprentice's first name";
+    Layout = "_Layout";
+}
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        @if (Model.BackToCheckPage)
+        {
+            <a class="link-back" asp-controller="CertificateCheck" asp-action="Check">Back</a>
+        }
+        else
+        {
+            <a asp-controller="CertificatePrivateDeclaration" asp-action="Index" class="link-back">Back</a>
+        }
+
+        <form class="apprentice-firstname-form js-disable-on-submit" method="post" asp-action="FirstName" asp-controller="CertificatePrivateFirstName">
+            @Html.HiddenFor(c => c.Id)
+
+            @* hidden with css by default *@
+            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                    There's a problem
+                </h2>
+                <ul class="js-error-summary-list error-summary-list"></ul>
+            </div>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                        There's a problem
+                    </h2>
+                    <ul class="error-summary-list">
+                        <li><a sfa-validation-for="FirstName"></a></li>
+                    </ul>
+                </div>
+            }
+
+            <div sfa-anyvalidationerror-class="after-error-summary">
+                <h1 class="heading-large">
+                    @Localizer["Heading"]
+                </h1>
+
+                <div class="form-group" sfa-validation-for="FirstName" sfa-validationerror-class="form-group-error">
+                    <label for="FirstName">
+                        <span class="form-label-bold visually-hidden">@Localizer["FirstName"]</span>
+                        <span class="form-hint">
+                            @Localizer["FirstNameHint"]
+                        </span>
+                        <span class="error-message" asp-validation-for="FirstName"></span>
+                    </label>
+                    <input class="form-control" name="FirstName" sfa-validation-for="FirstName" sfa-validationerror-class="form-control-error" asp-for="FirstName" type="text" />
+                </div>
+
+
+            </div>
+
+            <button type="submit" class="button">@Localizer["ContinueButton"]</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    @{await Html.RenderPartialAsync("~/Views/Certificate/_FirstNameScriptsPartial.cshtml"); }
+}

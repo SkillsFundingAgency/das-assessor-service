@@ -12,37 +12,38 @@
 
         <h1 class="heading-xlarge">
             Search results
-            <span class="heading-secondary">Number of results: @Model.PaginatedList.TotalRecordCount</span>
+            @if (!string.IsNullOrEmpty(@Model.StaffSearchResult.EndpointAssessorOrganisationId) && Model.StaffSearchResult.DisplayEpao)
+            {
+                <h2 class="heading-medium">@Model.StaffSearchResult.EndpointAssessorOrganisationId</h2>
+            }
+            <span class="heading-secondary">Number of results: @Model.StaffSearchResult.StaffSearchItems.TotalRecordCount</span>
         </h1>
 
-        @if (@Model.PaginatedList.TotalRecordCount > 0)
+        @if (@Model.StaffSearchResult.StaffSearchItems.TotalRecordCount > 0)
         {
         <table class="table table-font-xsmall">
             <thead>
                 <tr>
-                    <th>First name</th>
-                    <th>Surname</th>
+                    <th>Name</th>
                     <th>ULN</th>
                     <th>Standard</th>
-                  
                     <th>Certificate reference</th>
-                    <th>Current status</th>
-                    <th>Last updated</th>
+                    <th>Status</th>
+                    <th>Updated</th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var result in Model.PaginatedList.Items)
+                @foreach (var result in Model.StaffSearchResult.StaffSearchItems.Items)
                 {
                 <tr>
-                    <td>@result.GivenNames</td>
-                    <td>@result.FamilyName</td>
+                    <td>@result.GivenNames @result.FamilyName</td>
                     <td>@result.Uln</td>
                     <td>@result.Standard (@result.StandardCode)</td>
                     <td>@result.CertificateReference</td>
                     <td>@result.CertificateStatus</td>
                     <td>@result.LastUpdatedAt?.ToShortDateString()</td>
-                    <td><a asp-action="Select" asp-route-stdcode="@result.StandardCode" asp-route-uln="@result.Uln" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.PaginatedList.PageIndex">View</a></td>
+                    <td><a asp-action="Select" asp-route-stdcode="@result.StandardCode" asp-route-uln="@result.Uln" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.StaffSearchResult.StaffSearchItems.PageIndex">View</a></td>
                 </tr>
                 }
             </tbody>
@@ -52,39 +53,39 @@
     </div>
 </div>
 
-@if (Model.PaginatedList.HasPreviousPage || Model.PaginatedList.HasNextPage)
+@if (Model.StaffSearchResult.StaffSearchItems.HasPreviousPage || Model.StaffSearchResult.StaffSearchItems.HasNextPage)
 {
 <div class="grid-row">
     <div class="column-full">
         <div class="page-navigation">
 
-            @if (Model.PaginatedList.HasPreviousPage)
+            @if (Model.StaffSearchResult.StaffSearchItems.HasPreviousPage)
             {
                 <a 
                     asp-action="Results" 
                     asp-controller="Search" 
                     asp-route-searchstring="@Model.SearchString" 
-                    asp-route-page="@( Model.PaginatedList.PageIndex - 1)"
+                    asp-route-page="@( Model.StaffSearchResult.StaffSearchItems.PageIndex - 1)"
                     class="previous"
                 >
                     <i class="arrow-button icon-left-open">&#xe800;</i>
                     <span class="description">Previous <span class="hide-mob">page</span></span>
-                    <span class="counter">Page <span class="prevPage">@(Model.PaginatedList.PageIndex - 1)</span> of <span class="totalPage">@(Model.PaginatedList.TotalPages)</span></span>
+                    <span class="counter">Page <span class="prevPage">@(Model.StaffSearchResult.StaffSearchItems.PageIndex - 1)</span> of <span class="totalPage">@(Model.StaffSearchResult.StaffSearchItems.TotalPages)</span></span>
                 </a>
             }
 
-            @if (Model.PaginatedList.HasNextPage)
+            @if (Model.StaffSearchResult.StaffSearchItems.HasNextPage)
             {
                 <a
                     asp-action="Results" 
                     asp-controller="Search" 
                     asp-route-searchstring="@Model.SearchString" 
-                    asp-route-page="@( Model.PaginatedList.PageIndex + 1)"
+                    asp-route-page="@( Model.StaffSearchResult.StaffSearchItems.PageIndex + 1)"
                     class="next"
                 >
                     <i class="arrow-button icon-right-open">&#xe801;</i>
                     <span class="description">Next <span class="hide-mob">page</span></span>
-                    <span class="counter">Page <span class="nextPage">@(Model.PaginatedList.PageIndex + 1)</span> of <span class="totalPage">@(Model.PaginatedList.TotalPages)</span></span>
+                    <span class="counter">Page <span class="nextPage">@(Model.StaffSearchResult.StaffSearchItems.PageIndex + 1)</span> of <span class="totalPage">@(Model.StaffSearchResult.StaffSearchItems.TotalPages)</span></span>
                 </a>
             }
 

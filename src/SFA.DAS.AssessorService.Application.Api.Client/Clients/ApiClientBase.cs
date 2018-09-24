@@ -41,6 +41,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                     retryAttempt)));
         }
 
+        protected ApiClientBase(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger)
+        {
+            TokenService = tokenService;
+            _logger = logger;
+
+            HttpClient = httpClient;
+
+            _retryPolicy = HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2,
+                    retryAttempt)));
+        }
+
         protected static void RaiseResponseError(string message, HttpRequestMessage failedRequest, HttpResponseMessage failedResponse)
         {
             if (failedResponse.StatusCode == HttpStatusCode.NotFound)

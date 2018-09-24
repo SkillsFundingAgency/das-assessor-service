@@ -22,15 +22,15 @@
 
             @if (!ViewData.ModelState.IsValid)
             {
-            <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                    There's a problem
-                </h2>
-                <ul class="error-summary-list">
-                    <li><a sfa-validation-for="GivenNames"></a></li>
-                    <li><a sfa-validation-for="FamilyName"></a></li>
-                </ul>
-            </div>
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                        There's a problem
+                    </h2>
+                    <ul class="error-summary-list">
+                        <li><a sfa-validation-for="GivenNames"></a></li>
+                        <li><a sfa-validation-for="FamilyName"></a></li>
+                    </ul>
+                </div>
             }
 
             <fieldset sfa-anyvalidationerror-class="after-error-summary">
@@ -39,7 +39,7 @@
                         Apprentice name
                     </h1>
                 </legend>
-                
+
                 <div class="form-group" sfa-validation-for="GivenNames" sfa-validationerror-class="form-group-error">
                     <label for="GivenNames">
                         <span class="form-label-bold">First name</span>
@@ -60,11 +60,15 @@
                         <span class="error-message" asp-validation-for="FamilyName"></span>
                     </label>
                     <input class="form-control" name="FamilyName" sfa-validation-for="FamilyName" sfa-validationerror-class="form-control-error" asp-for="FamilyName" type="text" />
-                </div>               
+                </div>
             </fieldset>
 
             <button type="submit" class="button">Continue</button>
         </form>
+
+        <div>
+            <a asp-action="Index" asp-controller="Search" class="link-back">Search Again</a>
+        </div>
     </div>
 </div>
 

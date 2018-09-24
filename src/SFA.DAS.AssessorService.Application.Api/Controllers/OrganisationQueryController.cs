@@ -37,10 +37,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpGet("{ukprn}", Name = "SearchOrganisation")]
-        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(OrganisationResponse))]
-        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int) HttpStatusCode.NotFound, Type = typeof(string))]
-        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(OrganisationResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.NotFound, Type = typeof(string))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> SearchOrganisation(int ukprn)
         {
             _logger.LogInformation($"Received Search for an Organisation Request using ukprn {ukprn}");
@@ -60,20 +60,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(organisation);
         }
 
-        [HttpGet(Name="GetAllOrganisations")]
-        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<OrganisationResponse>))]
-        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        [HttpGet(Name = "GetAllOrganisations")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<OrganisationResponse>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetAllOrganisations()
         {
             _logger.LogInformation("Received request to retrieve All Organisations");
 
             var organisations =
                 Mapper.Map<List<OrganisationResponse>>(await _organisationQueryRepository.GetAllOrganisations());
-                
+
             return Ok(organisations);
         }
 
-        [HttpGet("{id}", Name = "GetOrganisation")]
+        [HttpGet("organisation/{id}", Name = "GetOrganisation")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<OrganisationResponse>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetOrganisation(Guid id)

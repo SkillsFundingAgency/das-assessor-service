@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SFA.DAS.AssessorService.Web.Resources.Views.Certificate {
+namespace SFA.DAS.AssessorService.Web.Resources.Validators {
     using System;
     
     
@@ -22,14 +22,14 @@ namespace SFA.DAS.AssessorService.Web.Resources.Views.Certificate {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Declaration {
+    internal class ChooseStandardViewModelValidator {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Declaration() {
+        internal ChooseStandardViewModelValidator() {
         }
         
         /// <summary>
@@ -39,7 +39,8 @@ namespace SFA.DAS.AssessorService.Web.Resources.Views.Certificate {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SFA.DAS.AssessorService.Web.Resources.Views.Certificate.Declaration", typeof(Declaration).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SFA.DAS.AssessorService.Web.Resources.Validators.ChooseStandardViewModelValidator" +
+                            "", typeof(ChooseStandardViewModelValidator).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,65 +62,11 @@ namespace SFA.DAS.AssessorService.Web.Resources.Views.Certificate {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Apply for certificate.
+        ///   Looks up a localized string similar to Select the standard.
         /// </summary>
-        internal static string ContinueButton {
+        internal static string NameCannotBeEmpty {
             get {
-                return ResourceManager.GetString("ContinueButton", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Declaration.
-        /// </summary>
-        internal static string Heading {
-            get {
-                return ResourceManager.GetString("Heading", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to By applying for this apprenticeship certificate you are confirming that:.
-        /// </summary>
-        internal static string InfoHeader {
-            get {
-                return ResourceManager.GetString("InfoHeader", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to the apprentice has given permission for you to apply for a certificate on their behalf.
-        /// </summary>
-        internal static string InfoLine1 {
-            get {
-                return ResourceManager.GetString("InfoLine1", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to the assessment was independent of both the provider and employer.
-        /// </summary>
-        internal static string InfoLine2 {
-            get {
-                return ResourceManager.GetString("InfoLine2", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to the apprentice has achieved all the requirements of the assessment plan, including the end-point assessment.
-        /// </summary>
-        internal static string InfoLine3 {
-            get {
-                return ResourceManager.GetString("InfoLine3", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to the apprentice has met the minimum duration of the apprenticeship.
-        /// </summary>
-        internal static string InfoLine4 {
-            get {
-                return ResourceManager.GetString("InfoLine4", resourceCulture);
+                return ResourceManager.GetString("NameCannotBeEmpty", resourceCulture);
             }
         }
     }

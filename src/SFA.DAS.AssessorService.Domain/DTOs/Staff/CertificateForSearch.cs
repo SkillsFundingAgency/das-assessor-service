@@ -4,6 +4,7 @@ namespace SFA.DAS.AssessorService.Domain.DTOs.Staff
 {
     public class CertificateForSearch
     {
+        public string EndPointAssessorOrganisationId { get; set; }
         public int StandardCode { get; set; }
         public long Uln { get; set; }
         public string CertificateReference { get; set; }

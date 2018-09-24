@@ -11,6 +11,10 @@ namespace SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs
         {
         }
 
+        public AssessmentOrgsApiClient(HttpClient httpClient) : base(httpClient)
+        {
+        }
+
         /// <summary>
         /// Get a single organisation details
         /// GET /assessmentorgs/{organisationId}
@@ -192,6 +196,14 @@ namespace SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/providers/{providerUkPrn}"))
             {
                 return await RequestAndDeserialiseAsync<Provider>(request);
+            }
+        }
+
+        public async Task<List<Provider>> GetProviders()
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/providers"))
+            {
+                return await RequestAndDeserialiseAsync<List<Provider>>(request);
             }
         }
     }

@@ -23,15 +23,15 @@
 
             @if (!ViewData.ModelState.IsValid)
             {
-            <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                    There's a problem
-                </h2>
-                <ul class="error-summary-list">
-                    <li><a sfa-validation-for="SelectedGrade"></a></li>
-                    @*<li><a href="#Pass">You need to specify an achievement grade for this apprentice</a></li>*@
-                </ul>
-            </div>
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                        There's a problem
+                    </h2>
+                    <ul class="error-summary-list">
+                        <li><a sfa-validation-for="SelectedGrade"></a></li>
+                        @*<li><a href="#Pass">You need to specify an achievement grade for this apprentice</a></li>*@
+                    </ul>
+                </div>
             }
 
             <div sfa-anyvalidationerror-class="after-error-summary">
@@ -47,12 +47,12 @@
                 <div class="form-group" sfa-validation-for="SelectedGrade" sfa-validationerror-class="form-group-error">
                     @foreach (var grade in Model.Grades)
                     {
-                    <div class="multiple-choice">
-                        <input asp-for="SelectedGrade" id="@grade.Text.Replace(" ", "_")" type="radio" value="@grade.Text" />
-                        <label for="@grade.Text.Replace(" ", "_")">
-                            @grade.Text
-                        </label>
-                    </div>
+                        <div class="multiple-choice">
+                            <input asp-for="SelectedGrade" id="@grade.Text.Replace(" ", "_")" type="radio" value="@grade.Text" />
+                            <label for="@grade.Text.Replace(" ", "_")">
+                                @grade.Text
+                            </label>
+                        </div>
                     }
                 </div>
             </div>
@@ -68,6 +68,10 @@
 
             <button type="submit" class="button">Continue</button>
         </form>
+
+        <div>
+            <a asp-action="Index" asp-controller="Search" class="link-back">Search Again</a>
+        </div>
     </div>
 </div>
 

@@ -76,6 +76,8 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
             .show()
             .find('.form-date')
             .before(error);
+        } else if (element.hasClass('autocomplete__input')) {
+          return false;
         } else {
           error.insertBefore(element);
         }

@@ -15,11 +15,23 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
         }
 
+        public CertificateApiClient(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger) : base(httpClient, tokenService, logger)
+        {
+        }
+
         public async Task<Certificate> Start(StartCertificateRequest request)
         {
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Post, "api/v1/certificates/start"))
             {
                 return await PostPutRequestWithResponse<StartCertificateRequest, Certificate>(httpRequest, request);
+            }
+        }
+
+        public async Task<Certificate> StartPrivate(StartCertificatePrivateRequest request)
+        {
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Post, "api/v1/certificates/startprivate"))
+            {
+                return await PostPutRequestWithResponse<StartCertificatePrivateRequest, Certificate>(httpRequest, request);
             }
         }
 
@@ -35,8 +47,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Put, "api/v1/certificates/update"))
             {
-                return await PostPutRequestWithResponse<UpdateCertificateRequest, Certificate>(httpRequest, certificateRequest);
-                return await PostPutRequestWithResponse<UpdateCertificateRequest, Certificate>(httpRequest, certificateRequest);
+                return await PostPutRequestWithResponse<UpdateCertificateRequest, Certificate>(httpRequest, certificateRequest);                
             }
         }
 

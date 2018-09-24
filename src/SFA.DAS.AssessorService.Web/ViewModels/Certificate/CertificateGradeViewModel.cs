@@ -7,7 +7,8 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 {
     public class CertificateGradeViewModel : CertificateBaseViewModel, ICertificateViewModel
     {
-        public string SelectedGrade { get; set; }
+        public string SelectedGrade { get; set; }       
+
         public List<SelectListItem> Grades = new List<SelectListItem>
         {
             new SelectListItem {Text = "Pass", Value = "Pass"},

@@ -41,13 +41,10 @@
                 </div>
             }
 
-            <fieldset sfa-anyvalidationerror-class="after-error-summary">
-                <legend id="Name">
-                    <h1 class="heading-large">
-                        @*<span class="heading-secondary">@Model.GivenNames @Model.FamilyName</span>*@
-                        @Localizer["Heading"]
-                    </h1>
-                </legend>
+            <div sfa-anyvalidationerror-class="after-error-summary">
+                <h1 class="heading-large">
+                    @Localizer["Heading"]
+                </h1>
 
                 <div class="form-group" sfa-validation-for="Name" sfa-validationerror-class="form-group-error">
                     <label for="Name">
@@ -71,7 +68,7 @@
                     <input class="form-control" name="Dept" sfa-validation-for="Dept" sfa-validationerror-class="form-control-error" asp-for="Dept" type="text"/>
                 </div>
 
-            </fieldset>
+            </div>
 
             <button type="submit" class="button">@Localizer["ContinueButton"]</button>
         </form>

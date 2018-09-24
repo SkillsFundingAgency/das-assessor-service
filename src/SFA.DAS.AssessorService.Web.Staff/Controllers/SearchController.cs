@@ -27,14 +27,14 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         {
             return View();
         }
-        
+
         [HttpGet("results")]
         public async Task<IActionResult> Results(string searchString, int page = 1)
         {
             var searchResults = await _apiClient.Search(searchString, page);
             var searchViewModel = new SearchViewModel
             {
-                PaginatedList = searchResults,
+                StaffSearchResult = searchResults,
                 SearchString = searchString,
                 Page = page
             };
@@ -43,12 +43,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         }
 
         [HttpGet("select")]
-        public async Task<IActionResult> Select(int stdCode, 
-            long uln, 
+        public async Task<IActionResult> Select(int stdCode,
+            long uln,
             string searchString,
             int page = 1,
             bool allLogs = false,
-            int? batchNumber = null)         
+            int? batchNumber = null)
         {
             var learner = await _apiClient.GetLearner(stdCode, uln, allLogs);
 
@@ -78,6 +78,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
     {
         public string SearchString { get; set; }
         public int Page { get; set; }
-        public PaginatedList<StaffSearchResult> PaginatedList { get; set; }
+        public StaffSearchResult StaffSearchResult { get; set; }
     }
 }

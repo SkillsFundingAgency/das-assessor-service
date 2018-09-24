@@ -35,6 +35,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(await _mediator.Send(request));
         }
 
+        [HttpPost("startprivate", Name = "StartPrivate")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Certificate))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> StartPrivate([FromBody] StartCertificatePrivateRequest request)
+        {
+             return Ok(await _mediator.Send(request));
+        }
+
         [HttpPut("update", Name = "Update")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Certificate))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]

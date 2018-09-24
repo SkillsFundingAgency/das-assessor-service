@@ -1,0 +1,106 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private.CertificateLearnerStartDateViewModel
+
+@{
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Learner start date";
+    Layout = "_Layout";
+}
+<div class="grid-row">
+    <div class="column-two-thirds">
+        @if (Model.BackToCheckPage)
+        {
+            <a class="link-back" asp-controller="CertificateCheck" asp-action="Check">Back</a>
+        }
+        else
+        {
+            <a class="link-back" asp-controller="CertificatePrivateStandardCode" asp-action="StandardCode">Back</a>
+        }
+
+        <form class="apprentice-learner-date-form js-disable-on-submit" method="post" asp-controller="CertificatePrivateLearnerStartDate">
+            <input type="hidden" name="fullDate" id="fullDate" class="date-input" />
+            @Html.HiddenFor(c => c.Id)
+            @Html.HiddenFor(m => m.StartDate)
+            <input type="hidden" name="WarningShown" id="WarningShown" value="@Model.WarningShown" />
+
+            @* hidden with css by default *@
+            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                    There's a problem
+                </h2>
+                <ul class="js-error-summary-list error-summary-list"></ul>
+            </div>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                if (Model.WarningShown == "true")
+                {
+                    <text>There is a warning!!</text>
+                }
+                else
+                {
+                    <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                        <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                            There's a problem
+                        </h2>
+                        <ul class="error-summary-list">
+                            <li><a sfa-validation-for="Date"></a></li>
+                            <li><a sfa-validation-for="Day"></a></li>
+                            <li><a sfa-validation-for="Month"></a></li>
+                            <li><a sfa-validation-for="Year"></a></li>
+                        </ul>
+                    </div>
+                }
+            }
+
+            <div sfa-anyvalidationerror-class="after-error-summary">
+                <h1 class="heading-medium">
+                    @Localizer["Heading"]
+                </h1>
+
+                <div class="form-group error-message-container" sfa-anyvalidationerror-class="form-group-error">
+                    <span class="error-message" asp-validation-for="Date"></span>
+                    <span class="error-message" asp-validation-for="Day"></span>
+                    <span class="error-message" asp-validation-for="Month"></span>
+                    <span class="error-message" asp-validation-for="Year"></span>
+
+                    <span class="form-hint">
+                        @Localizer["DateHint"]
+                    </span>
+                    <div class="form-date">
+                        <div class="form-group form-group-day">
+                            <label for="Day">Day</label>
+                            <input class="form-control date-input js-integers-only" sfa-validation-for="Day" sfa-validationerror-class="form-control-error" asp-for="Day" type="text" maxlength="2" />
+                        </div>
+
+                        <div class="form-group form-group-month">
+                            <label for="Month">Month</label>
+                            <input class="form-control date-input js-integers-only" sfa-validation-for="Month" sfa-validationerror-class="form-control-error" asp-for="Month" type="text" maxlength="2" />
+                        </div>
+
+                        <div class="form-group form-group-year">
+                            <label for="Year">Year</label>
+                            <input class="form-control date-input js-integers-only" sfa-validation-for="Year" sfa-validationerror-class="form-control-error" asp-for="Year" type="text" maxlength="4" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <details>
+                <summary><span class="summary">@Localizer["InfoHeader"]</span></summary>
+                <div class="panel panel-border-narrow" id="what-is-the-apprenticeship-start-date">
+                    <p>
+                        @Localizer["InfoBody"]
+                    </p>
+                </div>
+            </details>
+
+            <button type="submit" class="button">@Localizer["ContinueButton"]</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    @{await Html.RenderPartialAsync("~/Views/Certificate/_LearnerDateScriptsPartial.cshtml"); }
+}

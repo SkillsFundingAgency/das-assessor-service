@@ -23,7 +23,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(Guid certificateId)
+        public async Task<IActionResult> Index(Guid certificateId,
+            int stdCode,
+            long uln,
+            string searchString,
+            int page = 1)
         {
             var certificate = await _apiClient.GetCertificate(certificateId);
 
@@ -31,7 +35,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             {
                 Certificate = certificate,
                 IsConfirmed = false,
-                NextBatchDate = "Fake Date"
+                NextBatchDate = "Fake Date",
+                SearchString = searchString,
+                StdCode = stdCode,
+                Uln = uln,
+                Page = page
             };
 
             return View(vm);
@@ -52,7 +60,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             {
                 Certificate = certificate,
                 IsConfirmed = true,
-                NextBatchDate = nextScheduledRun?.RunTime.ToString("dd/MM/yyyy")
+                NextBatchDate = nextScheduledRun?.RunTime.ToString("dd/MM/yyyy"),
+                SearchString = duplicateRequestViewModel.SearchString,
+                StdCode = duplicateRequestViewModel.StdCode,
+                Uln = duplicateRequestViewModel.Uln,
+                Page = duplicateRequestViewModel.Page
             };
 
             return View(vm);
@@ -64,5 +76,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         public Certificate Certificate { get; set; }
         public bool IsConfirmed { get; set; }
         public string NextBatchDate { get; set; }
+        public string SearchString { get; set; }
+        public int Page { get; set; }
+        public long Uln { get; set; }
+        public int StdCode { get; set; }
     }
 }
