@@ -68,9 +68,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> GetAssessmentOrganisation(string organisationId)
         {
             _logger.LogInformation($@"Get Assessment Organisation [{organisationId}]");
-            var res = await _mediator.Send(new GetAssessmentOrganisationRequest { OrganisationId = organisationId });
-            if (res == null) return NotFound();
-            return Ok(res);
+            var result = await _mediator.Send(new GetAssessmentOrganisationRequest { OrganisationId = organisationId });
+            if (result == null) return NotFound();
+            return Ok(result);
         }
 
         [HttpGet("assessment-organisations/standards/{standardId}", Name = "GetAssessmentOrganisationsByStandard")]
@@ -81,9 +81,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> GetAssessmentOrganisationsByStandard(int standardId)
         {
             _logger.LogInformation($@"Get Assessment Organisations by Standard [{standardId}]");
-            var res = await _mediator.Send(new GetAssessmentOrganisationsbyStandardRequest { StandardId = standardId });
-            if (res == null) return NotFound();
-            return Ok(res);
+            var result = await _mediator.Send(new GetAssessmentOrganisationsbyStandardRequest { StandardId = standardId });
+            if (result == null) return NotFound();
+            return Ok(result);
         }
 
         [HttpGet("assessment-organisations/{organisationId}/standards", Name = "GetOrganisationStandardsByOrganisation")]
@@ -94,9 +94,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> GetOrganisationStandardsByOrganisation(string organisationId)
         {
             _logger.LogInformation($@"Get Organisations Standards by OrganisationId [{organisationId}]");
-            var res = await _mediator.Send(new GetStandardsByOrganisationRequest { OrganisationId = organisationId });
-            if (res == null) return NotFound();
-            return Ok(res);
+            var result = await _mediator.Send(new GetStandardsByOrganisationRequest { OrganisationId = organisationId });
+            if (result == null) return NotFound();
+            return Ok(result);
         }
 
         [HttpHead("assessment-organisations/{organisationId}", Name = "GetAssessmentOrganisationHead")]
@@ -105,10 +105,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> Head(string organisationId)
         {
             _logger.LogInformation($@"HEAD Assessment Organisation [{organisationId}]");
-            var res = await _mediator.Send(new GetAssessmentOrganisationRequest { OrganisationId = organisationId });
-            if (res == null) return NotFound();
+            var result = await _mediator.Send(new GetAssessmentOrganisationRequest { OrganisationId = organisationId });
+            if (result == null) return NotFound();
             return NoContent();
         }
 
+ [HttpGet("assessment-organisations/search/{searchstring}", Name = "SearchAssessmentOrganisations")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<AssessmentOrganisationSummary>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> SearchAssessmentOrganisations(string searchstring)
+        {
+            _logger.LogInformation($@"Search Assessment Organisations for [{searchstring}]");
+            return Ok(await _mediator.Send(new SearchAssessmentOrganisationsRequest{Searchstring = searchstring}));
+        }
     }
 }
