@@ -83,7 +83,7 @@
                     Learner start date
                 </dt>
                 <dd class="cya-answer">
-                    @Model.LearnerStartDate.ToShortDateString()
+                    @Model.LearnerStartDate?.ToShortDateString()
                 </dd>
                 <dd class="cya-change">
                     <a asp-controller="CertificatePrivateLearnerStartDate" asp-action="LearnerStartDate" asp-route-redirecttocheck="true">
@@ -165,7 +165,7 @@
                     Achievement date
                 </dt>
                 <dd class="cya-answer">
-                    @Model.AchievementDate.ToShortDateString()
+                    @Model.AchievementDate?.ToShortDateString()
                 </dd>
                 <dd class="cya-change">
                     <a asp-controller="CertificateDate" asp-action="Date" asp-route-redirecttocheck="true">

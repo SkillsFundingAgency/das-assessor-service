@@ -11,15 +11,15 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private
         public string Day { get; set; }
         public string Month { get; set; }
         public string Year { get; set; }
-        public DateTime StartDate { get; set; }
+        public DateTime? StartDate { get; set; }
         public string WarningShown { get; set; }
 
         public void FromCertificate(Domain.Entities.Certificate cert)
         {
             BaseFromCertificate(cert);
-            Day = CertificateData.LearningStartDate.Day.ToString();
-            Month = CertificateData.LearningStartDate.Month.ToString();
-            Year = CertificateData.LearningStartDate.Year.ToString();
+            Day = CertificateData.LearningStartDate?.Day.ToString();
+            Month = CertificateData.LearningStartDate?.Month.ToString();
+            Year = CertificateData.LearningStartDate?.Year.ToString();
             StartDate = CertificateData.LearningStartDate;
             WarningShown = "false";
         }

@@ -14,8 +14,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
         public string Option { get; set; }
         public string SelectedGrade { get; set; }
         public int StandardCode { get; set; }
-        public DateTime AchievementDate { get; set; }
-
+        public DateTime? AchievementDate { get; set; }
+        public DateTime? LearnerStartDate { get; set; }
+        
         public string FirstName { get; set; }
         public string Name { get; set; }
         public string Dept { get; set; }
@@ -37,7 +38,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
             Option = CertificateData.CourseOption;
             SelectedGrade = CertificateData.OverallGrade;
             StandardCode = cert.StandardCode;
-            AchievementDate = CertificateData.AchievementDate.Value;
+            AchievementDate = CertificateData.AchievementDate;
+            LearnerStartDate = CertificateData.LearningStartDate;
 
             FirstName = CertificateData.LearnerGivenNames;
 

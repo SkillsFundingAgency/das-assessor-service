@@ -13,8 +13,8 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         public string SelectedGrade { get; set; }
         public string SelectedUkPrn { get; set; }
         public string SelectedStandard { get; set; }
-        public DateTime AchievementDate { get; set; }
-        public DateTime LearnerStartDate { get; set; }
+        public DateTime? AchievementDate { get; set; }
+        public DateTime? LearnerStartDate { get; set; }
 
         public string Name { get; set; }
         public string Dept { get; set; }
@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             FirstName = CertificateData.LearnerGivenNames;
             LearnerStartDate = CertificateData.LearningStartDate;
 
-            AchievementDate = CertificateData.AchievementDate.Value;            
+            AchievementDate = CertificateData.AchievementDate;            
             Name = CertificateData.ContactName;
             Dept = CertificateData.Department;
             Employer = CertificateData.ContactOrganisation;
