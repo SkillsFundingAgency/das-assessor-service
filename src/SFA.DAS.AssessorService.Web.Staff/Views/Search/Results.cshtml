@@ -29,22 +29,21 @@
                     <th>Standard</th>
                     <th>Certificate reference</th>
                     <th>Status</th>
-                    <th>Updated</th>
-                    <th></th>
+                    <th>Updated</th>                    
                 </tr>
             </thead>
             <tbody>
                 @foreach (var result in Model.StaffSearchResult.StaffSearchItems.Items)
                 {
-                <tr>
-                    <td>@result.GivenNames @result.FamilyName</td>
-                    <td>@result.Uln</td>
-                    <td>@result.Standard (@result.StandardCode)</td>
-                    <td>@result.CertificateReference</td>
-                    <td>@result.CertificateStatus</td>
-                    <td>@result.LastUpdatedAt?.ToShortDateString()</td>
-                    <td><a asp-action="Select" asp-route-stdcode="@result.StandardCode" asp-route-uln="@result.Uln" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.StaffSearchResult.StaffSearchItems.PageIndex">View</a></td>
-                </tr>
+                    <tr>
+                        <td><a asp-action="Select" asp-route-stdcode="@result.StandardCode" asp-route-uln="@result.Uln" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.StaffSearchResult.StaffSearchItems.PageIndex">@result.GivenNames @result.FamilyName</a></td>                        
+                        <td>@result.Uln</td>
+                        <td>@result.Standard (@result.StandardCode)</td>
+                        <td>@result.CertificateReference</td>
+                        <td>@result.CertificateStatus</td>
+                        <td>@result.LastUpdatedAt?.ToShortDateString()</td>
+
+                    </tr>
                 }
             </tbody>
         </table>
