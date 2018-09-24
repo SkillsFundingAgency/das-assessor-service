@@ -16,7 +16,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers
 {
     public class ContractAmmendQueryBase
     {        
-        protected Mock<ILogger<CertificateAmmendController>> MockedLogger;
+        protected Mock<ILogger<CertificateAmendController>> MockedLogger;
         protected Mock<IHttpContextAccessor> MockHttpContextAccessor;
         protected ApiClient ApiClient;
 
@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers
 
         public ContractAmmendQueryBase()
         {
-           MockedLogger = new Mock<ILogger<CertificateAmmendController>>();
+           MockedLogger = new Mock<ILogger<CertificateAmendController>>();
            var mockedApiClientLogger = new Mock<ILogger<ApiClient>>();
 
             MockHttpContextAccessor = SetupMockedHttpContextAccessor();

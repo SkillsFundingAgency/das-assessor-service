@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
     {
         private readonly CertificateLearnerStartDateViewModelValidator _validator;
 
-        public CertificatePrivateLearnerStartDateController(ILogger<CertificateAmmendController> logger,
+        public CertificatePrivateLearnerStartDateController(ILogger<CertificateAmendController> logger,
             IHttpContextAccessor contextAccessor,
             ApiClient apiClient,
             CertificateLearnerStartDateViewModelValidator certificateLearnerStartDateViewModelValidator) : base(logger,
@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
         [HttpGet]
         public async Task<IActionResult> LearnerStartDate(Guid certificateid)
         {
-            return await LoadViewModel<CertificateLearnerStartDateViewModel>(certificateid, "~/Views/CertificateAmmend/LearnerStartDate.cshtml");
+            return await LoadViewModel<CertificateLearnerStartDateViewModel>(certificateid, "~/Views/CertificateAmend/LearnerStartDate.cshtml");
         }
 
         [HttpPost(Name = "LearnerStartDate")]
@@ -42,12 +42,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
             if (!result.IsValid && result.Errors.Any(e => e.Severity == Severity.Warning))
             {
                 vm.WarningShown = "true";
-                return View("~/Views/CertificateAmmend/LearnerStartDate.cshtml", vm);
+                return View("~/Views/CertificateAmend/LearnerStartDate.cshtml", vm);
             }
 
             var actionResult = await SaveViewModel(vm,
-                returnToIfModelNotValid: "~/Views/CertificateAmmend/LearnerStartDate.cshtml",
-                nextAction: RedirectToAction("Check", "CertificateAmmend", new { certificateid = vm.Id }), action: CertificateActions.Ukprn);
+                returnToIfModelNotValid: "~/Views/CertificateAmend/LearnerStartDate.cshtml",
+                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateid = vm.Id }), action: CertificateActions.Ukprn);
 
             return actionResult;
         }

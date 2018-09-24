@@ -14,11 +14,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 { 
     public class CertificateBaseController : Controller
     {
-        protected readonly ILogger<CertificateAmmendController> Logger;
+        protected readonly ILogger<CertificateAmendController> Logger;
         protected readonly IHttpContextAccessor ContextAccessor;
         protected readonly ApiClient ApiClient;     
 
-        public CertificateBaseController(ILogger<CertificateAmmendController> logger, 
+        public CertificateBaseController(ILogger<CertificateAmendController> logger, 
             IHttpContextAccessor contextAccessor, 
             ApiClient apiClient)
         {

@@ -9,7 +9,7 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <a class="link-back" asp-controller="CertificateAmmend" asp-action="Check" asp-route-certificateid=@Model.Id>Back</a>
+        <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateid=@Model.Id>Back</a>
 
         <form class="apprentice-standard-codes-form js-disable-on-submit" method="post" asp-action="StandardCode" asp-controller="CertificatePrivateStandardCode">
             @Html.HiddenFor(c => c.Id)
@@ -62,5 +62,5 @@
 
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-    @{ await Html.RenderPartialAsync("~/Views/CertificateAmmend/_StandardCodesScriptsPartial.cshtml"); }
+    @{ await Html.RenderPartialAsync("~/Views/CertificateAmend/_StandardCodesScriptsPartial.cshtml"); }
 }

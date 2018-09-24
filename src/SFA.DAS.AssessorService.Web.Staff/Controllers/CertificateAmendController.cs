@@ -8,9 +8,9 @@ using SFA.DAS.AssessorService.Web.Staff.ViewModels;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {
-    public class CertificateAmmendController : CertificateBaseController
+    public class CertificateAmendController : CertificateBaseController
     {
-        public CertificateAmmendController(ILogger<CertificateAmmendController> logger,
+        public CertificateAmendController(ILogger<CertificateAmendController> logger,
             IHttpContextAccessor contextAccessor,
             ApiClient apiClient) : base(logger, contextAccessor, apiClient)
         {
@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         [HttpGet]
         public async Task<IActionResult> Check(Guid certificateid)
         {
-            return await LoadViewModel<CertificateCheckViewModel>(certificateid, "~/Views/CertificateAmmend/Check.cshtml");
+            return await LoadViewModel<CertificateCheckViewModel>(certificateid, "~/Views/CertificateAmend/Check.cshtml");
         }     
 
         [HttpPost(Name = "Check")]

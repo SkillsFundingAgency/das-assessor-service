@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
         private readonly CacheHelper _cacheHelper;
         private readonly ApiClient _apiClient;       
 
-        public CertificatePrivateStandardCodeController(ILogger<CertificateAmmendController> logger,
+        public CertificatePrivateStandardCodeController(ILogger<CertificateAmendController> logger,
             IHttpContextAccessor contextAccessor,
             IAssessmentOrgsApiClient assessmentOrgsApiClient,
             CacheHelper cacheHelper,
@@ -43,7 +43,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
 
             var results = GetSelectListItems(standards, filteredStandardCodes);
 
-            var viewResult = await LoadViewModel<CertificateStandardCodeListViewModel>(certificateid, "~/Views/CertificateAmmend/StandardCode.cshtml");
+            var viewResult = await LoadViewModel<CertificateStandardCodeListViewModel>(certificateid, "~/Views/CertificateAmend/StandardCode.cshtml");
             if (viewResult is ViewResult)
             {
                 var vm = ((viewResult as ViewResult).Model) as CertificateStandardCodeListViewModel;
@@ -71,8 +71,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
             }
 
             var actionResult = await SaveViewModel(vm,
-                returnToIfModelNotValid: "~/Views/CertificateAmmend/StandardCode.cshtml",
-                nextAction: RedirectToAction("Check", "CertificateAmmend", new { certificateid = vm.Id }), action: CertificateActions.StatusCode);
+                returnToIfModelNotValid: "~/Views/CertificateAmend/StandardCode.cshtml",
+                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateid = vm.Id }), action: CertificateActions.StatusCode);
 
             return actionResult;
         }

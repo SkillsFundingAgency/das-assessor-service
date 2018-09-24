@@ -11,7 +11,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {   
     public class CertificateAddressController : CertificateBaseController
     {
-        public CertificateAddressController(ILogger<CertificateAmmendController> logger,
+        public CertificateAddressController(ILogger<CertificateAmendController> logger,
             IHttpContextAccessor contextAccessor,
             ApiClient apiClient)
             : base(logger, contextAccessor, apiClient)
@@ -20,15 +20,15 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         [HttpGet]
         public async Task<IActionResult> Address(Guid certificateid)
         {
-            return await LoadViewModel<CertificateAddressViewModel>(certificateid, "~/Views/CertificateAmmend/Address.cshtml");
+            return await LoadViewModel<CertificateAddressViewModel>(certificateid, "~/Views/CertificateAmend/Address.cshtml");
         }
 
         [HttpPost(Name = "Grade")]
         public async Task<IActionResult> Address(CertificateAddressViewModel vm)
         {
             return await SaveViewModel(vm,
-                returnToIfModelNotValid: "~/Views/CertificateAmmend/Address.cshtml",
-                nextAction: RedirectToAction("Check", "CertificateAmmend", new { certificateid = vm.Id }), action: CertificateActions.Address);
+                returnToIfModelNotValid: "~/Views/CertificateAmend/Address.cshtml",
+                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateid = vm.Id }), action: CertificateActions.Address);
         }
     }
 }

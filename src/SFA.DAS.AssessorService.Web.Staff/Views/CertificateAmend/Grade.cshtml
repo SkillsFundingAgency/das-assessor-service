@@ -8,7 +8,7 @@
 <div class="grid-row">
     <div class="column-two-thirds">
 
-        <a class="link-back" asp-controller="CertificateAmmend" asp-action="Check" asp-route-certificateid=@Model.Id>Back</a>
+        <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateid=@Model.Id>Back</a>
 
         <form class="apprentice-grade-form" type="post" asp-controller="CertificateGrade">
             @Html.HiddenFor(c => c.Id)
@@ -77,5 +77,5 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-    @{await Html.RenderPartialAsync("~/Views/CertificateAmmend/_GradeScriptsPartial.cshtml"); }
+    @{await Html.RenderPartialAsync("~/Views/CertificateAmend/_GradeScriptsPartial.cshtml"); }
 }

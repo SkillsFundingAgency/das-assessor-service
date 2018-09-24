@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
     [Route("certificate/ukprns")]
     public class CertificatePrivateProviderUkprnController : CertificateBaseController
     { 
-        public CertificatePrivateProviderUkprnController(ILogger<CertificateAmmendController> logger,
+        public CertificatePrivateProviderUkprnController(ILogger<CertificateAmendController> logger,
             IHttpContextAccessor contextAccessor,
             ApiClient apiClient) : base(logger, contextAccessor, apiClient)
         {     
@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
         [HttpGet]
         public async Task<IActionResult> Ukprn(Guid certificateId)
         {
-            var viewResult = await LoadViewModel<CertificateUkprnViewModel>(certificateId, "~/Views/CertificateAmmend/Ukprn.cshtml");
+            var viewResult = await LoadViewModel<CertificateUkprnViewModel>(certificateId, "~/Views/CertificateAmend/Ukprn.cshtml");
             return viewResult;
         }
 
@@ -31,8 +31,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
         public async Task<IActionResult> Ukprn(CertificateUkprnViewModel vm)
         {
             var actionResult = await SaveViewModel(vm,
-                returnToIfModelNotValid: "~/Views/CertificateAmmend/Ukprn.cshtml",
-                nextAction: RedirectToAction("Check", "CertificateAmmend", new { certificateid = vm.Id }), action: CertificateActions.Ukprn);
+                returnToIfModelNotValid: "~/Views/CertificateAmend/Ukprn.cshtml",
+                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateid = vm.Id }), action: CertificateActions.Ukprn);
 
             return actionResult;           
         }
