@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace SFA.DAS.AssessorService.Application.Interfaces
+﻿namespace SFA.DAS.AssessorService.Application.Interfaces
 {
     public interface IEpaOrganisationValidator
     {
@@ -12,5 +10,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         string CheckOrganisationTypeIsNullOrExists(int? organisationTypeId);
         string CheckIfOrganisationNotFound(string organisationId);
         string CheckUkprnIsValid(long? ukprn);
+        string CheckOrganisationNameNotUsed(string name);
+        string CheckOrganisationNameNotUsedForOtherOrganisations(string name, string organisationIdToIgnore);
     }
 }

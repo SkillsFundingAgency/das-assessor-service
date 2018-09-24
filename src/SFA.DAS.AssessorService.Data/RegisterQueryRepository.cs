@@ -138,6 +138,28 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
+        public async Task<bool> EpaOrganisationAlreadyUsingName(string organisationName, string organisationIdToExclude)
+        {
+         
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+                
+                var sqlToCheckExists =
+                    "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Organisations] " +
+                    $@"WHERE EndPointAssessorName = '{organisationName}'";
+                
+                if (!string.IsNullOrEmpty(organisationIdToExclude))
+                {
+                    sqlToCheckExists =  "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Organisations] " +
+                                        $@"WHERE EndPointAssessorName = '{organisationName}' AND  EndPointAssessorOrganisationId != '{organisationIdToExclude}'";
+                }
+                 
+                return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists);
+            }
+        }
+
         public async Task<string> EpaOrganisationIdCurrentMaximum()
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))

@@ -19,7 +19,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         public string ErrorMessageAnotherOrganisationUsingTheUkprn { get; } = "The ukprn entered is already used by another organisation; ";
         public string ErrorMessageUkprnIsInvalid { get; } = "The ukprn is not the correct format or length; ";
         public string ErrorMessageOrganisationNotFound { get; } = "There is no organisation for the this organisation Id; ";
-
+        
+        
+        public string ErrorMessageOrganisationNameAlreadyPresent { get; } = "There is already an organisation present with this name; ";
+ 
         public EpaOrganisationValidator( IRegisterQueryRepository registerRepository)
         {
             _registerRepository = registerRepository;
@@ -73,6 +76,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             if (ukprn == null) return string.Empty;
             var isValid = ukprn >= 10000000 && ukprn <= 99999999;
             return isValid ? string.Empty : ErrorMessageUkprnIsInvalid;
+        }
+
+        public string CheckOrganisationNameNotUsed(string name)
+        {
+            return _registerRepository.EpaOrganisationAlreadyUsingName(name, string.Empty).Result 
+                ? ErrorMessageOrganisationNameAlreadyPresent : 
+                string.Empty;
+        }
+
+        public string CheckOrganisationNameNotUsedForOtherOrganisations(string name, string organisationIdToIgnore)
+        {
+            return _registerRepository.EpaOrganisationAlreadyUsingName(name, organisationIdToIgnore).Result 
+                ? ErrorMessageOrganisationNameAlreadyPresent : 
+                string.Empty;
         }
 
         public string CheckIfOrganisationUkprnExistsForOtherOrganisations(long? ukprn, string organisationIdToIgnore)
