@@ -6,32 +6,52 @@
 }
 <div class="grid-row">
     <div class="column-two-thirds">
-        <form asp-action="Results" asp-controller="Register" method="get">
-            <div class="form-group">
-                <h1>
-                    <label class="form-label" for="SearchString">
-                        <span class="heading-xlarge">Organisation search</span>
-                        <span class="form-hint">Search by ukprn, OrganisationID (EPAXXXX) or name</span>
-                    </label>
-                </h1>
-                <input class="form-control" asp-for="SearchString" />
+        <a asp-action="Index" asp-controller="Dashboard" class="link-back">Return to dashboard</a>
+        <form class="register-search-form" asp-action="Results" asp-controller="Register" method="get">
+
+            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                    There's a problem
+                </h2>
+                
+                <ul class="js-error-summary-list error-summary-list"></ul>
             </div>
-            @if (!string.IsNullOrEmpty(@Model.ErrorMessage))
-            {
-                <div id="validation-messages">
-                    @Model.ErrorMessage
-                </div>
-                <div>
-                    &nbsp;
-                </div>
-                <div>
-                    &nbsp;
-                </div>
-            }
-            <button class="button" type="submit">Search</button>
-            
+
+            <h1>
+                <label class="form-label" for="SearchString">
+                    <span class="heading-xlarge">Organisation search</span>
+                </label>
+            </h1>
+
+            <p>Search using either the:</p>
+            <ul class="list list-bullet">
+                <li>UKPRN</li>
+                <li>organisation ID (EPAXXXX)</li>
+                <li>name</li>
+            </ul>
+
+            <div class="form-group">
+                @if (!string.IsNullOrEmpty(@Model.ErrorMessage))
+                {
+                    <div id="validation-messages">
+                        @Model.ErrorMessage
+                    </div>
+                }
+                <span class="error-message" asp-validation-for="SearchString"></span>
+                <input class="form-control" name="SearchString" sfa-validation-for="SearchString" sfa-validationerror-class="form-control-error" asp-for="SearchString" type="text" />
+            </div>
+            <div class="form-group">
+                <button class="button" type="submit">Search</button>
+            </div>
+            <div class="form-group">
+                <a class="button" href="#">Add New</a>
+            </div>
         </form>
-        <div>&nbsp;</div>
-        <div><a class="button">Add New</a></div>
+
     </div>  
 </div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <!-- @{await Html.RenderPartialAsync("~/Views/Register/_RegisterScriptsPartial.cshtml"); } -->
+}

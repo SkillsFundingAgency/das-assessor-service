@@ -1,0 +1,20 @@
+<script>
+  var epaoRegisterFormElement = $('.register-search-form');
+  var epaoRegisterValidationRulesObject = {
+    rules: {
+      SearchString: {
+        required: true,
+        minlength: 2
+      }
+    },
+    messages: {
+      SearchString: {
+        required: 'Enter a seach',
+        minlength: 'Enter 2 or more characters'
+      }
+    }
+  };
+
+  GOVUK.epaoValidate(epaoRegisterFormElement, epaoRegisterValidationRulesObject);
+
+</script>
