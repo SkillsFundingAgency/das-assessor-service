@@ -17,6 +17,19 @@
                 <ul class="js-error-summary-list error-summary-list"></ul>
             </div>
 
+            @if (!ViewData.ModelState.IsValid)
+            {
+            <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                    There's a problem
+                </h2>
+                <ul class="error-summary-list">
+                    <li><a sfa-validation-for="SearchString"></a></li>
+                    kfngnle
+                </ul>
+            </div>
+            }
+
             <h1>
                 <label class="form-label" for="SearchString">
                     <span class="heading-xlarge">Organisation search</span>
@@ -30,10 +43,10 @@
                 <li>name</li>
             </ul>
 
-            <div class="form-group">
+            <div class="form-group" sfa-validationerror-class="form-group-error">
                 @if (!string.IsNullOrEmpty(@Model.ErrorMessage))
                 {
-                    <div id="validation-messages">
+                    <div class="error-message"  id="validation-messages">
                         @Model.ErrorMessage
                     </div>
                 }
