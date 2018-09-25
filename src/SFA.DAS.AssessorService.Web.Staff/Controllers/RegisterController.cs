@@ -60,7 +60,23 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         [HttpGet("register/add-organisation")]
         public async Task<IActionResult> AddOrganisation()
         {
-            
+            var vm = new RegisterAddOrganisationViewModel
+            {
+                OrganisationTypes = await _apiClient.GetOrganisationTypes()
+            };
+
+            return View(vm);
+        }
+
+        [HttpPost("register/add-organisation")]
+        public async Task<IActionResult> AddOrganisation(RegisterAddOrganisationViewModel viewModel)
+        {
+            var vm = new RegisterAddOrganisationViewModel
+            {
+                OrganisationTypes = await _apiClient.GetOrganisationTypes()
+            };
+
+            return View(vm);
         }
     }
 }

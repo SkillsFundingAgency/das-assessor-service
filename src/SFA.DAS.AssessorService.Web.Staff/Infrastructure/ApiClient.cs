@@ -85,6 +85,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             return await Get<List<AssessmentOrganisationSummary>>($"/api/ao/assessment-organisations/search/{searchString}");
         }
 
+        public async Task<List<OrganisationType>> GetOrganisationTypes()
+        {
+            return await Get<List<OrganisationType>>($"/api/ao/organisation-types");
+        }
+
         public async Task<PaginatedList<StaffBatchSearchResult>> BatchSearch(int batchNumber, int page)
         {
             return await Get<PaginatedList<StaffBatchSearchResult>>($"/api/v1/staffsearch/batch?batchNumber={batchNumber}&page={page}");
