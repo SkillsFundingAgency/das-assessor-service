@@ -7,25 +7,28 @@
 
 
 <div class="grid-row">
-    <div class="column-full">
+    <div class="column-two-thirds">
         <a asp-action="Index" class="link-back">Search Again</a>
-
         <h1 class="heading-xlarge">
-            Organisation Search results
-            @if (@Model.Results.Count > 0)
-            {
-                <span class="heading-secondary">Matching results for '@Model.SearchString': @Model.Results.Count</span>
-            }
+            Organisation search results
+            <span class="heading-secondary">Number of results: @Model.Results.Count</span>
+            @*<span class="heading-secondary">Matching results for '@Model.SearchString': @Model.Results.Count</span>*@
         </h1>
+    </div>
+</div>
 
-        @if (@Model.Results.Count > 0)
-        {
-            <table class="table">
+
+@if (@Model.Results.Count > 0)
+{
+<div class="grid-row">
+    <div class="column-full">
+        <div class="form-group">
+            <table class="table responsive table-font-xsmall">
                 <thead>
                 <tr>
                     <th>Name</th>
                     <th>ID</th>
-                    <th>ukprn</th>
+                    <th>UKPRN</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -33,22 +36,22 @@
                 @foreach (var result in Model.Results.OrderBy(x => x.Name))
                 {
                     <tr>
-                        <td>@result.Name</td>
-                        <td>@result.Id</td>
-                        <td>@result.Ukprn</td>
-                        <td><a class="button">Edit</a></td>
+                        <td data-label="Name">@result.Name</td>
+                        <td data-label="ID">@result.Id</td>
+                        <td data-label="UKPRN">@result.Ukprn</td>
+                        <td class="numeric"><a href="#">Edit</a></td>
                     </tr>
                 }
                 </tbody>
             </table>
-        }
-        else
-        {
-            <div>There are no matching results for '@Model.SearchString'</div>
-        }
+        </div>
+    </div>
+</div>
+}
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <a class="button" href="#">Add New</a>
 
     </div>
-    <div>&nbsp;</div>
-    <div>&nbsp;</div>
-    <div><a class="button" >Add New</a></div>
 </div>
