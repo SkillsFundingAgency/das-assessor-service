@@ -46,16 +46,16 @@
                 </ul>
 
                 <div class="form-group" sfa-validation-for="SearchString" sfa-anyvalidationerror-class="form-group-error">
-                    <!-- @if (!string.IsNullOrEmpty(@Model.ErrorMessage))
+                    @*@if (!string.IsNullOrEmpty(@Model.ErrorMessage))
                     {
                         <div class="error-message"  id="validation-messages">
                             @Model.ErrorMessage
                         </div>
-                    } -->
+                    }*@
                     <div class="error-message-container" sfa-validation-for="SearchString" sfa-validationerror-class="form-group-error">
                         <span class="error-message" asp-validation-for="SearchString"></span>
                     </div>
-                    <input asp-for="SearchString" class="form-control" name="SearchString" sfa-validationerror-class="form-control-error" type="text" />
+                    <input class="form-control" asp-for="SearchString" name="SearchString" sfa-validationerror-class="form-control-error" type="text" />
                 </div>
             </div>
 

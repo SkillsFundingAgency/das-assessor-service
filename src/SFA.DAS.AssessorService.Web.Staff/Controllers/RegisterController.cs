@@ -20,31 +20,21 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 
         public IActionResult Index()
         {
-            return View(new RegisterViewModel());
+            return View(); 
         }
 
         [HttpGet("register/results")]
-        public async Task<IActionResult> Results(string searchString)
+        public async Task<IActionResult> Results(RegisterViewModel vm)
         {
-          
-            if (string.IsNullOrEmpty(searchString))
+            if (!ModelState.IsValid)
             {
-                searchString = string.Empty;
-            }
-            else
-            {
-                searchString = searchString.Trim().ToLower();
-            }
-
-            if (searchString.Length < 2)
-            {
-                var vm = new RegisterViewModel { ErrorMessage = "The expression entered is too short. Please enter 2 or more letters."};
                 return View("index",vm);
             }
 
             var searchResults = new List<AssessmentOrganisationSummary>();
 
-            if (searchString == "test")
+            //MFCMFC present to help Greg develop front end
+            if (vm.SearchString == "test")
                 searchResults = new List<AssessmentOrganisationSummary>
                 {
                     new AssessmentOrganisationSummary {Id = "EPA0001", Name = "test", Ukprn = 1111111},
@@ -52,16 +42,16 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 };
             else
             {
-                if (searchString != "empty")
+                if (vm.SearchString != "empty")
                 {
-                    searchResults = await _apiClient.SearchOrganisations(searchString.Trim().ToLower());
+                    searchResults = await _apiClient.SearchOrganisations(vm.SearchString?.Trim().ToLower());
                 }
             }
 
             var registerViewModel = new RegisterViewModel
             {
                 Results = searchResults,
-                SearchString = searchString,
+                SearchString = vm.SearchString,
             };
 
             return View(registerViewModel);
