@@ -43,7 +43,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 throw new BadRequestException(errorDetails.ToString());
             }
 
-            ThrowAlreadyExistsExceptionIfErrorPresent(errorDetails);
             errorDetails.Append(_validator.CheckIfOrganisationUkprnExists(request.Ukprn));
             ThrowAlreadyExistsExceptionIfErrorPresent(errorDetails);
 
