@@ -1,19 +1,21 @@
 ﻿@using SFA.DAS.AssessorService.Web.Staff.Controllers
 @model SFA.DAS.AssessorService.Web.Staff.Models.RegisterViewModel
 @{
-    ViewBag.Title = "Search Page";
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Organisation search";
     Layout = "_Layout";
 }
+
 <div class="grid-row">
     <div class="column-two-thirds">
         <a asp-action="Index" asp-controller="Dashboard" class="link-back">Return to dashboard</a>
+
         <form class="register-search-form" asp-action="Results" asp-controller="Register" method="get">
 
+            @* hidden with js *@
             <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
                 <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
                     There's a problem
                 </h2>
-                
                 <ul class="js-error-summary-list error-summary-list"></ul>
             </div>
 
@@ -25,39 +27,44 @@
                 </h2>
                 <ul class="error-summary-list">
                     <li><a sfa-validation-for="SearchString"></a></li>
-                    kfngnle
                 </ul>
             </div>
             }
 
-            <h1>
-                <label class="form-label" for="SearchString">
-                    <span class="heading-xlarge">Organisation search</span>
-                </label>
-            </h1>
+            <div sfa-anyvalidationerror-class="after-error-summary">
+                <h1>
+                    <label class="form-label" for="SearchString">
+                        <span class="heading-xlarge">Organisation search</span>
+                    </label>
+                </h1>
 
-            <p>Search using either the:</p>
-            <ul class="list list-bullet">
-                <li>UKPRN</li>
-                <li>organisation ID (EPAXXXX)</li>
-                <li>name</li>
-            </ul>
+                <p>Search using either the:</p>
+                <ul class="list list-bullet">
+                    <li>UKPRN</li>
+                    <li>organisation ID (EPAXXXX)</li>
+                    <li>name</li>
+                </ul>
 
-            <div class="form-group" sfa-validationerror-class="form-group-error">
-                @if (!string.IsNullOrEmpty(@Model.ErrorMessage))
-                {
-                    <div class="error-message"  id="validation-messages">
-                        @Model.ErrorMessage
+                <div class="form-group" sfa-validation-for="SearchString" sfa-anyvalidationerror-class="form-group-error">
+                    <!-- @if (!string.IsNullOrEmpty(@Model.ErrorMessage))
+                    {
+                        <div class="error-message"  id="validation-messages">
+                            @Model.ErrorMessage
+                        </div>
+                    } -->
+                    <div class="error-message-container" sfa-validation-for="SearchString" sfa-validationerror-class="form-group-error">
+                        <span class="error-message" asp-validation-for="SearchString"></span>
                     </div>
-                }
-                <span class="error-message" asp-validation-for="SearchString"></span>
-                <input class="form-control" name="SearchString" sfa-validation-for="SearchString" sfa-validationerror-class="form-control-error" asp-for="SearchString" type="text" />
+                    <input asp-for="SearchString" class="form-control" name="SearchString" sfa-validationerror-class="form-control-error" type="text" />
+                </div>
             </div>
+
             <div class="form-group">
                 <button class="button" type="submit">Search</button>
             </div>
+            
             <div class="form-group">
-                <a class="button" href="#">Add New</a>
+                <a class="button" href="">Add New</a>
             </div>
         </form>
 
@@ -65,6 +72,6 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <!-- @{await Html.RenderPartialAsync("_ValidationScriptsPartial");} -->
     <!-- @{await Html.RenderPartialAsync("~/Views/Register/_RegisterScriptsPartial.cshtml"); } -->
 }
