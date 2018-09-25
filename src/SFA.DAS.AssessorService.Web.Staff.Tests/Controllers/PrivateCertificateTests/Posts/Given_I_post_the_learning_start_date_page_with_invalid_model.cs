@@ -1,13 +1,12 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Application.Api.Consts;
-using SFA.DAS.AssessorService.Web.Controllers.Private;
-using SFA.DAS.AssessorService.Web.UnitTests.Helpers;
-using SFA.DAS.AssessorService.Web.Validators;
+using SFA.DAS.AssessorService.Web.Staff.Controllers.Private;
+using SFA.DAS.AssessorService.Web.Staff.Tests.Helpers;
+using SFA.DAS.AssessorService.Web.Staff.Validators;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private;
 
-namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Posts
+namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificateTests.Posts
 {
     public class Given_I_post_the_learning_startdate_page_with_invalid_model : CertificatePostBase
     {
@@ -16,22 +15,16 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Posts
         [SetUp]
         public void Arrange()
         {
-            var mockStringLocaliserBuildernew = new MockStringLocaliserBuilder();
-
-            var localiser = mockStringLocaliserBuildernew
-                .WithKey(ResourceMessageName.NoAssesmentProviderFound)
-                .WithKeyValue("100000000")
-                .Build<CertificateLearnerStartDateViewModelValidator>();
+            var mockStringLocaliserBuildernew = new MockStringLocaliserBuilder();            
 
             CertificateLearnerStartDateViewModelValidator validator =
-                new CertificateLearnerStartDateViewModelValidator(localiser.Object);
+                new CertificateLearnerStartDateViewModelValidator();
 
             var certificatePrivateLearnerStartDateController =
                 new CertificatePrivateLearnerStartDateController(MockLogger.Object,
                     MockHttpContextAccessor.Object,
-                    MockCertificateApiClient,
-                    validator,
-                    MockSession.Object
+                    MockApiClient,
+                    validator                   
                     );
 
             var vm = new CertificateLearnerStartDateViewModel
@@ -42,9 +35,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Posts
                 Month = "12",
                 Year = "2017",
                 IsPrivatelyFunded = true
-            };
-
-            SetupSession();
+            };        
 
             certificatePrivateLearnerStartDateController.ModelState.AddModelError("", "Error");
             var result = certificatePrivateLearnerStartDateController.LearnerStartDate(vm).GetAwaiter().GetResult();

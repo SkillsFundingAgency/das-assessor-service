@@ -21,13 +21,13 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Queries
             MockStringLocaliserBuilder mockStringLocaliserBuilder;
             mockStringLocaliserBuilder = new MockStringLocaliserBuilder();
 
-            Mock<IStringLocalizer<CertificateLearnerStartDateViewModel>>
-                mockLocaliser = new Mock<IStringLocalizer<CertificateLearnerStartDateViewModel>>();
+            Mock<IStringLocalizer<CertificateLearnerStartDateViewModelValidator>>
+                mockLocaliser = new Mock<IStringLocalizer<CertificateLearnerStartDateViewModelValidator>>();
 
             mockLocaliser = mockStringLocaliserBuilder
                 .WithKey("XXXX")
                 .WithKeyValue("100000000")
-                .Build<CertificateLearnerStartDateViewModel>();
+                .Build<CertificateLearnerStartDateViewModelValidator>();
 
             var certificateLearnerStartDateViewModelValidator =
                 new CertificateLearnerStartDateViewModelValidator(mockLocaliser.Object);

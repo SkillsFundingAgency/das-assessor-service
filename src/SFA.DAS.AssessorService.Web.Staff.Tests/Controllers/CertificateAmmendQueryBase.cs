@@ -14,7 +14,7 @@ using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers
 {
-    public class ContractAmmendQueryBase
+    public class CertificateAmmendQueryBase
     {        
         protected Mock<ILogger<CertificateAmendController>> MockedLogger;
         protected Mock<IHttpContextAccessor> MockHttpContextAccessor;
@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers
         protected Certificate Certificate;
         protected CertificateData CertificateData;
 
-        public ContractAmmendQueryBase()
+        public CertificateAmmendQueryBase()
         {
            MockedLogger = new Mock<ILogger<CertificateAmendController>>();
            var mockedApiClientLogger = new Mock<ILogger<ApiClient>>();
@@ -63,7 +63,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers
             mockHttp.When($"http://localhost:59022/api/v1/certificates/{Certificate.Id}")
                 .Respond("application/json", JsonConvert.SerializeObject(Certificate));
 
-            mockHttp.When($"http://localhost:59022/api/v1/organisations/{Certificate.OrganisationId}")
+            mockHttp.When($"http://localhost:59022/api/v1/organisations/organisation/{Certificate.OrganisationId}")
                 .Respond("application/json", JsonConvert.SerializeObject(Certificate));
 
             var apiClient = new ApiClient(client, apiClientLoggerMock.Object, tokenServiceMock.Object);

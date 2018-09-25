@@ -21,7 +21,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Posts
             var localiser = mockStringLocaliserBuildernew
                 .WithKey(ResourceMessageName.NoAssesmentProviderFound)
                 .WithKeyValue("100000000")
-                .Build<CertificateLearnerStartDateViewModel>();
+                .Build<CertificateLearnerStartDateViewModelValidator>();
 
             CertificateLearnerStartDateViewModelValidator validator =
                 new CertificateLearnerStartDateViewModelValidator(localiser.Object);

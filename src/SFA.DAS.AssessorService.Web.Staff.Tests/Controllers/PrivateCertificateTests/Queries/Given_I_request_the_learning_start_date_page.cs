@@ -5,14 +5,14 @@ using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Domain.JsonData;
-using SFA.DAS.AssessorService.Web.Controllers.Private;
-using SFA.DAS.AssessorService.Web.UnitTests.Helpers;
-using SFA.DAS.AssessorService.Web.Validators;
+using SFA.DAS.AssessorService.Web.Staff.Controllers.Private;
+using SFA.DAS.AssessorService.Web.Staff.Tests.Helpers;
+using SFA.DAS.AssessorService.Web.Staff.Validators;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private;
 
-namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Queries
+namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificateTests.Queries
 {
-    public class Given_I_request_the_learning_tart_date_page : CertificateQueryBase
+    public class Given_I_request_the_learning_start_date_page : CertificateQueryBase
     {
         private IActionResult _result;
         private CertificateLearnerStartDateViewModel _viewModelResponse;
@@ -32,19 +32,16 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Queries
                 .Build<CertificateLearnerStartDateViewModelValidator>();
 
             var certificateLearnerStartDateViewModelValidator =
-                new CertificateLearnerStartDateViewModelValidator(mockLocaliser.Object);
+                new CertificateLearnerStartDateViewModelValidator();
 
             var certificatePrivateLearnerStartDateController =
                 new CertificatePrivateLearnerStartDateController(MockLogger.Object,
                     MockHttpContextAccessor.Object,
-                    MockCertificateApiClient,
-                    certificateLearnerStartDateViewModelValidator,
-                    MockSession.Object
-                    );
+                    MockApiClient,
+                    certificateLearnerStartDateViewModelValidator                    
+                    );            
 
-            SetupSession();
-
-            _result = certificatePrivateLearnerStartDateController.LearnerStartDate(false).GetAwaiter().GetResult();
+            _result = certificatePrivateLearnerStartDateController.LearnerStartDate(Certificate.Id).GetAwaiter().GetResult();
 
             var result = _result as ViewResult;
             _viewModelResponse = result.Model as CertificateLearnerStartDateViewModel;
