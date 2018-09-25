@@ -2,15 +2,20 @@
 {
     public interface IEpaOrganisationValidator
     {
-        string CheckOrganisationId(string organisationId);
+        string CheckOrganisationIdIsPresentAndValid(string organisationId);
         string CheckOrganisationName(string name);
-        string CheckIfOrganisationIdExists(string organisationId);
+        string CheckIfOrganisationAlreadyExists(string organisationId);
         string CheckIfOrganisationUkprnExists(long? ukprn);
         string CheckIfOrganisationUkprnExistsForOtherOrganisations(long? ukprn, string organisationIdToIgnore);
         string CheckOrganisationTypeIsNullOrExists(int? organisationTypeId);
         string CheckIfOrganisationNotFound(string organisationId);
         string CheckUkprnIsValid(long? ukprn);
+        string CheckIfStandardNotFound(int standardCode);
+        string CheckIfOrganisationStandardAlreadyExists(string organisationId, int standardCode);
         string CheckOrganisationNameNotUsed(string name);
         string CheckOrganisationNameNotUsedForOtherOrganisations(string name, string organisationIdToIgnore);
+
+        string CheckIfContactIdIsEmptyOrValid(string contactId, string organisationId);
+        string CheckIfOrganisationStandardDoesNotExist(string organisationId, int standardCode);
     }
 }
