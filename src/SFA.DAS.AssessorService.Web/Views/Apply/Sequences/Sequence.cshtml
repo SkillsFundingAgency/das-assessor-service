@@ -30,7 +30,7 @@ else
                             <ul>
                                 @foreach (var answer in pg.Answers)
                                 {
-                                    <li>@answer.Value</li>
+                                    <li>@answer?.Value</li>
                                 }
                             </ul>
                         </dd>
