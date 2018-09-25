@@ -56,5 +56,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 
             return View(registerViewModel);
         }
+
+        [HttpGet("register/add-organisation")]
+        public async Task<IActionResult> AddOrganisation()
+        {
+            
+        }
     }
 }
