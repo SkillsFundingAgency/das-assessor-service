@@ -44,12 +44,12 @@
             </ul>
 
             <div class="form-group" sfa-validationerror-class="form-group-error">
-                @if (!string.IsNullOrEmpty(@Model.ErrorMessage))
+                @*@if (!string.IsNullOrEmpty(@Model.ErrorMessage))
                 {
                     <div class="error-message"  id="validation-messages">
                         @Model.ErrorMessage
                     </div>
-                }
+                }*@
                 <span class="error-message" asp-validation-for="SearchString"></span>
                 <input class="form-control" name="SearchString" sfa-validation-for="SearchString" sfa-validationerror-class="form-control-error" asp-for="SearchString" type="text" />
             </div>
