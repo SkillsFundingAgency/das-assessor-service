@@ -49,6 +49,9 @@
     <Content Update="Views\CertificateAmend\ApprenticeDetail.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\CertificateAmend\Uln.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\CertificateAmend\FirstName.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
@@ -68,6 +71,9 @@
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\CertificateAmend\_DateScriptsPartial.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\CertificateAmend\_UlnScriptsPartial.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\CertificateAmend\_FirstNameScriptsPartial.cshtml">

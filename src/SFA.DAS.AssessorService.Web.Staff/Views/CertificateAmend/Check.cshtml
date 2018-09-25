@@ -47,6 +47,14 @@
                 <dd class="cya-answer">
                     @Model.Uln
                 </dd>
+                @if (Model.IsPrivatelyFunded)
+                {
+                    <dd class="cya-change">
+                        <a asp-controller="CertificatePrivateUln" asp-action="Uln" asp-route-certificateid=@Model.Id>
+                            Change<span class="visually-hidden"> name</span>
+                        </a>
+                    </dd>
+                }
             </div>
         </dl>
 
