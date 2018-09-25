@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Web.Validators
 {
     public class CertificateLearnerStartDateViewModelValidator : AbstractValidator<CertificateLearnerStartDateViewModel>
     {
-        public CertificateLearnerStartDateViewModelValidator(IStringLocalizer<CertificateLearnerStartDateViewModel> localizer)
+        public CertificateLearnerStartDateViewModelValidator(IStringLocalizer<CertificateLearnerStartDateViewModelValidator> localizer)
         {
             RuleFor(vm => vm.Day).NotEmpty().WithMessage(localizer["DayRequired"]).DependentRules(() =>
             {
