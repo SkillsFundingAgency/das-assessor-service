@@ -6,7 +6,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 {
     public class SpecialCharacterCleanserService : ISpecialCharacterCleanserService
     {
-        private Dictionary<char, char> _alternates;
+        private Dictionary<char, char> _alternateCharacters;
 
         public SpecialCharacterCleanserService()
         {
@@ -15,16 +15,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
         private void BuildAlternates()
         {
-            _alternates = new Dictionary<char, char>
+            _alternateCharacters = new Dictionary<char, char>
             {
                 {'’', '\''},
                 {'`', '\''},
-                {'-', '–'}
+                {'-', '–'},
+                {'\u00A0',' '},
+                {'\t',' '},
+                {'%', ' '}
             };
         }
 
         public string CleanseStringForSpecialCharacters(string inputString)
         {
+            if (string.IsNullOrEmpty(inputString)) return null;
             var processedString = inputString;
 
             var specialCharacters = SpecialCharactersInString(processedString);
@@ -32,7 +36,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             if (specialCharacters.Length <= 0) return processedString;
             foreach (var specialCharacter in specialCharacters)
             {
-                var matchingEntry = _alternates.First(x => x.Key == specialCharacter);
+                var matchingEntry = _alternateCharacters.First(x => x.Key == specialCharacter);
                 processedString = processedString.Replace(matchingEntry.Key, matchingEntry.Value);
             }
 
@@ -41,7 +45,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
         private char[] SpecialCharactersInString(string inputString)
         {
-            return _alternates.Where(kvp => inputString.Contains(kvp.Key)).Select(kvp => kvp.Key).ToArray();
+            return _alternateCharacters.Where(kvp => inputString.Contains(kvp.Key)).Select(kvp => kvp.Key).ToArray();
         }
     }
 }
