@@ -18,22 +18,22 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         private OrganisationModel _organisation2;
         private readonly DatabaseService _databaseService = new DatabaseService();
         private RegisterQueryRepository _repository;
-        private string _orgId1;
-        private string _orgId2;
+        private string _organisationId1;
+        private string _organisationId2;
 
         [OneTimeSetUp]
         public void SetupOrganisationTests()
         {
             _repository = new RegisterQueryRepository(_databaseService.WebConfiguration);
-            _orgId1 = "EPA0001";
-            _orgId2 = "EPA005";
+            _organisationId1 = "EPA0001";
+            _organisationId2 = "EPA005";
             _organisation1 = new OrganisationModel
             {
                 Id = Guid.NewGuid(),
                 CreatedAt = DateTime.Now.AddYears(-1).Date,
                 DeletedAt = null,
                 EndPointAssessorName = "Name 1",
-                EndPointAssessorOrganisationId = _orgId1,
+                EndPointAssessorOrganisationId = _organisationId1,
                 EndPointAssessorUkprn = 876544,
                 PrimaryContact = null,
                 Status = "new",
@@ -48,7 +48,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 CreatedAt = DateTime.Now.AddMonths(-1).Date,
                 DeletedAt = null,
                 EndPointAssessorName = "Name 2",
-                EndPointAssessorOrganisationId = _orgId2,
+                EndPointAssessorOrganisationId = _organisationId2,
                 EndPointAssessorUkprn = 9888,
                 PrimaryContact = null,
                 Status = "new",
@@ -72,7 +72,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [Test]
         public void GetOrganisationByIdAndCheckTheOrganisationIsReturned()
         {
-            var organisation = OrganisationHandler.GetOrganisationSummaryByOrgId(_orgId2);
+            var organisation = OrganisationHandler.GetOrganisationSummaryByOrgId(_organisationId2);
             Assert.AreEqual(_organisation2.EndPointAssessorName, organisation.Name, "The organisation names do not match");
             Assert.AreEqual(_organisation2.EndPointAssessorOrganisationId, organisation.Id, "The organisation Ids do not match");
         }

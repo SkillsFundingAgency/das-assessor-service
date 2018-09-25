@@ -15,7 +15,7 @@ using NotFound = SFA.DAS.AssessorService.Domain.Exceptions.NotFound;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "AssessorServiceInternalAPI")]
     [Route("api/v1/contacts")]
     [ValidateBadRequest]
     public class ContactController : Controller
