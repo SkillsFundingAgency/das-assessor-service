@@ -5,10 +5,12 @@ using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Api.Consts;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
+using StructureMap.Diagnostics;
 using ValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace SFA.DAS.AssessorService.Application.Api.Validators
@@ -140,25 +142,24 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             return $"{_localizer[messageName].Value}; ";
         }
 
-        public ValidationResult ValidatorCreateEpaOrganisationRequest(CreateEpaOrganisationRequest request)
+        public ValidationResponse ValidatorCreateEpaOrganisationRequest(CreateEpaOrganisationRequest request)
         {
-            var validationResult = new FluentValidation.Results.ValidationResult();
+            var validationResult = new ValidationResponse();
 
-            RunValidationCheckAndAppendAnyError("Name", CheckOrganisationName(request.Name), validationResult);
-            RunValidationCheckAndAppendAnyError("OrganisationTypeId", CheckOrganisationTypeIsNullOrExists(request.OrganisationTypeId), validationResult);
-            RunValidationCheckAndAppendAnyError("Ukprn", CheckUkprnIsValid(request.Ukprn), validationResult);
-            // the above should create a badrequest exception
-
-            RunValidationCheckAndAppendAnyError("Name", CheckOrganisationNameNotUsed(request.Name), validationResult);
-            RunValidationCheckAndAppendAnyError("Ukprn", CheckIfOrganisationUkprnExists(request.Ukprn), validationResult);
+            RunValidationCheckAndAppendAnyError("Name", CheckOrganisationName(request.Name), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("OrganisationTypeId", CheckOrganisationTypeIsNullOrExists(request.OrganisationTypeId), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("Ukprn", CheckUkprnIsValid(request.Ukprn), validationResult, ValidationStatusCode.BadRequest);
+       
+            RunValidationCheckAndAppendAnyError("Name", CheckOrganisationNameNotUsed(request.Name), validationResult, ValidationStatusCode.AlreadyExists);
+            RunValidationCheckAndAppendAnyError("Ukprn", CheckIfOrganisationUkprnExists(request.Ukprn), validationResult, ValidationStatusCode.AlreadyExists);
 
             return validationResult;
         }
 
-        private void RunValidationCheckAndAppendAnyError(string fieldName, string errorMessage, ValidationResult validationResult)
+        private void RunValidationCheckAndAppendAnyError(string fieldName, string errorMessage, ValidationResponse validationResult, ValidationStatusCode statusCode)
         {
             if (errorMessage != string.Empty)
-                validationResult.Errors.Add(new ValidationFailure(fieldName, errorMessage));
+                validationResult.Errors.Add(new ValidationErrorDetail(fieldName, errorMessage.Replace("; ",""), statusCode));
         }
 
     }

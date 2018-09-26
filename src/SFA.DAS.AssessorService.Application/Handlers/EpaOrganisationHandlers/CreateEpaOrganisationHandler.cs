@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
@@ -32,20 +34,25 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
         public async Task<string> Handle(CreateEpaOrganisationRequest request, CancellationToken cancellationToken)
         {
-            var errorDetails = new StringBuilder();
             ProcessRequestFieldsForSpecialCharacters(request);
-            errorDetails.Append(_validator.CheckOrganisationName(request.Name));
-            errorDetails.Append(_validator.CheckOrganisationTypeIsNullOrExists(request.OrganisationTypeId));
-            errorDetails.Append(_validator.CheckUkprnIsValid(request.Ukprn));
-            errorDetails.Append(_validator.CheckOrganisationNameNotUsed(request.Name));
-            if (errorDetails.Length > 0)
+            var validationResponse = _validator.ValidatorCreateEpaOrganisationRequest(request);
+
+            if (!validationResponse.IsValid)
             {
-                _logger.LogError(errorDetails.ToString());
-                throw new BadRequestException(errorDetails.ToString());
+                var message = validationResponse.Errors.Aggregate(string.Empty, (current, error) => current + error.ErrorMessage + "; ");
+                _logger.LogError(message);
+                if (validationResponse.Errors.Any(x => x.StatusCode == ValidationStatusCode.BadRequest))
+                {     
+                    throw new BadRequestException(message);
+                }
+
+                if (validationResponse.Errors.Any(x => x.StatusCode == ValidationStatusCode.AlreadyExists))
+                {
+                    throw new AlreadyExistsException(message);
+                }
+
+                throw new Exception(message);
             }
-            
-            errorDetails.Append(_validator.CheckIfOrganisationUkprnExists(request.Ukprn));
-            ThrowAlreadyExistsExceptionIfErrorPresent(errorDetails);
 
             var newOrganisationId = _organisationIdGenerator.GetNextOrganisationId();
             if (newOrganisationId == string.Empty)
