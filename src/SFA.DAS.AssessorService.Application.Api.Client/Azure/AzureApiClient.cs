@@ -56,7 +56,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
         public async Task<AzureUser> GetUserDetailsByUkprn(string ukprn, bool includeSubscriptions = false)
         {
             AzureUser user;
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"/users?api-version=2017-03-01&expandGroups=false&$top=1&$filter=note eq '{ukprn}'"))
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"/users?api-version=2017-03-01&expandGroups=false&$top=1&$filter=note eq 'ukprn={ukprn}'"))
             {
                 var response = await RequestAndDeserialiseAsync<AzureUserResponse>(httpRequest, "Could not get User");
                 user = response.Users.FirstOrDefault();
@@ -112,7 +112,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
                 FirstName = organisation.EndPointAssessorName,
                 LastName = "EPAO",
                 Email = contact.Email,
-                Note = ukprn,
+                Note = $"ukprn={ukprn}",
                 Password = "3pa0Pa55w0rd!"
             };
 
@@ -203,7 +203,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
 
                 if (!string.IsNullOrWhiteSpace(user.Note))
                 {
-                    var organisation = await _organisationsApiClient.Get(user.Note);
+                    string ukprn = user.Note.Trim().ToLower()
+                                    .Replace("ukprn=", string.Empty);
+
+                    var organisation = await _organisationsApiClient.Get(ukprn);
                     await _organisationsApiClient.Update(new UpdateOrganisationRequest
                     {
                         EndPointAssessorName = organisation.EndPointAssessorName,
@@ -231,7 +234,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Post, $"/subscriptions/{subscriptionId}/regeneratePrimaryKey?api-version=2017-03-01"))
             {
                 await PostPutRequest(httpRequest);
-                return null; // TODO: return key ??
+                return null;
             }
         }
 
@@ -240,7 +243,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Post, $"/subscriptions/{subscriptionId}/regenerateSecondaryKey?api-version=2017-03-01"))
             {
                 await PostPutRequest(httpRequest);
-                return null; // TODO: return key ??
+                return null;
             }
         }
     }
