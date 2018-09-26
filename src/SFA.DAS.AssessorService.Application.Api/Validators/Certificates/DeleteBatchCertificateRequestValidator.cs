@@ -24,18 +24,23 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                 .Custom((m, context) =>
                 {
                     var existingCertificate = certificateRepository.GetCertificate(m.Uln, m.StandardCode).Result;
+                    var sumbittingEpao = organisationQueryRepository.GetByUkPrn(m.UkPrn).GetAwaiter().GetResult();
 
                     if (existingCertificate == null || !string.Equals(existingCertificate.CertificateReference, m.CertificateReference))
                     {
-                        context.AddFailure(new ValidationFailure("Certificate", $"Certificate not found"));
+                        context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate not found"));
                     }
                     else if (existingCertificate.Status == CertificateStatus.Submitted)
                     {
-                        context.AddFailure(new ValidationFailure("Certificate", $"Certificate cannot be Deleted when in '{CertificateStatus.Submitted}' status"));
+                        context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate cannot be Deleted when in '{CertificateStatus.Submitted}' status"));
                     }
                     else if (existingCertificate.Status == CertificateStatus.Printed)
                     {
-                        context.AddFailure(new ValidationFailure("Certificate", $"Certificate cannot be Deleted when in '{CertificateStatus.Printed}' status"));
+                        context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate cannot be Deleted when in '{CertificateStatus.Printed}' status"));
+                    }
+                    else if (sumbittingEpao?.Id != existingCertificate.OrganisationId)
+                    {
+                        context.AddFailure(new ValidationFailure("CertificateReference", $"EPAO is not the creator of this Certificate"));
                     }
                 });
 

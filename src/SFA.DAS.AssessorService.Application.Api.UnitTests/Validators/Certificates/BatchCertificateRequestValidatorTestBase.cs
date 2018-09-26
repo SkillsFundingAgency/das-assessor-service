@@ -6,6 +6,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
+using System;
 using System.Collections.Generic;
 using Standard = SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types.Standard;
 using StandardOrganisationSummary = SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types.StandardOrganisationSummary;
@@ -31,9 +32,10 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
         {
             var certificateRepositoryMock = new Mock<ICertificateRepository>();
 
-            certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 1)).ReturnsAsync(GenerateCertificate(1234567890, 1, "test", "Draft"));
-            certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 98)).ReturnsAsync(GenerateCertificate(1234567890, 98, "test", "Deleted"));
-            certificateRepositoryMock.Setup(q => q.GetCertificate(9999999999, 1)).ReturnsAsync(GenerateCertificate(9999999999, 1, "test", "Printed"));
+            certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 1)).ReturnsAsync(GenerateCertificate(1234567890, 1, "test", "Draft", new Guid("12345678123456781234567812345678")));
+            certificateRepositoryMock.Setup(q => q.GetCertificate(1234567890, 98)).ReturnsAsync(GenerateCertificate(1234567890, 98, "test", "Deleted", new Guid("12345678123456781234567812345678")));
+            certificateRepositoryMock.Setup(q => q.GetCertificate(9999999999, 1)).ReturnsAsync(GenerateCertificate(9999999999, 1, "test", "Printed", new Guid("99999999999999999999999999999999")));
+            certificateRepositoryMock.Setup(q => q.GetCertificate(9999999999, 99)).ReturnsAsync(GeneratePartialCertificate(9999999999, 99, "test", new Guid("99999999999999999999999999999999")));
 
             certificateRepositoryMock.Setup(q => q.GetOptions(1)).ReturnsAsync(new List<Option>());
             certificateRepositoryMock.Setup(q => q.GetOptions(98)).ReturnsAsync(new List<Option>());
@@ -52,8 +54,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
         {
             var organisationQueryRepositoryMock = new Mock<IOrganisationQueryRepository>();
 
-            organisationQueryRepositoryMock.Setup(r => r.GetByUkPrn(12345678)).ReturnsAsync(GenerateOrganisation(12345678));
-            organisationQueryRepositoryMock.Setup(r => r.GetByUkPrn(99999999)).ReturnsAsync(GenerateOrganisation(99999999));
+            organisationQueryRepositoryMock.Setup(r => r.GetByUkPrn(12345678)).ReturnsAsync(GenerateOrganisation(12345678, new Guid("12345678123456781234567812345678")));
+            organisationQueryRepositoryMock.Setup(r => r.GetByUkPrn(99999999)).ReturnsAsync(GenerateOrganisation(99999999, new Guid("99999999999999999999999999999999")));
 
             return organisationQueryRepositoryMock;
         }
@@ -81,6 +83,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
             assessmentOrgsApiClientMock.Setup(c => c.FindAllStandardsByOrganisationIdAsync("99999999"))
                 .ReturnsAsync(new List<StandardOrganisationSummary>
                 {
+                    GenerateStandardOrganisationSummary(1),
                     GenerateStandardOrganisationSummary(99)
                 });
 
@@ -99,16 +102,18 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
             ilrRepositoryMock.Setup(q => q.Get(1234567890, 98)).ReturnsAsync(GenerateIlr(1234567890, 1, "Test", "12345678"));
             ilrRepositoryMock.Setup(q => q.Get(1234567890, 99)).ReturnsAsync(GenerateIlr(1234567890, 1, "Test", "12345678"));
             ilrRepositoryMock.Setup(q => q.Get(9999999999, 1)).ReturnsAsync(GenerateIlr(9999999999, 1, "Test", "99999999"));
+            ilrRepositoryMock.Setup(q => q.Get(9999999999, 99)).ReturnsAsync(GenerateIlr(9999999999, 99, "Test", "99999999"));
 
             return ilrRepositoryMock;
         }
 
-        private static Certificate GenerateCertificate(long uln, int standardCode, string familyName, string status)
+        private static Certificate GenerateCertificate(long uln, int standardCode, string familyName, string status, Guid organisationId)
         {
             return Builder<Certificate>.CreateNew()
                 .With(i => i.Uln = uln)
                 .With(i => i.StandardCode = standardCode)
                 .With(i => i.Status = status)
+                .With(i => i.OrganisationId = organisationId)
                 .With(i => i.CertificateReference = $"{uln}-{standardCode}")
                                 .With(i => i.CertificateData = JsonConvert.SerializeObject(Builder<CertificateData>.CreateNew()
                                 .With(cd => cd.LearnerFamilyName = familyName)
@@ -117,9 +122,26 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
                 .Build();
         }
 
-        private static Organisation GenerateOrganisation(int ukprn)
+        private static Certificate GeneratePartialCertificate(long uln, int standardCode, string familyName, Guid organisationId)
+        {
+            // NOTE: This is to simulate a certificate that was been partly started via the Web App
+            return Builder<Certificate>.CreateNew()
+                .With(i => i.Uln = uln)
+                .With(i => i.StandardCode = standardCode)
+                .With(i => i.Status = "Draft")
+                .With(i => i.OrganisationId = organisationId)
+                .With(i => i.CertificateReference = $"{uln}-{standardCode}")
+                                .With(i => i.CertificateData = JsonConvert.SerializeObject(Builder<CertificateData>.CreateNew()
+                                .With(cd => cd.LearnerFamilyName = familyName)
+                                .With(cd => cd.OverallGrade = null)
+                                .Build()))
+                .Build();
+        }
+
+        private static Organisation GenerateOrganisation(int ukprn, Guid id)
         {
             return Builder<Organisation>.CreateNew()
+                .With(i => i.Id = id)
                 .With(i => i.EndPointAssessorOrganisationId = $"{ukprn}")
                 .With(i => i.EndPointAssessorUkprn = ukprn)
                 .Build();

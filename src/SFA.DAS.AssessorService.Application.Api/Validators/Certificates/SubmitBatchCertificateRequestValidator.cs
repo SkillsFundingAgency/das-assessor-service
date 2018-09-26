@@ -1,9 +1,11 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates.Batch;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using System.Linq;
 
@@ -24,15 +26,31 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                 .Custom((m, context) =>
                 {
                     var existingCertificate = certificateRepository.GetCertificate(m.Uln, m.StandardCode).Result;
+                    var sumbittingEpao = organisationQueryRepository.GetByUkPrn(m.UkPrn).GetAwaiter().GetResult();
 
                     if (existingCertificate == null || !string.Equals(existingCertificate.CertificateReference, m.CertificateReference))
                     {
-                        context.AddFailure(new ValidationFailure("Certificate", $"Certificate not found"));
+                        context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate not found"));
                     }
                     else if (existingCertificate.Status != CertificateStatus.Draft)
                     {
-                        context.AddFailure(new ValidationFailure("Certificate", $"Certificate is not in '{CertificateStatus.Draft}' status"));
+                        context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate is not in '{CertificateStatus.Draft}' status"));
                     }
+                    else if (sumbittingEpao?.Id != existingCertificate.OrganisationId)
+                    {
+                        context.AddFailure(new ValidationFailure("CertificateReference", $"EPAO is not the creator of this Certificate"));
+                    }
+                    else
+                    {
+                        var certificateData = JsonConvert.DeserializeObject<CertificateData>(existingCertificate.CertificateData);
+
+                        if (certificateData.LearnerGivenNames is null || certificateData.LearnerFamilyName is null || certificateData.ContactName is null ||
+                            certificateData.ContactOrganisation is null || certificateData.ContactAddLine1 is null || certificateData.ContactAddLine4 is null ||
+                            certificateData.ContactPostCode is null || certificateData.OverallGrade is null || certificateData.AchievementDate is null)
+                        {
+                            context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate is missing mandatory data"));
+                        }
+                    }              
                 });
 
             RuleFor(m => m)
