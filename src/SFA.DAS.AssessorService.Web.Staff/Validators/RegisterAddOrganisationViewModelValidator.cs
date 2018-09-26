@@ -16,15 +16,15 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators
     public class RegisterAddOrganisationViewModelValidator : AbstractValidator<RegisterAddOrganisationViewModel>
     {
         //private readonly IWebConfiguration _configuration;
-        private readonly IStringLocalizer<EpaOrganisationValidator> _localizer;
-        private readonly IRegisterQueryRepository _repository;
+        //private readonly IStringLocalizer<EpaOrganisationValidator> _localizer;
+        //private readonly IRegisterQueryRepository _repository;
 
-        public RegisterAddOrganisationViewModelValidator(IStringLocalizer<EpaOrganisationValidator> localizer, IRegisterQueryRepository repository)
+        public RegisterAddOrganisationViewModelValidator() //RegisterQueryRepository repository) //, IStringLocalizer<EpaOrganisationValidator> localizer, )
         {
            // _configuration = configuration;
-            _localizer = localizer;
-            _repository = repository;      
-            var validator = new EpaOrganisationValidator(_repository, _localizer);
+          //  _localizer = localizer;
+          //  _repository = repository;      
+           // var validator = new EpaOrganisationValidator(_repository, _localizer);
            
            // var res = validator.CheckOrganisationName("");
           

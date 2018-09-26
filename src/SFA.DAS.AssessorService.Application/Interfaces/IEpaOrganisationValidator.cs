@@ -1,4 +1,8 @@
-﻿namespace SFA.DAS.AssessorService.Application.Interfaces
+﻿using System.Collections.Generic;
+using FluentValidation.Results;
+using SFA.DAS.AssessorService.Api.Types.Models.Register;
+
+namespace SFA.DAS.AssessorService.Application.Interfaces
 {
     public interface IEpaOrganisationValidator
     {
@@ -17,5 +21,7 @@
 
         string CheckIfContactIdIsEmptyOrValid(string contactId, string organisationId);
         string CheckIfOrganisationStandardDoesNotExist(string organisationId, int standardCode);
+
+        ValidationResult ValidatorCreateEpaOrganisationRequest(CreateEpaOrganisationRequest request);
     }
 }

@@ -1,11 +1,15 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
+using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Api.Consts;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
+using ValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace SFA.DAS.AssessorService.Application.Api.Validators
 {
@@ -135,5 +139,27 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         {
             return $"{_localizer[messageName].Value}; ";
         }
+
+        public ValidationResult ValidatorCreateEpaOrganisationRequest(CreateEpaOrganisationRequest request)
+        {
+            var validationResult = new FluentValidation.Results.ValidationResult();
+
+            RunValidationCheckAndAppendAnyError("Name", CheckOrganisationName(request.Name), validationResult);
+            RunValidationCheckAndAppendAnyError("OrganisationTypeId", CheckOrganisationTypeIsNullOrExists(request.OrganisationTypeId), validationResult);
+            RunValidationCheckAndAppendAnyError("Ukprn", CheckUkprnIsValid(request.Ukprn), validationResult);
+            // the above should create a badrequest exception
+
+            RunValidationCheckAndAppendAnyError("Name", CheckOrganisationNameNotUsed(request.Name), validationResult);
+            RunValidationCheckAndAppendAnyError("Ukprn", CheckIfOrganisationUkprnExists(request.Ukprn), validationResult);
+
+            return validationResult;
+        }
+
+        private void RunValidationCheckAndAppendAnyError(string fieldName, string errorMessage, ValidationResult validationResult)
+        {
+            if (errorMessage != string.Empty)
+                validationResult.Errors.Add(new ValidationFailure(fieldName, errorMessage));
+        }
+
     }
 }
