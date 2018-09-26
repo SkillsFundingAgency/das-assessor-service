@@ -15,7 +15,7 @@
             </div>
             if (Model.Options[i].FurtherQuestions != null)
             {
-                <div class="panel panel-border-narrow" id="show-option-input">
+                <div class="panel panel-border-narrow js-hidden" id="show-option-input">
                     @for (int furtherQuestionIndex = 0; furtherQuestionIndex < Model.Options[i].FurtherQuestions.Count; furtherQuestionIndex++)
                     {
                         <div class="govuk-form-group">

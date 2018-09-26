@@ -1,0 +1,47 @@
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+<ul>
+    <li>
+        <label>Do you have a car?</label>
+        <p></p>
+
+        <div>
+
+            <div class="form-group" sfa-validation-for-id="Q-02" sfa-validationerror-class="form-group-error">
+                <div class="error-message-container" sfa-validation-for-id="Q-02">
+                    <span class="error-message" sfa-validation-for-id="Q-02"></span>
+                </div>
+                <div class="multiple-choice" data-target="show-option-input">
+                    <input type="radio" id="Q-02_0" name="Q-02" value="Yes" aria-controls="show-option-input" aria-expanded="false">
+                    <label for="Q-02_0">Yes</label>
+                </div>
+                <div class="panel panel-border-narrow js-hidden" id="show-option-input" aria-hidden="false">
+                    <div class="govuk-form-group">
+                        <label class="govuk-label" for="Q-02a">Make</label>
+
+                        <input type="text" id="Q-02a" name="Q-02a" value="">
+                    </div>
+                    <div class="govuk-form-group">
+                        <label class="govuk-label" for="Q-02b">Model</label>
+
+                        <input type="text" id="Q-02b" name="Q-02b" value="">
+                    </div>
+                </div>
+                <div class="multiple-choice" data-target="show-option-input">
+                    <input type="radio" id="Q-02_1" name="Q-02" value="No" aria-controls="show-option-input" aria-expanded="true">
+                    <label for="Q-02_1">No</label>
+                </div>
+                <div class="panel panel-border-narrow js-hidden" id="show-option-input">
+                    <div class="govuk-form-group">
+                        <label class="govuk-label" for="Q-02c">Why the hell not?</label>
+
+                        <input type="text" id="Q-02c" name="Q-02c" value="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </li>
+
+</ul>

@@ -67,6 +67,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
             var pageVm = new PageViewModel(updatePageResult.Page);
             return View("~/Views/Apply/Pages/Index.cshtml", pageVm);
         }
+
+        [HttpGet("Page/RadioTest")]
+        public IActionResult RadioTest()
+        {
+            return View("~/Views/Apply/Pages/RadioTest.cshtml");
+        }
     }
 
     public class PageViewModel
