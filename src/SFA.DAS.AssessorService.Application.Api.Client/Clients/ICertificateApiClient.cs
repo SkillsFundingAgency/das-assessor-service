@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<Certificate> GetCertificate(Guid certificateId);
         Task<Certificate> UpdateCertificate(UpdateCertificateRequest updateGradeRequest);
         Task<PaginatedList<CertificateHistoryResponse>> GetCertificateHistory(int pageIndex, string userName);
-        Task<CertificateAddress> GetContactPreviousAddress(string userName);
+        Task<CertificateAddress> GetContactPreviousAddress(string userName, bool isPrivatelyFunded);
         Task<List<CertificateAddress>> GetPreviousAddressess(string userName);
         Task<List<Option>> GetOptions(int stdCode);
     }

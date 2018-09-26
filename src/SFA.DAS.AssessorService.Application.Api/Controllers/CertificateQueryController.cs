@@ -53,26 +53,27 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> GetCertificates([FromQuery] List<string> statuses)
         {
             return Ok(await _mediator.Send(new GetCertificatesRequest { Statuses = statuses }));
-        }        
+        }
 
         [HttpGet("contact/previousaddress", Name = "GetContactPreviousAddress")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(CertificateAddress))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetContactPreviousAddress([FromQuery] string username)
+        public async Task<IActionResult> GetContactPreviousAddress([FromQuery] string username,
+            bool isPrivatelyFunded)
         {
-            var address = await _mediator.Send(new GetContactPreviousAddressesRequest { Username = username });
+            var address = await _mediator.Send(new GetContactPreviousAddressesRequest { Username = username, IsPrivatelyFunded = isPrivatelyFunded });
             if (address == null)
                 throw new ResourceNotFoundException();
             return Ok(address);
         }
-        
+
 
         [HttpGet("history", Name = "GetCertificatesHistory")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(PaginatedList<CertificateHistoryResponse>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetCertificatesHistory(int pageIndex,
             string userName)
-        {            
+        {
             return Ok(await _mediator.Send(new GetCertificateHistoryRequest { PageIndex = pageIndex, Username = userName }));
         }
 

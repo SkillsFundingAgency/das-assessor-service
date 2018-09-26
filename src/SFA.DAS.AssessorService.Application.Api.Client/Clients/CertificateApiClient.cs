@@ -51,9 +51,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<CertificateAddress> GetContactPreviousAddress(string userName)
+        public async Task<CertificateAddress> GetContactPreviousAddress(string userName,
+            bool isPrivatelyFunded)
         {
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/certificates/contact/previousaddress?username={userName}"))
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/certificates/contact/previousaddress?username={userName}&isPrivatelyFunded={isPrivatelyFunded}"))
             {
                 return await RequestAndDeserialiseAsync<CertificateAddress>(httpRequest, "Could not get Certificate Address");
             }
