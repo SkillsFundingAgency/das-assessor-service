@@ -9,5 +9,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
         public long Uln { get; set; }
         public string LastName { get; set; }
         public string Username { get; set; }
+        public string EndPointAssessorOrganisationId { get; set; }
     }
 }   

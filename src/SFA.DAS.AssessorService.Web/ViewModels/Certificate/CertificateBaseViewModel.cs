@@ -17,6 +17,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
             FullName = CertificateData.FullName;
             Standard = CertificateData.StandardName;
             Level = CertificateData.StandardLevel;
+            Uln = cert.Uln.ToString();
             IsPrivatelyFunded = cert.IsPrivatelyFunded;
         }
         public Guid Id { get; set; }
@@ -24,6 +25,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         public string GivenNames { get; set; }
         public string FullName { get; set; }
         public string Standard { get; set; }
+        public string Uln { get; set; }
         public int Level { get; set; }
         public bool BackToCheckPage { get; set; }
         public bool IsPrivatelyFunded { get; set; }

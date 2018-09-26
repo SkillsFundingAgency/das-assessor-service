@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Data
             var existingCert = await _context.Certificates.FirstOrDefaultAsync(c =>
                 c.Uln == certificate.Uln && c.StandardCode == certificate.StandardCode && c.CreateDay == certificate.CreateDay);
             if (existingCert != null) return existingCert;
-            
+
             _context.Certificates.Add(certificate);
             try
             {
@@ -57,12 +57,49 @@ namespace SFA.DAS.AssessorService.Data
                 }
                 throw;
             }
-                
+
             await UpdateCertificateLog(certificate, CertificateActions.Start, certificate.CreatedBy);
             _context.SaveChanges();
 
             return certificate;
         }
+
+        public async Task<Certificate> NewPrivate(Certificate certificate,
+            string endpointOrganisationId)
+        {
+            // Another check closer to INSERT that there isn't already a cert for this uln / std code
+            var existingCert = await _context.Certificates
+                .Include(q => q.Organisation)
+                .FirstOrDefaultAsync(c =>
+                    c.Uln == certificate.Uln &&
+                    c.Organisation.EndPointAssessorOrganisationId == endpointOrganisationId &&
+                    c.IsPrivatelyFunded);
+
+            if (existingCert != null)
+                return existingCert;
+
+            _context.Certificates.Add(certificate);
+            try
+            {
+                _context.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                if (!(e.InnerException is SqlException sqlException)) throw;
+
+                if (sqlException.Number == 2601 || sqlException.Number == 2627)
+                {
+                    return await _context.Certificates.FirstOrDefaultAsync(c =>
+                        c.Uln == certificate.Uln && c.StandardCode == certificate.StandardCode && c.CreateDay == certificate.CreateDay);
+                }
+                throw;
+            }
+
+            await UpdateCertificateLog(certificate, CertificateActions.Start, certificate.CreatedBy);
+            _context.SaveChanges();
+
+            return certificate;
+        }        
 
         public async Task<Certificate> GetCertificate(Guid id)
         {
@@ -75,11 +112,17 @@ namespace SFA.DAS.AssessorService.Data
                 c.Uln == uln && c.StandardCode == standardCode);
         }
 
-        public async Task<Certificate> GetPrivateCertificate(long uln, string lastName)
+        public async Task<Certificate> GetPrivateCertificate(long uln, 
+            string endpointOrganisationId,
+            string lastName)
         {
-            var certificate = await _context.Certificates.SingleOrDefaultAsync(c =>
-                c.Uln == uln && c.IsPrivatelyFunded && CheckLastName(c.CertificateData, lastName));
-            return certificate;
+            var existingCert = await _context.Certificates
+                .Include(q => q.Organisation)
+                .FirstOrDefaultAsync(c =>
+                    c.Uln == uln &&
+                    c.Organisation.EndPointAssessorOrganisationId == endpointOrganisationId &&
+                    c.IsPrivatelyFunded);
+            return existingCert;
         }
 
         public async Task<Certificate> GetCertificate(
@@ -176,7 +219,7 @@ namespace SFA.DAS.AssessorService.Data
             cert.UpdatedBy = username;
             cert.Status = certificate.Status;
             cert.UpdatedAt = certificate.UpdatedAt;
-      
+
 
             if (updateLog)
             {
@@ -301,7 +344,14 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<List<Option>> GetOptions(int stdCode)
         {
             return (await _connection.QueryAsync<Option>("SELECT * FROM Options WHERE StdCode = @stdCode",
-                new {stdCode})).ToList();
+                new { stdCode })).ToList();
+        }
+
+        private bool CheckLastNameExists(Certificate certificate, Certificate c)
+        {
+            var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+            var certificateDataCompare = JsonConvert.DeserializeObject<CertificateData>(c.CertificateData);
+            return certificateData.LearnerFamilyName == certificateDataCompare.LearnerFamilyName;
         }
     }
 }

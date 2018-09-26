@@ -20,8 +20,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
 
         [HttpGet]
         public async Task<IActionResult> FirstName(bool? redirectToCheck = false)
-        {
-            CertificateFirstNameViewModel vm = new CertificateFirstNameViewModel();
+        {            
             return await LoadViewModel<CertificateFirstNameViewModel>("~/Views/Certificate/FirstName.cshtml");
         }
 
