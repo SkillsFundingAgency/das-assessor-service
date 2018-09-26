@@ -116,7 +116,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
         public async Task<ApiResponse> DeleteCertificate(DeleteCertificateRequest request)
         {
-            var apiResponse = await Delete<ApiResponse>($"/api/v1/certificates/batch/{request.Uln}/{request.FamilyName}/{request.StandardCode}/{request.CertificateReference}/{request.UkPrn}/{request.Username}");
+            var apiResponse = await Delete<ApiResponse>($"/api/v1/certificates/batch/{request.Uln}/{request.FamilyName}/{request.StandardCode}/{request.CertificateReference}/{request.UkPrn}/{request.Email}");
 
             return apiResponse;
         }

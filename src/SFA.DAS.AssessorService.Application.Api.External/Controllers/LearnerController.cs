@@ -37,7 +37,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
                 Uln = uln,
                 Surname = familyName,
                 UkPrn = _headerInfo.Ukprn,
-                Username = _headerInfo.Username
+                Username = _headerInfo.Email
             };
 
             List<SearchResult> results = await _apiClient.Search(searchQuery, standardCode);

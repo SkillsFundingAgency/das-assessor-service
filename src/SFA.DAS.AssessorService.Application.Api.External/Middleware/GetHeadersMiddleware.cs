@@ -18,16 +18,16 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Middleware
 
         public async Task Invoke(HttpContext context, IHeaderInfo headerInfo)
         {
-            context.Request.Headers.TryGetValue("x-username", out var usernameHeaderValue);
-            context.Request.Headers.TryGetValue("x-ukprn", out var ukprnHeaderValue);
-            
-            bool validUkPrn = int.TryParse(ukprnHeaderValue.FirstOrDefault(), out int ukprn);
-            string username = usernameHeaderValue.FirstOrDefault() ?? string.Empty;
+            context.Request.Headers.TryGetValue("x-request-context-user-email", out var emailHeaderValue);
+            context.Request.Headers.TryGetValue("x-request-context-user-ukprn", out var ukprnHeaderValue);
 
-            if (validUkPrn && !string.IsNullOrWhiteSpace(username))
+            bool validUkPrn = int.TryParse(ukprnHeaderValue.FirstOrDefault(), out int ukprn);
+            string email = emailHeaderValue.FirstOrDefault() ?? string.Empty;
+
+            if (validUkPrn && !string.IsNullOrWhiteSpace(email))
             {
                 headerInfo.Ukprn = ukprn;
-                headerInfo.Username = username;
+                headerInfo.Email = email;
 
                 await _next(context);
             }

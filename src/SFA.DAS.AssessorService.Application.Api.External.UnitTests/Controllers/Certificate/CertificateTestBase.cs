@@ -55,7 +55,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
         {
             HeaderInfoMock = new HeaderInfo
             {
-                Username = string.Empty,
+                Email = string.Empty,
                 Ukprn = 0
             };
         }

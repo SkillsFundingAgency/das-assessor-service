@@ -16,7 +16,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                 .ForMember(x => x.StandardCode, opt => opt.MapFrom(source => source.CertificateData.LearningDetails.StandardCode))
                 .ForMember(x => x.FamilyName, opt => opt.MapFrom(source => source.CertificateData.Learner.FamilyName))
                 .ForMember(x => x.UkPrn, opt => opt.MapFrom(source => source.UkPrn))
-                .ForMember(x => x.Username, opt => opt.MapFrom(source => source.Username))
+                .ForMember(x => x.Email, opt => opt.MapFrom(source => source.Email))
                 .ForAllOtherMembers(x => x.Ignore());
 
             CreateMap<Messages.BatchCertificateRequest, AssessorService.Api.Types.Models.Certificates.Batch.CreateBatchCertificateRequest>();

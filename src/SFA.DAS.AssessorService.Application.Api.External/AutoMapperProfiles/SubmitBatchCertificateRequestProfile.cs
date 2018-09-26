@@ -12,7 +12,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
             .ForMember(x => x.StandardCode, opt => opt.MapFrom(source => source.StandardCode))
             .ForMember(x => x.CertificateReference, opt => opt.MapFrom(source => source.CertificateReference))
             .ForMember(x => x.UkPrn, opt => opt.MapFrom(source => source.UkPrn))
-            .ForMember(x => x.Username, opt => opt.MapFrom(source => source.Username))
+            .ForMember(x => x.Email, opt => opt.MapFrom(source => source.Email))
             .ForAllOtherMembers(x => x.Ignore());
         }
     }

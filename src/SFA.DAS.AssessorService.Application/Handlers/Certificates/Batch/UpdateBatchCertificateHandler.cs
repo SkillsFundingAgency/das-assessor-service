@@ -13,11 +13,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
     public class UpdateBatchCertificateHandler : IRequestHandler<UpdateBatchCertificateRequest, Certificate>
     {
         private readonly ICertificateRepository _certificateRepository;
+        private readonly IContactQueryRepository _contactQueryRepository;
         private readonly ILogger<UpdateBatchCertificateHandler> _logger;
 
-        public UpdateBatchCertificateHandler(ICertificateRepository certificateRepository, ILogger<UpdateBatchCertificateHandler> logger)
+        public UpdateBatchCertificateHandler(ICertificateRepository certificateRepository, IContactQueryRepository contactQueryRepository, ILogger<UpdateBatchCertificateHandler> logger)
         {
             _certificateRepository = certificateRepository;
+            _contactQueryRepository = contactQueryRepository;
             _logger = logger;
         }
 
@@ -28,6 +30,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
 
         private async Task<Certificate> UpdateCertificate(UpdateBatchCertificateRequest request)
         {
+            _logger.LogInformation("UpdateCertificate Before Get Contact from db");
+            var contact = await GetContactFromEmailAddress(request.Email);
+
             _logger.LogInformation("UpdateCertificate Before Get Certificate from db");
             var certificate = await _certificateRepository.GetCertificate(request.Uln, request.StandardCode);
 
@@ -41,9 +46,21 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             }
 
             _logger.LogInformation("UpdateCertificate Before Update Cert in db");
-            await _certificateRepository.Update(certificate, request.Username, null);
+            await _certificateRepository.Update(certificate, contact.Username, null);
 
             return certificate;
+        }
+
+        private async Task<Contact> GetContactFromEmailAddress(string email)
+        {
+            Contact contact = await _contactQueryRepository.GetContactFromEmailAddress(email);
+
+            if (contact == null)
+            {
+                contact = new Contact { Username = email, Email = email };
+            }
+
+            return contact;
         }
     }
 }

@@ -22,15 +22,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
         private readonly IIlrRepository _ilrRepository;
         private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
+        private readonly IContactQueryRepository _contactQueryRepository;
         private readonly ILogger<CreateBatchCertificateHandler> _logger;
 
         public CreateBatchCertificateHandler(ICertificateRepository certificateRepository, IIlrRepository ilrRepository, IAssessmentOrgsApiClient assessmentOrgsApiClient,
-            IOrganisationQueryRepository organisationQueryRepository, ILogger<CreateBatchCertificateHandler> logger)
+            IOrganisationQueryRepository organisationQueryRepository, IContactQueryRepository contactQueryRepository, ILogger<CreateBatchCertificateHandler> logger)
         {
             _certificateRepository = certificateRepository;
             _ilrRepository = ilrRepository;
             _assessmentOrgsApiClient = assessmentOrgsApiClient;
             _organisationQueryRepository = organisationQueryRepository;
+            _contactQueryRepository = contactQueryRepository;
             _logger = logger;
         }
 
@@ -41,6 +43,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
 
         private async Task<Certificate> CreateNewCertificate(CreateBatchCertificateRequest request)
         {
+            _logger.LogInformation("CreateNewCertificate Before Get Contact from API");
+            var contact = await GetContactFromEmailAddress(request.Email);
             _logger.LogInformation("CreateNewCertificate Before Get Ilr from db");
             var ilr = await _ilrRepository.Get(request.Uln, request.StandardCode);
             _logger.LogInformation("CreateNewCertificate Before Get Organisation from db");
@@ -64,7 +68,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
                         StandardCode = request.StandardCode,
                         ProviderUkPrn = ilr.UkPrn,
                         OrganisationId = organisation.Id,
-                        CreatedBy = request.Username,
+                        CreatedBy = contact.Username,
                         CertificateData = JsonConvert.SerializeObject(certData),
                         Status = CertificateStatus.Draft,
                         CertificateReference = "",
@@ -81,7 +85,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             }
 
             _logger.LogInformation("CreateNewCertificate Before Update Cert in db");
-            await _certificateRepository.Update(certificate, request.Username, null);
+            await _certificateRepository.Update(certificate, request.Email, null);
 
             _logger.LogInformation(LoggingConstants.CertificateStarted);
             _logger.LogInformation($"Certificate with ID: {certificate.Id} Started with reference of {certificate.CertificateReference}");
@@ -106,6 +110,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             }
 
             return provider;
+        }
+
+        private async Task<Contact> GetContactFromEmailAddress(string email)
+        {
+            Contact contact = await _contactQueryRepository.GetContactFromEmailAddress(email);
+
+            if( contact == null)
+            {
+                contact = new Contact { Username = email, Email = email };
+            }
+
+            return contact;
         }
 
         private CertificateData CombineCertificateData(CertificateData data, Ilr ilr, Standard standard, Provider provider)

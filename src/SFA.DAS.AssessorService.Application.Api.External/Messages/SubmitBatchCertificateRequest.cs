@@ -8,6 +8,6 @@
         public string CertificateReference { get; set; }
 
         public int UkPrn { get; set; }
-        public string Username { get; set; }
+        public string Email { get; set; }
     }
 }

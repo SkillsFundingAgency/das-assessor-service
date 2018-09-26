@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerOperation("Create Certificates", "Creates a new Certificate for each valid item within the request.")]
         public async Task<IActionResult> CreateCertificates([FromBody] IEnumerable<CertificateData> request)
         {
-            IEnumerable<BatchCertificateRequest> bcRequest = request.Select(req => new BatchCertificateRequest { UkPrn = _headerInfo.Ukprn, Username = _headerInfo.Username, CertificateData = req });
+            IEnumerable<BatchCertificateRequest> bcRequest = request.Select(req => new BatchCertificateRequest { UkPrn = _headerInfo.Ukprn, Email = _headerInfo.Email, CertificateData = req });
 
             var results = await _apiClient.CreateCertificates(bcRequest);
 
@@ -47,7 +47,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerOperation("Update Certificates", "Updates the specified Certificate with the information contained in each valid request.")]
         public async Task<IActionResult> UpdateCertificates([FromBody] IEnumerable<CertificateData> request)
         {
-            IEnumerable<BatchCertificateRequest> bcRequest = request.Select(req => new BatchCertificateRequest { UkPrn = _headerInfo.Ukprn, Username = _headerInfo.Username, CertificateData = req });
+            IEnumerable<BatchCertificateRequest> bcRequest = request.Select(req => new BatchCertificateRequest { UkPrn = _headerInfo.Ukprn, Email = _headerInfo.Email, CertificateData = req });
 
             var results = await _apiClient.UpdateCertificates(bcRequest);
 
@@ -60,7 +60,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerOperation("Submit Certificates", "Submits the specified Certificate for each valid request.")]
         public async Task<IActionResult> SubmitCertificates([FromBody] IEnumerable<SubmitCertificate> request)
         {
-            IEnumerable<SubmitBatchCertificateRequest> scRequest = request.Select(req => new SubmitBatchCertificateRequest { UkPrn = _headerInfo.Ukprn, Username = _headerInfo.Username, Uln = req.Uln, StandardCode = req.StandardCode, FamilyName = req.FamilyName, CertificateReference = req.CertificateReference });
+            IEnumerable<SubmitBatchCertificateRequest> scRequest = request.Select(req => new SubmitBatchCertificateRequest { UkPrn = _headerInfo.Ukprn, Email = _headerInfo.Email, Uln = req.Uln, StandardCode = req.StandardCode, FamilyName = req.FamilyName, CertificateReference = req.CertificateReference });
 
             var results = await _apiClient.SubmitCertificates(scRequest);
 
@@ -73,7 +73,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerOperation("Delete Certificate", "Deletes the specified Certificate.")]
         public async Task<IActionResult> DeleteCertificate(long uln, string familyName, int standardCode, string certificateReference)
         {
-            DeleteCertificateRequest deleteRequest = new DeleteCertificateRequest { UkPrn = _headerInfo.Ukprn, Username = _headerInfo.Username, Uln = uln, FamilyName = familyName, StandardCode = standardCode, CertificateReference = certificateReference};
+            DeleteCertificateRequest deleteRequest = new DeleteCertificateRequest { UkPrn = _headerInfo.Ukprn, Email = _headerInfo.Email, Uln = uln, FamilyName = familyName, StandardCode = standardCode, CertificateReference = certificateReference};
             var error = await _apiClient.DeleteCertificate(deleteRequest);
 
             if (error is null)
