@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 
@@ -90,6 +91,24 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
                 Options = q.Input.Options,
                 Value = answers?.SingleOrDefault(a => a?.QuestionId == q.QuestionId)?.Value
             }));
+
+            foreach (var question in Questions)
+            {
+                if (question.Options != null)
+                {
+                    foreach (var option in question.Options)
+                    {
+                        if (option.FurtherQuestions != null)
+                        {
+                            foreach (var furtherQuestion in option.FurtherQuestions)
+                            {
+                                furtherQuestion.Value = answers
+                                    ?.SingleOrDefault(a => a?.QuestionId == furtherQuestion.QuestionId.ToString())?.Value;
+                            }
+                        }
+                    }                    
+                }
+            }
         }
 
         public string PageId { get; set; }

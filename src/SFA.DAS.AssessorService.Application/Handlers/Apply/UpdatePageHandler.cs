@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Handlers.Apply.Validation;
@@ -42,27 +43,30 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
 
             foreach (var question in page.Questions)
             {
+                validationPassed = ProcessAnswer(request, question, validationPassed, validationErrors, page);
+                // IF Question is type ComplexRadio
+                // Need to get all answers from Input.Options.FurtherQuestions
+                
                 var answer = request.Answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
                 
-                var validators = _validatorFactory.Build(question);
-                foreach (var validator in validators)
+                if (question.Input.Options != null)
                 {
-                    var errors = validator.Validate(question, answer);
-                
-                    if (errors.Any())
+                    foreach (var option in question.Input.Options)
                     {
-                        validationPassed = false;
-                        validationErrors.AddRange(errors);
-                    }
-                    else
-                    {
-                        if (question.Input.Type == "Checkbox" && answer.Value == "on")
+                        if (answer?.Value == option.Label.ToString())
                         {
-                            answer.Value = "Yes";
+                            if (option.FurtherQuestions != null)
+                            {
+                                foreach (var furtherQuestion in option.FurtherQuestions)
+                                {
+                                    var fq = JsonConvert.DeserializeObject<Question>(furtherQuestion.ToString());
+
+                                    validationPassed = ProcessAnswer(request, fq, validationPassed, validationErrors, page);   
+                                }                            
+                            }                    
                         }
-                    }
-                    page.Answers.Add(answer);
-                }   
+                    }   
+                }
             }
 
             if (validationPassed)
@@ -81,6 +85,35 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Apply
             }
             
             
+        }
+
+        private bool ProcessAnswer(UpdatePageRequest request, Question question, bool validationPassed, List<KeyValuePair<string, string>> validationErrors,
+            Page page)
+        {
+            var answer = request.Answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
+
+            var validators = _validatorFactory.Build(question);
+            foreach (var validator in validators)
+            {
+                var errors = validator.Validate(question, answer);
+
+                if (errors.Any())
+                {
+                    validationPassed = false;
+                    validationErrors.AddRange(errors);
+                }
+                else
+                {
+                    if (question.Input.Type == "Checkbox" && answer.Value == "on")
+                    {
+                        answer.Value = "Yes";
+                    }
+                }
+
+                page.Answers.Add(answer);
+            }
+
+            return validationPassed;
         }
 
         private static void MarkSequenceAsCompleteIfAllPagesComplete(Sequence sequence, List<Sequence> workflow)
