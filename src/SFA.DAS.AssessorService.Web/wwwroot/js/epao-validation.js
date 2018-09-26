@@ -151,6 +151,11 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
     'Please specify a valid UK postcode'
   );
 
+  // Checks if the value is in an array
+  jQuery.validator.addMethod('equals', function(value, element, param) {
+    return this.optional(element) || $.inArray(value, param) >= 0;
+  });
+
   // Helper to ensure date input is correct format
   function parseDate(str) {
     var t = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);

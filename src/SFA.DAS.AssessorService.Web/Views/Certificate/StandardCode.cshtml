@@ -69,6 +69,10 @@
     </div>
 </div>
 
+<script type="text/javascript">
+    var certificateStandardCodeListViewModel = @Html.Raw(JsonConvert.SerializeObject(Model));
+</script>
+
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
     @{ await Html.RenderPartialAsync("~/Views/Certificate/_StandardCodesScriptsPartial.cshtml"); }

@@ -1,29 +1,44 @@
 <script src="~/lib/accessible-autocomplete/accessible-autocomplete.min.js"></script>
 
 <script>
-var epaoStandardCodesFormElement = $('.apprentice-standard-codes-form');
-var epaoStandardCodesValidationRulesObject = {
-  rules: {
+  var standardCodeArr = $.map(certificateStandardCodeListViewModel.StandardCodes, function (code) {
+    return code.Text
+  })
+  var epaoStandardCodesFormElement = $('.apprentice-standard-codes-form');
+  var epaoStandardCodesValidationRulesObject = {
+    rules: {
       StandardCodes: {
-          required: true
+        required: true,
+        equals: standardCodeArr
       }
-  },
-  messages: {
+    },
+    messages: {
       StandardCodes: {
-          required: 'Select the standard'
+        required: 'Select the standard',
+        equals: 'Select an available standard'
       }
-  }
-};
+    }
+  };
 
-GOVUK.epaoValidate(epaoStandardCodesFormElement, epaoStandardCodesValidationRulesObject);
+  GOVUK.epaoValidate(epaoStandardCodesFormElement, epaoStandardCodesValidationRulesObject);
 
-accessibleAutocomplete.enhanceSelectElement({
-  selectElement: document.querySelector('#SelectedStandardCode'),
-  name: 'StandardCodes',
-  defaultValue: '',
-//   confirmOnBlur: false,
-  autoselect: false,
-  showAllValues: true
-})
+  $(document).ready(function () {
+    accessibleAutocomplete.enhanceSelectElement({
+      selectElement: document.querySelector('#SelectedStandardCode'),
+      name: 'StandardCodes',
+      defaultValue: '',
+      autoselect: false,
+      showAllValues: true
+    })
+  })
+
+  // Empty field on click when coming from check and amend page
+  $(window).load(function () {
+    if (window.location.search.indexOf('redirecttocheck=true') === -1) return false
+
+    $('#SelectedStandardCode').focus(function () {
+      $(this).val('')
+    });
+  });
 
 </script>
