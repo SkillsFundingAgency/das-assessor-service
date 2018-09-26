@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
@@ -94,9 +95,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         }
 
         [Test]
-        public void BadRerquestResultsAreOfTypeString()
+        public void BadRerquestResultsAreOfTypeEpaOrganisationResponse()
         {
-            ((BadRequestObjectResult)_result).Value.Should().BeOfType<string>();
+            ((BadRequestObjectResult)_result).Value.Should().BeOfType<EpaOrganisationResponse>();
         }
     }
 }

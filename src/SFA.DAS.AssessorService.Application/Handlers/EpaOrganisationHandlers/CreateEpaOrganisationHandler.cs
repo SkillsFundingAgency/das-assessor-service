@@ -18,13 +18,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
         private readonly IRegisterRepository _registerRepository;
         private readonly ILogger<CreateEpaOrganisationHandler> _logger;
         private readonly IEpaOrganisationValidator _validator;
-        private readonly IEpaOrganisationIdGenerator _orgIdGenerator;
+        private readonly IEpaOrganisationIdGenerator _organisationIdGenerator;
 
         public CreateEpaOrganisationHandler(IRegisterRepository registerRepository, IEpaOrganisationValidator validator, IEpaOrganisationIdGenerator orgIdGenerator, ILogger<CreateEpaOrganisationHandler> logger)
         {
             _registerRepository = registerRepository;
             _logger = logger;
-            _orgIdGenerator = orgIdGenerator;
+            _organisationIdGenerator = orgIdGenerator;
             _validator = validator;
         }
 
@@ -45,7 +45,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             errorDetails.Append(_validator.CheckIfOrganisationUkprnExists(request.Ukprn));
             ThrowAlreadyExistsExceptionIfErrorPresent(errorDetails);
 
-            var newOrganisationId = _orgIdGenerator.GetNextOrganisationId();
+            var newOrganisationId = _organisationIdGenerator.GetNextOrganisationId();
             if (newOrganisationId == string.Empty)
                 throw new Exception("A valid organisation Id could not be generated");
 
