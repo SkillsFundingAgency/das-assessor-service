@@ -84,18 +84,19 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             _logger.LogInformation(
                 $"Start of Private Certificate");
 
+            var organisation = await _organisationsApiClient.Get(ukprn);
+
             var certificate = await _certificateApiClient.StartPrivate(new StartCertificatePrivateRequest()
             {
                 UkPrn = int.Parse(ukprn),
                 Uln = certificateStartPrivateViewModel.Uln,
                 LastName = certificateStartPrivateViewModel.Surname,
-                Username = username
+                Username = username,
+                EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId
             });
-
-            var organisation = await _organisationsApiClient.Get(ukprn);
+       
             _sessionService.Set("EndPointAsessorOrganisationId", organisation.EndPointAssessorOrganisationId);
            
-
            _sessionService.Set("CertificateSession", new CertificateSession()
             {
                 CertificateId = certificate.Id,
