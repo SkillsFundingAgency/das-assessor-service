@@ -11,9 +11,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators
     {
         public RegisterViewModelValidator()
         {
-            RuleFor(vm => vm.SearchString).NotEmpty().WithMessage("Search string required")
+            RuleFor(vm => vm.SearchString).NotEmpty().WithMessage("Enter 2 or more characters")
                 .Must(x => x?.Trim().Length > 1)
-                .WithMessage("The expression entered is too short. Please enter 2 or more letters.");
+                .WithMessage("Enter 2 or more characters");
 
         }
     }
