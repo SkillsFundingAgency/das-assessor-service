@@ -1,9 +1,10 @@
 <script src="~/lib/accessible-autocomplete/accessible-autocomplete.min.js"></script>
 
 <script>
-  var standardCodeArr = $.map(certificateStandardCodeListViewModel.StandardCodes, function (code) {
-    return code.Text
-  })
+  var selectOptionsArray = Array.from($('select#SelectedStandardCode')[0].options);
+  var standardCodeArr = $.map(selectOptionsArray, function (code) {
+    return code.innerHTML
+  });
   var epaoStandardCodesFormElement = $('.apprentice-standard-codes-form');
   var epaoStandardCodesValidationRulesObject = {
     rules: {
@@ -36,7 +37,7 @@
   $(window).load(function () {
     if (window.location.search.indexOf('redirecttocheck=true') === -1) return false
 
-    $('#SelectedStandardCode').focus(function () {
+    $('#SelectedStandardCode').click(function () {
       $(this).val('')
     });
   });
