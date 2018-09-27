@@ -100,19 +100,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Apply
 
             foreach (var question in Questions)
             {
-                if (question.Options != null)
+                if (question.Options == null) continue;
+                foreach (var option in question.Options)
                 {
-                    foreach (var option in question.Options)
+                    if (option.FurtherQuestions == null) continue;
+                    foreach (var furtherQuestion in option.FurtherQuestions)
                     {
-                        if (option.FurtherQuestions != null)
-                        {
-                            foreach (var furtherQuestion in option.FurtherQuestions)
-                            {
-                                furtherQuestion.Value = answers
-                                    ?.SingleOrDefault(a => a?.QuestionId == furtherQuestion.QuestionId.ToString())?.Value;
-                            }
-                        }
-                    }                    
+                        furtherQuestion.Value = answers
+                            ?.SingleOrDefault(a => a?.QuestionId == furtherQuestion.QuestionId.ToString())?.Value;
+                    }
                 }
             }
         }
