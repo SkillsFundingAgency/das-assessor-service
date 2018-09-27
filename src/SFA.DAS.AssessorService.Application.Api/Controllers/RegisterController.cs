@@ -62,7 +62,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
 
         [HttpPut(Name = "UpdateEpaOrganisation")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EpaOrganisation))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EpaOrganisationResponse))]
         [SwaggerResponse((int)HttpStatusCode.NotFound, typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.Gone, Type = typeof(ApiResponse))]
@@ -130,5 +130,25 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             }
         }
 
+        [HttpPut("standards", Name = "UpdateEpaOrganisationStandard")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EpaOrganisationStandard))]
+        [SwaggerResponse((int)HttpStatusCode.NotFound, typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.Conflict, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> UpdateOrganisationStandard([FromBody] UpdateEpaOrganisationStandardRequest request)
+        {
+            try
+            {
+                _logger.LogInformation($@"Updating Organisation Standard [{request.OrganisationId}, {request.StandardCode}]");
+                var result = await _mediator.Send(request);
+                return Ok(new EpaOrganisationStandardResponse(result));
+            }      
+            catch (Exception ex)
+            {
+                _logger.LogError($@"Bad request, Message: [{ex.Message}]");
+                return BadRequest(new EpaOrganisationStandardResponse(ex.Message));
+            }
+        }
     }
 }

@@ -14,5 +14,6 @@
         string CheckIfOrganisationStandardAlreadyExists(string organisationId, int standardCode);
 
         string CheckIfContactIdIsEmptyOrValid(string contactId, string organisationId);
+        string CheckIfOrganisationStandardDoesNotExist(string organisationId, int standardCode);
     }
 }

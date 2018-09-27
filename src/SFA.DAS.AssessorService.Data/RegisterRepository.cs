@@ -83,5 +83,22 @@ namespace SFA.DAS.AssessorService.Data
                 return res;
             }
         }
+
+        public async Task<string> UpdateEpaOrganisationStandard(EpaOrganisationStandard orgStandard)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                var res = connection.Query<string>(
+                    "UPDATE [OrganisationStandard] SET [EffectiveFrom] = @effectiveFrom, [EffectiveTo] = @EffectiveTo, " +
+                    "[Comments] = @comments, [ContactId] = @contactId " +
+                    "WHERE [EndPointAssessorOrganisationId] = @organisationId and [StandardCode] = @standardCode; SELECT top 1 id from [organisationStandard] where  [EndPointAssessorOrganisationId] = @organisationId and [StandardCode] = @standardCode;",
+                    new {orgStandard.EffectiveFrom, orgStandard.EffectiveTo, orgStandard.Comments, orgStandard.ContactId, orgStandard.OrganisationId, orgStandard.StandardCode}).Single();
+
+                return res;
+            }
+        }
     }
 }

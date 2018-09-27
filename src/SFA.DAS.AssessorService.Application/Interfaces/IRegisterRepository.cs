@@ -8,5 +8,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<string> CreateEpaOrganisation(EpaOrganisation organisation);
         Task<string> UpdateEpaOrganisation(EpaOrganisation organisation);
         Task<string> CreateEpaOrganisationStandard(EpaOrganisationStandard organisationStandard);
+
+        Task<string> UpdateEpaOrganisationStandard(EpaOrganisationStandard organisationStandard);
     }
 }
