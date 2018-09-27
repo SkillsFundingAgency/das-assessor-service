@@ -31,27 +31,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 return View("index",vm);
             }
 
-            var searchResults = new List<AssessmentOrganisationSummary>();
-
-            //MFCMFC present to help Greg develop front end
-            if (vm.SearchString == "test")
-                searchResults = new List<AssessmentOrganisationSummary>
-                {
-                    new AssessmentOrganisationSummary {Id = "EPA0001", Name = "test", Ukprn = 1111111},
-                    new AssessmentOrganisationSummary {Id = "EPA0002", Name = "rest", Ukprn = 2222222}
-                };
-            else
-            {
-                if (vm.SearchString != "empty")
-                {
-                    searchResults = await _apiClient.SearchOrganisations(vm.SearchString?.Trim().ToLower());
-                }
-            }
+            var searchResults = await _apiClient.SearchOrganisations(vm.SearchString?.Trim().ToLower());
 
             var registerViewModel = new RegisterViewModel
             {
                 Results = searchResults,
-                SearchString = vm.SearchString,
+                SearchString = vm.SearchString
             };
 
             return View(registerViewModel);
