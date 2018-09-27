@@ -28,9 +28,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Middleware
             context.Request.Headers.TryGetValue(_UserNoteHeader, out var noteHeaderValue);
 
             string email = emailHeaderValue.FirstOrDefault();
-            int ukprn = 0;      
 
-            if(!TryExtractUkprnFromHeader(noteHeaderValue, out ukprn))
+            if(!TryExtractUkprnFromHeader(noteHeaderValue, out var ukprn))
             {
                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 context.Response.ContentType = "application/json";

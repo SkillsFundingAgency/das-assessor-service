@@ -45,7 +45,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
             {
                 ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
 
-                if (_env.IsDevelopment())  // TODO: Change to.... if not sandbox
+                if (ApplicationConfiguration.UseExternalApiSandBox)
                 {
                     services.AddHttpClient<IApiClient, SandboxApiClient>(config =>
                     {
@@ -149,7 +149,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                     })
                     .UseAuthentication();
 
-                if (env.IsDevelopment()) // TODO: Change to.... if not sandbox
+                if (ApplicationConfiguration.UseExternalApiSandBox)
                 {
                     app.UseMiddleware<SandboxHeadersMiddleware>();
                 }
