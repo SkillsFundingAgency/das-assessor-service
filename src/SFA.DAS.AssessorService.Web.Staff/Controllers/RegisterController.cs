@@ -78,10 +78,15 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             };
 
             var organisationId = await _apiClient.CreateEpaOrganisation(addOrganisationRequest);
+            return Redirect($"view-organisation/{organisationId}");
+        }
+
+        [HttpGet("register/view-organisation/{organisationId}")]
+        public async Task<IActionResult> ViewOrganisation(string organisationId)
+        {
             var organisation = await _apiClient.GetEpaOrganisation(organisationId);
-            var viewOrganisation = new RegisterViewOrganisationViewModel {OrganisationId = organisation.OrganisationId};
-            // SAVE? AND REDIRECT????
-            return View("viewOrganisation",viewOrganisation);
+            var viewOrganisation = new RegisterViewOrganisationViewModel { OrganisationId = organisation.OrganisationId };
+            return View(viewOrganisation);
         }
     }
 }
