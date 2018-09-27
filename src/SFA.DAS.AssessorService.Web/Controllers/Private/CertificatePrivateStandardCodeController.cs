@@ -98,7 +98,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
 
             return await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/Certificate/StandardCode.cshtml",
-                nextAction: RedirectToAction("LearnerStartDate", "CertificatePrivateLearnerStartDate"), action: CertificateActions.StatusCode);
+                nextAction: RedirectToAction("LearnerStartDate", "CertificatePrivateLearnerStartDate"), action: CertificateActions.StandardCode);
         }
 
         private IEnumerable<SelectListItem> GetSelectListItems(List<Standard> standards,

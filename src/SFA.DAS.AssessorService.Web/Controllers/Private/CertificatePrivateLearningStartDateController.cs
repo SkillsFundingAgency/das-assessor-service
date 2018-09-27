@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
 
             var actionResult = await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/Certificate/LearnerStartDate.cshtml",
-                nextAction: RedirectToAction("Ukprn", "CertificatePrivateProviderUkprn"), action: CertificateActions.Date);
+                nextAction: RedirectToAction("Ukprn", "CertificatePrivateProviderUkprn"), action: CertificateActions.LearnerStartDate);
 
             return actionResult;
         }

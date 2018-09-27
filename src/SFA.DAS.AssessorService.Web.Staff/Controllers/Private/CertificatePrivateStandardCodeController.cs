@@ -72,7 +72,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
 
             var actionResult = await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/CertificateAmend/StandardCode.cshtml",
-                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateid = vm.Id }), action: CertificateActions.StatusCode);
+                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateid = vm.Id }), action: CertificateActions.StandardCode);
 
             return actionResult;
         }
