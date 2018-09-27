@@ -241,7 +241,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
             var result = _validator.ValidatorCreateEpaOrganisationRequest(request);
             
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.AreEqual("OrganisationTypeId", result.Errors[0].FieldDetails);
+            Assert.AreEqual("OrganisationTypeId", result.Errors[0].Field);
         }
         
         
@@ -258,8 +258,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
             var result = _validator.ValidatorCreateEpaOrganisationRequest(request);
             
             Assert.AreEqual(2, result.Errors.Count(x => x.StatusCode == ValidationStatusCode.BadRequest.ToString()));
-            Assert.AreEqual(1,result.Errors.Count(x => x.FieldDetails == "OrganisationTypeId"));
-            Assert.AreEqual(1,result.Errors.Count(x => x.FieldDetails == "Name"));
+            Assert.AreEqual(1,result.Errors.Count(x => x.Field == "OrganisationTypeId"));
+            Assert.AreEqual(1,result.Errors.Count(x => x.Field == "Name"));
         }
         
         [Test]
@@ -278,8 +278,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
             
             Assert.AreEqual(1, result.Errors.Count(x => x.StatusCode == ValidationStatusCode.BadRequest.ToString()));
             Assert.AreEqual(1, result.Errors.Count(x => x.StatusCode == ValidationStatusCode.AlreadyExists.ToString()));
-            Assert.AreEqual(1,result.Errors.Count(x => x.FieldDetails == "OrganisationTypeId"));
-            Assert.AreEqual(1,result.Errors.Count(x => x.FieldDetails == "Ukprn"));
+            Assert.AreEqual(1,result.Errors.Count(x => x.Field == "OrganisationTypeId"));
+            Assert.AreEqual(1,result.Errors.Count(x => x.Field == "Ukprn"));
         }
     }
 }

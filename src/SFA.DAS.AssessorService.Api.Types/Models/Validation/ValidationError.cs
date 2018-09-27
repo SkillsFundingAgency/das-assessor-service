@@ -2,15 +2,20 @@
 {
     public class ValidationErrorDetail
     {
-        public ValidationErrorDetail(string fieldDetails, string errorMessage)
+        public ValidationErrorDetail()
         {
-            FieldDetails = fieldDetails;
+            
+        }
+
+        public ValidationErrorDetail(string field, string errorMessage)
+        {
+            Field = field;
             ErrorMessage = errorMessage;
         }
 
-        public ValidationErrorDetail(string fieldDetails, string errorMessage, ValidationStatusCode statusCode)
+        public ValidationErrorDetail(string field, string errorMessage, ValidationStatusCode statusCode)
         {
-            FieldDetails = fieldDetails;
+            Field = field;
             ErrorMessage = errorMessage;
             ValidationStatusCode = statusCode;
         }
@@ -21,14 +26,11 @@
             ValidationStatusCode = statusCode;
         }
 
-        public string FieldDetails { get; set; }
+        public string Field { get; set; }
         public string ErrorMessage { get; set; }
         protected ValidationStatusCode? ValidationStatusCode { get; set; }
 
 
         public string StatusCode => ValidationStatusCode.ToString();
-
-
-
     }
 }

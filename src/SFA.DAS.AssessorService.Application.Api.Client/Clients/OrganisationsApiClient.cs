@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
@@ -38,6 +39,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 return await PostPutRequestWithResponse<CreateOrganisationRequest, OrganisationResponse>(request, organisationCreateViewModel);
             }
         }
+        
+        public async Task<ValidationResponse> ValidateCreateOrganisation(string name, string ukprn, string organisationTypeId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/ao/assessment-organisations/validate?name={name}&ukprn={ukprn}&organisationTypeId={organisationTypeId}"))
+            {
+                return await RequestAndDeserialiseAsync<ValidationResponse>(request,  $"Could not check the validation for organisation [{name}]");
+            }
+        }
 
         public async Task Update(UpdateOrganisationRequest organisationUpdateViewModel)
         {
@@ -63,5 +72,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<OrganisationResponse> Create(CreateOrganisationRequest organisationCreateViewModel);
         Task Update(UpdateOrganisationRequest organisationUpdateViewModel);
         Task Delete(Guid id);
+        Task<ValidationResponse> ValidateCreateOrganisation(string name, string ukprn, string organisationTypeId);
     }
 }

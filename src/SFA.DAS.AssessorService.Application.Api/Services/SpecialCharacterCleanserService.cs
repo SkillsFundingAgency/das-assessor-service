@@ -18,6 +18,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             _alternateCharacters = new Dictionary<char, char>
             {
                 {'’', '\''},
+                {'‘','\'' },
                 {'`', '\''},
                 {'-', '–'},
                 {'\u00A0',' '},
