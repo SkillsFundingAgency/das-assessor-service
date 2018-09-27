@@ -12,7 +12,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         string CheckIfOrganisationAlreadyExists(string organisationId);
         string CheckIfOrganisationUkprnExists(long? ukprn);
         string CheckIfOrganisationUkprnExistsForOtherOrganisations(long? ukprn, string organisationIdToIgnore);
-        string CheckOrganisationTypeIsNullOrExists(int? organisationTypeId);
+        string CheckOrganisationTypeExists(int? organisationTypeId);
         string CheckIfOrganisationNotFound(string organisationId);
         string CheckUkprnIsValid(long? ukprn);
         string CheckIfStandardNotFound(int standardCode);

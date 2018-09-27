@@ -12,18 +12,23 @@
         {
             FieldDetails = fieldDetails;
             ErrorMessage = errorMessage;
-            StatusCode = statusCode;
+            ValidationStatusCode = statusCode;
         }
 
         public ValidationErrorDetail(string errorMessage, ValidationStatusCode statusCode)
         {
             ErrorMessage = errorMessage;
-            StatusCode = statusCode;
+            ValidationStatusCode = statusCode;
         }
 
         public string FieldDetails { get; set; }
         public string ErrorMessage { get; set; }
-        public ValidationStatusCode? StatusCode { get; set; }
+        protected ValidationStatusCode? ValidationStatusCode { get; set; }
+
+
+        public string StatusCode => ValidationStatusCode.ToString();
+
+
 
     }
 }

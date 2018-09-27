@@ -41,12 +41,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             {
                 var message = validationResponse.Errors.Aggregate(string.Empty, (current, error) => current + error.ErrorMessage + "; ");
                 _logger.LogError(message);
-                if (validationResponse.Errors.Any(x => x.StatusCode == ValidationStatusCode.BadRequest))
+                if (validationResponse.Errors.Any(x => x.StatusCode == ValidationStatusCode.BadRequest.ToString()))
                 {     
                     throw new BadRequestException(message);
                 }
 
-                if (validationResponse.Errors.Any(x => x.StatusCode == ValidationStatusCode.AlreadyExists))
+                if (validationResponse.Errors.Any(x => x.StatusCode == ValidationStatusCode.AlreadyExists.ToString()))
                 {
                     throw new AlreadyExistsException(message);
                 }

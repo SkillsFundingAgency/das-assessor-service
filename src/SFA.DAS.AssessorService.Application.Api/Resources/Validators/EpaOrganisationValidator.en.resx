@@ -145,7 +145,7 @@
     <value>This organisation/standard does not exist</value>
   </data>
   <data name="OrganisationTypeIsInvalid" xml:space="preserve">
-    <value>There is no organisation type with this Id</value>
+    <value>This is not a valid organisation type</value>
   </data>
   <data name="StandardNotFound" xml:space="preserve">
     <value>There is no standard present for the given standard code</value>
