@@ -211,7 +211,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
             _registerRepository.Verify(r => r.ContactIdIsValidForOrganisationId(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         }
 
-
         [Test]
         public void CheckOrganisationRequestValidationWhenThereAreNoIssues()
         {
@@ -258,7 +257,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
                 .Returns(Task.FromResult(false));
             var result = _validator.ValidatorCreateEpaOrganisationRequest(request);
             
-            Assert.AreEqual(2, result.Errors.Count(x => x.StatusCode == ValidationStatusCode.BadRequest));
+            Assert.AreEqual(2, result.Errors.Count(x => x.StatusCode == ValidationStatusCode.BadRequest.ToString()));
             Assert.AreEqual(1,result.Errors.Count(x => x.FieldDetails == "OrganisationTypeId"));
             Assert.AreEqual(1,result.Errors.Count(x => x.FieldDetails == "Name"));
         }
@@ -277,8 +276,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
                 .Returns(Task.FromResult(true));
             var result = _validator.ValidatorCreateEpaOrganisationRequest(request);
             
-            Assert.AreEqual(1, result.Errors.Count(x => x.StatusCode == ValidationStatusCode.BadRequest));
-            Assert.AreEqual(1, result.Errors.Count(x => x.StatusCode == ValidationStatusCode.AlreadyExists));
+            Assert.AreEqual(1, result.Errors.Count(x => x.StatusCode == ValidationStatusCode.BadRequest.ToString()));
+            Assert.AreEqual(1, result.Errors.Count(x => x.StatusCode == ValidationStatusCode.AlreadyExists.ToString()));
             Assert.AreEqual(1,result.Errors.Count(x => x.FieldDetails == "OrganisationTypeId"));
             Assert.AreEqual(1,result.Errors.Count(x => x.FieldDetails == "Ukprn"));
         }

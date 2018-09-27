@@ -59,9 +59,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             return FormatErrorMessage(EpaOrganisationValidatorMessageName.UkprnAlreadyUsed);
         }
 
-        public string CheckOrganisationTypeExists(int? organisationTypeId)
+        public string CheckOrganisationTypeIsNullOrExists(int? organisationTypeId)
         {
-            if (organisationTypeId != null && _registerRepository.OrganisationTypeExists(organisationTypeId.Value).Result) return string.Empty;
+            if (organisationTypeId == null || _registerRepository.OrganisationTypeExists(organisationTypeId.Value).Result) return string.Empty;
                 return FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationTypeIsInvalid);
         }
 
@@ -147,7 +147,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             var validationResult = new ValidationResponse();
 
             RunValidationCheckAndAppendAnyError("Name", CheckOrganisationName(request.Name), validationResult, ValidationStatusCode.BadRequest);
-            RunValidationCheckAndAppendAnyError("OrganisationTypeId", CheckOrganisationTypeExists(request.OrganisationTypeId), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("OrganisationTypeId", CheckOrganisationTypeIsNullOrExists(request.OrganisationTypeId), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("Ukprn", CheckUkprnIsValid(request.Ukprn), validationResult, ValidationStatusCode.BadRequest);
        
             RunValidationCheckAndAppendAnyError("Name", CheckOrganisationNameNotUsed(request.Name), validationResult, ValidationStatusCode.AlreadyExists);

@@ -49,7 +49,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
         {
             request.OrganisationId = _cleanser.CleanseStringForSpecialCharacters(request.OrganisationId?.Trim());           
             request.Comments = _cleanser.CleanseStringForSpecialCharacters(request.Comments?.Trim());
-            request.ContactId = _cleanser.CleanseStringForSpecialCharacters(request.ContactId?.Trim());
+            request.ContactId = request.ContactId?.Trim();
         }
 
         private static EpaOrganisationStandard MapOrganisationStandardRequestToOrganisationStandard(UpdateEpaOrganisationStandardRequest request)

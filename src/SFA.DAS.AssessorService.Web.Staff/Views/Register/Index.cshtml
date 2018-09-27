@@ -46,15 +46,7 @@
                 </ul>
 
                 <div class="form-group" sfa-validation-for="SearchString" sfa-anyvalidationerror-class="form-group-error">
-                    @*@if (!string.IsNullOrEmpty(@Model.ErrorMessage))
-                    {
-                        <div class="error-message"  id="validation-messages">
-                            @Model.ErrorMessage
-                        </div>
-                    }*@
-                    <div class="error-message-container" sfa-validation-for="SearchString" sfa-validationerror-class="form-group-error">
-                        <span class="error-message" asp-validation-for="SearchString"></span>
-                    </div>
+                    <span class="error-message" asp-validation-for="SearchString"></span>
                     <input class="form-control" asp-for="SearchString" name="SearchString" sfa-validationerror-class="form-control-error" type="text" />
                 </div>
             </div>
@@ -72,6 +64,6 @@
 </div>
 
 @section Scripts {
-    <!-- @{await Html.RenderPartialAsync("_ValidationScriptsPartial");} -->
-    <!-- @{await Html.RenderPartialAsync("~/Views/Register/_RegisterScriptsPartial.cshtml"); } -->
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    @{ await Html.RenderPartialAsync("~/Views/Register/_RegisterScriptsPartial.cshtml"); }
 }
