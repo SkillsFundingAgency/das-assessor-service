@@ -19,9 +19,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
     {
         private readonly ILogger<CertificateController> _logger;
         private readonly IHeaderInfo _headerInfo;
-        private readonly ApiClient _apiClient;
+        private readonly IApiClient _apiClient;
 
-        public CertificateController(ILogger<CertificateController> logger, IHeaderInfo headerInfo, ApiClient apiClient)
+        public CertificateController(ILogger<CertificateController> logger, IHeaderInfo headerInfo, IApiClient apiClient)
         {
             _logger = logger;
             _headerInfo = headerInfo;

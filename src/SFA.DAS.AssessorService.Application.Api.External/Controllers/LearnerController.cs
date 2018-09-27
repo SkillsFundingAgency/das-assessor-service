@@ -17,9 +17,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
     {
         private readonly ILogger<LearnerController> _logger;
         private readonly IHeaderInfo _headerInfo;
-        private readonly ApiClient _apiClient;
+        private readonly IApiClient _apiClient;
 
-        public LearnerController(ILogger<LearnerController> logger, IHeaderInfo headerInfo, ApiClient apiClient)
+        public LearnerController(ILogger<LearnerController> logger, IHeaderInfo headerInfo, IApiClient apiClient)
         {
             _logger = logger;
             _headerInfo = headerInfo;

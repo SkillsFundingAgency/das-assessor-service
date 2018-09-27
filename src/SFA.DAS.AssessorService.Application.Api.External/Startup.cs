@@ -45,11 +45,22 @@ namespace SFA.DAS.AssessorService.Application.Api.External
             {
                 ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
 
-                services.AddHttpClient<ApiClient>("ApiClient", config =>
+                if (_env.IsDevelopment())  // TODO: Change to.... if not sandbox
                 {
-                    config.BaseAddress = new Uri(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
-                    config.DefaultRequestHeaders.Add("Accept", "Application/json");
-                });
+                    services.AddHttpClient<IApiClient, SandboxApiClient>(config =>
+                    {
+                        config.BaseAddress = new Uri(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
+                        config.DefaultRequestHeaders.Add("Accept", "Application/json");
+                    });
+                }
+                else
+                {
+                    services.AddHttpClient<IApiClient, ApiClient>(config =>
+                    {
+                        config.BaseAddress = new Uri(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
+                        config.DefaultRequestHeaders.Add("Accept", "Application/json");
+                    });
+                }
 
                 services.AddSwaggerGen(c =>
                 {
@@ -138,8 +149,13 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                     })
                     .UseAuthentication();
 
+                if (env.IsDevelopment()) // TODO: Change to.... if not sandbox
+                {
+                    app.UseMiddleware<SandboxHeadersMiddleware>();
+                }
+
                 app.UseMiddleware<GetHeadersMiddleware>();
-                
+
                 app.UseHttpsRedirection();
                 app.UseMvc();
             }

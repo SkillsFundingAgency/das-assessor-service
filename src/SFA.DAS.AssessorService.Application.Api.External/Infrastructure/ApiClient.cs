@@ -20,7 +20,7 @@ using SFA.DAS.AssessorService.Application.Api.External.Middleware;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 {
-    public class ApiClient
+    public class ApiClient : IApiClient
     {
         private readonly HttpClient _client;
         private readonly ILogger<ApiClient> _logger;
