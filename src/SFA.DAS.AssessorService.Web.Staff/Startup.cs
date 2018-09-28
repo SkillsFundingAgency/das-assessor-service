@@ -114,6 +114,25 @@ namespace SFA.DAS.AssessorService.Web.Staff
                 options.Wtrealm = ApplicationConfiguration.StaffAuthentication.WtRealm;
                 options.MetadataAddress = ApplicationConfiguration.StaffAuthentication.MetadataAddress;
             }).AddCookie();
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("EPAOCertificationTeam",
+                    policy =>
+                    {
+                        policy.RequireAssertion(context =>
+                            context.User.HasClaim("http://service/service", "ASS") &&
+                            context.User.HasClaim("http://service/service", "EPC"));
+                    });
+                
+                options.AddPolicy("EPAOOperationTeam",
+                    policy =>
+                    {
+                        policy.RequireAssertion(context =>
+                            context.User.HasClaim("http://service/service", "ASS") &&
+                            context.User.HasClaim("http://service/service", "EPO"));
+                    });
+            });
         }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

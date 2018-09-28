@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -31,7 +32,18 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         [HttpGet]
         public IActionResult PostSignIn()
         {
-            return RedirectToAction("Index", "Dashboard");
+            var roles = HttpContext.User.Claims.Where(c => c.Type == "http://service/service")
+                .Select(c => c.Value).ToList();
+
+            if (roles.Contains("ASS")) return RedirectToAction("Index", "Dashboard");
+            
+            foreach (var cookie in Request.Cookies.Keys)
+            {
+                Response.Cookies.Delete(cookie);
+            }
+
+            return RedirectToAction("InvalidRole", "Home");
+
         }
 
         [HttpGet]
