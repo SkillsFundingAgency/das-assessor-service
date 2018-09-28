@@ -8,6 +8,11 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
     {
         public string OrganisationId { get; set; }
         public int StandardCode { get; set; }
-        public List<OrganisationStandardPeriod> Periods { get; set; }
+
+        public DateTime? DateStandardApprovedOnRegister { get; set; }
+        public Guid? ContactId { get; set; }
+       
+        public DateTime EffectiveFrom { get; set; }
+        public DateTime? EffectiveTo { get; set; }
     }
 }
