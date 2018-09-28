@@ -67,5 +67,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         {
             return RedirectToAction(nameof(HomeController.Index), "Home");
         }
+
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
     }
 }

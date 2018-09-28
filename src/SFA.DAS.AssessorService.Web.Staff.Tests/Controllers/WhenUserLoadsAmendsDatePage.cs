@@ -7,7 +7,7 @@ using SFA.DAS.AssessorService.Web.Staff.ViewModels;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers
 {
-    public class WhenUserLoadsAmmendsDatePage : ContractAmmendQueryBase
+    public class WhenUserLoadsAmendsDatePage : ContractAmendQueryBase
     {
         private IActionResult _result;
         private CertificateDateViewModel _viewModelResponse;
