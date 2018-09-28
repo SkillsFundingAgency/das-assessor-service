@@ -18,6 +18,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             _alternateCharacters = new Dictionary<char, char>
             {
                 {'’', '\''},
+                {'‘','\'' },
                 {'`', '\''},
                 {'-', '–'},
                 {'\u00A0',' '},
@@ -34,6 +35,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             var specialCharacters = SpecialCharactersInString(processedString);
 
             if (specialCharacters.Length <= 0) return processedString;
+
             foreach (var specialCharacter in specialCharacters)
             {
                 var matchingEntry = _alternateCharacters.First(x => x.Key == specialCharacter);
