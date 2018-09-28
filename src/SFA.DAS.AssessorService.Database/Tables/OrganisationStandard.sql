@@ -8,7 +8,7 @@
 	[DateStandardApprovedOnRegister] [DateTime] NULL,
 	[Comments] [NVARCHAR] (500) NULL,
 	[Status] [nvarchar](10) NOT NULL, 
-    [ContactId] UNIQUEIDENTIFIER NULL,
+	[ContactId] [UNIQUEIDENTIFIER] NULL
 ) ON [PRIMARY]
 
 GO
