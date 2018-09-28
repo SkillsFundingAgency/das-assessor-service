@@ -22,7 +22,7 @@
     <PackageReference Include="SFA.DAS.Http" Version="1.0.0.39136" />
     <PackageReference Include="SFA.DAS.Notifications.Api.Client" Version="2.0.0.35919" />
     <PackageReference Include="StructureMap" Version="4.6.1" />
-    <PackageReference Include="Dapper" Version="1.50.4" />
+    <PackageReference Include="Dapper" Version="1.50.5" />
     <PackageReference Include="DapperExtensions" Version="1.6.3" />
     <PackageReference Include="EPPlus" Version="4.5.0.3-rc" />
     <PackageReference Include="FreeSpire.Doc" Version="5.7.0" />
