@@ -4,10 +4,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.Apprenticeships.Api.Types.AssessmentOrgs;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Handlers.RegisterUpdate;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
-using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
+using EFOrganisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.RegisterUpdate
 {
@@ -26,13 +27,13 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.RegisterUpdate
                     new OrganisationSummary {Id = "EPA0003", Ukprn = 33333333}
                 }.AsEnumerable()));
 
-            ApiClient.Setup(c => c.Get("EPA0003")).Returns(new ExternalApis.AssessmentOrgs.Types.Organisation { Id = "EPA0003", Name = "A New EPAO", UkPrn = 33333333});
+            ApiClient.Setup(c => c.Get("EPA0003")).Returns(new Organisation { Id = "EPA0003", Name = "A New EPAO"}); // MFCMFC, UkPrn = 33333333});
 
             OrganisationRepository.Setup(r => r.GetAllOrganisations())
-                .Returns(Task.FromResult(new List<Organisation>
+                .Returns(Task.FromResult(new List<EFOrganisation>
                 {
-                    new Organisation() { EndPointAssessorOrganisationId = "EPA0001", EndPointAssessorUkprn = 11111111},
-                    new Organisation() { EndPointAssessorOrganisationId = "EPA0002", EndPointAssessorUkprn = 22222222}
+                    new EFOrganisation(){ EndPointAssessorOrganisationId = "EPA0001", EndPointAssessorUkprn = 11111111},
+                    new EFOrganisation() { EndPointAssessorOrganisationId = "EPA0002", EndPointAssessorUkprn = 22222222}
                 }.AsEnumerable()));
         }
 

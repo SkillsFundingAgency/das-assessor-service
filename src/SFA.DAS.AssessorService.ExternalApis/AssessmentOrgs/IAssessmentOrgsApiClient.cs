@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SFA.DAS.Apprenticeships.Api.Types;
+using SFA.DAS.Apprenticeships.Api.Types.AssessmentOrgs;
+using SFA.DAS.Apprenticeships.Api.Types.Providers;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
 
 
@@ -104,10 +107,6 @@ namespace SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs
 
         Task<Standard> GetStandard(int standardId);
         Task<List<Standard>> GetAllStandards();
-
-        Task<List<EpaStandard>> GetAllEpaStandards();
-        Task<EpaStandard> GetEpaStandard(int standardId);
-
         Task<Provider> GetProvider(long providerUkPrn);
     }
 }

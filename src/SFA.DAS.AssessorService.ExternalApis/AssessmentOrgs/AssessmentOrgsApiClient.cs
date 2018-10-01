@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using SFA.DAS.Apprenticeships.Api.Types;
+using SFA.DAS.Apprenticeships.Api.Types.AssessmentOrgs;
+using SFA.DAS.Apprenticeships.Api.Types.Providers;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
 
 namespace SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs
@@ -184,22 +187,6 @@ namespace SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/standards"))
             {
                 return await RequestAndDeserialiseAsync<List<Standard>>(request);
-            }
-        }
-
-        public async Task<List<EpaStandard>> GetAllEpaStandards()
-        {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/standards"))
-            {
-                return await RequestAndDeserialiseAsync<List<EpaStandard>>(request);
-            }
-        }
-
-        public async Task<EpaStandard> GetEpaStandard(int standardId)
-        {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/standards/{standardId}"))
-            {
-                return await RequestAndDeserialiseAsync<EpaStandard>(request);
             }
         }
 
