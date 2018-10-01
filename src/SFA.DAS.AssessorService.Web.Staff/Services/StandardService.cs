@@ -21,19 +21,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             _assessmentOrgsApiClient = assessmentOrgsApiClient;
         }
 
-        public async Task<IEnumerable<Standard>> GetAllStandards()
+        public async Task<IEnumerable<StandardSummary>> GetAllStandardSummaries()
         {
-            //var results = await _cacheHelper.RetrieveFromCache<IEnumerable<Standard>>("Standards");
-            //if (results != null) return results;
-            var standards = await _assessmentOrgsApiClient.GetAllStandards();
-            //await _cacheHelper.SaveToCache("Standards", standards, 8);  // MFCMFC 8 hours???
-
-            var results = standards;
-
-            return results;
-
-            // var results = System.Web.Caching.Cache["Standards"] as Standard[];
-
+            var results = await _cacheHelper.RetrieveFromCache<IEnumerable<StandardSummary>>("StandardSummaries");
+           if (results != null) return results;
+            var standardSummaries = await _assessmentOrgsApiClient.GetAllStandardSummaries();
+            await _cacheHelper.SaveToCache("StandardSummaries", standardSummaries, 8);  // MFCMFC 8 hours???
+            return standardSummaries;
 
         }
 
@@ -45,7 +39,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
 
     public interface IStandardService
     {
-        Task<IEnumerable<Standard>> GetAllStandards();
+        Task<IEnumerable<StandardSummary>> GetAllStandardSummaries();
         Task<Standard> GetStandard(int standardId);
     }
 }

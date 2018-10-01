@@ -1,5 +1,7 @@
 ﻿using SFA.DAS.AssessorService.Api.Types.Models;
 using System.Collections.Generic;
+using SFA.DAS.Apprenticeships.Api.Types;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Models
 {
@@ -21,6 +23,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Models
         public string PrimaryContactName { get; set; }
 
         public List<ContactResponse> Contacts { get; set; }
+
+        public List<OrganisationStandardSummary> OrganisationStandards { get; set; }
 
     }
 }

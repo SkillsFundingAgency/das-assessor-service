@@ -13,10 +13,9 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
 
         public DateTime? DateStandardApprovedOnRegister { get; set; }
         public Guid? ContactId { get; set; }
-       
         public DateTime EffectiveFrom { get; set; }
         public DateTime? EffectiveTo { get; set; }
 
-        public Standard Standard { get; set; }
+        public StandardSummary StandardSummary { get; set; }
     }
 }

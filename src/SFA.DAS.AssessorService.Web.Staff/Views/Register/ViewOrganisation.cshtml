@@ -99,6 +99,46 @@
 
                  </label>
         
+            
+            <br/><br/>
+
+                @if (@Model.OrganisationStandards.Count > 0)
+                {
+                    <div class="grid-row">
+                        <div class="column-full">
+                            <div class="form-group">
+                                <table class="table responsive table-font-xsmall">
+                                    <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Code</th>
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach (var result in Model.OrganisationStandards.OrderBy(x => x.StandardSummary.Title))
+                                    {
+                                        <tr>
+                                            <td data-label="Name">@result.StandardSummary.Title</td>
+                                            <td data-label="ID">@result.StandardCode</td>
+                                            <td class="numeric"><a href="">Edit</a></td>
+                                        </tr>
+                                    }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <span>There are no standards</span>
+                }
+                <div class="form-group">
+                    <button class="button" type="submit" href="">Add New Standard</button>
+                </div>
+
+            </label>
         </div>
 
     </div>

@@ -190,6 +190,15 @@ namespace SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs
             }
         }
 
+        //MFCMFC Temporary measure to give time to figure out how to update GetAllStandards to StandardSummary
+        public async Task<List<StandardSummary>> GetAllStandardSummaries()
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/standards"))
+            {
+                return await RequestAndDeserialiseAsync<List<StandardSummary>>(request);
+            }
+        }
+
         public async Task<Provider> GetProvider(long providerUkPrn)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/providers/{providerUkPrn}"))

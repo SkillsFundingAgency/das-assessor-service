@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
@@ -95,16 +96,16 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             await GatherOrganisationContacts(viewModel);
 
             var organisationStandards = await _apiClient.GetEpaOrganisationStandards(organisationId);
-          
+
+            var allStandards = await _standardService.GetAllStandardSummaries();
 
             foreach (var organisationStandard in organisationStandards)
             {
-                var std = await _standardService.GetStandard(organisationStandard.StandardCode);
-                organisationStandard.Standard = std;
+                var std = allStandards.First(x => x.Id == organisationStandard.StandardCode.ToString());
+                organisationStandard.StandardSummary = std;
             }
 
-            //var allStandards = await _standardService.GetAllStandards();
-
+            viewModel.OrganisationStandards = organisationStandards;
             return View(viewModel);
         }
 
