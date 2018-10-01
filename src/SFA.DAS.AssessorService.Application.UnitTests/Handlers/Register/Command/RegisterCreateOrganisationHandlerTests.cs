@@ -18,6 +18,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
     public class RegisterCreateOrganisationHandlerTests
     {
         private Mock<IRegisterRepository> _registerRepository;
+        private Mock<ISpecialCharacterCleanserService> _cleanserService;
         private CreateEpaOrganisationHandler _createEpaOrganisationHandler;
         private string _returnedOrganisationId;
         private Mock<IEpaOrganisationValidator> _validator;
@@ -31,6 +32,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
         public void Setup()
         {
             _registerRepository = new Mock<IRegisterRepository>();
+            _cleanserService = new Mock<ISpecialCharacterCleanserService>();
             _validator = new Mock<IEpaOrganisationValidator>();
             _logger = new Mock<ILogger<CreateEpaOrganisationHandler>>();
             _idGenerator = new Mock<IEpaOrganisationIdGenerator>();
@@ -46,8 +48,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             _validator.Setup(v => v.CheckIfOrganisationUkprnExists(_requestNoIssues.Ukprn)).Returns(string.Empty);
             _validator.Setup(v => v.CheckOrganisationTypeIsNullOrExists(_requestNoIssues.OrganisationTypeId)).Returns(string.Empty);
             _validator.Setup(v => v.CheckUkprnIsValid(_requestNoIssues.Ukprn)).Returns(string.Empty);
-
-            _createEpaOrganisationHandler = new CreateEpaOrganisationHandler(_registerRepository.Object, _validator.Object, _idGenerator.Object,_logger.Object);
+            _cleanserService.Setup(c => c.CleanseStringForSpecialCharacters(It.IsAny<string>()))
+                .Returns((string s) => s);
+            _createEpaOrganisationHandler = new CreateEpaOrganisationHandler(_registerRepository.Object, _validator.Object, _idGenerator.Object,_logger.Object, _cleanserService.Object);
           }
 
         [Test]
@@ -116,7 +119,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             _registerRepository.Verify(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Never);
             _validator.Verify(v => v.CheckUkprnIsValid(requestInvalidUkprn.Ukprn));
         }
-    
+
         [Test]
         public void GetBadRequestExceptionWhenukprnAlreadyExistsValidationOccurs()
         {

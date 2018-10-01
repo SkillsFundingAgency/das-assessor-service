@@ -40,6 +40,9 @@
     <Content Update="nlog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Update="Views\Register\Index.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\CertificateAmend\Address.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
