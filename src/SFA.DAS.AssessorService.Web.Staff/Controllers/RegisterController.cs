@@ -94,8 +94,16 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             var viewModel = MapViewOrganisationModel(organisation);
             await GatherOrganisationContacts(viewModel);
 
-            var standards = await _apiClient.GetEpaOrganisationStandards(organisationId);
-            var allStandards = await _standardService.GetAllStandards();
+            var organisationStandards = await _apiClient.GetEpaOrganisationStandards(organisationId);
+          
+
+            foreach (var organisationStandard in organisationStandards)
+            {
+                var std = await _standardService.GetStandard(organisationStandard.StandardCode);
+                organisationStandard.Standard = std;
+            }
+
+            //var allStandards = await _standardService.GetAllStandards();
 
             return View(viewModel);
         }

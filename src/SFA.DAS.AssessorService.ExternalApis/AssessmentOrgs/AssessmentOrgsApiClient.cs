@@ -187,6 +187,22 @@ namespace SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs
             }
         }
 
+        public async Task<List<EpaStandard>> GetAllEpaStandards()
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/standards"))
+            {
+                return await RequestAndDeserialiseAsync<List<EpaStandard>>(request);
+            }
+        }
+
+        public async Task<EpaStandard> GetEpaStandard(int standardId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/standards/{standardId}"))
+            {
+                return await RequestAndDeserialiseAsync<EpaStandard>(request);
+            }
+        }
+
         public async Task<Provider> GetProvider(long providerUkPrn)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/providers/{providerUkPrn}"))

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -14,5 +15,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
        
         public DateTime EffectiveFrom { get; set; }
         public DateTime? EffectiveTo { get; set; }
+
+        public EpaStandard Standard { get; set; }
     }
 }
