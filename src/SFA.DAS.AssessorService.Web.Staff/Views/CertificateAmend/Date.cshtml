@@ -8,7 +8,7 @@
 <div class="grid-row">
     <div class="column-two-thirds">
 
-        <a class="link-back" asp-controller="CertificateAmmend" asp-action="Check" asp-route-certificateid=@Model.Id>Back</a>
+        <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateid=@Model.Id>Back</a>
 
         <form class="apprentice-date-form" type="post" asp-controller="CertificateDate">
             <input type="hidden" name="fullDate" id="fullDate" class="date-input" />
@@ -93,5 +93,5 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-    @{await Html.RenderPartialAsync("~/Views/CertificateAmmend/_DateScriptsPartial.cshtml"); }
+    @{await Html.RenderPartialAsync("~/Views/CertificateAmend/_DateScriptsPartial.cshtml"); }
 }

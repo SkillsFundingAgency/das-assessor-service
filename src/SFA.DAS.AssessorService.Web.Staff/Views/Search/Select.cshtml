@@ -210,7 +210,7 @@ else
             @if (Model.Learner.CertificateReference != null)
             {
                 <li><a asp-action="Index" asp-controller="DuplicateRequest" asp-route-certificateId="@Model.Learner.CertificateId">request duplicate certificate</a></li>
-                <li><a asp-action="Check" asp-controller="CertificateAmmend" asp-route-certificateId="@Model.Learner.CertificateId">amend certificate information</a></li>        
+                <li><a asp-action="Check" asp-controller="CertificateAmend" asp-route-certificateId="@Model.Learner.CertificateId">amend certificate information</a></li>        
             }
             <li><a asp-controller="Search" asp-action="Index">Search for another apprentice</a></li>
         </ul>

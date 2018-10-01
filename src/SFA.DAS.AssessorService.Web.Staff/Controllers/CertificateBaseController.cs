@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -12,13 +13,14 @@ using SFA.DAS.AssessorService.Web.Staff.ViewModels;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 { 
+    [Authorize(Policy = Startup.Policies.OperationsTeamOnly)]
     public class CertificateBaseController : Controller
     {
-        protected readonly ILogger<CertificateAmmendController> Logger;
+        protected readonly ILogger<CertificateAmendController> Logger;
         protected readonly IHttpContextAccessor ContextAccessor;
         protected readonly ApiClient ApiClient;     
 
-        public CertificateBaseController(ILogger<CertificateAmmendController> logger, 
+        public CertificateBaseController(ILogger<CertificateAmendController> logger, 
             IHttpContextAccessor contextAccessor, 
             ApiClient apiClient)
         {
