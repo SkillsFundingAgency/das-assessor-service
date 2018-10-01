@@ -45,10 +45,20 @@
     <ProjectReference Include="..\SFA.DAS.AssessorService.Settings\SFA.DAS.AssessorService.Settings.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Resources\Validators\CertificateFirstNameViewModelValidator.Designer.cs">
+    <Compile Update="Resources\Validators\CertificateFirstNameViewModelValidator - Copy.Designer.cs">
+      <DependentUpon>CertificateFirstNameViewModelValidator.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Resources\Validators\CertificateFirstNameViewModelValidator - Copy.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>CertificateFirstNameViewModelValidator.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Validators\CertificateLastNameViewModelValidator.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>CertificateLastNameViewModelValidator.resx</DependentUpon>
     </Compile>
     <Compile Update="Resources\Validators\CertificateStandardCodeListViewModelValidator.Designer.cs">
       <DesignTime>True</DesignTime>
@@ -78,6 +88,9 @@
     <Content Update="Views\Certificate\AddressSummary.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Certificate\LastName.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Certificate\StandardCode.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
@@ -98,6 +111,9 @@
     <Content Update="Views\Certificate\Recipient.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Certificate\_LastNameScriptsPartial.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Certificate\_UkprnScriptsPartial.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
@@ -109,6 +125,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Update="Resources\Validators\CertificateLastNameViewModelValidator.resx">
+      <LastGenOutput>CertificateLastNameViewModelValidator.Designer.cs</LastGenOutput>
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="Resources\Validators\ChooseStandardViewModelValidator.resx">
       <LastGenOutput>ChooseStandardViewModelValidator.Designer.cs</LastGenOutput>
       <Generator>ResXFileCodeGenerator</Generator>
@@ -125,7 +145,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Validators\CertificateFirstNameViewModelValidator.resx">
-      <LastGenOutput>CertificateFirstNameViewModelValidator.Designer.cs</LastGenOutput>
+      <LastGenOutput>CertificateFirstNameViewModelValidator - Copy.Designer.cs</LastGenOutput>
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Validators\CertificateRecipientViewModelValidator.resx">
@@ -148,6 +168,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Views\Certificate\AddressSummary.en.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Views\Certificate\LastName.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Views\Certificate\StandardCode.en.resx">

@@ -7,6 +7,7 @@
         public const string AddressSummary = "AddressSummary";
         public const string Date = "Date";        
         public const string FirstName = "FirstName";
+        public const string LastName = "LastName";
         public const string LearnerStartDate = "LearnerStartDate";
         public const string Grade = "Grade";
         public const string Option = "Option";

@@ -33,13 +33,19 @@
                 </dd>
                 @if (Model.IsPrivatelyFunded)
                 {
-                <dd class="cya-change">
-                    <a asp-controller="CertificatePrivateFirstName" asp-action="FirstName" asp-route-redirecttocheck="true">
-                        Change<span class="visually-hidden"> first name</span>
-                    </a>
-                </dd>
+                    <dd class="cya-change">
+                        <a asp-controller="CertificatePrivateFirstName" asp-action="FirstName" asp-route-redirecttocheck="true">
+                            Change<span class="visually-hidden"> first name</span>
+                        </a>
+                    </dd>
+                    <dd class="cya-change">
+                        <a asp-controller="CertificatePrivateLastName" asp-action="LastName" asp-route-redirecttocheck="true">
+                            Change<span class="visually-hidden"> last name</span>
+                        </a>
+                    </dd>
                 }
             </div>
+            
             <div>
                 <dt class="cya-question">
                     <abbr title="Unique learner number">ULN</abbr>
