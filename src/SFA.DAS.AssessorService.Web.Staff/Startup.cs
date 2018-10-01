@@ -120,7 +120,7 @@ namespace SFA.DAS.AssessorService.Web.Staff
                 options.AddPolicy(Policies.OperationsAndCertificationTeam,
                     policy =>
                     {
-                        policy.RequireAssertion(context =>
+                        policy.RequireAssertion(context => 
                             context.User.HasClaim("http://service/service", Roles.AssessmentService) &&
                             (context.User.HasClaim("http://service/service", Roles.CertificationTeam) ||
                              context.User.HasClaim("http://service/service", Roles.OperationsTeam)));
