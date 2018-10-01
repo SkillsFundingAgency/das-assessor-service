@@ -74,6 +74,26 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                 {
                     options.Cookie = new CookieBuilder() {Name = ".Assessors.Cookies", HttpOnly = true};
                 });
+            
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(Policies.ExternalApiAccess,
+                    policy =>
+                    {
+                        policy.RequireAssertion(context =>
+                            context.User.HasClaim("http://schemas.portal.com/service", Roles.ExternalApiAccess));
+                    });
+            });
         }
+    }
+
+    public class Policies
+    {
+        public const string ExternalApiAccess = "ExternalApiAccess";
+    }
+    
+    public class Roles
+    {
+        public const string ExternalApiAccess = "EPI";
     }
 }

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
-namespace SFA.DAS.AssessorService.Web.Staff.TagHelpers
+namespace SFA.DAS.AssessorService.Web.Extensions.TagHelpers
 {
     [HtmlTargetElement("a", Attributes = ValidationForAttributeName)]
     public class ValidationLinkTagHelper : TagHelper
