@@ -1,0 +1,63 @@
+﻿@using SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private
+@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateLastNameViewModel
+
+@{
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Apprentice's last name";
+    Layout = "_Layout";
+}
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateid=@Model.Id>Back</a>
+
+        <form class="apprentice-lastname-form js-disable-on-submit" method="post" asp-action="LastName" asp-controller="CertificatePrivateLastName">
+            @Html.HiddenFor(c => c.Id)
+
+            @* hidden with css by default *@
+            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                    There's a problem
+                </h2>
+                <ul class="js-error-summary-list error-summary-list"></ul>
+            </div>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                        There's a problem
+                    </h2>
+                    <ul class="error-summary-list">
+                        <li><a sfa-validation-for="LastName"></a></li>
+                    </ul>
+                </div>
+            }
+
+            <div sfa-anyvalidationerror-class="after-error-summary">
+                <h1 class="heading-large">
+                    What's the apprentice's last name?
+                </h1>
+
+                <div class="form-group" sfa-validation-for="LastName" sfa-validationerror-class="form-group-error">
+                    <label for="LastName">
+                        <span class="form-label-bold visually-hidden">Last Name</span>
+                        <span class="form-hint">
+                            For example, Hawkins
+                        </span>
+                        <span class="error-message" asp-validation-for="LastName"></span>
+                    </label>
+                    <input class="form-control" name="LastName" sfa-validation-for="LastName" sfa-validationerror-class="form-control-error" asp-for="LastName" type="text" maxlength="100" />
+                </div>
+
+
+            </div>
+
+            <button type="submit" class="button">Continue</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    @{await Html.RenderPartialAsync("~/Views/CertificateAmend/_LastNameScriptsPartial.cshtml"); }
+}

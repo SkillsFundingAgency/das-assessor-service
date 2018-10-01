@@ -111,7 +111,7 @@
     <Content Update="Views\Certificate\Recipient.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\Certificate\_LastNameScriptsPartial.cshtml">
+    <Content Update="Validators\_LastNameScriptsPartial.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\Certificate\_UkprnScriptsPartial.cshtml">
