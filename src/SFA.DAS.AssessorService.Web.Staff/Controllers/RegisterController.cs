@@ -31,7 +31,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 return View("index",vm);
             }
 
-            var searchResults = await _apiClient.SearchOrganisations(vm.SearchString?.Trim().ToLower());
+            var searchstring = vm.SearchString?.Trim().ToLower();
+            var rx = new System.Text.RegularExpressions.Regex("<[^>]*>");
+            var searchstring2 = rx.Replace(searchstring, "");
+            var searchResults = await _apiClient.SearchOrganisations(searchstring2);
 
             var registerViewModel = new RegisterViewModel
             {
