@@ -16,5 +16,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        public IActionResult InvalidRole()
+        {
+            return View();
+        }
     }
 }

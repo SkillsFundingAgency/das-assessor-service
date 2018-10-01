@@ -40,7 +40,7 @@
                 </table>
             </div>
 
-            @if (Model.Subscriptions.Any())
+            if (Model.Subscriptions.Any())
             {
                 <h1 class="heading-large">Subscription Details</h1>
                 <div class="grid-row">
@@ -78,7 +78,7 @@
                 </div>
             }
 
-            @if (!string.Equals(Model.State, "blocked"))
+            if (!string.Equals(Model.State, "blocked"))
             {
                 <form asp-action="RemoveAccess" asp-controller="ExternalApi" method="post">
                     @Html.HiddenFor(m => m.AzureId)
