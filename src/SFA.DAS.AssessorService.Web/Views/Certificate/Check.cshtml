@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using SFA.DAS.AssessorService.Domain.Extensions
 @inject IViewLocalizer Localizer
 @model SFA.DAS.AssessorService.Web.ViewModels.Certificate.CertificateCheckViewModel
 
@@ -85,7 +86,7 @@
             {
             <div>
                 <dt class="cya-question">
-                    Apprenticeship start date
+                    Standard Code
                 </dt>
                 <dd class="cya-answer">
                     @Model.SelectedStandard
@@ -145,10 +146,10 @@
             {
             <div>
                 <dt class="cya-question">
-                    Learner start date
+                    Apprentice start date
                 </dt>
                 <dd class="cya-answer">
-                    @Model.LearnerStartDate?.ToShortDateString()
+                    @Model.LearnerStartDate?.ToSfaShortDateString()
                 </dd>
                 <dd class="cya-change">
                     <a asp-controller="CertificatePrivateLearnerStartDate" asp-action="LearnerStartDate" asp-route-redirecttocheck="true">
@@ -163,7 +164,7 @@
                     Achievement date
                 </dt>
                 <dd class="cya-answer">
-                    @Model.AchievementDate?.ToShortDateString()
+                    @Model.AchievementDate?.ToSfaShortDateString()
                 </dd>
                 <dd class="cya-change">
                     <a asp-controller="CertificateDate" asp-action="Date" asp-route-redirecttocheck="true">
