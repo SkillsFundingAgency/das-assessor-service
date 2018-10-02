@@ -44,7 +44,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/ao/assessment-organisations/validate-new?name={name}&ukprn={ukprn}&organisationTypeId={organisationTypeId}"))
             {
-                return await RequestAndDeserialiseAsync<ValidationResponse>(request,  $"Could not check the validation for organisation [{name}]");
+                return await RequestAndDeserialiseAsync<ValidationResponse>(request,  $"Could not check the validation for new organisation [{name}]");
+            }
+        }
+
+        public async Task<ValidationResponse> ValidateUpdateOrganisation(string organisationId, string name, string ukprn, string organisationTypeId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/ao/assessment-organisations/validate-existing?organisationId={organisationId}&name={name}&ukprn={ukprn}&organisationTypeId={organisationTypeId}"))
+            {
+                return await RequestAndDeserialiseAsync<ValidationResponse>(request, $"Could not check the validation for existing organisation [{organisationId}]");
             }
         }
 
@@ -73,5 +81,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task Update(UpdateOrganisationRequest organisationUpdateViewModel);
         Task Delete(Guid id);
         Task<ValidationResponse> ValidateCreateOrganisation(string name, string ukprn, string organisationTypeId);
+        Task<ValidationResponse> ValidateUpdateOrganisation(string organisationId, string name, string ukprn, string organisationTypeId);
     }
 }

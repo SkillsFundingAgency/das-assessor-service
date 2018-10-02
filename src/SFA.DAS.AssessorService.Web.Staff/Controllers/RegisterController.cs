@@ -65,6 +65,19 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             return View(viewModel);
         }
 
+
+        [HttpPost("register/edit-organisation/{organisationId}")]
+        public async Task<IActionResult> EditOrganisation(RegisterViewAndEditOrganisationViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                viewModel.OrganisationTypes = await _apiClient.GetOrganisationTypes();
+                return View(viewModel);
+            }
+
+            return Redirect($"register/view-organisation/{viewModel.OrganisationId}");
+        }
+
         [HttpGet("register/add-organisation")]
         public async Task<IActionResult> AddOrganisation()
         {
@@ -100,7 +113,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             };
 
             var organisationId = await _apiClient.CreateEpaOrganisation(addOrganisationRequest);
-            return Redirect($"view-organisation/{organisationId}");
+            return Redirect($"register/view-organisation/{organisationId}");
         }
 
         [HttpGet("register/view-organisation/{organisationId}")]
