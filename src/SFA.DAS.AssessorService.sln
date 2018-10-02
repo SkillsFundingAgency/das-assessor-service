@@ -73,6 +73,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.App
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Application.Api.External.UnitTests", "SFA.DAS.AssessorService.Application.Api.External.UnitTests\SFA.DAS.AssessorService.Application.Api.External.UnitTests.csproj", "{F3C414DE-DF53-480A-A1A4-CA1A1E48E10E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.Web.Extensions", "SFA.DAS.AssessorService.Web.Extensions\SFA.DAS.AssessorService.Web.Extensions.csproj", "{33F5D8D1-8C5C-4863-A049-E165C1167B2B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -181,6 +183,10 @@ Global
 		{F3C414DE-DF53-480A-A1A4-CA1A1E48E10E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3C414DE-DF53-480A-A1A4-CA1A1E48E10E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F3C414DE-DF53-480A-A1A4-CA1A1E48E10E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33F5D8D1-8C5C-4863-A049-E165C1167B2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33F5D8D1-8C5C-4863-A049-E165C1167B2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33F5D8D1-8C5C-4863-A049-E165C1167B2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33F5D8D1-8C5C-4863-A049-E165C1167B2B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

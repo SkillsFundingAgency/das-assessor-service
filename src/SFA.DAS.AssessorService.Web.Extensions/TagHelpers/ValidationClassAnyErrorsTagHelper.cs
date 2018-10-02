@@ -1,11 +1,9 @@
-﻿using System.Linq;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
-namespace SFA.DAS.AssessorService.Web.TagHelpers
+namespace SFA.DAS.AssessorService.Web.Extensions.TagHelpers
 {
   [HtmlTargetElement("div", Attributes = ValidationErrorClassName)]
   [HtmlTargetElement("input", Attributes = ValidationErrorClassName)]
