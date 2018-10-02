@@ -1,4 +1,5 @@
-﻿@{ ViewBag.Title = "Staff Dashboard"; }
+﻿@using SFA.DAS.AssessorService.Web.Staff
+@{ ViewBag.Title = "Staff Dashboard"; }
 
 <div class="grid-row">
     <div class="column-two-thirds">
@@ -6,21 +7,21 @@
     </div>
 </div>
 <div class="grid-row">
-    <div class="column-one-third">
+    <div class="column-one-third" sfa-show-for-policy="@Startup.Policies.OperationsTeamOnly">
         <h2 class="heading-medium"><a asp-controller="Search">Search</a></h2>
         <p>Search by learner name, ULN, certificate reference or EPAO ID.</p>
     </div>
-    <div class="column-one-third">
+    <div class="column-one-third" sfa-show-for-policy="@Startup.Policies.OperationsTeamOnly">
         <h2 class="heading-medium"><a asp-controller="BatchSearch">Batch search</a></h2>
         <p>View current batches and search for certificates by batch number.</p>
     </div>
 </div>
 <div class="grid-row">
-    <div class="column-one-third">
+    <div class="column-one-third" sfa-show-for-policy="@Startup.Policies.OperationsTeamOnly">
         <h2 class="heading-medium"><a asp-controller="ScheduleConfig">Print schedule configuration</a></h2>
         <p>Print certificates. Create, delete and view existing print schedules.</p>
     </div>
-    <div class="column-one-third">
+    <div class="column-one-third" sfa-show-for-policy="@Startup.Policies.OperationsTeamOnly">
         <h2 class="heading-medium"><a asp-controller="ExternalApi">External API</a></h2>
         <p>Manage user's access and generate API keys.</p>
     </div>

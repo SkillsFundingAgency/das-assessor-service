@@ -186,7 +186,7 @@
             </div>
         </dl>
 
-        <form type="post" asp-controller="CertificateAmmend" asp-action="ConfirmAndSubmit" asp-route-certificateId="@Model.Id">
+        <form type="post" asp-controller="CertificateAmend" asp-action="ConfirmAndSubmit" asp-route-certificateId="@Model.Id">
             @Html.HiddenFor(c => c.Id)
             <button type="submit" class="button">Confirm and submit</button>
         </form>

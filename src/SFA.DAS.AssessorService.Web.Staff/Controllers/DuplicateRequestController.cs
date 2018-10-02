@@ -9,7 +9,7 @@ using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = Startup.Policies.OperationsTeamOnly)]
     public class DuplicateRequestController : Controller
     {
         private readonly ApiClient _apiClient;

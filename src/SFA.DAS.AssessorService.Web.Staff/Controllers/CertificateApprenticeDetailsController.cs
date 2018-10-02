@@ -6,12 +6,13 @@ using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels;
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {
     public class CertificateApprenticeDetailsController : CertificateBaseController
     {      
-        public CertificateApprenticeDetailsController(ILogger<CertificateAmmendController> logger,
+        public CertificateApprenticeDetailsController(ILogger<CertificateAmendController> logger,
             IHttpContextAccessor contextAccessor,
             ApiClient apiClient) : base(logger, contextAccessor, apiClient)
         {
@@ -21,15 +22,15 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         [HttpGet]
         public async Task<IActionResult> ApprenticeDetail(Guid certificateid)
         {
-            return await LoadViewModel<CertificateApprenticeDetailsViewModel>(certificateid, "~/Views/CertificateAmmend/ApprenticeDetail.cshtml");
+            return await LoadViewModel<CertificateApprenticeDetailsViewModel>(certificateid, "~/Views/CertificateAmend/ApprenticeDetail.cshtml");
         }
         
         [HttpPost(Name = "ApprenticeDetail")]
         public async Task<IActionResult> ApprenticeDetail(CertificateApprenticeDetailsViewModel vm)
         {            
             var actionResult = await SaveViewModel(vm, 
-                returnToIfModelNotValid: "~/Views/CertificateAmmend/ApprenticeDetail.cshtml",
-                nextAction: RedirectToAction("Check", "CertificateAmmend", new { certificateid = vm.Id }), action: CertificateActions.Name);
+                returnToIfModelNotValid: "~/Views/CertificateAmend/ApprenticeDetail.cshtml",
+                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateid = vm.Id }), action: CertificateActions.Name);
 
 
             return actionResult;
