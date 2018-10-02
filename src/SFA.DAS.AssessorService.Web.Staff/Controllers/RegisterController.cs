@@ -32,9 +32,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             }
 
             var searchstring = vm.SearchString?.Trim().ToLower();
+            searchstring = string.IsNullOrEmpty(searchstring) ? "" : searchstring;
             var rx = new System.Text.RegularExpressions.Regex("<[^>]*>");
-            var searchstring2 = rx.Replace(searchstring, "");
-            var searchResults = await _apiClient.SearchOrganisations(searchstring2);
+            searchstring = rx.Replace(searchstring, "");
+            var searchResults = await _apiClient.SearchOrganisations(searchstring);
 
             var registerViewModel = new RegisterViewModel
             {
