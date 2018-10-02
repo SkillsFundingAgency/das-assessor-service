@@ -6,10 +6,11 @@ using SFA.DAS.AssessorService.Api.Types.Models.Azure;
 using SFA.DAS.AssessorService.Application.Api.Client.Azure;
 using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Web.StartupConfiguration;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = Policies.ExternalApiAccess)]
     public class ExternalApiController : Controller
     {
         private readonly ILogger<ExternalApiController> _logger;
