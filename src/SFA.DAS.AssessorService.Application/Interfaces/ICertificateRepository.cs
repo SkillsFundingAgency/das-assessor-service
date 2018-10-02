@@ -20,6 +20,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<Certificate> Update(Certificate certificate, string username, string action, bool updateLog = true);
         Task<Certificate> UpdateProviderName(Guid id, string providerName);
         Task UpdateStatuses(UpdateCertificatesBatchToIndicatePrintedRequest updateCertificatesBatchToIndicatePrintedRequest);
+        Task UpdatePrivatelyFundedCertificatesToBeApproved();
         Task<List<CertificateLog>> GetCertificateLogsFor(Guid certificateId);
         Task<PaginatedList<Certificate>> GetCertificateHistory(string userName, int pageIndex, int pageSize);
         Task<string> GetPreviousProviderName(int providerUkPrn);

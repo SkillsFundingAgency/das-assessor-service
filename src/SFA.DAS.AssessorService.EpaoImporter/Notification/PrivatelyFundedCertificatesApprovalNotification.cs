@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.EpaoImporter.Const;
@@ -12,14 +13,14 @@ using SFA.DAS.Notifications.Api.Types;
 
 namespace SFA.DAS.AssessorService.EpaoImporter.Notification
 {
-    public class NotificationService : INotificationService
+    public class PrivatelyFundedCertificatesApprovalNotification : IPrivatelyFundedCertificatesApprovalNotification
     {
         private readonly INotificationsApi _notificationsApi;
         private readonly IAggregateLogger _aggregateLogger;
         private readonly IWebConfiguration _webConfiguration;
         private readonly IAssessorServiceApi _assessorServiceApi;
 
-        public NotificationService(INotificationsApi notificationsApi,
+        public PrivatelyFundedCertificatesApprovalNotification(INotificationsApi notificationsApi,
             IAggregateLogger aggregateLogger,
             IWebConfiguration webConfiguration,
             IAssessorServiceApi assessorServiceApi)
@@ -30,13 +31,12 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Notification
             _assessorServiceApi = assessorServiceApi;
         }
 
-        public async Task Send(int batchNumber, List<CertificateResponse> certificateResponses)
+        public async Task Send(IEnumerable<CertificateResponse> certificateResponses)
         {
-            var emailTemplate = await _assessorServiceApi.GetEmailTemplate(EMailTemplateNames.PrintAssessorCoverLetters);
+            var emailTemplate = await _assessorServiceApi.GetEmailTemplate(EMailTemplateNames.PrivatelyFundedCertificatesApprovals);
+            
 
-            var certificatesFileName = $"IFA-Certificate-{GetMonthYear()}-{batchNumber.ToString().PadLeft(3, '0')}.xlsx";
-
-            var personalisation = CreatePersonalisationTokens(certificateResponses, certificatesFileName);
+            var personalisation = CreatePersonalisationTokens(certificateResponses);
 
             _aggregateLogger.LogInfo("Send Email");
             _aggregateLogger.LogInfo($"Base Url = {_webConfiguration.NotificationsApiClientConfiguration.ApiBaseUrl}");
@@ -51,7 +51,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Notification
                     TemplateId = emailTemplate.TemplateId,
                     ReplyToAddress = "jcoxhead@hotmail.com",
                     Subject = "Test Subject",
-                    SystemId = "PrintAssessorCoverLetters",
+                    SystemId = "PrivatelyFundedCertificatesApprovals",
                     Tokens = personalisation
                 };
 
@@ -59,29 +59,33 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Notification
             }
         }
 
-        private Dictionary<string, string> CreatePersonalisationTokens(List<CertificateResponse> certificateResponses, string certificatesFileName)
+        private Dictionary<string, string> CreatePersonalisationTokens(IEnumerable<CertificateResponse> certificateResponses)
         {
+            var certificateReferences = certificateResponses.Select(q => q.CertificateReference).ToList();
+            var stringifiedCoverLetterFileNames = GetCoverLetterFileNames(certificateReferences);            
+
             var personalisation = new Dictionary<string, string>
-            {
-                {"fileName", $"Certificates File Name:- {certificatesFileName}"},
+            {              
                 {
-                    "numberOfCertificatesToBePrinted",
-                    $"Number Of Certificates to be Printed:- {certificateResponses.Count}"
+                   "numberOfCertificatesToBeApproved",
+                    $"Number Of Certificates to be Approved:- {certificateReferences.Count}"
                 },
-                {"numberOfCoverLetters", ""},
-                {"sftpUploadDirectory", $"{_webConfiguration.Sftp.UploadDirectory}"},
-                {"proofDirectory", $"{_webConfiguration.Sftp.ProofDirectory}"}
+                {"certificateReferences", $"{stringifiedCoverLetterFileNames}"}              
             };
             return personalisation;
         }
 
-        private static string GetMonthYear()
+        private static StringBuilder GetCoverLetterFileNames(List<string> certificateReferences)
         {
-            var month = DateTime.Today.Month.ToString().PadLeft(2, '0');
+            var stringifiedFileName = new StringBuilder();
+            foreach (var certificateReference in certificateReferences)
+            {
+                stringifiedFileName.Append(certificateReference);
+                if (certificateReference != certificateReferences.Last())
+                    stringifiedFileName.Append("\r\n");
+            }
 
-            var year = DateTime.Now.Year;
-            var monthYear = month + year.ToString().Substring(2, 2);
-            return monthYear;
-        }
+            return stringifiedFileName;
+        }       
     }
 }

@@ -99,7 +99,7 @@ namespace SFA.DAS.AssessorService.Data
             _context.SaveChanges();
 
             return certificate;
-        }        
+        }
 
         public async Task<Certificate> GetCertificate(Guid id)
         {
@@ -112,7 +112,7 @@ namespace SFA.DAS.AssessorService.Data
                 c.Uln == uln && c.StandardCode == standardCode);
         }
 
-        public async Task<Certificate> GetPrivateCertificate(long uln, 
+        public async Task<Certificate> GetPrivateCertificate(long uln,
             string endpointOrganisationId,
             string lastName)
         {
@@ -334,6 +334,18 @@ namespace SFA.DAS.AssessorService.Data
                                                                   WHERE ProviderUkPrn = @providerUkPrn 
                                                                   AND JSON_VALUE(CertificateData, '$.ProviderName') IS NOT NULL 
                                                                   ORDER BY CreatedAt DESC", new { providerUkPrn });
+        }
+
+        public async Task UpdatePrivatelyFundedCertificatesToBeApproved()
+        {
+            var certificates = _context.Certificates.Where(q => q.IsPrivatelyFunded && q.Status == CertificateStatus.Submitted);
+            foreach (var certificate in certificates)
+            {
+                certificate.Status = CertificateStatus.ToBeApproved;
+                //_context.Entry(certificate).State = EntityState.Modified;
+            }
+
+            await _context.SaveChangesAsync();
         }
 
         private bool CheckLastName(string data, string lastName)

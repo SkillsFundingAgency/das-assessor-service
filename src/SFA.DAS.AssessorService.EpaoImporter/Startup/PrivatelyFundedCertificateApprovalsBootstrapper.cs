@@ -3,6 +3,7 @@ using Microsoft.Azure.WebJobs.Host;
 using SFA.DAS.AssessorService.EpaoImporter.Const;
 using SFA.DAS.AssessorService.EpaoImporter.InfrastructureServices;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
+using SFA.DAS.AssessorService.EpaoImporter.Notification;
 using SFA.DAS.AssessorService.EpaoImporter.Startup.DependencyResolution;
 using SFA.DAS.AssessorService.Settings;
 using StructureMap;
@@ -32,14 +33,9 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Startup
 
                 configure.For<IAggregateLogger>().Use(logger).Singleton();
                 configure.For<IWebConfiguration>().Use(configuration).Singleton();
-
-                //configure.For<IFileTransferClient>().Use<FileTransferClient>();
-                //configure.For<IAssessorServiceApi>().Use<AssessorServiceApi>().Singleton();
-                //configure.For<INotificationService>().Use<NotificationService>();
-                //configure.For<SftpClient>().Use<SftpClient>("SftpClient",
-                //    c => new SftpClient(configuration.Sftp.RemoteHost, Convert.ToInt32(configuration.Sftp.Port),
-                //        configuration.Sftp.Username, configuration.Sftp.Password));
-                //configure.AddRegistry<NotificationsRegistry>();
+               
+                configure.For<IPrivatelyFundedCertificatesApprovalNotification>().Use<PrivatelyFundedCertificatesApprovalNotification>();
+                configure.AddRegistry<NotificationsRegistry>();
 
                 logger.LogInfo("Calling http registry and getting the token ....");
                 configure.AddRegistry<HttpRegistry>();

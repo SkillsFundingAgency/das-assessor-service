@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests.AssessorSer
             MockHttp.When($"http://localhost:59022/api/v1/emailTemplates/{templateName}")
                 .Respond("application/json", JsonConvert.SerializeObject(_emailTemplate)); // Respond with JSON
 
-            _result = AssessorServiceApi.GetEmailTemplate().Result;
+            _result = AssessorServiceApi.GetEmailTemplate(templateName).Result;
         }
 
         [Test]

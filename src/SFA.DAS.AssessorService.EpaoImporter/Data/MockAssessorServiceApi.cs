@@ -40,14 +40,24 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
             return generateDummyData == "true" ? certificates.Union(GenerateDummyData()) : certificates;
         }
 
+        public Task UpdatePrivatelyFundedCertificateRequestsToBeApproved()
+        {
+            return Task.CompletedTask;
+        }
+
         public Task<IEnumerable<CertificateResponse>> GetCertificatesToBeApproved()
         {
-            throw new NotImplementedException();
+            return Task.FromResult<IEnumerable<CertificateResponse>>(Enumerable.Empty<CertificateResponse>());
         }
 
         public Task ChangeStatusToPrinted(int batchNumber, IEnumerable<CertificateResponse> responses)
         {
             return Task.CompletedTask;
+        }
+
+        public Task<EMailTemplate> GetEmailTemplate(string templateName)
+        {
+            return Task.FromResult<EMailTemplate>(new Builder().CreateNew<EMailTemplate>().Build());
         }
 
         public Task<EMailTemplate> GetEmailTemplate()
@@ -64,12 +74,12 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
 
         public Task<ScheduleRun> GetSchedule(ScheduleType scheduleType)
         {
-            throw new NotImplementedException();
+            return Task.FromResult<ScheduleRun>(new Builder().CreateNew<ScheduleRun>().Build());
         }
 
         public Task CompleteSchedule(Guid scheduleRunId)
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
 
         public Task<int> GenerateBatchNumber()

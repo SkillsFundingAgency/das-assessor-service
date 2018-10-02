@@ -49,6 +49,12 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
             return certificates;
         }
 
+        public async Task UpdatePrivatelyFundedCertificateRequestsToBeApproved()
+        {
+            var responseMessage = await _httpClient.PutAsJsonAsync(
+                $"/api/v1/certificates/updatestatustobeapproved", new Object());            
+        }
+
         public async Task<IEnumerable<CertificateResponse>> GetCertificatesToBeApproved()
         {
             var response = await _httpClient.GetAsync(
@@ -101,9 +107,8 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
             await _httpClient.PutAsJsonAsync($"/api/v1/certificates/{batchNumber}", updateCertificatesBatchToIndicatePrintedRequest);
         }
 
-        public async Task<EMailTemplate> GetEmailTemplate()
-        {
-            var templateName = EMailTemplateNames.PrintAssessorCoverLetters;
+        public async Task<EMailTemplate> GetEmailTemplate(string templateName)
+        {           
             var response = await _httpClient.GetAsync(
                 $"/api/v1/emailTemplates/{templateName}");
 
