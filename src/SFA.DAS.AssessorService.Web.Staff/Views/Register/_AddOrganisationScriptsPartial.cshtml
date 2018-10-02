@@ -1,0 +1,29 @@
+<script>
+  var epaoAddOrganisationFormElement = $('.add-organisation-form');
+  var epaoAddOrganisationValidationRulesObject = {
+    rules: {
+      WebsiteLink: {
+        validUrl: true
+      }
+    },
+    messages: {
+      WebsiteLink: {
+        validUrl: 'Please enter a valid web address'
+      }
+    }
+  };
+
+  GOVUK.epaoValidate(epaoAddOrganisationFormElement, epaoAddOrganisationValidationRulesObject);
+
+
+  var expression = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
+  var regex = new RegExp(expression);
+  var t = 'www.google.com';
+
+  if (t.match(regex)) {
+    alert("Successful match");
+  } else {
+    alert("No match");
+  }
+
+</script>
