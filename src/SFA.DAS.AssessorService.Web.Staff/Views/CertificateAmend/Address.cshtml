@@ -7,7 +7,7 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <a class="link-back" asp-controller="CertificateAmmend" asp-action="Check" asp-route-certificateid=@Model.Id>Back</a>
+        <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateid=@Model.Id>Back</a>
 
         <form class="apprentice-address-form" type="post" asp-controller="CertificateAddress"
               asp-action="Address">
@@ -103,5 +103,5 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-    @{await Html.RenderPartialAsync("~/Views/CertificateAmmend/_AddressScriptsPartial.cshtml"); }
+    @{await Html.RenderPartialAsync("~/Views/CertificateAmend/_AddressScriptsPartial.cshtml"); }
 }
