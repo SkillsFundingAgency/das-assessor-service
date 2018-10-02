@@ -341,8 +341,7 @@ namespace SFA.DAS.AssessorService.Data
             var certificates = _context.Certificates.Where(q => q.IsPrivatelyFunded && q.Status == CertificateStatus.Submitted);
             foreach (var certificate in certificates)
             {
-                certificate.Status = CertificateStatus.ToBeApproved;
-                //_context.Entry(certificate).State = EntityState.Modified;
+                certificate.Status = CertificateStatus.ToBeApproved;              
             }
 
             await _context.SaveChangesAsync();
