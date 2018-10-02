@@ -11,7 +11,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {
     public class CertificateOptionController : CertificateBaseController
     {
-        public CertificateOptionController(ILogger<CertificateAmmendController> logger,
+        public CertificateOptionController(ILogger<CertificateAmendController> logger,
             IHttpContextAccessor contextAccessor,
             ApiClient apiClient)
             : base(logger, contextAccessor, apiClient)
@@ -21,15 +21,15 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         [HttpGet]
         public async Task<IActionResult> Option(Guid certificateid)
         {
-            return await LoadViewModel<CertificateOptionViewModel>(certificateid, "~/Views/CertificateAmmend/Option.cshtml");
+            return await LoadViewModel<CertificateOptionViewModel>(certificateid, "~/Views/CertificateAmend/Option.cshtml");
         }
 
         [HttpPost(Name = "Option")]
         public async Task<IActionResult> Option(CertificateOptionViewModel vm)
         {
             return await SaveViewModel(vm,
-                returnToIfModelNotValid: "~/Views/CertificateAmmend/Option.cshtml",
-                nextAction: RedirectToAction("Check", "CertificateAmmend", new { certificateid = vm.Id }), action: CertificateActions.Option);
+                returnToIfModelNotValid: "~/Views/CertificateAmend/Option.cshtml",
+                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateid = vm.Id }), action: CertificateActions.Option);
         }
     }
 }

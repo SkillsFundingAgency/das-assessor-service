@@ -8,7 +8,7 @@ using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = Startup.Policies.OperationsTeamOnly)]
     public class SearchController : Controller
     {
         private readonly ILogger<SearchController> _logger;
