@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="BuildBundlerMinifier" Version="2.8.391" />
+    <PackageReference Include="EPPlus" Version="4.5.0.3-rc" />
     <PackageReference Include="Humanizer.Core" Version="2.4.2" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
      <PackageReference Include="AutoMapper" Version="7.0.1" />
@@ -67,6 +68,15 @@
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\CertificateAmmend\_ViewImports.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Reports\Run.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Reports\Index.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Reports\_ReportScriptsPartial.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\Shared\_ValidationScriptsPartial.cshtml">

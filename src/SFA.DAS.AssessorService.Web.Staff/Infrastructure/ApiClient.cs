@@ -149,5 +149,17 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         {
             return await Post<StaffCertificateDuplicateRequest, Certificate>("api/v1/staffcertificatereprint", staffCertificateDuplicateRequest);   
         }
+
+        #region Reports
+        public async Task<IEnumerable<StaffReport>> GetReportList()
+        {
+            return await Get<IEnumerable<StaffReport>>($"api/v1/staffreports");
+        }
+
+        public async Task<IEnumerable<IDictionary<string, object>>> GetReport(Guid reportId)
+        {
+            return await Get<IEnumerable<IDictionary<string, object>>>($"api/v1/staffreports/{reportId}");
+        }
+        #endregion
     }
 }
