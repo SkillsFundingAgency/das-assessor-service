@@ -162,5 +162,22 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 validationResult.Errors.Add(new ValidationErrorDetail(fieldName, errorMessage.Replace("; ",""), statusCode));
         }
 
+        public ValidationResponse ValidatorUpdateEpaOrganisationRequest(UpdateEpaOrganisationRequest request)
+        {
+            var validationResult = new ValidationResponse();
+            RunValidationCheckAndAppendAnyError("OrganisationId", CheckIfOrganisationNotFound(request.OrganisationId), validationResult, ValidationStatusCode.NotFound);
+            if (!validationResult.IsValid)
+                return validationResult;
+
+            RunValidationCheckAndAppendAnyError("OrganisationId", CheckOrganisationIdIsPresentAndValid(request.OrganisationId), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("Name", CheckOrganisationName(request.Name), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("OrganisationTypeId", CheckOrganisationTypeIsNullOrExists(request.OrganisationTypeId), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("Ukprn", CheckIfOrganisationUkprnExistsForOtherOrganisations(request.Ukprn, request.OrganisationId), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("Name", CheckOrganisationNameNotUsedForOtherOrganisations(request.Name, request.OrganisationId), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("Name", CheckUkprnIsValid(request.Ukprn), validationResult, ValidationStatusCode.BadRequest);
+
+            return validationResult;
+
+        }
     }
 }

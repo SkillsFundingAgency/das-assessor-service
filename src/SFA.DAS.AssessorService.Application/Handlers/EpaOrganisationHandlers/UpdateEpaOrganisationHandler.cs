@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -6,6 +7,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
 
@@ -28,26 +30,24 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
         public async Task<string> Handle(UpdateEpaOrganisationRequest request, CancellationToken cancellationToken)
         {
-            var errorDetails = new StringBuilder();
             ProcessRequestFieldsForSpecialCharacters(request);
-            errorDetails.Append(_validator.CheckIfOrganisationNotFound(request.OrganisationId));
-
-            if (errorDetails.Length > 0)
+            var validationResponse = _validator.ValidatorUpdateEpaOrganisationRequest(request);
+         
+            if (!validationResponse.IsValid)
             {
-                _logger.LogError(errorDetails.ToString());
-                throw new NotFound(errorDetails.ToString());
-            }
+                var message = validationResponse.Errors.Aggregate(string.Empty, (current, error) => current + error.ErrorMessage + "; ");
+                _logger.LogError(message);
+                if (validationResponse.Errors.Any(x => x.StatusCode == ValidationStatusCode.NotFound.ToString()))
+                {
+                    throw new NotFound(message);
+                }
 
-            errorDetails.Append(_validator.CheckOrganisationIdIsPresentAndValid(request.OrganisationId));
-            errorDetails.Append(_validator.CheckOrganisationName(request.Name));
-            errorDetails.Append(_validator.CheckOrganisationTypeIsNullOrExists(request.OrganisationTypeId));
-            errorDetails.Append(_validator.CheckIfOrganisationUkprnExistsForOtherOrganisations(request.Ukprn, request.OrganisationId));
-            errorDetails.Append(_validator.CheckOrganisationNameNotUsedForOtherOrganisations(request.Name, request.OrganisationId));
-            errorDetails.Append(_validator.CheckUkprnIsValid(request.Ukprn));
-            if (errorDetails.Length > 0)
-            {
-                _logger.LogError(errorDetails.ToString());
-                throw new BadRequestException(errorDetails.ToString());
+                if (validationResponse.Errors.Any(x => x.StatusCode == ValidationStatusCode.BadRequest.ToString()))
+                {
+                    throw new BadRequestException(message);
+                }
+
+                throw new Exception(message);
             }
 
             var organisation = MapOrganisationRequestToOrganisation(request);
