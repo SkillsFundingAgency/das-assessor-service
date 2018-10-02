@@ -49,6 +49,24 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
             return certificates;
         }
 
+        public async Task<IEnumerable<CertificateResponse>> GetCertificatesToBeApproved()
+        {
+            var response = await _httpClient.GetAsync(
+                "/api/v1/certificates?statuses=ToBeApproved");
+
+            var certificates = await response.Content.ReadAsAsync<List<CertificateResponse>>();
+            if (response.IsSuccessStatusCode)
+            {
+                _aggregateLogger.LogInfo($"Getting Certificates to be printed - Status code returned: {response.StatusCode}. Content: {response.Content.ReadAsStringAsync().Result}");
+            }
+            else
+            {
+                _aggregateLogger.LogInfo($"Getting Certificates to be printed - Status code returned: {response.StatusCode}. Content: {response.Content.ReadAsStringAsync().Result}");
+            }
+
+            return certificates;
+        }
+
         public async Task<BatchLogResponse> GetCurrentBatchLog()
         {
             var response = await _httpClient.GetAsync(

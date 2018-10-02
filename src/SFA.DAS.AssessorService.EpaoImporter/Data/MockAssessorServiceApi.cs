@@ -40,6 +40,11 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
             return generateDummyData == "true" ? certificates.Union(GenerateDummyData()) : certificates;
         }
 
+        public Task<IEnumerable<CertificateResponse>> GetCertificatesToBeApproved()
+        {
+            throw new NotImplementedException();
+        }
+
         public Task ChangeStatusToPrinted(int batchNumber, IEnumerable<CertificateResponse> responses)
         {
             return Task.CompletedTask;
