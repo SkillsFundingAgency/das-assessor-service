@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = Startup.Policies.OperationsTeamOnly)]
     public class ReportsController : Controller
     {
         private readonly ILogger<ReportsController> _logger;
