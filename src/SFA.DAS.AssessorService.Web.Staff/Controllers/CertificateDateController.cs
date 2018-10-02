@@ -16,7 +16,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
     {
         private readonly CertificateDateViewModelValidator _validator;
 
-        public CertificateDateController(ILogger<CertificateAmmendController> logger,
+        public CertificateDateController(ILogger<CertificateAmendController> logger,
             IHttpContextAccessor contextAccessor,
             ApiClient apiClient,
             CertificateDateViewModelValidator validator) : base(logger, contextAccessor, apiClient)
@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         [HttpGet]
         public async Task<IActionResult> Date(Guid certificateid)
         {
-            return await LoadViewModel<CertificateDateViewModel>(certificateid, "~/Views/CertificateAmmend/Date.cshtml");
+            return await LoadViewModel<CertificateDateViewModel>(certificateid, "~/Views/CertificateAmend/Date.cshtml");
         }
 
         [HttpPost(Name = "Date")]
@@ -36,8 +36,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             var result = _validator.Validate(vm);
 
             var actionResult = await SaveViewModel(vm,
-                returnToIfModelNotValid: "~/Views/CertificateAmmend/Date.cshtml",
-                nextAction: RedirectToAction("Check", "CertificateAmmend", new { certificateid = vm.Id }), action: CertificateActions.Date);
+                returnToIfModelNotValid: "~/Views/CertificateAmend/Date.cshtml",
+                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateid = vm.Id }), action: CertificateActions.Date);
 
             return actionResult;
         }

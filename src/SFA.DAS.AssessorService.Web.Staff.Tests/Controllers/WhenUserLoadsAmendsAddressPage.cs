@@ -8,7 +8,7 @@ using SFA.DAS.AssessorService.Web.Staff.ViewModels;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers
 {
-    public class WhenUserLoadsAmmendsAddressPage : ContractAmmendQueryBase
+    public class WhenUserLoadsAmendsAddressPage : ContractAmendQueryBase
     {     
         private IActionResult _result;
         private CertificateAddressViewModel _viewModelResponse;
