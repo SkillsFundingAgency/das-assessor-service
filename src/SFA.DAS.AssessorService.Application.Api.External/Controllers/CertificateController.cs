@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             _apiClient = apiClient;
         }
 
-        [HttpPut]
+        [HttpPost]
         [SwaggerResponse((int)HttpStatusCode.OK, "For each item: The created Certificate if valid, else a list of validation errors.", typeof(IEnumerable<BatchCertificateResponse>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
         [SwaggerOperation("Create Certificates", "Creates a new Certificate for each valid item within the request.")]
@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             return Ok(results);
         }
 
-        [HttpPost]
+        [HttpPut]
         [SwaggerResponse((int)HttpStatusCode.OK, "For each item: The updated Certificate if valid, else a list of validation errors.", typeof(IEnumerable<BatchCertificateResponse>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
         [SwaggerOperation("Update Certificates", "Updates the specified Certificate with the information contained in each valid request.")]

@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _deleteValidator = deleteValidator;
         }
 
-        [HttpPut]
+        [HttpPost]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<BatchCertificateResponse>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
@@ -70,7 +70,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         }
 
-        [HttpPost]
+        [HttpPut]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<BatchCertificateResponse>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
