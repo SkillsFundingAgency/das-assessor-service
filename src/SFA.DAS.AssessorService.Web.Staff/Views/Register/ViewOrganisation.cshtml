@@ -1,5 +1,5 @@
 ﻿@using SFA.DAS.AssessorService.Web.Staff.Controllers
-@model RegisterViewOrganisationViewModel
+@model RegisterViewAndEditOrganisationViewModel
 @{
     ViewBag.Title = "View Organisation";
     Layout = "_Layout";
@@ -53,11 +53,11 @@
             @Model.PrimaryContactName
         </label>
                 <div class="form-group">
-                    <button class="button" type="submit" href="">Edit</button>
+                    <a class="button" type="submit" href="/register/edit-organisation/@Model.OrganisationId">Edit</a>
                 </div>
 
             <br/><br/>
-                 <label for="PrimaryContact">
+                 <label for="Contacts">
                      <span class="form-label-bold">Contacts</span>
                      @if (@Model.Contacts.Count > 0)
                      {
@@ -101,7 +101,8 @@
         
             
             <br/><br/>
-
+            <label for="Standards">
+                <span class="form-label-bold">Standards</span>
                 @if (@Model.OrganisationStandards.Count > 0)
                 {
                     <div class="grid-row">
@@ -137,7 +138,6 @@
                 <div class="form-group">
                     <button class="button" type="submit" href="">Add New Standard</button>
                 </div>
-
             </label>
         </div>
 

@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         
         public async Task<ValidationResponse> ValidateCreateOrganisation(string name, string ukprn, string organisationTypeId)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/ao/assessment-organisations/validate?name={name}&ukprn={ukprn}&organisationTypeId={organisationTypeId}"))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/ao/assessment-organisations/validate-new?name={name}&ukprn={ukprn}&organisationTypeId={organisationTypeId}"))
             {
                 return await RequestAndDeserialiseAsync<ValidationResponse>(request,  $"Could not check the validation for organisation [{name}]");
             }

@@ -5,7 +5,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.AO;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Models
 {
-    public class RegisterViewOrganisationViewModel
+    public class RegisterViewAndEditOrganisationViewModel
     {
         public string OrganisationId { get; set; }
         public string Name { get; set; }
@@ -25,6 +25,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Models
         public List<ContactResponse> Contacts { get; set; }
 
         public List<OrganisationStandardSummary> OrganisationStandards { get; set; }
-
+        public List<OrganisationType> OrganisationTypes { get; set; }
     }
 }

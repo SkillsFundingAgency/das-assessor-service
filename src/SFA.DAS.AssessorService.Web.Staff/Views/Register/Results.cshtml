@@ -29,17 +29,15 @@
                     <th>Name</th>
                     <th>ID</th>
                     <th>UKPRN</th>
-                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
                 @foreach (var result in Model.Results.OrderBy(x => x.Name))
                 {
                     <tr>
-                        <td data-label="Name">@result.Name</td>
+                        <td data-label="Name"><a href="/register/view-organisation/@result.Id">@result.Name</a></td>
                         <td data-label="ID">@result.Id</td>
                         <td data-label="UKPRN">@result.Ukprn</td>
-                        <td class="numeric"><a href="/register/view-organisation/@result.Id">View</a></td>
                     </tr>
                 }
                 </tbody>

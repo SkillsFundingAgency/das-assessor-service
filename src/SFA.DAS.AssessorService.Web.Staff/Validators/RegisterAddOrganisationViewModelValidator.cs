@@ -16,7 +16,7 @@ using SFA.DAS.AssessorService.Web.Staff.Models;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Validators
 {
-    public class RegisterAddOrganisationViewModelValidator : AbstractValidator<RegisterAddOrganisationViewModel>
+    public class RegisterAddOrganisationViewModelValidator : AbstractValidator<RegisterOrganisationViewModel>
     {
         private readonly IOrganisationsApiClient _apiClient;
 
