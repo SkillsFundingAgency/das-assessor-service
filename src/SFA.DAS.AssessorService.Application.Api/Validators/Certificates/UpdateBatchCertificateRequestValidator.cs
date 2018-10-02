@@ -19,14 +19,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
             RuleFor(m => m)
                 .Custom((m, context) =>
                 {
-                    var existingCertificate = certificateRepository.GetCertificate(m.Uln, m.StandardCode).Result;
+                    var existingCertificate = certificateRepository.GetCertificate(m.Uln, m.StandardCode).GetAwaiter().GetResult();
                     var sumbittingEpao = organisationQueryRepository.GetByUkPrn(m.UkPrn).GetAwaiter().GetResult();
 
                     if (existingCertificate == null || !string.Equals(existingCertificate.CertificateReference, m.CertificateReference))
                     {
                         context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate not found"));
                     }
-                    else if (existingCertificate.Status != CertificateStatus.Draft && existingCertificate.Status != CertificateStatus.Deleted)
+                    else if (existingCertificate.Status != CertificateStatus.Draft)
                     {
                         context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate is not in '{CertificateStatus.Draft}' status"));
                     }

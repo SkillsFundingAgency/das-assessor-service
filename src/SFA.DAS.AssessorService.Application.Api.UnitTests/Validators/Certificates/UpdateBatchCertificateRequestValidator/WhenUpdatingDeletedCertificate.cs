@@ -8,7 +8,7 @@ using System;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certificates.UpdateBatchCertificateRequestValidator
 {
-    public class WhenResurrectingDeletedCertificate : UpdateBatchCertificateRequestValidatorTestBase
+    public class WhenUpdatingDeletedCertificate : UpdateBatchCertificateRequestValidatorTestBase
     {
         private ValidationResult _validationResult;
 
@@ -33,9 +33,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
         }
 
         [Test]
-        public void ThenValidationResultShouldBeTrue()
+        public void ThenValidationResultShouldBeFalse()
         {
-            _validationResult.IsValid.Should().BeTrue();
+            _validationResult.IsValid.Should().BeFalse();
         }
     }
 }

@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
         {
             RuleFor(m => m.Uln).InclusiveBetween(1000000000, 9999999999).WithMessage("The apprentice's ULN should contain exactly 10 numbers");
             RuleFor(m => m.FamilyName).NotEmpty().WithMessage("Enter the apprentice's last name");
-            RuleFor(m => m.StandardCode).NotEmpty().WithMessage("A standard should be selected");
+            RuleFor(m => m.StandardCode).GreaterThan(0).WithMessage("A standard should be selected");
             RuleFor(m => m.UkPrn).InclusiveBetween(10000000, 99999999).WithMessage("The UKPRN should contain exactly 8 numbers");
             RuleFor(m => m.Email).NotEmpty();
 
@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                         else if (!grades.Any(g => g == overallGrade))
                         {
                             string gradesString = string.Join(", ", grades);
-                            context.AddFailure(new ValidationFailure("OverallGrade", $"Invalid grade. Must one of the following: {gradesString}"));
+                            context.AddFailure(new ValidationFailure("OverallGrade", $"Invalid grade. Must be one of the following: {gradesString}"));
                         }
                     });
 
@@ -49,7 +49,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                     {
                         if (!achievementDate.HasValue)
                         {
-                            context.AddFailure(new ValidationFailure("AchievementDate", "Enter the achievement day"));
+                            context.AddFailure(new ValidationFailure("AchievementDate", "Enter the achievement date"));
                         }
                         else if (achievementDate.Value < new DateTime(2017, 1, 1))
                         {
@@ -79,21 +79,27 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                     else
                     {
                         var providedStandards = assessmentOrgsApiClient.FindAllStandardsByOrganisationIdAsync(sumbittingEpao.EndPointAssessorOrganisationId).GetAwaiter().GetResult();
-                        var courseOptions = certificateRepository.GetOptions(m.StandardCode).GetAwaiter().GetResult();
 
                         if (!providedStandards.Any(s => s.StandardCode == m.StandardCode.ToString()))
                         {
                             context.AddFailure(new ValidationFailure("StandardCode", "EPAO does not provide this Standard"));
                         }
-                        else if (!courseOptions.Any() && !string.IsNullOrEmpty(m.CertificateData?.CourseOption))
-                        {
-                            context.AddFailure(new ValidationFailure("CourseOption", $"Invalid course option for this Standard"));
-                        }
-                        else if (courseOptions.Any() && !courseOptions.Any(o => o.OptionName == m.CertificateData?.CourseOption))
-                        {
-                            string courseOptionsString = string.Join(", ", courseOptions.Select(o => o.OptionName));
-                            context.AddFailure(new ValidationFailure("CourseOption", $"Invalid course option for this Standard. Must one of the following: {courseOptionsString}"));
-                        }
+                    }
+                });
+
+            RuleFor(m => m)
+                .Custom((m, context) =>
+                {
+                    var courseOptions = certificateRepository.GetOptions(m.StandardCode).GetAwaiter().GetResult();
+
+                    if (!courseOptions.Any() && !string.IsNullOrEmpty(m.CertificateData?.CourseOption))
+                    {
+                        context.AddFailure(new ValidationFailure("CourseOption", $"Invalid course option for this Standard. Must be empty"));
+                    }
+                    else if (courseOptions.Any() && !courseOptions.Any(o => o.OptionName == m.CertificateData?.CourseOption))
+                    {
+                        string courseOptionsString = string.Join(", ", courseOptions.Select(o => o.OptionName));
+                        context.AddFailure(new ValidationFailure("CourseOption", $"Invalid course option for this Standard. Must be one of the following: {courseOptionsString}"));
                     }
                 });
         }
