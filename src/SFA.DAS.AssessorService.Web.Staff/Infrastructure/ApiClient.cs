@@ -88,16 +88,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         public async Task<string> ImportOrganisations()
         {
             var uri = "/api/ao/assessment-organisations/";
-
-
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
 
-            HttpContent x = null;
-            using (var response = await _client.PatchAsync(new Uri(uri, UriKind.Relative), x))
+            using (var response = await _client.PatchAsync(new Uri(uri, UriKind.Relative), null))
             {
                 var res= await response.Content.ReadAsAsync<AssessmentOrgsImportResponse>();
-
-
                 return res.Status;
             }
         }
