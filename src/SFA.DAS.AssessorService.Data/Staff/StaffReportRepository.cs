@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.Data.Staff
 
         public Task<IEnumerable<StaffReport>> GetReportList()
         {
-            var reports = _assessorDbContext.StaffReports.ToList();
+            var reports = _assessorDbContext.StaffReports.OrderBy(sr => sr.DisplayOrder).ToList();
 
             return Task.FromResult(reports.AsEnumerable());
         }
