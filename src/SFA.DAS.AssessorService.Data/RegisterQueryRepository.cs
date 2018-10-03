@@ -138,7 +138,7 @@ namespace SFA.DAS.AssessorService.Data
         }
         
         
-          public async Task<bool> EpaOrganisationStandardExists(string organisationId, int standardCode)
+        public async Task<bool> EpaOrganisationStandardExists(string organisationId, int standardCode)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
@@ -202,8 +202,7 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        public async Task<IEnumerable<AssessmentOrganisationContact>>
-            GetAssessmentOrganisationContacts(string organisationId)
+        public async Task<IEnumerable<AssessmentOrganisationContact>> GetAssessmentOrganisationContacts(string organisationId)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
@@ -243,7 +242,7 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-           public async Task<bool> ContactIdIsValid(string contactId)
+        public async Task<bool> ContactIdIsValid(string contactId)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
@@ -251,7 +250,7 @@ namespace SFA.DAS.AssessorService.Data
                     await connection.OpenAsync();
                 var sqlToCheckExists =
                     "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Contacts] " +
-                    "WHERE convert(varchar(50),id)  = @ContactId";
+                    "WHERE convert(varchar(50),id)  = @contactId";
                 return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new {contactId});
             }
         }
@@ -285,7 +284,6 @@ namespace SFA.DAS.AssessorService.Data
                 return await connection.QueryAsync<EpaOrganisation>(sqlForOrganisationsByStandardId, new {standardId});
             }
         }
-
 
         public async Task<IEnumerable<OrganisationStandardSummary>> GetOrganisationStandardByOrganisationId(string organisationId)
         {
@@ -326,7 +324,11 @@ namespace SFA.DAS.AssessorService.Data
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
-                var assessmentOrganisationSummaries = await connection.QueryAsync<AssessmentOrganisationSummary>("select EndPointAssessorOrganisationId as Id, EndPointAssessorName as Name, EndPointAssessorUkprn as ukprn from [Organisations] where EndPointAssessorUkprn = @ukprnNumeric", new {ukprnNumeric});
+
+                var sql =
+                    "select EndPointAssessorOrganisationId as Id, EndPointAssessorName as Name, EndPointAssessorUkprn as ukprn from [Organisations] where EndPointAssessorUkprn = @ukprnNumeric";
+
+                var assessmentOrganisationSummaries = await connection.QueryAsync<AssessmentOrganisationSummary>(sql, new {ukprnNumeric});
                 return assessmentOrganisationSummaries;
             }
         }
