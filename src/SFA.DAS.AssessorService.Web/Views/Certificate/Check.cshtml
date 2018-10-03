@@ -32,14 +32,14 @@
                 <dd class="cya-answer">
                     @Model.GivenNames
                 </dd>
-                @if (Model.IsPrivatelyFunded)
-                {
                 <dd class="cya-change">
+                    @if (Model.IsPrivatelyFunded)
+                    {
                     <a asp-controller="CertificatePrivateFirstName" asp-action="FirstName" asp-route-redirecttocheck="true">
                         Change<span class="visually-hidden"> first name</span>
                     </a>
+                    }
                 </dd>
-                }
             </div>
 
             <div>
@@ -49,14 +49,14 @@
                 <dd class="cya-answer">
                     @Model.FamilyName
                 </dd>
-                @if (Model.IsPrivatelyFunded)
-                {
                 <dd class="cya-change">
+                    @if (Model.IsPrivatelyFunded)
+                    {
                     <a asp-controller="CertificatePrivateLastName" asp-action="LastName" asp-route-redirecttocheck="true">
                         Change<span class="visually-hidden"> last name</span>
                     </a>
+                    }
                 </dd>
-                }
             </div>
     
             <div>
@@ -69,9 +69,9 @@
                 <dd class="cya-change">
                     @if (Model.IsPrivatelyFunded)
                     {
-                        <a asp-controller="CertificatePrivateUln" asp-action="Uln" asp-route-redirecttocheck="true">
-                            Change<span class="visually-hidden"> uln</span>
-                        </a>
+                    <a asp-controller="CertificatePrivateUln" asp-action="Uln" asp-route-redirecttocheck="true">
+                        Change<span class="visually-hidden"> ULN</span>
+                    </a>
                     }
                 </dd>
             </div>
@@ -108,7 +108,6 @@
                     @Model.Level
                 </dd>
                 <dd class="cya-change">
-
                 </dd>
             </div>
             <div>
@@ -152,7 +151,7 @@
                 </dd>
                 <dd class="cya-change">
                     <a asp-controller="CertificatePrivateLearnerStartDate" asp-action="LearnerStartDate" asp-route-redirecttocheck="true">
-                        Change<span class="visually-hidden"> Start Date</span>
+                        Change<span class="visually-hidden"> apprenticeship start date</span>
                     </a>
                 </dd>
             </div>
@@ -183,7 +182,7 @@
                 </dd>
                 <dd class="cya-change">
                     <a asp-controller="CertificatePrivateProviderUkprn" asp-action="Ukprn" asp-route-redirecttocheck="true">
-                        Change<span class="visually-hidden"> option</span>
+                        Change<span class="visually-hidden"> UKPRN</span>
                     </a>
                 </dd>
             </div>
@@ -204,7 +203,7 @@
                 </dd>
                 <dd class="cya-change">
                     <a asp-controller="CertificateRecipient" asp-action="Recipient" asp-route-redirecttocheck="true">
-                        Change<span class="visually-hidden"> name</span>
+                        Change<span class="visually-hidden"> recipient name</span>
                     </a>
                 </dd>
             </div>
