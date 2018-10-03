@@ -14,7 +14,7 @@ using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers
 {
-    public class CertificateAmmendQueryBase
+    public class CertificateAmendQueryBase
     {        
         protected Mock<ILogger<CertificateAmendController>> MockedLogger;
         protected Mock<IHttpContextAccessor> MockHttpContextAccessor;
@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers
         protected Certificate Certificate;
         protected CertificateData CertificateData;
 
-        public CertificateAmmendQueryBase()
+        public CertificateAmendQueryBase()
         {
            MockedLogger = new Mock<ILogger<CertificateAmendController>>();
            var mockedApiClientLogger = new Mock<ILogger<ApiClient>>();

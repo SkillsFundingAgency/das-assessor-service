@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Staff;
 using SFA.DAS.AssessorService.Application.Api.Client;
@@ -77,6 +78,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         public async Task<StaffSearchResult> Search(string searchString, int page)
         {
             return await Get<StaffSearchResult>($"/api/v1/staffsearch?searchQuery={searchString}&page={page}");
+        }
+
+        public async Task<List<AssessmentOrganisationSummary>> SearchOrganisations(string searchString)
+        {
+            return await Get<List<AssessmentOrganisationSummary>>($"/api/ao/assessment-organisations/search/{searchString}");
         }
 
         public async Task<PaginatedList<StaffBatchSearchResult>> BatchSearch(int batchNumber, int page)

@@ -85,4 +85,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="Validators\EpaOrganisationValidator.cs.orig" />
+  </ItemGroup>
 </Project>
