@@ -3,7 +3,7 @@
 @model SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private.CertificateLearnerStartDateViewModel
 
 @{
-    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Learner start date";
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Apprenticeship start date";
     Layout = "_Layout";
 }
 <div class="grid-row">
@@ -47,7 +47,7 @@
             }
 
             <div sfa-anyvalidationerror-class="after-error-summary">
-                <h1 class="heading-medium">
+                <h1 class="heading-large">
                     @Localizer["Heading"]
                 </h1>
 

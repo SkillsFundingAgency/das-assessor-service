@@ -27,26 +27,38 @@
         <dl class="govuk-check-your-answers cya-questions-short">
             <div>
                 <dt class="cya-question">
-                    Name
+                    First name
                 </dt>
                 <dd class="cya-answer">
-                    @Model.GivenNames @Model.FamilyName
+                    @Model.GivenNames
                 </dd>
                 @if (Model.IsPrivatelyFunded)
                 {
-                    <dd class="cya-change">
-                        <a asp-controller="CertificatePrivateFirstName" asp-action="FirstName" asp-route-redirecttocheck="true">
-                            Change<span class="visually-hidden"> first name</span>
-                        </a>
-                    </dd>
-                    <dd class="cya-change">
-                        <a asp-controller="CertificatePrivateLastName" asp-action="LastName" asp-route-redirecttocheck="true">
-                            Change<span class="visually-hidden"> last name</span>
-                        </a>
-                    </dd>
+                <dd class="cya-change">
+                    <a asp-controller="CertificatePrivateFirstName" asp-action="FirstName" asp-route-redirecttocheck="true">
+                        Change<span class="visually-hidden"> first name</span>
+                    </a>
+                </dd>
                 }
             </div>
-            
+
+            <div>
+                <dt class="cya-question">
+                    Last name
+                </dt>
+                <dd class="cya-answer">
+                    @Model.FamilyName
+                </dd>
+                @if (Model.IsPrivatelyFunded)
+                {
+                <dd class="cya-change">
+                    <a asp-controller="CertificatePrivateLastName" asp-action="LastName" asp-route-redirecttocheck="true">
+                        Change<span class="visually-hidden"> last name</span>
+                    </a>
+                </dd>
+                }
+            </div>
+    
             <div>
                 <dt class="cya-question">
                     <abbr title="Unique learner number">ULN</abbr>
@@ -71,7 +83,7 @@
                     Standard
                 </dt>
                 <dd class="cya-answer">
-                    @Model.Standard
+                    @Model.Standard (@Model.SelectedStandard)
                 </dd>
                 <dd class="cya-change">
                     @if (Model.IsPrivatelyFunded)
@@ -82,25 +94,6 @@
                     }
                 </dd>
             </div>
-            @if (Model.IsPrivatelyFunded)
-            {
-            <div>
-                <dt class="cya-question">
-                    Standard Code
-                </dt>
-                <dd class="cya-answer">
-                    @Model.SelectedStandard
-                </dd>
-                <dd class="cya-change">
-                @if (Model.IsPrivatelyFunded)
-                {
-                    <a asp-controller="CertificatePrivateStandardCode" asp-action="StandardCode" asp-route-redirecttocheck="true">
-                        Change<span class="visually-hidden"> standard code</span>
-                    </a>
-                }
-                </dd>
-            </div>
-            }
             <div>
                 <dt class="cya-question">
                     Level
@@ -146,7 +139,7 @@
             {
             <div>
                 <dt class="cya-question">
-                    Apprentice start date
+                    Apprenticeship start date
                 </dt>
                 <dd class="cya-answer">
                     @Model.LearnerStartDate?.ToSfaShortDateString()
