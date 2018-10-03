@@ -139,6 +139,84 @@
                 <div class="form-group">
                     <button class="button" type="submit">Save</button>
                 </div>
+                <div class="form-group">
+                    <a class="button" href="/register/view-organisation/@Model.OrganisationId">Cancel</a>
+                </div>
+                
+                <br/><br/>
+                <label for="Contacts">
+                    <span class="form-label-bold">Contacts</span>
+                    @if (@Model.Contacts.Count > 0)
+                    {
+                        <div class="grid-row">
+                            <div class="column-full">
+                                <div class="form-group">
+                                    <table class="table responsive table-font-xsmall">
+                                        <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>username</th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        @foreach (var result in Model.Contacts.OrderBy(x => x.DisplayName))
+                                        {
+                                            <tr>
+                                                <td data-label="Name">@result.DisplayName</td>
+                                                <td data-label="ID">@result.Email</td>
+                                                <td data-label="Username">@result.Username</td>
+                                            </tr>
+                                        }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <span>There are no contacts</span>
+                    }
+                </label>
+        
+            
+                <br/><br/>
+                <label for="Standards">
+                    <span class="form-label-bold">Standards</span>
+                    @if (@Model.OrganisationStandards.Count > 0)
+                    {
+                        <div class="grid-row">
+                            <div class="column-full">
+                                <div class="form-group">
+                                    <table class="table responsive table-font-xsmall">
+                                        <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Code</th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        @foreach (var result in Model.OrganisationStandards.OrderBy(x => x.StandardSummary.Title))
+                                        {
+                                            <tr>
+                                                <td data-label="Name">@result.StandardSummary.Title</td>
+                                                <td data-label="ID">@result.StandardCode</td>
+                                            </tr>
+                                        }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <span>There are no standards</span>
+                    }
+                </label>
             </div>
         </form>
 

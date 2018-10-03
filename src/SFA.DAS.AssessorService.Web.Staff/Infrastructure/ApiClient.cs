@@ -114,6 +114,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             return result.Details;
         }
 
+        public async Task<string> UpdateEpaOrganisation(UpdateEpaOrganisationRequest request)
+        {
+            var result = await Put<UpdateEpaOrganisationRequest, EpaOrganisationResponse>("api/ao/assessment-organisations", request);
+            return result.Details;
+        }
+
         public async Task<PaginatedList<StaffBatchSearchResult>> BatchSearch(int batchNumber, int page)
         {
             return await Get<PaginatedList<StaffBatchSearchResult>>($"/api/v1/staffsearch/batch?batchNumber={batchNumber}&page={page}");

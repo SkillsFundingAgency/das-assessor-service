@@ -60,8 +60,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         {
             var organisation = await _apiClient.GetEpaOrganisation(organisationId);
             var viewModel = MapOrganisationModel(organisation);
-
-
             return View(viewModel);
         }
 
@@ -75,7 +73,24 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 return View(viewModel);
             }
 
-            return Redirect($"register/view-organisation/{viewModel.OrganisationId}");
+            var updateOrganisationRequest = new UpdateEpaOrganisationRequest
+            {
+                Name = viewModel.Name,
+                OrganisationId = viewModel.OrganisationId,
+                Ukprn = viewModel.Ukprn,
+                OrganisationTypeId = viewModel.OrganisationTypeId,
+                LegalName = viewModel.LegalName,
+                WebsiteLink = viewModel.WebsiteLink,
+                Address1 = viewModel.Address1,
+                Address2 = viewModel.Address2,
+                Address3 = viewModel.Address3,
+                Address4 = viewModel.Address4,
+                Postcode = viewModel.Postcode
+            };
+
+            await _apiClient.UpdateEpaOrganisation(updateOrganisationRequest);
+
+            return RedirectToAction("ViewOrganisation", "register", new { organisationId = viewModel.OrganisationId});
         }
 
         [HttpGet("register/add-organisation")]
@@ -113,15 +128,14 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             };
 
             var organisationId = await _apiClient.CreateEpaOrganisation(addOrganisationRequest);
-            return Redirect($"register/view-organisation/{organisationId}");
+            return RedirectToAction("ViewOrganisation", "register",new { organisationId });
         }
 
         [HttpGet("register/view-organisation/{organisationId}")]
         public async Task<IActionResult> ViewOrganisation(string organisationId)
         {    
             var organisation = await _apiClient.GetEpaOrganisation(organisationId);
-            var viewModel = MapOrganisationModel(organisation);
-            
+            var viewModel = MapOrganisationModel(organisation);     
             return View(viewModel);
         }
 
