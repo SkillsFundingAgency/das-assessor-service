@@ -1,5 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Http
 @using SFA.DAS.AssessorService.Web.Infrastructure
+@using SFA.DAS.AssessorService.Web.StartupConfiguration
 @inject ISessionService SessionService
 <!DOCTYPE html>
 <html lang="en">
@@ -127,7 +128,7 @@
         <div id="global-header-bar" class="global-header-bar--dark-blue"></div>
         <div class="header-inner">
             <div id="header-user--nav" class="grid-row">
-                <div class="column-two-thirds">
+                <div class="column-one-half">
                     <p class="heading-small">
                         @SessionService.Get("OrganisationName")
                         <span class="heading-secondary">
@@ -135,9 +136,12 @@
                         </span>
                     </p>
                 </div>
-                <div class="column-one-third">
+                <div class="column-one-half">
                     <nav id="user-nav" class="js-hidden-mobile">
                         <ul>
+                            <li>
+                                <a sfa-show-for-policy="@Policies.ExternalApiAccess" asp-controller="ExternalApi" asp-action="Index">External API keys</a>
+                            </li>
                             <li>
                                 <a asp-controller="Home" asp-action="ContactUs">Contact us</a>
                             </li>

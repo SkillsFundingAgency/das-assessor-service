@@ -70,6 +70,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             if (!ModelState.IsValid)
             {
                 viewModel.OrganisationTypes = await _apiClient.GetOrganisationTypes();
+                GatherOrganisationContacts(viewModel);
+                GatherOrganisationStandards(viewModel);
                 return View(viewModel);
             }
 
