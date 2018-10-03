@@ -7,7 +7,8 @@
 	[EffectiveTo] [DateTime] NULL,
 	[DateStandardApprovedOnRegister] [DateTime] NULL,
 	[Comments] [NVARCHAR] (500) NULL,
-	[Status] [nvarchar](10) NOT NULL,
+	[Status] [nvarchar](10) NOT NULL, 
+	[ContactId] [UNIQUEIDENTIFIER] NULL
 ) ON [PRIMARY]
 
 GO
@@ -22,5 +23,13 @@ ADD CONSTRAINT FK_OrganisationIdentifierStandard
 FOREIGN KEY (EndPointAssessorOrganisationId) REFERENCES [Organisations] ([EndPointAssessorOrganisationId]);
 GO
 
+GO
 CREATE UNIQUE NONCLUSTERED INDEX IX_standardOrgIdStandardCodeEffectiveFrom
    ON [OrganisationStandard] (EndPointAssessorOrganisationId, StandardCode, EffectiveFrom);   
+
+GO
+
+ALTER TABLE [OrganisationStandard]
+ADD CONSTRAINT FK_OrganisationContact
+FOREIGN KEY (ContactId) REFERENCES Contacts ([Id]);
+GO

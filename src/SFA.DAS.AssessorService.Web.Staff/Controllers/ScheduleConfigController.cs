@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = Startup.Policies.OperationsTeamOnly)]
     public class ScheduleConfigController : Controller
     {
         private readonly ApiClient _apiClient;

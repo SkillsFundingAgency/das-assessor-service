@@ -33,40 +33,44 @@
     <ProjectReference Include="..\SFA.DAS.AssessorService.Application.Api.Client\SFA.DAS.AssessorService.Application.Api.Client.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Domain\SFA.DAS.AssessorService.Domain.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Settings\SFA.DAS.AssessorService.Settings.csproj" />
+    <ProjectReference Include="..\SFA.DAS.AssessorService.Web.Extensions\SFA.DAS.AssessorService.Web.Extensions.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Update="nlog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Update="Views\CertificateAmmend\Address.cshtml">
+    <Content Update="Views\Register\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\CertificateAmmend\Date.cshtml">
+    <Content Update="Views\CertificateAmend\Address.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\CertificateAmmend\ApprenticeDetail.cshtml">
+    <Content Update="Views\CertificateAmend\Date.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\CertificateAmmend\Recipient.cshtml">
+    <Content Update="Views\CertificateAmend\ApprenticeDetail.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\CertificateAmmend\Grade.cshtml">
+    <Content Update="Views\CertificateAmend\Recipient.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\CertificateAmmend\Option.cshtml">
+    <Content Update="Views\CertificateAmend\Grade.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\CertificateAmmend\_DateScriptsPartial.cshtml">
+    <Content Update="Views\CertificateAmend\Option.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\CertificateAmmend\_GradeScriptsPartial.cshtml">
+    <Content Update="Views\CertificateAmend\_DateScriptsPartial.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\CertificateAmmend\_OptionScriptsPartial.cshtml">
+    <Content Update="Views\CertificateAmend\_GradeScriptsPartial.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\CertificateAmmend\_ViewImports.cshtml">
+    <Content Update="Views\CertificateAmend\_OptionScriptsPartial.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\CertificateAmend\_ViewImports.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\Shared\_ValidationScriptsPartial.cshtml">
