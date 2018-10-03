@@ -19,4 +19,7 @@
     <ProjectReference Include="..\SFA.DAS.AssessorService.Application.Api\SFA.DAS.AssessorService.Application.Api.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Data\SFA.DAS.AssessorService.Data.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="Controllers\Register\Command\CreateNewOrganisationTests.cs.orig" />
+  </ItemGroup>
 </Project>

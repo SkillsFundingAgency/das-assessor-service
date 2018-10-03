@@ -8,7 +8,7 @@ using SFA.DAS.AssessorService.Web.Staff.ViewModels;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers
 {
-    public class Given_I_request_the_AdddressPage : CertificateAmmendQueryBase
+    public class Given_I_request_the_AdddressPage : CertificateAmendQueryBase
     {     
         private IActionResult _result;
         private CertificateAddressViewModel _viewModelResponse;
@@ -16,7 +16,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers
         [SetUp]
         public void Arrange()
         {
-            var certificateAddressController = new CertificateAddressController(MockedLogger.Object, MockHttpContextAccessor.Object, ApiClient);
+             var certificateAddressController = new CertificateAddressController(MockedLogger.Object, MockHttpContextAccessor.Object, ApiClient);
             _result = certificateAddressController.Address(Certificate.Id).GetAwaiter().GetResult();
 
             var result = _result as ViewResult;

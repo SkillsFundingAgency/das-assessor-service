@@ -63,5 +63,42 @@ namespace SFA.DAS.AssessorService.Data
                 return org.OrganisationId;
             }
         }
+
+        public async Task<string>CreateEpaOrganisationStandard(EpaOrganisationStandard organisationStandard)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+             
+                var res = connection.Query<string>(
+                    "INSERT INTO [dbo].[OrganisationStandard] ([EndPointAssessorOrganisationId],[StandardCode],[EffectiveFrom],[EffectiveTo],[DateStandardApprovedOnRegister] ,[Comments],[Status], [ContactId]) VALUES (" +
+                    "@organisationId, @standardCode, @effectiveFrom, @effectiveTo, null, @comments, 'New', @ContactId); SELECT CAST(SCOPE_IDENTITY() as varchar); ",
+                    new
+                    {
+                        organisationStandard.OrganisationId, organisationStandard.StandardCode, organisationStandard.EffectiveFrom, organisationStandard.EffectiveTo,
+                        organisationStandard.DateStandardApprovedOnRegister, organisationStandard.Comments, organisationStandard.ContactId}).Single();
+
+                return res;
+            }
+        }
+
+        public async Task<string> UpdateEpaOrganisationStandard(EpaOrganisationStandard orgStandard)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                var res = connection.Query<string>(
+                    "UPDATE [OrganisationStandard] SET [EffectiveFrom] = @effectiveFrom, [EffectiveTo] = @EffectiveTo, " +
+                    "[Comments] = @comments, [ContactId] = @contactId " +
+                    "WHERE [EndPointAssessorOrganisationId] = @organisationId and [StandardCode] = @standardCode; SELECT top 1 id from [organisationStandard] where  [EndPointAssessorOrganisationId] = @organisationId and [StandardCode] = @standardCode;",
+                    new {orgStandard.EffectiveFrom, orgStandard.EffectiveTo, orgStandard.Comments, orgStandard.ContactId, orgStandard.OrganisationId, orgStandard.StandardCode}).Single();
+
+                return res;
+            }
+        }
     }
 }
