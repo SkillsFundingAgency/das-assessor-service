@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetReportList()
         {
-            _logger.LogInformation($"Recieved request to get list of reports");
+            _logger.LogInformation($"Received request to get list of reports");
 
             var reportList = await _staffReportRepository.GetReportList();
 
@@ -47,7 +47,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetReport(Guid reportId)
         {
-            _logger.LogInformation($"Recieved request to generate report : {reportId}");
+            _logger.LogInformation($"Received request to generate report : {reportId}");
 
             try
             {
