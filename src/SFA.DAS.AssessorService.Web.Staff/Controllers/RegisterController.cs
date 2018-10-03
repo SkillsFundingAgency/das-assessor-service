@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.Models;
@@ -44,6 +45,26 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             };
 
             return View(registerViewModel);
+        }
+
+        [HttpGet("register/impage")]
+        public async Task<IActionResult> Impage()
+        {
+            var vm = new AssessmentOrgsImportResponse { Status = "Press to run" };
+            return View(vm);
+        }
+
+        [HttpGet("register/impage-{choice}")]
+        public async Task<IActionResult> Impage(string choice)
+        {
+            var vm = new AssessmentOrgsImportResponse { Status = "Running" };
+
+            if (choice == "DoIt")
+            {
+                var importResults = await _apiClient.ImportOrganisations();
+                vm.Status = importResults;
+            }
+            return View(vm);
         }
     }
 }
