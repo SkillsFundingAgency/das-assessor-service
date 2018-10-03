@@ -30,37 +30,6 @@
         <dl class="govuk-check-your-answers cya-questions-short">
             <div>
                 <dt class="cya-question">
-                    Name
-                </dt>
-                <dd class="cya-answer">
-                    @Model.GivenNames @Model.FamilyName
-                </dd>
-            </div>
-            <div>
-                <dt class="cya-question">
-                    <abbr title="Unique learner number">ULN</abbr>
-                </dt>
-                <dd class="cya-answer">
-                    @Model.Uln
-                </dd>
-                @if (Model.IsPrivatelyFunded)
-                {
-                    <dd class="cya-change">
-                        <a asp-controller="CertificatePrivateUln" asp-action="Uln" asp-route-certificateid=@Model.Id>
-                            Change<span class="visually-hidden"> name</span>
-                        </a>
-                    </dd>
-                }
-            </div>
-        </dl>
-
-        <h2 class="heading-medium">
-            Apprentice details
-        </h2>
-
-        <dl class="govuk-check-your-answers cya-questions-short">
-            <div>
-                <dt class="cya-question">
                     First name
                 </dt>
                 <dd class="cya-answer">
@@ -100,8 +69,14 @@
                 <dd class="cya-answer">
                     @Model.Uln
                 </dd>
-                <dd class="cya-change">
-                </dd>
+                @if (Model.IsPrivatelyFunded)
+                {
+                    <dd class="cya-change">
+                        <a asp-controller="CertificatePrivateUln" asp-action="Uln" asp-route-certificateid=@Model.Id>
+                            Change<span class="visually-hidden"> name</span>
+                        </a>
+                    </dd>
+                }
             </div>
         </dl>
 

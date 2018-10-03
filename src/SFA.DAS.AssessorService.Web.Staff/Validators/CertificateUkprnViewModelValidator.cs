@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators
                 {
                     RuleFor(vm => vm.Ukprn).Length(8).WithMessage("The UKPRN should contain 8 numbers").DependentRules(() =>
                     {
-                        RuleFor(vm => vm.Ukprn).Must(UkprnMustExist).WithMessage("Enter the training provider's UKPRN");
+                        RuleFor(vm => vm.Ukprn).Must(UkprnMustExist).WithMessage("This UKPRN cannot be found");
                     });
                 });
             });
