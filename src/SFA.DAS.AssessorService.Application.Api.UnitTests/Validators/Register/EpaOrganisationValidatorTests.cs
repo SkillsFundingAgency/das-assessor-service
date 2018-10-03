@@ -208,7 +208,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
             if (repositoryCheckResult == false)
                 _registerRepository.Verify(r => r.ContactIdIsValidForOrganisationId(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
             else
-            _registerRepository.Verify(r => r.ContactIdIsValidForOrganisationId(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+                _registerRepository.Verify(r => r.ContactIdIsValidForOrganisationId(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         }
 
         [Test]
