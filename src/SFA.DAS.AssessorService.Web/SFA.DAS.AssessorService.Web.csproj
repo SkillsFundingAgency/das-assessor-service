@@ -117,8 +117,8 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Resources\Validators\CertificateLastNameViewModelValidator.resx">
-      <LastGenOutput>CertificateLastNameViewModelValidator.Designer.cs</LastGenOutput>
       <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>CertificateLastNameViewModelValidator.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Validators\ChooseStandardViewModelValidator.resx">
       <LastGenOutput>ChooseStandardViewModelValidator.Designer.cs</LastGenOutput>
