@@ -3,7 +3,7 @@ AS
 	SELECT 
 		CONVERT(CHAR(12), GETDATE(), 103) AS 'To Date',
 		ce.[BatchNumber] AS 'Batch Number',
-		CONVERT(CHAR(16), ce.[ToBePrinted]) 'Printed',
+		CONVERT(CHAR(16), ce.[ToBePrinted]) 'Printed Date',
 		COUNT(*) AS 'Total',
 		SUM(CASE WHEN ce.[CertificateReferenceId] < 10000 THEN 1 ELSE 0 END) AS 'Manual',
 		SUM(CASE WHEN ce.[CertificateReferenceId] >= 10000 THEN 1 ELSE 0 END) AS 'EPA Service Total',
