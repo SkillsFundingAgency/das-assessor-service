@@ -108,19 +108,23 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         public async Task<Organisation> GetOrganisation(Guid id)
         {
             return await Get<Organisation>($"/api/v1/organisations/organisation/{id}");
-        }   
+        }
+
+        public async Task<List<Option>> GetOptions(int stdCode)
+        {
+            return await Get<List<Option>>($"api/v1/certificates/options/?stdCode={stdCode}");
+        }
 
         public async Task<Certificate> UpdateCertificate(UpdateCertificateRequest certificateRequest)
         {
             return await Put<UpdateCertificateRequest, Certificate>("api/v1/certificates/update", certificateRequest);
         }
-      
+
         public async Task<ScheduleRun> GetNextScheduleToRunNow()
         {
             return await Get<ScheduleRun>($"api/v1/schedule?scheduleType=1");
         }
-          
-          
+
         public async Task<ScheduleRun> GetNextScheduledRun(int scheduleType)
         {
             return await Get<ScheduleRun>($"api/v1/schedule/next?scheduleType={scheduleType}");
@@ -153,7 +157,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
 
         public async Task<Certificate> PostReprintRequest(StaffCertificateDuplicateRequest staffCertificateDuplicateRequest)
         {
-            return await Post<StaffCertificateDuplicateRequest, Certificate>("api/v1/staffcertificatereprint", staffCertificateDuplicateRequest);   
-        }
+            return await Post<StaffCertificateDuplicateRequest, Certificate>("api/v1/staffcertificatereprint", staffCertificateDuplicateRequest);
+        }     
     }
 }

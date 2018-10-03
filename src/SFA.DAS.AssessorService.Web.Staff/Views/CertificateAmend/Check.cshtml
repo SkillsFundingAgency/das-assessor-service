@@ -69,7 +69,7 @@
                 @if (Model.IsPrivatelyFunded)
                 {
                 <dd class="cya-change">
-                    <a asp-controller="CertificatePrivateFirstName" asp-action="FirstName" asp-route-redirecttocheck="true">
+                    <a asp-controller="CertificatePrivateFirstName" asp-action="FirstName" asp-route-certificateid=@Model.Id>
                         Change<span class="visually-hidden"> first name</span>
                     </a>
                 </dd>
@@ -86,7 +86,7 @@
                 @if (Model.IsPrivatelyFunded)
                 {
                 <dd class="cya-change">
-                    <a asp-controller="CertificatePrivateLastName" asp-action="LastName" asp-route-redirecttocheck="true">
+                    <a asp-controller="CertificatePrivateLastName" asp-action="LastName" asp-route-certificateid=@Model.Id>
                         Change<span class="visually-hidden"> last name</span>
                     </a>
                 </dd>
@@ -122,7 +122,7 @@
                 <dd class="cya-change">
                     @if (Model.IsPrivatelyFunded)
                     {
-                    <a asp-controller="CertificatePrivateStandardCode" asp-action="StandardCode" asp-route-redirecttocheck="true">
+                    <a asp-controller="CertificatePrivateStandardCode" asp-action="StandardCode" asp-route-certificateid=@Model.Id>
                         Change<span class="visually-hidden"> standard</span>
                     </a>
                     }
@@ -147,7 +147,7 @@
                     @Model.SelectedGrade
                 </dd>
                 <dd class="cya-change">
-                    <a asp-controller="CertificateGrade" asp-action="Grade" asp-route-redirecttocheck="true">
+                    <a asp-controller="CertificateGrade" asp-action="Grade" asp-route-certificateid=@Model.Id>
                         Change<span class="visually-hidden"> grade</span>
                     </a>
                 </dd>
@@ -162,7 +162,7 @@
                         @Model.Option
                     </dd>
                     <dd class="cya-change">
-                        <a asp-controller="CertificateOption" asp-action="Option" asp-route-redirecttocheck="true">
+                        <a asp-controller="CertificateOption" asp-action="Option" asp-route-certificateid=@Model.Id>
                             Change<span class="visually-hidden"> option</span>
                         </a>
                     </dd>
@@ -179,7 +179,7 @@
                     @Model.LearnerStartDate?.ToSfaShortDateString()
                 </dd>
                 <dd class="cya-change">
-                    <a asp-controller="CertificatePrivateLearnerStartDate" asp-action="LearnerStartDate" asp-route-redirecttocheck="true">
+                    <a asp-controller="CertificatePrivateLearnerStartDate" asp-action="LearnerStartDate" asp-route-certificateid=@Model.Id>
                         Change<span class="visually-hidden"> Start Date</span>
                     </a>
                 </dd>
@@ -194,7 +194,7 @@
                     @Model.AchievementDate?.ToSfaShortDateString()
                 </dd>
                 <dd class="cya-change">
-                    <a asp-controller="CertificateDate" asp-action="Date" asp-route-redirecttocheck="true">
+                    <a asp-controller="CertificateDate" asp-action="Date" asp-route-redirecttocheck="true" asp-route-certificateid=@Model.Id>
                         Change<span class="visually-hidden"> achievement date</span>
                     </a>
                 </dd>
@@ -210,7 +210,7 @@
                     @Model.Ukprn
                 </dd>
                 <dd class="cya-change">
-                    <a asp-controller="CertificatePrivateProviderUkprn" asp-action="Ukprn" asp-route-redirecttocheck="true">
+                    <a asp-controller="CertificatePrivateProviderUkprn" asp-action="Ukprn" asp-route-certificateid=@Model.Id>
                         Change<span class="visually-hidden"> option</span>
                     </a>
                 </dd>
