@@ -17,7 +17,8 @@
         public const string Printed = "Printed";       
         public const string Reprint = "Reprint";
         public const string Recipient = "Recipient";
-        public const string Name = "Name";        
+        public const string Name = "Name";
+        public const string Uln = "Uln";
         public const string ProviderUkPrn = "ProviderUkPrn";
     }
 } 
