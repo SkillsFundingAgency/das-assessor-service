@@ -117,7 +117,7 @@
                     Standard
                 </dt>
                 <dd class="cya-answer">
-                    @Model.Standard (@Model.SelectedStandard)
+                    @Model.Standard (@Model.StandardCode)
                 </dd>
                 <dd class="cya-change">
                     @if (Model.IsPrivatelyFunded)
@@ -207,7 +207,7 @@
                     UKPRN
                 </dt>
                 <dd class="cya-answer">
-                    @Model.SelectedUkPrn
+                    @Model.Ukprn
                 </dd>
                 <dd class="cya-change">
                     <a asp-controller="CertificatePrivateProviderUkprn" asp-action="Ukprn" asp-route-redirecttocheck="true">
