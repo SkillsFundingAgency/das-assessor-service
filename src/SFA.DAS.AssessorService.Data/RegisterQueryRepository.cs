@@ -146,7 +146,7 @@ namespace SFA.DAS.AssessorService.Data
                     await connection.OpenAsync();
                 var sqlToCheckExists =
                     "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [OrganisationStandard] " +
-                    "WHERE EndPointAssessorOrganisationId = @organisationId and standardCode = @tandardCode";
+                    "WHERE EndPointAssessorOrganisationId = @organisationId and standardCode = @standardCode";
                 return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new {organisationId, standardCode});
             }
         }

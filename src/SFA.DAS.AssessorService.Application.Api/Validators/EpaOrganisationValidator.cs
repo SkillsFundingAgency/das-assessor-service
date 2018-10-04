@@ -43,7 +43,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         {
             if (string.IsNullOrEmpty(organisationName) || organisationName.Trim().Length==0)
                 return FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationNameEmpty);
-            return string.Empty;
+            
+            return organisationName.Trim().Length < 2 
+                ? FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationNameTooShort) 
+                : string.Empty;
         }
 
         public string CheckIfOrganisationAlreadyExists(string organisationId)
