@@ -136,7 +136,7 @@
     <value>Enter an organisation name</value>
   </data>
   <data name="OrganisationNameTooShort" xml:space="preserve">
-    <value>Enter an organisation name that is 2 or more letters</value>
+    <value>Enter an organisation name that has 2 or more letters</value>
   </data>
   <data name="OrganisationNotFound" xml:space="preserve">
     <value>There is no organisation for this organisation ID</value>
