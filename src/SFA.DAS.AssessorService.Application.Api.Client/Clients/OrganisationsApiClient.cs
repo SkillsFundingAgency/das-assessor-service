@@ -12,7 +12,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
     public class OrganisationsApiClient : ApiClientBase, IOrganisationsApiClient
     {
-        public OrganisationsApiClient(string baseUri, ITokenService tokenService, ILogger<OrganisationsApiClient> logger) : base(baseUri, tokenService, logger)
+        public OrganisationsApiClient(string baseUri, ITokenService tokenService,
+            ILogger<OrganisationsApiClient> logger) : base(baseUri, tokenService, logger)
         {
         }
 
@@ -20,7 +21,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/organisations/"))
             {
-                return await RequestAndDeserialiseAsync<IEnumerable<OrganisationResponse>>(request, $"Could not find the organisations");
+                return await RequestAndDeserialiseAsync<IEnumerable<OrganisationResponse>>(request,
+                    $"Could not find the organisations");
             }
         }
 
@@ -28,7 +30,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/organisations/{ukprn}"))
             {
-                return await RequestAndDeserialiseAsync<OrganisationResponse>(request, $"Could not find the organisation {ukprn}");
+                return await RequestAndDeserialiseAsync<OrganisationResponse>(request,
+                    $"Could not find the organisation {ukprn}");
             }
         }
 
@@ -36,15 +39,21 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/organisations/"))
             {
-                return await PostPutRequestWithResponse<CreateOrganisationRequest, OrganisationResponse>(request, organisationCreateViewModel);
+                return await PostPutRequestWithResponse<CreateOrganisationRequest, OrganisationResponse>(request,
+                    organisationCreateViewModel);
             }
         }
-        
-        public async Task<ValidationResponse> ValidateCreateOrganisation(string name, string ukprn, string organisationTypeId)
+
+        public async Task<ValidationResponse> ValidateCreateOrganisation(string name, string ukprn,
+            string organisationTypeId)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/ao/assessment-organisations/validate?name={name}&ukprn={ukprn}&organisationTypeId={organisationTypeId}"))
+
+            var newName = SanitizeUrlParam(name);
+            using (var request = new HttpRequestMessage(HttpMethod.Get,
+                $"/api/ao/assessment-organisations/validate?name={newName}&ukprn={ukprn}&organisationTypeId={organisationTypeId}"))
             {
-                return await RequestAndDeserialiseAsync<ValidationResponse>(request,  $"Could not check the validation for organisation [{name}]");
+                return await RequestAndDeserialiseAsync<ValidationResponse>(request,
+                    $"Could not check the validation for organisation [{name}]");
             }
         }
 
@@ -62,6 +71,34 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             {
                 await Delete(request);
             }
+        }
+
+        private string SanitizeUrlParam(string rawParam)
+        {
+            var result = rawParam;
+
+            result = result?.Replace("%", "%25");
+            result = result?.Replace("<", "%3C");
+            result = result?.Replace(">", "%3E");
+            result = result?.Replace("#", "%23");
+            result = result?.Replace("{", "%7B");
+            result = result?.Replace("}", "%7D");
+            result = result?.Replace("|", "%7C");
+            result = result?.Replace("\\", "%5C");
+            result = result?.Replace("^", "%5E");
+            result = result?.Replace("~", "%7E");
+            result = result?.Replace("[", "%5B");
+            result = result?.Replace("]", "%5D");
+            result = result?.Replace("`", "%60");
+            result = result?.Replace(";", "%3B");
+            result = result?.Replace("/", "%2F");
+            result = result?.Replace("?", "%3F");
+            result = result?.Replace(":", "%3A");
+            result = result?.Replace("@", "%40");
+            result = result?.Replace("=", "%3D");
+            result = result?.Replace("&", "%26");
+            result = result?.Replace("$", "%24");
+            return result;
         }
     }
 

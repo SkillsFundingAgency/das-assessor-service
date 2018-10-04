@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Data
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
-                var orgTypes = await connection.QueryAsync<OrganisationType>("select * from [OrganisationType]");
+                var orgTypes = await connection.QueryAsync<OrganisationType>("select * from [OrganisationType] order by case Type when 'Other' then id + 1000 else id end");
                 return orgTypes;
             }
         }
@@ -169,7 +169,7 @@ namespace SFA.DAS.AssessorService.Data
                                         "WHERE EndPointAssessorName = @organisationName AND  EndPointAssessorOrganisationId != @organisationIdToExclude";
                     return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { organisationName, organisationIdToExclude });
                 }
-                 
+
                 return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new {organisationName});
             }
         }
