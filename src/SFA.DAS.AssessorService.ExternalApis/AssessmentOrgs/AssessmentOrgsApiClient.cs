@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.Apprenticeships.Api.Types.AssessmentOrgs;
 using SFA.DAS.Apprenticeships.Api.Types.Providers;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
 
 namespace SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs
 {
@@ -190,7 +189,6 @@ namespace SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs
             }
         }
 
-        //MFCMFC Temporary measure to give time to figure out how to update GetAllStandards to StandardSummary
         public async Task<List<StandardSummary>> GetAllStandardSummaries()
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/standards"))

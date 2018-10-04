@@ -1,7 +1,4 @@
-﻿using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 using SFA.DAS.Apprenticeships.Api.Types;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.AO

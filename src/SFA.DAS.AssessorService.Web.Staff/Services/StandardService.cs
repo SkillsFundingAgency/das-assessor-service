@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 
 
@@ -26,7 +23,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             var results = await _cacheHelper.RetrieveFromCache<IEnumerable<StandardSummary>>("StandardSummaries");
            if (results != null) return results;
             var standardSummaries = await _assessmentOrgsApiClient.GetAllStandardSummaries();
-            await _cacheHelper.SaveToCache("StandardSummaries", standardSummaries, 8);  // MFCMFC 8 hours???
+            await _cacheHelper.SaveToCache("StandardSummaries", standardSummaries, 8);  
             return standardSummaries;
 
         }
