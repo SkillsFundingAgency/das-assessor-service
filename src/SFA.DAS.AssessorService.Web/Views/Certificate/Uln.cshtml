@@ -1,4 +1,7 @@
-﻿@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateUlnViewModel
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private
+@inject IViewLocalizer Localizer
+@model SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private.CertificateUlnViewModel
 
 @{
     ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Apprentice's unique learner number";
@@ -7,7 +10,8 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateid=@Model.Id>Back</a>
+
+        <a class="link-back" asp-controller="CertificateCheck" asp-action="Check">Back</a>
 
         <form class="apprentice-uln-form js-disable-on-submit" method="post" asp-action="Uln" asp-controller="CertificatePrivateUln">
             @Html.HiddenFor(c => c.Id)
@@ -34,18 +38,17 @@
 
             <div sfa-anyvalidationerror-class="after-error-summary">
                 <h1 class="heading-large">
-                    Please enter Uln
+                    @Localizer["Heading"]
                 </h1>
 
                 <div class="form-group" sfa-validation-for="Uln" sfa-validationerror-class="form-group-error">
                     <label class="form-label" for="Uln">
-                        <span class="form-label-bold">Unique learner number (<abbr title="Unique learner number">ULN</abbr>)</span>
-                        <span class="form-hint">"For example, 1234567890"</span>
+                        <span class="form-label-bold"> @Localizer["UlnName"] (<abbr title=" @Localizer["UlnName"]">ULN</abbr>)</span>
+                        <span class="form-hint">@Localizer["UlnNameHint"]</span>
                         <span class="error-message" asp-validation-for="Uln"></span>
                     </label>
                     <input class="form-control js-integers-only" name="Uln" autocomplete="off" asp-for="Uln" type="text" sfa-validation-for="Uln" sfa-validationerror-class="form-control-error" maxlength="10" />
                 </div>
-
 
             </div>
 
@@ -56,5 +59,5 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-    @{await Html.RenderPartialAsync("~/Views/CertificateAmend/_UlnScriptsPartial.cshtml"); }
+    @{await Html.RenderPartialAsync("~/Views/Certificate/_UlnScriptsPartial.cshtml"); }
 }

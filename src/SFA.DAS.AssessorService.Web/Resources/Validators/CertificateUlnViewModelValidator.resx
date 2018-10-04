@@ -117,16 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ContinueButton" xml:space="preserve">
-    <value>Continue</value>
+  <data name="UlnMatches" xml:space="preserve">
+    <value>The apprentice's ULN should contain exactly 10 numbers</value>
   </data>
-  <data name="Heading" xml:space="preserve">
-    <value>What's the training provider's UK Provider Reference Number (UKPRN)?</value>
-  </data>
-  <data name="UkprnNameComment" xml:space="preserve">
-    <value>A UKPRN is a unique 8 digit number given to training providers registered on the UK Register of Learning Providers (UKRLP).</value>
-  </data>
-  <data name="UkprnNameHint" xml:space="preserve">
-    <value>For example, 10000346</value>
+  <data name="UlnNameCannotBeEmpty" xml:space="preserve">
+    <value>Enter the apprentice's ULN</value>
   </data>
 </root>

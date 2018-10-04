@@ -30,50 +30,19 @@
         <dl class="govuk-check-your-answers cya-questions-short">
             <div>
                 <dt class="cya-question">
-                    Name
-                </dt>
-                <dd class="cya-answer">
-                    @Model.GivenNames @Model.FamilyName
-                </dd>
-            </div>
-            <div>
-                <dt class="cya-question">
-                    <abbr title="Unique learner number">ULN</abbr>
-                </dt>
-                <dd class="cya-answer">
-                    @Model.Uln
-                </dd>
-                @if (Model.IsPrivatelyFunded)
-                {
-                    <dd class="cya-change">
-                        <a asp-controller="CertificatePrivateUln" asp-action="Uln" asp-route-certificateid=@Model.Id>
-                            Change<span class="visually-hidden"> name</span>
-                        </a>
-                    </dd>
-                }
-            </div>
-        </dl>
-
-        <h2 class="heading-medium">
-            Apprentice details
-        </h2>
-
-        <dl class="govuk-check-your-answers cya-questions-short">
-            <div>
-                <dt class="cya-question">
                     First name
                 </dt>
                 <dd class="cya-answer">
                     @Model.GivenNames
                 </dd>
-                @if (Model.IsPrivatelyFunded)
-                {
                 <dd class="cya-change">
+                    @if (Model.IsPrivatelyFunded)
+                    {
                     <a asp-controller="CertificatePrivateFirstName" asp-action="FirstName" asp-route-certificateid=@Model.Id>
                         Change<span class="visually-hidden"> first name</span>
                     </a>
+                    }
                 </dd>
-                }
             </div>
 
             <div>
@@ -83,14 +52,14 @@
                 <dd class="cya-answer">
                     @Model.FamilyName
                 </dd>
-                @if (Model.IsPrivatelyFunded)
-                {
                 <dd class="cya-change">
+                    @if (Model.IsPrivatelyFunded)
+                    {
                     <a asp-controller="CertificatePrivateLastName" asp-action="LastName" asp-route-certificateid=@Model.Id>
                         Change<span class="visually-hidden"> last name</span>
                     </a>
+                    }
                 </dd>
-                }
             </div>
     
             <div>
@@ -101,6 +70,12 @@
                     @Model.Uln
                 </dd>
                 <dd class="cya-change">
+                    @if (Model.IsPrivatelyFunded)
+                    {
+                    <a asp-controller="CertificatePrivateUln" asp-action="Uln" asp-route-certificateid=@Model.Id>
+                        Change<span class="visually-hidden"> ULN</span>
+                    </a>
+                    }
                 </dd>
             </div>
         </dl>
@@ -180,7 +155,7 @@
                 </dd>
                 <dd class="cya-change">
                     <a asp-controller="CertificatePrivateLearnerStartDate" asp-action="LearnerStartDate" asp-route-certificateid=@Model.Id>
-                        Change<span class="visually-hidden"> Start Date</span>
+                        Change<span class="visually-hidden"> apprenticeship start date</span>
                     </a>
                 </dd>
             </div>
@@ -211,7 +186,7 @@
                 </dd>
                 <dd class="cya-change">
                     <a asp-controller="CertificatePrivateProviderUkprn" asp-action="Ukprn" asp-route-certificateid=@Model.Id>
-                        Change<span class="visually-hidden"> option</span>
+                        Change<span class="visually-hidden"> UKPRN</span>
                     </a>
                 </dd>
             </div>
@@ -232,7 +207,7 @@
                 </dd>
                 <dd class="cya-change">
                     <a asp-controller="CertificateRecipient" asp-action="Recipient" asp-route-certificateid=@Model.Id>
-                        Change<span class="visually-hidden"> name</span>
+                        Change<span class="visually-hidden"> recipient name</span>
                     </a>
                 </dd>
             </div>

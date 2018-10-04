@@ -121,7 +121,7 @@
     <value>Enter the training provider's UKPRN</value>
   </data>
   <data name="UkprnMustExist" xml:space="preserve">
-    <value>Enter the training provider's UKPRN</value>
+    <value>This UKPRN cannot be found</value>
   </data>
   <data name="UkprnNumber" xml:space="preserve">
     <value>The UKPRN should contain 8 numbers</value>
