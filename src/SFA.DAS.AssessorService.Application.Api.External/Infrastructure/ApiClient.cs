@@ -88,7 +88,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
         { 
             var apiResponse = await Get<Domain.Entities.Certificate>($"/api/v1/certificates/batch/{request.Uln}/{request.FamilyName}/{request.StandardCode}/{request.CertificateReference}/{request.UkPrn}/{request.Email}");
 
-            return Mapper.Map<Domain.Entities.Certificate, Certificate>(apiResponse); // will this blow up on not found??
+            return Mapper.Map<Domain.Entities.Certificate, Certificate>(apiResponse);
         }
 
         public async Task<IEnumerable<BatchCertificateResponse>> CreateCertificates(IEnumerable<BatchCertificateRequest> request)

@@ -73,8 +73,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
                 certificate = null;
             }
 
-            await RecordGetCertificateOccured(certificate != null, request.Uln, request.FamilyName, request.Email);
-
             return certificate;
         }
 
@@ -97,18 +95,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             }
 
             return contact;
-        }
-
-        private async Task RecordGetCertificateOccured(bool certificateFound, long uln, string familyName, string username)
-        {
-            await _ilrRepository.StoreSearchLog(new SearchLog()
-            {
-                NumberOfResults = certificateFound ? 1 : 0,
-                SearchTime = DateTime.UtcNow,
-                Surname = familyName,
-                Uln = uln,
-                Username = username
-            });
         }
     }
 }
