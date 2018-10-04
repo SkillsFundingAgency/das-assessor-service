@@ -1,22 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
+﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.External.Messages;
-using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Application.Api.External.Middleware;
+using SFA.DAS.AssessorService.Application.Api.External.Models.Certificates;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
 using SearchQuery = SFA.DAS.AssessorService.Application.Api.External.Models.Search.SearchQuery;
 using SearchResult = SFA.DAS.AssessorService.Application.Api.External.Models.Search.SearchResult;
-using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.AssessorService.Application.Api.External.Middleware;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 {
@@ -85,6 +82,13 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
         {
             List<SearchResult> results = await Post<SearchQuery, List<SearchResult>>("/api/v1/search", searchQuery);
             return results.Where(s => standardCode is null || s.StdCode == standardCode).ToList();
+        }
+
+        public async Task<Certificate> GetCertificate(GetCertificateRequest request)
+        { 
+            var apiResponse = await Get<Domain.Entities.Certificate>($"/api/v1/certificates/batch/{request.Uln}/{request.FamilyName}/{request.StandardCode}/{request.CertificateReference}/{request.UkPrn}/{request.Email}");
+
+            return Mapper.Map<Domain.Entities.Certificate, Certificate>(apiResponse); // will this blow up on not found??
         }
 
         public async Task<IEnumerable<BatchCertificateResponse>> CreateCertificates(IEnumerable<BatchCertificateRequest> request)

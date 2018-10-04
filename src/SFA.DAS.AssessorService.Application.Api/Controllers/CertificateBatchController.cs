@@ -6,7 +6,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Certificates.Batch;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Api.Validators.Certificates;
-using SFA.DAS.AssessorService.Application.Exceptions;
+using SFA.DAS.AssessorService.Domain.Entities;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,6 +34,34 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _updateValidator = updateValidator;
             _submitValidator = submitValidator;
             _deleteValidator = deleteValidator;
+        }
+
+        [HttpGet("{uln}/{lastname}/{standardcode}/{certificateReference}/{ukPrn}/{email}")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Certificate))]
+        [SwaggerResponse((int)HttpStatusCode.NotFound)]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> Get(long uln, string lastname, int standardcode, string certificateReference, int ukPrn, string email)
+        {
+            var request = new GetBatchCertificateRequest
+            {
+                Uln = uln,
+                FamilyName = lastname,
+                StandardCode = standardcode,
+                CertificateReference = certificateReference,
+                UkPrn = ukPrn,
+                Email = email
+            };
+
+            var certificate = await _mediator.Send(request);
+
+            if(certificate is null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(certificate);
+            }
         }
 
         [HttpPost]

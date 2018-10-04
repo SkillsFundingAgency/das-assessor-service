@@ -28,6 +28,26 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             _apiClient = apiClient;
         }
 
+        [HttpGet("{uln}/{familyName}/{standardCode}/{certificateReference}")]
+        [SwaggerResponse((int)HttpStatusCode.OK, "The specified Certificate.", typeof(Certificate))]
+        [SwaggerResponse((int)HttpStatusCode.NotFound, "The specified Certificate could not be found.")]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
+        [SwaggerOperation("Get Certificate", "Gets the specified Certificate.")]
+        public async Task<IActionResult> GetCertificate(long uln, string familyName, int standardCode, string certificateReference)
+        {
+            GetCertificateRequest getRequest = new GetCertificateRequest { UkPrn = _headerInfo.Ukprn, Email = _headerInfo.Email, Uln = uln, FamilyName = familyName, StandardCode = standardCode, CertificateReference = certificateReference };
+            var response = await _apiClient.GetCertificate(getRequest);
+
+            if (response is null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(response);
+            }
+        }
+
         [HttpPost]
         [SwaggerResponse((int)HttpStatusCode.OK, "For each item: The created Certificate if valid, else a list of validation errors.", typeof(IEnumerable<BatchCertificateResponse>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
