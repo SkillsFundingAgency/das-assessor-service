@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
                 if(certData.LearnerFamilyName == request.FamilyName)
                 {
                     var searchingContact = await _contactQueryRepository.GetContactFromEmailAddress(request.Email);
-                    var certificateContact = await GetContactFromCertificateLogs(certificate.Id, certificate.UpdatedBy ?? certificate.CreatedBy);
+                    var certificateContact = await GetContactFromCertificateLogs(certificate.Id, certificate.CreatedBy);
                     
                     if (certificateContact is null || certificateContact.OrganisationId != searchingContact.OrganisationId)
                     {
@@ -83,11 +83,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             _logger.LogInformation("GetContactFromCertificateLogs Before GetCertificateLogsFor");
             var certificateLogs = await _certificateRepository.GetCertificateLogsFor(certificateId);
 
+            var submittedLogEntry = certificateLogs?.FirstOrDefault(l => l.Status == Domain.Consts.CertificateStatus.Submitted);
+            var createdLogEntry = certificateLogs?.FirstOrDefault(l => l.Status == Domain.Consts.CertificateStatus.Draft);
+
             _logger.LogInformation("GetContactFromCertificateLogs Before GetContact");
-            if (certificateLogs.Any())
+            if (submittedLogEntry != null)
             {
-                var lastUpdatedLogEntry = certificateLogs.Aggregate((i1, i2) => i1.EventTime > i2.EventTime ? i1 : i2);
-                contact = await _contactQueryRepository.GetContact(lastUpdatedLogEntry.Username);
+                contact = await _contactQueryRepository.GetContact(submittedLogEntry.Username);
+            }
+            else if (createdLogEntry != null)
+            {
+                contact = await _contactQueryRepository.GetContact(createdLogEntry.Username);
             }
             else
             {
