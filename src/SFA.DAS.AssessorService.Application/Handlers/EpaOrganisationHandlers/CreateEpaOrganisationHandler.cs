@@ -64,21 +64,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
         private void ProcessRequestFieldsForSpecialCharacters(CreateEpaOrganisationRequest request)
         {
-            request.Name = _cleanser.CleanseStringForSpecialCharacters(request.Name?.Trim());           
-            request.LegalName = _cleanser.CleanseStringForSpecialCharacters(request.LegalName?.Trim());
-            request.WebsiteLink = _cleanser.CleanseStringForSpecialCharacters(request.WebsiteLink?.Trim());
-            request.Address1 = _cleanser.CleanseStringForSpecialCharacters(request.Address1?.Trim());
-            request.Address2 = _cleanser.CleanseStringForSpecialCharacters(request.Address2?.Trim());
-            request.Address3 = _cleanser.CleanseStringForSpecialCharacters(request.Address3?.Trim());
+            request.Name = _cleanser.CleanseStringForSpecialCharacters(request.Name?.Trim())?.Trim();           
+            request.LegalName = _cleanser.CleanseStringForSpecialCharacters(request.LegalName?.Trim())?.Trim();
+            request.WebsiteLink = _cleanser.CleanseStringForSpecialCharacters(request.WebsiteLink?.Trim())?.Trim();
+            request.Address1 = _cleanser.CleanseStringForSpecialCharacters(request.Address1?.Trim())?.Trim();
+            request.Address2 = _cleanser.CleanseStringForSpecialCharacters(request.Address2?.Trim())?.Trim();
+            request.Address3 = _cleanser.CleanseStringForSpecialCharacters(request.Address3?.Trim())?.Trim();
             request.Address4 = _cleanser.CleanseStringForSpecialCharacters(request.Address4?.Trim());
             request.Postcode = _cleanser.CleanseStringForSpecialCharacters(request.Postcode?.Trim());
-        }
-
-        private void ThrowAlreadyExistsExceptionIfErrorPresent(StringBuilder errorDetails)
-        {
-            if (errorDetails.Length == 0) return;
-            _logger.LogError(errorDetails.ToString());
-            throw new AlreadyExistsException(errorDetails.ToString());
         }
 
         private static EpaOrganisation MapOrganisationRequestToOrganisation(CreateEpaOrganisationRequest request, string newOrganisationId)
