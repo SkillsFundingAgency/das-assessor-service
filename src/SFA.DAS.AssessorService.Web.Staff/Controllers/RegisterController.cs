@@ -2,8 +2,11 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.Models;
 
@@ -58,12 +61,32 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             return View(vm);
         }
 
+          [HttpGet("register/impage")]
+        public async Task<IActionResult> Impage()
+        {
+            var vm = new AssessmentOrgsImportResponse { Status = "Press to run" };
+            return View(vm);
+        }
+
+        [HttpGet("register/impage-{choice}")]
+        public async Task<IActionResult> Impage(string choice)
+        {
+            var vm = new AssessmentOrgsImportResponse { Status = "Running" };
+
+            if (choice == "DoIt")
+            {
+                var importResults = await _apiClient.ImportOrganisations();
+                vm.Status = importResults;
+            }
+            return View(vm);
+        }
+            
         [HttpPost("register/add-organisation")]
         public async Task<IActionResult> AddOrganisation(RegisterAddOrganisationViewModel viewModel)
         {
-               if (!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                viewModel.OrganisationTypes = await _apiClient.GetOrganisationTypes();
+                viewModel.OrganisationTypes = await _apiClient.GetOrganisationTypes();             
                 return View(viewModel);
             }
 

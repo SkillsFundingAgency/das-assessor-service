@@ -14,6 +14,10 @@ using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.Web.Staff.Models;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
 {
@@ -87,6 +91,19 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             return await Get<List<AssessmentOrganisationSummary>>($"/api/ao/assessment-organisations/search/{searchString}");
         }
 
+        public async Task<string> ImportOrganisations()
+        {
+            var uri = "/api/ao/assessment-organisations/";
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+
+            using (var response = await _client.PatchAsync(new Uri(uri, UriKind.Relative), null))
+            {
+                var res= await response.Content.ReadAsAsync<AssessmentOrgsImportResponse>();
+                return res.Status;
+            }
+        }
+        
+        
         public async Task<List<OrganisationType>> GetOrganisationTypes()
         {
             return await Get<List<OrganisationType>>($"/api/ao/organisation-types");

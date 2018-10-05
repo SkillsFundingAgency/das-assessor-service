@@ -77,27 +77,25 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             var result = rawParam;
 
-            result = result?.Replace("%", "%25");
-            result = result?.Replace("<", "%3C");
-            result = result?.Replace(">", "%3E");
-            result = result?.Replace("#", "%23");
-            result = result?.Replace("{", "%7B");
-            result = result?.Replace("}", "%7D");
-            result = result?.Replace("|", "%7C");
-            result = result?.Replace("\\", "%5C");
-            result = result?.Replace("^", "%5E");
-            result = result?.Replace("~", "%7E");
-            result = result?.Replace("[", "%5B");
-            result = result?.Replace("]", "%5D");
+            result = result?.Replace("%", "");
+            result = result?.Replace("<", "");
+            result = result?.Replace(">", "");
+            result = result?.Replace("#", "");
+            result = result?.Replace("{", "");
+            result = result?.Replace("}", "");
+            result = result?.Replace("|", "");
+            result = result?.Replace("\\", "");
+            result = result?.Replace("^", "");
+            result = result?.Replace("~", "");
+            result = result?.Replace("[", "");
+            result = result?.Replace("]", "");
             result = result?.Replace("`", "%60");
-            result = result?.Replace(";", "%3B");
-            result = result?.Replace("/", "%2F");
-            result = result?.Replace("?", "%3F");
-            result = result?.Replace(":", "%3A");
-            result = result?.Replace("@", "%40");
-            result = result?.Replace("=", "%3D");
+            result = result?.Replace(";", "");
+            result = result?.Replace("/", "");
+            result = result?.Replace("?", "");
+            result = result?.Replace("=", "");
             result = result?.Replace("&", "%26");
-            result = result?.Replace("$", "%24");
+            result = result?.Replace("$", "");
             return result;
         }
     }
