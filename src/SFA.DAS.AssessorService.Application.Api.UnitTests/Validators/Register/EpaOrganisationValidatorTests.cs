@@ -182,6 +182,17 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         }
 
 
+        [TestCase("")]
+        [TestCase(null)]
+        public void CheckIfOrganisationNotFoundReturnsAnErrorMessageWhenEmpty(string organisationId)
+        {
+            var isMessageReturned =
+                _validator.CheckIfOrganisationNotFound(null).Length > 0;
+            Assert.AreEqual(isMessageReturned, true);
+            _registerRepository.Verify(r => r.EpaOrganisationExistsWithOrganisationId(It.IsAny<string>()), Times.Never);
+        }
+
+
         [TestCase(false, false)]
         [TestCase(true, true)]
         public void CheckIfOrganisationStandardAlreadyExistsReturnsAnErrorMessage(bool exists, bool noMessageReturned)

@@ -98,7 +98,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
 
         public string CheckIfOrganisationNotFound(string organisationId)
         {
-            return _registerRepository.EpaOrganisationExistsWithOrganisationId(organisationId).Result 
+            return organisationId != null && _registerRepository.EpaOrganisationExistsWithOrganisationId(organisationId).Result 
                 ? string.Empty :
                 FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationNotFound);
         }
@@ -141,6 +141,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 : FormatErrorMessage(EpaOrganisationValidatorMessageName.ContactIdInvalidForOrganisationId);
         }
 
+        public string CheckIfDisplayNameIsMissing(string displayName)
+        {
+            return string.IsNullOrEmpty(displayName?.Trim()) 
+                ? FormatErrorMessage(EpaOrganisationValidatorMessageName.DisplayNameIsMissing) 
+                : string.Empty;
+        }
+
         private string FormatErrorMessage(string messageName)
         {
             return $"{_localizer[messageName].Value}; ";
@@ -152,8 +159,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
 
             RunValidationCheckAndAppendAnyError("Name", CheckOrganisationName(request.Name), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("OrganisationTypeId", CheckOrganisationTypeIsNullOrExists(request.OrganisationTypeId), validationResult, ValidationStatusCode.BadRequest);
-            RunValidationCheckAndAppendAnyError("Ukprn", CheckUkprnIsValid(request.Ukprn), validationResult, ValidationStatusCode.BadRequest);
-       
+            RunValidationCheckAndAppendAnyError("Ukprn", CheckUkprnIsValid(request.Ukprn), validationResult, ValidationStatusCode.BadRequest);    
             RunValidationCheckAndAppendAnyError("Name", CheckOrganisationNameNotUsed(request.Name), validationResult, ValidationStatusCode.AlreadyExists);
             RunValidationCheckAndAppendAnyError("Ukprn", CheckIfOrganisationUkprnExists(request.Ukprn), validationResult, ValidationStatusCode.AlreadyExists);
 
@@ -169,7 +175,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         public ValidationResponse ValidatorCreateEpaOrganisationContactRequest(CreateOrganisationContactRequest request)
         {
             var validationResult = new ValidationResponse();
+            RunValidationCheckAndAppendAnyError("EndPointAssessorOrganisationId", CheckIfOrganisationNotFound(request.EndPointAssessorOrganisationId), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("DisplayName", CheckIfDisplayNameIsMissing(request.DisplayName), validationResult, ValidationStatusCode.BadRequest);
+
             return validationResult;
         }
+
+     
     }
 }

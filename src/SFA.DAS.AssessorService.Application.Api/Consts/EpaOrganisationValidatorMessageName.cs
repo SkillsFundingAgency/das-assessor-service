@@ -21,5 +21,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Consts
         public const string OrganisationStandardAlreadyExists = "This organisation/standard already exists";
         public const string StandardNotFound = "StandardNotFound";
         public const string OrganisationStandardDoesNotExist = "OrganisationStandardDoesNotExist";
+        public const string DisplayNameIsMissing = "DisplayNameIsMissing";
     }
 }
