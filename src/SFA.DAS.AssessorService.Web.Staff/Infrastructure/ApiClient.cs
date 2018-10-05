@@ -92,12 +92,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             return await Get<List<AssessmentOrganisationSummary>>($"/api/ao/assessment-organisations/search/{searchString}");
         }
 
-        public async Task<List<OrganisationType>> GetOrganisationTypes()
-        {
-            return await Get<List<OrganisationType>>($"/api/ao/organisation-types");
-        }
-        
-        
         public async Task<string> ImportOrganisations()
         {
             var uri = "/api/ao/assessment-organisations/";
@@ -108,6 +102,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
                 var res= await response.Content.ReadAsAsync<AssessmentOrgsImportResponse>();
                 return res.Status;
             }
+        }
+        
+        
+        public async Task<List<OrganisationType>> GetOrganisationTypes()
+        {
+            return await Get<List<OrganisationType>>($"/api/ao/organisation-types");
         }
         
 

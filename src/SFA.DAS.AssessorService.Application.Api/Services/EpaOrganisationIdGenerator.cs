@@ -12,6 +12,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             _registerQueryRepository = registerQueryRepository;
         }
 
+        public string GetNextContactUsername()
+        {
+            var currentMaxId = _registerQueryRepository.EpaContactUsernameHighestCounter().Result;
+            return $@"username-{currentMaxId:D4}";
+        }
+
         public string GetNextOrganisationId()
         {
             var currentMaxId = _registerQueryRepository.EpaOrganisationIdCurrentMaximum().Result;

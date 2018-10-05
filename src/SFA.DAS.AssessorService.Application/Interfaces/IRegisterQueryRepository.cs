@@ -18,6 +18,8 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<bool> EpaOrganisationAlreadyUsingName(string organisationName, string organisationId);
         Task<string> EpaOrganisationIdCurrentMaximum();
 
+        Task<int> EpaContactUsernameHighestCounter();
+
         Task<bool> ContactIdIsValid(string contactId);
         Task<bool> ContactIdIsValidForOrganisationId(string contactId, string organisationId);
         Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisations();

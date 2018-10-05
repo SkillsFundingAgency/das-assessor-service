@@ -186,6 +186,20 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
+        public async Task<int> EpaContactUsernameHighestCounter()
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                const string sqlToGetHighestUsernameCounter = "select max(convert(int,replace(username,'unknown-',''))) highestCounter from [Contacts]  where username like 'unknown-%' and isnumeric(replace(username,'unknown-','')) = 1";
+                var maxCounter = await connection.ExecuteScalarAsync<int?>(sqlToGetHighestUsernameCounter);
+
+                return maxCounter + 1 ?? 100;
+            }
+        }
+
         public async Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisations()
         {
             var connectionString = _configuration.SqlConnectionString;

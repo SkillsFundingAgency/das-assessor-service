@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Api.Consts;
@@ -165,5 +166,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 validationResult.Errors.Add(new ValidationErrorDetail(fieldName, errorMessage.Replace("; ",""), statusCode));
         }
 
+        public ValidationResponse ValidatorCreateEpaOrganisationContactRequest(CreateOrganisationContactRequest request)
+        {
+            var validationResult = new ValidationResponse();
+            return validationResult;
+        }
     }
 }

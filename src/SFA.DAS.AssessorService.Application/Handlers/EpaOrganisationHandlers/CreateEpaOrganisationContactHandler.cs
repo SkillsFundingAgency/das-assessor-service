@@ -1,8 +1,13 @@
-﻿using System.Threading;
+﻿using System;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
+using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
@@ -13,19 +18,67 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
         private readonly ILogger<CreateEpaOrganisationContactHandler> _logger;
         private readonly IEpaOrganisationValidator _validator;
         private readonly ISpecialCharacterCleanserService _cleanser;
+        private readonly IEpaOrganisationIdGenerator _organisationIdGenerator;
 
-        public CreateEpaOrganisationContactHandler(IRegisterRepository registerRepository, IEpaOrganisationValidator validator, ISpecialCharacterCleanserService cleanser, ILogger<CreateEpaOrganisationContactHandler> logger)
+        public CreateEpaOrganisationContactHandler(IRegisterRepository registerRepository, IEpaOrganisationValidator validator, ISpecialCharacterCleanserService cleanser, ILogger<CreateEpaOrganisationContactHandler> logger, IEpaOrganisationIdGenerator organisationIdGenerator)
         {
             _registerRepository = registerRepository;
             _validator = validator;
             _cleanser = cleanser;
             _logger = logger;
+            _organisationIdGenerator = organisationIdGenerator;
         }
 
-        public Task<string> Handle(CreateOrganisationContactRequest request, CancellationToken cancellationToken)
+        public async Task<string> Handle(CreateOrganisationContactRequest request, CancellationToken cancellationToken)
         {
 
-            throw new System.NotImplementedException();
+            ProcessRequestFieldsForSpecialCharacters(request);
+
+            var validationResponse = _validator.ValidatorCreateEpaOrganisationContactRequest(request);
+
+            if (!validationResponse.IsValid)
+            {
+                var message = validationResponse.Errors.Aggregate(string.Empty, (current, error) => current + error.ErrorMessage + "; ");
+                _logger.LogError(message);
+                if (validationResponse.Errors.Any(x => x.StatusCode == ValidationStatusCode.BadRequest.ToString()))
+                {
+                    throw new BadRequestException(message);
+                }
+
+                if (validationResponse.Errors.Any(x => x.StatusCode == ValidationStatusCode.AlreadyExists.ToString()))
+                {
+                    throw new AlreadyExistsException(message);
+                }
+
+                throw new Exception(message);
+            }
+
+            var newUsername = _organisationIdGenerator.GetNextContactUsername();
+            if (newUsername == string.Empty)
+                throw new Exception("A valid organisation Id could not be generated");
+
+            var contact = MapOrganisationContactRequestToContact(request, newUsername);
+            return await _registerRepository.CreateEpaOrganisationContact(contact);
         }
+
+        private EpaContact MapOrganisationContactRequestToContact(CreateOrganisationContactRequest request, string newUsername)
+        {
+            return new EpaContact
+            {
+                DisplayName = request.DisplayName,
+                Email = request.Email,
+                EndPointAssessorOrganisationId = request.EndPointAssessorOrganisationId,
+                Id = Guid.NewGuid(),
+                PhoneNumber = request.PhoneNumber,
+                Username = newUsername
+            };
+        }
+
+        private void ProcessRequestFieldsForSpecialCharacters(CreateOrganisationContactRequest request)
+        {
+            request.DisplayName = _cleanser.CleanseStringForSpecialCharacters(request.DisplayName);
+            request.Email = _cleanser.CleanseStringForSpecialCharacters(request.Email);
+            request.PhoneNumber = _cleanser.CleanseStringForSpecialCharacters(request.PhoneNumber);
+        }    
     }
 }
