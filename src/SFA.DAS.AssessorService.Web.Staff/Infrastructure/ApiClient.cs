@@ -1,12 +1,19 @@
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Staff;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
+using SFA.DAS.AssessorService.Web.Staff.Models;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -85,6 +92,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             return await Get<List<AssessmentOrganisationSummary>>($"/api/ao/assessment-organisations/search/{searchString}");
         }
 
+        public async Task<List<OrganisationType>> GetOrganisationTypes()
+        {
+            return await Get<List<OrganisationType>>($"/api/ao/organisation-types");
+        }
+        
+        
         public async Task<string> ImportOrganisations()
         {
             var uri = "/api/ao/assessment-organisations/";
@@ -95,6 +108,18 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
                 var res= await response.Content.ReadAsAsync<AssessmentOrgsImportResponse>();
                 return res.Status;
             }
+        }
+        
+
+        public async Task<EpaOrganisation> GetEpaOrganisation(string organisationId)
+        {
+            return await Get<EpaOrganisation>($"api/ao/assessment-organisations/{organisationId}");
+        }
+
+        public async Task<string> CreateEpaOrganisation(CreateEpaOrganisationRequest request)
+        {
+            var result = await Post<CreateEpaOrganisationRequest, EpaOrganisationResponse>("api/ao/assessment-organisations", request);
+            return result.Details;
         }
 
         public async Task<PaginatedList<StaffBatchSearchResult>> BatchSearch(int batchNumber, int page)

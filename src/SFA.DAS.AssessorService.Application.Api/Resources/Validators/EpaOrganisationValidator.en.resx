@@ -118,25 +118,28 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AnotherOrganisationUsingTheUkprn" xml:space="preserve">
-    <value>The ukprn entered is already used by another organisation</value>
+    <value>The UKPRN entered is already used by another organisation</value>
   </data>
   <data name="ContactIdInvalidForOrganisationId" xml:space="preserve">
-    <value>The contact Id entered is invalid for the given organisation</value>
+    <value>The contact ID entered is invalid for the given organisation</value>
   </data>
   <data name="NoOrganisationId" xml:space="preserve">
-    <value>There is no organisation Id</value>
+    <value>Enter an organisation ID</value>
   </data>
   <data name="OrganisationIdAlreadyUsed" xml:space="preserve">
-    <value>There is already an entry for this organisation Id</value>
+    <value>There is already an entry for this organisation ID</value>
   </data>
   <data name="OrganisationIdTooLong" xml:space="preserve">
-    <value>The length of the organisation Id is too long</value>
+    <value>The length of the organisation ID is too long</value>
   </data>
   <data name="OrganisationNameEmpty" xml:space="preserve">
-    <value>There is no organisation name</value>
+    <value>Enter an organisation name</value>
+  </data>
+  <data name="OrganisationNameTooShort" xml:space="preserve">
+    <value>Enter an organisation name that is 2 or more letters</value>
   </data>
   <data name="OrganisationNotFound" xml:space="preserve">
-    <value>There is no organisation for this organisation Id</value>
+    <value>There is no organisation for this organisation ID</value>
   </data>
   <data name="OrganisationStandardAlreadyExists" xml:space="preserve">
     <value>This organisation/standard already exists</value>
@@ -145,15 +148,15 @@
     <value>This organisation/standard does not exist</value>
   </data>
   <data name="OrganisationTypeIsInvalid" xml:space="preserve">
-    <value>There is no organisation type with this Id</value>
+    <value>This is not a valid organisation type</value>
   </data>
   <data name="StandardNotFound" xml:space="preserve">
     <value>There is no standard present for the given standard code</value>
   </data>
   <data name="UkprnAlreadyUsed" xml:space="preserve">
-    <value>There is already an organisation with this ukprn</value>
+    <value>There is already an organisation with this UKPRN</value>
   </data>
   <data name="UkprnIsInvalid" xml:space="preserve">
-    <value>The ukprn is not the correct format or length</value>
+    <value>The UKPRN must be 8 numbers</value>
   </data>
 </root>
