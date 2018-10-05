@@ -18,7 +18,7 @@
         @if (Model.SelectedReportData != null && Model.SelectedReportData.Any())
         {
             <div class="form-group">
-                <table class="table responsive table-font-xsmall">
+                <table class="table responsive table-font-xsmall" style="display:block;overflow:auto">
                     <thead>
                         <tr>
                             @foreach (var key in Model.SelectedReportData.First().Keys)
