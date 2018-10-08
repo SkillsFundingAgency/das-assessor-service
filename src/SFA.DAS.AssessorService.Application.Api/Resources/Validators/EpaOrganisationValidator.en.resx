@@ -123,6 +123,12 @@
   <data name="ContactIdInvalidForOrganisationId" xml:space="preserve">
     <value>The contact ID entered is invalid for the given organisation</value>
   </data>
+  <data name="EmailIsMissing" xml:space="preserve">
+    <value>Enter an email address</value>
+  </data>
+  <data name="EmailAlreadyPresent" xml:space="preserve">
+    <value>This email is being used by another contact</value>
+  </data>
   <data name="DisplayNameIsMissing" xml:space="preserve">
     <value>Enter a contact name</value>
   </data>

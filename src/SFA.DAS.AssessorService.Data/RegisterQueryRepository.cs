@@ -268,7 +268,7 @@ namespace SFA.DAS.AssessorService.Data
                 return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new {contactId});
             }
         }
-       
+
         public async Task<bool> ContactIdIsValidForOrganisationId(string contactId, string organisationId)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
@@ -368,5 +368,17 @@ namespace SFA.DAS.AssessorService.Data
                 return assessmentOrganisationSummaries;
             }
         }
+
+        //public async Task<bool> EmailAlreadyPresent(string email)
+        //{
+        //    using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+        //    {
+        //        if (connection.State != ConnectionState.Open)
+        //            await connection.OpenAsync();
+        //        const string sqlToCheckExists = "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Contacts] " +
+        //                                        "WHERE email  = @email";
+        //        return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { email });
+        //    }
+        //}
     }
 }

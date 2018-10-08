@@ -148,10 +148,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 : string.Empty;
         }
 
-        private string FormatErrorMessage(string messageName)
+        public string CheckIfEmailIsMissing(string emailName)
         {
-            return $"{_localizer[messageName].Value}; ";
+            return string.IsNullOrEmpty(emailName?.Trim())
+                ? FormatErrorMessage(EpaOrganisationValidatorMessageName.EmailIsMissing)
+                : string.Empty;
         }
+
+        //public string CheckIfEmailAlreadyPresent(string email)
+        //{
+        //    return _registerRepository.EmailAlreadyPresent(email).Result
+        //        ? FormatErrorMessage(EpaOrganisationValidatorMessageName.EmailAlreadyPresent)
+        //        : string.Empty;
+        //}
 
         public ValidationResponse ValidatorCreateEpaOrganisationRequest(CreateEpaOrganisationRequest request)
         {
@@ -166,21 +175,26 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             return validationResult;
         }
 
-        private void RunValidationCheckAndAppendAnyError(string fieldName, string errorMessage, ValidationResponse validationResult, ValidationStatusCode statusCode)
-        {
-            if (errorMessage != string.Empty)
-                validationResult.Errors.Add(new ValidationErrorDetail(fieldName, errorMessage.Replace("; ",""), statusCode));
-        }
-
         public ValidationResponse ValidatorCreateEpaOrganisationContactRequest(CreateOrganisationContactRequest request)
         {
             var validationResult = new ValidationResponse();
             RunValidationCheckAndAppendAnyError("EndPointAssessorOrganisationId", CheckIfOrganisationNotFound(request.EndPointAssessorOrganisationId), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("DisplayName", CheckIfDisplayNameIsMissing(request.DisplayName), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("Email", CheckIfEmailIsMissing(request.Email), validationResult, ValidationStatusCode.BadRequest);
+            //RunValidationCheckAndAppendAnyError("Email", CheckIfEmailAlreadyPresent(request.Email), validationResult, ValidationStatusCode.AlreadyExists);
 
             return validationResult;
         }
 
-     
+        private string FormatErrorMessage(string messageName)
+        {
+            return $"{_localizer[messageName].Value}; ";
+        }
+        private void RunValidationCheckAndAppendAnyError(string fieldName, string errorMessage, ValidationResponse validationResult, ValidationStatusCode statusCode)
+        {
+            if (errorMessage != string.Empty)
+                validationResult.Errors.Add(new ValidationErrorDetail(fieldName, errorMessage.Replace("; ", ""), statusCode));
+        }
+
     }
 }

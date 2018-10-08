@@ -24,6 +24,8 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         string CheckIfContactIdIsEmptyOrValid(string contactId, string organisationId);
         string CheckIfOrganisationStandardDoesNotExist(string organisationId, int standardCode);
         string CheckIfDisplayNameIsMissing(string displayName);
+        string CheckIfEmailIsMissing(string email);
+        //string CheckIfEmailAlreadyPresent(string email);
         ValidationResponse ValidatorCreateEpaOrganisationRequest(CreateEpaOrganisationRequest request);
         ValidationResponse ValidatorCreateEpaOrganisationContactRequest(CreateOrganisationContactRequest request);
     }
