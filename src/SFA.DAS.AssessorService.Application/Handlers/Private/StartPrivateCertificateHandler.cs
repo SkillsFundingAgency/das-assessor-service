@@ -18,18 +18,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Private
 {
     public class StartPrivateCertificateHandler : IRequestHandler<StartCertificatePrivateRequest, Certificate>
     {
-        private readonly ICertificateRepository _certificateRepository;
-        private readonly IIlrRepository _ilrRepository;
-        private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
+        private readonly ICertificateRepository _certificateRepository;             
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
         private readonly ILogger<StartCertificateHandler> _logger;
 
-        public StartPrivateCertificateHandler(ICertificateRepository certificateRepository, IIlrRepository ilrRepository, IAssessmentOrgsApiClient assessmentOrgsApiClient,
+        public StartPrivateCertificateHandler(ICertificateRepository certificateRepository,
             IOrganisationQueryRepository organisationQueryRepository, ILogger<StartCertificateHandler> logger)
         {
-            _certificateRepository = certificateRepository;
-            _ilrRepository = ilrRepository;
-            _assessmentOrgsApiClient = assessmentOrgsApiClient;
+            _certificateRepository = certificateRepository;            
             _organisationQueryRepository = organisationQueryRepository;
             _logger = logger;
         }
