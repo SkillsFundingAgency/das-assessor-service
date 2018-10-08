@@ -141,10 +141,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 : FormatErrorMessage(EpaOrganisationValidatorMessageName.ContactIdInvalidForOrganisationId);
         }
 
-        public string CheckIfDisplayNameIsMissing(string displayName)
+        public string CheckDisplayName(string name)
         {
-            return string.IsNullOrEmpty(displayName?.Trim()) 
-                ? FormatErrorMessage(EpaOrganisationValidatorMessageName.DisplayNameIsMissing) 
+            if (string.IsNullOrEmpty(name) || name.Trim().Length == 0)
+                return FormatErrorMessage(EpaOrganisationValidatorMessageName.DisplayNameIsMissing);
+
+            return name.Trim().Length < 2
+                ? FormatErrorMessage(EpaOrganisationValidatorMessageName.DisplayNameTooShort)
                 : string.Empty;
         }
 
@@ -179,7 +182,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         {
             var validationResult = new ValidationResponse();
             RunValidationCheckAndAppendAnyError("EndPointAssessorOrganisationId", CheckIfOrganisationNotFound(request.EndPointAssessorOrganisationId), validationResult, ValidationStatusCode.BadRequest);
-            RunValidationCheckAndAppendAnyError("DisplayName", CheckIfDisplayNameIsMissing(request.DisplayName), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("DisplayName", CheckDisplayName(request.DisplayName), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("Email", CheckIfEmailIsMissing(request.Email), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("Email", CheckIfEmailAlreadyPresentInAnotherOrganisation(request.Email, request.EndPointAssessorOrganisationId), validationResult, ValidationStatusCode.AlreadyExists);
 

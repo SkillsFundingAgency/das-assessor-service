@@ -168,4 +168,7 @@
   <data name="UkprnIsInvalid" xml:space="preserve">
     <value>The UKPRN must be 8 numbers</value>
   </data>
+  <data name="DisplayNameTooShort" xml:space="preserve">
+    <value>Enter a name that is 2 or more characters</value>
+  </data>
 </root>
