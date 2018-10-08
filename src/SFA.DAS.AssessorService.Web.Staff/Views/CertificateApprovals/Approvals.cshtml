@@ -7,9 +7,8 @@
     <div class="grid-row">
         <div class="column-three-thirds" sfa-show-for-policy="@Startup.Policies.OperationsTeamOnly">
 
-            <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" >Back</a>
-
-
+            <a class="link-back" asp-controller="Dashboard" asp-action="Index">Back</a>
+          
             @* hidden with css by default *@
             <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
                 <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
@@ -42,37 +41,38 @@
                 {
                     <table class="table table-font-xsmall">
                         <thead>
-                        <tr>
-                            <th>Certificate Reference</th>
-                            <th>ULN</th>
-                            <th>Standard</th>
-                            <th>Approve</th>
-                            <th>Reject</th>
-                        </tr>
+                            <tr>
+                                <th>Certificate Reference</th>
+                                <th>ULN</th>
+                                <th>Standard</th>
+                                <th>Approve</th>
+                                <th>Reject</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        @foreach (var result in Model)
-                        {
-                            <tr>
-                                @* <td><a asp-action="Select" asp-route-stdcode="@result.StandardCode" asp-route-uln="@result.Uln" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.StaffSearchResult.StaffSearchItems.PageIndex">@result.GivenNames @result.FamilyName</a></td> *@
-                                <td>@result.CertificateReference</td>
-                                <td>@result.Uln</td>
-                                <td>@result.StandardCode</td>
-                                <td>
-                                    <input name="IsApproved" asp-for=@result.IsApproved type="checkbox" type="checkbox"/>
-                                    @* <label for="IsApproved">Approved</label> *@
-                                </td>
-                                <td>
-                                    <input name="IsRejected" asp-for=@result.IsRejected type="checkbox" type="checkbox"/>
-                                    @* <label for="IsRejected">Rejected</label> *@
-                                </td>
+                            @foreach (var result in Model)
+                            {
+                                <tr>
+                                    @* <td><a asp-action="Select" asp-route-stdcode="@result.StandardCode" asp-route-uln="@result.Uln" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.StaffSearchResult.StaffSearchItems.PageIndex">@result.GivenNames @result.FamilyName</a></td> *@
+                                    <td>@result.CertificateReference</td>
+                                    <td>@result.Uln</td>
+                                    <td>@result.StandardCode</td>
+                                    <td>
+                                        <input name="IsApproved" asp-for=@result.IsApproved type="checkbox" type="checkbox" />
+                                        @* <label for="IsApproved">Approved</label> *@
+                                    </td>
+                                    <td>
+                                        <input name="IsRejected" asp-for=@result.IsRejected type="checkbox" type="checkbox" />
+                                        @* <label for="IsRejected">Rejected</label> *@
+                                    </td>
 
-                            </tr>
-                        }
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 }
             </div>
+            <button type="submit" class="button">Submit</button>
         </div>
     </div>
 </form>
