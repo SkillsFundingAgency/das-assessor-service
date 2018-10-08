@@ -46,6 +46,11 @@
     <ProjectReference Include="..\SFA.DAS.AssessorService.Web.Extensions\SFA.DAS.AssessorService.Web.Extensions.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="Resources\Validators\CertificateFirstNameViewModelValidator.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>CertificateFirstNameViewModelValidator.resx</DependentUpon>
+    </Compile>
     <Compile Update="Resources\Validators\CertificateUlnViewModelValidator.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

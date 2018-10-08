@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using FluentValidation.Results;
+
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 
