@@ -11,7 +11,7 @@ using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Data.UnitTests.Certificates
 {
-    public class WhenSystemGetsCertificate
+    public class WhenSystemGetsCertificateByUlnAndStandardCode
     {
         private CertificateRepository _certificateRepository;
         private Mock<AssessorDbContext> _mockDbContext;
