@@ -22,14 +22,14 @@ namespace SFA.DAS.AssessorService.Web.Resources.Validators {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class CertificateUkprnViewModelValidator {
+    internal class CertificateFirstNameViewModelValidator {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal CertificateUkprnViewModelValidator() {
+        internal CertificateFirstNameViewModelValidator() {
         }
         
         /// <summary>
@@ -39,8 +39,8 @@ namespace SFA.DAS.AssessorService.Web.Resources.Validators {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SFA.DAS.AssessorService.Web.Resources.Validators.CertificateUkprnViewModelValidat" +
-                            "or", typeof(CertificateUkprnViewModelValidator).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SFA.DAS.AssessorService.Web.Resources.Validators.CertificateFirstNameViewModelVal" +
+                            "idator", typeof(CertificateFirstNameViewModelValidator).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -62,38 +62,11 @@ namespace SFA.DAS.AssessorService.Web.Resources.Validators {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter the training provider&apos;s UKPRN.
+        ///   Looks up a localized string similar to Enter the apprentice’s first name.
         /// </summary>
-        internal static string NameCannotBeEmpty {
+        internal static string FirstNameCannotBeEmpty {
             get {
-                return ResourceManager.GetString("NameCannotBeEmpty", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to This UKPRN cannot be found.
-        /// </summary>
-        internal static string UkprnMustExist {
-            get {
-                return ResourceManager.GetString("UkprnMustExist", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The UKPRN should contain 8 numbers.
-        /// </summary>
-        internal static string UkprnNumber {
-            get {
-                return ResourceManager.GetString("UkprnNumber", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The UKPRN should contain 8 numbers.
-        /// </summary>
-        internal static string UkprnNumberLength {
-            get {
-                return ResourceManager.GetString("UkprnNumberLength", resourceCulture);
+                return ResourceManager.GetString("FirstNameCannotBeEmpty", resourceCulture);
             }
         }
     }

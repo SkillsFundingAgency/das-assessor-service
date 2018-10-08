@@ -7,6 +7,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers;
 using SFA.DAS.AssessorService.Application.Interfaces;
@@ -48,6 +49,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             _validator.Setup(v => v.CheckIfOrganisationUkprnExists(_requestNoIssues.Ukprn)).Returns(string.Empty);
             _validator.Setup(v => v.CheckOrganisationTypeIsNullOrExists(_requestNoIssues.OrganisationTypeId)).Returns(string.Empty);
             _validator.Setup(v => v.CheckUkprnIsValid(_requestNoIssues.Ukprn)).Returns(string.Empty);
+            _validator.Setup(v => v.ValidatorCreateEpaOrganisationRequest(_requestNoIssues)).Returns(new ValidationResponse());
             _cleanserService.Setup(c => c.CleanseStringForSpecialCharacters(It.IsAny<string>()))
                 .Returns((string s) => s);
             _createEpaOrganisationHandler = new CreateEpaOrganisationHandler(_registerRepository.Object, _validator.Object, _idGenerator.Object,_logger.Object, _cleanserService.Object);
@@ -61,13 +63,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
         }
 
         [Test]
-        public void CheckAllValidatorsAreCalledWhenHandlerInvoked()
+        public void CheckMainValidatorIsCalledWhenHandlerInvoked()
         {
            var result = _createEpaOrganisationHandler.Handle(_requestNoIssues, new CancellationToken()).Result;
-            _validator.Verify(v => v.CheckOrganisationName(_requestNoIssues.Name));
-            _validator.Verify(v => v.CheckIfOrganisationUkprnExists(_requestNoIssues.Ukprn));
-            _validator.Verify(v => v.CheckOrganisationTypeIsNullOrExists(_requestNoIssues.OrganisationTypeId));
-            _validator.Verify(v => v.CheckUkprnIsValid(_requestNoIssues.Ukprn));
+            _validator.Verify(v => v.ValidatorCreateEpaOrganisationRequest(_requestNoIssues));
         }
 
         [Test]
@@ -83,67 +82,27 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             _returnedOrganisationId = _createEpaOrganisationHandler.Handle(_requestNoIssues, new CancellationToken()).Result;
             _returnedOrganisationId.Should().BeEquivalentTo(_expectedOrganisationNoIssues.OrganisationId);
         }
-
+        
         [Test]
-        public void GetExceptionWhenNoValidOrganisationIdIsGenerated()
-        {
-            const string errorMessage = "A valid organisation Id could not be generated";
-            var requestWithNoIdGenerated = BuildRequest("org without id coming", 123322);
-            _idGenerator.Setup(g => g.GetNextOrganisationId()).Returns(string.Empty);
-            var ex = Assert.ThrowsAsync<Exception>(() => _createEpaOrganisationHandler.Handle(requestWithNoIdGenerated, new CancellationToken()));
-            Assert.AreEqual(errorMessage, ex.Message);
-            _registerRepository.Verify(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Never);
-           _idGenerator.Verify(v => v.GetNextOrganisationId());
-        }
-
-        [Test]
-        public void GetBadRequestExceptionWhenNoNameValidationOccurs()
-        {
-            const string errorMessage = "No Name issue";
-            var requestNoName = BuildRequest("", 123321);
-            _validator.Setup(v => v.CheckOrganisationName(requestNoName.Name)).Returns(errorMessage);
-            var ex = Assert.ThrowsAsync<BadRequestException>(() => _createEpaOrganisationHandler.Handle(requestNoName, new CancellationToken()));
-            Assert.AreEqual(errorMessage,ex.Message);
-            _registerRepository.Verify(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()),Times.Never);
-            _validator.Verify(v => v.CheckOrganisationName(requestNoName.Name));
-        }  
-
-        [Test]
-        public void GetBadRequestExceptionWhenUkprnInvalidFormatOccurs()
-        {
-            const string errorMessage = "invalid ukprn";
-            var requestInvalidUkprn = BuildRequest("name", 123321);
-            _validator.Setup(v => v.CheckUkprnIsValid(requestInvalidUkprn.Ukprn)).Returns(errorMessage);
-            var ex = Assert.ThrowsAsync<BadRequestException>(() => _createEpaOrganisationHandler.Handle(requestInvalidUkprn, new CancellationToken()));
-            Assert.AreEqual(errorMessage, ex.Message);
-            _registerRepository.Verify(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Never);
-            _validator.Verify(v => v.CheckUkprnIsValid(requestInvalidUkprn.Ukprn));
-        }
-
-        [Test]
-        public void GetBadRequestExceptionWhenukprnAlreadyExistsValidationOccurs()
-        {
-            const string errorMessage = "ukprn already exists";
-            var requestNoUkprn = BuildRequest("name", 123321);
-            _validator.Setup(v => v.CheckIfOrganisationUkprnExists(requestNoUkprn.Ukprn)).Returns(errorMessage);
-            var ex = Assert.ThrowsAsync<AlreadyExistsException>(() => _createEpaOrganisationHandler.Handle(requestNoUkprn, new CancellationToken()));
-            Assert.AreEqual(errorMessage, ex.Message);
-            _registerRepository.Verify(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Never);
-            _validator.Verify(v => v.CheckIfOrganisationUkprnExists(requestNoUkprn.Ukprn));
-        }
-
-
-        [Test]
-        public void GetBadRequestExceptionWheOrganisationTypeIdValidationOccurs()
+        public void GeExceptionWheValidationOccurs()
         {
             const string errorMessage = "organisation type is invalid";
             var requestUnknownOrganisationTypeId = BuildRequest("name", 123321);
-            _validator.Setup(v => v.CheckOrganisationTypeIsNullOrExists(requestUnknownOrganisationTypeId.OrganisationTypeId)).Returns(errorMessage);
+            var errorResponse = BuildErrorResponse(errorMessage,  ValidationStatusCode.BadRequest);
+            _validator.Setup(v => v.ValidatorCreateEpaOrganisationRequest(requestUnknownOrganisationTypeId)).Returns(errorResponse);
             var ex = Assert.ThrowsAsync<BadRequestException>(() => _createEpaOrganisationHandler.Handle(requestUnknownOrganisationTypeId, new CancellationToken()));
-            Assert.AreEqual(errorMessage, ex.Message);
+            Assert.AreEqual(errorMessage + "; ", ex.Message);
             _registerRepository.Verify(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Never);
-            _validator.Verify(v => v.CheckOrganisationTypeIsNullOrExists(requestUnknownOrganisationTypeId.OrganisationTypeId));
+            _validator.Verify(v => v.ValidatorCreateEpaOrganisationRequest(requestUnknownOrganisationTypeId));
         }
+
+        private ValidationResponse BuildErrorResponse(string errorMessage, ValidationStatusCode statusCode)
+        {
+            var validationResponse = new ValidationResponse();
+            validationResponse.Errors.Add(new ValidationErrorDetail(errorMessage,statusCode));
+            return validationResponse;
+        }
+
         private CreateEpaOrganisationRequest BuildRequest(string name, long? ukprn)
         {
             return new CreateEpaOrganisationRequest

@@ -1,7 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Localization;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Api.Consts;
 using SFA.DAS.AssessorService.Application.Api.Validators;
 using SFA.DAS.AssessorService.Application.Interfaces;
@@ -205,7 +208,78 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
             if (repositoryCheckResult == false)
                 _registerRepository.Verify(r => r.ContactIdIsValidForOrganisationId(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
             else
-            _registerRepository.Verify(r => r.ContactIdIsValidForOrganisationId(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+                _registerRepository.Verify(r => r.ContactIdIsValidForOrganisationId(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+        }
+
+        [Test]
+        public void CheckOrganisationRequestValidationWhenThereAreNoIssues()
+        {
+            var request = new CreateEpaOrganisationRequest
+            {
+                Name = "test", Ukprn = null, OrganisationTypeId = 9
+            };
+            
+            _registerRepository.Setup(r => r.OrganisationTypeExists(It.IsAny<int>()))
+                .Returns(Task.FromResult(true));
+            var result = _validator.ValidatorCreateEpaOrganisationRequest(request);
+            
+            Assert.AreEqual(0, result.Errors.Count);
+        }
+        
+        
+        
+        [Test]
+        public void CheckOrganisationRequestValidationWhenThereIsInvalidOrganisationTypeId()
+        {
+            var request = new CreateEpaOrganisationRequest
+            {
+                Name = "test", Ukprn = null, OrganisationTypeId = 9
+            };
+            
+            _registerRepository.Setup(r => r.OrganisationTypeExists(It.IsAny<int>()))
+                .Returns(Task.FromResult(false));
+            var result = _validator.ValidatorCreateEpaOrganisationRequest(request);
+            
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.AreEqual("OrganisationTypeId", result.Errors[0].Field);
+        }
+        
+        
+        [Test]
+        public void CheckOrganisationRequestValidationWhenThereIsInvalidOrganisationTypeIdAndNoName()
+        {
+            var request = new CreateEpaOrganisationRequest
+            {
+                Name = "", Ukprn = null, OrganisationTypeId = 9
+            };
+            
+            _registerRepository.Setup(r => r.OrganisationTypeExists(It.IsAny<int>()))
+                .Returns(Task.FromResult(false));
+            var result = _validator.ValidatorCreateEpaOrganisationRequest(request);
+            
+            Assert.AreEqual(2, result.Errors.Count(x => x.StatusCode == ValidationStatusCode.BadRequest.ToString()));
+            Assert.AreEqual(1,result.Errors.Count(x => x.Field == "OrganisationTypeId"));
+            Assert.AreEqual(1,result.Errors.Count(x => x.Field == "Name"));
+        }
+        
+        [Test]
+        public void CheckOrganisationRequestValidationWhenThereIsInvalidOrganisationTypeIdAndPresentUkprn()
+        {
+            var request = new CreateEpaOrganisationRequest
+            {
+                Name = "test", Ukprn = 12345678, OrganisationTypeId = 9
+            };
+            
+            _registerRepository.Setup(r => r.OrganisationTypeExists(It.IsAny<int>()))
+                .Returns(Task.FromResult(false));
+            _registerRepository.Setup(r => r.EpaOrganisationExistsWithUkprn(It.IsAny<long>()))
+                .Returns(Task.FromResult(true));
+            var result = _validator.ValidatorCreateEpaOrganisationRequest(request);
+            
+            Assert.AreEqual(1, result.Errors.Count(x => x.StatusCode == ValidationStatusCode.BadRequest.ToString()));
+            Assert.AreEqual(1, result.Errors.Count(x => x.StatusCode == ValidationStatusCode.AlreadyExists.ToString()));
+            Assert.AreEqual(1,result.Errors.Count(x => x.Field == "OrganisationTypeId"));
+            Assert.AreEqual(1,result.Errors.Count(x => x.Field == "Ukprn"));
         }
     }
 }

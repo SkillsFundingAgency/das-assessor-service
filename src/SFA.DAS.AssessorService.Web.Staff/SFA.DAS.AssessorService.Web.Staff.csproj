@@ -13,7 +13,6 @@
     <PackageReference Include="Humanizer.Core" Version="2.4.2" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
      <PackageReference Include="AutoMapper" Version="7.0.1" />
-    <PackageReference Include="FluentValidation.AspNetCore" Version="7.6.103" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.3.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.Redis" Version="2.1.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.NLogTarget" Version="2.6.4" />
@@ -31,6 +30,8 @@
   <ItemGroup>
     <ProjectReference Include="..\SFA.DAS.AssessorService.Api.Types\SFA.DAS.AssessorService.Api.Types.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Application.Api.Client\SFA.DAS.AssessorService.Application.Api.Client.csproj" />
+    <ProjectReference Include="..\SFA.DAS.AssessorService.Application.Api\SFA.DAS.AssessorService.Application.Api.csproj" />
+    <ProjectReference Include="..\SFA.DAS.AssessorService.Application\SFA.DAS.AssessorService.Application.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Domain\SFA.DAS.AssessorService.Domain.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.ExternalApis\SFA.DAS.AssessorService.ExternalApis.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Settings\SFA.DAS.AssessorService.Settings.csproj" />
