@@ -117,7 +117,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpPost("contacts", Name = "CreateEpaOrganisationContact")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(EpaContact))]
-        public async Task<IActionResult> CreateOrganisationContact([FromBody] CreateOrganisationContactRequest request)
+        public async Task<IActionResult> CreateOrganisationContact([FromBody] CreateEpaOrganisationContactRequest request)
         {
             try
             {

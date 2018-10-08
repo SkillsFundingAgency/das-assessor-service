@@ -175,7 +175,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             return validationResult;
         }
 
-        public ValidationResponse ValidatorCreateEpaOrganisationContactRequest(CreateOrganisationContactRequest request)
+        public ValidationResponse ValidatorCreateEpaOrganisationContactRequest(CreateEpaOrganisationContactRequest request)
         {
             var validationResult = new ValidationResponse();
             RunValidationCheckAndAppendAnyError("EndPointAssessorOrganisationId", CheckIfOrganisationNotFound(request.EndPointAssessorOrganisationId), validationResult, ValidationStatusCode.BadRequest);

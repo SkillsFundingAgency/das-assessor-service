@@ -12,7 +12,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 {
-    public class CreateEpaOrganisationContactHandler : IRequestHandler<CreateOrganisationContactRequest, string>
+    public class CreateEpaOrganisationContactHandler : IRequestHandler<CreateEpaOrganisationContactRequest, string>
     {
         private readonly IRegisterRepository _registerRepository;
         private readonly ILogger<CreateEpaOrganisationContactHandler> _logger;
@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             _organisationIdGenerator = organisationIdGenerator;
         }
 
-        public async Task<string> Handle(CreateOrganisationContactRequest request, CancellationToken cancellationToken)
+        public async Task<string> Handle(CreateEpaOrganisationContactRequest request, CancellationToken cancellationToken)
         {
 
             ProcessRequestFieldsForSpecialCharacters(request);
@@ -61,7 +61,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             return await _registerRepository.CreateEpaOrganisationContact(contact);
         }
 
-        private EpaContact MapOrganisationContactRequestToContact(CreateOrganisationContactRequest request, string newUsername)
+        private EpaContact MapOrganisationContactRequestToContact(CreateEpaOrganisationContactRequest request, string newUsername)
         {
             return new EpaContact
             {
@@ -74,7 +74,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             };
         }
 
-        private void ProcessRequestFieldsForSpecialCharacters(CreateOrganisationContactRequest request)
+        private void ProcessRequestFieldsForSpecialCharacters(CreateEpaOrganisationContactRequest request)
         {
             request.DisplayName = _cleanser.CleanseStringForSpecialCharacters(request.DisplayName);
             request.Email = _cleanser.CleanseStringForSpecialCharacters(request.Email);

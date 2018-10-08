@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    public class CreateOrganisationContactRequest : IRequest<string>
+    public class CreateEpaOrganisationContactRequest : IRequest<string>
     {
         public string EndPointAssessorOrganisationId { get; set; }
         public string DisplayName { get; set; }

@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         private static Mock<IMediator> _mediator;
         private static Mock<ILogger<RegisterController>> _logger;
         private object _result;
-        private CreateOrganisationContactRequest _request;
+        private CreateEpaOrganisationContactRequest _request;
         private string _orgId;
         private string _username;
 
@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
 
             _username = "username-4000";
             _orgId = "EPA999";
-            _request = new CreateOrganisationContactRequest
+            _request = new CreateEpaOrganisationContactRequest
             {
                 EndPointAssessorOrganisationId = _orgId,
                 DisplayName = "Tester McTestFace",
@@ -57,7 +57,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         [Test]
         public void MediatorSendsExpectedOrganisationContactRequest()
         {
-            _mediator.Verify(m => m.Send(It.IsAny<CreateOrganisationContactRequest>(), new CancellationToken()));
+            _mediator.Verify(m => m.Send(It.IsAny<CreateEpaOrganisationContactRequest>(), new CancellationToken()));
         }
 
         [Test]

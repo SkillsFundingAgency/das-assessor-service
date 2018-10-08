@@ -27,6 +27,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         string CheckIfEmailIsMissing(string email);
         //string CheckIfEmailAlreadyPresent(string email);
         ValidationResponse ValidatorCreateEpaOrganisationRequest(CreateEpaOrganisationRequest request);
-        ValidationResponse ValidatorCreateEpaOrganisationContactRequest(CreateOrganisationContactRequest request);
+        ValidationResponse ValidatorCreateEpaOrganisationContactRequest(CreateEpaOrganisationContactRequest request);
     }
 }

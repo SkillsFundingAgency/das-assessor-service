@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         private static Mock<IMediator> _mediator;
         private static Mock<ILogger<RegisterController>> _logger;
         private object _result;
-        private CreateOrganisationContactRequest _request;
+        private CreateEpaOrganisationContactRequest _request;
 
         [SetUp]
         public void Arrange()
@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
             _mediator = new Mock<IMediator>();
             _logger = new Mock<ILogger<RegisterController>>();
 
-            _request = new CreateOrganisationContactRequest
+            _request = new CreateEpaOrganisationContactRequest
             {
                 EndPointAssessorOrganisationId = "EPA0009",
                 DisplayName = "Tester McTestFace",
@@ -55,7 +55,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         [Test]
         public void MediatorSendsInvalidOrganisatioContactRequest()
         {
-            _mediator.Verify(m => m.Send(It.IsAny<CreateOrganisationContactRequest>(), new CancellationToken()));
+            _mediator.Verify(m => m.Send(It.IsAny<CreateEpaOrganisationContactRequest>(), new CancellationToken()));
         }
 
         [Test]
