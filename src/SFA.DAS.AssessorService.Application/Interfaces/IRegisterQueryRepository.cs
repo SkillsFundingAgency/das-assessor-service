@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
         Task<bool> ContactIdIsValid(string contactId);
 
-       // Task<bool> EmailAlreadyPresent(string email);
+        Task<bool> EmailAlreadyPresentInAnotherOrganisation(string email, string organisationId);
         Task<bool> ContactIdIsValidForOrganisationId(string contactId, string organisationId);
         Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisations();
         Task<bool> EpaOrganisationStandardExists(string organisationId, int standardCode);

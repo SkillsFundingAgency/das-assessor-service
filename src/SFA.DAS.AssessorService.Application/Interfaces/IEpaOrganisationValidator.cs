@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         string CheckIfOrganisationStandardDoesNotExist(string organisationId, int standardCode);
         string CheckIfDisplayNameIsMissing(string displayName);
         string CheckIfEmailIsMissing(string email);
-        //string CheckIfEmailAlreadyPresent(string email);
+        string CheckIfEmailAlreadyPresentInAnotherOrganisation(string email, string organisationId);
         ValidationResponse ValidatorCreateEpaOrganisationRequest(CreateEpaOrganisationRequest request);
         ValidationResponse ValidatorCreateEpaOrganisationContactRequest(CreateEpaOrganisationContactRequest request);
     }

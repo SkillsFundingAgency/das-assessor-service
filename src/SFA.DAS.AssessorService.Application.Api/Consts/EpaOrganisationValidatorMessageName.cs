@@ -23,6 +23,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Consts
         public const string OrganisationStandardDoesNotExist = "OrganisationStandardDoesNotExist";
         public const string DisplayNameIsMissing = "DisplayNameIsMissing";
         public const string EmailIsMissing = "EmailIsMissing";
-        public const string EmailAlreadyPresent = "EmailAlreadyPresent";
+        public const string EmailAlreadyPresentInAnotherOrganisation = "EmailAlreadyPresentInAnotherOrganisation";
     }
 }

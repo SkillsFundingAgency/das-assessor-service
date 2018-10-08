@@ -155,12 +155,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 : string.Empty;
         }
 
-        //public string CheckIfEmailAlreadyPresent(string email)
-        //{
-        //    return _registerRepository.EmailAlreadyPresent(email).Result
-        //        ? FormatErrorMessage(EpaOrganisationValidatorMessageName.EmailAlreadyPresent)
-        //        : string.Empty;
-        //}
+        public string CheckIfEmailAlreadyPresentInAnotherOrganisation(string email, string organisationId)
+        {
+            return _registerRepository.EmailAlreadyPresentInAnotherOrganisation(email, organisationId).Result
+                ? FormatErrorMessage(EpaOrganisationValidatorMessageName.EmailAlreadyPresentInAnotherOrganisation)
+                : string.Empty;
+        }
 
         public ValidationResponse ValidatorCreateEpaOrganisationRequest(CreateEpaOrganisationRequest request)
         {
@@ -181,7 +181,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             RunValidationCheckAndAppendAnyError("EndPointAssessorOrganisationId", CheckIfOrganisationNotFound(request.EndPointAssessorOrganisationId), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("DisplayName", CheckIfDisplayNameIsMissing(request.DisplayName), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("Email", CheckIfEmailIsMissing(request.Email), validationResult, ValidationStatusCode.BadRequest);
-            //RunValidationCheckAndAppendAnyError("Email", CheckIfEmailAlreadyPresent(request.Email), validationResult, ValidationStatusCode.AlreadyExists);
+            RunValidationCheckAndAppendAnyError("Email", CheckIfEmailAlreadyPresentInAnotherOrganisation(request.Email, request.EndPointAssessorOrganisationId), validationResult, ValidationStatusCode.AlreadyExists);
 
             return validationResult;
         }
@@ -195,6 +195,5 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             if (errorMessage != string.Empty)
                 validationResult.Errors.Add(new ValidationErrorDetail(fieldName, errorMessage.Replace("; ", ""), statusCode));
         }
-
     }
 }
