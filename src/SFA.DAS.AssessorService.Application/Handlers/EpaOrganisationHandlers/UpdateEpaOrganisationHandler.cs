@@ -42,6 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             errorDetails.Append(_validator.CheckOrganisationName(request.Name));
             errorDetails.Append(_validator.CheckOrganisationTypeIsNullOrExists(request.OrganisationTypeId));
             errorDetails.Append(_validator.CheckIfOrganisationUkprnExistsForOtherOrganisations(request.Ukprn, request.OrganisationId));
+            errorDetails.Append(_validator.CheckOrganisationNameNotUsedForOtherOrganisations(request.Name, request.OrganisationId));
             errorDetails.Append(_validator.CheckUkprnIsValid(request.Ukprn));
             if (errorDetails.Length > 0)
             {

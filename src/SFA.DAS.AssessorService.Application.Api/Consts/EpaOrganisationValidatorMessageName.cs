@@ -11,6 +11,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Consts
         public const string OrganisationNotFound = "OrganisationNotFound";
         public const string OrganisationIdTooLong = "OrganisationIdTooLong";
         public const string OrganisationNameEmpty = "OrganisationNameEmpty";
+        public const string OrganisationNameTooShort = "OrganisationNameTooShort";
         public const string OrganisationIdAlreadyUsed = "OrganisationIdAlreadyUsed";
         public const string UkprnAlreadyUsed = "UkprnAlreadyUsed";
         public const string OrganisationTypeIsInvalid = "OrganisationTypeIsInvalid";
