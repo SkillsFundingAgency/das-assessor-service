@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Web
             _env = env;
         }
 
-        public IWebConfiguration Configuration { get; set; }
+        private IWebConfiguration Configuration { get; set; }
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
@@ -84,10 +84,10 @@ namespace SFA.DAS.AssessorService.Web
 
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
             
-            return ConfigureIOC(services);
+            return ConfigureIoc(services);
         }        
 
-        private IServiceProvider ConfigureIOC(IServiceCollection services)
+        private IServiceProvider ConfigureIoc(IServiceCollection services)
         {
             var container = new Container();
 

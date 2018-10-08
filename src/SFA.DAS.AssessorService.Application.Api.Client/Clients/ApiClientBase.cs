@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
             _retryPolicy = HttpPolicyExtensions
                     .HandleTransientHttpError()
-                    .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+//                    .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
                 .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2,
                     retryAttempt)));
         }
