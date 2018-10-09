@@ -73,13 +73,13 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             RegisterQueryRepository.Setup(r => r.GetOrganisationStandardByOrganisationId(_organisationId))
                 .Returns(Task.FromResult(_expectedStandards.AsEnumerable()));
 
-            RegisterQueryRepository.Setup(r => r.GetOrganisatonStandardPeriodsByOrganisationStandard(_organisationId, _standardCode1))
+            RegisterQueryRepository.Setup(r => r.GetOrganisationStandardPeriodsByOrganisationStandard(_organisationId, _standardCode1))
                 .Returns(Task.FromResult(_expectedPeriods1.AsEnumerable()));
 
-            RegisterQueryRepository.Setup(r => r.GetOrganisatonStandardPeriodsByOrganisationStandard(_organisationId, _standardCode2))
+            RegisterQueryRepository.Setup(r => r.GetOrganisationStandardPeriodsByOrganisationStandard(_organisationId, _standardCode2))
                 .Returns(Task.FromResult(_expectedPeriods2.AsEnumerable()));
 
-            RegisterQueryRepository.Setup(r => r.GetOrganisatonStandardPeriodsByOrganisationStandard(_organisationId, _standardCode3))
+            RegisterQueryRepository.Setup(r => r.GetOrganisationStandardPeriodsByOrganisationStandard(_organisationId, _standardCode3))
                 .Returns(Task.FromResult(new List<OrganisationStandardPeriod>().AsEnumerable()));
 
             GetStandardsByAssessmentOrganisationHandler =
@@ -99,7 +99,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         public void GetPeriodByOrganisationStandardRepoIsCalledThreeTimesWhenHandlerInvoked()
         {
             GetStandardsByAssessmentOrganisationHandler.Handle(_request, new CancellationToken()).Wait();
-            RegisterQueryRepository.Verify(r => r.GetOrganisatonStandardPeriodsByOrganisationStandard(_organisationId,It.IsAny<int>()),Times.Exactly(3));
+            RegisterQueryRepository.Verify(r => r.GetOrganisationStandardPeriodsByOrganisationStandard(_organisationId,It.IsAny<int>()),Times.Exactly(3));
         }
 
         [Test]

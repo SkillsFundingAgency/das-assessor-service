@@ -18,11 +18,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
 {
     public class EpaOrganisationValidator: IEpaOrganisationValidator
     {
-        private readonly IRegisterQueryRepository _registerRepository;
+        private readonly IRegisterValidationRepository _registerRepository;
         private readonly IStringLocalizer<EpaOrganisationValidator> _localizer;
         public string ErrorMessageOrganisationNameAlreadyPresent { get; } = "There is already an organisation present with this name; ";
 
-        public EpaOrganisationValidator( IRegisterQueryRepository registerRepository, IStringLocalizer<EpaOrganisationValidator> localizer) 
+        public EpaOrganisationValidator( IRegisterValidationRepository registerRepository, IStringLocalizer<EpaOrganisationValidator> localizer) 
         {
             _registerRepository = registerRepository;
             _localizer = localizer;

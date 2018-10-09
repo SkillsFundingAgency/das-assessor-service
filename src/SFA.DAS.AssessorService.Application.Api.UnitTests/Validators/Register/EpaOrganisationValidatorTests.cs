@@ -15,13 +15,13 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
     [TestFixture]
     public class EpaOrganisationValidatorTests
     {
-        private Mock<IRegisterQueryRepository> _registerRepository;
+        private Mock<IRegisterValidationRepository> _registerRepository;
         private EpaOrganisationValidator _validator;
         private Mock<IStringLocalizer<EpaOrganisationValidator>> _localizer;
         [SetUp]
         public void Setup()
         {
-            _registerRepository = new Mock<IRegisterQueryRepository>();
+            _registerRepository = new Mock<IRegisterValidationRepository>();
             _localizer = new Mock<IStringLocalizer<EpaOrganisationValidator>>();
             _validator = new EpaOrganisationValidator(_registerRepository.Object, _localizer.Object);
 

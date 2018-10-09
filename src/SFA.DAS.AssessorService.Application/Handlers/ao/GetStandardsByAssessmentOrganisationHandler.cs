@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             var organisationStandardSummaries = orgStandards as OrganisationStandardSummary[] ?? orgStandards.ToArray();
             foreach (var orgStandard in organisationStandardSummaries)
             {
-                var periods = await _registerQueryRepository.GetOrganisatonStandardPeriodsByOrganisationStandard(orgStandard.OrganisationId, orgStandard.StandardCode);
+                var periods = await _registerQueryRepository.GetOrganisationStandardPeriodsByOrganisationStandard(orgStandard.OrganisationId, orgStandard.StandardCode);
                 orgStandard.Periods = periods.ToList();
             }
             return organisationStandardSummaries.ToList();

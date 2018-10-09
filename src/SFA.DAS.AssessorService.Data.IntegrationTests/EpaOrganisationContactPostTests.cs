@@ -12,7 +12,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
     {
         private readonly DatabaseService _databaseService = new DatabaseService();
         private RegisterRepository _repository;
-        private RegisterQueryRepository _queryRepository;
+        private RegisterValidationRepository _validationRepository;
         private string _organisationIdCreated;
         private int _ukprnCreated;
         private OrganisationModel _organisation;
@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         public void SetUpOrganisationTests()
         {
             _repository = new RegisterRepository(_databaseService.WebConfiguration);
-            _queryRepository = new RegisterQueryRepository(_databaseService.WebConfiguration);
+            _validationRepository = new RegisterValidationRepository(_databaseService.WebConfiguration);
             _organisationIdCreated = "EPA0987";
             _ukprnCreated = 123321;
             _org2IdCreated = "EPA0001";
@@ -83,10 +83,10 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         {
 
             var isContactPresentBeforeInsert =
-                _queryRepository.ContactIdIsValidForOrganisationId(_contactId.ToString(),_contact.EndPointAssessorOrganisationId).Result;
+                _validationRepository.ContactIdIsValidForOrganisationId(_contactId.ToString(),_contact.EndPointAssessorOrganisationId).Result;
             var returnedUserName = _repository.CreateEpaOrganisationContact(_contact).Result;
             var isContactPresenAfterInsert =
-                _queryRepository.ContactIdIsValidForOrganisationId(_contactId.ToString(), _contact.EndPointAssessorOrganisationId).Result;
+                _validationRepository.ContactIdIsValidForOrganisationId(_contactId.ToString(), _contact.EndPointAssessorOrganisationId).Result;
          
             Assert.IsFalse(isContactPresentBeforeInsert);
             Assert.IsTrue(isContactPresenAfterInsert);
