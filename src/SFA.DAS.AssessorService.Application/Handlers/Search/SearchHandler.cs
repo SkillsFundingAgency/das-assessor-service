@@ -59,6 +59,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
             var thisEpao = await _organisationRepository.GetByUkPrn(request.UkPrn);
 
+            if (thisEpao == null)
+            {
+                _logger.LogInformation(LoggingConstants.SearchFailure);
+                return new List<SearchResult>();
+            }
+
             var intStandards = await GetEpaoStandards(thisEpao);
 
             var ilrResults = await _ilrRepository.SearchForLearnerByUln(request.Uln);
