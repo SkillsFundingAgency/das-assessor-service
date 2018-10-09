@@ -1,0 +1,27 @@
+﻿@using SFA.DAS.AssessorService.Web.Staff.Controllers
+@model RegisterViewContactViewModel
+@{
+    ViewBag.Title = "View Contact";
+    Layout = "_Layout";
+}
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <a asp-action="Index" asp-controller="Register" class="link-back">Return to organisation search</a>
+        
+        <h1>
+            <label class="form-label" for="">
+                <span class="heading-xlarge">View Contact</span>
+            </label>
+        </h1>
+
+        <div id="organisationWrapper">
+               
+            <label for="ContactId">
+                <span class="form-label-bold">Contact ID</span>
+                        
+                <span>@Model.ContactId</span>
+            </label>
+        </div>
+
+    </div>
+</div>
