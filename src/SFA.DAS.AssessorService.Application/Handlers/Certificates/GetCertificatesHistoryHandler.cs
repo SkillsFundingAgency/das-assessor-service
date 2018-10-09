@@ -98,7 +98,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                         ContactAddLine2 = certificateData.ContactAddLine2,
                         ContactAddLine3 = certificateData.ContactAddLine3,
                         ContactAddLine4 = certificateData.ContactAddLine4,
-                        ContactPostCode = certificateData.ContactPostCode
+                        ContactPostCode = certificateData.ContactPostCode,
+                        IsPrivatelyFunded =  certificate.IsPrivatelyFunded
                     };
                 });
 

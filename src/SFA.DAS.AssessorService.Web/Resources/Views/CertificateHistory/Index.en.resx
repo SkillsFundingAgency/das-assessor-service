@@ -132,6 +132,9 @@
   <data name="CertificateNumber" xml:space="preserve">
     <value>Certificate number</value>
   </data>
+  <data name="CertificateType" xml:space="preserve">
+    <value>Certificate Type</value>
+  </data>
   <data name="DateRequested" xml:space="preserve">
     <value>Date requested</value>
   </data>
@@ -156,10 +159,16 @@
   <data name="Previous" xml:space="preserve">
     <value>Previous</value>
   </data>
+  <data name="PrivatelyFundedCertificate" xml:space="preserve">
+    <value>Privately Funded</value>
+  </data>
   <data name="RecordedBy" xml:space="preserve">
     <value>Recorded by</value>
   </data>
   <data name="Standard" xml:space="preserve">
+    <value>Standard</value>
+  </data>
+  <data name="StandardCertificate" xml:space="preserve">
     <value>Standard</value>
   </data>
   <data name="TrainingProvider" xml:space="preserve">
