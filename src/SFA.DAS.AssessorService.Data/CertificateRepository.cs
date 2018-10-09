@@ -180,7 +180,7 @@ namespace SFA.DAS.AssessorService.Data
                                  certificate.OrganisationId equals organisation.Id
                                join contact in _context.Contacts on
                                  organisation.Id equals contact.OrganisationId
-                               where contact.Username == userName
+                                  where contact.Username == userName
                                   && statuses.Contains(certificate.Status)
                                select certificate).CountAsync();
 
