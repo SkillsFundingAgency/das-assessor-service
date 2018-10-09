@@ -61,6 +61,39 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             return View(vm);
         }
 
+        [HttpGet("register/add-contact/{organisationId}")]
+        public async Task<IActionResult> AddContact(string organisationId)
+        {
+            var vm = new RegisterAddContactViewModel
+            {
+                EndPointAssessorOrganisationId = organisationId
+            };
+
+            return View(vm);
+        }
+
+        [HttpPost("register/add-contact/{organisationId}")]
+        public async Task<IActionResult> AddContact(RegisterAddContactViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+            {      
+                return View(viewModel);
+            }
+
+            var addContactRequest = new CreateEpaOrganisationContactRequest
+            {
+                EndPointAssessorOrganisationId = viewModel.EndPointAssessorOrganisationId,
+                DisplayName =  viewModel.DisplayName,
+                Email = viewModel.Email,
+                PhoneNumber = viewModel.PhoneNumber
+                
+            };
+
+            var organisationId = await _apiClient.CreateEpaContact(addContactRequest);
+            //return Redirect($"view-organisation/{organisationId}");
+            return Redirect($"/register/add-contact/{viewModel.EndPointAssessorOrganisationId}");
+        }
+        
           [HttpGet("register/impage")]
         public async Task<IActionResult> Impage()
         {
