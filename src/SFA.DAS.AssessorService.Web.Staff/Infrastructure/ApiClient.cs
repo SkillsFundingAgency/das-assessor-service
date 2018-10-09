@@ -8,10 +8,16 @@ using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Staff;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
+using SFA.DAS.AssessorService.Web.Staff.Models;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
 {
@@ -83,6 +89,36 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         public async Task<List<AssessmentOrganisationSummary>> SearchOrganisations(string searchString)
         {
             return await Get<List<AssessmentOrganisationSummary>>($"/api/ao/assessment-organisations/search/{searchString}");
+        }
+
+        public async Task<string> ImportOrganisations()
+        {
+            var uri = "/api/ao/assessment-organisations/";
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+
+            using (var response = await _client.PatchAsync(new Uri(uri, UriKind.Relative), null))
+            {
+                var res= await response.Content.ReadAsAsync<AssessmentOrgsImportResponse>();
+                return res.Status;
+            }
+        }
+        
+        
+        public async Task<List<OrganisationType>> GetOrganisationTypes()
+        {
+            return await Get<List<OrganisationType>>($"/api/ao/organisation-types");
+        }
+
+
+        public async Task<EpaOrganisation> GetEpaOrganisation(string organisationId)
+        {
+            return await Get<EpaOrganisation>($"api/ao/assessment-organisations/{organisationId}");
+        }
+
+        public async Task<string> CreateEpaOrganisation(CreateEpaOrganisationRequest request)
+        {
+            var result = await Post<CreateEpaOrganisationRequest, EpaOrganisationResponse>("api/ao/assessment-organisations", request);
+            return result.Details;
         }
 
         public async Task<PaginatedList<StaffBatchSearchResult>> BatchSearch(int batchNumber, int page)
