@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
             var specialCharacters = SpecialCharactersInString(processedString);
 
-            if (specialCharacters.Length <= 0) return processedString.Trim();
+            if (specialCharacters.Length <= 0) return processedString;
 
             foreach (var specialCharacter in specialCharacters)
             {
