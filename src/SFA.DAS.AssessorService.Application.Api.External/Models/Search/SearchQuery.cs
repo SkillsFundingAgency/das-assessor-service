@@ -5,7 +5,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Search
     public class SearchQuery : IEquatable<SearchQuery>
     {
         public long Uln { get; set; }
-        public string FamilyName { get; set; }
+        public string Surname { get; set; }
         public int UkPrn { get; set; }
         public string Username { get; set; }
 
@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Search
 
                 int hash = hashBase;
                 hash = (hash * multiplier) ^ Uln.GetHashCode();
-                hash = (hash * multiplier) ^ (FamilyName is null ? 0 : FamilyName.GetHashCode());
+                hash = (hash * multiplier) ^ (Surname is null ? 0 : Surname.GetHashCode());
                 hash = (hash * multiplier) ^ UkPrn.GetHashCode();
                 hash = (hash * multiplier) ^ (Username is null ? 0 : Username.GetHashCode());
                 return hash;
@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Search
         private bool IsEqual(SearchQuery other)
         {
             return Equals(Uln, other.Uln)
-                && string.Equals(FamilyName, other.FamilyName)
+                && string.Equals(Surname, other.Surname)
                 && Equals(UkPrn, other.UkPrn)
                 && string.Equals(Username, other.Username);
         }

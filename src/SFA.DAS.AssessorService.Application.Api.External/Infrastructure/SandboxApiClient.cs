@@ -127,8 +127,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
         public Task<List<SearchResult>> Search(SearchQuery searchQuery, int? standardCode = null)
         {
-            SearchResult result1 = new SearchResult { Uln = searchQuery.Uln, GivenNames = "SANDBOX", FamilyName = searchQuery.FamilyName, StdCode = standardCode ?? 99, CertificateStatus = "Draft", CertificateReference = "SANDBOX" };
-            SearchResult result2 = new SearchResult { Uln = searchQuery.Uln, GivenNames = "SANDBOX", FamilyName = searchQuery.FamilyName, StdCode = 1 };
+            SearchResult result1 = new SearchResult { Uln = searchQuery.Uln, GivenNames = "SANDBOX", FamilyName = searchQuery.Surname, StdCode = standardCode ?? 99, CertificateStatus = "Draft", CertificateReference = "SANDBOX" };
+            SearchResult result2 = new SearchResult { Uln = searchQuery.Uln, GivenNames = "SANDBOX", FamilyName = searchQuery.Surname, StdCode = 1 };
 
             List<SearchResult> response = new List<SearchResult> { result1 };
 

@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             SearchQuery searchQuery = new SearchQuery
             {
                 Uln = uln,
-                FamilyName = familyName,
+                Surname = familyName,
                 UkPrn = _headerInfo.Ukprn,
                 Username = _headerInfo.Email
             };
