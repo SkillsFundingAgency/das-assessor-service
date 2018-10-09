@@ -84,13 +84,13 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
 
             var isContactPresentBeforeInsert =
                 _validationRepository.ContactIdIsValidForOrganisationId(_contactId.ToString(),_contact.EndPointAssessorOrganisationId).Result;
-            var returnedUserName = _repository.CreateEpaOrganisationContact(_contact).Result;
+            var returnedContactId = _repository.CreateEpaOrganisationContact(_contact).Result;
             var isContactPresenAfterInsert =
                 _validationRepository.ContactIdIsValidForOrganisationId(_contactId.ToString(), _contact.EndPointAssessorOrganisationId).Result;
          
             Assert.IsFalse(isContactPresentBeforeInsert);
             Assert.IsTrue(isContactPresenAfterInsert);
-            Assert.AreEqual(returnedUserName, _contact.Username);
+            Assert.AreEqual(returnedContactId, _contactId.ToString());
         }
 
         [OneTimeTearDown]
