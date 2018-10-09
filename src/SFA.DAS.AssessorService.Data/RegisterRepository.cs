@@ -124,7 +124,7 @@ namespace SFA.DAS.AssessorService.Data
                         contact.PhoneNumber
                     });
 
-                return contact.Username;
+                return contact.Id.ToString();
             }
         }
     }
