@@ -67,6 +67,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                     c.SwaggerDoc("v1", new Info { Title = "SFA.DAS.AssessorService.Application.Api.External", Version = "v1" });
                     c.EnableAnnotations();
                     c.OperationFilter<AddAzureHeaderOperationFilter>();
+                    c.OperationFilter<UpdateOptionalParamatersWithDefaultValues>();
 
                     if (_env.IsDevelopment())
                     {

@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<SearchResult>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
         [SwaggerOperation("Get Learner Details", "Gets the Learner details for the specified Uln and Family Name, filtered by Standard Code if specified.")]
-        public async Task<IActionResult> Get(long uln, string familyName, [SwaggerParameter(Required = false)] int? standardCode = null)
+        public async Task<IActionResult> Get(long uln, string familyName, int? standardCode = null)
         {            
             SearchQuery searchQuery = new SearchQuery
             {
