@@ -142,6 +142,33 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             }
         }
 
+        [HttpPut("contacts", Name = "UpdateEpaOrganisationContact")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EpaContact))]
+        public async Task<IActionResult> UpdateOrganisationContact([FromBody] UpdateEpaOrganisationContactRequest request)
+        {
+            try
+            {
+                _logger.LogInformation("Updating Organisation Contact");
+                var result = await _mediator.Send(request);
+                return Ok(new EpaOrganisationContactResponse(result));
+            }
+            catch (AlreadyExistsException ex)
+            {
+                _logger.LogError($@"Record already exists for using this email in another organisation [{request.Email}]");
+                return Conflict(new EpaOrganisationContactResponse(ex.Message));
+            }
+            catch (BadRequestException ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest(new EpaOrganisationContactResponse(ex.Message));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($@"Bad request, Message: [{ex.Message}]");
+                return BadRequest();
+            }
+        }
+
         [HttpPost("standards",Name = "CreateEpaOrganisationStandard")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EpaOrganisationStandard))]
         [SwaggerResponse((int)HttpStatusCode.NotFound, typeof(ApiResponse))]

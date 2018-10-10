@@ -11,7 +11,10 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<bool> EpaOrganisationAlreadyUsingName(string organisationName, string organisationId);
         Task<bool> ContactIdIsValid(string contactId);
         Task<bool> EmailAlreadyPresentInAnotherOrganisation(string email, string organisationId);
+
+        Task<bool> EmailAlreadyPresentInAnOrganisationNotAssociatedWithContact(string email, string contactId);
         Task<bool> ContactIdIsValidForOrganisationId(string contactId, string organisationId);
         Task<bool> EpaOrganisationStandardExists(string organisationId, int standardCode);
+        Task<bool> ContactExists(string contactId);
     }
 }

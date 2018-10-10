@@ -143,5 +143,31 @@ namespace SFA.DAS.AssessorService.Data
                 return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new {email, organisationId});
             }
         }
+
+        public async Task<bool> EmailAlreadyPresentInAnOrganisationNotAssociatedWithContact(string email, string contactId)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+                const string sqlToCheckExists =
+                    "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Contacts] " +
+                    "WHERE email  = @email and EndPointAssessorOrganisationId != (select EndPointAssessorOrganisationId from contacts where Id=@contactId)";
+                return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { email, contactId });
+            }
+        }
+
+        public async Task<bool> ContactExists(string contactId)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+                const string sqlToCheckExists =
+                    "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Contacts] " +
+                    "WHERE Id  = @contactId";
+                return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { contactId});
+            }
+        }
     }
 }

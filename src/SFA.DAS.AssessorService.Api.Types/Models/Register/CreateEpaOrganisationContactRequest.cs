@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace SFA.DAS.AssessorService.Api.Types.Models
+namespace SFA.DAS.AssessorService.Api.Types.Models.Register
 {
     public class CreateEpaOrganisationContactRequest : IRequest<string>
     {

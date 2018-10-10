@@ -171,4 +171,10 @@
   <data name="DisplayNameTooShort" xml:space="preserve">
     <value>Enter a name that is 2 or more characters</value>
   </data>
+  <data name="ContactIdDoesntExist" xml:space="preserve">
+    <value>The Contact Id is invalid</value>
+  </data>
+  <data name="ErrorMessageOrganisationNameAlreadyPresent" xml:space="preserve">
+    <value>There is already an organisation present with this name</value>
+  </data>
 </root>
