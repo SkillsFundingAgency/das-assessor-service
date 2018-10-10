@@ -25,7 +25,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
         public string AddressLine2 { get; set; }
         public string AddressLine3 { get; set; }
         public string City { get; set; }
-        public string Postcode { get; set; }    
+        public string Postcode { get; set; }
+        public bool RedirectToCheck { get; set; }
 
         public void FromCertificate(Certificate cert)
         {

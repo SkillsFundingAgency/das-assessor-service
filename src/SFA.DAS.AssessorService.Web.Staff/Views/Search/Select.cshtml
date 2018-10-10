@@ -209,7 +209,10 @@ else
     <div class="column-two-thirds">
         <h2 class="heading-medium">What do you want to do next?</h2>
         <ul class="list list-bullet">
-            @if (Model.Learner.CertificateReference != null)
+            @if (Model.Learner.CertificateStatus == CertificateStatus.Submitted
+                || Model.Learner.CertificateStatus == CertificateStatus.Printed
+                || Model.Learner.CertificateStatus == CertificateStatus.Reprint
+                )
             {
                 <li><a asp-action="Index" asp-controller="DuplicateRequest" asp-route-certificateId="@Model.Learner.CertificateId" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.Page">request duplicate certificate</a></li>
             }

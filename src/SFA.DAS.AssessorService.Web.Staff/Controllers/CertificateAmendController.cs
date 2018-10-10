@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         [HttpPost(Name = "Check")]
         public async Task<IActionResult> ConfirmAndSubmit(CertificateCheckViewModel vm)
         {
-            return RedirectToAction("Index", "DuplicateRequest", new { certificateid = vm.Id });
+            return RedirectToAction("Index", "DuplicateRequest", new { certificateid = vm.Id, redirectToCheck = vm.RedirectToCheck });
         }
     }
 }

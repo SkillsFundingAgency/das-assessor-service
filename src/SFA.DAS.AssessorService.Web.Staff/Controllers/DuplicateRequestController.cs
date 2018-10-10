@@ -23,11 +23,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(Guid certificateId,
+        public async Task<IActionResult> Index(         
+            Guid certificateId,
             int stdCode,
             long uln,
             string searchString,
-            int page = 1)
+            int page = 1,
+            bool? redirectToCheck = false)
         {
             var certificate = await _apiClient.GetCertificate(certificateId);
 
@@ -39,7 +41,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 SearchString = searchString,
                 StdCode = stdCode,
                 Uln = uln,
-                Page = page
+                Page = page,
+                BackToCheckPage = redirectToCheck.Value
             };
 
             return View(vm);
@@ -80,5 +83,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         public int Page { get; set; }
         public long Uln { get; set; }
         public int StdCode { get; set; }
+        public bool BackToCheckPage { get; set; }
     }
 }
