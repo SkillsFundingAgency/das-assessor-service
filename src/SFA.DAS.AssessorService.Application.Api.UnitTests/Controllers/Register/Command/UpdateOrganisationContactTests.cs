@@ -44,7 +44,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
                 _result = _controller.UpdateOrganisationContact(_request).Result;
             }
 
-
             [Test]
             public void UpdateEpaOrganisationContactReturnsExpectedActionResult()
             {
@@ -74,7 +73,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
             {
                 var organisationStandardId = ((OkObjectResult)_result).Value as EpaOrganisationContactResponse;
                 organisationStandardId.Details.Should().Be(_contactId.ToString());
-            }
-        
+            }       
     }
 }
