@@ -82,7 +82,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             }
         }
 
-
         [HttpPut(Name = "UpdateEpaOrganisation")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EpaOrganisationResponse))]
         [SwaggerResponse((int)HttpStatusCode.NotFound, typeof(ApiResponse))]
