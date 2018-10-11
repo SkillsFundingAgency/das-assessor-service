@@ -152,7 +152,7 @@ namespace SFA.DAS.AssessorService.Data
                     await connection.OpenAsync();
                 const string sqlToCheckExists =
                     "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Contacts] " +
-                    "WHERE email  = @email and EndPointAssessorOrganisationId != (select EndPointAssessorOrganisationId from contacts where Id=@contactId)";
+                    "WHERE email  = @email and EndPointAssessorOrganisationId != (select EndPointAssessorOrganisationId from contacts where convert(varchar(50),id)=@contactId)";
                 return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { email, contactId });
             }
         }
@@ -165,7 +165,7 @@ namespace SFA.DAS.AssessorService.Data
                     await connection.OpenAsync();
                 const string sqlToCheckExists =
                     "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Contacts] " +
-                    "WHERE Id  = @contactId";
+                    "WHERE convert(varchar(50),id)  = @contactId";
                 return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { contactId});
             }
         }
