@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
         private readonly ILogger<Startup> _logger;
         private const string ServiceName = "SFA.DAS.AssessorService";
         private const string Version = "1.0";
-        private readonly bool UseExternalApiSandBox;
+        private readonly bool UseSandbox;
 
         public Startup(IConfiguration configuration, IHostingEnvironment env, ILogger<Startup> logger)
         {
@@ -35,9 +35,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External
             _logger = logger;
             Configuration = configuration;
 
-            if(!bool.TryParse(Configuration["UseExternalApiSandBox"], out UseExternalApiSandBox))
+            if(!bool.TryParse(Configuration["UseSandboxServices"], out UseSandbox))
             {
-                UseExternalApiSandBox = "yes".Equals(Configuration["UseExternalApiSandBox"], StringComparison.InvariantCultureIgnoreCase);
+                UseSandbox = "yes".Equals(Configuration["UseSandboxServices"], StringComparison.InvariantCultureIgnoreCase);
             }
         }
 
@@ -51,7 +51,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
             {
                 ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
 
-                if (UseExternalApiSandBox)
+                if (UseSandbox)
                 {
                     services.AddHttpClient<IApiClient, SandboxApiClient>(config =>
                     {
@@ -156,7 +156,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                     })
                     .UseAuthentication();
 
-                if (UseExternalApiSandBox)
+                if (UseSandbox)
                 {
                     app.UseMiddleware<SandboxHeadersMiddleware>();
                 }
