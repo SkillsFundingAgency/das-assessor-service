@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -38,6 +39,16 @@ namespace SFA.DAS.AssessorService.Data
                 .FirstOrDefaultAsync();
 
             return contact;
+        }
+
+        public async Task<Contact> GetBySignInId(Guid requestSignInId)
+        {
+            return await _assessorDbContext.Contacts.FirstOrDefaultAsync(c => c.SignInId == requestSignInId);
+        }
+
+        public async Task<IList<ContactRole>> GetRolesFor(Guid contactId)
+        {
+            return await _assessorDbContext.ContactRoles.Where(cr => cr.ContactId == contactId).ToListAsync();
         }
 
         public async Task<bool> CheckContactExists(string userName)

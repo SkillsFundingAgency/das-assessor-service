@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,6 +27,7 @@ namespace SFA.DAS.AssessorService.Data
         public virtual DbSet<EMailTemplate> EMailTemplates { get; set; }
         public virtual DbSet<BatchLog> BatchLogs { get; set; }
         public virtual DbSet<SearchLog> SearchLogs { get; set; }
+        public virtual DbSet<ContactRole> ContactRoles { get; set; }
 
         public override int SaveChanges()
         {
