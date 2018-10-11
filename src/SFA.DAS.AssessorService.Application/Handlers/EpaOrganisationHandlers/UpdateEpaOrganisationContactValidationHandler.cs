@@ -8,7 +8,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 {
-    public class UpdateEpaOrganisationContactValidationHandler: IRequestHandler<UpdateEpoOrganisationContactValidationRequest, ValidationResponse>
+    public class UpdateEpaOrganisationContactValidationHandler: IRequestHandler<UpdateEpaOrganisationContactValidationRequest, ValidationResponse>
     {
         private readonly ILogger<UpdateEpaOrganisationContactValidationHandler> _logger;
         private readonly IEpaOrganisationValidator _validator;
@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             _validator = validator;
         }
 
-        public async Task<ValidationResponse> Handle(UpdateEpoOrganisationContactValidationRequest request, CancellationToken cancellationToken)
+        public async Task<ValidationResponse> Handle(UpdateEpaOrganisationContactValidationRequest request, CancellationToken cancellationToken)
         {
             return _validator.ValidatorUpdateEpaOrganisationContactRequest(new UpdateEpaOrganisationContactRequest
             {

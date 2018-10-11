@@ -224,5 +224,24 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 return BadRequest(new EpaOrganisationStandardResponse(ex.Message));
             }
         }
+
+
+        [HttpGet("contacts/validate-existing", Name = "UpdateEpaContactValidate")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
+        public async Task<IActionResult> CreateContactValidate(UpdateEpaOrganisationContactValidationRequest request)
+        {
+            try
+            {
+                _logger.LogInformation("Validation of creating new contact");
+                var result = await _mediator.Send(request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($@"Bad request, Message: [{ex.Message}]");
+                return BadRequest(ex);
+            }
+        }
+
     }
 }
