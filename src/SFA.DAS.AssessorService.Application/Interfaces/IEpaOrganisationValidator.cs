@@ -26,6 +26,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         string CheckIfOrganisationStandardDoesNotExist(string organisationId, int standardCode);
         string CheckDisplayName(string displayName);
         string CheckIfEmailIsMissing(string email);
+        string CheckIfEmailIsSuitableFormat(string email);
         string CheckIfEmailAlreadyPresentInAnotherOrganisation(string email, string organisationId);
         string CheckIfEmailAlreadyPresentInOrganisationNotAssociatedWithContact(string email, string contactId);
 
