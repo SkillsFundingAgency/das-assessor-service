@@ -180,7 +180,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                     worksheet.Cells[row, 3].Value = certificateData.StandardName.ToUpper();
 
                 if (certificateData.CourseOption != null)
-                    worksheet.Cells[row, 4].Value = '(' + certificateData.CourseOption.ToUpper() + ')';
+                    worksheet.Cells[row, 4].Value = "(" + certificateData.CourseOption.ToUpper() + "):";
 
                 worksheet.Cells[row, 5].Value = $"Level {certificateData.StandardLevel}".ToUpper();
 
