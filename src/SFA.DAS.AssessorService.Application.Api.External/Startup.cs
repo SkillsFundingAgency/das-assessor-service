@@ -64,7 +64,11 @@ namespace SFA.DAS.AssessorService.Application.Api.External
 
                 services.AddSwaggerGen(c =>
                 {
-                    c.SwaggerDoc("v1", new Info { Title = "SFA.DAS.AssessorService.Application.Api.External", Version = "v1" });
+                    var title = $"Assessor Service API {Configuration["EnvironmentName"]}";
+
+                    if (ApplicationConfiguration.UseExternalApiSandBox) title = $"{title} SANDBOX";
+
+                    c.SwaggerDoc("v1", new Info { Title = title, Version = "v1" });
                     c.EnableAnnotations();
                     c.OperationFilter<AddAzureHeaderOperationFilter>();
                     c.OperationFilter<UpdateOptionalParamatersWithDefaultValues>();
@@ -146,7 +150,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                 app.UseSwagger()
                     .UseSwaggerUI(c =>
                     {
-                        c.SwaggerEndpoint("/swagger/v1/swagger.json", "SFA.DAS.AssessorService.Application.Api.External v1");
+                        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Assessor Service API v1");
                     })
                     .UseAuthentication();
 
