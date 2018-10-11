@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {
-    [Authorize(Policy = Startup.Policies.OperationsTeamOnly)]
+    [Authorize(Roles = Domain.Roles.OperationsTeam)]
+    [Authorize(Roles = Domain.Roles.CertificationTeam)]
     public class ExternalApiController : Controller
     {
         private readonly ILogger<ExternalApiController> _logger;
