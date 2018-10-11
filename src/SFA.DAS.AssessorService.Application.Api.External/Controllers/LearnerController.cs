@@ -26,11 +26,30 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             _apiClient = apiClient;
         }
 
-        [HttpGet("{uln}/{familyName}/{standardCode:int?}", Name = "Get")]
+        [HttpGet("{uln}/{familyName}", Name = "Get")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<SearchResult>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
-        [SwaggerOperation("Get Learner Details", "Gets the Learner details for the specified Uln and Family Name, filtered by Standard Code if specified.")]
-        public async Task<IActionResult> Get(long uln, string familyName, int? standardCode = null)
+        [SwaggerOperation("Get Learner Details", "Gets the Learner details for the specified Uln and Family Name.")]
+        public async Task<IActionResult> Get(long uln, string familyName)
+        {
+            SearchQuery searchQuery = new SearchQuery
+            {
+                Uln = uln,
+                Surname = familyName,
+                UkPrn = _headerInfo.Ukprn,
+                Username = _headerInfo.Email
+            };
+
+            List<SearchResult> results = await _apiClient.Search(searchQuery);
+
+            return Ok(results);
+        }
+
+        [HttpGet("{uln}/{familyName}/{standardCode}", Name = "GetByStandardCode")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<SearchResult>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
+        [SwaggerOperation("Get Learner Details - Filtered By Standard", "Gets the Learner details for the specified Uln, Family Name and Standard Code.")]
+        public async Task<IActionResult> GetByStandardCode(long uln, string familyName, int standardCode)
         {            
             SearchQuery searchQuery = new SearchQuery
             {
@@ -44,6 +63,5 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             
             return Ok(results);
         }
-
     }
 }

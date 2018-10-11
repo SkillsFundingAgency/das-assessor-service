@@ -39,7 +39,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
             var expectedItems = _items.Where(sr => sr.Uln == uln && sr.FamilyName == familyName);
 
             // act
-            var actionResult = ControllerMock.Get(uln, familyName, null).Result as ObjectResult;
+            var actionResult = ControllerMock.Get(uln, familyName).Result as ObjectResult;
             var actualItems = actionResult.Value as List<SearchResult>;
 
             // assert
