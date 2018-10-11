@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
@@ -12,6 +13,7 @@ using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using StructureMap.Diagnostics;
+using Swashbuckle.AspNetCore.Swagger;
 using ValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace SFA.DAS.AssessorService.Application.Api.Validators
@@ -183,6 +185,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 : string.Empty;
         }
 
+        public string CheckIfEmailIsSuitableFormat(string email)
+        {
+            var regex = new Regex(@"^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$");
+            var match = regex.Match(email);
+            return !match.Success
+                ? FormatErrorMessage(EpaOrganisationValidatorMessageName.EmailIsIncorrectFormat)
+                : string.Empty;
+        }
+
         public ValidationResponse ValidatorCreateEpaOrganisationRequest(CreateEpaOrganisationRequest request)
         {
             var validationResult = new ValidationResponse();
@@ -201,7 +212,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             var validationResult = new ValidationResponse();
             RunValidationCheckAndAppendAnyError("EndPointAssessorOrganisationId", CheckIfOrganisationNotFound(request.EndPointAssessorOrganisationId), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("DisplayName", CheckDisplayName(request.DisplayName), validationResult, ValidationStatusCode.BadRequest);
-            RunValidationCheckAndAppendAnyError("Email", CheckIfEmailIsMissing(request.Email), validationResult, ValidationStatusCode.BadRequest);
+
+            var emailMissing = CheckIfEmailIsMissing(request.Email);
+            RunValidationCheckAndAppendAnyError("Email", emailMissing, validationResult, ValidationStatusCode.BadRequest);
+            if (emailMissing ==string.Empty)
+                RunValidationCheckAndAppendAnyError("Email", CheckIfEmailIsSuitableFormat(request.Email), validationResult, ValidationStatusCode.AlreadyExists);
+
             RunValidationCheckAndAppendAnyError("Email", CheckIfEmailAlreadyPresentInAnotherOrganisation(request.Email, request.EndPointAssessorOrganisationId), validationResult, ValidationStatusCode.AlreadyExists);
 
             return validationResult;
@@ -213,7 +229,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
 
             RunValidationCheckAndAppendAnyError("ContactId", CheckContactIdExists(request.ContactId), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("DisplayName", CheckDisplayName(request.DisplayName), validationResult, ValidationStatusCode.BadRequest);
-            RunValidationCheckAndAppendAnyError("Email", CheckIfEmailIsMissing(request.Email), validationResult, ValidationStatusCode.BadRequest);
+            var emailMissing = CheckIfEmailIsMissing(request.Email);
+            RunValidationCheckAndAppendAnyError("Email", emailMissing, validationResult, ValidationStatusCode.BadRequest);
+            if (emailMissing == string.Empty)
+                RunValidationCheckAndAppendAnyError("Email", CheckIfEmailIsSuitableFormat(request.Email), validationResult, ValidationStatusCode.AlreadyExists);
+
             RunValidationCheckAndAppendAnyError("Email", CheckIfEmailAlreadyPresentInOrganisationNotAssociatedWithContact(request.Email, request.ContactId), validationResult, ValidationStatusCode.AlreadyExists);
             return validationResult;
         }

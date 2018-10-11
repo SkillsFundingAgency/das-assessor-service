@@ -50,7 +50,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.StandardNotFound])
                 .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.StandardNotFound, "fail"));
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.OrganisationStandardDoesNotExist])
-                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationStandardDoesNotExist, "fail")); 
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationStandardDoesNotExist, "fail"));
+            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.EmailIsIncorrectFormat])
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.EmailIsIncorrectFormat, "fail"));
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.ErrorMessageOrganisationNameAlreadyPresent])
                 .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.ErrorMessageOrganisationNameAlreadyPresent, "fail")); 
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.ContactIdDoesntExist])
@@ -95,6 +97,17 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         {
             var noMessageReturned = _validator.CheckIfEmailIsMissing(name).Length == 0;
             Assert.AreEqual(isAcceptable, noMessageReturned);
+        }
+        
+        [TestCase(null, true)]
+        [TestCase(10000000, true)]
+        [TestCase(99999999, true)]
+        [TestCase(9999999, false)]
+        [TestCase(100000000, false)]
+        public void CheckUkprnIsValid(long? ukprn, bool isValid)
+        {
+            var noMessageReturned = _validator.CheckUkprnIsValid(ukprn).Length == 0;
+            Assert.AreEqual(isValid, noMessageReturned);
         }
         
         [TestCase("name", true, "")]
@@ -189,6 +202,27 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
                 _validator.CheckIfOrganisationUkprnExistsForOtherOrganisations(null, "123445").Length > 0;
             Assert.IsFalse(isMessageReturned);
             _registerRepository.Verify(r => r.EpaOrganisationAlreadyUsingUkprn(It.IsAny<long>(), It.IsAny<string>()), Times.Never);
+        }
+
+
+        [TestCase("test@test.com",true)]
+        [TestCase("test@test.co.uk", true)]
+        [TestCase("test.tester@test.com", true)]
+        [TestCase("test.tester@digitaleducation.gov.uk", true)]
+        [TestCase("test.terser@test.co.uk", true)]
+        [TestCase("testtest",false)]
+        [TestCase("testtest@com", true)]
+        [TestCase("testtest@test..com", false)]
+        [TestCase("testtest@", false)]
+        [TestCase("@testtest", false)]
+        [TestCase("n/a", false)]
+        [TestCase("test test", false)]
+        [TestCase("testtest", false)]
+        public void CheckIfEmailIsAcceptableFormat(string email, bool isValidExpected)
+        {
+            var isValidReturned =
+                _validator.CheckIfEmailIsSuitableFormat(email).Length == 0;
+            Assert.AreEqual(isValidExpected, isValidReturned);
         }
 
         [Test]

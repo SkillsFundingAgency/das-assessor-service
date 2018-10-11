@@ -21,6 +21,7 @@
         public const string DisplayNameTooShort = "DisplayNameTooShort";
         public const string DisplayNameIsMissing = "DisplayNameIsMissing";
         public const string ContactIdDoesntExist = "ContactIdDoesntExist";
+        public const string EmailIsIncorrectFormat = "EmailIsIncorrectFormat";
         public const string ErrorMessageOrganisationNameAlreadyPresent = "ErrorMessageOrganisationNameAlreadyPresent";
     }
 }
