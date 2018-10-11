@@ -28,7 +28,5 @@ namespace SFA.DAS.AssessorService.Settings
 
         [JsonRequired] public string SessionRedisConnectionString { get; set; }
         [JsonRequired] public AuthSettings StaffAuthentication { get; set; }
-
-        public bool UseExternalApiSandBox { get; set; }
     }
 }

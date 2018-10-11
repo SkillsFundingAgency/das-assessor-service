@@ -15,6 +15,5 @@
         string SpecflowDBTestConnectionString { get; set; }
         string SessionRedisConnectionString { get; set; }
         AuthSettings StaffAuthentication { get; set; }
-        bool UseExternalApiSandBox { get; set; }
     }
 }

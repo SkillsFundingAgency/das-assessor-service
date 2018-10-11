@@ -27,12 +27,18 @@ namespace SFA.DAS.AssessorService.Application.Api.External
         private readonly ILogger<Startup> _logger;
         private const string ServiceName = "SFA.DAS.AssessorService";
         private const string Version = "1.0";
+        private readonly bool UseExternalApiSandBox;
 
         public Startup(IConfiguration configuration, IHostingEnvironment env, ILogger<Startup> logger)
         {
             _env = env;
             _logger = logger;
             Configuration = configuration;
+
+            if(!bool.TryParse(Configuration["UseExternalApiSandBox"], out UseExternalApiSandBox))
+            {
+                UseExternalApiSandBox = "yes".Equals(Configuration["UseExternalApiSandBox"], StringComparison.InvariantCultureIgnoreCase);
+            }
         }
 
         public IConfiguration Configuration { get; }
@@ -45,7 +51,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
             {
                 ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
 
-                if (ApplicationConfiguration.UseExternalApiSandBox)
+                if (UseExternalApiSandBox)
                 {
                     services.AddHttpClient<IApiClient, SandboxApiClient>(config =>
                     {
@@ -64,11 +70,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
 
                 services.AddSwaggerGen(c =>
                 {
-                    var title = $"Assessor Service API {Configuration["EnvironmentName"]}";
-
-                    if (ApplicationConfiguration.UseExternalApiSandBox) title = $"{title} SANDBOX";
-
-                    c.SwaggerDoc("v1", new Info { Title = title, Version = "v1" });
+                    c.SwaggerDoc("v1", new Info { Title = $"Assessor Service API {Configuration["InstanceName"]}", Version = "v1" });
                     c.EnableAnnotations();
                     c.OperationFilter<AddAzureHeaderOperationFilter>();
                     c.OperationFilter<UpdateOptionalParamatersWithDefaultValues>();
@@ -154,7 +156,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                     })
                     .UseAuthentication();
 
-                if (ApplicationConfiguration.UseExternalApiSandBox)
+                if (UseExternalApiSandBox)
                 {
                     app.UseMiddleware<SandboxHeadersMiddleware>();
                 }
