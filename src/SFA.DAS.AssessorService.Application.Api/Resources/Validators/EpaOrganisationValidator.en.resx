@@ -171,4 +171,7 @@
   <data name="DisplayNameTooShort" xml:space="preserve">
     <value>Enter a name that is 2 or more characters</value>
   </data>
+  <data name="EmailIsIncorrectFormat" xml:space="preserve">
+    <value>The email is the wrong format</value>
+  </data>
 </root>

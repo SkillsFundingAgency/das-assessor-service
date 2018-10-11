@@ -108,7 +108,7 @@ namespace SFA.DAS.AssessorService.Data
                 const string sqlToGetHighestUsernameCounter = "select max(convert(int,replace(username,'unknown-',''))) highestCounter from [Contacts]  where username like 'unknown-%' and isnumeric(replace(username,'unknown-','')) = 1";
                 var maxCounter = await connection.ExecuteScalarAsync<int?>(sqlToGetHighestUsernameCounter);
 
-                return maxCounter + 1 ?? 100;
+                return maxCounter ?? 100;
             }
         }
 
