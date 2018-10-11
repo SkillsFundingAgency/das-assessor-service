@@ -1,0 +1,103 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "AdminEmail": {
+            "type": "string"
+        },
+        "EnvironmentName": {
+            "type": "string",
+            "metadata": {
+                "description": "Abbreviated name for the environment, eg: AT, TEST, PP, PRD"
+            }
+        },
+        "OrganizationName": {
+            "type": "string",
+            "defaultValue": "National Careers Service"
+        },
+        "SkuTier": {
+            "type": "string",
+            "allowedValues": [
+                "Developer",
+                "Basic",
+                "Standard",
+                "Premium"
+            ],
+            "defaultValue": "Developer"
+        },
+        "apimServiceName": {
+            "type": "string"
+        },
+        "proxyCustomHostname": {
+            "type": "string"
+        },
+        "apimCustomHostnameBase64EncodedPfxCertificate": {
+            "type": "string"
+        },
+        "apimSSLCertificatePassword": {
+            "type": "securestring"
+        },
+        "portalCustomHostname": {
+            "type": "string"
+        }                                     
+    },
+    "variables": {
+        "apimServiceName": "[toLower(concat('dss-',parameters('EnvironmentName'),'-shared-apim'))]"
+    },
+    "resources": [
+        {
+            "name": "[parameters('apimServiceName')]",
+            "type": "Microsoft.ApiManagement/service",
+            "apiVersion": "2018-01-01",
+            "tags": {},
+            "properties": {
+                "publisherEmail": "[parameters('AdminEmail')]",
+                "publisherName": "[parameters('OrganizationName')]",
+                "notificationSenderEmail": "apimgmt-noreply@mail.windowsazure.com",
+                "hostnameConfigurations": [
+                    {
+                        "type": "Proxy",
+                        "hostName": "[parameters('proxyCustomHostname')]",
+                        "encodedCertificate": "[parameters('apimCustomHostnameBase64EncodedPfxCertificate')]",
+                        "certificatePassword": "[parameters('apimSSLCertificatePassword')]",
+                        "negotiateClientCertificate": false
+                      },
+                      {
+                        "type": "Portal",
+                        "hostName": "[parameters('portalCustomHostname')]",
+                        "encodedCertificate": "[parameters('apimCustomHostnameBase64EncodedPfxCertificate')]",
+                        "certificatePassword": "[parameters('apimSSLCertificatePassword')]",
+                        "negotiateClientCertificate": false
+                      }                    
+                ],
+                "additionalLocations": null,
+                "virtualNetworkConfiguration": null, 
+                "customProperties": {
+                    "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Protocols.Tls10": "True",
+                    "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Protocols.Tls11": "True",
+                    "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Protocols.Ssl30": "False",
+                    "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Ciphers.TripleDes168": "True",
+                    "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Backend.Protocols.Tls10": "True",
+                    "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Backend.Protocols.Tls11": "True",
+                    "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Backend.Protocols.Ssl30": "False"
+                }, 
+                "virtualNetworkType": "None",
+                "certificates": null                                              
+            },
+            "sku": {
+                "name": "[parameters('SkuTier')]",
+                "capacity": 1
+            },
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "location": "[resourceGroup().location]"
+        }
+    ],
+    "outputs": {
+        "ApimServiceIdentityPrincipalId": {
+            "type": "string",
+            "value": "[reference(concat(resourceId('Microsoft.ApiManagement/service', parameters('apimServiceName')),'/providers/Microsoft.ManagedIdentity/Identities/default'), '2015-08-31-PREVIEW').principalId]"
+        }
+    }
+}

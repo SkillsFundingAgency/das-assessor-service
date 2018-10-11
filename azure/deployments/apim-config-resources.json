@@ -1,0 +1,239 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "AdminEmail": {
+            "type": "string"
+        },
+        "EnvironmentName": {
+            "type": "string",
+            "metadata": {
+                "description": "Abbreviated name for the environment, eg: AT, TEST, PP, PRD"
+            }
+        },
+        "OrganizationName": {
+            "type": "string",
+            "defaultValue": "National Careers Service"
+        },
+        "SkuTier": {
+            "type": "string",
+            "allowedValues": [
+                "Developer",
+                "Basic",
+                "Standard",
+                "Premium"
+            ],
+            "defaultValue": "Developer"
+        },
+        "apimServiceName": {
+            "type": "string"
+        },
+        "proxyCustomHostname": {
+            "type": "string"
+        },
+        "apimCustomHostnameBase64EncodedPfxCertificate": {
+            "type": "string"
+        },
+        "apimSSLCertificatePassword": {
+            "type": "securestring"
+        },
+        "portalCustomHostname": {
+            "type": "string"
+        },          
+        "ProductDisplayName": {
+            "type": "string"
+        },
+        "ProductGroupDisplayName": {
+            "type": "string"
+        },        
+        "appInsightsName": {
+            "type": "string"
+        },
+        "apiName": {
+            "type": "string"
+        }                                            
+    },
+    "variables": {
+        "apimProductName": "[toLower(replace(parameters('ProductDisplayName'), ' ', '-'))]",
+        "apimProductGroupName": "[toLower(replace(parameters('ProductGroupDisplayName'), ' ', '-'))]",
+        "apiName": "[toLower(replace(parameters('ProductDisplayName'), ' ', '-'))]"
+    },
+    "resources": [
+        {
+            "name": "[parameters('apimServiceName')]",
+            "type": "Microsoft.ApiManagement/service",
+            "apiVersion": "2018-01-01",
+            "tags": {},
+            "properties": {
+                "publisherEmail": "[parameters('AdminEmail')]",
+                "publisherName": "[parameters('OrganizationName')]",
+                "notificationSenderEmail": "apimgmt-noreply@mail.windowsazure.com",
+                "hostnameConfigurations": [
+                    {
+                        "type": "Proxy",
+                        "hostName": "[parameters('proxyCustomHostname')]",
+                        "encodedCertificate": "[parameters('apimCustomHostnameBase64EncodedPfxCertificate')]",
+                        "certificatePassword": "[parameters('apimSSLCertificatePassword')]",
+                        "negotiateClientCertificate": false
+                      },
+                      {
+                        "type": "Portal",
+                        "hostName": "[parameters('portalCustomHostname')]",
+                        "encodedCertificate": "[parameters('apimCustomHostnameBase64EncodedPfxCertificate')]",
+                        "certificatePassword": "[parameters('apimSSLCertificatePassword')]",
+                        "negotiateClientCertificate": false
+                      }                                       
+                ],
+                "additionalLocations": null,
+                "virtualNetworkConfiguration": null, 
+                "customProperties": {
+                    "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Protocols.Tls10": "True",
+                    "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Protocols.Tls11": "True",
+                    "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Protocols.Ssl30": "False",
+                    "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Ciphers.TripleDes168": "True",
+                    "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Backend.Protocols.Tls10": "True",
+                    "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Backend.Protocols.Tls11": "True",
+                    "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Backend.Protocols.Ssl30": "False"
+                }, 
+                "virtualNetworkType": "None",
+                "certificates": null                                              
+            },
+            "sku": {
+                "name": "[parameters('SkuTier')]",
+                "capacity": 1
+            },
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "location": "[resourceGroup().location]",
+            "resources": [
+                {
+                    "name": "[variables('apiName')]",
+                    "type": "apis",
+                    "apiVersion": "2018-01-01",
+                    "properties": {
+                      "authenticationSettings": null,
+                      "displayName": "[parameters('apiName')]",
+                      "path": "[variables('apiName')]",
+                      "protocols": [
+                        "https"
+                      ]
+                    },
+                    "resources": [
+                      {
+                        "name": "applicationinsights",
+                        "type": "diagnostics",
+                        "apiVersion": "2018-01-01",
+                        "properties": {
+                          "enabled": true
+                        },
+                        "resources": [
+                          {
+                            "name": "[concat(parameters('appInsightsName'), '-logger')]",
+                            "type": "loggers",
+                            "apiVersion": "2018-01-01",
+                            "dependsOn": [
+                              "applicationinsights"
+                            ]
+                          }
+                        ],
+                        "dependsOn": [
+                          "[variables('apiName')]"
+                        ]
+                      }
+                    ],
+                    "dependsOn": [
+                      "[parameters('apimServiceName')]"
+                    ]
+                },                
+                {
+                    "name": "[variables('apimProductName')]",
+                    "type": "products",
+                    "apiVersion": "2018-01-01",
+                    "properties": {
+                        "description": "string",
+                        "terms": "string",
+                        "subscriptionRequired": true,
+                        "approvalRequired": true,
+                        "subscriptionsLimit": 1,
+                        "state": "published",
+                        "displayName": "[parameters('ProductDisplayName')]"
+                    },
+                    "resources": [
+                        {
+                            "name": "[variables('apimProductGroupName')]",
+                            "type": "groups",
+                            "apiVersion": "2018-01-01",
+                            "dependsOn": [
+                                "[parameters('apimServiceName')]",
+                                "[variables('apimProductName')]"
+                            ]                                    
+                        },
+                        {
+                            "name": "[variables('apiName')]",
+                            "type": "apis",
+                            "apiVersion": "2018-01-01",
+                            "dependsOn": [
+                                "[parameters('apimServiceName')]",
+                                "[concat('Microsoft.ApiManagement/service/', parameters('apimServiceName'), '/apis/', variables('apiName'))]",
+                                "[concat('Microsoft.ApiManagement/service/', parameters('apimServiceName'), '/products/', variables('apimProductName'))]"
+                            ]                                    
+                        }                                                                     
+                    ],
+                    "dependsOn": [
+                        "[parameters('apimServiceName')]"
+                    ]
+                },
+                {
+                    "name": "[variables('apimProductGroupName')]",
+                    "type": "groups",
+                    "apiVersion": "2018-01-01",
+                    "properties": {
+                        "displayName": "[parameters('ProductGroupDisplayName')]",
+                        "description": "This user group is for developers that represent a registered training provider. \r\n\r\nNote that the provider's UKPRN will need to be set in the user's \"notes\" field. ",
+                        "type": "custom",
+                        "externalId": null
+                    },
+                    "dependsOn": [
+                        "[parameters('apimServiceName')]"
+                    ]                                    
+                },                             
+                {
+                  "name": "[concat(parameters('appInsightsName'), '-logger')]",
+                  "type": "loggers",
+                  "apiVersion": "2018-01-01",
+                  "properties": {
+                    "loggerType": "applicationInsights",
+                    "credentials": {
+                        "instrumentationKey": "[reference(concat('microsoft.insights/components/', parameters('appInsightsName'))).InstrumentationKey]"
+                    },
+                    "isBuffered": true
+                  },
+                  "dependsOn": [
+                    "[parameters('apimServiceName')]",
+                    "[parameters('appInsightsName')]"
+                  ]
+                }
+            ]            
+        },
+        {
+            "apiVersion": "2015-05-01",
+            "name": "[parameters('appInsightsName')]",
+            "type": "Microsoft.Insights/components",
+            "location": "[resourceGroup().location]",
+            "kind": "web",
+            "tags": {
+              "[concat('hidden-link:', resourceId('Microsoft.Web/sites', parameters('apimServiceName')))]": "Resource"
+            },
+            "properties": {
+              "Application_Type": "web"
+            }
+          }        
+    ],
+    "outputs": {
+        "ApimServiceIdentityPrincipalId": {
+            "type": "string",
+            "value": "[reference(concat(resourceId('Microsoft.ApiManagement/service', parameters('apimServiceName')),'/providers/Microsoft.ManagedIdentity/Identities/default'), '2015-08-31-PREVIEW').principalId]"
+        }
+    }
+}
