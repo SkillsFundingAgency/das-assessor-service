@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels;
 
@@ -41,15 +42,33 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         [HttpPost(Name = "Check")]
         public async Task<IActionResult> ConfirmAndSubmit(CertificateCheckViewModel vm)
         {
-            return RedirectToAction("Index", "DuplicateRequest",
-                new
-                {
-                    certificateid = vm.Id, redirectToCheck = vm.RedirectToCheck,
-                    Uln = vm.Uln,
-                    StdCode = vm.StandardCode,
-                    Page = vm.Page,
-                    SearchString = vm.SearchString
-                });
+            if (vm.Status ==
+                CertificateStatus.Submitted ||
+                vm.Status == CertificateStatus.Printed ||
+                vm.Status == CertificateStatus.Reprint)
+            {
+                return RedirectToAction("Index", "DuplicateRequest",
+                    new
+                    {
+                        certificateid = vm.Id, redirectToCheck = vm.RedirectToCheck,
+                        Uln = vm.Uln,
+                        StdCode = vm.StandardCode,                     
+                        Page = vm.Page,
+                        SearchString = vm.SearchString
+                    });
+            }
+            else
+            {
+                return RedirectToAction("Index", "Comment",
+                    new
+                    {
+                        certificateid = vm.Id, redirectToCheck = vm.RedirectToCheck,
+                        Uln = vm.Uln,
+                        StdCode = vm.StandardCode,
+                        Page = vm.Page,                       
+                        SearchString = vm.SearchString
+                    });
+            }
         }
     }
 }

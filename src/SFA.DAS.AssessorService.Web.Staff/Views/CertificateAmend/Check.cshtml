@@ -1,5 +1,6 @@
 ﻿@model SFA.DAS.AssessorService.Web.Staff.ViewModels.CertificateCheckViewModel
 @using SFA.DAS.AssessorService.Domain.Extensions
+@using SFA.DAS.AssessorService.Domain.Consts;
 
 @{
     ViewBag.Title = "Check and approve the assessment details";
@@ -262,12 +263,14 @@
             </div>
         </dl>
 
+   
         <form type="post" asp-controller="CertificateAmend" asp-action="ConfirmAndSubmit" asp-route-certificateId="@Model.Id" asp-route-redirectToCheck=true>
-            @Html.HiddenFor(c => c.Id)            
+            @Html.HiddenFor(c => c.Id)
             @Html.HiddenFor(m => m.StandardCode)
             @Html.HiddenFor(m => m.Uln)
             @Html.HiddenFor(m => m.Page)
             @Html.HiddenFor(m => m.SearchString)
+            @Html.HiddenFor(m => m.Status)
             <button type="submit" class="button">Confirm and submit</button>
         </form>
 
