@@ -120,7 +120,7 @@
                 </dt>
                 <dd class="cya-answer">
                     @Model.SelectedGrade
-                </dd>
+                </dd>  
                 <dd class="cya-change">
                     <a asp-controller="CertificateGrade" asp-action="Grade" asp-route-certificateid=@Model.Id>
                         Change<span class="visually-hidden"> grade</span>
@@ -263,7 +263,11 @@
         </dl>
 
         <form type="post" asp-controller="CertificateAmend" asp-action="ConfirmAndSubmit" asp-route-certificateId="@Model.Id" asp-route-redirectToCheck=true>
-            @Html.HiddenFor(c => c.Id)
+            @Html.HiddenFor(c => c.Id)            
+            @Html.HiddenFor(m => m.StandardCode)
+            @Html.HiddenFor(m => m.Uln)
+            @Html.HiddenFor(m => m.Page)
+            @Html.HiddenFor(m => m.SearchString)
             <button type="submit" class="button">Confirm and submit</button>
         </form>
 

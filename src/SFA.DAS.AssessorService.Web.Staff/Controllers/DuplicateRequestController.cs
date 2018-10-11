@@ -35,10 +35,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 
             var vm = new DuplicateRequestViewModel
             {
-                Certificate = certificate,
+                CertificateId = certificateId,
                 IsConfirmed = false,
                 NextBatchDate = "Fake Date",
                 SearchString = searchString,
+                CertificateReference = certificate.CertificateReference,
                 StdCode = stdCode,
                 Uln = uln,
                 Page = page,
@@ -54,16 +55,17 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
             var certificate = await _apiClient.PostReprintRequest(new StaffCertificateDuplicateRequest
             {
-                Id = duplicateRequestViewModel.Certificate.Id,
+                Id = duplicateRequestViewModel.CertificateId,
                 Username = username
             });
 
             var nextScheduledRun = await _apiClient.GetNextScheduledRun((int)ScheduleType.PrintRun);
             var vm = new DuplicateRequestViewModel
             {
-                Certificate = certificate,
+                CertificateId = certificate.Id,
                 IsConfirmed = true,
                 NextBatchDate = nextScheduledRun?.RunTime.ToString("dd/MM/yyyy"),
+                CertificateReference = certificate.CertificateReference,
                 SearchString = duplicateRequestViewModel.SearchString,
                 StdCode = duplicateRequestViewModel.StdCode,
                 Uln = duplicateRequestViewModel.Uln,
@@ -76,7 +78,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 
     public class DuplicateRequestViewModel
     {
-        public Certificate Certificate { get; set; }
+        public Guid CertificateId { get; set; }
         public bool IsConfirmed { get; set; }
         public string NextBatchDate { get; set; }
         public string SearchString { get; set; }
@@ -84,5 +86,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         public long Uln { get; set; }
         public int StdCode { get; set; }
         public bool BackToCheckPage { get; set; }
+        public string CertificateReference { get; set; }
     }
 }
