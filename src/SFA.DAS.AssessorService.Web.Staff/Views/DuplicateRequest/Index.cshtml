@@ -1,4 +1,7 @@
-@using SFA.DAS.AssessorService.Web.Staff.Controllers
+@using Newtonsoft.Json
+@using SFA.DAS.AssessorService.Domain.JsonData
+@using SFA.DAS.AssessorService.Domain.Consts
+
 @model SFA.DAS.AssessorService.Web.Staff.Controllers.DuplicateRequestViewModel
 
 @{
@@ -10,10 +13,40 @@
     <div class="column-two-thirds">
         <a asp-action="Index" asp-controller="Search" class="link-back">Search Again</a>
         <h1 class="heading-large">Re-print certificate</h1>
-        @if (!Model.IsConfirmed)
+        @if (Model.Certificate.Status == CertificateStatus.Draft || Model.Certificate.Status == CertificateStatus.Submitted)
         {
-            <p class="lede text">Request a duplicate print of the following certificate: <span class="bold-medium">@Model.Certificate.CertificateReference</span></p>
-            
+            <p>Certificate is in an invalid status to request a reprint.</p>
+        }
+        else if (!Model.IsConfirmed)
+        {
+            <p class="lede text">Request a duplicate print of the following certificate: </p>
+
+            <div class="grid-row">
+                <div class="column-one-half">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td class="bold">Certificate number</td>
+                                <td>@Model.Certificate.CertificateReference</td>
+                            </tr>
+                            <tr>
+                                <td class="bold">Name</td>
+                                <td>
+                                    @{
+                                        var certData = JsonConvert.DeserializeObject<CertificateData>(@Model.Certificate.CertificateData);
+                                        Html.Raw($"{certData.LearnerGivenNames} {certData.LearnerFamilyName}");
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="bold"><abbr title="Unique learner number">ULN</abbr></td>
+                                <td>@Model.Certificate.Uln</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             <form asp-action="Index" asp-controller="DuplicateRequest" method="post">
                 @Html.HiddenFor(m => m.Certificate.Id)
                 <button class="button">Confirm</button>

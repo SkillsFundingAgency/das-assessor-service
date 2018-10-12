@@ -72,6 +72,10 @@
                         <td>@Model.Learner.OrganisationName</td>
                     </tr>
                     <tr>
+                        <td><span class="bold">EPAO ID</span></td>
+                        <td>@Model.Learner.OrganisationId</td>
+                    </tr>
+                    <tr>
                         <td><span class="bold">Standard</span></td>
                         <td>@Model.Learner.Standard (@Model.Learner.StandardCode)</td>
                     </tr>
@@ -121,6 +125,7 @@
                             <th>Date and time</th>
                             <th>Action</th>
                             <th>By</th>
+                            <th>Email</th>
                             <th>Status</th>
                             <th>Batch</th>
                             <th>Changed</th>
@@ -133,6 +138,7 @@
                                 <td>@log.EventTime.UtcToTimeZoneTime()</td>
                                 <td>@log.Action</td>
                                 <td>@log.ActionBy</td>
+                                <td>@log.ActionByEmail</td>
                                 <td>@log.Status</td>
                                 <td>@log.BatchNumber</td>
                                 <td>
@@ -209,8 +215,14 @@ else
         <ul class="list list-bullet">
             @if (Model.Learner.CertificateReference != null)
             {
-                <li><a asp-action="Index" asp-controller="DuplicateRequest" asp-route-certificateId="@Model.Learner.CertificateId">request duplicate certificate</a></li>
-                <li><a asp-action="Check" asp-controller="CertificateAmend" asp-route-certificateId="@Model.Learner.CertificateId">amend certificate information</a></li>        
+                if(Model.Learner.CertificateStatus == CertificateStatus.Printed || Model.Learner.CertificateStatus == CertificateStatus.Reprint)
+                { 
+                    <li><a asp-action="Index" asp-controller="DuplicateRequest" asp-route-certificateId="@Model.Learner.CertificateId">request duplicate certificate</a></li>
+                }
+                else if (Model.Learner.CertificateStatus == CertificateStatus.Draft)
+                {
+                    <li><a asp-action="Check" asp-controller="CertificateAmend" asp-route-certificateId="@Model.Learner.CertificateId">amend certificate information</a></li>
+                }
             }
             <li><a asp-controller="Search" asp-action="Index">Search for another apprentice</a></li>
         </ul>
