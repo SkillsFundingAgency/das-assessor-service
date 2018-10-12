@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using FluentValidation.Results;
+using Microsoft.AspNetCore.Identity.UI.Pages.Internal.Account;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
@@ -22,11 +23,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
     {
         private readonly IRegisterValidationRepository _registerRepository;
         private readonly IStringLocalizer<EpaOrganisationValidator> _localizer;
+        private readonly ISpecialCharacterCleanserService _cleanserService;
         public string ErrorMessageOrganisationNameAlreadyPresent { get; } = "There is already an organisation present with this name; ";
 
-        public EpaOrganisationValidator( IRegisterValidationRepository registerRepository, IStringLocalizer<EpaOrganisationValidator> localizer) 
+        public EpaOrganisationValidator( IRegisterValidationRepository registerRepository, ISpecialCharacterCleanserService cleanserService, IStringLocalizer<EpaOrganisationValidator> localizer) 
         {
             _registerRepository = registerRepository;
+            _cleanserService = cleanserService;
             _localizer = localizer;
         }
         
@@ -42,8 +45,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 : string.Empty;
         }
 
-        public string CheckOrganisationName(string organisationName)
+        public string CheckOrganisationName(string name)
         {
+            var organisationName = _cleanserService.CleanseStringForSpecialCharacters(name);
             if (string.IsNullOrEmpty(organisationName) || organisationName.Trim().Length==0)
                 return FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationNameEmpty);
             
@@ -145,10 +149,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
 
         public string CheckDisplayName(string name)
         {
-            if (string.IsNullOrEmpty(name) || name.Trim().Length == 0)
+            var newName = _cleanserService.CleanseStringForSpecialCharacters(name);
+            if (string.IsNullOrEmpty(newName) || newName.Trim().Length == 0)
                 return FormatErrorMessage(EpaOrganisationValidatorMessageName.DisplayNameIsMissing);
 
-            return name.Trim().Length < 2
+            return newName.Trim().Length < 2
                 ? FormatErrorMessage(EpaOrganisationValidatorMessageName.DisplayNameTooShort)
                 : string.Empty;
         }
