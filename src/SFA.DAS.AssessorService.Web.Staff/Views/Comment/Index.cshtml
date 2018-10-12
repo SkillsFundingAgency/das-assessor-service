@@ -18,8 +18,13 @@
 
         <h1 class="heading-large">Confirmation</h1>
 
-        <p class="lede text">Thank you for confirming the certificate changes for<span class="bold-medium">@Model.CertificateReference</span></p>
-
+        <p class="lede text">
+            Thank you for confirming the certificate changes for Certificate for
+         
+            <div class="bold-medium"><span>Name:</span> @Model.FullName</div>
+            <div class="bold-medium">Uln: @Model.Uln</div>            
+            <div class="bold-medium">Certificate Reference: @Model.CertificateReference</div>
+        </p>
 
         <div>
             <a asp-action="Index" asp-controller="Search" class="link-back">Search Again</a>

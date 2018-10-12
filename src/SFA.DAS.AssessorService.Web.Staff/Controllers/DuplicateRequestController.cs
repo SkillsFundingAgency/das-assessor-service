@@ -3,8 +3,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
@@ -23,7 +25,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(         
+        public async Task<IActionResult> Index(
             Guid certificateId,
             int stdCode,
             long uln,
@@ -32,6 +34,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             bool? redirectToCheck = false)
         {
             var certificate = await _apiClient.GetCertificate(certificateId);
+            var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 
             var vm = new DuplicateRequestViewModel
             {
@@ -42,7 +45,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 CertificateReference = certificate.CertificateReference,
                 StdCode = stdCode,
                 Uln = uln,
-                Page = page,
+                FullName = certificateData.FullName,
                 Status = certificate.Status,
                 BackToCheckPage = redirectToCheck.Value
             };
@@ -53,14 +56,16 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         [HttpPost(Name = "Index")]
         public async Task<IActionResult> Index(DuplicateRequestViewModel duplicateRequestViewModel)
         {
-            var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
+            var username = _contextAccessor.HttpContext.User
+                .FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
             var certificate = await _apiClient.PostReprintRequest(new StaffCertificateDuplicateRequest
             {
                 Id = duplicateRequestViewModel.CertificateId,
                 Username = username
             });
+            var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 
-            var nextScheduledRun = await _apiClient.GetNextScheduledRun((int)ScheduleType.PrintRun);
+            var nextScheduledRun = await _apiClient.GetNextScheduledRun((int) ScheduleType.PrintRun);
             var vm = new DuplicateRequestViewModel
             {
                 CertificateId = certificate.Id,
@@ -71,6 +76,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 StdCode = duplicateRequestViewModel.StdCode,
                 Uln = duplicateRequestViewModel.Uln,
                 Status = certificate.Status,
+                FullName = certificateData.FullName,
                 Page = duplicateRequestViewModel.Page
             };
 

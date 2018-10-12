@@ -209,8 +209,7 @@ else
     <div class="column-two-thirds">
         <h2 class="heading-medium">What do you want to do next?</h2>
         <ul class="list list-bullet">
-            @if (Model.Learner.CertificateStatus == CertificateStatus.Submitted
-                || Model.Learner.CertificateStatus == CertificateStatus.Printed
+            @if (Model.Learner.CertificateStatus == CertificateStatus.Printed
                 || Model.Learner.CertificateStatus == CertificateStatus.Reprint
                 )
             {
