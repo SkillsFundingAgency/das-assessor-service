@@ -82,7 +82,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             }
         }
 
-        [HttpGet("contacts/validate",Name = "CreateEpaContactValidate")]
+        [HttpGet("contacts/validate-new",Name = "CreateEpaContactValidate")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
         public async Task<IActionResult> CreateContactValidate(CreateEpaContactValidationRequest request)
         {

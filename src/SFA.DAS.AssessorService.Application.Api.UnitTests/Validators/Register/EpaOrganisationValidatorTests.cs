@@ -18,12 +18,15 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         private Mock<IRegisterValidationRepository> _registerRepository;
         private EpaOrganisationValidator _validator;
         private Mock<IStringLocalizer<EpaOrganisationValidator>> _localizer;
+        private Mock<ISpecialCharacterCleanserService> _cleanserService;
         [SetUp]
         public void Setup()
         {
             _registerRepository = new Mock<IRegisterValidationRepository>();
             _localizer = new Mock<IStringLocalizer<EpaOrganisationValidator>>();
-            _validator = new EpaOrganisationValidator(_registerRepository.Object, _localizer.Object);
+            _cleanserService = new Mock<ISpecialCharacterCleanserService>();
+            _cleanserService.Setup(c => c.CleanseStringForSpecialCharacters(It.IsAny<string>())).Returns((string s) => s);
+            _validator = new EpaOrganisationValidator(_registerRepository.Object, _cleanserService.Object,_localizer.Object);
 
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.OrganisationTypeIsInvalid])
                 .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationTypeIsInvalid, "fail"));          

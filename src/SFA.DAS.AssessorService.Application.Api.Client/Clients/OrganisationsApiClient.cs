@@ -56,7 +56,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                     $"Could not check the validation for organisation [{name}]");
             }
         }
-        
+
         public async Task<ValidationResponse> ValidateUpdateContact(string contactId, string displayName, string email)
         {
             var newName = SanitizeUrlParam(displayName);
@@ -74,8 +74,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
 
             var newName = SanitizeUrlParam(name);
+            var newEmail = SanitizeUrlParam(email);
             using (var request = new HttpRequestMessage(HttpMethod.Get,
-                $"/api/ao/assessment-organisations/contacts/validate?name={newName}&organisationId={organisationId}&email={email}&phone={phone}"))
+                $"/api/ao/assessment-organisations/contacts/validate-new?name={newName}&organisationId={organisationId}&email={email}&phone={phone}"))
             {
                 return await RequestAndDeserialiseAsync<ValidationResponse>(request,
                     $"Could not check the validation for contact [{name}] against organisation [{organisationId}]");
