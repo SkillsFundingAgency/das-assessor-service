@@ -119,29 +119,6 @@
                         "https"
                       ]
                     },
-                    "resources": [
-                      {
-                        "name": "applicationinsights",
-                        "type": "diagnostics",
-                        "apiVersion": "2018-01-01",
-                        "properties": {
-                          "enabled": true
-                        },
-                        "resources": [
-                          {
-                            "name": "[concat(parameters('appInsightsName'), '-logger')]",
-                            "type": "loggers",
-                            "apiVersion": "2018-01-01",
-                            "dependsOn": [
-                              "applicationinsights"
-                            ]
-                          }
-                        ],
-                        "dependsOn": [
-                          "[variables('apiName')]"
-                        ]
-                      }
-                    ],
                     "dependsOn": [
                       "[parameters('apimServiceName')]"
                     ]
@@ -197,38 +174,9 @@
                     "dependsOn": [
                         "[parameters('apimServiceName')]"
                     ]                                    
-                },                             
-                {
-                  "name": "[concat(parameters('appInsightsName'), '-logger')]",
-                  "type": "loggers",
-                  "apiVersion": "2018-01-01",
-                  "properties": {
-                    "loggerType": "applicationInsights",
-                    "credentials": {
-                        "instrumentationKey": "[reference(concat('microsoft.insights/components/', parameters('appInsightsName'))).InstrumentationKey]"
-                    },
-                    "isBuffered": true
-                  },
-                  "dependsOn": [
-                    "[parameters('apimServiceName')]",
-                    "[parameters('appInsightsName')]"
-                  ]
                 }
             ]            
-        },
-        {
-            "apiVersion": "2015-05-01",
-            "name": "[parameters('appInsightsName')]",
-            "type": "Microsoft.Insights/components",
-            "location": "[resourceGroup().location]",
-            "kind": "web",
-            "tags": {
-              "[concat('hidden-link:', resourceId('Microsoft.Web/sites', parameters('apimServiceName')))]": "Resource"
-            },
-            "properties": {
-              "Application_Type": "web"
-            }
-          }        
+        }       
     ],
     "outputs": {
         "ApimServiceIdentityPrincipalId": {
