@@ -49,7 +49,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         }
 
         [Test]
-        public void MediatorSendsInvalidOrganisatioContactRequest()
+        public void MediatorSendsInvalidOrganisationContactRequest()
         {
             _mediator.Verify(m => m.Send(It.IsAny<CreateEpaOrganisationContactRequest>(), new CancellationToken()));
         }

@@ -31,39 +31,28 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         private int _standardCode1 = 1;
         private int _standardCode2 = 2;
         private int _standardCode3 = 3;
-        private OrganisationStandardPeriod period1a;
-        private OrganisationStandardPeriod period1b;
-        private OrganisationStandardPeriod period2;
-        private List<OrganisationStandardPeriod> _expectedPeriods1;
-        private List<OrganisationStandardPeriod> _expectedPeriods2;
+
+        private DateTime effectiveFrom1;
+        private DateTime effectiveFrom2;
+        private DateTime effectiveTo2;
 
         [SetUp]
         public void Setup()
         {
+            effectiveFrom1 = DateTime.Today.AddYears(-1);
+            effectiveFrom2 = DateTime.Today.AddMonths(-1);
+            effectiveTo2 = DateTime.Today.AddMonths(1);
+
             RegisterQueryRepository = new Mock<IRegisterQueryRepository>();
-            _standard1 = new OrganisationStandardSummary { OrganisationId = _organisationId, StandardCode = _standardCode1, Periods = new List<OrganisationStandardPeriod>() };
-            _standard2 = new OrganisationStandardSummary { OrganisationId = _organisationId, StandardCode = _standardCode2, Periods = new List<OrganisationStandardPeriod>() };
-            _standard3 = new OrganisationStandardSummary { OrganisationId = _organisationId, StandardCode = _standardCode3, Periods = new List<OrganisationStandardPeriod>() };
+            _standard1 = new OrganisationStandardSummary { OrganisationId = _organisationId, StandardCode = _standardCode1, EffectiveFrom = effectiveFrom1 };
+            _standard2 = new OrganisationStandardSummary { OrganisationId = _organisationId, StandardCode = _standardCode2, EffectiveFrom = effectiveFrom2, EffectiveTo = effectiveTo2 };
+            _standard3 = new OrganisationStandardSummary { OrganisationId = _organisationId, StandardCode = _standardCode3 };
 
             _expectedStandards = new List<OrganisationStandardSummary>
             {
                 _standard1,
                 _standard2,
                 _standard3
-            };
-
-            period1a = new OrganisationStandardPeriod {EffectiveFrom = DateTime.Today.AddYears(-1)};
-            period1b = new OrganisationStandardPeriod { EffectiveFrom = DateTime.Today.AddMonths(-1),  EffectiveTo = DateTime.Today.AddMonths(1) };
-            _expectedPeriods1 = new List<OrganisationStandardPeriod>
-            {
-                period1a,
-                period1b
-            };
-
-            period1b = new OrganisationStandardPeriod { EffectiveFrom = DateTime.Today.AddMonths(-1)};
-            _expectedPeriods2 = new List<OrganisationStandardPeriod>
-            {
-                period2
             };
 
             _request = new GetStandardsByOrganisationRequest { OrganisationId = _organisationId };
@@ -73,19 +62,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             RegisterQueryRepository.Setup(r => r.GetOrganisationStandardByOrganisationId(_organisationId))
                 .Returns(Task.FromResult(_expectedStandards.AsEnumerable()));
 
-            RegisterQueryRepository.Setup(r => r.GetOrganisationStandardPeriodsByOrganisationStandard(_organisationId, _standardCode1))
-                .Returns(Task.FromResult(_expectedPeriods1.AsEnumerable()));
-
-            RegisterQueryRepository.Setup(r => r.GetOrganisationStandardPeriodsByOrganisationStandard(_organisationId, _standardCode2))
-                .Returns(Task.FromResult(_expectedPeriods2.AsEnumerable()));
-
-            RegisterQueryRepository.Setup(r => r.GetOrganisationStandardPeriodsByOrganisationStandard(_organisationId, _standardCode3))
-                .Returns(Task.FromResult(new List<OrganisationStandardPeriod>().AsEnumerable()));
-
             GetStandardsByAssessmentOrganisationHandler =
                 new GetStandardsByAssessmentOrganisationHandler(RegisterQueryRepository.Object, Logger.Object);
         }
-
 
         [Test]
         public void GetStandardsByOrganisationRepoIsCalledWhenHandlerInvoked()
@@ -94,13 +73,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             RegisterQueryRepository.Verify(r => r.GetOrganisationStandardByOrganisationId(_organisationId));
         }
 
-
-        [Test]
-        public void GetPeriodByOrganisationStandardRepoIsCalledThreeTimesWhenHandlerInvoked()
-        {
-            GetStandardsByAssessmentOrganisationHandler.Handle(_request, new CancellationToken()).Wait();
-            RegisterQueryRepository.Verify(r => r.GetOrganisationStandardPeriodsByOrganisationStandard(_organisationId,It.IsAny<int>()),Times.Exactly(3));
-        }
 
         [Test]
         public void GetStandardsForOrganisationReturns3SetsOfStandards()
@@ -114,8 +86,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         {
             var standards = GetStandardsByAssessmentOrganisationHandler.Handle(_request, new CancellationToken()).Result;
             var standard = standards.Where(s => s.OrganisationId == _organisationId && s.StandardCode == _standardCode1).First();
-            var periods = standard.Periods;
-            Assert.AreEqual(periods,_expectedPeriods1);
+            Assert.AreEqual(effectiveFrom1, standard.EffectiveFrom);
+            Assert.AreEqual(null, standard.EffectiveTo);
         }
 
         [Test]
@@ -123,18 +95,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         {
             var standards = GetStandardsByAssessmentOrganisationHandler.Handle(_request, new CancellationToken()).Result;
             var standard = standards.Where(s => s.OrganisationId == _organisationId && s.StandardCode == _standardCode2).First();
-            var periods = standard.Periods;
-            Assert.AreEqual(periods, _expectedPeriods2);
-        }
-
-
-        [Test]
-        public void GetStandardsForOrganisationReturnsStandard3OfStandardsWithExpectedNoPeriods()
-        {
-            var standards = GetStandardsByAssessmentOrganisationHandler.Handle(_request, new CancellationToken()).Result;
-            var standard = standards.Where(s => s.OrganisationId == _organisationId && s.StandardCode == _standardCode3).First();
-            var periods = standard.Periods;
-            periods.Count.Should().Be(0);
+            Assert.AreEqual(effectiveFrom2, standard.EffectiveFrom);
+            Assert.AreEqual(effectiveTo2, standard.EffectiveTo);
         }
     }
 }

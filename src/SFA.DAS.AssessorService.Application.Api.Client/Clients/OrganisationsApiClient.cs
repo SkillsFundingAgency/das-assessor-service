@@ -44,13 +44,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<ValidationResponse> ValidateCreateOrganisation(string name, string ukprn,
-            string organisationTypeId)
+        public async Task<ValidationResponse> ValidateCreateOrganisation(string name, string ukprn, string organisationTypeId)
         {
 
             var newName = SanitizeUrlParam(name);
             using (var request = new HttpRequestMessage(HttpMethod.Get,
-                $"/api/ao/assessment-organisations/validate?name={newName}&ukprn={ukprn}&organisationTypeId={organisationTypeId}"))
+                $"/api/ao/assessment-organisations/validate-new?name={newName}&ukprn={ukprn}&organisationTypeId={organisationTypeId}")
+            )
             {
                 return await RequestAndDeserialiseAsync<ValidationResponse>(request,
                     $"Could not check the validation for organisation [{name}]");
@@ -66,6 +66,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             {
                 return await RequestAndDeserialiseAsync<ValidationResponse>(request,
                     $"Could not check the validation for contact [{newName}] against contactId [{contactId}]");
+            }
+        }
+        
+        public async Task<ValidationResponse> ValidateUpdateOrganisation(string organisationId, string name, string ukprn, string organisationTypeId)
+        {
+            var newName = SanitizeUrlParam(name);
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/ao/assessment-organisations/validate-existing?organisationId={organisationId}&name={newName}&ukprn={ukprn}&organisationTypeId={organisationTypeId}"))
+            {
+                return await RequestAndDeserialiseAsync<ValidationResponse>(request, $"Could not check the validation for existing organisation [{organisationId}]");
             }
         }
         
@@ -135,6 +144,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task Delete(Guid id);
         Task<ValidationResponse> ValidateCreateOrganisation(string name, string ukprn, string organisationTypeId);
         Task<ValidationResponse> ValidateUpdateContact(string contactId, string displayName, string email);
+        Task<ValidationResponse> ValidateUpdateOrganisation(string organisationId, string name, string ukprn, string organisationTypeId);
         Task<ValidationResponse> ValidateCreateContact(string name, string organisationId, string email, string phone);
     }
 }
