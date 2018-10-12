@@ -61,7 +61,47 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             return View(vm);
         }
 
-          [HttpGet("register/impage")]
+        [HttpGet("register/add-contact/{organisationId}")]
+        public async Task<IActionResult> AddContact(string organisationId)
+        {
+            var vm = new RegisterAddContactViewModel
+            {
+                EndPointAssessorOrganisationId = organisationId
+            };
+
+            return View(vm);
+        }
+
+        [HttpPost("register/add-contact/{organisationId}")]
+        public async Task<IActionResult> AddContact(RegisterAddContactViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+            {      
+                return View(viewModel);
+            }
+
+            var addContactRequest = new CreateEpaOrganisationContactRequest
+            {
+                EndPointAssessorOrganisationId = viewModel.EndPointAssessorOrganisationId,
+                DisplayName =  viewModel.DisplayName,
+                Email = viewModel.Email,
+                PhoneNumber = viewModel.PhoneNumber
+                
+            };
+
+            var contactId = await _apiClient.CreateEpaContact(addContactRequest);
+            return Redirect($"/register/view-contact/{contactId}");
+            
+        }
+
+        [HttpGet("register/view-contact/{contactId}")]
+        public async Task<IActionResult> ViewContact(string contactId)
+        {
+            var viewContact = new RegisterViewContactViewModel { ContactId = contactId };
+            return View(viewContact);
+        }
+
+        [HttpGet("register/impage")]
         public async Task<IActionResult> Impage()
         {
             var vm = new AssessmentOrgsImportResponse { Status = "Press to run" };

@@ -82,6 +82,22 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             }
         }
 
+        [HttpGet("contacts/validate",Name = "CreateEpaContactValidate")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
+        public async Task<IActionResult> CreateContactValidate(CreateEpaContactValidationRequest request)
+        {
+            try
+            {
+                _logger.LogInformation("Validation of creating new contact");
+                var result = await _mediator.Send(request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($@"Bad request, Message: [{ex.Message}]");
+                return BadRequest(ex);
+            }
+        }
         [HttpPut(Name = "UpdateEpaOrganisation")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EpaOrganisationResponse))]
         [SwaggerResponse((int)HttpStatusCode.NotFound, typeof(ApiResponse))]
