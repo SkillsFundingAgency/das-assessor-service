@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using SFA.DAS.Apprenticeships.Api.Types.AssessmentOrgs;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
+using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -22,7 +24,7 @@ namespace SFA.DAS.AssessorService.Data
             return await _assessorDbContext.Organisations.ToListAsync();
         }
 
-        public async Task<Organisation> GetByUkPrn(int ukprn)
+        public async Task<Organisation> GetByUkPrn(long ukprn)
         {
             return await _assessorDbContext.Organisations
                 .FirstOrDefaultAsync(q => q.EndPointAssessorUkprn == ukprn);

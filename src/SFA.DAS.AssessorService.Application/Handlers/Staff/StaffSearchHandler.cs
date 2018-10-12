@@ -14,7 +14,6 @@ using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 {
@@ -126,7 +125,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
             foreach (var searchResult in searchResults)
             {
-                var standard = allStandards.SingleOrDefault(s => s.Id == searchResult.StandardCode);
+                var standard = allStandards.SingleOrDefault(s => s.StandardId == searchResult.StandardCode.ToString());
                 if (standard == null)
                 {
                     standard = assessmentOrgsApiClient.GetStandard(searchResult.StandardCode).Result;

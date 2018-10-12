@@ -62,7 +62,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
 
-        [HttpGet("validate",Name = "CreateEpaOrganisationValidate")]
+        [HttpGet("validate-new",Name = "CreateEpaOrganisationValidate")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.Conflict, Type = typeof(ApiResponse))]
@@ -72,6 +72,26 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             try
             {
                 _logger.LogInformation("Validation of creating new Organisation");
+                var result = await _mediator.Send(request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($@"Bad request, Message: [{ex.Message}]");
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpGet("validate-existing", Name = "UpdateEpaOrganisationValidate")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.Conflict, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> UpdateOrganisationValidate(UpdateEpaOrganisationValidationRequest request)
+        {
+            try
+            {
+                _logger.LogInformation("Validation of existing Organisation");
                 var result = await _mediator.Send(request);
                 return Ok(result);
             }
