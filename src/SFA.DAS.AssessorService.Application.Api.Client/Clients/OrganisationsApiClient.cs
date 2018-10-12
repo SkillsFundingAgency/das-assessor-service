@@ -56,6 +56,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                     $"Could not check the validation for organisation [{name}]");
             }
         }
+        
+        
+        public async Task<ValidationResponse> ValidateCreateContact(string name, string organisationId,
+            string email, string phone)
+        {
+
+            var newName = SanitizeUrlParam(name);
+            using (var request = new HttpRequestMessage(HttpMethod.Get,
+                $"/api/ao/assessment-organisations/contacts/validate?name={newName}&organisationId={organisationId}&email={email}&phone={phone}"))
+            {
+                return await RequestAndDeserialiseAsync<ValidationResponse>(request,
+                    $"Could not check the validation for contact [{name}] against organisation [{organisationId}]");
+            }
+        }
 
         public async Task Update(UpdateOrganisationRequest organisationUpdateViewModel)
         {
@@ -108,5 +122,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task Update(UpdateOrganisationRequest organisationUpdateViewModel);
         Task Delete(Guid id);
         Task<ValidationResponse> ValidateCreateOrganisation(string name, string ukprn, string organisationTypeId);
+        Task<ValidationResponse> ValidateCreateContact(string name, string organisationId, string email, string phone);
     }
 }
