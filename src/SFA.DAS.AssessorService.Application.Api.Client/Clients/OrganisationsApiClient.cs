@@ -76,7 +76,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                     $"Could not check the validation for contact [{name}] against organisation [{organisationId}]");
             }
         }
-        }
+        
 
         public async Task Update(UpdateOrganisationRequest organisationUpdateViewModel)
         {
