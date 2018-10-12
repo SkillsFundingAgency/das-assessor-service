@@ -20,6 +20,9 @@
         "externalApiAppServiceName": {
             "type": "string"
         },
+        "externalApiSandboxAppServiceName": {
+            "type": "string"
+        },        
         "uiKeyvaultCertificateName": {
             "type": "string"
         },
@@ -32,6 +35,9 @@
         "externalAPiKeyvaultCertificateName": {
             "type": "string"
         },
+        "externalAPiSandboxKeyvaultCertificateName": {
+            "type": "string"
+        },        
         "uiCustomHostname": {
             "type": "string"
         },
@@ -44,6 +50,9 @@
         "externalApiCustomHostname": {
             "type": "string"
         },
+        "externalApiSandboxCustomHostname": {
+            "type": "string"
+        },        
         "functionAppNames": {
             "type": "array"
         },
@@ -232,6 +241,92 @@
                 }
             }
         },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "[parameters('externalApiSandboxAppServiceName')]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+              "mode": "Incremental",
+              "templateLink": {
+                "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/app-service.json",
+                "contentVersion": "1.0.0.0"
+              },
+              "parameters": {
+                "appServiceName": {
+                  "value": "[parameters('externalApiSandboxAppServiceName')]"
+                },
+                "appServicePlanName": {
+                  "value": "[parameters('sharedAppServicePlanName')]"
+                },
+                "appServicePlanResourceGroup": {
+                  "value": "[parameters('sharedAppServicePlanResourceGroup')]"
+                },
+                "appServiceAppSettings": {
+                  "value": [
+                    {
+                        "name": "ApplicationInsights:InstrumentationKey",
+                        "value": "[reference(concat(parameters('externalApiSandboxAppServiceName'),'-ai')).outputs.InstrumentationKey.value]"
+                    },                      
+                    {
+                      "name": "EnvironmentName",
+                      "value": "[parameters('environmentName')]"
+                    },
+                    {
+                      "name": "ConfigurationStorageConnectionString",
+                      "value": "[parameters('configurationStorageConnectionString')]"
+                    },
+                    {
+                        "name": "InstanceName",
+                        "value": "[concat(parameters('environmentName'),' (Sandbox)')]"
+                    },
+                    {
+                        "name": "UseSandboxServices",
+                        "value": "yes"
+                    }                    
+                  ]
+                },
+                "appServiceConnectionStrings": {
+                  "value": [
+                    {
+                      "name": "Redis",
+                      "connectionString": "[parameters('loggingRedisConnectionString')]",
+                      "type": "Custom"
+                    }
+                  ]
+                },
+                "customHostName": {
+                    "value": "[parameters('externalApiSandboxCustomHostname')]"
+                },                
+                "certificateThumbprint": {
+                    "value": "[reference(resourceId(parameters('sharedAppServicePlanResourceGroup'), 'Microsoft.Web/certificates', parameters('externalApiSandboxKeyvaultCertificateName')), '2016-03-01').Thumbprint]"
+                }                
+              }
+            },
+            "dependsOn": [
+            ]
+        },
+        {
+            "apiVersion": "2017-08-01",
+            "name": "[concat(parameters('externalApiSandboxAppServiceName'),'-ai')]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+              "mode": "Incremental",
+              "templateLink": {
+                "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/application-insights.json",
+                "contentVersion": "1.0.0.0"
+              },
+              "parameters": {
+                "appInsightsName": {
+                  "value": "[parameters('externalApiSandboxAppServiceName')]"
+                },
+                "attachedService": {
+                  "value": "[parameters('externalApiSandboxAppServiceName')]"
+                }
+              }
+            },
+            "dependsOn": [
+            ]
+        },        
         {
             "name": "StorageAccount",
             "type": "Microsoft.Resources/deployments",
