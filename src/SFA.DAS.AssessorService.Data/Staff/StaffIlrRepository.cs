@@ -38,10 +38,21 @@ namespace SFA.DAS.AssessorService.Data.Staff
         public async Task<IEnumerable<Ilr>> SearchForLearnerByUln(StaffSearchRequest searchRequest)
         {
             long.TryParse(searchRequest.SearchQuery, out var uln);
-            return await _context.Ilrs.Where(r => r.Uln == uln).GroupBy(r => r.StdCode).Select(g => g.OrderByDescending(l => l.Id).First())
-                .Skip((searchRequest.Page - 1) * 10)
-                .Take(10)
-                .ToListAsync();
+
+            return (await _connection.QueryAsync<Ilr>(
+                            @"SELECT ilr.*
+                            	FROM
+	                            (
+		                            SELECT *,
+		                            DENSE_RANK() OVER (PARTITION BY [Uln], [StdCode] ORDER BY [Source] DESC,[LearnStartDate] DESC) AS rownumber
+		                            FROM ilrs 
+		                            WHERE [Uln] = @uln
+	                            ) AS ilr
+                            WHERE rownumber = 1
+                            ORDER BY [Id] DESC
+                            OFFSET @skip ROWS 
+		                    FETCH NEXT @take ROWS ONLY",
+                new { uln, skip = (searchRequest.Page - 1) * 10, take = 10 })).ToList();
         }
 
         public async Task<IEnumerable<Ilr>> SearchForLearnerByName(string learnerName, int page, int pageSize)
