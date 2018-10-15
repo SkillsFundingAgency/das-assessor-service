@@ -27,10 +27,22 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         [HttpGet]
         public async Task<IActionResult> Approvals()
         {
-            var certificates = await ApiClient.GetCertificatesToBeApproved();            
-            var certificatesToBeApproved = Mapper.Map<List<CertificateApprovalViewModel>>(certificates);
-            
+            var certificates = await ApiClient.GetCertificatesToBeApproved();
+            var certificatesToBeApproved = new CertificateApprovalViewModel
+            {
+                Id = 1,
+                CertificateDetailApprovalViewModels = Mapper.Map<List<CertificateDetailApprovalViewModel>>(certificates)
+            };
+
             return View(certificatesToBeApproved);
+        }
+
+        [HttpPost(Name = "Approvals")]
+        public async Task<IActionResult> Approvals(
+            CertificateApprovalViewModel
+                certificateApprovalViewModel)
+        {
+            return View(certificateApprovalViewModel);
         }
     }
 }
