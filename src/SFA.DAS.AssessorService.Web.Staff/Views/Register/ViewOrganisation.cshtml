@@ -70,17 +70,17 @@
                                                  <th>Name</th>
                                                  <th>Email</th>
                                                  <th>username</th>
-                                                 <th></th>
+
                                              </tr>
                                          </thead>
                                          <tbody>
                                              @foreach (var result in Model.Contacts.OrderBy(x => x.DisplayName))
                                              {
                                                  <tr>
-                                                     <td data-label="Name">@result.DisplayName</td>
+                                                     <td data-label="Name"><a href="/register/view-contact/@result.Id">@result.DisplayName</a></td>
                                                      <td data-label="ID">@result.Email</td>
                                                      <td data-label="Username">@result.Username</td>
-                                                     <td class="numeric"><a href="">Edit</a></td>
+                                                     
                                                  </tr>
                                              }
                                          </tbody>
@@ -94,7 +94,7 @@
                          <span>There are no contacts</span>
                      }
                 <div class="form-group">
-                    <button class="button" type="submit" href="">Add New Contact</button>
+                    <a class="button" href="/register/add-contact/@Model.OrganisationId">Add New Contact</a>
                 </div>
 
                  </label>

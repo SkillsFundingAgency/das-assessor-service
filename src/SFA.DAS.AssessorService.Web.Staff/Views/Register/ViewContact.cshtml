@@ -1,5 +1,5 @@
 ﻿@using SFA.DAS.AssessorService.Web.Staff.Controllers
-@model RegisterViewContactViewModel
+@model RegisterViewAndEditContactViewModel
 @{
     ViewBag.Title = "View Contact";
     Layout = "_Layout";
@@ -16,12 +16,25 @@
 
         <div id="organisationWrapper">
                
-            <label for="ContactId">
-                <span class="form-label-bold">Contact ID</span>
-                        
-                <span>@Model.ContactId</span>
+            <label for="Organisation">
+                <span class="form-label-bold">Organisation</span>
+                <a href="/register/view-organisation/@Model.OrganisationId">@Model.OrganisationName</a>
+            </label>
+            <label for="DisplayName">
+                <span class="form-label-bold">Contact Name</span>
+                @Model.DisplayName
+            </label>
+            <label for="Email">
+                <span class="form-label-bold">Email</span>
+                @Model.Email
+            </label>
+            <label for="PhoneNumber">
+                <span class="form-label-bold">Phone Number</span>
+                @Model.PhoneNumber
             </label>
         </div>
-
+        <div class="form-group">
+            <a class="button" href="/register/edit-contact/@Model.ContactId">Edit</a>
+        </div>
     </div>
 </div>

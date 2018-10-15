@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Identity;
-
 namespace SFA.DAS.AssessorService.Web.Staff.Models
 {
     public class RegisterAddContactViewModel

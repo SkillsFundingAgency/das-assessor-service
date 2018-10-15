@@ -64,35 +64,35 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 
 
         [HttpPost("register/edit-organisation/{organisationId}")]
-        public async Task<IActionResult> EditOrganisation(RegisterViewAndEditOrganisationViewModel viewModel)
-        {
-            if (!ModelState.IsValid)
-            {
-                viewModel.OrganisationTypes = await _apiClient.GetOrganisationTypes();
-                GatherOrganisationContacts(viewModel);
-                GatherOrganisationStandards(viewModel);
-                return View(viewModel);
-            }
-
-            var updateOrganisationRequest = new UpdateEpaOrganisationRequest
-            {
-                Name = viewModel.Name,
-                OrganisationId = viewModel.OrganisationId,
-                Ukprn = viewModel.Ukprn,
-                OrganisationTypeId = viewModel.OrganisationTypeId,
-                LegalName = viewModel.LegalName,
-                WebsiteLink = viewModel.WebsiteLink,
-                Address1 = viewModel.Address1,
-                Address2 = viewModel.Address2,
-                Address3 = viewModel.Address3,
-                Address4 = viewModel.Address4,
-                Postcode = viewModel.Postcode
-            };
-
-            await _apiClient.UpdateEpaOrganisation(updateOrganisationRequest);
-
-            return RedirectToAction("ViewOrganisation", "register", new { organisationId = viewModel.OrganisationId});
-        }
+                 public async Task<IActionResult> EditOrganisation(RegisterViewAndEditOrganisationViewModel viewModel)
+                 {
+                     if (!ModelState.IsValid)
+                     {
+                         viewModel.OrganisationTypes = await _apiClient.GetOrganisationTypes();
+                         GatherOrganisationContacts(viewModel);
+                         GatherOrganisationStandards(viewModel);
+                         return View(viewModel);
+                     }
+         
+                     var updateOrganisationRequest = new UpdateEpaOrganisationRequest
+                     {
+                         Name = viewModel.Name,
+                         OrganisationId = viewModel.OrganisationId,
+                         Ukprn = viewModel.Ukprn,
+                         OrganisationTypeId = viewModel.OrganisationTypeId,
+                         LegalName = viewModel.LegalName,
+                         WebsiteLink = viewModel.WebsiteLink,
+                         Address1 = viewModel.Address1,
+                         Address2 = viewModel.Address2,
+                         Address3 = viewModel.Address3,
+                         Address4 = viewModel.Address4,
+                         Postcode = viewModel.Postcode
+                     };
+         
+                     await _apiClient.UpdateEpaOrganisation(updateOrganisationRequest);
+         
+                     return RedirectToAction("ViewOrganisation", "register", new { organisationId = viewModel.OrganisationId});
+                 }
 
         [HttpGet("register/add-organisation")]
         public async Task<IActionResult> AddOrganisation()
@@ -138,11 +138,41 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             
         }
 
+        [HttpGet("register/edit-contact/{contactId}")]
+        public async Task<IActionResult> EditContact(string contactId)
+        {
+            var contact = await _apiClient.GetEpaCntact(contactId);
+            var organisation = await _apiClient.GetEpaOrganisation(contact.OrganisationId);
+            var viewModel = MapContactModel(contact, organisation);
+            return View(viewModel);
+        }
+
+        [HttpPost("register/edit-contact/{contactId}")]
+        public async Task<IActionResult> EditContact(RegisterViewAndEditContactViewModel viewAndEditModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(viewAndEditModel);
+            }
+
+            var request = new UpdateEpaOrganisationContactRequest
+            {
+                ContactId = viewAndEditModel.ContactId,
+                DisplayName =  viewAndEditModel.DisplayName,
+                Email = viewAndEditModel.Email,
+                PhoneNumber = viewAndEditModel.PhoneNumber 
+            };
+            await _apiClient.UpdateEpaContact(request);
+            return RedirectToAction("ViewContact", "register", new { contactId = viewAndEditModel.ContactId});
+        }
+        
         [HttpGet("register/view-contact/{contactId}")]
         public async Task<IActionResult> ViewContact(string contactId)
         {
-            var viewContact = new RegisterViewContactViewModel { ContactId = contactId };
-            return View(viewContact);
+            var contact = await _apiClient.GetEpaCntact(contactId);
+            var organisation = await _apiClient.GetEpaOrganisation(contact.OrganisationId);
+            var viewModel = MapContactModel(contact, organisation);
+            return View(viewModel);
         }
 
         [HttpGet("register/impage")]
@@ -215,6 +245,20 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             viewAndEditModel.OrganisationStandards = organisationStandards;
         }
 
+        private RegisterViewAndEditContactViewModel MapContactModel(AssessmentOrganisationContact contact, EpaOrganisation organisation)
+        {
+            var viewModel = new RegisterViewAndEditContactViewModel
+            {
+                Email = contact.Email,
+                ContactId = contact.Id.ToString(),
+                PhoneNumber = contact.PhoneNumber,
+                DisplayName = contact.DisplayName,
+                OrganisationName = organisation.Name,
+                OrganisationId = organisation.OrganisationId
+            };
+
+            return viewModel;
+        }
 
         private void GatherOrganisationContacts(RegisterViewAndEditOrganisationViewModel viewAndEditModel)
         {
