@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         private int _id1;
         private int _id2;
         private int _id3;
-        private List<DeliveryArea> _expectedDeliveryAreas;
+        private List<int> _expectedDeliveryAreas;
 
         [SetUp]
         public void Setup()
@@ -62,11 +62,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
                 _standard3
             };
 
-            _expectedDeliveryAreas = new List<DeliveryArea>
-            {
-                new DeliveryArea { Id = 1, Area = "Area 100", Status = "Live" },
-                new DeliveryArea { Id = 2, Area = "Area 10" }
-            };
+            _expectedDeliveryAreas = new List<int>{1,2};
             
             _request = new GetStandardsByOrganisationRequest { OrganisationId = _organisationId };
 
@@ -75,7 +71,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             RegisterQueryRepository.Setup(r => r.GetOrganisationStandardByOrganisationId(_organisationId))
                 .Returns(Task.FromResult(_expectedStandards.AsEnumerable()));
 
-            RegisterQueryRepository.Setup(r => r.GetDeliveryAreasByOrganisationStandardId(_id1))
+            RegisterQueryRepository.Setup(r => r.GetDeliveryAreaIdsByOrganisationStandardId(_id1))
                 .Returns(Task.FromResult(_expectedDeliveryAreas.AsEnumerable()));
             
             GetStandardsByAssessmentOrganisationHandler =
@@ -88,7 +84,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         {
             GetStandardsByAssessmentOrganisationHandler.Handle(_request, new CancellationToken()).Wait();
             RegisterQueryRepository.Verify(r => r.GetOrganisationStandardByOrganisationId(_organisationId));
-            RegisterQueryRepository.Verify(r => r.GetDeliveryAreasByOrganisationStandardId(_id1));
+            RegisterQueryRepository.Verify(r => r.GetDeliveryAreaIdsByOrganisationStandardId(_id1));
         }
 
         [Test]

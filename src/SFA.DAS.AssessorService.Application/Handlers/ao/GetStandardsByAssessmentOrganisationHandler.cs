@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             var orgStandards = await _registerQueryRepository.GetOrganisationStandardByOrganisationId(organisationId);
             foreach (var orgStandard in orgStandards)
             {
-                var deliveryAreas = await _registerQueryRepository.GetDeliveryAreasByOrganisationStandardId(orgStandard.Id);
+                var deliveryAreas = await _registerQueryRepository.GetDeliveryAreaIdsByOrganisationStandardId(orgStandard.Id);
                 orgStandard.DeliveryAreas = deliveryAreas.ToList();
             }
             return orgStandards.ToList();

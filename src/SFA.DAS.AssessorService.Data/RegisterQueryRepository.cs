@@ -341,7 +341,7 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        public async Task<IEnumerable<DeliveryArea>> GetDeliveryAreasByOrganisationStandardId(int organisationStandardId)
+        public async Task<IEnumerable<int>> GetDeliveryAreaIdsByOrganisationStandardId(int organisationStandardId)
         {
             var connectionString = _configuration.SqlConnectionString;
 
@@ -351,9 +351,9 @@ namespace SFA.DAS.AssessorService.Data
                     await connection.OpenAsync();
 
                 var sql =
-                    "select * from deliveryArea where id in (select DeliveryAreaId from organisationStandardDeliveryArea" +
-                    " where OrganisationStandardId = @organisationStandardId)";
-                var deliveryAreas = await connection.QueryAsync<DeliveryArea>(sql, new {organisationStandardId});
+                    "select DeliveryAreaId from organisationStandardDeliveryArea" +
+                    " where OrganisationStandardId = @organisationStandardId";
+                var deliveryAreas = await connection.QueryAsync<int>(sql, new {organisationStandardId});
                 return deliveryAreas;
             }
         }

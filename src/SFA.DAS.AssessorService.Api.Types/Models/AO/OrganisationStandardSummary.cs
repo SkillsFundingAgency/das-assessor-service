@@ -16,6 +16,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
         public DateTime? EffectiveTo { get; set; }
 
         public StandardSummary StandardSummary { get; set; }
-        public List<DeliveryArea> DeliveryAreas { get; set; }
+        public List<int> DeliveryAreas { get; set; }
     }
 }
