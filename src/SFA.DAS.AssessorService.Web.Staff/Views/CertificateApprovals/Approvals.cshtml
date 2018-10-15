@@ -6,77 +6,82 @@
 @{ ViewBag.Title = "Staff Dashboard"; }
 
 <div class="grid-row">
+
     <div class="column-three-thirds" sfa-show-for-policy="@Startup.Policies.OperationsTeamOnly">
 
-        <a class="link-back" asp-controller="Dashboard" asp-action="Index">Back</a>
+        <form class="apprentice-approvals-form js-disable-on-submit" type="post" asp-controller="CertificateApprovals" asp-action="Approvals">
+            <a class="link-back" asp-controller="Dashboard" asp-action="Index">Back</a>
 
-        @* hidden with css by default *@
-        <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-            <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                There's a problem
-            </h2>
-            <ul class="js-error-summary-list error-summary-list"></ul>
-        </div>
-
-        @if (!ViewData.ModelState.IsValid)
-        {
-            <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+            @* hidden with css by default *@
+            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
                 <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
                     There's a problem
                 </h2>
-                <ul class="error-summary-list">
-                    <li>
-                        <a sfa-validation-for="FirstName"></a>
-                    </li>
-                </ul>
+                <ul class="js-error-summary-list error-summary-list"></ul>
             </div>
-        }
 
-
-        <div sfa-anyvalidationerror-class="after-error-summary">
-            <h1 class="heading-large">
-                Approve/Reject Privately Funded Certificates?
-            </h1>
-
-            @if (@Model.CertificateDetailApprovalViewModels.Any())
+            @if (!ViewData.ModelState.IsValid)
             {
-                <table class="table table-font-xsmall">
-                    <thead>
-                    <tr>
-                        <th>Full Name</th>
-                        <th>ULN</th>
-                        <th>Standard</th>
-                        <th>Certificate Reference</th>
-                        <th>Approve</th>
-
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach (var result in Model.CertificateDetailApprovalViewModels)
-                    {
-                        <tr>
-                            @* <td><a asp-action="Select" asp-route-stdcode="@result.StandardCode" asp-route-uln="@result.Uln" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.StaffSearchResult.StaffSearchItems.PageIndex">@result.GivenNames @result.FamilyName</a></td> *@
-                            <td>@result.FullName</td>
-                            <td>@result.Uln</td>
-                            <td>@result.StandardCode</td>
-                            <td>@result.CertificateReference</td>
-                            <td>
-                                <select asp-for=@result.IsApproved
-                                        asp-items="@(new SelectList(@result.ApprovedRejected, "Value", "Text"))">
-                                </select>
-                            </td>
-
-                        </tr>
-                    }
-                    </tbody>
-                </table>
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                        There's a problem
+                    </h2>
+                    <ul class="error-summary-list">
+                        <li>
+                            <a sfa-validation-for="FirstName"></a>
+                        </li>
+                    </ul>
+                </div>
             }
-        </div>
 
-        <form class="apprentice-approvals-form js-disable-on-submit" type="post" asp-controller="CertificateApprovals"  asp-action="Approvals">
-            @Html.HiddenFor(c => c.Id)
+
+            <div sfa-anyvalidationerror-class="after-error-summary">
+                <h1 class="heading-large">
+                    Approve/Reject Privately Funded Certificates?
+                </h1>
+
+                @if (@Model.CertificateDetailApprovalViewModels.Any())
+                {
+                    <table class="table table-font-xsmall">
+                        <thead>
+                        <tr>
+                            <th>Full Name</th>
+                            <th>ULN</th>
+                            <th>Standard</th>
+                            <th>Certificate Reference</th>
+                            <th>Approve</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        @{
+                            var approvalresults = Model.CertificateDetailApprovalViewModels.ToList();
+                        }
+                        @for (int i = 0; i < approvalresults.Count; i++)
+                        {
+                            @Html.HiddenFor(x => @approvalresults[i].CertificateReference)
+                            <tr>
+                                @* <td><a asp-action="Select" asp-route-stdcode="@result.StandardCode" asp-route-uln="@result.Uln" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.StaffSearchResult.StaffSearchItems.PageIndex">@result.GivenNames @result.FamilyName</a></td> *@
+                                <td>@approvalresults[i].FullName</td>
+                                <td>@approvalresults[i].Uln</td>
+                                <td>@approvalresults[i].StandardCode</td>
+                                <td>@approvalresults[i].CertificateReference</td>
+                                <td>
+                                    <select asp-for=@approvalresults[i].IsApproved
+                                            asp-items="@(new SelectList(@approvalresults[i].ApprovedRejected, "Value", "Text"))">
+                                    </select>
+                                </td>
+
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                }
+            </div>
+
+
             @Html.HiddenFor(c => c.CertificateDetailApprovalViewModels)
-           
+
             <button type="submit" class="button">Submit</button>
         </form>
     </div>

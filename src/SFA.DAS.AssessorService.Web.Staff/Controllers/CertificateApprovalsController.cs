@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
-using SFA.DAS.AssessorService.Web.Staff.ViewModels;
 using Microsoft.AspNetCore.Authorization;
-using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels.Private;
 using AutoMapper;
 
@@ -30,7 +26,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             var certificates = await ApiClient.GetCertificatesToBeApproved();
             var certificatesToBeApproved = new CertificateApprovalViewModel
             {
-                Id = 1,
                 CertificateDetailApprovalViewModels = Mapper.Map<List<CertificateDetailApprovalViewModel>>(certificates)
             };
 
@@ -39,10 +34,14 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 
         [HttpPost(Name = "Approvals")]
         public async Task<IActionResult> Approvals(
-            CertificateApprovalViewModel
-                certificateApprovalViewModel)
+            CertificatePostApprovalViewModel certificateApprovalViewModel)
         {
-            return View(certificateApprovalViewModel);
+            certificateApprovalViewModel.UserName = ContextAccessor.HttpContext.User
+                .FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
+
+            ApiClient.ApproveCertificates(certificateApprovalViewModel);
+
+            return RedirectToAction("Index", "Dashboard");
         }
     }
 }
