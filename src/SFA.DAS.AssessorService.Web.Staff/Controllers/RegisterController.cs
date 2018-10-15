@@ -279,7 +279,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
     
         private RegisterViewAndEditOrganisationViewModel MapOrganisationModel(EpaOrganisation organisation)
         {
-            var notSetDescription = "Not Set";
+            var notSetDescription = "Not set";
             var viewModel = new RegisterViewAndEditOrganisationViewModel
             {
                 OrganisationId = organisation.OrganisationId,
@@ -287,13 +287,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 Ukprn = organisation.Ukprn,
                 OrganisationTypeId = organisation.OrganisationTypeId,
                 OrganisationType = notSetDescription,
-                LegalName = organisation.OrganisationData.LegalName,
-                WebsiteLink = organisation.OrganisationData.WebsiteLink,
-                Address1 = organisation.OrganisationData.Address1,
-                Address2 = organisation.OrganisationData.Address2,
-                Address3 = organisation.OrganisationData.Address3,
-                Address4 = organisation.OrganisationData.Address4,
-                Postcode = organisation.OrganisationData.Postcode,
+                LegalName = organisation.OrganisationData?.LegalName,
+                WebsiteLink = organisation.OrganisationData?.WebsiteLink,
+                Address1 = organisation.OrganisationData?.Address1,
+                Address2 = organisation.OrganisationData?.Address2,
+                Address3 = organisation.OrganisationData?.Address3,
+                Address4 = organisation.OrganisationData?.Address4,
+                Postcode = organisation.OrganisationData?.Postcode,
                 PrimaryContact = organisation.PrimaryContact,
                 PrimaryContactName = notSetDescription
             };

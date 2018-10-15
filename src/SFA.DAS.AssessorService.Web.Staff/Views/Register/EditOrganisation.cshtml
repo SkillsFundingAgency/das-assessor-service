@@ -1,224 +1,221 @@
 ﻿@using SFA.DAS.AssessorService.Web.Staff.Controllers
 @model RegisterViewAndEditOrganisationViewModel
 @{
-    ViewBag.Title = "Edit Organisation";
-    Layout = "_Layout";
+ViewBag.Title = "Edit organisation";
+Layout = "_Layout";
 }
 <div class="grid-row">
     <div class="column-two-thirds">
-        <a asp-action="Index" asp-controller="Register" class="link-back">Return to Register Search</a>
+        <a asp-action="Index" asp-controller="Register" class="link-back">Return to register search</a>
         <form class="register-search-form" asp-action="EditOrganisation" asp-controller="Register" method="POST">
-
             <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
                 <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
                     There's a problem
                 </h2>
-
                 <ul class="js-error-summary-list error-summary-list"></ul>
             </div>
 
             @if (!ViewData.ModelState.IsValid)
             {
-                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                        There's a problem
-                    </h2>
-                    <ul class="error-summary-list">
-                        <li><a sfa-validation-for="OrganisationId"></a></li>
-                        <li><a sfa-validation-for="Name"></a></li>
-                        <li><a sfa-validation-for="Ukprn"></a></li>
-                        <li><a sfa-validation-for="OrganisationTypeId"></a></li>
-                        <li><a sfa-validation-for="LegalName"></a></li>
-                        <li><a sfa-validation-for="WebsiteLink"></a></li>
-                        <li><a sfa-validation-for="Address1"></a></li>
-                        <li><a sfa-validation-for="Address2"></a></li>
-                        <li><a sfa-validation-for="Address3"></a></li>
-                        <li><a sfa-validation-for="Address4"></a></li>
-                        <li><a sfa-validation-for="Postcode"></a></li>
-                    </ul>
-                </div>
+            <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                    There's a problem
+                </h2>
+                <ul class="error-summary-list">
+                    <li><a sfa-validation-for="OrganisationId"></a></li>
+                    <li><a sfa-validation-for="Name"></a></li>
+                    <li><a sfa-validation-for="Ukprn"></a></li>
+                    <li><a sfa-validation-for="OrganisationTypeId"></a></li>
+                    <li><a sfa-validation-for="LegalName"></a></li>
+                    <li><a sfa-validation-for="WebsiteLink"></a></li>
+                    <li><a sfa-validation-for="Address1"></a></li>
+                    <li><a sfa-validation-for="Address2"></a></li>
+                    <li><a sfa-validation-for="Address3"></a></li>
+                    <li><a sfa-validation-for="Address4"></a></li>
+                    <li><a sfa-validation-for="Postcode"></a></li>
+                </ul>
+            </div>
             }
 
-            <h1>
-                <label class="form-label" for="">
-                    <span class="heading-xlarge">Edit Organisation @Model.OrganisationId</span>
-                    @Html.HiddenFor(c => c.OrganisationId)
-                </label>
+            <h1 class="heading-xlarge">
+                Edit organisation
+                <!-- <span class="heading-secondary">Organisation ID: @Model.OrganisationId</span> -->
+                @Html.HiddenFor(c => c.OrganisationId)
             </h1>
 
             <div id="organisationWrapper">
                 <div class="form-group" sfa-validation-for="OrganisationId" sfa-validationerror-class="form-group-error">
                     <label for="OrganisationId">
-                        <span class="form-label-bold">Organisation Id</span>
+                        <span class="form-label-bold">Organisation ID</span>
                         <span class="error-message" asp-validation-for="OrganisationId"></span>
                         @Model.OrganisationId
                     </label>
                 </div>
                 <div class="form-group" sfa-validation-for="Name" sfa-validationerror-class="form-group-error">
                     <label for="Name">
-                        <span class="form-label-bold">Name</span>
+                        <span class="form-label-bold">Organisation name</span>
                         <span class="error-message" asp-validation-for="Name"></span>
-                        <input class="form-control" name="Name" sfa-validation-for="Name" sfa-validationerror-class="form-control-error" asp-for="Name" type="text" maxlength="100"/>
                     </label>
+                    <input class="form-control" name="Name" sfa-validation-for="Name" sfa-validationerror-class="form-control-error" asp-for="Name" type="text" maxlength="100" />
+                </div>
+                <div class="form-group" sfa-validation-for="LegalName" sfa-validationerror-class="form-group-error">
+                    <label for="LegalName">
+                        <span class="form-label-bold">Legal name (optional)</span>
+                        <span class="form-hint">if different from organisation name</span>
+                        <span class="error-message" asp-validation-for="LegalName"></span>
+                    </label>
+                    <input class="form-control" name="LegalName" sfa-validation-for="LegalName" sfa-validationerror-class="form-control-error" asp-for="LegalName" type="text" />
                 </div>
                 <div class="form-group" sfa-validation-for="Ukprn" sfa-validationerror-class="form-group-error">
                     <label for="Ukprn">
-                        <span class="form-label-bold">UKPRN</span>
+                        <span class="form-label-bold">UKPRN (optional)</span>
                         <span class="error-message" asp-validation-for="Ukprn"></span>
-                        <input class="form-control" name="Ukprn" sfa-validation-for="Ukprn" sfa-validationerror-class="form-control-error" asp-for="Ukprn" type="number" />
                     </label>
+                    <input type="text" maxlength="8" class="form-control js-integers-only" name="Ukprn" sfa-validation-for="Ukprn" sfa-validationerror-class="form-control-error" asp-for="Ukprn" />
                 </div>
                 <div class="form-group" sfa-validation-for="OrganisationTypeId" sfa-validationerror-class="form-group-error">
-                    <span class="form-label-bold">Type of Organisation</span>
+                    <span class="form-label-bold">Type of organisation</span>
                     <span class="error-message" asp-validation-for="OrganisationTypeId"></span>
                     @Html.HiddenFor(c => c.OrganisationTypes)
                     @foreach (var organisation in Model.OrganisationTypes)
                     {
-                        <div class="multiple-choice">
+                    <div class="multiple-choice">
 
-                            <input asp-for="OrganisationTypeId" id="organisation-type-@organisation.Type.Replace(" ", "_")" type="radio" value="@organisation.Id" />
-                            <label for="@organisation.Type.Replace(" ", "_")">
-                                @organisation.Type
-                            </label>
-                        </div>
+                        <input asp-for="OrganisationTypeId" id="organisation-type-@organisation.Type.Replace(" ", " _")" type="radio" value="@organisation.Id" />
+                        <label for="organisation-type-@organisation.Type.Replace(" ", " _")">
+                            @organisation.Type
+                        </label>
+                    </div>
                     }
-                </div>
-                <div class="form-group" sfa-validation-for="LegalName" sfa-validationerror-class="form-group-error">
-                    <label for="LegalName">
-                        <span class="form-label-bold">Legal Name</span>
-                        <span class="error-message" asp-validation-for="LegalName"></span>
-                        <input class="form-control" name="LegalName" sfa-validation-for="LegalName" sfa-validationerror-class="form-control-error" asp-for="LegalName" type="text" />
-                    </label>
                 </div>
                 <div class="form-group" sfa-validation-for="WebsiteLink" sfa-validationerror-class="form-group-error">
                     <label for="WebsiteLink">
                         <span class="form-label-bold">Website</span>
                         <span class="error-message" asp-validation-for="WebsiteLink"></span>
-                        <input class="form-control" name="WebsiteLink" sfa-validation-for="WebsiteLink" sfa-validationerror-class="form-control-error" asp-for="WebsiteLink" type="text" />
                     </label>
+                    <input class="form-control" name="WebsiteLink" sfa-validation-for="WebsiteLink" sfa-validationerror-class="form-control-error" asp-for="WebsiteLink" type="text" />
                 </div>
-                <div class="form-group" sfa-validation-for="Address1" sfa-validationerror-class="form-group-error">
+                <div class="form-group-related" sfa-validation-for="Address1" sfa-validationerror-class="form-group-error">
                     <label for="Address1">
-                        <span class="form-label-bold">Address 1</span>
+                        <span class="form-label-bold">Street address</span>
                         <span class="error-message" asp-validation-for="Address1"></span>
-                        <input class="form-control" name="Address1" sfa-validation-for="Address1" sfa-validationerror-class="form-control-error" asp-for="Address1" type="text" />
                     </label>
+                    <input class="form-control" name="Address1" sfa-validation-for="Address1" sfa-validationerror-class="form-control-error" asp-for="Address1" type="text" />
                 </div>
-                <div class="form-group" sfa-validation-for="Address2" sfa-validationerror-class="form-group-error">
+                <div class="form-group-related" sfa-validation-for="Address2" sfa-validationerror-class="form-group-error">
                     <label for="Address2">
-                        <span class="form-label-bold">Address 2</span>
+                        <span class="form-label-bold visually-hidden">Address 2</span>
                         <span class="error-message" asp-validation-for="Address1"></span>
-                        <input class="form-control" name="Address2" sfa-validation-for="Address2" sfa-validationerror-class="form-control-error" asp-for="Address2" type="text" />
                     </label>
+                    <input class="form-control" name="Address2" sfa-validation-for="Address2" sfa-validationerror-class="form-control-error" asp-for="Address2" type="text" />
                 </div>
                 <div class="form-group" sfa-validation-for="Address3" sfa-validationerror-class="form-group-error">
-                    <label for="Address1">
-                        <span class="form-label-bold">Address 3</span>
+                    <label for="Address3">
+                        <span class="form-label-bold visually-hidden">Address 3</span>
                         <span class="error-message" asp-validation-for="Address3"></span>
-                        <input class="form-control" name="Address3" sfa-validation-for="Address3" sfa-validationerror-class="form-control-error" asp-for="Address3" type="text" />
                     </label>
+                    <input class="form-control" name="Address3" sfa-validation-for="Address3" sfa-validationerror-class="form-control-error" asp-for="Address3" type="text" />
                 </div>
                 <div class="form-group" sfa-validation-for="Address4" sfa-validationerror-class="form-group-error">
                     <label for="Address4">
-                        <span class="form-label-bold">Address 4</span>
+                        <span class="form-label-bold">City / Town</span>
                         <span class="error-message" asp-validation-for="Address4"></span>
-                        <input class="form-control" name="Address4" sfa-validation-for="Address4" sfa-validationerror-class="form-control-error" asp-for="Address4" type="text" />
                     </label>
+                    <input class="form-control" name="Address4" sfa-validation-for="Address4" sfa-validationerror-class="form-control-error" asp-for="Address4" type="text" />
                 </div>
                 <div class="form-group" sfa-validation-for="Postcode" sfa-validationerror-class="form-group-error">
                     <label for="Postcode">
                         <span class="form-label-bold">Postcode</span>
                         <span class="error-message" asp-validation-for="Postcode"></span>
-                        <input class="form-control" name="Postcode" sfa-validation-for="Postcode" sfa-validationerror-class="form-control-error" asp-for="Postcode" type="text" />
                     </label>
+                    <input class="form-control" name="Postcode" sfa-validation-for="Postcode" sfa-validationerror-class="form-control-error" asp-for="Postcode" type="text" />
                 </div>
-                <label for="PrimaryContact">
-                    <span class="form-label-bold">Primary Contact</span>
-                    @Model.PrimaryContactName
-                </label>
+                <div class="form-group">
+                    <label for="PrimaryContact">
+                        <span class="form-label-bold">Primary contact</span>
+                    </label>
+                        @Model.PrimaryContactName
+                </div>
                 <div class="form-group">
                     <button class="button" type="submit">Save</button>
+                    <a class="text-link button" href="/register/view-organisation/@Model.OrganisationId">Cancel</a>
                 </div>
-                <div class="form-group">
-                    <a class="button" href="/register/view-organisation/@Model.OrganisationId">Cancel</a>
-                </div>
-                
-                <br/><br/>
-                <label for="Contacts">
-                    <span class="form-label-bold">Contacts</span>
-                    @if (@Model.Contacts.Count > 0)
-                    {
-                        <div class="grid-row">
-                            <div class="column-full">
-                                <div class="form-group">
-                                    <table class="table responsive table-font-xsmall">
-                                        <thead>
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Email</th>
-                                            <th>username</th>
-                                            <th></th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        @foreach (var result in Model.Contacts.OrderBy(x => x.DisplayName))
-                                        {
-                                            <tr>
-                                                <td data-label="Name">@result.DisplayName</td>
-                                                <td data-label="ID">@result.Email</td>
-                                                <td data-label="Username">@result.Username</td>
-                                            </tr>
-                                        }
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    }
-                    else
-                    {
-                        <span>There are no contacts</span>
-                    }
-                </label>
-        
-            
-                <br/><br/>
-                <label for="Standards">
-                    <span class="form-label-bold">Standards</span>
-                    @if (@Model.OrganisationStandards.Count > 0)
-                    {
-                        <div class="grid-row">
-                            <div class="column-full">
-                                <div class="form-group">
-                                    <table class="table responsive table-font-xsmall">
-                                        <thead>
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Code</th>
-                                            <th></th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        @foreach (var result in Model.OrganisationStandards.OrderBy(x => x.StandardSummary.Title))
-                                        {
-                                            <tr>
-                                                <td data-label="Name">@result.StandardSummary.Title</td>
-                                                <td data-label="ID">@result.StandardCode</td>
-                                            </tr>
-                                        }
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    }
-                    else
-                    {
-                        <span>There are no standards</span>
-                    }
-                </label>
             </div>
         </form>
-
     </div>
 </div>
+
+<div class="grid-row">
+    <div class="column-full">
+        <h2 class="heading-large">Contacts</h2>
+        <div class="form-group">
+            @if (@Model.Contacts.Count > 0)
+            {
+            <table class="table responsive table-font-xsmall">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>username</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var result in Model.Contacts.OrderBy(x => x.DisplayName))
+                    {
+                    <tr>
+                        <td data-label="Name">@result.DisplayName</td>
+                        <td data-label="ID">@result.Email</td>
+                        <td data-label="Username">@result.Username</td>
+                        <td class="numeric"><a href="">Edit</a></td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+            }
+            else
+            {
+            <span>There are no contacts</span>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="grid-row">
+    <div class="column-full">
+        <h2 class="heading-large">Standards</h2>
+        <div class="form-group">
+            @if (@Model.OrganisationStandards.Count > 0)
+            {
+            <table class="table responsive table-font-xsmall">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Code</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var result in Model.OrganisationStandards.OrderBy(x =>
+                    x.StandardSummary.Title))
+                    {
+                    <tr>
+                        <td data-label="Name">@result.StandardSummary.Title</td>
+                        <td data-label="ID">@result.StandardCode</td>
+                        <td class="numeric"><a href="">Edit</a></td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+            }
+            else
+            {
+            <span>There are no standards</span>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}
