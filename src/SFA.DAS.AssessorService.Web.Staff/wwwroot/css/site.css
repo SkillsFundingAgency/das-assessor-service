@@ -20,13 +20,14 @@
     margin-left: 5px;
   }
 }
-.button.text-link:hover {
+.button.text-link:hover,
+.button.text-link:focus {
   color: #2b8cc4;
 }
 
-.button:focus {
+/* .button:focus {
   position: inherit;
-}
+} */
 
 .govuk-related-items {
   margin-top: 30px;
