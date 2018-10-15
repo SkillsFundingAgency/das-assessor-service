@@ -1,11 +1,12 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels;
+using System;
+using System.Threading.Tasks;
+using CertificateActions = SFA.DAS.AssessorService.Domain.Consts.CertificateActions;
+using CertificateStatus = SFA.DAS.AssessorService.Domain.Consts.CertificateStatus;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {
@@ -19,15 +20,30 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Check(Guid certificateid)
+        public async Task<IActionResult> Check(Guid certificateId)
         {
-            return await LoadViewModel<CertificateCheckViewModel>(certificateid, "~/Views/CertificateAmend/Check.cshtml");
+            return await LoadViewModel<CertificateCheckViewModel>(certificateId, "~/Views/CertificateAmend/Check.cshtml");
         }     
 
-        [HttpPost(Name = "Check")]
+        [HttpPost]
         public async Task<IActionResult> ConfirmAndSubmit(CertificateCheckViewModel vm)
         {
-            return RedirectToAction("Index", "DuplicateRequest", new { certificateid = vm.Id });
+            var certificate = await ApiClient.GetCertificate(vm.Id);
+
+            if(certificate.Status == CertificateStatus.Printed || certificate.Status == CertificateStatus.Reprint)
+            {
+                return RedirectToAction("Index", "DuplicateRequest", new { certificateId = certificate.Id });
+            }
+            else if(certificate.Status == CertificateStatus.Draft || certificate.Status == CertificateStatus.Submitted)
+            {
+                var actionResult = await SaveViewModel(vm,
+                    returnToIfModelNotValid: "~/Views/CertificateAmend/Check.cshtml",
+                    nextAction: RedirectToAction("Select", "Search", new { stdcode = certificate.StandardCode, uln = certificate.Uln, searchString = certificate.Uln }), action: CertificateActions.Submit);
+
+                return actionResult;
+            }
+
+            return RedirectToAction("Index", "Search");
         }
     }
 }

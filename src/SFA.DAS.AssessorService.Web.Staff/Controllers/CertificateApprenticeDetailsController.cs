@@ -6,7 +6,6 @@ using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels;
 using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {
@@ -20,9 +19,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ApprenticeDetail(Guid certificateid)
+        public async Task<IActionResult> ApprenticeDetail(Guid certificateId)
         {
-            return await LoadViewModel<CertificateApprenticeDetailsViewModel>(certificateid, "~/Views/CertificateAmend/ApprenticeDetail.cshtml");
+            return await LoadViewModel<CertificateApprenticeDetailsViewModel>(certificateId, "~/Views/CertificateAmend/ApprenticeDetail.cshtml");
         }
         
         [HttpPost(Name = "ApprenticeDetail")]
@@ -30,7 +29,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         {            
             var actionResult = await SaveViewModel(vm, 
                 returnToIfModelNotValid: "~/Views/CertificateAmend/ApprenticeDetail.cshtml",
-                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateid = vm.Id }), action: CertificateActions.Name);
+                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateId = vm.Id }), action: CertificateActions.Name);
 
 
             return actionResult;

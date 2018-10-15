@@ -7,7 +7,7 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateid=@Model.Id>Back</a>
+        <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateId=@Model.Id>Back</a>
 
         <form class="apprentice-apprentice-detail-form" type="post" asp-controller="CertificateApprenticeDetails" asp-method="ApprenticeDetail">
             @Html.HiddenFor(c => c.Id)
@@ -29,6 +29,7 @@
                 <ul class="error-summary-list">
                     <li><a sfa-validation-for="GivenNames"></a></li>
                     <li><a sfa-validation-for="FamilyName"></a></li>
+                    <li><a sfa-validation-for="ReasonForChange"></a></li>
                 </ul>
             </div>
             }
@@ -60,7 +61,16 @@
                         <span class="error-message" asp-validation-for="FamilyName"></span>
                     </label>
                     <input class="form-control" name="FamilyName" sfa-validation-for="FamilyName" sfa-validationerror-class="form-control-error" asp-for="FamilyName" type="text" />
-                </div>               
+                </div>
+
+                <div class="form-group" sfa-validation-for="ReasonForChange" sfa-validationerror-class="form-group-error">
+                    <label for="ReasonForChange">
+                        <span class="form-label-bold">Reason for change</span>
+                        <span class="form-hint">Please could you provide more detail as to why this change is required.</span>
+                        <span class="error-message" asp-validation-for="ReasonForChange"></span>
+                    </label>
+                    <input class="form-control" name="ReasonForChange" sfa-validation-for="ReasonForChange" sfa-validationerror-class="form-control-error" asp-for="ReasonForChange" type="text" />
+                </div>
             </fieldset>
 
             <button type="submit" class="button">Continue</button>

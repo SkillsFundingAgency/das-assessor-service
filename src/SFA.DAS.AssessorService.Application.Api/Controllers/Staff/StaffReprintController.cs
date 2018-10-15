@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
-using SFA.DAS.AssessorService.Domain.Paging;
+using SFA.DAS.AssessorService.Domain.Entities;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
 {
@@ -27,7 +26,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
         }
 
         [HttpPost(Name= "StaffCertificateReprint")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(CertificateReprintResponse))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Certificate))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> StaffCertificateReprint([FromBody] StaffCertificateDuplicateRequest staffCertificateDuplicateRequest)

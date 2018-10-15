@@ -1,6 +1,6 @@
 ﻿@using SFA.DAS.AssessorService.Domain.Consts
 @using SFA.DAS.AssessorService.Domain.Extensions
-@using SFA.DAS.AssessorService.Web.Staff.Controllers
+
 @model SFA.DAS.AssessorService.Web.Staff.Controllers.LearnerDetailViewModel
 
 @{
@@ -119,7 +119,7 @@
         <div class="column-full">
             <h2 class="heading-large">History</h2>
             <div class="form-group">
-                <table class="table js-history-table">
+                <table class="table js-history-table" style="display:block;overflow:auto">
                     <thead>
                         <tr>
                             <th>Date and time</th>
@@ -128,7 +128,7 @@
                             <th>Email</th>
                             <th>Status</th>
                             <th>Batch</th>
-                            <th>Changed</th>
+                            <th>Reason</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -141,6 +141,7 @@
                                 <td>@log.ActionByEmail</td>
                                 <td>@log.Status</td>
                                 <td>@log.BatchNumber</td>
+                                <td>@log.ReasonForChange</td>
                                 <td>
                                     @{
                                         if (Model.Learner.CertificateLogs.Count() > 1)
@@ -219,7 +220,7 @@ else
                 { 
                     <li><a asp-action="Index" asp-controller="DuplicateRequest" asp-route-certificateId="@Model.Learner.CertificateId">request duplicate certificate</a></li>
                 }
-                else if (Model.Learner.CertificateStatus == CertificateStatus.Draft)
+                else if (Model.Learner.CertificateStatus == CertificateStatus.Draft || Model.Learner.CertificateStatus == CertificateStatus.Submitted)
                 {
                     <li><a asp-action="Check" asp-controller="CertificateAmend" asp-route-certificateId="@Model.Learner.CertificateId">amend certificate information</a></li>
                 }

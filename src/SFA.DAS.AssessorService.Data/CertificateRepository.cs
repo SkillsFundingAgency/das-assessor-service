@@ -158,7 +158,7 @@ namespace SFA.DAS.AssessorService.Data
             return new PaginatedList<Certificate>(certificates, count, pageIndex, pageSize);
         }       
 
-        public async Task<Certificate> Update(Certificate certificate, string username, string action, bool updateLog = true)
+        public async Task<Certificate> Update(Certificate certificate, string username, string action, bool updateLog = true, string reasonForChange = null)
         {
             var cert = await GetCertificate(certificate.Id);
 
@@ -169,7 +169,7 @@ namespace SFA.DAS.AssessorService.Data
 
             if (updateLog)
             {
-                await UpdateCertificateLog(cert, action, username);
+                await UpdateCertificateLog(cert, action, username, reasonForChange);
             }
             
             await _context.SaveChangesAsync();
@@ -190,7 +190,7 @@ namespace SFA.DAS.AssessorService.Data
             return Task.FromResult(certificate);
         }
 
-        private async Task UpdateCertificateLog(Certificate cert, string action, string username)
+        private async Task UpdateCertificateLog(Certificate cert, string action, string username, string reasonForChange = null)
         {
             if (action != null)
             {
@@ -203,7 +203,8 @@ namespace SFA.DAS.AssessorService.Data
                     Id = Guid.NewGuid(),
                     CertificateData = cert.CertificateData,
                     Username = username,
-                    BatchNumber = cert.BatchNumber
+                    BatchNumber = cert.BatchNumber,
+                    ReasonForChange = reasonForChange
                 };
 
                 await _context.CertificateLogs.AddAsync(certLog);

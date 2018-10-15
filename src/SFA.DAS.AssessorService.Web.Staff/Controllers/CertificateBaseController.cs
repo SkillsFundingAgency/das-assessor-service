@@ -68,7 +68,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 
             var updatedCertificate = vm.GetCertificateFromViewModel(certificate, certData);
 
-            await ApiClient.UpdateCertificate(new UpdateCertificateRequest(updatedCertificate) { Username = username, Action = action });
+            await ApiClient.UpdateCertificate(new UpdateCertificateRequest(updatedCertificate) { Username = username, Action = action, ReasonForChange = vm.ReasonForChange });
 
             Logger.LogInformation($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} updated.");
 

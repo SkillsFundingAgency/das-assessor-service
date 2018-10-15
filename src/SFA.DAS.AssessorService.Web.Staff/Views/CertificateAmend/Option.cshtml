@@ -7,7 +7,7 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">     
-        <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateid=@Model.Id>Back</a>
+        <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateId=@Model.Id>Back</a>
 
         <form type="post" asp-controller="CertificateOption" asp-method="Option" class="apprentice-option-form">
             @Html.HiddenFor(c => c.Id)
@@ -30,13 +30,14 @@
                     <li><a sfa-validation-for="HasAdditionalLearningOption"></a></li>
                     <li><a sfa-validation-for="Option"></a></li>
                     @*<li><a href="#Pass">You need to specify an achievement grade for this apprentice</a></li>*@
+                    <li><a sfa-validation-for="ReasonForChange"></a></li>
                 </ul>
             </div>
             }
 
             <div sfa-anyvalidationerror-class="after-error-summary">
                 <div id="HasAdditionalLearningOption">
-                    <h1 class="heading-medium">                       
+                    <h1 class="heading-medium">
                         Did the apprentice take a learning option?
                     </h1>
                     <p>You may know options as 'occupational options', 'pathways', 'specialisms' or 'specialist functions'.</p>
@@ -66,6 +67,14 @@
                             No
                         </label>
                     </div>
+                </div>
+                <div class="form-group" sfa-validation-for="ReasonForChange" sfa-validationerror-class="form-group-error">
+                    <label for="ReasonForChange">
+                        <span class="form-label-bold">Reason for change</span>
+                        <span class="form-hint">Please could you provide more detail as to why this change is required.</span>
+                        <span class="error-message" asp-validation-for="ReasonForChange"></span>
+                    </label>
+                    <input class="form-control" name="ReasonForChange" sfa-validation-for="ReasonForChange" sfa-validationerror-class="form-control-error" asp-for="ReasonForChange" type="text" />
                 </div>
             </div>
 

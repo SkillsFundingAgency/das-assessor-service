@@ -11,6 +11,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
         string GivenNames { get; set; }
         void FromCertificate(Certificate cert);
         bool BackToCheckPage { get; set; }
+        string ReasonForChange { get; set; }
         Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData certData);
     }
 }

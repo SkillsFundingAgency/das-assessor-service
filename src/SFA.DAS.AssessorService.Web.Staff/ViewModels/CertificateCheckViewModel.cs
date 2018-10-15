@@ -16,6 +16,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
         public int StandardCode { get; set; }
         public DateTime AchievementDate { get; set; }
 
+        public string Status { get; set; }
+
         public string Name { get; set; }
         public string Dept { get; set; }
         public string Employer { get; set; }
@@ -37,6 +39,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
             SelectedGrade = CertificateData.OverallGrade;
             StandardCode = cert.StandardCode;
             AchievementDate = CertificateData.AchievementDate.Value;
+
+            Status = cert.Status;
 
             Name = CertificateData.ContactName;
             Dept = CertificateData.Department;

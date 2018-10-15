@@ -8,7 +8,7 @@
 <div class="grid-row">
     <div class="column-two-thirds">
 
-        <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateid=@Model.Id>Back</a>
+        <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateId=@Model.Id>Back</a>
 
         <form class="apprentice-date-form" type="post" asp-controller="CertificateDate">
             <input type="hidden" name="fullDate" id="fullDate" class="date-input" />
@@ -41,6 +41,7 @@
                     <li><a sfa-validation-for="Day"></a></li>
                     <li><a sfa-validation-for="Month"></a></li>
                     <li><a sfa-validation-for="Year"></a></li>
+                    <li><a sfa-validation-for="ReasonForChange"></a></li>
                 </ul>
             </div>
                 //}
@@ -74,6 +75,15 @@
                             <input class="form-control date-input js-integers-only" sfa-validation-for="Year" sfa-validationerror-class="form-control-error" asp-for="Year" type="text" maxlength="4" />
                         </div>
                     </div>
+                </div>
+
+                <div class="form-group" sfa-validation-for="ReasonForChange" sfa-validationerror-class="form-group-error">
+                    <label for="ReasonForChange">
+                        <span class="form-label-bold">Reason for change</span>
+                        <span class="form-hint">Please could you provide more detail as to why this change is required.</span>
+                        <span class="error-message" asp-validation-for="ReasonForChange"></span>
+                    </label>
+                    <input class="form-control" name="ReasonForChange" sfa-validation-for="ReasonForChange" sfa-validationerror-class="form-control-error" asp-for="ReasonForChange" type="text" />
                 </div>
             </div>
 

@@ -13,7 +13,7 @@
     <div class="column-two-thirds">
         <a asp-action="Index" asp-controller="Search" class="link-back">Search Again</a>
         <h1 class="heading-large">Re-print certificate</h1>
-        @if (Model.Certificate.Status == CertificateStatus.Draft || Model.Certificate.Status == CertificateStatus.Submitted)
+        @if (! (Model.Certificate.Status == CertificateStatus.Printed || Model.Certificate.Status == CertificateStatus.Reprint) )
         {
             <p>Certificate is in an invalid status to request a reprint.</p>
         }
@@ -34,7 +34,7 @@
                                 <td>
                                     @{
                                         var certData = JsonConvert.DeserializeObject<CertificateData>(@Model.Certificate.CertificateData);
-                                        Html.Raw($"{certData.LearnerGivenNames} {certData.LearnerFamilyName}");
+                                        @Html.Raw($"{certData.LearnerGivenNames} {certData.LearnerFamilyName}");
                                     }
                                 </td>
                             </tr>
@@ -49,7 +49,12 @@
 
             <form asp-action="Index" asp-controller="DuplicateRequest" method="post">
                 @Html.HiddenFor(m => m.Certificate.Id)
-                <button class="button">Confirm</button>
+                <button class="button">Confirm reprint</button>
+            </form>
+            <br />
+            <form asp-action="Check" asp-controller="CertificateAmend" method="get">
+                @Html.Hidden("certificateId", Model.Certificate.Id, new { @id = "certificateId" })
+                <button class="button">Amend before reprint</button>
             </form>
         }
         else

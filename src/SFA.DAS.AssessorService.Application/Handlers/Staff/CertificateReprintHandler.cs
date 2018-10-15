@@ -1,14 +1,13 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using NotFound = SFA.DAS.AssessorService.Domain.Exceptions.NotFound;
+using SFA.DAS.AssessorService.Domain.Entities;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 {
-    public class CertificateReprintHandler : IRequestHandler<StaffCertificateDuplicateRequest, CertificateReprintResponse>
+    public class CertificateReprintHandler : IRequestHandler<StaffCertificateDuplicateRequest, Certificate>
     {
         private readonly ICertificateRepository _certificateRepository;
 
@@ -17,7 +16,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             _certificateRepository = certificateRepository;
         }
 
-        public async Task<CertificateReprintResponse> Handle(StaffCertificateDuplicateRequest request,
+        public async Task<Certificate> Handle(StaffCertificateDuplicateRequest request,
             CancellationToken cancellationToken)
         {
             var certificate = await _certificateRepository.GetCertificate(request.Id);
@@ -26,15 +25,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             {
                 certificate.Status = Domain.Consts.CertificateStatus.Reprint;
                 await _certificateRepository.Update(certificate, request.Username,
-                    action: SFA.DAS.AssessorService.Domain.Consts.CertificateActions.Reprint);
+                    action: Domain.Consts.CertificateActions.Reprint);
             }
 
-            var staffUiReprintResponse = new CertificateReprintResponse
-            {
-                Certificate = certificate
-            };
-
-            return staffUiReprintResponse;
+            return certificate;
         }
     }
 }
