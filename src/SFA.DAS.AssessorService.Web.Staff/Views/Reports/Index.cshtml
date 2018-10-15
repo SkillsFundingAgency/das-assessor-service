@@ -40,6 +40,9 @@
                     </h1>
                 </div>
                 <div class="form-group" sfa-validation-for="ReportId" sfa-validationerror-class="form-group-error">
+                    <div class="error-message-container" sfa-validation-for="ReportId">
+                        <span class="error-message" asp-validation-for="ReportId"></span>
+                    </div>
                     @foreach (var report in Model.Reports)
                     {
                         <div class="multiple-choice">

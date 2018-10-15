@@ -2,23 +2,57 @@
 @model ReportViewModel
 
 @{
-    ViewBag.Title = $"Viewing Report";
+    ViewBag.Title = "Viewing report";
     Layout = "_Layout";
 }
 
 <div class="grid-row">
-    <div class="column-full">
+    <div class="column-two-thirds">
         <a asp-action="Index" asp-controller="Reports" class="link-back">Go back</a>
 
         <h1 class="heading-xlarge">
-            Viewing Report
+            Viewing report
             <span class="heading-secondary">@Model.SelectedReport?.ReportName</span>
         </h1>
 
         @if (Model.SelectedReportData != null && Model.SelectedReportData.Any())
         {
+          @foreach (var entry in Model.SelectedReportData)
+          {
+            <table class="staff-report-table">
+              <tbody>
+                @foreach (var kvp in entry)
+                {
+                <tr>
+                  <td>@kvp.Key</td>
+                  <td>@kvp.Value</td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          }
+        }
+        else
+        {
+          <div class="form-group">
+              <h2 class="heading-medium">No records present for this report.</h2>
+          </div>
+        }
+
+        @*
+        *********
+        *********
+        THIS IS THE ORIGINAL WIDE TABLE.
+        LEAVING IN UNTIL A TABLE FORMAT IS AGREED UPON.
+        *********
+        *********
+        *@
+
+        @*
+        @if (Model.SelectedReportData != null && Model.SelectedReportData.Any())
+        {
             <div class="form-group">
-                <table class="table responsive table-font-xsmall" style="display:block;overflow:auto">
+                <table class="table responsive-at-desktop table-font-xsmall">
                     <thead>
                         <tr>
                             @foreach (var key in Model.SelectedReportData.First().Keys)
@@ -51,8 +85,10 @@
         else
         {
             <div class="form-group">
-                <span class="bold">No records present</span>
+                <h2 class="heading-large">No records present</h2>
             </div>
         }
+        *@
+        
     </div>
 </div>
