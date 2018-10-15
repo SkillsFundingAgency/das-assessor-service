@@ -36,11 +36,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             }
             else if(certificate.Status == CertificateStatus.Draft || certificate.Status == CertificateStatus.Submitted)
             {
-                var actionResult = await SaveViewModel(vm,
-                    returnToIfModelNotValid: "~/Views/CertificateAmend/Check.cshtml",
-                    nextAction: RedirectToAction("Select", "Search", new { stdcode = certificate.StandardCode, uln = certificate.Uln, searchString = certificate.Uln }), action: CertificateActions.Submit);
-
-                return actionResult;
+                return RedirectToAction("Select", "Search", new { stdcode = certificate.StandardCode, uln = certificate.Uln, searchString = certificate.Uln });
             }
 
             return RedirectToAction("Index", "Search");
