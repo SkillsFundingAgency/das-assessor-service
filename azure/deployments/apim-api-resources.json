@@ -25,19 +25,19 @@
             ],
             "defaultValue": "Developer"
         },
-        "apimServiceName": {
+        "ApimServiceName": {
             "type": "string"
         },
-        "proxyCustomHostname": {
+        "ProxyCustomHostname": {
             "type": "string"
         },
-        "apimCustomHostnameBase64EncodedPfxCertificate": {
+        "ApimCustomHostnameBase64EncodedPfxCertificate": {
             "type": "string"
         },
-        "apimSSLCertificatePassword": {
+        "ApimSSLCertificatePassword": {
             "type": "securestring"
         },
-        "portalCustomHostname": {
+        "PortalCustomHostname": {
             "type": "string"
         },          
         "ProductDisplayName": {
@@ -45,22 +45,19 @@
         },
         "ProductGroupDisplayName": {
             "type": "string"
-        },        
-        "appInsightsName": {
-            "type": "string"
         },
-        "apiName": {
+        "ApiDisplayName": {
             "type": "string"
         }                                            
     },
     "variables": {
-        "apimProductName": "[toLower(replace(parameters('ProductDisplayName'), ' ', '-'))]",
-        "apimProductGroupName": "[toLower(replace(parameters('ProductGroupDisplayName'), ' ', '-'))]",
-        "apiName": "[toLower(replace(parameters('ProductDisplayName'), ' ', '-'))]"
+        "ApimProductName": "[toLower(replace(parameters('ProductDisplayName'), ' ', '-'))]",
+        "ApimProductGroupName": "[toLower(replace(parameters('ProductGroupDisplayName'), ' ', '-'))]",
+        "ApiName": "[toLower(replace(parameters('ApiDisplayName'), ' ', '-'))]"
     },
     "resources": [
         {
-            "name": "[parameters('apimServiceName')]",
+            "name": "[parameters('ApimServiceName')]",
             "type": "Microsoft.ApiManagement/service",
             "apiVersion": "2018-01-01",
             "tags": {},
@@ -71,16 +68,16 @@
                 "hostnameConfigurations": [
                     {
                         "type": "Proxy",
-                        "hostName": "[parameters('proxyCustomHostname')]",
-                        "encodedCertificate": "[parameters('apimCustomHostnameBase64EncodedPfxCertificate')]",
-                        "certificatePassword": "[parameters('apimSSLCertificatePassword')]",
+                        "hostName": "[parameters('ProxyCustomHostname')]",
+                        "encodedCertificate": "[parameters('ApimCustomHostnameBase64EncodedPfxCertificate')]",
+                        "certificatePassword": "[parameters('ApimSSLCertificatePassword')]",
                         "negotiateClientCertificate": false
                       },
                       {
                         "type": "Portal",
-                        "hostName": "[parameters('portalCustomHostname')]",
-                        "encodedCertificate": "[parameters('apimCustomHostnameBase64EncodedPfxCertificate')]",
-                        "certificatePassword": "[parameters('apimSSLCertificatePassword')]",
+                        "hostName": "[parameters('PortalCustomHostname')]",
+                        "encodedCertificate": "[parameters('ApimCustomHostnameBase64EncodedPfxCertificate')]",
+                        "certificatePassword": "[parameters('ApimSSLCertificatePassword')]",
                         "negotiateClientCertificate": false
                       }                                       
                 ],
@@ -108,23 +105,23 @@
             "location": "[resourceGroup().location]",
             "resources": [
                 {
-                    "name": "[variables('apiName')]",
+                    "name": "[variables('ApiName')]",
                     "type": "apis",
                     "apiVersion": "2018-01-01",
                     "properties": {
                       "authenticationSettings": null,
-                      "displayName": "[parameters('apiName')]",
-                      "path": "[variables('apiName')]",
+                      "displayName": "[parameters('ApiDisplayName')]",
+                      "path": "[variables('ApiName')]",
                       "protocols": [
                         "https"
                       ]
                     },
                     "dependsOn": [
-                      "[parameters('apimServiceName')]"
+                      "[parameters('ApimServiceName')]"
                     ]
                 },                
                 {
-                    "name": "[variables('apimProductName')]",
+                    "name": "[variables('ApimProductName')]",
                     "type": "products",
                     "apiVersion": "2018-01-01",
                     "properties": {
@@ -138,22 +135,22 @@
                     },
                     "resources": [
                         {
-                            "name": "[variables('apimProductGroupName')]",
+                            "name": "[variables('ApimProductGroupName')]",
                             "type": "groups",
                             "apiVersion": "2018-01-01",
                             "dependsOn": [
-                                "[parameters('apimServiceName')]",
-                                "[variables('apimProductName')]"
+                                "[parameters('ApimServiceName')]",
+                                "[variables('ApimProductName')]"
                             ]                                    
                         },
                         {
-                            "name": "[variables('apiName')]",
+                            "name": "[variables('ApiName')]",
                             "type": "apis",
                             "apiVersion": "2018-01-01",
                             "dependsOn": [
                                 "[parameters('apimServiceName')]",
-                                "[concat('Microsoft.ApiManagement/service/', parameters('apimServiceName'), '/apis/', variables('apiName'))]",
-                                "[concat('Microsoft.ApiManagement/service/', parameters('apimServiceName'), '/products/', variables('apimProductName'))]"
+                                "[concat('Microsoft.ApiManagement/service/', parameters('ApimServiceName'), '/apis/', variables('ApiName'))]",
+                                "[concat('Microsoft.ApiManagement/service/', parameters('ApimServiceName'), '/products/', variables('ApimProductName'))]"
                             ]                                    
                         }                                                                     
                     ],
@@ -172,7 +169,7 @@
                         "externalId": null
                     },
                     "dependsOn": [
-                        "[parameters('apimServiceName')]"
+                        "[parameters('ApimServiceName')]"
                     ]                                    
                 }
             ]            
@@ -181,7 +178,7 @@
     "outputs": {
         "ApimServiceIdentityPrincipalId": {
             "type": "string",
-            "value": "[reference(concat(resourceId('Microsoft.ApiManagement/service', parameters('apimServiceName')),'/providers/Microsoft.ManagedIdentity/Identities/default'), '2015-08-31-PREVIEW').principalId]"
+            "value": "[reference(concat(resourceId('Microsoft.ApiManagement/service', parameters('ApimServiceName')),'/providers/Microsoft.ManagedIdentity/Identities/default'), '2015-08-31-PREVIEW').principalId]"
         }
     }
 }
