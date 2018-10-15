@@ -28,13 +28,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             var organisationId = request.OrganisationId;
             _logger.LogInformation($@"Handling OrganisationStandards Request for OrganisationId [{organisationId}]");
             var orgStandards = await _registerQueryRepository.GetOrganisationStandardByOrganisationId(organisationId);
-            var organisationStandardSummaries = orgStandards as OrganisationStandardSummary[] ?? orgStandards.ToArray();
-            foreach (var orgStandard in organisationStandardSummaries)
+            foreach (var orgStandard in orgStandards)
             {
-                var periods = await _registerQueryRepository.GetOrganisatonStandardPeriodsByOrganisationStandard(orgStandard.OrganisationId, orgStandard.StandardCode);
-                orgStandard.Periods = periods.ToList();
+                var deliveryAreas = await _registerQueryRepository.GetDeliveryAreasByOrganisationStandardId(orgStandard.Id);
+                orgStandard.DeliveryAreas = deliveryAreas.ToList();
             }
-            return organisationStandardSummaries.ToList();
+            return orgStandards.ToList();
         }
     }
 }

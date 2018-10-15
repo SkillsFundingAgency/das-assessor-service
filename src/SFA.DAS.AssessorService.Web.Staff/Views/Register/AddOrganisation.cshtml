@@ -1,5 +1,5 @@
 ﻿@using SFA.DAS.AssessorService.Web.Staff.Controllers
-@model RegisterAddOrganisationViewModel
+@model RegisterOrganisationViewModel
 @{
     ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Add organisation";
     Layout = "_Layout";
@@ -88,14 +88,14 @@
                     </label>
                     <input class="form-control" name="WebsiteLink" sfa-validation-for="WebsiteLink" sfa-validationerror-class="form-control-error" asp-for="WebsiteLink" type="text" />
                 </div>
-                <div class="form-group" sfa-validation-for="Address1" sfa-validationerror-class="form-group-error">
+                <div class="form-group-related" sfa-validation-for="Address1" sfa-validationerror-class="form-group-error">
                     <label for="Address1">
                         <span class="form-label-bold">Street address</span>
                         <span class="error-message" asp-validation-for="Address1"></span>
                     </label>
                     <input class="form-control" name="Address1" sfa-validation-for="Address1" sfa-validationerror-class="form-control-error" asp-for="Address1" type="text" />
                 </div>
-                <div class="form-group" sfa-validation-for="Address2" sfa-validationerror-class="form-group-error">
+                <div class="form-group-related" sfa-validation-for="Address2" sfa-validationerror-class="form-group-error">
                     <label for="Address2">
                         <span class="form-label-bold visually-hidden">Address 2</span>
                         <span class="error-message" asp-validation-for="Address1"></span>
@@ -111,7 +111,7 @@
                 </div>
                 <div class="form-group" sfa-validation-for="Address4" sfa-validationerror-class="form-group-error">
                     <label for="Address4">
-                        <span class="form-label-bold">Town / City</span>
+                        <span class="form-label-bold">City / Town</span>
                         <span class="error-message" asp-validation-for="Address4"></span>
                     </label>
                     <input class="form-control" name="Address4" sfa-validation-for="Address4" sfa-validationerror-class="form-control-error" asp-for="Address4" type="text" />

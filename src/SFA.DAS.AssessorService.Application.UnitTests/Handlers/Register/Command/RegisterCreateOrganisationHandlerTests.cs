@@ -49,7 +49,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             _validator.Setup(v => v.CheckIfOrganisationUkprnExists(_requestNoIssues.Ukprn)).Returns(string.Empty);
             _validator.Setup(v => v.CheckOrganisationTypeIsNullOrExists(_requestNoIssues.OrganisationTypeId)).Returns(string.Empty);
             _validator.Setup(v => v.CheckUkprnIsValid(_requestNoIssues.Ukprn)).Returns(string.Empty);
-            _validator.Setup(v => v.ValidatorCreateEpaOrganisationRequest(_requestNoIssues)).Returns(new ValidationResponse());
+            _validator.Setup(v => v.ValidatorCreateEpaOrganisationRequest(_requestNoIssues)).Returns(new ValidationResponse()); 
             _cleanserService.Setup(c => c.CleanseStringForSpecialCharacters(It.IsAny<string>()))
                 .Returns((string s) => s);
             _createEpaOrganisationHandler = new CreateEpaOrganisationHandler(_registerRepository.Object, _validator.Object, _idGenerator.Object,_logger.Object, _cleanserService.Object);
