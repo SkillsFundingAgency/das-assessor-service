@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,7 @@ using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels.Private;
 using AutoMapper;
+using SFA.DAS.AssessorService.Domain.Consts;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {
@@ -26,7 +28,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             var certificates = await ApiClient.GetCertificatesToBeApproved();
             var certificatesToBeApproved = new CertificateApprovalViewModel
             {
-                CertificateDetailApprovalViewModels = Mapper.Map<List<CertificateDetailApprovalViewModel>>(certificates)
+                ToBeApprovedCertificates = Mapper.Map<List<CertificateDetailApprovalViewModel>>(certificates
+                    .Where(q => q.Status == CertificateStatus.ToBeApproved)),
+                ApprovedCertificates = Mapper.Map<List<CertificateDetailApprovalViewModel>>(certificates
+                    .Where(q => q.Status == CertificateStatus.Approved)),
+                RejectedCertificates = Mapper.Map<List<CertificateDetailApprovalViewModel>>(certificates
+                    .Where(q => q.Status == CertificateStatus.Rejected))
             };
 
             return View(certificatesToBeApproved);

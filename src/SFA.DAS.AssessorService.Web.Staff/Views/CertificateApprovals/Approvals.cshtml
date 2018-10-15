@@ -1,4 +1,5 @@
 ﻿@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateApprovalViewModel
+@using OfficeOpenXml.FormulaParsing.Excel.Functions.Math
 @using SFA.DAS.AssessorService.Domain.Consts
 @using SFA.DAS.AssessorService.Web.Staff
 
@@ -37,50 +38,95 @@
 
             <div sfa-anyvalidationerror-class="after-error-summary">
                 <h1 class="heading-large">
-                    Approve/Reject Privately Funded Certificates?
+                    To be Approved Privately Funded Certificates?
                 </h1>
 
-                @if (@Model.CertificateDetailApprovalViewModels.Any())
+                @*                 @if (@Model.CertificateDetailApprova1ViewModels.Any()) *@
+                @*                 { *@
+                @*                     <table class="table table-font-xsmall"> *@
+                @*                         <thead> *@
+                @*                         <tr> *@
+                @*                             <th>Full Name</th> *@
+                @*                             <th>ULN</th> *@
+                @*                             <th>Standard</th> *@
+                @*                             <th>Certificate Reference</th> *@
+                @*                             <th>Approve</th> *@
+                @*                         </tr> *@
+                @*                         </thead> *@
+                @*                         <tbody> *@
+                @* *@
+                @*                         @{ *@
+                @*                             var approvalresults = Model.CertificateDetailApprova1ViewModels.ToList(); *@
+                @*                         } *@
+                @*                         @for (int i = 0; i < approvalresults.Count; i++) *@
+                @*                         { *@
+                @*                             @Html.HiddenFor(x => @approvalresults[i].CertificateReference) *@
+                @*                             <tr> *@
+                @*                                 $1$ <td><a asp-action="Select" asp-route-stdcode="@result.StandardCode" asp-route-uln="@result.Uln" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.StaffSearchResult.StaffSearchItems.PageIndex">@result.GivenNames @result.FamilyName</a></td> #1# *@
+                @*                                 <td>@approvalresults[i].FullName</td> *@
+                @*                                 <td>@approvalresults[i].Uln</td> *@
+                @*                                 <td>@approvalresults[i].StandardCode</td> *@
+                @*                                 <td>@approvalresults[i].CertificateReference</td> *@
+                @*                                 <td> *@
+                @*                                     <select asp-for=@approvalresults[i].IsApproved *@
+                @*                                             asp-items="@(new SelectList(@approvalresults[i].ApprovedRejected, "Value", "Text"))"> *@
+                @*                                     </select> *@
+                @*                                 </td> *@
+                @* *@
+                @*                             </tr> *@
+                @*                         } *@
+                @*                         </tbody> *@
+                @*                     </table> *@
+                
+                
+                @{
+                    var count = Model.ToBeApprovedCertificates.Count() + Model.ApprovedCertificates.Count() + Model.RejectedCertificates.Count();
+                    var approvalResults = 
+                        new SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateDetailApprovalViewModel[count];
+                    @for (int i = 0; i < count; i++)
+                    {
+                        approvalResults[i] = new SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateDetailApprovalViewModel();
+                    }
+                }
+
+                @if (@Model.ToBeApprovedCertificates.Any())
                 {
-                    <table class="table table-font-xsmall">
-                        <thead>
-                        <tr>
-                            <th>Full Name</th>
-                            <th>ULN</th>
-                            <th>Standard</th>
-                            <th>Certificate Reference</th>
-                            <th>Approve</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-
-                        @{
-                            var approvalresults = Model.CertificateDetailApprova1lViewModels.ToList();
-                        }
-                        @for (int i = 0; i < approvalresults.Count; i++)
+                    await Html.RenderPartialAsync("_ApprovalsDetailsPartial", Model.ToBeApprovedCertificates, new ViewDataDictionary(ViewData)
+                    {
                         {
-                            @Html.HiddenFor(x => @approvalresults[i].CertificateReference)
-                            <tr>
-                                @* <td><a asp-action="Select" asp-route-stdcode="@result.StandardCode" asp-route-uln="@result.Uln" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.StaffSearchResult.StaffSearchItems.PageIndex">@result.GivenNames @result.FamilyName</a></td> *@
-                                <td>@approvalresults[i].FullName</td>
-                                <td>@approvalresults[i].Uln</td>
-                                <td>@approvalresults[i].StandardCode</td>
-                                <td>@approvalresults[i].CertificateReference</td>
-                                <td>
-                                    <select asp-for=@approvalresults[i].IsApproved
-                                            asp-items="@(new SelectList(@approvalresults[i].ApprovedRejected, "Value", "Text"))">
-                                    </select>
-                                </td>
+                            "Increment", 0                                                      
+                        },
+                        { "ApprovalResults", approvalResults }
+                    });
+                }
+                <h1 class="heading-large">
+                    Approved Privately Funded Certificates?
+                </h1>
+                            
+                @if (@Model.ApprovedCertificates.Any())
+                {
+                    await Html.RenderPartialAsync("_ApprovalsDetailsPartial", @Model.ApprovedCertificates, new ViewDataDictionary(ViewData)
+                    {
+                        {"Increment", Model.ToBeApprovedCertificates.Count()},
+                        {"ApprovalResults",approvalResults}
+                    });
+                }
 
-                            </tr>
-                        }
-                        </tbody>
-                    </table>
+                <h1 class="heading-large">
+                    Rejected Privately Funded Certificates?
+                </h1>
+
+                @if (@Model.RejectedCertificates.Any())
+                {
+                    await Html.RenderPartialAsync("_ApprovalsDetailsPartial", @Model.RejectedCertificates,
+                        new ViewDataDictionary(ViewData)
+                        {
+                            {"Increment", Model.ToBeApprovedCertificates.Count() + @Model.ApprovedCertificates.Count()},
+                            {"ApprovalResults",approvalResults}
+                        });
                 }
             </div>
 
-
-            @Html.HiddenFor(c => c.CertificateDetailApprovalViewModels)
 
             <button type="submit" class="button">Submit</button>
         </form>

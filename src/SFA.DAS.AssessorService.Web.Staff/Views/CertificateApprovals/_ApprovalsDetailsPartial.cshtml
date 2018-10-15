@@ -1,0 +1,48 @@
+@model IEnumerable<SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateDetailApprovalViewModel>
+
+
+<table class="table table-font-xsmall">
+    <thead>
+    <tr>
+        <th>Full Name</th>
+        <th>ULN</th>
+        <th>Standard</th>
+        <th>Certificate Reference</th>
+        <th>Approve</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    @{
+        var results = Model.ToList();
+        var approvalresults = ViewData["ApprovalResults"] as SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateDetailApprovalViewModel[];
+    }
+    @for (int i =  0; i < results.Count; i++)
+    {
+        var j = (int) ViewData["Increment"] + i;
+      
+        <tr>
+            @* <td><a asp-action="Select" asp-route-stdcode="@result.StandardCode" asp-route-uln="@result.Uln" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.StaffSearchResult.StaffSearchItems.PageIndex">@result.GivenNames @result.FamilyName</a></td> *@
+            <td>@results[i].FullName</td>
+            <td>@results[i].Uln</td>
+            <td>@results[i].StandardCode</td>
+            <td>@results[i].CertificateReference</td>
+            <td>
+                @{
+                    approvalresults[j].IsApproved = results[i].IsApproved;
+                }
+                <select asp-for=@approvalresults[j].IsApproved
+                        asp-items="@(new SelectList(@results[i].ApprovedRejected, "Value", "Text"))">
+                </select>
+            </td>            
+        </tr>
+        
+        {
+            approvalresults[j].CertificateReference = results[i].CertificateReference;
+        }
+      
+        @Html.HiddenFor(x => @approvalresults[j].CertificateReference)
+//        approvalresults[j].IsApproved = results[i].IsApproved;
+    }
+    </tbody>
+</table>
