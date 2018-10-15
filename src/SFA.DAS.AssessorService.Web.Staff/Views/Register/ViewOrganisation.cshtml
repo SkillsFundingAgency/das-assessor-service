@@ -1,145 +1,163 @@
 ﻿@using SFA.DAS.AssessorService.Web.Staff.Controllers
 @model RegisterViewAndEditOrganisationViewModel
 @{
-    ViewBag.Title = "View Organisation";
-    Layout = "_Layout";
+ViewBag.Title = "View Organisation";
+Layout = "_Layout";
 }
 <div class="grid-row">
     <div class="column-two-thirds">
         <a asp-action="Index" asp-controller="Register" class="link-back">Return to organisation search</a>
-        
-               <h1>
-                <label class="form-label" for="">
-                    <span class="heading-xlarge">View organisation</span>
-                </label>
-            </h1>
+
+        <h1>
+            <label class="form-label" for="">
+                <span class="heading-xlarge">View organisation</span>
+            </label>
+        </h1>
 
         <div id="organisationWrapper">
-              
-            <label for="Name">
-                <span class="form-label-bold">Name</span>
-                @Model.Name
-            </label>
-            <label for="OrganisationId">
-                <span class="form-label-bold">Organisation Id</span>
-                @Model.OrganisationId
-            </label>
-            <label for="Ukprn">
-                <span class="form-label-bold">UKPRN</span>
-                @Model.Ukprn
-            </label>
-            <label for="OrganisationType">
-                <span class="form-label-bold">Organisation Type</span>
-                @Model.OrganisationType
-            </label>
-            <label for="LegalName">
-                <span class="form-label-bold">Legal Name</span>
-                @Model.LegalName
-            </label>
-            <label for="WebsiteLink">
-                <span class="form-label-bold">Web Site</span>
-                @Model.WebsiteLink
-            </label>
-            <label for="Address">
-                <span class="form-label-bold">Address</span>
-                @Model.Address1 
-                @Model.Address2 
-                @Model.Address3 
-                @Model.Address4 
-                @Model.Postcode
-            </label>
-        <label for="PrimaryContact">
-            <span class="form-label-bold">Primary Contact</span>
-            @Model.PrimaryContactName
-        </label>
-                <div class="form-group">
-                    <a class="button" type="submit" href="/register/edit-organisation/@Model.OrganisationId">Edit</a>
-                </div>
+            <div class="form-group">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td><span class="bold-small">Name</span></td>
+                            <td>@Model.Name</td>
+                        </tr>
+                        <tr>
+                            <td><span class="bold-small">Organisation ID</span></td>
+                            <td>@Model.OrganisationId</td>
+                        </tr>
+                        <tr>
+                            <td><span class="bold-small">UKPRN</span></td>
+                            <td>@Model.Ukprn</td>
+                        </tr>
+                        <tr>
+                            <td><span class="bold-small">Organisation Type</span></td>
+                            <td>@Model.OrganisationType</td>
+                        </tr>
+                        <tr>
+                            <td><span class="bold-small">Legal Name</span></td>
+                            <td>@Model.LegalName</td>
+                        </tr>
+                        <tr>
+                            <td><span class="bold-small">Website</span></td>
+                            <td>@Model.WebsiteLink</td>
+                        </tr>
+                        <tr>
+                            <td><span class="bold-small">Address</span></td>
+                            <td>
+                                @if (@Model.Address1 != null)
+                                {
+                                @Model.Address1<br />
+                                }
+                                @if (@Model.Address2 != null)
+                                {
+                                @Model.Address2<br />
+                                }
+                                @if (@Model.Address3 != null)
+                                {
+                                @Model.Address3<br />
+                                }
+                                @if (@Model.Address4 != null)
+                                {
+                                @Model.Address4<br />
+                                }
+                                @if (@Model.Postcode != null)
+                                {
+                                @Model.Postcode
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="bold-small">Primary contact</span></td>
+                            <td>@Model.PrimaryContactName</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-            <br/><br/>
-                 <label for="Contacts">
-                     <span class="form-label-bold">Contacts</span>
-                     @if (@Model.Contacts.Count > 0)
-                     {
-                         <div class="grid-row">
-                             <div class="column-full">
-                                 <div class="form-group">
-                                     <table class="table responsive table-font-xsmall">
-                                         <thead>
-                                             <tr>
-                                                 <th>Name</th>
-                                                 <th>Email</th>
-                                                 <th>username</th>
-                                                 <th></th>
-                                             </tr>
-                                         </thead>
-                                         <tbody>
-                                             @foreach (var result in Model.Contacts.OrderBy(x => x.DisplayName))
-                                             {
-                                                 <tr>
-                                                     <td data-label="Name">@result.DisplayName</td>
-                                                     <td data-label="ID">@result.Email</td>
-                                                     <td data-label="Username">@result.Username</td>
-                                                     <td class="numeric"><a href="">Edit</a></td>
-                                                 </tr>
-                                             }
-                                         </tbody>
-                                     </table>
-                                 </div>
-                             </div>
-                         </div>
-                     }
-                     else
-                     {
-                         <span>There are no contacts</span>
-                     }
-                <div class="form-group">
-                    <button class="button" type="submit" href="">Add New Contact</button>
-                </div>
-
-                 </label>
-        
-            
-            <br/><br/>
-            <label for="Standards">
-                <span class="form-label-bold">Standards</span>
-                @if (@Model.OrganisationStandards.Count > 0)
-                {
-                    <div class="grid-row">
-                        <div class="column-full">
-                            <div class="form-group">
-                                <table class="table responsive table-font-xsmall">
-                                    <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Code</th>
-                                        <th></th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    @foreach (var result in Model.OrganisationStandards.OrderBy(x => x.StandardSummary.Title))
-                                    {
-                                        <tr>
-                                            <td data-label="Name">@result.StandardSummary.Title</td>
-                                            <td data-label="ID">@result.StandardCode</td>
-                                            <td class="numeric"><a href="">Edit</a></td>
-                                        </tr>
-                                    }
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                }
-                else
-                {
-                    <span>There are no standards</span>
-                }
-                <div class="form-group">
-                    <button class="button" type="submit" href="">Add New Standard</button>
-                </div>
-            </label>
+            <div class="form-group">
+                <a class="button" type="submit" href="/register/edit-organisation/@Model.OrganisationId">Edit</a>
+            </div>
         </div>
-
     </div>
+</div>
+
+<div class="grid-row">
+    <div class="column-full">
+        <h2 class="heading-large">Contacts</h2>
+        <div class="form-group">
+            @if (@Model.Contacts.Count > 0)
+            {
+            <table class="table responsive table-font-xsmall">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>username</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var result in Model.Contacts.OrderBy(x => x.DisplayName))
+                    {
+                    <tr>
+                        <td data-label="Name">@result.DisplayName</td>
+                        <td data-label="ID">@result.Email</td>
+                        <td data-label="Username">@result.Username</td>
+                        <td class="numeric"><a href="">Edit</a></td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+            }
+            else
+            {
+            <span>There are no contacts</span>
+            }
+        </div>
+        <div class="form-group">
+            <button class="button" type="submit" href="">Add New Contact</button>
+        </div>
+    </div>
+</div>
+
+<div class="grid-row">
+    <div class="column-full">
+        <h2 class="heading-large">Standards</h2>
+        <div class="form-group">
+            @if (@Model.OrganisationStandards.Count > 0)
+            {
+            <table class="table responsive table-font-xsmall">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Code</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var result in Model.OrganisationStandards.OrderBy(x =>
+                    x.StandardSummary.Title))
+                    {
+                    <tr>
+                        <td data-label="Name">@result.StandardSummary.Title</td>
+                        <td data-label="ID">@result.StandardCode</td>
+                        <td class="numeric"><a href="">Edit</a></td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+            }
+            else
+            {
+            <span>There are no standards</span>
+            }
+        </div>
+        <div class="form-group">
+            <button class="button" type="submit" href="">Add New Standard</button>
+        </div>
+    </div>
+</div>
+</div>
+</div>
 </div>

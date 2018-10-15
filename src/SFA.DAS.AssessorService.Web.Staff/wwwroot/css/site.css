@@ -8,16 +8,20 @@
   text-decoration: underline;
   color: #005ea5;
   border: none;
-  padding: 4px 4px 2px;
-  font-size: 14px;
-  line-height: 1;
-  width: auto;
-  text-align: left;
+  padding: 0.526315em 0.789473em 0.263157em;
+  line-height: 1.25;
+  text-align: center;
 }
+
 @media (min-width: 641px) {
   .button.text-link {
+    width: auto;
+    text-align: left;
     margin-left: 5px;
   }
+}
+.button.text-link:hover {
+  color: #2b8cc4;
 }
 
 .button:focus {
@@ -242,7 +246,7 @@ nav.global-nav ul li.current a {
 }
 
 nav.global-nav ul li.current a:after {
-  content: '';
+  content: "";
   display: block;
   height: 5px;
   position: absolute;
@@ -353,20 +357,20 @@ fieldset.after-error-summary {
   }
 }
 
-.error-summary [class^='heading-'],
-.info-summary [class^='heading-'],
-.success-summary [class^='heading-'],
-.warning-summary [class^='heading-'],
-.info-highlighted [class^='heading-'] {
+.error-summary [class^="heading-"],
+.info-summary [class^="heading-"],
+.success-summary [class^="heading-"],
+.warning-summary [class^="heading-"],
+.info-highlighted [class^="heading-"] {
   margin-top: 0;
 }
 
 /* :first-child:last-child === element has no siblings */
-.error-summary [class^='heading-']:first-child:last-child,
-.info-summary [class^='heading-']:first-child:last-child,
-.success-summary [class^='heading-']:first-child:last-child,
-.warning-summary [class^='heading-']:first-child:last-child,
-.info-highlighted [class^='heading-']:first-child:last-child {
+.error-summary [class^="heading-"]:first-child:last-child,
+.info-summary [class^="heading-"]:first-child:last-child,
+.success-summary [class^="heading-"]:first-child:last-child,
+.warning-summary [class^="heading-"]:first-child:last-child,
+.info-highlighted [class^="heading-"]:first-child:last-child {
   margin: 0;
 }
 
@@ -469,7 +473,7 @@ fieldset.after-error-summary {
 }
 .ui-autocomplete .ui-menu-item {
   cursor: pointer;
-  font-family: 'nta', Arial, sans-serif;
+  font-family: "nta", Arial, sans-serif;
   font-size: 16px;
   line-height: 1.25;
   font-weight: 300;
@@ -711,7 +715,7 @@ fieldset.after-error-summary {
   float: left;
   font-size: 2.5em;
   line-height: 1;
-  font-family: 'fontello';
+  font-family: "fontello";
   font-style: normal;
   font-weight: normal;
   speak: none;
@@ -748,14 +752,14 @@ fieldset.after-error-summary {
 }
 
 @font-face {
-  font-family: 'fontello';
-  src: url('../assets/stylesheets/fonts/fontello.eot?30491483');
-  src: url('../assets/stylesheets/fonts/fontello.eot?30491483#iefix')
-      format('embedded-opentype'),
-    url('../assets/stylesheets/fonts/fontello.woff?30491483') format('woff'),
-    url('../assets/stylesheets/fonts/fontello.ttf?30491483') format('truetype'),
-    url('../assets/stylesheets/fonts/fontello.svg?30491483#fontello')
-      format('svg');
+  font-family: "fontello";
+  src: url("../assets/stylesheets/fonts/fontello.eot?30491483");
+  src: url("../assets/stylesheets/fonts/fontello.eot?30491483#iefix")
+      format("embedded-opentype"),
+    url("../assets/stylesheets/fonts/fontello.woff?30491483") format("woff"),
+    url("../assets/stylesheets/fonts/fontello.ttf?30491483") format("truetype"),
+    url("../assets/stylesheets/fonts/fontello.svg?30491483#fontello")
+      format("svg");
   font-weight: normal;
   font-style: normal;
 }

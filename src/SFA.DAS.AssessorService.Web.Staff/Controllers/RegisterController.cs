@@ -195,7 +195,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
     
         private RegisterViewAndEditOrganisationViewModel MapOrganisationModel(EpaOrganisation organisation)
         {
-            var notSetDescription = "Not Set";
+            var notSetDescription = "Not set";
             var viewModel = new RegisterViewAndEditOrganisationViewModel
             {
                 OrganisationId = organisation.OrganisationId,
