@@ -9,8 +9,7 @@ using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {
-    [Authorize(Roles = Domain.Roles.OperationsTeam)]
-    [Authorize(Roles = Domain.Roles.CertificationTeam)]
+    [Authorize(Roles = Domain.Roles.OperationsTeam + "," + Domain.Roles.CertificationTeam)]
     public class DuplicateRequestController : Controller
     {
         private readonly ApiClient _apiClient;

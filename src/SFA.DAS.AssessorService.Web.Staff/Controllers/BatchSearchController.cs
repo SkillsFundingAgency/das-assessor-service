@@ -8,8 +8,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {
-    [Authorize(Roles = Domain.Roles.OperationsTeam)]
-    [Authorize(Roles = Domain.Roles.CertificationTeam)]
+    [Authorize(Roles = Domain.Roles.OperationsTeam + "," + Domain.Roles.CertificationTeam)]
     public class BatchSearchController : Controller
     {
         private readonly ILogger<BatchSearchController> _logger;

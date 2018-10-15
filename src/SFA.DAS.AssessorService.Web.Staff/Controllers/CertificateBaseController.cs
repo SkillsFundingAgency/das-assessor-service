@@ -13,8 +13,7 @@ using SFA.DAS.AssessorService.Web.Staff.ViewModels;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {
-    [Authorize(Roles = Domain.Roles.OperationsTeam)]
-    [Authorize(Roles = Domain.Roles.CertificationTeam)]
+    [Authorize(Roles = Domain.Roles.OperationsTeam + "," + Domain.Roles.CertificationTeam)]
     public class CertificateBaseController : Controller
     {
         protected readonly ILogger<CertificateAmendController> Logger;
