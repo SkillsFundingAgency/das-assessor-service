@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Web.Staff.Services;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ao
 {
@@ -16,6 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
     {
         private readonly IRegisterQueryRepository _registerQueryRepository;
         private readonly ILogger<GetStandardsByAssessmentOrganisationHandler> _logger;
+        private readonly IStandardService _standardService;
 
         public GetStandardsByAssessmentOrganisationHandler(IRegisterQueryRepository registerQueryRepository, ILogger<GetStandardsByAssessmentOrganisationHandler> logger)
         {
@@ -35,5 +37,5 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             }
             return orgStandards.ToList();
         }
-    }
+    } 
 }
