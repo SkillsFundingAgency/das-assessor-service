@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Models
 {
-    public class RegisterAddOrganisationViewModel
+    public class RegisterOrganisationViewModel
     {
         public List<OrganisationType> OrganisationTypes { get; set; }
 

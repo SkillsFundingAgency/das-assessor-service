@@ -31,8 +31,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         {
             _mediator = new Mock<IMediator>();
             _logger = new Mock<ILogger<RegisterQueryController>>();
-            _standard1 = new OrganisationStandardSummary { OrganisationId = OrganisationId, StandardCode = 1, Periods = new List<OrganisationStandardPeriod>()};
-            _standard2 = new OrganisationStandardSummary { OrganisationId = OrganisationId, StandardCode= 2, Periods = new List<OrganisationStandardPeriod>()};
+            _standard1 = new OrganisationStandardSummary { OrganisationId = OrganisationId, StandardCode = 1};
+            _standard2 = new OrganisationStandardSummary { OrganisationId = OrganisationId, StandardCode= 2};
 
             _expectedStandards = new List<OrganisationStandardSummary>
             {
