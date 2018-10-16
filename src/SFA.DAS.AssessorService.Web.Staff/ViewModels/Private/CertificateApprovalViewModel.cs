@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc.Rendering;
+using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 
 namespace SFA.DAS.AssessorService.Web.Staff.ViewModels.Private
 {

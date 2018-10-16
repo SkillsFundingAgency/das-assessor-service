@@ -1,14 +1,14 @@
 @model IEnumerable<SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateDetailApprovalViewModel>
 
-
 <table class="table table-font-xsmall">
     <thead>
     <tr>
-        <th>Full Name</th>
+        <th>Apprentice</th>
         <th>ULN</th>
-        <th>Standard</th>
-        <th>Certificate Reference</th>
-        <th>Approve</th>
+        <th>Employer</th>
+        <th>Training Provider</th>
+        <th>Date Requested</th>
+        <th>Approve/Reject</th>
     </tr>
     </thead>
     <tbody>
@@ -17,15 +17,16 @@
         var results = Model.ToList();
         var approvalresults = ViewData["ApprovalResults"] as SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateDetailApprovalViewModel[];
     }
-    @for (int i =  0; i < results.Count; i++)
+    @for (int i = 0; i < results.Count; i++)
     {
         var j = (int) ViewData["Increment"] + i;
-      
-        <tr>         
+
+        <tr>
             <td>@results[i].FullName</td>
             <td>@results[i].Uln</td>
-            <td>@results[i].StandardCode</td>
-            <td>@results[i].CertificateReference</td>
+            <td>@results[i].ContactOrganisation</td>
+            <td>@results[i].TrainingProvider</td>
+            <td>@results[i].CreatedAt.ToString("dd/MM/yyyy")</td>
             <td>
                 @{
                     approvalresults[j].IsApproved = results[i].IsApproved;
@@ -33,15 +34,14 @@
                 <select asp-for=@approvalresults[j].IsApproved
                         asp-items="@(new SelectList(@results[i].ApprovedRejected, "Value", "Text"))">
                 </select>
-            </td>            
+            </td>
         </tr>
-        
+
         {
             approvalresults[j].CertificateReference = results[i].CertificateReference;
         }
-      
+
         @Html.HiddenFor(x => @approvalresults[j].CertificateReference)
-//        approvalresults[j].IsApproved = results[i].IsApproved;
     }
     </tbody>
 </table>

@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
 {
-    public class CertificateHistoryResponse
+    public class CertificateSummaryResponse
     {
         public string CertificateReference { get; set; }
         public string RecordedBy { get; set; }
@@ -26,5 +26,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
         public string ContactAddLine3 { get; set; }
         public string ContactAddLine4 { get; set; }
         public string ContactPostCode { get; set; }
+        public string Status { get; set; }
     }
 }

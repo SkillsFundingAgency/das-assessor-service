@@ -6,10 +6,10 @@ using SFA.DAS.AssessorService.Web.Staff.ViewModels.Private;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Automapper.CustomResolvers
 {
-    public class ApprovalsViewModelResolver : IValueResolver<CertificateResponse, CertificateDetailApprovalViewModel,
+    public class ApprovalsViewModelResolver : IValueResolver<CertificateSummaryResponse, CertificateDetailApprovalViewModel,
         IEnumerable<SelectListItem>>
     {
-        public IEnumerable<SelectListItem> Resolve(CertificateResponse source, CertificateDetailApprovalViewModel destination,
+        public IEnumerable<SelectListItem> Resolve(CertificateSummaryResponse source, CertificateDetailApprovalViewModel destination,
             IEnumerable<SelectListItem> destMember,
             ResolutionContext context)
         {

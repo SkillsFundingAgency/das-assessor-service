@@ -98,10 +98,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             return await Get<List<CertificateResponse>>("/api/v1/certificates?statusses=Submitted");
         }
 
-        public async Task<List<CertificateResponse>> GetCertificatesToBeApproved()
+        public async Task<List<CertificateSummaryResponse>> GetCertificatesToBeApproved()
         {
-            return await Get<List<CertificateResponse>>(
-                "/api/v1/certificates?statuses=ToBeApproved&statuses=Approved&statuses=Rejected");
+            return await Get<List<CertificateSummaryResponse>>("/api/v1/certificates/approvals");
         }
 
         public async Task<StaffSearchResult> Search(string searchString, int page)
