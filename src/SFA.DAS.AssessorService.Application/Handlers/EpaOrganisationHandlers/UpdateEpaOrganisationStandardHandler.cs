@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -6,6 +7,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
 
@@ -29,17 +31,22 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
         public async Task<string> Handle(UpdateEpaOrganisationStandardRequest request, CancellationToken cancellationToken)
         {
-            var errorDetails = new StringBuilder();
+         
             ProcessRequestFieldsForSpecialCharacters(request);
-            errorDetails.Append(_validator.CheckIfOrganisationStandardDoesNotExist(request.OrganisationId, request.StandardCode));
-            errorDetails.Append(_validator.CheckIfContactIdIsEmptyOrValid(request.ContactId,request.OrganisationId));
+            var validationResponse = _validator.ValidatorUpdateEpaOrganisationStandardRequest(request);
 
-            if (errorDetails.Length > 0)
+            if (!validationResponse.IsValid)
             {
-                _logger.LogError(errorDetails.ToString());
-                throw new BadRequestException(errorDetails.ToString());
-            }
-
+                var message = validationResponse.Errors.Aggregate(string.Empty, (current, error) => current + error.ErrorMessage + "; ");
+                _logger.LogError(message);
+                if (validationResponse.Errors.Any(x => x.StatusCode == ValidationStatusCode.BadRequest.ToString()))
+                {     
+                    throw new BadRequestException(message);
+                }
+                
+                throw new Exception(message);
+            } 
+            
             var organisationStandard = MapOrganisationStandardRequestToOrganisationStandard(request);
 
             return await _registerRepository.UpdateEpaOrganisationStandard(organisationStandard);

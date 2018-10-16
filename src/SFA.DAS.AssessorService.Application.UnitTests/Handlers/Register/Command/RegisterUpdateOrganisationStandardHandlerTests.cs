@@ -7,11 +7,9 @@ using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Command
 {
@@ -45,8 +43,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
                 _registerRepository.Setup(r => r.UpdateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>()))
                     .Returns(Task.FromResult(_expectedOrganisationStandardNoIssues.Id.ToString()));
 
-                _validator.Setup(v => v.CheckIfOrganisationStandardDoesNotExist(_requestNoIssues.OrganisationId, _requestNoIssues.StandardCode)).Returns(string.Empty);
-                _validator.Setup(v => v.CheckIfContactIdIsEmptyOrValid(It.IsAny<string>(), It.IsAny<string>())).Returns(string.Empty);
+                _validator.Setup(v => v.ValidatorUpdateEpaOrganisationStandardRequest(_requestNoIssues)).Returns(new ValidationResponse());
                 _cleanserService.Setup(c => c.CleanseStringForSpecialCharacters(It.IsAny<string>()))
                     .Returns((string s) => s);
                 
@@ -65,7 +62,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             public void CheckValidatorIsCalledWhenHandlerInvoked()
             {
                 var res = _updateEpaOrganisationStandardHandler.Handle(_requestNoIssues, new CancellationToken()).Result;
-                _validator.Verify(v => v.CheckIfOrganisationStandardDoesNotExist(_requestNoIssues.OrganisationId, _requestNoIssues.StandardCode));
+                _validator.Verify(v => v.ValidatorUpdateEpaOrganisationStandardRequest(_requestNoIssues));
             }
 
             [Test]
@@ -80,11 +77,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             {
                 const string errorMessage = "no organisation Id";
                 var requestNoOrgId = BuildRequest("org 1", 1);
-                _validator.Setup(v => v.CheckIfOrganisationStandardDoesNotExist(requestNoOrgId.OrganisationId, requestNoOrgId.StandardCode)).Returns(errorMessage);
-                var ex = Assert.ThrowsAsync<BadRequestException>(() => _updateEpaOrganisationStandardHandler.Handle(requestNoOrgId, new CancellationToken()));
-                Assert.AreEqual(errorMessage, ex.Message);
+                var errorResponse = BuildErrorResponse(errorMessage,  ValidationStatusCode.BadRequest);
+                _validator.Setup(v => v.ValidatorUpdateEpaOrganisationStandardRequest(requestNoOrgId)).Returns(errorResponse);
+                  var ex = Assert.ThrowsAsync<BadRequestException>(() => _updateEpaOrganisationStandardHandler.Handle(requestNoOrgId, new CancellationToken()));
+                Assert.AreEqual(errorMessage + "; ", ex.Message);
                 _registerRepository.Verify(r => r.UpdateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>()), Times.Never);
-                _validator.Verify(v => v.CheckIfOrganisationStandardDoesNotExist(requestNoOrgId.OrganisationId, requestNoOrgId.StandardCode));
+                _validator.Verify(v => v.ValidatorUpdateEpaOrganisationStandardRequest(requestNoOrgId));
             }
 
         private UpdateEpaOrganisationStandardRequest BuildRequest(string organisationId, int standardCode)
@@ -95,6 +93,13 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
                     StandardCode = standardCode,
                     EffectiveFrom = null
                 };
+            }
+
+        private ValidationResponse BuildErrorResponse(string errorMessage, ValidationStatusCode statusCode)
+            {
+                var validationResponse = new ValidationResponse();
+                validationResponse.Errors.Add(new ValidationErrorDetail(errorMessage,statusCode));
+                return validationResponse;
             }
 
         private EpaOrganisationStandard BuildOrganisationStandard(UpdateEpaOrganisationStandardRequest request, int id)

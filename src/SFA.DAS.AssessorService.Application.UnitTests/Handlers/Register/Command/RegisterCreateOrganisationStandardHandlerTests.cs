@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             _registerRepository.Setup(r => r.CreateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>()))
                 .Returns(Task.FromResult(_expectedOrganisationStandardNoIssues.Id.ToString()));
 
-            _validator.Setup(v => v.ValidatorCreateEpaOrganisationStandardRequest(_requestNoIssues)).Returns(new ValidationResponse()); ;
+            _validator.Setup(v => v.ValidatorCreateEpaOrganisationStandardRequest(_requestNoIssues)).Returns(new ValidationResponse());
             _cleanserService.Setup(c => c.CleanseStringForSpecialCharacters(It.IsAny<string>()))
                 .Returns((string s) => s);
             
@@ -117,6 +117,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             validationResponse.Errors.Add(new ValidationErrorDetail(errorMessage,statusCode));
             return validationResponse;
         }
+        
         private CreateEpaOrganisationStandardRequest BuildRequest(string organisationId, int standardCode)
         {
             return new CreateEpaOrganisationStandardRequest
