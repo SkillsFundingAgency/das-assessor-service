@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
         public string CleanseStringForSpecialCharacters(string inputString)
         {
             if (string.IsNullOrEmpty(inputString)) return null;
-            var processedString = inputString;
+            var processedString = inputString.Trim();
 
             var specialCharacters = SpecialCharactersInString(processedString);
 
@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 processedString = processedString.Replace(matchingEntry.Key, matchingEntry.Value);
             }
 
-            return processedString;
+            return processedString.Trim();
         }
 
         private char[] SpecialCharactersInString(string inputString)
