@@ -141,8 +141,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         {
             if (string.IsNullOrEmpty(contactId)) return string.Empty;
 
-            return _registerRepository.ContactIdIsValidForOrganisationId(contactId, organisationId).Result
-                ?string.Empty 
+            return Guid.TryParse(contactId, out Guid newContactId) && _registerRepository.ContactIdIsValidForOrganisationId(newContactId, organisationId).Result
+                ? string.Empty 
                 : FormatErrorMessage(EpaOrganisationValidatorMessageName.ContactIdInvalidForOrganisationId);
         }
 
@@ -167,10 +167,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
 
         public string CheckContactIdExists(string contactId)
         {
-            if (string.IsNullOrEmpty(contactId) || contactId.Trim().Length == 0)
-                return FormatErrorMessage(EpaOrganisationValidatorMessageName.ContactIdDoesntExist);
 
-            return _registerRepository.ContactExists(contactId).Result
+            if (!Guid.TryParse(contactId, out Guid newContactId))
+                return FormatErrorMessage(EpaOrganisationValidatorMessageName.ContactIdDoesntExist);
+            
+            return _registerRepository.ContactExists(newContactId).Result
                 ? string.Empty
                 : FormatErrorMessage(EpaOrganisationValidatorMessageName.ContactIdDoesntExist);
         }
@@ -185,9 +186,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
 
         public string CheckIfEmailAlreadyPresentInOrganisationNotAssociatedWithContact(string email, string contactId)
         {
-            return _registerRepository.EmailAlreadyPresentInAnOrganisationNotAssociatedWithContact(email, contactId).Result
-                ? FormatErrorMessage(EpaOrganisationValidatorMessageName.EmailAlreadyPresentInAnotherOrganisation)
-                : string.Empty;
+            return Guid.TryParse(contactId, out Guid newContactId) && !_registerRepository
+                       .EmailAlreadyPresentInAnOrganisationNotAssociatedWithContact(email, newContactId).Result
+                ? string.Empty
+                : FormatErrorMessage(EpaOrganisationValidatorMessageName.EmailAlreadyPresentInAnotherOrganisation);
         }
 
         public string CheckIfEmailIsSuitableFormat(string email)

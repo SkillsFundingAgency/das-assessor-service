@@ -83,10 +83,10 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         {
 
             var isContactPresentBeforeInsert =
-                _validationRepository.ContactIdIsValidForOrganisationId(_contactId.ToString(),_contact.EndPointAssessorOrganisationId).Result;
+                _validationRepository.ContactIdIsValidForOrganisationId(_contactId,_contact.EndPointAssessorOrganisationId).Result;
             var returnedContactId = _repository.CreateEpaOrganisationContact(_contact).Result;
             var isContactPresenAfterInsert =
-                _validationRepository.ContactIdIsValidForOrganisationId(_contactId.ToString(), _contact.EndPointAssessorOrganisationId).Result;
+                _validationRepository.ContactIdIsValidForOrganisationId(_contactId, _contact.EndPointAssessorOrganisationId).Result;
          
             Assert.IsFalse(isContactPresentBeforeInsert);
             Assert.IsTrue(isContactPresenAfterInsert);

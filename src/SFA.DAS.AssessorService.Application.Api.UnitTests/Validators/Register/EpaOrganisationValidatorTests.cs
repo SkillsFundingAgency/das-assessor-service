@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Localization;
 using Moq;
@@ -302,46 +303,46 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         [TestCase(true, true)]
         public void CheckIfEmailAlreadyExistsAgainstOtherOrganisationNotAssociatedWithContactIdReturnsAnErrorMessage(bool exists, bool noMessageReturned)
         {
-            _registerRepository.Setup(r => r.EmailAlreadyPresentInAnOrganisationNotAssociatedWithContact(It.IsAny<string>(), It.IsAny<string>()))
+            _registerRepository.Setup(r => r.EmailAlreadyPresentInAnOrganisationNotAssociatedWithContact(It.IsAny<string>(), It.IsAny<Guid>()))
                 .Returns(Task.FromResult(exists));
             var isMessageReturned =
-                _validator.CheckIfEmailAlreadyPresentInOrganisationNotAssociatedWithContact("email", "orgId").Length > 0;
+                _validator.CheckIfEmailAlreadyPresentInOrganisationNotAssociatedWithContact("email", Guid.NewGuid().ToString()).Length > 0;
             Assert.AreEqual(noMessageReturned, exists);
-            _registerRepository.Verify(r => r.EmailAlreadyPresentInAnOrganisationNotAssociatedWithContact(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+            _registerRepository.Verify(r => r.EmailAlreadyPresentInAnOrganisationNotAssociatedWithContact(It.IsAny<string>(), It.IsAny<Guid>()), Times.Once);
         }
         
 
         [TestCase("", false, false)]
         [TestCase(null,false,false)]
-        [TestCase("valid contact id", true, true)]
+        [TestCase("02741b43-acfd-45c6-a9d6-780ebe5df65c", true, true)]
         public void CheckIfContactIdExistsReturnsAnErrorMessage(string contactId, bool repositoryCheckResult, bool noMessageReturned)
         {
-            _registerRepository.Setup(r => r.ContactExists(It.IsAny<string>()))
+            _registerRepository.Setup(r => r.ContactExists(It.IsAny<Guid>()))
                 .Returns(Task.FromResult(repositoryCheckResult));
             var isMessageReturned =
                 _validator.CheckContactIdExists(contactId).Length > 0;
             Assert.AreEqual(noMessageReturned, !isMessageReturned);
             if (repositoryCheckResult == false)
-                _registerRepository.Verify(r => r.ContactExists(It.IsAny<string>()), Times.Never);
+                _registerRepository.Verify(r => r.ContactExists(It.IsAny<Guid>()), Times.Never);
             else
-                _registerRepository.Verify(r => r.ContactExists(It.IsAny<string>()), Times.Once);
+                _registerRepository.Verify(r => r.ContactExists(It.IsAny<Guid>()), Times.Once);
         }
         
         
         [TestCase("", "",false, true)]
         [TestCase(null,"",false,true)]
-        [TestCase("valid contact id", "valid org Id", true, true)]
+        [TestCase("3151f01c-ba75-4123-965e-ff1e5f128514", "valid org Id", true, true)]
         public void CheckIfOrganisationStandardHasValidContactIdReturnsAnErrorMessage(string contactId, string organisationId, bool repositoryCheckResult, bool noMessageReturned)
         {
-            _registerRepository.Setup(r => r.ContactIdIsValidForOrganisationId(It.IsAny<string>(), It.IsAny<string>()))
+            _registerRepository.Setup(r => r.ContactIdIsValidForOrganisationId(It.IsAny<Guid>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(repositoryCheckResult));
             var isMessageReturned =
                 _validator.CheckIfContactIdIsEmptyOrValid(contactId, organisationId).Length > 0;
             Assert.AreEqual(noMessageReturned, !isMessageReturned);
             if (repositoryCheckResult == false)
-                _registerRepository.Verify(r => r.ContactIdIsValidForOrganisationId(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+                _registerRepository.Verify(r => r.ContactIdIsValidForOrganisationId(It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
             else
-                _registerRepository.Verify(r => r.ContactIdIsValidForOrganisationId(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+                _registerRepository.Verify(r => r.ContactIdIsValidForOrganisationId(It.IsAny<Guid>(), It.IsAny<string>()), Times.Once);
         }
 
         [Test]
