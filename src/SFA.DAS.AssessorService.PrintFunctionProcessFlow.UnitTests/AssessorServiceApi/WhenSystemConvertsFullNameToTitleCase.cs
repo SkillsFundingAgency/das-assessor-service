@@ -22,8 +22,7 @@ namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests.AssessorSer
                 ? CultureInfo.CurrentCulture.TextInfo.ToTitleCase(learnerName)
                 : CultureInfo.CurrentCulture.TextInfo.ToTitleCase(learnerName);
 
-            Assert.AreEqual(result, "Test String");
-            Console.WriteLine(result);
+            Assert.AreEqual(result, "Test String");       
         }
     }
 }
