@@ -907,11 +907,7 @@ table.responsive tr.total {
 }
 
 table.staff-report-table {
-  margin-bottom: 55px;
-}
-
-table.staff-report-table td {
-  width: 50%;
+  margin-bottom: 30px;
 }
 
 table.staff-report-table tr:first-child td:first-child,
@@ -920,9 +916,10 @@ table.staff-report-table tr:first-child td:last-child {
   line-height: 1.11111;
   text-align: left;
   font-weight: bold;
-  padding: 0 0 20px;
+  /* padding: 0 0 20px; */
   border: 0 none;
   margin-bottom: 20px;
+  column-span: all;
 }
 
 table.staff-report-table tr:first-child td:first-child {
