@@ -182,5 +182,24 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             return validationResult;
 
         }
+
+        public ValidationResponse ValidatorCreateEpaOrganisationStandardRequest(CreateEpaOrganisationStandardRequest request)
+        {
+            var validationResult = new ValidationResponse();
+
+            RunValidationCheckAndAppendAnyError("OrganisationId", CheckOrganisationIdIsPresentAndValid(request.OrganisationId), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("ContactId", CheckIfContactIdIsEmptyOrValid(request.ContactId,request.OrganisationId), validationResult, ValidationStatusCode.BadRequest);
+            if (!validationResult.IsValid) return validationResult;
+       
+            RunValidationCheckAndAppendAnyError("OrganisationId", CheckIfOrganisationNotFound(request.OrganisationId), validationResult, ValidationStatusCode.NotFound);
+            if (!validationResult.IsValid) return validationResult;
+   
+            RunValidationCheckAndAppendAnyError("StandardCode", CheckIfStandardNotFound(request.StandardCode), validationResult, ValidationStatusCode.NotFound);
+            if (!validationResult.IsValid) return validationResult;
+
+            RunValidationCheckAndAppendAnyError("OrganisationId", CheckIfOrganisationStandardAlreadyExists(request.OrganisationId, request.StandardCode), validationResult, ValidationStatusCode.AlreadyExists);
+
+            return validationResult;
+        }
     }
 }

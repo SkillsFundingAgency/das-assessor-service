@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
@@ -30,26 +32,30 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
         public async Task<string> Handle(CreateEpaOrganisationStandardRequest request, CancellationToken cancellationToken)
         {
-            var errorDetails = new StringBuilder();
             ProcessRequestFieldsForSpecialCharacters(request);
-            errorDetails.Append(_validator.CheckOrganisationIdIsPresentAndValid(request.OrganisationId));
-            errorDetails.Append(_validator.CheckIfContactIdIsEmptyOrValid(request.ContactId, request.OrganisationId));
-            if (errorDetails.Length > 0)
+            var validationResponse = _validator.ValidatorCreateEpaOrganisationStandardRequest(request);
+
+            if (!validationResponse.IsValid)
             {
-                _logger.LogError(errorDetails.ToString());
-                throw new BadRequestException(errorDetails.ToString());
-            }
+                var message = validationResponse.Errors.Aggregate(string.Empty, (current, error) => current + error.ErrorMessage + "; ");
+                _logger.LogError(message);
+                if (validationResponse.Errors.Any(x => x.StatusCode == ValidationStatusCode.BadRequest.ToString()))
+                {     
+                    throw new BadRequestException(message);
+                }
+                
+                if (validationResponse.Errors.Any(x => x.StatusCode == ValidationStatusCode.NotFound.ToString()))
+                {
+                    throw new NotFound(message);
+                }
 
-            errorDetails.Append(_validator.CheckIfOrganisationNotFound(request.OrganisationId));
-            ThrowNotFoundExceptionIfErrorPresent(errorDetails);
+                if (validationResponse.Errors.Any(x => x.StatusCode == ValidationStatusCode.AlreadyExists.ToString()))
+                {
+                    throw new AlreadyExistsException(message);
+                }
 
-            errorDetails.Append(_validator.CheckIfStandardNotFound(request.StandardCode));
-            ThrowNotFoundExceptionIfErrorPresent(errorDetails);
-
-            errorDetails.Append(
-                _validator.CheckIfOrganisationStandardAlreadyExists(request.OrganisationId, request.StandardCode));
-
-            ThrowAlreadyExistsExceptionIfErrorPresent(errorDetails);
+                throw new Exception(message);
+            } 
 
             var organisationStandard = MapOrganisationStandardRequestToOrganisationStandard(request);
            
@@ -62,25 +68,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             request.Comments = _cleanser.CleanseStringForSpecialCharacters(request.Comments?.Trim());
             request.ContactId = request.ContactId?.Trim();
         }
-
-        private void ThrowAlreadyExistsExceptionIfErrorPresent(StringBuilder errorDetails)
-        {
-            if (errorDetails.Length == 0) return;
-            _logger.LogError(errorDetails.ToString());
-            throw new AlreadyExistsException(errorDetails.ToString());
-        }
-
-        private void ThrowNotFoundExceptionIfErrorPresent(StringBuilder errorDetails)
-        {
-            if (errorDetails.Length == 0) return;
-            _logger.LogError(errorDetails.ToString());
-            throw new NotFound(errorDetails.ToString());
-        }
-
+        
         private static  EpaOrganisationStandard MapOrganisationStandardRequestToOrganisationStandard(CreateEpaOrganisationStandardRequest request)
         {
             Guid? contactId = null;
-            if (Guid.TryParse(request.ContactId, out Guid contactIdGuid))
+            if (Guid.TryParse(request.ContactId, out var contactIdGuid))
                 contactId = contactIdGuid;
 
             var organisationStandard = new EpaOrganisationStandard
