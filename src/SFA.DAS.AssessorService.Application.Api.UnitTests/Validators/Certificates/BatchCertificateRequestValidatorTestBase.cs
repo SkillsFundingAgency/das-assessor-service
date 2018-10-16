@@ -1,15 +1,16 @@
 ﻿using FizzWare.NBuilder;
-using Microsoft.Extensions.Localization;
 using Moq;
 using Newtonsoft.Json;
+using SFA.DAS.Apprenticeships.Api.Types;
+using SFA.DAS.Apprenticeships.Api.Types.AssessmentOrgs;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using System;
 using System.Collections.Generic;
-using Standard = SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types.Standard;
-using StandardOrganisationSummary = SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types.StandardOrganisationSummary;
+using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
+
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certificates
 {
@@ -152,7 +153,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
             return Builder<Standard>.CreateNew()
                 .With(i => i.Title = $"{standardCode}")
                 .With(i => i.Level = standardCode)
-                .With(i => i.Id = standardCode)
                 .Build();
         }
 

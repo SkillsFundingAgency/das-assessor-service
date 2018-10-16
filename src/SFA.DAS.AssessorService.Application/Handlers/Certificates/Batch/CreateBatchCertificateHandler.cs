@@ -1,6 +1,8 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using SFA.DAS.Apprenticeships.Api.Types;
+using SFA.DAS.Apprenticeships.Api.Types.Providers;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates.Batch;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Logging;
@@ -8,7 +10,6 @@ using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -133,7 +134,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
                 StandardName = standard.Title,
                 LearningStartDate = ilr.LearnStartDate,
                 StandardLevel = standard.Level,
-                StandardPublicationDate = standard.EffectiveFrom,
+                StandardPublicationDate = standard.EffectiveFrom.Value,
                 FullName = $"{ilr.GivenNames} {ilr.FamilyName}",
                 ProviderName = provider.ProviderName,
 
