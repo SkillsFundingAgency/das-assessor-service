@@ -1,5 +1,6 @@
 <policies>
     <inbound>
+        <rate-limit-by-key calls="120" renewal-period="60" counter-key="@(context.Request.IpAddress)" />
         <set-header name="x-request-context-user-email" exists-action="override">
             <value>@(context.User.Email)</value>
         </set-header>
