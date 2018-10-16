@@ -12,12 +12,12 @@ using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {
     [Authorize(Policy = Startup.Policies.OperationsTeamOnly)]
-    public class DuplicateRequestController : Controller
+    public class CommentController : Controller
     {
         private readonly ApiClient _apiClient;
         private readonly IHttpContextAccessor _contextAccessor;
 
-        public DuplicateRequestController(ApiClient apiClient,
+        public CommentController(ApiClient apiClient,
             IHttpContextAccessor contextAccessor)
         {
             _apiClient = apiClient;
@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(
+        public async Task<IActionResult> Index(         
             Guid certificateId,
             int stdCode,
             long uln,
@@ -46,41 +46,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 StdCode = stdCode,
                 Uln = uln,
                 FullName = certificateData.FullName,
-                Status = certificate.Status,
+                Page = page,
                 BackToCheckPage = redirectToCheck.Value
             };
 
             return View(vm);
-        }
-
-        [HttpPost(Name = "Index")]
-        public async Task<IActionResult> Index(DuplicateRequestViewModel duplicateRequestViewModel)
-        {
-            var username = _contextAccessor.HttpContext.User
-                .FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
-            var certificate = await _apiClient.PostReprintRequest(new StaffCertificateDuplicateRequest
-            {
-                Id = duplicateRequestViewModel.CertificateId,
-                Username = username
-            });
-            var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-
-            var nextScheduledRun = await _apiClient.GetNextScheduledRun((int) ScheduleType.PrintRun);
-            var vm = new DuplicateRequestViewModel
-            {
-                CertificateId = certificate.Id,
-                IsConfirmed = true,
-                NextBatchDate = nextScheduledRun?.RunTime.ToString("dd/MM/yyyy"),
-                CertificateReference = certificate.CertificateReference,
-                SearchString = duplicateRequestViewModel.SearchString,
-                StdCode = duplicateRequestViewModel.StdCode,
-                Uln = duplicateRequestViewModel.Uln,
-                Status = certificate.Status,
-                FullName = certificateData.FullName,
-                Page = duplicateRequestViewModel.Page
-            };
-
-            return View(vm);
-        }
+        }            
     }
 }

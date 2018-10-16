@@ -9,6 +9,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
     public class CertificateCheckViewModel : CertificateBaseViewModel, ICertificateViewModel
     {
         public long Uln { get; set; }
+        public string CertificateReference { get; set; }
         public int? Ukprn { get; set; }
         public int Level { get; set; }
         public string Option { get; set; }
@@ -25,14 +26,23 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
         public string AddressLine2 { get; set; }
         public string AddressLine3 { get; set; }
         public string City { get; set; }
-        public string Postcode { get; set; }    
+        public string Postcode { get; set; }
+        public string Status { get; set; }
+        public bool RedirectToCheck { get; set; }
 
+        public string SearchString { get; set; }
+        public int Page { get; set; }
+        
         public void FromCertificate(Certificate cert)
         {
             BaseFromCertificate(cert);
 
             Uln = cert.Uln;
             Ukprn = cert.ProviderUkPrn;
+
+            Status = cert.Status;
+
+            CertificateReference = cert.CertificateReference;
 
             Level = CertificateData.StandardLevel;
             Option = CertificateData.CourseOption;
