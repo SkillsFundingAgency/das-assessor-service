@@ -148,7 +148,7 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        public async Task<AssessmentOrganisationContact> GetAssessmentOrganisationContact(string contactId)
+        public async Task<AssessmentOrganisationContact> GetAssessmentOrganisationContact(Guid contactId)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {

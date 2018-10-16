@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -23,7 +24,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
         {
             var contactId = request.ContactId;
             _logger.LogInformation($@"Handling Get Contact Request for [{contactId}]");
-            var contact = await _registerQueryRepository.GetAssessmentOrganisationContact(contactId);
+
+            if (!Guid.TryParse(contactId, out Guid newContactId))
+                return null;
+            var contact = await _registerQueryRepository.GetAssessmentOrganisationContact(newContactId);
 
             return contact ?? null;
         }  
