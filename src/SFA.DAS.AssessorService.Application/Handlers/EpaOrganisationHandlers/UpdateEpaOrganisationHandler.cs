@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -6,6 +7,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
 
@@ -28,26 +30,24 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
         public async Task<string> Handle(UpdateEpaOrganisationRequest request, CancellationToken cancellationToken)
         {
-            var errorDetails = new StringBuilder();
             ProcessRequestFieldsForSpecialCharacters(request);
-            errorDetails.Append(_validator.CheckIfOrganisationNotFound(request.OrganisationId));
-
-            if (errorDetails.Length > 0)
+            var validationResponse = _validator.ValidatorUpdateEpaOrganisationRequest(request);
+         
+            if (!validationResponse.IsValid)
             {
-                _logger.LogError(errorDetails.ToString());
-                throw new NotFound(errorDetails.ToString());
-            }
+                var message = validationResponse.Errors.Aggregate(string.Empty, (current, error) => current + error.ErrorMessage + "; ");
+                _logger.LogError(message);
+                if (validationResponse.Errors.Any(x => x.StatusCode == ValidationStatusCode.NotFound.ToString()))
+                {
+                    throw new NotFound(message);
+                }
 
-            errorDetails.Append(_validator.CheckOrganisationIdIsPresentAndValid(request.OrganisationId));
-            errorDetails.Append(_validator.CheckOrganisationName(request.Name));
-            errorDetails.Append(_validator.CheckOrganisationTypeIsNullOrExists(request.OrganisationTypeId));
-            errorDetails.Append(_validator.CheckIfOrganisationUkprnExistsForOtherOrganisations(request.Ukprn, request.OrganisationId));
-            errorDetails.Append(_validator.CheckOrganisationNameNotUsedForOtherOrganisations(request.Name, request.OrganisationId));
-            errorDetails.Append(_validator.CheckUkprnIsValid(request.Ukprn));
-            if (errorDetails.Length > 0)
-            {
-                _logger.LogError(errorDetails.ToString());
-                throw new BadRequestException(errorDetails.ToString());
+                if (validationResponse.Errors.Any(x => x.StatusCode == ValidationStatusCode.BadRequest.ToString()))
+                {
+                    throw new BadRequestException(message);
+                }
+
+                throw new Exception(message);
             }
 
             var organisation = MapOrganisationRequestToOrganisation(request);
@@ -57,15 +57,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
         private void ProcessRequestFieldsForSpecialCharacters(UpdateEpaOrganisationRequest request)
         {       
-            request.OrganisationId = _cleanser.CleanseStringForSpecialCharacters(request.OrganisationId?.Trim());  
-            request.Name = _cleanser.CleanseStringForSpecialCharacters(request.Name?.Trim());  
-            request.LegalName = _cleanser.CleanseStringForSpecialCharacters(request.LegalName?.Trim());
-            request.WebsiteLink = _cleanser.CleanseStringForSpecialCharacters(request.WebsiteLink?.Trim());
-            request.Address1 = _cleanser.CleanseStringForSpecialCharacters(request.Address1?.Trim());
-            request.Address2 = _cleanser.CleanseStringForSpecialCharacters(request.Address2?.Trim());
-            request.Address3 = _cleanser.CleanseStringForSpecialCharacters(request.Address3?.Trim());
-            request.Address4 = _cleanser.CleanseStringForSpecialCharacters(request.Address4?.Trim());
-            request.Postcode = _cleanser.CleanseStringForSpecialCharacters(request.Postcode?.Trim());
+            request.OrganisationId = _cleanser.CleanseStringForSpecialCharacters(request.OrganisationId);  
+            request.Name = _cleanser.CleanseStringForSpecialCharacters(request.Name);  
+            request.LegalName = _cleanser.CleanseStringForSpecialCharacters(request.LegalName);
+            request.WebsiteLink = _cleanser.CleanseStringForSpecialCharacters(request.WebsiteLink);
+            request.Address1 = _cleanser.CleanseStringForSpecialCharacters(request.Address1);
+            request.Address2 = _cleanser.CleanseStringForSpecialCharacters(request.Address2);
+            request.Address3 = _cleanser.CleanseStringForSpecialCharacters(request.Address3);
+            request.Address4 = _cleanser.CleanseStringForSpecialCharacters(request.Address4);
+            request.Postcode = _cleanser.CleanseStringForSpecialCharacters(request.Postcode);
         }
 
         private static EpaOrganisation MapOrganisationRequestToOrganisation(UpdateEpaOrganisationRequest request)
