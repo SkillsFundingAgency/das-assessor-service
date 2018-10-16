@@ -85,7 +85,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             }
 
             _logger.LogInformation("CreateNewCertificate Before Update Cert in db");
-            await _certificateRepository.Update(certificate, request.Email, null);
+            await _certificateRepository.Update(certificate, contact.Username, null);
 
             _logger.LogInformation(LoggingConstants.CertificateStarted);
             _logger.LogInformation($"Certificate with ID: {certificate.Id} Started with reference of {certificate.CertificateReference}");
