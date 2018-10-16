@@ -1,6 +1,4 @@
 ﻿@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateApprovalViewModel
-@using OfficeOpenXml.FormulaParsing.Excel.Functions.Math
-@using SFA.DAS.AssessorService.Domain.Consts
 @using SFA.DAS.AssessorService.Web.Staff
 
 
@@ -35,50 +33,11 @@
                 </div>
             }
 
-
             <div sfa-anyvalidationerror-class="after-error-summary">
                 <h1 class="heading-large">
                     To be Approved Privately Funded Certificates?
                 </h1>
-
-                @*                 @if (@Model.CertificateDetailApprova1ViewModels.Any()) *@
-                @*                 { *@
-                @*                     <table class="table table-font-xsmall"> *@
-                @*                         <thead> *@
-                @*                         <tr> *@
-                @*                             <th>Full Name</th> *@
-                @*                             <th>ULN</th> *@
-                @*                             <th>Standard</th> *@
-                @*                             <th>Certificate Reference</th> *@
-                @*                             <th>Approve</th> *@
-                @*                         </tr> *@
-                @*                         </thead> *@
-                @*                         <tbody> *@
-                @* *@
-                @*                         @{ *@
-                @*                             var approvalresults = Model.CertificateDetailApprova1ViewModels.ToList(); *@
-                @*                         } *@
-                @*                         @for (int i = 0; i < approvalresults.Count; i++) *@
-                @*                         { *@
-                @*                             @Html.HiddenFor(x => @approvalresults[i].CertificateReference) *@
-                @*                             <tr> *@
-                @*                                 $1$ <td><a asp-action="Select" asp-route-stdcode="@result.StandardCode" asp-route-uln="@result.Uln" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.StaffSearchResult.StaffSearchItems.PageIndex">@result.GivenNames @result.FamilyName</a></td> #1# *@
-                @*                                 <td>@approvalresults[i].FullName</td> *@
-                @*                                 <td>@approvalresults[i].Uln</td> *@
-                @*                                 <td>@approvalresults[i].StandardCode</td> *@
-                @*                                 <td>@approvalresults[i].CertificateReference</td> *@
-                @*                                 <td> *@
-                @*                                     <select asp-for=@approvalresults[i].IsApproved *@
-                @*                                             asp-items="@(new SelectList(@approvalresults[i].ApprovedRejected, "Value", "Text"))"> *@
-                @*                                     </select> *@
-                @*                                 </td> *@
-                @* *@
-                @*                             </tr> *@
-                @*                         } *@
-                @*                         </tbody> *@
-                @*                     </table> *@
-                
-                
+                                            
                 @{
                     var count = Model.ToBeApprovedCertificates.Count() + Model.ApprovedCertificates.Count() + Model.RejectedCertificates.Count();
                     var approvalResults = 

@@ -21,8 +21,7 @@
     {
         var j = (int) ViewData["Increment"] + i;
       
-        <tr>
-            @* <td><a asp-action="Select" asp-route-stdcode="@result.StandardCode" asp-route-uln="@result.Uln" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.StaffSearchResult.StaffSearchItems.PageIndex">@result.GivenNames @result.FamilyName</a></td> *@
+        <tr>         
             <td>@results[i].FullName</td>
             <td>@results[i].Uln</td>
             <td>@results[i].StandardCode</td>
