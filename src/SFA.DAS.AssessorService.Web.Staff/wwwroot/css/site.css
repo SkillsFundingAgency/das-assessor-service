@@ -906,58 +906,67 @@ table.responsive tr.total {
   }
 }
 
-.scrollable-table-container {
+.scrollable-table-scroll-container {
+  display: block;
   width: calc(100% + 20px);
-  margin-top: 0;
-  margin-bottom: 0;
+  margin: 0 -20px;
   overflow-x: auto;
   padding-top: 30px;
   -webkit-overflow-scrolling: touch;
   position: relative;
-  /* mask-image: -webkit-linear-gradient(
+  mask-image: -webkit-linear-gradient(
     to right,
     transparent,
-    white 10px,
-    white 90%,
+    white 20px,
+    white 97%,
     transparent
   );
   mask-image: -moz-linear-gradient(
     to right,
     transparent,
-    white 10px,
-    white 90%,
+    white 20px,
+    white 97%,
     transparent
   );
   mask-image: linear-gradient(
     to right,
     transparent,
-    white 10px,
-    white 90%,
+    white 20px,
+    white 97%,
     transparent
   );
   -webkit-mask-image: -webkit-linear-gradient(
     to right,
     transparent,
-    white 10px,
-    white 90%,
+    white 20px,
+    white 97%,
     transparent
   );
   -webkit-mask-image: -moz-linear-gradient(
     to right,
     transparent,
-    white 10px,
-    white 90%,
+    white 20px,
+    white 97%,
     transparent
-  ); */
+  );
   -webkit-mask-image: linear-gradient(
     to right,
     transparent,
-    white 10px,
-    white 90%,
+    white 20px,
+    white 97%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    white 20px,
+    white 97%,
     transparent
   );
 }
 
-table.staff-report-table {
-  margin-left: 10px;
+.scrollable-table-container {
+  display: inline-block;
+  position: relative;
+  margin: 0 20px;
 }

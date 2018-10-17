@@ -28,28 +28,30 @@ Layout = "_Layout";
       </form>
     </div>
     <div class="form-group">
-      <div class="scrollable-table-container">
-        <table class="table staff-report-table table-font-xsmall">
-          <thead>
-            <tr>
-              @foreach (var key in Model.SelectedReportData.First().Keys)
+      <div class="scrollable-table-scroll-container">
+        <div class="scrollable-table-container">
+          <table class="table staff-report-table table-font-xsmall">
+            <thead>
+              <tr>
+                @foreach (var key in Model.SelectedReportData.First().Keys)
+                {
+                <th>@key</th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @foreach (var entry in Model.SelectedReportData)
               {
-              <th>@key</th>
+              <tr>
+                @foreach (var kvp in entry)
+                {
+                <td data-label="@kvp.Key">@kvp.Value</td>
+                }
+              </tr>
               }
-            </tr>
-          </thead>
-          <tbody>
-            @foreach (var entry in Model.SelectedReportData)
-            {
-            <tr>
-              @foreach (var kvp in entry)
-              {
-              <td data-label="@kvp.Key">@kvp.Value</td>
-              }
-            </tr>
-            }
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
     }
