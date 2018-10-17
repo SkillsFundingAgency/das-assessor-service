@@ -42,6 +42,90 @@
         }
 
         @Html.HiddenFor(x => @approvalresults[j].CertificateReference)
+
+//        note for Greg include this back needs java script to provide for accrodion here.
+@*         <tr class="js-history-details-expandble js-hidden history-details-expandble" aria-hidden="true"> *@
+        
+            <tr>
+            <td colspan="5">
+                <div class="history-details-content">
+                    <h2 class="heading-medium history-details-content--first-heading">Assessment details</h2>
+                    <ul>
+                        <li>
+                            <p>
+                                <span class="bold">Recorded by: </span> @Html.DisplayFor(modelItem => @results[i].RecordedBy)</p>
+                        </li>
+                        <li>
+                            <p>
+                                <span class="bold">Standard: :</span> @Html.DisplayFor(modelItem => @results[i].StandardName)</p>
+                        </li>
+                        <li>
+                            <p>
+                                <span class="bold">Level: </span> @Html.DisplayFor(modelItem => @results[i].Level)</p>
+                        </li>
+                        <li>
+                            <p>
+                                <span class="bold">Grade: </span> @Html.DisplayFor(modelItem => @results[i].OverallGrade)</p>
+                        </li>
+
+                        <li>
+                            <p>
+                                <span class="bold">Option: </span> @Html.DisplayFor(modelItem => @results[i].CourseOption)</p>
+                        </li>
+                        <li>
+                            <p>
+                                <span class="bold">Apprenticeship start date: </span>
+                                @{
+                                    var achievementStartDate = @results[i].LearningStartDate.HasValue ? @results[i].LearningStartDate.Value.ToString("dd/MM/yyyy") : "";
+                                }
+                                @achievementStartDate
+                            </p>
+                        </li>
+                        <li>
+                            <p>
+                                <span class="bold">Achievement date: </span>
+                                @{
+                                    var achievementDate = @results[i].AchievementDate.HasValue ? @results[i].AchievementDate.Value.ToString("dd/MM/yyyy") : "";
+                                }
+                                @achievementDate
+                            </p>
+                        </li>
+                        <li>
+                            <p>
+                                <span class="bold">Certificate number:</span> @Html.DisplayFor(modelItem => @results[i].CertificateReference)</p>
+                        </li>
+                    </ul>
+
+                    <h2 class="heading-medium">Postage details: </h2>
+                    <p>
+                        The certificate was posted to this address.
+                    </p>
+                    <ul>
+                        <li>
+                            @Html.DisplayFor(modelItem => @results[i].ContactName)
+                        </li>
+                        <li>
+                            @Html.DisplayFor(modelItem => @results[i].ContactOrganisation)
+                        </li>
+                        <li>
+                            @Html.DisplayFor(modelItem => @results[i].ContactAddLine1)
+                        </li>
+                        <li>
+                            @Html.DisplayFor(modelItem => @results[i].ContactAddLine2)
+                        </li>
+                        <li>
+                            @Html.DisplayFor(modelItem => @results[i].ContactAddLine3)
+                        </li>
+                        <li>
+                            @Html.DisplayFor(modelItem => @results[i].ContactAddLine4)
+                        </li>
+                        <li>
+                            @Html.DisplayFor(modelItem => @results[i].ContactPostCode)
+                        </li>
+                    </ul>
+                </div>
+            </td>
+        </tr>
     }
     </tbody>
 </table>

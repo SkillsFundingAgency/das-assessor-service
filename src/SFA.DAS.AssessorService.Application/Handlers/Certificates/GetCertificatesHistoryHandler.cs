@@ -54,6 +54,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                 {
                     var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
                     recordedBy = certificate.CertificateLogs
+                        .OrderByDescending(q => q.EventTime)
                         .FirstOrDefault(certificateLog =>
                             certificateLog.Status == Domain.Consts.CertificateStatus.Submitted)?.Username;
                     try

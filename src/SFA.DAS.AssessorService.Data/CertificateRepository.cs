@@ -163,6 +163,7 @@ namespace SFA.DAS.AssessorService.Data
             {
                 return await _context.Certificates
                     .Include(q => q.Organisation)
+                    .Include(q => q.CertificateLogs)
                     .AsNoTracking()
                     .ToListAsync();
             }
@@ -170,6 +171,7 @@ namespace SFA.DAS.AssessorService.Data
             {
                 return await _context.Certificates
                     .Include(q => q.Organisation)
+                    .Include(q => q.CertificateLogs)
                     .Where(x => statuses.Contains(x.Status))
                     .ToListAsync();
             }
