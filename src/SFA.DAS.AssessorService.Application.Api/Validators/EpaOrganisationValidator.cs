@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using FluentValidation.Results;
@@ -22,12 +24,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
     public class EpaOrganisationValidator: IEpaOrganisationValidator
     {
         private readonly IRegisterValidationRepository _registerRepository;
+        private readonly IRegisterQueryRepository _registerQueryRepository;
         private readonly IStringLocalizer<EpaOrganisationValidator> _localizer;
         private readonly ISpecialCharacterCleanserService _cleanserService;
        
-        public EpaOrganisationValidator( IRegisterValidationRepository registerRepository, ISpecialCharacterCleanserService cleanserService, IStringLocalizer<EpaOrganisationValidator> localizer) 
+        public EpaOrganisationValidator( IRegisterValidationRepository registerRepository,  IRegisterQueryRepository registerQueryRepository, ISpecialCharacterCleanserService cleanserService, IStringLocalizer<EpaOrganisationValidator> localizer) 
         {
             _registerRepository = registerRepository;
+            _registerQueryRepository = registerQueryRepository;
             _cleanserService = cleanserService;
             _localizer = localizer;
         }
@@ -95,6 +99,22 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 string.Empty;
         }
 
+        public string CheckIfDeliveryAreasAreValid(List<int> deliveryAreas)
+        {
+            if (deliveryAreas == null || deliveryAreas.Count == 0)
+                return FormatErrorMessage(EpaOrganisationValidatorMessageName.NoDeliveryAreasPresent);
+
+            var validDeliveryAreas = _registerQueryRepository.GetDeliveryAreas().Result;
+
+            foreach (var deliveryArea in deliveryAreas)
+            {
+                if (!validDeliveryAreas.Any(x => x.Id == deliveryArea))
+                    return FormatErrorMessage(EpaOrganisationValidatorMessageName.DeliveryAreaNotValid);               
+            }
+
+            return string.Empty;
+        }
+        
         public string CheckIfOrganisationUkprnExistsForOtherOrganisations(long? ukprn, string organisationIdToIgnore)
         {
         if (ukprn == null || !_registerRepository.EpaOrganisationAlreadyUsingUkprn(ukprn.Value, organisationIdToIgnore).Result) return string.Empty;
@@ -252,6 +272,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
 
             RunValidationCheckAndAppendAnyError("OrganisationId", CheckOrganisationIdIsPresentAndValid(request.OrganisationId), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("ContactId", CheckIfContactIdIsValid(request.ContactId,request.OrganisationId), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("DeliveryAreas", CheckIfDeliveryAreasAreValid(request.DeliveryAreas), validationResult,ValidationStatusCode.BadRequest);
             if (!validationResult.IsValid) return validationResult;
        
             RunValidationCheckAndAppendAnyError("OrganisationId", CheckIfOrganisationNotFound(request.OrganisationId), validationResult, ValidationStatusCode.NotFound);

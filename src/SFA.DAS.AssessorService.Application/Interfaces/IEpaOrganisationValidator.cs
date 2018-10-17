@@ -1,4 +1,5 @@
-﻿using SFA.DAS.AssessorService.Api.Types.Models;
+﻿using System.Collections.Generic;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 
@@ -27,6 +28,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         string CheckIfEmailIsSuitableFormat(string email);
         string CheckIfEmailAlreadyPresentInAnotherOrganisation(string email, string organisationId);
         string CheckIfEmailAlreadyPresentInOrganisationNotAssociatedWithContact(string email, string contactId);
+        string CheckIfDeliveryAreasAreValid(List<int> DeliveryAreas);
 
         ValidationResponse ValidatorCreateEpaOrganisationRequest(CreateEpaOrganisationRequest request);
         ValidationResponse ValidatorCreateEpaOrganisationContactRequest(CreateEpaOrganisationContactRequest request);

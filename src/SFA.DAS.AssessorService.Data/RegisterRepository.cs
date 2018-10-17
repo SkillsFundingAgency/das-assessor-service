@@ -2,12 +2,15 @@
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Settings;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Dapper;
 using Newtonsoft.Json;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
+using System.Transactions;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 using SFA.DAS.AssessorService.Application.Exceptions;
 
@@ -64,23 +67,46 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        public async Task<string>CreateEpaOrganisationStandard(EpaOrganisationStandard organisationStandard)
+        public async Task<string>CreateEpaOrganisationStandard(EpaOrganisationStandard organisationStandard, List<int> deliveryAreas)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var transactionScope = new TransactionScope())
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-
-             
-                var res = connection.Query<string>(
-                    "INSERT INTO [dbo].[OrganisationStandard] ([EndPointAssessorOrganisationId],[StandardCode],[EffectiveFrom],[EffectiveTo],[DateStandardApprovedOnRegister] ,[Comments],[Status], [ContactId]) VALUES (" +
-                    "@organisationId, @standardCode, @effectiveFrom, @effectiveTo, null, @comments, 'New', @ContactId); SELECT CAST(SCOPE_IDENTITY() as varchar); ",
-                    new
+                try
+                {
+                    using (var connection = new SqlConnection(_configuration.SqlConnectionString))
                     {
-                        organisationStandard.OrganisationId, organisationStandard.StandardCode, organisationStandard.EffectiveFrom, organisationStandard.EffectiveTo,
-                        organisationStandard.DateStandardApprovedOnRegister, organisationStandard.Comments, organisationStandard.ContactId}).Single();
+                        if (connection.State != ConnectionState.Open)
+                            await connection.OpenAsync();
 
-                return res;
+
+                        var osdaId = connection.Query<string>(
+                            "INSERT INTO [dbo].[OrganisationStandard] ([EndPointAssessorOrganisationId],[StandardCode],[EffectiveFrom],[EffectiveTo],[DateStandardApprovedOnRegister] ,[Comments],[Status], [ContactId]) VALUES (" +
+                            "@organisationId, @standardCode, @effectiveFrom, @effectiveTo, null, @comments, 'New', @ContactId); SELECT CAST(SCOPE_IDENTITY() as varchar); ",
+                            new
+                            {
+                                organisationStandard.OrganisationId, organisationStandard.StandardCode,
+                                organisationStandard.EffectiveFrom, organisationStandard.EffectiveTo,
+                                organisationStandard.DateStandardApprovedOnRegister, organisationStandard.Comments,
+                                organisationStandard.ContactId
+                            }).Single();
+
+                        foreach (var deliveryAreaId in deliveryAreas)
+                        {
+                            connection.Execute("INSERT INTO OrganisationStandardDeliveryArea ([OrganisationStandardId],DeliveryAreaId, Status) VALUES " + 
+                                               "(@osdaId, @deliveryAreaId,'Live'); ",
+                                            new { osdaId, deliveryAreaId}
+                                         );
+                        }
+                        
+                        transactionScope.Complete();
+                        return osdaId;
+                    }
+                }
+                catch (Exception e)
+                {
+                    transactionScope.Dispose();
+                    throw e;
+                }
             }
         }
 

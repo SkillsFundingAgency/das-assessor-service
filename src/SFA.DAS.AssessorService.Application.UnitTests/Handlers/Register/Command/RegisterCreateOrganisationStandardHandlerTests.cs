@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -38,10 +39,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             _organisationId = "EPA999";
             _requestNoIssuesId = 1;
 
-            _requestNoIssues = BuildRequest(_organisationId, 123321);
+            _requestNoIssues = BuildRequest(_organisationId, 123321, new List<int>{1});
             _expectedOrganisationStandardNoIssues = BuildOrganisationStandard(_requestNoIssues,_requestNoIssuesId);
 
-            _registerRepository.Setup(r => r.CreateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>()))
+            _registerRepository.Setup(r => r.CreateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>(), new List<int>{1}))
                 .Returns(Task.FromResult(_expectedOrganisationStandardNoIssues.Id.ToString()));
 
             _validator.Setup(v => v.ValidatorCreateEpaOrganisationStandardRequest(_requestNoIssues)).Returns(new ValidationResponse());
@@ -55,7 +56,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
         public void CreateOrganisationStandardDetailsRepoIsCalledWhenHandlerInvoked()
         {
             var res = _createEpaOrganisationStandardHandler.Handle(_requestNoIssues, new CancellationToken()).Result;
-            _registerRepository.Verify(r => r.CreateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>()));
+            _registerRepository.Verify(r => r.CreateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>(), It.IsAny<List<int>>()));
         }
 
         [Test]
@@ -76,12 +77,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
         public void GetBadRequestExceptionWhenOrganisationIdIssueValidationOccurs()
         {
             const string errorMessage = "no organisation Id";
-            var requestNoOrgId = BuildRequest("", 1);
+            var requestNoOrgId = BuildRequest("", 1, new List<int>{1});
             var errorResponse = BuildErrorResponse(errorMessage,  ValidationStatusCode.BadRequest);
             _validator.Setup(v => v.ValidatorCreateEpaOrganisationStandardRequest(requestNoOrgId)).Returns(errorResponse);
             var ex = Assert.ThrowsAsync<BadRequestException>(() => _createEpaOrganisationStandardHandler.Handle(requestNoOrgId, new CancellationToken()));
             Assert.AreEqual(errorMessage + "; ", ex.Message);
-            _registerRepository.Verify(r => r.CreateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>()), Times.Never);
+            _registerRepository.Verify(r => r.CreateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>(), new List<int>{1}), Times.Never);
             _validator.Verify(v => v.ValidatorCreateEpaOrganisationStandardRequest(requestNoOrgId));
         }
         
@@ -89,12 +90,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
         public void GetNotFoundExceptionWhenOrganisationIdIssueValidationOccurs()
         {
             const string errorMessage = "no organisation Id";
-            var requestOrgNotFound = BuildRequest("", 1);
+            var requestOrgNotFound = BuildRequest("", 1, new List<int> {1});
             var errorResponse = BuildErrorResponse(errorMessage,  ValidationStatusCode.NotFound);
             _validator.Setup(v => v.ValidatorCreateEpaOrganisationStandardRequest(requestOrgNotFound)).Returns(errorResponse);
             var ex = Assert.ThrowsAsync<NotFound>(() => _createEpaOrganisationStandardHandler.Handle(requestOrgNotFound, new CancellationToken()));
             Assert.AreEqual(errorMessage + "; ", ex.Message);
-            _registerRepository.Verify(r => r.CreateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>()), Times.Never);
+            _registerRepository.Verify(r => r.CreateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>(), new List<int>{1}), Times.Never);
             _validator.Verify(v => v.ValidatorCreateEpaOrganisationStandardRequest(requestOrgNotFound));
         }
         
@@ -102,12 +103,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
         public void GetAlreadyExistsExceptionWhenOrganisationIdIssueValidationOccurs()
         {
             const string errorMessage = "organisation/contact already exists";
-            var requestNoOrgId = BuildRequest("", 1);
+            var requestNoOrgId = BuildRequest("", 1, new List<int> {1});
             var errorResponse = BuildErrorResponse(errorMessage,  ValidationStatusCode.AlreadyExists);
             _validator.Setup(v => v.ValidatorCreateEpaOrganisationStandardRequest(requestNoOrgId)).Returns(errorResponse);
             var ex = Assert.ThrowsAsync<AlreadyExistsException>(() => _createEpaOrganisationStandardHandler.Handle(requestNoOrgId, new CancellationToken()));
             Assert.AreEqual(errorMessage + "; ", ex.Message);
-            _registerRepository.Verify(r => r.CreateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>()), Times.Never);
+            _registerRepository.Verify(r => r.CreateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>(), new List<int>{1}), Times.Never);
             _validator.Verify(v => v.ValidatorCreateEpaOrganisationStandardRequest(requestNoOrgId));
         }       
         
@@ -118,13 +119,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             return validationResponse;
         }
         
-        private CreateEpaOrganisationStandardRequest BuildRequest(string organisationId, int standardCode)
+        private CreateEpaOrganisationStandardRequest BuildRequest(string organisationId, int standardCode, List<int> deliveryAreas)
         {
             return new CreateEpaOrganisationStandardRequest
             {          
                 OrganisationId = organisationId,
                 StandardCode = standardCode,
-                EffectiveFrom = null
+                EffectiveFrom = null,
+                DeliveryAreas = deliveryAreas
             };
         }
 

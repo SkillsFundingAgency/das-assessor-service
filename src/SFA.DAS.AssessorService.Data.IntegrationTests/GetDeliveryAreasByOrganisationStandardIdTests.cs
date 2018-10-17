@@ -101,14 +101,6 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             Assert.AreEqual(1, deliveryAreasReturned.Count(x => x == _deliveryArea2.Id), "Delivery Area 2 Id was not found");
         }
 
-        /*[Test]
-        public void GetOrganisationByIdAndCheckTheOrganisationIsReturned()
-        {
-            var organisation = OrganisationHandler.GetOrganisationSummaryByOrgId(_organisationId2);
-            Assert.AreEqual(_organisation2.EndPointAssessorName, organisation.Name, "The organisation names do not match");
-            Assert.AreEqual(_organisation2.EndPointAssessorOrganisationId, organisation.Id, "The organisation Ids do not match");
-        }*/
-
         [OneTimeTearDown]
         public void TearDownOrganisationTests()
         {

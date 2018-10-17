@@ -20,14 +20,18 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         private EpaOrganisationValidator _validator;
         private Mock<IStringLocalizer<EpaOrganisationValidator>> _localizer;
         private Mock<ISpecialCharacterCleanserService> _cleanserService;
+        private Mock<IRegisterQueryRepository> _registerQueryRepository;
+
         [SetUp]
         public void Setup()
         {
             _registerRepository = new Mock<IRegisterValidationRepository>();
+            _registerQueryRepository = new Mock<IRegisterQueryRepository>();
             _localizer = new Mock<IStringLocalizer<EpaOrganisationValidator>>();
             _cleanserService = new Mock<ISpecialCharacterCleanserService>();
             _cleanserService.Setup(c => c.CleanseStringForSpecialCharacters(It.IsAny<string>())).Returns((string s) => s);
-            _validator = new EpaOrganisationValidator(_registerRepository.Object, _cleanserService.Object,_localizer.Object);
+            
+            _validator = new EpaOrganisationValidator(_registerRepository.Object, _registerQueryRepository.Object, _cleanserService.Object,_localizer.Object);
 
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.OrganisationTypeIsInvalid])
                 .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationTypeIsInvalid, "fail"));          
@@ -70,7 +74,11 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.EmailAlreadyPresentInAnotherOrganisation])
                 .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.EmailAlreadyPresentInAnotherOrganisation, "fail"));            
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.ContactIdIsRequired])
-                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.ContactIdIsRequired, "fail"));            
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.ContactIdIsRequired, "fail")); 
+            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.NoDeliveryAreasPresent])
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.NoDeliveryAreasPresent, "fail")); 
+            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.DeliveryAreaNotValid])
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.DeliveryAreaNotValid, "fail")); 
         }
 
         [TestCase("EPA000", true)]

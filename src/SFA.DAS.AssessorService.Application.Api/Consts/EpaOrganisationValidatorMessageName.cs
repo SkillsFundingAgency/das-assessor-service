@@ -24,5 +24,7 @@
         public const string ContactIdDoesntExist = "ContactIdDoesntExist";
         public const string EmailIsIncorrectFormat = "EmailIsIncorrectFormat";
         public const string ErrorMessageOrganisationNameAlreadyPresent = "ErrorMessageOrganisationNameAlreadyPresent";
+        public const string NoDeliveryAreasPresent = "NoDeliveryAreasPresent";
+        public const string DeliveryAreaNotValid = "DeliveryAreaNotValid";
     }
 }
