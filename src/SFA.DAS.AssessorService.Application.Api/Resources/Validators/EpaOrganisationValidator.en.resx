@@ -123,8 +123,17 @@
   <data name="ContactIdInvalidForOrganisationId" xml:space="preserve">
     <value>The contact ID entered is invalid for the given organisation</value>
   </data>
-   <data name="ContactIdIsRequired" xml:space="preserve">
+  <data name="EmailIsMissing" xml:space="preserve">
+    <value>Enter an email address</value>
+  </data>  
+  <data name="ContactIdIsRequired" xml:space="preserve">
     <value>A Contact is required</value>
+ </data>
+  <data name="EmailAlreadyPresentInAnotherOrganisation" xml:space="preserve">
+    <value>This email is being used by another contact in a different organisation</value>
+  </data>
+  <data name="DisplayNameIsMissing" xml:space="preserve">
+    <value>Enter a contact name</value>
   </data>
   <data name="NoOrganisationId" xml:space="preserve">
     <value>Enter an organisation ID</value>
@@ -161,5 +170,17 @@
   </data>
   <data name="UkprnIsInvalid" xml:space="preserve">
     <value>The UKPRN must be 8 numbers</value>
+  </data>
+  <data name="DisplayNameTooShort" xml:space="preserve">
+    <value>Enter a name that is 2 or more characters</value>
+  </data>
+  <data name="ContactIdDoesntExist" xml:space="preserve">
+    <value>The Contact Id is invalid</value>
+  </data>
+  <data name="EmailIsIncorrectFormat" xml:space="preserve">
+    <value>The email is the wrong format</value>
+  </data>
+  <data name="ErrorMessageOrganisationNameAlreadyPresent" xml:space="preserve">
+    <value>There is already an organisation present with this name</value>
   </data>
 </root>

@@ -102,7 +102,22 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             }
         }
 
-
+        [HttpGet("contacts/validate-new",Name = "CreateEpaContactValidate")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
+        public async Task<IActionResult> CreateContactValidate(CreateEpaContactValidationRequest request)
+        {
+            try
+            {
+                _logger.LogInformation("Validation of creating new contact");
+                var result = await _mediator.Send(request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($@"Bad request, Message: [{ex.Message}]");
+                return BadRequest(ex);
+            }
+        }
         [HttpPut(Name = "UpdateEpaOrganisation")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EpaOrganisationResponse))]
         [SwaggerResponse((int)HttpStatusCode.NotFound, typeof(ApiResponse))]
@@ -135,6 +150,59 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             }
         }
 
+        [HttpPost("contacts", Name = "CreateEpaOrganisationContact")]
+        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(EpaContact))]
+        public async Task<IActionResult> CreateOrganisationContact([FromBody] CreateEpaOrganisationContactRequest request)
+        {
+            try
+            {
+                _logger.LogInformation("Creating new Organisation Contact");
+                var result = await _mediator.Send(request);
+                return Ok(new EpaOrganisationContactResponse(result));
+            }
+            catch (AlreadyExistsException ex)
+            {
+                _logger.LogError($@"Record already exists for organisation/email [{request.EndPointAssessorOrganisationId}, {request.Email}]");
+                return Conflict(new EpaOrganisationContactResponse(ex.Message));
+            }
+            catch (BadRequestException ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest(new EpaOrganisationContactResponse(ex.Message));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($@"Bad request, Message: [{ex.Message}]");
+                return BadRequest();
+            }
+        }
+
+        [HttpPut("contacts", Name = "UpdateEpaOrganisationContact")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EpaContact))]
+        public async Task<IActionResult> UpdateOrganisationContact([FromBody] UpdateEpaOrganisationContactRequest request)
+        {
+            try
+            {
+                _logger.LogInformation("Updating Organisation Contact");
+                var result = await _mediator.Send(request);
+                return Ok(new EpaOrganisationContactResponse(result));
+            }
+            catch (AlreadyExistsException ex)
+            {
+                _logger.LogError($@"Record already exists for using this email in another organisation [{request.Email}]");
+                return Conflict(new EpaOrganisationContactResponse(ex.Message));
+            }
+            catch (BadRequestException ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest(new EpaOrganisationContactResponse(ex.Message));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($@"Bad request, Message: [{ex.Message}]");
+                return BadRequest();
+            }
+        }
 
         [HttpPost("standards",Name = "CreateEpaOrganisationStandard")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EpaOrganisationStandard))]
@@ -192,5 +260,24 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 return BadRequest(new EpaOrganisationStandardResponse(ex.Message));
             }
         }
+
+
+        [HttpGet("contacts/validate-existing", Name = "UpdateEpaContactValidate")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
+        public async Task<IActionResult> CreateContactValidate(UpdateEpaOrganisationContactValidationRequest request)
+        {
+            try
+            {
+                _logger.LogInformation("Validation of creating new contact");
+                var result = await _mediator.Send(request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($@"Bad request, Message: [{ex.Message}]");
+                return BadRequest(ex);
+            }
+        }
+
     }
 }

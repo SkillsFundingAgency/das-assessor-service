@@ -100,5 +100,51 @@ namespace SFA.DAS.AssessorService.Data
                 return res;
             }
         }
+
+        public async Task<string> CreateEpaOrganisationContact(EpaContact contact)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+
+                connection.Execute(
+                    $@"INSERT INTO [dbo].[Contacts] ([Id],[CreatedAt],[DisplayName],[Email],[EndPointAssessorOrganisationId],[OrganisationId],[Status],[Username],[PhoneNumber]) " +
+                    $@"VALUES (@id,getutcdate(), @displayName, @email, @endPointAssessorOrganisationId," +
+                    $@"(select id from organisations where EndPointAssessorOrganisationId=@endPointAssessorOrganisationId), " +
+                    $@"'Live', @username, @PhoneNumber);",
+                    new
+                    {
+                        contact.Id,
+                        contact.DisplayName,
+                        contact.Email,
+                        contact.EndPointAssessorOrganisationId,
+                        contact.Username,
+                        contact.PhoneNumber
+                    });
+
+                return contact.Id.ToString();
+            }
+        }
+
+        public async Task<string> UpdateEpaOrganisationContact(EpaContact contact)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+
+                connection.Execute(
+                    "UPDATE [Contacts] SET [DisplayName] = @displayName, [Email] = @email, " +
+                    "[PhoneNumber] = @phoneNumber, [updatedAt] = getUtcDate() " +
+                    "WHERE [Id] = @Id ",
+                    new { contact.DisplayName, contact.Email, contact.PhoneNumber, contact.Id});
+
+
+                return contact.Id.ToString();
+            }
+        }
     }
 }

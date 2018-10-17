@@ -97,7 +97,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
                 new GetStandardsByAssessmentOrganisationHandler(RegisterQueryRepository.Object, _standardService.Object,Logger.Object);
         }
 
-
         [Test]
         public void GetStandardsByOrganisationRepoIsCalledWhenHandlerInvoked()
         {
@@ -106,6 +105,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             RegisterQueryRepository.Verify(r => r.GetDeliveryAreaIdsByOrganisationStandardId(_id1));
             _standardService.Verify(s => s.GetAllStandardSummaries());
         }
+
 
         [Test]
         public void GetStandardsForOrganisationReturns3SetsOfStandards()

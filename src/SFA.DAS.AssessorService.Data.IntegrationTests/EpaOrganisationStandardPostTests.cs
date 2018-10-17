@@ -15,6 +15,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         private readonly DatabaseService _databaseService = new DatabaseService();
         private RegisterRepository _repository;
         private RegisterQueryRepository _queryRepository;
+        private RegisterValidationRepository _validationRepository;
         private string _organisationIdCreated;
         private int _ukprnCreated;
         private OrganisationModel _organisation;
@@ -28,6 +29,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         {
             _repository = new RegisterRepository(_databaseService.WebConfiguration);
             _queryRepository = new RegisterQueryRepository(_databaseService.WebConfiguration);
+            _validationRepository = new RegisterValidationRepository(_databaseService.WebConfiguration);
             _organisationIdCreated = "EPA0987";
             _ukprnCreated = 123321;
             _organisationTypeId = 5;
@@ -64,9 +66,9 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [Test]
         public void CreateOrganisationThatDoesntExistAndCheckItIsThere()
         {
-            var isOrgStandardPresentBeforeInsert = _queryRepository.EpaOrganisationStandardExists(_organisationIdCreated,_standardCode).Result;
+            var isOrgStandardPresentBeforeInsert = _validationRepository.EpaOrganisationStandardExists(_organisationIdCreated,_standardCode).Result;
             var returnedOrganisationStandardId = _repository.CreateEpaOrganisationStandard(_organisationStandard).Result;
-            var isOrgStandardPresentAfterInsert = _queryRepository.EpaOrganisationStandardExists(_organisationIdCreated, _standardCode).Result;
+            var isOrgStandardPresentAfterInsert = _validationRepository.EpaOrganisationStandardExists(_organisationIdCreated, _standardCode).Result;
             var returnedOrganisationStandardByIds = OrganisationStandardHandler.GetOrganisationStandardByOrgIdStandardCode(_organisationIdCreated, _standardCode);
 
             Assert.IsFalse(isOrgStandardPresentBeforeInsert);

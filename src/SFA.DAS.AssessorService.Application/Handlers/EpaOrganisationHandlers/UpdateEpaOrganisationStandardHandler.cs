@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
         private readonly ILogger<UpdateEpaOrganisationStandardHandler> _logger;
         private readonly IEpaOrganisationValidator _validator;
         private readonly ISpecialCharacterCleanserService _cleanser;
-        
+
         public UpdateEpaOrganisationStandardHandler(IRegisterRepository registerRepository, IEpaOrganisationValidator validator, ILogger<UpdateEpaOrganisationStandardHandler> logger, ISpecialCharacterCleanserService cleanser)
         {
             _registerRepository = registerRepository;
@@ -54,7 +54,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
         private void ProcessRequestFieldsForSpecialCharacters(UpdateEpaOrganisationStandardRequest request)
         {
-            request.OrganisationId = _cleanser.CleanseStringForSpecialCharacters(request.OrganisationId?.Trim());           
+            request.OrganisationId = _cleanser.CleanseStringForSpecialCharacters(request.OrganisationId?.Trim());
             request.Comments = _cleanser.CleanseStringForSpecialCharacters(request.Comments?.Trim());
             request.ContactId = request.ContactId?.Trim();
         }
@@ -62,7 +62,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
         private static EpaOrganisationStandard MapOrganisationStandardRequestToOrganisationStandard(UpdateEpaOrganisationStandardRequest request)
         {
             Guid? contactId = null;
-            if (!string.IsNullOrEmpty(request.ContactId)  && Guid.TryParse(request.ContactId, out Guid contactIdGuid))
+            if (!string.IsNullOrEmpty(request.ContactId) && Guid.TryParse(request.ContactId, out Guid contactIdGuid))
                 contactId = contactIdGuid;
 
             var organisationStandard = new EpaOrganisationStandard

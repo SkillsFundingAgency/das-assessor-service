@@ -43,7 +43,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
                 _assessmentOrganisationDetails1,
                 _assessmentOrganisationDetails2
             };
-          
            
             _searchAssessmentOrganisationsHandler = new SearchAssessmentOrganisationHandler(_registerQueryRepository.Object, _searchValidator.Object, _logger.Object,_cleanserService.Object);
         }
