@@ -69,6 +69,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
                 .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.EmailIsMissing, "fail"));
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.EmailAlreadyPresentInAnotherOrganisation])
                 .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.EmailAlreadyPresentInAnotherOrganisation, "fail"));            
+            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.ContactIdIsRequired])
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.ContactIdIsRequired, "fail"));            
         }
 
         [TestCase("EPA000", true)]
@@ -329,8 +331,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         }
         
         
-        [TestCase("", "",false, true)]
-        [TestCase(null,"",false,true)]
+        [TestCase("", "",false, false)]
+        [TestCase("wrong contact id", "valid org id",false, false)]
+        [TestCase(null,"",false,false)]
         [TestCase("3151f01c-ba75-4123-965e-ff1e5f128514", "valid org Id", true, true)]
         public void CheckIfOrganisationStandardHasValidContactIdReturnsAnErrorMessage(string contactId, string organisationId, bool repositoryCheckResult, bool noMessageReturned)
         {

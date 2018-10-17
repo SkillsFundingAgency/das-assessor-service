@@ -127,7 +127,7 @@
     <value>Enter an email address</value>
   </data>  
   <data name="ContactIdIsRequired" xml:space="preserve">
-    <value>A Contact is required</value>
+    <value>A valid contact is required</value>
  </data>
   <data name="EmailAlreadyPresentInAnotherOrganisation" xml:space="preserve">
     <value>This email is being used by another contact in a different organisation</value>
