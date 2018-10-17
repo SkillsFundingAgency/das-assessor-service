@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         string CheckOrganisationNameNotUsed(string name);
         string CheckOrganisationNameNotUsedForOtherOrganisations(string name, string organisationIdToIgnore);
 
-        string CheckIfContactIdIsEmptyOrValid(string contactId, string organisationId);
+        string CheckIfContactIdIsValid(string contactId, string organisationId);
         string CheckIfOrganisationStandardDoesNotExist(string organisationId, int standardCode);
 
         ValidationResponse ValidatorCreateEpaOrganisationRequest(CreateEpaOrganisationRequest request);

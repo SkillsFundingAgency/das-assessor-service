@@ -203,7 +203,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
             _registerRepository.Setup(r => r.ContactIdIsValidForOrganisationId(It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(repositoryCheckResult));
             var isMessageReturned =
-                _validator.CheckIfContactIdIsEmptyOrValid(contactId, organisationId).Length > 0;
+                _validator.CheckIfContactIdIsValid(contactId, organisationId).Length > 0;
             Assert.AreEqual(noMessageReturned, !isMessageReturned);
             if (repositoryCheckResult == false)
                 _registerRepository.Verify(r => r.ContactIdIsValidForOrganisationId(It.IsAny<string>(), It.IsAny<string>()), Times.Never);

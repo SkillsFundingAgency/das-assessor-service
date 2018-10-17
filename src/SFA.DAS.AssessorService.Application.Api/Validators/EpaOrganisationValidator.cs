@@ -131,7 +131,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 : FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationStandardDoesNotExist);
         }
         
-        public string CheckIfContactIdIsEmptyOrValid(string contactId, string organisationId)
+        public string CheckIfContactIdIsValid(string contactId, string organisationId)
         {
             if (string.IsNullOrEmpty(contactId)) return string.Empty;
 
@@ -188,7 +188,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             var validationResult = new ValidationResponse();
 
             RunValidationCheckAndAppendAnyError("OrganisationId", CheckOrganisationIdIsPresentAndValid(request.OrganisationId), validationResult, ValidationStatusCode.BadRequest);
-            RunValidationCheckAndAppendAnyError("ContactId", CheckIfContactIdIsEmptyOrValid(request.ContactId,request.OrganisationId), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("ContactId", CheckIfContactIdIsValid(request.ContactId,request.OrganisationId), validationResult, ValidationStatusCode.BadRequest);
             if (!validationResult.IsValid) return validationResult;
        
             RunValidationCheckAndAppendAnyError("OrganisationId", CheckIfOrganisationNotFound(request.OrganisationId), validationResult, ValidationStatusCode.NotFound);
@@ -206,7 +206,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         {
             var validationResult = new ValidationResponse();
             RunValidationCheckAndAppendAnyError("OrganisationId", CheckIfOrganisationStandardDoesNotExist(request.OrganisationId, request.StandardCode), validationResult, ValidationStatusCode.BadRequest);
-            RunValidationCheckAndAppendAnyError("ContactId", CheckIfContactIdIsEmptyOrValid(request.ContactId,request.OrganisationId), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("ContactId", CheckIfContactIdIsValid(request.ContactId,request.OrganisationId), validationResult, ValidationStatusCode.BadRequest);
             return validationResult;
         }
     }
