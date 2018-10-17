@@ -148,7 +148,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
             foreach (var searchResult in searchResults)
             {
-                var standard = allStandards.SingleOrDefault(s => s.Id == searchResult.StandardCode);
+                var standard = allStandards.SingleOrDefault(s => s.StandardId == searchResult.StandardCode.ToString());
                 if (standard == null)
                 {
                     standard = assessmentOrgsApiClient.GetStandard(searchResult.StandardCode).Result;

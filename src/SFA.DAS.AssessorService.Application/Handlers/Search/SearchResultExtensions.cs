@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
             foreach (var searchResult in searchResults)
             {
-                var standard = allStandards.SingleOrDefault(s => s.Id == searchResult.StdCode);
+                var standard = allStandards.SingleOrDefault(s => s.StandardId == searchResult.StdCode.ToString());
                 if (standard == null)
                 {
                     standard = assessmentOrgsApiClient.GetStandard(searchResult.StdCode).Result;

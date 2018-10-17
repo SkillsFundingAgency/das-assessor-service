@@ -139,11 +139,27 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             return await Get<EpaOrganisation>($"api/ao/assessment-organisations/{organisationId}");
         }
 
+        public async Task<List<ContactResponse>> GetEpaOrganisationContacts(string organisationId)
+        {
+            return await Get<List<ContactResponse>>($"api/v1/contacts/{organisationId}");
+        }
+
+        public async Task<List<OrganisationStandardSummary>> GetEpaOrganisationStandards(string organisationId)
+        {
+            return await Get<List<OrganisationStandardSummary>>($"/api/ao/assessment-organisations/{organisationId}/standards");
+        }
+
         public async Task<string> CreateEpaOrganisation(CreateEpaOrganisationRequest request)
         {
             var result =
                 await Post<CreateEpaOrganisationRequest, EpaOrganisationResponse>("api/ao/assessment-organisations",
                     request);
+            return result.Details;
+        }
+
+        public async Task<string> UpdateEpaOrganisation(UpdateEpaOrganisationRequest request)
+        {
+            var result = await Put<UpdateEpaOrganisationRequest, EpaOrganisationResponse>("api/ao/assessment-organisations", request);
             return result.Details;
         }
 

@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels.Private;
 
@@ -65,7 +65,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
             vm.StandardCodes = GetSelectListItems(standards, filteredStandardCodes);
             if (!string.IsNullOrEmpty(vm.SelectedStandardCode))
             {
-                var selectedStandard = standards.First(q => q.Id == Convert.ToInt32(vm.SelectedStandardCode));
+                var selectedStandard = standards.First(q => q.StandardId == vm.SelectedStandardCode);
                 vm.Standard = selectedStandard.Title;
                 vm.Level = selectedStandard.Level;
             }
@@ -81,8 +81,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
             List<string> filteredStandardCodes)
         {
             return standards
-                .Where(a => filteredStandardCodes.Contains(a.Id.ToString()))
-                .Select(q => new SelectListItem { Value = q.Id.ToString(), Text = q.Title.ToString() + " (" + q.Id + ')' })
+                .Where(a => filteredStandardCodes.Contains(a.StandardId))
+                .Select(q => new SelectListItem { Value = q.StandardId, Text = q.Title.ToString() + " (" + q.StandardId + ')' })
                 .ToList()
                 .OrderBy(q => q.Text);
         }
