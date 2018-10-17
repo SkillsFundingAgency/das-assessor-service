@@ -102,9 +102,6 @@ namespace SFA.DAS.AssessorService.Web.Staff
                 config.For<IAzureTokenService>().Use<AzureTokenService>();
                 config.For<IAzureApiClient>().Use<AzureApiClient>().Ctor<string>("baseUri").Is(ApplicationConfiguration.AzureApiAuthentication.ApiBaseAddress)
                                                                    .Ctor<string>("productId").Is(ApplicationConfiguration.AzureApiAuthentication.ProductId);
-                config.For<CacheHelper>().Use<CacheHelper>();
-
-
 
 
                 config.For<IStandardService>().Use<StandardService>();

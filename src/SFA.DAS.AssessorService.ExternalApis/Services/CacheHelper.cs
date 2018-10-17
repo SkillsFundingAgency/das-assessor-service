@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 
-namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
+namespace SFA.DAS.AssessorService.ExternalApis.Services
 {
     public class CacheHelper
     {

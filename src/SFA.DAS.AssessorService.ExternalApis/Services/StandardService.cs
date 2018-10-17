@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
-using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
+using SFA.DAS.AssessorService.ExternalApis.Services;
 
 
 namespace SFA.DAS.AssessorService.Web.Staff.Services
