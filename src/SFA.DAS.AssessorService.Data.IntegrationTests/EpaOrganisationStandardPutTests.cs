@@ -15,6 +15,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         private readonly DatabaseService _databaseService = new DatabaseService();
         private RegisterRepository _repository;
         private RegisterQueryRepository _queryRepository;
+        private RegisterValidationRepository _validationRepository;
         private string _organisationIdCreated;
         private int _ukprnCreated;
         private OrganisationModel _organisation;
@@ -33,6 +34,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         {
             _repository = new RegisterRepository(_databaseService.WebConfiguration);
             _queryRepository = new RegisterQueryRepository(_databaseService.WebConfiguration);
+            _validationRepository = new RegisterValidationRepository(_databaseService.WebConfiguration);
             _organisationIdCreated = "EPA0987";
             _ukprnCreated = 123321;
             _organisationTypeId = 5;
@@ -75,7 +77,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 Comments = "comments updated"
             };
 
-            _isOrgStandardPresentBeforeUpdate = _queryRepository.EpaOrganisationStandardExists(_organisationIdCreated, _standardCode).Result;
+            _isOrgStandardPresentBeforeUpdate = _validationRepository.EpaOrganisationStandardExists(_organisationIdCreated, _standardCode).Result;
             _organisationStandardBeforeUpdate = OrganisationStandardHandler.GetOrganisationStandardByOrgIdStandardCode(_organisationIdCreated, _standardCode);
             _returnedOrganisationStandardId = _repository.UpdateEpaOrganisationStandard(_organisationStandardUpdates).Result;
             _organisationStandardAfterUpdate = OrganisationStandardHandler.GetOrganisationStandardByOrgIdStandardCode(_organisationIdCreated, _standardCode);
