@@ -13,6 +13,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
     {
         private readonly DatabaseService _databaseService = new DatabaseService();
         private RegisterRepository _repository;
+        private RegisterValidationRepository _validationRepository;
         private RegisterQueryRepository _queryRepository;
         private string _organisationIdCreated;
         private int _ukprnCreated;
@@ -25,6 +26,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         public void SetUpOrganisationTests()
         {
             _repository = new RegisterRepository(_databaseService.WebConfiguration);
+            _validationRepository = new RegisterValidationRepository(_databaseService.WebConfiguration);
             _queryRepository = new RegisterQueryRepository(_databaseService.WebConfiguration);
             _organisationIdCreated = "EPA0987";
             _ukprnCreated = 123321;
@@ -69,12 +71,12 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         {
             var maxOrgWithNoData = _queryRepository.EpaOrganisationIdCurrentMaximum().Result;
 
-            var isOrgByOrgIdPresentBeforeInsert = _queryRepository.EpaOrganisationExistsWithOrganisationId(_organisationIdCreated).Result;
-            var isOrgByUkprnPresentBeforeInsert = _queryRepository.EpaOrganisationExistsWithUkprn(_ukprnCreated).Result;
+            var isOrgByOrgIdPresentBeforeInsert = _validationRepository.EpaOrganisationExistsWithOrganisationId(_organisationIdCreated).Result;
+            var isOrgByUkprnPresentBeforeInsert = _validationRepository.EpaOrganisationExistsWithUkprn(_ukprnCreated).Result;
             var returnedOrganisationId = _repository.CreateEpaOrganisation(_organisation).Result;
             var org2 = _repository.CreateEpaOrganisation(_organisation2).Result;
-            var isOrgByOrgIdPresentAfterInsert = _queryRepository.EpaOrganisationExistsWithOrganisationId(_organisationIdCreated).Result;
-            var isOrgByUkprnPresentAfterInsert = _queryRepository.EpaOrganisationExistsWithUkprn(_ukprnCreated).Result;
+            var isOrgByOrgIdPresentAfterInsert = _validationRepository.EpaOrganisationExistsWithOrganisationId(_organisationIdCreated).Result;
+            var isOrgByUkprnPresentAfterInsert = _validationRepository.EpaOrganisationExistsWithUkprn(_ukprnCreated).Result;
             var returnedOrganisationByGetById = _queryRepository.GetEpaOrganisationById(_id).Result;
             var returnedOrganisationByGetByOrganisationId =
                 _queryRepository.GetEpaOrganisationByOrganisationId(_organisationIdCreated).Result;
