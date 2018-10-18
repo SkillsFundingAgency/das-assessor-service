@@ -8,21 +8,26 @@
   text-decoration: underline;
   color: #005ea5;
   border: none;
-  padding: 4px 4px 2px;
-  font-size: 14px;
-  line-height: 1;
-  width: auto;
-  text-align: left;
+  padding: 0.526315em 0.789473em 0.263157em;
+  line-height: 1.25;
+  text-align: center;
 }
+
 @media (min-width: 641px) {
   .button.text-link {
+    width: auto;
+    text-align: left;
     margin-left: 5px;
   }
 }
-
-.button:focus {
-  position: inherit;
+.button.text-link:hover,
+.button.text-link:focus {
+  color: #2b8cc4;
 }
+
+/* .button:focus {
+  position: inherit;
+} */
 
 .govuk-related-items {
   margin-top: 30px;

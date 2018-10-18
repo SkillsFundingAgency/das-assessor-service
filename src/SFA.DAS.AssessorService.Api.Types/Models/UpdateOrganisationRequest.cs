@@ -9,7 +9,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public string EndPointAssessorOrganisationId { get; set; }
         public string EndPointAssessorName { get; set; }
         public string PrimaryContact { get; set; }
-        public int? EndPointAssessorUkprn { get; set; }
+        public long? EndPointAssessorUkprn { get; set; }
         public bool ApiEnabled { get; set; }
         public string ApiUser { get; set; }
     }

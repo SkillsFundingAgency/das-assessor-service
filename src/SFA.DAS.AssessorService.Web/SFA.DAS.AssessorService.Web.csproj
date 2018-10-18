@@ -42,6 +42,7 @@
   <ItemGroup>
     <ProjectReference Include="..\SFA.DAS.AssessorService.Application.Api.Client\SFA.DAS.AssessorService.Application.Api.Client.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Settings\SFA.DAS.AssessorService.Settings.csproj" />
+    <ProjectReference Include="..\SFA.DAS.AssessorService.Web.Extensions\SFA.DAS.AssessorService.Web.Extensions.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Resources\Validators\CertificateRecipientViewModelValidator.Designer.cs">
@@ -128,5 +129,8 @@
     <EmbeddedResource Update="Resources\Views\Search\Index.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="TagHelpers" />
   </ItemGroup>
 </Project>

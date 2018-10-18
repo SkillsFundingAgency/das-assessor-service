@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Organisations
             _contactRepository = new Mock<IContactRepository>();
 
             var orgQueryRepos = new Mock<IOrganisationQueryRepository>();
-            orgQueryRepos.Setup(r => r.GetByUkPrn(It.IsAny<int>())).ReturnsAsync(new Organisation()
+            orgQueryRepos.Setup(r => r.GetByUkPrn(It.IsAny<long>())).ReturnsAsync(new Organisation()
             {
                 Status = OrganisationStatus.Deleted,
                 EndPointAssessorOrganisationId = "12345"

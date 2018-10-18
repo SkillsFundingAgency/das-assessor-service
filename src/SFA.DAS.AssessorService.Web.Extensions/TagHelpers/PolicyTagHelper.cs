@@ -2,9 +2,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
-namespace SFA.DAS.AssessorService.Web.Staff.TagHelpers
+namespace SFA.DAS.AssessorService.Web.Extensions.TagHelpers
 {
     [HtmlTargetElement("div", Attributes = PolicyTagHelperAttributeName )]
+    [HtmlTargetElement("a", Attributes = PolicyTagHelperAttributeName )]
     public class PolicyTagHelper : TagHelper
     {
         private readonly IHttpContextAccessor _contextAccessor;

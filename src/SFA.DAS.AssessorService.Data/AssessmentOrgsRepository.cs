@@ -312,8 +312,9 @@ namespace SFA.DAS.AssessorService.Data
                 {
                     var numberOfMatches = connection
                         .ExecuteScalar(
-                            "select count(0) from [Contacts] where [EndPointAssessorOrganisationId] = @EndPointAssessorOrganisationId and email = @email",
+                            "select count(0) from [Contacts] where ([EndPointAssessorOrganisationId] = @EndPointAssessorOrganisationId and email = @email) or username=@username ",
                             contact).ToString();
+
                     if (numberOfMatches == "0")
                     {
                        contactsToInsert.Add(contact);              
@@ -321,8 +322,8 @@ namespace SFA.DAS.AssessorService.Data
                     else
                     {
                         var username = connection
-                            .ExecuteScalar("select username from [Contacts] where [EndPointAssessorOrganisationId] = @EndPointAssessorOrganisationId and email = @email",
-                                contact).ToString();
+                                .ExecuteScalar("select username from [Contacts] where ([EndPointAssessorOrganisationId] = @EndPointAssessorOrganisationId and email = @email) or username=@username",
+                                    contact).ToString();
                         contact.Username = username;
                         contactsToUpdate.Add(contact);
                     }

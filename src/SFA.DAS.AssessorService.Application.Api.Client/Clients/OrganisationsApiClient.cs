@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
@@ -11,7 +12,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
     public class OrganisationsApiClient : ApiClientBase, IOrganisationsApiClient
     {
-        public OrganisationsApiClient(string baseUri, ITokenService tokenService, ILogger<OrganisationsApiClient> logger) : base(baseUri, tokenService, logger)
+        public OrganisationsApiClient(string baseUri, ITokenService tokenService,
+            ILogger<OrganisationsApiClient> logger) : base(baseUri, tokenService, logger)
         {
         }
 
@@ -19,7 +21,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/organisations/"))
             {
-                return await RequestAndDeserialiseAsync<IEnumerable<OrganisationResponse>>(request, $"Could not find the organisations");
+                return await RequestAndDeserialiseAsync<IEnumerable<OrganisationResponse>>(request,
+                    $"Could not find the organisations");
             }
         }
 
@@ -27,7 +30,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/organisations/{ukprn}"))
             {
-                return await RequestAndDeserialiseAsync<OrganisationResponse>(request, $"Could not find the organisation {ukprn}");
+                return await RequestAndDeserialiseAsync<OrganisationResponse>(request,
+                    $"Could not find the organisation {ukprn}");
             }
         }
 
@@ -35,7 +39,30 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/organisations/"))
             {
-                return await PostPutRequestWithResponse<CreateOrganisationRequest, OrganisationResponse>(request, organisationCreateViewModel);
+                return await PostPutRequestWithResponse<CreateOrganisationRequest, OrganisationResponse>(request,
+                    organisationCreateViewModel);
+            }
+        }
+
+        public async Task<ValidationResponse> ValidateCreateOrganisation(string name, string ukprn, string organisationTypeId)
+        {
+
+            var newName = SanitizeUrlParam(name);
+            using (var request = new HttpRequestMessage(HttpMethod.Get,
+                $"/api/ao/assessment-organisations/validate-new?name={newName}&ukprn={ukprn}&organisationTypeId={organisationTypeId}")
+            )
+            {
+                return await RequestAndDeserialiseAsync<ValidationResponse>(request,
+                    $"Could not check the validation for organisation [{name}]");
+            }
+        }
+
+        public async Task<ValidationResponse> ValidateUpdateOrganisation(string organisationId, string name, string ukprn, string organisationTypeId)
+        {
+            var newName = SanitizeUrlParam(name);
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/ao/assessment-organisations/validate-existing?organisationId={organisationId}&name={newName}&ukprn={ukprn}&organisationTypeId={organisationTypeId}"))
+            {
+                return await RequestAndDeserialiseAsync<ValidationResponse>(request, $"Could not check the validation for existing organisation [{organisationId}]");
             }
         }
 
@@ -54,6 +81,32 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 await Delete(request);
             }
         }
+
+        private string SanitizeUrlParam(string rawParam)
+        {
+            var result = rawParam;
+
+            result = result?.Replace("%", "");
+            result = result?.Replace("<", "");
+            result = result?.Replace(">", "");
+            result = result?.Replace("#", "");
+            result = result?.Replace("{", "");
+            result = result?.Replace("}", "");
+            result = result?.Replace("|", "");
+            result = result?.Replace("\\", "");
+            result = result?.Replace("^", "");
+            result = result?.Replace("~", "");
+            result = result?.Replace("[", "");
+            result = result?.Replace("]", "");
+            result = result?.Replace("`", "%60");
+            result = result?.Replace(";", "");
+            result = result?.Replace("/", "");
+            result = result?.Replace("?", "");
+            result = result?.Replace("=", "");
+            result = result?.Replace("&", "%26");
+            result = result?.Replace("$", "");
+            return result;
+        }
     }
 
     public interface IOrganisationsApiClient
@@ -63,5 +116,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<OrganisationResponse> Create(CreateOrganisationRequest organisationCreateViewModel);
         Task Update(UpdateOrganisationRequest organisationUpdateViewModel);
         Task Delete(Guid id);
+        Task<ValidationResponse> ValidateCreateOrganisation(string name, string ukprn, string organisationTypeId);
+        Task<ValidationResponse> ValidateUpdateOrganisation(string organisationId, string name, string ukprn, string organisationTypeId);
     }
 }
