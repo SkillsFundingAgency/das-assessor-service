@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -14,13 +15,14 @@ using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 {
-    public class GetCertificatesHistoryHandler : IRequestHandler<GetCertificateHistoryRequest, PaginatedList<CertificateSummaryResponse>>
+    public class GetCertificatesToBeApprovedHandler : IRequestHandler<GetToBeApprovedCertificatesRequest,
+        List<CertificateSummaryResponse>>
     {
         private readonly ICertificateRepository _certificateRepository;
         private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
         private readonly ILogger<GetCertificatesHistoryHandler> _logger;
 
-        public GetCertificatesHistoryHandler(ICertificateRepository certificateRepository,
+        public GetCertificatesToBeApprovedHandler(ICertificateRepository certificateRepository,
             IAssessmentOrgsApiClient assessmentOrgsApiClient,
             ILogger<GetCertificatesHistoryHandler> logger)
         {
@@ -29,27 +31,30 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             _logger = logger;
         }
 
-        public async Task<PaginatedList<CertificateSummaryResponse>> Handle(GetCertificateHistoryRequest request, CancellationToken cancellationToken)
+        public async Task<List<CertificateSummaryResponse>> Handle(GetToBeApprovedCertificatesRequest request,
+            CancellationToken cancellationToken)
         {
-            const int pageSize = 10;
+            var statuses = new List<string>
+            {
+                "ToBeApproved",
+                "Approved",
+                "Rejected"
+            };
 
-            var certificates = await _certificateRepository.GetCertificateHistory(
-                request.Username,
-                request.PageIndex ?? 1,
-                pageSize);
+            var certificates = await _certificateRepository.GetCertificates(statuses);
 
             // Please Note:- Cannot seem to automap this with custom value/type converters
             // so dealing with it manually for now.
-            var certificateHistoryResponses = MapCertificates(certificates);
-
-            return certificateHistoryResponses;
+            var approvals = MapCertificates(certificates);
+            return approvals;
         }
 
-        private PaginatedList<CertificateSummaryResponse> MapCertificates(PaginatedList<Certificate> certificates)
+        private List<CertificateSummaryResponse> MapCertificates(IEnumerable<Certificate> certificates)
         {
             var trainingProviderName = string.Empty;
             var recordedBy = string.Empty;
-            var certificateResponses = certificates.Items.Select(
+
+            var certificateResponses = certificates.Select(
                 certificate =>
                 {
                     var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
@@ -57,6 +62,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                         .OrderByDescending(q => q.EventTime)
                         .FirstOrDefault(certificateLog =>
                             certificateLog.Status == Domain.Consts.CertificateStatus.Submitted)?.Username;
+
                     try
                     {
                         if (certificateData.ProviderName == null)
@@ -99,18 +105,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                         ContactAddLine2 = certificateData.ContactAddLine2,
                         ContactAddLine3 = certificateData.ContactAddLine3,
                         ContactAddLine4 = certificateData.ContactAddLine4,
-                        ContactPostCode = certificateData.ContactPostCode
+                        ContactPostCode = certificateData.ContactPostCode,
+                        Status = certificate.Status
                     };
                 });
 
             var responses = certificateResponses.ToList();
-            var paginatedList = new PaginatedList<CertificateSummaryResponse>(responses,
-                    certificates.TotalRecordCount,
-                    certificates.PageIndex,
-                    certificates.PageSize
-                );
-
-            return paginatedList;
+            return responses;
         }
     }
 }
