@@ -172,17 +172,12 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                     worksheet.Cells[row, 1].Value = certificateData.AchievementDate.Value.ToString("dd MMMM yyyy");
 
                 var learnerName = $"{certificateData.LearnerGivenNames} {certificateData.LearnerFamilyName}";
-                var resultName = String.Empty;
-                if (!string.IsNullOrEmpty(certificateData.FullName))
-                {
-                    CultureInfo.CurrentCulture.TextInfo.ToTitleCase(certificateData.FullName.ToLower());                 
-                }
-                else
-                {
-                    resultName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(learnerName.ToLower());
-                }
 
-                worksheet.Cells[row, 2].Value = resultName;
+                worksheet.Cells[row, 2].Value = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(
+                    !string.IsNullOrEmpty(certificateData.FullName) 
+                        ? certificateData.FullName.ToLower() 
+                        : learnerName.ToLower()
+                );
 
                 if (certificateData.StandardName != null)
                     worksheet.Cells[row, 3].Value = certificateData.StandardName.ToUpper();

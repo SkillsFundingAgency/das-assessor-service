@@ -11,6 +11,7 @@ using SFA.DAS.AssessorService.Web.Staff.ViewModels;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Tests
 {
+    [TestFixture]
     public class WhenStringUsesTitleCase
     {           
         [Test]
