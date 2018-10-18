@@ -24,17 +24,17 @@
                     <thead>
                         <tr>
                             <th>Name</th>
-                            <th>UKPRN</th>
+                            <th>Ukprn</th>
                             <th>Email</th>
-                            <th>Registration Date</th>
+                            <th>Access</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>@Model.FirstName @Model.LastName</td>
-                            <td>@Model.Note</td>
+                            <td>@Model.LastName</td>
+                            <td>@Model.Ukprn</td>
                             <td>@Model.Email</td>
-                            <td>@Model.RegistrationDate.UtcToTimeZoneTime()</td>
+                            <td>@Html.Raw(string.Equals(@Model.State, "blocked") ? "Disabled" : "Enabled")</td>
                         </tr>
                     </tbody>
                 </table>

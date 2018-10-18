@@ -12,7 +12,7 @@
 
         <h1 class="heading-xlarge">
             External API details
-            <span class="heading-secondary">@Model.FirstName @Model.LastName</span>
+            <span class="heading-secondary">@Model.FirstName - @Model.LastName</span>
         </h1>
 
         <h2 class="heading-large">User details</h2>
@@ -20,14 +20,14 @@
         <table class="table responsive table-font-xsmall">
             <thead>
                 <tr>
-                    <th>UKPRN</th>
+                    <th>Ukprn</th>
                     <th>Email</th>
                     <th>Registration date</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td data-label="UKPRN">@Model.Note</td>
+                    <td data-label="Ukprn">@Model.Ukprn</td>
                     <td data-label="Email">@Model.Email</td>
                     <td data-label="Registration date">@Model.RegistrationDate.UtcToTimeZoneTime()</td>
                 </tr>
@@ -45,19 +45,19 @@
 
         @foreach (var subscription in Model.Subscriptions)
         {
-            <div class="column-one-half form-group">
-                <h2 class="bold-medium">@subscription.ProductId</h2>
-                <h3 class="heading-small">Primary key</h3>
-                <form asp-action="RenewPrimaryKey" asp-controller="ExternalApi" asp-route-subscriptionId="@subscription.Id" asp-route-userId="@Model.Id" method="post">
-                    <span class="code">@subscription.PrimaryKey</span>
-                    <input class="button text-link" type="submit" value="renew key" />
-                </form>
-                <h3 class="heading-small">Secondary key</h3>
-                <form asp-action="RenewSecondaryKey" asp-controller="ExternalApi" asp-route-subscriptionId="@subscription.Id" asp-route-userId="@Model.Id" method="post">
-                    <span class="code">@subscription.SecondaryKey</span>
-                    <input class="button text-link" type="submit" value="renew key" />
-                </form>
-            </div>
+        <div class="column-one-half form-group">
+            <h2 class="bold-medium">@subscription.ProductId</h2>
+            <h3 class="heading-small">Primary key</h3>
+            <form asp-action="RenewPrimaryKey" asp-controller="ExternalApi" asp-route-subscriptionId="@subscription.Id" asp-route-userId="@Model.Id" method="post">
+                <span class="code">@subscription.PrimaryKey</span>
+                <input class="button text-link" type="submit" value="renew key" />
+            </form>
+            <h3 class="heading-small">Secondary key</h3>
+            <form asp-action="RenewSecondaryKey" asp-controller="ExternalApi" asp-route-subscriptionId="@subscription.Id" asp-route-userId="@Model.Id" method="post">
+                <span class="code">@subscription.SecondaryKey</span>
+                <input class="button text-link" type="submit" value="renew key" />
+            </form>
+        </div>
         }
 
     </div>

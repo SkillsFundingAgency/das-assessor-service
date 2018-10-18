@@ -101,7 +101,9 @@ namespace SFA.DAS.AssessorService.Web.Staff
                 config.For<IAssessmentOrgsApiClient>().Use(() => new AssessmentOrgsApiClient(ApplicationConfiguration.AssessmentOrgsApiClientBaseUrl));
                 config.For<IAzureTokenService>().Use<AzureTokenService>();
                 config.For<IAzureApiClient>().Use<AzureApiClient>().Ctor<string>("baseUri").Is(ApplicationConfiguration.AzureApiAuthentication.ApiBaseAddress)
-                                                                   .Ctor<string>("productId").Is(ApplicationConfiguration.AzureApiAuthentication.ProductId);
+                                                                   .Ctor<string>("productId").Is(ApplicationConfiguration.AzureApiAuthentication.ProductId)
+                                                                   .Ctor<string>("groupId").Is(ApplicationConfiguration.AzureApiAuthentication.GroupId)
+                                                                   .Ctor<string>("password").Is(ApplicationConfiguration.AzureApiAuthentication.DefaultPassword);
                 config.For<CacheHelper>().Use<CacheHelper>();
 
 
