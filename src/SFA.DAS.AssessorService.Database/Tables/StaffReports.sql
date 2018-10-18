@@ -6,7 +6,7 @@
 	[CreatedAt]    DATETIME2 (7)    NOT NULL DEFAULT GETDATE(),
     [DeletedAt]    DATETIME2 (7)    NULL,
     [UpdatedAt]    DATETIME2 (7)    NULL, 
-    [DisplayOrder] INT NOT NULL ,
+    [DisplayOrder] INT NULL ,
 )
 
 GO
