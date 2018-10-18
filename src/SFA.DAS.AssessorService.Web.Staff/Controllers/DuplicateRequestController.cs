@@ -47,7 +47,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 Uln = uln,
                 FullName = certificateData.FullName,
                 Status = certificate.Status,
-                BackToCheckPage = redirectToCheck.Value
+                BackToCheckPage = redirectToCheck.Value,
+                Page = page
             };
 
             return View(vm);
