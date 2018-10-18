@@ -48,12 +48,14 @@
         },
         "ApiDisplayName": {
             "type": "string"
-        }                                            
+        },
+        "ApiName": {
+            "type": "string"
+        }        
     },
     "variables": {
-        "ApimProductName": "[toLower(replace(parameters('ProductDisplayName'), ' ', '-'))]",
-        "ApimProductGroupName": "[toLower(replace(parameters('ProductGroupDisplayName'), ' ', '-'))]",
-        "ApiName": "[toLower(replace(parameters('ApiDisplayName'), ' ', '-'))]"
+        "ApimProductName": "[toLower(replace(replace(replace(parameters('ProductDisplayName'),')',''),'(',''), ' ', '-'))]",
+        "ApimProductGroupName": "[toLower(replace(parameters('ProductGroupDisplayName'), ' ', '-'))]"
     },
     "resources": [
         {
@@ -67,19 +69,20 @@
                 "notificationSenderEmail": "apimgmt-noreply@mail.windowsazure.com",
                 "hostnameConfigurations": [
                     {
-                        "type": "Proxy",
-                        "hostName": "[parameters('ProxyCustomHostname')]",
-                        "encodedCertificate": "[parameters('ApimCustomHostnameBase64EncodedPfxCertificate')]",
-                        "certificatePassword": "[parameters('ApimSSLCertificatePassword')]",
-                        "negotiateClientCertificate": false
-                      },
-                      {
                         "type": "Portal",
                         "hostName": "[parameters('PortalCustomHostname')]",
                         "encodedCertificate": "[parameters('ApimCustomHostnameBase64EncodedPfxCertificate')]",
                         "certificatePassword": "[parameters('ApimSSLCertificatePassword')]",
                         "negotiateClientCertificate": false
-                      }                                       
+                    },                     
+                    {
+                        "type": "Proxy",
+                        "hostName": "[parameters('ProxyCustomHostname')]",
+                        "encodedCertificate": "[parameters('ApimCustomHostnameBase64EncodedPfxCertificate')]",
+                        "certificatePassword": "[parameters('ApimSSLCertificatePassword')]",
+                        "negotiateClientCertificate": false,
+                        "defaultSslBinding": true
+                    }                                     
                 ],
                 "additionalLocations": null,
                 "virtualNetworkConfiguration": null, 
@@ -99,19 +102,16 @@
                 "name": "[parameters('SkuTier')]",
                 "capacity": 1
             },
-            "identity": {
-                "type": "SystemAssigned"
-            },
             "location": "[resourceGroup().location]",
             "resources": [
                 {
-                    "name": "[variables('ApiName')]",
+                    "name": "[parameters('ApiName')]",
                     "type": "apis",
                     "apiVersion": "2018-01-01",
                     "properties": {
                       "authenticationSettings": null,
                       "displayName": "[parameters('ApiDisplayName')]",
-                      "path": "[variables('ApiName')]",
+                      "path": "[parameters('ApiName')]",
                       "protocols": [
                         "https"
                       ]
@@ -144,12 +144,12 @@
                             ]                                    
                         },
                         {
-                            "name": "[variables('ApiName')]",
+                            "name": "[parameters('ApiName')]",
                             "type": "apis",
                             "apiVersion": "2018-01-01",
                             "dependsOn": [
                                 "[parameters('apimServiceName')]",
-                                "[concat('Microsoft.ApiManagement/service/', parameters('ApimServiceName'), '/apis/', variables('ApiName'))]",
+                                "[concat('Microsoft.ApiManagement/service/', parameters('ApimServiceName'), '/apis/', parameters('ApiName'))]",
                                 "[concat('Microsoft.ApiManagement/service/', parameters('ApimServiceName'), '/products/', variables('ApimProductName'))]"
                             ]                                    
                         }                                                                     
@@ -176,9 +176,5 @@
         }       
     ],
     "outputs": {
-        "ApimServiceIdentityPrincipalId": {
-            "type": "string",
-            "value": "[reference(concat(resourceId('Microsoft.ApiManagement/service', parameters('ApimServiceName')),'/providers/Microsoft.ManagedIdentity/Identities/default'), '2015-08-31-PREVIEW').principalId]"
-        }
     }
 }

@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-Update an APIM API with a swagger definition
+Update an existing APIM API with a swagger definition
 
 .PARAMETER ResourceGroupName
 The name of the resource group that contains the APIM instance
@@ -8,8 +8,8 @@ The name of the resource group that contains the APIM instance
 .PARAMETER InstanceName
 The name of the APIM instnace
 
-.PARAMETER ApiName
-The name of the API to update
+.PARAMETER ApiId
+The ApiId of the API to update. This will be the API Name if it was created using ARM templates but with hyphens between each word e.g. my-api-id
 
 .PARAMETER SwaggerSpecificationUrl
 The full path to the swagger defintion
@@ -28,9 +28,9 @@ Param(
     [Parameter(Mandatory=$true)]
     [String]$ResourceGroupName,
     [Parameter(Mandatory=$true)]
-    [String]$InstanceName,
+    [String]$ServiceName,
     [Parameter(Mandatory=$true)]
-    [String]$ApiName,
+    [String]$ApiId,    
     [Parameter(Mandatory=$true)]
     [String]$SwaggerSpecificationUrl,
     [Parameter(Mandatory=$false)]
@@ -39,10 +39,8 @@ Param(
 
 try {
     # --- Build context and retrieve apiid
-    Write-Host "Building APIM context for $ResourceGroupName\$InstanceName"
-    $Context = New-AzureRmApiManagementContext -ResourceGroupName $ResourceGroupName -ServiceName $InstanceName
-    Write-Host "Retrieving ApiId for API $ApiName"
-    $ApiId = (Get-AzureRmApiManagementApi -Context $Context -Name $ApiName).ApiId
+    Write-Host "Building APIM context for $ResourceGroupName\$ServiceName"
+    $Context = New-AzureRmApiManagementContext -ResourceGroupName $ResourceGroupName -ServiceName $ServiceName
 
     if ($PSBoundParameters.ContainsKey("ApiUrlSuffix")) {
         $ApiSuf = $ApiUrlSuffix.ToLower()
@@ -50,20 +48,9 @@ try {
         $ApiSuf = $ApiName.Replace(' ','-').ToLower()
     }    
 
-    if (!$ApiId) {
-        # create API if it doesn't exist
-        Write-Host "Could not retrieve ApiId for API $ApiName - creating API"
-
-        $ApimUri = [System.Uri] $SwaggerSpecificationUrl
-
-        Write-Host "Creating API $ApiName with suffix $ApiSuf"
-        $NewApi = New-AzureRmApiManagementApi -Context $Context -Name $ApiName -Description $ApiName -ServiceUrl "https://$($ApimUri.Host)" -Protocols @("https") -Path $ApiSuf -ErrorAction Stop -Verbose:$VerbosePreference
-        $ApiId = $NewApi.ApiId
-    }
-
     # --- Import swagger definition
-    Write-Host "Updating API $ApiId\$InstanceName from definition $SwaggerSpecficiationUrl"
-    Import-AzureRmApiManagementApi -Context $Context -SpecificationFormat "Swagger" -SpecificationUrl $SwaggerSpecificationUrl -ApiId $ApiId -Path $ApiSuf -ErrorAction Stop -Verbose:$VerbosePreference
+    Write-Host "Updating API $ApiId\$ServiceName from definition $SwaggerSpecficiationUrl"
+    Import-AzureRmApiManagementApi -Context $Context -SpecificationFormat "Swagger" -SpecificationUrl $($SwaggerSpecificationUrl) -ApiId $($ApiId) -Path $($ApiSuf) -ErrorAction Stop -Verbose:$VerbosePreference
 } catch {
    throw $_
 }

@@ -8,8 +8,8 @@ The name of the resource group that contains the APIM instance
 .PARAMETER ServiceName
 The name of the APIM instnace
 
-.PARAMETER ApiResourceName
-The name of the API to update
+.PARAMETER ApiId
+The ApiId of the API to update. This will be the API Name if it was created using ARM templates but with hyphens between each word e.g. my-api-id
 
 .PARAMETER ApimApiPolicyFilePath
 The full path to the XML file containing the policy to apply to the API
@@ -22,7 +22,7 @@ Param(
     [Parameter(Mandatory=$true)]
     [String]$ServiceName,
     [Parameter(Mandatory=$true)]
-    [String]$ApiResourceName,
+    [String]$ApiId,
     [Parameter(Mandatory=$true)]
     [String]$ApimApiPolicyFilePath
 )
@@ -37,7 +37,7 @@ try {
     Write-Host "Test that policy file exists"
     if (Test-Path -Path $ApimApiPolicyFilePath) {
         Write-Host "Set API policy"
-        Set-AzureRmApiManagementPolicy -Context $ApimContext -Format application/vnd.ms-azure-apim.policy.raw+xml -ApiId $ApiResourceName -PolicyFilePath $ApimApiPolicyFilePath
+        Set-AzureRmApiManagementPolicy -Context $ApimContext -Format application/vnd.ms-azure-apim.policy.raw+xml -ApiId $($ApiId) -PolicyFilePath $($ApimApiPolicyFilePath) -ErrorAction Stop -Verbose:$VerbosePreference
     } else {
         Write-Host "Please specify a valid policy file path"
     }
