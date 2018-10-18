@@ -20,7 +20,7 @@ AS
 		) ab 
 		WHERE ab.rownumber = 1
 	) cl
-	JOIN [dbo].[certificates] ce ON ce.[Id] = cl.[CertificateId]
+	JOIN [dbo].[Certificates] ce ON ce.[Id] = cl.[CertificateId]
 	WHERE cl.[Action] IN ('Submit', 'Printed', 'Reprint')
 	GROUP BY CONVERT(VARCHAR(10), DATEADD(mm, DATEDIFF(mm, 0, DATEADD(mm, 0, cl.[EventTime])), 0), 120)
 

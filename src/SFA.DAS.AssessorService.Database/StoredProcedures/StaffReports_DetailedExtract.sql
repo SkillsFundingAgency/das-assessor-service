@@ -4,7 +4,7 @@
 AS
 	SELECT
 		   CONVERT(VARCHAR(10), DATEADD(mm, DATEDIFF(mm, 0, DATEADD(mm, 0, cl.[EventTime])), 0), 120) AS 'Month',
-		   ce.[ULN] AS 'Apprentice ULN',
+		   ce.[Uln] AS 'Apprentice ULN',
 		   UPPER(JSON_VALUE(ce.[CertificateData], '$.FullName')) AS 'Apprentice Names',
 		   CONVERT(CHAR(10), JSON_VALUE(ce.[CertificateData], '$.AchievementDate')) AS 'Achievement Date',
 		   UPPER(JSON_VALUE(ce.[CertificateData], '$.StandardName')) AS 'Standard Name',
