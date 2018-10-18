@@ -69,19 +69,20 @@
                 "notificationSenderEmail": "apimgmt-noreply@mail.windowsazure.com",
                 "hostnameConfigurations": [
                     {
-                        "type": "Proxy",
-                        "hostName": "[parameters('ProxyCustomHostname')]",
-                        "encodedCertificate": "[parameters('ApimCustomHostnameBase64EncodedPfxCertificate')]",
-                        "certificatePassword": "[parameters('ApimSSLCertificatePassword')]",
-                        "negotiateClientCertificate": false
-                      },
-                      {
                         "type": "Portal",
                         "hostName": "[parameters('PortalCustomHostname')]",
                         "encodedCertificate": "[parameters('ApimCustomHostnameBase64EncodedPfxCertificate')]",
                         "certificatePassword": "[parameters('ApimSSLCertificatePassword')]",
                         "negotiateClientCertificate": false
-                      }                                       
+                    },                     
+                    {
+                        "type": "Proxy",
+                        "hostName": "[parameters('ProxyCustomHostname')]",
+                        "encodedCertificate": "[parameters('ApimCustomHostnameBase64EncodedPfxCertificate')]",
+                        "certificatePassword": "[parameters('ApimSSLCertificatePassword')]",
+                        "negotiateClientCertificate": false,
+                        "defaultSslBinding": true
+                    }                                     
                 ],
                 "additionalLocations": null,
                 "virtualNetworkConfiguration": null, 
@@ -100,9 +101,6 @@
             "sku": {
                 "name": "[parameters('SkuTier')]",
                 "capacity": 1
-            },
-            "identity": {
-                "type": "SystemAssigned"
             },
             "location": "[resourceGroup().location]",
             "resources": [
