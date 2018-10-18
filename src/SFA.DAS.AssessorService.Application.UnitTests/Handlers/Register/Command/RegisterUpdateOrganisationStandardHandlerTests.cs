@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.Collections.Generic;
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -37,10 +38,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
                 _organisationId = "EPA999";
                 _requestNoIssuesId = 1;
 
-                _requestNoIssues = BuildRequest(_organisationId, 123321);
+                _requestNoIssues = BuildRequest(_organisationId, 123321, new List<int> { 1 });
                 _expectedOrganisationStandardNoIssues = BuildOrganisationStandard(_requestNoIssues, _requestNoIssuesId);
 
-                _registerRepository.Setup(r => r.UpdateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>()))
+                _registerRepository.Setup(r => r.UpdateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>(), new List<int>{1}))
                     .Returns(Task.FromResult(_expectedOrganisationStandardNoIssues.Id.ToString()));
 
                 _validator.Setup(v => v.ValidatorUpdateEpaOrganisationStandardRequest(_requestNoIssues)).Returns(new ValidationResponse());
@@ -55,7 +56,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             public void UpdateOrganisationStandardDetailsRepoIsCalledWhenHandlerInvoked()
             {
                 var res = _updateEpaOrganisationStandardHandler.Handle(_requestNoIssues, new CancellationToken()).Result;
-                _registerRepository.Verify(r => r.UpdateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>()));
+                _registerRepository.Verify(r => r.UpdateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>(), It.IsAny<List<int>>()));
             }
 
             [Test]
@@ -76,22 +77,23 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             public void GetBadRequestExceptionWhenOrganisationIdStandardCodeDoesNotExist()
             {
                 const string errorMessage = "no organisation Id";
-                var requestNoOrgId = BuildRequest("org 1", 1);
+                var requestNoOrgId = BuildRequest("org 1", 1, new List<int> { 1 });
                 var errorResponse = BuildErrorResponse(errorMessage,  ValidationStatusCode.BadRequest);
                 _validator.Setup(v => v.ValidatorUpdateEpaOrganisationStandardRequest(requestNoOrgId)).Returns(errorResponse);
                   var ex = Assert.ThrowsAsync<BadRequestException>(() => _updateEpaOrganisationStandardHandler.Handle(requestNoOrgId, new CancellationToken()));
                 Assert.AreEqual(errorMessage + "; ", ex.Message);
-                _registerRepository.Verify(r => r.UpdateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>()), Times.Never);
+                _registerRepository.Verify(r => r.UpdateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>(), new List<int>()), Times.Never);
                 _validator.Verify(v => v.ValidatorUpdateEpaOrganisationStandardRequest(requestNoOrgId));
             }
 
-        private UpdateEpaOrganisationStandardRequest BuildRequest(string organisationId, int standardCode)
+        private UpdateEpaOrganisationStandardRequest BuildRequest(string organisationId, int standardCode, List<int> deliveryAreas)
             {
                 return new UpdateEpaOrganisationStandardRequest
                 {
                     OrganisationId = organisationId,
                     StandardCode = standardCode,
-                    EffectiveFrom = null
+                    EffectiveFrom = null,
+                    DeliveryAreas = deliveryAreas
                 };
             }
 
