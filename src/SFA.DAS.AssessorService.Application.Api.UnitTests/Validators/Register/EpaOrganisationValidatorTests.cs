@@ -59,6 +59,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
                 .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.EmailIsIncorrectFormat, "fail"));
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.ErrorMessageOrganisationNameAlreadyPresent])
                 .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.ErrorMessageOrganisationNameAlreadyPresent, "fail")); 
+            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.EmailIsMissing])
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.EmailIsIncorrectFormat, "fail")); 
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.ContactIdDoesntExist])
                 .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.ContactIdDoesntExist, "fail")); 
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.DisplayNameIsMissing])
@@ -215,17 +217,21 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         [TestCase("test.tester@digitaleducation.gov.uk", true)]
         [TestCase("test.terser@test.co.uk", true)]
         [TestCase("testtest",false)]
-        [TestCase("testtest@com", true)]
+        [TestCase("testtest@com", false)]
         [TestCase("testtest@test..com", false)]
         [TestCase("testtest@", false)]
         [TestCase("@testtest", false)]
         [TestCase("n/a", false)]
         [TestCase("test test", false)]
         [TestCase("testtest", false)]
+        [TestCase("",false)]
+        [TestCase("firstname-lastname@domain-one.co.in", true)]
+        [TestCase("firstname-lastname@domain-one.com", true)]
+        [TestCase("firstname-lastname@domain-one.nz", true)]
         public void CheckIfEmailIsAcceptableFormat(string email, bool isValidExpected)
         {
             var isValidReturned =
-                _validator.CheckIfEmailIsSuitableFormat(email).Length == 0;
+                _validator.CheckIfEmailIsPresentAndInSuitableFormat(email).Length == 0;
             Assert.AreEqual(isValidExpected, isValidReturned);
         }
 
