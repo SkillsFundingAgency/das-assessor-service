@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-using SFA.DAS.AssessorService.Api.Types.Models.Register;
+﻿using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 
 namespace SFA.DAS.AssessorService.Application.Interfaces
@@ -24,5 +22,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         string CheckIfOrganisationStandardDoesNotExist(string organisationId, int standardCode);
 
         ValidationResponse ValidatorCreateEpaOrganisationRequest(CreateEpaOrganisationRequest request);
+        ValidationResponse ValidatorUpdateEpaOrganisationRequest(UpdateEpaOrganisationRequest request);
     }
 }

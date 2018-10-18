@@ -4,13 +4,13 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using SFA.DAS.Apprenticeships.Api.Types.Providers;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Logging;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 {
@@ -68,7 +68,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 StandardName = standard.Title,
                 LearningStartDate = ilr.LearnStartDate, 
                 StandardLevel = standard.Level,
-                StandardPublicationDate = standard.EffectiveFrom,
+                // MFC 01/10/18 WE NEED TO TALK ABOUT THIS, COS EFFECTIVEFROM IS NOW NULLABLE
+                StandardPublicationDate = standard.EffectiveFrom.Value,
                 FullName = $"{ilr.GivenNames} {ilr.FamilyName}",
                 ProviderName = provider.ProviderName
             };

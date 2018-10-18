@@ -35,7 +35,5 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 OrganisationTypeId = request.OrganisationTypeId
             } );   
         }
-
-
     }
 }
