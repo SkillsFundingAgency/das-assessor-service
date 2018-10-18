@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
 using RichardSzalay.MockHttp;
-using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -21,7 +20,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.MockedObjects
 
             var options = Builder<Option>.CreateListOfSize(10)
                 .Build();
-            
+
             var certificateResponses = Builder<CertificateResponse>.CreateListOfSize(10)
                 .Build();
 
@@ -49,18 +48,18 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.MockedObjects
                 .With(q => q.Id = certificate.OrganisationId)
                 .With(q => q.EndPointAssessorOrganisationId = "EPA00001")
                 .Build();
-            
+
             mockHttp.When($"http://localhost:59022/api/v1/organisations/organisation/{certificate.OrganisationId}")
                 .Respond("application/json", JsonConvert.SerializeObject(organisation));
 
             mockHttp.When($"http://localhost:59022/api/v1/certificates/approvals")
                 .Respond("application/json", JsonConvert.SerializeObject(certificateSummaryResponses));
-                
+
             mockHttp.When($"http://localhost:59022/api/v1/certificates/options/?stdCode={93}")
                 .Respond("application/json", JsonConvert.SerializeObject(options));
 
-            mockHttp.When($"http://localhost:59022//api/v1/certificates?statusses=ToBeApproved")
-                .Respond("application/json", JsonConvert.SerializeObject(approvals));
+
+
 
             var certificateFirstNameViewModel = new CertificateFirstNameViewModel
             {
@@ -73,7 +72,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.MockedObjects
                 Standard = "91",
                 IsPrivatelyFunded = true
             };
-            
+
             mockHttp
                 .When(System.Net.Http.HttpMethod.Put, "http://localhost:59022/api/v1/certificates/update")
                 .Respond(System.Net.HttpStatusCode.OK, "application/json", "{'status' : 'OK'}");
