@@ -193,7 +193,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 : FormatErrorMessage(EpaOrganisationValidatorMessageName.EmailAlreadyPresentInAnotherOrganisation);
         }
 
-        public string CheckIfEmailIsSuitableFormat(string email)
+        public string CheckIfEmailIsPresentAndInSuitableFormat(string email)
         {
             var validationResults = new EmailValidator().Validate(new EmailChecker {EmailToCheck = email});
             return validationResults.IsValid ? string.Empty : FormatErrorMessage(validationResults.Errors.First().ErrorMessage);
@@ -218,9 +218,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             RunValidationCheckAndAppendAnyError("EndPointAssessorOrganisationId", CheckIfOrganisationNotFound(request.EndPointAssessorOrganisationId), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("DisplayName", CheckDisplayName(request.DisplayName), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("Email", CheckIfEmailIsPresentAndInSuitableFormat(request.Email), validationResult, ValidationStatusCode.BadRequest);
-
             RunValidationCheckAndAppendAnyError("Email", CheckIfEmailAlreadyPresentInAnotherOrganisation(request.Email, request.EndPointAssessorOrganisationId), validationResult, ValidationStatusCode.AlreadyExists);
-
             return validationResult;
         }
 
@@ -230,11 +228,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
 
             RunValidationCheckAndAppendAnyError("ContactId", CheckContactIdExists(request.ContactId), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("DisplayName", CheckDisplayName(request.DisplayName), validationResult, ValidationStatusCode.BadRequest);
-            var emailMissing = CheckIfEmailIsMissing(request.Email);
-            RunValidationCheckAndAppendAnyError("Email", emailMissing, validationResult, ValidationStatusCode.BadRequest);
-            if (emailMissing == string.Empty)
-                RunValidationCheckAndAppendAnyError("Email", CheckIfEmailIsSuitableFormat(request.Email), validationResult, ValidationStatusCode.AlreadyExists);
-
+            RunValidationCheckAndAppendAnyError("Email", CheckIfEmailIsPresentAndInSuitableFormat(request.Email), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("Email", CheckIfEmailAlreadyPresentInOrganisationNotAssociatedWithContact(request.Email, request.ContactId), validationResult, ValidationStatusCode.AlreadyExists);
             return validationResult;
         }
@@ -249,6 +243,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             if (errorMessage != string.Empty)
                 validationResult.Errors.Add(new ValidationErrorDetail(fieldName, errorMessage.Replace("; ", ""), statusCode));
         }
+
         public ValidationResponse ValidatorUpdateEpaOrganisationRequest(UpdateEpaOrganisationRequest request)
         {
             var validationResult = new ValidationResponse();
