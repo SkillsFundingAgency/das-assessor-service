@@ -4,6 +4,8 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
 using RichardSzalay.MockHttp;
+using SFA.DAS.Apprenticeships.Api.Types;
+using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
@@ -18,6 +20,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.MockedObjects
             var tokenServiceMock = new Mock<ITokenService>();
 
             var options = Builder<Option>.CreateListOfSize(10)
+                .Build();
+
+            var approvals = Builder<CertificateResponse>.CreateListOfSize(10)
                 .Build();
 
             var mockHttp = new MockHttpMessageHandler();
@@ -39,7 +44,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.MockedObjects
                 .Respond("application/json", JsonConvert.SerializeObject(organisation));
 
             mockHttp.When($"http://localhost:59022/api/v1/certificates/options/?stdCode={93}")
-                .Respond("application/json", JsonConvert.SerializeObject(options));            
+                .Respond("application/json", JsonConvert.SerializeObject(options));
+
+            mockHttp.When($"http://localhost:59022//api/v1/certificates?statusses=ToBeApproved")
+                .Respond("application/json", JsonConvert.SerializeObject(approvals));
 
             var certificateFirstNameViewModel = new CertificateFirstNameViewModel
             {

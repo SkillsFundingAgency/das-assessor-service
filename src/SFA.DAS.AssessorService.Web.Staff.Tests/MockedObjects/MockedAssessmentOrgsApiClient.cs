@@ -33,35 +33,35 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.MockedObjects
             };
 
 
-            var standards = new List<Standard>
+            var standards = new List<StandardSummary>
             {
-                new Standard
+                new StandardSummary
                 {
-                    StandardId = "91",
+                    Id = "91",
                     Level = 2,
                     Title = "Test Title 1"
                 },
-                new Standard
+                new StandardSummary
                 {
-                    StandardId = "92",
+                    Id = "92",
                     Level = 3,
                     Title = "Test Title 2"
                 },
-                new Standard
+                new StandardSummary
                 {
-                    StandardId = "93",
+                    Id = "93",
                     Level = 5,
                     Title = "Test Title 3"
                 },
-                new Standard
+                new StandardSummary
                 {
-                    StandardId = "94",
+                    Id = "94",
                     Level = 2,
                     Title = "Test Title 4"
                 },
-                new Standard
+                new StandardSummary
                 {
-                    StandardId = "95",
+                    Id = "95",
                     Level = 2,
                     Title = "Test Title 5"
                 },
