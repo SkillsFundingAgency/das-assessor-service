@@ -49,7 +49,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             
             var organisationStandard = MapOrganisationStandardRequestToOrganisationStandard(request);
 
-            return await _registerRepository.UpdateEpaOrganisationStandard(organisationStandard);
+            return await _registerRepository.UpdateEpaOrganisationStandard(organisationStandard, request.DeliveryAreas);
         }
 
         private void ProcessRequestFieldsForSpecialCharacters(UpdateEpaOrganisationStandardRequest request)

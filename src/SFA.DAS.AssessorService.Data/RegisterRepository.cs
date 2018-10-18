@@ -110,20 +110,54 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        public async Task<string> UpdateEpaOrganisationStandard(EpaOrganisationStandard orgStandard)
+        public async Task<string> UpdateEpaOrganisationStandard(EpaOrganisationStandard orgStandard,
+            List<int> deliveryAreas)
         {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            using (var transactionScope = new TransactionScope())
             {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
+                try
+                {
+                    using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+                    {
+                        if (connection.State != ConnectionState.Open)
+                            await connection.OpenAsync();
 
-                var res = connection.Query<string>(
-                    "UPDATE [OrganisationStandard] SET [EffectiveFrom] = @effectiveFrom, [EffectiveTo] = @EffectiveTo, " +
-                    "[Comments] = @comments, [ContactId] = @contactId " +
-                    "WHERE [EndPointAssessorOrganisationId] = @organisationId and [StandardCode] = @standardCode; SELECT top 1 id from [organisationStandard] where  [EndPointAssessorOrganisationId] = @organisationId and [StandardCode] = @standardCode;",
-                    new {orgStandard.EffectiveFrom, orgStandard.EffectiveTo, orgStandard.Comments, orgStandard.ContactId, orgStandard.OrganisationId, orgStandard.StandardCode}).Single();
+                        var osdaId = connection.Query<string>(
+                            "UPDATE [OrganisationStandard] SET [EffectiveFrom] = @effectiveFrom, [EffectiveTo] = @EffectiveTo, " +
+                            "[Comments] = @comments, [ContactId] = @contactId " +
+                            "WHERE [EndPointAssessorOrganisationId] = @organisationId and [StandardCode] = @standardCode; SELECT top 1 id from [organisationStandard] where  [EndPointAssessorOrganisationId] = @organisationId and [StandardCode] = @standardCode;",
+                            new
+                            {
+                                orgStandard.EffectiveFrom,
+                                orgStandard.EffectiveTo,
+                                orgStandard.Comments,
+                                orgStandard.ContactId,
+                                orgStandard.OrganisationId,
+                                orgStandard.StandardCode
+                            }).Single();
 
-                return res;
+                        connection.Execute(
+                            "Delete from OrganisationStandardDeliveryArea where OrganisationStandardId = @osdaId and DeliveryAreaId not in @deliveryAreas", new {osdaId, deliveryAreas});
+
+                        foreach (var deliveryAreaId in deliveryAreas)
+                        {
+                            connection.Execute("IF NOT EXISTS (select * from OrganisationStandardDeliveryArea where OrganisationStandardId = @osdaId and DeliveryAreaId = @DeliveryAreaId) " +
+                                               "INSERT INTO OrganisationStandardDeliveryArea ([OrganisationStandardId],DeliveryAreaId, Status) VALUES " +
+                                               "(@osdaId, @deliveryAreaId,'Live'); ",
+                                new { osdaId, deliveryAreaId }
+                            );
+                        }
+
+                        transactionScope.Complete();
+
+                        return osdaId;
+                    }
+                }
+                catch (Exception e)
+                {
+                    transactionScope.Dispose();
+                    throw e;
+                }
             }
         }
 
