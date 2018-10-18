@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         private object _result;
         private EpaOrganisation _returnedOrganisation;
         private CreateEpaOrganisationRequest _request;
-        private string organsiationId = "EPA999";
+        
         private string _organisationId;
 
         [SetUp]

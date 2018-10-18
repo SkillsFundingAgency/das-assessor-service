@@ -66,13 +66,13 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
                 new GetStandardsByAssessmentOrganisationHandler(RegisterQueryRepository.Object, Logger.Object);
         }
 
-
         [Test]
         public void GetStandardsByOrganisationRepoIsCalledWhenHandlerInvoked()
         {
             GetStandardsByAssessmentOrganisationHandler.Handle(_request, new CancellationToken()).Wait();
             RegisterQueryRepository.Verify(r => r.GetOrganisationStandardByOrganisationId(_organisationId));
         }
+
 
         [Test]
         public void GetStandardsForOrganisationReturns3SetsOfStandards()

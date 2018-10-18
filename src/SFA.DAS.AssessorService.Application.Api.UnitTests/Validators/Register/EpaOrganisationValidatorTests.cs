@@ -15,15 +15,18 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
     [TestFixture]
     public class EpaOrganisationValidatorTests
     {
-        private Mock<IRegisterQueryRepository> _registerRepository;
+        private Mock<IRegisterValidationRepository> _registerRepository;
         private EpaOrganisationValidator _validator;
         private Mock<IStringLocalizer<EpaOrganisationValidator>> _localizer;
+        private Mock<ISpecialCharacterCleanserService> _cleanserService;
         [SetUp]
         public void Setup()
         {
-            _registerRepository = new Mock<IRegisterQueryRepository>();
+            _registerRepository = new Mock<IRegisterValidationRepository>();
             _localizer = new Mock<IStringLocalizer<EpaOrganisationValidator>>();
-            _validator = new EpaOrganisationValidator(_registerRepository.Object, _localizer.Object);
+            _cleanserService = new Mock<ISpecialCharacterCleanserService>();
+            _cleanserService.Setup(c => c.CleanseStringForSpecialCharacters(It.IsAny<string>())).Returns((string s) => s);
+            _validator = new EpaOrganisationValidator(_registerRepository.Object, _cleanserService.Object,_localizer.Object);
 
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.OrganisationTypeIsInvalid])
                 .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationTypeIsInvalid, "fail"));          
@@ -50,7 +53,11 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.StandardNotFound])
                 .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.StandardNotFound, "fail"));
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.OrganisationStandardDoesNotExist])
-                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationStandardDoesNotExist, "fail")); 
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationStandardDoesNotExist, "fail"));
+            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.EmailIsIncorrectFormat])
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.EmailIsIncorrectFormat, "fail"));
+            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.EmailIsMissing])
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.EmailIsIncorrectFormat, "fail")); 
         }
 
         [TestCase("EPA000", true)]
@@ -147,6 +154,31 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
             _registerRepository.Verify(r => r.EpaOrganisationAlreadyUsingUkprn(It.IsAny<long>(), It.IsAny<string>()), Times.Never);
         }
 
+
+        [TestCase("test@test.com",true)]
+        [TestCase("test@test.co.uk", true)]
+        [TestCase("test.tester@test.com", true)]
+        [TestCase("test.tester@digitaleducation.gov.uk", true)]
+        [TestCase("test.terser@test.co.uk", true)]
+        [TestCase("testtest",false)]
+        [TestCase("testtest@com", false)]
+        [TestCase("testtest@test..com", false)]
+        [TestCase("testtest@", false)]
+        [TestCase("@testtest", false)]
+        [TestCase("n/a", false)]
+        [TestCase("test test", false)]
+        [TestCase("testtest", false)]
+        [TestCase("",false)]
+        [TestCase("firstname-lastname@domain-one.co.in", true)]
+        [TestCase("firstname-lastname@domain-one.com", true)]
+        [TestCase("firstname-lastname@domain-one.nz", true)]
+        public void CheckIfEmailIsAcceptableFormat(string email, bool isValidExpected)
+        {
+            var isValidReturned =
+                _validator.CheckIfEmailIsPresentAndInSuitableFormat(email).Length == 0;
+            Assert.AreEqual(isValidExpected, isValidReturned);
+        }
+
         [Test]
         public void CheckIfOrganisationUkprnExistsForOtherOrganisationsWhenUkprnIsNotUsedElsewhere()
         {
@@ -179,6 +211,17 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
                 _validator.CheckIfOrganisationNotFound("123445").Length > 0;
             Assert.AreEqual(noMessageReturned, exists);
             _registerRepository.Verify(r => r.EpaOrganisationExistsWithOrganisationId(It.IsAny<string>()), Times.Once);
+        }
+
+
+        [TestCase("")]
+        [TestCase(null)]
+        public void CheckIfOrganisationNotFoundReturnsAnErrorMessageWhenEmpty(string organisationId)
+        {
+            var isMessageReturned =
+                _validator.CheckIfOrganisationNotFound(null).Length > 0;
+            Assert.AreEqual(isMessageReturned, true);
+            _registerRepository.Verify(r => r.EpaOrganisationExistsWithOrganisationId(It.IsAny<string>()), Times.Never);
         }
 
 
