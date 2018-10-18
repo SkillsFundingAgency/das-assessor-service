@@ -175,7 +175,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                 var resultName = String.Empty;
                 if (!string.IsNullOrEmpty(certificateData.FullName))
                 {
-                    CultureInfo.CurrentCulture.TextInfo.ToTitleCase(certificateData.FullName.ToLower());                 
+                    resultName = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(certificateData.FullName.ToLower());                 
                 }
                 else
                 {
