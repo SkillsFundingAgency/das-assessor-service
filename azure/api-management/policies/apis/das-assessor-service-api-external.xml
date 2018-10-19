@@ -1,0 +1,67 @@
+<policies>
+    <inbound>
+        <rate-limit-by-key calls="120" renewal-period="60" counter-key="@(context.Request.IpAddress)" />
+        <set-header name="x-request-context-user-email" exists-action="override">
+            <value>@(context.User.Email)</value>
+        </set-header>
+        <set-header name="x-request-context-user-note" exists-action="override">
+            <value>@(context.User.Note)</value>
+        </set-header>    
+        <log-to-eventhub logger-id="{{LoggerName}}">@{
+            return new JObject(
+                        new JProperty("@timestamp", DateTime.UtcNow.ToString("o")),
+                        new JProperty("@version", 1),
+                        new JProperty("app_Name", "das-assessor-service-api-external".ToLower()),
+                        new JProperty("level", "INFO"),
+                        new JProperty("LoggerType", "Api.Management.Logger"),
+                        new JProperty("Environment", "{{Environment}}"),
+                        new JProperty("message", string.Join(", ", context.Product.Name, context.Api.Name, context.Operation.Name, context.Operation.Method)),
+                        new JProperty("requestBody", context.Request.Body?.As<string>(preserveContent: true)),
+                        new JProperty("requestId", context.RequestId),
+                        new JProperty("direction", "INBOUND"),
+                        new JProperty("User", new JObject(
+                            new JProperty("Subscription", context.Subscription.Key),
+                            new JProperty("Note", context.User.Note),
+                            new JProperty("Email", context.User.Email)
+                            )
+                        ),
+                        new JProperty("RequestCtx", new JObject(
+                                new JProperty("IpAddress", context.Request.IpAddress),
+                                new JProperty("Url", context.Request.Url.ToString()),
+                                new JProperty("Method", context.Operation.Method)
+                            )
+                        )
+                    ).ToString();
+            }</log-to-eventhub>
+        <base />
+    </inbound>
+    <backend>
+        <base />
+    </backend>
+    <outbound>
+        <log-to-eventhub logger-id="{{LoggerName}}">@{
+            var level = context.Response.StatusCode >= 400 ? "ERROR" : "INFO";
+            return new JObject(
+                        new JProperty("@timestamp", DateTime.UtcNow.ToString("o")),
+                        new JProperty("@version", 1),
+                        new JProperty("app_Name", "das-assessor-service-api-external".ToLower()),
+                        new JProperty("level", level),
+                        new JProperty("LoggerType", "Api.Management.Logger"),
+                        new JProperty("Environment", "{{Environment}}"),
+                        new JProperty("message", context.Response.StatusReason + " (" + context.Response.StatusCode + ")"),
+                        new JProperty("requestId", context.RequestId),
+                        new JProperty("direction", "OUTBOUND"),
+                        new JProperty("RequestCtx", new JObject(
+                                new JProperty("IpAddress", context.Request.IpAddress),
+                                new JProperty("Url", context.Request.Url.ToString()),
+                                new JProperty("Method", context.Operation.Method)
+                            )
+                        )
+                    ).ToString();
+            }</log-to-eventhub>
+        <base />
+    </outbound>
+    <on-error>
+        <base />
+    </on-error>
+</policies>

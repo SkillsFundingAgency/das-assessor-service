@@ -37,19 +37,6 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        public async Task<bool> EpaOrganisationExistsWithOrganisationId(string organisationId)
-        {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-                var sqlToCheckExists =
-                    "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Organisations] " +
-                    "WHERE EndPointAssessorOrganisationId = @organisationId";
-                return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new {organisationId});
-            }
-        }
-
         public async Task<IEnumerable<DeliveryArea>> GetDeliveryAreas()
         {
             var connectionString = _configuration.SqlConnectionString;
@@ -63,32 +50,6 @@ namespace SFA.DAS.AssessorService.Data
                 return deliveryAreas;
             }
          }
-        
-        public async Task<bool> EpaOrganisationExistsWithUkprn(long ukprn)
-        {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-                var sqlToCheckExists =
-                    "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Organisations] " +
-                    "WHERE EndPointAssessorUkprn = @ukprn";
-                return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new {ukprn});
-            }
-        }
-
-        public async Task<bool> OrganisationTypeExists(int organisationTypeId)
-        {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-                var sqlToCheckExists =
-                    "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [OrganisationType] " +
-                    "WHERE Id = @organisationTypeId";
-                return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new {organisationTypeId});
-            }
-        }
 
         public async Task<EpaOrganisation> GetEpaOrganisationById(Guid id)
         {
@@ -124,56 +85,7 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        public async Task<bool> EpaOrganisationAlreadyUsingUkprn(long ukprn, string organisationIdToExclude)
-        {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-                var sqlToCheckExists =
-                    "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Organisations] " +
-                    "WHERE EndPointAssessorOrganisationId != @organisationIdToExclude and EndPointAssessorUkprn = @ukprn";
-                return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { organisationIdToExclude, ukprn});
-            }
-        }
         
-        
-        public async Task<bool> EpaOrganisationStandardExists(string organisationId, int standardCode)
-        {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-                var sqlToCheckExists =
-                    "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [OrganisationStandard] " +
-                    "WHERE EndPointAssessorOrganisationId = @organisationId and standardCode = @standardCode";
-                return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new {organisationId, standardCode});
-            }
-        }
-
-        public async Task<bool> EpaOrganisationAlreadyUsingName(string organisationName, string organisationIdToExclude)
-        {
-         
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-                
-                var sqlToCheckExists =
-                    "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Organisations] " +
-                    "WHERE EndPointAssessorName = @organisationName";
-                
-                if (!string.IsNullOrEmpty(organisationIdToExclude))
-                {
-                    sqlToCheckExists =  "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Organisations] " +
-                                        "WHERE EndPointAssessorName = @organisationName AND  EndPointAssessorOrganisationId != @organisationIdToExclude";
-                    return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { organisationName, organisationIdToExclude });
-                }
-
-                return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new {organisationName});
-            }
-        }
-
         public async Task<string> EpaOrganisationIdCurrentMaximum()
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
@@ -183,6 +95,20 @@ namespace SFA.DAS.AssessorService.Data
                 const string sqlToGetHighestOrganisationId = "select max(EndPointAssessorOrganisationId) OrgId from organisations where EndPointAssessorOrganisationId like 'EPA%' " + 
                                                 " and isnumeric(replace(EndPointAssessorOrganisationId,'EPA','')) = 1";
                 return await connection.ExecuteScalarAsync<string>(sqlToGetHighestOrganisationId);
+            }
+        }
+
+        public async Task<int> EpaContactUsernameHighestCounter()
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                const string sqlToGetHighestUsernameCounter = "select max(convert(int,replace(username,'unknown-',''))) highestCounter from [Contacts]  where username like 'unknown-%' and isnumeric(replace(username,'unknown-','')) = 1";
+                var maxCounter = await connection.ExecuteScalarAsync<int?>(sqlToGetHighestUsernameCounter);
+
+                return maxCounter ?? 100;
             }
         }
 
@@ -242,31 +168,7 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        public async Task<bool> ContactIdIsValid(string contactId)
-        {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-                var sqlToCheckExists =
-                    "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Contacts] " +
-                    "WHERE convert(varchar(50),id)  = @contactId";
-                return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new {contactId});
-            }
-        }
-       
-        public async Task<bool> ContactIdIsValidForOrganisationId(string contactId, string organisationId)
-        {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-                var sqlToCheckExists =
-                    "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Contacts] " +
-                    "WHERE convert(varchar(50),id)  = @ContactId and EndPointAssessorOrganisationId = @organisationId";
-                return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new {contactId, organisationId});
-            }
-        }
+     
         
         public async Task<IEnumerable<EpaOrganisation>> GetAssessmentOrganisationsByStandardId(int standardId)
         {
@@ -299,7 +201,7 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        public async Task<IEnumerable<OrganisationStandardPeriod>> GetOrganisatonStandardPeriodsByOrganisationStandard(string organisationId, int standardId)
+        public async Task<IEnumerable<OrganisationStandardPeriod>> GetOrganisationStandardPeriodsByOrganisationStandard(string organisationId, int standardId)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
@@ -354,5 +256,7 @@ namespace SFA.DAS.AssessorService.Data
                 return assessmentOrganisationSummaries;
             }
         }
+
+       
     }
 }
