@@ -59,7 +59,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
                 logger.LogInformation("MatchUpExistingCompletedStandards After GetContact");
 
-                var searchingContact = contactRepository.GetContact(request.Username).Result;
+                var searchingContact = contactRepository.GetContact(request.Username).Result ?? contactRepository.GetContactFromEmailAddress(request.Username).Result;
 
                 if (submittingContact != null && searchingContact != null && submittingContact.OrganisationId == searchingContact.OrganisationId)
                 {
