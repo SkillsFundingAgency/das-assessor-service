@@ -161,6 +161,43 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             worksheet.Cells["A1:J1"].Value = monthYear + " Print Data - Batch " + batchNumber.ToString();
         }
 
+        private static string NameToTitleCase(string name)
+        {
+            var isAllLower = true;
+            var isAllUpper = true;
+            
+            foreach (var character in name)
+            {
+                if (char.IsLetter(character) &&  !char.IsUpper(character))
+                {
+                    isAllUpper = false;
+                }
+            }
+            
+            foreach (var character in name)
+            {
+                if (char.IsLetter(character) &&  
+                    char.IsUpper(character))
+                {
+                    isAllLower = false;
+                }
+            }
+
+            if (!isAllUpper && !isAllLower) return name;
+            var chars = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name.ToLower()).ToCharArray();
+
+            for (var i = 0; i + 1 < chars.Length; i++)
+            {
+                if (chars[i].Equals('\'') ||
+                    chars[i].Equals('`') ||
+                    chars[i].Equals('-'))
+                {                    
+                    chars[i + 1] = char.ToUpper(chars[i + 1]);
+                }
+            }
+            return new string(chars);
+        }    
+
         private void CreateWorksheetData(ExcelWorksheet worksheet)
         {
             var row = 3;
@@ -172,9 +209,12 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                     worksheet.Cells[row, 1].Value = certificateData.AchievementDate.Value.ToString("dd MMMM yyyy");
 
                 var learnerName = $"{certificateData.LearnerGivenNames} {certificateData.LearnerFamilyName}";
-                worksheet.Cells[row, 2].Value = certificateData.FullName != null
-                    ? CultureInfo.CurrentCulture.TextInfo.ToTitleCase(certificateData.FullName)
-                    : CultureInfo.CurrentCulture.TextInfo.ToTitleCase(learnerName);
+
+                worksheet.Cells[row, 2].Value = NameToTitleCase(
+                    !string.IsNullOrEmpty(certificateData.FullName) 
+                        ? certificateData.FullName.ToLower() 
+                        : learnerName.ToLower()
+                );
 
                 if (certificateData.StandardName != null)
                     worksheet.Cells[row, 3].Value = certificateData.StandardName.ToUpper();
