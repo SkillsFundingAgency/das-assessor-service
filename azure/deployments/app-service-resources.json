@@ -28,7 +28,8 @@
         }
     },
     "variables": {
-        "UseCustomHostname": "[greater(length(parameters('customHostname')), 0)]"
+        "UseCustomHostname": "[greater(length(parameters('customHostname')), 0)]",
+        "InstanceName": "[if(equals(toUpper(parameters('configEnvironmentName')),'PROD'),'',parameters('configEnvironmentName'))]"
     },
     "resources": [
         {
@@ -69,7 +70,7 @@
                         },
                         {
                             "name": "InstanceName",
-                            "value": "[toUpper(parameters('configEnvironmentName'))]"
+                            "value": "[toUpper(variables('InstanceName'))]"
                         }                        
                     ],
                     "connectionStrings": [
