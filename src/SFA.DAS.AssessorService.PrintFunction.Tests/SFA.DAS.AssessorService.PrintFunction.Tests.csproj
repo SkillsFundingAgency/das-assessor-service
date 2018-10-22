@@ -44,6 +44,10 @@
       <HintPath>..\packages\EPPlus.4.5.2.1\lib\net40\EPPlus.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="FizzWare.NBuilder, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5651b03e12e42c12">
+      <HintPath>..\packages\NBuilder.6.0.0\lib\net40\FizzWare.NBuilder.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="FluentAssertions, Version=5.4.2.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a">
       <HintPath>..\packages\FluentAssertions.5.4.2\lib\net45\FluentAssertions.dll</HintPath>
       <Private>True</Private>
@@ -57,16 +61,31 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="mscorlib" />
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="nunit.framework, Version=3.11.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb">
       <HintPath>..\packages\NUnit.3.11.0\lib\net45\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="PresentationCore" />
+    <Reference Include="RichardSzalay.MockHttp, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\RichardSzalay.MockHttp.5.0.0\lib\net45\RichardSzalay.MockHttp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SFA.DAS.Notifications.Api.Client, Version=1.2.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\..\Users\daveg\.nuget\packages\sfa.das.notifications.api.client\2.0.0.35919\lib\net45\SFA.DAS.Notifications.Api.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="SFA.DAS.Notifications.Api.Types, Version=1.1.0.12760, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests\bin\Debug\net461\SFA.DAS.Notifications.Api.Types.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Security" />
     <Reference Include="System.Threading.Tasks.Extensions, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
       <HintPath>..\packages\System.Threading.Tasks.Extensions.4.3.0\lib\portable-net45+win8+wp8+wpa81\System.Threading.Tasks.Extensions.dll</HintPath>
@@ -80,8 +99,15 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssessorServiceApi\AssessorServiceTestBase.cs" />
+    <Compile Include="AssessorServiceApi\WhenSystemChangesStatusesToPrinted.cs" />
+    <Compile Include="AssessorServiceApi\WhenSystemGeneratesBatchNumber.cs" />
+    <Compile Include="AssessorServiceApi\WhenSystemGetsEmailTemplate.cs" />
+    <Compile Include="AssessorServiceApi\WhenSystemRequestsCertificatesToBePrinted.cs" />
+    <Compile Include="WhenPrinterFunctionFlowCommandIsExecutedSuccessfully.cs" />
     <Compile Include="WhenSpreadsheetRequested.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WhenSystemSendsNotification.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -90,6 +116,10 @@
     <ProjectReference Include="..\SFA.DAS.AssessorService.Api.Types\SFA.DAS.AssessorService.Api.Types.csproj">
       <Project>{c6d53d77-b520-426f-b5d5-00aedc0fe4e0}</Project>
       <Name>SFA.DAS.AssessorService.Api.Types</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SFA.DAS.AssessorService.Domain\SFA.DAS.AssessorService.Domain.csproj">
+      <Project>{95283279-6151-4580-a781-93903696a1a2}</Project>
+      <Name>SFA.DAS.AssessorService.Domain</Name>
     </ProjectReference>
     <ProjectReference Include="..\SFA.DAS.AssessorService.EpaoImporter\SFA.DAS.AssessorService.EpaoImporter.csproj">
       <Project>{6901b04c-fea8-4bab-87cf-1ff871b7c497}</Project>

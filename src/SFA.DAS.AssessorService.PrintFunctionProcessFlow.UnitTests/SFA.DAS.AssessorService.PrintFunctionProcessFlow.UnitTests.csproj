@@ -31,9 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="IFATemplateDocument.docx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <Folder Include="AssessorServiceApi" />
   </ItemGroup>
 
 </Project>
