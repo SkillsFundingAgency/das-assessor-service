@@ -99,18 +99,32 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
             if (request.SearchQuery.Length == 10 && long.TryParse(request.SearchQuery, out var uln))
             {
-                // Search string is a long of 10 length so must be a uln.
-                var sr = new StaffReposSearchResult
+                if (await _staffCertificateRepository.IsPrivateCertificateForUln(Convert.ToInt64(request.SearchQuery)))
                 {
-                    TotalCount = (await _ilrRepository.SearchForLearnerByUln(uln)).Count(),
-                    PageOfResults = await _staffIlrRepository.SearchForLearnerByUln(request)
-                };
-                return sr;
+                    var certificates = (await _staffCertificateRepository.SearchForLearnerByUln(uln));
+                    var sr = new StaffReposSearchResult
+                    {
+                        TotalCount = certificates.Count(),
+                        PageOfResults = certificates
+                    };
+                    return sr;
+                }
+                else
+                {
+                    // Search string is a long of 10 length so must be a uln.
+                    var sr = new StaffReposSearchResult
+                    {
+                        TotalCount = (await _ilrRepository.SearchForLearnerByUln(uln)).Count(),
+                        PageOfResults = await _staffIlrRepository.SearchForLearnerByUln(request)
+                    };
+                    return sr;    
+                }
+               
             }
 
             if (request.SearchQuery.Length == 8 && long.TryParse(request.SearchQuery, out var certRef))
             {
-                if (await _staffCertificateRepository.IsPrivateCertificate(request.SearchQuery))
+                if (await _staffCertificateRepository.IsPrivateCertificateForCertificateReference(request.SearchQuery))
                 {
                     var learnerCertificateRequest =
                         await _staffCertificateRepository.SearchForLearnerByCertificateReference(request.SearchQuery);
@@ -175,13 +189,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
             foreach (var searchResult in searchResults)
             {
-                var standard = allStandards.SingleOrDefault(s => s.StandardId == searchResult.StandardCode.ToString());
-                if (standard == null)
+                if (searchResult.StandardCode != 0)
                 {
-                    standard = assessmentOrgsApiClient.GetStandard(searchResult.StandardCode).Result;
-                }
+                    var standard =
+                        allStandards.SingleOrDefault(s => s.StandardId == searchResult.StandardCode.ToString());
+                    if (standard == null)
+                    {
+                        standard = assessmentOrgsApiClient.GetStandard(searchResult.StandardCode).Result;
+                    }
 
-                searchResult.Standard = standard.Title;
+                    searchResult.Standard = standard.Title;
+                }
             }
 
             return searchResults;

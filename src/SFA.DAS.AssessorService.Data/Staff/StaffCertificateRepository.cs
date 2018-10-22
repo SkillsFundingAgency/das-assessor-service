@@ -23,14 +23,34 @@ namespace SFA.DAS.AssessorService.Data.Staff
             _context = context;
             _connection = connection;
         }
+        
+        public async Task<bool> IsPrivateCertificateForUln(long uln)
+        {
+            var certificate =
+                await _context.Certificates
+                    .Include(q => q.Organisation)
+                    .FirstOrDefaultAsync(q => q.Uln == uln);
+            return certificate != null && certificate.IsPrivatelyFunded;
+        }
 
-        public async Task<bool> IsPrivateCertificate(string certificateReference)
+        public async Task<bool> IsPrivateCertificateForCertificateReference(string certificateReference)
         {
             var certificate =
                 await _context.Certificates
                     .Include(q => q.Organisation)
                     .FirstOrDefaultAsync(q => q.CertificateReference == certificateReference);
             return certificate != null && certificate.IsPrivatelyFunded;
+        }
+
+        public async Task<IEnumerable<Ilr>> SearchForLearnerByUln(long uln)
+        {
+            var cert = await _context.Certificates.FirstOrDefaultAsync(c => c.Uln == uln);
+            IEnumerable<Ilr> results =
+                cert != null
+                    ? new List<Ilr> {new Ilr().GetFromCertificate(cert)}
+                    : new List<Ilr>();
+
+            return results;
         }
 
         public async Task<IEnumerable<Ilr>> SearchForLearnerByCertificateReference(string certRef)
