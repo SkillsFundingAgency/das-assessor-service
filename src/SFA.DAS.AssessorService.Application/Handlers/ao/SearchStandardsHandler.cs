@@ -17,11 +17,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers
     public class SearchStandardsHandler: IRequestHandler<SearchStandardsRequest, List<StandardSummary>>
     {
         private readonly IStandardService _standardSearch;
-        private readonly ILogger<SearchAssessmentOrganisationHandler> _logger;
+        private readonly ILogger<SearchStandardsHandler> _logger;
         //private readonly IEpaOrganisationSearchValidator _validator;
         private readonly ISpecialCharacterCleanserService _cleanser;
 
-        public SearchStandardsHandler(IStandardService standardSearch, ILogger<SearchAssessmentOrganisationHandler> logger, ISpecialCharacterCleanserService cleanser)
+        public SearchStandardsHandler(IStandardService standardSearch, ILogger<SearchStandardsHandler> logger, ISpecialCharacterCleanserService cleanser)
         {
             _standardSearch = standardSearch;
             _logger = logger;
