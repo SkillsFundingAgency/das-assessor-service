@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessmentOrgs.Api.Client.Core.Types;
 using SFA.DAS.AssessorService.Api.Types;
 using SFA.DAS.AssessorService.Api.Types.Models;
@@ -23,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
     {
         private readonly ILogger<RegisterQueryController> _logger;
         private readonly IMediator _mediator;
-        
+
         public RegisterQueryController(IMediator mediator, ILogger<RegisterQueryController> logger
         )
         {
@@ -32,9 +33,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpGet("organisation-types", Name = "GetOrganisationTypes")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<OrganisationType>))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<OrganisationType>))]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetOrganisationTypes()
         {
             _logger.LogInformation("Get Organisation Types");
@@ -42,9 +43,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpGet("delivery-areas", Name = "GetDeliveryAreas")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<DeliveryArea>))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<DeliveryArea>))]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetDeliveryAreas()
         {
             _logger.LogInformation("Get Delivery Areas");
@@ -52,9 +53,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpGet("assessment-organisations", Name = "GetAssessmentOrganisations")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<AssessmentOrganisationSummary>))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<AssessmentOrganisationSummary>))]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetAssessmentOrganisations()
         {
             _logger.LogInformation("Get Assessment Organisations");
@@ -62,76 +63,90 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpGet("assessment-organisations/{organisationId}", Name = "GetAssessmentOrganisation")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EpaOrganisation))]
-        [SwaggerResponse((int)HttpStatusCode.NotFound, null)]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(EpaOrganisation))]
+        [SwaggerResponse((int) HttpStatusCode.NotFound, null)]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetAssessmentOrganisation(string organisationId)
         {
             _logger.LogInformation($@"Get Assessment Organisation [{organisationId}]");
-            var result = await _mediator.Send(new GetAssessmentOrganisationRequest { OrganisationId = organisationId });
+            var result = await _mediator.Send(new GetAssessmentOrganisationRequest {OrganisationId = organisationId});
             if (result == null) return NotFound();
             return Ok(result);
         }
 
         [HttpGet("assessment-organisations/standards/{standardId}", Name = "GetAssessmentOrganisationsByStandard")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<EpaOrganisation>))]
-        [SwaggerResponse((int)HttpStatusCode.NotFound, null)]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<EpaOrganisation>))]
+        [SwaggerResponse((int) HttpStatusCode.NotFound, null)]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetAssessmentOrganisationsByStandard(int standardId)
         {
             _logger.LogInformation($@"Get Assessment Organisations by Standard [{standardId}]");
-            var result = await _mediator.Send(new GetAssessmentOrganisationsbyStandardRequest { StandardId = standardId });
+            var result = await _mediator.Send(new GetAssessmentOrganisationsbyStandardRequest
+                {StandardId = standardId});
             if (result == null) return NotFound();
             return Ok(result);
         }
 
-        [HttpGet("assessment-organisations/{organisationId}/standards", Name = "GetOrganisationStandardsByOrganisation")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<OrganisationStandardSummary>))]
-        [SwaggerResponse((int)HttpStatusCode.NotFound, null)]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        [HttpGet("assessment-organisations/{organisationId}/standards", Name =
+            "GetOrganisationStandardsByOrganisation")]
+        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<OrganisationStandardSummary>))]
+        [SwaggerResponse((int) HttpStatusCode.NotFound, null)]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetOrganisationStandardsByOrganisation(string organisationId)
         {
             _logger.LogInformation($@"Get Organisations Standards by OrganisationId [{organisationId}]");
-            var result = await _mediator.Send(new GetStandardsByOrganisationRequest { OrganisationId = organisationId });
+            var result = await _mediator.Send(new GetStandardsByOrganisationRequest {OrganisationId = organisationId});
             if (result == null) return NotFound();
             return Ok(result);
         }
 
         [HttpGet("assessment-organisations/contacts/{contactId}", Name = "GetContact")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(AssessmentOrganisationContact))]
-        [SwaggerResponse((int)HttpStatusCode.NotFound, null)]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(AssessmentOrganisationContact))]
+        [SwaggerResponse((int) HttpStatusCode.NotFound, null)]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetContact(string contactId)
         {
             _logger.LogInformation($@"Get Contact from Id [{contactId}]");
-            var result = await _mediator.Send(new GetContactRequest { ContactId = contactId });
+            var result = await _mediator.Send(new GetContactRequest {ContactId = contactId});
             if (result == null) return BadRequest();
             return Ok(result);
         }
-        
+
         [HttpHead("assessment-organisations/{organisationId}", Name = "GetAssessmentOrganisationHead")]
-        [SwaggerResponse((int)HttpStatusCode.NoContent)]
-        [SwaggerResponse((int)HttpStatusCode.NotFound)]
+        [SwaggerResponse((int) HttpStatusCode.NoContent)]
+        [SwaggerResponse((int) HttpStatusCode.NotFound)]
         public async Task<IActionResult> Head(string organisationId)
         {
             _logger.LogInformation($@"HEAD Assessment Organisation [{organisationId}]");
-            var result = await _mediator.Send(new GetAssessmentOrganisationRequest { OrganisationId = organisationId });
+            var result = await _mediator.Send(new GetAssessmentOrganisationRequest {OrganisationId = organisationId});
             if (result == null) return NotFound();
             return NoContent();
         }
 
- [HttpGet("assessment-organisations/search/{searchstring}", Name = "SearchAssessmentOrganisations")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<AssessmentOrganisationSummary>))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        [HttpGet("assessment-organisations/search/{searchstring}", Name = "SearchAssessmentOrganisations")]
+        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<AssessmentOrganisationSummary>))]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> SearchAssessmentOrganisations(string searchstring)
         {
             _logger.LogInformation($@"Search Assessment Organisations for [{searchstring}]");
-            return Ok(await _mediator.Send(new SearchAssessmentOrganisationsRequest{Searchstring = searchstring}));
+            return Ok(await _mediator.Send(new SearchAssessmentOrganisationsRequest {Searchstring = searchstring}));
+        }
+
+
+        [HttpGet("assessment-organisations/standards/search/{searchstring}", Name = "SearchStandards")]
+        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<StandardSummary>))]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> SearchStandards(string searchstring)
+        {
+            _logger.LogInformation($@"Search Standards for [{searchstring}]");
+            return Ok(await _mediator.Send(new SearchStandardsRequest {Searchstring = searchstring}));
         }
     }
 }
+
