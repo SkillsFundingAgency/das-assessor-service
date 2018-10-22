@@ -1,11 +1,9 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.WsFederation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Web.Staff.Domain;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {
@@ -17,7 +15,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         {
             _logger = logger;
         }
-
 
         [HttpGet]
         public IActionResult SignIn()
@@ -32,18 +29,18 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         [HttpGet]
         public IActionResult PostSignIn()
         {
-            var roles = HttpContext.User.Claims.Where(c => c.Type == "http://service/service")
-                .Select(c => c.Value).ToList();
-
-            if (roles.Contains("ASS")) return RedirectToAction("Index", "Dashboard");
-            
-            foreach (var cookie in Request.Cookies.Keys)
+            if(!HttpContext.User.HasValidRole())
             {
-                Response.Cookies.Delete(cookie);
+                _logger.LogInformation($"PostSignIn - User '{HttpContext.User.Identity.Name}' does not have a valid role");
+                foreach (var cookie in Request.Cookies.Keys)
+                {
+                    Response.Cookies.Delete(cookie);
+                }
+
+                return RedirectToAction("InvalidRole", "Home");
             }
 
-            return RedirectToAction("InvalidRole", "Home");
-
+            return RedirectToAction("Index", "Dashboard");
         }
 
         [HttpGet]
