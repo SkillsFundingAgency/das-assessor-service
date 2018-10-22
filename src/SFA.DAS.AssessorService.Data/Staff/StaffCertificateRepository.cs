@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,26 @@ namespace SFA.DAS.AssessorService.Data.Staff
             _connection = connection;
         }
 
+        public async Task<bool> IsPrivateCertificate(string certificateReference)
+        {
+            var certificate =
+                await _context.Certificates
+                    .Include(q => q.Organisation)
+                    .FirstOrDefaultAsync(q => q.CertificateReference == certificateReference);
+            return certificate != null && certificate.IsPrivatelyFunded;
+        }
+
+        public async Task<IEnumerable<Ilr>> SearchForLearnerByCertificateReference(string certRef)
+        {
+            var cert = await _context.Certificates.FirstOrDefaultAsync(c => c.CertificateReference == certRef);
+            IEnumerable<Ilr> results =
+                cert != null
+                    ? new List<Ilr> {new Ilr().GetFromCertificate(cert)}
+                    : new List<Ilr>();
+
+            return results;
+        }
+
         public async Task<List<CertificateForSearch>> GetCertificatesFor(long[] ulns)
         {
             return (await _connection.QueryAsync<CertificateForSearch>(@"SELECT 
@@ -38,12 +59,11 @@ namespace SFA.DAS.AssessorService.Data.Staff
 																			INNER JOIN Organisations org
 																			ON cert.OrganisationId = org.Id                                                                            
                                                                             WHERE Uln IN @ulns",
-
                 new {ulns})).ToList();
         }
 
         public async Task<List<CertificateLogSummary>> GetCertificateLogsFor(Guid certificateId,
-            bool allRecords=false)
+            bool allRecords = false)
         {
             if (allRecords)
             {
@@ -56,11 +76,12 @@ namespace SFA.DAS.AssessorService.Data.Staff
             }
             else
             {
-                var cert = await _connection.QueryFirstAsync<Certificate>("SELECT * FROM Certificates WHERE Id = @certificateId",
+                var cert = await _connection.QueryFirstAsync<Certificate>(
+                    "SELECT * FROM Certificates WHERE Id = @certificateId",
                     new {certificateId});
 
-                if (cert.Status == CertificateStatus.Submitted 
-                    || cert.Status == CertificateStatus.Reprint 
+                if (cert.Status == CertificateStatus.Submitted
+                    || cert.Status == CertificateStatus.Reprint
                     || cert.Status == CertificateStatus.Printed)
                 {
                     return (await _connection.QueryAsync<CertificateLogSummary>(@"DECLARE @FirstSubmitTime datetime2
@@ -83,23 +104,25 @@ namespace SFA.DAS.AssessorService.Data.Staff
                             LEFT OUTER JOIN Contacts c ON c.Username = logs.Username
                         WHERE CertificateId = @certificateId
                         ORDER BY EventTime DESC", new {certificateId})).ToList();
-
                 }
             }
         }
 
-        public async Task<StaffReposBatchSearchResult> GetCertificateLogsForBatch(int batchNumber, int page, int pageSize)
+        public async Task<StaffReposBatchSearchResult> GetCertificateLogsForBatch(int batchNumber, int page,
+            int pageSize)
         {
-            var results = await _context.CertificateLogs.Where(cl => cl.BatchNumber == batchNumber && cl.Action == CertificateActions.Printed)
+            var results = await _context.CertificateLogs
+                .Where(cl => cl.BatchNumber == batchNumber && cl.Action == CertificateActions.Printed)
                 .Include(cl => cl.Certificate)
                 .OrderByDescending(cl => cl.EventTime)
                 .Skip((page - 1) * pageSize)
-                .Take(pageSize)  
+                .Take(pageSize)
                 .ToListAsync();
 
-            var count = await _context.CertificateLogs.Where(cl => cl.BatchNumber == batchNumber && cl.Action == CertificateActions.Printed).CountAsync();
+            var count = await _context.CertificateLogs
+                .Where(cl => cl.BatchNumber == batchNumber && cl.Action == CertificateActions.Printed).CountAsync();
 
-            return new StaffReposBatchSearchResult { PageOfResults = results, TotalCount = count };
+            return new StaffReposBatchSearchResult {PageOfResults = results, TotalCount = count};
         }
 
         public async Task<StaffReposBatchLogResult> GetBatchLogs(int page, int pageSize)
@@ -112,7 +135,7 @@ namespace SFA.DAS.AssessorService.Data.Staff
 
             var count = await _context.BatchLogs.CountAsync();
 
-            return new StaffReposBatchLogResult { PageOfResults = results, TotalCount = count };
+            return new StaffReposBatchLogResult {PageOfResults = results, TotalCount = count};
         }
     }
 }

@@ -14,6 +14,8 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
         Task<StaffReposBatchSearchResult> GetCertificateLogsForBatch(int batchNumber, int page, int pageSize);
         Task<StaffReposBatchLogResult> GetBatchLogs(int page, int pageSize);
+        Task<IEnumerable<Ilr>> SearchForLearnerByCertificateReference(string certRef);
+        Task<bool> IsPrivateCertificate(string certificateReference);
     }
 
 

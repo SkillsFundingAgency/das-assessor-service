@@ -57,14 +57,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             if (searchResult.TotalCount == 0)
             {
                 totalRecordCount = await _staffIlrRepository.CountLearnersByName(request.SearchQuery);
-                searchResult.PageOfResults = await _staffIlrRepository.SearchForLearnerByName(request.SearchQuery, request.Page, pageSize);
+                searchResult.PageOfResults =
+                    await _staffIlrRepository.SearchForLearnerByName(request.SearchQuery, request.Page, pageSize);
             }
             else
             {
                 displayEpao = searchResult.DisplayEpao;
             }
 
-            _logger.LogInformation(searchResult.PageOfResults.Any() ? LoggingConstants.SearchSuccess : LoggingConstants.SearchFailure);
+            _logger.LogInformation(searchResult.PageOfResults.Any()
+                ? LoggingConstants.SearchSuccess
+                : LoggingConstants.SearchFailure);
 
             var searchResults = Mapper.Map<List<StaffSearchItems>>(searchResult.PageOfResults);
 
@@ -74,8 +77,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             return new StaffSearchResult
             {
                 DisplayEpao = displayEpao,
-                EndpointAssessorOrganisationId = displayEpao && searchResults.Count > 0 ? searchResults.First().EndpointAssessorOrganisationId : string.Empty,
-                StaffSearchItems = new PaginatedList<StaffSearchItems>(searchResults, totalRecordCount, request.Page, pageSize)
+                EndpointAssessorOrganisationId = displayEpao && searchResults.Count > 0
+                    ? searchResults.First().EndpointAssessorOrganisationId
+                    : string.Empty,
+                StaffSearchItems =
+                    new PaginatedList<StaffSearchItems>(searchResults, totalRecordCount, request.Page, pageSize)
             };
         }
 
@@ -85,7 +91,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
             var regex = new Regex(@"\b(?i)(epa)[0-9]{4}\b");
             if (regex.IsMatch(request.SearchQuery))
-            {                
+            {
                 var sr = await _staffIlrRepository.SearchForLearnerByEpaOrgId(request);
                 sr.DisplayEpao = true;
                 return sr;
@@ -104,28 +110,47 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
             if (request.SearchQuery.Length == 8 && long.TryParse(request.SearchQuery, out var certRef))
             {
-                var sr = new StaffReposSearchResult
+                if (await _staffCertificateRepository.IsPrivateCertificate(request.SearchQuery))
                 {
-                    DisplayEpao = true,
-                    TotalCount = (await _staffIlrRepository.SearchForLearnerByCertificateReference(request.SearchQuery)).Count(),
-                    PageOfResults = await _staffIlrRepository.SearchForLearnerByCertificateReference(request.SearchQuery)
-                };
-                return sr;
+                    var learnerCertificateRequest =
+                        await _staffCertificateRepository.SearchForLearnerByCertificateReference(request.SearchQuery);
+                    var sr = new StaffReposSearchResult
+                    {
+                        DisplayEpao = true,
+                        TotalCount = learnerCertificateRequest.Count(),
+                        PageOfResults = learnerCertificateRequest
+                    };
+                    return sr;
+                }
+                else
+                {
+                    var learnerCertificateRequest =
+                        await _staffIlrRepository.SearchForLearnerByCertificateReference(request.SearchQuery);
+                    var sr = new StaffReposSearchResult
+                    {
+                        DisplayEpao = true,
+                        TotalCount = learnerCertificateRequest.Count(),
+                        PageOfResults = learnerCertificateRequest
+                    };
+                    return sr;
+                }
             }
 
-            return new StaffReposSearchResult() { PageOfResults = new List<Ilr>(), TotalCount = 0 };
+            return new StaffReposSearchResult() {PageOfResults = new List<Ilr>(), TotalCount = 0};
         }
 
 
         private List<StaffSearchItems> MatchUpExistingCompletedStandards(List<StaffSearchItems> searchResults)
         {
             _logger.LogInformation("MatchUpExistingCompletedStandards Before Get Certificates for uln from db");
-            var completedCertificates = _staffCertificateRepository.GetCertificatesFor(searchResults.Select(r => r.Uln).ToArray()).Result;
+            var completedCertificates = _staffCertificateRepository
+                .GetCertificatesFor(searchResults.Select(r => r.Uln).ToArray()).Result;
             _logger.LogInformation("MatchUpExistingCompletedStandards After Get Certificates for uln from db");
 
             foreach (var searchResult in searchResults)
             {
-                var certificate = completedCertificates.SingleOrDefault(s => s.StandardCode == searchResult.StandardCode && s.Uln == searchResult.Uln);
+                var certificate = completedCertificates.SingleOrDefault(s =>
+                    s.StandardCode == searchResult.StandardCode && s.Uln == searchResult.Uln);
                 if (certificate == null) continue;
 
                 searchResult.CertificateReference = certificate.CertificateReference;
@@ -139,10 +164,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                     searchResult.LastUpdatedAt = certificate.LastUpdatedAt?.UtcToTimeZoneTime();
                 }
             }
+
             return searchResults;
         }
 
-        private List<StaffSearchItems> PopulateStandards(List<StaffSearchItems> searchResults, IAssessmentOrgsApiClient assessmentOrgsApiClient, ILogger<SearchHandler> logger)
+        private List<StaffSearchItems> PopulateStandards(List<StaffSearchItems> searchResults,
+            IAssessmentOrgsApiClient assessmentOrgsApiClient, ILogger<SearchHandler> logger)
         {
             var allStandards = assessmentOrgsApiClient.GetAllStandards().Result;
 
@@ -153,7 +180,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 {
                     standard = assessmentOrgsApiClient.GetStandard(searchResult.StandardCode).Result;
                 }
-                searchResult.Standard = standard.Title;
+
                 searchResult.Standard = standard.Title;
             }
 
