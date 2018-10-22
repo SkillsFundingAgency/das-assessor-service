@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Handlers.Search;
 using SFA.DAS.AssessorService.Application.Interfaces;
@@ -15,6 +16,7 @@ using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
+using SFA.DAS.AssessorService.Application.Infrastructure;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 {
@@ -25,18 +27,22 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
         private readonly IStaffCertificateRepository _staffCertificateRepository;
         private readonly ILogger<SearchHandler> _logger;
         private readonly IStaffIlrRepository _staffIlrRepository;
+        private readonly CacheHelper _cacheHelper;
 
         public StaffSearchHandler(IAssessmentOrgsApiClient assessmentOrgsApiClient,
             IIlrRepository ilrRepository,
             IStaffCertificateRepository staffCertificateRepository,
             ILogger<SearchHandler> logger,
-            IStaffIlrRepository staffIlrRepository)
+            IStaffIlrRepository staffIlrRepository, 
+            CacheHelper cacheHelper
+            )
         {
             _assessmentOrgsApiClient = assessmentOrgsApiClient;
             _ilrRepository = ilrRepository;
             _staffCertificateRepository = staffCertificateRepository;
             _logger = logger;
             _staffIlrRepository = staffIlrRepository;
+            _cacheHelper = cacheHelper;
         }
 
         public async Task<StaffSearchResult> Handle(StaffSearchRequest request, CancellationToken cancellationToken)
@@ -72,7 +78,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             var searchResults = Mapper.Map<List<StaffSearchItems>>(searchResult.PageOfResults);
 
             searchResults = MatchUpExistingCompletedStandards(searchResults);
-            searchResults = PopulateStandards(searchResults, _assessmentOrgsApiClient, _logger);
+            searchResults = await PopulateStandards(searchResults, _assessmentOrgsApiClient, _logger);
 
             return new StaffSearchResult
             {
@@ -182,21 +188,24 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             return searchResults;
         }
 
-        private List<StaffSearchItems> PopulateStandards(List<StaffSearchItems> searchResults,
+        private async Task<List<StaffSearchItems>> PopulateStandards(List<StaffSearchItems> searchResults,
             IAssessmentOrgsApiClient assessmentOrgsApiClient, ILogger<SearchHandler> logger)
         {
-            var allStandards = assessmentOrgsApiClient.GetAllStandards().Result;
+            var results = await _cacheHelper.RetrieveFromCache<IEnumerable<StandardSummary>>("AllStandardSummaries");
+            if (results == null)
+            {
+                var standards = assessmentOrgsApiClient.GetAllStandardSummaries().Result;
+                await _cacheHelper.SaveToCache("AllStandardSummaries", standards, 1);
 
+                results = standards;
+            }
+                     
             foreach (var searchResult in searchResults)
             {
                 if (searchResult.StandardCode != 0)
                 {
                     var standard =
-                        allStandards.SingleOrDefault(s => s.StandardId == searchResult.StandardCode.ToString());
-                    if (standard == null)
-                    {
-                        standard = assessmentOrgsApiClient.GetStandard(searchResult.StandardCode).Result;
-                    }
+                        results.SingleOrDefault(s => s.Id == searchResult.StandardCode.ToString());
 
                     searchResult.Standard = standard.Title;
                 }
