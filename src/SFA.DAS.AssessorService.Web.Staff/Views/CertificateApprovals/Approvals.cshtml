@@ -6,7 +6,7 @@
 
 <div class="grid-row">
 
-    <div class="column-three-thirds" sfa-show-for-policy="@Startup.Policies.OperationsTeamOnly">
+    <div class="column-three-thirds">
 
         <form class="apprentice-approvals-form js-disable-on-submit" type="post" asp-controller="CertificateApprovals" asp-action="Approvals">
             <a class="link-back" asp-controller="Dashboard" asp-action="Index">Back</a>
@@ -26,9 +26,7 @@
                         There's a problem
                     </h2>
                     <ul class="error-summary-list">
-                        <li>
-                            <a sfa-validation-for="FirstName"></a>
-                        </li>
+                      
                     </ul>
                 </div>
             }

@@ -11,6 +11,7 @@ using SFA.DAS.AssessorService.Web.Staff.ViewModels;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {
+    [Authorize]
     public class CertificateAmendController : CertificateBaseController
     {
         public CertificateAmendController(ILogger<CertificateAmendController> logger,

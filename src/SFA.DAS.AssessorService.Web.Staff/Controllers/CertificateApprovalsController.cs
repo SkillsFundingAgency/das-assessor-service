@@ -11,8 +11,8 @@ using AutoMapper;
 using SFA.DAS.AssessorService.Domain.Consts;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
-{
-    [Authorize(Policy = Startup.Policies.OperationsTeamOnly)]
+{  
+    [Authorize]
     public class CertificateApprovalsController : CertificateBaseController
     {
         public CertificateApprovalsController(ILogger<CertificateAmendController> logger,
