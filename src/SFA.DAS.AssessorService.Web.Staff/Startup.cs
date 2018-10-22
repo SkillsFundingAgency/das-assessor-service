@@ -124,41 +124,11 @@ namespace SFA.DAS.AssessorService.Web.Staff
             {
                 options.Wtrealm = ApplicationConfiguration.StaffAuthentication.WtRealm;
                 options.MetadataAddress = ApplicationConfiguration.StaffAuthentication.MetadataAddress;
+                options.TokenValidationParameters.RoleClaimType = Domain.Roles.RoleClaimType;
             }).AddCookie();
-
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy(Policies.OperationsAndCertificationTeam,
-                    policy =>
-                    {
-                        policy.RequireAssertion(context => 
-                            context.User.HasClaim("http://service/service", Roles.AssessmentService) &&
-                            (context.User.HasClaim("http://service/service", Roles.CertificationTeam) ||
-                             context.User.HasClaim("http://service/service", Roles.OperationsTeam)));
-                    });
-                
-                options.AddPolicy(Policies.OperationsTeamOnly,
-                    policy =>
-                    {
-                        policy.RequireAssertion(context =>
-                            context.User.HasClaim("http://service/service", Roles.AssessmentService) &&
-                            context.User.HasClaim("http://service/service", Roles.OperationsTeam));
-                    });
-            });
         }
 
-        public class Roles
-        {
-            public const string AssessmentService = "ASS";
-            public const string CertificationTeam = "EPC";
-            public const string OperationsTeam = "EPO";
-        }
 
-        public class Policies
-        {
-            public const string OperationsAndCertificationTeam = "OperationsAndCertificationTeam";
-            public const string OperationsTeamOnly = "OperationsTeamOnly";
-        }
         
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
