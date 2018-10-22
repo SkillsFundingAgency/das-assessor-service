@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Specflow.Tests.Organisations.Q
             return _restClientResult;
         }
 
-        public RestClientResult SearchOrganisationByUkPrn(int ukprn)
+        public RestClientResult SearchOrganisationByUkPrn(long ukprn)
         {
             _restClientResult.HttpResponseMessage = HttpClient.GetAsync(
                 $"api/v1/organisations/{ukprn}").Result;
