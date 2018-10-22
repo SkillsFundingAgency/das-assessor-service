@@ -10,8 +10,7 @@ using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
-{
-    [Authorize(Policy = Startup.Policies.OperationsTeamOnly)]
+{  
     public class CommentController : Controller
     {
         private readonly ApiClient _apiClient;
