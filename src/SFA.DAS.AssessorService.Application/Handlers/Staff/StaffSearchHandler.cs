@@ -83,7 +83,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
         {
             // Naive decision on what is being searched.
 
-            var regex = new Regex(@"\b(EPA|epa)[0-9]{4}\b");
+            var regex = new Regex(@"\b(?i)(epa)[0-9]{4}\b");
             if (regex.IsMatch(request.SearchQuery))
             {                
                 var sr = await _staffIlrRepository.SearchForLearnerByEpaOrgId(request);
@@ -148,7 +148,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
             foreach (var searchResult in searchResults)
             {
-                var standard = allStandards.SingleOrDefault(s => s.Id == searchResult.StandardCode);
+                var standard = allStandards.SingleOrDefault(s => s.StandardId == searchResult.StandardCode.ToString());
                 if (standard == null)
                 {
                     standard = assessmentOrgsApiClient.GetStandard(searchResult.StandardCode).Result;

@@ -7,9 +7,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
+
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels.Private;
 
@@ -65,7 +66,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
             vm.StandardCodes = GetSelectListItems(standards, filteredStandardCodes);
             if (!string.IsNullOrEmpty(vm.SelectedStandardCode))
             {
-                var selectedStandard = standards.First(q => q.Id == Convert.ToInt32(vm.SelectedStandardCode));
+                var selectedStandard = standards.First(q => q.Id == vm.SelectedStandardCode);
                 vm.Standard = selectedStandard.Title;
                 vm.Level = selectedStandard.Level;
             }
@@ -77,12 +78,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
             return actionResult;
         }
 
-        private IEnumerable<SelectListItem> GetSelectListItems(List<Standard> standards,
+        private IEnumerable<SelectListItem> GetSelectListItems(List<StandardSummary> standards,
             List<string> filteredStandardCodes)
         {
             return standards
-                .Where(a => filteredStandardCodes.Contains(a.Id.ToString()))
-                .Select(q => new SelectListItem { Value = q.Id.ToString(), Text = q.Title.ToString() + " (" + q.Id + ')' })
+                .Where(a => filteredStandardCodes.Contains(a.Id))
+                .Select(q => new SelectListItem { Value = q.Id, Text = q.Title.ToString() + " (" + q.Id + ')' })
                 .ToList()
                 .OrderBy(q => q.Text);
         }
@@ -99,12 +100,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
             return filteredStandardCodes;
         }
 
-        private async Task<IEnumerable<Standard>> GetAllStandards()
+        private async Task<IEnumerable<StandardSummary>> GetAllStandards()
         {
-            var results = await _cacheHelper.RetrieveFromCache<IEnumerable<Standard>>("Standards");
+            var results = await _cacheHelper.RetrieveFromCache<IEnumerable<StandardSummary>>("Standards");
             if (results == null)
             {
-                var standards = await _assessmentOrgsApiClient.GetAllStandards();
+                var standards = await _assessmentOrgsApiClient.GetAllStandardSummaries();
                 await _cacheHelper.SaveToCache("Standards", standards, 1);
 
                 results = standards;

@@ -14,7 +14,7 @@ using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 {
-    public class GetCertificatesHistoryHandler : IRequestHandler<GetCertificateHistoryRequest, PaginatedList<CertificateHistoryResponse>>
+    public class GetCertificatesHistoryHandler : IRequestHandler<GetCertificateHistoryRequest, PaginatedList<CertificateSummaryResponse>>
     {
         private readonly ICertificateRepository _certificateRepository;
         private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             _logger = logger;
         }
 
-        public async Task<PaginatedList<CertificateHistoryResponse>> Handle(GetCertificateHistoryRequest request, CancellationToken cancellationToken)
+        public async Task<PaginatedList<CertificateSummaryResponse>> Handle(GetCertificateHistoryRequest request, CancellationToken cancellationToken)
         {
             const int pageSize = 10;
 
@@ -45,7 +45,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             return certificateHistoryResponses;
         }
 
-        private PaginatedList<CertificateHistoryResponse> MapCertificates(PaginatedList<Certificate> certificates)
+        private PaginatedList<CertificateSummaryResponse> MapCertificates(PaginatedList<Certificate> certificates)
         {
             var trainingProviderName = string.Empty;
             var recordedBy = string.Empty;
@@ -54,6 +54,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                 {
                     var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
                     recordedBy = certificate.CertificateLogs
+                        .OrderByDescending(q => q.EventTime)
                         .FirstOrDefault(certificateLog =>
                             certificateLog.Status == Domain.Consts.CertificateStatus.Submitted)?.Username;
                     try
@@ -78,7 +79,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                             $"Cannot find training provider for ukprn {certificate.Organisation.EndPointAssessorUkprn.Value}");
                     }
 
-                    return new CertificateHistoryResponse
+                    return new CertificateSummaryResponse
                     {
                         CertificateReference = certificate.CertificateReference,
                         Uln = certificate.Uln,
@@ -104,7 +105,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                 });
 
             var responses = certificateResponses.ToList();
-            var paginatedList = new PaginatedList<CertificateHistoryResponse>(responses,
+            var paginatedList = new PaginatedList<CertificateSummaryResponse>(responses,
                     certificates.TotalRecordCount,
                     certificates.PageIndex,
                     certificates.PageSize

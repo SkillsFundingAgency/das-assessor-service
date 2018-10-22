@@ -3,9 +3,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
+using SFA.DAS.Apprenticeships.Api.Types.AssessmentOrgs;
 using SFA.DAS.AssessorService.Application.Handlers.RegisterUpdate;
 using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.RegisterUpdate

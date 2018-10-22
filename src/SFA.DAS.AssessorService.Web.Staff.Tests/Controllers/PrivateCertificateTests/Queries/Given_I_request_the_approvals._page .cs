@@ -1,11 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Web.Staff.Controllers;
-using SFA.DAS.AssessorService.Web.Staff.Controllers.Private;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels.Private;
 
@@ -14,9 +11,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
     public class Given_I_request_the_approvals_page : CertificateQueryBase
     {
         private IActionResult _result;
-        private List<CertificateApprovalViewModel> _viewModelResponse;
+        private CertificateApprovalViewModel _viewModelResponse;
 
-        [SetUp]
+        [OneTimeSetUp]
         public void Arrange()
         {
             MappingStartup.AddMappings();
@@ -30,13 +27,25 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
             _result = certificateApprovalsController.Approvals().GetAwaiter().GetResult();
 
             var result = _result as ViewResult;
-            _viewModelResponse = result.Model as List<CertificateApprovalViewModel>;
+            _viewModelResponse = result.Model as CertificateApprovalViewModel;
         }
 
         [Test]
         public void ThenShouldReturnApprovals()
         {      
-            _viewModelResponse.Count.Should().Be(10);            
+            _viewModelResponse.ApprovedCertificates.Count().Should().Be(3);            
+        }
+
+        [Test]
+        public void ThenShouldReturnRejections()
+        {
+            _viewModelResponse.RejectedCertificates.Count().Should().Be(3);
+        }
+
+        [Test]
+        public void ThenShouldReturnToBeApproveds()
+        {
+            _viewModelResponse.ToBeApprovedCertificates.Count().Should().Be(4);
         }
     }
 }

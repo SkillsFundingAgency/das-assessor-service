@@ -4,9 +4,10 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
 using RichardSzalay.MockHttp;
+using SFA.DAS.Apprenticeships.Api.Types;
+using SFA.DAS.Apprenticeships.Api.Types.AssessmentOrgs;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
 {
@@ -31,35 +32,35 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
             };
 
 
-            var standards = new List<Standard>
+            var standards = new List<StandardSummary>
             {
-                new Standard
+                new StandardSummary
                 {
-                    Id = 91,
+                    Id = "91",
                     Level = 2,
                     Title = "Test Title 1"
                 },
-                new Standard
+                new StandardSummary
                 {
-                    Id = 92,
+                    Id = "92",
                     Level = 3,
                     Title = "Test Title 2"
                 },
-                new Standard
+                new StandardSummary
                 {
-                    Id = 93,
+                    Id = "93",
                     Level = 5,
                     Title = "Test Title 3"
                 },
-                new Standard
+                new StandardSummary
                 {
-                    Id = 94,
+                    Id = "94",
                     Level = 2,
                     Title = "Test Title 4"
                 },
-                new Standard
+                new StandardSummary
                 {
-                    Id = 95,
+                    Id = "95",
                     Level = 2,
                     Title = "Test Title 5"
                 },

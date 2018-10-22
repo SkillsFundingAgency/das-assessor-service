@@ -5,12 +5,13 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.Apprenticeships.Api.Types;
+using SFA.DAS.Apprenticeships.Api.Types.AssessmentOrgs;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Handlers.Search;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
@@ -37,7 +38,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 
             var assessmentOrgsApiClient = new Mock<IAssessmentOrgsApiClient>();
             assessmentOrgsApiClient.Setup(c => c.GetAllStandards())
-                .ReturnsAsync(new List<Standard> { new Standard{Title = "Standard Title", Level = 2}});
+                .ReturnsAsync(new List<Standard> { new Standard { Title = "Standard Title", Level = 2}});
             assessmentOrgsApiClient.Setup(c => c.FindAllStandardsByOrganisationIdAsync("EPA0001"))
                 .ReturnsAsync(new List<StandardOrganisationSummary>(){new StandardOrganisationSummary(){StandardCode = "5"}});
             assessmentOrgsApiClient.Setup(c => c.GetStandard(It.IsAny<int>()))
