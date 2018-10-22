@@ -1,8 +1,14 @@
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apprenticeships.Api.Types;
+using SFA.DAS.AssessorService.Api.Types;
+using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Handlers;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Web.Staff.Services;
@@ -14,7 +20,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
     {
         private Mock<IStandardService> _standardService;
         private SearchStandardsHandler _searchStandardsHandler;
-        private Mock<ILogger<SearchStandardsHandler>> _logger;;
+        private Mock<ILogger<SearchStandardsHandler>> _logger;
         private Mock<ISpecialCharacterCleanserService> _cleanserService;
         private List<StandardSummary> _expectedStandards;
         private StandardSummary _standardSummary1;
@@ -36,91 +42,93 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
                 _standardSummary2
             };
            
+            _cleanserService.Setup(c => c.UnescapeAndRemoveNonAlphanumericCharacters(_standardSummary1.Title)).Returns(_standardSummary1.Title);
+            _cleanserService.Setup(c => c.UnescapeAndRemoveNonAlphanumericCharacters(_standardSummary2.Title)).Returns(_standardSummary2.Title);
+
             _searchStandardsHandler = new SearchStandardsHandler(_standardService.Object,  _logger.Object,_cleanserService.Object);
         }
-/*
+
         [TestCase("A")]
         [TestCase("A ")]
         [TestCase("")]
         [TestCase("A        ")]
         [TestCase("   A  ")]
-        public void SearchAssessmentOrganisationsThrowsBadRequestExceptionIfSearchStringTooShort(string search)
+        public void SearchStandardsThrowsBadRequestExceptionIfSearchStringTooShort(string search)
         {
-            var request = new SearchAssessmentOrganisationsRequest { Searchstring = search };
-            _cleanserService.Setup(c => c.CleanseStringForSpecialCharacters(search.Trim())).Returns(search.Trim());
+            var request = new SearchStandardsRequest { Searchstring = search };
+            _cleanserService.Setup(c => c.UnescapeAndRemoveNonAlphanumericCharacters(search)).Returns(search.Trim());
             Assert.ThrowsAsync<BadRequestException>(() => _searchStandardsHandler.Handle(request, new CancellationToken())); 
         }
 
         [Test]
-        public void SearchAssessmentOrganisationsWithValidOrganisationId()
+        public void SearchStandardsWithValidStandardId()
         {
-            const string searchstring = "epacode";
-            var request = new SearchAssessmentOrganisationsRequest { Searchstring = searchstring };
-            _cleanserService.Setup(c => c.CleanseStringForSpecialCharacters(searchstring)).Returns(searchstring);
-            _searchValidator.Setup(v => v.IsValidEpaOrganisationId(searchstring)).Returns(true);
-            _searchValidator.Setup(v => v.IsValidUkprn(searchstring)).Returns(true);
-            _registerQueryRepository.Setup(r => r.GetAssessmentOrganisationsByOrganisationId(searchstring))
-                .Returns(Task.FromResult(_expectedOrganisationListOfDetails.AsEnumerable()));
-            var organisations = _searchStandardsHandler.Handle(request, new CancellationToken()).Result;
+            var searchstring = _standardSummary1.Id;
+            var request = new SearchStandardsRequest { Searchstring = searchstring };
+            _cleanserService.Setup(c => c.UnescapeAndRemoveNonAlphanumericCharacters(searchstring)).Returns(searchstring);
+        
+            _standardService.Setup(r => r.GetAllStandardSummaries())
+                .Returns(Task.FromResult(_expectedStandards.AsEnumerable()));
+            var standards = _searchStandardsHandler.Handle(request, new CancellationToken()).Result;
 
-            _searchValidator.Verify(v => v.IsValidEpaOrganisationId(searchstring));
-            _searchValidator.Verify(v => v.IsValidUkprn(It.IsAny<string>()),Times.Never);
-            _registerQueryRepository.Verify(r => r.GetAssessmentOrganisationsByOrganisationId(searchstring));
-            organisations.Count.Should().Be(2);
-            organisations.Should().Contain(_assessmentOrganisationDetails1);
-            organisations.Should().Contain(_assessmentOrganisationDetails2);
+            standards.Count.Should().Be(1);
+            standards.Should().Contain(_standardSummary1);
         }
-
+        
         [Test]
-        public void SearchAssessmentOrganisationsWithValidUkprn()
+        public void SearchStandardsWithInvalidStandardId()
         {
-            const string searchstring = "12345678";
-            var request = new SearchAssessmentOrganisationsRequest { Searchstring = searchstring };
-            _cleanserService.Setup(c => c.CleanseStringForSpecialCharacters(searchstring)).Returns(searchstring);
-            _searchValidator.Setup(v => v.IsValidEpaOrganisationId(searchstring)).Returns(false);
-            _searchValidator.Setup(v => v.IsValidUkprn(searchstring)).Returns(true);
-            _registerQueryRepository.Setup(r => r.GetAssessmentOrganisationsByOrganisationId(searchstring))
-                .Returns(Task.FromResult(new List<AssessmentOrganisationSummary>().AsEnumerable()));
-            _registerQueryRepository.Setup(r => r.GetAssessmentOrganisationsByUkprn(searchstring))
-                .Returns(Task.FromResult(_expectedOrganisationListOfDetails.AsEnumerable()));
-            var organisations = _searchStandardsHandler.Handle(request, new CancellationToken()).Result;
+            var searchstring = "99";
+            var request = new SearchStandardsRequest { Searchstring = searchstring };
+            _cleanserService.Setup(c => c.UnescapeAndRemoveNonAlphanumericCharacters(searchstring)).Returns(searchstring);
+        
+            _standardService.Setup(r => r.GetAllStandardSummaries())
+                .Returns(Task.FromResult(_expectedStandards.AsEnumerable()));
+            var standardSummaries = _searchStandardsHandler.Handle(request, new CancellationToken()).Result;
 
-            _searchValidator.Verify(v => v.IsValidEpaOrganisationId(searchstring));
-            _registerQueryRepository.Verify(r => r.GetAssessmentOrganisationsByOrganisationId(searchstring), Times.Never);
-            _searchValidator.Verify(v => v.IsValidUkprn(It.IsAny<string>()));
-            _registerQueryRepository.Verify(r => r.GetAssessmentOrganisationsByUkprn(searchstring));
-
-            organisations.Count.Should().Be(2);
-            organisations.Should().Contain(_assessmentOrganisationDetails1);
-            organisations.Should().Contain(_assessmentOrganisationDetails2);
+            standardSummaries.Count.Should().Be(0);
         }
-
+         
         [Test]
-        public void SearchAssessmentOrganisationsWithGeneralSearchString()
+        public void SearchStandardsWithValidWordSearchReturns2Results()
         {
-            const string searchstring = "12345678";
-            var request = new SearchAssessmentOrganisationsRequest { Searchstring = searchstring };
-            _cleanserService.Setup(c => c.CleanseStringForSpecialCharacters(searchstring)).Returns(searchstring);
-            _searchValidator.Setup(v => v.IsValidEpaOrganisationId(searchstring)).Returns(false);
-            _searchValidator.Setup(v => v.IsValidUkprn(searchstring)).Returns(false);
-            _registerQueryRepository.Setup(r => r.GetAssessmentOrganisationsByOrganisationId(searchstring))
-                .Returns(Task.FromResult(new List<AssessmentOrganisationSummary>().AsEnumerable()));
-            _registerQueryRepository.Setup(r => r.GetAssessmentOrganisationsByUkprn(searchstring))
-                .Returns(Task.FromResult(new List<AssessmentOrganisationSummary>().AsEnumerable()));
-            _registerQueryRepository.Setup(r => r.GetAssessmentOrganisationsByName(searchstring))
-                .Returns(Task.FromResult(_expectedOrganisationListOfDetails.AsEnumerable()));
-            var organisations = _searchStandardsHandler.Handle(request, new CancellationToken()).Result;
+            var searchstring = "Name";
+            var request = new SearchStandardsRequest { Searchstring = searchstring };
+            _cleanserService.Setup(c => c.UnescapeAndRemoveNonAlphanumericCharacters(searchstring)).Returns(searchstring); 
+            _standardService.Setup(r => r.GetAllStandardSummaries())
+                .Returns(Task.FromResult(_expectedStandards.AsEnumerable()));
+            var standardSummaries = _searchStandardsHandler.Handle(request, new CancellationToken()).Result;
 
-            _searchValidator.Verify(v => v.IsValidEpaOrganisationId(searchstring));
-            _registerQueryRepository.Verify(r => r.GetAssessmentOrganisationsByOrganisationId(searchstring), Times.Never);
-            _searchValidator.Verify(v => v.IsValidUkprn(It.IsAny<string>()));
-            _registerQueryRepository.Verify(r => r.GetAssessmentOrganisationsByUkprn(searchstring), Times.Never);
-            _registerQueryRepository.Verify(r => r.GetAssessmentOrganisationsByName(searchstring));
-
-
-            organisations.Count.Should().Be(2);
-            organisations.Should().Contain(_assessmentOrganisationDetails1);
-            organisations.Should().Contain(_assessmentOrganisationDetails2);
+            standardSummaries.Count.Should().Be(2);
+            standardSummaries.Should().Contain(_standardSummary1);
+            standardSummaries.Should().Contain(_standardSummary2);
         }
-    }*/
+        
+        [Test]
+        public void SearchStandardsWithValidWordSearchReturns1Result()
+        {
+            var searchstring = "Name 100";
+            var request = new SearchStandardsRequest { Searchstring = searchstring };
+            _cleanserService.Setup(c => c.UnescapeAndRemoveNonAlphanumericCharacters(searchstring)).Returns(searchstring);       
+            _standardService.Setup(r => r.GetAllStandardSummaries())
+                .Returns(Task.FromResult(_expectedStandards.AsEnumerable()));
+            var standardSummaries = _searchStandardsHandler.Handle(request, new CancellationToken()).Result;
+
+            standardSummaries.Count.Should().Be(1);
+            standardSummaries.Should().Contain(_standardSummary1);
+        }
+        
+        [Test]
+        public void SearchStandardsWithValidWordSearchReturnsZeroResults()
+        {
+            var searchstring = "no match";
+            var request = new SearchStandardsRequest { Searchstring = searchstring };
+            _cleanserService.Setup(c => c.UnescapeAndRemoveNonAlphanumericCharacters(searchstring)).Returns(searchstring);       
+            _standardService.Setup(r => r.GetAllStandardSummaries())
+                .Returns(Task.FromResult(_expectedStandards.AsEnumerable()));
+            var standardSummaries = _searchStandardsHandler.Handle(request, new CancellationToken()).Result;
+
+            standardSummaries.Count.Should().Be(0);
+        }        
+    }
 }
