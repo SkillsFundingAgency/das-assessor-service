@@ -184,7 +184,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 : string.Empty;
         }
 
-
         public string CheckIfEmailAlreadyPresentInOrganisationNotAssociatedWithContact(string email, string contactId)
         {
             if (!Guid.TryParse(contactId, out Guid newContactId))
