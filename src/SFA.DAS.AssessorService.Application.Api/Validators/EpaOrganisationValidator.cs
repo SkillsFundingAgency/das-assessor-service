@@ -207,10 +207,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
 
         public string CheckIfEmailAlreadyPresentInOrganisationNotAssociatedWithContact(string email, string contactId)
         {
-            return Guid.TryParse(contactId, out Guid newContactId) && !_registerRepository
-                       .EmailAlreadyPresentInAnOrganisationNotAssociatedWithContact(email, newContactId).Result
-                ? string.Empty
-                : FormatErrorMessage(EpaOrganisationValidatorMessageName.EmailAlreadyPresentInAnotherOrganisation);
+            if (!Guid.TryParse(contactId, out Guid newContactId))
+                return string.Empty;
+
+            return _registerRepository
+                .EmailAlreadyPresentInAnOrganisationNotAssociatedWithContact(email, newContactId).Result
+                ? FormatErrorMessage(EpaOrganisationValidatorMessageName.EmailAlreadyPresentInAnotherOrganisation)
+                : string.Empty;
         }
 
         public string CheckIfEmailIsPresentAndInSuitableFormat(string email)
