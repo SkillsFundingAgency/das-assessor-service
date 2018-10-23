@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
@@ -13,29 +14,24 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 {
-    public class CreateEpaOrganisationContactHandler : IRequestHandler<CreateEpaOrganisationContactRequest, string>
+    public class UpdateEpaOrganisationContactHandler : IRequestHandler<UpdateEpaOrganisationContactRequest, string>
     {
         private readonly IRegisterRepository _registerRepository;
-        private readonly ILogger<CreateEpaOrganisationContactHandler> _logger;
+        private readonly ILogger<UpdateEpaOrganisationContactHandler> _logger;
         private readonly IEpaOrganisationValidator _validator;
         private readonly ISpecialCharacterCleanserService _cleanser;
-        private readonly IEpaOrganisationIdGenerator _organisationIdGenerator;
 
-        public CreateEpaOrganisationContactHandler(IRegisterRepository registerRepository, IEpaOrganisationValidator validator, ISpecialCharacterCleanserService cleanser, ILogger<CreateEpaOrganisationContactHandler> logger, IEpaOrganisationIdGenerator organisationIdGenerator)
+        public UpdateEpaOrganisationContactHandler(IRegisterRepository registerRepository, IEpaOrganisationValidator validator, ISpecialCharacterCleanserService cleanser, ILogger<UpdateEpaOrganisationContactHandler> logger)
         {
             _registerRepository = registerRepository;
             _validator = validator;
             _cleanser = cleanser;
             _logger = logger;
-            _organisationIdGenerator = organisationIdGenerator;
         }
-
-        public async Task<string> Handle(CreateEpaOrganisationContactRequest request, CancellationToken cancellationToken)
+        public async Task<string> Handle(UpdateEpaOrganisationContactRequest request, CancellationToken cancellationToken)
         {
-
             ProcessRequestFieldsForSpecialCharacters(request);
-
-            var validationResponse = _validator.ValidatorCreateEpaOrganisationContactRequest(request);
+            var validationResponse = _validator.ValidatorUpdateEpaOrganisationContactRequest(request);
 
             if (!validationResponse.IsValid)
             {
@@ -45,41 +41,32 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 {
                     throw new BadRequestException(message);
                 }
-
                 if (validationResponse.Errors.Any(x => x.StatusCode == ValidationStatusCode.AlreadyExists.ToString()))
                 {
                     throw new AlreadyExistsException(message);
                 }
-
                 throw new Exception(message);
             }
-
-            var newUsername = _organisationIdGenerator.GetNextContactUsername();
-            if (newUsername == string.Empty)
-                throw new Exception("A valid organisation Id could not be generated");
-
-            var contact = MapOrganisationContactRequestToContact(request, newUsername);
-            return await _registerRepository.CreateEpaOrganisationContact(contact);
+            var contact = MapOrganisationContactRequestToContact(request);
+            return await _registerRepository.UpdateEpaOrganisationContact(contact);
         }
 
-        private EpaContact MapOrganisationContactRequestToContact(CreateEpaOrganisationContactRequest request, string newUsername)
+        private static EpaContact MapOrganisationContactRequestToContact(UpdateEpaOrganisationContactRequest request)
         {
             return new EpaContact
             {
                 DisplayName = request.DisplayName,
                 Email = request.Email,
-                EndPointAssessorOrganisationId = request.EndPointAssessorOrganisationId,
-                Id = Guid.NewGuid(),
-                PhoneNumber = request.PhoneNumber,
-                Username = newUsername
+                Id = Guid.Parse(request.ContactId),
+                PhoneNumber = request.PhoneNumber
             };
         }
 
-        private void ProcessRequestFieldsForSpecialCharacters(CreateEpaOrganisationContactRequest request)
+        private void ProcessRequestFieldsForSpecialCharacters(UpdateEpaOrganisationContactRequest request)
         {
             request.DisplayName = _cleanser.CleanseStringForSpecialCharacters(request.DisplayName);
             request.Email = _cleanser.CleanseStringForSpecialCharacters(request.Email);
             request.PhoneNumber = _cleanser.CleanseStringForSpecialCharacters(request.PhoneNumber);
-        }    
+        }
     }
 }

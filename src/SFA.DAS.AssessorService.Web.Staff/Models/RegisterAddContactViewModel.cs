@@ -1,8 +1,6 @@
-﻿using MediatR;
-
-namespace SFA.DAS.AssessorService.Api.Types.Models
+namespace SFA.DAS.AssessorService.Web.Staff.Models
 {
-    public class CreateEpaOrganisationContactRequest : IRequest<string>
+    public class RegisterAddContactViewModel
     {
         public string EndPointAssessorOrganisationId { get; set; }
         public string DisplayName { get; set; }

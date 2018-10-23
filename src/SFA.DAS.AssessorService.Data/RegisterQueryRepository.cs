@@ -148,6 +148,26 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
+        public async Task<AssessmentOrganisationContact> GetAssessmentOrganisationContact(Guid contactId)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                var sql =
+                    "SELECT C.Id, C.EndPointAssessorOrganisationId as OrganisationId, C.CreatedAt, C.DeletedAt, " +
+                    "C.DisplayName, C.email, C.Status, C.UpdatedAt, C.Username, C.PhoneNumber, " +
+                    "CASE WHEN PrimaryContact Is NULL THEN 0 ELSE 1 END AS IsPrimaryContact " +
+                    "from contacts C  left outer join Organisations O on " +
+                    "C.Username = O.PrimaryContact AND C.EndPointAssessorOrganisationId = O.EndPointAssessorOrganisationId " +
+                    "where convert(varchar(50),C.Id) = @contactId ";
+
+                var contacts = await connection.QueryAsync<AssessmentOrganisationContact>(sql, new {contactId});
+                return contacts.FirstOrDefault();
+            }
+        }
+
         public async Task<AssessmentOrganisationContact> GetPrimaryOrFirstContact(string organisationId)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
@@ -164,7 +184,9 @@ namespace SFA.DAS.AssessorService.Data
                     "where C.EndPointAssessorOrganisationId = @organisationId " +
                     "order by CASE WHEN PrimaryContact Is NULL THEN 0 ELSE 1 END DESC";
 
-                return await connection.QuerySingleAsync<AssessmentOrganisationContact>(sql, new {organisationId});
+                var contact = await connection.QuerySingleAsync<AssessmentOrganisationContact>(sql, new {organisationId});
+
+                return contact;
             }
         }
 
