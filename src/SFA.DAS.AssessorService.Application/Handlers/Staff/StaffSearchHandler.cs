@@ -33,9 +33,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             IIlrRepository ilrRepository,
             IStaffCertificateRepository staffCertificateRepository,
             ILogger<SearchHandler> logger,
-            IStaffIlrRepository staffIlrRepository, 
+            IStaffIlrRepository staffIlrRepository,
             CacheHelper cacheHelper
-            )
+        )
         {
             _assessmentOrgsApiClient = assessmentOrgsApiClient;
             _ilrRepository = ilrRepository;
@@ -104,27 +104,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 
             if (request.SearchQuery.Length == 10 && long.TryParse(request.SearchQuery, out var uln))
             {
-                if (await _staffCertificateRepository.IsPrivateCertificateForUln(Convert.ToInt64(request.SearchQuery)))
+                var certificates =
+                    (await _staffCertificateRepository.SearchForLearnerByUln(uln, isPrivatelyFunded: true));
+                var ilrs = await _staffIlrRepository.SearchForLearnerByUln(request);
+                var results = certificates.Union(ilrs);
+
+                var sr = new StaffReposSearchResult
                 {
-                    var certificates = (await _staffCertificateRepository.SearchForLearnerByUln(uln, isPrivatelyFunded: true));
-                    var sr = new StaffReposSearchResult
-                    {
-                        TotalCount = certificates.Count(),
-                        PageOfResults = certificates
-                    };
-                    return sr;
-                }
-                else
-                {
-                    // Search string is a long of 10 length so must be a uln.
-                    var sr = new StaffReposSearchResult
-                    {
-                        TotalCount = (await _ilrRepository.SearchForLearnerByUln(uln)).Count(),
-                        PageOfResults = await _staffIlrRepository.SearchForLearnerByUln(request)
-                    };
-                    return sr;    
-                }
-               
+                    TotalCount = results.Count(),
+                    PageOfResults = results
+                };
+                return sr;
             }
 
             if (request.SearchQuery.Length == 8 && long.TryParse(request.SearchQuery, out var certRef))
@@ -155,17 +145,22 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 }
             }
 
-            return new StaffReposSearchResult() {PageOfResults = new List<Ilr>(), TotalCount = 0};
+            return
+                new StaffReposSearchResult()
+                {
+                    PageOfResults = new List<Ilr>(), TotalCount = 0
+                };
         }
 
 
         private List<StaffSearchItems> MatchUpExistingCompletedStandards(List<StaffSearchItems> searchResults)
         {
             _logger.LogInformation("MatchUpExistingCompletedStandards Before Get Certificates for uln from db");
+
             var completedCertificates = _staffCertificateRepository
                 .GetCertificatesFor(searchResults.Select(r => r.Uln).ToArray()).Result;
-            _logger.LogInformation("MatchUpExistingCompletedStandards After Get Certificates for uln from db");
 
+            _logger.LogInformation("MatchUpExistingCompletedStandards After Get Certificates for uln from db");
             foreach (var searchResult in searchResults)
             {
                 var certificate = completedCertificates.SingleOrDefault(s =>
@@ -195,17 +190,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             {
                 var standards = assessmentOrgsApiClient.GetAllStandardSummaries().Result;
                 await _cacheHelper.SaveToCache("AllStandardSummaries", standards, 1);
-
                 results = standards;
             }
-                     
+
             foreach (var searchResult in searchResults)
             {
                 if (searchResult.StandardCode != 0)
                 {
                     var standard =
                         results.SingleOrDefault(s => s.Id == searchResult.StandardCode.ToString());
-
                     searchResult.Standard = standard.Title;
                 }
             }

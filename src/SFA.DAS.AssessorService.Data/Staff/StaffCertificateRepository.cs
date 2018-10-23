@@ -52,7 +52,9 @@ namespace SFA.DAS.AssessorService.Data.Staff
 
         public async Task<IEnumerable<Ilr>> SearchForLearnerByUln(long uln, bool isPrivatelyFunded = false)
         {
-            var cert = await _context.Certificates.FirstOrDefaultAsync(c => c.Uln == uln && c.IsPrivatelyFunded == isPrivatelyFunded);
+            var cert = await _context.Certificates
+                .Include(q => q.Organisation)
+                .FirstOrDefaultAsync(c => c.Uln == uln && c.IsPrivatelyFunded == isPrivatelyFunded);
             IEnumerable<Ilr> results =
                 cert != null
                     ? new List<Ilr> {new Ilr().GetFromCertificate(cert)}
