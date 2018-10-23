@@ -99,6 +99,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(result);
         }
 
+        [HttpGet("assessment-organisations/contacts/{contactId}", Name = "GetContact")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(AssessmentOrganisationContact))]
+        [SwaggerResponse((int)HttpStatusCode.NotFound, null)]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetContact(string contactId)
+        {
+            _logger.LogInformation($@"Get Contact from Id [{contactId}]");
+            var result = await _mediator.Send(new GetContactRequest { ContactId = contactId });
+            if (result == null) return BadRequest();
+            return Ok(result);
+        }
+        
         [HttpHead("assessment-organisations/{organisationId}", Name = "GetAssessmentOrganisationHead")]
         [SwaggerResponse((int)HttpStatusCode.NoContent)]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]

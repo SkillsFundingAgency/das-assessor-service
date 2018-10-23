@@ -1,0 +1,46 @@
+﻿@using SFA.DAS.AssessorService.Web.Staff.Controllers
+@model RegisterViewAndEditContactViewModel
+@{
+    ViewBag.Title = "View Contact";
+    Layout = "_Layout";
+}
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <a asp-action="Index" asp-controller="Register" class="link-back">Return to organisation search</a>
+        
+        <h1>
+            <label class="form-label" for="">
+                <span class="heading-xlarge">View Contact</span>
+            </label>
+        </h1>
+        
+        <div id="organisationWrapper">
+            <div class="form-group">
+                <table>
+                    <tbody>
+                    <tr>
+                        <td><span class="bold-small">Organisation</span></td>
+                        <td><a href="/register/view-organisation/@Model.OrganisationId">@Model.OrganisationName</a></td>
+                    </tr>
+                    <tr>
+                        <td><span class="bold-small">Contact Name</span></td>
+                        <td> @Model.DisplayName</td>
+                    </tr>
+                    <tr>
+                        <td><span class="bold-small">Email</span></td>
+                        <td>@Model.Email</td>
+                    </tr>
+                    <tr>
+                        <td><span class="bold-small">Phone Number</span></td>
+                        <td>@Model.PhoneNumber</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="form-group">
+                <a class="button" href="/register/edit-contact/@Model.ContactId">Edit</a>
+            </div>
+        </div>    
+    </div>
+</div>
