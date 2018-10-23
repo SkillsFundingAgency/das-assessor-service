@@ -5,7 +5,7 @@
 @{ ViewBag.Title = "Staff Dashboard"; }
 
 <div class="grid-row">
-    <div class="column-full" sfa-show-for-policy="@Startup.Policies.OperationsTeamOnly">
+    <div class="column-full">
         <form class="apprentice-approvals-form js-disable-on-submit" type="post" asp-controller="CertificateApprovals" asp-action="Approvals">
             <a class="link-back" asp-controller="Dashboard" asp-action="Index">Back</a>
 
@@ -24,9 +24,7 @@
                         There's a problem
                     </h2>
                     <ul class="error-summary-list">
-                        <li>
-                            <a sfa-validation-for="FirstName"></a>
-                        </li>
+                      
                     </ul>
                 </div>
             }
