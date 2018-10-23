@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using SFA.DAS.Apprenticeships.Api.Types;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
 {
@@ -224,6 +225,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         public async Task<Certificate> PostReprintRequest(StaffCertificateDuplicateRequest staffCertificateDuplicateRequest)
         {
             return await Post<StaffCertificateDuplicateRequest, Certificate>("api/v1/staffcertificatereprint", staffCertificateDuplicateRequest);   
+        }
+
+        public async Task<List<StandardSummary>> SearchStandards(string searchString)
+        {
+            return await Get<List<StandardSummary>>($"/api/ao/assessment-organisations/standards/search/{searchString}");
         }
     }
 }
