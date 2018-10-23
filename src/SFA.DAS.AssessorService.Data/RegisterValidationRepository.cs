@@ -1,3 +1,4 @@
+using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
@@ -104,7 +105,7 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        public async Task<bool> ContactIdIsValid(string contactId)
+        public async Task<bool> ContactIdIsValid(Guid contactId)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
@@ -112,12 +113,12 @@ namespace SFA.DAS.AssessorService.Data
                     await connection.OpenAsync();
                 var sqlToCheckExists =
                     "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Contacts] " +
-                    "WHERE convert(varchar(50),id)  = @contactId";
+                    "WHERE id  = @contactId";
                 return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new {contactId});
             }
         }
 
-        public async Task<bool> ContactIdIsValidForOrganisationId(string contactId, string organisationId)
+        public async Task<bool> ContactIdIsValidForOrganisationId(Guid contactId, string organisationId)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
@@ -125,7 +126,7 @@ namespace SFA.DAS.AssessorService.Data
                     await connection.OpenAsync();
                 var sqlToCheckExists =
                     "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Contacts] " +
-                    "WHERE convert(varchar(50),id)  = @ContactId and EndPointAssessorOrganisationId = @organisationId";
+                    "WHERE id = @ContactId and EndPointAssessorOrganisationId = @organisationId";
                 return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new {contactId, organisationId});
             }
         }
@@ -141,6 +142,32 @@ namespace SFA.DAS.AssessorService.Data
                     "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Contacts] " +
                     "WHERE email  = @email and EndPointAssessorOrganisationId != @organisationId";
                 return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new {email, organisationId});
+            }
+        }
+
+        public async Task<bool> EmailAlreadyPresentInAnOrganisationNotAssociatedWithContact(string email, Guid contactId)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+                const string sqlToCheckExists =
+                    "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Contacts] " +
+                    "WHERE email  = @email and EndPointAssessorOrganisationId != (select EndPointAssessorOrganisationId from contacts where id=@contactId)";
+                return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { email, contactId });
+            }
+        }
+
+        public async Task<bool> ContactExists(Guid contactId)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+                const string sqlToCheckExists =
+                    "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Contacts] " +
+                    "WHERE id  = @contactId";
+                return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { contactId});
             }
         }
     }
