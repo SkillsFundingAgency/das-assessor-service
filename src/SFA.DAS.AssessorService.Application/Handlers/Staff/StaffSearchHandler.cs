@@ -94,7 +94,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
         private async Task<StaffReposSearchResult> Search(StaffSearchRequest request)
         {
             // Naive decision on what is being searched.
-
             var regex = new Regex(@"\b(?i)(epa)[0-9]{4}\b");
             if (regex.IsMatch(request.SearchQuery))
             {
@@ -107,7 +106,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             {
                 if (await _staffCertificateRepository.IsPrivateCertificateForUln(Convert.ToInt64(request.SearchQuery)))
                 {
-                    var certificates = (await _staffCertificateRepository.SearchForLearnerByUln(uln));
+                    var certificates = (await _staffCertificateRepository.SearchForLearnerByUln(uln, isPrivatelyFunded: true));
                     var sr = new StaffReposSearchResult
                     {
                         TotalCount = certificates.Count(),

@@ -37,7 +37,7 @@
                     @foreach (var result in Model.StaffSearchResult.StaffSearchItems.Items)
                     {
                         <tr>
-                            <td><a asp-action="Select" asp-route-stdcode="@result.StandardCode" asp-route-uln="@result.Uln" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.StaffSearchResult.StaffSearchItems.PageIndex">@result.GivenNames @result.FamilyName</a></td>
+                            <td><a asp-action="Select" asp-route-stdcode="@result.StandardCode" asp-route-certificatereference="@result.CertificateReference" asp-route-uln="@result.Uln" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.StaffSearchResult.StaffSearchItems.PageIndex">@result.GivenNames @result.FamilyName</a></td>
                             <td>@result.Uln</td>
                             <td>@result.Standard (@result.StandardCode)</td>
                             <td>@result.CertificateReference</td>

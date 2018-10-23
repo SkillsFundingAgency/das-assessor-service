@@ -23,9 +23,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
         [HttpGet]
         public async Task<IActionResult> Get(int stdCode, 
             long uln,
+            string certificateReference,
             bool allLogs=false)
         {
-            return Ok(await _mediator.Send(new LearnerDetailRequest(stdCode,uln,
+            return Ok(await _mediator.Send(new LearnerDetailRequest(certificateReference,
+                stdCode,
+                uln,
                 allLogs)));
         }
     }

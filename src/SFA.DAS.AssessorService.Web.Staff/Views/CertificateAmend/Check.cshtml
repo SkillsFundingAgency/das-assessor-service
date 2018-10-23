@@ -13,7 +13,7 @@
             var fullName = @Model.GivenNames + " " + @Model.FamilyName;
         }
 
-        <a class="link-back" asp-controller="Search" asp-action="Select" asp-route-stdcode=@Model.StandardCode
+        <a class="link-back" asp-controller="Search" asp-action="Select" asp-route-certificateReference=@Model.CertificateReference asp-route-stdcode=@Model.StandardCode
            asp-route-uln=@Model.Uln asp-route-searchstring=@Model.SearchString>Back</a>
 
         <h1 class="heading-large">Check and submit the assessment details</h1>

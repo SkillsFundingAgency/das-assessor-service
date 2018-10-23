@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Data.Staff
             _context = context;
             _connection = connection;
         }
-        
+
         public async Task<bool> IsPrivateCertificateForUln(long uln)
         {
             var certificate =
@@ -38,13 +38,21 @@ namespace SFA.DAS.AssessorService.Data.Staff
             var certificate =
                 await _context.Certificates
                     .Include(q => q.Organisation)
-                    .FirstOrDefaultAsync(q => q.CertificateReference == certificateReference);
+                    .FirstOrDefaultAsync(q => q.CertificateReference == certificateReference && q.IsPrivatelyFunded);
             return certificate != null && certificate.IsPrivatelyFunded;
         }
 
-        public async Task<IEnumerable<Ilr>> SearchForLearnerByUln(long uln)
+        public async Task<Ilr> GetPrivateCertificate(string certificateReference)
         {
-            var cert = await _context.Certificates.FirstOrDefaultAsync(c => c.Uln == uln);
+            var certificate =
+                await _context.Certificates.FirstAsync(c => c.CertificateReference == certificateReference && c.IsPrivatelyFunded);
+            var ilr = new Ilr().GetFromCertificate(certificate);
+            return ilr;
+        }
+
+        public async Task<IEnumerable<Ilr>> SearchForLearnerByUln(long uln, bool isPrivatelyFunded = false)
+        {
+            var cert = await _context.Certificates.FirstOrDefaultAsync(c => c.Uln == uln && c.IsPrivatelyFunded == isPrivatelyFunded);
             IEnumerable<Ilr> results =
                 cert != null
                     ? new List<Ilr> {new Ilr().GetFromCertificate(cert)}

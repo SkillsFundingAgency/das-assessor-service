@@ -43,14 +43,17 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         }
 
         [HttpGet("select")]
-        public async Task<IActionResult> Select(int stdCode,
+        public async Task<IActionResult> Select(
+            string certificateReference,
+            int stdCode,
             long uln,
             string searchString,
             int page = 1,
             bool allLogs = false,
+         
             int? batchNumber = null)
         {
-            var learner = await _apiClient.GetLearner(stdCode, uln, allLogs);
+            var learner = await _apiClient.GetLearner(certificateReference, stdCode, uln, allLogs);
 
             var vm = new LearnerDetailViewModel
             {
@@ -58,6 +61,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 SearchString = searchString,
                 Page = page,
                 ShowDetail = !allLogs,
+                CertificateReference = certificateReference,
                 BatchNumber = batchNumber
             };
 
@@ -72,6 +76,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         public int Page { get; set; }
         public bool ShowDetail { get; set; }
         public int? BatchNumber { get; set; }
+        public string CertificateReference { get; set; }
     }
 
     public class SearchViewModel

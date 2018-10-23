@@ -25,8 +25,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
         private readonly ILogger<LearnerDetailHandler> _logger;
         private readonly IOrganisationQueryRepository _organisationRepository;
 
-        public LearnerDetailHandler(IIlrRepository ilrRepository, IAssessmentOrgsApiClient apiClient, ICertificateRepository certificateRepository, 
-            IStaffCertificateRepository staffCertificateRepository, ILogger<LearnerDetailHandler> logger, IOrganisationQueryRepository organisationRepository)
+        public LearnerDetailHandler(IIlrRepository ilrRepository, IAssessmentOrgsApiClient apiClient,
+            ICertificateRepository certificateRepository,
+            IStaffCertificateRepository staffCertificateRepository, ILogger<LearnerDetailHandler> logger,
+            IOrganisationQueryRepository organisationRepository)
         {
             _ilrRepository = ilrRepository;
             _apiClient = apiClient;
@@ -35,9 +37,19 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             _logger = logger;
             _organisationRepository = organisationRepository;
         }
+
         public async Task<LearnerDetail> Handle(LearnerDetailRequest request, CancellationToken cancellationToken)
         {
-            var learner = await _ilrRepository.Get(request.Uln, request.StdCode);
+            Ilr learner;
+            if (request.CertificateReference != null && await _staffCertificateRepository.IsPrivateCertificateForCertificateReference(request.CertificateReference))
+            {
+                learner = await _staffCertificateRepository.GetPrivateCertificate(request.CertificateReference);
+            }
+            else
+            {
+                learner = await _ilrRepository.Get(request.Uln, request.StdCode);
+            }
+
             var standard = await _apiClient.GetStandard(learner.StdCode);
             var certificate = await _certificateRepository.GetCertificate(request.Uln, request.StdCode);
 
@@ -52,12 +64,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 {
                     CalculateDifferences(logs);
                 }
-                
+
 
                 certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
                 epao = await _organisationRepository.Get(certificate.OrganisationId);
             }
-            
+
             var learnerDetail = new LearnerDetail()
             {
                 Uln = learner.Uln,
@@ -66,12 +78,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 LearnStartDate = learner.LearnStartDate,
                 StandardCode = learner.StdCode,
                 Standard = standard.Title,
-                CertificateReference = certificate?.CertificateReference, 
-                CertificateStatus = certificate?.Status, 
+                CertificateReference = certificate?.CertificateReference,
+                CertificateStatus = certificate?.Status,
                 Level = standard.Level,
                 OverallGrade = certificateData.OverallGrade,
                 AchievementDate = certificateData.AchievementDate, //?.UtcToTimeZoneTime(),
-                Option = certificateData.CourseOption, 
+                Option = certificateData.CourseOption,
                 OrganisationName = epao.EndPointAssessorName,
                 CertificateLogs = logs,
                 FundingModel = learner.FundingModel,
@@ -99,7 +111,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             }
         }
 
-        private Dictionary<string, string> GetDifference(string thisLogCertificateData, string previousLogCertificateData)
+        private Dictionary<string, string> GetDifference(string thisLogCertificateData,
+            string previousLogCertificateData)
         {
             var differences = new Dictionary<string, string>();
             var thisData = JsonConvert.DeserializeObject<CertificateData>(thisLogCertificateData);
@@ -116,7 +129,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                         thisProperty = result.UtcToTimeZoneTime().ToShortDateString();
                     }
 
-                    differences.Add(propertyInfo.Name.Spaceyfy(), string.IsNullOrEmpty(thisProperty) ? "<Empty>" : thisProperty);
+                    differences.Add(propertyInfo.Name.Spaceyfy(),
+                        string.IsNullOrEmpty(thisProperty) ? "<Empty>" : thisProperty);
                 }
             }
 
