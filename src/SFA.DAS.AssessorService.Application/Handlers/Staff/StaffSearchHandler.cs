@@ -208,7 +208,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                         results.SingleOrDefault(s => s.Id == searchResult.StandardCode.ToString());
 
                     searchResult.Standard = standard.Title;
-                }
+                }0
             }
 
             return searchResults;
