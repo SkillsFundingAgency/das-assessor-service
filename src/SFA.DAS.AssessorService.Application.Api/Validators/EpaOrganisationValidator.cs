@@ -117,6 +117,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
 
         public string CheckSearchStringForStandardsIsValid(string searchstring)
         {
+            if (searchstring == null) searchstring = string.Empty;       
             var isAnInt = int.TryParse(searchstring, out _);
             if (!isAnInt && searchstring.Length < 2)
                 return FormatErrorMessage(EpaOrganisationValidatorMessageName.SearchStandardsTooShort);

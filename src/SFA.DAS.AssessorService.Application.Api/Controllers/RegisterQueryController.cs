@@ -151,7 +151,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(await _mediator.Send(new SearchStandardsRequest {Searchstring = searchstring}));
         }
 
-        [HttpGet("assessment-organisations/standards/search/validate/{searchstring}", Name = "SearchStandardsValidate")]
+        [HttpGet("assessment-organisations/standards/validate/search/{searchstring}", Name = "SearchStandardsValidate")]
+        [Route("assessment-organisations/standards/validate/search")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
         public async Task<IActionResult> SearchStandardsValidate(string searchstring)
         {

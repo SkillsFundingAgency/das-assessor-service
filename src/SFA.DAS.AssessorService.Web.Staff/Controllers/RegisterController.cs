@@ -230,6 +230,41 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             return View(viewModel);
         }
 
+
+        [HttpGet("register/search-standards/{organisationId}")]
+        public async Task<IActionResult> SearchStandards(string organisationId)
+        {
+            var organisation = await _apiClient.GetEpaOrganisation(organisationId);
+            var vm = new SearchStandardsViewModel{OrganisationId = organisationId, OrganisationName = organisation.Name};
+            
+            return View(vm);
+        }
+
+        [HttpGet("register/search-standards-results")]
+        public async Task<IActionResult> SearchStandardsResults(SearchStandardsViewModel vm)
+        {
+            var organisation = await _apiClient.GetEpaOrganisation(vm.OrganisationId);
+            vm.OrganisationName = organisation.Name;
+            if (!ModelState.IsValid)
+            {
+                return View("SearchStandards", vm);
+            }
+
+            var searchstring = vm.StandardSearchString?.Trim();
+            var searchResults = await _apiClient.SearchStandards(searchstring);
+
+            var standardViewModel = new SearchStandardsViewModel
+            {
+                Results = searchResults,
+                StandardSearchString = vm.StandardSearchString,
+                OrganisationId = vm.OrganisationId,
+                OrganisationName = vm.OrganisationName
+            };
+
+            return View(standardViewModel);
+        }
+
+
         private void GatherOrganisationStandards(RegisterViewAndEditOrganisationViewModel viewAndEditModel)
         {
             var organisationStandards = _apiClient.GetEpaOrganisationStandards(viewAndEditModel.OrganisationId).Result;

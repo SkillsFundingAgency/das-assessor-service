@@ -92,6 +92,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task<ValidationResponse> ValidateSearchStandards(string searchstring)
+        {
+            if (string.IsNullOrEmpty(searchstring))
+                searchstring = string.Empty;  
+            using (var request = new HttpRequestMessage(HttpMethod.Get,
+                $"/api/ao/assessment-organisations/standards/validate/search/{searchstring}")) 
+            {
+                return await RequestAndDeserialiseAsync<ValidationResponse>(request,
+                    $"Could not check the validation for standard using [{searchstring}]");
+            }
+        }
+
         public async Task Update(UpdateOrganisationRequest organisationUpdateViewModel)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/organisations/"))
@@ -146,5 +158,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<ValidationResponse> ValidateUpdateContact(string contactId, string displayName, string email);
         Task<ValidationResponse> ValidateUpdateOrganisation(string organisationId, string name, string ukprn, string organisationTypeId);
         Task<ValidationResponse> ValidateCreateContact(string name, string organisationId, string email, string phone);
+
+        Task<ValidationResponse> ValidateSearchStandards(string searchstring);
     }
 }
