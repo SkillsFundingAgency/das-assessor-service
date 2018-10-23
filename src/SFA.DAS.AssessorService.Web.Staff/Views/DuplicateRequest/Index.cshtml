@@ -11,11 +11,11 @@
     <div class="column-two-thirds">
         @if (Model.BackToCheckPage)
         {
-            <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateId="@Model.CertificateId" asp-route-uln=@Model.Uln asp-route-stdcode=@Model.StdCode asp-route-page=@Model.Page asp-route-searchstring=@Model.SearchString>Back</a>
+            <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificatereference=@Model.CertificateReference asp-route-certificateId="@Model.CertificateId" asp-route-uln=@Model.Uln asp-route-stdcode=@Model.StdCode asp-route-page=@Model.Page asp-route-searchstring=@Model.SearchString>Back</a>
         }
         else
         {
-            <a class="link-back" asp-controller="Search" asp-action="Select" asp-route-stdcode="@Model.StdCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.Page">Back</a>
+            <a class="link-back" asp-controller="Search" asp-action="Select" asp-route-certificatereference=@Model.CertificateReference  asp-route-certificateId="@Model.CertificateId"  asp-route-stdcode="@Model.StdCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.Page">Back</a>
         }
 
         <h1 class="heading-large">Re-print certificate</h1>
