@@ -64,14 +64,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
         private void ProcessRequestFieldsForSpecialCharacters(CreateEpaOrganisationRequest request)
         {
-            request.Name = _cleanser.CleanseStringForSpecialCharacters(request.Name?.Trim())?.Trim();           
-            request.LegalName = _cleanser.CleanseStringForSpecialCharacters(request.LegalName?.Trim())?.Trim();
-            request.WebsiteLink = _cleanser.CleanseStringForSpecialCharacters(request.WebsiteLink?.Trim())?.Trim();
-            request.Address1 = _cleanser.CleanseStringForSpecialCharacters(request.Address1?.Trim())?.Trim();
-            request.Address2 = _cleanser.CleanseStringForSpecialCharacters(request.Address2?.Trim())?.Trim();
-            request.Address3 = _cleanser.CleanseStringForSpecialCharacters(request.Address3?.Trim())?.Trim();
-            request.Address4 = _cleanser.CleanseStringForSpecialCharacters(request.Address4?.Trim());
-            request.Postcode = _cleanser.CleanseStringForSpecialCharacters(request.Postcode?.Trim());
+            request.Name = _cleanser.CleanseStringForSpecialCharacters(request.Name);           
+            request.LegalName = _cleanser.CleanseStringForSpecialCharacters(request.LegalName);
+            request.WebsiteLink = _cleanser.CleanseStringForSpecialCharacters(request.WebsiteLink);
+            request.Address1 = _cleanser.CleanseStringForSpecialCharacters(request.Address1);
+            request.Address2 = _cleanser.CleanseStringForSpecialCharacters(request.Address2);
+            request.Address3 = _cleanser.CleanseStringForSpecialCharacters(request.Address3);
+            request.Address4 = _cleanser.CleanseStringForSpecialCharacters(request.Address4);
+            request.Postcode = _cleanser.CleanseStringForSpecialCharacters(request.Postcode);
         }
 
         private static EpaOrganisation MapOrganisationRequestToOrganisation(CreateEpaOrganisationRequest request, string newOrganisationId)

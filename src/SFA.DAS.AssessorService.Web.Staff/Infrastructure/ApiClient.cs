@@ -14,6 +14,7 @@ using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.Web.Staff.Models;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -108,11 +109,26 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         {
             return await Get<List<OrganisationType>>($"/api/ao/organisation-types");
         }
-
+        
 
         public async Task<EpaOrganisation> GetEpaOrganisation(string organisationId)
         {
             return await Get<EpaOrganisation>($"api/ao/assessment-organisations/{organisationId}");
+        }
+        
+        public async Task<AssessmentOrganisationContact> GetEpaCntact(string contactId)
+        {
+            return await Get<AssessmentOrganisationContact>($"api/ao/assessment-organisations/contacts/{contactId}");
+        }
+        
+        public async Task<List<ContactResponse>> GetEpaOrganisationContacts(string organisationId)
+        {
+            return await Get<List<ContactResponse>>($"api/v1/contacts/{organisationId}");
+        }
+
+        public async Task<List<OrganisationStandardSummary>> GetEpaOrganisationStandards(string organisationId)
+        {
+            return await Get<List<OrganisationStandardSummary>>($"/api/ao/assessment-organisations/{organisationId}/standards");
         }
 
         public async Task<string> CreateEpaOrganisation(CreateEpaOrganisationRequest request)
@@ -121,6 +137,24 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             return result.Details;
         }
 
+        public async Task<string> UpdateEpaOrganisation(UpdateEpaOrganisationRequest request)
+        {
+            var result = await Put<UpdateEpaOrganisationRequest, EpaOrganisationResponse>("api/ao/assessment-organisations", request);
+            return result.Details;
+        }
+
+        public async Task<string> CreateEpaContact(CreateEpaOrganisationContactRequest request)
+        {
+            var result = await Post<CreateEpaOrganisationContactRequest, EpaOrganisationContactResponse>("api/ao/assessment-organisations/contacts", request);
+            return result.Details;
+        }
+
+        public async Task<string> UpdateEpaContact(UpdateEpaOrganisationContactRequest request)
+        {
+            var result = await Put<UpdateEpaOrganisationContactRequest, EpaOrganisationContactResponse>("api/ao/assessment-organisations/contacts", request);
+            return result.Details;
+        }
+        
         public async Task<PaginatedList<StaffBatchSearchResult>> BatchSearch(int batchNumber, int page)
         {
             return await Get<PaginatedList<StaffBatchSearchResult>>($"/api/v1/staffsearch/batch?batchNumber={batchNumber}&page={page}");
