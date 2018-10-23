@@ -127,5 +127,24 @@ namespace SFA.DAS.AssessorService.Data
                 return contact.Id.ToString();
             }
         }
+
+        public async Task<string> UpdateEpaOrganisationContact(EpaContact contact)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+
+                connection.Execute(
+                    "UPDATE [Contacts] SET [DisplayName] = @displayName, [Email] = @email, " +
+                    "[PhoneNumber] = @phoneNumber, [updatedAt] = getUtcDate() " +
+                    "WHERE [Id] = @Id ",
+                    new { contact.DisplayName, contact.Email, contact.PhoneNumber, contact.Id});
+
+
+                return contact.Id.ToString();
+            }
+        }
     }
 }

@@ -11,7 +11,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
         public string Username { get; set; }
         public string DisplayName { get; set; }
         public string Email { get; set; }
-
         public string Status { get; set; }
         public string PhoneNumber { get; set; }
     }

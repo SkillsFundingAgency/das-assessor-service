@@ -18,15 +18,18 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         string CheckIfOrganisationStandardAlreadyExists(string organisationId, int standardCode);
         string CheckOrganisationNameNotUsed(string name);
         string CheckOrganisationNameNotUsedForOtherOrganisations(string name, string organisationIdToIgnore);
+        string CheckContactIdExists(string contactId);
 
         string CheckIfContactIdIsEmptyOrValid(string contactId, string organisationId);
         string CheckIfOrganisationStandardDoesNotExist(string organisationId, int standardCode);
         string CheckDisplayName(string displayName);
         string CheckIfEmailIsPresentAndInSuitableFormat(string email);
         string CheckIfEmailAlreadyPresentInAnotherOrganisation(string email, string organisationId);
+        string CheckIfEmailAlreadyPresentInOrganisationNotAssociatedWithContact(string email, string contactId);
 
         ValidationResponse ValidatorCreateEpaOrganisationRequest(CreateEpaOrganisationRequest request);
         ValidationResponse ValidatorCreateEpaOrganisationContactRequest(CreateEpaOrganisationContactRequest request);
+        ValidationResponse ValidatorUpdateEpaOrganisationContactRequest(UpdateEpaOrganisationContactRequest request);
         ValidationResponse ValidatorUpdateEpaOrganisationRequest(UpdateEpaOrganisationRequest request);
     }
 }

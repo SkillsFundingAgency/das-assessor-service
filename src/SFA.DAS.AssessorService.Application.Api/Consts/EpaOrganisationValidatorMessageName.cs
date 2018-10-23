@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace SFA.DAS.AssessorService.Application.Api.Consts
+﻿namespace SFA.DAS.AssessorService.Application.Api.Consts
 {
     public class EpaOrganisationValidatorMessageName
     {
@@ -25,6 +20,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Consts
         public const string EmailAlreadyPresentInAnotherOrganisation = "EmailAlreadyPresentInAnotherOrganisation";
         public const string DisplayNameTooShort = "DisplayNameTooShort";
         public const string DisplayNameIsMissing = "DisplayNameIsMissing";
+        public const string ContactIdDoesntExist = "ContactIdDoesntExist";
         public const string EmailIsIncorrectFormat = "EmailIsIncorrectFormat";
+        public const string ErrorMessageOrganisationNameAlreadyPresent = "ErrorMessageOrganisationNameAlreadyPresent";
     }
 }

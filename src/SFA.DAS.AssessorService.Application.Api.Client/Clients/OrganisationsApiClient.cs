@@ -57,12 +57,38 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task<ValidationResponse> ValidateUpdateContact(string contactId, string displayName, string email)
+        {
+            var newName = SanitizeUrlParam(displayName);
+            var newEmail = SanitizeUrlParam(email);
+            using (var request = new HttpRequestMessage(HttpMethod.Get,
+                $"/api/ao/assessment-organisations/contacts/validate-existing?displayName={newName}&email={newEmail}&contactId={contactId}"))
+            {
+                return await RequestAndDeserialiseAsync<ValidationResponse>(request,
+                    $"Could not check the validation for contact [{newName}] against contactId [{contactId}]");
+            }
+        }
+        
         public async Task<ValidationResponse> ValidateUpdateOrganisation(string organisationId, string name, string ukprn, string organisationTypeId)
         {
             var newName = SanitizeUrlParam(name);
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/ao/assessment-organisations/validate-existing?organisationId={organisationId}&name={newName}&ukprn={ukprn}&organisationTypeId={organisationTypeId}"))
             {
                 return await RequestAndDeserialiseAsync<ValidationResponse>(request, $"Could not check the validation for existing organisation [{organisationId}]");
+            }
+        }
+        
+        public async Task<ValidationResponse> ValidateCreateContact(string name, string organisationId,
+            string email, string phone)
+        {
+
+            var newName = SanitizeUrlParam(name);
+            var newEmail = SanitizeUrlParam(email);
+            using (var request = new HttpRequestMessage(HttpMethod.Get,
+                $"/api/ao/assessment-organisations/contacts/validate-new?name={newName}&organisationId={organisationId}&email={email}&phone={phone}"))
+            {
+                return await RequestAndDeserialiseAsync<ValidationResponse>(request,
+                    $"Could not check the validation for contact [{name}] against organisation [{organisationId}]");
             }
         }
 
@@ -117,6 +143,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task Update(UpdateOrganisationRequest organisationUpdateViewModel);
         Task Delete(Guid id);
         Task<ValidationResponse> ValidateCreateOrganisation(string name, string ukprn, string organisationTypeId);
+        Task<ValidationResponse> ValidateUpdateContact(string contactId, string displayName, string email);
         Task<ValidationResponse> ValidateUpdateOrganisation(string organisationId, string name, string ukprn, string organisationTypeId);
+        Task<ValidationResponse> ValidateCreateContact(string name, string organisationId, string email, string phone);
     }
 }
