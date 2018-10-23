@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Localization;
 using Moq;
@@ -56,8 +57,20 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
                 .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationStandardDoesNotExist, "fail"));
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.EmailIsIncorrectFormat])
                 .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.EmailIsIncorrectFormat, "fail"));
+            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.ErrorMessageOrganisationNameAlreadyPresent])
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.ErrorMessageOrganisationNameAlreadyPresent, "fail")); 
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.EmailIsMissing])
                 .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.EmailIsIncorrectFormat, "fail")); 
+            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.ContactIdDoesntExist])
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.ContactIdDoesntExist, "fail")); 
+            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.DisplayNameIsMissing])
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.DisplayNameIsMissing, "DisplayNameIsMissing")); 
+            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.DisplayNameTooShort])
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.DisplayNameTooShort, "DisplayNameTooShort"));
+            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.EmailIsMissing])
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.EmailIsMissing, "fail"));
+            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.EmailAlreadyPresentInAnotherOrganisation])
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.EmailAlreadyPresentInAnotherOrganisation, "fail"));            
         }
 
         [TestCase("EPA000", true)]
@@ -81,7 +94,17 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
             var noMessageReturned = _validator.CheckOrganisationName(name).Length == 0;
             Assert.AreEqual(isAcceptable, noMessageReturned);
         }
-
+        
+        [TestCase("name", true)]
+        [TestCase("    ", false)]
+        [TestCase("", false)]
+        [TestCase(null, false)]
+        public void CheckEmailIsMissingReturnsExpectedMessage(string name, bool isAcceptable)
+        {
+            var noMessageReturned = _validator.CheckIfEmailIsMissing(name).Length == 0;
+            Assert.AreEqual(isAcceptable, noMessageReturned);
+        }
+        
         [TestCase(null, true)]
         [TestCase(10000000, true)]
         [TestCase(99999999, true)]
@@ -92,14 +115,37 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
             var noMessageReturned = _validator.CheckUkprnIsValid(ukprn).Length == 0;
             Assert.AreEqual(isValid, noMessageReturned);
         }
+        
+        [TestCase("name", true, "")]
+        [TestCase("    ", false, "DisplayNameIsMissing; ")]
+        [TestCase("", false, "DisplayNameIsMissing; ")]
+        [TestCase(null, false,"DisplayNameIsMissing; ")]
+        [TestCase("a", false,  "DisplayNameTooShort; ")]
+        [TestCase("  a  ", false,  "DisplayNameTooShort; ")]
+        public void CheckDisplayNameReturnsExpectedMessage(string name, bool isAcceptable, string messageExpected)
+        {
+            var messageReturned = _validator.CheckDisplayName(name);
+            Assert.AreEqual(messageExpected, messageReturned);
+            
+        }
 
         [TestCase(false, false)]
         [TestCase(true, true)]
         public void CheckIfOrganisationIdAlreadyUsedReturnExpectedMessage(bool alreadyPresent, bool messageShown)
         {
-            _registerRepository.Setup(r => r.EpaOrganisationExistsWithOrganisationId(It.IsAny<string>()))
+            _registerRepository.Setup(r => r.EpaOrganisationAlreadyUsingName(It.IsAny<string>(),string.Empty))
                 .Returns(Task.FromResult(alreadyPresent));
-            var noMessageReturned = _validator.CheckIfOrganisationAlreadyExists("id here").Length > 0;
+            var noMessageReturned = _validator.CheckOrganisationNameNotUsed("id here").Length > 0;
+            Assert.AreEqual(noMessageReturned, alreadyPresent);
+        }
+        
+        [TestCase(false, false)]
+        [TestCase(true, true)]
+        public void CheckIfOrganisationIdAlreadyUsedByOtherOrganisationsReturnExpectedMessage(bool alreadyPresent, bool messageShown)
+        {
+            _registerRepository.Setup(r => r.EpaOrganisationAlreadyUsingName(It.IsAny<string>(),It.IsAny<string>()))
+                .Returns(Task.FromResult(alreadyPresent));
+            var noMessageReturned = _validator.CheckOrganisationNameNotUsedForOtherOrganisations("id here","other org Id").Length > 0;
             Assert.AreEqual(noMessageReturned, alreadyPresent);
         }
 
@@ -116,6 +162,16 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         [TestCase(false, false)]
         [TestCase(true, true)]
         public void CheckIfUkprnAlreadyUsedReturnExpectedMessage(bool alreadyPresent, bool messageShown)
+        {
+            _registerRepository.Setup(r => r.EpaOrganisationExistsWithUkprn(It.IsAny<long>()))
+                .Returns(Task.FromResult(alreadyPresent));
+            var messageReturned = _validator.CheckIfOrganisationUkprnExists(1234).Length > 0;
+            Assert.AreEqual(messageReturned, alreadyPresent);
+        }
+        
+        [TestCase(false, false)]
+        [TestCase(true, true)]
+        public void CheckIfContactExistsReturnExpectedMessage(bool alreadyPresent, bool messageShown)
         {
             _registerRepository.Setup(r => r.EpaOrganisationExistsWithUkprn(It.IsAny<long>()))
                 .Returns(Task.FromResult(alreadyPresent));
@@ -236,22 +292,63 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
             Assert.AreEqual(noMessageReturned, exists);
             _registerRepository.Verify(r => r.EpaOrganisationStandardExists(It.IsAny<string>(), It.IsAny<int>()), Times.Once);
         }
+        
+        [TestCase(false, false)]
+        [TestCase(true, true)]
+        public void CheckIfEmailAlreadyExistsAgainstOtherOrganisationReturnsAnErrorMessage(bool exists, bool noMessageReturned)
+        {
+            _registerRepository.Setup(r => r.EmailAlreadyPresentInAnotherOrganisation(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(exists));
+            var isMessageReturned =
+                _validator.CheckIfEmailAlreadyPresentInAnotherOrganisation("email", "orgId").Length > 0;
+            Assert.AreEqual(noMessageReturned, exists);
+            _registerRepository.Verify(r => r.EmailAlreadyPresentInAnotherOrganisation(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+        }
+        
+        [TestCase(false, false)]
+        [TestCase(true, true)]
+        public void CheckIfEmailAlreadyExistsAgainstOtherOrganisationNotAssociatedWithContactIdReturnsAnErrorMessage(bool exists, bool noMessageReturned)
+        {
+            _registerRepository.Setup(r => r.EmailAlreadyPresentInAnOrganisationNotAssociatedWithContact(It.IsAny<string>(), It.IsAny<Guid>()))
+                .Returns(Task.FromResult(exists));
+            var isMessageReturned =
+                _validator.CheckIfEmailAlreadyPresentInOrganisationNotAssociatedWithContact("email", Guid.NewGuid().ToString()).Length > 0;
+            Assert.AreEqual(noMessageReturned, exists);
+            _registerRepository.Verify(r => r.EmailAlreadyPresentInAnOrganisationNotAssociatedWithContact(It.IsAny<string>(), It.IsAny<Guid>()), Times.Once);
+        }
+        
 
-
+        [TestCase("", false, false)]
+        [TestCase(null,false,false)]
+        [TestCase("02741b43-acfd-45c6-a9d6-780ebe5df65c", true, true)]
+        public void CheckIfContactIdExistsReturnsAnErrorMessage(string contactId, bool repositoryCheckResult, bool noMessageReturned)
+        {
+            _registerRepository.Setup(r => r.ContactExists(It.IsAny<Guid>()))
+                .Returns(Task.FromResult(repositoryCheckResult));
+            var isMessageReturned =
+                _validator.CheckContactIdExists(contactId).Length > 0;
+            Assert.AreEqual(noMessageReturned, !isMessageReturned);
+            if (repositoryCheckResult == false)
+                _registerRepository.Verify(r => r.ContactExists(It.IsAny<Guid>()), Times.Never);
+            else
+                _registerRepository.Verify(r => r.ContactExists(It.IsAny<Guid>()), Times.Once);
+        }
+        
+        
         [TestCase("", "",false, true)]
         [TestCase(null,"",false,true)]
-        [TestCase("valid contact id", "valid org Id", true, true)]
+        [TestCase("3151f01c-ba75-4123-965e-ff1e5f128514", "valid org Id", true, true)]
         public void CheckIfOrganisationStandardHasValidContactIdReturnsAnErrorMessage(string contactId, string organisationId, bool repositoryCheckResult, bool noMessageReturned)
         {
-            _registerRepository.Setup(r => r.ContactIdIsValidForOrganisationId(It.IsAny<string>(), It.IsAny<string>()))
+            _registerRepository.Setup(r => r.ContactIdIsValidForOrganisationId(It.IsAny<Guid>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(repositoryCheckResult));
             var isMessageReturned =
                 _validator.CheckIfContactIdIsEmptyOrValid(contactId, organisationId).Length > 0;
             Assert.AreEqual(noMessageReturned, !isMessageReturned);
             if (repositoryCheckResult == false)
-                _registerRepository.Verify(r => r.ContactIdIsValidForOrganisationId(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+                _registerRepository.Verify(r => r.ContactIdIsValidForOrganisationId(It.IsAny<Guid>(), It.IsAny<string>()), Times.Never);
             else
-                _registerRepository.Verify(r => r.ContactIdIsValidForOrganisationId(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+                _registerRepository.Verify(r => r.ContactIdIsValidForOrganisationId(It.IsAny<Guid>(), It.IsAny<string>()), Times.Once);
         }
 
         [Test]
