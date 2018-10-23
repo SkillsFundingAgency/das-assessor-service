@@ -1,28 +1,32 @@
 @model IEnumerable<SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateDetailApprovalViewModel>
 
-<table class="table table-font-xsmall">
+<table class="table responsive table-font-xsmall">
     <thead>
-    <tr>
-        <th>Apprentice</th>
-        <th>ULN</th>
-        <th>Employer</th>
-        <th>Training Provider</th>
-        <th>Date Requested</th>
-        <th>Approve/Reject</th>
-    </tr>
+        <tr>
+            <th>Apprentice</th>
+            <th>ULN</th>
+            <th>Employer</th>
+            <th>Training Provider</th>
+            <th>Date Requested</th>
+            <th>Status</th>
+        </tr>
     </thead>
     <tbody>
-
-    @{
-        var results = Model.ToList();
-        var approvalresults = ViewData["ApprovalResults"] as SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateDetailApprovalViewModel[];
-    }
-    @for (int i = 0; i < results.Count; i++)
-    {
-        var j = (int) ViewData["Increment"] + i;
+        @{
+            var results = Model.ToList();
+            var approvalresults = ViewData["ApprovalResults"] as SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateDetailApprovalViewModel[];
+        }
+        @for (int i = 0; i < results.Count; i++)
+        {
+            var j = (int) ViewData["Increment"] + i;
 
         <tr>
-            <td>@results[i].FullName</td>
+            <td>
+                <div role="button" tabindex="0" class="js-expand-table-row expand-table-row" data-uln="@results[i].Uln">
+                    <i class="arrow arrow-closed">►</i>
+                    <span>@results[i].FullName</span>
+                </div>
+            </td>
             <td>@results[i].Uln</td>
             <td>@results[i].ContactOrganisation</td>
             <td>@results[i].TrainingProvider</td>
@@ -31,8 +35,11 @@
                 @{
                     approvalresults[j].IsApproved = results[i].IsApproved;
                 }
-                <select asp-for=@approvalresults[j].IsApproved
-                        asp-items="@(new SelectList(@results[i].ApprovedRejected, "Value", "Text"))">
+                <select 
+                    asp-for=@approvalresults[j].IsApproved
+                    asp-items="@(new SelectList(@results[i].ApprovedRejected, "Value", "Text"))"
+                    class="form-control form-control--full form-control--small"
+                >
                 </select>
             </td>
         </tr>
@@ -43,13 +50,10 @@
 
         @Html.HiddenFor(x => @approvalresults[j].CertificateReference)
 
-//        note for Greg include this back needs java script to provide for accrodion here.
-@*         <tr class="js-history-details-expandble js-hidden history-details-expandble" aria-hidden="true"> *@
-        
-            <tr>
-            <td colspan="5">
-                <div class="history-details-content">
-                    <h2 class="heading-medium history-details-content--first-heading">Assessment details</h2>
+        <tr class="js-expandble-cell js-hidden expandble-cell" aria-hidden="true">
+            <td colspan="6">
+                <div class="expandble-cell-content">
+                    <h2 class="heading-medium expandble-cell-content--first-heading">Assessment details</h2>
                     <ul>
                         <li>
                             <p>
@@ -98,7 +102,7 @@
 
                     <h2 class="heading-medium">Postage details: </h2>
                     <p>
-                        The certificate was posted to this address.
+                        The certificate was posted to this address:
                     </p>
                     <ul>
                         <li>

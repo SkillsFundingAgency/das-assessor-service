@@ -18,12 +18,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Automapper.CustomResolvers
                 new SelectListItem {Text = "Please Select", Value = "ToBeApproved"},
                 new SelectListItem
                 {
-                    Text = "Approve",
+                    Text = "Approved",
                     Value = "Approved"
                 },
                 new SelectListItem
                 {
-                    Text = "Reject",
+                    Text = "Rejected",
                     Value = "Rejected"
                 }
             };
