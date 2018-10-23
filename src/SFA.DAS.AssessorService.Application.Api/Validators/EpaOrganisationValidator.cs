@@ -25,8 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         private readonly IRegisterValidationRepository _registerRepository;
         private readonly IStringLocalizer<EpaOrganisationValidator> _localizer;
         private readonly ISpecialCharacterCleanserService _cleanserService;
-        public string ErrorMessageOrganisationNameAlreadyPresent { get; } = "There is already an organisation present with this name; ";
-
+       
         public EpaOrganisationValidator( IRegisterValidationRepository registerRepository, ISpecialCharacterCleanserService cleanserService, IStringLocalizer<EpaOrganisationValidator> localizer) 
         {
             _registerRepository = registerRepository;
@@ -86,14 +85,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         public string CheckOrganisationNameNotUsed(string name)
         {
             return _registerRepository.EpaOrganisationAlreadyUsingName(name, string.Empty).Result 
-                ? ErrorMessageOrganisationNameAlreadyPresent : 
+                ? FormatErrorMessage(EpaOrganisationValidatorMessageName.ErrorMessageOrganisationNameAlreadyPresent) : 
                 string.Empty;
         }
 
         public string CheckOrganisationNameNotUsedForOtherOrganisations(string name, string organisationIdToIgnore)
         {
             return _registerRepository.EpaOrganisationAlreadyUsingName(name, organisationIdToIgnore).Result 
-                ? ErrorMessageOrganisationNameAlreadyPresent : 
+                ? FormatErrorMessage(EpaOrganisationValidatorMessageName.ErrorMessageOrganisationNameAlreadyPresent) : 
                 string.Empty;
         }
 
@@ -143,8 +142,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         {
             if (string.IsNullOrEmpty(contactId)) return string.Empty;
 
-            return _registerRepository.ContactIdIsValidForOrganisationId(contactId, organisationId).Result
-                ?string.Empty 
+            return Guid.TryParse(contactId, out Guid newContactId) && _registerRepository.ContactIdIsValidForOrganisationId(newContactId, organisationId).Result
+                ? string.Empty 
                 : FormatErrorMessage(EpaOrganisationValidatorMessageName.ContactIdInvalidForOrganisationId);
         }
 
@@ -159,7 +158,24 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 : string.Empty;
         }
 
-       
+        public string CheckIfEmailIsMissing(string emailName)
+        {
+            return string.IsNullOrEmpty(emailName?.Trim())
+                ? FormatErrorMessage(EpaOrganisationValidatorMessageName.EmailIsMissing)
+                : string.Empty;
+        }
+
+
+        public string CheckContactIdExists(string contactId)
+        {
+
+            if (!Guid.TryParse(contactId, out Guid newContactId))
+                return FormatErrorMessage(EpaOrganisationValidatorMessageName.ContactIdDoesntExist);
+            
+            return _registerRepository.ContactExists(newContactId).Result
+                ? string.Empty
+                : FormatErrorMessage(EpaOrganisationValidatorMessageName.ContactIdDoesntExist);
+        }
 
         public string CheckIfEmailAlreadyPresentInAnotherOrganisation(string email, string organisationId)
         {
@@ -168,12 +184,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 : string.Empty;
         }
 
-//        public string CheckIfEmailIsMissing(string emailName)
-//        {
-//            return string.IsNullOrEmpty(emailName?.Trim())
-//                ? FormatErrorMessage(EpaOrganisationValidatorMessageName.EmailIsMissing)
-//                : string.Empty;
-//        }
+
+        public string CheckIfEmailAlreadyPresentInOrganisationNotAssociatedWithContact(string email, string contactId)
+        {
+            if (!Guid.TryParse(contactId, out Guid newContactId))
+                return string.Empty;
+
+            return _registerRepository
+                .EmailAlreadyPresentInAnOrganisationNotAssociatedWithContact(email, newContactId).Result
+                ? FormatErrorMessage(EpaOrganisationValidatorMessageName.EmailAlreadyPresentInAnotherOrganisation)
+                : string.Empty;
+        }
 
         public string CheckIfEmailIsPresentAndInSuitableFormat(string email)
         {
@@ -200,9 +221,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             RunValidationCheckAndAppendAnyError("EndPointAssessorOrganisationId", CheckIfOrganisationNotFound(request.EndPointAssessorOrganisationId), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("DisplayName", CheckDisplayName(request.DisplayName), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("Email", CheckIfEmailIsPresentAndInSuitableFormat(request.Email), validationResult, ValidationStatusCode.BadRequest);
-
             RunValidationCheckAndAppendAnyError("Email", CheckIfEmailAlreadyPresentInAnotherOrganisation(request.Email, request.EndPointAssessorOrganisationId), validationResult, ValidationStatusCode.AlreadyExists);
+            return validationResult;
+        }
 
+        public ValidationResponse ValidatorUpdateEpaOrganisationContactRequest(UpdateEpaOrganisationContactRequest request)
+        {
+            var validationResult = new ValidationResponse();
+
+            RunValidationCheckAndAppendAnyError("ContactId", CheckContactIdExists(request.ContactId), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("DisplayName", CheckDisplayName(request.DisplayName), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("Email", CheckIfEmailIsPresentAndInSuitableFormat(request.Email), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("Email", CheckIfEmailAlreadyPresentInOrganisationNotAssociatedWithContact(request.Email, request.ContactId), validationResult, ValidationStatusCode.AlreadyExists);
             return validationResult;
         }
 
@@ -210,11 +240,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         {
             return $"{_localizer[messageName].Value}; ";
         }
+        
         private void RunValidationCheckAndAppendAnyError(string fieldName, string errorMessage, ValidationResponse validationResult, ValidationStatusCode statusCode)
         {
             if (errorMessage != string.Empty)
                 validationResult.Errors.Add(new ValidationErrorDetail(fieldName, errorMessage.Replace("; ", ""), statusCode));
         }
+
         public ValidationResponse ValidatorUpdateEpaOrganisationRequest(UpdateEpaOrganisationRequest request)
         {
             var validationResult = new ValidationResponse();

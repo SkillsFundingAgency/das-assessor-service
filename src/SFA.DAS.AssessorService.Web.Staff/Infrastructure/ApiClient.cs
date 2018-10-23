@@ -115,7 +115,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         {
             return await Get<EpaOrganisation>($"api/ao/assessment-organisations/{organisationId}");
         }
-
+        
+        public async Task<AssessmentOrganisationContact> GetEpaCntact(string contactId)
+        {
+            return await Get<AssessmentOrganisationContact>($"api/ao/assessment-organisations/contacts/{contactId}");
+        }
+        
         public async Task<List<ContactResponse>> GetEpaOrganisationContacts(string organisationId)
         {
             return await Get<List<ContactResponse>>($"api/v1/contacts/{organisationId}");
@@ -138,6 +143,18 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             return result.Details;
         }
 
+        public async Task<string> CreateEpaContact(CreateEpaOrganisationContactRequest request)
+        {
+            var result = await Post<CreateEpaOrganisationContactRequest, EpaOrganisationContactResponse>("api/ao/assessment-organisations/contacts", request);
+            return result.Details;
+        }
+
+        public async Task<string> UpdateEpaContact(UpdateEpaOrganisationContactRequest request)
+        {
+            var result = await Put<UpdateEpaOrganisationContactRequest, EpaOrganisationContactResponse>("api/ao/assessment-organisations/contacts", request);
+            return result.Details;
+        }
+        
         public async Task<PaginatedList<StaffBatchSearchResult>> BatchSearch(int batchNumber, int page)
         {
             return await Get<PaginatedList<StaffBatchSearchResult>>($"/api/v1/staffsearch/batch?batchNumber={batchNumber}&page={page}");
