@@ -119,40 +119,46 @@
         <div class="column-full">
             <h2 class="heading-large">History</h2>
             <div class="form-group">
-                <table class="table js-history-table" style="display:block;overflow:auto">
+                <table class="table table-font-xsmall js-history-table responsive">
                     <thead>
                         <tr>
                             <th>Date and time</th>
                             <th>Action</th>
-                            <th>By</th>
-                            <th>Email</th>
+                            <th>User</th>
                             <th>Status</th>
                             <th>Batch</th>
-                            <th>Reason</th>
+                            <th>Change</th>
+                            <th class="force-wide-column">Reason for change</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var log in Model.Learner.CertificateLogs)
                         {
                             <tr>
-                                <td>@log.EventTime.UtcToTimeZoneTime()</td>
-                                <td>@log.Action</td>
-                                <td>@log.ActionBy</td>
-                                <td>@log.ActionByEmail</td>
-                                <td>@log.Status</td>
-                                <td>@log.BatchNumber</td>
-                                <td>@log.ReasonForChange</td>
-                                <td>
+                                <td data-label="Date and time">@log.EventTime.UtcToTimeZoneTime()</td>
+                                <td data-label="Action">@log.Action</td>
+                                <td data-label="By">
+                                    @log.ActionBy<br />
+                                    @log.ActionByEmail
+                                </td>
+                                <td data-label="Status">@log.Status</td>
+                                <td data-label="Batch">@log.BatchNumber</td>
+                                <td data-label="Change">
                                     @{
                                         if (Model.Learner.CertificateLogs.Count() > 1)
                                         {
                                             foreach (var change in log.DifferencesToPrevious)
                                             {
-                                                <span class="bold">@(change.Key)<text>:</text></span>
-                                                @change.Value<br />
+                                                <p>
+                                                    <span class="bold">@(change.Key)<text>:</text></span>
+                                                    @change.Value
+                                                </p>
                                             }
                                         }
                                     }
+                                </td>
+                                <td data-label="Reason for change">
+                                    @log.ReasonForChange
                                 </td>
                             </tr>
                         }

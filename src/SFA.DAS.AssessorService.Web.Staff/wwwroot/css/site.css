@@ -910,3 +910,7 @@ table.responsive tr.total {
     width: 70%;
   }
 }
+
+.force-wide-column {
+  min-width: 150px;
+}
