@@ -24,6 +24,7 @@ namespace SFA.DAS.AssessorService.PrintFunction.Tests
         [TestCase("Oscar de la Hoya", "Oscar de la Hoya")]
         [TestCase("abram aramot", "Abram Aramot")]
         [TestCase("Abram ARAMOT", "Abram ARAMOT")]
+        [TestCase("JAMES OSMITH'", "James Osmith'")]
         public void ThenLearnerNameCasesAreStandardised(string inputName, string expected)
         {
             var worksheet = GenerateWorksheet(new List<CertificateResponse>()
