@@ -114,7 +114,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
 
             return string.Empty;
         }
-        
+
+        public string CheckSearchStringForStandardsIsValid(string searchstring)
+        {
+            var isAnInt = int.TryParse(searchstring, out _);
+            if (!isAnInt && searchstring.Length < 2)
+                return FormatErrorMessage(EpaOrganisationValidatorMessageName.SearchStandardsTooShort);
+
+            return string.Empty;
+        }
+
         public string CheckIfOrganisationUkprnExistsForOtherOrganisations(long? ukprn, string organisationIdToIgnore)
         {
         if (ukprn == null || !_registerRepository.EpaOrganisationAlreadyUsingUkprn(ukprn.Value, organisationIdToIgnore).Result) return string.Empty;
@@ -311,6 +320,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             RunValidationCheckAndAppendAnyError("Ukprn", CheckUkprnIsValid(request.Ukprn), validationResult, ValidationStatusCode.BadRequest);
 
             return validationResult;
+        }
+
+        public ValidationResponse ValidatorSearchStandardsRequest(SearchStandardsValidationRequest request)
+        {
+            var validationResult = new ValidationResponse();
+            RunValidationCheckAndAppendAnyError("StandardSearchString", CheckSearchStringForStandardsIsValid(request.Searchstring), validationResult, ValidationStatusCode.BadRequest);
+            return validationResult;
+
         }
     }
 }

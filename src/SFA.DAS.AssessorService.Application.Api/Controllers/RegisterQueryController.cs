@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using MediatR;
@@ -10,6 +11,8 @@ using SFA.DAS.AssessmentOrgs.Api.Client.Core.Types;
 using SFA.DAS.AssessorService.Api.Types;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Exceptions;
@@ -147,6 +150,25 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _logger.LogInformation($@"Search Standards for [{searchstring}]");
             return Ok(await _mediator.Send(new SearchStandardsRequest {Searchstring = searchstring}));
         }
+
+        [HttpGet("assessment-organisations/standards/search/validate/{searchstring}", Name = "SearchStandardsValidate")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
+        public async Task<IActionResult> SearchStandardsValidate(string searchstring)
+        {
+            try
+            {
+                var request = new SearchStandardsValidationRequest { Searchstring = searchstring };
+                _logger.LogInformation("Validation search standards");
+                var result = await _mediator.Send(request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($@"Bad request, Message: [{ex.Message}]");
+                return BadRequest(ex);
+            }
+        }
+
     }
 }
 
