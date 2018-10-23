@@ -1,0 +1,80 @@
+@using SFA.DAS.AssessorService.Web.Staff.Controllers
+@model RegisterViewAndEditContactViewModel
+@{
+    ViewBag.Title = "Edit Contact";
+    Layout = "_Layout";
+}
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <a asp-action="Index" asp-controller="Register" class="link-back">Return to Register Search</a>
+        <form class="register-search-form" asp-action="EditContact" asp-controller="Register" method="POST">
+
+            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                    There's a problem
+                </h2>
+
+                <ul class="js-error-summary-list error-summary-list"></ul>
+            </div>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                        There's a problem
+                    </h2>
+                    <ul class="error-summary-list">
+                        <li><a sfa-validation-for="DisplayName"></a></li>
+                        <li><a sfa-validation-for="Email"></a></li>
+                        <li><a sfa-validation-for="PhoneNumber"></a></li>
+                        <li><a sfa-validation-for="ContactId"></a></li>
+                    </ul>
+                </div>
+            }
+
+            <h1>
+                <label class="form-label" for="">
+                    <span class="heading-xlarge">Edit Contact</span>
+                    @Html.HiddenFor(c => c.ContactId)
+                </label>
+            </h1>
+
+            <div id="organisationWrapper">
+                <div class="form-group" sfa-validation-for="OrganisationName" sfa-validationerror-class="form-group-error">
+                    <label for="OrganisationName">
+                        <span class="form-label-bold">Organisation Name</span>
+                        @Model.OrganisationName
+                    </label>
+                </div>
+                <div class="form-group" sfa-validation-for="DisplayName" sfa-validationerror-class="form-group-error">
+                    <label for="DisplayName">
+                        <span class="form-label-bold">Display Name</span>
+                        <span class="error-message" asp-validation-for="DisplayName"></span>
+                    </label>
+                    <input class="form-control" name="DisplayName" sfa-validation-for="DisplayName" sfa-validationerror-class="form-control-error" asp-for="DisplayName" type="text"  maxlength="120" />
+                </div>
+                <div class="form-group" sfa-validation-for="Email" sfa-validationerror-class="form-group-error">
+                    <label for="Email">
+                        <span class="form-label-bold">Email</span>
+                        <span class="error-message" asp-validation-for="Email"></span>
+                    </label>
+                    <input class="form-control" name="Email" sfa-validation-for="Email" sfa-validationerror-class="form-control-error" asp-for="Email" type="text" maxlength="120" />
+                </div>
+                <div class="form-group" sfa-validation-for="PhoneNumber" sfa-validationerror-class="form-group-error">
+                    <label for="PhoneNumber">
+                        <span class="form-label-bold">Phone Number</span>
+                        <span class="error-message" asp-validation-for="PhoneNumber"></span>
+                    </label>
+                    <input class="form-control" name="PhoneNumber" sfa-validation-for="PhoneNumber" sfa-validationerror-class="form-control-error" asp-for="PhoneNumber" type="text" />
+                </div>        
+                <div class="form-group">
+                    <button class="button" type="submit">Save</button>
+                </div>
+                <div class="form-group">
+                    <a class="button" href="/register/view-contact/@Model.ContactId">Cancel</a>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
