@@ -1,0 +1,68 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model SFA.DAS.AssessorService.Web.ViewModels.Search.SelectedStandardViewModel
+
+@{
+    ViewBag.Title = Model.CertificateReference == null ? "Confirm this is the correct apprentice" : "An assessment has already been recorded against this apprentice";
+    Layout = "_Layout";
+}
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <a class="link-back" asp-controller="Search" asp-action="ChooseStandard">Back</a>
+     
+        <h1 class="heading-large">An assessment has already been recorded against this apprentice</h1>
+        <ul class="list">
+            <li>
+                <p>
+                    <span class="bold">Name:</span> @Model.GivenNames @Model.FamilyName</p>
+            </li>
+            <li>
+                <p>
+                    <span class="bold"><abbr title="Unique learner number">ULN</abbr>:</span> @Model.Uln</p>
+            </li>
+            <li>
+                <p>
+                    <span class="bold">Standard:</span> @Model.Standard</p>
+            </li>
+            <li>
+                <p>
+                    <span class="bold">Level:</span> @Model.Level</p>
+            </li>
+
+            @if (Model.ShowExtraInfo)
+            {
+                <li>
+                    <p>
+                        <span class="bold">Certificate number:</span> @Model.CertificateReference</p>
+                </li>
+                <li>
+                    <p>
+                        <span class="bold">Learner start date:</span> @Model.LearnerStartDate</p>
+                </li>
+                <li>
+                    <p>
+                        <span class="bold">Achievement Date:</span> @Model.AchievementDate</p>
+                </li>
+                <li>
+                    <p>
+                        <span class="bold">Grade:</span> @Model.OverallGrade</p>
+                </li>
+                <li>
+                    <p>
+                        <span class="bold">Recorded by:</span> @Model.SubmittedBy</p>
+                </li>
+                <li>
+                    <p>
+                        <span class="bold">Date recorded:</span> @Model.SubmittedAt</p>
+                </li>
+            }
+
+        </ul>
+
+        <p>
+            <a asp-controller="Search" asp-action="Index">Search again</a>
+        </p>
+        }
+    </div>
+</div>

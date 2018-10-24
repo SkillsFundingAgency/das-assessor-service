@@ -9,6 +9,7 @@ using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private;
+using CertificateStatus = SFA.DAS.AssessorService.Domain.Consts.CertificateStatus;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -24,7 +25,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly ISessionService _sessionService;
 
         public CertificateController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor,
-            ICertificateApiClient certificateApiClient, 
+            ICertificateApiClient certificateApiClient,
             IOrganisationsApiClient organisationsApiClient,
             ISessionService sessionService)
         {
@@ -56,7 +57,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             var organisation = await _organisationsApiClient.Get(ukprn);
 
-            var options = (await _certificateApiClient.GetOptions(cert.StandardCode)).Select(o => o.OptionName).ToList();
+            var options = (await _certificateApiClient.GetOptions(cert.StandardCode)).Select(o => o.OptionName)
+                .ToList();
 
             _sessionService.Set("CertificateSession", new CertificateSession()
             {
@@ -94,10 +96,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 Username = username,
                 EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId
             });
-       
+
             _sessionService.Set("EndPointAsessorOrganisationId", organisation.EndPointAssessorOrganisationId);
-           
-           _sessionService.Set("CertificateSession", new CertificateSession()
+
+            _sessionService.Set("CertificateSession", new CertificateSession()
             {
                 CertificateId = certificate.Id,
                 Uln = certificateStartPrivateViewModel.Uln

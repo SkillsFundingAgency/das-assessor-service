@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 RejectedCertificates = Mapper.Map<List<CertificateDetailApprovalViewModel>>(certificates
                     .Where(q => q.Status == CertificateStatus.Rejected)),
                 SentForApproval = Mapper.Map<List<CertificateDetailApprovalViewModel>>(certificates
-                .Where(q => q.Status == CertificateStatus.SentForApproval))
+                    .Where(q => q.Status == CertificateStatus.SentForApproval))
             };
 
             return View(certificatesToBeApproved);
