@@ -128,7 +128,7 @@
                             <th>Status</th>
                             <th>Batch</th>
                             <th>Change</th>
-                            <th class="force-wide-column">Reason for change</th>
+                            <!-- <th class="force-wide-column">Reason for change</th> -->
                         </tr>
                     </thead>
                     <tbody>
@@ -154,11 +154,23 @@
                                                     @change.Value
                                                 </p>
                                             }
+                                            if (log.ReasonForChange != null)
+                                            {
+                                                <div role="button" tabindex="0" class="js-expand-table-row expand-table-row" data-expand-id="@log.EventTime.Ticks">
+                                                    <i class="arrow arrow-closed">►</i>
+                                                    <span>Show reason for change</span>
+                                                </div>
+                                            }
                                         }
                                     }
                                 </td>
-                                <td data-label="Reason for change">
-                                    @log.ReasonForChange
+                            </tr>
+                            <tr class="js-expandble-cell js-hidden expandble-cell" aria-hidden="true">
+                                <td data-label="Reason for change" colspan="6">
+                                    <div class="expandble-cell-content">
+                                        <h3 class="heading-small expandble-cell-content--first-heading">Reason for change</h3>
+                                        @log.ReasonForChange
+                                    </div>
                                 </td>
                             </tr>
                         }

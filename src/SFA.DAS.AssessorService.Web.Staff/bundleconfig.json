@@ -13,6 +13,7 @@
       "wwwroot/js/details.polyfill.js",
       "wwwroot/js/shim-links-with-button-role.js",
       "wwwroot/js/show-hide-content.js",
+      "wwwroot/js/expandable-table.js",
       "wwwroot/js/site.js"
     ],
     // Optionally specify minification options
