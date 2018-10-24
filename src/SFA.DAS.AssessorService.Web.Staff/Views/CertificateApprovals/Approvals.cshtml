@@ -37,7 +37,7 @@
                 </h1>
                                             
                 @{
-                    var count = Model.ToBeApprovedCertificates.Count() + Model.ApprovedCertificates.Count() + Model.RejectedCertificates.Count();
+                    var count = Model.ToBeApprovedCertificates.Count() + Model.ApprovedCertificates.Count() + Model.RejectedCertificates.Count() + Model.SentForApproval.Count();
                     var approvalResults = 
                         new SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateDetailApprovalViewModel[count];
                     for (int i = 0; i < count; i++)
@@ -78,7 +78,22 @@
                     await Html.RenderPartialAsync("_ApprovalsDetailsPartial", @Model.RejectedCertificates,
                         new ViewDataDictionary(ViewData)
                         {
-                            {"Increment", Model.ToBeApprovedCertificates.Count() + @Model.ApprovedCertificates.Count()},
+                            {"Increment", Model.ToBeApprovedCertificates.Count() + Model.ApprovedCertificates.Count()},
+                            {"ApprovalResults",approvalResults}
+                        });
+                }
+                
+                
+                <h1 class="heading-large">
+                    Sent For Approval Certificates?
+                </h1>
+
+                @if (@Model.SentForApproval.Any())
+                {
+                    await Html.RenderPartialAsync("_ApprovalsDetailsPartial", @Model.SentForApproval,
+                        new ViewDataDictionary(ViewData)
+                        {
+                            {"Increment", Model.ToBeApprovedCertificates.Count() + Model.ApprovedCertificates.Count() + Model.RejectedCertificates.Count()},
                             {"ApprovalResults",approvalResults}
                         });
                 }

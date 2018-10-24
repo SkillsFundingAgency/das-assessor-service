@@ -370,24 +370,25 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task ApproveCertificates(List<ApprovalResult> approvalResults, string userName)
         {
-            var certificateReferences =
-                approvalResults.Select(q => q.CertificateReference).ToList();
+           
+                var certificateReferences =
+                    approvalResults.Select(q => q.CertificateReference).ToList();
 
-            var certificates =
-                _context.Certificates.Where(q => certificateReferences.Contains(q.CertificateReference));
+                var certificates =
+                    _context.Certificates.Where(q => certificateReferences.Contains(q.CertificateReference));
 
-            foreach (var approvalResult in approvalResults)
-            {
-                var certificate =
-                    await certificates.FirstAsync(
-                        q => q.CertificateReference == approvalResult.CertificateReference);
+                foreach (var approvalResult in approvalResults)
+                {
+                    var certificate =
+                        await certificates.FirstAsync(
+                            q => q.CertificateReference == approvalResult.CertificateReference);
 
-                certificate.Status = approvalResult.IsApproved;
+                    certificate.Status = approvalResult.IsApproved;
 
-                UpdateCertificateLog(certificate, CertificateActions.Status, userName);
-            }
+                    UpdateCertificateLog(certificate, certificate.Status, userName);
+                }
 
-            await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();                       
         }
 
         private bool CheckLastName(string data, string lastName)

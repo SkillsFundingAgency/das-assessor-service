@@ -35,10 +35,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             CancellationToken cancellationToken)
         {
             var statuses = new List<string>
-            {
-                "ToBeApproved",
-                "Approved",
-                "Rejected"
+            {                
+                Domain.Consts.CertificateStatus.ToBeApproved,
+                Domain.Consts.CertificateStatus.Approved,
+                Domain.Consts.CertificateStatus.Rejected,
+                Domain.Consts.CertificateStatus.SentForApproval
             };
 
             var certificates = await _certificateRepository.GetCertificates(statuses);
@@ -67,12 +68,20 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                     {
                         if (certificateData.ProviderName == null)
                         {
-                            var provider = _assessmentOrgsApiClient
-                                .GetProvider(certificate.ProviderUkPrn).GetAwaiter()
-                                .GetResult();
+                            if (certificate.ProviderUkPrn == 0)
+                            {
+                                _logger.LogInformation(
+                                    $"Cannot find training provider for ukprn {certificate.Organisation.EndPointAssessorUkprn.Value}");                                
+                            }
+                            else
+                            {
+                                var provider = _assessmentOrgsApiClient
+                                    .GetProvider(certificate.ProviderUkPrn).GetAwaiter()
+                                    .GetResult();
 
-                            trainingProviderName = provider.ProviderName;
-                            _certificateRepository.UpdateProviderName(certificate.Id, trainingProviderName);
+                                trainingProviderName = provider.ProviderName;
+                                _certificateRepository.UpdateProviderName(certificate.Id, trainingProviderName);
+                            }
                         }
                         else
                         {
