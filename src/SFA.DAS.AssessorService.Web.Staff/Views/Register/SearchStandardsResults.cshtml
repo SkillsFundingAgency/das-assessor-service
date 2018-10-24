@@ -1,4 +1,5 @@
-﻿@model SFA.DAS.AssessorService.Web.Staff.Models.SearchStandardsViewModel
+﻿@using SFA.DAS.AssessorService.Domain.Extensions
+@model SFA.DAS.AssessorService.Web.Staff.Models.SearchStandardsViewModel
 
 @{
     ViewBag.Title = "Search results";
@@ -39,9 +40,9 @@
                             <tr>
                                 <td data-label="Name">@result.Title</td>
                                 <td data-label="ID">@result.Id</td>
-                                <td data-label="EffectiveFrom">@result.EffectiveFrom</td>
-                                <td data-label="EffectiveTo">@result.EffectiveTo</td>
-                                <td data-label="LastDateForNewStarts">@result.LastDateForNewStarts</td>
+                                <td data-label="EffectiveFrom">@result.EffectiveFrom.ToSfaShortestDateString()</td>
+                                <td data-label="EffectiveTo">@result.EffectiveTo.ToSfaShortestDateString()</td>
+                                <td data-label="LastDateForNewStarts">@result.LastDateForNewStarts.ToSfaShortestDateString()</td>
                                 <td><a href="">Add To Organisation</a></td>
                             </tr>
                         }
