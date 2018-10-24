@@ -3,9 +3,9 @@ using Moq;
 using RichardSzalay.MockHttp;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
 
-namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests
+namespace SFA.DAS.AssessorService.PrintFunction.Tests.AssessorServiceApi
 {
-    public class AssesssorServiceTestBase
+    public class AssessorServiceTestBase
     {
         protected Mock<IAggregateLogger> AggregateLogger;
         protected MockHttpMessageHandler MockHttp;
