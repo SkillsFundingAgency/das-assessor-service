@@ -53,7 +53,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             return isAnInt 
                 ? allStandards.Where(x => x.Id == searchstring).ToList() 
                 : allStandards.Where(x => 
-                    _cleanser.UnescapeAndRemoveNonAlphanumericCharacters(x.Title).Contains(searchstring)).ToList();
+                    _cleanser.UnescapeAndRemoveNonAlphanumericCharacters(x.Title.ToLower()).Contains(searchstring.ToLower())).ToList();
         }
     }
 }

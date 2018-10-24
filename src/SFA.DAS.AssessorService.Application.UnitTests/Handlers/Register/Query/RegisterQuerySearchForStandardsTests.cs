@@ -40,8 +40,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             _cleanserService = new Mock<ISpecialCharacterCleanserService>();
             _logger = new Mock<ILogger<SearchStandardsHandler>>();
             _validator = new Mock<IEpaOrganisationValidator>();
-            _standardSummary1 = new StandardSummary { Id = "1", Title = "Name 100" };
-            _standardSummary2 = new StandardSummary { Id = "2", Title = "Name 10" };
+            _standardSummary1 = new StandardSummary { Id = "1", Title = "name 100" };
+            _standardSummary2 = new StandardSummary { Id = "2", Title = "name 10" };
             errorResponse = BuildErrorResponse(errorMessage, ValidationStatusCode.BadRequest);
             _validator.Setup(v => v.ValidatorSearchStandardsRequest(It.IsAny<SearchStandardsValidationRequest>())).Returns(new ValidationResponse());
 
