@@ -42,6 +42,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 return await RequestAndDeserialiseAsync<Certificate>(httpRequest, "Could not get Certificate");
             }
         }
+        
+        public async Task<Certificate> GetCertificate(int ukprn, long uln, string lastName, string endPointAssessorOrganisationId)
+        {
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/certificates/private?ukprn={ukprn}&uln={uln}&lastName={lastName}&endPointAssessorOrganisationId={endPointAssessorOrganisationId}"))
+            {
+                return await RequestAndDeserialiseAsync<Certificate>(httpRequest, "Could not get Certificate");
+            }
+        }
 
         public async Task<Certificate> UpdateCertificate(UpdateCertificateRequest certificateRequest)
         {

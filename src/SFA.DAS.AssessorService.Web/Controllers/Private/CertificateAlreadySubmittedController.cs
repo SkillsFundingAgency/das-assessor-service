@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -28,16 +29,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
         }
 
         [HttpGet]
-        public IActionResult Index(Guid id)
+        public async Task<IActionResult> Index(Guid id)
         {
-            var certificate = _certificateApiClient.GetCertificate(id).GetAwaiter().GetResult();
+            var certificate = await _certificateApiClient.GetCertificate(id);
             var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 //            var submittedAt = certificate.CertificateLogs.FirstOrDefault(q => q.Status == CertificateStatus.Submitted).EventTime;
-//            var standard = _assessmentOrgsApiClient.st``(certificate.StandardCode);
+            var standard = await _assessmentOrgsApiClient.GetStandard(certificate.StandardCode);
             
             var selectedStandardViewModel = new SelectedStandardViewModel()
             {
-//                Standard = standard.
+                Standard = standard.Title,
                 StdCode = certificate.StandardCode.ToString(),
                 Uln = certificate.Uln.ToString(),
                 GivenNames = certificateData.LearnerGivenNames,

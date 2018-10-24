@@ -93,5 +93,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             return Ok(await _mediator.Send(new GetToBeApprovedCertificatesRequest()));
         }
+        
+        [HttpGet("private", Name = "GetPrivateCertificatePrivateByUlnRequest")]
+        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(PaginatedList<CertificateSummaryResponse>))]
+        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetPrivateCertificatePrivateByUlnRequest(GetPrivateCertificatePrivateByUlnRequest getPrivateCertificatePrivateByUlnRequest)
+        {
+            return Ok(await _mediator.Send(getPrivateCertificatePrivateByUlnRequest));
+        }                        
     }
 }
