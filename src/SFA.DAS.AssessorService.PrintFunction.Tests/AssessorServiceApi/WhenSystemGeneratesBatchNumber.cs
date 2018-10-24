@@ -5,9 +5,9 @@ using NUnit.Framework;
 using RichardSzalay.MockHttp;
 using SFA.DAS.AssessorService.Api.Types.Models;
 
-namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests.AssessorServiceApi
+namespace SFA.DAS.AssessorService.PrintFunction.Tests.AssessorServiceApi
 {
-    public class WhenSystemProcessesCoverLetter : AssesssorServiceTestBase
+    public class WhenSystemProcessesCoverLetter : AssessorServiceTestBase
     {
         private BatchLogResponse _result;
         private BatchLogResponse _expected;
