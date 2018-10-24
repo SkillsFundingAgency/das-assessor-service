@@ -31,8 +31,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.App
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.ExternalApis", "SFA.DAS.AssessorService.ExternalApis\SFA.DAS.AssessorService.ExternalApis.csproj", "{F2954FF3-69CA-4C61-995A-59BCC4E94839}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.Application.Api.Specflow.Tests", "SFA.DAS.AssessorService.Application.Api.Specflow.Tests\SFA.DAS.AssessorService.Application.Api.Specflow.Tests.csproj", "{7AC422A2-0183-4D77-AA10-B55198A69F35}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Azure", "Azure", "{F85262CD-4210-4352-B691-30F40D99B4D2}"
 	ProjectSection(SolutionItems) = preProject
 		..\azure\parameters.json = ..\azure\parameters.json
@@ -54,15 +52,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Api
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "SFA.DAS.AssessorService.Database", "SFA.DAS.AssessorService.Database\SFA.DAS.AssessorService.Database.sqlproj", "{BA3B0BA5-07CB-4BCF-A504-96127F500A39}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Specflow", "Specflow", "{5DC896DC-AB7E-4018-BB8C-F0757E9B309F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.Web.Specflow.Tests", "SFA.DAS.AssessorService.Web.Specflow.Tests\SFA.DAS.AssessorService.Web.Specflow.Tests.csproj", "{E76F24FB-FDBF-4139-BBC7-B87FBC1453C2}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Data.UnitTests", "SFA.DAS.AssessorService.Data.UnitTests\SFA.DAS.AssessorService.Data.UnitTests.csproj", "{C6966220-9CF5-41CA-92CD-DF428AD66AB5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.EpaoImporter", "SFA.DAS.AssessorService.EpaoImporter\SFA.DAS.AssessorService.EpaoImporter.csproj", "{6901B04C-FEA8-4BAB-87CF-1FF871B7C497}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests", "SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests\SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests.csproj", "{830676C3-27E8-46A1-9624-1A733502911E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.NLog.Targets.Redis", "SFA.DAS.AssessorService.NLog.Targets.Redis\SFA.DAS.AssessorService.NLog.Targets.Redis.csproj", "{93FFBB83-E16E-4F7E-93F8-446175CCF965}"
 EndProject
@@ -77,6 +69,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Application.Api.External.UnitTests", "SFA.DAS.AssessorService.Application.Api.External.UnitTests\SFA.DAS.AssessorService.Application.Api.External.UnitTests.csproj", "{F3C414DE-DF53-480A-A1A4-CA1A1E48E10E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Web.Extensions", "SFA.DAS.AssessorService.Web.Extensions\SFA.DAS.AssessorService.Web.Extensions.csproj", "{33F5D8D1-8C5C-4863-A049-E165C1167B2B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.PrintFunction.Tests", "SFA.DAS.AssessorService.PrintFunction.Tests\SFA.DAS.AssessorService.PrintFunction.Tests.csproj", "{55020A23-70EB-42D3-B7FB-E1156DF6D810}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -132,10 +126,6 @@ Global
 		{F2954FF3-69CA-4C61-995A-59BCC4E94839}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F2954FF3-69CA-4C61-995A-59BCC4E94839}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F2954FF3-69CA-4C61-995A-59BCC4E94839}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7AC422A2-0183-4D77-AA10-B55198A69F35}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7AC422A2-0183-4D77-AA10-B55198A69F35}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7AC422A2-0183-4D77-AA10-B55198A69F35}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7AC422A2-0183-4D77-AA10-B55198A69F35}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C6D53D77-B520-426F-B5D5-00AEDC0FE4E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C6D53D77-B520-426F-B5D5-00AEDC0FE4E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C6D53D77-B520-426F-B5D5-00AEDC0FE4E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -146,10 +136,6 @@ Global
 		{BA3B0BA5-07CB-4BCF-A504-96127F500A39}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BA3B0BA5-07CB-4BCF-A504-96127F500A39}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BA3B0BA5-07CB-4BCF-A504-96127F500A39}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{E76F24FB-FDBF-4139-BBC7-B87FBC1453C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E76F24FB-FDBF-4139-BBC7-B87FBC1453C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E76F24FB-FDBF-4139-BBC7-B87FBC1453C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E76F24FB-FDBF-4139-BBC7-B87FBC1453C2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C6966220-9CF5-41CA-92CD-DF428AD66AB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C6966220-9CF5-41CA-92CD-DF428AD66AB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C6966220-9CF5-41CA-92CD-DF428AD66AB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -158,10 +144,6 @@ Global
 		{6901B04C-FEA8-4BAB-87CF-1FF871B7C497}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6901B04C-FEA8-4BAB-87CF-1FF871B7C497}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6901B04C-FEA8-4BAB-87CF-1FF871B7C497}.Release|Any CPU.Build.0 = Release|Any CPU
-		{830676C3-27E8-46A1-9624-1A733502911E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{830676C3-27E8-46A1-9624-1A733502911E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{830676C3-27E8-46A1-9624-1A733502911E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{830676C3-27E8-46A1-9624-1A733502911E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{93FFBB83-E16E-4F7E-93F8-446175CCF965}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{93FFBB83-E16E-4F7E-93F8-446175CCF965}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{93FFBB83-E16E-4F7E-93F8-446175CCF965}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -190,6 +172,10 @@ Global
 		{33F5D8D1-8C5C-4863-A049-E165C1167B2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{33F5D8D1-8C5C-4863-A049-E165C1167B2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{33F5D8D1-8C5C-4863-A049-E165C1167B2B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55020A23-70EB-42D3-B7FB-E1156DF6D810}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55020A23-70EB-42D3-B7FB-E1156DF6D810}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55020A23-70EB-42D3-B7FB-E1156DF6D810}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55020A23-70EB-42D3-B7FB-E1156DF6D810}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -199,15 +185,12 @@ Global
 		{E6E3A82F-A269-42E3-A1C6-0B157CFF4408} = {EB54D000-867F-48CA-AE28-BDBE0CCE1322}
 		{4C41B95D-C9E5-461A-B198-F1F36A61176A} = {EB54D000-867F-48CA-AE28-BDBE0CCE1322}
 		{F2954FF3-69CA-4C61-995A-59BCC4E94839} = {EFD6034B-FA26-4A09-8FDA-D03C3326560C}
-		{7AC422A2-0183-4D77-AA10-B55198A69F35} = {5DC896DC-AB7E-4018-BB8C-F0757E9B309F}
 		{3B16AB0E-5C83-4E5D-82B0-7021AB4C5B9F} = {F85262CD-4210-4352-B691-30F40D99B4D2}
-		{5DC896DC-AB7E-4018-BB8C-F0757E9B309F} = {EB54D000-867F-48CA-AE28-BDBE0CCE1322}
-		{E76F24FB-FDBF-4139-BBC7-B87FBC1453C2} = {5DC896DC-AB7E-4018-BB8C-F0757E9B309F}
 		{C6966220-9CF5-41CA-92CD-DF428AD66AB5} = {EB54D000-867F-48CA-AE28-BDBE0CCE1322}
-		{830676C3-27E8-46A1-9624-1A733502911E} = {EB54D000-867F-48CA-AE28-BDBE0CCE1322}
 		{05449B49-D2B3-4F63-B981-544F0AF7B4FF} = {EB54D000-867F-48CA-AE28-BDBE0CCE1322}
 		{69B3D223-F8CA-4AF9-A258-F5DF1AE24F27} = {EB54D000-867F-48CA-AE28-BDBE0CCE1322}
 		{F3C414DE-DF53-480A-A1A4-CA1A1E48E10E} = {EB54D000-867F-48CA-AE28-BDBE0CCE1322}
+		{55020A23-70EB-42D3-B7FB-E1156DF6D810} = {EB54D000-867F-48CA-AE28-BDBE0CCE1322}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C5B677B2-0D72-4629-A5FD-F94B00EC858B}

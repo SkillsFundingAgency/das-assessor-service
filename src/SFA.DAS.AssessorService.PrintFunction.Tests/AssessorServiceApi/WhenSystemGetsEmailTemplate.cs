@@ -6,9 +6,9 @@ using RichardSzalay.MockHttp;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.EpaoImporter.Const;
 
-namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests.AssessorServiceApi
+namespace SFA.DAS.AssessorService.PrintFunction.Tests.AssessorServiceApi
 {
-    public class WhenSystemGetsEmailTemplate : AssesssorServiceTestBase
+    public class WhenSystemGetsEmailTemplate : AssessorServiceTestBase
     {
         private EMailTemplate _result;
         private EMailTemplate _emailTemplate;

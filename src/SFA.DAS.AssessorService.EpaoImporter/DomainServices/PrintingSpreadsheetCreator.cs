@@ -161,6 +161,41 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             worksheet.Cells["A1:J1"].Value = monthYear + " Print Data - Batch " + batchNumber.ToString();
         }
 
+        private static string NameToTitleCase(string name)
+        {
+            var convertToTitleCase = IsNameAllUpperOrAllLower(name);
+
+            if (!convertToTitleCase) return name;
+            var newNameCharacters = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name.ToLower()).ToCharArray();
+
+            FixTitleCaseForNamesWithApostrophesAndHyphens(newNameCharacters);
+            return new string(newNameCharacters);
+        }
+
+        private static bool IsNameAllUpperOrAllLower(string name)
+        {
+            var convertToTitleCase = name.ToCharArray().Where(char.IsLetter).All(char.IsLower);
+            if (!convertToTitleCase)
+            {
+                convertToTitleCase = name.ToCharArray().Where(char.IsLetter).All(char.IsUpper);
+            }
+
+            return convertToTitleCase;
+        }
+
+        private static void FixTitleCaseForNamesWithApostrophesAndHyphens(char[] newNameCharacters)
+        {
+            for (var i = 0; i + 1 < newNameCharacters.Length; i++)
+            {
+                if (newNameCharacters[i].Equals('\'') ||
+                    newNameCharacters[i].Equals('`') ||
+                    newNameCharacters[i].Equals('-'))
+                {
+                    newNameCharacters[i + 1] = char.ToUpper(newNameCharacters[i + 1]);
+                }
+            }
+        }
+
         private void CreateWorksheetData(ExcelWorksheet worksheet)
         {
             var row = 3;
@@ -172,9 +207,12 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                     worksheet.Cells[row, 1].Value = certificateData.AchievementDate.Value.ToString("dd MMMM yyyy");
 
                 var learnerName = $"{certificateData.LearnerGivenNames} {certificateData.LearnerFamilyName}";
-                worksheet.Cells[row, 2].Value = certificateData.FullName != null
-                    ? CultureInfo.CurrentCulture.TextInfo.ToTitleCase(certificateData.FullName)
-                    : CultureInfo.CurrentCulture.TextInfo.ToTitleCase(learnerName);
+
+                worksheet.Cells[row, 2].Value = NameToTitleCase(
+                    !string.IsNullOrEmpty(certificateData.FullName) 
+                        ? certificateData.FullName 
+                        : learnerName
+                );
 
                 if (certificateData.StandardName != null)
                     worksheet.Cells[row, 3].Value = certificateData.StandardName.ToUpper();
