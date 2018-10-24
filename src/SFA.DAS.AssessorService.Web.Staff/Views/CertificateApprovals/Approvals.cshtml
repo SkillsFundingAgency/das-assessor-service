@@ -40,7 +40,7 @@
                     var count = Model.ToBeApprovedCertificates.Count() + Model.ApprovedCertificates.Count() + Model.RejectedCertificates.Count();
                     var approvalResults = 
                         new SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateDetailApprovalViewModel[count];
-                    @for (int i = 0; i < count; i++)
+                    for (int i = 0; i < count; i++)
                     {
                         approvalResults[i] = new SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateDetailApprovalViewModel();
                     }

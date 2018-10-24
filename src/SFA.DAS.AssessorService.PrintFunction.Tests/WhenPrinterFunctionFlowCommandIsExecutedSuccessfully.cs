@@ -15,7 +15,7 @@ using SFA.DAS.AssessorService.EpaoImporter.Logger;
 using SFA.DAS.AssessorService.EpaoImporter.Notification;
 using SFA.DAS.AssessorService.EpaoImporter.Sftp;
 
-namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests
+namespace SFA.DAS.AssessorService.PrintFunction.Tests
 {
     public class WhenSystemSchedulesDate
     {
