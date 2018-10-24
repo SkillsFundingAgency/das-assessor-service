@@ -14,6 +14,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             _logger = logger;
         }
 
+        public ContactsApiClient(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger) : base(httpClient, tokenService, logger)
+        {
+        }
+
         public async Task<ContactResponse> GetByUsername(string username)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/user/{username}"))

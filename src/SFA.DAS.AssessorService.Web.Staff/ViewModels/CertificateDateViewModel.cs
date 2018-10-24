@@ -11,7 +11,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
         public string Day { get; set; }
         public string Month { get; set; }
         public string Year { get; set; }
-        public DateTime StartDate { get; set; }
+        public DateTime? StartDate { get; set; }
         public string WarningShown { get; set; }
 
         public void FromCertificate(Certificate cert)
@@ -21,6 +21,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
             Month = CertificateData.AchievementDate?.Month.ToString();
             Year = CertificateData.AchievementDate?.Year.ToString();
             StartDate = CertificateData.LearningStartDate;
+           
             WarningShown = "false";
         }
 

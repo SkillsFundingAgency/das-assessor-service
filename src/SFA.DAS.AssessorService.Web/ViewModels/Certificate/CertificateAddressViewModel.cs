@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         public bool SelectPreviousAddress { get; set; }
 
         public bool EditForm { get; set; } = false;
-        public bool ResetForm { get; set; } = false;
+        public bool ResetForm { get; set; } = false;        
 
         public CertificatePreviousAddressViewModel PreviousAddress { get; set; }
 

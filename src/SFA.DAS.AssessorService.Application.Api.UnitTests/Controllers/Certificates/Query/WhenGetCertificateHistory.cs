@@ -24,10 +24,10 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Certific
             var mediator = new Mock<IMediator>();
 
             MappingBootstrapper.Initialize();
-            var certificateHistoryResponses = Builder<CertificateHistoryResponse>.CreateListOfSize(10).Build().ToList();
+            var certificateHistoryResponses = Builder<CertificateSummaryResponse>.CreateListOfSize(10).Build().ToList();
 
             var certificateHistoryPaginatedList =
-                new PaginatedList<CertificateHistoryResponse>(certificateHistoryResponses, 40, 1, 10);
+                new PaginatedList<CertificateSummaryResponse>(certificateHistoryResponses, 40, 1, 10);
 
             mediator.Setup(q => q.Send(Moq.It.IsAny<GetCertificateHistoryRequest>(), new CancellationToken()))
                 .Returns(Task.FromResult((certificateHistoryPaginatedList)));
@@ -45,7 +45,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Certific
         public void ThenShouldCallQuery()
         {
             var result = _result as OkObjectResult;
-            var paginatedList = result.Value as PaginatedList<CertificateHistoryResponse>;
+            var paginatedList = result.Value as PaginatedList<CertificateSummaryResponse>;
 
             paginatedList.Items.Count.Should().Be(10);
         }

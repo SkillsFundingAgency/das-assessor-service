@@ -12,7 +12,7 @@ using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 
-namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
+namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 {
     public class StartCertificateHandler : IRequestHandler<StartCertificateRequest, Certificate>
     {
