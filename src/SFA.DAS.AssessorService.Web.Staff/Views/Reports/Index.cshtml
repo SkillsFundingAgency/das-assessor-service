@@ -1,0 +1,66 @@
+﻿@model SFA.DAS.AssessorService.Web.Staff.ViewModels.ReportViewModel
+
+@{
+    ViewBag.Title = "Reports";
+    Layout = "_Layout";
+}
+
+<div class="grid-row">
+    <div class="column-full">
+        <a asp-action="Index" asp-controller="Dashboard" class="link-back">Return to dashboard</a>
+
+        <h1 class="heading-xlarge">Run report</h1>
+
+        <form class="report-selection-form" asp-action="Run" method="get">
+
+            @* hidden with css by default *@
+            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                    There's a problem
+                </h2>
+                <ul class="js-error-summary-list error-summary-list"></ul>
+            </div>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                        There's a problem
+                    </h2>
+                    <ul class="error-summary-list">
+                        <li><a sfa-validation-for="ReportId"></a></li>
+                    </ul>
+                </div>
+            }
+
+            <div sfa-anyvalidationerror-class="after-error-summary">
+                <div id="SelectedReport">
+                    <h1 class="heading-medium">
+                        Please select the report you wish to run
+                    </h1>
+                </div>
+                <div class="form-group" sfa-validation-for="ReportId" sfa-validationerror-class="form-group-error">
+                    <div class="error-message-container" sfa-validation-for="ReportId">
+                        <span class="error-message" asp-validation-for="ReportId"></span>
+                    </div>
+                    @foreach (var report in Model.Reports)
+                    {
+                        <div class="multiple-choice">
+                            <input asp-for="ReportId" id="@report.Id" type="radio" value="@report.Id" />
+                            <label for="@report.Id">
+                                @report.ReportName
+                            </label>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <button type="submit" class="button">Run</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    @{await Html.RenderPartialAsync("~/Views/Reports/_ReportScriptsPartial.cshtml"); }
+}
