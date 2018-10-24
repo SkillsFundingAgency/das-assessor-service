@@ -155,7 +155,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
         public async Task<IActionResult> SearchStandardsValidate(string searchstring)
         {
-            return await SearchStandardsValidateSearchstring(searchstring.Trim());
+            return await SearchStandardsValidateSearchstring(searchstring?.Trim());
         }
 
         [HttpGet("assessment-organisations/standards/validate/search", Name = "SearchStandardsValidateEmptyString")]
