@@ -49,7 +49,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
         public string UnescapeAndRemoveNonAlphanumericCharacters(string text)
         {
-            var unescapedText = Uri.UnescapeDataString(text.Trim());
+
+            var unescapedText = "";
+            if (!string.IsNullOrEmpty(text))
+                unescapedText = Uri.UnescapeDataString(text?.Trim());
             return string.Concat(unescapedText.Where(char.IsLetterOrDigit));
         }
 
