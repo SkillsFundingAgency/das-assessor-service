@@ -87,7 +87,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 OrganisationName = epao.EndPointAssessorName,
                 CertificateLogs = logs,
                 FundingModel = learner.FundingModel,
-                CertificateId = certificate?.Id
+                CertificateId = certificate?.Id,
+                IsPrivatelyFunded = certificate.IsPrivatelyFunded
             };
 
             return learnerDetail;

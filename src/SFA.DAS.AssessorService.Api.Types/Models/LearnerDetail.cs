@@ -23,6 +23,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public string OverallGrade { get; set; }
         public DateTime? AchievementDate { get; set; }
         public Guid? CertificateId { get; set; }
+        public bool IsPrivatelyFunded { get; set; }
 
         public List<CertificateLogSummary> CertificateLogs { get; set; }
     }

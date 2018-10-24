@@ -47,10 +47,18 @@
                     <td class="bold"><abbr title="Unique learner number">ULN</abbr></td>
                     <td>@Model.Learner.Uln</td>
                 </tr>
-                <tr>
-                    <td class="bold">Funding model</td>
-                    <td>@Model.Learner.FundingModel</td>
-                </tr>
+            <tr>
+                <td class="bold">Funding model</td>
+                <td>@Model.Learner.FundingModel</td>
+            </tr>
+            <tr>
+                @{
+
+                    var isPrivatelyFunded = Model.Learner.IsPrivatelyFunded ? "true" : "false";}
+                }
+                <td class="bold">Privately funded</td>
+                <td>@isPrivatelyFunded</td>
+            </tr>
             </tbody>
         </table>
     </div>
