@@ -22,6 +22,11 @@ namespace SFA.DAS.AssessorService.ExternalApis
             _httpClient = new HttpClient { BaseAddress = new Uri(baseUri ?? "http://das-prd-apprenticeshipinfoservice.cloudapp.net") };
         }
 
+        protected ApiClientBase(HttpClient httpClient)
+        {
+            _httpClient = httpClient;
+        }
+
         protected static void RaiseResponseError(string message, HttpRequestMessage failedRequest, HttpResponseMessage failedResponse)
         {
             if (failedResponse.StatusCode == HttpStatusCode.NotFound)

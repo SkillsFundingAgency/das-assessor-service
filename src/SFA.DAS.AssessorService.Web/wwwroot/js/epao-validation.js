@@ -76,6 +76,8 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
             .show()
             .find('.form-date')
             .before(error);
+        } else if (element.hasClass('autocomplete__input')) {
+          return false;
         } else {
           error.insertBefore(element);
         }
@@ -148,6 +150,11 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
     },
     'Please specify a valid UK postcode'
   );
+
+  // Checks if the value is in an array
+  jQuery.validator.addMethod('equals', function(value, element, param) {
+    return this.optional(element) || $.inArray(value, param) >= 0;
+  });
 
   // Helper to ensure date input is correct format
   function parseDate(str) {

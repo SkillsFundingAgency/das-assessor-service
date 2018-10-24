@@ -13,3 +13,7 @@ IF NOT EXISTS(SELECT * FROM ScheduleRuns)
 BEGIN
 	INSERT INTO ScheduleRuns (RunTime, IsComplete, Interval, IsRecurring, ScheduleType) VALUES ('2018-08-17 08:00:00', 0, 10080, 1, 1)
 END
+
+UPDATE CERTIFICATES
+set IsPrivatelyFunded = 0
+WHERE IsPrivatelyFunded IS NULL 

@@ -39,6 +39,9 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <None Update="nlog.approvals.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="nlog.printing.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

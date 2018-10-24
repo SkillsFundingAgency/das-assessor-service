@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 searchResult.CertificateReference = certificate.CertificateReference;
                 searchResult.CertificateId = certificate.Id;
                 searchResult.CertificateStatus = certificate.Status;
-                searchResult.LearnStartDate = certificateData.LearningStartDate == DateTime.MinValue ? null : new DateTime?(certificateData.LearningStartDate) ;
+                searchResult.LearnStartDate = certificateData.LearningStartDate;
                 searchResult.Option = certificateData.CourseOption;
 
                 var certificateLogs = certificateRepository.GetCertificateLogsFor(certificate.Id).Result;
