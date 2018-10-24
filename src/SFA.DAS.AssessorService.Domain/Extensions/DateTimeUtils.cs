@@ -57,7 +57,7 @@ namespace SFA.DAS.AssessorService.Domain.Extensions
         public static string ToSfaShortestDateString(this DateTime? time)
         {
             return time == null ? 
-                string.Empty : time.Value.ToString("dd MMM yyyy");
+                string.Empty : time.Value.ToString("dd MMM yy");
         }
     }
 }
