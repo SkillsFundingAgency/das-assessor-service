@@ -5,6 +5,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Certificates.Batch;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
+using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using System;
 using System.Linq;
 using System.Threading;
@@ -18,12 +19,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IIlrRepository _ilrRepository;
         private readonly ILogger<GetBatchCertificateHandler> _logger;
+        private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
 
-        public GetBatchCertificateHandler(ICertificateRepository certificateRepository, IContactQueryRepository contactQueryRepository, IIlrRepository ilrRepository, ILogger<GetBatchCertificateHandler> logger)
+        public GetBatchCertificateHandler(ICertificateRepository certificateRepository, IContactQueryRepository contactQueryRepository, IIlrRepository ilrRepository, IAssessmentOrgsApiClient assessmentOrgsApiClient, ILogger<GetBatchCertificateHandler> logger)
         {
             _certificateRepository = certificateRepository;
             _contactQueryRepository = contactQueryRepository;
             _ilrRepository = ilrRepository;
+            _assessmentOrgsApiClient = assessmentOrgsApiClient;
             _logger = logger;
         }
 
@@ -45,23 +48,32 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
                 {
                     var searchingContact = await _contactQueryRepository.GetContactFromEmailAddress(request.Email);
                     var certificateContact = await GetContactFromCertificateLogs(certificate.Id, certificate.CreatedBy);
-                    
+
                     if (certificateContact is null || certificateContact.OrganisationId != searchingContact.OrganisationId)
                     {
-                        certData.OverallGrade = "";
-                        certData.LearningStartDate = DateTime.MinValue;
-                        certData.AchievementDate = null;
+                        var providedStandards = await _assessmentOrgsApiClient.FindAllStandardsByOrganisationIdAsync(searchingContact.EndPointAssessorOrganisationId);
 
-                        certificate.CreateDay = DateTime.MinValue;
-                        certificate.CreatedAt = DateTime.MinValue;
-                        certificate.CreatedBy = null;
-                        certificate.UpdatedBy = null;
-                        certificate.UpdatedAt = null;
-                        certificate.DeletedBy = null;
-                        certificate.DeletedAt = null;
+                        if (providedStandards.Any(s => s.StandardCode == certificate.StandardCode.ToString()))
+                        {
+                            certData.OverallGrade = "";
+                            certData.LearningStartDate = DateTime.MinValue;
+                            certData.AchievementDate = null;
+
+                            certificate.CreateDay = DateTime.MinValue;
+                            certificate.CreatedAt = DateTime.MinValue;
+                            certificate.CreatedBy = null;
+                            certificate.UpdatedBy = null;
+                            certificate.UpdatedAt = null;
+                            certificate.DeletedBy = null;
+                            certificate.DeletedAt = null;
+
+                            certificate.CertificateData = JsonConvert.SerializeObject(certData);
+                        }
+                        else
+                        {
+                            certificate = null;
+                        }
                     }
-
-                    certificate.CertificateData = JsonConvert.SerializeObject(certData);
                 }
                 else
                 {
