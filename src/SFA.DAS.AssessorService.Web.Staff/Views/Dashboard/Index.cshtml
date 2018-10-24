@@ -27,13 +27,13 @@
         <p>Manage user's access and generate API keys.</p>
     </div>
 </div>
-
 <div class="grid-row">
-    <div class="column-one-third">
+    <div class="column-one-third" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam)">
         <h2 class="heading-medium"><a asp-controller="CertificateApprovals" asp-action="Approvals">Privately Funded Certificate Approvals</a></h2>
         <p>Approve Privately Funded Certificates.</p>
     </div>
-    <div class="column-one-third">
-       
+    <div class="column-one-third" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam)">
+        <h2 class="heading-medium"><a asp-controller="Reports">Reports</a></h2>
+        <p>On demand reporting.</p>
     </div>
 </div>
