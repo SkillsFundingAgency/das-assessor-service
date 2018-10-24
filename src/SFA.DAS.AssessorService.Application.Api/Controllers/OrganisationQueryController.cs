@@ -73,7 +73,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(organisations);
         }
 
-        [HttpGet("{id}", Name = "GetOrganisation")]
+        [HttpGet("organisation/{id}", Name = "GetOrganisation")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<OrganisationResponse>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetOrganisation(Guid id)

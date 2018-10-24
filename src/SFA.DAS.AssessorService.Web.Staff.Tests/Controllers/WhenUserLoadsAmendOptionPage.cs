@@ -9,7 +9,7 @@ using SFA.DAS.AssessorService.Web.Staff.ViewModels;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Tests
 {
-    public class WhenUserLoadsAmendOptionPage : ContractAmendQueryBase
+    public class WhenUserLoadsAmendOptionPage : CertificateAmendQueryBase
     {     
         private IActionResult _result;
 

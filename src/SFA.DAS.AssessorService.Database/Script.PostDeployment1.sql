@@ -27,3 +27,7 @@ BEGIN
 	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder) VALUES ('Standard', 'StaffReports_ByStandard', 9)
 	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder) VALUES ('Certificate count', 'StaffReports_CertificateCount', 10)
 END
+
+UPDATE CERTIFICATES
+set IsPrivatelyFunded = 0
+WHERE IsPrivatelyFunded IS NULL 

@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         public string Day { get; set; }
         public string Month { get; set; }
         public string Year { get; set; }
-        public DateTime StartDate { get; set; }
+        public DateTime? StartDate { get; set; }
         public string WarningShown { get; set; }
 
         public void FromCertificate(Domain.Entities.Certificate cert)

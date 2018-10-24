@@ -17,6 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
     public class StaffReposSearchResult
     {
         public IEnumerable<Ilr> PageOfResults { get; set; }
+        public bool DisplayEpao { get; set; }
         public int TotalCount { get; set; }
     }
 }

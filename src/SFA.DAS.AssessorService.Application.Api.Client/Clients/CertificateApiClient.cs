@@ -15,11 +15,23 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
         }
 
+        public CertificateApiClient(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger) : base(httpClient, tokenService, logger)
+        {
+        }
+
         public async Task<Certificate> Start(StartCertificateRequest request)
         {
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Post, "api/v1/certificates/start"))
             {
                 return await PostPutRequestWithResponse<StartCertificateRequest, Certificate>(httpRequest, request);
+            }
+        }
+
+        public async Task<Certificate> StartPrivate(StartCertificatePrivateRequest request)
+        {
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Post, "api/v1/certificates/startprivate"))
+            {
+                return await PostPutRequestWithResponse<StartCertificatePrivateRequest, Certificate>(httpRequest, request);
             }
         }
 
@@ -35,14 +47,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Put, "api/v1/certificates/update"))
             {
-                return await PostPutRequestWithResponse<UpdateCertificateRequest, Certificate>(httpRequest, certificateRequest);
-                return await PostPutRequestWithResponse<UpdateCertificateRequest, Certificate>(httpRequest, certificateRequest);
+                return await PostPutRequestWithResponse<UpdateCertificateRequest, Certificate>(httpRequest, certificateRequest);                
             }
         }
 
-        public async Task<CertificateAddress> GetContactPreviousAddress(string userName)
+        public async Task<CertificateAddress> GetContactPreviousAddress(string userName,
+            bool isPrivatelyFunded)
         {
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/certificates/contact/previousaddress?username={userName}"))
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/certificates/contact/previousaddress?username={userName}&isPrivatelyFunded={isPrivatelyFunded}"))
             {
                 return await RequestAndDeserialiseAsync<CertificateAddress>(httpRequest, "Could not get Certificate Address");
             }
@@ -56,11 +68,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<PaginatedList<CertificateHistoryResponse>> GetCertificateHistory(int pageIndex, string userName)
+        public async Task<PaginatedList<CertificateSummaryResponse>> GetCertificateHistory(int pageIndex, string userName)
         {
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/certificates/history/?pageIndex={pageIndex}&userName={userName}"))
             {
-                return await RequestAndDeserialiseAsync<PaginatedList<CertificateHistoryResponse>>(httpRequest, "Could not get Certificate History");
+                return await RequestAndDeserialiseAsync<PaginatedList<CertificateSummaryResponse>>(httpRequest, "Could not get Certificate History");
             }
         }
 

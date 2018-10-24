@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Web.Staff.ViewModels.Private;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
 {
@@ -35,9 +36,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             _tokenService = tokenService;
         }
 
-        protected async Task<T> Get<T>(string uri)
+        private async Task<T> Get<T>(string uri)
         {
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
 
             using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
             {
@@ -45,23 +47,37 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             }
         }
 
-        protected async Task<U> Post<T, U>(string uri, T model)
+        private async Task<U> Post<T, U>(string uri, T model)
         {
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
             var serializeObject = JsonConvert.SerializeObject(model);
 
-            using (var response = await _client.PostAsync(new Uri(uri, UriKind.Relative), new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
+            using (var response = await _client.PostAsync(new Uri(uri, UriKind.Relative),
+                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
             {
                 return await response.Content.ReadAsAsync<U>();
             }
         }
 
-        protected async Task<U> Put<T, U>(string uri, T model)
+        private async Task Post<T>(string uri, T model)
         {
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
             var serializeObject = JsonConvert.SerializeObject(model);
 
-            using (var response = await _client.PutAsync(new Uri(uri, UriKind.Relative), new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
+            using (var response = await _client.PostAsync(new Uri(uri, UriKind.Relative),
+                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json"))) ;
+        }
+
+        protected async Task<U> Put<T, U>(string uri, T model)
+        {
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            var serializeObject = JsonConvert.SerializeObject(model);
+
+            using (var response = await _client.PutAsync(new Uri(uri, UriKind.Relative),
+                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
             {
                 return await response.Content.ReadAsAsync<U>();
             }
@@ -69,7 +85,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
 
         protected async Task<T> Delete<T>(string uri)
         {
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
 
             using (var response = await _client.DeleteAsync(new Uri(uri, UriKind.Relative)))
             {
@@ -82,29 +99,36 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             return await Get<List<CertificateResponse>>("/api/v1/certificates?statusses=Submitted");
         }
 
-        public async Task<PaginatedList<StaffSearchResult>> Search(string searchString, int page)
+        public async Task<List<CertificateSummaryResponse>> GetCertificatesToBeApproved()
         {
-            return await Get<PaginatedList<StaffSearchResult>>($"/api/v1/staffsearch?searchQuery={searchString}&page={page}");
+            return await Get<List<CertificateSummaryResponse>>("/api/v1/certificates/approvals");
+        }
+
+        public async Task<StaffSearchResult> Search(string searchString, int page)
+        {
+            return await Get<StaffSearchResult>($"/api/v1/staffsearch?searchQuery={searchString}&page={page}");
         }
 
         public async Task<List<AssessmentOrganisationSummary>> SearchOrganisations(string searchString)
         {
-            return await Get<List<AssessmentOrganisationSummary>>($"/api/ao/assessment-organisations/search/{searchString}");
+            return await Get<List<AssessmentOrganisationSummary>>(
+                $"/api/ao/assessment-organisations/search/{searchString}");
         }
 
         public async Task<string> ImportOrganisations()
         {
             var uri = "/api/ao/assessment-organisations/";
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
 
             using (var response = await _client.PatchAsync(new Uri(uri, UriKind.Relative), null))
             {
-                var res= await response.Content.ReadAsAsync<AssessmentOrgsImportResponse>();
+                var res = await response.Content.ReadAsAsync<AssessmentOrgsImportResponse>();
                 return res.Status;
             }
         }
-        
-        
+
+
         public async Task<List<OrganisationType>> GetOrganisationTypes()
         {
             return await Get<List<OrganisationType>>($"/api/ao/organisation-types");
@@ -133,7 +157,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
 
         public async Task<string> CreateEpaOrganisation(CreateEpaOrganisationRequest request)
         {
-            var result = await Post<CreateEpaOrganisationRequest, EpaOrganisationResponse>("api/ao/assessment-organisations", request);
+            var result =
+                await Post<CreateEpaOrganisationRequest, EpaOrganisationResponse>("api/ao/assessment-organisations",
+                    request);
             return result.Details;
         }
 
@@ -157,7 +183,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         
         public async Task<PaginatedList<StaffBatchSearchResult>> BatchSearch(int batchNumber, int page)
         {
-            return await Get<PaginatedList<StaffBatchSearchResult>>($"/api/v1/staffsearch/batch?batchNumber={batchNumber}&page={page}");
+            return await Get<PaginatedList<StaffBatchSearchResult>>(
+                $"/api/v1/staffsearch/batch?batchNumber={batchNumber}&page={page}");
         }
 
         public async Task<PaginatedList<StaffBatchLogResult>> BatchLog(int page)
@@ -177,20 +204,24 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
 
         public async Task<Organisation> GetOrganisation(Guid id)
         {
-            return await Get<Organisation>($"/api/v1/organisations/{id}");
-        }   
+            return await Get<Organisation>($"/api/v1/organisations/organisation/{id}");
+        }
+
+        public async Task<List<Option>> GetOptions(int stdCode)
+        {
+            return await Get<List<Option>>($"api/v1/certificates/options/?stdCode={stdCode}");
+        }
 
         public async Task<Certificate> UpdateCertificate(UpdateCertificateRequest certificateRequest)
         {
             return await Put<UpdateCertificateRequest, Certificate>("api/v1/certificates/update", certificateRequest);
         }
-      
+
         public async Task<ScheduleRun> GetNextScheduleToRunNow()
         {
             return await Get<ScheduleRun>($"api/v1/schedule?scheduleType=1");
         }
-          
-          
+
         public async Task<ScheduleRun> GetNextScheduledRun(int scheduleType)
         {
             return await Get<ScheduleRun>($"api/v1/schedule/next?scheduleType={scheduleType}");
@@ -221,9 +252,17 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             return await Delete<object>($"api/v1/schedule?scheduleRunId={scheduleRunId}");
         }
 
-        public async Task<Certificate> PostReprintRequest(StaffCertificateDuplicateRequest staffCertificateDuplicateRequest)
+        public async Task<Certificate> PostReprintRequest(
+            StaffCertificateDuplicateRequest staffCertificateDuplicateRequest)
         {
-            return await Post<StaffCertificateDuplicateRequest, Certificate>("api/v1/staffcertificatereprint", staffCertificateDuplicateRequest);   
+            return await Post<StaffCertificateDuplicateRequest, Certificate>("api/v1/staffcertificatereprint",
+                staffCertificateDuplicateRequest);
+        }
+
+        public async Task ApproveCertificates(CertificatePostApprovalViewModel certificatePostApprovalViewModel)
+        {
+            await Post<CertificatePostApprovalViewModel>("api/v1/certificates/approvals",
+                certificatePostApprovalViewModel);
         }
 
         #region Reports

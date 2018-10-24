@@ -1,0 +1,37 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model SFA.DAS.AssessorService.Web.ViewModels.Search.SearchRequestViewModel
+
+@{
+    ViewBag.Title = "Declaration";
+    Layout = "_Layout";
+}
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <a asp-controller="Search" asp-action="Result" class="link-back">Back</a>
+
+        <h1 class="heading-large">
+            @Localizer["Heading"]
+        </h1>
+
+        <p>@Localizer["InfoHeader"]</p>
+
+        <ul class="list list-bullet">
+            <li>@Localizer["InfoLine1"]</li>
+            <li>@Localizer["InfoLine2"]</li>
+            <li>@Localizer["InfoLine3"]</li>
+            <li>@Localizer["InfoLine4"]</li>
+        </ul>
+
+
+        <form class="js-disable-on-submit" method="post" asp-action="StartPrivate" asp-controller="Certificate">
+            @Html.HiddenFor(c => c.Uln)
+            @Html.HiddenFor(c => c.Surname)
+            @Html.HiddenFor(c => c.SearchResults)
+            @Html.HiddenFor(c => c.IsPrivatelyFunded)
+            <button type="submit" class="button">@Localizer["ContinueButton"]</button>
+        </form>
+
+    </div>
+</div>

@@ -30,6 +30,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             _sessionService.Remove("SearchResults");
             _sessionService.Remove("SelectedStandard");
             _sessionService.Remove("SearchResultsChooseStandard");
+            _sessionService.Remove("EndPointAsessorOrganisationId");
 
             return View("Index");
         }
@@ -41,6 +42,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             if (!ModelState.IsValid)
             {
                 return View(vm);
+            }
+
+            if (vm.IsPrivatelyFunded)
+            {
+                return RedirectToAction("Index", "CertificatePrivateDeclaration", vm);
             }
 
             var result = await _searchOrchestrator.Search(vm);
