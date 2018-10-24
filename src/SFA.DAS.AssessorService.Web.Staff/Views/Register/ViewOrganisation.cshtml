@@ -154,8 +154,14 @@ Layout = "_Layout";
             }
         </div>
         <div class="form-group">
-            <a class="button" href="/register/search-standards/@Model.OrganisationId">Add New Standard</a>
-
+            @if (@Model.Contacts.Count > 0)
+            {
+                <a class="button" href="/register/search-standards/@Model.OrganisationId">Add New Standard</a>
+            }
+            else
+            {
+                <span>You can add standards when there are 1 or more contacts added to the organisation</span>
+            }
         </div>
     </div>
 </div>

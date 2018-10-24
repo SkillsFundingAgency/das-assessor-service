@@ -93,14 +93,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         }
 
         public async Task<ValidationResponse> ValidateSearchStandards(string searchstring)
-        {
-            if (string.IsNullOrEmpty(searchstring))
-                searchstring = string.Empty;  
+        { 
             using (var request = new HttpRequestMessage(HttpMethod.Get,
                 $"/api/ao/assessment-organisations/standards/validate/search/{searchstring}")) 
             {
                 return await RequestAndDeserialiseAsync<ValidationResponse>(request,
-                    $"Could not check the validation for standard using [{searchstring}]");
+                    $"Could not check the validation for standard using [{searchstring.Trim()}]");
             }
         }
 

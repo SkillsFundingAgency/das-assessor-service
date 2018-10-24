@@ -152,9 +152,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpGet("assessment-organisations/standards/validate/search/{searchstring}", Name = "SearchStandardsValidate")]
-        [Route("assessment-organisations/standards/validate/search")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
         public async Task<IActionResult> SearchStandardsValidate(string searchstring)
+        {
+            return await SearchStandardsValidateSearchstring(searchstring.Trim());
+        }
+
+        [HttpGet("assessment-organisations/standards/validate/search", Name = "SearchStandardsValidateEmptyString")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
+        public async Task<IActionResult> SearchStandardsValidateEmptyString()
+        {
+            return await SearchStandardsValidateSearchstring(string.Empty);
+        }
+
+        private async Task<IActionResult> SearchStandardsValidateSearchstring(string searchstring)
         {
             try
             {
