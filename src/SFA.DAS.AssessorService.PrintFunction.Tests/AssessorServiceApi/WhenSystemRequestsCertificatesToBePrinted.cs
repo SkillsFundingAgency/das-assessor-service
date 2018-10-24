@@ -7,9 +7,9 @@ using NUnit.Framework;
 using RichardSzalay.MockHttp;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 
-namespace SFA.DAS.AssessorService.PrintFunctionProcessFlow.UnitTests.AssessorServiceApi
+namespace SFA.DAS.AssessorService.PrintFunction.Tests.AssessorServiceApi
 {
-    public class WhenSystemRequestsCertificatesToBePrinted : AssesssorServiceTestBase
+    public class WhenSystemRequestsCertificatesToBePrinted : AssessorServiceTestBase
     {
         private IEnumerable<CertificateResponse> _result;
 

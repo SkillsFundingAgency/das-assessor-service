@@ -163,40 +163,38 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 
         private static string NameToTitleCase(string name)
         {
-            var isAllLower = true;
-            var isAllUpper = true;
-            
-            foreach (var character in name)
+            var convertToTitleCase = IsNameAllUpperOrAllLower(name);
+
+            if (!convertToTitleCase) return name;
+            var newNameCharacters = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name.ToLower()).ToCharArray();
+
+            FixTitleCaseForNamesWithApostrophesAndHyphens(newNameCharacters);
+            return new string(newNameCharacters);
+        }
+
+        private static bool IsNameAllUpperOrAllLower(string name)
+        {
+            var convertToTitleCase = name.ToCharArray().Where(char.IsLetter).All(char.IsLower);
+            if (!convertToTitleCase)
             {
-                if (char.IsLetter(character) &&  !char.IsUpper(character))
-                {
-                    isAllUpper = false;
-                }
-            }
-            
-            foreach (var character in name)
-            {
-                if (char.IsLetter(character) &&  
-                    char.IsUpper(character))
-                {
-                    isAllLower = false;
-                }
+                convertToTitleCase = name.ToCharArray().Where(char.IsLetter).All(char.IsUpper);
             }
 
-            if (!isAllUpper && !isAllLower) return name;
-            var chars = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name.ToLower()).ToCharArray();
+            return convertToTitleCase;
+        }
 
-            for (var i = 0; i + 1 < chars.Length; i++)
+        private static void FixTitleCaseForNamesWithApostrophesAndHyphens(char[] newNameCharacters)
+        {
+            for (var i = 0; i + 1 < newNameCharacters.Length; i++)
             {
-                if (chars[i].Equals('\'') ||
-                    chars[i].Equals('`') ||
-                    chars[i].Equals('-'))
-                {                    
-                    chars[i + 1] = char.ToUpper(chars[i + 1]);
+                if (newNameCharacters[i].Equals('\'') ||
+                    newNameCharacters[i].Equals('`') ||
+                    newNameCharacters[i].Equals('-'))
+                {
+                    newNameCharacters[i + 1] = char.ToUpper(newNameCharacters[i + 1]);
                 }
             }
-            return new string(chars);
-        }    
+        }
 
         private void CreateWorksheetData(ExcelWorksheet worksheet)
         {
@@ -212,8 +210,8 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 
                 worksheet.Cells[row, 2].Value = NameToTitleCase(
                     !string.IsNullOrEmpty(certificateData.FullName) 
-                        ? certificateData.FullName.ToLower() 
-                        : learnerName.ToLower()
+                        ? certificateData.FullName 
+                        : learnerName
                 );
 
                 if (certificateData.StandardName != null)
