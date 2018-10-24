@@ -39,17 +39,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             {
                 var message = validationResponse.Errors.Aggregate(string.Empty, (current, error) => current + error.ErrorMessage + "; ");
                 _logger.LogError(message);
-                if (validationResponse.Errors.Any(x => x.StatusCode == ValidationStatusCode.BadRequest.ToString()))
+                if (validationResponse.Errors.Any(x =>  x.ValidationStatusCode == ValidationStatusCode.BadRequest))
                 {     
                     throw new BadRequestException(message);
                 }
                 
-                if (validationResponse.Errors.Any(x => x.StatusCode == ValidationStatusCode.NotFound.ToString()))
+                if (validationResponse.Errors.Any(x =>  x.ValidationStatusCode == ValidationStatusCode.NotFound))
                 {
                     throw new NotFound(message);
                 }
 
-                if (validationResponse.Errors.Any(x => x.StatusCode == ValidationStatusCode.AlreadyExists.ToString()))
+                if (validationResponse.Errors.Any(x => x.ValidationStatusCode == ValidationStatusCode.AlreadyExists))
                 {
                     throw new AlreadyExistsException(message);
                 }

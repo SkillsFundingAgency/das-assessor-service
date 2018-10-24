@@ -28,7 +28,7 @@
 
         public string Field { get; set; }
         public string ErrorMessage { get; set; }
-        protected ValidationStatusCode? ValidationStatusCode { get; set; }
+        public  ValidationStatusCode ValidationStatusCode { get; set; }
 
 
         public string StatusCode => ValidationStatusCode.ToString();
