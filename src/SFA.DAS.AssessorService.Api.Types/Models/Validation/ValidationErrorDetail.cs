@@ -3,8 +3,7 @@
     public class ValidationErrorDetail
     {
         public ValidationErrorDetail()
-        {
-            
+        {       
         }
 
         public ValidationErrorDetail(string field, string errorMessage)
