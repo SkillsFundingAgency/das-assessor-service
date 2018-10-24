@@ -1,4 +1,7 @@
 ﻿using AutoMapper;
+using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Web.Staff.Automapper.CustomResolvers;
+using SFA.DAS.AssessorService.Web.Staff.ViewModels.Private;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
 {
@@ -8,7 +11,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         {
             Mapper.Initialize(cfg =>
             {
-            
+                cfg.CreateMap<CertificateSummaryResponse, CertificateDetailApprovalViewModel>()
+                    .ForMember(
+                        dest => dest.IsApproved, opt => opt.MapFrom(src => src.Status)
+                    )
+                    .ForMember(q => q.ApprovedRejected,
+                        opts => { opts.ResolveUsing<ApprovalsViewModelResolver>(); });
             });
         }
     }

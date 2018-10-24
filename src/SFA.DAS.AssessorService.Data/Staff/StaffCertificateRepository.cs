@@ -25,7 +25,9 @@ namespace SFA.DAS.AssessorService.Data.Staff
 
         public async Task<List<CertificateForSearch>> GetCertificatesFor(long[] ulns)
         {
-            return (await _connection.QueryAsync<CertificateForSearch>(@"SELECT cert.StandardCode, 
+            return (await _connection.QueryAsync<CertificateForSearch>(@"SELECT 
+                                                                            org.EndPointAssessorOrganisationId,
+                                                                            cert.StandardCode, 
                                                                             cert.Uln, 
                                                                             cert.CertificateReference, 
                                                                             JSON_VALUE(CertificateData, '$.LearnerGivenNames') AS GivenNames, 
@@ -33,6 +35,8 @@ namespace SFA.DAS.AssessorService.Data.Staff
 		                                                                    cert.Status,
 		                                                                    cert.UpdatedAt AS LastUpdatedAt
                                                                             FROM Certificates cert
+																			INNER JOIN Organisations org
+																			ON cert.OrganisationId = org.Id                                                                            
                                                                             WHERE Uln IN @ulns",
 
                 new {ulns})).ToList();

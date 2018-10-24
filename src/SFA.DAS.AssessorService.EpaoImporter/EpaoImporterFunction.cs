@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
 
                 var webConfig = ConfigurationHelper.GetConfiguration();
                 var _tokenService = new TokenService(webConfig);
-                
+
                 _epaoImporterLogger.LogInfo("Config Received");
 
                 var token = _tokenService.GetToken();

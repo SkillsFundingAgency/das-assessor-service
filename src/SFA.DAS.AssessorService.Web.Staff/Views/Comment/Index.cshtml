@@ -1,0 +1,33 @@
+@model SFA.DAS.AssessorService.Web.Staff.Controllers.DuplicateRequestViewModel
+
+@{
+    ViewBag.Title = "Comment";
+    Layout = "_Layout";
+}
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        @if (Model.BackToCheckPage)
+        {
+            <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateId="@Model.CertificateId" asp-route-uln=@Model.Uln asp-route-stdcode=@Model.StdCode asp-route-page=@Model.Page asp-route-searchstring=@Model.SearchString>Back</a>
+        }
+        else
+        {
+            <a class="link-back" asp-controller="Search" asp-action="Select" asp-route-stdcode="@Model.StdCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.Page">Back</a>
+        }
+
+        <h1 class="heading-large">Confirmation</h1>
+
+        <p class="lede text">
+            Thank you for confirming the certificate changes for Certificate for
+         
+            <div class="bold-medium"><span>Name:</span> @Model.FullName</div>
+            <div class="bold-medium">Uln: @Model.Uln</div>            
+            <div class="bold-medium">Certificate Reference: @Model.CertificateReference</div>
+        </p>
+
+        <div>
+            <a asp-action="Index" asp-controller="Search" class="link-back">Search Again</a>
+        </div>
+    </div>
+</div>

@@ -105,11 +105,8 @@ namespace SFA.DAS.AssessorService.Web.Staff
                                                                    .Ctor<string>("groupId").Is(ApplicationConfiguration.AzureApiAuthentication.GroupId)
                                                                    .Ctor<string>("password").Is(ApplicationConfiguration.AzureApiAuthentication.DefaultPassword);
                 config.For<CacheHelper>().Use<CacheHelper>();
-
-
-
-
-                config.For<IStandardService>().Use<StandardService>();
+                config.For<CertificateLearnerStartDateViewModelValidator>()
+                    .Use<CertificateLearnerStartDateViewModelValidator>();
                 config.Populate(services);
             });
             return container.GetInstance<IServiceProvider>();

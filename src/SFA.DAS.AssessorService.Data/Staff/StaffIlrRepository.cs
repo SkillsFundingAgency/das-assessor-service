@@ -77,7 +77,7 @@ namespace SFA.DAS.AssessorService.Data.Staff
             var searchResult = new StaffReposSearchResult
             {
                 PageOfResults = (await _connection.QueryAsync<Ilr>(
-                        @"SELECT cert.Uln, JSON_VALUE(CertificateData, '$.LearnerGivenNames') AS GivenNames, JSON_VALUE(CertificateData, '$.LearnerFamilyName') AS FamilyName, cert.StandardCode AS StdCode, cert.UpdatedAt 
+                        @"SELECT org.EndPointAssessorOrganisationId, cert.Uln, JSON_VALUE(CertificateData, '$.LearnerGivenNames') AS GivenNames, JSON_VALUE(CertificateData, '$.LearnerFamilyName') AS FamilyName, cert.StandardCode AS StdCode, cert.UpdatedAt 
 		                    FROM Certificates cert
                             INNER JOIN Organisations org ON org.Id = cert.OrganisationId
                             INNER JOIN Ilrs ilr ON ilr.Uln = cert.Uln AND ilr.StdCode = cert.StandardCode
@@ -85,13 +85,13 @@ namespace SFA.DAS.AssessorService.Data.Staff
 		                    ORDER BY cert.UpdatedAt DESC 		            
 		                    OFFSET @skip ROWS 
 		                    FETCH NEXT @take ROWS ONLY",
-                        new { epaOrgId = searchRequest.SearchQuery, skip = (searchRequest.Page - 1) * 10, take = 10 }))
+                        new { epaOrgId = searchRequest.SearchQuery.ToLower(), skip = (searchRequest.Page - 1) * 10, take = 10 }))
                     .ToList(),
                 TotalCount = await _connection.ExecuteScalarAsync<int>(@"SELECT COUNT(1)
                     FROM Certificates cert
                         INNER JOIN Organisations org ON org.Id = cert.OrganisationId
                     INNER JOIN Ilrs ilr ON ilr.Uln = cert.Uln AND ilr.StdCode = cert.StandardCode
-                    WHERE org.EndPointAssessorOrganisationId = @epaOrgId", new { epaOrgId = searchRequest.SearchQuery })
+                    WHERE org.EndPointAssessorOrganisationId = @epaOrgId", new { epaOrgId = searchRequest.SearchQuery.ToLower() })
             };
 
 
