@@ -34,7 +34,7 @@
                 <select asp-for=@approvalresults[j].IsApproved
                         asp-items="@(new SelectList(@results[i].ApprovedRejected, "Value", "Text"))">
                 </select>
-            </td>
+            </td>e
         </tr>
 
         if (results[i].Status == "Rejected")
@@ -54,7 +54,7 @@
 
         @Html.HiddenFor(x => @approvalresults[j].CertificateReference)
 
-//        note for Greg include this back needs java script to provide for accrodion here.
+//        note for Greg include this back needs java script to provide for accordion here.
 @*         <tr class="js-history-details-expandble js-hidden history-details-expandble" aria-hidden="true"> *@
 
         <tr>
