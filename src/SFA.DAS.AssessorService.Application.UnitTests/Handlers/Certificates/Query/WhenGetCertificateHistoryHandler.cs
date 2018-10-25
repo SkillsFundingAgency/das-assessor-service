@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Qu
         private Mock<IAssessmentOrgsApiClient> _assessmentOrgsApiClientMock;
         private Mock<ILogger<GetCertificatesHistoryHandler>> _loggermock;
 
-        private PaginatedList<CertificateHistoryResponse> _result;
+        private PaginatedList<CertificateSummaryResponse> _result;
 
         [SetUp]
         public void Arrange()

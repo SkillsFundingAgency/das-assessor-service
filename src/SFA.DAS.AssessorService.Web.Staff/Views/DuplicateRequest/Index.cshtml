@@ -1,3 +1,4 @@
+@using SFA.DAS.AssessorService.Domain.Consts
 @using SFA.DAS.AssessorService.Web.Staff.Controllers
 @model SFA.DAS.AssessorService.Web.Staff.Controllers.DuplicateRequestViewModel
 
@@ -8,14 +9,22 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <a asp-action="Index" asp-controller="Search" class="link-back">Search Again</a>
+        @if (Model.BackToCheckPage)
+        {
+            <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateId="@Model.CertificateId" asp-route-uln=@Model.Uln asp-route-stdcode=@Model.StdCode asp-route-page=@Model.Page asp-route-searchstring=@Model.SearchString>Back</a>
+        }
+        else
+        {
+            <a class="link-back" asp-controller="Search" asp-action="Select" asp-route-stdcode="@Model.StdCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.Page">Back</a>
+        }
+
         <h1 class="heading-large">Re-print certificate</h1>
         @if (!Model.IsConfirmed)
         {
-            <p class="lede text">Request a duplicate print of the following certificate: <span class="bold-medium">@Model.Certificate.CertificateReference</span></p>
-            
-            <form asp-action="Index" asp-controller="DuplicateRequest" method="post">
-                @Html.HiddenFor(m => m.Certificate.Id)
+            <p class="lede text">Request a duplicate print of the following certificate: <span class="bold-medium">@Model.CertificateReference</span></p>
+
+            <form asp-action="Index" asp-controller="DuplicateRequest" method="post" asp-route-certificateId=@Model.CertificateId
+                  asp-route-uln=@Model.Uln asp-route-stdcode=@Model.StdCode asp-route-page=@Model.Page asp-route-searchstring=@Model.SearchString>
                 <button class="button">Confirm</button>
             </form>
         }
@@ -24,5 +33,9 @@
             <p>Certificate reprint requested.</p>
             <p>Will be processed in next Print Run scheduled for @Model.NextBatchDate</p>
         }
+
+        <div>
+            <a asp-action="Index" asp-controller="Search" class="link-back">Search Again</a>
+        </div>
     </div>
 </div>

@@ -5,6 +5,9 @@
         public const string Draft = "Draft";
         public const string Ready = "Ready";
         public const string Submitted = "Submitted";
+        public const string ToBeApproved = "ToBeApproved";
+        public const string Approved = "Approved";
+        public const string Rejected = "Rejected";
         public const string Printed = "Printed";
         public const string Cancelled = "Cancelled";
         public const string NoCertificate = "NoCertificate";

@@ -1,0 +1,23 @@
+<script>
+    var epaoUlnFormElement = $('.apprentice-uln-form');
+    var epaoUlnValidationRulesObject = {
+        rules: {           
+            Uln: {
+                required: true,
+                number: true,
+                minlength: 10,
+                maxlength: 10
+            }
+        },
+        messages: {         
+            Uln: {
+                required: 'Enter the apprentice\'s ULN',
+                number: 'The apprentice\'s ULN should contain exactly 10 numbers',
+                minlength: 'The apprentice\'s ULN should contain exactly 10 numbers',
+                maxlength: 'The apprentice\'s ULN should contain exactly 10 numbers'
+            }
+        }
+    };
+
+    GOVUK.epaoValidate(epaoUlnFormElement, epaoUlnValidationRulesObject);
+</script>
