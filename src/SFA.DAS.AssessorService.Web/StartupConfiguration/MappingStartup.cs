@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Web.ViewModels.Search;
 
 namespace SFA.DAS.AssessorService.Web.StartupConfiguration
@@ -11,6 +12,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
             Mapper.Initialize(cfg =>
             {
                 cfg.CreateMap<ResultViewModel, SearchResult>();
+                cfg.CreateMap<GetPrivateCertificateAlreadySubmittedResponse, SelectedStandardViewModel>();
             });
         }
     }

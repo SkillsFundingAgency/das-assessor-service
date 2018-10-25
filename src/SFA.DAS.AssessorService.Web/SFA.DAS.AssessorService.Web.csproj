@@ -11,6 +11,10 @@
     <EmbeddedResource Remove="Views\CertificateAddressSummary\**" />
     <None Remove="Services\**" />
     <None Remove="Views\CertificateAddressSummary\**" />
+    <Compile Remove="TagHelpers\**" />
+    <EmbeddedResource Remove="TagHelpers\**" />
+    <None Remove="TagHelpers\**" />
+    <Content Remove="TagHelpers\**" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="inactive_app_offline_public_beta.htm" />
@@ -240,8 +244,5 @@
     <EmbeddedResource Update="Resources\Views\Search\Index.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="TagHelpers" />
   </ItemGroup>
 </Project>

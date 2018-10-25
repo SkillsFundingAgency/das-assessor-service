@@ -13,6 +13,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<Certificate> StartPrivate(StartCertificatePrivateRequest request);
         Task<Certificate> GetCertificate(Guid certificateId);
         Task<Certificate> GetCertificate(int ukprn, long uln, string lastName, string endPointAssessorOrganisationId);
+        Task<GetPrivateCertificateAlreadySubmittedResponse> GetAlreadySubmittedPrivateCertificate(Guid certificateId);
         Task<Certificate> UpdateCertificate(UpdateCertificateRequest updateGradeRequest);
         Task<PaginatedList<CertificateSummaryResponse>> GetCertificateHistory(int pageIndex, string userName);
         Task<CertificateAddress> GetContactPreviousAddress(string userName, bool isPrivatelyFunded);

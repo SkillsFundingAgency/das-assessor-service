@@ -94,6 +94,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(await _mediator.Send(new GetToBeApprovedCertificatesRequest()));
         }
         
+        
+        [HttpGet("alreadysubmitted", Name = "GetAlreadySubmittedPrivateCertificateDetails")]
+        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(PaginatedList<CertificateSummaryResponse>))]
+        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetAlreadySubmittedPrivateCertificateDetails(GetPrivateCertificateAlreadySubmittedRequest getPrivateCertificateAlreadySubmittedRequest)
+        {
+            return Ok(await _mediator.Send(getPrivateCertificateAlreadySubmittedRequest));
+        }                        
+        
         [HttpGet("private", Name = "GetPrivateCertificatePrivateByUlnRequest")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(PaginatedList<CertificateSummaryResponse>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
