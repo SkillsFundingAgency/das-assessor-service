@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
         public async Task<IActionResult> StaffCertificateReprint([FromBody] StaffCertificateDuplicateRequest staffCertificateDuplicateRequest)
         {
             var result =  await _mediator.Send(staffCertificateDuplicateRequest);
-            return Ok(result.Certificate);
+            return Ok(result);
 
         }
     }
