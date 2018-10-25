@@ -32,6 +32,9 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string UpdatedBy { get; set; }
         public string DeletedBy { get; set; }
         public string LearnRefNumber { get; set; }
+
+        public bool IsPrivatelyFunded { get; set; }
+
         public DateTime CreateDay { get; set; }
         public virtual ICollection<CertificateLog> CertificateLogs { get; set; } = new List<CertificateLog>();
     }

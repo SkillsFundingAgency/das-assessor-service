@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.EpaoImporter.Const;
 using SFA.DAS.AssessorService.EpaoImporter.Data;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
 using SFA.DAS.AssessorService.Settings;
@@ -31,7 +32,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Notification
 
         public async Task Send(int batchNumber, List<CertificateResponse> certificateResponses)
         {
-            var emailTemplate = await _assessorServiceApi.GetEmailTemplate();
+            var emailTemplate = await _assessorServiceApi.GetEmailTemplate(EMailTemplateNames.PrintAssessorCoverLetters);
 
             var certificatesFileName = $"IFA-Certificate-{GetMonthYear()}-{batchNumber.ToString().PadLeft(3, '0')}.xlsx";
 

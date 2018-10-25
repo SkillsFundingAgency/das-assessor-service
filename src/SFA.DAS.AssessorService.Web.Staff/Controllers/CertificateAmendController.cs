@@ -1,45 +1,72 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels;
-using System;
-using System.Threading.Tasks;
-using CertificateActions = SFA.DAS.AssessorService.Domain.Consts.CertificateActions;
-using CertificateStatus = SFA.DAS.AssessorService.Domain.Consts.CertificateStatus;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {
+    [Authorize]
     public class CertificateAmendController : CertificateBaseController
     {
         public CertificateAmendController(ILogger<CertificateAmendController> logger,
             IHttpContextAccessor contextAccessor,
             ApiClient apiClient) : base(logger, contextAccessor, apiClient)
         {
-
         }
 
         [HttpGet]
-        public async Task<IActionResult> Check(Guid certificateId)
+        public async Task<IActionResult> Check(Guid certificateId, string searchString, int page)
         {
-            return await LoadViewModel<CertificateCheckViewModel>(certificateId, "~/Views/CertificateAmend/Check.cshtml");
-        }     
+            var viewModel = await LoadViewModel<CertificateCheckViewModel>(certificateId, "~/Views/CertificateAmend/Check.cshtml");
+            var viewResult = (viewModel as ViewResult);
+            var certificateCheckViewModel = viewResult.Model as CertificateCheckViewModel;
 
-        [HttpPost]
+            certificateCheckViewModel.Page = page;
+            certificateCheckViewModel.SearchString = searchString;
+
+
+            var options = await ApiClient.GetOptions(certificateCheckViewModel.StandardCode);
+            TempData["HideOption"] = !options.Any();
+
+            return viewModel;
+        }
+
+        [HttpPost(Name = "Check")]
         public async Task<IActionResult> ConfirmAndSubmit(CertificateCheckViewModel vm)
         {
-            var certificate = await ApiClient.GetCertificate(vm.Id);
-
-            if(certificate.Status == CertificateStatus.Printed || certificate.Status == CertificateStatus.Reprint)
+            if (vm.Status ==
+                CertificateStatus.Submitted ||
+                vm.Status == CertificateStatus.Printed ||
+                vm.Status == CertificateStatus.Reprint)
             {
-                return RedirectToAction("Index", "DuplicateRequest", new { certificateId = certificate.Id });
+                return RedirectToAction("Index", "DuplicateRequest",
+                    new
+                    {
+                        certificateId = vm.Id, redirectToCheck = vm.RedirectToCheck,
+                        Uln = vm.Uln,
+                        StdCode = vm.StandardCode,                     
+                        Page = vm.Page,
+                        SearchString = vm.SearchString
+                    });
             }
-            else if(certificate.Status == CertificateStatus.Draft || certificate.Status == CertificateStatus.Submitted)
+            else
             {
-                return RedirectToAction("Select", "Search", new { stdcode = certificate.StandardCode, uln = certificate.Uln, searchString = certificate.Uln });
+                return RedirectToAction("Index", "Comment",
+                    new
+                    {
+                        certificateId = vm.Id, redirectToCheck = vm.RedirectToCheck,
+                        Uln = vm.Uln,
+                        StdCode = vm.StandardCode,
+                        Page = vm.Page,                       
+                        SearchString = vm.SearchString
+                    });
             }
-
-            return RedirectToAction("Index", "Search");
         }
     }
 }
