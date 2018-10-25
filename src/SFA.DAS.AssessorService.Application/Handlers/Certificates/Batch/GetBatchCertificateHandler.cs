@@ -55,10 +55,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
 
                         if (providedStandards.Any(s => s.StandardCode == certificate.StandardCode.ToString()))
                         {
-                            certData.OverallGrade = "";
-                            certData.LearningStartDate = DateTime.MinValue;
-                            certData.AchievementDate = null;
+                            CertificateData redactedData = new CertificateData
+                            {
+                                LearnerGivenNames = certData.LearnerGivenNames,
+                                LearnerFamilyName = certData.LearnerFamilyName,
+                                StandardName = certData.StandardName,
+                                StandardLevel = certData.StandardLevel,
+                                StandardPublicationDate = certData.StandardPublicationDate
+                            };
 
+                            certificate.CertificateData = JsonConvert.SerializeObject(redactedData);
                             certificate.CreateDay = DateTime.MinValue;
                             certificate.CreatedAt = DateTime.MinValue;
                             certificate.CreatedBy = null;
@@ -66,8 +72,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
                             certificate.UpdatedAt = null;
                             certificate.DeletedBy = null;
                             certificate.DeletedAt = null;
-
-                            certificate.CertificateData = JsonConvert.SerializeObject(certData);
                         }
                         else
                         {
