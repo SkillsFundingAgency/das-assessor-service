@@ -5,10 +5,10 @@ using Newtonsoft.Json;
 
 namespace SFA.DAS.AssessorService.ExternalApis.Services
 {
-    public class CacheHelper
+    public class CacheService
     {
         private readonly IDistributedCache _distributedCache;
-        public CacheHelper(IDistributedCache distributedCache)
+        public CacheService(IDistributedCache distributedCache)
         {
             _distributedCache = distributedCache;
         }
