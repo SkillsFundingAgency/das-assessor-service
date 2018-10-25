@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
+using SFA.DAS.AssessorService.ExternalApis.Services;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels.Private;
@@ -21,13 +22,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
     public class CertificatePrivateStandardCodeController : CertificateBaseController
     {
         private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
-        private readonly CacheHelper _cacheHelper;
+        private readonly CacheService _cacheHelper;
         private readonly ApiClient _apiClient;       
 
         public CertificatePrivateStandardCodeController(ILogger<CertificateAmendController> logger,
             IHttpContextAccessor contextAccessor,
             IAssessmentOrgsApiClient assessmentOrgsApiClient,
-            CacheHelper cacheHelper,
+            CacheService cacheHelper,
             ApiClient apiClient)
             : base(logger, contextAccessor, apiClient)
         {
