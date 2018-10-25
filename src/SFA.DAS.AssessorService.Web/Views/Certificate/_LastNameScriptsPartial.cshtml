@@ -1,0 +1,19 @@
+<script>
+
+var epaoLastNameFormElement = $('.apprentice-lastname-form ');
+var epaoLastNameValidationRulesObject = {
+    rules: {
+        LastName: {
+            required: true
+        }
+    },
+    messages: {
+        LastName: {
+            required: 'Enter the apprentice’s last name'
+        }
+    }
+};
+
+GOVUK.epaoValidate(epaoLastNameFormElement, epaoLastNameValidationRulesObject);
+
+</script>

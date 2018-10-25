@@ -1,4 +1,6 @@
 ﻿@model SFA.DAS.AssessorService.Web.Staff.ViewModels.CertificateCheckViewModel
+@using SFA.DAS.AssessorService.Domain.Extensions
+@using SFA.DAS.AssessorService.Domain.Consts;
 
 @{
     ViewBag.Title = "Check and approve the assessment details";
@@ -10,9 +12,9 @@
         @{
             var fullName = @Model.GivenNames + " " + @Model.FamilyName;
         }
-  
+
         <a class="link-back" asp-controller="Search" asp-action="Select" asp-route-stdcode=@Model.StandardCode
-           asp-route-uln=@Model.Uln asp-route-searchstring=@fullName >Back</a>
+           asp-route-uln=@Model.Uln asp-route-searchstring=@Model.SearchString>Back</a>
 
         <h1 class="heading-large">Check and submit the assessment details</h1>
 
@@ -29,23 +31,52 @@
         <dl class="govuk-check-your-answers cya-questions-short">
             <div>
                 <dt class="cya-question">
-                    Name
+                    First name
                 </dt>
                 <dd class="cya-answer">
-                    @Model.GivenNames @Model.FamilyName
+                    @Model.GivenNames
                 </dd>
                 <dd class="cya-change">
-                    <a asp-controller="CertificateApprenticeDetails" asp-action="ApprenticeDetail" asp-route-certificateid=@Model.Id>
-                        Change<span class="visually-hidden"> name</span>
+                    @if (Model.IsPrivatelyFunded)
+                    {
+                    <a asp-controller="CertificatePrivateFirstName" asp-action="FirstName" asp-route-certificateid=@Model.Id>
+                        Change<span class="visually-hidden"> first name</span>
                     </a>
+                    }
                 </dd>
             </div>
+
+            <div>
+                <dt class="cya-question">
+                    Last name
+                </dt>
+                <dd class="cya-answer">
+                    @Model.FamilyName
+                </dd>
+                <dd class="cya-change">
+                    @if (Model.IsPrivatelyFunded)
+                    {
+                    <a asp-controller="CertificatePrivateLastName" asp-action="LastName" asp-route-certificateid=@Model.Id>
+                        Change<span class="visually-hidden"> last name</span>
+                    </a>
+                    }
+                </dd>
+            </div>
+    
             <div>
                 <dt class="cya-question">
                     <abbr title="Unique learner number">ULN</abbr>
                 </dt>
                 <dd class="cya-answer">
                     @Model.Uln
+                </dd>
+                <dd class="cya-change">
+                    @if (Model.IsPrivatelyFunded)
+                    {
+                    <a asp-controller="CertificatePrivateUln" asp-action="Uln" asp-route-certificateid=@Model.Id>
+                        Change<span class="visually-hidden"> ULN</span>
+                    </a>
+                    }
                 </dd>
             </div>
         </dl>
@@ -56,14 +87,21 @@
         </h2>
 
         <dl class="govuk-check-your-answers cya-questions-short">
+            
             <div>
                 <dt class="cya-question">
                     Standard
                 </dt>
                 <dd class="cya-answer">
-                    @Model.Standard
+                    @Model.Standard (@Model.StandardCode)
                 </dd>
                 <dd class="cya-change">
+                    @if (Model.IsPrivatelyFunded)
+                    {
+                    <a asp-controller="CertificatePrivateStandardCode" asp-action="StandardCode" asp-route-certificateid=@Model.Id>
+                        Change<span class="visually-hidden"> standard</span>
+                    </a>
+                    }
                 </dd>
             </div>
             <div>
@@ -74,6 +112,7 @@
                     @Model.Level
                 </dd>
                 <dd class="cya-change">
+
                 </dd>
             </div>
             <div>
@@ -82,39 +121,77 @@
                 </dt>
                 <dd class="cya-answer">
                     @Model.SelectedGrade
-                </dd>
+                </dd>  
                 <dd class="cya-change">
                     <a asp-controller="CertificateGrade" asp-action="Grade" asp-route-certificateid=@Model.Id>
                         Change<span class="visually-hidden"> grade</span>
                     </a>
                 </dd>
             </div>
+            @if ((bool) TempData["HideOption"] == false)
+            {
+                <div>
+                    <dt class="cya-question">
+                        Option
+                    </dt>
+                    <dd class="cya-answer">
+                        @Model.Option
+                    </dd>
+                    <dd class="cya-change">
+                        <a asp-controller="CertificateOption" asp-action="Option" asp-route-certificateid=@Model.Id>
+                            Change<span class="visually-hidden"> option</span>
+                        </a>
+                    </dd>
+                </div>
+            }
+
+            @if (Model.IsPrivatelyFunded)
+            {
             <div>
                 <dt class="cya-question">
-                    Option
+                    Apprenticeship start date
                 </dt>
                 <dd class="cya-answer">
-                    @Model.Option
+                    @Model.LearnerStartDate?.ToSfaShortDateString()
                 </dd>
                 <dd class="cya-change">
-                    <a asp-controller="CertificateOption" asp-action="Option" asp-route-certificateid=@Model.Id>
-                        Change<span class="visually-hidden"> option</span>
+                    <a asp-controller="CertificatePrivateLearnerStartDate" asp-action="LearnerStartDate" asp-route-certificateid=@Model.Id>
+                        Change<span class="visually-hidden"> apprenticeship start date</span>
                     </a>
                 </dd>
             </div>
+            }
+            
             <div>
                 <dt class="cya-question">
                     Achievement date
                 </dt>
                 <dd class="cya-answer">
-                    @Model.AchievementDate.ToShortDateString()
+                    @Model.AchievementDate?.ToSfaShortDateString()
                 </dd>
                 <dd class="cya-change">
-                    <a asp-controller="CertificateDate" asp-action="Date" asp-route-certificateid=@Model.Id>
+                    <a asp-controller="CertificateDate" asp-action="Date" asp-route-redirecttocheck="true" asp-route-certificateid=@Model.Id>
                         Change<span class="visually-hidden"> achievement date</span>
                     </a>
                 </dd>
             </div>
+
+            @if (Model.IsPrivatelyFunded)
+            {
+            <div>
+                <dt class="cya-question">
+                    UKPRN
+                </dt>
+                <dd class="cya-answer">
+                    @Model.Ukprn
+                </dd>
+                <dd class="cya-change">
+                    <a asp-controller="CertificatePrivateProviderUkprn" asp-action="Ukprn" asp-route-certificateid=@Model.Id>
+                        Change<span class="visually-hidden"> UKPRN</span>
+                    </a>
+                </dd>
+            </div>
+            }
         </dl>
 
         <h2 class="heading-medium">
@@ -131,7 +208,7 @@
                 </dd>
                 <dd class="cya-change">
                     <a asp-controller="CertificateRecipient" asp-action="Recipient" asp-route-certificateid=@Model.Id>
-                        Change<span class="visually-hidden"> name</span>
+                        Change<span class="visually-hidden"> recipient name</span>
                     </a>
                 </dd>
             </div>
@@ -166,16 +243,16 @@
                     Address
                 </dt>
                 <dd class="cya-answer">
-                    @Model.AddressLine1<br/>
+                    @Model.AddressLine1<br />
                     @if (@Model.AddressLine2 != null)
                     {
-                        @Model.AddressLine2<br/>
+                        @Model.AddressLine2<br />
                     }
                     @if (@Model.AddressLine3 != null)
                     {
-                        @Model.AddressLine3<br/>
+                        @Model.AddressLine3<br />
                     }
-                    @Model.City<br/>
+                    @Model.City<br />
                     @Model.Postcode
                 </dd>
                 <dd class="cya-change">
@@ -186,9 +263,19 @@
             </div>
         </dl>
 
-        <form type="post" asp-controller="CertificateAmend" asp-action="ConfirmAndSubmit" asp-route-certificateId="@Model.Id">
+   
+        <form type="post" asp-controller="CertificateAmend" asp-action="ConfirmAndSubmit" asp-route-certificateId="@Model.Id" asp-route-redirectToCheck=true>
             @Html.HiddenFor(c => c.Id)
+            @Html.HiddenFor(m => m.StandardCode)
+            @Html.HiddenFor(m => m.Uln)
+            @Html.HiddenFor(m => m.Page)
+            @Html.HiddenFor(m => m.SearchString)
+            @Html.HiddenFor(m => m.Status)
             <button type="submit" class="button">Confirm and submit</button>
         </form>
+
+        <div>
+            <a asp-action="Index" asp-controller="Search" class="link-back">Search Again</a>
+        </div>
     </div>
 </div>

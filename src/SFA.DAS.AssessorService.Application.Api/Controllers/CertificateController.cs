@@ -35,6 +35,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(await _mediator.Send(request));
         }
 
+        [HttpPost("startprivate", Name = "StartPrivate")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Certificate))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> StartPrivate([FromBody] StartCertificatePrivateRequest request)
+        {
+            return Ok(await _mediator.Send(request));
+        }
+
         [HttpPut("update", Name = "Update")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Certificate))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
@@ -63,6 +72,33 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             try
             {
                 await _mediator.Send(certificateReprintRequest);
+            }
+            catch (NotFound)
+            {
+                throw new ResourceNotFoundException();
+            }
+
+            return Ok();
+        }
+
+        [HttpPut("updatestatustobeapproved", Name = "UpdatePrivateCertificationCertificateStatusToBeApproved")]
+        [SwaggerResponse((int)HttpStatusCode.OK)]        
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> UpdatePrivateCertificationCertificateStatusToBeApproved([FromBody] UpdateCertificateRequestToBeApproved certificate)
+        {
+            await _mediator.Send(certificate);
+            return Ok();
+        }
+        
+        [HttpPost("approvals", Name = "Approvals")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Certificate))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> Approvals([FromBody] CertificateApprovalRequest certificateApprovalRequest)
+        {
+            try
+            {
+                await _mediator.Send(certificateApprovalRequest);
             }
             catch (NotFound)
             {

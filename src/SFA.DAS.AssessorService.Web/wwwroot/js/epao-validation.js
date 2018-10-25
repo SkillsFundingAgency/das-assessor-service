@@ -76,6 +76,8 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
             .show()
             .find('.form-date')
             .before(error);
+        } else if (element.hasClass('autocomplete__input')) {
+          return false;
         } else {
           error.insertBefore(element);
         }
@@ -148,6 +150,25 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
     },
     'Please specify a valid UK postcode'
   );
+
+  // Matches a valid GUID. An empty GUID is not valid.
+  jQuery.validator.addMethod(
+    'validGuid',
+    function(value, element) {
+        return (
+            this.optional(element) || value !== '00000000-0000-0000-0000-000000000000' &&
+            /^([0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12})$/i.test(
+                value
+            )
+        );
+    },
+    'Please specify a valid GUID'
+  );
+
+  // Checks if the value is in an array
+  jQuery.validator.addMethod('equals', function(value, element, param) {
+    return this.optional(element) || $.inArray(value, param) >= 0;
+  });
 
   // Helper to ensure date input is correct format
   function parseDate(str) {

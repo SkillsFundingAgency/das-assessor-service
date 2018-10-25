@@ -5,6 +5,7 @@ using FizzWare.NBuilder;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.EpaoImporter.Const;
 using SFA.DAS.AssessorService.EpaoImporter.Data;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
 using SFA.DAS.AssessorService.EpaoImporter.Notification;
@@ -55,7 +56,7 @@ namespace SFA.DAS.AssessorService.PrintFunction.Tests
                     ClientToken = "12323333333333333"
                 });
 
-            assessorServiceApiMock.Setup(q => q.GetEmailTemplate())
+            assessorServiceApiMock.Setup(q => q.GetEmailTemplate(EMailTemplateNames.PrintAssessorCoverLetters))
                 .Returns(Task.FromResult(new Domain.Entities.EMailTemplate
                 {
                     Recipients = "jcoxhead@hotmil.com",
