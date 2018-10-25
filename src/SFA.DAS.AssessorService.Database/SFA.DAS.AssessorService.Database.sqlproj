@@ -78,6 +78,17 @@
     <Build Include="Tables\OrganisationType.sql" />
     <Build Include="StoredProcedures\StaffSearchCertificates.sql" />
     <Build Include="Tables\Options.sql" />
+    <Build Include="Tables\StaffReports.sql" />
+    <Build Include="StoredProcedures\StaffReports_DetailedExtract.sql" />
+    <Build Include="StoredProcedures\StaffReports_ByBatch.sql" />
+    <Build Include="StoredProcedures\StaffReports_ByEpao.sql" />
+    <Build Include="StoredProcedures\StaffReports_ByEpaoAndStandardAndGrade.sql" />
+    <Build Include="StoredProcedures\StaffReports_ByProvider.sql" />
+    <Build Include="StoredProcedures\StaffReports_ByProviderAndGrade.sql" />
+    <Build Include="StoredProcedures\StaffReports_ByStandard.sql" />
+    <Build Include="StoredProcedures\StaffReports_CertificateCount.sql" />
+    <Build Include="StoredProcedures\StaffReports_MonthlySummary.sql" />
+    <Build Include="StoredProcedures\StaffReports_WeeklySummary.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />

@@ -1,0 +1,17 @@
+<script>
+    var epaoRunReportFormElement = $('.report-selection-form');
+    var epaoRunReportValidationRulesObject = {
+        rules: {
+            ReportId: {
+                required: true,
+                validGuid: true
+            },
+        },
+        messages: {
+            ReportId: 'Please select a report',
+            validGuid: 'Please select a report'
+        }
+    };
+
+    GOVUK.epaoValidate(epaoRunReportFormElement, epaoRunReportValidationRulesObject);
+</script>

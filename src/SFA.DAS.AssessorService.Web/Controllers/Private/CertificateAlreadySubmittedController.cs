@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
         public CertificateAlreadySubmittedController(ICertificateApiClient certificateApiClient,
             IAssessmentOrgsApiClient assessmentOrgsApiClient,
             ILogger<CertificateController> logger)
-        {'
+        {
             _certificateApiClient = certificateApiClient;
             _assessmentOrgsApiClient = assessmentOrgsApiClient;
         }

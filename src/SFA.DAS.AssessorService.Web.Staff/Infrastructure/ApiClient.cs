@@ -264,5 +264,17 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             await Post<CertificatePostApprovalViewModel>("api/v1/certificates/approvals",
                 certificatePostApprovalViewModel);
         }
+
+        #region Reports
+        public async Task<IEnumerable<StaffReport>> GetReportList()
+        {
+            return await Get<IEnumerable<StaffReport>>($"api/v1/staffreports");
+        }
+
+        public async Task<IEnumerable<IDictionary<string, object>>> GetReport(Guid reportId)
+        {
+            return await Get<IEnumerable<IDictionary<string, object>>>($"api/v1/staffreports/{reportId}");
+        }
+        #endregion
     }
 }

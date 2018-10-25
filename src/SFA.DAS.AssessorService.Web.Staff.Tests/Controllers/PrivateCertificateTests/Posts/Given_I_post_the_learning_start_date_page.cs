@@ -4,7 +4,7 @@ using NUnit.Framework;
 using SFA.DAS.AssessorService.Web.Staff.Controllers.Private;
 using SFA.DAS.AssessorService.Web.Staff.Tests.Helpers;
 using SFA.DAS.AssessorService.Web.Staff.Validators;
-using SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private;
+using SFA.DAS.AssessorService.Web.Staff.ViewModels.Private;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificateTests.Posts
 {
