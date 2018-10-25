@@ -105,6 +105,17 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             return View(vm);
         }
 
+        [HttpGet("register/add-standard/organisation/{organisationId}/standard/{standardId}")]
+        public async Task<IActionResult> AddOrganisationStandard(string organisationId, int standardId)
+        {
+            var vm = new RegisterAddOrganisationStandardViewModel
+            {
+                OrganisationId = organisationId,
+                StandardId = standardId
+            };
+            return View(vm);
+        }
+
         [HttpGet("register/add-contact/{organisationId}")]
         public async Task<IActionResult> AddContact(string organisationId)
         {
