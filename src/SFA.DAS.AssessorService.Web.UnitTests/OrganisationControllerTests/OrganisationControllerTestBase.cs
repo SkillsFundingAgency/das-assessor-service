@@ -21,12 +21,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
         protected static Mock<IOrganisationsApiClient> ApiClient;
 
         public static void Setup()
-        {
-            //OrganisationService = new Mock<IOrganisationService>();
-            //OrganisationService
-            //   .Setup(serv => serv.GetOrganisation("jwt", 12345))
-            //   .Returns(Task.FromResult(new Organisation() { Id = "ID1" }));
-
+        {         
             var httpContext = new Mock<IHttpContextAccessor>();
             httpContext
                 .Setup(c => c.HttpContext)

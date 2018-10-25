@@ -26,6 +26,7 @@ namespace SFA.DAS.AssessorService.Data
         public virtual DbSet<EMailTemplate> EMailTemplates { get; set; }
         public virtual DbSet<BatchLog> BatchLogs { get; set; }
         public virtual DbSet<SearchLog> SearchLogs { get; set; }
+        public virtual DbSet<StaffReport> StaffReports { get; set; }
 
         public override int SaveChanges()
         {

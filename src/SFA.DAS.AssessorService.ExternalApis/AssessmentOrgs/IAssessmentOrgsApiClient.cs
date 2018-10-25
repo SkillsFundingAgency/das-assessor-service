@@ -107,5 +107,6 @@ namespace SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs
         Task<List<Standard>> GetAllStandards();
         Task<List<StandardSummary>> GetAllStandardSummaries();
         Task<Provider> GetProvider(long providerUkPrn);
+        Task<List<Provider>> GetProviders();
     }
 }

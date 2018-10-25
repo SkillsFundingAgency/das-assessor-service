@@ -20,6 +20,7 @@ namespace SFA.DAS.AssessorService.ExternalApis.Services
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(expirationInHours)
             });
         }
+
         public async Task<T> RetrieveFromCache<T>(string key)
         {
             var json = await _distributedCache.GetStringAsync(key);

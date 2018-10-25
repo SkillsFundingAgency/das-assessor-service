@@ -13,6 +13,10 @@
         {
             <a class="link-back" asp-controller="CertificateCheck" asp-action="Check">Back</a>
         }
+        else if(Model.IsPrivatelyFunded)
+        {
+            <a class="link-back" asp-controller="CertificatePrivateProviderUkprn" asp-action="Ukprn">Back</a>
+        }
         else
         {
             <a class="link-back" asp-controller="CertificateDeclaration" asp-action="Declare">Back</a>
@@ -44,12 +48,9 @@
             }
 
             <div sfa-anyvalidationerror-class="after-error-summary">
-                <div id="SelectedGrade">
-                    <h1 class="heading-medium">
-                        @*<span class="heading-secondary">@Model.GivenNames @Model.FamilyName</span>*@
-                        @Localizer["Heading"]
-                    </h1>
-                </div>
+                <h1 class="heading-large">
+                    @Localizer["Heading"]
+                </h1>
                 <div class="form-group" sfa-validation-for="SelectedGrade" sfa-validationerror-class="form-group-error">
                     <div class="error-message-container" sfa-validation-for="SelectedGrade">
                         <span class="error-message" asp-validation-for="SelectedGrade"></span>
