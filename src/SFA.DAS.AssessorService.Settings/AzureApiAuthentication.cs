@@ -13,7 +13,5 @@ namespace SFA.DAS.AssessorService.Settings
         [JsonRequired] public string ProductId { get; set; }
 
         [JsonRequired] public string GroupId { get; set; }
-
-        [JsonRequired] public string DefaultPassword { get; set; }
     }
 }

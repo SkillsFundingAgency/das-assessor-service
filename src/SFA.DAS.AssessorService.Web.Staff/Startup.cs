@@ -102,8 +102,7 @@ namespace SFA.DAS.AssessorService.Web.Staff
                 config.For<IAzureTokenService>().Use<AzureTokenService>();
                 config.For<IAzureApiClient>().Use<AzureApiClient>().Ctor<string>("baseUri").Is(ApplicationConfiguration.AzureApiAuthentication.ApiBaseAddress)
                                                                    .Ctor<string>("productId").Is(ApplicationConfiguration.AzureApiAuthentication.ProductId)
-                                                                   .Ctor<string>("groupId").Is(ApplicationConfiguration.AzureApiAuthentication.GroupId)
-                                                                   .Ctor<string>("password").Is(ApplicationConfiguration.AzureApiAuthentication.DefaultPassword);
+                                                                   .Ctor<string>("groupId").Is(ApplicationConfiguration.AzureApiAuthentication.GroupId);
                 config.For<CacheHelper>().Use<CacheHelper>();
                 config.For<CertificateLearnerStartDateViewModelValidator>()
                     .Use<CertificateLearnerStartDateViewModelValidator>();

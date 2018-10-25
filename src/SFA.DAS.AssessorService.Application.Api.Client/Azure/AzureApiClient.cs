@@ -15,15 +15,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
     {
         private readonly string _groupId;
         private readonly string _productId;
-        private readonly string _password;
         protected readonly IOrganisationsApiClient _organisationsApiClient;
         protected readonly IContactsApiClient _contactsApiClient;
 
-        public AzureApiClient(string baseUri, string productId, string groupId, string password, IAzureTokenService tokenService, ILogger<AzureApiClientBase> logger, IOrganisationsApiClient organisationsApiClient, IContactsApiClient contactsApiClient) : base(baseUri, tokenService, logger)
+        public AzureApiClient(string baseUri, string productId, string groupId, IAzureTokenService tokenService, ILogger<AzureApiClientBase> logger, IOrganisationsApiClient organisationsApiClient, IContactsApiClient contactsApiClient) : base(baseUri, tokenService, logger)
         {
             _productId = productId;
             _groupId = groupId;
-            _password = password;
             _organisationsApiClient = organisationsApiClient;
             _contactsApiClient = contactsApiClient;
         }
@@ -146,8 +144,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
                     FirstName = organisation.EndPointAssessorName,
                     LastName = contact.DisplayName,
                     Email = contact.Email,
-                    Note = $"ukprn={ukprn}",
-                    Password = _password
+                    Note = $"ukprn={ukprn}"
                 };
 
                 using (var httpRequest = new HttpRequestMessage(HttpMethod.Put, $"/users/{Guid.NewGuid()}?api-version=2017-03-01"))

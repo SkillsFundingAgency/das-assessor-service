@@ -7,6 +7,5 @@
         string Key { get; set; }
         string ProductId { get; set; }
         string GroupId { get; set; }
-        string DefaultPassword { get; set; }
     }
 }
