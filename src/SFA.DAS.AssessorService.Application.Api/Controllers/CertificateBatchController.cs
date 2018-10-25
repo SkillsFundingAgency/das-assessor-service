@@ -22,14 +22,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
     public class CertificateBatchController : Controller
     {
         private readonly IMediator _mediator;
+        private readonly GetBatchCertificateRequestValidator _getValidator;
         private readonly CreateBatchCertificateRequestValidator _createValidator;
         private readonly UpdateBatchCertificateRequestValidator _updateValidator;
         private readonly SubmitBatchCertificateRequestValidator _submitValidator;
         private readonly DeleteBatchCertificateRequestValidator _deleteValidator;
 
-        public CertificateBatchController(IMediator mediator, CreateBatchCertificateRequestValidator createValidator, UpdateBatchCertificateRequestValidator updateValidator, SubmitBatchCertificateRequestValidator submitValidator, DeleteBatchCertificateRequestValidator deleteValidator)
+        public CertificateBatchController(IMediator mediator, GetBatchCertificateRequestValidator getValidator, CreateBatchCertificateRequestValidator createValidator, UpdateBatchCertificateRequestValidator updateValidator, SubmitBatchCertificateRequestValidator submitValidator, DeleteBatchCertificateRequestValidator deleteValidator)
         {
             _mediator = mediator;
+            _getValidator = getValidator;
             _createValidator = createValidator;
             _updateValidator = updateValidator;
             _submitValidator = submitValidator;
@@ -37,9 +39,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpGet("{uln}/{lastname}/{standardcode}/{certificateReference}/{ukPrn}/{email}")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Certificate))]
-        [SwaggerResponse((int)HttpStatusCode.NotFound)]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(GetBatchCertificateResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> Get(long uln, string lastname, int standardcode, string certificateReference, int ukPrn, string email)
         {
             var request = new GetBatchCertificateRequest
@@ -52,16 +54,23 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 Email = email
             };
 
-            var certificate = await _mediator.Send(request);
+            ValidationResult validationResult = _getValidator.Validate(request);
 
-            if(certificate is null)
+            GetBatchCertificateResponse getResponse = new GetBatchCertificateResponse
             {
-                return NotFound();
-            }
-            else
+                Uln = request.Uln,
+                StandardCode = request.StandardCode,
+                FamilyName = request.FamilyName,
+                CertificateReference = request.CertificateReference,
+                ValidationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList()
+            };
+
+            if (validationResult.IsValid)
             {
-                return Ok(certificate);
+                getResponse.Certificate = await _mediator.Send(request);
             }
+
+            return Ok(getResponse);
         }
 
         [HttpPost]

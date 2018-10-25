@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
 {
     public class SubmitBatchCertificateRequestValidator : AbstractValidator<SubmitBatchCertificateRequest>
     {
-        public SubmitBatchCertificateRequestValidator(IStringLocalizer<BatchCertificateRequestValidator> localiser, IOrganisationQueryRepository organisationQueryRepository, IIlrRepository ilrRepository, ICertificateRepository certificateRepository, IAssessmentOrgsApiClient assessmentOrgsApiClient)
+        public SubmitBatchCertificateRequestValidator(IStringLocalizer<SubmitBatchCertificateRequestValidator> localiser, IOrganisationQueryRepository organisationQueryRepository, IIlrRepository ilrRepository, ICertificateRepository certificateRepository, IAssessmentOrgsApiClient assessmentOrgsApiClient)
         {
             RuleFor(m => m.Uln).InclusiveBetween(1000000000, 9999999999).WithMessage("The apprentice's ULN should contain exactly 10 numbers");
             RuleFor(m => m.FamilyName).NotEmpty().WithMessage("Enter the apprentice's last name");

@@ -38,13 +38,13 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             GetCertificateRequest getRequest = new GetCertificateRequest { UkPrn = _headerInfo.Ukprn, Email = _headerInfo.Email, Uln = uln, FamilyName = familyName, StandardCode = standardCode, CertificateReference = certificateReference };
             var response = await _apiClient.GetCertificate(getRequest);
 
-            if (response is null)
+            if (response.ValidationErrors.Any())
             {
-                return NotFound();
+                return NotFound(string.Join("; ", response.ValidationErrors));
             }
             else
             {
-                return Ok(response);
+                return Ok(response.Certificate);
             }
         }
 

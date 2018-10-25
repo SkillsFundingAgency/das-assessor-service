@@ -11,7 +11,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
     {
         Task<IEnumerable<BatchCertificateResponse>> CreateCertificates(IEnumerable<BatchCertificateRequest> request);
         Task<ApiResponse> DeleteCertificate(DeleteCertificateRequest request);
-        Task<Certificate> GetCertificate(GetCertificateRequest request);
+        Task<GetCertificateResponse> GetCertificate(GetCertificateRequest request);
         Task<List<SearchResult>> Search(SearchQuery searchQuery, int? standardCode = null);
         Task<IEnumerable<SubmitBatchCertificateResponse>> SubmitCertificates(IEnumerable<SubmitBatchCertificateRequest> request);
         Task<IEnumerable<BatchCertificateResponse>> UpdateCertificates(IEnumerable<BatchCertificateRequest> request);

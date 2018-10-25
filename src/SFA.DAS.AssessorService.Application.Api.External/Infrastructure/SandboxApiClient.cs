@@ -20,14 +20,23 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             _client = client;
         }
 
-        public Task<Certificate> GetCertificate(GetCertificateRequest request)
+        public Task<GetCertificateResponse> GetCertificate(GetCertificateRequest request)
         {
-            var response = new Certificate
+            var certificate = new Certificate
             {
                 CertificateData = new Models.Certificates.CertificateData { CertificateReference = "SANDBOX" },
                 Status = "Draft",
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = request.Email,
+            };
+
+            var response = new GetCertificateResponse
+            {
+                Certificate = certificate,
+                CertificateReference = request.CertificateReference,
+                FamilyName = request.FamilyName,
+                StandardCode = request.StandardCode,
+                Uln = request.Uln
             };
 
             return Task.FromResult(response);

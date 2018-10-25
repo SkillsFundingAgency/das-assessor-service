@@ -84,11 +84,11 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             return results.Where(s => standardCode is null || s.StdCode == standardCode).ToList();
         }
 
-        public async Task<Certificate> GetCertificate(GetCertificateRequest request)
+        public async Task<GetCertificateResponse> GetCertificate(GetCertificateRequest request)
         { 
-            var apiResponse = await Get<Domain.Entities.Certificate>($"/api/v1/certificates/batch/{request.Uln}/{request.FamilyName}/{request.StandardCode}/{request.CertificateReference}/{request.UkPrn}/{request.Email}");
+            var apiResponse = await Get<AssessorService.Api.Types.Models.Certificates.Batch.GetBatchCertificateResponse>($"/api/v1/certificates/batch/{request.Uln}/{request.FamilyName}/{request.StandardCode}/{request.CertificateReference}/{request.UkPrn}/{request.Email}");
 
-            return Mapper.Map<Domain.Entities.Certificate, Certificate>(apiResponse);
+            return Mapper.Map<AssessorService.Api.Types.Models.Certificates.Batch.GetBatchCertificateResponse, GetCertificateResponse>(apiResponse);
         }
 
         public async Task<IEnumerable<BatchCertificateResponse>> CreateCertificates(IEnumerable<BatchCertificateRequest> request)
