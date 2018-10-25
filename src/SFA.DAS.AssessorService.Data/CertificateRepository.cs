@@ -369,8 +369,7 @@ namespace SFA.DAS.AssessorService.Data
         }
 
         public async Task ApproveCertificates(List<ApprovalResult> approvalResults, string userName)
-        {
-           
+        {           
                 var certificateReferences =
                     approvalResults.Select(q => q.CertificateReference).ToList();
 
@@ -382,8 +381,19 @@ namespace SFA.DAS.AssessorService.Data
                     var certificate =
                         await certificates.FirstAsync(
                             q => q.CertificateReference == approvalResult.CertificateReference);
+                    var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 
-                    certificate.Status = approvalResult.IsApproved;
+                    certificate.Status = approvalResult.ApprovedStatus;
+                    if (certificate.Status == CertificateStatus.Rejected)
+                    {
+                        certificateData.ReasonForRejection = approvalResult.ReasonForRejection;
+                        certificate.CertificateData = JsonConvert.SerializeObject(certificateData);
+                    }
+                    else
+                    {
+                        certificateData.ReasonForRejection = String.Empty;
+                        certificate.CertificateData = JsonConvert.SerializeObject(certificateData);
+                    }
 
                     UpdateCertificateLog(certificate, certificate.Status, userName);
                 }

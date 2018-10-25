@@ -28,6 +28,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels.Private
         public string ContactAddLine3 { get; set; }
         public string ContactAddLine4 { get; set; }
         public string ContactPostCode { get; set; }
+        public string ReasonForRejection { get; set; }
         public string Status { get; set; }
           
         public string IsApproved { get; set; }        

@@ -37,6 +37,17 @@
             </td>
         </tr>
 
+        if (results[i].Status == "Rejected")
+        {
+            <tr>
+            <td colspan="4"></td>
+            <td >Rejection Reason</td>
+            <td>
+                <textarea  type="text" rows="5" asp-for=@approvalresults[j].ReasonForRejection></textarea>                                                                                              
+            </td >
+            </tr>
+        }
+
         {
             approvalresults[j].CertificateReference = results[i].CertificateReference;
         }
@@ -45,8 +56,8 @@
 
 //        note for Greg include this back needs java script to provide for accrodion here.
 @*         <tr class="js-history-details-expandble js-hidden history-details-expandble" aria-hidden="true"> *@
-        
-            <tr>
+
+        <tr>
             <td colspan="5">
                 <div class="history-details-content">
                     <h2 class="heading-medium history-details-content--first-heading">Assessment details</h2>

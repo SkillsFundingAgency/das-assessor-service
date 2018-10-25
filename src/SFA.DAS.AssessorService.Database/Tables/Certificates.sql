@@ -17,6 +17,7 @@
     [ProviderUkPrn] INT NOT NULL, 
     [CertificateReferenceId] INT NOT NULL IDENTITY(10001,1), 
 	[LearnRefNumber] NVARCHAR(12) NULL,
+	[ReasonForRejection] [nvarchar](max) NOT NULL,
 	[CreateDay] DATE NOT NULL,
 	[IsPrivatelyFunded] BIT, 
     CONSTRAINT [PK_Certificates] PRIMARY KEY ([Id]),
