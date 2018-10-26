@@ -18,7 +18,15 @@ namespace SFA.DAS.AssessorService.Web.Staff.Models
         public DateTime? StandardLastDateForNewStarts { get; set; }
         public List<ContactResponse> Contacts { get; set; }
         public List<DeliveryArea> AvailableDeliveryAreas { get; set; }
+        //public DateTime EffectiveFromDate { get; set; }
+        public string EffectiveFromDay { get; set; }
+        public string EffectiveFromMonth { get; set; }
+        public string EffectiveFromYear { get; set; }
         public DateTime? EffectiveFrom { get; set; }
+        public DateTime EffectiveToDate { get; set; }
+        public string EffectiveToDay { get; set; }
+        public string EffectiveToMonth { get; set; }
+        public string EffectiveToYear { get; set; }
         public DateTime? EffectiveTo {get;set;}
         public Guid? ContactId { get; set; }
         public List<int> SelectedDeliveryAreas { get; set; }

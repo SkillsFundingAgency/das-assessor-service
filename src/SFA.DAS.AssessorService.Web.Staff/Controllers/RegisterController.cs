@@ -107,7 +107,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             return View(vm);
         }
 
-        [HttpGet("register/add-standard/organisation/{organisationId}/standard/{standardId}")]
+       [HttpGet("register/add-standard/organisation/{organisationId}/standard/{standardId}")]
         public async Task<IActionResult> AddOrganisationStandard(string organisationId, int standardId)
         {
             var vm = new RegisterAddOrganisationStandardViewModel
@@ -123,6 +123,18 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             vm.StandardLastDateForNewStarts = DateTime.Today.AddDays(5); //nullable                   
             
             return View(vm);
+        }
+        
+        
+        [HttpPost("register/add-standard/organisation/{organisationId}/standard/{standardId}")]
+        public async Task<IActionResult> AddOrganisationStandard(RegisterAddOrganisationStandardViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+            {      
+                return View(viewModel);
+            }                   
+            
+            return View(viewModel);
         }
 
         [HttpGet("register/add-contact/{organisationId}")]

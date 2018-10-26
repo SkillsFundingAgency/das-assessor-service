@@ -9,7 +9,11 @@
     <div class="column-two-thirds">
         <a href="/register/search-standards/@Model.OrganisationId" class="link-back">Return to standard search</a>
         <form class="add-organisation-form" asp-action="AddOrganisationStandard" asp-controller="Register" method="POST">
-
+        <input type="hidden" name="fullDate" id="fullDate" class="date-input" />
+        @Html.HiddenFor(c => c.OrganisationId)
+        @Html.HiddenFor(c => c.StandardId)
+        @Html.HiddenFor(m => m.EffectiveFrom)
+        @Html.HiddenFor(m => m.EffectiveTo)   
             <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
                 <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
                     There's a problem
@@ -19,12 +23,16 @@
 
             @if (!ViewData.ModelState.IsValid)
             {
-                @*<div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
                         <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
                             There's a problem
                         </h2>
-                        <ul class="error-summary-list">
-                            <li><a sfa-validation-for="Name"></a></li>
+                    <ul class="error-summary-list">
+                        <li><a sfa-validation-for="EffectiveFrom"></a></li>
+                        <li><a sfa-validation-for="EffectiveFromDay"></a></li>
+                        <li><a sfa-validation-for="EffectiveFromMonth"></a></li>
+                        <li><a sfa-validation-for="EffectiveFromYear"></a></li>
+                        @*<li><a sfa-validation-for="Name"></a></li>
                             <li><a sfa-validation-for="LegalName"></a></li>
                             <li><a sfa-validation-for="Address1"></a></li>
                             <li><a sfa-validation-for="Address2"></a></li>
@@ -33,9 +41,9 @@
                             <li><a sfa-validation-for="Postcode"></a></li>
                             <li><a sfa-validation-for="Ukprn"></a></li>
                             <li><a sfa-validation-for="OrganisationTypeId"></a></li>
-                            <li><a sfa-validation-for="WebsiteLink"></a></li>
-                        </ul>
-                    </div>*@
+                            <li><a sfa-validation-for="WebsiteLink"></a></li>*@
+                    </ul>
+                    </div>
             }
 
             <h1>
@@ -43,49 +51,68 @@
                     <span class="heading-xlarge">Add an organisation standard</span>
                 </label>
             </h1>
+        <table>
+            <tbody>
+            <tr>
+                <td><span class="bold-small">Organisation</span></td>
+                <td>@Model.OrganisationName</td>
+            </tr>
+            <tr>
+                <td><span class="bold-small">Organisation ID</span></td>
+                <td>@Model.OrganisationId</td>
+            </tr>
+            <tr>
+                <td><span class="bold-small">UKPRN</span></td>
+                <td>@Model.Ukprn</td>
+            </tr>
+            <tr>
+                <td><span class="bold-small">Standard</span></td>
+                <td>@Model.StandardTitle</td>
+            </tr>
+            <tr>
+                <td><span class="bold-small">Effective From</span></td>
+                <td>@Model.StandardEffectiveFrom.ToSfaShortDateString()</td>
+            </tr>
+            <tr>
+                <td><span class="bold-small">Effective To</span></td>
+                <td>@Model.StandardEffectiveTo.ToSfaShortDateString()</td>
+            </tr>
+            <tr>
+                <td><span class="bold-small">Late Date For New Starts</span></td>
+                <td>@Model.StandardLastDateForNewStarts.ToSfaShortDateString()</td>
+            </tr>
+            </tbody>
+        </table>
 
+        <h1>New Organisation Standard Details</h1>
+        
+        <div class="form-group error-message-container" sfa-anyvalidationerror-class="form-group-error">
+            <span class="error-message" asp-validation-for="EffectiveFrom"></span>
+            <span class="error-message" asp-validation-for="EffectiveFromDay"></span>
+            <span class="error-message" asp-validation-for="EffectiveFromMonth"></span>
+            <span class="error-message" asp-validation-for="EffectiveFromYear"></span>
+            <label for="EffectiveFrom">
+                <span class="form-label-bold">Effective From</span>
+            </label>
+                <span class="form-date">
+                    <div class="form-group form-group-day">
+                        <label for="EffectiveFromDay">Day</label>
+                        <input class="form-control date-input js-integers-only" sfa-validation-for="EffectiveFromDay" sfa-validationerror-class="form-control-error" asp-for="EffectiveFromDay" type="text" maxlength="2" />
+                    </div>
+
+                    <div class="form-group form-group-month">
+                        <label for="EffectiveFromMonth">Month</label>
+                        <input class="form-control date-input js-integers-only" sfa-validation-for="EffectiveFromMonth" sfa-validationerror-class="form-control-error" asp-for="EffectiveFromMonth" type="text" maxlength="2" />
+                    </div>
+
+                    <div class="form-group form-group-year">
+                        <label for="EffectiveFromYear">Year</label>
+                        <input class="form-control date-input js-integers-only" sfa-validation-for="EffectiveFromYear" sfa-validationerror-class="form-control-error" asp-for="EffectiveFromYear" type="text" maxlength="4" />
+                    </div>
+                </span>
            
-                 <table>
-                    <tbody>
-                        <tr>
-                            <td><span class="bold-small">Organisation</span></td>
-                            <td>@Model.OrganisationName</td>
-                        </tr>
-                        <tr>
-                            <td><span class="bold-small">Organisation ID</span></td>
-                            <td>@Model.OrganisationId</td>
-                        </tr>
-                        <tr>
-                            <td><span class="bold-small">UKPRN</span></td>
-                            <td>@Model.Ukprn</td>
-                        </tr>
-                        <tr>
-                            <td><span class="bold-small">Standard</span></td>
-                            <td>@Model.StandardTitle</td>
-                        </tr>
-                        <tr>
-                            <td><span class="bold-small">Effective From</span></td>
-                            <td>@Model.StandardEffectiveFrom.ToSfaShortDateString()</td>
-                        </tr>
-                        <tr>
-                            <td><span class="bold-small">Effective To</span></td>
-                            <td>@Model.StandardEffectiveTo.ToSfaShortDateString()</td>
-                        </tr>
-                        <tr>
-                            <td><span class="bold-small">Late Date For New Starts</span></td>
-                            <td>@Model.StandardLastDateForNewStarts.ToSfaShortDateString()</td>
-                        </tr>
-                    </tbody>
-                </table>
-               @* <div class="form-group" sfa-validation-for="LegalName" sfa-validationerror-class="form-group-error">
-                    <label for="LegalName">
-                        <span class="form-label-bold">Legal name (optional)</span>
-                        <span class="form-hint">if different from organisation name</span>
-                        <span class="error-message" asp-validation-for="LegalName"></span>
-                    </label>
-                    <input class="form-control" name="LegalName" sfa-validation-for="LegalName" sfa-validationerror-class="form-control-error" asp-for="LegalName" type="text"/>
-                </div>
-                <div class="form-group" sfa-validation-for="Ukprn" sfa-validationerror-class="form-group-error">
+        </div>
+        @*   <div class="form-group" sfa-validation-for="Ukprn" sfa-validationerror-class="form-group-error">
                     <label for="Ukprn">
                         <span class="form-label-bold">UKPRN (optional)</span>
                         <span class="error-message" asp-validation-for="Ukprn"></span>
@@ -147,10 +174,10 @@
                         <span class="error-message" asp-validation-for="Postcode"></span>
                     </label>
                     <input class="form-control" name="Postcode" sfa-validation-for="Postcode" sfa-validationerror-class="form-control-error" asp-for="Postcode" type="text"/>
-                </div>
+                </div>*@
                 <div class="form-group">
                     <button class="button" type="submit">Save</button>
-                </div>*@
+                </div>
             </div>
         </form>
     </div>
