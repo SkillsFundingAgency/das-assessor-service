@@ -1,9 +1,8 @@
 ﻿using System;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Domain.JsonData;
-using SFA.DAS.AssessorService.Web.Staff.ViewModels;
 
-namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private
+namespace SFA.DAS.AssessorService.Web.Staff.ViewModels.Private
 {
     public class CertificateLearnerStartDateViewModel : CertificateBaseViewModel, ICertificateViewModel
     {
@@ -14,7 +13,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private
         public DateTime? StartDate { get; set; }
         public string WarningShown { get; set; }
 
-        public void FromCertificate(Domain.Entities.Certificate cert)
+        public void FromCertificate(AssessorService.Domain.Entities.Certificate cert)
         {
             BaseFromCertificate(cert);
             Day = CertificateData.LearningStartDate?.Day.ToString();
@@ -24,7 +23,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private
             WarningShown = "false";
         }
 
-        public Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData data)
+        public AssessorService.Domain.Entities.Certificate GetCertificateFromViewModel(AssessorService.Domain.Entities.Certificate certificate, CertificateData data)
         {
             data.LearningStartDate = new DateTime(int.Parse(Year), int.Parse(Month), int.Parse(Day));
 
