@@ -127,7 +127,7 @@
                             <th>User</th>
                             <th>Status</th>
                             <th>Batch</th>
-                            <th>Change</th>
+                            <th>@if (Model.Learner.CertificateLogs.Count() > 1) { @Html.Raw("Change"); }</th>
                             <!-- <th class="force-wide-column">Reason for change</th> -->
                         </tr>
                     </thead>

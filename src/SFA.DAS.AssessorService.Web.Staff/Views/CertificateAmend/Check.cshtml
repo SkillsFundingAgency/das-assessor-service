@@ -261,7 +261,7 @@
         @if (Model.Status == CertificateStatus.Printed || Model.Status == CertificateStatus.Reprint)
         {
             <form asp-action="Index" asp-controller="DuplicateRequest" method="post">
-                @Html.Hidden("Certificate.Id", Model.Id, new { @id = "Certificate.Id" })
+                @Html.Hidden("certificateId", Model.Id, new { @id = "certificateId" })
                 <button class="button">Confirm reprint</button>
             </form>
         }
