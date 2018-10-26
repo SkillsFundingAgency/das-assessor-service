@@ -12,9 +12,13 @@
         <input type="hidden" name="fullDate" id="fullDate" class="date-input" />
         @Html.HiddenFor(c => c.OrganisationId)
         @Html.HiddenFor(c => c.StandardId)
-        @Html.HiddenFor(m => m.EffectiveFrom)
-        @Html.HiddenFor(m => m.EffectiveTo)   
-            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+        @Html.HiddenFor(c => c.Ukprn)
+        @Html.HiddenFor(c => c.OrganisationName)
+        @Html.HiddenFor(c => c.StandardTitle)        
+        @Html.HiddenFor(m => m.StandardEffectiveFrom)
+        @Html.HiddenFor(m => m.StandardEffectiveTo)  
+        @Html.HiddenFor(c => c.StandardLastDateForNewStarts)
+        <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
                 <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
                     There's a problem
                 </h2>
@@ -31,17 +35,11 @@
                         <li><a sfa-validation-for="EffectiveFrom"></a></li>
                         <li><a sfa-validation-for="EffectiveFromDay"></a></li>
                         <li><a sfa-validation-for="EffectiveFromMonth"></a></li>
-                        <li><a sfa-validation-for="EffectiveFromYear"></a></li>
-                        @*<li><a sfa-validation-for="Name"></a></li>
-                            <li><a sfa-validation-for="LegalName"></a></li>
-                            <li><a sfa-validation-for="Address1"></a></li>
-                            <li><a sfa-validation-for="Address2"></a></li>
-                            <li><a sfa-validation-for="Address3"></a></li>
-                            <li><a sfa-validation-for="Address4"></a></li>
-                            <li><a sfa-validation-for="Postcode"></a></li>
-                            <li><a sfa-validation-for="Ukprn"></a></li>
-                            <li><a sfa-validation-for="OrganisationTypeId"></a></li>
-                            <li><a sfa-validation-for="WebsiteLink"></a></li>*@
+                        <li><a sfa-validation-for="EffectiveFromYear"></a></li>  
+                        <li><a sfa-validation-for="EffectiveTo"></a></li>
+                        <li><a sfa-validation-for="EffectiveToDay"></a></li>
+                        <li><a sfa-validation-for="EffectiveToMonth"></a></li>
+                        <li><a sfa-validation-for="EffectiveToYear"></a></li>  
                     </ul>
                     </div>
             }
@@ -94,22 +92,48 @@
             <label for="EffectiveFrom">
                 <span class="form-label-bold">Effective From</span>
             </label>
-                <span class="form-date">
-                    <div class="form-group form-group-day">
-                        <label for="EffectiveFromDay">Day</label>
-                        <input class="form-control date-input js-integers-only" sfa-validation-for="EffectiveFromDay" sfa-validationerror-class="form-control-error" asp-for="EffectiveFromDay" type="text" maxlength="2" />
-                    </div>
+            <span class="form-date">
+                <div class="form-group form-group-day">
+                    <label for="EffectiveFromDay">Day</label>
+                    <input class="form-control date-input js-integers-only" sfa-validation-for="EffectiveFromDay" sfa-validationerror-class="form-control-error" asp-for="EffectiveFromDay" type="text" maxlength="2" />
+                </div>
 
-                    <div class="form-group form-group-month">
-                        <label for="EffectiveFromMonth">Month</label>
-                        <input class="form-control date-input js-integers-only" sfa-validation-for="EffectiveFromMonth" sfa-validationerror-class="form-control-error" asp-for="EffectiveFromMonth" type="text" maxlength="2" />
-                    </div>
+                <div class="form-group form-group-month">
+                    <label for="EffectiveFromMonth">Month</label>
+                    <input class="form-control date-input js-integers-only" sfa-validation-for="EffectiveFromMonth" sfa-validationerror-class="form-control-error" asp-for="EffectiveFromMonth" type="text" maxlength="2" />
+                </div>
 
-                    <div class="form-group form-group-year">
-                        <label for="EffectiveFromYear">Year</label>
-                        <input class="form-control date-input js-integers-only" sfa-validation-for="EffectiveFromYear" sfa-validationerror-class="form-control-error" asp-for="EffectiveFromYear" type="text" maxlength="4" />
-                    </div>
-                </span>
+                <div class="form-group form-group-year">
+                    <label for="EffectiveFromYear">Year</label>
+                    <input class="form-control date-input js-integers-only" sfa-validation-for="EffectiveFromYear" sfa-validationerror-class="form-control-error" asp-for="EffectiveFromYear" type="text" maxlength="4" />
+                </div>
+            </span>
+           
+        </div>
+        <div class="form-group error-message-container" sfa-anyvalidationerror-class="form-group-error">
+            <span class="error-message" asp-validation-for="EffectiveTo"></span>
+            <span class="error-message" asp-validation-for="EffectiveToDay"></span>
+            <span class="error-message" asp-validation-for="EffectiveToMonth"></span>
+            <span class="error-message" asp-validation-for="EffectiveToYear"></span>
+            <label for="EffectiveFrom">
+                <span class="form-label-bold">Effective To</span>
+            </label>
+            <span class="form-date">
+                <div class="form-group form-group-day">
+                    <label for="EffectiveToDay">Day</label>
+                    <input class="form-control date-input js-integers-only" sfa-validation-for="EffectiveToDay" sfa-validationerror-class="form-control-error" asp-for="EffectiveToDay" type="text" maxlength="2" />
+                </div>
+
+                <div class="form-group form-group-month">
+                    <label for="EffectiveToMonth">Month</label>
+                    <input class="form-control date-input js-integers-only" sfa-validation-for="EffectiveToMonth" sfa-validationerror-class="form-control-error" asp-for="EffectiveToMonth" type="text" maxlength="2" />
+                </div>
+
+                <div class="form-group form-group-year">
+                    <label for="EffectiveToYear">Year</label>
+                    <input class="form-control date-input js-integers-only" sfa-validation-for="EffectiveToYear" sfa-validationerror-class="form-control-error" asp-for="EffectiveToYear" type="text" maxlength="4" />
+                </div>
+            </span>
            
         </div>
         @*   <div class="form-group" sfa-validation-for="Ukprn" sfa-validationerror-class="form-group-error">
