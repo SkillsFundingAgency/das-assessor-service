@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
         public GetBatchCertificateRequestValidatorTestBase() : base()
         {
             var stringLocalizerMock = new Mock<IStringLocalizer<Api.Validators.Certificates.GetBatchCertificateRequestValidator>>();
-            Validator = new Api.Validators.Certificates.GetBatchCertificateRequestValidator(stringLocalizerMock.Object, CertificateRepositoryMock.Object);
+            Validator = new Api.Validators.Certificates.GetBatchCertificateRequestValidator(stringLocalizerMock.Object, OrganisationQueryRepositoryMock.Object, IlrRepositoryMock.Object, CertificateRepositoryMock.Object, AssessmentOrgsApiClientMock.Object);
         }
     }
 }
