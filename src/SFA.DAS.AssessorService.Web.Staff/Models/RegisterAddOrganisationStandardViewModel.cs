@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Models
     public class RegisterAddOrganisationStandardViewModel
     {
         public string OrganisationId { get; set; }
-        public string Name { get; set; }
+        public string OrganisationName { get; set; }
         public long? Ukprn { get; set; }
 
         public int StandardId { get; set; }

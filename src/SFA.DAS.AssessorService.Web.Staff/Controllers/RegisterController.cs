@@ -1,8 +1,10 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
@@ -113,6 +115,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 OrganisationId = organisationId,
                 StandardId = standardId
             };
+            vm.OrganisationName = "aaa";
+            vm.Ukprn = 11112222; // nullable
+            vm.StandardTitle = "Busy Administrator";
+            vm.StandardEffectiveFrom = DateTime.Today;
+            vm.StandardEffectiveTo = DateTime.Today.AddDays(180); //nullable
+            vm.StandardLastDateForNewStarts = DateTime.Today.AddDays(5); //nullable                   
+            
             return View(vm);
         }
 
