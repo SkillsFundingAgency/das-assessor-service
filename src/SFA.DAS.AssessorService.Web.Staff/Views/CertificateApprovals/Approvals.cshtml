@@ -35,13 +35,6 @@
                 </h1>
                 <p>The approved certificates will be cleared from this page at the end of the print run.</p>
 
-                @if (@Model.ToBeApprovedCertificates.Any())
-                {
-                    <h2 class="heading-medium">
-                        Pending
-                    </h2>
-                }
-
                 @{
                     var count = Model.ToBeApprovedCertificates.Count() + Model.ApprovedCertificates.Count() + Model.RejectedCertificates.Count() + Model.SentForApproval.Count();
                     var approvalResults = 
@@ -54,6 +47,9 @@
 
                 @if (@Model.ToBeApprovedCertificates.Any())
                 {
+                    <h2 class="heading-medium">
+                        Pending
+                    </h2>
                     await Html.RenderPartialAsync("_ApprovalsDetailsPartial", Model.ToBeApprovedCertificates, new ViewDataDictionary(ViewData)
                     {
                         {
@@ -61,6 +57,19 @@
                         },
                         { "ApprovalResults", approvalResults }
                     });
+                }
+                
+                @if (@Model.SentForApproval.Any())
+                {
+                    <h2 class="heading-medium">
+                        Sent for approval
+                    </h2>
+                    await Html.RenderPartialAsync("_ApprovalsDetailsPartial", @Model.SentForApproval,
+                        new ViewDataDictionary(ViewData)
+                        {
+                            {"Increment", Model.ToBeApprovedCertificates.Count() + Model.ApprovedCertificates.Count() + Model.RejectedCertificates.Count()},
+                            {"ApprovalResults",approvalResults}
+                        });
                 }
 
                 @if (@Model.ApprovedCertificates.Any())
@@ -91,19 +100,7 @@
                 }
                 
                 
-                <h1 class="heading-large">
-                    Sent For Approval Certificates?
-                </h1>
 
-                @if (@Model.SentForApproval.Any())
-                {
-                    await Html.RenderPartialAsync("_ApprovalsDetailsPartial", @Model.SentForApproval,
-                        new ViewDataDictionary(ViewData)
-                        {
-                            {"Increment", Model.ToBeApprovedCertificates.Count() + Model.ApprovedCertificates.Count() + Model.RejectedCertificates.Count()},
-                            {"ApprovalResults",approvalResults}
-                        });
-                }
             </div>
 
 
