@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
 
             foreach (var organisationStandard in orgStandards)
             {
-                var std = allStandards.First(x => x.Id == organisationStandard.StandardCode.ToString());
+                var std = allStandards.FirstOrDefault(x => x.Id == organisationStandard.StandardCode.ToString());
                 organisationStandard.StandardSummary = std;
             }
             return orgStandards.ToList();
