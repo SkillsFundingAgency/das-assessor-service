@@ -101,6 +101,27 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             }
         }
 
+        [HttpPost("standards/validate-new", Name = "CreateEpaOrganisationStandardValidate")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> CreateOrganisationStandardValidation(CreateEpaOrganisationStandardValidationRequest request)
+        {
+
+
+            try
+            {
+                _logger.LogInformation("Validation of creating new organisation standard");
+                var result = await _mediator.Send(request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($@"Bad request, Message: [{ex.Message}]");
+                return BadRequest(ex);
+            }
+            
+        }
+
         [HttpGet("standards/validate/search/{searchstring}", Name = "SearchStandardsValidate")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
         public async Task<IActionResult> SearchStandardsValidate(string searchstring)

@@ -334,7 +334,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             var standardErrorMessage = string.Empty;
             if (standard is null)
                 {
-                    RunValidationCheckAndAppendAnyError("StandardCode", standardErrorMessage, validationResult, ValidationStatusCode.NotFound);
+                    standardErrorMessage = FormatErrorMessage(EpaOrganisationValidatorMessageName.StandardNotFound);
+                RunValidationCheckAndAppendAnyError("StandardCode", standardErrorMessage, validationResult, ValidationStatusCode.NotFound);
                     return validationResult;
                 }
 
