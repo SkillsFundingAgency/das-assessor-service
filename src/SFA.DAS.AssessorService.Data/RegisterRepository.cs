@@ -87,7 +87,7 @@ namespace SFA.DAS.AssessorService.Data
                         organisationStandard.ContactId
                     }).Single();
 
-                foreach (var deliveryAreaId in deliveryAreas)
+                foreach (var deliveryAreaId in deliveryAreas.Distinct())
                 {
                     connection.Execute("INSERT INTO OrganisationStandardDeliveryArea ([OrganisationStandardId],DeliveryAreaId, Status) VALUES " + 
                                         "(@osdaId, @deliveryAreaId,'Live'); ",
@@ -127,7 +127,7 @@ namespace SFA.DAS.AssessorService.Data
                     "Delete from OrganisationStandardDeliveryArea where OrganisationStandardId = @osdaId and DeliveryAreaId not in @deliveryAreas",
                     new {osdaId, deliveryAreas});
 
-                foreach (var deliveryAreaId in deliveryAreas)
+                foreach (var deliveryAreaId in deliveryAreas.Distinct())
                 {
                     connection.Execute(
                         "IF NOT EXISTS (select * from OrganisationStandardDeliveryArea where OrganisationStandardId = @osdaId and DeliveryAreaId = @DeliveryAreaId) " +
