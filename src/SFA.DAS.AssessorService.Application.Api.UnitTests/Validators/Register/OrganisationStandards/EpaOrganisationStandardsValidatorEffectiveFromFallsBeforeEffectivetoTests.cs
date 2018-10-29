@@ -23,9 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register.
                 .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationStandardEffectiveFromAfterEffectiveTo, "fail"));
         
             _validator = new EpaOrganisationValidator(Mock.Of<IRegisterValidationRepository>(), Mock.Of<IRegisterQueryRepository>(), Mock.Of<ISpecialCharacterCleanserService>(), _localizer.Object);
-
         }
-
 
         [Test]
         public void RegisterValidationOfOrganisationStandardEffectiveFromAgainstStandardDetailsValueSource(
