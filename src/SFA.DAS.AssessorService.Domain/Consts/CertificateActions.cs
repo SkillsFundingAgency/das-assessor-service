@@ -21,5 +21,6 @@
         public const string Uln = "Uln";
         public const string ProviderUkPrn = "ProviderUkPrn";
         public const string Status = "Status";
+        public const string ApprovePrivateCertificate = "ApprovePrivateCertificate";
     }
 }

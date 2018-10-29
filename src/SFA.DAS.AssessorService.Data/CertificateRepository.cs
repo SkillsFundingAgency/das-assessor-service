@@ -399,13 +399,7 @@ namespace SFA.DAS.AssessorService.Data
                 }
 
                 await _context.SaveChangesAsync();                       
-        }
-
-        private bool CheckLastName(string data, string lastName)
-        {
-            var certificateData = JsonConvert.DeserializeObject<CertificateData>(data);
-            return certificateData.LearnerFamilyName == lastName;
-        }
+        }        
 
         public async Task<List<Option>> GetOptions(int stdCode)
         {
@@ -414,14 +408,6 @@ namespace SFA.DAS.AssessorService.Data
                 {
                     stdCode
                 })).ToList();
-        }
-
-        private bool CheckLastNameExists(Certificate certificate, Certificate c)
-        {
-            var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-
-            var certificateDataCompare = JsonConvert.DeserializeObject<CertificateData>(c.CertificateData);
-            return certificateData.LearnerFamilyName == certificateDataCompare.LearnerFamilyName;
-        }
+        }        
     }
 }

@@ -1,6 +1,4 @@
-﻿using System;
-using MediatR;
-using SFA.DAS.AssessorService.Domain.Entities;
+﻿using MediatR;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
 {

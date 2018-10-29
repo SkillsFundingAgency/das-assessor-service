@@ -82,14 +82,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpPut("updatestatustobeapproved", Name = "UpdatePrivateCertificationCertificateStatusToBeApproved")]
-        [SwaggerResponse((int)HttpStatusCode.OK)]        
+        [SwaggerResponse((int)HttpStatusCode.OK)]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> UpdatePrivateCertificationCertificateStatusToBeApproved([FromBody] UpdateCertificateRequestToBeApproved certificate)
         {
             await _mediator.Send(certificate);
             return Ok();
         }
-        
+
         [HttpPost("approvals", Name = "Approvals")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Certificate))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
@@ -107,5 +107,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             return Ok();
         }
+
+        [HttpPost("prepareprivatecertificatesforbatchrun", Name = "PreparePrivateCertificatesforBatchRun")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Certificate))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> PreparePrivateCertificatesforBatchRun([FromBody] PrivateCertificatePrepareForBatchRunRequest privateCertificatePrepareForBatchRunRequest)
+        {
+            await _mediator.Send(privateCertificatePrepareForBatchRunRequest);
+            return Ok();
+        }
     }
-} 
+}
