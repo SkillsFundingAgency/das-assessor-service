@@ -1,10 +1,9 @@
-﻿
-
-using System;
+﻿using System;
 using Castle.Core.Internal;
 using Microsoft.Extensions.Localization;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.Application.Api.Consts;
 using SFA.DAS.AssessorService.Application.Api.Validators;
 using SFA.DAS.AssessorService.Application.Interfaces;
 
@@ -15,11 +14,19 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register.
     public class EpaOrganisationStandardsValidatorEffectiveFromTests
     {
         private EpaOrganisationValidator _validator;
-
+        private Mock<IStringLocalizer<EpaOrganisationValidator>> _localizer;
         [SetUp]
         public void Setup()
         {
-            _validator = new EpaOrganisationValidator(Mock.Of<IRegisterValidationRepository>(),Mock.Of<IRegisterQueryRepository>(),Mock.Of<ISpecialCharacterCleanserService>(),null);
+            _localizer = new Mock<IStringLocalizer<EpaOrganisationValidator>>();
+            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.OrganisationStandardEffectiveFromBeforeStandardEffectiveFrom])
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationStandardEffectiveFromBeforeStandardEffectiveFrom, "fail"));
+            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.OrganisationStandardEffectiveFromAfterStandardEffectiveTo])
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationStandardEffectiveFromAfterStandardEffectiveTo, "fail"));
+            _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.OrganisationStandardEffectiveFromAfterStandardLastDayForNewStarts])
+                .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationStandardEffectiveFromAfterStandardLastDayForNewStarts, "fail"));
+
+            _validator = new EpaOrganisationValidator(Mock.Of<IRegisterValidationRepository>(),Mock.Of<IRegisterQueryRepository>(),Mock.Of<ISpecialCharacterCleanserService>(),_localizer.Object);
         }
 
         [Test]
@@ -96,5 +103,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register.
             }
 
         };
+
+
     }
 }

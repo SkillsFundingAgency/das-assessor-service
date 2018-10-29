@@ -192,4 +192,22 @@
   <data name="SearchStandardsTooShort" xml:space="preserve">
     <value>The entry must be a number or a phrase with at least 2 characters</value>
   </data>
+  <data name="OrganisationStandardEffectiveFromAfterStandardEffectiveTo" xml:space="preserve">
+    <value>The organisation standard Effective From must be on or before the standard Effective To</value>
+  </data>
+  <data name="OrganisationStandardEffectiveFromAfterStandardLastDayForNewStarts" xml:space="preserve">
+    <value>The organisation standard Effective From must be on or before the standard Last Day for New Starts</value>
+  </data>
+  <data name="OrganisationStandardEffectiveFromBeforeStandardEffectiveFrom" xml:space="preserve">
+    <value>The organisation standard Effective From must be on or after the standard Effective From</value>
+  </data>
+  <data name="OrganisationStandardEffectiveToAfterStandardEffectiveTo" xml:space="preserve">
+    <value>The organisation standard Effective To must be on or before the standard Effective To</value>
+  </data>
+  <data name="OrganisationStandardEffectiveToBeforeStandardEffectiveFrom" xml:space="preserve">
+    <value>The organisation standard Effective To must be on or after the standard Effective From</value>
+  </data>
+  <data name="OrganisationStandardEffectiveFromAfterEffectiveTo" xml:space="preserve">
+    <value>The organisation standard Effective From must be on or before organisation standard Effective To</value>
+  </data>
 </root>
