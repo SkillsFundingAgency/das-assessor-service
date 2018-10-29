@@ -10,9 +10,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Helpers
         ValidationResponse CheckDateIsEmptyOrValid(string day, string month, string year, 
             string dayFieldName, string monthFieldName, string yearFieldName, string dateFieldName, string dateFieldDescription);
 
-        ValidationResponse CheckOrganisationStandardFromDateIsWithinStandardDateRanges(DateTime? effectiveFrom,
-            DateTime standardEffectiveFrom, DateTime? standardEffectiveTo, DateTime? LastDateForNewStarts);
+        
 
-        ValidationResponse CheckEffectiveFromIsOnOrBeforeEffectiveTo(DateTime? effectiveFrom, DateTime? effectiveTo);
     }
 }

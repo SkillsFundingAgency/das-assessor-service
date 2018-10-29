@@ -25,44 +25,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Helpers
                 ValidateDate(day, month, year, dateFieldName, dateFieldDescription, validationResponse);
             return validationResponse;
         }
-        
-        
-        public ValidationResponse CheckOrganisationStandardFromDateIsWithinStandardDateRanges(DateTime? effectiveFrom, DateTime standardEffectiveFrom,
-            DateTime? standardEffectiveTo, DateTime? LastDateForNewStarts)
-        {
-            var validationResponse = new ValidationResponse();
-            if (effectiveFrom == null)
-                return validationResponse;
-            if (effectiveFrom < standardEffectiveFrom)
-            {
-                RunValidationCheckAndAppendAnyError("EffectiveFrom", "The organisation standard Effective From must be on or after the standard Effective From", validationResponse);
-            }
-            
-            if (standardEffectiveTo.HasValue && effectiveFrom > standardEffectiveTo)
-            {
-                RunValidationCheckAndAppendAnyError("EffectiveFrom", "The organisation standard Effective From must be on or before the standard Effective To", validationResponse);
-            }        
-            
-            if (LastDateForNewStarts.HasValue && effectiveFrom > LastDateForNewStarts)
-            {
-                RunValidationCheckAndAppendAnyError("EffectiveFrom", "The organisation standard Effective From must be on or before the standard Last Day for New Starts", validationResponse);
-            }
-            
-            return validationResponse;
-
-        }
-
-        public ValidationResponse CheckEffectiveFromIsOnOrBeforeEffectiveTo(DateTime? effectiveFrom, DateTime? effectiveTo)
-        {
-            var validationResponse = new ValidationResponse();
-
-            if (!effectiveFrom.HasValue || !effectiveTo.HasValue) return validationResponse;
-            if (effectiveFrom.Value > effectiveTo.Value)
-                RunValidationCheckAndAppendAnyError("EffectiveFrom", "The organisation standard Effective From must be on or before organisation standard Effective To", validationResponse);
-
-            return validationResponse;
-
-        }
 
         private void ValidateDate(string dayString, string monthString, string yearString, string dateField, string description, ValidationResponse validationResponse)
         {

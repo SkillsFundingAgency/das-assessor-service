@@ -8,6 +8,7 @@ using FluentValidation.Results;
 using Microsoft.AspNetCore.Identity.UI.Pages.Internal.Account;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
@@ -28,7 +29,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         private readonly IStringLocalizer<EpaOrganisationValidator> _localizer;
         private readonly ISpecialCharacterCleanserService _cleanserService;
        
-        public EpaOrganisationValidator( IRegisterValidationRepository registerRepository,  IRegisterQueryRepository registerQueryRepository, ISpecialCharacterCleanserService cleanserService, IStringLocalizer<EpaOrganisationValidator> localizer) 
+        public EpaOrganisationValidator( IRegisterValidationRepository registerRepository,  IRegisterQueryRepository registerQueryRepository, 
+                                         ISpecialCharacterCleanserService cleanserService, IStringLocalizer<EpaOrganisationValidator> localizer) 
         {
             _registerRepository = registerRepository;
             _registerQueryRepository = registerQueryRepository;
@@ -138,18 +140,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationNotFound);
         }
 
-        public string CheckIfStandardNotFound(int standardCode)
+        public Standard GetStandard(int standardCode)
         {
             var apiClient = new AssessmentOrgsApiClient();
 
             try
             {
                 var res = apiClient.GetStandard(standardCode).Result;
-                return string.Empty;
+                return res;
             }
             catch
             {
-                return FormatErrorMessage(EpaOrganisationValidatorMessageName.StandardNotFound);
+                return (Standard)null;
             }
         }
 
@@ -232,6 +234,54 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             return validationResults.IsValid ? string.Empty : FormatErrorMessage(validationResults.Errors.First().ErrorMessage);
         }
 
+
+        public string CheckOrganisationStandardFromDateIsWithinStandardDateRanges(DateTime? effectiveFrom, DateTime? standardEffectiveFrom,
+            DateTime? standardEffectiveTo, DateTime? lastDateForNewStarts)
+        {
+            if (effectiveFrom == null || standardEffectiveFrom == null)
+                return string.Empty;
+            // MFCMFC words go in a resource
+            if (effectiveFrom < standardEffectiveFrom)
+                return "The organisation standard Effective From must be on or after the standard Effective From";
+
+
+            if (standardEffectiveTo.HasValue && effectiveFrom > standardEffectiveTo)
+                return "The organisation standard Effective From must be on or before the standard Effective To";
+
+
+            if (lastDateForNewStarts.HasValue && effectiveFrom > lastDateForNewStarts)
+                return
+                    "The organisation standard Effective From must be on or before the standard Last Day for New Starts";
+
+            return string.Empty;
+        }
+
+
+        public string CheckOrganisationStandardToDateIsWithinStandardDateRanges(DateTime? effectiveTo, DateTime? standardEffectiveFrom, DateTime? standardEffectiveTo)
+        {
+            if (effectiveTo == null)
+                return string.Empty;
+
+            // MFCMFC words go in a resource
+            if (effectiveTo >= standardEffectiveFrom)
+                return "The organisation standard Effective To must be on or after the standard Effective From";
+
+
+            if (standardEffectiveTo.HasValue && effectiveTo <= standardEffectiveTo)
+                return "The organisation standard Effective To must be on or before the standard Effective To";
+
+            return string.Empty;
+        }
+
+
+        public string CheckEffectiveFromIsOnOrBeforeEffectiveTo(DateTime? effectiveFrom, DateTime? effectiveTo)
+        {
+            if (!effectiveFrom.HasValue || !effectiveTo.HasValue || effectiveFrom.Value <= effectiveTo.Value) return string.Empty;
+
+            // MFCMFC words go in a resource
+            return "The organisation standard Effective From must be on or before organisation standard Effective To";
+
+        }
         public ValidationResponse ValidatorCreateEpaOrganisationRequest(CreateEpaOrganisationRequest request)
         {
             var validationResult = new ValidationResponse();
@@ -266,22 +316,38 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             return validationResult;
         }
 
-        public ValidationResponse ValidatorCreateEpaOrganisationStandardRequest(CreateEpaOrganisationStandardRequest request)
+        public ValidationResponse ValidatorCreateEpaOrganisationStandardRequest(
+            CreateEpaOrganisationStandardRequest request)
         {
             var validationResult = new ValidationResponse();
 
-            RunValidationCheckAndAppendAnyError("OrganisationId", CheckOrganisationIdIsPresentAndValid(request.OrganisationId), validationResult, ValidationStatusCode.BadRequest);
-            RunValidationCheckAndAppendAnyError("ContactId", CheckIfContactIdIsValid(request.ContactId,request.OrganisationId), validationResult, ValidationStatusCode.BadRequest);
-            RunValidationCheckAndAppendAnyError("DeliveryAreas", CheckIfDeliveryAreasAreValid(request.DeliveryAreas), validationResult,ValidationStatusCode.BadRequest);
-            if (!validationResult.IsValid) return validationResult;
-       
-            RunValidationCheckAndAppendAnyError("OrganisationId", CheckIfOrganisationNotFound(request.OrganisationId), validationResult, ValidationStatusCode.NotFound);
-            if (!validationResult.IsValid) return validationResult;
-   
-            RunValidationCheckAndAppendAnyError("StandardCode", CheckIfStandardNotFound(request.StandardCode), validationResult, ValidationStatusCode.NotFound);
+            RunValidationCheckAndAppendAnyError("OrganisationId",
+                CheckOrganisationIdIsPresentAndValid(request.OrganisationId), validationResult,
+                ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("ContactId",
+                CheckIfContactIdIsValid(request.ContactId, request.OrganisationId), validationResult,
+                ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("DeliveryAreas", CheckIfDeliveryAreasAreValid(request.DeliveryAreas),
+                validationResult, ValidationStatusCode.BadRequest);
             if (!validationResult.IsValid) return validationResult;
 
+            RunValidationCheckAndAppendAnyError("OrganisationId", CheckIfOrganisationNotFound(request.OrganisationId),
+                validationResult, ValidationStatusCode.NotFound);
+            if (!validationResult.IsValid) return validationResult;
+
+            var standard = GetStandard(request.StandardCode);
+            var standardErrorMessage = string.Empty;
+            if (standard is null)
+                {
+                    RunValidationCheckAndAppendAnyError("StandardCode", standardErrorMessage, validationResult, ValidationStatusCode.NotFound);
+                    return validationResult;
+                }
+
             RunValidationCheckAndAppendAnyError("OrganisationId", CheckIfOrganisationStandardAlreadyExists(request.OrganisationId, request.StandardCode), validationResult, ValidationStatusCode.AlreadyExists);
+            if (!validationResult.IsValid) return validationResult;
+
+            RunValidationCheckAndAppendAnyError("EffectiveFrom", CheckOrganisationStandardFromDateIsWithinStandardDateRanges(request.EffectiveFrom,standard.EffectiveFrom,standard.EffectiveTo,standard.LastDateForNewStarts), validationResult, ValidationStatusCode.AlreadyExists);
+            RunValidationCheckAndAppendAnyError("EffectiveFrom", CheckEffectiveFromIsOnOrBeforeEffectiveTo(request.EffectiveFrom, request.EffectiveTo), validationResult, ValidationStatusCode.AlreadyExists);
 
             return validationResult;
         }
@@ -329,6 +395,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             RunValidationCheckAndAppendAnyError("StandardSearchString", CheckSearchStringForStandardsIsValid(request.Searchstring), validationResult, ValidationStatusCode.BadRequest);
             return validationResult;
 
-        }
+        }  
     }
 }
