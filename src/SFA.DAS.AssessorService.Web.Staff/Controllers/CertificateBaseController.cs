@@ -58,6 +58,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             var certificate = await ApiClient.GetCertificate(vm.Id);
             var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 
+            if(string.IsNullOrEmpty(vm.ReasonForChange))
+            {
+                ModelState.AddModelError(nameof(vm.ReasonForChange), "Please enter a reason");
+            }
+
             if (!ModelState.IsValid)
             {
                 vm.FamilyName = certData.LearnerFamilyName;
