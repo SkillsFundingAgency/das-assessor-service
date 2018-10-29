@@ -3,6 +3,6 @@
     public class ApprovalResult
     {
         public string CertificateReference { get; set; }
-        public string IsApproved { get; set; }
+        public string ApprovedStatus { get; set; }
     }
 }

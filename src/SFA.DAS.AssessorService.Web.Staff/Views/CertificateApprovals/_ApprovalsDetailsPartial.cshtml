@@ -33,10 +33,10 @@
                 <td>@results[i].CreatedAt.ToString("dd/MM/yyyy")</td>
                 <td>
                     @{
-                        approvalresults[j].IsApproved = results[i].IsApproved;
+                        approvalresults[j].ApprovedStatus = results[i].ApprovedStatus;
                     }
                     <select 
-                        asp-for=@approvalresults[j].IsApproved
+                        asp-for=@approvalresults[j].ApprovedStatus
                         asp-items="@(new SelectList(@results[i].ApprovedRejected, "Value", "Text"))"
                         class="form-control form-control--full form-control--small"
                     >

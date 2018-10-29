@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels.Private
         public string ReasonForRejection { get; set; }
         public string Status { get; set; }
           
-        public string IsApproved { get; set; }        
+        public string ApprovedStatus { get; set; }        
         public IEnumerable<SelectListItem> ApprovedRejected { get; set; }
     }
 }

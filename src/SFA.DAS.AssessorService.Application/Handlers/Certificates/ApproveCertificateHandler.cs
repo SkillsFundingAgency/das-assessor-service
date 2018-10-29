@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
         public async Task Handle(CertificateApprovalRequest request, CancellationToken cancellationToken)
         {
-            await _certificateRepository.ApproveCertificates(request.ApprovalResults.ToList(), request.userName);
+            await _certificateRepository.ApproveCertificates(request.ApprovalResults.ToList(), request.UserName);
         }
     }
 }

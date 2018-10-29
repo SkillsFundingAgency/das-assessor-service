@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             {
                 cfg.CreateMap<CertificateSummaryResponse, CertificateDetailApprovalViewModel>()
                     .ForMember(
-                        dest => dest.IsApproved, opt => opt.MapFrom(src => src.Status)
+                        dest => dest.ApprovedStatus, opt => opt.MapFrom(src => src.Status)
                     )
                     .ForMember(q => q.ApprovedRejected,
                         opts => { opts.ResolveUsing<ApprovalsViewModelResolver>(); });

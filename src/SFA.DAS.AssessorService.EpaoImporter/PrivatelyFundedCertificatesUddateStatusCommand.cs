@@ -26,14 +26,10 @@ namespace SFA.DAS.AssessorService.EpaoImporter
         {
             try
             {
-                _aggregateLogger.LogInfo("Privately Funded Certificate Approval Notification Started");
+                _aggregateLogger.LogInfo("Prepare Private Certificates for BatchRun Started");
                 _aggregateLogger.LogInfo($"Process Environment = {EnvironmentVariableTarget.Process}");
 
-//                await _assessorServiceApi.UpdatePrivatelyFundedCertificateRequestsToBeApproved();
-//
-//                var certificatesToBeApproved = await _assessorServiceApi.GetCertificatesToBeApproved();
-//                await _notificationService.Send(certificatesToBeApproved);
-
+                await _assessorServiceApi.PreparePrivateCertificatesforBatchRun();
             }
             catch (Exception e)
             {
