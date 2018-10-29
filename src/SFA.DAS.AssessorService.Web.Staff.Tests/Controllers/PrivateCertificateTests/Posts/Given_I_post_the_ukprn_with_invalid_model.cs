@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
 
             certificatePrivateProviderUkprnController.ModelState.AddModelError("", "Error");
 
-            var result = certificatePrivateProviderUkprnController.Ukprn(vm).GetAwaiter().GetResult();
+            var result = certificatePrivateProviderUkprnController.Ukprn(vm, "", 1).GetAwaiter().GetResult();
 
             _result = result as ViewResult;
         }

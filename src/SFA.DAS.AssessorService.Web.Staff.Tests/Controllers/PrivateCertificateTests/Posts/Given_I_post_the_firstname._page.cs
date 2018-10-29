@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
                 IsPrivatelyFunded = true
             };                      
 
-            var result = certificatePrivateFirstNameController.FirstName(vm).GetAwaiter().GetResult();
+            var result = certificatePrivateFirstNameController.FirstName(vm, "", 1).GetAwaiter().GetResult();
 
             _result = result as RedirectToActionResult;
         }

@@ -7,10 +7,12 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateid=@Model.Id>Back</a>
+        <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateid=@Model.Id asp-route-searchstring=@ViewBag.SearchString asp-route-page=@ViewBag.page>Back</a>
 
-        <form class="apprentice-ukprn-form js-disable-on-submit" method="post" asp-action="Ukprn" asp-controller="CertificatePrivateProviderUkprn">
+        <form class="apprentice-ukprn-form js-disable-on-submit" method="post" asp-action="Ukprn" asp-controller="CertificatePrivateProviderUkprn">            
             @Html.HiddenFor(c => c.Id)
+            @Html.Hidden("SearchString", (object)ViewBag.SearchString)        
+            @Html.Hidden("SearchPage", (object) ViewBag.Page)
 
             @* hidden with css by default *@
             <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">

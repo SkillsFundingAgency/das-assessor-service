@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
             };
                     
 
-            var result = certificatePrivateLearnerStartDateController.LearnerStartDate(vm).GetAwaiter().GetResult();
+            var result = certificatePrivateLearnerStartDateController.LearnerStartDate(vm, "", 1).GetAwaiter().GetResult();
 
             _result = result as RedirectToActionResult;
         }

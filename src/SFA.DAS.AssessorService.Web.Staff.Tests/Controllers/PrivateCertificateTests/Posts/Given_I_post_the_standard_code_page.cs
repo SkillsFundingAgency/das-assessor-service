@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
             MockSession.Setup(q => q.Get("EndPointAsessorOrganisationId"))
                 .Returns("EPA00001");
 
-            var result = certificatePrivateStandardCodeController.StandardCode(vm).GetAwaiter().GetResult();
+            var result = certificatePrivateStandardCodeController.StandardCode(vm, "", 1).GetAwaiter().GetResult();
 
             _result = result as RedirectToActionResult;
         }

@@ -18,17 +18,25 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         { }
 
         [HttpGet]
-        public async Task<IActionResult> Grade(Guid certificateid)
+        public async Task<IActionResult> Grade(Guid certificateid,
+            string searchString,
+            int page)
         {
-            return await LoadViewModel<CertificateGradeViewModel>(certificateid, "~/Views/CertificateAmend/Grade.cshtml");
+            ViewBag.SearchString = searchString;
+            ViewBag.Page = page;
+            
+            return await LoadViewModel<CertificateGradeViewModel>(certificateid, 
+                "~/Views/CertificateAmend/Grade.cshtml");
         }
 
         [HttpPost(Name = "Grade")]
-        public async Task<IActionResult> Grade(CertificateGradeViewModel vm)
+        public async Task<IActionResult> Grade(CertificateGradeViewModel vm,
+            string searchString,
+            int searchPage)
         {
             return await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/CertificateAmend/Grade.cshtml",
-                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateid = vm.Id }), action: CertificateActions.Grade);
+                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateid = vm.Id, searchstring = searchString, page = searchPage }), action: CertificateActions.Grade);
         }
     }
 }

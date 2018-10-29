@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
                     MockApiClient                  
                     );
             
-            _result = certificatePrivateFirstNameController.FirstName(Certificate.Id).GetAwaiter().GetResult();
+            _result = certificatePrivateFirstNameController.FirstName(Certificate.Id, "", 1).GetAwaiter().GetResult();
 
             var result = _result as ViewResult;
             _viewModelResponse = result.Model as CertificateFirstNameViewModel;

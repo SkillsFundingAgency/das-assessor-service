@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
                 IsPrivatelyFunded = true
             };                      
 
-            var result = certificatePrivateProviderUkprnController.Ukprn(vm).GetAwaiter().GetResult();
+            var result = certificatePrivateProviderUkprnController.Ukprn(vm, "", 1).GetAwaiter().GetResult();
 
             _result = result as RedirectToActionResult;
         }

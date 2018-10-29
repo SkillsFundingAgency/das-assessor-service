@@ -25,19 +25,25 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Date(Guid certificateid)
+        public async Task<IActionResult> Date(Guid certificateid,
+                    string searchString,
+                    int page)
         {
+            ViewBag.SearchString = searchString;
+            ViewBag.Page = page;
             return await LoadViewModel<CertificateDateViewModel>(certificateid, "~/Views/CertificateAmend/Date.cshtml");
         }
 
         [HttpPost(Name = "Date")]
-        public async Task<IActionResult> Date(CertificateDateViewModel vm)
+        public async Task<IActionResult> Date(CertificateDateViewModel vm,
+                    string searchString,
+                    int searchPage)
         {
             var result = _validator.Validate(vm);
 
             var actionResult = await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/CertificateAmend/Date.cshtml",
-                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateid = vm.Id }), action: CertificateActions.Date);
+                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateid = vm.Id, searchstring = searchString, page = searchPage }), action: CertificateActions.Date);
 
             return actionResult;
         }

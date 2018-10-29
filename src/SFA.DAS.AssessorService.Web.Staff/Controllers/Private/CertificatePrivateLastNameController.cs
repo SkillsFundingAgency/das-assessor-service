@@ -20,17 +20,24 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
         { }
 
         [HttpGet]
-        public async Task<IActionResult> LastName(Guid certificateid)
+        public async Task<IActionResult> LastName(Guid certificateid,
+            string searchString,
+            int page)
         {
+            ViewBag.SearchString = searchString;
+            ViewBag.Page = page;
+            
             return await LoadViewModel<CertificateLastNameViewModel>(certificateid, "~/Views/CertificateAmend/LastName.cshtml");
         }
 
         [HttpPost(Name = "LastName")]
-        public async Task<IActionResult> LastName(CertificateLastNameViewModel vm)
+        public async Task<IActionResult> LastName(CertificateLastNameViewModel vm,
+            string searchString,
+            int searchPage)
         {
             var actionResult = await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/CertificateAmend/LastName.cshtml",
-                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateid = vm.Id }), action: CertificateActions.LastName);
+                nextAction: RedirectToAction("Check", "CertificateAmend",  new { certificateid = vm.Id, searchstring = searchString, page = searchPage }), action: CertificateActions.LastName);
 
             return actionResult;
         }

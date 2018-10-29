@@ -17,7 +17,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers
         public void Arrange()
         {
              var certificateAddressController = new CertificateAddressController(MockedLogger.Object, MockHttpContextAccessor.Object, ApiClient);
-            _result = certificateAddressController.Address(Certificate.Id).GetAwaiter().GetResult();
+            _result = certificateAddressController.Address(Certificate.Id,
+                "", 12).GetAwaiter().GetResult();
 
             var result = _result as ViewResult;
             _viewModelResponse = result.Model as CertificateAddressViewModel;

@@ -29,13 +29,20 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
         }
        
         [HttpGet]
-        public async Task<IActionResult> LearnerStartDate(Guid certificateid)
+        public async Task<IActionResult> LearnerStartDate(Guid certificateid,
+            string searchString,
+            int page)
         {
+            ViewBag.SearchString = searchString;
+            ViewBag.Page = page;
+            
             return await LoadViewModel<CertificateLearnerStartDateViewModel>(certificateid, "~/Views/CertificateAmend/LearnerStartDate.cshtml");
         }
 
         [HttpPost(Name = "LearnerStartDate")]
-        public async Task<IActionResult> LearnerStartDate(CertificateLearnerStartDateViewModel vm)
+        public async Task<IActionResult> LearnerStartDate(CertificateLearnerStartDateViewModel vm,
+            string searchString,
+            int searchPage)
         {
             var result = _validator.Validate(vm);
 
@@ -47,7 +54,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
 
             var actionResult = await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/CertificateAmend/LearnerStartDate.cshtml",
-                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateid = vm.Id }), action: CertificateActions.LearnerStartDate);
+                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateid = vm.Id, searchstring = searchString, page = searchPage }), action: CertificateActions.LearnerStartDate);
 
             return actionResult;
         }

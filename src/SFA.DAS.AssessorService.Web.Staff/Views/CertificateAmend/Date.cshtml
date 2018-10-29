@@ -7,13 +7,15 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateid=@Model.Id>Back</a>
+        <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateid=@Model.Id asp-route-searchstring=@ViewBag.SearchString asp-route-page=@ViewBag.page>Back</a>
 
 
         <form class="apprentice-date-form js-disable-on-submit" method="post" asp-controller="CertificateDate">
             <input type="hidden" name="fullDate" id="fullDate" class="date-input" />
             @Html.HiddenFor(c => c.Id)
-            @Html.HiddenFor(m => m.StartDate)
+            @Html.HiddenFor(m => m.StartDate)            
+            @Html.Hidden("SearchString", (object)ViewBag.SearchString)        
+            @Html.Hidden("SearchPage", (object) ViewBag.Page)
             <input type="hidden" name="WarningShown" id="WarningShown" value="@Model.WarningShown" />
 
             @* hidden with css by default *@

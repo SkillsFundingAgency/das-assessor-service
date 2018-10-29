@@ -21,7 +21,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers
                     MockHttpContextAccessor.Object,
                     ApiClient,
                     certificateDateViewModelValidator);
-            _result = certificateApprenticeDetailsController.Date(Certificate.Id).GetAwaiter().GetResult();
+            _result = certificateApprenticeDetailsController.Date(Certificate.Id, "", 1).GetAwaiter().GetResult();
 
             var result = _result as ViewResult;
             _viewModelResponse = result.Model as CertificateDateViewModel;

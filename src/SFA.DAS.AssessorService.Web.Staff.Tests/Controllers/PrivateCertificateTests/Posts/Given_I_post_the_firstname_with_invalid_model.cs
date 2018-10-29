@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
          
             certificatePrivateFirstNameController.ModelState.AddModelError("", "Error");
 
-            var result = certificatePrivateFirstNameController.FirstName(vm).GetAwaiter().GetResult();
+            var result = certificatePrivateFirstNameController.FirstName(vm, "", 1).GetAwaiter().GetResult();
 
             _result = result as ViewResult;
         }

@@ -17,20 +17,30 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
         public CertificatePrivateFirstNameController(ILogger<CertificateAmendController> logger,
             IHttpContextAccessor contextAccessor,
             ApiClient apiClient) : base(logger, contextAccessor, apiClient)
-        { }
+        {
+        }
 
         [HttpGet]
-        public async Task<IActionResult> FirstName(Guid certificateid)
-        {            
-            return await LoadViewModel<CertificateFirstNameViewModel>(certificateid, "~/Views/CertificateAmend/FirstName.cshtml");
+        public async Task<IActionResult> FirstName(Guid certificateid,
+            string searchString,
+            int page)
+        {
+            ViewBag.SearchString = searchString;
+            ViewBag.Page = page;
+
+            return await LoadViewModel<CertificateFirstNameViewModel>(certificateid,
+                "~/Views/CertificateAmend/FirstName.cshtml");
         }
 
         [HttpPost(Name = "FirstName")]
-        public async Task<IActionResult> FirstName(CertificateFirstNameViewModel vm)
+        public async Task<IActionResult> FirstName(CertificateFirstNameViewModel vm,
+            string searchString,
+            int searchPage)
         {
             var actionResult = await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/CertificateAmend/FirstName.cshtml",
-                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateid = vm.Id }), action: CertificateActions.FirstName);
+                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateid = vm.Id, searchstring = searchString, page = searchPage }),
+                action: CertificateActions.FirstName);
 
             return actionResult;
         }

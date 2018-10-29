@@ -37,8 +37,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
         }
 
         [HttpGet]
-        public async Task<IActionResult> StandardCode(Guid certificateid)
+        public async Task<IActionResult> StandardCode(Guid certificateid,
+                string searchString,
+                int page)
         {
+            ViewBag.SearchString = searchString;
+            ViewBag.Page = page;
+            
             var filteredStandardCodes = await GetFilteredStatusCodes(certificateid);
             var standards = (await GetAllStandards()).ToList();
 
@@ -55,8 +60,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
         }
 
         [HttpPost(Name = "StandardCode")]
-        public async Task<IActionResult> StandardCode(CertificateStandardCodeListViewModel vm)
-        {
+        public async Task<IActionResult> StandardCode(CertificateStandardCodeListViewModel vm,
+            string searchString,
+            int searchPage)        
+        {           
             var username = ContextAccessor.HttpContext.User
                 .FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
@@ -73,7 +80,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
 
             var actionResult = await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/CertificateAmend/StandardCode.cshtml",
-                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateid = vm.Id }), action: CertificateActions.StandardCode);
+                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateid = vm.Id, searchstring = searchString, page = searchPage }), action: CertificateActions.StandardCode);
 
             return actionResult;
         }

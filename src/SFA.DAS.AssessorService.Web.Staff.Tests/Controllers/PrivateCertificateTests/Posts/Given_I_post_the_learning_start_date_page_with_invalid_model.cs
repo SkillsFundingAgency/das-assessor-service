@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
             };        
 
             certificatePrivateLearnerStartDateController.ModelState.AddModelError("", "Error");
-            var result = certificatePrivateLearnerStartDateController.LearnerStartDate(vm).GetAwaiter().GetResult();
+            var result = certificatePrivateLearnerStartDateController.LearnerStartDate(vm, "", 1).GetAwaiter().GetResult();
 
             _result = result as ViewResult;
         }
