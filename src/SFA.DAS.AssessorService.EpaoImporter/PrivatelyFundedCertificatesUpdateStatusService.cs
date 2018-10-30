@@ -7,7 +7,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
     public static class PrivatelyFundedCertificatesUddateStatusService
     {
         [FunctionName("PrivatelyFundedCertificatesUddateStatusService")]
-        public static void Run([TimerTrigger("0 30 18 * * 4", RunOnStartup = true)]
+        public static void Run([TimerTrigger("0 30 18 * * 4")]
             TimerInfo myTimer, TraceWriter functionLogger,
             ExecutionContext context)
         {
