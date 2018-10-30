@@ -58,6 +58,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 return await RequestAndDeserialiseAsync<GetPrivateCertificateAlreadySubmittedResponse>(httpRequest, "Could not get Certificate");
             }
         }
+        
+        public async Task<List<CertificateSummaryResponse>> GetDraftCertificatesInApprovalState()
+        {
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/certificates/approved/draft"))
+            {
+                return await RequestAndDeserialiseAsync<List<CertificateSummaryResponse>>(httpRequest, "Could not get Certificates");
+            }           
+        }
+        
 
         public async Task<Certificate> UpdateCertificate(UpdateCertificateRequest certificateRequest)
         {

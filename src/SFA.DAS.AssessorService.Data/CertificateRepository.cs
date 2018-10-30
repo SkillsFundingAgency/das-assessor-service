@@ -157,6 +157,15 @@ namespace SFA.DAS.AssessorService.Data
                 .ToListAsync();
         }
 
+        public async Task<List<Certificate>> GetApprovedDraftCertificates()
+        {
+            return await _context.Certificates
+                .Include(q => q.Organisation)
+                .Include(q => q.CertificateLogs)
+                .Where(x => x.Status == CertificateStatus.Draft && IsInApprovalState(x.CertificateData))
+                .ToListAsync();
+        }       
+
         public async Task<List<Certificate>> GetCertificates(List<string> statuses)
         {
             if (statuses == null || !statuses.Any())
@@ -233,7 +242,6 @@ namespace SFA.DAS.AssessorService.Data
             cert.UpdatedBy = username;
             cert.Status = certificate.Status;
             cert.UpdatedAt = certificate.UpdatedAt;
-
 
             if (updateLog)
             {
@@ -399,6 +407,12 @@ namespace SFA.DAS.AssessorService.Data
             }
 
             await _context.SaveChangesAsync();
+        }
+
+        private bool IsInApprovalState(string certificateData)
+        {
+            var data = JsonConvert.DeserializeObject<CertificateData>(certificateData);
+            return data.InApprovalState == true;
         }
 
         public async Task<List<Option>> GetOptions(int stdCode)

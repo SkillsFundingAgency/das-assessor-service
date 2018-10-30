@@ -7,18 +7,7 @@
     Layout = "_Layout";
 }
 
-<div>
-    <nav class="app-navigation govuk-clearfix">
-        <ul class="app-navigation__list">
-            <li class="app-navigation--current-page">
-                <a asp-controller="Search" asp-action="Index">Search</a>
-            </li>
-            <li>
-                <a asp-controller="CertificateHistory" asp-action="Index">Previous assessments</a>
-            </li>
-        </ul>
-    </nav>
-</div>    
+@{ await Html.RenderPartialAsync("_SearchMenu"); }  
 
 <div class="grid-row">
     <div class="column-two-thirds">

@@ -3,19 +3,21 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 {
     public class PrivateCertificatePrepareForBatchRunHandler : IRequestHandler<PrivateCertificatePrepareForBatchRunRequest>
     {
         private readonly ICertificateRepository _certificateRepository;
-        private readonly ILogger<UpdateCertificateHandler> _logger;
+        private readonly ILogger<PrivateCertificatePrepareForBatchRunHandler> _logger;
 
         public PrivateCertificatePrepareForBatchRunHandler(ICertificateRepository certificateRepository,
-            ILogger<UpdateCertificateHandler> logger)
+            ILogger<PrivateCertificatePrepareForBatchRunHandler> logger)
         {
             _certificateRepository = certificateRepository;
             _logger = logger;
@@ -32,6 +34,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             var certificates = await _certificateRepository.GetCertificates(statuses);
             foreach (var certificate in certificates)
             {
+                var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
                 if (certificate.Status == Domain.Consts.CertificateStatus.Approved)
                 {
                     certificate.Status = Domain.Consts.CertificateStatus.Submitted;
@@ -39,6 +42,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
                 if (certificate.Status == Domain.Consts.CertificateStatus.Rejected)
                 {
+                    certificateData.InApprovalState = true;
+                    certificate.CertificateData = JsonConvert.SerializeObject(certificateData);
                     certificate.Status = Domain.Consts.CertificateStatus.Draft;
                 }
 

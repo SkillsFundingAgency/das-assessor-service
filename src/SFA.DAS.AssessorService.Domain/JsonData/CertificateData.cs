@@ -26,5 +26,6 @@ namespace SFA.DAS.AssessorService.Domain.JsonData
         public string Department { get; set; }
         public string FullName { get; set; }
         public string ReasonForRejection { get; set; }
+        public bool InApprovalState { get; set; }
     }
 }
