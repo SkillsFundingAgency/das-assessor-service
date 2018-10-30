@@ -202,11 +202,11 @@ else
         <div class="form-group">
             @if (Model.ShowDetail)
             {
-                <a asp-action="Select" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString" asp-route-alllogs=true>Show all history</a>
+                <a asp-action="Select" asp-route-certificatereference=@Model.CertificateReference asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString" asp-route-alllogs=true>Show all history</a>
             }
             else
             {
-                <a asp-action="Select" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString" asp-route-alllogs=false>Show summary</a>
+                <a asp-action="Select" asp-route-certificatereference=@Model.CertificateReference asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString" asp-route-alllogs=false>Show summary</a>
             }
         </div>
     </div>
