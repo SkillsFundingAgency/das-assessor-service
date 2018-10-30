@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
         {
             _logger.LogInformation("Handling Search Standards Request");
             
-            var searchstring = _cleanser.UnescapeAndRemoveNonAlphanumericCharacters(request.Searchstring);
+            var searchstring = _cleanser.UnescapeAndRemoveNonAlphanumericCharacters(request.SearchTerm);
             var validationResponse = _validator.ValidatorSearchStandardsRequest(new SearchStandardsValidationRequest {Searchstring = searchstring});
             if (!validationResponse.IsValid)
             {
