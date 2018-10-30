@@ -100,7 +100,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 return await Task.Factory.StartNew<T>(() => JsonConvert.DeserializeObject<T>(json, JsonSettings));
             }
 
-            if (result.StatusCode == HttpStatusCode.NotFound)
+            if (result.StatusCode == HttpStatusCode.NotFound
+                || result.StatusCode == HttpStatusCode.NoContent)
             {
                 if (message == null)
                 {
@@ -109,6 +110,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
                 RaiseResponseError(message, clonedRequest, result);
             }
+            
 
             RaiseResponseError(clonedRequest, result);
 

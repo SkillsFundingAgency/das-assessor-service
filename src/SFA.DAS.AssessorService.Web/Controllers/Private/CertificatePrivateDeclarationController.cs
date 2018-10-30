@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.ViewModels.Search;
@@ -36,22 +36,33 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
             var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
             var organisation = await _organisationsApiClient.Get(ukprn);
 
-            var certificate = await _certificateApiClient.GetCertificate(Convert.ToInt32(ukprn),
-                Convert.ToInt64(searchRequestViewModel.Uln),
-                searchRequestViewModel.Surname,
-                organisation.EndPointAssessorOrganisationId);
-            
-            if(certificate.Status == CertificateStatus.Submitted ||
-               certificate.Status == CertificateStatus.Printed ||
-               certificate.Status == CertificateStatus.Reprint ||
-               certificate.Status == CertificateStatus.Approved ||
-               certificate.Status == CertificateStatus.ToBeApproved ||
-               certificate.Status == CertificateStatus.Rejected ||
-               certificate.Status == CertificateStatus.SentForApproval)
-            
+            try
             {
-                return RedirectToAction("Index", "CertificateAlreadySubmitted", new { id = certificate.Id } );                    
+                var certificate = await _certificateApiClient.GetCertificate(Convert.ToInt32(ukprn),
+                    Convert.ToInt64(searchRequestViewModel.Uln),
+                    searchRequestViewModel.Surname,
+                    organisation.EndPointAssessorOrganisationId);
+
+                if (certificate.Status == CertificateStatus.Submitted ||
+                    certificate.Status == CertificateStatus.Printed ||
+                    certificate.Status == CertificateStatus.Reprint ||
+                    certificate.Status == CertificateStatus.Approved ||
+                    certificate.Status == CertificateStatus.ToBeApproved ||
+                    certificate.Status == CertificateStatus.Rejected ||
+                    certificate.Status == CertificateStatus.SentForApproval)
+
+                {
+                    return RedirectToAction("Index", "CertificateAlreadySubmitted", new {id = certificate.Id});
+                }
             }
+            catch (HttpRequestException e)
+            {
+                // This is terrible code quick fix wil have to eb looked at later - out of time
+                if(e.Message.Contains("Response Status: 204"))
+                    return View("~/Views/Certificate/PrivateDeclaration.cshtml", searchRequestViewModel);
+                throw;
+            }
+
 
             return View("~/Views/Certificate/PrivateDeclaration.cshtml", searchRequestViewModel);
         }
