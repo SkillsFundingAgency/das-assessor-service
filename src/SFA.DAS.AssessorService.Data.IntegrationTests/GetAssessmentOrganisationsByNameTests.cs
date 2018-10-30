@@ -68,7 +68,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         [TestCase("name 1", 1)]
         public void RunGetAllOrganisationsAndCheckAllOrganisationsExpectedAreReturned(string name, int expectedCount)
         {
-            var organisationsReturned = _repository.GetAssessmentOrganisationsbyName(name).Result.ToList();
+            var organisationsReturned = _repository.GetAssessmentOrganisationsByName(name).Result.ToList();
             Assert.AreEqual(expectedCount, organisationsReturned.Count(), $@"Expected {expectedCount} organisations back but got {organisationsReturned.Count()}");
         }
 

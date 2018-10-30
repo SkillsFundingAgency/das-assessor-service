@@ -5,6 +5,8 @@ using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Domain.JsonData;
+using SFA.DAS.AssessorService.ExternalApis.Services;
+using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.Controllers.Private;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels.Private;
@@ -25,7 +27,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
                 new CertificatePrivateStandardCodeController(MockLogger.Object,
                     MockHttpContextAccessor.Object,
                     MockAssessmentOrgsApiClient,
-                    new CacheHelper(mockDistributedCache.Object),
+                    new CacheService(mockDistributedCache.Object),
                     MockApiClient                    
                     );      
 

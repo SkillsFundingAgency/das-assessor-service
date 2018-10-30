@@ -115,7 +115,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
                 .Returns(Task.FromResult(new List<AssessmentOrganisationSummary>().AsEnumerable()));
             _registerQueryRepository.Setup(r => r.GetAssessmentOrganisationsByUkprn(searchstring))
                 .Returns(Task.FromResult(new List<AssessmentOrganisationSummary>().AsEnumerable()));
-            _registerQueryRepository.Setup(r => r.GetAssessmentOrganisationsbyName(searchstring))
+            _registerQueryRepository.Setup(r => r.GetAssessmentOrganisationsByName(searchstring))
                 .Returns(Task.FromResult(_expectedOrganisationListOfDetails.AsEnumerable()));
             var organisations = _searchAssessmentOrganisationsHandler.Handle(request, new CancellationToken()).Result;
 
@@ -123,7 +123,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             _registerQueryRepository.Verify(r => r.GetAssessmentOrganisationsByOrganisationId(searchstring), Times.Never);
             _searchValidator.Verify(v => v.IsValidUkprn(It.IsAny<string>()));
             _registerQueryRepository.Verify(r => r.GetAssessmentOrganisationsByUkprn(searchstring), Times.Never);
-            _registerQueryRepository.Verify(r => r.GetAssessmentOrganisationsbyName(searchstring));
+            _registerQueryRepository.Verify(r => r.GetAssessmentOrganisationsByName(searchstring));
 
 
             organisations.Count.Should().Be(2);

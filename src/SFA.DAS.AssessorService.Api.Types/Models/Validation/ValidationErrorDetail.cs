@@ -3,8 +3,7 @@
     public class ValidationErrorDetail
     {
         public ValidationErrorDetail()
-        {
-            
+        {       
         }
 
         public ValidationErrorDetail(string field, string errorMessage)
@@ -28,7 +27,7 @@
 
         public string Field { get; set; }
         public string ErrorMessage { get; set; }
-        protected ValidationStatusCode? ValidationStatusCode { get; set; }
+        public  ValidationStatusCode ValidationStatusCode { get; set; }
 
 
         public string StatusCode => ValidationStatusCode.ToString();
