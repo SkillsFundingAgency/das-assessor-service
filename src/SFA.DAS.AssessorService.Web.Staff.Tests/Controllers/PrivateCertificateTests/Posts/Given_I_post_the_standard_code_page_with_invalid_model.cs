@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.ExternalApis.Services;
+using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.Controllers.Private;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels.Private;
@@ -22,7 +24,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
                 new CertificatePrivateStandardCodeController(MockLogger.Object,
                     MockHttpContextAccessor.Object,
                     MockAssessmentOrgsApiClient,
-                    new CacheHelper(distributedCacheMock.Object), 
+                    new CacheService(distributedCacheMock.Object), 
                     MockApiClient                    
                     );
 
