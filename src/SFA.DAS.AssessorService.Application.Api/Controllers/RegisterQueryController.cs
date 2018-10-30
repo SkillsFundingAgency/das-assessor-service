@@ -137,7 +137,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> SearchAssessmentOrganisations(string searchstring)
         {
             _logger.LogInformation($@"Search Assessment Organisations for [{searchstring}]");
-            return Ok(await _mediator.Send(new SearchAssessmentOrganisationsRequest {Searchstring = searchstring}));
+            return Ok(await _mediator.Send(new SearchAssessmentOrganisationsRequest {SearchTerm = searchstring}));
         }
 
 
@@ -148,7 +148,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> SearchStandards(string searchstring)
         {
             _logger.LogInformation($@"Search Standards for [{searchstring}]");
-            return Ok(await _mediator.Send(new SearchStandardsRequest {Searchstring = searchstring}));
+            return Ok(await _mediator.Send(new SearchStandardsRequest {SearchTerm = searchstring}));
         }
 
         [HttpGet("assessment-organisations/standards/validate/search/{searchstring}", Name = "SearchStandardsValidate")]

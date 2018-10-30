@@ -6,6 +6,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
 {
     public class SearchStandardsRequest: IRequest<List<StandardSummary>>
     {
-        public string Searchstring { get; set; }
+        public string SearchTerm { get; set; }
     }
 }

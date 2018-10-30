@@ -14,7 +14,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register.Query
 {
     [TestFixture]
-    public class SearchStandardsBySearchStringTests
+    public class SearchStandardsBySearchTermTests
     {
         private static RegisterQueryController _queryController;
         private static object _result;
@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         private List<StandardSummary> _expectedStandards;
         private StandardSummary _standard1;
         private StandardSummary _standard2;
-        private string _searchString = "Test";
+        private string _searchTerm = "Test";
         
         
         [SetUp]
@@ -43,7 +43,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
                 m.Send(It.IsAny<SearchStandardsRequest>(),
                     new CancellationToken())).ReturnsAsync(_expectedStandards);
             _queryController = new RegisterQueryController(_mediator.Object, _logger.Object);
-            _result = _queryController.SearchStandards(_searchString).Result;
+            _result = _queryController.SearchStandards(_searchTerm).Result;
         }  
 
         [Test]

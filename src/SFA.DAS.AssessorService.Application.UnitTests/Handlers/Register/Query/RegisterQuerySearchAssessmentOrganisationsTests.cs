@@ -54,7 +54,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         [TestCase("   A  ")]
         public void SearchAssessmentOrganisationsThrowsBadRequestExceptionIfSearchStringTooShort(string search)
         {
-            var request = new SearchAssessmentOrganisationsRequest { Searchstring = search };
+            var request = new SearchAssessmentOrganisationsRequest { SearchTerm = search };
             _cleanserService.Setup(c => c.CleanseStringForSpecialCharacters(search.Trim())).Returns(search.Trim());
             Assert.ThrowsAsync<BadRequestException>(() => _searchAssessmentOrganisationsHandler.Handle(request, new CancellationToken())); 
         }
@@ -63,7 +63,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         public void SearchAssessmentOrganisationsWithValidOrganisationId()
         {
             const string searchstring = "epacode";
-            var request = new SearchAssessmentOrganisationsRequest { Searchstring = searchstring };
+            var request = new SearchAssessmentOrganisationsRequest { SearchTerm = searchstring };
             _cleanserService.Setup(c => c.CleanseStringForSpecialCharacters(searchstring)).Returns(searchstring);
             _searchValidator.Setup(v => v.IsValidEpaOrganisationId(searchstring)).Returns(true);
             _searchValidator.Setup(v => v.IsValidUkprn(searchstring)).Returns(true);
@@ -83,7 +83,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         public void SearchAssessmentOrganisationsWithValidUkprn()
         {
             const string searchstring = "12345678";
-            var request = new SearchAssessmentOrganisationsRequest { Searchstring = searchstring };
+            var request = new SearchAssessmentOrganisationsRequest { SearchTerm = searchstring };
             _cleanserService.Setup(c => c.CleanseStringForSpecialCharacters(searchstring)).Returns(searchstring);
             _searchValidator.Setup(v => v.IsValidEpaOrganisationId(searchstring)).Returns(false);
             _searchValidator.Setup(v => v.IsValidUkprn(searchstring)).Returns(true);
@@ -107,7 +107,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         public void SearchAssessmentOrganisationsWithGeneralSearchString()
         {
             const string searchstring = "12345678";
-            var request = new SearchAssessmentOrganisationsRequest { Searchstring = searchstring };
+            var request = new SearchAssessmentOrganisationsRequest { SearchTerm = searchstring };
             _cleanserService.Setup(c => c.CleanseStringForSpecialCharacters(searchstring)).Returns(searchstring);
             _searchValidator.Setup(v => v.IsValidEpaOrganisationId(searchstring)).Returns(false);
             _searchValidator.Setup(v => v.IsValidUkprn(searchstring)).Returns(false);
