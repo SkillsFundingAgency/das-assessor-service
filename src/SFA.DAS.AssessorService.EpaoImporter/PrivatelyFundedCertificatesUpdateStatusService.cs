@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                 new PrivatelyFundedCertificateApprovalsBootstrapper(functionLogger, context);
 
             var command = privatelyFundedCertificateApprovalsBootstrapper
-                .GetInstance<PrivatelyFundedCertificatesUddateStatusCommand>();
+                .GetInstance<PrivatelyFundedCertificatesUpdateStatusCommand>();
             command.Execute().GetAwaiter().GetResult();
         }
     }
