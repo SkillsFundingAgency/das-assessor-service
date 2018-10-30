@@ -21,7 +21,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             CancellationToken cancellationToken)
         {
             var certificate = await _certificateRepository.GetPrivateCertificate(request.Uln, request.EndPointAssessorOrganisationId, request.LastName);
-//            var certificateResponse = Mapper.Map<Certificate, CertificateResponse>(certificate);
             return certificate;
         }
     }
