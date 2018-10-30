@@ -52,9 +52,7 @@
                     </h2>
                     await Html.RenderPartialAsync("_ApprovalsDetailsPartial", Model.ToBeApprovedCertificates, new ViewDataDictionary(ViewData)
                     {
-                        {
-                            "Increment", 0
-                        },
+                        { "Increment", 0 },
                         { "ApprovalResults", approvalResults }
                     });
                 }
@@ -67,8 +65,8 @@
                     await Html.RenderPartialAsync("_ApprovalsDetailsPartial", @Model.SentForApproval,
                         new ViewDataDictionary(ViewData)
                         {
-                            {"Increment", Model.ToBeApprovedCertificates.Count() + Model.ApprovedCertificates.Count() + Model.RejectedCertificates.Count()},
-                            {"ApprovalResults",approvalResults}
+                            { "Increment", Model.ToBeApprovedCertificates.Count() + Model.ApprovedCertificates.Count() + Model.RejectedCertificates.Count()} ,
+                            { "ApprovalResults",approvalResults }
                         });
                 }
 
@@ -80,8 +78,8 @@
                                 
                         await Html.RenderPartialAsync("_ApprovalsDetailsPartial", @Model.ApprovedCertificates, new ViewDataDictionary(ViewData)
                         {
-                            {"Increment", Model.ToBeApprovedCertificates.Count()},
-                            {"ApprovalResults",approvalResults}
+                            { "Increment", Model.ToBeApprovedCertificates.Count() },
+                            { "ApprovalResults",approvalResults }
                         });
                 }
 
@@ -94,16 +92,11 @@
                     await Html.RenderPartialAsync("_ApprovalsDetailsPartial", @Model.RejectedCertificates,
                         new ViewDataDictionary(ViewData)
                         {
-                            {"Increment", Model.ToBeApprovedCertificates.Count() + Model.ApprovedCertificates.Count()},
-                            {"ApprovalResults",approvalResults}
+                            { "Increment", Model.ToBeApprovedCertificates.Count() + Model.ApprovedCertificates.Count() },
+                            { "ApprovalResults",approvalResults }
                         });
                 }
-                
-                
-
             </div>
-
-
             <button type="submit" class="button">Submit</button>
         </form>
     </div>

@@ -6,9 +6,9 @@
             <th>Apprentice</th>
             <th>ULN</th>
             <th>Employer</th>
-            <th>Training Provider</th>
-            <th>Date Requested</th>
-            <th>Status</th>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+            <th>Training provider</th>
+            <th>Date requested</th>
+            <th class="select-min-width-pfc-table">Status</th>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
         </tr>
     </thead>
     <tbody>
@@ -21,17 +21,17 @@
             var j = (int) ViewData["Increment"] + i;
 
             <tr>
-                <td>
+                <td data-label="Apprentice">
                     <div role="button" tabindex="0" class="js-expand-table-row expand-table-row" data-uln="@results[i].Uln">
                         <i class="arrow arrow-closed">►</i>
                         <span>@results[i].FullName</span>
                     </div>
                 </td>
-                <td>@results[i].Uln</td>
-                <td>@results[i].ContactOrganisation</td>
-                <td>@results[i].TrainingProvider</td>
-                <td>@results[i].CreatedAt.ToString("dd/MM/yyyy")</td>
-                <td>
+                <td data-label="ULN">@results[i].Uln</td>
+                <td data-label="Employer">@results[i].ContactOrganisation</td>
+                <td data-label="Training provider">@results[i].TrainingProvider</td>
+                <td data-label="Date requested">@results[i].CreatedAt.ToString("dd/MM/yyyy")</td>
+                <td data-label="Status">
                     @{
                         approvalresults[j].ApprovedStatus = results[i].ApprovedStatus;
                     }
@@ -47,11 +47,11 @@
             if (results[i].Status == "Rejected")
             {
                 <tr>
-                    <td colspan="4"></td>
-                    <td >Rejection Reason</td>
-                    <td>
-                        <textarea  type="text" rows="5" asp-for=@approvalresults[j].ReasonForRejection></textarea>                                                                                              
-                    </td >
+                    <td class="empty-table-cells" colspan="3"></td>
+                    <td colspan="3" class="reject-label">
+                        <span class="bold-xsmall">Reason for rejection</span>
+                        <textarea class="form-control form-control--full" type="text" rows="5" asp-for=@approvalresults[j].ReasonForRejection></textarea>                                                                                              
+                    </td>
                 </tr>
             }
 

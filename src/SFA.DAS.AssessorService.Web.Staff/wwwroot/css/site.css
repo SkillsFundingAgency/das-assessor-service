@@ -963,3 +963,21 @@ table.responsive tr.total {
   margin-top: 0;
   margin-bottom: 1.25em;
 }
+
+.select-min-width-pfc-table {
+  min-width: 123px;
+}
+
+table.responsive tr td.reject-label {
+  text-align: left;
+}
+
+table.responsive tr td.empty-table-cells {
+  display: none;
+}
+
+@media (min-width: 769px) {
+  table.responsive tr td.empty-table-cells {
+    display: table-cell;
+  }
+}
