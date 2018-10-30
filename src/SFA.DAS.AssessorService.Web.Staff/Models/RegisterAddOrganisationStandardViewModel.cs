@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Models
 
         public int StandardId { get; set; }
         public string StandardTitle { get; set; }
-        public DateTime StandardEffectiveFrom { get; set; }
+        public DateTime? StandardEffectiveFrom { get; set; }
         public DateTime? StandardEffectiveTo { get; set; }
         public DateTime? StandardLastDateForNewStarts { get; set; }
         public List<ContactResponse> Contacts { get; set; }
@@ -23,13 +23,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Models
         public string EffectiveFromMonth { get; set; }
         public string EffectiveFromYear { get; set; }
         public DateTime? EffectiveFrom { get; set; }
-        public DateTime EffectiveToDate { get; set; }
         public string EffectiveToDay { get; set; }
         public string EffectiveToMonth { get; set; }
         public string EffectiveToYear { get; set; }
         public DateTime? EffectiveTo {get;set;}
         public Guid? ContactId { get; set; }
-        public List<int> SelectedDeliveryAreas { get; set; }
+        public List<int> DeliveryAreas { get; set; }
         public string Comments { get; set; }
 
     }

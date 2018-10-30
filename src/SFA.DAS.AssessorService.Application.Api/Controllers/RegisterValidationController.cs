@@ -101,7 +101,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             }
         }
 
-        [HttpPost("standards/validate-new", Name = "CreateEpaOrganisationStandardValidate")]
+        [HttpGet("standards/validate-new", Name = "CreateEpaOrganisationStandardValidate")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> CreateOrganisationStandardValidation(CreateEpaOrganisationStandardValidationRequest request)

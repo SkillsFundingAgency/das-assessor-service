@@ -9,6 +9,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.Models;
 using SFA.DAS.AssessorService.Web.Staff.Services;
@@ -20,11 +21,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
     {
         private readonly ApiClient _apiClient;
         private readonly IStandardService _standardService;
+        private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
 
-        public RegisterController(ApiClient apiClient, IStandardService standardService)
+        public RegisterController(ApiClient apiClient, IStandardService standardService, IAssessmentOrgsApiClient assessmentOrgsApiClient)
         {
             _apiClient = apiClient;
             _standardService = standardService;
+            _assessmentOrgsApiClient = assessmentOrgsApiClient;
         }
 
         public IActionResult Index()
@@ -110,18 +113,24 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
        [HttpGet("register/add-standard/organisation/{organisationId}/standard/{standardId}")]
         public async Task<IActionResult> AddOrganisationStandard(string organisationId, int standardId)
         {
+            var organisation = await _apiClient.GetEpaOrganisation(organisationId);
+            var standard = await  _assessmentOrgsApiClient.GetStandard(standardId);
+            var availableDeliveryAreas = await _apiClient.GetDeliveryAreas();
+
             var vm = new RegisterAddOrganisationStandardViewModel
             {
                 OrganisationId = organisationId,
-                StandardId = standardId
-            };
-            vm.OrganisationName = "aaa";
-            vm.Ukprn = 11112222; // nullable
-            vm.StandardTitle = "Busy Administrator";
-            vm.StandardEffectiveFrom = DateTime.Today;
-            vm.StandardEffectiveTo = DateTime.Today.AddDays(180); //nullable
-            vm.StandardLastDateForNewStarts = DateTime.Today.AddDays(5); //nullable                   
-            
+                StandardId = standardId,
+                Contacts = await _apiClient.GetEpaOrganisationContacts(organisationId),
+                OrganisationName = organisation.Name,
+                Ukprn = organisation.Ukprn,
+                StandardTitle = standard.Title,
+                StandardEffectiveFrom = standard.EffectiveFrom,
+                StandardEffectiveTo = standard.EffectiveTo,
+                StandardLastDateForNewStarts = standard.LastDateForNewStarts,
+                AvailableDeliveryAreas = availableDeliveryAreas
+            };          
+
             return View(vm);
         }
         

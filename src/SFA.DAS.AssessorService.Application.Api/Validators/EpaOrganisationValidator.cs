@@ -318,12 +318,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         {
             var validationResult = new ValidationResponse();
 
-            RunValidationCheckAndAppendAnyError("OrganisationId",
-                CheckOrganisationIdIsPresentAndValid(request.OrganisationId), validationResult,
-                ValidationStatusCode.BadRequest);
-            RunValidationCheckAndAppendAnyError("ContactId",
-                CheckIfContactIdIsValid(request.ContactId, request.OrganisationId), validationResult,
-                ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("OrganisationId", CheckOrganisationIdIsPresentAndValid(request.OrganisationId), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("ContactId", CheckIfContactIdIsValid(request.ContactId, request.OrganisationId), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("DeliveryAreas", CheckIfDeliveryAreasAreValid(request.DeliveryAreas), validationResult, ValidationStatusCode.BadRequest);
             if (!validationResult.IsValid) return validationResult;
 

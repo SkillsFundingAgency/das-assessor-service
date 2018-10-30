@@ -271,6 +271,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
                 certificatePostApprovalViewModel);
         }
 
+        public async Task<List<DeliveryArea>> GetDeliveryAreas()
+        {
+            return await Get<List<DeliveryArea>>("/api/ao/delivery-areas");
+        }
+
         #region Reports
         public async Task<IEnumerable<StaffReport>> GetReportList()
         {
