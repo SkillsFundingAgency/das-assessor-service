@@ -2,12 +2,15 @@
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Settings;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Dapper;
 using Newtonsoft.Json;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
+using System.Transactions;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 using SFA.DAS.AssessorService.Application.Exceptions;
 
@@ -64,40 +67,77 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        public async Task<string>CreateEpaOrganisationStandard(EpaOrganisationStandard organisationStandard)
+        public async Task<string>CreateEpaOrganisationStandard(EpaOrganisationStandard organisationStandard, List<int> deliveryAreas)
         {
+           
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
-             
-                var res = connection.Query<string>(
+
+                var osdaId = connection.Query<string>(
                     "INSERT INTO [dbo].[OrganisationStandard] ([EndPointAssessorOrganisationId],[StandardCode],[EffectiveFrom],[EffectiveTo],[DateStandardApprovedOnRegister] ,[Comments],[Status], [ContactId]) VALUES (" +
                     "@organisationId, @standardCode, @effectiveFrom, @effectiveTo, null, @comments, 'New', @ContactId); SELECT CAST(SCOPE_IDENTITY() as varchar); ",
                     new
                     {
-                        organisationStandard.OrganisationId, organisationStandard.StandardCode, organisationStandard.EffectiveFrom, organisationStandard.EffectiveTo,
-                        organisationStandard.DateStandardApprovedOnRegister, organisationStandard.Comments, organisationStandard.ContactId}).Single();
+                        organisationStandard.OrganisationId, organisationStandard.StandardCode,
+                        organisationStandard.EffectiveFrom, organisationStandard.EffectiveTo,
+                        organisationStandard.DateStandardApprovedOnRegister, organisationStandard.Comments,
+                        organisationStandard.ContactId
+                    }).Single();
 
-                return res;
+                foreach (var deliveryAreaId in deliveryAreas.Distinct())
+                {
+                    connection.Execute("INSERT INTO OrganisationStandardDeliveryArea ([OrganisationStandardId],DeliveryAreaId, Status) VALUES " + 
+                                        "(@osdaId, @deliveryAreaId,'Live'); ",
+                                    new { osdaId, deliveryAreaId}
+                                    );
+                }                      
+                        
+                return osdaId;
             }
+            
         }
 
-        public async Task<string> UpdateEpaOrganisationStandard(EpaOrganisationStandard orgStandard)
+        public async Task<string> UpdateEpaOrganisationStandard(EpaOrganisationStandard orgStandard,
+            List<int> deliveryAreas)
         {
+
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
-                var res = connection.Query<string>(
+                var osdaId = connection.Query<string>(
                     "UPDATE [OrganisationStandard] SET [EffectiveFrom] = @effectiveFrom, [EffectiveTo] = @EffectiveTo, " +
                     "[Comments] = @comments, [ContactId] = @contactId " +
                     "WHERE [EndPointAssessorOrganisationId] = @organisationId and [StandardCode] = @standardCode; SELECT top 1 id from [organisationStandard] where  [EndPointAssessorOrganisationId] = @organisationId and [StandardCode] = @standardCode;",
-                    new {orgStandard.EffectiveFrom, orgStandard.EffectiveTo, orgStandard.Comments, orgStandard.ContactId, orgStandard.OrganisationId, orgStandard.StandardCode}).Single();
+                    new
+                    {
+                        orgStandard.EffectiveFrom,
+                        orgStandard.EffectiveTo,
+                        orgStandard.Comments,
+                        orgStandard.ContactId,
+                        orgStandard.OrganisationId,
+                        orgStandard.StandardCode
+                    }).Single();
 
-                return res;
+                connection.Execute(
+                    "Delete from OrganisationStandardDeliveryArea where OrganisationStandardId = @osdaId and DeliveryAreaId not in @deliveryAreas",
+                    new {osdaId, deliveryAreas});
+
+                foreach (var deliveryAreaId in deliveryAreas.Distinct())
+                {
+                    connection.Execute(
+                        "IF NOT EXISTS (select * from OrganisationStandardDeliveryArea where OrganisationStandardId = @osdaId and DeliveryAreaId = @DeliveryAreaId) " +
+                        "INSERT INTO OrganisationStandardDeliveryArea ([OrganisationStandardId],DeliveryAreaId, Status) VALUES " +
+                        "(@osdaId, @deliveryAreaId,'Live'); ",
+                        new {osdaId, deliveryAreaId}
+                    );
+                }
+
+                return osdaId;
             }
         }
 

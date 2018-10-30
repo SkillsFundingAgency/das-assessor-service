@@ -53,7 +53,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             }
 
             _logger.LogInformation($@"Searching AssessmentOrganisations based on name wildcard: [{searchstring}]");
-            var resultMain = await _registerQueryRepository.GetAssessmentOrganisationsbyName(searchstring);
+            var resultMain = await _registerQueryRepository.GetAssessmentOrganisationsByName(searchstring);
             return resultMain.ToList();
         }
     }
