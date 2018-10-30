@@ -44,11 +44,13 @@
 
             <form asp-action="Index" asp-controller="DuplicateRequest" method="post">
                 @Html.HiddenFor(m => m.CertificateId)
+                @Html.HiddenFor(m => m.SearchString)
                 <button class="button">Confirm reprint</button>
             </form>
             <br />
             <form asp-action="Check" asp-controller="CertificateAmend" method="get">
                 @Html.Hidden("certificateId", Model.CertificateId, new { @id = "certificateId" })
+                @Html.Hidden("searchString", Model.SearchString, new { @id = "searchString" })
                 <button class="button">Amend before reprint</button>
             </form>
         }
