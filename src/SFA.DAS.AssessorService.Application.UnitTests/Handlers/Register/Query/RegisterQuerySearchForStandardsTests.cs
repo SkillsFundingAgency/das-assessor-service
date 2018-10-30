@@ -55,7 +55,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         [TestCase("   A  ")]
         public void SearchStandardsThrowsBadRequestExceptionIfSearchStringTooShort(string search)
         {
-            var request = new SearchStandardsRequest { Searchstring = search };
+            var request = new SearchStandardsRequest { SearchTerm = search };
             _cleanserService.Setup(c => c.UnescapeAndRemoveNonAlphanumericCharacters(search)).Returns(search.Trim());
             Assert.ThrowsAsync<BadRequestException>(() => _searchStandardsHandler.Handle(request, new CancellationToken())); 
         }
@@ -64,7 +64,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         public void SearchStandardsWithValidStandardId()
         {
             var searchstring = _standardSummary1.Id;
-            var request = new SearchStandardsRequest { Searchstring = searchstring };
+            var request = new SearchStandardsRequest { SearchTerm = searchstring };
             _cleanserService.Setup(c => c.UnescapeAndRemoveNonAlphanumericCharacters(searchstring)).Returns(searchstring);
         
             _standardService.Setup(r => r.GetAllStandardSummaries())
@@ -79,7 +79,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         public void SearchStandardsWithInvalidStandardId()
         {
             var searchstring = "99";
-            var request = new SearchStandardsRequest { Searchstring = searchstring };
+            var request = new SearchStandardsRequest { SearchTerm = searchstring };
             _cleanserService.Setup(c => c.UnescapeAndRemoveNonAlphanumericCharacters(searchstring)).Returns(searchstring);
         
             _standardService.Setup(r => r.GetAllStandardSummaries())
@@ -93,7 +93,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         public void SearchStandardsWithValidWordSearchReturns2Results()
         {
             var searchstring = "Name";
-            var request = new SearchStandardsRequest { Searchstring = searchstring };
+            var request = new SearchStandardsRequest { SearchTerm = searchstring };
             _cleanserService.Setup(c => c.UnescapeAndRemoveNonAlphanumericCharacters(searchstring)).Returns(searchstring); 
             _standardService.Setup(r => r.GetAllStandardSummaries())
                 .Returns(Task.FromResult(_expectedStandards.AsEnumerable()));
@@ -108,7 +108,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         public void SearchStandardsWithValidWordSearchReturns1Result()
         {
             var searchstring = "Name 100";
-            var request = new SearchStandardsRequest { Searchstring = searchstring };
+            var request = new SearchStandardsRequest { SearchTerm = searchstring };
             _cleanserService.Setup(c => c.UnescapeAndRemoveNonAlphanumericCharacters(searchstring)).Returns(searchstring);       
             _standardService.Setup(r => r.GetAllStandardSummaries())
                 .Returns(Task.FromResult(_expectedStandards.AsEnumerable()));
@@ -122,7 +122,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         public void SearchStandardsWithValidWordSearchReturnsZeroResults()
         {
             var searchstring = "no match";
-            var request = new SearchStandardsRequest { Searchstring = searchstring };
+            var request = new SearchStandardsRequest { SearchTerm = searchstring };
             _cleanserService.Setup(c => c.UnescapeAndRemoveNonAlphanumericCharacters(searchstring)).Returns(searchstring);       
             _standardService.Setup(r => r.GetAllStandardSummaries())
                 .Returns(Task.FromResult(_expectedStandards.AsEnumerable()));

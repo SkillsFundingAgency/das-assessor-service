@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers
         {
             _logger.LogInformation("Handling Search Standards Request");
             
-            var searchstring = _cleanser.UnescapeAndRemoveNonAlphanumericCharacters(request.Searchstring);
+            var searchstring = _cleanser.UnescapeAndRemoveNonAlphanumericCharacters(request.SearchTerm);
             
             var isAnInt = int.TryParse(searchstring, out _);
             if (!isAnInt && searchstring.Length < 2)
