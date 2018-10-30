@@ -3,7 +3,7 @@
 	[Action] [nvarchar](400) NULL,
 	[CertificateId] [uniqueidentifier] NOT NULL,
 	[EventTime] [datetime2](7) NOT NULL,
-	[Status] [nvarchar](12) NOT NULL,
+	[Status] [nvarchar](20) NOT NULL,
  [CertificateData] NVARCHAR(MAX) NOT NULL, 
     [Username] NVARCHAR(50) NOT NULL,
 	[BatchNumber] [int] NULL,
