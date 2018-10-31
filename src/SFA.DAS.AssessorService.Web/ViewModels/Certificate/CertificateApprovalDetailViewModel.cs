@@ -6,6 +6,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 {
     public class CertificateDetailApprovalViewModel
     {
+        public Guid Id { get; set; }
         public string CertificateReference { get; set; }
         public string RecordedBy { get; set; }
         public long Uln { get; set; }

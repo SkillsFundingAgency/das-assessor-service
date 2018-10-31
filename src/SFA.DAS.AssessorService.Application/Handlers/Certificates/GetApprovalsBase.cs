@@ -75,6 +75,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
                     return new CertificateSummaryResponse
                     {
+                        Id = certificate.Id,
                         CertificateReference = certificate.CertificateReference,
                         Uln = certificate.Uln,
                         CreatedAt = certificate.CreatedAt,

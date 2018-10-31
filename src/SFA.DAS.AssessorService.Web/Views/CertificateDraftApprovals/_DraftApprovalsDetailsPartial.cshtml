@@ -21,10 +21,13 @@
 
             <tr>
                 <td data-label="Apprentice">
-                    <div role="button" tabindex="0" class="js-expand-table-row expand-table-row" data-uln="@results[i].Uln">
-                        <i class="arrow arrow-closed">►</i>
-                        <span>@results[i].FullName</span>
-                    </div>
+                     <div role="button" tabindex="0"  data-uln="@results[i].Uln"> 
+                         <i class="arrow arrow-closed">►</i> 
+                        
+                        <a asp-controller="CertificateCheck" asp-action="CheckForRejectedApprovals" asp-route-certificateId=@results[i].Id asp-route-redirecttocheck="true">
+                            <span>@results[i].FullName</span>
+                        </a>                       
+                     </div> 
                 </td>
                 <td data-label="ULN">@results[i].Uln</td>
                 <td data-label="Employer">@results[i].ContactOrganisation</td>
