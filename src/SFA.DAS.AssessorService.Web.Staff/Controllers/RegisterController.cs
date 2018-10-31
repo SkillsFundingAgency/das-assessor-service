@@ -295,7 +295,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 Address4 = organisation.OrganisationData?.Address4,
                 Postcode = organisation.OrganisationData?.Postcode,
                 PrimaryContact = organisation.PrimaryContact,
-                PrimaryContactName = notSetDescription
+                PrimaryContactName = notSetDescription,
+                Status = organisation.Status
             };
 
             if (viewModel.OrganisationTypeId != null)
