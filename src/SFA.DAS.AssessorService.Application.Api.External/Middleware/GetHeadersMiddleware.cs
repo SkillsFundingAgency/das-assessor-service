@@ -59,6 +59,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Middleware
             if (string.IsNullOrWhiteSpace(header)) return false;
 
             string strippedValue = header.Trim().ToLower()
+                                    .Replace(" ", string.Empty)
                                     .Replace("ukprn=", string.Empty);
 
             return int.TryParse(strippedValue, out ukprn);
