@@ -7,8 +7,7 @@
             <th>ULN</th>
             <th>Employer</th>
             <th>Training provider</th>
-            <th>Date requested</th>
-            <th class="select-min-width-pfc-table">Status</th>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+            <th>Date requested</th>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
         </tr>
     </thead>
     <tbody>
@@ -30,12 +29,7 @@
                 <td data-label="ULN">@results[i].Uln</td>
                 <td data-label="Employer">@results[i].ContactOrganisation</td>
                 <td data-label="Training provider">@results[i].TrainingProvider</td>
-                <td data-label="Date requested">@results[i].CreatedAt.ToString("dd/MM/yyyy")</td>
-                <td data-label="Status">
-                    @{
-                        approvalresults[j].ApprovedStatus = results[i].ApprovedStatus;
-                    }                   
-                </td>
+                <td data-label="Date requested">@results[i].CreatedAt.ToString("dd/MM/yyyy")</td>              
             </tr>
 
             if (results[i].Status == "Rejected")
