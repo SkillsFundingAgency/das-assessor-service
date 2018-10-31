@@ -97,7 +97,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         }
 
         public async Task<ValidationResponse> ValidateSearchStandards(string searchstring)
-        { 
+        {
+           
             using (var request = new HttpRequestMessage(HttpMethod.Get,
                 $"/api/ao/assessment-organisations/standards/validate/search/{searchstring}")) 
             {
