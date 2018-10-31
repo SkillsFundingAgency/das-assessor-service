@@ -143,7 +143,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             };
 
             var organisationStandardId = await _apiClient.CreateEpaOrganisationStandard(addOrganisationStandardRequest);
-            return Redirect($"/register/view-standard/{organisationStandardId}");
+            return Redirect($"/register/view-organisation/{viewModel.OrganisationId}");
         }
 
 

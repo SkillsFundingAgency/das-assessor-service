@@ -116,7 +116,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
             var queryString =
                 $"/api/ao/assessment-organisations/standards/validate-new?OrganisationId={organisationId}&StandardCode={standardId}&EffectiveFrom={effectiveFrom?.ToString("yyyy-MM-dd")}" +
-                $"&EffectiveFrom={effectiveTo?.ToString("yyyy-MM-dd")}{contactIdString}{deliveryAreasString}";
+                $"&EffectiveTo={effectiveTo?.ToString("yyyy-MM-dd")}{contactIdString}{deliveryAreasString}";
             using (var request = new HttpRequestMessage(HttpMethod.Get, queryString))
             {
                 return await RequestAndDeserialiseAsync<ValidationResponse>(request,

@@ -109,7 +109,12 @@ Layout = "_Layout";
                         <td data-label="Name"><a href="/register/view-contact/@result.Id">@result.DisplayName</a></td>
                         <td data-label="ID">@result.Email</td>
                         <td data-label="PhoneNumber">@result.PhoneNumber</td>
-                        <td data-label="Username">@result.Username</td>
+                        <td data-label="Username">
+                            @if (!result.Username.Contains("unknown"))
+                            {
+                                @result.Username
+                            }
+                        </td>
                                                      
                     </tr>
                     }
@@ -148,7 +153,7 @@ Layout = "_Layout";
                     <tr>
                         <td data-label="Name">@result.StandardSummary.Title</td>
                         <td data-label="ID">@result.StandardCode</td>
-                        <td class="numeric"><a href="">Edit</a></td>
+                        <td class="numeric"></td>
                     </tr>
                     }
                 </tbody>
