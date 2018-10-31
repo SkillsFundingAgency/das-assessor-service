@@ -10,6 +10,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         string GivenNames { get; set; }
         void FromCertificate(Domain.Entities.Certificate cert);
         bool BackToCheckPage { get; set; }
+        bool BackToSearchPage { get; set; }
         Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData certData);
     }
 }

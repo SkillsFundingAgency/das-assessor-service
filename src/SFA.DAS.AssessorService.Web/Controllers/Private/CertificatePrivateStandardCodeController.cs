@@ -40,7 +40,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
         }
 
         [HttpGet]
-        public async Task<IActionResult> StandardCode(bool? redirectToCheck = false)
+        public async Task<IActionResult> StandardCode(bool? redirectToCheck = false,
+            bool? redirecttosearch = false)
         {
             var filteredStandardCodes = await GetFilteredStatusCodes();
             var standards = (await GetAllStandards()).ToList();
@@ -57,7 +58,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
             return viewResult;
         }
 
-        [HttpPost(Name = "StandardCode")]
+        [HttpPost(Name = "StandardCode")]    
         public async Task<IActionResult> StandardCode(CertificateStandardCodeListViewModel vm)
         {
             var username = ContextAccessor.HttpContext.User

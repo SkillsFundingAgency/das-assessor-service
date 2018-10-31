@@ -30,7 +30,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public async Task<IActionResult> Address(
             bool? edit,
             bool? reset,
-            bool? redirectToCheck = false)
+            bool? redirectToCheck = false,
+            bool? redirecttosearch = false)
         {
             var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 

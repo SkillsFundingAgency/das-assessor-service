@@ -17,10 +17,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     [Route("certificate/check")]
     public class CertificateCheckController : CertificateBaseController
     {
+        private IOrganisationsApiClient _organisationsApiClient;
+        
         public CertificateCheckController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor,
-            ICertificateApiClient certificateApiClient, ISessionService sessionService) : base(logger, contextAccessor,
+            ICertificateApiClient certificateApiClient, 
+            IOrganisationsApiClient organisationsApiClient,
+            ISessionService sessionService) : base(logger, contextAccessor,
             certificateApiClient, sessionService)
         {
+            _organisationsApiClient = organisationsApiClient;
         }
 
         [HttpGet]
@@ -41,13 +46,30 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet("CheckForRejectedApprovals/{certificateId}")]
         public async Task<IActionResult> CheckForRejectedApprovals(Guid certificateId)
         {
+            SessionService.Remove("SearchResults");
+            SessionService.Remove("SelectedStandard");
+            SessionService.Remove("SearchResultsChooseStandard");
+            SessionService.Remove("EndPointAsessorOrganisationId");
+            
             var viewModel = new CertificateCheckViewModel();
             var certificate = await CertificateApiClient.GetCertificate(certificateId);
             viewModel.FromCertificate(certificate);
 
-            TempData["HideOption"] = false;
+            var organisation = await _organisationsApiClient.Get(certificate.OrganisationId);
 
-//          return await LoadViewModel<CertificateCheckViewModel>("~/Views/Certificate/Check.cshtml");            
+            viewModel.BackToSearchPage = true;
+            
+            SessionService.Set("CertificateSession", new CertificateSession
+            {
+                CertificateId = certificate.Id,
+                Uln = certificate.Uln,
+                StandardCode = certificate.StandardCode               
+            });
+
+            SessionService.Set("EndPointAsessorOrganisationId", organisation.EndPointAssessorOrganisationId);
+
+            TempData["HideOption"] = false;
+            
             return View("~/Views/Certificate/Check.cshtml", viewModel);
         }
 

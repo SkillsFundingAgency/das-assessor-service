@@ -26,7 +26,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Date(bool? redirectToCheck = false)
+        public async Task<IActionResult> Date(bool? redirectToCheck = false,
+            bool? redirecttosearch = false)
         {
             return await LoadViewModel<CertificateDateViewModel>("~/Views/Certificate/Date.cshtml");
         }

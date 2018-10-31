@@ -19,7 +19,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
         { }
 
         [HttpGet]
-        public async Task<IActionResult> LastName(bool? redirectToCheck = false)
+        public async Task<IActionResult> LastName(bool? redirectToCheck = false,
+            bool? redirecttosearch = false)
         {            
             return await LoadViewModel<CertificateLastNameViewModel>("~/Views/Certificate/LastName.cshtml");
         }

@@ -26,7 +26,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
         }
 
         [HttpGet]
-        public async Task<IActionResult> LearnerStartDate(bool? redirectToCheck = false)
+        public async Task<IActionResult> LearnerStartDate(bool? redirectToCheck = false,
+            bool? redirecttosearch = false)
         {
             return await LoadViewModel<CertificateLearnerStartDateViewModel>("~/Views/Certificate/LearnerStartDate.cshtml");
         }

@@ -45,6 +45,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
             else
                 SessionService.Remove("redirecttocheck");
+            
+            if (query.ContainsKey("redirecttosearch") && bool.Parse(query["redirecttosearch"]))
+            {
+                Logger.LogInformation($"RedirectToSearch for {typeof(T).Name} is true");
+                SessionService.Set("redirecttosearch", "true");
+                viewModel.BackToSearchPage = true;
+            }
+            else
+                SessionService.Remove("redirecttosearch");
+            
                 
             var sessionString = SessionService.Get("CertificateSession");
             if (sessionString == null)
@@ -88,10 +98,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             Logger.LogInformation($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} updated.");
 
-            if (SessionService.Exists("redirecttocheck") && bool.Parse(SessionService.Get("redirecttocheck")))
+            if (SessionService.Exists("redirecttocheck") && bool.Parse(SessionService.Get("redirecttocheck")))                              
             {
                 Logger.LogInformation($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} redirecting back to Certificate Check.");
                 return new RedirectToActionResult("Check", "CertificateCheck", null);
+            }
+            
+            if( SessionService.Exists("redirecttosearch") && bool.Parse(SessionService.Get("redirecttosearch")))
+            {
+                Logger.LogInformation($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} redirecting back to Certificate Check.");
+                return new RedirectToActionResult("CheckForRejectedApprovals", "CertificateCheck", new { certificateId = certificate.Id });
             }
 
             Logger.LogInformation($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} redirecting to {nextAction.ControllerName} {nextAction.ActionName}");

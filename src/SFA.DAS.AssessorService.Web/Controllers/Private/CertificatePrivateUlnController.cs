@@ -21,7 +21,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
         { }
 
         [HttpGet]
-        public async Task<IActionResult> Uln(Guid certificateid)
+        public async Task<IActionResult> Uln(Guid certificateid,
+            bool? redirectToCheck = false,
+            bool? redirecttosearch = false)
         {
             return await LoadViewModel<CertificateUlnViewModel>("~/Views/Certificate/Uln.cshtml");
         }

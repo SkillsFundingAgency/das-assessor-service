@@ -15,6 +15,10 @@
         {
             <a class="link-back" asp-controller="CertificateCheck" asp-action="Check">Back</a>
         }
+        else if (Model.BackToSearchPage)
+        {
+            <a class="link-back" asp-controller="CertificateCheck" asp-route-certificateId=@Model.Id asp-action="CheckForRejectedApprovals">Back</a>
+        }
         else
         {
             <a asp-controller="CertificatePrivateFirstName" asp-action="FirstName" class="link-back">Back</a>

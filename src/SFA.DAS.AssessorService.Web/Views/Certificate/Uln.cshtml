@@ -10,8 +10,14 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-
-        <a class="link-back" asp-controller="CertificateCheck" asp-action="Check">Back</a>
+        @if (Model.BackToCheckPage)
+        {
+            <a class="link-back" asp-controller="CertificateCheck" asp-action="Check">Back</a>
+        }
+        else if (Model.BackToSearchPage)
+        {
+            <a class="link-back" asp-controller="CertificateCheck" asp-route-certificateId=@Model.Id asp-action="CheckForRejectedApprovals">Back</a>
+        }
 
         <form class="apprentice-uln-form js-disable-on-submit" method="post" asp-action="Uln" asp-controller="CertificatePrivateUln">
             @Html.HiddenFor(c => c.Id)
@@ -31,7 +37,9 @@
                         There's a problem
                     </h2>
                     <ul class="error-summary-list">
-                        <li><a sfa-validation-for="Uln"></a></li>
+                        <li>
+                            <a sfa-validation-for="Uln"></a>
+                        </li>
                     </ul>
                 </div>
             }
@@ -47,7 +55,7 @@
                         <span class="form-hint">@Localizer["UlnNameHint"]</span>
                         <span class="error-message" asp-validation-for="Uln"></span>
                     </label>
-                    <input class="form-control js-integers-only" name="Uln" autocomplete="off" asp-for="Uln" type="text" sfa-validation-for="Uln" sfa-validationerror-class="form-control-error" maxlength="10" />
+                    <input class="form-control js-integers-only" name="Uln" autocomplete="off" asp-for="Uln" type="text" sfa-validation-for="Uln" sfa-validationerror-class="form-control-error" maxlength="10"/>
                 </div>
 
             </div>
@@ -58,6 +66,6 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-    @{await Html.RenderPartialAsync("~/Views/Certificate/_UlnScriptsPartial.cshtml"); }
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    @{ await Html.RenderPartialAsync("~/Views/Certificate/_UlnScriptsPartial.cshtml"); }
 }

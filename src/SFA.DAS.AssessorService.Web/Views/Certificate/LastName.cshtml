@@ -14,6 +14,10 @@
         {
             <a class="link-back" asp-controller="CertificateCheck" asp-action="Check">Back</a>
         }
+        else if (Model.BackToSearchPage)
+        {
+            <a class="link-back" asp-controller="CertificateCheck" asp-route-certificateId=@Model.Id asp-action="CheckForRejectedApprovals">Back</a>
+        }
         else
         {
             <a asp-controller="CertificatePrivateDeclaration" asp-action="Index" asp-route-uln=@Model.Uln asp-route-surname=@Model.FamilyName asp-route-IsPrivatelyFunded=true class="link-back">Back</a>

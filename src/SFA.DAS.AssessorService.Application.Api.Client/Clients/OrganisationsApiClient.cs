@@ -29,6 +29,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                     $"Could not find the organisations");
             }
         }
+        
+        public async Task<OrganisationResponse> Get(Guid id)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/organisations/organisation/{id}"))
+            {
+                return await RequestAndDeserialiseAsync<OrganisationResponse>(request,
+                    $"Could not find the organisation {id}");
+            }
+        }                      
 
         public async Task<OrganisationResponse> Get(string ukprn)
         {
@@ -141,6 +150,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
     public interface IOrganisationsApiClient
     {
+        Task<OrganisationResponse> Get(Guid id);
         Task<IEnumerable<OrganisationResponse>> GetAll();
         Task<OrganisationResponse> Get(string ukprn);
         Task<OrganisationResponse> Create(CreateOrganisationRequest organisationCreateViewModel);

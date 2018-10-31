@@ -23,7 +23,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
         }
 
         [HttpGet]
-        public async Task<IActionResult> Ukprn(bool? redirectToCheck = false)
+        public async Task<IActionResult> Ukprn(bool? redirectToCheck = false,
+            bool? redirecttosearch = false)
         {
             var viewResult = await LoadViewModel<CertificateUkprnViewModel>("~/Views/Certificate/Ukprn.cshtml");
             return viewResult;

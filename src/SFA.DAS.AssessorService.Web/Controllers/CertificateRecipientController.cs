@@ -19,7 +19,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {}
 
         [HttpGet]
-        public async Task<IActionResult> Recipient(bool? redirectToCheck = false)
+        public async Task<IActionResult> Recipient(bool? redirectToCheck = false,
+            bool? redirecttosearch = false)
         {
             return await LoadViewModel<CertificateRecipientViewModel>("~/Views/Certificate/Recipient.cshtml");
         }

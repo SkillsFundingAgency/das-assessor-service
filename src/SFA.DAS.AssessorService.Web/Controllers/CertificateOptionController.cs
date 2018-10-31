@@ -23,7 +23,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {}
 
         [HttpGet]
-        public async Task<IActionResult> Option(bool? redirectToCheck = false)
+        public async Task<IActionResult> Option(bool? redirectToCheck = false,
+            bool? redirecttosearch = false)
         {
             var sessionString = SessionService.Get("CertificateSession");
             if (sessionString == null)

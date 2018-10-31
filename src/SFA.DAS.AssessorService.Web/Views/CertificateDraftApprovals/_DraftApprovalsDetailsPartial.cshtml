@@ -24,7 +24,7 @@
                      <div role="button" tabindex="0"  data-uln="@results[i].Uln"> 
                          <i class="arrow arrow-closed">►</i> 
                         
-                        <a asp-controller="CertificateCheck" asp-action="CheckForRejectedApprovals" asp-route-certificateId=@results[i].Id asp-route-redirecttocheck="true">
+                        <a asp-controller="CertificateCheck" asp-action="CheckForRejectedApprovals" asp-route-certificateId=@results[i].Id asp-route-redirecttosearch="true">
                             <span>@results[i].FullName</span>
                         </a>                       
                      </div> 

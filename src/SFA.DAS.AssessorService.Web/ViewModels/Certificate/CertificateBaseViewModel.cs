@@ -28,6 +28,7 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
         public string Uln { get; set; }
         public int Level { get; set; }
         public bool BackToCheckPage { get; set; }
+        public bool BackToSearchPage { get; set; }
         public bool IsPrivatelyFunded { get; set; }
     }
 }
