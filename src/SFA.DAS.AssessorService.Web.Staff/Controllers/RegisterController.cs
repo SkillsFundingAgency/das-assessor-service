@@ -112,38 +112,27 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 
        [HttpGet("register/add-standard/organisation/{organisationId}/standard/{standardId}")]
         public async Task<IActionResult> AddOrganisationStandard(string organisationId, int standardId)
-        {
-            var organisation = await _apiClient.GetEpaOrganisation(organisationId);
-            var standard = await  _assessmentOrgsApiClient.GetStandard(standardId);
-            var availableDeliveryAreas = await _apiClient.GetDeliveryAreas();
+       {
+           var viewModelToHydrate =
+               new RegisterAddOrganisationStandardViewModel {OrganisationId = organisationId, StandardId = standardId};
+           var vm = await ConstructOrganisationAndStandardDetails(viewModelToHydrate);
 
-            var vm = new RegisterAddOrganisationStandardViewModel
-            {
-                OrganisationId = organisationId,
-                StandardId = standardId,
-                Contacts = await _apiClient.GetEpaOrganisationContacts(organisationId),
-                OrganisationName = organisation.Name,
-                Ukprn = organisation.Ukprn,
-                StandardTitle = standard.Title,
-                StandardEffectiveFrom = standard.EffectiveFrom,
-                StandardEffectiveTo = standard.EffectiveTo,
-                StandardLastDateForNewStarts = standard.LastDateForNewStarts,
-                AvailableDeliveryAreas = availableDeliveryAreas
-            };          
+           return View(vm);
+       }
 
-            return View(vm);
-        }
-        
-        
+
         [HttpPost("register/add-standard/organisation/{organisationId}/standard/{standardId}")]
         public async Task<IActionResult> AddOrganisationStandard(RegisterAddOrganisationStandardViewModel viewModel)
         {
             if (!ModelState.IsValid)
-            {      
-                return View(viewModel);
+            {
+                var viewModelInvalid = await ConstructOrganisationAndStandardDetails(viewModel);
+                return View(viewModelInvalid);
             }                   
             
-            return View(viewModel);
+            // MFCMFC This might be moot....
+            var viewModelValid = await ConstructOrganisationAndStandardDetails(viewModel);
+            return View(viewModelValid);
         }
 
         [HttpGet("register/add-contact/{organisationId}")]
@@ -305,7 +294,23 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             return View(standardViewModel);
         }
 
+        private async Task<RegisterAddOrganisationStandardViewModel> ConstructOrganisationAndStandardDetails(RegisterAddOrganisationStandardViewModel vm)
+        {
+            var organisation = await _apiClient.GetEpaOrganisation(vm.OrganisationId);
+            var standard = await _assessmentOrgsApiClient.GetStandard(vm.StandardId);
+            var availableDeliveryAreas = await _apiClient.GetDeliveryAreas();
 
+            vm.Contacts = await _apiClient.GetEpaOrganisationContacts(vm.OrganisationId);
+            vm.OrganisationName = organisation.Name;
+            vm.Ukprn = organisation.Ukprn;
+            vm.StandardTitle = standard.Title;
+            vm.StandardEffectiveFrom = standard.EffectiveFrom;
+            vm.StandardEffectiveTo = standard.EffectiveTo;
+            vm.StandardLastDateForNewStarts = standard.LastDateForNewStarts;
+            vm.AvailableDeliveryAreas = availableDeliveryAreas;
+
+            return vm;
+        }
         private void GatherOrganisationStandards(RegisterViewAndEditOrganisationViewModel viewAndEditModel)
         {
             var organisationStandards = _apiClient.GetEpaOrganisationStandards(viewAndEditModel.OrganisationId).Result;

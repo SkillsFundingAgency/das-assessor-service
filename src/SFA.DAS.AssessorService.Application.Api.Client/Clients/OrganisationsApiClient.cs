@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -110,12 +111,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             DateTime? effectiveTo, Guid? contactId, List<int> deliveryAreas)
         {
 
-            var deliveryAreasString = "&DeliveryAreas=2";
+            var deliveryAreasString = deliveryAreas.Aggregate(string.Empty, (current, deliveryArea) => current + $"&DeliveryAreas={deliveryArea}");
             var contactIdString = contactId == null ? string.Empty : $"&contactId={contactId.Value}";
 
             var queryString =
-                $"/api/ao/assessment-organisations/standards/validate-new?OrganisationId={organisationId}&StandardCode={standardId}&EffectiveFrom={effectiveFrom?.ToString("yyyy-mm-dd")}" +
-                $"&EffectiveFrom={effectiveTo?.ToString("yyyy-mm-dd")}{contactIdString}{contactIdString}{deliveryAreasString}";
+                $"/api/ao/assessment-organisations/standards/validate-new?OrganisationId={organisationId}&StandardCode={standardId}&EffectiveFrom={effectiveFrom?.ToString("yyyy-MM-dd")}" +
+                $"&EffectiveFrom={effectiveTo?.ToString("yyyy-MM-dd")}{contactIdString}{deliveryAreasString}";
             using (var request = new HttpRequestMessage(HttpMethod.Get, queryString))
             {
                 return await RequestAndDeserialiseAsync<ValidationResponse>(request,

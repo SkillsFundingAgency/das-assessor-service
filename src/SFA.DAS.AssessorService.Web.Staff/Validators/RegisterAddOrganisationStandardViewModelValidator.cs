@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators
 
             RuleFor(vm => vm).Custom((vm, context) =>
             {
-                var validationResult = registerValidator.CheckDateIsEmptyOrValid(vm.EffectiveFromDay,
+                var validationResultEffectiveFrom = registerValidator.CheckDateIsEmptyOrValid(vm.EffectiveFromDay,
                     vm.EffectiveFromMonth,
                     vm.EffectiveFromYear, "EffectiveFromDay",
                     "EffectiveFromMonth", "EffectiveFromYear", "EffectiveFrom", "Effective From");
@@ -36,16 +36,18 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators
                     vm.EffectiveToYear, "EffectiveToDay",
                     "EffectiveToMonth", "EffectiveToYear", "EffectiveTo", "Effective To");
 
-               
-             
-                CreateFailuresInContext(validationResult.Errors, context);
+                vm.EffectiveFrom = ConstructDate(vm.EffectiveFromDay, vm.EffectiveFromMonth, vm.EffectiveFromYear);
+                vm.EffectiveTo = ConstructDate(vm.EffectiveToDay, vm.EffectiveToMonth, vm.EffectiveToYear);
+
+                CreateFailuresInContext(validationResultEffectiveFrom.Errors, context);
                 CreateFailuresInContext(validationResultEffectiveTo.Errors, context);
 
-                if (validationResult.IsValid && validationResultEffectiveTo.IsValid)
+                if (validationResultEffectiveFrom.IsValid && validationResultEffectiveTo.IsValid)
                 {
+                    var deliveryAreas = vm.DeliveryAreas ?? new List<int>();
                     var validationResultExternals = _apiClient
                         .ValidateCreateOrganisationStandard(vm.OrganisationId, vm.StandardId, vm.EffectiveFrom,
-                            vm.EffectiveTo, vm.ContactId, vm.DeliveryAreas).Result;
+                            vm.EffectiveTo, vm.ContactId, deliveryAreas).Result;
                     if (validationResultExternals.IsValid) return;
                     foreach (var error in validationResultExternals.Errors)
                     {
@@ -64,6 +66,14 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators
             }
         }
 
-       
+        private static DateTime? ConstructDate(string dayString, string monthString, string yearString)
+        {
+
+            if (!int.TryParse(dayString, out var day) || !int.TryParse(monthString, out var month) ||
+                !int.TryParse(yearString, out var year)) return null;
+
+            return new DateTime(year, month, day);
+        }
+
     }
 }
