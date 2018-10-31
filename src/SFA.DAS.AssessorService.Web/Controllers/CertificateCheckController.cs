@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -18,9 +19,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     public class CertificateCheckController : CertificateBaseController
     {
         private IOrganisationsApiClient _organisationsApiClient;
-        
+
         public CertificateCheckController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor,
-            ICertificateApiClient certificateApiClient, 
+            ICertificateApiClient certificateApiClient,
             IOrganisationsApiClient organisationsApiClient,
             ISessionService sessionService) : base(logger, contextAccessor,
             certificateApiClient, sessionService)
@@ -50,26 +51,30 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             SessionService.Remove("SelectedStandard");
             SessionService.Remove("SearchResultsChooseStandard");
             SessionService.Remove("EndPointAsessorOrganisationId");
-            
+
             var viewModel = new CertificateCheckViewModel();
             var certificate = await CertificateApiClient.GetCertificate(certificateId);
             viewModel.FromCertificate(certificate);
 
             var organisation = await _organisationsApiClient.Get(certificate.OrganisationId);
 
+            var options = (await CertificateApiClient.GetOptions(certificate.StandardCode)).Select(o => o.OptionName)
+                .ToList();
+
             viewModel.BackToSearchPage = true;
-            
+
             SessionService.Set("CertificateSession", new CertificateSession
             {
                 CertificateId = certificate.Id,
                 Uln = certificate.Uln,
-                StandardCode = certificate.StandardCode               
+                StandardCode = certificate.StandardCode,
+                Options = options
             });
 
             SessionService.Set("EndPointAsessorOrganisationId", organisation.EndPointAssessorOrganisationId);
 
-            TempData["HideOption"] = false;
-            
+            TempData["HideOption"] = !options.Any();
+
             return View("~/Views/Certificate/Check.cshtml", viewModel);
         }
 

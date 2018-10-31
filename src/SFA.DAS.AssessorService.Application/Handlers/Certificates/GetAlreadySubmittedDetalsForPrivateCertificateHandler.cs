@@ -45,6 +45,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
             var certificateLogs = await _certificateRepository.GetCertificateLogsFor(certificate.Id);
             var submittedLog = certificateLogs.FirstOrDefault(q => q.Status == CertificateStatus.Submitted);
+            if (submittedLog == null)
+            {
+                submittedLog = certificateLogs.FirstOrDefault(q => q.Status == CertificateStatus.Approved ||
+                                                                   q.Status == CertificateStatus.ToBeApproved ||
+                                                                   q.Status == CertificateStatus.Rejected ||
+                                                                   q.Status == CertificateStatus.SentForApproval
+                );
+            }
+
             var submittedBy = submittedLog.Username;
             var submittedAt = submittedLog.EventTime;
             
