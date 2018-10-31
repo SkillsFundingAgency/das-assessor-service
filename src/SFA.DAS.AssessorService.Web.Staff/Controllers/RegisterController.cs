@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -129,12 +130,31 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 var viewModelInvalid = await ConstructOrganisationAndStandardDetails(viewModel);
                 return View(viewModelInvalid);
             }                   
-            
-            // MFCMFC This might be moot....
-            var viewModelValid = await ConstructOrganisationAndStandardDetails(viewModel);
-            return View(viewModelValid);
+
+            var addOrganisationStandardRequest = new CreateEpaOrganisationStandardRequest
+            {
+                OrganisationId = viewModel.OrganisationId,
+               StandardCode = viewModel.StandardId,
+               EffectiveFrom = viewModel.EffectiveFrom,
+               EffectiveTo = viewModel.EffectiveTo,
+               ContactId = viewModel.ContactId.ToString(),
+               DeliveryAreas = viewModel.DeliveryAreas,
+               Comments = viewModel.Comments
+            };
+
+            var organisationStandardId = await _apiClient.CreateEpaOrganisationStandard(addOrganisationStandardRequest);
+            return Redirect($"/register/view-standard/{organisationStandardId}");
         }
 
+
+        [HttpGet("register/view-standard/{organisationStandardId}")]
+        public async Task<IActionResult> ViewStandard(int organisationStandardId)
+        {
+
+            var viewModel =
+                new RegisterViewAndEditOrganisationStandardViewModel {OrganisationStandardId = organisationStandardId};
+            return View(viewModel);
+        }
         [HttpGet("register/add-contact/{organisationId}")]
         public async Task<IActionResult> AddContact(string organisationId)
         {
@@ -308,7 +328,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             vm.StandardEffectiveTo = standard.EffectiveTo;
             vm.StandardLastDateForNewStarts = standard.LastDateForNewStarts;
             vm.AvailableDeliveryAreas = availableDeliveryAreas;
-
+            vm.DeliveryAreas = vm.DeliveryAreas ?? new List<int>();
             return vm;
         }
         private void GatherOrganisationStandards(RegisterViewAndEditOrganisationViewModel viewAndEditModel)

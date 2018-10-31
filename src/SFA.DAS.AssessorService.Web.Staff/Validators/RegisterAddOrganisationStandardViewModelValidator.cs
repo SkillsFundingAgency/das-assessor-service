@@ -42,18 +42,15 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators
                 CreateFailuresInContext(validationResultEffectiveFrom.Errors, context);
                 CreateFailuresInContext(validationResultEffectiveTo.Errors, context);
 
-//                if (validationResultEffectiveFrom.IsValid && validationResultEffectiveTo.IsValid)
-//                {
-                    var deliveryAreas = vm.DeliveryAreas ?? new List<int>();
-                    var validationResultExternals = _apiClient
-                        .ValidateCreateOrganisationStandard(vm.OrganisationId, vm.StandardId, vm.EffectiveFrom,
-                            vm.EffectiveTo, vm.ContactId, deliveryAreas).Result;
-                    if (validationResultExternals.IsValid) return;
-                    foreach (var error in validationResultExternals.Errors)
-                    {
-                        context.AddFailure(error.Field, error.ErrorMessage);
-                    }
-//                }
+                var deliveryAreas = vm.DeliveryAreas ?? new List<int>();
+                var validationResultExternals = _apiClient
+                    .ValidateCreateOrganisationStandard(vm.OrganisationId, vm.StandardId, vm.EffectiveFrom,
+                        vm.EffectiveTo, vm.ContactId, deliveryAreas).Result;
+                if (validationResultExternals.IsValid) return;
+                foreach (var error in validationResultExternals.Errors)
+                {
+                    context.AddFailure(error.Field, error.ErrorMessage);
+                }
 
             });
         }

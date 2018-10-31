@@ -32,6 +32,8 @@
                     There's a problem
                 </h2>
                 <ul class="error-summary-list">
+                    <li><a sfa-validation-for="OrganisationId"></a></li>
+                    <li><a sfa-validation-for="StandardId"></a></li>
                     <li><a sfa-validation-for="EffectiveFrom"></a></li>
                     <li><a sfa-validation-for="EffectiveFromDay"></a></li>
                     <li><a sfa-validation-for="EffectiveFromMonth"></a></li>
@@ -67,7 +69,7 @@
             </tr>
             <tr>
                 <td><span class="bold-small">Standard</span></td>
-                <td>@Model.StandardTitle</td>
+                <td>@Model.StandardTitle (@Model.StandardId)</td>
             </tr>
             <tr>
                 <td><span class="bold-small">Effective From</span></td>
@@ -140,7 +142,7 @@
         </div>
         <div class="form-group" sfa-validation-for="ContactId" sfa-validationerror-class="form-group-error">
             <label for="ContactId">
-                <span class="form-label-bold">Contact</span>
+                <span class="form-label-bold">Contacts</span>
                 <span class="error-message" asp-validation-for="ContactId"></span>
             </label>
             @foreach (var contact in Model.Contacts)
@@ -158,8 +160,6 @@
                 <span class="form-label-bold">Delivery Areas</span>
                 <span class="error-message" asp-validation-for="DeliveryAreas"></span>
             </label>
-            @* <input type="text" class="form-control" name="DeliveryAreas" sfa-validation-for="DeliveryAreas" sfa-validationerror-class="form-control-error" asp-for="DeliveryAreas"/>
-            *@
             @foreach (var deliveryArea in Model.AvailableDeliveryAreas)
             {
             <div class="checkbox">
@@ -176,7 +176,13 @@
             </div>
             }
         </div>
-
+            <div class="form-group" sfa-validation-for="Comments" sfa-validationerror-class="form-group-error">
+                <label for="Comments">
+                    <span class="form-label-bold">Comments</span>
+                    <span class="error-message" asp-validation-for="Comments"></span>
+                </label>
+                <input class="form-control" maxlength="500" name="Comments" sfa-validation-for="Comments" sfa-validationerror-class="form-control-error" asp-for="Comments" type="text" />
+            </div>
                 <div class="form-group">
                     <button class="button" type="submit">Save</button>
                 </div>
