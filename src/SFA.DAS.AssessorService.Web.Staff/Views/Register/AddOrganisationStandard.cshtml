@@ -48,11 +48,7 @@
             </div>
         }
 
-        <h1>
-            <label class="form-label" for="">
-                <span class="heading-xlarge">Add an organisation standard</span>
-            </label>
-        </h1>
+        <h1 class="heading-xlarge">Add an organisation standard</h1>
         <table>
             <tbody>
             <tr>
@@ -86,7 +82,7 @@
             </tbody>
         </table>
 
-        <h1>New Organisation Standard Details</h1>
+        <h1 class="heading-large">New organisation standard details</h1>
         
         <div class="form-group error-message-container" sfa-anyvalidationerror-class="form-group-error">
             <span class="error-message" asp-validation-for="EffectiveFrom"></span>
@@ -94,7 +90,7 @@
             <span class="error-message" asp-validation-for="EffectiveFromMonth"></span>
             <span class="error-message" asp-validation-for="EffectiveFromYear"></span>
             <label for="EffectiveFrom">
-                <span class="form-label-bold">Effective From</span>
+                <span class="form-label-bold">Effective from</span>
             </label>
             <span class="form-date">
                 <div class="form-group form-group-day">
@@ -112,15 +108,15 @@
                     <input class="form-control date-input js-integers-only" sfa-validation-for="EffectiveFromYear" sfa-validationerror-class="form-control-error" asp-for="EffectiveFromYear" type="text" maxlength="4" />
                 </div>
             </span>
-           
         </div>
+
         <div class="form-group error-message-container" sfa-anyvalidationerror-class="form-group-error">
             <span class="error-message" asp-validation-for="EffectiveTo"></span>
             <span class="error-message" asp-validation-for="EffectiveToDay"></span>
             <span class="error-message" asp-validation-for="EffectiveToMonth"></span>
             <span class="error-message" asp-validation-for="EffectiveToYear"></span>
             <label for="EffectiveFrom">
-                <span class="form-label-bold">Effective To</span>
+                <span class="form-label-bold">Effective to</span>
             </label>
             <span class="form-date">
                 <div class="form-group form-group-day">
@@ -148,9 +144,9 @@
             @foreach (var contact in Model.Contacts)
             {
                 <div class="multiple-choice">
-                    <input asp-for="ContactId" id="contact-id-@contact.Id" type="radio" value="@contact.Id"/>
-                    <label for="organisation-type-@contact-id-@contact.Id">
-                        @contact.DisplayName, @contact.Email, @contact.PhoneNumber
+                    <input asp-for="ContactId" id="@contact.Id" type="radio" value="@contact.Id"/>
+                    <label for="@contact.Id">
+                        @contact.DisplayName (@contact.Email, @contact.PhoneNumber)
                     </label>
                 </div>
             }
@@ -162,30 +158,31 @@
             </label>
             @foreach (var deliveryArea in Model.AvailableDeliveryAreas)
             {
-            <div class="checkbox">
-                <label>
-                    <input type="checkbox"
-                           name="DeliveryAreas"
-                       @if (Model.DeliveryAreas != null && Model.DeliveryAreas.Any(x => x == deliveryArea.Id))
-                           {
-                               @Html.Raw("checked") 
-                               
-                           }
-                           value="@deliveryArea.Id" /> @deliveryArea.Area
+            var checkboxChecked = Model.DeliveryAreas != null && Model.DeliveryAreas.Any(x => x == deliveryArea.Id) ? "checked" : "";
+            <div class="multiple-choice">
+                <input 
+                    id="@deliveryArea.Id"
+                    name="DeliveryAreas"
+                    type="checkbox"
+                    value="@deliveryArea.Id"
+                    @checkboxChecked
+                />
+                <label for="@deliveryArea.Id">
+                    @deliveryArea.Area
                 </label>
             </div>
             }
         </div>
-            <div class="form-group" sfa-validation-for="Comments" sfa-validationerror-class="form-group-error">
-                <label for="Comments">
-                    <span class="form-label-bold">Comments</span>
-                    <span class="error-message" asp-validation-for="Comments"></span>
-                </label>
-                <input class="form-control" maxlength="500" name="Comments" sfa-validation-for="Comments" sfa-validationerror-class="form-control-error" asp-for="Comments" type="text" />
-            </div>
-                <div class="form-group">
-                    <button class="button" type="submit">Save</button>
-                </div>
+        <div class="form-group" sfa-validation-for="Comments" sfa-validationerror-class="form-group-error">
+            <label for="Comments">
+                <span class="form-label-bold">Comments</span>
+                <span class="error-message" asp-validation-for="Comments"></span>
+            </label>
+            <input class="form-control" maxlength="500" name="Comments" sfa-validation-for="Comments" sfa-validationerror-class="form-control-error" asp-for="Comments" type="text" />
+        </div>
+        <div class="form-group">
+            <button class="button" type="submit">Save</button>
+        </div>
             
         </form>
     </div>
