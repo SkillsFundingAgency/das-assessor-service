@@ -21,7 +21,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Models
         public string OrganisationType { get; set; }
         public string PrimaryContact { get; set; }
         public string PrimaryContactName { get; set; }
-
+        public string Status { get; set; }
         public List<ContactResponse> Contacts { get; set; }
 
         public List<OrganisationStandardSummary> OrganisationStandards { get; set; }

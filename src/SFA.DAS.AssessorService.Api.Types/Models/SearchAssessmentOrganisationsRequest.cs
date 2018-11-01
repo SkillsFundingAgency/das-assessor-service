@@ -6,6 +6,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
 {
     public class SearchAssessmentOrganisationsRequest : IRequest<List<AssessmentOrganisationSummary>>
     {
-        public string Searchstring { get; set; }
+        public string SearchTerm { get; set; }
     }
 }
