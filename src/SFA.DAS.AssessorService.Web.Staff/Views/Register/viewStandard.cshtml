@@ -63,19 +63,25 @@
                                     }             
                             </td>
                         </tr>
-                        <tr>
-                            <td><span class="bold-small">Delivery Areas</span></td>
-                            <td>
-                                @if (Model.DeliveryAreas != null && Model.DeliveryAreas.Any())
+                    <tr>
+                        <td><span class="bold-small">Delivery Areas</span></td>
+                        <td>
+                            @if (Model.DeliveryAreas != null && Model.DeliveryAreas.Any())
+                            {
+                                for (var index = 0; index < Model.DeliveryAreas.Count; index++)
                                 {
-                                    foreach (var deliveryArea in Model.DeliveryAreas)
-                                    {
-                                        @deliveryArea.DeliveryArea
-                                        @Html.Raw("<br/>")
-                                    }
+                                    var deliveryArea = Model.DeliveryAreas[index];
+                                    @deliveryArea.DeliveryArea
+                                    if (index < Model.DeliveryAreas.Count-1)
+                                    { @Html.Raw(", ")}
                                 }
-                            </td>
-                        </tr>
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="bold-small">Comments</span></td>
+                        <td> @Model.Comments</td>
+                    </tr>
                     </tbody>
                 </table>
             </div>
