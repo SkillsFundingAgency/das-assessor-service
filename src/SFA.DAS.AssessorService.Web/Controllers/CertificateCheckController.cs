@@ -51,6 +51,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             SessionService.Remove("SelectedStandard");
             SessionService.Remove("SearchResultsChooseStandard");
             SessionService.Remove("EndPointAsessorOrganisationId");
+            SessionService.Remove("redirecttosearch");
+            SessionService.Remove("redirecttocheck");
 
             var viewModel = new CertificateCheckViewModel();
             var certificate = await CertificateApiClient.GetCertificate(certificateId);

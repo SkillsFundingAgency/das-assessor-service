@@ -12,7 +12,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
         {
             var privatelyFundedCertificateApprovalsBootstrapper = new PrivatelyFundedCertificateApprovalsBootstrapper(functionLogger, context);
 
-            var command = privatelyFundedCertificateApprovalsBootstrapper.GetInstance<PrivatelyFundedCertificatesApprovalCommand>();
+            var command = privatelyFundedCertificateApprovalsBootstrapper.GetInstance<PrivatelyFundedCertificatesApprovalNotificationCommand>();
             command.Execute().GetAwaiter().GetResult();
         }
     }

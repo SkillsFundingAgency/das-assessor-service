@@ -10,6 +10,7 @@ using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
+using CertificateStatus = SFA.DAS.AssessorService.Domain.Consts.CertificateStatus;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -90,10 +91,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 vm.GivenNames = certData.LearnerGivenNames;
                 Logger.LogInformation($"Model State not valid for {typeof(T).Name} requested by {username} with Id {certificate.Id}. Errors: {ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)}");
                 return View(returnToIfModelNotValid, vm);
-            }
-
+            }          
+            
             var updatedCertificate = vm.GetCertificateFromViewModel(certificate, certData);
-
+        
             await CertificateApiClient.UpdateCertificate(new UpdateCertificateRequest(updatedCertificate) { Username = username, Action = action});
 
             Logger.LogInformation($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} updated.");

@@ -6,13 +6,13 @@ using SFA.DAS.AssessorService.EpaoImporter.Notification;
 
 namespace SFA.DAS.AssessorService.EpaoImporter
 {
-    public class PrivatelyFundedCertificatesApprovalCommand : ICommand
+    public class PrivatelyFundedCertificatesApprovalNotificationCommand : ICommand
     {
         private readonly IAggregateLogger _aggregateLogger;
         private readonly IAssessorServiceApi _assessorServiceApi;
         private readonly IPrivatelyFundedCertificatesApprovalNotification _notificationService;
 
-        public PrivatelyFundedCertificatesApprovalCommand(IAggregateLogger aggregateLogger,
+        public PrivatelyFundedCertificatesApprovalNotificationCommand(IAggregateLogger aggregateLogger,
             IAssessorServiceApi assessorServiceApi,
             IPrivatelyFundedCertificatesApprovalNotification notificationService
             )

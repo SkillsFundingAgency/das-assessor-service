@@ -53,8 +53,20 @@ namespace SFA.DAS.AssessorService.Web.ViewModels.Certificate
 
         public Domain.Entities.Certificate GetCertificateFromViewModel(Domain.Entities.Certificate certificate, CertificateData data)
         {
-            certificate.Status = certificate.IsPrivatelyFunded ? CertificateStatus.ToBeApproved : CertificateStatus.Submitted;
-
+            if (certificate.IsPrivatelyFunded && data.InApprovalState)
+            {
+                certificate.Status = CertificateStatus.Submitted;
+                data.InApprovalState = false;
+            }
+            else if (certificate.IsPrivatelyFunded && data.InApprovalState == false)
+            {
+                certificate.Status = CertificateStatus.ToBeApproved;
+            }
+            else
+            {
+                certificate.Status = CertificateStatus.Submitted;
+            }
+                         
             certificate.CertificateData = JsonConvert.SerializeObject(data);
             return certificate;
         }
