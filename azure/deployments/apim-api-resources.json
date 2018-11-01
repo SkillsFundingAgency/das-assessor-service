@@ -8,12 +8,12 @@
         "EnvironmentName": {
             "type": "string",
             "metadata": {
-                "description": "Abbreviated name for the environment, eg: AT, TEST, PP, PRD"
+                "description": "Abbreviated name for the environment, eg: AT, TEST, TEST2, PP, PRD"
             }
         },
         "OrganizationName": {
             "type": "string",
-            "defaultValue": "National Careers Service"
+            "defaultValue": "Education and Skills Funding Agency"
         },
         "SkuTier": {
             "type": "string",
@@ -51,7 +51,15 @@
         },
         "ApiName": {
             "type": "string"
-        }        
+        },
+        "UseCustomGroup": {
+            "type": "string",
+            "allowedValues": [
+                "yes",
+                "no"
+            ],
+            "defaultValue": "yes"
+        }
     },
     "variables": {
         "ApimProductName": "[toLower(replace(replace(replace(parameters('ProductDisplayName'),')',''),'(',''), ' ', '-'))]",
@@ -125,8 +133,8 @@
                     "type": "products",
                     "apiVersion": "2018-01-01",
                     "properties": {
-                        "description": "string",
-                        "terms": "string",
+                        "description": "Use this product to: \n<ul class=\"list list-bullet\">\n<li>retrieve learner details</li>\n<li>create and submit certificates</li>\n</ul>",
+                        "terms": "",
                         "subscriptionRequired": true,
                         "approvalRequired": true,
                         "subscriptionsLimit": 1,
@@ -135,6 +143,7 @@
                     },
                     "resources": [
                         {
+                            "condition": "[equals(parameters('UseCustomGroup'),'yes')]",
                             "name": "[variables('ApimProductGroupName')]",
                             "type": "groups",
                             "apiVersion": "2018-01-01",
@@ -143,6 +152,16 @@
                                 "[variables('ApimProductName')]"
                             ]                                    
                         },
+                        {
+                            "condition": "[equals(parameters('UseCustomGroup'),'no')]",
+                            "name": "Developers",
+                            "type": "groups",
+                            "apiVersion": "2018-01-01",
+                            "dependsOn": [
+                                "[parameters('ApimServiceName')]",
+                                "[variables('ApimProductName')]"
+                            ]
+                          },                        
                         {
                             "name": "[parameters('ApiName')]",
                             "type": "apis",
@@ -159,7 +178,8 @@
                     ]
                 },
                 {
-                    "name": "[variables('apimProductGroupName')]",
+                    "condition": "[equals(parameters('UseCustomGroup'),'yes')]",
+                    "name": "[variables('ApimProductGroupName')]",
                     "type": "groups",
                     "apiVersion": "2018-01-01",
                     "properties": {
