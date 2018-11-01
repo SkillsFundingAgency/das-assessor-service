@@ -41,6 +41,7 @@ Layout = "_Layout";
                 Edit organisation
                 <!-- <span class="heading-secondary">Organisation ID: @Model.OrganisationId</span> -->
                 @Html.HiddenFor(c => c.OrganisationId)
+                @Html.HiddenFor(c => c.Status)
             </h1>
 
             <div id="organisationWrapper">
@@ -134,7 +135,13 @@ Layout = "_Layout";
                     <label for="PrimaryContact">
                         <span class="form-label-bold">Primary contact</span>
                     </label>
-                        @Model.PrimaryContactName
+                    @Model.PrimaryContactName
+                </div>
+                <div class="form-group">
+                    <label for="Status">
+                        <span class="form-label-bold">Status</span>
+                    </label>
+                    @Model.Status
                 </div>
                 <div class="form-group">
                     <button class="button" type="submit">Save</button>

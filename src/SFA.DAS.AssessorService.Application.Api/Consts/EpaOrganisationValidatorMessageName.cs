@@ -26,5 +26,6 @@
         public const string ErrorMessageOrganisationNameAlreadyPresent = "ErrorMessageOrganisationNameAlreadyPresent";
         public const string NoDeliveryAreasPresent = "NoDeliveryAreasPresent";
         public const string DeliveryAreaNotValid = "DeliveryAreaNotValid";
+        public const string SearchStandardsTooShort = "SearchStandardsTooShort";
     }
 }
