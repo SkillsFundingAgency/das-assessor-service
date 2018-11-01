@@ -251,7 +251,7 @@ namespace SFA.DAS.AssessorService.Data
 
                 var sql =
                       "SELECT o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, o.OrganisationData, ot.Id as OrganisationTypeId, ot.Type as OrganisationType "
-                    + "FROM [Organisations] o LEFT JOIN [OrganisationType] ot ON ot.Id = o.OrganisationTypeId "
+                    + "FROM [Organisations] o LEFT OUTER JOIN [OrganisationType] ot ON ot.Id = o.OrganisationTypeId "
                     + "WHERE o.EndPointAssessorUkprn = @ukprnNumeric";
 
                 var assessmentOrganisationSummaries = await connection.QueryAsync<AssessmentOrganisationSummary>(sql, new {ukprnNumeric});
@@ -268,7 +268,7 @@ namespace SFA.DAS.AssessorService.Data
 
                 var sql =
                       "SELECT o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, o.OrganisationData, ot.Id as OrganisationTypeId, ot.Type as OrganisationType "
-                    + "FROM [Organisations] o LEFT JOIN [OrganisationType] ot ON ot.Id = o.OrganisationTypeId "
+                    + "FROM [Organisations] o LEFT OUTER JOIN [OrganisationType] ot ON ot.Id = o.OrganisationTypeId "
                     + "WHERE o.EndPointAssessorOrganisationId like @organisationId";
 
                 var assessmentOrganisationSummaries = await connection.QueryAsync<AssessmentOrganisationSummary>(sql, new {organisationId = $"{organisationId.Replace(" ","")}%" });
@@ -285,7 +285,7 @@ namespace SFA.DAS.AssessorService.Data
 
                 var sql =
                       "SELECT o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, o.OrganisationData, ot.Id as OrganisationTypeId, ot.Type as OrganisationType "
-                    + "FROM [Organisations] o LEFT JOIN [OrganisationType] ot ON ot.Id = o.OrganisationTypeId "
+                    + "FROM [Organisations] o LEFT OUTER JOIN [OrganisationType] ot ON ot.Id = o.OrganisationTypeId "
                     + "WHERE replace(o.EndPointAssessorName, ' ','') like @organisationName";
 
                 var assessmentOrganisationSummaries = await connection.QueryAsync<AssessmentOrganisationSummary>(sql, new {organisationName =$"%{organisationName.Replace(" ","")}%" } );
