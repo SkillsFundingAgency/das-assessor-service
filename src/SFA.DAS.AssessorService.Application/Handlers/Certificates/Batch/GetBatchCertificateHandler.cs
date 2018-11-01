@@ -47,7 +47,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
                 if(certData.LearnerFamilyName == request.FamilyName)
                 {
                     var searchingContact = await _contactQueryRepository.GetContactFromEmailAddress(request.Email);
-                    var certificateContact = await GetContactFromCertificateLogs(certificate.Id, certificate.CreatedBy);
+                    var certificateContact = await GetContactFromCertificateLogs(certificate.Id, certificate.UpdatedBy ?? certificate.CreatedBy);
 
                     if (certificateContact is null || certificateContact.OrganisationId != searchingContact.OrganisationId)
                     {
@@ -94,7 +94,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
 
         private async Task<Contact> GetContactFromCertificateLogs(Guid certificateId, string fallbackUsername)
         {
-            Contact contact;
+            Contact contact = null;
 
             _logger.LogInformation("GetContactFromCertificateLogs Before GetCertificateLogsFor");
             var certificateLogs = await _certificateRepository.GetCertificateLogsFor(certificateId);
@@ -102,16 +102,19 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             var submittedLogEntry = certificateLogs?.FirstOrDefault(l => l.Status == Domain.Consts.CertificateStatus.Submitted);
             var createdLogEntry = certificateLogs?.FirstOrDefault(l => l.Status == Domain.Consts.CertificateStatus.Draft);
 
-            _logger.LogInformation("GetContactFromCertificateLogs Before GetContact");
             if (submittedLogEntry != null)
             {
+                _logger.LogInformation("GetContactFromCertificateLogs Before Submitted GetContact");
                 contact = await _contactQueryRepository.GetContact(submittedLogEntry.Username);
             }
-            else if (createdLogEntry != null)
+
+            if (contact is null && createdLogEntry != null)
             {
+                _logger.LogInformation("GetContactFromCertificateLogs Before Created GetContact");
                 contact = await _contactQueryRepository.GetContact(createdLogEntry.Username);
             }
-            else
+
+            if(contact is null && !string.IsNullOrEmpty(fallbackUsername))
             {
                 contact = await _contactQueryRepository.GetContact(fallbackUsername);
             }
