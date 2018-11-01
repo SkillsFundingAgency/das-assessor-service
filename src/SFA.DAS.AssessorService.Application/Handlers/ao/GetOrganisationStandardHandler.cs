@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Web.Staff.Services;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ao
 {
@@ -13,11 +14,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
     {
         private readonly IRegisterQueryRepository _registerQueryRepository;
         private readonly ILogger<GetAssessmentOrganisationHandler> _logger;
+        private readonly IStandardService _standardService;
 
-        public GetOrganisationStandardHandler(IRegisterQueryRepository registerQueryRepository, ILogger<GetAssessmentOrganisationHandler> logger)
+        public GetOrganisationStandardHandler(IRegisterQueryRepository registerQueryRepository, ILogger<GetAssessmentOrganisationHandler> logger, IStandardService standardService)
         {
             _registerQueryRepository = registerQueryRepository;
             _logger = logger;
+            _standardService = standardService;
         }
 
 
@@ -25,6 +28,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
         {
             _logger.LogInformation($@"Handling Get Organisation Request for [{request.OrganisationStandardId}]");
             var organisationStandard = await _registerQueryRepository.GetOrganisationStandardFromOrganisationStandardId(request.OrganisationStandardId);
+            var organisation =
+                await _registerQueryRepository.GetEpaOrganisationByOrganisationId(organisationStandard.OrganisationId);
+            organisationStandard.OrganisationName = organisation?.Name;
+            organisationStandard.OrganisationStatus = organisation?.Status;
+            var standard = await _standardService.GetStandard(organisationStandard.StandardCode);
+            organisationStandard.StandardName = standard?.Title;
+
             organisationStandard.Contact =
                 await _registerQueryRepository.GetContactByContactId(organisationStandard.ContactId.GetValueOrDefault());
             var orgStandardDeliveryAreas =

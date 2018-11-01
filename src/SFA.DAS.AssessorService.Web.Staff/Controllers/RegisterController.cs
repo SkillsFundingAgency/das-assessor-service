@@ -143,18 +143,21 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             };
 
             var organisationStandardId = await _apiClient.CreateEpaOrganisationStandard(addOrganisationStandardRequest);
-            return Redirect($"/register/view-organisation/{viewModel.OrganisationId}");
+            return Redirect($"/register/view-standard/{organisationStandardId}");
         }
-
 
         [HttpGet("register/view-standard/{organisationStandardId}")]
         public async Task<IActionResult> ViewStandard(int organisationStandardId)
         {
+            var organisationStandard = await _apiClient.GetOrganisationStandard(organisationStandardId);
+
 
             var viewModel =
-                new RegisterViewAndEditOrganisationStandardViewModel {OrganisationStandardId = organisationStandardId};
+                MapOrganisationStandardToViewModel(organisationStandard);
+
             return View(viewModel);
         }
+
         [HttpGet("register/add-contact/{organisationId}")]
         public async Task<IActionResult> AddContact(string organisationId)
         {
@@ -411,6 +414,27 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             GatherOrganisationStandards(viewModel);
 
             return viewModel;
+        }
+
+        private static RegisterViewAndEditOrganisationStandardViewModel MapOrganisationStandardToViewModel(OrganisationStandard organisationStandard)
+        {
+            return new RegisterViewAndEditOrganisationStandardViewModel
+            {
+                OrganisationStandardId = organisationStandard.Id,
+                StandardCode = organisationStandard.StandardCode,
+                StandardName = organisationStandard.StandardName,
+                OrganisationId = organisationStandard.OrganisationId,
+                EffectiveFrom = organisationStandard.EffectiveFrom,
+                EffectiveTo = organisationStandard.EffectiveTo,
+                DateStandardApprovedOnRegister = organisationStandard.DateStandardApprovedOnRegister,
+                Comments = organisationStandard.Comments,
+                Status = organisationStandard.Status,
+                ContactId = organisationStandard.ContactId,
+                Contact = organisationStandard.Contact,
+                DeliveryAreas = organisationStandard.DeliveryAreas,
+                OrganisationName = organisationStandard.OrganisationName,
+                OrganisationStatus = organisationStandard.OrganisationStatus
+            };
         }
     }
 }

@@ -120,7 +120,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
         
         [HttpGet("assessment-organisations/organisation-standard/{organisationStandardId}", Name = "GetOrganisationStandard")]
-        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(AssessmentOrganisationContact))]
+        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(OrganisationStandard))]
         [SwaggerResponse((int) HttpStatusCode.NotFound, null)]
         [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]

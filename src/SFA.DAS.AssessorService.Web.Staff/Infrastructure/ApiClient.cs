@@ -284,6 +284,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             return await Get<List<DeliveryArea>>("/api/ao/delivery-areas");
         }
 
+        public async Task<OrganisationStandard> GetOrganisationStandard(int organisationStandardId)
+        {
+            return await Get<OrganisationStandard>($"/api/ao/assessment-organisations/organisation-standard/{organisationStandardId}");
+        }
         #region Reports
         public async Task<IEnumerable<StaffReport>> GetReportList()
         {
