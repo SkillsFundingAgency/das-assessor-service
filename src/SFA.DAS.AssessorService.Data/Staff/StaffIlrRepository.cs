@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -65,11 +66,10 @@ namespace SFA.DAS.AssessorService.Data.Staff
 
         public async Task<int> CountLearnersByName(string learnerName)
         {
-            var deSpacedLearnerName = learnerName.Replace(" ", "");
-            return await _context.Ilrs
-                .CountAsync(i => i.FamilyName.Replace(" ", "") == deSpacedLearnerName ||
-                                 i.GivenNames.Replace(" ", "") == deSpacedLearnerName ||
-                   i.GivenNames.Replace(" ", "") + i.FamilyName.Replace(" ", "") == deSpacedLearnerName);
+            var result = _connection.ExecuteScalar("CountStaffSearchCertificates",
+                new { Search = learnerName },
+                commandType: CommandType.StoredProcedure);
+            return (int)result;
         }
 
         public async Task<StaffReposSearchResult> SearchForLearnerByEpaOrgId(StaffSearchRequest searchRequest)
