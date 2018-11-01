@@ -7,7 +7,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
     public static class PrivatelyFundedCertificatesApprovalNotificationService
     {
         [FunctionName("PrivatelyFundedCertificatesApprovalNotificationService")]
-        public static void Run([TimerTrigger("0 30 10 * * 5")] TimerInfo myTimer, TraceWriter functionLogger,
+        public static void Run([TimerTrigger("0 0 10 * * 3")] TimerInfo myTimer, TraceWriter functionLogger,
             ExecutionContext context)
         {
             var privatelyFundedCertificateApprovalsBootstrapper = new PrivatelyFundedCertificateApprovalsBootstrapper(functionLogger, context);
