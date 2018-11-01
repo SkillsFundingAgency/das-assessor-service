@@ -1,4 +1,5 @@
 ﻿@using SFA.DAS.AssessorService.Web.Staff.Controllers
+@using SFA.DAS.AssessorService.Domain.Extensions
 @model RegisterViewAndEditOrganisationStandardViewModel
 @{
     ViewBag.Title = "View Organisation Standard";
@@ -28,15 +29,15 @@
                         </tr>
                         <tr>
                             <td><span class="bold-small">Standard</span></td>
-                            <td> @Model.StandardName (@Model.StandardCode)</td>
+                            <td> @Model.StandardTitle (@Model.StandardTitle)</td>
                         </tr>
                         <tr>
                             <td><span class="bold-small">Effective From</span></td>
-                            <td> @Model.EffectiveFrom</td>
+                            <td> @Model.EffectiveFrom.ToSfaShortDateString()</td>
                         </tr>
                         <tr>
                             <td><span class="bold-small">Effective To</span></td>
-                            <td> @Model.EffectiveTo</td>
+                            <td> @Model.EffectiveTo.ToSfaShortDateString()</td>
                         </tr>
                         <tr>
                             <td><span class="bold-small">Date Approved on Register</span></td>
@@ -49,45 +50,45 @@
                         <tr>
                             <td><span class="bold-small">Contact</span></td>
                             <td>
-                                @if (Model.Contact!=null)
-                                    {
-                                        @Model.Contact.DisplayName 
-                                        @Html.Raw(@", ")
-                                        @Model.Contact.Email
+                                @if (Model.Contact != null)
+                                {
+                                    @Model.Contact.DisplayName
+                                    @Html.Raw(@", ")
+                                    @Model.Contact.Email
 
-                                        if (!string.IsNullOrEmpty(Model.Contact.PhoneNumber))
-                                        {
-                                            @Html.Raw(@", ")
-                                            @Model.Contact.PhoneNumber
-                                        }
-                                    }             
+                                    if (!string.IsNullOrEmpty(Model.Contact.PhoneNumber))
+                                    {
+                                        @Html.Raw(@", ")
+                                        @Model.Contact.PhoneNumber
+                                    }
+                                }
                             </td>
                         </tr>
-                    <tr>
-                        <td><span class="bold-small">Delivery Areas</span></td>
-                        <td>
-                            @if (Model.DeliveryAreas != null && Model.DeliveryAreas.Any())
-                            {
-                                for (var index = 0; index < Model.DeliveryAreas.Count; index++)
+                        <tr>
+                            <td><span class="bold-small">Delivery Areas</span></td>
+                            <td>
+                                @if (Model.DeliveryAreasDetails != null && Model.DeliveryAreasDetails.Any())
                                 {
-                                    var deliveryArea = Model.DeliveryAreas[index];
-                                    @deliveryArea.DeliveryArea
-                                    if (index < Model.DeliveryAreas.Count-1)
-                                    { @Html.Raw(", ")}
+                                    for (var index = 0; index < Model.DeliveryAreas.Count; index++)
+                                    {
+                                        var deliveryArea = Model.DeliveryAreasDetails[index];
+                                        @deliveryArea.DeliveryArea
+                                        if (index < Model.DeliveryAreasDetails.Count - 1)
+                                        { @Html.Raw(", ")}
                                 }
                             }
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><span class="bold-small">Comments</span></td>
-                        <td> @Model.Comments</td>
-                    </tr>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="bold-small">Comments</span></td>
+                            <td> @Model.Comments</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
 
             <div class="form-group">
-                <a class="button">Edit</a>
+                <a class="button" href="/register/edit-standard/@Model.OrganisationStandardId">Edit</a>
             </div>
         </div>
     </div>

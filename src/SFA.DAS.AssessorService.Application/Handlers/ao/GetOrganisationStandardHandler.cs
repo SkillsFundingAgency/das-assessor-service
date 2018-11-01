@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,22 +33,28 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
                 await _registerQueryRepository.GetEpaOrganisationByOrganisationId(organisationStandard.OrganisationId);
             organisationStandard.OrganisationName = organisation?.Name;
             organisationStandard.OrganisationStatus = organisation?.Status;
-            var standard = await _standardService.GetStandard(organisationStandard.StandardCode);
-            organisationStandard.StandardName = standard?.Title;
+            organisationStandard.Ukprn = organisation?.Ukprn;
+
+            var standard = await _standardService.GetStandard(organisationStandard.StandardId);
+            organisationStandard.StandardTitle = standard?.Title;
+            organisationStandard.StandardEffectiveFrom = standard?.EffectiveFrom;
+            organisationStandard.StandardEffectiveTo = standard?.EffectiveTo;
+            organisationStandard.StandardLastDateForNewStarts = standard?.LastDateForNewStarts;
 
             organisationStandard.Contact =
                 await _registerQueryRepository.GetContactByContactId(organisationStandard.ContactId.GetValueOrDefault());
             var orgStandardDeliveryAreas =
                 await _registerQueryRepository.GetDeliveryAreasByOrganisationStandardId(request.OrganisationStandardId);
             var allDeliveryAreas = await _registerQueryRepository.GetDeliveryAreas();
-            foreach (var orgStandardDeliveryArea in orgStandardDeliveryAreas)
+            var organisationStandardDeliveryAreas = orgStandardDeliveryAreas as OrganisationStandardDeliveryArea[] ?? orgStandardDeliveryAreas.ToArray();
+            foreach (var orgStandardDeliveryArea in organisationStandardDeliveryAreas)
             {
                 orgStandardDeliveryArea.DeliveryArea =
                     allDeliveryAreas.FirstOrDefault(x => x.Id == orgStandardDeliveryArea.DeliveryAreaId).Area;
             }
 
-            organisationStandard.DeliveryAreas = orgStandardDeliveryAreas.ToList();
-
+            organisationStandard.DeliveryAreasDetails = organisationStandardDeliveryAreas.ToList();
+            organisationStandard.DeliveryAreas = organisationStandardDeliveryAreas.Select(orgStandardDeliveryArea => orgStandardDeliveryArea.DeliveryAreaId).ToList();
 
             return organisationStandard;      
         }

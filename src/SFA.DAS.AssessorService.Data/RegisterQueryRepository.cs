@@ -229,7 +229,7 @@ namespace SFA.DAS.AssessorService.Data
                     await connection.OpenAsync();
 
                 var sqlForStandardByOrganisationStandardId =
-                    "SELECT Id, EndPointAssessorOrganisationId as OrganisationId, StandardCode, EffectiveFrom, EffectiveTo, " +
+                    "SELECT Id, EndPointAssessorOrganisationId as OrganisationId, StandardCode as StandardId, EffectiveFrom, EffectiveTo, " +
                     "DateStandardApprovedOnRegister, Comments, Status, ContactId "+
                     "FROM [OrganisationStandard] WHERE Id = @organisationStandardId";
                 return await connection.QuerySingleAsync<OrganisationStandard>(sqlForStandardByOrganisationStandardId, new {organisationStandardId});
