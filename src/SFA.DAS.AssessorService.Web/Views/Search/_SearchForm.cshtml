@@ -56,20 +56,21 @@
         </div>
     </details>
 
-    @* <div class="form-group"> *@
-    @*     <div class="multiple-choice"> *@
-    @*         <input name="IsPrivatelyFunded" asp-for="IsPrivatelyFunded" type="checkbox" type="checkbox" /> *@
-    @*         <label for="IsPrivatelyFunded">@Localizer["PrivatelyFunded"]</label> *@
-    @*     </div> *@
-    @* </div> *@
-
-    <details>
-        <summary><span class="summary">How do I know if the apprenticeship is privately funded?</span></summary>
-        <div class="panel panel-border-narrow" id="what-is-a-unique-learner-number">
-            <p>The training provider and employer will know if the apprenticeship is privately funded.</p>
-            <p>A privately funded apprenticeship doesn't receive government funding and isn't subject to ESFA funding rules.</p>
+    @*
+    <div class="form-group">
+        <div class="multiple-choice">
+            <input name="IsPrivatelyFunded" asp-for="IsPrivatelyFunded" type="checkbox" type="checkbox" />
+            <label for="IsPrivatelyFunded">@Localizer["PrivatelyFunded"]</label>
         </div>
+    </div>
+    <details> 
+        <summary><span class="summary">How do I know if the apprenticeship is privately funded?</span></summary> 
+        <div class="panel panel-border-narrow" id="what-is-a-unique-learner-number"> 
+            <p>The training provider and employer will know if the apprenticeship is privately funded.</p> 
+            <p>A privately funded apprenticeship doesn't receive government funding and isn't subject to ESFA funding rules.</p> 
+        </div> 
     </details>
+    *@
 
     <div class="form-group">
         <input class="button" id="button-search" type="submit" value="@Localizer["SearchButton"]">
