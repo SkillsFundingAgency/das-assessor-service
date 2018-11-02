@@ -1,0 +1,54 @@
+﻿@using SFA.DAS.AssessorService.Domain.Extensions
+@model SFA.DAS.AssessorService.Web.Staff.Models.SearchStandardsViewModel
+
+@{
+    ViewBag.Title = "Search results";
+    Layout = "_Layout";
+}
+@Html.HiddenFor(c => c.OrganisationId)
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <a href="/register/search-standards/@Model.OrganisationId" class="link-back">Return to standards search</a>
+        <h1 class="heading-xlarge">
+            Standard search results for @Model.OrganisationName (@Model.OrganisationId)
+            <span class="heading-secondary">Number of results: @Model.Results.Count</span>
+        </h1>
+    </div>
+</div>
+
+
+@if (@Model.Results.Count > 0)
+{
+    <div class="grid-row">
+        <div class="column-full">
+            <div class="form-group">
+                <table class="table responsive table-font-xsmall">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Standard ID</th>
+                            <th>Effective From</th>
+                            <th>Effective To</th>
+                            <th>Last Date For New Starts</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var result in Model.Results.OrderBy(x => x.Title))
+                        {
+                            <tr>
+                                <td data-label="Name">@result.Title</td>
+                                <td data-label="ID">@result.Id</td>
+                                <td data-label="EffectiveFrom">@result.EffectiveFrom.ToSfaShortestDateString()</td>
+                                <td data-label="EffectiveTo">@result.EffectiveTo.ToSfaShortestDateString()</td>
+                                <td data-label="LastDateForNewStarts">@result.LastDateForNewStarts.ToSfaShortestDateString()</td>
+                                <td><a href="">Add To Organisation</a></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}

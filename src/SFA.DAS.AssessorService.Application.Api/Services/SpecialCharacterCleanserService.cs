@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc.Razor;
 using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Api.Services
@@ -43,6 +45,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             }
 
             return processedString.Trim();
+        }
+
+        public string UnescapeAndRemoveNonAlphanumericCharacters(string text)
+        {
+
+            var unescapedText = "";
+            if (!string.IsNullOrEmpty(text))
+                unescapedText = Uri.UnescapeDataString(text?.Trim());
+            return string.Concat(unescapedText.Where(char.IsLetterOrDigit));
         }
 
         private char[] SpecialCharactersInString(string inputString)
