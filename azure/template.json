@@ -106,7 +106,7 @@
                         "value": [
                             {
                                 "name": "ApplicationInsights:InstrumentationKey",
-                                "value": "[reference(concat('microsoft.insights/components/', parameters('uiAppServiceName'))).InstrumentationKey]"
+                                "value": "[reference(concat(parameters('uiAppServiceName'),'-ai')).outputs.InstrumentationKey.value]"
                             },
                             {
                                 "name": "ConfigurationStorageConnectionString",
@@ -115,10 +115,6 @@
                             {
                                 "name": "EnvironmentName",
                                 "value": "[toUpper(parameters('environmentName'))]"
-                            },
-                            {
-                                "name": "InstanceName",
-                                "value": "[toUpper(variables('InstanceName'))]"
                             }
                         ]
                     },
@@ -164,7 +160,7 @@
                         "value": [
                             {
                                 "name": "ApplicationInsights:InstrumentationKey",
-                                "value": "[reference(concat('microsoft.insights/components/', parameters('apiAppServiceName'))).InstrumentationKey]"
+                                "value": "[reference(concat(parameters('apiAppServiceName'),'-ai')).outputs.InstrumentationKey.value]"
                             },
                             {
                                 "name": "ConfigurationStorageConnectionString",
@@ -173,10 +169,6 @@
                             {
                                 "name": "EnvironmentName",
                                 "value": "[toUpper(parameters('environmentName'))]"
-                            },
-                            {
-                                "name": "InstanceName",
-                                "value": "[toUpper(variables('InstanceName'))]"
                             }
                         ]
                     },
@@ -222,7 +214,7 @@
                         "value": [
                             {
                                 "name": "ApplicationInsights:InstrumentationKey",
-                                "value": "[reference(concat('microsoft.insights/components/', parameters('manageAppServiceName'))).InstrumentationKey]"
+                                "value": "[reference(concat(parameters('manageAppServiceName'),'-ai')).outputs.InstrumentationKey.value]"
                             },
                             {
                                 "name": "ConfigurationStorageConnectionString",
@@ -231,10 +223,6 @@
                             {
                                 "name": "EnvironmentName",
                                 "value": "[toUpper(parameters('environmentName'))]"
-                            },
-                            {
-                                "name": "InstanceName",
-                                "value": "[toUpper(variables('InstanceName'))]"
                             }
                         ]
                     },
@@ -316,27 +304,6 @@
             "dependsOn": []
         },
         {
-            "apiVersion": "2017-08-01",
-            "name": "[concat(parameters('externalApiAppServiceName'),'-ai')]",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/application-insights.json",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "appInsightsName": {
-                        "value": "[parameters('externalApiAppServiceName')]"
-                    },
-                    "attachedService": {
-                        "value": "[parameters('externalApiAppServiceName')]"
-                    }
-                }
-            },
-            "dependsOn": []
-        },
-        {
             "apiVersion": "2017-05-10",
             "name": "[concat('AppService-', parameters('externalApiSandboxAppServiceName'))]",
             "type": "Microsoft.Resources/deployments",
@@ -401,6 +368,27 @@
         },
         {
             "apiVersion": "2017-08-01",
+            "name": "[concat(parameters('externalApiAppServiceName'),'-ai')]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/application-insights.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "appInsightsName": {
+                        "value": "[parameters('externalApiAppServiceName')]"
+                    },
+                    "attachedService": {
+                        "value": "[parameters('externalApiAppServiceName')]"
+                    }
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "apiVersion": "2017-08-01",
             "name": "[concat(parameters('externalApiSandboxAppServiceName'),'-ai')]",
             "type": "Microsoft.Resources/deployments",
             "properties": {
@@ -415,6 +403,69 @@
                     },
                     "attachedService": {
                         "value": "[parameters('externalApiSandboxAppServiceName')]"
+                    }
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "apiVersion": "2017-08-01",
+            "name": "[concat(parameters('uiAppServiceName'),'-ai')]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/application-insights.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "appInsightsName": {
+                        "value": "[parameters('uiAppServiceName')]"
+                    },
+                    "attachedService": {
+                        "value": "[parameters('uiAppServiceName')]"
+                    }
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "apiVersion": "2017-08-01",
+            "name": "[concat(parameters('apiAppServiceName'),'-ai')]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/application-insights.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "appInsightsName": {
+                        "value": "[parameters('apiAppServiceName')]"
+                    },
+                    "attachedService": {
+                        "value": "[parameters('apiAppServiceName')]"
+                    }
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "apiVersion": "2017-08-01",
+            "name": "[concat(parameters('manageAppServiceName'),'-ai')]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/application-insights.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "appInsightsName": {
+                        "value": "[parameters('manageAppServiceName')]"
+                    },
+                    "attachedService": {
+                        "value": "[parameters('manageAppServiceName')]"
                     }
                 }
             },
