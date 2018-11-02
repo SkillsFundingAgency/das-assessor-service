@@ -18,6 +18,9 @@
             @Html.HiddenFor(m => m.StandardEffectiveFrom)
             @Html.HiddenFor(m => m.StandardEffectiveTo)  
             @Html.HiddenFor(c => c.StandardLastDateForNewStarts)
+            @Html.HiddenFor(c => c.Status)
+            @Html.HiddenFor(c => c.OrganisationStatus)
+
             <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
                 <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
                     There's a problem
@@ -61,6 +64,10 @@
                     <td>@Model.OrganisationName</td>
                 </tr>
                 <tr>
+                    <td><span class="bold-small">Organisation Status</span></td>
+                    <td>@Model.OrganisationStatus</td>
+                </tr>
+                <tr>
                     <td><span class="bold-small">Organisation ID</span></td>
                     <td>@Model.OrganisationId</td>
                 </tr>
@@ -85,7 +92,7 @@
                     <td>@Model.StandardLastDateForNewStarts.ToSfaShortDateString()</td>
                 </tr>
                 <tr>
-                    <td><span class="bold-small">Status of Organisation</span></td>
+                    <td><span class="bold-small">Status</span></td>
                     <td>@Model.Status</td>
                 </tr>
                 </tbody>
