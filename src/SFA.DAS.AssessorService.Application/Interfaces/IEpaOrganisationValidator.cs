@@ -20,6 +20,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         string CheckOrganisationNameNotUsed(string name);
         string CheckOrganisationNameNotUsedForOtherOrganisations(string name, string organisationIdToIgnore);
         string CheckContactIdExists(string contactId);
+        string CheckSearchStringForStandardsIsValid(string searchstring);
 
         string CheckIfContactIdIsValid(string contactId, string organisationId);
         string CheckIfOrganisationStandardDoesNotExist(string organisationId, int standardCode);
@@ -35,5 +36,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         ValidationResponse ValidatorUpdateEpaOrganisationRequest(UpdateEpaOrganisationRequest request);
         ValidationResponse ValidatorCreateEpaOrganisationStandardRequest(CreateEpaOrganisationStandardRequest request);
         ValidationResponse ValidatorUpdateEpaOrganisationStandardRequest(UpdateEpaOrganisationStandardRequest request);
+        ValidationResponse ValidatorSearchStandardsRequest(SearchStandardsValidationRequest request);
+
     }
 }

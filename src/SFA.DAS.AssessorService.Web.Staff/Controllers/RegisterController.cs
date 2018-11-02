@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -44,9 +45,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             searchstring = rx.Replace(searchstring, "");
             var searchResults = await _apiClient.SearchOrganisations(searchstring);
 
+            var results = searchResults ?? new List<AssessmentOrganisationSummary>();
             var registerViewModel = new RegisterViewModel
             {
-                Results = searchResults,
+                Results = results,
                 SearchString = vm.SearchString
             };
 
@@ -230,6 +232,45 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             return View(viewModel);
         }
 
+
+        [HttpGet("register/search-standards/{organisationId}")]
+        public async Task<IActionResult> SearchStandards(string organisationId)
+        {
+            var organisation = await _apiClient.GetEpaOrganisation(organisationId);
+            var vm = new SearchStandardsViewModel{OrganisationId = organisationId, OrganisationName = organisation.Name};
+            
+            return View(vm);
+        }
+
+        [HttpGet("register/search-standards-results")]
+        public async Task<IActionResult> SearchStandardsResults(SearchStandardsViewModel vm)
+        {
+            var organisation = await _apiClient.GetEpaOrganisation(vm.OrganisationId);
+            vm.OrganisationName = organisation.Name;
+            if (!ModelState.IsValid)
+            {
+                return View("SearchStandards", vm);
+            }
+
+            var searchstring = vm.StandardSearchString?.Trim().ToLower();
+            searchstring = string.IsNullOrEmpty(searchstring) ? "" : searchstring;
+            var rx = new System.Text.RegularExpressions.Regex("<[^>]*>");
+            searchstring = rx.Replace(searchstring, "");
+            searchstring = searchstring.Replace("/", "");
+            var searchResults = await _apiClient.SearchStandards(searchstring);
+
+            var standardViewModel = new SearchStandardsViewModel
+            {
+                Results = searchResults,
+                StandardSearchString = vm.StandardSearchString,
+                OrganisationId = vm.OrganisationId,
+                OrganisationName = vm.OrganisationName
+            };
+
+            return View(standardViewModel);
+        }
+
+
         private void GatherOrganisationStandards(RegisterViewAndEditOrganisationViewModel viewAndEditModel)
         {
             var organisationStandards = _apiClient.GetEpaOrganisationStandards(viewAndEditModel.OrganisationId).Result;
@@ -295,7 +336,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 Address4 = organisation.OrganisationData?.Address4,
                 Postcode = organisation.OrganisationData?.Postcode,
                 PrimaryContact = organisation.PrimaryContact,
-                PrimaryContactName = notSetDescription
+                PrimaryContactName = notSetDescription,
+                Status = organisation.Status
             };
 
             if (viewModel.OrganisationTypeId != null)
