@@ -14,5 +14,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Register
         public string ContactId { get; set; }
         public List<int> DeliveryAreas { get; set; }
         public string ActionChoice { get; set; }
+        public string OrganisationStandardStatus { get; set; }
+        public string OrganisationStatus { get; set; }
     }
 }

@@ -93,7 +93,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                          Address3 = viewModel.Address3,
                          Address4 = viewModel.Address4,
                          Postcode = viewModel.Postcode,
-                         OrganisationStatus = viewModel.OrganisationStatus
+                         Status = viewModel.Status
                      };
          
                      await _apiClient.UpdateEpaOrganisation(updateOrganisationRequest);
@@ -187,11 +187,14 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 EffectiveTo = viewModel.EffectiveTo,
                 ContactId = viewModel.ContactId.ToString(),
                 DeliveryAreas = viewModel.DeliveryAreas,
-                Comments = viewModel.Comments
+                Comments = viewModel.Comments,
+                OrganisationStatus = viewModel.OrganisationStatus,
+                OrganisationStandardStatus = viewModel.Status,
+                ActionChoice = viewModel.ActionChoice
             };
 
             var organisationStandardId = await _apiClient.UpdateEpaOrganisationStandard(updateOrganisationStandardRequest);
-            return Redirect($"/register/view-standard/{viewModel.OrganisationStandardId}");
+            return Redirect($"/register/view-standard/{organisationStandardId}");
         }
 
         [HttpGet("register/add-contact/{organisationId}")]
@@ -463,7 +466,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 Postcode = organisation.OrganisationData?.Postcode,
                 PrimaryContact = organisation.PrimaryContact,
                 PrimaryContactName = notSetDescription,
-                OrganisationStatus = organisation.Status
+                Status = organisation.Status
             };
 
             if (viewModel.OrganisationTypeId != null)

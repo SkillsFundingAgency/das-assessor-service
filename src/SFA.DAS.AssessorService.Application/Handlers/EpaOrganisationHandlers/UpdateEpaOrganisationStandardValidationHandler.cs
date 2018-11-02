@@ -33,7 +33,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 EffectiveFrom = request.EffectiveFrom,
                 ContactId = request.ContactId,
                 DeliveryAreas = request.DeliveryAreas,
-                ActionChoice = request.ActionChoice
+                ActionChoice = request.ActionChoice,
+                OrganisationStandardStatus = request.OrganisationStandardStatus,
+                OrganisationStatus = request.OrganisationStatus
             });
         }
     }

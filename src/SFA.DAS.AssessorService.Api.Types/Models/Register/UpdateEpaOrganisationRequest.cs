@@ -7,7 +7,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Register
     {
         public string Name { get; set; }
         public string OrganisationId { get; set; }
-        public string OrganisationStatus { get; set; }
+        public string Status { get; set; }
         public long? Ukprn { get; set; }
         public int? OrganisationTypeId { get; set; }
         public string LegalName { get; set; }

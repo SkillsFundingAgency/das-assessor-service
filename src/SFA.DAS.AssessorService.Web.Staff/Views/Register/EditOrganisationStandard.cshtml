@@ -197,7 +197,10 @@
             </div>
             <div class="form-group">
                 <button class="button" type="submit" name="ActionChoice" value="Save">Save</button>
-                <button class="button" type="submit" name="ActionChoice" value="MakeLive">Make Live</button>
+                @if (Model.OrganisationStatus == "Live" && Model.Status == "New")
+                {
+                    <button class="button" type="submit" name="ActionChoice" value="MakeLive">Make Live</button>
+                }
                 <a href="/register/view-standard/@Model.OrganisationStandardId">Cancel</a>
             </div>
             

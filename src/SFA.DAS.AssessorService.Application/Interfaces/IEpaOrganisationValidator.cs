@@ -32,7 +32,8 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         string CheckIfEmailAlreadyPresentInOrganisationNotAssociatedWithContact(string email, string contactId);
         string CheckIfDeliveryAreasAreValid(List<int> DeliveryAreas);
 
-
+        string CheckOrganisationStandardMakeLiveOrganisationStatus(string organisationStatus, string organisationStandardStatus);
+        string CheckOrganisationStandardMakeLiveEffectiveFrom(DateTime? effectiveFrom, string organisationStandardStatus);
 
         string CheckOrganisationStandardFromDateIsWithinStandardDateRanges(DateTime? effectiveFrom,
             DateTime? standardEffectiveFrom, DateTime? standardEffectiveTo, DateTime? lastDateForNewStarts);

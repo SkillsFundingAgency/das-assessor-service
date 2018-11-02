@@ -101,7 +101,7 @@ namespace SFA.DAS.AssessorService.Data
         }
 
         public async Task<string> UpdateEpaOrganisationStandard(EpaOrganisationStandard orgStandard,
-            List<int> deliveryAreas)
+            List<int> deliveryAreas, string actionChoice)
         {
 
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
@@ -134,6 +134,14 @@ namespace SFA.DAS.AssessorService.Data
                         "INSERT INTO OrganisationStandardDeliveryArea ([OrganisationStandardId],DeliveryAreaId, Status) VALUES " +
                         "(@osdaId, @deliveryAreaId,'Live'); ",
                         new {osdaId, deliveryAreaId}
+                    );
+                }
+
+                if (actionChoice == "MakeLive")
+                {
+                    connection.Execute(
+                        "UPDATE [OrganisationStandard] SET [Status] = 'Live', [DateStandardApprovedOnRegister] = getutcdate() where Id = @osdaId ",
+                        new { osdaId }
                     );
                 }
 

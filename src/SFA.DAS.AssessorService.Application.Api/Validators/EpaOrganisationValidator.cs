@@ -279,6 +279,29 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             return FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationStandardEffectiveFromAfterEffectiveTo);
 
         }
+
+        //MFCMFC
+        public string CheckOrganisationStandardMakeLiveOrganisationStatus(string organisationStatus, string organisationStandardStatus)
+        {
+            var errorMessage = "This standard cannot be updated because the organisation is not Live";
+            return organisationStatus != "Live" ? FormatErrorMessage(errorMessage) : string.Empty;
+        }
+
+        public string CheckOrganisationStandardMakeLiveEffectiveFrom(DateTime? effectiveFrom, string organisationStandardStatus)
+        {
+            var errorMessageIfStandardStatusIsNew =
+                "This standard cannot be made live because the Effective From is not set";
+
+            var errorMessageIfStandardStatusINotNew =
+                "This standard cannot be updated because the Effective From is not set";
+
+            return effectiveFrom != null 
+                ? string.Empty 
+                : FormatErrorMessage(organisationStandardStatus == "New" 
+                    ? errorMessageIfStandardStatusIsNew 
+                    : errorMessageIfStandardStatusINotNew);
+        }
+
         public ValidationResponse ValidatorCreateEpaOrganisationRequest(CreateEpaOrganisationRequest request)
         {
             var validationResult = new ValidationResponse();
@@ -361,10 +384,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             RunValidationCheckAndAppendAnyError("EffectiveFrom", CheckOrganisationStandardFromDateIsWithinStandardDateRanges(request.EffectiveFrom, standard.EffectiveFrom, standard.EffectiveTo, standard.LastDateForNewStarts), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("EffectiveFrom", CheckEffectiveFromIsOnOrBeforeEffectiveTo(request.EffectiveFrom, request.EffectiveTo), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("EffectiveTo", CheckOrganisationStandardToDateIsWithinStandardDateRanges(request.EffectiveTo, standard.EffectiveFrom, standard.EffectiveTo), validationResult, ValidationStatusCode.BadRequest);
-            if (request.ActionChoice == "MakeLive")
-            {
-                RunValidationCheckAndAppendAnyError("ActionChoice", "This Standard cannot be made live because the organisation is not live", validationResult, ValidationStatusCode.BadRequest);
 
+            if (request.ActionChoice == "MakeLive" || request.OrganisationStandardStatus!="New")
+            {
+                RunValidationCheckAndAppendAnyError("ActionChoice", CheckOrganisationStandardMakeLiveOrganisationStatus(request.OrganisationStatus, request.OrganisationStandardStatus), validationResult, ValidationStatusCode.BadRequest);
+                RunValidationCheckAndAppendAnyError("EffectiveFrom", CheckOrganisationStandardMakeLiveEffectiveFrom(request.EffectiveFrom, request.OrganisationStandardStatus), validationResult, ValidationStatusCode.BadRequest);   
             }
 
             return validationResult;
@@ -404,6 +428,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             RunValidationCheckAndAppendAnyError("StandardSearchString", CheckSearchStringForStandardsIsValid(request.Searchstring), validationResult, ValidationStatusCode.BadRequest);
             return validationResult;
 
-        }  
+        } 
     }
 }
