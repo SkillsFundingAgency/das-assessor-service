@@ -361,7 +361,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             RunValidationCheckAndAppendAnyError("EffectiveFrom", CheckOrganisationStandardFromDateIsWithinStandardDateRanges(request.EffectiveFrom, standard.EffectiveFrom, standard.EffectiveTo, standard.LastDateForNewStarts), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("EffectiveFrom", CheckEffectiveFromIsOnOrBeforeEffectiveTo(request.EffectiveFrom, request.EffectiveTo), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("EffectiveTo", CheckOrganisationStandardToDateIsWithinStandardDateRanges(request.EffectiveTo, standard.EffectiveFrom, standard.EffectiveTo), validationResult, ValidationStatusCode.BadRequest);
+            if (request.ActionChoice == "MakeLive")
+            {
+                RunValidationCheckAndAppendAnyError("ActionChoice", "This Standard cannot be made live because the organisation is not live", validationResult, ValidationStatusCode.BadRequest);
 
+            }
 
             return validationResult;
         }

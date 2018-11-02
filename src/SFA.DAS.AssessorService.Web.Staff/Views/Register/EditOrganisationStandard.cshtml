@@ -44,6 +44,7 @@
                         <li><a sfa-validation-for="EffectiveToYear"></a></li>
                         <li><a sfa-validation-for="ContactId"></a></li>
                         <li><a sfa-validation-for="DeliveryAreas"></a></li>
+                        <li><a sfa-validation-for="ActionChoice"></a></li>
                     </ul>
                 </div>
             }
@@ -188,7 +189,8 @@
                 <input class="form-control" maxlength="500" name="Comments" sfa-validation-for="Comments" sfa-validationerror-class="form-control-error" asp-for="Comments" type="text" />
             </div>
             <div class="form-group">
-                <button class="button" type="submit">Save</button>
+                <button class="button" type="submit" name="ActionChoice" value="Save">Save</button>
+                <button class="button" type="submit" name="ActionChoice" value="MakeLive">Make Live</button>
                 <a href="/register/view-standard/@Model.OrganisationStandardId">Cancel</a>
             </div>
             

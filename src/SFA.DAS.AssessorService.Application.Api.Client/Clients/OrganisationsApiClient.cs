@@ -125,14 +125,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         }
 
         public async Task<ValidationResponse> ValidateUpdateOrganisationStandard(string organisationId, int standardId, DateTime? effectiveFrom,
-            DateTime? effectiveTo, Guid? contactId, List<int> deliveryAreas)
+            DateTime? effectiveTo, Guid? contactId, List<int> deliveryAreas, string actionChoice)
         {
             var deliveryAreasString = deliveryAreas.Aggregate(string.Empty, (current, deliveryArea) => current + $"&DeliveryAreas={deliveryArea}");
             var contactIdString = contactId == null ? string.Empty : $"&contactId={contactId.Value}";
-
+           
             var queryString =
                 $"/api/ao/assessment-organisations/standards/validate-existing?OrganisationId={organisationId}&StandardCode={standardId}&EffectiveFrom={effectiveFrom?.ToString("yyyy-MM-dd")}" +
-                $"&EffectiveTo={effectiveTo?.ToString("yyyy-MM-dd")}{contactIdString}{deliveryAreasString}";
+                $"&EffectiveTo={effectiveTo?.ToString("yyyy-MM-dd")}&ActionChoice={actionChoice}{contactIdString}{deliveryAreasString}";
             using (var request = new HttpRequestMessage(HttpMethod.Get, queryString))
             {
                 return await RequestAndDeserialiseAsync<ValidationResponse>(request,
@@ -198,7 +198,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<ValidationResponse> ValidateSearchStandards(string searchstring);
 
         Task<ValidationResponse> ValidateCreateOrganisationStandard(string organisationId, int standardId, DateTime? effectiveFrom, DateTime? effectiveTo, Guid? contactId, List<int> deliveryAreas);
-        Task<ValidationResponse> ValidateUpdateOrganisationStandard(string organisationId, int standardId, DateTime? effectiveFrom, DateTime? effectiveTo, Guid? contactId, List<int> deliveryAreas);
+        Task<ValidationResponse> ValidateUpdateOrganisationStandard(string organisationId, int standardId, DateTime? effectiveFrom, DateTime? effectiveTo, Guid? contactId, List<int> deliveryAreas, string actionChoice);
 
     }
 }

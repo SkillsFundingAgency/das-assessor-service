@@ -43,7 +43,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators
                 var deliveryAreas = vm.DeliveryAreas ?? new List<int>();
                 var validationResultExternals = _apiClient
                     .ValidateUpdateOrganisationStandard(vm.OrganisationId, vm.StandardId, vm.EffectiveFrom,
-                        vm.EffectiveTo, vm.ContactId, deliveryAreas).Result;
+                        vm.EffectiveTo, vm.ContactId, deliveryAreas, vm.ActionChoice).Result;
                 if (validationResultExternals.IsValid) return;
                 foreach (var error in validationResultExternals.Errors)
                 {
