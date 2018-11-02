@@ -537,7 +537,7 @@
                         "value": [
                             {
                                 "name": "ApplicationInsights:InstrumentationKey",
-                                "value": "[reference(concat(parameters('functionAppNames'),'-ai', copyIndex())).outputs.InstrumentationKey.value]"
+                                "value": "[reference(concat(parameters('functionAppNames')[copyIndex()],'-ai')).outputs.InstrumentationKey.value]"
                             },
                             {
                                 "name": "ConfigurationStorageConnectionString",
