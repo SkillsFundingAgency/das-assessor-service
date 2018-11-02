@@ -54,7 +54,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         [TestCase("   A  ")]
         public void SearchAssessmentOrganisationsThrowsBadRequestExceptionIfSearchStringTooShort(string search)
         {
-            var request = new SearchAssessmentOrganisationsRequest { Searchstring = search };
+            var request = new SearchAssessmentOrganisationsRequest { SearchTerm = search };
             _cleanserService.Setup(c => c.CleanseStringForSpecialCharacters(search.Trim())).Returns(search.Trim());
             Assert.ThrowsAsync<BadRequestException>(() => _searchAssessmentOrganisationsHandler.Handle(request, new CancellationToken())); 
         }
@@ -63,7 +63,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         public void SearchAssessmentOrganisationsWithValidOrganisationId()
         {
             const string searchstring = "epacode";
-            var request = new SearchAssessmentOrganisationsRequest { Searchstring = searchstring };
+            var request = new SearchAssessmentOrganisationsRequest { SearchTerm = searchstring };
             _cleanserService.Setup(c => c.CleanseStringForSpecialCharacters(searchstring)).Returns(searchstring);
             _searchValidator.Setup(v => v.IsValidEpaOrganisationId(searchstring)).Returns(true);
             _searchValidator.Setup(v => v.IsValidUkprn(searchstring)).Returns(true);
@@ -83,7 +83,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         public void SearchAssessmentOrganisationsWithValidUkprn()
         {
             const string searchstring = "12345678";
-            var request = new SearchAssessmentOrganisationsRequest { Searchstring = searchstring };
+            var request = new SearchAssessmentOrganisationsRequest { SearchTerm = searchstring };
             _cleanserService.Setup(c => c.CleanseStringForSpecialCharacters(searchstring)).Returns(searchstring);
             _searchValidator.Setup(v => v.IsValidEpaOrganisationId(searchstring)).Returns(false);
             _searchValidator.Setup(v => v.IsValidUkprn(searchstring)).Returns(true);
@@ -107,7 +107,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
         public void SearchAssessmentOrganisationsWithGeneralSearchString()
         {
             const string searchstring = "12345678";
-            var request = new SearchAssessmentOrganisationsRequest { Searchstring = searchstring };
+            var request = new SearchAssessmentOrganisationsRequest { SearchTerm = searchstring };
             _cleanserService.Setup(c => c.CleanseStringForSpecialCharacters(searchstring)).Returns(searchstring);
             _searchValidator.Setup(v => v.IsValidEpaOrganisationId(searchstring)).Returns(false);
             _searchValidator.Setup(v => v.IsValidUkprn(searchstring)).Returns(false);
@@ -115,7 +115,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
                 .Returns(Task.FromResult(new List<AssessmentOrganisationSummary>().AsEnumerable()));
             _registerQueryRepository.Setup(r => r.GetAssessmentOrganisationsByUkprn(searchstring))
                 .Returns(Task.FromResult(new List<AssessmentOrganisationSummary>().AsEnumerable()));
-            _registerQueryRepository.Setup(r => r.GetAssessmentOrganisationsbyName(searchstring))
+            _registerQueryRepository.Setup(r => r.GetAssessmentOrganisationsByName(searchstring))
                 .Returns(Task.FromResult(_expectedOrganisationListOfDetails.AsEnumerable()));
             var organisations = _searchAssessmentOrganisationsHandler.Handle(request, new CancellationToken()).Result;
 
@@ -123,7 +123,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             _registerQueryRepository.Verify(r => r.GetAssessmentOrganisationsByOrganisationId(searchstring), Times.Never);
             _searchValidator.Verify(v => v.IsValidUkprn(It.IsAny<string>()));
             _registerQueryRepository.Verify(r => r.GetAssessmentOrganisationsByUkprn(searchstring), Times.Never);
-            _registerQueryRepository.Verify(r => r.GetAssessmentOrganisationsbyName(searchstring));
+            _registerQueryRepository.Verify(r => r.GetAssessmentOrganisationsByName(searchstring));
 
 
             organisations.Count.Should().Be(2);

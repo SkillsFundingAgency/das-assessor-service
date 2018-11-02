@@ -126,6 +126,9 @@
   <data name="EmailIsMissing" xml:space="preserve">
     <value>Enter an email address</value>
   </data>
+  <data name="ContactIdIsRequired" xml:space="preserve">
+    <value>A valid contact is required</value>
+  </data>
   <data name="EmailAlreadyPresentInAnotherOrganisation" xml:space="preserve">
     <value>This email is being used by another contact in a different organisation</value>
   </data>
@@ -179,5 +182,14 @@
   </data>
   <data name="ErrorMessageOrganisationNameAlreadyPresent" xml:space="preserve">
     <value>There is already an organisation present with this name</value>
+  </data>
+  <data name="NoDeliveryAreasPresent" xml:space="preserve">
+    <value>There must be at least 1 Delivery Area</value>
+  </data>
+  <data name="DeliveryAreaNotValid" xml:space="preserve">
+    <value>At least 1 of the delivery areas is not valid</value>
+  </data>
+  <data name="SearchStandardsTooShort" xml:space="preserve">
+    <value>The entry must be a number or a phrase with at least 2 characters</value>
   </data>
 </root>

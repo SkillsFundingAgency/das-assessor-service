@@ -217,7 +217,7 @@ namespace SFA.DAS.AssessorService.Data
                     await connection.OpenAsync();
 
                 var sqlForStandardByOrganisationId =
-                     "SELECT distinct EndPointAssessorOrganisationId as organisationId, StandardCode, EffectiveFrom, EffectiveTo, DateStandardApprovedOnRegister, ContactId " +
+                    "SELECT distinct id,EndPointAssessorOrganisationId as organisationId, StandardCode, EffectiveFrom, EffectiveTo, DateStandardApprovedOnRegister, ContactId "+
                      "FROM [OrganisationStandard] WHERE EndPointAssessorOrganisationId = @organisationId";
                 return await connection.QueryAsync<OrganisationStandardSummary>(sqlForStandardByOrganisationId, new {organisationId});
             }
@@ -250,7 +250,9 @@ namespace SFA.DAS.AssessorService.Data
                     await connection.OpenAsync();
 
                 var sql =
-                    "select EndPointAssessorOrganisationId as Id, EndPointAssessorName as Name, EndPointAssessorUkprn as ukprn, OrganisationData from [Organisations] where EndPointAssessorUkprn = @ukprnNumeric";
+                      "SELECT o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, o.OrganisationData, ot.Id as OrganisationTypeId, ot.Type as OrganisationType "
+                    + "FROM [Organisations] o LEFT OUTER JOIN [OrganisationType] ot ON ot.Id = o.OrganisationTypeId "
+                    + "WHERE o.EndPointAssessorUkprn = @ukprnNumeric";
 
                 var assessmentOrganisationSummaries = await connection.QueryAsync<AssessmentOrganisationSummary>(sql, new {ukprnNumeric});
                 return assessmentOrganisationSummaries;
@@ -263,22 +265,49 @@ namespace SFA.DAS.AssessorService.Data
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
-                var assessmentOrganisationSummaries = await connection.QueryAsync<AssessmentOrganisationSummary>("select EndPointAssessorOrganisationId as Id, EndPointAssessorName as Name, EndPointAssessorUkprn as ukprn, OrganisationData from [Organisations] where EndPointAssessorOrganisationId like @organisationId", new {organisationId = $"{organisationId.Replace(" ","")}%" });
+
+                var sql =
+                      "SELECT o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, o.OrganisationData, ot.Id as OrganisationTypeId, ot.Type as OrganisationType "
+                    + "FROM [Organisations] o LEFT OUTER JOIN [OrganisationType] ot ON ot.Id = o.OrganisationTypeId "
+                    + "WHERE o.EndPointAssessorOrganisationId like @organisationId";
+
+                var assessmentOrganisationSummaries = await connection.QueryAsync<AssessmentOrganisationSummary>(sql, new {organisationId = $"{organisationId.Replace(" ","")}%" });
                 return assessmentOrganisationSummaries;
             }
         }
-        public async Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsbyName(string organisationName)
+        public async Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsByName(string organisationName)
         {
             var connectionString = _configuration.SqlConnectionString;
             using (var connection = new SqlConnection(connectionString))
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
-                var assessmentOrganisationSummaries = await connection.QueryAsync<AssessmentOrganisationSummary>("select EndPointAssessorOrganisationId as Id, EndPointAssessorName as Name, EndPointAssessorUkprn as ukprn, OrganisationData from [Organisations] where replace(EndPointAssessorName, ' ','') like @organisationName", new {organisationName =$"%{organisationName.Replace(" ","")}%" } );
+
+                var sql =
+                      "SELECT o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, o.OrganisationData, ot.Id as OrganisationTypeId, ot.Type as OrganisationType "
+                    + "FROM [Organisations] o LEFT OUTER JOIN [OrganisationType] ot ON ot.Id = o.OrganisationTypeId "
+                    + "WHERE replace(o.EndPointAssessorName, ' ','') like @organisationName";
+
+                var assessmentOrganisationSummaries = await connection.QueryAsync<AssessmentOrganisationSummary>(sql, new {organisationName =$"%{organisationName.Replace(" ","")}%" } );
                 return assessmentOrganisationSummaries;
             }
         }
 
-       
+        public async Task<IEnumerable<int>> GetDeliveryAreaIdsByOrganisationStandardId(int organisationStandardId)
+        {
+            var connectionString = _configuration.SqlConnectionString;
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                var sql =
+                    "select DeliveryAreaId from organisationStandardDeliveryArea" +
+                    " where OrganisationStandardId = @organisationStandardId";
+                var deliveryAreas = await connection.QueryAsync<int>(sql, new {organisationStandardId});
+                return deliveryAreas;
+            }
+        }
     }
 }

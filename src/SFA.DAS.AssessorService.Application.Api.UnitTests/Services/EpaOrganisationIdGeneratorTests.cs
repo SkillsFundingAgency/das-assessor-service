@@ -26,7 +26,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         [TestCase("EPA1", "EPA0002")]
         [TestCase("EPA11111", "EPA11112")]
         [TestCase("EPA11A11", "")]
-
         public void GetNewOrganisationIdFromCurrentMaximumOrganisationId(string currentId, string newId)
         {
             _registerQueryRepository.Setup(r => r.EpaOrganisationIdCurrentMaximum()).Returns(Task.FromResult(currentId));

@@ -280,7 +280,7 @@
                             },
                             {
                                 "name": "InstanceName",
-                                "value": "[parameters('environmentName')]"
+                                "value": "[variables('InstanceName')]"
                             }
                         ]
                     },
@@ -339,7 +339,7 @@
                             },
                             {
                                 "name": "InstanceName",
-                                "value": "[concat(parameters('environmentName'),' (Sandbox)')]"
+                                "value": "[concat(variables('InstanceName'),' (Sandbox)')]"
                             },
                             {
                                 "name": "UseSandboxServices",

@@ -1,0 +1,59 @@
+﻿@model SFA.DAS.AssessorService.Web.Staff.Models.SearchStandardsViewModel
+
+@{
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Standard search";
+    Layout = "_Layout";
+}
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <a href="/register/view-organisation/@Model.OrganisationId" class="link-back">Return to Organisation View</a>
+
+        <form class="register-search-form" asp-action="SearchStandardsResults" asp-controller="Register" method="get">
+            @Html.HiddenFor(c => c.OrganisationId)
+            @* hidden with js *@
+            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                    There's a problem
+                </h2>
+                <ul class="js-error-summary-list error-summary-list"></ul>
+            </div>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                        There's a problem
+                    </h2>
+                    <ul class="error-summary-list">
+                        <li><a sfa-validation-for="StandardSearchString"></a></li>
+                    </ul>
+                </div>
+            }
+
+            <div sfa-anyvalidationerror-class="after-error-summary">
+                <h1>
+                    <label class="form-label" for="SearchString">
+                        <span class="heading-xlarge">Add a standard to @Model.OrganisationName (@Model.OrganisationId)</span>
+                    </label>
+                </h1>
+
+                <p>Search for a standard using either the:</p>
+                <ul class="list list-bullet">
+                    <li>Standard Id (an integer)</li>
+                    <li>name</li>
+                </ul>
+
+                <div class="form-group" sfa-validation-for="SearchString" sfa-anyvalidationerror-class="form-group-error">
+                    <span class="error-message" asp-validation-for="StandardSearchString"></span>
+                    <input class="form-control" asp-for="StandardSearchString" name="StandardSearchString" sfa-validationerror-class="form-control-error" type="text" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <button class="button" type="submit">Search<span class="visually-hidden"> for a Standard to Add</span></button>
+            </div>
+        </form>
+
+    </div>
+</div>

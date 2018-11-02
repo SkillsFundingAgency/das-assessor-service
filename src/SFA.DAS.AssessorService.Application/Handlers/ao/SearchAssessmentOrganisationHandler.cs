@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
         {
             _logger.LogInformation("Handling Search AssessmentOrganisations Request");
             
-            var searchstring = _cleanser.CleanseStringForSpecialCharacters(request.Searchstring.Trim());
+            var searchstring = _cleanser.CleanseStringForSpecialCharacters(request.SearchTerm.Trim());
 
             if (searchstring.Length < 2)
                 throw new BadRequestException("The searchstring is too short to do a valid search");
@@ -53,7 +53,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             }
 
             _logger.LogInformation($@"Searching AssessmentOrganisations based on name wildcard: [{searchstring}]");
-            var resultMain = await _registerQueryRepository.GetAssessmentOrganisationsbyName(searchstring);
+            var resultMain = await _registerQueryRepository.GetAssessmentOrganisationsByName(searchstring);
             return resultMain.ToList();
         }
     }
