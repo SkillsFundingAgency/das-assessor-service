@@ -92,7 +92,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                          Address2 = viewModel.Address2,
                          Address3 = viewModel.Address3,
                          Address4 = viewModel.Address4,
-                         Postcode = viewModel.Postcode
+                         Postcode = viewModel.Postcode,
+                         OrganisationStatus = viewModel.OrganisationStatus
                      };
          
                      await _apiClient.UpdateEpaOrganisation(updateOrganisationRequest);
@@ -462,7 +463,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 Postcode = organisation.OrganisationData?.Postcode,
                 PrimaryContact = organisation.PrimaryContact,
                 PrimaryContactName = notSetDescription,
-                Status = organisation.Status
+                OrganisationStatus = organisation.Status
             };
 
             if (viewModel.OrganisationTypeId != null)
