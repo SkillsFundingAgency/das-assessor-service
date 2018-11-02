@@ -8,7 +8,7 @@
 <div class="grid-row">
     <div class="column-two-thirds">
         <a href="/register/search-standards/@Model.OrganisationId" class="link-back">Return to standard search</a>
-        <form class="add-organisation-form" asp-action="AddOrganisationStandard" asp-controller="Register" method="POST">
+        <form class="add-organisation-form" asp-action="EditOrganisationStandard" asp-controller="Register" method="POST">
             <input type="hidden" name="fullDate" id="fullDate" class="date-input" />
             @Html.HiddenFor(c => c.OrganisationId)
             @Html.HiddenFor(c => c.StandardId)
@@ -82,6 +82,10 @@
                 <tr>
                     <td><span class="bold-small">Late Date For New Starts</span></td>
                     <td>@Model.StandardLastDateForNewStarts.ToSfaShortDateString()</td>
+                </tr>
+                <tr>
+                    <td><span class="bold-small">Status of Organisation</span></td>
+                    <td>@Model.Status</td>
                 </tr>
                 </tbody>
             </table>
@@ -185,6 +189,7 @@
             </div>
             <div class="form-group">
                 <button class="button" type="submit">Save</button>
+                <a href="/register/view-standard/@Model.OrganisationStandardId">Cancel</a>
             </div>
             
         </form>
