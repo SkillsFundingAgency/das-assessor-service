@@ -561,18 +561,6 @@
                                 "type": "Custom"
                             }
                         ]
-                    },
-                    "configurationStorageConnectionString": {
-                        "value": "[parameters('configurationStorageConnectionString')]"
-                    },
-                    "configEnvironmentName": {
-                        "value": "[parameters('environmentName')]"
-                    },
-                    "storageConnectionString": {
-                        "value": "[reference('StorageAccount').outputs.StorageConnectionString.value]"
-                    },
-                    "loggingRedisConnectionString": {
-                        "value": "[parameters('loggingRedisConnectionString')]"
                     }
                 }
             },
@@ -595,7 +583,7 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "serviceBusName": {
+                    "serviceBusNamespaceName": {
                         "value": "[parameters('serviceBusName')]"
                     }
                 }
