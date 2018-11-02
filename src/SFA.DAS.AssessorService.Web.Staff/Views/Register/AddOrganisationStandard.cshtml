@@ -146,7 +146,13 @@
                     <div class="multiple-choice">
                         <input asp-for="ContactId" id="@contact.Id" type="radio" value="@contact.Id"/>
                         <label for="@contact.Id">
-                            @contact.DisplayName (@contact.Email, @contact.PhoneNumber)
+                            @contact.DisplayName
+                            @if (!String.IsNullOrEmpty( @contact.Email )) {
+                                <br /><a href="mailto:@contact.Email">@contact.Email</a>
+                            }
+                            @if (!String.IsNullOrEmpty( @contact.PhoneNumber )) {
+                                <br />@contact.PhoneNumber
+                            }
                         </label>
                     </div>
                 }
