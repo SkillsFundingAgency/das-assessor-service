@@ -469,12 +469,11 @@
                     }
                 }
             },
-            
             "dependsOn": []
         },
         {
             "apiVersion": "2017-08-01",
-            "name": "[concat(parameters('functionAppNames'),'-ai', copyIndex())]",
+            "name": "[concat(parameters('functionAppNames')[copyIndex()], '-ai')]",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
