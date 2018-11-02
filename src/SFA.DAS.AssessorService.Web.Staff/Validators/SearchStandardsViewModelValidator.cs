@@ -18,7 +18,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators
 
             RuleFor(vm => vm).Custom((vm, context) =>
             {
-                var validationResult = _apiClient.ValidateSearchStandards(vm.StandardSearchString).Result;
+                var searchstring = vm.StandardSearchString?.Trim().ToLower();
+                searchstring = string.IsNullOrEmpty(searchstring) ? "" : searchstring;
+                var rx = new System.Text.RegularExpressions.Regex("<[^>]*>/");
+                searchstring = rx.Replace(searchstring, "");
+                searchstring = searchstring.Replace("/", "");
+                var searchTerm = Uri.EscapeUriString(searchstring);
+                var validationResult = _apiClient.ValidateSearchStandards(searchTerm).Result;
                 if (validationResult.IsValid) return;
                 foreach (var error in validationResult.Errors)
                 {
