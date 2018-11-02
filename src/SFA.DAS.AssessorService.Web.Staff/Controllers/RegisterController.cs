@@ -50,9 +50,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             searchstring = rx.Replace(searchstring, "");
             var searchResults = await _apiClient.SearchOrganisations(searchstring);
 
+            var results = searchResults ?? new List<AssessmentOrganisationSummary>();
             var registerViewModel = new RegisterViewModel
             {
-                Results = searchResults,
+                Results = results,
                 SearchString = vm.SearchString
             };
 
@@ -339,7 +340,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 return View("SearchStandards", vm);
             }
 
-            var searchstring = vm.StandardSearchString?.Trim();
+            var searchstring = vm.StandardSearchString?.Trim().ToLower();
+            searchstring = string.IsNullOrEmpty(searchstring) ? "" : searchstring;
+            var rx = new System.Text.RegularExpressions.Regex("<[^>]*>");
+            searchstring = rx.Replace(searchstring, "");
+            searchstring = searchstring.Replace("/", "");
             var searchResults = await _apiClient.SearchStandards(searchstring);
 
             var standardViewModel = new SearchStandardsViewModel
