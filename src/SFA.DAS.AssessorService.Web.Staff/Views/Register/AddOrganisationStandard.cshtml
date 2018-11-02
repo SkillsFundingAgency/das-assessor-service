@@ -8,6 +8,7 @@
 <div class="grid-row">
     <div class="column-two-thirds">
         <a href="/register/search-standards/@Model.OrganisationId" class="link-back">Return to standard search</a>
+
         <form class="add-organisation-form" asp-action="AddOrganisationStandard" asp-controller="Register" method="POST">
             <input type="hidden" name="fullDate" id="fullDate" class="date-input" />
             @Html.HiddenFor(c => c.OrganisationId)
@@ -18,9 +19,10 @@
             @Html.HiddenFor(m => m.StandardEffectiveFrom)
             @Html.HiddenFor(m => m.StandardEffectiveTo)  
             @Html.HiddenFor(c => c.StandardLastDateForNewStarts)
+
             <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
                 <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                    There's a problem
+                    There is a problem
                 </h2>
                 <ul class="js-error-summary-list error-summary-list"></ul>
             </div>
@@ -29,7 +31,7 @@
             {
                 <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
                     <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                        There's a problem
+                        There is a problem
                     </h2>
                     <ul class="error-summary-list">
                         <li><a sfa-validation-for="OrganisationId"></a></li>
@@ -56,6 +58,11 @@
                     <td>@Model.OrganisationName</td>
                 </tr>
                 <tr>
+                    <td><span class="bold-small">Organisation status</span></td>
+                    @*<td>@Model.OrganisationStatus</td>*@
+                    <td>!!!! THIS IS MISSING !!!!</td>
+                </tr>
+                <tr>
                     <td><span class="bold-small">Organisation ID</span></td>
                     <td>@Model.OrganisationId</td>
                 </tr>
@@ -78,6 +85,11 @@
                 <tr>
                     <td><span class="bold-small">Last date for new starts</span></td>
                     <td>@Model.StandardLastDateForNewStarts.ToSfaShortDateString()</td>
+                </tr>
+                <tr>
+                    <td><span class="bold-small">Standard status</span></td>
+                    @* <td>@Model.Status</td> *@
+                    <td>!!!! THIS IS MISSING !!!!</td>
                 </tr>
                 </tbody>
             </table>
