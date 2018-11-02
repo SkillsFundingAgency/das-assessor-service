@@ -280,26 +280,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
 
         }
 
-        //MFCMFC
         public string CheckOrganisationStandardMakeLiveOrganisationStatus(string organisationStatus, string organisationStandardStatus)
         {
-            var errorMessage = "This standard cannot be updated because the organisation is not Live";
-            return organisationStatus != "Live" ? FormatErrorMessage(errorMessage) : string.Empty;
+            return organisationStatus != "Live" 
+                ? FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationStandardCannotBeUpdatedBecauseOrganisationNotLive) 
+                : string.Empty;
         }
 
         public string CheckOrganisationStandardMakeLiveEffectiveFrom(DateTime? effectiveFrom, string organisationStandardStatus)
         {
-            var errorMessageIfStandardStatusIsNew =
-                "This standard cannot be made live because the Effective From is not set";
-
-            var errorMessageIfStandardStatusINotNew =
-                "This standard cannot be updated because the Effective From is not set";
-
             return effectiveFrom != null 
                 ? string.Empty 
                 : FormatErrorMessage(organisationStandardStatus == "New" 
-                    ? errorMessageIfStandardStatusIsNew 
-                    : errorMessageIfStandardStatusINotNew);
+                    ? EpaOrganisationValidatorMessageName.OrganisationStandardCannotBeMadeLiveBecauseEffectiveFromNotSet
+                    : EpaOrganisationValidatorMessageName.OrganisationStandardCannotBeUpdatedBecauseEffectiveFromNotSet);
         }
 
         public ValidationResponse ValidatorCreateEpaOrganisationRequest(CreateEpaOrganisationRequest request)
