@@ -8,7 +8,7 @@
     init: function init() {
       // loop over table row and add relevant attributes
       $(".js-expand-table-row").each(function() {
-        var ariaControlId = "table-content-" + $(this).data("uln");
+        var ariaControlId = "table-content-" + $(this).data("expand-id");
         var $expandable = $(this)
           .closest("tr")
           .nextAll("tr.js-expandble-cell:first");

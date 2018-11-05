@@ -22,5 +22,22 @@
     },
     // Optionally generate .map file
     "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/js/epao-validation.min.js",
+    "inputFiles": [ "wwwroot/js/epao-validation.js" ],
+    "minify": {
+      "renameLocals": true
+    }
+  },
+  {
+    "outputFileName": "wwwroot/js/postcode-lookup-service.min.js",
+    "inputFiles": [
+      "wwwroot/lib/jquery-ui/dist/jquery-ui.min.js",
+      "wwwroot/js/postcode-lookup-service.js"
+    ],
+    "minify": {
+      "renameLocals": true
+    }
   }
 ]

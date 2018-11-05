@@ -58,6 +58,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             var certificate = await ApiClient.GetCertificate(vm.Id);
             var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 
+            if(string.IsNullOrEmpty(vm.ReasonForChange))
+            {
+                ModelState.AddModelError(nameof(vm.ReasonForChange), "Please enter a reason");
+            }
+
             if (!ModelState.IsValid)
             {
                 vm.FamilyName = certData.LearnerFamilyName;
@@ -68,7 +73,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 
             var updatedCertificate = vm.GetCertificateFromViewModel(certificate, certData);
 
-            await ApiClient.UpdateCertificate(new UpdateCertificateRequest(updatedCertificate) { Username = username, Action = action });
+            await ApiClient.UpdateCertificate(new UpdateCertificateRequest(updatedCertificate) { Username = username, Action = action, ReasonForChange = vm.ReasonForChange });
 
             Logger.LogInformation($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} updated.");
 

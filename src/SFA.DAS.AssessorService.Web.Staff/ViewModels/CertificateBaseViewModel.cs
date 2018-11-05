@@ -28,6 +28,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
         public string FullName { get; set; }
         public int Level { get; set; }    
         public bool IsPrivatelyFunded { get; set; }
-        public bool BackToCheckPage { get; set; }     
+        public bool BackToCheckPage { get; set; }
+        public string ReasonForChange { get; set; }
     }
 }
