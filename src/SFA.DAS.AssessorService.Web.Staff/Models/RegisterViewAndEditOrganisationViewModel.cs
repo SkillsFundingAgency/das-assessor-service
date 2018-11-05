@@ -26,5 +26,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Models
 
         public List<OrganisationStandardSummary> OrganisationStandards { get; set; }
         public List<OrganisationType> OrganisationTypes { get; set; }
+
+        public string ActionChoice { get; set; }
     }
 }
