@@ -1,14 +1,12 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using FluentValidation;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.Validators;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels;
+using System;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {
@@ -25,9 +23,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Date(Guid certificateid)
+        public async Task<IActionResult> Date(Guid certificateId)
         {
-            return await LoadViewModel<CertificateDateViewModel>(certificateid, "~/Views/CertificateAmend/Date.cshtml");
+            return await LoadViewModel<CertificateDateViewModel>(certificateId, "~/Views/CertificateAmend/Date.cshtml");
         }
 
         [HttpPost(Name = "Date")]
@@ -37,7 +35,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 
             var actionResult = await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/CertificateAmend/Date.cshtml",
-                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateid = vm.Id }), action: CertificateActions.Date);
+                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateId = vm.Id }), action: CertificateActions.Date);
 
             return actionResult;
         }

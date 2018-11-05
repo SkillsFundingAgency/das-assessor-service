@@ -20,9 +20,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
         { }
 
         [HttpGet]
-        public async Task<IActionResult> Uln(Guid certificateid)
+        public async Task<IActionResult> Uln(Guid certificateId)
         {         
-            return await LoadViewModel<CertificateUlnViewModel>(certificateid, "~/Views/CertificateAmend/Uln.cshtml");
+            return await LoadViewModel<CertificateUlnViewModel>(certificateId, "~/Views/CertificateAmend/Uln.cshtml");
         }
 
         [HttpPost(Name = "Uln")]
@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
         {
             var actionResult = await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/CertificateAmend/Uln.cshtml",
-                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateid = vm.Id }), action: CertificateActions.FirstName);
+                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateId = vm.Id }), action: CertificateActions.FirstName);
 
             return actionResult;
         }

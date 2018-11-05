@@ -21,12 +21,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Check(Guid certificateid,           
-            string searchString,
-            int page)
+        public async Task<IActionResult> Check(Guid certificateId, string searchString, int page)
         {
-            var viewModel =
-                await LoadViewModel<CertificateCheckViewModel>(certificateid, "~/Views/CertificateAmend/Check.cshtml");
+            var viewModel = await LoadViewModel<CertificateCheckViewModel>(certificateId, "~/Views/CertificateAmend/Check.cshtml");
             var viewResult = (viewModel as ViewResult);
             var certificateCheckViewModel = viewResult.Model as CertificateCheckViewModel;
 
@@ -43,15 +40,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         [HttpPost(Name = "Check")]
         public async Task<IActionResult> ConfirmAndSubmit(CertificateCheckViewModel vm)
         {
-            if (vm.Status ==
-                CertificateStatus.Submitted ||
-                vm.Status == CertificateStatus.Printed ||
+            if (vm.Status == CertificateStatus.Printed ||
                 vm.Status == CertificateStatus.Reprint)
             {
                 return RedirectToAction("Index", "DuplicateRequest",
                     new
                     {
-                        certificateid = vm.Id, redirectToCheck = vm.RedirectToCheck,
+                        certificateId = vm.Id, redirectToCheck = vm.RedirectToCheck,
                         Uln = vm.Uln,
                         StdCode = vm.StandardCode,                     
                         Page = vm.Page,
@@ -63,7 +58,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 return RedirectToAction("Index", "Comment",
                     new
                     {
-                        certificateid = vm.Id, redirectToCheck = vm.RedirectToCheck,
+                        certificateId = vm.Id, redirectToCheck = vm.RedirectToCheck,
                         Uln = vm.Uln,
                         StdCode = vm.StandardCode,
                         Page = vm.Page,                       

@@ -18,9 +18,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         { }
 
         [HttpGet]
-        public async Task<IActionResult> Recipient(Guid certificateid)
+        public async Task<IActionResult> Recipient(Guid certificateId)
         {
-            return await LoadViewModel<CertificateRecipientViewModel>(certificateid, "~/Views/CertificateAmend/Recipient.cshtml");
+            return await LoadViewModel<CertificateRecipientViewModel>(certificateId, "~/Views/CertificateAmend/Recipient.cshtml");
         }
 
         [HttpPost(Name = "Recipient")]
@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         {
             return await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/CertificateAmend/Recipient.cshtml",
-                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateid = vm.Id }), action: CertificateActions.Recipient);
+                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateId = vm.Id }), action: CertificateActions.Recipient);
         }
     }
 }
