@@ -85,6 +85,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 AchievementDate = certificateData.AchievementDate, //?.UtcToTimeZoneTime(),
                 Option = certificateData.CourseOption,
                 OrganisationName = epao.EndPointAssessorName,
+                OrganisationId = epao.EndPointAssessorOrganisationId,
                 CertificateLogs = logs,
                 FundingModel = learner.FundingModel,
                 CertificateId = certificate?.Id,

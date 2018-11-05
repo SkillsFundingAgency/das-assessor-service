@@ -3,7 +3,7 @@
 <script>
   var selectOptionsArray = Array.from($('select#SelectedStandardCode')[0].options);
   var standardCodeArr = $.map(selectOptionsArray, function (code) {
-    return code.innerHTML
+    return code.innerHTML;
   });
   var epaoStandardCodesFormElement = $('.apprentice-standard-codes-form');
   var epaoStandardCodesValidationRulesObject = {
@@ -31,11 +31,11 @@
       autoselect: false,
       showAllValues: true
     })
-  })
+  });
 
   // Empty field on click when coming from check and amend page
   $(window).load(function () {
-    if (window.location.search.indexOf('redirecttocheck=true') === -1) return false
+      if (window.location.search.indexOf('redirecttocheck=true') === -1) return false;
 
     $('#SelectedStandardCode').click(function () {
       $(this).val('')

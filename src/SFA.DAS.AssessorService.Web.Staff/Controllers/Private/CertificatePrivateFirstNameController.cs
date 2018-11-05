@@ -17,8 +17,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
         public CertificatePrivateFirstNameController(ILogger<CertificateAmendController> logger,
             IHttpContextAccessor contextAccessor,
             ApiClient apiClient) : base(logger, contextAccessor, apiClient)
-        {
-        }
+        { }
 
         [HttpGet]
         public async Task<IActionResult> FirstName(Guid certificateid,

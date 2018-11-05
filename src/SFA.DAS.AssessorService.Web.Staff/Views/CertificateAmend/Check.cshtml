@@ -1,4 +1,5 @@
-﻿@model SFA.DAS.AssessorService.Web.Staff.ViewModels.CertificateCheckViewModel
+﻿@using SFA.DAS.AssessorService.Domain.Consts;
+@model SFA.DAS.AssessorService.Web.Staff.ViewModels.CertificateCheckViewModel
 @using SFA.DAS.AssessorService.Domain.Extensions
 @using SFA.DAS.AssessorService.Domain.Consts;
 
@@ -9,9 +10,6 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        @{
-            var fullName = @Model.GivenNames + " " + @Model.FamilyName;
-        }
 
         <a class="link-back" asp-controller="Search" asp-action="Select" asp-route-certificateReference=@Model.CertificateReference asp-route-stdcode=@Model.StandardCode
            asp-route-uln=@Model.Uln asp-route-searchstring=@Model.SearchString>Back</a>
@@ -81,13 +79,11 @@
             </div>
         </dl>
 
-
         <h2 class="heading-medium">
             Apprenticeship details
         </h2>
 
         <dl class="govuk-check-your-answers cya-questions-short">
-            
             <div>
                 <dt class="cya-question">
                     Standard
@@ -112,7 +108,6 @@
                     @Model.Level
                 </dd>
                 <dd class="cya-change">
-
                 </dd>
             </div>
             <div>
@@ -263,19 +258,24 @@
             </div>
         </dl>
 
-   
-        <form type="post" asp-controller="CertificateAmend" asp-action="ConfirmAndSubmit" asp-route-certificateId="@Model.Id" asp-route-redirectToCheck=true>
-            @Html.HiddenFor(c => c.Id)
-            @Html.HiddenFor(m => m.StandardCode)
-            @Html.HiddenFor(m => m.Uln)
-            @Html.HiddenFor(m => m.Page)
-            @Html.HiddenFor(m => m.SearchString)
-            @Html.HiddenFor(m => m.Status)
-            <button type="submit" class="button">Confirm and submit</button>
-        </form>
-
-        <div>
-            <a asp-action="Index" asp-controller="Search" class="link-back">Search Again</a>
-        </div>
+        @if (Model.Status == CertificateStatus.Printed || Model.Status == CertificateStatus.Reprint)
+        {
+            <form asp-action="Index" asp-controller="DuplicateRequest" method="post">
+                @Html.Hidden("certificateId", Model.Id, new { @id = "certificateId" })
+                <button class="button">Confirm reprint</button>
+            </form>
+        }
+        else
+        {
+            <form type="post" asp-controller="CertificateAmend" asp-action="ConfirmAndSubmit">
+                @Html.HiddenFor(c => c.Id)
+                @Html.HiddenFor(m => m.StandardCode)
+                @Html.HiddenFor(m => m.Uln)
+                @Html.HiddenFor(m => m.Page)
+                @Html.HiddenFor(m => m.SearchString)
+                @Html.HiddenFor(m => m.Status)
+                <button type="submit" class="button">Confirm and submit</button>
+            </form>
+        }
     </div>
 </div>
