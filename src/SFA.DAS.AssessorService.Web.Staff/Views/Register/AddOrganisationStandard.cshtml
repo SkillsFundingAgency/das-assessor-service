@@ -59,7 +59,7 @@
                 </tr>
                 <tr>
                     <td><span class="bold-small">Organisation status</span></td>
-                    <td>MFCMFC</td>
+                    <td>@Model.OrganisationStatus</td>
                 </tr>
                 <tr>
                     <td><span class="bold-small">Organisation ID</span></td>
@@ -84,11 +84,6 @@
                 <tr>
                     <td><span class="bold-small">Last date for new starts</span></td>
                     <td>@Model.StandardLastDateForNewStarts.ToSfaShortDateString()</td>
-                </tr>
-                <tr>
-                    <td><span class="bold-small">Standard status</span></td>
-                    @* <td>@Model.Status</td> *@
-                    <td>!!!! THIS IS MISSING !!!!</td>
                 </tr>
                 </tbody>
             </table>
