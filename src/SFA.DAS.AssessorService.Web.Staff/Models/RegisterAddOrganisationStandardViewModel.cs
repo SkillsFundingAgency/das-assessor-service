@@ -10,6 +10,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Models
         public string OrganisationId { get; set; }
         public string OrganisationName { get; set; }
         public long? Ukprn { get; set; }
+        public string OrganisationStatus { get; set; }
 
         public int StandardId { get; set; }
         public string StandardTitle { get; set; }

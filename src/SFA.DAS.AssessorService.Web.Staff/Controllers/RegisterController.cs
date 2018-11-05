@@ -376,6 +376,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             vm.StandardLastDateForNewStarts = standard.LastDateForNewStarts;
             vm.AvailableDeliveryAreas = availableDeliveryAreas;
             vm.DeliveryAreas = vm.DeliveryAreas ?? new List<int>();
+            vm.OrganisationStatus = organisation.Status;
             return vm;
         }
 
