@@ -1,4 +1,4 @@
-(function(global) {
+;(function(global) {
   "use strict";
 
   var $ = global.jQuery;
@@ -11,7 +11,7 @@
         var ariaControlId = "table-content-" + $(this).data("expand-id");
         var $expandable = $(this)
           .closest("tr")
-          .nextAll("tr.js-history-details-expandble");
+          .nextAll("tr.js-expandble-cell:first");
         var $arrow = $(this).find("i.arrow");
         $(this).attr({
           "aria-expanded": "false",

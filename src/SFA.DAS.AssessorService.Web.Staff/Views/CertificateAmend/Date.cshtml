@@ -7,10 +7,9 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateid=@Model.Id>Back</a>
+        <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateId=@Model.Id>Back</a>
 
-
-        <form class="apprentice-date-form js-disable-on-submit" method="post" asp-controller="CertificateDate">
+        <form class="apprentice-date-form" type="post" asp-controller="CertificateDate">
             <input type="hidden" name="fullDate" id="fullDate" class="date-input" />
             @Html.HiddenFor(c => c.Id)
             @Html.HiddenFor(m => m.StartDate)
@@ -26,30 +25,29 @@
 
             @if (!ViewData.ModelState.IsValid)
             {
-                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                        There's a problem
-                    </h2>
-                    <ul class="error-summary-list">
-                        <li><a sfa-validation-for="Date"></a></li>
-                        <li><a sfa-validation-for="Day"></a></li>
-                        <li><a sfa-validation-for="Month"></a></li>
-                        <li><a sfa-validation-for="Year"></a></li>
-                    </ul>
-                </div>
+            <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                    There's a problem
+                </h2>
+                <ul class="error-summary-list">
+                    <li><a sfa-validation-for="Date"></a></li>
+                    <li><a sfa-validation-for="Day"></a></li>
+                    <li><a sfa-validation-for="Month"></a></li>
+                    <li><a sfa-validation-for="Year"></a></li>
+                    <li><a sfa-validation-for="ReasonForChange"></a></li>
+                </ul>
+            </div>
             }
 
             <div sfa-anyvalidationerror-class="after-error-summary">
-                <h1 class="heading-large">
-                    What's the apprenticeship achievement date?
-                </h1>
+                <div id="Date">
+                    <h1 class="heading-medium">
+                        @*<span class="heading-secondary">@Model.GivenNames @Model.FamilyName</span>*@
+                        What's the apprenticeship achievement date?
+                    </h1>
+                </div>
 
                 <div class="form-group error-message-container" sfa-anyvalidationerror-class="form-group-error">
-                    <span class="error-message" asp-validation-for="Date"></span>
-                    <span class="error-message" asp-validation-for="Day"></span>
-                    <span class="error-message" asp-validation-for="Month"></span>
-                    <span class="error-message" asp-validation-for="Year"></span>
-
                     <span class="form-hint">
                         For example, 15 10 2017
                     </span>
@@ -62,7 +60,6 @@
                         <div class="form-group form-group-month">
                             <label for="Month">Month</label>
                             <input class="form-control date-input js-integers-only" sfa-validation-for="Month" sfa-validationerror-class="form-control-error" asp-for="Month" type="text" maxlength="2" />
-
                         </div>
 
                         <div class="form-group form-group-year">
@@ -70,6 +67,15 @@
                             <input class="form-control date-input js-integers-only" sfa-validation-for="Year" sfa-validationerror-class="form-control-error" asp-for="Year" type="text" maxlength="4" />
                         </div>
                     </div>
+                </div>
+
+                <div class="form-group" sfa-validation-for="ReasonForChange" sfa-validationerror-class="form-group-error">
+                    <label for="ReasonForChange">
+                        <span class="form-label-bold">Reason for change</span>
+                        <span class="form-hint">Please could you provide more detail as to why this change is required.</span>
+                        <span class="error-message" asp-validation-for="ReasonForChange"></span>
+                    </label>
+                    <textarea class="form-control form-control-3-4" rows="5" name="ReasonForChange" sfa-validation-for="ReasonForChange" sfa-validationerror-class="form-control-error" asp-for="ReasonForChange"></textarea>
                 </div>
             </div>
 

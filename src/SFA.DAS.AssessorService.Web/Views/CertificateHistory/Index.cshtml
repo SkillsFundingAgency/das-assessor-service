@@ -51,7 +51,7 @@
                     {
                         <tr>
                             <td data-label="@Localizer["Apprentice"]" class="nowrap">
-                                <div role="button" tabindex="0" class="js-expand-table-row expand-table-row" data-uln="@Html.DisplayFor(modelItem => item.Uln)"><i class="arrow arrow-closed">►</i> <span>@Html.DisplayFor(modelItem => item.FullName)</span></div>
+                                <div role="button" tabindex="0" class="js-expand-table-row expand-table-row" data-expand-id="@Html.DisplayFor(modelItem => item.Uln)"><i class="arrow arrow-closed">►</i> <span>@Html.DisplayFor(modelItem => item.FullName)</span></div>
                             </td>
                             <td data-label="@Localizer["ULN"]">
                                 @Html.DisplayFor(modelItem => item.Uln)
