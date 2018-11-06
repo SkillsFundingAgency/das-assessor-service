@@ -536,7 +536,23 @@
                     "functionAppAppSettings": {
                         "value": [
                             {
-                                "name": "ApplicationInsights:InstrumentationKey",
+                                "name": "AzureWebJobsStorage",
+                                "value": "[reference('StorageAccount').outputs.StorageConnectionString.value]"
+                            },
+                            {
+                                "name": "AzureWebJobsDashboard",
+                                "value": "[reference('StorageAccount').outputs.StorageConnectionString.value]"
+                            },
+                            {
+                                "name": "FUNCTIONS_EXTENSION_VERSION",
+                                "value": "~1"
+                            },
+                            {
+                                "name": "MSDEPLOY_RENAME_LOCKED_FILES",
+                                "value": "1"
+                            }
+                            {
+                                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
                                 "value": "[reference(concat(parameters('functionAppNames')[copyIndex()],'-ai')).outputs.InstrumentationKey.value]"
                             },
                             {
@@ -546,10 +562,6 @@
                             {
                                 "name": "EnvironmentName",
                                 "value": "[toUpper(parameters('environmentName'))]"
-                            },
-                            {
-                                "name": "InstanceName",
-                                "value": "[toUpper(variables('InstanceName'))]"
                             }
                         ]
                     },
