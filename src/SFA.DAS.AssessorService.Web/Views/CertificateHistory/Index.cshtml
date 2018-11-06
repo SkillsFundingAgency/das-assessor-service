@@ -15,7 +15,7 @@
     <div class="column-full">
         <h1 class="heading-large">Previous assessments</h1>
 
-        <table class="table responsive">
+        <table class="table responsive table-font-xsmall">
             <thead>
             <tr>
                 <th>
@@ -33,9 +33,6 @@
                 <th>
                     @Localizer["DateRequested"]
                 </th>
-                @* <th> *@
-                @*     @Localizer["CertificateType"] *@
-                @* </th> *@
             </tr>
             </thead>
             <tbody>
@@ -59,17 +56,11 @@
                     <td data-label="@Localizer["DateRequested"]">
                         @item.CreatedAt.ToString("dd/MM/yyyy")
                     </td>
-@*                     <td data-label="@Localizer["CertificateType"]"> *@
-@*                         @{ *@
-@*                             var certificateType = @item.IsPrivatelyFunded ? @Localizer["PrivatelyFundedCertificate"] : @Localizer["StandardCertificate"]; *@
-@*                         } *@
-@*                         <span class="badge badge-primary">@certificateType</span> *@
-@*                     </td> *@
                 </tr>
-                <tr class="js-history-details-expandble js-hidden history-details-expandble" aria-hidden="true">
+                <tr class="js-expandble-cell js-hidden expandble-cell" aria-hidden="true">
                     <td colspan="5">
-                        <div class="history-details-content">
-                            <h2 class="heading-medium history-details-content--first-heading">@Localizer["AssessmentDetails"]</h2>
+                        <div class="expandble-cell-content">
+                            <h2 class="heading-medium expandble-cell-content--first-heading">@Localizer["AssessmentDetails"]</h2>
                             <ul>
                                 <li>
                                     <p>

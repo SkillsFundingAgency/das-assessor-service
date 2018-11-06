@@ -7,7 +7,8 @@
             <th>ULN</th>
             <th>Employer</th>
             <th>Training provider</th>
-            <th>Date requested</th>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+            <th>Date requested</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -21,18 +22,20 @@
 
             <tr>
                 <td data-label="Apprentice">
-                     <div role="button" tabindex="0"  data-uln="@results[i].Uln"> 
-                         <i class="arrow arrow-closed">►</i> 
-                        
-                        <a asp-controller="CertificateCheck" asp-action="CheckForRejectedApprovals" asp-route-certificateId=@results[i].Id asp-route-redirecttosearch="true">
-                            <span>@results[i].FullName</span>
-                        </a>                       
+                     <div role="button" tabindex="0" class="js-expand-table-row expand-table-row" data-expand-id="@results[i].Uln"> 
+                        <i class="arrow arrow-closed">►</i> 
+                        <span>@results[i].FullName</span>
                      </div> 
                 </td>
                 <td data-label="ULN">@results[i].Uln</td>
                 <td data-label="Employer">@results[i].ContactOrganisation</td>
                 <td data-label="Training provider">@results[i].TrainingProvider</td>
-                <td data-label="Date requested">@results[i].CreatedAt.ToString("dd/MM/yyyy")</td>              
+                <td data-label="Date requested">@results[i].CreatedAt.ToString("dd/MM/yyyy")</td>
+                <td>
+                    <a asp-controller="CertificateCheck" asp-action="CheckForRejectedApprovals" asp-route-certificateId=@results[i].Id asp-route-redirecttosearch="true">
+                        Edit
+                    </a>
+                </td>
             </tr>
 
             if (results[i].Status == "Rejected")
