@@ -38,14 +38,14 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
         }
 
         [HttpGet]
-        public async Task<IActionResult> StandardCode(Guid certificateid)
+        public async Task<IActionResult> StandardCode(Guid certificateId)
         {
-            var filteredStandardCodes = await GetFilteredStatusCodes(certificateid);
+            var filteredStandardCodes = await GetFilteredStatusCodes(certificateId);
             var standards = (await GetAllStandards()).ToList();
 
             var results = GetSelectListItems(standards, filteredStandardCodes);
 
-            var viewResult = await LoadViewModel<CertificateStandardCodeListViewModel>(certificateid, "~/Views/CertificateAmend/StandardCode.cshtml");
+            var viewResult = await LoadViewModel<CertificateStandardCodeListViewModel>(certificateId, "~/Views/CertificateAmend/StandardCode.cshtml");
             if (viewResult is ViewResult)
             {
                 var vm = ((viewResult as ViewResult).Model) as CertificateStandardCodeListViewModel;
@@ -74,7 +74,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
 
             var actionResult = await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/CertificateAmend/StandardCode.cshtml",
-                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateid = vm.Id }), action: CertificateActions.StandardCode);
+                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateId = vm.Id }), action: CertificateActions.StandardCode);
 
             return actionResult;
         }
@@ -89,9 +89,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
                 .OrderBy(q => q.Text);
         }
 
-        private async Task<List<string>> GetFilteredStatusCodes(Guid certificateid)
+        private async Task<List<string>> GetFilteredStatusCodes(Guid certificateId)
         {
-            var certificate = await ApiClient.GetCertificate(certificateid);
+            var certificate = await ApiClient.GetCertificate(certificateId);
             var organisation = await ApiClient.GetOrganisation(certificate.OrganisationId);         
 
             var filteredStandardCodes =

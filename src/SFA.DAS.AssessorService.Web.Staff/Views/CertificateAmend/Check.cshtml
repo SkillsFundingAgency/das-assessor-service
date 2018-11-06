@@ -1,4 +1,5 @@
-﻿@model SFA.DAS.AssessorService.Web.Staff.ViewModels.CertificateCheckViewModel
+﻿@using SFA.DAS.AssessorService.Domain.Consts;
+@model SFA.DAS.AssessorService.Web.Staff.ViewModels.CertificateCheckViewModel
 @using SFA.DAS.AssessorService.Domain.Extensions
 @using SFA.DAS.AssessorService.Domain.Consts;
 
@@ -9,12 +10,9 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        @{
-            var fullName = @Model.GivenNames + " " + @Model.FamilyName;
-        }
 
         <a class="link-back" asp-controller="Search" asp-action="Select" asp-route-stdcode=@Model.StandardCode
-           asp-route-uln=@Model.Uln asp-route-searchstring=@Model.SearchString>Back</a>
+           asp-route-uln=@Model.Uln asp-route-searchstring=@Model.SearchString>Back to details</a>
 
         <h1 class="heading-large">Check and submit the assessment details</h1>
 
@@ -39,7 +37,7 @@
                 <dd class="cya-change">
                     @if (Model.IsPrivatelyFunded)
                     {
-                    <a asp-controller="CertificatePrivateFirstName" asp-action="FirstName" asp-route-certificateid=@Model.Id>
+                    <a asp-controller="CertificatePrivateFirstName" asp-action="FirstName" asp-route-certificateId=@Model.Id asp-route-stdcode=@Model.StandardCode asp-route-uln=@Model.Uln asp-route-searchstring=@Model.SearchString>
                         Change<span class="visually-hidden"> first name</span>
                     </a>
                     }
@@ -56,7 +54,7 @@
                 <dd class="cya-change">
                     @if (Model.IsPrivatelyFunded)
                     {
-                    <a asp-controller="CertificatePrivateLastName" asp-action="LastName" asp-route-certificateid=@Model.Id>
+                    <a asp-controller="CertificatePrivateLastName" asp-action="LastName" asp-route-certificateId=@Model.Id asp-route-stdcode=@Model.StandardCode asp-route-uln=@Model.Uln asp-route-searchstring=@Model.SearchString>
                         Change<span class="visually-hidden"> last name</span>
                     </a>
                     }
@@ -73,7 +71,7 @@
                 <dd class="cya-change">
                     @if (Model.IsPrivatelyFunded)
                     {
-                    <a asp-controller="CertificatePrivateUln" asp-action="Uln" asp-route-certificateid=@Model.Id>
+                    <a asp-controller="CertificatePrivateUln" asp-action="Uln" asp-route-certificateId=@Model.Id  asp-route-stdcode=@Model.StandardCode asp-route-uln=@Model.Uln asp-route-searchstring=@Model.SearchString>
                         Change<span class="visually-hidden"> ULN</span>
                     </a>
                     }
@@ -81,13 +79,11 @@
             </div>
         </dl>
 
-
         <h2 class="heading-medium">
             Apprenticeship details
         </h2>
 
         <dl class="govuk-check-your-answers cya-questions-short">
-            
             <div>
                 <dt class="cya-question">
                     Standard
@@ -98,7 +94,7 @@
                 <dd class="cya-change">
                     @if (Model.IsPrivatelyFunded)
                     {
-                    <a asp-controller="CertificatePrivateStandardCode" asp-action="StandardCode" asp-route-certificateid=@Model.Id>
+                    <a asp-controller="CertificatePrivateStandardCode" asp-action="StandardCode" asp-route-certificateId=@Model.Id  asp-route-stdcode=@Model.StandardCode asp-route-uln=@Model.Uln asp-route-searchstring=@Model.SearchString>
                         Change<span class="visually-hidden"> standard</span>
                     </a>
                     }
@@ -112,7 +108,6 @@
                     @Model.Level
                 </dd>
                 <dd class="cya-change">
-
                 </dd>
             </div>
             <div>
@@ -123,7 +118,7 @@
                     @Model.SelectedGrade
                 </dd>  
                 <dd class="cya-change">
-                    <a asp-controller="CertificateGrade" asp-action="Grade" asp-route-certificateid=@Model.Id>
+                    <a asp-controller="CertificateGrade" asp-action="Grade" asp-route-certificateId=@Model.Id  asp-route-stdcode=@Model.StandardCode asp-route-uln=@Model.Uln asp-route-searchstring=@Model.SearchString>
                         Change<span class="visually-hidden"> grade</span>
                     </a>
                 </dd>
@@ -138,7 +133,7 @@
                         @Model.Option
                     </dd>
                     <dd class="cya-change">
-                        <a asp-controller="CertificateOption" asp-action="Option" asp-route-certificateid=@Model.Id>
+                        <a asp-controller="CertificateOption" asp-action="Option" asp-route-certificateId=@Model.Id  asp-route-stdcode=@Model.StandardCode asp-route-uln=@Model.Uln asp-route-searchstring=@Model.SearchString>
                             Change<span class="visually-hidden"> option</span>
                         </a>
                     </dd>
@@ -155,7 +150,7 @@
                     @Model.LearnerStartDate?.ToSfaShortDateString()
                 </dd>
                 <dd class="cya-change">
-                    <a asp-controller="CertificatePrivateLearnerStartDate" asp-action="LearnerStartDate" asp-route-certificateid=@Model.Id>
+                    <a asp-controller="CertificatePrivateLearnerStartDate" asp-action="LearnerStartDate" asp-route-certificateId=@Model.Id  asp-route-stdcode=@Model.StandardCode asp-route-uln=@Model.Uln asp-route-searchstring=@Model.SearchString>
                         Change<span class="visually-hidden"> apprenticeship start date</span>
                     </a>
                 </dd>
@@ -170,7 +165,7 @@
                     @Model.AchievementDate?.ToSfaShortDateString()
                 </dd>
                 <dd class="cya-change">
-                    <a asp-controller="CertificateDate" asp-action="Date" asp-route-redirecttocheck="true" asp-route-certificateid=@Model.Id>
+                    <a asp-controller="CertificateDate" asp-action="Date" asp-route-redirecttocheck="true" asp-route-certificateId=@Model.Id  asp-route-stdcode=@Model.StandardCode asp-route-uln=@Model.Uln asp-route-searchstring=@Model.SearchString>
                         Change<span class="visually-hidden"> achievement date</span>
                     </a>
                 </dd>
@@ -186,7 +181,7 @@
                     @Model.Ukprn
                 </dd>
                 <dd class="cya-change">
-                    <a asp-controller="CertificatePrivateProviderUkprn" asp-action="Ukprn" asp-route-certificateid=@Model.Id>
+                    <a asp-controller="CertificatePrivateProviderUkprn" asp-action="Ukprn" asp-route-certificateId=@Model.Id  asp-route-stdcode=@Model.StandardCode asp-route-uln=@Model.Uln asp-route-searchstring=@Model.SearchString>
                         Change<span class="visually-hidden"> UKPRN</span>
                     </a>
                 </dd>
@@ -207,7 +202,7 @@
                     @Model.Name
                 </dd>
                 <dd class="cya-change">
-                    <a asp-controller="CertificateRecipient" asp-action="Recipient" asp-route-certificateid=@Model.Id>
+                    <a asp-controller="CertificateRecipient" asp-action="Recipient" asp-route-certificateId=@Model.Id  asp-route-stdcode=@Model.StandardCode asp-route-uln=@Model.Uln asp-route-searchstring=@Model.SearchString>
                         Change<span class="visually-hidden"> recipient name</span>
                     </a>
                 </dd>
@@ -220,7 +215,7 @@
                     @Model.Dept
                 </dd>
                 <dd class="cya-change">
-                    <a asp-controller="CertificateRecipient" asp-action="Recipient" asp-route-certificateid=@Model.Id>
+                    <a asp-controller="CertificateRecipient" asp-action="Recipient" asp-route-certificateId=@Model.Id  asp-route-stdcode=@Model.StandardCode asp-route-uln=@Model.Uln asp-route-searchstring=@Model.SearchString>
                         Change<span class="visually-hidden"> department</span>
                     </a>
                 </dd>
@@ -233,7 +228,7 @@
                     @Model.Employer
                 </dd>
                 <dd class="cya-change">
-                    <a asp-controller="CertificateAddress" asp-action="Address" asp-route-certificateid=@Model.Id>
+                    <a asp-controller="CertificateAddress" asp-action="Address" asp-route-certificateId=@Model.Id  asp-route-stdcode=@Model.StandardCode asp-route-uln=@Model.Uln asp-route-searchstring=@Model.SearchString>
                         Change<span class="visually-hidden"> organisation</span>
                     </a>
                 </dd>
@@ -256,26 +251,31 @@
                     @Model.Postcode
                 </dd>
                 <dd class="cya-change">
-                    <a asp-controller="CertificateAddress" asp-action="Address" asp-route-certificateid=@Model.Id>
+                    <a asp-controller="CertificateAddress" asp-action="Address" asp-route-certificateId=@Model.Id  asp-route-stdcode=@Model.StandardCode asp-route-uln=@Model.Uln asp-route-searchstring=@Model.SearchString>
                         Change<span class="visually-hidden"> address</span>
                     </a>
                 </dd>
             </div>
         </dl>
 
-   
-        <form type="post" asp-controller="CertificateAmend" asp-action="ConfirmAndSubmit" asp-route-certificateId="@Model.Id" asp-route-redirectToCheck=true>
-            @Html.HiddenFor(c => c.Id)
-            @Html.HiddenFor(m => m.StandardCode)
-            @Html.HiddenFor(m => m.Uln)
-            @Html.HiddenFor(m => m.Page)
-            @Html.HiddenFor(m => m.SearchString)
-            @Html.HiddenFor(m => m.Status)
-            <button type="submit" class="button">Confirm and submit</button>
-        </form>
-
-        <div>
-            <a asp-action="Index" asp-controller="Search" class="link-back">Search Again</a>
-        </div>
+        @if (Model.Status == CertificateStatus.Printed || Model.Status == CertificateStatus.Reprint)
+        {
+            <form asp-action="Index" asp-controller="DuplicateRequest" method="post">
+                @Html.Hidden("certificateId", Model.Id, new { @id = "certificateId" })
+                <button class="button">Confirm reprint</button>
+            </form>
+        }
+        else
+        {
+            <form type="post" asp-controller="CertificateAmend" asp-action="ConfirmAndSubmit">
+                @Html.HiddenFor(c => c.Id)
+                @Html.HiddenFor(m => m.StandardCode)
+                @Html.HiddenFor(m => m.Uln)
+                @Html.HiddenFor(m => m.Page)
+                @Html.HiddenFor(m => m.SearchString)
+                @Html.HiddenFor(m => m.Status)
+                <button type="submit" class="button">Confirm and submit</button>
+            </form>
+        }
     </div>
 </div>

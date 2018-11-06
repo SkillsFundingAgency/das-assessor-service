@@ -7,7 +7,7 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateid=@Model.Id>Back</a>
+        <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateId=@Model.Id>Back</a>
 
         <form class="apprentice-firstname-form js-disable-on-submit" method="post" asp-action="FirstName" asp-controller="CertificatePrivateFirstName">
             @Html.HiddenFor(c => c.Id)
@@ -28,28 +28,36 @@
                     </h2>
                     <ul class="error-summary-list">
                         <li><a sfa-validation-for="FirstName"></a></li>
+                        <li><a sfa-validation-for="ReasonForChange"></a></li>
                     </ul>
                 </div>
             }
 
-            <div sfa-anyvalidationerror-class="after-error-summary">
-                <h1 class="heading-large">
-                    What's the apprentice's first name?
-                </h1>
+                <div sfa-anyvalidationerror-class="after-error-summary">
+                    <h1 class="heading-large">
+                        What's the apprentice's first name?
+                    </h1>
 
-                <div class="form-group" sfa-validation-for="FirstName" sfa-validationerror-class="form-group-error">
-                    <label for="FirstName">
-                        <span class="form-label-bold visually-hidden">First name</span>
-                        <span class="form-hint">
-                            For example, Karla
-                        </span>
-                        <span class="error-message" asp-validation-for="FirstName"></span>
-                    </label>
-                    <input class="form-control" name="FirstName" sfa-validation-for="FirstName" sfa-validationerror-class="form-control-error" asp-for="FirstName" type="text" maxlength="100" />
+                    <div class="form-group" sfa-validation-for="FirstName" sfa-validationerror-class="form-group-error">
+                        <label for="FirstName">
+                            <span class="form-label-bold visually-hidden">First name</span>
+                            <span class="form-hint">
+                                For example, Karla
+                            </span>
+                            <span class="error-message" asp-validation-for="FirstName"></span>
+                        </label>
+                        <input class="form-control" name="FirstName" sfa-validation-for="FirstName" sfa-validationerror-class="form-control-error" asp-for="FirstName" type="text" maxlength="100" />
+                    </div>
+
+                    <div class="form-group" sfa-validation-for="ReasonForChange" sfa-validationerror-class="form-group-error">
+                        <label for="ReasonForChange">
+                            <span class="form-label-bold">Reason for change</span>
+                            <span class="form-hint">Please could you provide more detail as to why this change is required.</span>
+                            <span class="error-message" asp-validation-for="ReasonForChange"></span>
+                        </label>
+                        <textarea class="form-control form-control-3-4" rows="5" name="ReasonForChange" sfa-validation-for="ReasonForChange" sfa-validationerror-class="form-control-error" asp-for="ReasonForChange"></textarea>
+                    </div>
                 </div>
-
-
-            </div>
 
             <button type="submit" class="button">Continue</button>
         </form>
