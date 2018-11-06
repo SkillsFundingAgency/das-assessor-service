@@ -13,6 +13,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Models
         public int? OrganisationTypeId { get; set; }
         public string LegalName { get; set; }
         public string WebsiteLink { get; set; }
+        public string Address { get; set; }
         public string Address1 { get; set; }
         public string Address2 { get; set; }
         public string Address3 { get; set; }
@@ -23,7 +24,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Models
         public string PrimaryContactName { get; set; }
         public string Status { get; set; }
         public List<ContactResponse> Contacts { get; set; }
-
+        public string ContactsCount { get; set; }
+        public string StandardsCount { get; set; }
         public List<OrganisationStandardSummary> OrganisationStandards { get; set; }
         public List<OrganisationType> OrganisationTypes { get; set; }
 
