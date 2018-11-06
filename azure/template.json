@@ -550,7 +550,7 @@
                             {
                                 "name": "MSDEPLOY_RENAME_LOCKED_FILES",
                                 "value": "1"
-                            }
+                            },
                             {
                                 "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
                                 "value": "[reference(concat(parameters('functionAppNames')[copyIndex()],'-ai')).outputs.InstrumentationKey.value]"
