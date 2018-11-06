@@ -59,6 +59,10 @@
                 "no"
             ],
             "defaultValue": "yes"
+        },
+        "SubscriptionApprovalRequired": {
+            "type": "bool",
+            "defaultValue": true
         }
     },
     "variables": {
@@ -136,7 +140,7 @@
                         "description": "Use this product to: \n<ul class=\"list list-bullet\">\n<li>retrieve learner details</li>\n<li>create and submit certificates</li>\n</ul>",
                         "terms": "",
                         "subscriptionRequired": true,
-                        "approvalRequired": true,
+                        "approvalRequired": "[parameters('SubscriptionApprovalRequired')]",
                         "subscriptionsLimit": 1,
                         "state": "published",
                         "displayName": "[parameters('ProductDisplayName')]"
