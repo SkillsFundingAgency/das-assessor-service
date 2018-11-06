@@ -127,7 +127,7 @@
         <div class="column-full">
             <h2 class="heading-large">History</h2>
             <div class="form-group">
-                <table class="table table-font-xsmall js-history-table responsive">
+                <table class="table responsive table-font-xsmall">
                     <thead>
                         <tr>
                             <th>Date and time</th>
@@ -136,7 +136,6 @@
                             <th>Status</th>
                             <th>Batch</th>
                             <th>@if (Model.Learner.CertificateLogs.Count() > 1) { @Html.Raw("Change"); }</th>
-                            <!-- <th class="force-wide-column">Reason for change</th> -->
                         </tr>
                     </thead>
                     <tbody>
