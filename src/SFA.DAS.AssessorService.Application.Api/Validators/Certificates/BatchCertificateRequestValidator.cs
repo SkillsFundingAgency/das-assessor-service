@@ -37,7 +37,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                         {
                             context.AddFailure(new ValidationFailure("OverallGrade", "Select the grade the apprentice achieved"));
                         }
-                        else if (!grades.Any(g => g == overallGrade))
+                        else if (!grades.Any(g => g.Equals(overallGrade, StringComparison.InvariantCultureIgnoreCase)))
                         {
                             string gradesString = string.Join(", ", grades);
                             context.AddFailure(new ValidationFailure("OverallGrade", $"Invalid grade. Must be one of the following: {gradesString}"));
@@ -70,7 +70,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
 
                     if (requestedIlr == null || !string.Equals(requestedIlr.FamilyName, m.FamilyName))
                     {
-                        context.AddFailure(new ValidationFailure("Uln", "Cannot find entry for specified Uln, FamilyName & StandardCode"));
+                        context.AddFailure(new ValidationFailure("Uln", "Cannot find apprentice with the specified Uln, FamilyName & StandardCode"));
                     }
                     else if (sumbittingEpao == null)
                     {

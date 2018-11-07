@@ -47,7 +47,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
 
                     if (requestedIlr == null || !string.Equals(requestedIlr.FamilyName, m.FamilyName))
                     {
-                        context.AddFailure(new ValidationFailure("Uln", "Cannot find entry for specified Uln, FamilyName & StandardCode"));
+                        context.AddFailure(new ValidationFailure("Uln", "Cannot find apprentice with the specified Uln, FamilyName & StandardCode"));
                     }
                     else if (searchingEpao == null)
                     {
