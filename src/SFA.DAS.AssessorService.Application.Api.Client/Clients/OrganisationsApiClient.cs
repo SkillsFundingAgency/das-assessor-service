@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -107,6 +108,23 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task<ValidationResponse> ValidateCreateOrganisationStandard(string organisationId, int standardId, DateTime? effectiveFrom,
+            DateTime? effectiveTo, Guid? contactId, List<int> deliveryAreas)
+        {
+
+            var deliveryAreasString = deliveryAreas.Aggregate(string.Empty, (current, deliveryArea) => current + $"&DeliveryAreas={deliveryArea}");
+            var contactIdString = contactId == null ? string.Empty : $"&contactId={contactId.Value}";
+
+            var queryString =
+                $"/api/ao/assessment-organisations/standards/validate-new?OrganisationId={organisationId}&StandardCode={standardId}&EffectiveFrom={effectiveFrom?.ToString("yyyy-MM-dd")}" +
+                $"&EffectiveTo={effectiveTo?.ToString("yyyy-MM-dd")}{contactIdString}{deliveryAreasString}";
+            using (var request = new HttpRequestMessage(HttpMethod.Get, queryString))
+            {
+                return await RequestAndDeserialiseAsync<ValidationResponse>(request,
+                    $"Could not check the validation for adding organisation standard using [xxx]");
+            }
+        }
+
         public async Task Update(UpdateOrganisationRequest organisationUpdateViewModel)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/organisations/"))
@@ -163,5 +181,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<ValidationResponse> ValidateCreateContact(string name, string organisationId, string email, string phone);
 
         Task<ValidationResponse> ValidateSearchStandards(string searchstring);
+
+        Task<ValidationResponse> ValidateCreateOrganisationStandard(string organisationId, int standardId, DateTime? effectiveFrom, DateTime? effectiveTo, Guid? contactId, List<int> deliveryAreas);
     }
 }

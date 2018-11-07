@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
@@ -15,7 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         string CheckOrganisationTypeIsNullOrExists(int? organisationTypeId);
         string CheckIfOrganisationNotFound(string organisationId);
         string CheckUkprnIsValid(long? ukprn);
-        string CheckIfStandardNotFound(int standardCode);
+        Standard GetStandard(int standardCode);
         string CheckIfOrganisationStandardAlreadyExists(string organisationId, int standardCode);
         string CheckOrganisationNameNotUsed(string name);
         string CheckOrganisationNameNotUsedForOtherOrganisations(string name, string organisationIdToIgnore);
@@ -29,6 +31,15 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         string CheckIfEmailAlreadyPresentInAnotherOrganisation(string email, string organisationId);
         string CheckIfEmailAlreadyPresentInOrganisationNotAssociatedWithContact(string email, string contactId);
         string CheckIfDeliveryAreasAreValid(List<int> DeliveryAreas);
+
+
+
+        string CheckOrganisationStandardFromDateIsWithinStandardDateRanges(DateTime? effectiveFrom,
+            DateTime? standardEffectiveFrom, DateTime? standardEffectiveTo, DateTime? lastDateForNewStarts);
+
+        string CheckEffectiveFromIsOnOrBeforeEffectiveTo(DateTime? effectiveFrom, DateTime? effectiveTo);
+        string CheckOrganisationStandardToDateIsWithinStandardDateRanges(DateTime? effectiveTo,
+            DateTime? standardEffectiveFrom, DateTime? standardEffectiveTo);
 
         ValidationResponse ValidatorCreateEpaOrganisationRequest(CreateEpaOrganisationRequest request);
         ValidationResponse ValidatorCreateEpaOrganisationContactRequest(CreateEpaOrganisationContactRequest request);
