@@ -11,7 +11,8 @@
     <div class="column-two-thirds">
         <a href="/register/search-standards/@Model.OrganisationId" class="link-back">Return to standards search</a>
         <h1 class="heading-xlarge">
-            Standard search results for @Model.OrganisationName (@Model.OrganisationId)
+            <span class="heading-secondary">@Model.OrganisationId</span>
+            Standard search results for @Model.OrganisationName
             <span class="heading-secondary">Number of results: @Model.Results.Count</span>
         </h1>
     </div>
@@ -28,9 +29,9 @@
                         <tr>
                             <th>Name</th>
                             <th>Standard ID</th>
-                            <th>Effective From</th>
-                            <th>Effective To</th>
-                            <th>Last Date For New Starts</th>
+                            <th>Effective from</th>
+                            <th>Effective to</th>
+                            <th>Last date for new starts</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -40,10 +41,10 @@
                             <tr>
                                 <td data-label="Name">@result.Title</td>
                                 <td data-label="ID">@result.Id</td>
-                                <td data-label="EffectiveFrom">@result.EffectiveFrom.ToSfaShortestDateString()</td>
-                                <td data-label="EffectiveTo">@result.EffectiveTo.ToSfaShortestDateString()</td>
-                                <td data-label="LastDateForNewStarts">@result.LastDateForNewStarts.ToSfaShortestDateString()</td>
-                                <td><a href="">Add To Organisation</a></td>
+                                <td data-label="Effective from">@result.EffectiveFrom.ToSfaShortestDateString()</td>
+                                <td data-label="Effective to">@result.EffectiveTo.ToSfaShortestDateString()</td>
+                                <td data-label="Last date for new starts">@result.LastDateForNewStarts.ToSfaShortestDateString()</td>
+                                <td class="numeric"><a href="/register/add-standard/organisation/@Model.OrganisationId/standard/@result.Id">Add to organisation</a></td>
                             </tr>
                         }
                     </tbody>

@@ -1,0 +1,34 @@
+﻿@using SFA.DAS.AssessorService.Web.Staff.Controllers
+@model RegisterViewAndEditOrganisationStandardViewModel
+@{
+    ViewBag.Title = "View Organisation Standard";
+    Layout = "_Layout";
+}
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <a class="link-back">Return to organisation</a>
+
+        <h1>
+            <label class="form-label" for="">
+                <span class="heading-xlarge">View Organisation Standard HOLDING PAGE</span>
+            </label>
+        </h1>
+
+        <div id="organisationWrapper">
+            <div class="form-group">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td><span class="bold-small">Organisation Standard</span></td>
+                            <td> @Model.OrganisationStandardId</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="form-group">
+                <a class="button">Edit</a>
+            </div>
+        </div>
+    </div>
+</div>

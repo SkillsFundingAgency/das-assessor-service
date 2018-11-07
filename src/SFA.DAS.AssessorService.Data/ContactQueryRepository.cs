@@ -28,6 +28,16 @@ namespace SFA.DAS.AssessorService.Data
             return contacts;
         }
 
+        public async Task<IEnumerable<Contact>> GetAllContacts(string endPointAssessorOrganisationId)
+        {
+            var contacts = await _assessorDbContext.Organisations
+                .Include(organisation => organisation.Contacts)
+                .Where(organisation => organisation.EndPointAssessorOrganisationId == endPointAssessorOrganisationId)
+                .SelectMany(q => q.Contacts).ToListAsync();
+
+            return contacts;
+        }
+
         public async Task<Contact> GetContact(string userName)
         {
             var contact = await _assessorDbContext.Organisations
