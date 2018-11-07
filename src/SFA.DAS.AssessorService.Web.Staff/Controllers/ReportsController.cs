@@ -9,10 +9,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Web.Staff.Domain;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {
-    [Authorize(Roles = Domain.Roles.OperationsTeam + "," + Domain.Roles.CertificationTeam)]
+    [Authorize(Roles = Domain.Roles.OperationsTeam + "," + Domain.Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
     public class ReportsController : Controller
     {
         private readonly ILogger<ReportsController> _logger;
