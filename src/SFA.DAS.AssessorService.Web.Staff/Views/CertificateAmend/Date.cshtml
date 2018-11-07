@@ -25,17 +25,18 @@
 
             @if (!ViewData.ModelState.IsValid)
             {
-                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                        There is a problem
-                    </h2>
-                    <ul class="error-summary-list">
-                        <li><a sfa-validation-for="Date"></a></li>
-                        <li><a sfa-validation-for="Day"></a></li>
-                        <li><a sfa-validation-for="Month"></a></li>
-                        <li><a sfa-validation-for="Year"></a></li>
-                    </ul>
-                </div>
+            <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                    There is a problem
+                </h2>
+                <ul class="error-summary-list">
+                    <li><a sfa-validation-for="Date"></a></li>
+                    <li><a sfa-validation-for="Day"></a></li>
+                    <li><a sfa-validation-for="Month"></a></li>
+                    <li><a sfa-validation-for="Year"></a></li>
+                    <li><a sfa-validation-for="ReasonForChange"></a></li>
+                </ul>
+            </div>
             }
 
             <div sfa-anyvalidationerror-class="after-error-summary">
