@@ -8,6 +8,9 @@ var epaoUkprnValidationRulesObject = {
             number: true,
             minlength: 8,
             maxlength: 8
+        },
+        ReasonForChange: {
+            required: true
         }
     },
     messages: {
@@ -16,6 +19,9 @@ var epaoUkprnValidationRulesObject = {
             number: 'The UKPRN should contain 8 numbers',
             minlength: 'The UKPRN should contain 8 numbers',
             maxlength: 'The UKPRN should contain 8 numbers'
+        },
+        ReasonForChange: {
+            required: 'Enter a reason'
         }
     }
 };

@@ -4,10 +4,10 @@
 	[CertificateId] [uniqueidentifier] NOT NULL,
 	[EventTime] [datetime2](7) NOT NULL,
 	[Status] [nvarchar](20) NOT NULL,
-	  [ReasonForChange] [nvarchar](max) NULL,
  [CertificateData] NVARCHAR(MAX) NOT NULL, 
     [Username] NVARCHAR(50) NOT NULL,
 	[BatchNumber] [int] NULL,
+    [ReasonForChange] NVARCHAR(MAX) NULL, 
     CONSTRAINT [PK_CertificateLogs] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
