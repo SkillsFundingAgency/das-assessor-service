@@ -129,7 +129,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             using (var request = new HttpRequestMessage(HttpMethod.Get, queryString))
             {
                 return await RequestAndDeserialiseAsync<ValidationResponse>(request,
-                    $"Could not check the validation for adding organisation standard using given details");
+                    "Could not check the validation for adding organisation standard using given details");
             }
         }
 
@@ -145,7 +145,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             using (var request = new HttpRequestMessage(HttpMethod.Get, queryString))
             {
                 return await RequestAndDeserialiseAsync<ValidationResponse>(request,
-                    $"Could not check the validation for adding organisation standard using given details");
+                    "Could not check the validation for adding organisation standard using given details");
             }
         }
 
