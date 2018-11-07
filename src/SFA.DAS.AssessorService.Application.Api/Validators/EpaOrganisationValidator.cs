@@ -198,6 +198,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         }
 
 
+        public string CheckIfContactDetailsAlreadyPresentInSystem(string displayName, string email, string phoneNumber, string contactId)
+        {
+            Guid? newContactId = null;
+
+            if (contactId!=null && Guid.TryParse(contactId, out Guid guidContactId))
+                 newContactId = guidContactId;
+
+            return _registerRepository.ContactDetailsAlreadyExist(displayName, email, phoneNumber, newContactId).Result
+                ? FormatErrorMessage("This is MFCMFC")
+                : string.Empty;
+        }
+
         public string CheckContactIdExists(string contactId)
         {
 
@@ -299,6 +311,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             RunValidationCheckAndAppendAnyError("DisplayName", CheckDisplayName(request.DisplayName), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("Email", CheckIfEmailIsPresentAndInSuitableFormat(request.Email), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("Email", CheckIfEmailAlreadyPresentInAnotherOrganisation(request.Email, request.EndPointAssessorOrganisationId), validationResult, ValidationStatusCode.AlreadyExists);
+            //MFCMFC  'displayname
+            RunValidationCheckAndAppendAnyError("DisplayName", CheckIfContactDetailsAlreadyPresentInSystem(request.DisplayName, request.Email,request.PhoneNumber, null), validationResult, ValidationStatusCode.AlreadyExists);
             return validationResult;
         }
 
@@ -310,6 +324,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             RunValidationCheckAndAppendAnyError("DisplayName", CheckDisplayName(request.DisplayName), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("Email", CheckIfEmailIsPresentAndInSuitableFormat(request.Email), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("Email", CheckIfEmailAlreadyPresentInOrganisationNotAssociatedWithContact(request.Email, request.ContactId), validationResult, ValidationStatusCode.AlreadyExists);
+            RunValidationCheckAndAppendAnyError("DisplayName", CheckIfContactDetailsAlreadyPresentInSystem(request.DisplayName, request.Email,request.PhoneNumber, request.ContactId), validationResult, ValidationStatusCode.AlreadyExists);
             return validationResult;
         }
 
@@ -387,6 +402,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             RunValidationCheckAndAppendAnyError("StandardSearchString", CheckSearchStringForStandardsIsValid(request.Searchstring), validationResult, ValidationStatusCode.BadRequest);
             return validationResult;
 
-        }  
+        }    
     }
 }

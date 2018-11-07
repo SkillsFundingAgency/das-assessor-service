@@ -24,7 +24,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             {
                 ContactId = request.ContactId,
                 DisplayName = request.DisplayName,
-                Email = request.Email
+                Email = request.Email,
+                PhoneNumber = request.PhoneNumber
             } );   
         }
     }

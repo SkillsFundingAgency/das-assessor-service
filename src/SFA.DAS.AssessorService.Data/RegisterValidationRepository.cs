@@ -170,5 +170,25 @@ namespace SFA.DAS.AssessorService.Data
                 return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { contactId});
             }
         }
+
+        public async Task<bool> ContactDetailsAlreadyExist(string displayName, string email, string phone, Guid? contactId)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+               var sqlToCheckExists =
+                    "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Contacts] " +
+                    "WHERE id != @contactId and displayname = @displayName and email = @email and phonenumber = @phone";
+
+                if (contactId == null)
+                {
+                    sqlToCheckExists =
+                        "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Contacts] " +
+                        "WHERE displayname = @displayName and email = @email and phonenumber = @phone";
+                }
+                return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { contactId, displayName, email, phone });
+            }
+        }
     }
 }
