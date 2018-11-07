@@ -153,6 +153,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(await _mediator.Send(new SearchAssessmentOrganisationsRequest {SearchTerm = searchstring}));
         }
 
+        [HttpGet("assessment-organisations/email/{emailAddress}", Name = "GetAssessmentOrganisationFromEmail")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<AssessmentOrganisationSummary>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetAssessmentOrganisationFromEmail(string emailAddress)
+        {
+            _logger.LogInformation($@"Get organisation from email [{emailAddress}]");
+            return Ok(await _mediator.Send(new GetAssessmentOrganisationByEmailRequest { Email = emailAddress }));
+        }
+
 
         [HttpGet("assessment-organisations/standards/search/{searchstring}", Name = "SearchStandards")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<StandardSummary>))]

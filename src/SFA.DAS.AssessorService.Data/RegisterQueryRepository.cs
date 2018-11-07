@@ -288,6 +288,25 @@ namespace SFA.DAS.AssessorService.Data
                 return assessmentOrganisationSummaries;
             }
         }
+
+        public async Task<AssessmentOrganisationSummary> GetAssessmentOrganisationByContactEmail(string email)
+        {
+            var connectionString = _configuration.SqlConnectionString;
+            using (var connection = new SqlConnection(connectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                var sql =
+                    "SELECT top 1 o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, o.OrganisationData, ot.Id as OrganisationTypeId, ot.Type as OrganisationType "
+                    + "FROM [Organisations] o LEFT OUTER JOIN [OrganisationType] ot ON ot.Id = o.OrganisationTypeId "
+                    + "LEFT JOIN [Contacts] c ON c.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId "
+                    + "WHERE replace(c.Email, ' ','')  = replace(@email, ' ','')";
+
+                var organisation = await connection.QuerySingleOrDefaultAsync<AssessmentOrganisationSummary>(sql, new { email});
+                return organisation;
+            }
+        }
         public async Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsByName(string organisationName)
         {
             var connectionString = _configuration.SqlConnectionString;
