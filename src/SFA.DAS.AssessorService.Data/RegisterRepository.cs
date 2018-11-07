@@ -60,8 +60,8 @@ namespace SFA.DAS.AssessorService.Data
                 connection.Execute(
                     "UPDATE [Organisations] SET [UpdatedAt] = GetUtcDate(), [EndPointAssessorName] = @Name, " +
                     "[EndPointAssessorUkprn] = @ukprn, [OrganisationTypeId] = @organisationTypeId, " +
-                    "[OrganisationData] = @orgData WHERE [EndPointAssessorOrganisationId] = @organisationId",
-                    new {org.Name, org.Ukprn, org.OrganisationTypeId, orgData, org.OrganisationId});
+                    "[OrganisationData] = @orgData, Status = @status WHERE [EndPointAssessorOrganisationId] = @organisationId",
+                    new {org.Name, org.Ukprn, org.OrganisationTypeId, orgData, org.Status, org.OrganisationId});
        
                 return org.OrganisationId;
             }

@@ -50,6 +50,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
         private static EpaOrganisation MapOrganisationRequestToOrganisation(UpdateEpaOrganisationRequest request)
         {
+            var status = request.Status;
+            if (status == "New" && request.ActionChoice == "MakeLive")
+            {
+                status = "Live";
+            }
+
             var organisation = new EpaOrganisation
             {
                 Name = request.Name.Trim(),
@@ -65,7 +71,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                     LegalName = request.LegalName,
                     Postcode = request.Postcode,
                     WebsiteLink = request.WebsiteLink
-                }
+                },
+                Status = status
             };
 
             return organisation;
