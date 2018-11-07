@@ -909,6 +909,20 @@ table.responsive tr.total {
   table.responsive tr th.tw-70 {
     width: 70%;
   }
+
+  .expandble-cell-content {
+    border-left-style: solid;
+    border-color: #bfc1c3;
+    border-left-width: 5px;
+  }
+
+  table.responsive tr td:empty {
+    display: table-cell;
+  }
+}
+
+.nowrap {
+  white-space: nowrap;
 }
 
 .scrollable-table-scroll-container {
@@ -981,7 +995,6 @@ table.responsive tr.total {
   color: #005ea5;
   cursor: pointer;
   position: relative;
-  /* margin-bottom: 0.26316em; */
 }
 
 .expand-table-row span {
@@ -1006,11 +1019,26 @@ table.responsive tr.total {
   box-sizing: border-box;
   clear: both;
   padding: 0.78947em;
-  /* margin-bottom: 0.78947em; */
   text-align: left;
 }
 
 .expandble-cell-content .expandble-cell-content--first-heading {
   margin-top: 0;
   margin-bottom: 1.25em;
+}
+
+.select-min-width-pfc-table {
+  min-width: 123px;
+}
+
+.arrow {
+  color: #005ea5;
+  cursor: pointer;
+  display: none;
+}
+
+@media (min-width: 641px) {
+  .arrow {
+    display: inline-block;
+  }
 }
