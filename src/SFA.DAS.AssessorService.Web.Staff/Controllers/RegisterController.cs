@@ -1,13 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.Models;
 using SFA.DAS.AssessorService.Web.Staff.Services;
@@ -19,11 +22,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
     {
         private readonly ApiClient _apiClient;
         private readonly IStandardService _standardService;
+        private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
 
-        public RegisterController(ApiClient apiClient, IStandardService standardService)
+        public RegisterController(ApiClient apiClient, IStandardService standardService, IAssessmentOrgsApiClient assessmentOrgsApiClient)
         {
             _apiClient = apiClient;
             _standardService = standardService;
+            _assessmentOrgsApiClient = assessmentOrgsApiClient;
         }
 
         public IActionResult Index()
@@ -107,6 +112,50 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             return View(vm);
         }
 
+       [HttpGet("register/add-standard/organisation/{organisationId}/standard/{standardId}")]
+        public async Task<IActionResult> AddOrganisationStandard(string organisationId, int standardId)
+       {
+           var viewModelToHydrate =
+               new RegisterAddOrganisationStandardViewModel {OrganisationId = organisationId, StandardId = standardId};
+           var vm = await ConstructOrganisationAndStandardDetails(viewModelToHydrate);
+
+           return View(vm);
+       }
+
+
+        [HttpPost("register/add-standard/organisation/{organisationId}/standard/{standardId}")]
+        public async Task<IActionResult> AddOrganisationStandard(RegisterAddOrganisationStandardViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                var viewModelInvalid = await ConstructOrganisationAndStandardDetails(viewModel);
+                return View(viewModelInvalid);
+            }                   
+
+            var addOrganisationStandardRequest = new CreateEpaOrganisationStandardRequest
+            {
+                OrganisationId = viewModel.OrganisationId,
+               StandardCode = viewModel.StandardId,
+               EffectiveFrom = viewModel.EffectiveFrom,
+               EffectiveTo = viewModel.EffectiveTo,
+               ContactId = viewModel.ContactId.ToString(),
+               DeliveryAreas = viewModel.DeliveryAreas,
+               Comments = viewModel.Comments
+            };
+
+            var organisationStandardId = await _apiClient.CreateEpaOrganisationStandard(addOrganisationStandardRequest);
+            return Redirect($"/register/view-organisation/{viewModel.OrganisationId}");
+        }
+
+
+        [HttpGet("register/view-standard/{organisationStandardId}")]
+        public async Task<IActionResult> ViewStandard(int organisationStandardId)
+        {
+
+            var viewModel =
+                new RegisterViewAndEditOrganisationStandardViewModel {OrganisationStandardId = organisationStandardId};
+            return View(viewModel);
+        }
         [HttpGet("register/add-contact/{organisationId}")]
         public async Task<IActionResult> AddContact(string organisationId)
         {
@@ -270,7 +319,24 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             return View(standardViewModel);
         }
 
+        private async Task<RegisterAddOrganisationStandardViewModel> ConstructOrganisationAndStandardDetails(RegisterAddOrganisationStandardViewModel vm)
+        {
+            var organisation = await _apiClient.GetEpaOrganisation(vm.OrganisationId);
+            var standard = await _assessmentOrgsApiClient.GetStandard(vm.StandardId);
+            var availableDeliveryAreas = await _apiClient.GetDeliveryAreas();
 
+            vm.Contacts = await _apiClient.GetEpaOrganisationContacts(vm.OrganisationId);
+            vm.OrganisationName = organisation.Name;
+            vm.Ukprn = organisation.Ukprn;
+            vm.StandardTitle = standard.Title;
+            vm.StandardEffectiveFrom = standard.EffectiveFrom;
+            vm.StandardEffectiveTo = standard.EffectiveTo;
+            vm.StandardLastDateForNewStarts = standard.LastDateForNewStarts;
+            vm.AvailableDeliveryAreas = availableDeliveryAreas;
+            vm.DeliveryAreas = vm.DeliveryAreas ?? new List<int>();
+            vm.OrganisationStatus = organisation.Status;
+            return vm;
+        }
         private void GatherOrganisationStandards(RegisterViewAndEditOrganisationViewModel viewAndEditModel)
         {
             var organisationStandards = _apiClient.GetEpaOrganisationStandards(viewAndEditModel.OrganisationId).Result;
