@@ -237,4 +237,4 @@
     }
   }
   global.GOVUK = GOVUK
-})(window)
+})(window);

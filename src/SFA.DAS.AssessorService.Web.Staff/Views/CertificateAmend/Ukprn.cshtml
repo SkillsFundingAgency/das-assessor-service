@@ -7,7 +7,7 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateid=@Model.Id>Back</a>
+        <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateId=@Model.Id>Back</a>
 
         <form class="apprentice-ukprn-form js-disable-on-submit" method="post" asp-action="Ukprn" asp-controller="CertificatePrivateProviderUkprn">
             @Html.HiddenFor(c => c.Id)
@@ -28,27 +28,36 @@
                     </h2>
                     <ul class="error-summary-list">
                         <li><a sfa-validation-for="Ukprn"></a></li>
+                        <li><a sfa-validation-for="ReasonForChange"></a></li>
                     </ul>
                 </div>
             }
 
-            <div sfa-anyvalidationerror-class="after-error-summary">
-                <h1 class="heading-large">
-                    What's the training provider's UK Provider Reference Number (UKPRN)?
-                </h1>
+                <div sfa-anyvalidationerror-class="after-error-summary">
+                    <h1 class="heading-large">
+                        What's the training provider's UK Provider Reference Number (UKPRN)?
+                    </h1>
 
-                <div class="form-group" sfa-validation-for="Ukprn" sfa-validationerror-class="form-group-error">
-                    <label for="Ukprn">
-                        <span class="form-label-bold visually-hidden">Ukprns</span>
-                        <span class="form-hint">
-                            For example, 10000346
-                        </span>
-                        <span class="error-message" asp-validation-for="Ukprn"></span>
-                    </label>
-                    <input class="form-control js-integers-only" name="Ukprn" sfa-validation-for="Ukprn" sfa-validationerror-class="form-control-error" asp-for="Ukprn" type="text" maxlength="8" />
+                    <div class="form-group" sfa-validation-for="Ukprn" sfa-validationerror-class="form-group-error">
+                        <label for="Ukprn">
+                            <span class="form-label-bold visually-hidden">Ukprns</span>
+                            <span class="form-hint">
+                                For example, 10000346
+                            </span>
+                            <span class="error-message" asp-validation-for="Ukprn"></span>
+                        </label>
+                        <input class="form-control js-integers-only" name="Ukprn" sfa-validation-for="Ukprn" sfa-validationerror-class="form-control-error" asp-for="Ukprn" type="text" maxlength="8" />
+                    </div>
+
+                    <div class="form-group" sfa-validation-for="ReasonForChange" sfa-validationerror-class="form-group-error">
+                        <label for="ReasonForChange">
+                            <span class="form-label-bold">Reason for change</span>
+                            <span class="form-hint">Please could you provide more detail as to why this change is required.</span>
+                            <span class="error-message" asp-validation-for="ReasonForChange"></span>
+                        </label>
+                        <textarea class="form-control form-control-3-4" rows="5" name="ReasonForChange" sfa-validation-for="ReasonForChange" sfa-validationerror-class="form-control-error" asp-for="ReasonForChange"></textarea>
+                    </div>
                 </div>
-
-            </div>
 
             <details>
                 <summary><span class="summary">What's a UKPRN?</span></summary>

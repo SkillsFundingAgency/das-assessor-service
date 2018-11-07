@@ -16,6 +16,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public int FundingModel { get; set; }
         public string Option { get; set; }
         public string OrganisationName { get; set; }
+        public string OrganisationId { get; set; }
         public string CertificateReference { get; set; }
         public string CertificateStatus { get; set; }
         public DateTime? LastUpdatedAt { get; set; }

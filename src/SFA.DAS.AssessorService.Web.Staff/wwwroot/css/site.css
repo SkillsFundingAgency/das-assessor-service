@@ -909,6 +909,20 @@ table.responsive tr.total {
   table.responsive tr th.tw-70 {
     width: 70%;
   }
+
+  .expandble-cell-content {
+    border-left-style: solid;
+    border-color: #bfc1c3;
+    border-left-width: 5px;
+  }
+
+  table.responsive tr td:empty {
+    display: table-cell;
+  }
+}
+
+.nowrap {
+  white-space: nowrap;
 }
 
 .scrollable-table-scroll-container {
@@ -974,4 +988,57 @@ table.responsive tr.total {
   display: inline-block;
   position: relative;
   margin: 0 20px;
+}
+
+.expand-table-row {
+  display: inline-block;
+  color: #005ea5;
+  cursor: pointer;
+  position: relative;
+}
+
+.expand-table-row span {
+  text-decoration: underline;
+}
+
+.expand-table-row:visited {
+  color: #005ea5;
+}
+
+.expand-table-row:focus {
+  outline: 3px solid #ffbf47;
+}
+
+.expand-table-row:hover {
+  color: #2b8cc4;
+}
+
+.expandble-cell-content {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  clear: both;
+  padding: 0.78947em;
+  text-align: left;
+}
+
+.expandble-cell-content .expandble-cell-content--first-heading {
+  margin-top: 0;
+  margin-bottom: 1.25em;
+}
+
+.select-min-width-pfc-table {
+  min-width: 123px;
+}
+
+.arrow {
+  color: #005ea5;
+  cursor: pointer;
+  display: none;
+}
+
+@media (min-width: 641px) {
+  .arrow {
+    display: inline-block;
+  }
 }

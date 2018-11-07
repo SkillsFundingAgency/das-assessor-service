@@ -26,7 +26,7 @@
     <div class="column-full">
         <h1 class="heading-large">Previous assessments</h1>
 
-            <table class="table responsive">
+            <table class="table responsive table-font-xsmall">
                 <thead>
                     <tr>
                         <th>
@@ -51,7 +51,7 @@
                     {
                         <tr>
                             <td data-label="@Localizer["Apprentice"]" class="nowrap">
-                                <div role="button" tabindex="0" class="js-expand-table-row expand-table-row" data-uln="@Html.DisplayFor(modelItem => item.Uln)"><i class="arrow arrow-closed">►</i> <span>@Html.DisplayFor(modelItem => item.FullName)</span></div>
+                                <div role="button" tabindex="0" class="js-expand-table-row expand-table-row" data-expand-id="@Html.DisplayFor(modelItem => item.Uln)"><i class="arrow arrow-closed">►</i> <span>@Html.DisplayFor(modelItem => item.FullName)</span></div>
                             </td>
                             <td data-label="@Localizer["ULN"]">
                                 @Html.DisplayFor(modelItem => item.Uln)
@@ -66,10 +66,10 @@
                                 @item.CreatedAt.ToString("dd/MM/yyyy") 
                             </td>
                         </tr>
-                        <tr class="js-history-details-expandble js-hidden history-details-expandble" aria-hidden="true">
+                        <tr class="js-expandble-cell js-hidden expandble-cell" aria-hidden="true">
                             <td colspan="5">
-                                <div class="history-details-content">
-                                    <h2 class="heading-medium history-details-content--first-heading">@Localizer["AssessmentDetails"]</h2>
+                                <div class="expandble-cell-content">
+                                    <h2 class="heading-medium expandble-cell-content--first-heading">@Localizer["AssessmentDetails"]</h2>
                                     <ul>
                                         <li>
                                             <p><span class="bold">@Localizer["RecordedBy"]:</span> @Html.DisplayFor(modelItem => item.RecordedBy)</p>
