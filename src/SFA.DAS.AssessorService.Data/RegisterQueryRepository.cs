@@ -285,7 +285,7 @@ namespace SFA.DAS.AssessorService.Data
                     await connection.OpenAsync();
 
                 var sql =
-                    "SELECT o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, o.OrganisationData, ot.Id as OrganisationTypeId, ot.Type as OrganisationType "
+                    "SELECT top 1 o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, o.OrganisationData, ot.Id as OrganisationTypeId, ot.Type as OrganisationType "
                     + "FROM [Organisations] o LEFT OUTER JOIN [OrganisationType] ot ON ot.Id = o.OrganisationTypeId "
                     + "LEFT JOIN [Contacts] c ON c.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId "
                     + "WHERE replace(c.Email, ' ','')  = replace(@email, ' ','')";
