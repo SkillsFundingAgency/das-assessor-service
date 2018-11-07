@@ -7,11 +7,15 @@ var epaoOptionValidationRulesObject = {
     },
     Option: {
       required: '#options_yes[value="True"]:checked'
+    },
+    ReasonForChange: {
+      required: true
     }
   },
   messages: {
     HasAdditionalLearningOption  : 'Select yes or no',
-    Option  : 'Enter the learning option'
+    Option  : 'Enter the learning option',
+    ReasonForChange: 'Enter a reason'
   }
 };
 
