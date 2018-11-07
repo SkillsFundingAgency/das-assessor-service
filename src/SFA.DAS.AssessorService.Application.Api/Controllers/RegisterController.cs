@@ -29,7 +29,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             _mediator = mediator;
             _logger = logger;
+
         }
+
         [HttpPost(Name = "CreateEpaOrganisation")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EpaOrganisationResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(ApiResponse))]
@@ -61,63 +63,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             }
         }
 
-
-        [HttpGet("validate-new",Name = "CreateEpaOrganisationValidate")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(ApiResponse))]
-        [SwaggerResponse((int)HttpStatusCode.Conflict, Type = typeof(ApiResponse))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> CreateOrganisationValidate(CreateEpaOrganisationValidationRequest request)
-        {
-            try
-            {
-                _logger.LogInformation("Validation of creating new Organisation");
-                var result = await _mediator.Send(request);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($@"Bad request, Message: [{ex.Message}]");
-                return BadRequest(ex);
-            }
-        }
-
-        [HttpGet("validate-existing", Name = "UpdateEpaOrganisationValidate")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(ApiResponse))]
-        [SwaggerResponse((int)HttpStatusCode.Conflict, Type = typeof(ApiResponse))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> UpdateOrganisationValidate(UpdateEpaOrganisationValidationRequest request)
-        {
-            try
-            {
-                _logger.LogInformation("Validation of existing Organisation");
-                var result = await _mediator.Send(request);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($@"Bad request, Message: [{ex.Message}]");
-                return BadRequest(ex);
-            }
-        }
-
-        [HttpGet("contacts/validate-new",Name = "CreateEpaContactValidate")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
-        public async Task<IActionResult> CreateContactValidate(CreateEpaContactValidationRequest request)
-        {
-            try
-            {
-                _logger.LogInformation("Validation of creating new contact");
-                var result = await _mediator.Send(request);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($@"Bad request, Message: [{ex.Message}]");
-                return BadRequest(ex);
-            }
-        }
         [HttpPut(Name = "UpdateEpaOrganisation")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EpaOrganisationResponse))]
         [SwaggerResponse((int)HttpStatusCode.NotFound, typeof(ApiResponse))]
@@ -260,24 +205,5 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 return BadRequest(new EpaOrganisationStandardResponse(ex.Message));
             }
         }
-
-
-        [HttpGet("contacts/validate-existing", Name = "UpdateEpaContactValidate")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
-        public async Task<IActionResult> CreateContactValidate(UpdateEpaOrganisationContactValidationRequest request)
-        {
-            try
-            {
-                _logger.LogInformation("Validation of creating new contact");
-                var result = await _mediator.Send(request);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($@"Bad request, Message: [{ex.Message}]");
-                return BadRequest(ex);
-            }
-        }
-
     }
 }

@@ -32,19 +32,23 @@
             }
 
             <div sfa-anyvalidationerror-class="after-error-summary">
-                <h1>
-                    <label class="form-label" for="SearchString">
-                        <span class="heading-xlarge">Add a standard to @Model.OrganisationName (@Model.OrganisationId)</span>
-                    </label>
-                </h1>
+                <label class="form-label" for="SearchString">
+                    <h1 class="heading-xlarge">
+                        <span class="heading-secondary">@Model.OrganisationId</span>
+                        Add a standard to @Model.OrganisationName
+                    </h1>
+                </label>
 
                 <p>Search for a standard using either the:</p>
                 <ul class="list list-bullet">
-                    <li>Standard Id (an integer)</li>
-                    <li>name</li>
+                    <li>Standard ID</li>
+                    <li>Name</li>
                 </ul>
 
                 <div class="form-group" sfa-validation-for="SearchString" sfa-anyvalidationerror-class="form-group-error">
+                    <span class="form-hint">
+                        Standard ID must be a number
+                    </span>
                     <span class="error-message" asp-validation-for="StandardSearchString"></span>
                     <input class="form-control" asp-for="StandardSearchString" name="StandardSearchString" sfa-validationerror-class="form-control-error" type="text" />
                 </div>
