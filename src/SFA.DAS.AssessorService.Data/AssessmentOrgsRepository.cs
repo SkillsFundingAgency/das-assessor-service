@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Data
             {
                 var connectionString = LocalConnectionString();
                 var obfConnectionString = connectionString.Substring(0,60);
-                //connectionString = connectionString.Replace("MultipleActiveResultSets=True", "MultipleActiveResultSets=False");
+                connectionString = connectionString.Replace("MultipleActiveResultSets=True", "MultipleActiveResultSets=False");
                 if (obfConnectionString.ToLower().Contains("password"))
                     obfConnectionString = "obfuscation full";
 
