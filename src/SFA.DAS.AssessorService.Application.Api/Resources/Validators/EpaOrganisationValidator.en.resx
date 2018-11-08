@@ -210,4 +210,7 @@
   <data name="OrganisationStandardEffectiveFromAfterEffectiveTo" xml:space="preserve">
     <value>The organisation standard effective from date must be on or before organisation standard effective to date</value>
   </data>
+  <data name="ContactDetailsAreDuplicates" xml:space="preserve">
+    <value>There is already a contact with this name, email and phone number</value>
+  </data>
 </root>

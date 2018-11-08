@@ -206,7 +206,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                  newContactId = guidContactId;
 
             return _registerRepository.ContactDetailsAlreadyExist(displayName, email, phoneNumber, newContactId).Result
-                ? FormatErrorMessage("This is MFCMFC")
+                ? FormatErrorMessage(EpaOrganisationValidatorMessageName.ContactDetailsAreDuplicates)  
                 : string.Empty;
         }
 
@@ -307,25 +307,30 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         public ValidationResponse ValidatorCreateEpaOrganisationContactRequest(CreateEpaOrganisationContactRequest request)
         {
             var validationResult = new ValidationResponse();
-            RunValidationCheckAndAppendAnyError("EndPointAssessorOrganisationId", CheckIfOrganisationNotFound(request.EndPointAssessorOrganisationId), validationResult, ValidationStatusCode.BadRequest);
-            RunValidationCheckAndAppendAnyError("DisplayName", CheckDisplayName(request.DisplayName), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("Email", CheckIfEmailIsPresentAndInSuitableFormat(request.Email), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("Email", CheckIfEmailAlreadyPresentInAnotherOrganisation(request.Email, request.EndPointAssessorOrganisationId), validationResult, ValidationStatusCode.AlreadyExists);
-            //MFCMFC  'displayname
-            RunValidationCheckAndAppendAnyError("DisplayName", CheckIfContactDetailsAlreadyPresentInSystem(request.DisplayName, request.Email,request.PhoneNumber, null), validationResult, ValidationStatusCode.AlreadyExists);
-            return validationResult;
+
+            if (validationResult.IsValid)
+                RunValidationCheckAndAppendAnyError("ContactDetails", CheckIfContactDetailsAlreadyPresentInSystem(request.DisplayName, request.Email, request.PhoneNumber, null), validationResult, ValidationStatusCode.AlreadyExists);
+
+            RunValidationCheckAndAppendAnyError("EndPointAssessorOrganisationId", CheckIfOrganisationNotFound(request.EndPointAssessorOrganisationId), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("DisplayName", CheckDisplayName(request.DisplayName), validationResult, ValidationStatusCode.BadRequest);
+                    return validationResult;
         }
 
         public ValidationResponse ValidatorUpdateEpaOrganisationContactRequest(UpdateEpaOrganisationContactRequest request)
         {
             var validationResult = new ValidationResponse();
 
-            RunValidationCheckAndAppendAnyError("ContactId", CheckContactIdExists(request.ContactId), validationResult, ValidationStatusCode.BadRequest);
-            RunValidationCheckAndAppendAnyError("DisplayName", CheckDisplayName(request.DisplayName), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("Email", CheckIfEmailIsPresentAndInSuitableFormat(request.Email), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("Email", CheckIfEmailAlreadyPresentInOrganisationNotAssociatedWithContact(request.Email, request.ContactId), validationResult, ValidationStatusCode.AlreadyExists);
-            RunValidationCheckAndAppendAnyError("DisplayName", CheckIfContactDetailsAlreadyPresentInSystem(request.DisplayName, request.Email,request.PhoneNumber, request.ContactId), validationResult, ValidationStatusCode.AlreadyExists);
-            return validationResult;
+
+            if (validationResult.IsValid)
+                RunValidationCheckAndAppendAnyError("ContactDetails", CheckIfContactDetailsAlreadyPresentInSystem(request.DisplayName, request.Email, request.PhoneNumber, request.ContactId), validationResult, ValidationStatusCode.AlreadyExists);
+
+            RunValidationCheckAndAppendAnyError("ContactId", CheckContactIdExists(request.ContactId), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("DisplayName", CheckDisplayName(request.DisplayName), validationResult, ValidationStatusCode.BadRequest);
+                    return validationResult;
         }
 
         public ValidationResponse ValidatorCreateEpaOrganisationStandardRequest(

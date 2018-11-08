@@ -35,5 +35,6 @@
         public const string OrganisationStandardEffectiveToBeforeStandardEffectiveFrom = "OrganisationStandardEffectiveToBeforeStandardEffectiveFrom";
         public const string OrganisationStandardEffectiveToAfterStandardEffectiveTo = "OrganisationStandardEffectiveToAfterStandardEffectiveTo";
         public const string OrganisationStandardEffectiveFromAfterEffectiveTo = "OrganisationStandardEffectiveFromAfterEffectiveTo";
+        public const string ContactDetailsAreDuplicates = "ContactDetailsAreDuplicates";
     }
 }
