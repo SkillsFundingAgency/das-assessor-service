@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations
+﻿namespace SFA.DAS.AssessorService.Api.Types.Models.AO
 {
     public class OrganisationStandardData
     {

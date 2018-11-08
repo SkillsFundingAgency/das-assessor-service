@@ -21,6 +21,7 @@ namespace SFA.DAS.AssessorService.Data
         {
             _configuration = configuration;
             SqlMapper.AddTypeHandler(typeof(OrganisationData), new OrganisationDataHandler());
+            SqlMapper.AddTypeHandler(typeof(OrganisationStandardData), new OrganisationStandardDataHandler());
         }
 
         public async Task<IEnumerable<OrganisationType>> GetOrganisationTypes()
@@ -217,7 +218,7 @@ namespace SFA.DAS.AssessorService.Data
                     await connection.OpenAsync();
 
                 var sqlForStandardByOrganisationId =
-                    "SELECT distinct id,EndPointAssessorOrganisationId as organisationId, StandardCode, EffectiveFrom, EffectiveTo, DateStandardApprovedOnRegister, ContactId "+
+                    "SELECT distinct id,EndPointAssessorOrganisationId as organisationId, StandardCode, EffectiveFrom, EffectiveTo, DateStandardApprovedOnRegister, ContactId, OrganisationStandardData "+
                      "FROM [OrganisationStandard] WHERE EndPointAssessorOrganisationId = @organisationId";
                 return await connection.QueryAsync<OrganisationStandardSummary>(sqlForStandardByOrganisationId, new {organisationId});
             }

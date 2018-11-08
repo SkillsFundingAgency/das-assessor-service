@@ -107,6 +107,8 @@ namespace SFA.DAS.AssessorService.Data
                         _spreadsheetReader.HarvestStandardDeliveryAreas(package, spreadsheetDto.Organisations,
                             standards,
                             spreadsheetDto.DeliveryAreas);
+                    LogProgress(progressStatus, "Reading from spreadsheet: Organisation-Standards-Delivery Areas gathering comments; ");
+                    _spreadsheetReader.MapDeliveryAreasCommentsIntoOrganisationStandards(spreadsheetDto.OrganisationStandardDeliveryAreas, spreadsheetDto.OrganisationStandards);
                     LogProgress(progressStatus, "Reading from spreadsheet: Contacts; ");
                     spreadsheetDto.Contacts = _spreadsheetReader.HarvestOrganisationContacts(
                         spreadsheetDto.Organisations,

@@ -197,6 +197,7 @@ namespace SFA.DAS.AssessorService.Data
                 var dateStandardApprovedOnRegister = ProcessNullableDateValue(worksheet.Cells[i, 10].Value?.ToString());
                 var comments = worksheet.Cells[i, 11].Value?.ToString();
 
+
                 epaOrganisationStandards.Add(
                     new EpaOrganisationStandard
                     {
@@ -397,6 +398,18 @@ namespace SFA.DAS.AssessorService.Data
 
             if (worksheet == null) throw new WorksheetNotAvailableException($"Worksheet [{worksheetname}] not found");
             return worksheet;
+        }
+
+        public void MapDeliveryAreasCommentsIntoOrganisationStandards(List<EpaOrganisationStandardDeliveryArea> osDeliveryAreas, List<EpaOrganisationStandard> organisationStandards)
+        {
+            foreach (var organisationStandard in organisationStandards)
+            {
+                organisationStandard.OrganisationStandardData = new OrganisationStandardData();
+                var firstDeliveryArea =
+                    osDeliveryAreas.FirstOrDefault(x => x.EndPointAssessorOrganisationId == organisationStandard.EndPointAssessorOrganisationId);
+                if (firstDeliveryArea != null)
+                    organisationStandard.OrganisationStandardData.DeliveryAreasComments = firstDeliveryArea.Comments;
+            }
         }
     }
 }

@@ -10,8 +10,9 @@ using System.Transactions;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations;
+using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 using SFA.DAS.AssessorService.Settings;
+using SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -24,6 +25,7 @@ namespace SFA.DAS.AssessorService.Data
         {
             _configuration = configuration;
             _logger = logger;
+           
         }
 
         public string TearDownData()
@@ -34,7 +36,7 @@ namespace SFA.DAS.AssessorService.Data
             {
                 var connectionString = LocalConnectionString();
                 var obfConnectionString = connectionString.Substring(0,60);
-                connectionString = connectionString.Replace("MultipleActiveResultSets=True", "MultipleActiveResultSets=False");
+                //connectionString = connectionString.Replace("MultipleActiveResultSets=True", "MultipleActiveResultSets=False");
                 if (obfConnectionString.ToLower().Contains("password"))
                     obfConnectionString = "obfuscation full";
 
@@ -220,22 +222,28 @@ namespace SFA.DAS.AssessorService.Data
                 if (currentNumber != "0") return organisationStandardsFromDatabase.ToList();
                 foreach (var organisationStandard in orgStandards)
                 {
-
+                    
                     var comments = ConvertStringToSqlValueString(organisationStandard.Comments);
                     var contactId = ConvertGuidToSqlValueString(organisationStandard.ContactId);
                     var effectiveFrom = ConvertDateToSqlValueString(organisationStandard.EffectiveFrom);
                     var effectiveTo = ConvertDateToSqlValueString(organisationStandard.EffectiveTo);
+                    var organisationStandardData = JsonConvert.SerializeObject(organisationStandard.OrganisationStandardData);
                     var dateStandardApprovedOnRegister =
                         ConvertDateToSqlValueString(organisationStandard.DateStandardApprovedOnRegister);
 
-                    var sqlToInsert = "INSERT INTO [OrganisationStandard] ([EndPointAssessorOrganisationId],[StandardCode],[EffectiveFrom],[EffectiveTo],[DateStandardApprovedOnRegister],[Comments],[Status], [ContactId])" +
-                                      $"VALUES ('{organisationStandard.EndPointAssessorOrganisationId}' ,'{organisationStandard.StandardCode}' ,{effectiveFrom} ,{effectiveTo} ,{dateStandardApprovedOnRegister} ,{comments} ,'{organisationStandard.Status}', {contactId}); ";
-
+                    var sqlToInsert = "INSERT INTO [OrganisationStandard] ([EndPointAssessorOrganisationId],[StandardCode],[EffectiveFrom],[EffectiveTo],[DateStandardApprovedOnRegister],[Comments],[Status], [ContactId], [OrganisationStandardData])" +
+                                      $"VALUES ('{organisationStandard.EndPointAssessorOrganisationId}' ,'{organisationStandard.StandardCode}' ,{effectiveFrom} ,{effectiveTo} ,{dateStandardApprovedOnRegister} ,{comments} ,'{organisationStandard.Status}', {contactId}, '{organisationStandardData}'); ";
+                    
                     sql.Append(sqlToInsert);
                 }
                 connection.Execute(sql.ToString());
-                organisationStandardsFromDatabase = connection.QueryAsync<EpaOrganisationStandard>("select * from [OrganisationStandard]").Result.ToList();                
-                connection.Close();
+                organisationStandardsFromDatabase = connection.QueryAsync<EpaOrganisationStandard>($"select [Id],[EndPointAssessorOrganisationId]," +
+                                                                                                    $"[StandardCode],[EffectiveFrom] ,[EffectiveTo]," +
+                                                                                                    $"[DateStandardApprovedOnRegister], " +
+                                                                                                    $"[Comments],[Status],[ContactId] " +
+                                                                                                    $" from [OrganisationStandard]").Result.ToList();
+
+                   connection.Close();
             }
 
             return organisationStandardsFromDatabase.ToList();
@@ -280,12 +288,10 @@ namespace SFA.DAS.AssessorService.Data
                     sql.Append($@"INSERT INTO [OrganisationStandardDeliveryArea]
                                         ([OrganisationStandardId]
                                         ,[DeliveryAreaId]
-                                        ,[Comments]
                                         ,[Status])
                                     VALUES
                                         ('{organisationStandardDeliveryArea.OrganisationStandardId}'
                                         , {organisationStandardDeliveryArea.DeliveryAreaId}
-                                        , '{organisationStandardDeliveryArea.Comments}'
                                         , '{organisationStandardDeliveryArea.Status}'); ");
 
                 }
@@ -418,5 +424,18 @@ namespace SFA.DAS.AssessorService.Data
                 ? "null" 
                 : $"'{dateToProcess.Value:yyyy-MM-dd}'";
         }   
+    }
+
+    public class EntityOrganisationStandardDataHandler : SqlMapper.TypeHandler<OrganisationStandardData>
+    {
+        public override OrganisationStandardData Parse(object value)
+        {
+            return JsonConvert.DeserializeObject<OrganisationStandardData>(value.ToString());
+        }
+
+        public override void SetValue(IDbDataParameter parameter, OrganisationStandardData value)
+        {
+            parameter.Value = JsonConvert.SerializeObject(value);
+        }
     }
 }

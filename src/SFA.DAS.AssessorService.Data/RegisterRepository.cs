@@ -25,6 +25,7 @@ namespace SFA.DAS.AssessorService.Data
         {
             _configuration = configuration;
             SqlMapper.AddTypeHandler(typeof(OrganisationData), new OrganisationDataHandler());
+            SqlMapper.AddTypeHandler(typeof(OrganisationStandardData), new OrganisationStandardDataHandler());
         }
 
         public async Task<string> CreateEpaOrganisation(EpaOrganisation org)
