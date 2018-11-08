@@ -179,14 +179,15 @@ namespace SFA.DAS.AssessorService.Data
                     await connection.OpenAsync();
                var sqlToCheckExists =
                     "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Contacts] " +
-                    "WHERE id != @contactId and displayname = @displayName and email = @email and phonenumber = @phone";
+                    "WHERE displayname = @displayName and email = @email";
 
-                if (contactId == null)
-                {
-                    sqlToCheckExists =
-                        "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Contacts] " +
-                        "WHERE displayname = @displayName and email = @email and phonenumber = @phone";
-                }
+                sqlToCheckExists = !string.IsNullOrEmpty(phone)
+                    ? sqlToCheckExists + " and phonenumber = @phone"
+                    : sqlToCheckExists + " and phonenumber is null";
+
+                if (contactId != null)
+                    sqlToCheckExists = sqlToCheckExists + " and id != @contactId ";
+
                 return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { contactId, displayName, email, phone });
             }
         }
