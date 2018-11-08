@@ -15,7 +15,8 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         string CheckIfOrganisationUkprnExists(long? ukprn);
         string CheckIfOrganisationUkprnExistsForOtherOrganisations(long? ukprn, string organisationIdToIgnore);
         string CheckOrganisationTypeIsNullOrExists(int? organisationTypeId);
-        string CheckIfOrganisationNotFound(string organisationId);
+        string CheckOrganisationTypeExists(int? organisationTypeId);
+        string CheckIfOrganisationNotFound(string organisationId); 
         string CheckUkprnIsValid(long? ukprn);
         Standard GetStandard(int standardCode);
         string CheckIfOrganisationStandardAlreadyExists(string organisationId, int standardCode);
@@ -41,6 +42,11 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         string CheckEffectiveFromIsOnOrBeforeEffectiveTo(DateTime? effectiveFrom, DateTime? effectiveTo);
         string CheckOrganisationStandardToDateIsWithinStandardDateRanges(DateTime? effectiveTo,
             DateTime? standardEffectiveFrom, DateTime? standardEffectiveTo);
+
+        string CheckAddressDetailsForOrganisation(string address1, string address2, string address3, string address4);
+        string CheckPostcodeIsPresentForOrganisation(string postcode);
+        string CheckContactCountForOrganisation(int? numberOfContacts);
+        string CheckStandardCountForOrganisation(int? numberOfStandards);
 
         ValidationResponse ValidatorCreateEpaOrganisationRequest(CreateEpaOrganisationRequest request);
         ValidationResponse ValidatorCreateEpaOrganisationContactRequest(CreateEpaOrganisationContactRequest request);

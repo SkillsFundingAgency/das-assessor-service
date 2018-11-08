@@ -11,11 +11,11 @@ using SFA.DAS.AssessorService.Web.Staff.Models;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Validators
 {
-    public class RegisterEditOrganisationStandardViewModel : AbstractValidator<RegisterViewAndEditOrganisationStandardViewModel>
+    public class RegisterEditOrganisationStandardViewModelValidator : AbstractValidator<RegisterViewAndEditOrganisationStandardViewModel>
     {
         private readonly IOrganisationsApiClient _apiClient;
         private readonly IRegisterValidator _registerValidator;
-        public RegisterEditOrganisationStandardViewModel(IOrganisationsApiClient apiClient,
+        public RegisterEditOrganisationStandardViewModelValidator(IOrganisationsApiClient apiClient,
             IRegisterValidator registerValidator)
         {
             _apiClient = apiClient;

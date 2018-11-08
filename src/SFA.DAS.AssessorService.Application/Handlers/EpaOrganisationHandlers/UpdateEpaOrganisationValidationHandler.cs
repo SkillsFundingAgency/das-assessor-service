@@ -30,7 +30,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 Name = request.Name,
                 Ukprn = request.Ukprn,
                 OrganisationTypeId = request.OrganisationTypeId,
-                OrganisationId = request.OrganisationId
+                OrganisationId = request.OrganisationId,
+                ActionChoice = request.ActionChoice,
+                Status = request.Status,
+                Address1 = request.Address1,
+                Address2 = request.Address2,
+                Address3 = request.Address3,
+                Address4 = request.Address4,
+                Postcode = request.Postcode
             });
         }
     }

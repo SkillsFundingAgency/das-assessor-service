@@ -94,7 +94,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                          Address3 = viewModel.Address3,
                          Address4 = viewModel.Address4,
                          Postcode = viewModel.Postcode,
-                         Status = viewModel.Status
+                         Status = viewModel.Status,
+                         ActionChoice = viewModel.ActionChoice
                      };
          
                      await _apiClient.UpdateEpaOrganisation(updateOrganisationRequest);
