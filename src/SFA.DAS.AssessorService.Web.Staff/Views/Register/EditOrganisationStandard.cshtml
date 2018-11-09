@@ -1,7 +1,7 @@
 ﻿@using SFA.DAS.AssessorService.Domain.Extensions
-@model SFA.DAS.AssessorService.Web.Staff.Models.RegisterAddOrganisationStandardViewModel
+@model SFA.DAS.AssessorService.Web.Staff.Models.RegisterViewAndEditOrganisationStandardViewModel
 @{
-    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Add organisation standard";
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Edit organisation standard";
     Layout = "_Layout";
 }
 
@@ -9,7 +9,7 @@
     <div class="column-two-thirds">
         <a href="/register/search-standards/@Model.OrganisationId" class="link-back">Return to standard search</a>
 
-        <form class="add-organisation-form" asp-action="AddOrganisationStandard" asp-controller="Register" method="POST">
+        <form class="add-organisation-form" asp-action="EditOrganisationStandard" asp-controller="Register" method="POST">
             <input type="hidden" name="fullDate" id="fullDate" class="date-input" />
             @Html.HiddenFor(c => c.OrganisationId)
             @Html.HiddenFor(c => c.StandardId)
@@ -19,6 +19,8 @@
             @Html.HiddenFor(m => m.StandardEffectiveFrom)
             @Html.HiddenFor(m => m.StandardEffectiveTo)  
             @Html.HiddenFor(c => c.StandardLastDateForNewStarts)
+            @Html.HiddenFor(c => c.Status)
+            @Html.HiddenFor(c => c.OrganisationStatus)
 
             <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
                 <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
@@ -46,11 +48,12 @@
                         <li><a sfa-validation-for="EffectiveToYear"></a></li>
                         <li><a sfa-validation-for="ContactId"></a></li>
                         <li><a sfa-validation-for="DeliveryAreas"></a></li>
+                        <li><a sfa-validation-for="ActionChoice"></a></li>
                     </ul>
                 </div>
             }
 
-            <h1 class="heading-xlarge">Add an organisation standard</h1>
+            <h1 class="heading-xlarge">Edit an organisation standard</h1>
             <table>
                 <tbody>
                 <tr>
@@ -85,11 +88,19 @@
                     <td><span class="bold-small">Last date for new starts</span></td>
                     <td>@Model.StandardLastDateForNewStarts.ToSfaShortDateString()</td>
                 </tr>
+                <tr>
+                    <td><span class="bold-small">Date approved on register</span></td>
+                    <td> @Model.DateStandardApprovedOnRegister.ToSfaShortDateString()</td>
+                </tr>
+                <tr>
+                    <td><span class="bold-small">Standard status</span></td>
+                    <td>@Model.Status</td>
+                </tr>
                 </tbody>
             </table>
 
             <h1 class="heading-large">New organisation standard details</h1>
-            
+        
             <div class="form-group error-message-container" sfa-anyvalidationerror-class="form-group-error">
                 <span class="error-message" asp-validation-for="EffectiveFrom"></span>
                 <span class="error-message" asp-validation-for="EffectiveFromDay"></span>
@@ -114,8 +125,8 @@
                         <input class="form-control date-input js-integers-only" sfa-validation-for="EffectiveFromYear" sfa-validationerror-class="form-control-error" asp-for="EffectiveFromYear" type="text" maxlength="4" />
                     </div>
                 </span>
+           
             </div>
-
             <div class="form-group error-message-container" sfa-anyvalidationerror-class="form-group-error">
                 <span class="error-message" asp-validation-for="EffectiveTo"></span>
                 <span class="error-message" asp-validation-for="EffectiveToDay"></span>
@@ -140,7 +151,7 @@
                         <input class="form-control date-input js-integers-only" sfa-validation-for="EffectiveToYear" sfa-validationerror-class="form-control-error" asp-for="EffectiveToYear" type="text" maxlength="4" />
                     </div>
                 </span>
-            
+           
             </div>
             <div class="form-group" sfa-validation-for="ContactId" sfa-validationerror-class="form-group-error">
                 <label for="ContactId">
@@ -186,16 +197,21 @@
                 }
             </div>
             <div class="form-group" sfa-validation-for="Comments" sfa-validationerror-class="form-group-error">
-                <label class="form-label" for="Comments">
+                <label for="Comments">
                     <span class="form-label-bold">Comments</span>
                     <span class="error-message" asp-validation-for="Comments"></span>
                 </label>
                 <textarea class="form-control form-control-3-4" maxlength="500" name="Comments" id="Comments" sfa-validationerror-class="form-control-error" asp-for="Comments" rows="5"></textarea>
             </div>
             <div class="form-group">
-                <button class="button" type="submit">Save</button>
+                <button class="button" type="submit" name="ActionChoice" value="Save">Save</button>
+                @if (Model.OrganisationStatus == "Live" && Model.Status == "New")
+                {
+                    <button class="button" type="submit" name="ActionChoice" value="MakeLive">Make Live</button>
+                }
+                <a href="/register/view-standard/@Model.OrganisationStandardId">Cancel</a>
             </div>
-                
+            
         </form>
     </div>
 </div>

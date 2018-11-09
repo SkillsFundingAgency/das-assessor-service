@@ -17,38 +17,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
     {
         private readonly IRegisterRepository _registerRepository;
         private readonly ILogger<UpdateEpaOrganisationHandler> _logger;
-        private readonly IEpaOrganisationValidator _validator;
         private readonly ISpecialCharacterCleanserService _cleanser;
         
-        public UpdateEpaOrganisationHandler(IRegisterRepository registerRepository, IEpaOrganisationValidator validator, ILogger<UpdateEpaOrganisationHandler> logger, ISpecialCharacterCleanserService cleanser)
+        public UpdateEpaOrganisationHandler(IRegisterRepository registerRepository,  ILogger<UpdateEpaOrganisationHandler> logger, ISpecialCharacterCleanserService cleanser)
         {
             _registerRepository = registerRepository;
             _logger = logger;
             _cleanser = cleanser;
-            _validator = validator;
         }
 
         public async Task<string> Handle(UpdateEpaOrganisationRequest request, CancellationToken cancellationToken)
         {
             ProcessRequestFieldsForSpecialCharacters(request);
-            var validationResponse = _validator.ValidatorUpdateEpaOrganisationRequest(request);
-         
-            if (!validationResponse.IsValid)
-            {
-                var message = validationResponse.Errors.Aggregate(string.Empty, (current, error) => current + error.ErrorMessage + "; ");
-                _logger.LogError(message);
-                if (validationResponse.Errors.Any(x => x.StatusCode == ValidationStatusCode.NotFound.ToString()))
-                {
-                    throw new NotFound(message);
-                }
-
-                if (validationResponse.Errors.Any(x => x.StatusCode == ValidationStatusCode.BadRequest.ToString()))
-                {
-                    throw new BadRequestException(message);
-                }
-
-                throw new Exception(message);
-            }
 
             var organisation = MapOrganisationRequestToOrganisation(request);
 
@@ -70,6 +50,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
         private static EpaOrganisation MapOrganisationRequestToOrganisation(UpdateEpaOrganisationRequest request)
         {
+            var status = request.Status;
+            if (status == "New" && request.ActionChoice == "MakeLive")
+            {
+                status = "Live";
+            }
+
             var organisation = new EpaOrganisation
             {
                 Name = request.Name.Trim(),
@@ -85,7 +71,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                     LegalName = request.LegalName,
                     Postcode = request.Postcode,
                     WebsiteLink = request.WebsiteLink
-                }
+                },
+                Status = status
             };
 
             return organisation;
