@@ -21,7 +21,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
         private Mock<IRegisterRepository> _registerRepository;
         private UpdateEpaOrganisationHandler _updateEpaOrganisationHandler;
         private string _returnedOrganisationId;
-        private Mock<IEpaOrganisationValidator> _validator;
         private Mock<ISpecialCharacterCleanserService> _cleanserService;
         private Mock<ILogger<UpdateEpaOrganisationHandler>> _logger;
         private UpdateEpaOrganisationRequest _requestNoIssues;
@@ -32,7 +31,6 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
         public void Setup()
         {
             _registerRepository = new Mock<IRegisterRepository>();
-            _validator = new Mock<IEpaOrganisationValidator>();
             _cleanserService = new Mock<ISpecialCharacterCleanserService>();
             _logger = new Mock<ILogger<UpdateEpaOrganisationHandler>>();
             _organisationId = "EPA999";
@@ -43,16 +41,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             _registerRepository.Setup(r => r.UpdateEpaOrganisation(It.IsAny<EpaOrganisation>()))
                 .Returns(Task.FromResult(_expectedOrganisationNoIssues.OrganisationId));
 
-            _validator.Setup(v => v.CheckOrganisationIdIsPresentAndValid(_requestNoIssues.OrganisationId)).Returns(string.Empty);
-            _validator.Setup(v => v.CheckOrganisationName(_requestNoIssues.Name)).Returns(string.Empty);
-            _validator.Setup(v => v.CheckOrganisationTypeIsNullOrExists(_requestNoIssues.OrganisationTypeId)).Returns(string.Empty);
-            _validator.Setup(v => v.CheckIfOrganisationUkprnExistsForOtherOrganisations(_requestNoIssues.Ukprn,_requestNoIssues.OrganisationId)).Returns(string.Empty);
-            _validator.Setup(v => v.CheckIfOrganisationNotFound(_requestNoIssues.OrganisationId)).Returns(string.Empty);
-            _validator.Setup(v => v.ValidatorUpdateEpaOrganisationRequest(_requestNoIssues)).Returns(new ValidationResponse());
             _cleanserService.Setup(c => c.CleanseStringForSpecialCharacters(It.IsAny<string>()))
                 .Returns((string s) => s);
             
-            _updateEpaOrganisationHandler = new UpdateEpaOrganisationHandler(_registerRepository.Object, _validator.Object, _logger.Object, _cleanserService.Object);
+            _updateEpaOrganisationHandler = new UpdateEpaOrganisationHandler(_registerRepository.Object, _logger.Object, _cleanserService.Object);
         }
 
         [Test]
@@ -63,30 +55,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
         }
 
         [Test]
-        public void CheckMainValidatorIsCalledWhenHandlerInvoked()
-        {
-            var res = _updateEpaOrganisationHandler.Handle(_requestNoIssues, new CancellationToken()).Result;
-            _validator.Verify(v => v.ValidatorUpdateEpaOrganisationRequest(_requestNoIssues));
-        }
-
-        [Test]
         public void GetOrganisationDetailsWhenOrganisationUpdated()
         {
             _returnedOrganisationId = _updateEpaOrganisationHandler.Handle(_requestNoIssues, new CancellationToken()).Result;
             _returnedOrganisationId.Should().BeEquivalentTo(_expectedOrganisationNoIssues.OrganisationId);
-        }
-
-        [Test]
-        public void GetExceptionWhenValidationInvalidOccurs()
-        {
-            const string errorMessage = "organisation type id doesn't exist";
-            var requestInvalidOrgTypeId = BuildRequest("name", "EPA888", 123321);
-            var errorResponse = BuildErrorResponse(errorMessage,  ValidationStatusCode.BadRequest);
-            _validator.Setup(v => v.ValidatorUpdateEpaOrganisationRequest(requestInvalidOrgTypeId)).Returns(errorResponse);
-            var ex = Assert.ThrowsAsync<BadRequestException>(() => _updateEpaOrganisationHandler.Handle(requestInvalidOrgTypeId, new CancellationToken()));
-            Assert.AreEqual(errorMessage + "; ", ex.Message);
-            _registerRepository.Verify(r => r.UpdateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Never);
-            _validator.Verify(v => v.ValidatorUpdateEpaOrganisationRequest(requestInvalidOrgTypeId));
         }
 
         private ValidationResponse BuildErrorResponse(string errorMessage, ValidationStatusCode statusCode)

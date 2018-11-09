@@ -162,6 +162,9 @@
   <data name="OrganisationTypeIsInvalid" xml:space="preserve">
     <value>This is not a valid organisation type</value>
   </data>
+  <data name="OrganisationTypeIsRequired" xml:space="preserve">
+    <value>You must choose an organisation type</value>
+  </data>
   <data name="StandardNotFound" xml:space="preserve">
     <value>There is no standard present for the given standard code</value>
   </data>
@@ -209,5 +212,26 @@
   </data>
   <data name="OrganisationStandardEffectiveFromAfterEffectiveTo" xml:space="preserve">
     <value>The organisation standard effective from date must be on or before organisation standard effective to date</value>
+  </data>
+  <data name="OrganisationStandardCannotBeMadeLiveBecauseEffectiveFromNotSet" xml:space="preserve">
+    <value>This standard cannot be made live because the Effective From is not set</value>
+  </data>
+  <data name="OrganisationStandardCannotBeUpdatedBecauseEffectiveFromNotSet" xml:space="preserve">
+    <value>This standard cannot be updated because the Effective From is not set</value>
+  </data>
+  <data name="OrganisationStandardCannotBeUpdatedBecauseOrganisationNotLive" xml:space="preserve">
+    <value>This standard cannot be updated because the organisation is not Live</value>
+  </data>
+  <data name="AddressIsNotEntered" xml:space="preserve">
+    <value>There are insufficient details in the address</value>
+  </data>
+  <data name="PostcodeIsNotEntered" xml:space="preserve">
+    <value>There are insufficient details in the postcode</value>
+  </data>
+  <data name="ContactsAreNotPresent" xml:space="preserve">
+    <value>The organisation cannot go live without at least one contact</value>
+  </data>
+  <data name="StandardsAreNotPresent" xml:space="preserve">
+    <value>The organisation cannot go live without at least one standard</value>
   </data>
 </root>

@@ -1,4 +1,4 @@
-﻿@model SFA.DAS.AssessorService.Web.Staff.ViewModels.CertificateDateViewModel
+@model SFA.DAS.AssessorService.Web.Staff.ViewModels.CertificateDateViewModel
 
 @{
     ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Apprenticeship achievement date";
@@ -21,7 +21,7 @@
             @* hidden with css by default *@
             <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
                 <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                    There's a problem
+                    There is a problem
                 </h2>
                 <ul class="js-error-summary-list error-summary-list"></ul>
             </div>
@@ -30,7 +30,7 @@
             {
             <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
                 <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                    There's a problem
+                    There is a problem
                 </h2>
                 <ul class="error-summary-list">
                     <li><a sfa-validation-for="Date"></a></li>
@@ -90,7 +90,6 @@
                     </p>
                 </div>
             </details>
-
             <button type="submit" class="button">Continue</button>
         </form>
     </div>
