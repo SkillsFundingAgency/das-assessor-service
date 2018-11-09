@@ -13,5 +13,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Register
         public string Comments { get; set; }
         public string ContactId { get; set; }
         public List<int> DeliveryAreas { get; set; }
+        public string DeliveryAreaComments { get; set; }
     }
 }
