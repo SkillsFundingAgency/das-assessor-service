@@ -140,7 +140,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                EffectiveTo = viewModel.EffectiveTo,
                ContactId = viewModel.ContactId.ToString(),
                DeliveryAreas = viewModel.DeliveryAreas,
-               Comments = viewModel.Comments
+               Comments = viewModel.Comments,
+               DeliveryAreaComments = viewModel.DeliveryAreaComments
             };
 
             var organisationStandardId = await _apiClient.CreateEpaOrganisationStandard(addOrganisationStandardRequest);
