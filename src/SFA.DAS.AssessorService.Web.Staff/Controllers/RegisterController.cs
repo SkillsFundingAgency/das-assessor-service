@@ -93,7 +93,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                          Address2 = viewModel.Address2,
                          Address3 = viewModel.Address3,
                          Address4 = viewModel.Address4,
-                         Postcode = viewModel.Postcode
+                         Postcode = viewModel.Postcode,
+                         Status = viewModel.Status,
+                         ActionChoice = viewModel.ActionChoice
                      };
          
                      await _apiClient.UpdateEpaOrganisation(updateOrganisationRequest);
@@ -141,22 +143,64 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                ContactId = viewModel.ContactId.ToString(),
                DeliveryAreas = viewModel.DeliveryAreas,
                Comments = viewModel.Comments,
-               DeliveryAreaComments = viewModel.DeliveryAreaComments
+               DeliveryAreasComments = viewModel.DeliveryAreasComments
             };
 
             var organisationStandardId = await _apiClient.CreateEpaOrganisationStandard(addOrganisationStandardRequest);
-            return Redirect($"/register/view-organisation/{viewModel.OrganisationId}");
+            return Redirect($"/register/view-standard/{organisationStandardId}");
         }
-
 
         [HttpGet("register/view-standard/{organisationStandardId}")]
         public async Task<IActionResult> ViewStandard(int organisationStandardId)
         {
+            var organisationStandard = await _apiClient.GetOrganisationStandard(organisationStandardId);
+
 
             var viewModel =
-                new RegisterViewAndEditOrganisationStandardViewModel {OrganisationStandardId = organisationStandardId};
+                MapOrganisationStandardToViewModel(organisationStandard);
+
             return View(viewModel);
         }
+
+
+        [HttpGet("register/edit-standard/{organisationStandardId}")]
+        public async Task<IActionResult> EditOrganisationStandard(int organisationStandardId)
+        {
+            var organisationStandard = await _apiClient.GetOrganisationStandard(organisationStandardId);
+            var viewModel =
+                MapOrganisationStandardToViewModel(organisationStandard);
+            var vm = await AddContactsAndDeliveryAreasAndDateDetails(viewModel);
+            return View(vm);
+        }
+
+        [HttpPost("register/edit-standard/{organisationStandardId}")]
+        public async Task<IActionResult> EditOrganisationStandard(RegisterViewAndEditOrganisationStandardViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                var viewModelInvalid = await AddContactsAndDeliveryAreasAndDateDetails(viewModel);
+                return View(viewModelInvalid);
+            }
+
+            var updateOrganisationStandardRequest = new UpdateEpaOrganisationStandardRequest
+            {
+                OrganisationId = viewModel.OrganisationId,
+                StandardCode = viewModel.StandardId,
+                EffectiveFrom = viewModel.EffectiveFrom,
+                EffectiveTo = viewModel.EffectiveTo,
+                ContactId = viewModel.ContactId.ToString(),
+                DeliveryAreas = viewModel.DeliveryAreas,
+                Comments = viewModel.Comments,
+                OrganisationStatus = viewModel.OrganisationStatus,
+                OrganisationStandardStatus = viewModel.Status,
+                ActionChoice = viewModel.ActionChoice,
+                DeliveryAreasComments = viewModel.DeliveryAreasComments
+            };
+
+            var organisationStandardId = await _apiClient.UpdateEpaOrganisationStandard(updateOrganisationStandardRequest);
+            return Redirect($"/register/view-standard/{organisationStandardId}");
+        }
+
         [HttpGet("register/add-contact/{organisationId}")]
         public async Task<IActionResult> AddContact(string organisationId)
         {
@@ -338,6 +382,33 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             vm.OrganisationStatus = organisation.Status;
             return vm;
         }
+
+
+        private async Task<RegisterViewAndEditOrganisationStandardViewModel> AddContactsAndDeliveryAreasAndDateDetails(RegisterViewAndEditOrganisationStandardViewModel vm)
+        {
+            var availableDeliveryAreas = await _apiClient.GetDeliveryAreas();
+
+            vm.Contacts = await _apiClient.GetEpaOrganisationContacts(vm.OrganisationId);
+            vm.AvailableDeliveryAreas = availableDeliveryAreas;
+            vm.DeliveryAreas = vm.DeliveryAreas ?? new List<int>();
+            if (vm.EffectiveFrom.HasValue)
+            {
+                var effectiveFrom = vm.EffectiveFrom.Value;
+                vm.EffectiveFromDay = effectiveFrom.Day.ToString();
+                vm.EffectiveFromMonth = effectiveFrom.Month.ToString();
+                vm.EffectiveFromYear = effectiveFrom.Year.ToString();
+            }
+
+            if (vm.EffectiveTo.HasValue)
+            {
+                var effectiveTo = vm.EffectiveTo.Value;
+                vm.EffectiveToDay = effectiveTo.Day.ToString();
+                vm.EffectiveToMonth = effectiveTo.Month.ToString();
+                vm.EffectiveToYear = effectiveTo.Year.ToString();
+            }
+
+            return vm;
+        }
         private void GatherOrganisationStandards(RegisterViewAndEditOrganisationViewModel viewAndEditModel)
         {
             var organisationStandards = _apiClient.GetEpaOrganisationStandards(viewAndEditModel.OrganisationId).Result;
@@ -418,6 +489,33 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             GatherOrganisationStandards(viewModel);
 
             return viewModel;
+        }
+
+        private static RegisterViewAndEditOrganisationStandardViewModel MapOrganisationStandardToViewModel(OrganisationStandard organisationStandard)
+        {
+            return new RegisterViewAndEditOrganisationStandardViewModel
+            {
+                OrganisationStandardId = organisationStandard.Id,
+                StandardId = organisationStandard.StandardId,
+                StandardTitle = organisationStandard.StandardTitle,
+                OrganisationId = organisationStandard.OrganisationId,
+                Ukprn = organisationStandard.Ukprn,
+                EffectiveFrom = organisationStandard.EffectiveFrom,
+                EffectiveTo = organisationStandard.EffectiveTo,
+                DateStandardApprovedOnRegister = organisationStandard.DateStandardApprovedOnRegister,
+                StandardEffectiveFrom = organisationStandard.StandardEffectiveFrom,
+                StandardEffectiveTo = organisationStandard.StandardEffectiveTo,
+                StandardLastDateForNewStarts = organisationStandard.StandardLastDateForNewStarts,
+                Comments = organisationStandard.Comments,
+                Status = organisationStandard.Status,
+                ContactId = organisationStandard.ContactId,
+                Contact = organisationStandard.Contact,
+                DeliveryAreas = organisationStandard.DeliveryAreas,
+                OrganisationName = organisationStandard.OrganisationName,
+                OrganisationStatus = organisationStandard.OrganisationStatus,
+                DeliveryAreasDetails = organisationStandard.DeliveryAreasDetails,
+                DeliveryAreasComments = organisationStandard.OrganisationStandardData?.DeliveryAreasComments
+            };
         }
     }
 }

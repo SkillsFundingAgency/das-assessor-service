@@ -172,6 +172,14 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             return result.Details;
         }
 
+        public async Task<string> UpdateEpaOrganisationStandard(UpdateEpaOrganisationStandardRequest request)
+        {
+            var result =
+                await Put<UpdateEpaOrganisationStandardRequest, EpaOrganisationStandardResponse>("api/ao/assessment-organisations/standards",
+                    request);
+            return result.Details;
+        }
+
         public async Task<string> UpdateEpaOrganisation(UpdateEpaOrganisationRequest request)
         {
             var result = await Put<UpdateEpaOrganisationRequest, EpaOrganisationResponse>("api/ao/assessment-organisations", request);
@@ -284,6 +292,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             return await Get<List<DeliveryArea>>("/api/ao/delivery-areas");
         }
 
+        public async Task<OrganisationStandard> GetOrganisationStandard(int organisationStandardId)
+        {
+            return await Get<OrganisationStandard>($"/api/ao/assessment-organisations/organisation-standard/{organisationStandardId}");
+        }
         #region Reports
         public async Task<IEnumerable<StaffReport>> GetReportList()
         {
