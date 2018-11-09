@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mime;
 using System.Text;
+using Microsoft.Extensions.Logging;
 using OfficeOpenXml;
 using SFA.DAS.AssessorService.Data.Exceptions;
 using SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations;
@@ -18,6 +19,13 @@ namespace SFA.DAS.AssessorService.Data
         private const string StandardsWorkSheetName = "Standards Lookup (LARS copy)";
 
         private const string DeliveryAreasWorkSheetName = "Register - Delivery areas";
+        private readonly ILogger<AssessmentOrgsSpreadsheetReader> _logger;
+
+        public AssessmentOrgsSpreadsheetReader(ILogger<AssessmentOrgsSpreadsheetReader> logger)
+        {
+            _logger = logger;
+        }
+
 
         public List<DeliveryArea> HarvestDeliveryAreas()
         {
@@ -66,6 +74,7 @@ namespace SFA.DAS.AssessorService.Data
                 var epaOrganisationName = worksheet.Cells[i, 2].Value != null ? worksheet.Cells[i, 2].Value.ToString() : string.Empty;
                 if (epaOrganisationIdentifier == string.Empty || epaOrganisationName == string.Empty)
                 {
+                    _logger.LogInformation($"Harvest Organisations skipped row {i}: Either no identifier [{epaOrganisationIdentifier}] or name[{epaOrganisationName}] present");
                     break;
                 }
                      var epaOrganisationType = worksheet.Cells[i, 3].Value != null ? worksheet.Cells[i, 3].Value.ToString() : string.Empty;
@@ -113,7 +122,7 @@ namespace SFA.DAS.AssessorService.Data
                                                                 Address4 = contactAddress4,
                                                                 Postcode = postcode},
                         EndPointAssessorUkprn = ukprn,                    
-                        Status = "New"
+                        Status = "Live"
                     });
             }
 
@@ -181,13 +190,23 @@ namespace SFA.DAS.AssessorService.Data
                 var epaOrganisationIdentifier = worksheet.Cells[i, 1].Value?.ToString();
 
                 var status = "Live";
-                if (epaOrganisationIdentifier == null || epaOrganisations.All(x => x.EndPointAssessorOrganisationId != epaOrganisationIdentifier))
+                if (epaOrganisationIdentifier == null ||
+                    epaOrganisations.All(x => x.EndPointAssessorOrganisationId != epaOrganisationIdentifier))
+                {
+                    if (epaOrganisationIdentifier != null)
+                        _logger.LogInformation($"Harvest OrganisationStandards skipped row {i}: Identifier not matched with harvested organisations: [{epaOrganisationIdentifier}]");
                     continue;
+                    
+                }
 
                 var standardCode = ProcessNullableIntValue(worksheet.Cells[i, 3].Value?.ToString());
-                 
+
                 if (standardCode == null || standards.All(x => x.StandardCode != standardCode))
-                    continue;
+                {
+                    if (standardCode != null)
+                        _logger.LogInformation($"Harvest OrganisationStandards skipped row {i}: Standard code that can be matched with harvested standards: [{standardCode}]");
+                    continue;          
+                }
 
                 var effectiveFrom = ProcessNullableDateValue(worksheet.Cells[i, 5].Value?.ToString());
                 var effectiveTo = ProcessNullableDateValue(worksheet.Cells[i, 6].Value?.ToString());
@@ -224,9 +243,15 @@ namespace SFA.DAS.AssessorService.Data
             for (var i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
             {
                 var epaOrganisationIdentifier = worksheet.Cells[i, 1].Value?.ToString();
-                
-                if (epaOrganisationIdentifier == null || epaOrganisations.All(x => x.EndPointAssessorOrganisationId != epaOrganisationIdentifier))
-                    continue;
+
+                if (epaOrganisationIdentifier == null ||
+                    epaOrganisations.All(x => x.EndPointAssessorOrganisationId != epaOrganisationIdentifier))
+                {
+                    if (epaOrganisationIdentifier!=null)
+                        _logger.LogInformation($"Harvest OrganisationStandardsDeliveryAreas skipped row {i}: organisation identifier not matched in harvested organisations: [{epaOrganisationIdentifier}]");
+
+                    continue;        
+                }
 
                 var standardCode = ProcessNullableIntValue(worksheet.Cells[i, 3].Value?.ToString());
 
@@ -244,7 +269,11 @@ namespace SFA.DAS.AssessorService.Data
 
                 // skip if standard code is null or standard not actually available
                 if (standardCode == null || standards.All(x => x.StandardCode != standardCode.Value))
+                {
+                    if (standardCode != null)
+                        _logger.LogInformation($"Harvest OrganisationStandardsDeliveryAreas skipped row {i}: Standard not matched in harvested standards: [{standardCode}]");
                     continue;
+                }
 
                 var deliveryArea = worksheet.Cells[i, 5].Value != null
                     ? worksheet.Cells[i, 5].Value.ToString().Trim()
@@ -406,7 +435,7 @@ namespace SFA.DAS.AssessorService.Data
             {
                 organisationStandard.OrganisationStandardData = new OrganisationStandardData();
                 var firstDeliveryArea =
-                    osDeliveryAreas.FirstOrDefault(x => x.EndPointAssessorOrganisationId == organisationStandard.EndPointAssessorOrganisationId);
+                    osDeliveryAreas.FirstOrDefault(x => x.EndPointAssessorOrganisationId == organisationStandard.EndPointAssessorOrganisationId && x.StandardCode == organisationStandard.StandardCode);
                 if (firstDeliveryArea != null)
                     organisationStandard.OrganisationStandardData.DeliveryAreasComments = firstDeliveryArea.Comments;
             }

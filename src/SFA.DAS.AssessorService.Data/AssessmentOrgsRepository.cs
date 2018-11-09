@@ -10,7 +10,6 @@ using System.Transactions;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations;
 
@@ -424,18 +423,5 @@ namespace SFA.DAS.AssessorService.Data
                 ? "null" 
                 : $"'{dateToProcess.Value:yyyy-MM-dd}'";
         }   
-    }
-
-    public class EntityOrganisationStandardDataHandler : SqlMapper.TypeHandler<OrganisationStandardData>
-    {
-        public override OrganisationStandardData Parse(object value)
-        {
-            return JsonConvert.DeserializeObject<OrganisationStandardData>(value.ToString());
-        }
-
-        public override void SetValue(IDbDataParameter parameter, OrganisationStandardData value)
-        {
-            parameter.Value = JsonConvert.SerializeObject(value);
-        }
     }
 }
