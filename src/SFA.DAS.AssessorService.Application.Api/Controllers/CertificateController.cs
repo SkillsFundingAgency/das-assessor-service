@@ -99,22 +99,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             try
             {
                 await _mediator.Send(certificateApprovalRequest);
+                // ON-993 - Was agreed that we should fire off the PreparePrivateCertificatesforBatchRun job as it's a workflow process
+                await _mediator.Send(new PrivateCertificatePrepareForBatchRunRequest { UserName = certificateApprovalRequest.UserName });
             }
             catch (NotFound)
             {
                 throw new ResourceNotFoundException();
             }
 
-            return Ok();
-        }
-
-        [HttpPost("prepareprivatecertificatesforbatchrun", Name = "PreparePrivateCertificatesforBatchRun")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Certificate))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> PreparePrivateCertificatesforBatchRun([FromBody] PrivateCertificatePrepareForBatchRunRequest privateCertificatePrepareForBatchRunRequest)
-        {
-            await _mediator.Send(privateCertificatePrepareForBatchRunRequest);
             return Ok();
         }
     }

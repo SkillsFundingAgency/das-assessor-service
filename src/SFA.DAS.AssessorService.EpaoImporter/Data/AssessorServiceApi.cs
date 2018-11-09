@@ -107,11 +107,6 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
             await _httpClient.PutAsJsonAsync($"/api/v1/certificates/{batchNumber}", updateCertificatesBatchToIndicatePrintedRequest);
         }
 
-        public async Task PreparePrivateCertificatesforBatchRun()
-        {                      
-            await _httpClient.PostAsJsonAsync($"/api/v1/certificates/prepareprivatecertificatesforbatchrun", new { UserName = "System"});
-        }
-
         public async Task<EMailTemplate> GetEmailTemplate(string templateName)
         {           
             var response = await _httpClient.GetAsync(
