@@ -148,7 +148,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         
         public async Task<List<ContactResponse>> GetEpaOrganisationContacts(string organisationId)
         {
-            return await Get<List<ContactResponse>>($"api/v1/contacts/{organisationId}");
+            return await Get<List<ContactResponse>>($"api/v1/contacts/get-all/{organisationId}");
         }
 
         public async Task<List<OrganisationStandardSummary>> GetEpaOrganisationStandards(string organisationId)
@@ -160,6 +160,14 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         {
             var result =
                 await Post<CreateEpaOrganisationRequest, EpaOrganisationResponse>("api/ao/assessment-organisations",
+                    request);
+            return result.Details;
+        }
+
+        public async Task<string> CreateEpaOrganisationStandard(CreateEpaOrganisationStandardRequest request)
+        {
+            var result =
+                await Post<CreateEpaOrganisationStandardRequest, EpaOrganisationStandardResponse>("api/ao/assessment-organisations/standards",
                     request);
             return result.Details;
         }
@@ -269,6 +277,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         {
             await Post<CertificatePostApprovalViewModel>("api/v1/certificates/approvals",
                 certificatePostApprovalViewModel);
+        }
+
+        public async Task<List<DeliveryArea>> GetDeliveryAreas()
+        {
+            return await Get<List<DeliveryArea>>("/api/ao/delivery-areas");
         }
 
         #region Reports

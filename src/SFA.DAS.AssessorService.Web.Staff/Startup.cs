@@ -110,7 +110,7 @@ namespace SFA.DAS.AssessorService.Web.Staff
                 config.For<CacheService>().Use<CacheService>();
                 config.For<CertificateLearnerStartDateViewModelValidator>()
                     .Use<CertificateLearnerStartDateViewModelValidator>();
-
+                config.For<IRegisterValidator>().Use<RegisterValidator>();
 
                 config.For<IStandardService>().Use<StandardService>();
                 config.Populate(services);
