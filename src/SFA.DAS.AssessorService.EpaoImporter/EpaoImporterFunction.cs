@@ -14,8 +14,9 @@ namespace SFA.DAS.AssessorService.EpaoImporter
         public static void Run([TimerTrigger("0 0 2 * * *")] TimerInfo myTimer, TraceWriter functionLogger,
             ExecutionContext context)
         {
-
-            var _epaoImporterLogger = new AggregateLogger(FunctionName.EpaoImporter, functionLogger, context);
+			_epaoImporterLogger.LogInfo("EAO Importer Function Disabled Permanently");
+/*
+			var _epaoImporterLogger = new AggregateLogger(FunctionName.EpaoImporter, functionLogger, context);
             try
             {
                 _epaoImporterLogger.LogInfo("EAO Importer Function Started");
@@ -52,6 +53,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                 _epaoImporterLogger.LogError("Function Errored", e);
                 throw;
             }
+*/
         }
     }
 }
