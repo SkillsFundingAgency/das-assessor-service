@@ -25,9 +25,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
         }
 
         public async Task<IEnumerable<StandardSummary>> GetAllStandardSummaries()
-        {
-            var collations = await GatherAllStandardDetails();
-
+        {          
             var results = await _cacheService.RetrieveFromCache<IEnumerable<StandardSummary>>("StandardSummaries");
             if (results != null) return results;
 
@@ -39,6 +37,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
 
         public async Task<IEnumerable<StandardCollation>> GatherAllStandardDetails()
         {
+            var hoursBetweenCaching = 8;
             var ifaResults = await _cacheService.RetrieveFromCache<IEnumerable<IfaStandard>>("IfaStandardSummaries");
 
             if (ifaResults == null)
@@ -51,14 +50,14 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                 }
 
                 ifaResults = fullIfaStandards;
-                await _cacheService.SaveToCache("IfaStandardSummaries", fullIfaStandards, 8);
+                await _cacheService.SaveToCache("IfaStandardSummaries", fullIfaStandards, hoursBetweenCaching);
             }
 
             var winResults = await _cacheService.RetrieveFromCache<IEnumerable<StandardSummary>>("StandardSummaries");
             if (winResults == null)
             { 
             var standardSummaries = await _assessmentOrgsApiClient.GetAllStandardSummaries();
-            await _cacheService.SaveToCache("StandardSummaries", standardSummaries, 8);
+            await _cacheService.SaveToCache("StandardSummaries", standardSummaries, hoursBetweenCaching);
                 winResults = standardSummaries;
 
             }

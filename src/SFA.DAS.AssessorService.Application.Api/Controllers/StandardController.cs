@@ -22,15 +22,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
     {
         private readonly ILogger<StandardController> _logger;
         private readonly IMediator _mediator;
-        private readonly IStandardService _standardService;
         //private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
 
 
-        public StandardController(ILogger<StandardController> logger, IMediator mediator, IStandardService standardService)
+        public StandardController(ILogger<StandardController> logger, IMediator mediator)
         {
             _logger = logger;
             _mediator = mediator;
-            _standardService = standardService;
         }
 
         [HttpPost(Name = "GatherAndStoreStandards")]
@@ -41,34 +39,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> GatherAndStoreStandards([FromBody] GatherStandardsRequest request)
         {
 
-            var processDetails = string.Empty;
-            var standards = await _standardService.GatherAllStandardDetails();
+            var processDetails = await _mediator.Send(request);
 
-//            try
-//            {
-//                _logger.LogInformation("Creating new Organisation");
-//                var result = await _mediator.Send(request);
-//                return Ok(new EpaOrganisationResponse(result));
-//            }
-//
-//            catch (AlreadyExistsException ex)
-//            {
-//                _logger.LogError($@"Record already exists for organisation [{ex.Message}]");
-//                return Conflict(new EpaOrganisationResponse(ex.Message));
-//            }
-//            catch (BadRequestException ex)
-//            {
-//                _logger.LogError(ex.Message);
-//                return BadRequest(new EpaOrganisationResponse(ex.Message));
-//            }
-//            catch (Exception ex)
-//            {
-//                _logger.LogError($@"Bad request, Message: [{ex.Message}]");
-//                return BadRequest();
-//            }
-
-            processDetails = $"{processDetails}processing complete; ";
-            return Ok(new GatherStandardsResponse(processDetails));
+            var res = processDetails + "; Processing of Standards Upsert complete";
+            return Ok(new GatherStandardsResponse(res));
         }
     }
 }
