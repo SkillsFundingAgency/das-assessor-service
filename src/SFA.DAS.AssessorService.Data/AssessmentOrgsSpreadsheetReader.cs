@@ -440,5 +440,17 @@ namespace SFA.DAS.AssessorService.Data
                     organisationStandard.OrganisationStandardData.DeliveryAreasComments = firstDeliveryArea.Comments;
             }
         }
+
+        public void MapPrimaryContacts(List<EpaOrganisation> organisations, List<OrganisationContact> contacts)
+        {
+            foreach (var organisation in organisations)
+            {
+                var contactMatch =
+                    contacts.FirstOrDefault(c => c.EndPointAssessorOrganisationId ==
+                                                 organisation.EndPointAssessorOrganisationId);
+                if (contactMatch != null)
+                    organisation.PrimaryContact = contactMatch.Username;
+            }
+        }
     }
 }
