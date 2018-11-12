@@ -113,6 +113,8 @@ namespace SFA.DAS.AssessorService.Data
                     spreadsheetDto.Contacts = _spreadsheetReader.HarvestOrganisationContacts(
                         spreadsheetDto.Organisations,
                         spreadsheetDto.OrganisationStandards);
+
+                    _spreadsheetReader.MapPrimaryContacts(spreadsheetDto.Organisations, spreadsheetDto.Contacts);
                 }
             }
             LogProgress(progressStatus, "Finished extrcacting from spreadsheet");

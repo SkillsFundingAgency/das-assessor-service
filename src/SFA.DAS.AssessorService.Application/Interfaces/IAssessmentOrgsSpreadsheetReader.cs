@@ -19,5 +19,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
                                                              List<EpaOrganisationStandard> organisationStandards);
 
         void MapDeliveryAreasCommentsIntoOrganisationStandards(List<EpaOrganisationStandardDeliveryArea> osDeliveryAreas, List<EpaOrganisationStandard> organisationStandards);
+        void MapPrimaryContacts(List<EpaOrganisation> organisations, List<OrganisationContact> contacts);
     }
 }

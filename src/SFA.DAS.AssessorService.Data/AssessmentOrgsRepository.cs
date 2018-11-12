@@ -185,9 +185,9 @@ namespace SFA.DAS.AssessorService.Data
 
                     var sqlToAppend =
                         "INSERT INTO [Organisations] ([Id],[CreatedAt],[DeletedAt],[EndPointAssessorName],[EndPointAssessorOrganisationId], " +
-                        "[EndPointAssessorUkprn],[PrimaryContact],[Status],[UpdatedAt],[OrganisationTypeId],[OrganisationData]) VALUES (" +
+                        "[EndPointAssessorUkprn],[Status],[UpdatedAt],[OrganisationTypeId],[PrimaryContact],[OrganisationData]) VALUES (" +
                         $@" {id}, getutcdate(), null, {endPointAssessorName}, '{org.EndPointAssessorOrganisationId}'," +
-                        $@"{ukprn}, null, '{org.Status}', null,  {org.OrganisationTypeId}, '{organisationData}' ); ";
+                        $@"{ukprn}, '{org.Status}', null,  {org.OrganisationTypeId}, '{org.PrimaryContact}', '{organisationData}' ); ";
                     sql.Append(sqlToAppend);
                 }
 
@@ -198,8 +198,15 @@ namespace SFA.DAS.AssessorService.Data
                     var sqlToAppend =
                         $@"UPDATE [Organisations] SET [OrganisationTypeId] = {org.OrganisationTypeId}," +
                         $@"[OrganisationData] = '{organisationData}' "+
-                        $@"WHERE EndPointAssessorOrganisationId = '{org.EndPointAssessorOrganisationId}'; ";
+                        $@"WHERE EndPointAssessorOrganisationId = '{org.EndPointAssessorOrganisationId}' and primarycontact is not null and primaryContact != 'NULL'; ";
+
+                    var sqlToAppendWhereUsernameIsNull =
+                        $@"UPDATE [Organisations] SET [OrganisationTypeId] = {org.OrganisationTypeId}," +
+                        $@"[OrganisationData] = '{organisationData}', PrimaryContact = '{org.PrimaryContact}' " +
+                        $@"WHERE EndPointAssessorOrganisationId = '{org.EndPointAssessorOrganisationId}' and (primarycontact is null or primaryContact = 'NULL') ";
+
                     sql.Append(sqlToAppend);
+                    sql.Append(sqlToAppendWhereUsernameIsNull);
                 }
                 connection.Execute(sql.ToString());                           
                 connection.Close();
