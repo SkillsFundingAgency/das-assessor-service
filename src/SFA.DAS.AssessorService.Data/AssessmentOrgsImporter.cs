@@ -96,6 +96,7 @@ namespace SFA.DAS.AssessorService.Data
                     LogProgress(progressStatus, "Reading from spreadsheet: Organisations; ");
                     spreadsheetDto.Organisations =
                         _spreadsheetReader.HarvestEpaOrganisations(package, spreadsheetDto.OrganisationTypes);
+                    LogProgress(progressStatus, $"Reading from spreadsheet: Organisations gathered: {spreadsheetDto.Organisations?.Count}; ");
                     LogProgress(progressStatus, "Reading from spreadsheet: Standards; ");
                     var standards = _spreadsheetReader.HarvestStandards(package);
                     LogProgress(progressStatus, "Reading from spreadsheet: Organisation-Standards; ");
@@ -153,11 +154,11 @@ namespace SFA.DAS.AssessorService.Data
                 progressStatus.Append(message); _logger.LogInformation(message);
                 _assessmentOrgsRepository.WriteOrganisationTypes(spreadsheetDto.OrganisationTypes);
 
-                message = "WRITING TO DATABASE: Organisations; ";
+                message = $"WRITING TO DATABASE: Organisations ({spreadsheetDto.Organisations?.Count}); ";
                 progressStatus.Append(message); _logger.LogInformation(message);
                 _assessmentOrgsRepository.WriteOrganisations(spreadsheetDto.Organisations);
 
-                message = "WRITING TO DATABASE: Contacts;  ";
+                message = $"WRITING TO DATABASE: Contacts ({spreadsheetDto.Contacts?.Count});  ";
                 progressStatus.Append(message); _logger.LogInformation(message);
                 var contactsFromDatabase = _assessmentOrgsRepository.UpsertThenGatherOrganisationContacts(spreadsheetDto.Contacts);
 
@@ -165,7 +166,7 @@ namespace SFA.DAS.AssessorService.Data
 
                 AttachContactsToOrganisationStandards(orgStandards, contactsFromDatabase);
 
-                message = "WRITING TO DATABASE: Organisation-Standards; ";
+                message = $"WRITING TO DATABASE: Organisation-Standards  ({orgStandards?.Count});";
                 progressStatus.Append(message); _logger.LogInformation(message);
                 var organisationStandards = _assessmentOrgsRepository.WriteEpaOrganisationStandards(orgStandards);
 
