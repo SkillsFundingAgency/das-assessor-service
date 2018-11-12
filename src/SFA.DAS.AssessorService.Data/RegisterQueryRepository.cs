@@ -288,7 +288,7 @@ namespace SFA.DAS.AssessorService.Data
                     + "LEFT OUTER JOIN [Contacts] con ON con.Username = o.PrimaryContact "
                     + "WHERE o.EndPointAssessorOrganisationId like @organisationId";
 
-                var assessmentOrganisationSummaries = await connection.QueryAsync<AssessmentOrganisationSummary>(sql, new {organisationId = $"{organisationId.Replace(" ","")}%" });
+                var assessmentOrganisationSummaries = await connection.QueryAsync<AssessmentOrganisationSummary>(sql, new {organisationId = $"{organisationId.Replace(" ","")}" });
                 return assessmentOrganisationSummaries;
             }
         }
