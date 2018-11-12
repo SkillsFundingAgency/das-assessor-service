@@ -18,7 +18,9 @@ namespace SFA.DAS.AssessorService.EpaoImporter
             var _epaoImporterLogger = new AggregateLogger(FunctionName.EpaoImporter, functionLogger, context);
             try
             {
-                _epaoImporterLogger.LogInfo("EAO Importer Function Started");
+				_epaoImporterLogger.LogInfo("EAO Importer Function Disabled");
+/*
+				_epaoImporterLogger.LogInfo("EAO Importer Function Started");
 
                 var webConfig = ConfigurationHelper.GetConfiguration();
                 var _tokenService = new TokenService(webConfig);
@@ -46,6 +48,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                         _epaoImporterLogger.LogInfo($"Status code returned: {response.StatusCode}. Content: {content}");
                     }
                 }
+*/
             }
             catch (Exception e)
             {
