@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                 .ForMember(x=> x.CertificateReference, opt => opt.MapFrom(source => source.CertificateData.CertificateReference))
                 .ForMember(x => x.CertificateData, opt => opt.MapFrom(source => Mapper.Map<Models.Certificates.CertificateData, Domain.JsonData.CertificateData>(source.CertificateData)))
                 .ForMember(x => x.Uln, opt => opt.MapFrom(source => source.CertificateData.Learner.Uln))
-                .ForMember(x => x.StandardCode, opt => opt.MapFrom(source => source.CertificateData.LearningDetails.StandardCode))
+                .ForMember(x => x.StandardCode, opt => opt.MapFrom(source => source.CertificateData.Standard.Code))
                 .ForMember(x => x.FamilyName, opt => opt.MapFrom(source => source.CertificateData.Learner.FamilyName))
                 .ForMember(x => x.UkPrn, opt => opt.MapFrom(source => source.UkPrn))
                 .ForMember(x => x.Email, opt => opt.MapFrom(source => source.Email))

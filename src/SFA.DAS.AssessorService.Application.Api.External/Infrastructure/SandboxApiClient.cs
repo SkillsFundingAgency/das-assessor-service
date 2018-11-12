@@ -25,9 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             var certificate = new Certificate
             {
                 CertificateData = new Models.Certificates.CertificateData { CertificateReference = "SANDBOX" },
-                Status = "Draft",
-                CreatedAt = DateTime.UtcNow,
-                CreatedBy = request.Email,
+                Status = new Models.Certificates.CertificateStatus { CurrentStatus = "Draft", CreatedAt = DateTime.UtcNow, CreatedBy = request.Email },
             };
 
             var response = new GetCertificateResponse
@@ -55,9 +53,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                     Certificate = new Certificate
                     {
                         CertificateData = req.CertificateData ?? new Models.Certificates.CertificateData { },
-                        Status = "Draft",
-                        CreatedAt = DateTime.UtcNow,
-                        CreatedBy = req.Email,
+                        Status = new Models.Certificates.CertificateStatus { CurrentStatus = "Draft", CreatedAt = DateTime.UtcNow, CreatedBy = req.Email },
                     }
                 };
 
@@ -82,11 +78,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                     Certificate = new Certificate
                     {
                         CertificateData = req.CertificateData ?? new Models.Certificates.CertificateData { },
-                        Status = "Draft",
-                        CreatedAt = DateTime.UtcNow.AddHours(-1),
-                        CreatedBy = req.Email,
-                        UpdatedAt = DateTime.UtcNow,
-                        UpdatedBy = req.Email
+                        Status = new Models.Certificates.CertificateStatus { CurrentStatus = "Draft", CreatedAt = DateTime.UtcNow.AddHours(-1), CreatedBy = req.Email, UpdatedAt = DateTime.UtcNow, UpdatedBy = req.Email },
                     }
                 };
 
@@ -113,11 +105,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                     Certificate = new Certificate
                     {
                         CertificateData = new Models.Certificates.CertificateData { },
-                        Status = "Submitted",
-                        CreatedAt = DateTime.UtcNow.AddHours(-1),
-                        CreatedBy = req.Email,
-                        UpdatedAt = DateTime.UtcNow,
-                        UpdatedBy = req.Email
+                        Status = new Models.Certificates.CertificateStatus { CurrentStatus = "Submitted", CreatedAt = DateTime.UtcNow.AddHours(-1), CreatedBy = req.Email, UpdatedAt = DateTime.UtcNow, UpdatedBy = req.Email }
                     }
                 };
 

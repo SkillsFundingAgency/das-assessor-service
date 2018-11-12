@@ -5,6 +5,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
     public class CertificateData : IEquatable<CertificateData>
     {
         public string CertificateReference { get; set; }
+        public Standard Standard { get; set; }
         public Learner Learner { get; set; }
         public LearningDetails LearningDetails { get; set; }
         public PostalContact PostalContact { get; set; }
@@ -19,6 +20,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
 
                 int hash = hashBase;
                 hash = (hash * multiplier) ^ (CertificateReference is null ? 0 : CertificateReference.GetHashCode());
+                hash = (hash * multiplier) ^ (Standard is null ? 0 : Standard.GetHashCode());
                 hash = (hash * multiplier) ^ (Learner is null ? 0 : Learner.GetHashCode());
                 hash = (hash * multiplier) ^ (LearningDetails is null ? 0 : LearningDetails.GetHashCode());
                 hash = (hash * multiplier) ^ (PostalContact is null ? 0 : PostalContact.GetHashCode());
@@ -44,6 +46,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
         private bool IsEqual(CertificateData other)
         {
             return string.Equals(CertificateReference, other.CertificateReference)
+                && Equals(Standard, other.Standard)
                 && Equals(Learner, other.Learner)
                 && Equals(LearningDetails, other.LearningDetails)
                 && Equals(PostalContact, other.PostalContact);

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using System;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
 {
@@ -10,9 +11,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                 .ForMember(x => x.LearnerGivenNames, opt => opt.MapFrom(source => source.Learner.GivenNames))
                 .ForMember(x => x.LearnerFamilyName, opt => opt.MapFrom(source => source.Learner.FamilyName))
                 .ForMember(x => x.FullName, opt => opt.MapFrom(source => $"{source.Learner.GivenNames} {source.Learner.FamilyName}"))
-                .ForMember(x => x.StandardName, opt => opt.MapFrom(source => source.LearningDetails.StandardName))
-                .ForMember(x => x.StandardLevel, opt => opt.MapFrom(source => source.LearningDetails.StandardLevel))
-                .ForMember(x => x.StandardPublicationDate, opt => opt.MapFrom(source => source.LearningDetails.StandardPublicationDate))
+                .ForMember(x => x.StandardName, opt => opt.MapFrom(source => source.Standard.Name))
+                .ForMember(x => x.StandardLevel, opt => opt.MapFrom(source => source.Standard.Level))
+                .ForMember(x => x.StandardPublicationDate, opt => opt.MapFrom(source => source.Standard.PublicationDate))
                 .ForMember(x => x.LearningStartDate, opt => opt.MapFrom(source => source.LearningDetails.LearningStartDate))
                 .ForMember(x => x.AchievementDate, opt => opt.MapFrom(source => source.LearningDetails.AchievementDate))
                 .ForMember(x => x.CourseOption, opt => opt.MapFrom(source => source.LearningDetails.CourseOption))
@@ -38,9 +39,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                 .ForPath(x => x.LearningDetails.LearningStartDate, opt => opt.MapFrom(source => source.LearningStartDate))
                 .ForPath(x => x.LearningDetails.OverallGrade, opt => opt.MapFrom(source => source.OverallGrade))
                 .ForPath(x => x.LearningDetails.ProviderName, opt => opt.MapFrom(source => source.ProviderName))
-                .ForPath(x => x.LearningDetails.StandardLevel, opt => opt.MapFrom(source => source.StandardLevel))
-                .ForPath(x => x.LearningDetails.StandardName, opt => opt.MapFrom(source => source.StandardName))
-                .ForPath(x => x.LearningDetails.StandardPublicationDate, opt => opt.MapFrom(source => source.StandardPublicationDate))
+                .ForPath(x => x.Standard.Name, opt => opt.MapFrom(source => source.StandardName))
+                .ForPath(x => x.Standard.Level, opt => opt.MapFrom(source => source.StandardLevel))
+                .ForPath(x => x.Standard.PublicationDate, opt => opt.MapFrom(source => source.StandardPublicationDate))
                 .ForPath(x => x.PostalContact.AddressLine1, opt => opt.MapFrom(source => source.ContactAddLine1))
                 .ForPath(x => x.PostalContact.AddressLine2, opt => opt.MapFrom(source => source.ContactAddLine2))
                 .ForPath(x => x.PostalContact.AddressLine3, opt => opt.MapFrom(source => source.ContactAddLine3))
@@ -49,7 +50,24 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                 .ForPath(x => x.PostalContact.Department, opt => opt.MapFrom(source => source.Department))
                 .ForPath(x => x.PostalContact.Organisation, opt => opt.MapFrom(source => source.ContactOrganisation))
                 .ForPath(x => x.PostalContact.PostCode, opt => opt.MapFrom(source => source.ContactPostCode))
+                .AfterMap<CollapseNullsAction>()
                 .ForAllOtherMembers(x => x.Ignore());
+        }
+
+        public class CollapseNullsAction : IMappingAction<Domain.JsonData.CertificateData, Models.Certificates.CertificateData>
+        {
+            public void Process(Domain.JsonData.CertificateData source, Models.Certificates.CertificateData destination)
+            {
+                if (destination.LearningDetails.LearningStartDate == DateTime.MinValue)
+                {
+                    destination.LearningDetails = null;
+                }
+
+                if(destination.PostalContact.PostCode is null)
+                {
+                    destination.PostalContact = null;
+                }
+            }
         }
     }
 }
