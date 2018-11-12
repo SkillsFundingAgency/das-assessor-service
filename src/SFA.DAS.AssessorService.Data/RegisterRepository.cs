@@ -172,6 +172,11 @@ namespace SFA.DAS.AssessorService.Data
                         contact.PhoneNumber
                     });
 
+                connection.Execute("UPDATE [dbo].[Organisations] set PrimaryContact=@username WHERE EndPointAssessorOrganisationId = @endPointAssessorOrganisationId and PrimaryContact is null",
+                    new
+                    {
+                        contact.EndPointAssessorOrganisationId, contact.Username
+                    });
                 return contact.Id.ToString();
             }
         }
@@ -189,7 +194,6 @@ namespace SFA.DAS.AssessorService.Data
                     "[PhoneNumber] = @phoneNumber, [updatedAt] = getUtcDate() " +
                     "WHERE [Id] = @Id ",
                     new { contact.DisplayName, contact.Email, contact.PhoneNumber, contact.Id});
-
 
                 return contact.Id.ToString();
             }
