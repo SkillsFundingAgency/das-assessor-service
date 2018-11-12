@@ -75,7 +75,7 @@ namespace SFA.DAS.AssessorService.Data
                 if (epaOrganisationIdentifier == string.Empty || epaOrganisationName == string.Empty)
                 {
                     _logger.LogInformation($"Harvest Organisations skipped row {i}: Either no identifier [{epaOrganisationIdentifier}] or name[{epaOrganisationName}] present");
-                    break;
+                    continue;
                 }
                      var epaOrganisationType = worksheet.Cells[i, 3].Value != null ? worksheet.Cells[i, 3].Value.ToString() : string.Empty;
                 var epaOrganisationTypeDetails = organisationTypes.FirstOrDefault(x => string.Equals(x.Type,
