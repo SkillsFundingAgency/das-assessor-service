@@ -90,7 +90,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
         public async Task<GetCertificateResponse> GetCertificate(GetCertificateRequest request)
         { 
-            var apiResponse = await Get<AssessorService.Api.Types.Models.Certificates.Batch.GetBatchCertificateResponse>($"/api/v1/certificates/batch/{request.Uln}/{request.FamilyName}/{request.StandardCode}/{request.CertificateReference}/{request.UkPrn}/{request.Email}");
+            var apiResponse = await Get<AssessorService.Api.Types.Models.Certificates.Batch.GetBatchCertificateResponse>($"/api/v1/certificates/batch/{request.Uln}/{request.FamilyName}/{request.StandardCode}/{request.UkPrn}/{request.Email}");
 
             return Mapper.Map<AssessorService.Api.Types.Models.Certificates.Batch.GetBatchCertificateResponse, GetCertificateResponse>(apiResponse);
         }

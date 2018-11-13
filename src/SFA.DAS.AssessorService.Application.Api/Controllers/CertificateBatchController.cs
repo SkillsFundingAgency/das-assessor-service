@@ -38,18 +38,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _deleteValidator = deleteValidator;
         }
 
-        [HttpGet("{uln}/{lastname}/{standardcode}/{certificateReference}/{ukPrn}/{email}")]
+        [HttpGet("{uln}/{lastname}/{standardcode}/{ukPrn}/{email}")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(GetBatchCertificateResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> Get(long uln, string lastname, int standardcode, string certificateReference, int ukPrn, string email)
+        public async Task<IActionResult> Get(long uln, string lastname, int standardcode, int ukPrn, string email)
         {
             var request = new GetBatchCertificateRequest
             {
                 Uln = uln,
                 FamilyName = lastname,
                 StandardCode = standardcode,
-                CertificateReference = certificateReference,
                 UkPrn = ukPrn,
                 Email = email
             };
@@ -61,7 +60,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 Uln = request.Uln,
                 StandardCode = request.StandardCode,
                 FamilyName = request.FamilyName,
-                CertificateReference = request.CertificateReference,
                 ValidationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList()
             };
 

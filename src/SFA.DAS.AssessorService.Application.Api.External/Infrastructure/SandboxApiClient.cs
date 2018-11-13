@@ -29,7 +29,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             var response = new GetCertificateResponse
             {
                 Certificate = certificate,
-                CertificateReference = request.CertificateReference,
                 FamilyName = request.FamilyName,
                 StandardCode = request.StandardCode,
                 Uln = request.Uln

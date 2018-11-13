@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             _logger.LogInformation("GetCertificate Before Get Certificate from db");
             Certificate certificate = await _certificateRepository.GetCertificate(request.Uln, request.StandardCode);
 
-            if (certificate != null && certificate.CertificateReference == request.CertificateReference)
+            if (certificate != null)
             {
                 var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 

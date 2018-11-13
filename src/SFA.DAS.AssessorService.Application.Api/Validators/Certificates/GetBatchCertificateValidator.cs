@@ -16,7 +16,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
             RuleFor(m => m.Uln).InclusiveBetween(1000000000, 9999999999).WithMessage("The apprentice's ULN should contain exactly 10 numbers");
             RuleFor(m => m.FamilyName).NotEmpty().WithMessage("Enter the apprentice's last name");
             RuleFor(m => m.StandardCode).GreaterThan(0).WithMessage("A standard should be selected");
-            RuleFor(m => m.CertificateReference).NotEmpty().WithMessage("Enter the certificate reference");
             RuleFor(m => m.UkPrn).InclusiveBetween(10000000, 99999999).WithMessage("The UKPRN should contain exactly 8 numbers");
             RuleFor(m => m.Email).NotEmpty();
 
@@ -27,11 +26,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
 
                     if (existingCertificate is null)
                     {
-                        context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate not found"));
-                    }
-                    else if (!existingCertificate.CertificateReference.Equals(m.CertificateReference, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        context.AddFailure(new ValidationFailure("CertificateReference", $"Invalid certificate reference"));
+                        // TODO: FUTURE WORK - Do Alan's Certificate Search THEN the ILR Search (which may be the validation down below)
                     }
                     else if (!existingCertificate.CertificateData.Contains(m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
                     {
@@ -42,6 +37,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
             RuleFor(m => m)
                 .Custom((m, context) =>
                 {
+                    // TODO: FUTURE WORK - consider comment above. Currently we're making the Certificate & ILR record both mandatory
                     var requestedIlr = ilrRepository.Get(m.Uln, m.StandardCode).GetAwaiter().GetResult();
                     var searchingEpao = organisationQueryRepository.GetByUkPrn(m.UkPrn).GetAwaiter().GetResult();
 
