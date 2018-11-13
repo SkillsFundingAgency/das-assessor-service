@@ -11,7 +11,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                     .ForPath(x => x.ProvidedCertificateData.CertificateReference, opt => opt.MapFrom(source => source.ProvidedCertificateReference))
                     .ForPath(x => x.ProvidedCertificateData.Learner.Uln, opt => opt.MapFrom(source => source.Uln))
                     .ForPath(x => x.ProvidedCertificateData.Learner.FamilyName, opt => opt.MapFrom(source => source.FamilyName))
-                    .ForPath(x => x.ProvidedCertificateData.Standard.Code, opt => opt.MapFrom(source => source.StandardCode))
+                    .ForPath(x => x.ProvidedCertificateData.Standard.StandardCode, opt => opt.MapFrom(source => source.StandardCode))
                     .ForMember(x => x.Certificate, opt => opt.MapFrom(source => Mapper.Map<Domain.Entities.Certificate, Models.Certificates.Certificate>(source.Certificate)))
                     .ForMember(x => x.ValidationErrors, opt => opt.MapFrom(source => source.ValidationErrors))
                     .AfterMap<SetFamilyNameAction>()

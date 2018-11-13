@@ -4,7 +4,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
 {
     public class Standard : IEquatable<Standard>
     {
-        public int Code { get; set; }
+        public int StandardCode { get; set; }
         public string Name { get; set; }
         public int Level { get; set; }
 
@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
                 const int multiplier = 16777619;
 
                 int hash = hashBase;
-                hash = (hash * multiplier) ^ Code.GetHashCode();
+                hash = (hash * multiplier) ^ StandardCode.GetHashCode();
                 hash = (hash * multiplier) ^ (Name is null ? 0 : Name.GetHashCode());
                 hash = (hash * multiplier) ^ Level.GetHashCode();
                 return hash;
@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
 
         private bool IsEqual(Standard other)
         {
-            return Equals(Code, other.Code)
+            return Equals(StandardCode, other.StandardCode)
                 && string.Equals(Name, other.Name)
                 && Equals(Level, other.Level);
         }

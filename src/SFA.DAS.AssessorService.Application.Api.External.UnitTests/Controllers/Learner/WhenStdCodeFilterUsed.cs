@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
             long uln = 1234;
             string familyName = "test";
             int stdCode = 1234;
-            var expectedItems = _items.Where(sr => sr.CertificateData.Learner.Uln == uln && sr.CertificateData.Learner.FamilyName == familyName && sr.CertificateData.Standard.Code == stdCode);
+            var expectedItems = _items.Where(sr => sr.CertificateData.Learner.Uln == uln && sr.CertificateData.Learner.FamilyName == familyName && sr.CertificateData.Standard.StandardCode == stdCode);
 
             // act
             var actionResult = ControllerMock.GetByStandardCode(uln, familyName, stdCode).Result as ObjectResult;
