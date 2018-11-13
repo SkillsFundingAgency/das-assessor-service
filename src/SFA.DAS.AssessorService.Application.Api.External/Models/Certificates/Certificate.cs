@@ -19,16 +19,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
                 int hash = hashBase;
                 hash = (hash * multiplier) ^ (CertificateData is null ? 0 : CertificateData.GetHashCode());
                 hash = (hash * multiplier) ^ (Status is null ? 0 : Status.GetHashCode());
-
-                //hash = (hash * multiplier) ^ (Status is null ? 0 : Status.GetHashCode());
-                //hash = (hash * multiplier) ^ CreatedAt.GetHashCode();
-                //hash = (hash * multiplier) ^ (CreatedBy is null ? 0 : CreatedBy.GetHashCode());
-                //hash = (hash * multiplier) ^ (UpdatedAt is null ? 0 : UpdatedAt.GetHashCode());
-                //hash = (hash * multiplier) ^ (UpdatedBy is null ? 0 : UpdatedBy.GetHashCode());
-                //hash = (hash * multiplier) ^ (DeletedAt is null ? 0 : DeletedAt.GetHashCode());
-                //hash = (hash * multiplier) ^ (DeletedBy is null ? 0 : DeletedBy.GetHashCode());
-                //hash = (hash * multiplier) ^ (PrintedAt is null ? 0 : PrintedAt.GetHashCode());
-                //hash = (hash * multiplier) ^ (BatchNumber is null ? 0 : BatchNumber.GetHashCode());
                 return hash;
             }
         }
@@ -52,14 +42,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
         {
             return Equals(CertificateData, other.CertificateData)
                 && Equals(Status, other.Status);
-                //&& Equals(CreatedAt, other.CreatedAt)
-                //&& string.Equals(CreatedBy, other.CreatedBy)
-                //&& Equals(UpdatedAt, other.UpdatedAt)
-                //&& string.Equals(UpdatedBy, other.UpdatedBy)
-                //&& Equals(DeletedAt, other.DeletedAt)
-                //&& string.Equals(DeletedBy, other.DeletedBy)
-                //&& Equals(PrintedAt, other.PrintedAt)
-                //&& Equals(BatchNumber, other.BatchNumber);
         }
 
         public static bool operator ==(Certificate left, Certificate right)
