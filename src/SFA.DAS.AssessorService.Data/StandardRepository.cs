@@ -23,25 +23,36 @@ namespace SFA.DAS.AssessorService.Data
             SqlMapper.AddTypeHandler(typeof(StandardData), new StandardDataHandler());
         }
 
-        public Task<IEnumerable<StandardCollation>> GetStandardCollations()
+        public async Task<IEnumerable<StandardCollation>> GetStandardCollations()
         {
-            throw new System.NotImplementedException();
+                var connectionString = _configuration.SqlConnectionString;
+
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    if (connection.State != ConnectionState.Open)
+                        await connection.OpenAsync();
+
+                    var standards = await connection.QueryAsync<StandardCollation>("select * from [StandardCollation]");
+                    return standards;
+                }
+            
         }
 
         public async Task<string> UpsertStandards(List<StandardCollation> standards)
         {
+
+            var countInserted = 0;
+            var countUpdated = 0;
+            var countRemoved = 0;
 
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
-                var countInserted = 0;
-                var countUpdated = 0;
-                var countRemoved = 0;
 
                 // Go get current standardCollation
-                var currentStandards = new List<StandardCollation>();
+                var currentStandards = await GetStandardCollations();
 
                 var deletedStandards = new List<StandardCollation>();
 
@@ -50,31 +61,48 @@ namespace SFA.DAS.AssessorService.Data
                     if (!standards.Any(s => s.StandardId == standard.StandardId))
                         deletedStandards.Add(standard);
                 }
-                
-                // delete the deletedStandards
-                // MFCMFC
+
+                foreach (var standard in deletedStandards)
+                {
+                    countRemoved++;
+                    connection.Execute(
+                        "Update [StandardCollaction] set IsLive=0, DateRemoved=getutcdate() " +
+                        "where StandardId = @standardId",
+                        new { standard.StandardId}
+                    );
+                }
 
                 foreach (var standard in standards)
                 {
+                    var isNew = true;
                     var standardData = JsonConvert.SerializeObject(standard.StandardData);
-                    var upsertStatus = currentStandards.Any(x=> x.StandardId == standard.StandardId) 
-                        ? InsertUpdateOrDelete.Update : 
-                        InsertUpdateOrDelete.Insert;
+                    if (currentStandards.Any(x => x.StandardId == standard.StandardId))
+                        isNew = false;
 
 
-                    if (upsertStatus == InsertUpdateOrDelete.Insert)
+                    if (isNew)
+                    { 
+                        countInserted++;
                         connection.Execute(
                             "INSERT INTO [StandardCollation] ([StandardId],[ReferenceNumber] ,[Title],[StandardData]) " +
                             $@"VALUES (@standardId, @referenceNumber, @Title, @standardData)",
                             new {standard.StandardId, standard.ReferenceNumber, standard.Title, standardData}
                         );
+                    }
+                    else
+                    {
+                        countUpdated++;
+                        connection.Execute(
+                            "Update [StandardCollaction] set ReferenceNumber = @referenceNumber, Title = @Title, StandardData = @StandardData, DateUpdated=getutcdate(), DateRemoved=null, IsLive = 1 " +
+                            "where StandardId = @standardId",
+                            new { standard.StandardId, standard.ReferenceNumber, standard.Title, standardData }
+                        );
+                    }
                 }
-                //return org.OrganisationId;
 
             }
 
-
-            return "details of update";
+            return $"details of update: Number of Inserts: {countInserted}; Number of Updates: {countUpdated}; Number of Removes: {countRemoved}";
         }
     }
 

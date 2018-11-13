@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[StandardCollation]
 (
-	[Id] INT NOT NULL PRIMARY KEY, 
+	[Id] INT IDENTITY(1,1) PRIMARY KEY, 
     [StandardId] INT NOT NULL, 
     [ReferenceNumber] NVARCHAR(10) NULL,
 	[Title] NVARCHAR(500)  NOT NULL,
