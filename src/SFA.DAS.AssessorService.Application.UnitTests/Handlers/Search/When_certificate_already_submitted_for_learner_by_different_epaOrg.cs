@@ -46,7 +46,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                 });
 
             CertificateRepository.Setup(r => r.GetCertificateLogsFor(certificateId))
-                .ReturnsAsync(new List<CertificateLog>(){new CertificateLog(){Status = CertificateStatus.Submitted, EventTime = new DateTime(2018,2,3,13,23,33), Username = "differentuser"}});
+                .ReturnsAsync(new List<CertificateLog>(){
+                    new CertificateLog(){Status = CertificateStatus.Submitted, EventTime = new DateTime(2018,2,3,13,23,33), Username = "differentuser"},
+                    new CertificateLog(){Status = CertificateStatus.Draft, EventTime = new DateTime(2018,2,3,13,23,32), Username = "differentuser"}
+                });
 
             ContactRepository.Setup(cr => cr.GetContact("differentuser"))
                 .ReturnsAsync(new Contact() {DisplayName = "EPAO User from another EAPOrg", OrganisationId = submittingEpaoOrgId});
