@@ -118,7 +118,7 @@ namespace SFA.DAS.AssessorService.Data
                     _spreadsheetReader.MapPrimaryContacts(spreadsheetDto.Organisations, spreadsheetDto.Contacts);
                 }
             }
-            LogProgress(progressStatus, "Finished extrcacting from spreadsheet");
+            LogProgress(progressStatus, "Finished extracting from spreadsheet");
             return spreadsheetDto;
 
         }
