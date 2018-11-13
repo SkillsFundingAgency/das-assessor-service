@@ -187,7 +187,7 @@ namespace SFA.DAS.AssessorService.Data
                         "INSERT INTO [Organisations] ([Id],[CreatedAt],[DeletedAt],[EndPointAssessorName],[EndPointAssessorOrganisationId], " +
                         "[EndPointAssessorUkprn],[Status],[UpdatedAt],[OrganisationTypeId],[PrimaryContact],[OrganisationData]) VALUES (" +
                         $@" {id}, getutcdate(), null, {endPointAssessorName}, '{org.EndPointAssessorOrganisationId}'," +
-                        $@"{ukprn}, '{org.Status}', null,  {org.OrganisationTypeId}, '{org.PrimaryContact}', '{organisationData}' ); ";
+                        $@"{ukprn}, '{org.Status}', null,  {org.OrganisationTypeId}, null, '{organisationData}' ); ";
                     sql.Append(sqlToAppend);
                 }
 
@@ -195,18 +195,18 @@ namespace SFA.DAS.AssessorService.Data
                 {      
                     var organisationData = JsonConvert.SerializeObject(org.OrganisationData);
                 
-                    var sqlToAppend =
+                    var sqlToAppendWhereStatusIsNotDeleted =
                         $@"UPDATE [Organisations] SET [OrganisationTypeId] = {org.OrganisationTypeId}," +
-                        $@"[OrganisationData] = '{organisationData}' "+
-                        $@"WHERE EndPointAssessorOrganisationId = '{org.EndPointAssessorOrganisationId}' and primarycontact is not null and primaryContact != 'NULL'; ";
+                        $@"[OrganisationData] = '{organisationData}', Status = 'Live' "+
+                        $@"WHERE EndPointAssessorOrganisationId = '{org.EndPointAssessorOrganisationId}' and Status !='Deleted'; ";
 
-                    var sqlToAppendWhereUsernameIsNull =
+                    var sqlToAppendWhereStatusIsDeleted =
                         $@"UPDATE [Organisations] SET [OrganisationTypeId] = {org.OrganisationTypeId}," +
                         $@"[OrganisationData] = '{organisationData}', PrimaryContact = '{org.PrimaryContact}' " +
-                        $@"WHERE EndPointAssessorOrganisationId = '{org.EndPointAssessorOrganisationId}' and (primarycontact is null or primaryContact = 'NULL') ";
+                        $@"WHERE EndPointAssessorOrganisationId = '{org.EndPointAssessorOrganisationId}' and Status = 'Deleted'; ";
 
-                    sql.Append(sqlToAppend);
-                    sql.Append(sqlToAppendWhereUsernameIsNull);
+                    sql.Append(sqlToAppendWhereStatusIsNotDeleted);
+                    sql.Append(sqlToAppendWhereStatusIsDeleted);
                 }
                 connection.Execute(sql.ToString());                           
                 connection.Close();
