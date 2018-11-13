@@ -7,7 +7,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
         public int Code { get; set; }
         public string Name { get; set; }
         public int Level { get; set; }
-        public DateTime PublicationDate { get; set; }
 
         #region GetHashCode, Equals and IEquatable
         public override int GetHashCode()
@@ -21,7 +20,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
                 hash = (hash * multiplier) ^ Code.GetHashCode();
                 hash = (hash * multiplier) ^ (Name is null ? 0 : Name.GetHashCode());
                 hash = (hash * multiplier) ^ Level.GetHashCode();
-                hash = (hash * multiplier) ^ PublicationDate.GetHashCode();
                 return hash;
             }
         }
@@ -45,8 +43,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
         {
             return Equals(Code, other.Code)
                 && string.Equals(Name, other.Name)
-                && Equals(Level, other.Level)
-                && Equals(PublicationDate, other.PublicationDate);
+                && Equals(Level, other.Level);
         }
 
         public static bool operator ==(Standard left, Standard right)

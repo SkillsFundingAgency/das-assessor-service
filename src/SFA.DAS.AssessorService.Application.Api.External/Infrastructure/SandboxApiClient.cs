@@ -6,8 +6,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Certificate = SFA.DAS.AssessorService.Application.Api.External.Models.Certificates.Certificate;
-using SearchQuery = SFA.DAS.AssessorService.Application.Api.External.Models.Search.SearchQuery;
-using SearchResult = SFA.DAS.AssessorService.Application.Api.External.Models.Search.SearchResult;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 {
@@ -122,19 +120,19 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             return Task.FromResult(response);
         }
 
-        public Task<List<SearchResult>> Search(SearchQuery searchQuery, int? standardCode = null)
+        public Task<IEnumerable<Certificate>> Search(GetLearnerDetailsRequest searchQuery)
         {
-            SearchResult result1 = new SearchResult { Uln = searchQuery.Uln, GivenNames = "SANDBOX", FamilyName = searchQuery.Surname, StdCode = standardCode ?? 99, CertificateStatus = "Draft", CertificateReference = "SANDBOX" };
-            SearchResult result2 = new SearchResult { Uln = searchQuery.Uln, GivenNames = "SANDBOX", FamilyName = searchQuery.Surname, StdCode = 1 };
+            Certificate result1 = new Certificate { };// { Uln = searchQuery.Uln, GivenNames = "SANDBOX", FamilyName = searchQuery.Surname, StdCode = standardCode ?? 99, CertificateStatus = "Draft", CertificateReference = "SANDBOX" };
+            Certificate result2 = new Certificate { };//Uln = searchQuery.Uln, GivenNames = "SANDBOX", FamilyName = searchQuery.Surname, StdCode = 1 };
 
-            List<SearchResult> response = new List<SearchResult> { result1 };
+            List<Certificate> response = new List<Certificate> { result1 };
 
-            if (!standardCode.HasValue)
+            if (!searchQuery.StandardCode.HasValue)
             {
                 response.Add(result2);
             }
 
-            return Task.FromResult(response);
+            return Task.FromResult(response.AsEnumerable());
         }
     }
 }

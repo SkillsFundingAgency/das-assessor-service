@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Application.Api.External.Messages;
 using SFA.DAS.AssessorService.Application.Api.External.Middleware;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Certificates;
-using SFA.DAS.AssessorService.Application.Api.External.Models.Search;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 {
@@ -12,7 +11,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
         Task<IEnumerable<BatchCertificateResponse>> CreateCertificates(IEnumerable<BatchCertificateRequest> request);
         Task<ApiResponse> DeleteCertificate(DeleteCertificateRequest request);
         Task<GetCertificateResponse> GetCertificate(GetCertificateRequest request);
-        Task<List<SearchResult>> Search(SearchQuery searchQuery, int? standardCode = null);
+        Task<IEnumerable<Certificate>> Search(GetLearnerDetailsRequest searchQuery);
         Task<IEnumerable<SubmitBatchCertificateResponse>> SubmitCertificates(IEnumerable<SubmitBatchCertificateRequest> request);
         Task<IEnumerable<BatchCertificateResponse>> UpdateCertificates(IEnumerable<BatchCertificateRequest> request);
     }

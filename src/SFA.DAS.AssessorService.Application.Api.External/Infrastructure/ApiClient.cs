@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.External.Messages;
 using SFA.DAS.AssessorService.Application.Api.External.Middleware;
@@ -12,8 +13,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using SearchQuery = SFA.DAS.AssessorService.Application.Api.External.Models.Search.SearchQuery;
-using SearchResult = SFA.DAS.AssessorService.Application.Api.External.Models.Search.SearchResult;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 {
@@ -78,10 +77,15 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             }
         }
 
-        public async Task<List<SearchResult>> Search(SearchQuery searchQuery, int? standardCode = null)
+        public async Task<IEnumerable<Certificate>> Search(GetLearnerDetailsRequest searchQuery)
         {
-            List<SearchResult> results = await Post<SearchQuery, List<SearchResult>>("/api/v1/search", searchQuery);
-            return results.Where(s => standardCode is null || s.StdCode == standardCode).ToList();
+            SearchQuery query = new SearchQuery { Uln = searchQuery.Uln, Surname = searchQuery.FamilyName, UkPrn = searchQuery.UkPrn, Username = searchQuery.Email };
+
+            var apiResponse = await Post<SearchQuery, IEnumerable<SearchResult>>("/api/v1/search", query);
+
+            var results = apiResponse.Where(s => searchQuery.StandardCode is null || s.StdCode == searchQuery.StandardCode).ToList();
+
+            return Mapper.Map<IEnumerable<SearchResult>, IEnumerable<Certificate>>(results);
         }
 
         public async Task<GetCertificateResponse> GetCertificate(GetCertificateRequest request)

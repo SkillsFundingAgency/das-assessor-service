@@ -70,6 +70,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                     searchResult.SubmittedBy = submittingContact.DisplayName; // This needs to be contact real name
                     searchResult.SubmittedAt = submittedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time 
                     searchResult.AchDate = certificateData.AchievementDate;
+                    searchResult.CreatedBy = createdContact != null ? createdContact.DisplayName : createdLogEntry != null ? createdLogEntry.Username : certificate.CreatedBy; // This needs to be contact real name
+                    searchResult.CreatedAt = createdLogEntry != null ? createdLogEntry.EventTime.UtcToTimeZoneTime() : certificate.CreatedAt.UtcToTimeZoneTime(); // This needs to be local time
                     searchResult.UpdatedBy = lastUpdatedContact != null ? lastUpdatedContact.DisplayName : lastUpdatedLogEntry.Username; // This needs to be contact real name
                     searchResult.UpdatedAt = lastUpdatedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time
                 }
@@ -80,6 +82,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                     searchResult.SubmittedBy = submittedLogEntry.Username; // This needs to be contact real name
                     searchResult.SubmittedAt = submittedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time 
                     searchResult.AchDate = certificateData.AchievementDate;
+                    searchResult.CreatedBy = createdContact != null ? createdContact.DisplayName : createdLogEntry != null ? createdLogEntry.Username : certificate.CreatedBy; // This needs to be contact real name
+                    searchResult.CreatedAt = createdLogEntry != null ? createdLogEntry.EventTime.UtcToTimeZoneTime() : certificate.CreatedAt.UtcToTimeZoneTime(); // This needs to be local time
                     searchResult.UpdatedBy = lastUpdatedContact != null ? lastUpdatedContact.DisplayName : lastUpdatedLogEntry.Username; // This needs to be contact real name
                     searchResult.UpdatedAt = lastUpdatedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time
                 }
@@ -91,6 +95,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                     searchResult.SubmittedAt = null;
                     searchResult.LearnStartDate = null;
                     searchResult.AchDate = null;
+                    searchResult.CreatedBy = null;
+                    searchResult.CreatedAt = DateTime.MinValue;
                     searchResult.UpdatedBy = null;
                     searchResult.UpdatedAt = null; 
                 }
