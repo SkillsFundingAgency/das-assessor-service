@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             var results = await _cacheService.RetrieveFromCache<IEnumerable<StandardSummary>>("StandardSummaries");
             if (results != null) return results;
 
-            var standardSummaries = await _assessmentOrgsApiClient.GetAllStandardSummaries();
+            var standardSummaries = await _assessmentOrgsApiClient.GetAllStandardsV2();
             await _cacheService.SaveToCache("StandardSummaries", standardSummaries, 8);
             return standardSummaries;
 
@@ -37,11 +37,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
 
         public async Task<IEnumerable<StandardCollation>> GatherAllStandardDetails()
         {
-            var hoursBetweenCaching = 8;
-            var ifaResults = await _cacheService.RetrieveFromCache<IEnumerable<IfaStandard>>("IfaStandardSummaries");
-
-            if (ifaResults == null)
-            {
+//            var hoursBetweenCaching = 8;
+//            var ifaResults = await _cacheService.RetrieveFromCache<IEnumerable<IfaStandard>>("IfaStandardSummaries");
+//
+//            if (ifaResults == null)
+//            {
                 var ifaStandards = await _ifaStandardsApiClient.GetAllStandards();
                 var fullIfaStandards = new List<IfaStandard>();
                 foreach (var ifaStandard in ifaStandards)
@@ -49,18 +49,18 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                     fullIfaStandards.Add(await _ifaStandardsApiClient.GetStandard(ifaStandard.Id));
                 }
 
-                ifaResults = fullIfaStandards;
-                await _cacheService.SaveToCache("IfaStandardSummaries", fullIfaStandards, hoursBetweenCaching);
-            }
+                var ifaResults = fullIfaStandards;
+                //await _cacheService.SaveToCache("IfaStandardSummaries", fullIfaStandards, hoursBetweenCaching);
+           // }
 
-            var winResults = await _cacheService.RetrieveFromCache<IEnumerable<StandardSummary>>("StandardSummaries");
-            if (winResults == null)
-            { 
-            var standardSummaries = await _assessmentOrgsApiClient.GetAllStandardSummaries();
-            await _cacheService.SaveToCache("StandardSummaries", standardSummaries, hoursBetweenCaching);
-                winResults = standardSummaries;
+//            var winResults = await _cacheService.RetrieveFromCache<IEnumerable<StandardSummary>>("StandardSummaries");
+//            if (winResults == null)
+//            { 
+            var standardSummaries = await _assessmentOrgsApiClient.GetAllStandardsV2();
+//            await _cacheService.SaveToCache("StandardSummaries", standardSummaries, hoursBetweenCaching);
+             var winResults = standardSummaries;
 
-            }
+            //}
 
             var collation = new List<StandardCollation>();
             foreach (var winStandard in winResults)
@@ -79,7 +79,32 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                         EffectiveFrom = winStandard.EffectiveFrom,
                         EffectiveTo = winStandard.EffectiveTo,
                         Level = winStandard.Level,
-                        LastDateForNewStarts = winStandard.LastDateForNewStarts
+                        LastDateForNewStarts = winStandard.LastDateForNewStarts,
+                        IfaOnly = false
+                    }
+                };
+                collation.Add(standard);
+            }
+
+
+            var uncollatedIfaStandards = ifaResults.Where(ifaStandard => collation.All(s => s.StandardId != ifaStandard.Id)).ToList();
+
+            foreach (var ifaStandard in uncollatedIfaStandards)
+            {
+                var standard = new StandardCollation
+                {
+                    StandardId = ifaStandard.Id,
+                    ReferenceNumber = ifaStandard?.ReferenceNumber,
+                    Title = ifaStandard.Title,
+                    StandardData = new StandardData
+                    {
+                        Category = ifaStandard?.Category,
+                        IfaStatus = ifaStandard?.Status,
+                        EffectiveFrom = null,
+                        EffectiveTo = null,
+                        Level = ifaStandard.Level,
+                        LastDateForNewStarts = null,
+                        IfaOnly = true
                     }
                 };
                 collation.Add(standard);
@@ -87,7 +112,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
 
             return collation;
         }
-
 
         public async Task<Standard> GetStandard(int standardId)
         {

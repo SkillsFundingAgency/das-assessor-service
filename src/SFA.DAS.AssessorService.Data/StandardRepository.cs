@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Data
             SqlMapper.AddTypeHandler(typeof(StandardData), new StandardDataHandler());
         }
 
-        public async Task<IEnumerable<StandardCollation>> GetStandardCollations()
+        public async Task<List<StandardCollation>> GetStandardCollations()
         {
                 var connectionString = _configuration.SqlConnectionString;
 
@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Data
                         await connection.OpenAsync();
 
                     var standards = await connection.QueryAsync<StandardCollation>("select * from [StandardCollation]");
-                    return standards;
+                    return standards.ToList();
                 }
             
         }
@@ -66,7 +66,7 @@ namespace SFA.DAS.AssessorService.Data
                 {
                     countRemoved++;
                     connection.Execute(
-                        "Update [StandardCollaction] set IsLive=0, DateRemoved=getutcdate() " +
+                        "Update [StandardCollation] set IsLive=0, DateRemoved=getutcdate() " +
                         "where StandardId = @standardId",
                         new { standard.StandardId}
                     );
@@ -93,7 +93,7 @@ namespace SFA.DAS.AssessorService.Data
                     {
                         countUpdated++;
                         connection.Execute(
-                            "Update [StandardCollaction] set ReferenceNumber = @referenceNumber, Title = @Title, StandardData = @StandardData, DateUpdated=getutcdate(), DateRemoved=null, IsLive = 1 " +
+                            "Update [StandardCollation] set ReferenceNumber = @referenceNumber, Title = @Title, StandardData = @StandardData, DateUpdated=getutcdate(), DateRemoved=null, IsLive = 1 " +
                             "where StandardId = @standardId",
                             new { standard.StandardId, standard.ReferenceNumber, standard.Title, standardData }
                         );

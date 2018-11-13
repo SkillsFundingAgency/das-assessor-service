@@ -11,6 +11,7 @@ namespace SFA.DAS.AssessorService.ExternalApis.IFAStandards.Types
         public DateTime? EffectiveFrom { get; set; }
         public DateTime? EffectiveTo { get; set; }
         public DateTime? LastDateForNewStarts { get; set; }
+        public bool IfaOnly { get; set; }
 
         //public int? Duration { get; set; }
         //public bool? IsPublished { get; set; }

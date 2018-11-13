@@ -8,6 +8,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
     {
         Task<string> UpsertStandards(List<StandardCollation> standards);
 
-        Task<IEnumerable<StandardCollation>> GetStandardCollations();
+        Task<List<StandardCollation>> GetStandardCollations();
     }
 }
