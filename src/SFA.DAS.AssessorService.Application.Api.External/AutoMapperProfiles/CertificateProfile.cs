@@ -38,6 +38,19 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                 {
                     destination.Status = null;
                 }
+
+                if (destination.CertificateData != null)
+                {
+                    if (destination.CertificateData.LearningDetails?.LearningStartDate == DateTime.MinValue)
+                    {
+                        destination.CertificateData.LearningDetails = null;
+                    }
+
+                    if (destination.CertificateData.PostalContact?.PostCode is null)
+                    {
+                        destination.CertificateData.PostalContact = null;
+                    }
+                }
             }
         }
     }

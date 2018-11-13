@@ -26,7 +26,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                 .ForMember(x => x.ContactAddLine4, opt => opt.MapFrom(source => source.PostalContact.City))
                 .ForMember(x => x.ContactPostCode, opt => opt.MapFrom(source => source.PostalContact.PostCode))
                 .ForMember(x => x.ProviderName, opt => opt.MapFrom(source => source.LearningDetails.ProviderName))
-                .ForMember(x => x.Registration, opt => opt.MapFrom(source => string.Empty))
                 .ForAllOtherMembers(x => x.Ignore());
 
             CreateMap<Domain.JsonData.CertificateData, Models.Certificates.CertificateData>()
@@ -48,24 +47,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                 .ForPath(x => x.PostalContact.Department, opt => opt.MapFrom(source => source.Department))
                 .ForPath(x => x.PostalContact.Organisation, opt => opt.MapFrom(source => source.ContactOrganisation))
                 .ForPath(x => x.PostalContact.PostCode, opt => opt.MapFrom(source => source.ContactPostCode))
-                .AfterMap<CollapseNullsAction>()
                 .ForAllOtherMembers(x => x.Ignore());
-        }
-
-        public class CollapseNullsAction : IMappingAction<Domain.JsonData.CertificateData, Models.Certificates.CertificateData>
-        {
-            public void Process(Domain.JsonData.CertificateData source, Models.Certificates.CertificateData destination)
-            {
-                if (destination.LearningDetails.LearningStartDate == DateTime.MinValue)
-                {
-                    destination.LearningDetails = null;
-                }
-
-                if(destination.PostalContact.PostCode is null)
-                {
-                    destination.PostalContact = null;
-                }
-            }
         }
     }
 }
