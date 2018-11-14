@@ -189,8 +189,6 @@ namespace SFA.DAS.AssessorService.Data
                 return contact;
             }
         }
-
-     
         
         public async Task<IEnumerable<EpaOrganisation>> GetAssessmentOrganisationsByStandardId(int standardId)
         {
@@ -220,6 +218,21 @@ namespace SFA.DAS.AssessorService.Data
                     "SELECT distinct id,EndPointAssessorOrganisationId as organisationId, StandardCode, EffectiveFrom, EffectiveTo, DateStandardApprovedOnRegister, ContactId "+
                      "FROM [OrganisationStandard] WHERE EndPointAssessorOrganisationId = @organisationId";
                 return await connection.QueryAsync<OrganisationStandardSummary>(sqlForStandardByOrganisationId, new {organisationId});
+            }
+        }
+
+        public async Task<OrganisationStandard> GetOrganisationStandardFromOrganisationStandardId(int organisationStandardId)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                var sqlForStandardByOrganisationStandardId =
+                    "SELECT Id, EndPointAssessorOrganisationId as OrganisationId, StandardCode as StandardId, EffectiveFrom, EffectiveTo, " +
+                    "DateStandardApprovedOnRegister, Comments, Status, ContactId "+
+                    "FROM [OrganisationStandard] WHERE Id = @organisationStandardId";
+                return await connection.QuerySingleAsync<OrganisationStandard>(sqlForStandardByOrganisationStandardId, new {organisationStandardId});
             }
         }
 
@@ -275,6 +288,25 @@ namespace SFA.DAS.AssessorService.Data
                 return assessmentOrganisationSummaries;
             }
         }
+
+        public async Task<AssessmentOrganisationSummary> GetAssessmentOrganisationByContactEmail(string email)
+        {
+            var connectionString = _configuration.SqlConnectionString;
+            using (var connection = new SqlConnection(connectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                var sql =
+                    "SELECT top 1 o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, o.OrganisationData, ot.Id as OrganisationTypeId, ot.Type as OrganisationType "
+                    + "FROM [Organisations] o LEFT OUTER JOIN [OrganisationType] ot ON ot.Id = o.OrganisationTypeId "
+                    + "LEFT JOIN [Contacts] c ON c.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId "
+                    + "WHERE replace(c.Email, ' ','')  = replace(@email, ' ','')";
+
+                var organisation = await connection.QuerySingleOrDefaultAsync<AssessmentOrganisationSummary>(sql, new { email});
+                return organisation;
+            }
+        }
         public async Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsByName(string organisationName)
         {
             var connectionString = _configuration.SqlConnectionString;
@@ -306,6 +338,40 @@ namespace SFA.DAS.AssessorService.Data
                     "select DeliveryAreaId from organisationStandardDeliveryArea" +
                     " where OrganisationStandardId = @organisationStandardId";
                 var deliveryAreas = await connection.QueryAsync<int>(sql, new {organisationStandardId});
+                return deliveryAreas;
+            }
+        }
+
+        public async Task<EpaContact> GetContactByContactId(Guid contactId)
+        {
+            var connectionString = _configuration.SqlConnectionString;
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                var sql =
+                    "select Id, EndPointAssessorOrganisationId, Username, DisplayName, Email, Status, PhoneNumber " +
+                    " from Contacts where Id = @contactId";
+                var contact = await connection.QuerySingleAsync<EpaContact>(sql, new { contactId });
+                return contact;
+            }
+        }
+
+        public async Task<IEnumerable<OrganisationStandardDeliveryArea>> GetDeliveryAreasByOrganisationStandardId(int organisationStandardId)
+        {
+            var connectionString = _configuration.SqlConnectionString;
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                var sql =
+                    "select *  from organisationStandardDeliveryArea" +
+                    " where OrganisationStandardId = @organisationStandardId";
+                var deliveryAreas = await connection.QueryAsync<OrganisationStandardDeliveryArea>(sql, new { organisationStandardId });
                 return deliveryAreas;
             }
         }

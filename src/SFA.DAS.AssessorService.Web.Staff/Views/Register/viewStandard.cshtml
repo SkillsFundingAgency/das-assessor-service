@@ -1,0 +1,95 @@
+﻿@using SFA.DAS.AssessorService.Web.Staff.Controllers
+@using SFA.DAS.AssessorService.Domain.Extensions
+@model RegisterViewAndEditOrganisationStandardViewModel
+@{
+    ViewBag.Title = "View Organisation Standard";
+    Layout = "_Layout";
+}
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <a class="link-back" a href="/register/view-organisation/@Model.OrganisationId">Return to organisation</a>
+
+        <h1 class="heading-xlarge">View organisation standard</h1>
+
+        <div id="organisationWrapper">
+            <div class="form-group">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td><span class="bold-small">Organisation</span></td>
+                            <td> @Model.OrganisationName</td>
+                        </tr>
+                    <tr>
+                        <td><span class="bold-small">Organisation status</span></td>
+                        <td> @Model.OrganisationStatus</td>
+                    </tr>
+                    <tr>
+                        <td><span class="bold-small">Organisation ID</span></td>
+                        <td>@Model.OrganisationId</td>
+                    </tr>
+                        <tr>
+                            <td><span class="bold-small">Standard</span></td>
+                            <td> @Model.StandardTitle (@Model.StandardId)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="bold-small">Standard effective from</span></td>
+                            <td> @Model.EffectiveFrom.ToSfaShortDateString()</td>
+                        </tr>
+                        <tr>
+                            <td><span class="bold-small">Standard effective to</span></td>
+                            <td> @Model.EffectiveTo.ToSfaShortDateString()</td>
+                        </tr>
+                        <tr>
+                            <td><span class="bold-small">Date approved on register</span></td>
+                            <td> @Model.DateStandardApprovedOnRegister</td>
+                        </tr>
+                        <tr>
+                            <td><span class="bold-small">Status</span></td>
+                            <td> @Model.Status</td>
+                        </tr>
+                        <tr>
+                            <td><span class="bold-small">Contact</span></td>
+                            <td>
+                                @if (Model.Contact != null)
+                                {
+                                    @Model.Contact.DisplayName
+                                    if (!string.IsNullOrEmpty(Model.Contact.Email))
+                                    {
+                                        <br /><a href="mailto:@Model.Contact.Email">@Model.Contact.Email</a>
+                                    }
+                                    if (!string.IsNullOrEmpty(Model.Contact.PhoneNumber))
+                                    {
+                                        <br />@Model.Contact.PhoneNumber
+                                    }
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="bold-small">Delivery Areas</span></td>
+                            <td>
+                                @if (Model.DeliveryAreasDetails != null && Model.DeliveryAreasDetails.Any())
+                                {
+                                    for (var index = 0; index < Model.DeliveryAreas.Count; index++)
+                                    {
+                                        var deliveryArea = Model.DeliveryAreasDetails[index];
+                                        @deliveryArea.DeliveryArea
+                                        if (index < Model.DeliveryAreasDetails.Count - 1)
+                                        { @Html.Raw(", ")}
+                                }
+                            }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="bold-small">Comments</span></td>
+                            <td> @Model.Comments</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="form-group">
+                <a class="button" href="/register/edit-standard/@Model.OrganisationStandardId">Edit</a>
+            </div>
+        </div>
+    </div>
+</div>

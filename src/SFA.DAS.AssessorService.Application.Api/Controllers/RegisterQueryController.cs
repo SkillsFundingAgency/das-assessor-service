@@ -118,6 +118,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             if (result == null) return BadRequest();
             return Ok(result);
         }
+        
+        [HttpGet("assessment-organisations/organisation-standard/{organisationStandardId}", Name = "GetOrganisationStandard")]
+        [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(OrganisationStandard))]
+        [SwaggerResponse((int) HttpStatusCode.NotFound, null)]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetOrganisationStandard(int organisationStandardId)
+        {
+            _logger.LogInformation($@"Get Organisation Standard from Id [{organisationStandardId}]");
+            var result = await _mediator.Send(new GetOrganisationStandardRequest {OrganisationStandardId = organisationStandardId});
+            if (result == null) return BadRequest();
+            return Ok(result);
+        }
 
         [HttpHead("assessment-organisations/{organisationId}", Name = "GetAssessmentOrganisationHead")]
         [SwaggerResponse((int) HttpStatusCode.NoContent)]
@@ -140,6 +153,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(await _mediator.Send(new SearchAssessmentOrganisationsRequest {SearchTerm = searchstring}));
         }
 
+        [HttpGet("assessment-organisations/email/{emailAddress}", Name = "GetAssessmentOrganisationFromEmail")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<AssessmentOrganisationSummary>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetAssessmentOrganisationFromEmail(string emailAddress)
+        {
+            _logger.LogInformation($@"Get organisation from email [{emailAddress}]");
+            return Ok(await _mediator.Send(new GetAssessmentOrganisationByEmailRequest { Email = emailAddress }));
+        }
+
 
         [HttpGet("assessment-organisations/standards/search/{searchstring}", Name = "SearchStandards")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<StandardSummary>))]
@@ -150,37 +173,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _logger.LogInformation($@"Search Standards for [{searchstring}]");
             return Ok(await _mediator.Send(new SearchStandardsRequest {SearchTerm = searchstring}));
         }
-
-        [HttpGet("assessment-organisations/standards/validate/search/{searchstring}", Name = "SearchStandardsValidate")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
-        public async Task<IActionResult> SearchStandardsValidate(string searchstring)
-        {
-            return await SearchStandardsValidateSearchstring(searchstring?.Trim());
-        }
-
-        [HttpGet("assessment-organisations/standards/validate/search", Name = "SearchStandardsValidateEmptyString")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
-        public async Task<IActionResult> SearchStandardsValidateEmptyString()
-        {
-            return await SearchStandardsValidateSearchstring(string.Empty);
-        }
-
-        private async Task<IActionResult> SearchStandardsValidateSearchstring(string searchstring)
-        {
-            try
-            {
-                var request = new SearchStandardsValidationRequest { Searchstring = searchstring };
-                _logger.LogInformation("Validation search standards");
-                var result = await _mediator.Send(request);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($@"Bad request, Message: [{ex.Message}]");
-                return BadRequest(ex);
-            }
-        }
-
     }
 }
 

@@ -10,7 +10,7 @@ Layout = "_Layout";
         <form class="register-search-form" asp-action="EditOrganisation" asp-controller="Register" method="POST">
             <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
                 <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                    There's a problem
+                    There is a problem
                 </h2>
                 <ul class="js-error-summary-list error-summary-list"></ul>
             </div>
@@ -19,7 +19,7 @@ Layout = "_Layout";
             {
             <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
                 <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                    There's a problem
+                    There is a problem
                 </h2>
                 <ul class="error-summary-list">
                     <li><a sfa-validation-for="OrganisationId"></a></li>
@@ -28,11 +28,14 @@ Layout = "_Layout";
                     <li><a sfa-validation-for="OrganisationTypeId"></a></li>
                     <li><a sfa-validation-for="LegalName"></a></li>
                     <li><a sfa-validation-for="WebsiteLink"></a></li>
+                    <li><a sfa-validation-for="Address"></a></li>
                     <li><a sfa-validation-for="Address1"></a></li>
                     <li><a sfa-validation-for="Address2"></a></li>
                     <li><a sfa-validation-for="Address3"></a></li>
                     <li><a sfa-validation-for="Address4"></a></li>
                     <li><a sfa-validation-for="Postcode"></a></li>
+                    <li><a sfa-validation-for="ContactsCount"></a></li>
+                    <li><a sfa-validation-for="StandardsCount"></a></li>
                 </ul>
             </div>
             }
@@ -96,33 +99,36 @@ Layout = "_Layout";
                     </label>
                     <input class="form-control" name="WebsiteLink" sfa-validation-for="WebsiteLink" sfa-validationerror-class="form-control-error" asp-for="WebsiteLink" type="text" />
                 </div>
-                <div class="form-group-related" sfa-validation-for="Address1" sfa-validationerror-class="form-group-error">
-                    <label for="Address1">
-                        <span class="form-label-bold">Street address</span>
-                        <span class="error-message" asp-validation-for="Address1"></span>
-                    </label>
-                    <input class="form-control" name="Address1" sfa-validation-for="Address1" sfa-validationerror-class="form-control-error" asp-for="Address1" type="text" />
-                </div>
-                <div class="form-group-related" sfa-validation-for="Address2" sfa-validationerror-class="form-group-error">
-                    <label for="Address2">
-                        <span class="form-label-bold visually-hidden">Address 2</span>
-                        <span class="error-message" asp-validation-for="Address1"></span>
-                    </label>
-                    <input class="form-control" name="Address2" sfa-validation-for="Address2" sfa-validationerror-class="form-control-error" asp-for="Address2" type="text" />
-                </div>
-                <div class="form-group" sfa-validation-for="Address3" sfa-validationerror-class="form-group-error">
-                    <label for="Address3">
-                        <span class="form-label-bold visually-hidden">Address 3</span>
-                        <span class="error-message" asp-validation-for="Address3"></span>
-                    </label>
-                    <input class="form-control" name="Address3" sfa-validation-for="Address3" sfa-validationerror-class="form-control-error" asp-for="Address3" type="text" />
-                </div>
-                <div class="form-group" sfa-validation-for="Address4" sfa-validationerror-class="form-group-error">
-                    <label for="Address4">
-                        <span class="form-label-bold">City / Town</span>
-                        <span class="error-message" asp-validation-for="Address4"></span>
-                    </label>
-                    <input class="form-control" name="Address4" sfa-validation-for="Address4" sfa-validationerror-class="form-control-error" asp-for="Address4" type="text" />
+                <div class="form-group-related" sfa-validation-for="Address" sfa-validationerror-class="form-group-error">
+                    <span class="error-message" asp-validation-for="Address"></span>
+                    <div class="form-group-related" sfa-validation-for="Address1" sfa-validationerror-class="form-group-error">
+                        <label for="Address1">
+                            <span class="form-label-bold">Street address</span>
+                            <span class="error-message" asp-validation-for="Address1"></span>
+                        </label>
+                        <input class="form-control" name="Address1" sfa-validation-for="Address1" sfa-validationerror-class="form-control-error" asp-for="Address1" type="text"/>
+                    </div>
+                    <div class="form-group-related" sfa-validation-for="Address2" sfa-validationerror-class="form-group-error">
+                        <label for="Address2">
+                            <span class="form-label-bold visually-hidden">Address 2</span>
+                            <span class="error-message" asp-validation-for="Address2"></span>
+                        </label>
+                        <input class="form-control" name="Address2" sfa-validation-for="Address2" sfa-validationerror-class="form-control-error" asp-for="Address2" type="text"/>
+                    </div>
+                    <div class="form-group" sfa-validation-for="Address3" sfa-validationerror-class="form-group-error">
+                        <label for="Address3">
+                            <span class="form-label-bold visually-hidden">Address 3</span>
+                            <span class="error-message" asp-validation-for="Address3"></span>
+                        </label>
+                        <input class="form-control" name="Address3" sfa-validation-for="Address3" sfa-validationerror-class="form-control-error" asp-for="Address3" type="text"/>
+                    </div>
+                    <div class="form-group" sfa-validation-for="Address4" sfa-validationerror-class="form-group-error">
+                        <label for="Address4">
+                            <span class="form-label-bold">City / Town</span>
+                            <span class="error-message" asp-validation-for="Address4"></span>
+                        </label>
+                        <input class="form-control" name="Address4" sfa-validation-for="Address4" sfa-validationerror-class="form-control-error" asp-for="Address4" type="text"/>
+                    </div>
                 </div>
                 <div class="form-group" sfa-validation-for="Postcode" sfa-validationerror-class="form-group-error">
                     <label for="Postcode">
@@ -144,7 +150,11 @@ Layout = "_Layout";
                     @Model.Status
                 </div>
                 <div class="form-group">
-                    <button class="button" type="submit">Save</button>
+                    <button class="button" type="submit" name="ActionChoice" value="Save">Save</button>
+                    @if (Model.Status == "New")
+                    {
+                        <button class="button" type="submit" name="ActionChoice" value="MakeLive">Make Live</button>
+                    }
                     <a class="text-link button" href="/register/view-organisation/@Model.OrganisationId">Cancel</a>
                 </div>
             </div>
@@ -163,8 +173,7 @@ Layout = "_Layout";
                     <tr>
                         <th>Name</th>
                         <th>Email</th>
-                        <th>username</th>
-                        <th></th>
+                        <th>Username</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -174,7 +183,6 @@ Layout = "_Layout";
                         <td data-label="Name">@result.DisplayName</td>
                         <td data-label="ID">@result.Email</td>
                         <td data-label="Username">@result.Username</td>
-                        <td class="numeric"><a href="">Edit</a></td>
                     </tr>
                     }
                 </tbody>
@@ -182,7 +190,10 @@ Layout = "_Layout";
             }
             else
             {
-            <span>There are no contacts</span>
+                <div class="form-group" sfa-validation-for="ContactsCount" sfa-validationerror-class="form-group-error">
+                    <span class="error-message" asp-validation-for="ContactsCount"></span>
+                    <span>There are no contacts</span>
+                    </div>
             }
         </div>
     </div>
@@ -199,7 +210,6 @@ Layout = "_Layout";
                     <tr>
                         <th>Name</th>
                         <th>Code</th>
-                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -209,15 +219,16 @@ Layout = "_Layout";
                     <tr>
                         <td data-label="Name">@result.StandardSummary.Title</td>
                         <td data-label="ID">@result.StandardCode</td>
-                        <td class="numeric"><a href="">Edit</a></td>
                     </tr>
                     }
                 </tbody>
             </table>
             }
             else
-            {
-            <span>There are no standards</span>
+            {<div class="form-group" sfa-validation-for="StandardsCount" sfa-validationerror-class="form-group-error">
+                 <span class="error-message" asp-validation-for="StandardsCount"></span>
+                 <span>There are no standards</span>
+             </div>
             }
         </div>
     </div>

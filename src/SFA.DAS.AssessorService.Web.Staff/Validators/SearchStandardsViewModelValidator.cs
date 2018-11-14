@@ -23,6 +23,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators
                 var rx = new System.Text.RegularExpressions.Regex("<[^>]*>/");
                 searchstring = rx.Replace(searchstring, "");
                 searchstring = searchstring.Replace("/", "");
+                searchstring = searchstring.Replace("+", "");
                 var searchTerm = Uri.EscapeUriString(searchstring);
                 var validationResult = _apiClient.ValidateSearchStandards(searchTerm).Result;
                 if (validationResult.IsValid) return;
