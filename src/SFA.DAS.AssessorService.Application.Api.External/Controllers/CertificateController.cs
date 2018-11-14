@@ -29,9 +29,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         }
 
         [HttpGet("{uln}/{familyName}/{standardCode}")]
-        [SwaggerResponse((int)HttpStatusCode.OK, "The specified Certificate.", typeof(Certificate))]
-        [SwaggerResponse((int)HttpStatusCode.NotFound, "The specified Certificate could not be found.")]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.OK, "The current Certificate.", typeof(Certificate))]
+        [SwaggerResponse((int)HttpStatusCode.NotFound, "There is no Certificate and you may create one.")]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, "Refer to the Message for more information.", typeof(ApiResponse))]
         [SwaggerOperation("Get Certificate", "Gets the specified Certificate.")]
         public async Task<IActionResult> GetCertificate(long uln, string familyName, int standardCode)
         {
@@ -50,7 +50,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
 
         [HttpPost]
         [SwaggerResponse((int)HttpStatusCode.OK, "For each item: The created Certificate if valid, else a list of validation errors.", typeof(IEnumerable<BatchCertificateResponse>))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, "Refer to the Message for more information.", typeof(ApiResponse))]
         [SwaggerOperation("Create Certificates", "Creates a new Certificate for each valid item within the request.")]
         public async Task<IActionResult> CreateCertificates([FromBody] IEnumerable<CertificateData> request)
         {
@@ -63,7 +63,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
 
         [HttpPut]
         [SwaggerResponse((int)HttpStatusCode.OK, "For each item: The updated Certificate if valid, else a list of validation errors.", typeof(IEnumerable<BatchCertificateResponse>))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, "Refer to the Message for more information.", typeof(ApiResponse))]
         [SwaggerOperation("Update Certificates", "Updates the specified Certificate with the information contained in each valid request.")]
         public async Task<IActionResult> UpdateCertificates([FromBody] IEnumerable<CertificateData> request)
         {
@@ -76,7 +76,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
 
         [HttpPost("submit")]
         [SwaggerResponse((int)HttpStatusCode.OK, "For each item: A the submitted Certificate if valid, else a list of validation errors.", typeof(IEnumerable<SubmitBatchCertificateResponse>))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, "Refer to the Message for more information.", typeof(ApiResponse))]
         [SwaggerOperation("Submit Certificates", "Submits the specified Certificate for each valid request.")]
         public async Task<IActionResult> SubmitCertificates([FromBody] IEnumerable<SubmitCertificate> request)
         {
@@ -89,7 +89,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
 
         [HttpDelete("{uln}/{familyName}/{standardCode}/{certificateReference}")]
         [SwaggerResponse((int)HttpStatusCode.NoContent, "The specified Certificate has been deleted.")]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, "Refer to the Message for more information.", typeof(ApiResponse))]
         [SwaggerOperation("Delete Certificate", "Deletes the specified Certificate.")]
         public async Task<IActionResult> DeleteCertificate(long uln, string familyName, int standardCode, string certificateReference)
         {
