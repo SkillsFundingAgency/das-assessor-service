@@ -104,7 +104,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         }
 
         [HttpPost("submit")]
-        [SwaggerResponse((int)HttpStatusCode.OK, "For each item: A the submitted Certificate if valid, else a list of validation errors.", typeof(IEnumerable<SubmitBatchCertificateResponse>))]
+        [SwaggerResponse((int)HttpStatusCode.OK, "For each item: The submitted Certificate if valid, else a list of validation errors.", typeof(IEnumerable<SubmitBatchCertificateResponse>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
         [SwaggerOperation("Submit Certificates", "Submits the specified Certificate for each valid request.")]
         public async Task<IActionResult> SubmitCertificates([FromBody] IEnumerable<SubmitCertificate> request)
