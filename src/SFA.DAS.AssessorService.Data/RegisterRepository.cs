@@ -25,6 +25,7 @@ namespace SFA.DAS.AssessorService.Data
         {
             _configuration = configuration;
             SqlMapper.AddTypeHandler(typeof(OrganisationData), new OrganisationDataHandler());
+            SqlMapper.AddTypeHandler(typeof(OrganisationStandardData), new OrganisationStandardDataHandler());
         }
 
         public async Task<string> CreateEpaOrganisation(EpaOrganisation org)
@@ -60,8 +61,8 @@ namespace SFA.DAS.AssessorService.Data
                 connection.Execute(
                     "UPDATE [Organisations] SET [UpdatedAt] = GetUtcDate(), [EndPointAssessorName] = @Name, " +
                     "[EndPointAssessorUkprn] = @ukprn, [OrganisationTypeId] = @organisationTypeId, " +
-                    "[OrganisationData] = @orgData WHERE [EndPointAssessorOrganisationId] = @organisationId",
-                    new {org.Name, org.Ukprn, org.OrganisationTypeId, orgData, org.OrganisationId});
+                    "[OrganisationData] = @orgData, Status = @status WHERE [EndPointAssessorOrganisationId] = @organisationId",
+                    new {org.Name, org.Ukprn, org.OrganisationTypeId, orgData, org.Status, org.OrganisationId});
        
                 return org.OrganisationId;
             }
@@ -101,7 +102,7 @@ namespace SFA.DAS.AssessorService.Data
         }
 
         public async Task<string> UpdateEpaOrganisationStandard(EpaOrganisationStandard orgStandard,
-            List<int> deliveryAreas)
+            List<int> deliveryAreas, string actionChoice)
         {
 
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
@@ -134,6 +135,14 @@ namespace SFA.DAS.AssessorService.Data
                         "INSERT INTO OrganisationStandardDeliveryArea ([OrganisationStandardId],DeliveryAreaId, Status) VALUES " +
                         "(@osdaId, @deliveryAreaId,'Live'); ",
                         new {osdaId, deliveryAreaId}
+                    );
+                }
+
+                if (actionChoice == "MakeLive")
+                {
+                    connection.Execute(
+                        "UPDATE [OrganisationStandard] SET [Status] = 'Live', [DateStandardApprovedOnRegister] = getutcdate() where Id = @osdaId ",
+                        new { osdaId }
                     );
                 }
 

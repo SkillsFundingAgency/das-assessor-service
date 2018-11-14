@@ -19,41 +19,21 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
     {
         private readonly IRegisterRepository _registerRepository;
         private readonly ILogger<CreateEpaOrganisationHandler> _logger;
-        private readonly IEpaOrganisationValidator _validator;
         private readonly IEpaOrganisationIdGenerator _organisationIdGenerator;
         private readonly ISpecialCharacterCleanserService _cleanser;
         
-        public CreateEpaOrganisationHandler(IRegisterRepository registerRepository, IEpaOrganisationValidator validator, IEpaOrganisationIdGenerator orgIdGenerator, ILogger<CreateEpaOrganisationHandler> logger, ISpecialCharacterCleanserService cleanser)
+        public CreateEpaOrganisationHandler(IRegisterRepository registerRepository, IEpaOrganisationIdGenerator orgIdGenerator, ILogger<CreateEpaOrganisationHandler> logger, ISpecialCharacterCleanserService cleanser)
         {
             _registerRepository = registerRepository;
             _logger = logger;
             _cleanser = cleanser;
             _organisationIdGenerator = orgIdGenerator;
-            _validator = validator;
         }
 
         public async Task<string> Handle(CreateEpaOrganisationRequest request, CancellationToken cancellationToken)
         {
             ProcessRequestFieldsForSpecialCharacters(request);
-            var validationResponse = _validator.ValidatorCreateEpaOrganisationRequest(request);
-
-            if (!validationResponse.IsValid)
-            {
-                var message = validationResponse.Errors.Aggregate(string.Empty, (current, error) => current + error.ErrorMessage + "; ");
-                _logger.LogError(message);
-                if (validationResponse.Errors.Any(x => x.StatusCode == ValidationStatusCode.BadRequest.ToString()))
-                {     
-                    throw new BadRequestException(message);
-                }
-
-                if (validationResponse.Errors.Any(x => x.StatusCode == ValidationStatusCode.AlreadyExists.ToString()))
-                {
-                    throw new AlreadyExistsException(message);
-                }
-
-                throw new Exception(message);
-            }
-
+ 
             var newOrganisationId = _organisationIdGenerator.GetNextOrganisationId();
             if (newOrganisationId == string.Empty)
                 throw new Exception("A valid organisation Id could not be generated");

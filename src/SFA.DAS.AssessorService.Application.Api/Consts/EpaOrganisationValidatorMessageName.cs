@@ -36,5 +36,13 @@
         public const string OrganisationStandardEffectiveToAfterStandardEffectiveTo = "OrganisationStandardEffectiveToAfterStandardEffectiveTo";
         public const string OrganisationStandardEffectiveFromAfterEffectiveTo = "OrganisationStandardEffectiveFromAfterEffectiveTo";
         public const string ContactDetailsAreDuplicates = "ContactDetailsAreDuplicates";
+        public const string OrganisationStandardCannotBeUpdatedBecauseOrganisationNotLive = "OrganisationStandardCannotBeUpdatedBecauseOrganisationNotLive";
+        public const string OrganisationStandardCannotBeMadeLiveBecauseEffectiveFromNotSet = "OrganisationStandardCannotBeMadeLiveBecauseEffectiveFromNotSet";
+        public const string OrganisationStandardCannotBeUpdatedBecauseEffectiveFromNotSet = "OrganisationStandardCannotBeUpdatedBecauseEffectiveFromNotSet";
+        public const string OrganisationTypeIsRequired = "OrganisationTypeIsRequired";
+        public const string AddressIsNotEntered = "AddressIsNotEntered";
+        public const string PostcodeIsNotEntered = "PostcodeIsNotEntered";
+        public const string ContactsAreNotPresent = "ContactsAreNotPresent";
+        public const string StandardsAreNotPresent = "StandardsAreNotPresent";
     }
 }
