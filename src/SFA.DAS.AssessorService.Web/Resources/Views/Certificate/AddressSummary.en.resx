@@ -148,7 +148,7 @@
     <value>Company name</value>
   </data>
     <data name="Heading" xml:space="preserve">
-    <value>Confirm the employer's address</value>
+    <value>Confirm the address where we are sending the certificate</value>
   </data>
   <data name="LoadingAddress" xml:space="preserve">
     <value>Loading address...</value>
