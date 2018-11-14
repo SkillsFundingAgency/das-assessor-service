@@ -147,7 +147,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<List<Certificate>> GetCompletedCertificatesFor(long uln)
         {
-            return await _context.Certificates.Where(c => c.Uln == uln && (c.Status == CertificateStatus.Printed || c.Status == CertificateStatus.Submitted))
+            return await _context.Certificates.Where(c => c.Uln == uln && (c.Status == CertificateStatus.Reprint || c.Status == CertificateStatus.Printed || c.Status == CertificateStatus.Submitted))
                 .ToListAsync();
         }
 
