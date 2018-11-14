@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
             .ForPath(x => x.CertificateData.Learner.GivenNames, opt => opt.MapFrom(source => source.GivenNames))
             .ForPath(x => x.CertificateData.Learner.FamilyName, opt => opt.MapFrom(source => source.FamilyName))
             .ForPath(x => x.CertificateData.Standard.StandardCode, opt => opt.MapFrom(source => source.StdCode))
-            .ForPath(x => x.CertificateData.Standard.Name, opt => opt.MapFrom(source => source.Standard))
+            .ForPath(x => x.CertificateData.Standard.StandardName, opt => opt.MapFrom(source => source.Standard))
             .ForPath(x => x.CertificateData.Standard.Level, opt => opt.MapFrom(source => source.Level))
             .ForPath(x => x.CertificateData.LearningDetails.CourseOption, opt => opt.MapFrom(source => source.Option))
             .ForPath(x => x.CertificateData.LearningDetails.LearningStartDate, opt => opt.MapFrom(source => source.LearnStartDate ?? DateTime.MinValue))
