@@ -17,6 +17,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
     [SwaggerTag("Batch Certificates")]
     public class CertificateController : ControllerBase
     {
+        private const string CERTIFICATE_STATUS_DRAFT = "Draft";
+        private const string CERTIFICATE_STATUS_READY = "Ready";
+
         private readonly ILogger<CertificateController> _logger;
         private readonly IHeaderInfo _headerInfo;
         private readonly IApiClient _apiClient;
@@ -49,6 +52,11 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             }
             else
             {
+                if(IsDraftCertificateDeemedAsReady(response.Certificate))
+                {
+                    response.Certificate.Status.CurrentStatus = CERTIFICATE_STATUS_READY;
+                }
+
                 return Ok(response.Certificate);
             }
         }
@@ -63,6 +71,14 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
 
             var results = await _apiClient.CreateCertificates(bcRequest);
 
+            foreach(var result in results)
+            {
+                if (IsDraftCertificateDeemedAsReady(result.Certificate))
+                {
+                    result.Certificate.Status.CurrentStatus = CERTIFICATE_STATUS_READY;
+                }
+            }
+
             return Ok(results);
         }
 
@@ -75,6 +91,14 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             IEnumerable<BatchCertificateRequest> bcRequest = request.Select(req => new BatchCertificateRequest { UkPrn = _headerInfo.Ukprn, Email = _headerInfo.Email, CertificateData = req });
 
             var results = await _apiClient.UpdateCertificates(bcRequest);
+
+            foreach (var result in results)
+            {
+                if (IsDraftCertificateDeemedAsReady(result.Certificate))
+                {
+                    result.Certificate.Status.CurrentStatus = CERTIFICATE_STATUS_READY;
+                }
+            }
 
             return Ok(results);
         }
@@ -110,5 +134,39 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
                 return BadRequest(error);
             }
         }
+
+        #region Utility Functions
+        private bool IsDraftCertificateDeemedAsReady(Certificate certificate)
+        {
+            // Note: This for the External API only and allows the caller to know if a Draft Certificate is 'Ready' for submitting
+            // It is deemed ready if the mandatory fields have been filled out.
+            if (certificate?.CertificateData is null || certificate?.Status?.CurrentStatus != CERTIFICATE_STATUS_DRAFT || string.IsNullOrEmpty(certificate.CertificateData.CertificateReference))
+            {
+                return false;
+            }
+            else if (certificate.CertificateData.Standard is null || certificate.CertificateData.Standard.StandardCode < 1)
+            {
+                return false;
+            }
+            else if (certificate.CertificateData.PostalContact is null || string.IsNullOrEmpty(certificate.CertificateData.PostalContact.ContactName)
+                        || string.IsNullOrEmpty(certificate.CertificateData.PostalContact.Organisation) || string.IsNullOrEmpty(certificate.CertificateData.PostalContact.City)
+                        || string.IsNullOrEmpty(certificate.CertificateData.PostalContact.PostCode))
+            {
+                return false;
+            }
+            else if (certificate.CertificateData.Learner is null || string.IsNullOrEmpty(certificate.CertificateData.Learner.FamilyName)
+                        || certificate.CertificateData.Learner.Uln < 1000000000 || certificate.CertificateData.Learner.Uln > 9999999999)
+            {
+                return false;
+            }
+            else if (certificate.CertificateData.LearningDetails is null || string.IsNullOrEmpty(certificate.CertificateData.LearningDetails.OverallGrade)
+                        || !certificate.CertificateData.LearningDetails.AchievementDate.HasValue)
+            {
+                return false;
+            }
+
+            return true;
+        }
+        #endregion
     }
 }
