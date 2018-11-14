@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates.Batch;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
@@ -39,8 +40,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
         {
             _logger.LogInformation("GetCertificate Before Get Certificate from db");
             Certificate certificate = await _certificateRepository.GetCertificate(request.Uln, request.StandardCode);
+            var allowedCertificateStatus = new string[] { CertificateStatus.Draft, CertificateStatus.Submitted, CertificateStatus.Printed, CertificateStatus.Reprint };
 
-            if (certificate != null)
+            if (certificate != null && allowedCertificateStatus.Contains(certificate.Status))
             {
                 var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 
@@ -99,8 +101,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             _logger.LogInformation("GetContactFromCertificateLogs Before GetCertificateLogsFor");
             var certificateLogs = await _certificateRepository.GetCertificateLogsFor(certificateId);
 
-            var submittedLogEntry = certificateLogs?.FirstOrDefault(l => l.Status == Domain.Consts.CertificateStatus.Submitted);
-            var createdLogEntry = certificateLogs?.FirstOrDefault(l => l.Status == Domain.Consts.CertificateStatus.Draft);
+            var submittedLogEntry = certificateLogs?.FirstOrDefault(l => l.Status == CertificateStatus.Submitted);
+            var createdLogEntry = certificateLogs?.FirstOrDefault(l => l.Status == CertificateStatus.Draft);
 
             if (submittedLogEntry != null)
             {
