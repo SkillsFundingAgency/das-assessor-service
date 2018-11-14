@@ -31,8 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [HttpGet("{uln}/{familyName}/{standardCode}")]
         [SwaggerResponse((int)HttpStatusCode.OK, "The current Certificate.", typeof(Certificate))]
         [SwaggerResponse((int)HttpStatusCode.NoContent, "There is no Certificate and you may create one.", typeof(Certificate))]
-        [SwaggerResponse((int)HttpStatusCode.NotFound, "Refer to the content for more information.")]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, "Refer to the Message for more information.", typeof(ApiResponse))]
         [SwaggerOperation("Get Certificate", "Gets the specified Certificate.")]
         public async Task<IActionResult> GetCertificate(long uln, string familyName, int standardCode)
         {
@@ -41,7 +40,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
 
             if (response.ValidationErrors.Any())
             {
-                return NotFound(string.Join("; ", response.ValidationErrors));
+                ApiResponse error = new ApiResponse((int)HttpStatusCode.BadRequest, string.Join("; ", response.ValidationErrors));
+                return BadRequest(error);
             }
             else if(response.Certificate is null)
             {
@@ -94,7 +94,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
 
         [HttpDelete("{uln}/{familyName}/{standardCode}/{certificateReference}")]
         [SwaggerResponse((int)HttpStatusCode.NoContent, "The specified Certificate has been deleted.")]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, "Refer to the Message for more information.", typeof(ApiResponse))]
         [SwaggerOperation("Delete Certificate", "Deletes the specified Certificate.")]
         public async Task<IActionResult> DeleteCertificate(long uln, string familyName, int standardCode, string certificateReference)
         {
