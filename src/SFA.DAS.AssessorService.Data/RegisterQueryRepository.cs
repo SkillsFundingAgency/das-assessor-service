@@ -263,10 +263,10 @@ namespace SFA.DAS.AssessorService.Data
                     await connection.OpenAsync();
 
                 var sql =
-                      "SELECT o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, o.OrganisationData, ot.Id as OrganisationTypeId, ot.Type as OrganisationType, con.Email as Email "
+                      "SELECT o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, o.OrganisationData, ot.Id as OrganisationTypeId, ot.Type as OrganisationType, c.Email as Email "
                     + "FROM [Organisations] o "
                     + "LEFT OUTER JOIN [OrganisationType] ot ON ot.Id = o.OrganisationTypeId "
-                    + "LEFT OUTER JOIN [Contacts] con ON con.Username = o.PrimaryContact "
+                    + "LEFT OUTER JOIN [Contacts] con ON c.Username = o.PrimaryContact AND c.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId "
                     + "WHERE o.EndPointAssessorUkprn = @ukprnNumeric";
 
                 var assessmentOrganisationSummaries = await connection.QueryAsync<AssessmentOrganisationSummary>(sql, new {ukprnNumeric});
@@ -282,10 +282,10 @@ namespace SFA.DAS.AssessorService.Data
                     await connection.OpenAsync();
 
                 var sql =
-                      "SELECT o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, o.OrganisationData, ot.Id as OrganisationTypeId, ot.Type as OrganisationType, con.Email as Email "
+                      "SELECT o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, o.OrganisationData, ot.Id as OrganisationTypeId, ot.Type as OrganisationType, c.Email as Email "
                     + "FROM [Organisations] o "
                     + "LEFT OUTER JOIN [OrganisationType] ot ON ot.Id = o.OrganisationTypeId "
-                    + "LEFT OUTER JOIN [Contacts] con ON con.Username = o.PrimaryContact "
+                    + "LEFT OUTER JOIN [Contacts] c ON c.Username = o.PrimaryContact AND c.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId "
                     + "WHERE o.EndPointAssessorOrganisationId like @organisationId";
 
                 var assessmentOrganisationSummaries = await connection.QueryAsync<AssessmentOrganisationSummary>(sql, new {organisationId = $"{organisationId.Replace(" ","")}" });
@@ -320,10 +320,10 @@ namespace SFA.DAS.AssessorService.Data
                     await connection.OpenAsync();
 
                 var sql =
-                      "SELECT o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, o.OrganisationData, ot.Id as OrganisationTypeId, ot.Type as OrganisationType, con.Email as Email "
+                      "SELECT o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, o.OrganisationData, ot.Id as OrganisationTypeId, ot.Type as OrganisationType, c.Email as Email "
                     + "FROM [Organisations] o "
                     + "LEFT OUTER JOIN [OrganisationType] ot ON ot.Id = o.OrganisationTypeId "
-                    + "LEFT OUTER JOIN [Contacts] con ON con.Username = o.PrimaryContact "
+                    + "LEFT OUTER JOIN [Contacts] c ON c.Username = o.PrimaryContact AND c.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId "
                     + "WHERE replace(o.EndPointAssessorName, ' ','') like @organisationName";
 
                 var assessmentOrganisationSummaries = await connection.QueryAsync<AssessmentOrganisationSummary>(sql, new {organisationName =$"%{organisationName.Replace(" ","")}%" } );
