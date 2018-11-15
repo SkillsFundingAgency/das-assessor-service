@@ -49,7 +49,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             
             var organisationStandard = MapOrganisationStandardRequestToOrganisationStandard(request);
 
-            return await _registerRepository.UpdateEpaOrganisationStandard(organisationStandard, request.DeliveryAreas);
+            return await _registerRepository.UpdateEpaOrganisationStandard(organisationStandard, request.DeliveryAreas, request.ActionChoice);
         }
 
         private void ProcessRequestFieldsForSpecialCharacters(UpdateEpaOrganisationStandardRequest request)
@@ -72,7 +72,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 EffectiveFrom = request.EffectiveFrom,
                 EffectiveTo = request.EffectiveTo,
                 Comments = request.Comments,
-                ContactId = contactId
+                ContactId = contactId,
+                OrganisationStandardData = new OrganisationStandardData { DeliveryAreasComments = request.DeliveryAreasComments}
             };
             return organisationStandard;
         }

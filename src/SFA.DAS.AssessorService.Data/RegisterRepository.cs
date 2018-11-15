@@ -25,6 +25,7 @@ namespace SFA.DAS.AssessorService.Data
         {
             _configuration = configuration;
             SqlMapper.AddTypeHandler(typeof(OrganisationData), new OrganisationDataHandler());
+            SqlMapper.AddTypeHandler(typeof(OrganisationStandardData), new OrganisationStandardDataHandler());
         }
 
         public async Task<string> CreateEpaOrganisation(EpaOrganisation org)
@@ -60,8 +61,8 @@ namespace SFA.DAS.AssessorService.Data
                 connection.Execute(
                     "UPDATE [Organisations] SET [UpdatedAt] = GetUtcDate(), [EndPointAssessorName] = @Name, " +
                     "[EndPointAssessorUkprn] = @ukprn, [OrganisationTypeId] = @organisationTypeId, " +
-                    "[OrganisationData] = @orgData WHERE [EndPointAssessorOrganisationId] = @organisationId",
-                    new {org.Name, org.Ukprn, org.OrganisationTypeId, orgData, org.OrganisationId});
+                    "[OrganisationData] = @orgData, Status = @status WHERE [EndPointAssessorOrganisationId] = @organisationId",
+                    new {org.Name, org.Ukprn, org.OrganisationTypeId, orgData, org.Status, org.OrganisationId});
        
                 return org.OrganisationId;
             }
@@ -77,14 +78,14 @@ namespace SFA.DAS.AssessorService.Data
 
 
                 var osdaId = connection.Query<string>(
-                    "INSERT INTO [dbo].[OrganisationStandard] ([EndPointAssessorOrganisationId],[StandardCode],[EffectiveFrom],[EffectiveTo],[DateStandardApprovedOnRegister] ,[Comments],[Status], [ContactId]) VALUES (" +
-                    "@organisationId, @standardCode, @effectiveFrom, @effectiveTo, null, @comments, 'New', @ContactId); SELECT CAST(SCOPE_IDENTITY() as varchar); ",
+                    "INSERT INTO [dbo].[OrganisationStandard] ([EndPointAssessorOrganisationId],[StandardCode],[EffectiveFrom],[EffectiveTo],[DateStandardApprovedOnRegister] ,[Comments],[Status], [ContactId], [OrganisationStandardData]) VALUES (" +
+                    "@organisationId, @standardCode, @effectiveFrom, @effectiveTo, null, @comments, 'New', @ContactId, @OrganisationStandardData); SELECT CAST(SCOPE_IDENTITY() as varchar); ",
                     new
                     {
                         organisationStandard.OrganisationId, organisationStandard.StandardCode,
                         organisationStandard.EffectiveFrom, organisationStandard.EffectiveTo,
                         organisationStandard.DateStandardApprovedOnRegister, organisationStandard.Comments,
-                        organisationStandard.ContactId
+                        organisationStandard.ContactId, organisationStandard.OrganisationStandardData
                     }).Single();
 
                 foreach (var deliveryAreaId in deliveryAreas.Distinct())
@@ -101,7 +102,7 @@ namespace SFA.DAS.AssessorService.Data
         }
 
         public async Task<string> UpdateEpaOrganisationStandard(EpaOrganisationStandard orgStandard,
-            List<int> deliveryAreas)
+            List<int> deliveryAreas, string actionChoice)
         {
 
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
@@ -111,7 +112,7 @@ namespace SFA.DAS.AssessorService.Data
 
                 var osdaId = connection.Query<string>(
                     "UPDATE [OrganisationStandard] SET [EffectiveFrom] = @effectiveFrom, [EffectiveTo] = @EffectiveTo, " +
-                    "[Comments] = @comments, [ContactId] = @contactId " +
+                    "[Comments] = @comments, [ContactId] = @contactId, [OrganisationStandardData] = @organisationStandardData " +
                     "WHERE [EndPointAssessorOrganisationId] = @organisationId and [StandardCode] = @standardCode; SELECT top 1 id from [organisationStandard] where  [EndPointAssessorOrganisationId] = @organisationId and [StandardCode] = @standardCode;",
                     new
                     {
@@ -120,7 +121,8 @@ namespace SFA.DAS.AssessorService.Data
                         orgStandard.Comments,
                         orgStandard.ContactId,
                         orgStandard.OrganisationId,
-                        orgStandard.StandardCode
+                        orgStandard.StandardCode,
+                        orgStandard.OrganisationStandardData
                     }).Single();
 
                 connection.Execute(
@@ -134,6 +136,14 @@ namespace SFA.DAS.AssessorService.Data
                         "INSERT INTO OrganisationStandardDeliveryArea ([OrganisationStandardId],DeliveryAreaId, Status) VALUES " +
                         "(@osdaId, @deliveryAreaId,'Live'); ",
                         new {osdaId, deliveryAreaId}
+                    );
+                }
+
+                if (actionChoice == "MakeLive")
+                {
+                    connection.Execute(
+                        "UPDATE [OrganisationStandard] SET [Status] = 'Live', [DateStandardApprovedOnRegister] = getutcdate() where Id = @osdaId ",
+                        new { osdaId }
                     );
                 }
 
@@ -164,6 +174,11 @@ namespace SFA.DAS.AssessorService.Data
                         contact.PhoneNumber
                     });
 
+                connection.Execute("UPDATE [dbo].[Organisations] set PrimaryContact=@username WHERE EndPointAssessorOrganisationId = @endPointAssessorOrganisationId and PrimaryContact is null",
+                    new
+                    {
+                        contact.EndPointAssessorOrganisationId, contact.Username
+                    });
                 return contact.Id.ToString();
             }
         }
@@ -181,7 +196,6 @@ namespace SFA.DAS.AssessorService.Data
                     "[PhoneNumber] = @phoneNumber, [updatedAt] = getUtcDate() " +
                     "WHERE [Id] = @Id ",
                     new { contact.DisplayName, contact.Email, contact.PhoneNumber, contact.Id});
-
 
                 return contact.Id.ToString();
             }

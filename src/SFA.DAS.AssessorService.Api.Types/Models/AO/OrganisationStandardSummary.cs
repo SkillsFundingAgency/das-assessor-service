@@ -17,5 +17,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
 
         public StandardSummary StandardSummary { get; set; }
         public List<int> DeliveryAreas { get; set; }
+
+        public OrganisationStandardData OrganisationStandardData { get; set; }
     }
 }

@@ -154,7 +154,7 @@
     <value>Add the employer's address</value>
   </data>
   <data name="Lead" xml:space="preserve">
-    <value>Certificates should go to the apprentice's employer.</value>
+    <value>This is the address where the certificate will be sent.</value>
   </data>
   <data name="LoadingAddress" xml:space="preserve">
     <value>Loading address...</value>

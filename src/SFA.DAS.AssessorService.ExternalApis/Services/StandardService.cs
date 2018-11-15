@@ -21,9 +21,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
         public async Task<IEnumerable<StandardSummary>> GetAllStandardSummaries()
         {
             var results = await _cacheService.RetrieveFromCache<IEnumerable<StandardSummary>>("StandardSummaries");
-           if (results != null) return results;
+            if (results != null) return results;
             var standardSummaries = await _assessmentOrgsApiClient.GetAllStandardSummaries();
-            await _cacheService.SaveToCache("StandardSummaries", standardSummaries, 8);  
+            await _cacheService.SaveToCache("StandardSummaries", standardSummaries, 8);
             return standardSummaries;
 
         }
