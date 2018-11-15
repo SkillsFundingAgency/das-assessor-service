@@ -14,6 +14,8 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
         public CertificateDetails CertificateDetails { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public SftpSettings Sftp { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public string AssessmentOrgsApiClientBaseUrl { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string IfaApiClientBaseUrl { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
         public string IFATemplateStorageConnectionString { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public string SqlConnectionString { get; set; }
         public string SpecflowDBTestConnectionString { get; set; }

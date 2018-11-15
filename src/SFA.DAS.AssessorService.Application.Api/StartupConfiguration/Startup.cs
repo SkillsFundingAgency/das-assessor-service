@@ -150,8 +150,8 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 config.For<SingleInstanceFactory>().Use<SingleInstanceFactory>(ctx => t => ctx.GetInstance(t));
                 config.For<MultiInstanceFactory>().Use<MultiInstanceFactory>(ctx => t => ctx.GetAllInstances(t));
                 config.For<IMediator>().Use<Mediator>();
-                config.For<IAssessmentOrgsApiClient>().Use(() => new AssessmentOrgsApiClient(Configuration.AssessmentOrgsApiClientBaseUrl));   //MFCMFC
-                config.For<IIfaStandardsApiClient>().Use(() => new IfaStandardsApiClient("https://www.instituteforapprenticeships.org"));
+                config.For<IAssessmentOrgsApiClient>().Use(() => new AssessmentOrgsApiClient(Configuration.AssessmentOrgsApiClientBaseUrl));  
+                config.For<IIfaStandardsApiClient>().Use(() => new IfaStandardsApiClient(Configuration.IfaApiClientBaseUrl));
                 config.For<IDateTimeProvider>().Use<UtcDateTimeProvider>();
 
                 var option = new DbContextOptionsBuilder<AssessorDbContext>();

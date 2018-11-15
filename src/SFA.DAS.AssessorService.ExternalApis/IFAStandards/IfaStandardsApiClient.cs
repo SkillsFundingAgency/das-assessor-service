@@ -13,6 +13,9 @@ namespace SFA.DAS.AssessorService.ExternalApis.IFAStandards
         {
         }
 
+        public IfaStandardsApiClient(HttpClient httpClient) : base(httpClient)
+        {
+        }
 
         public async Task<IfaStandard> GetStandard(int standardId)
         {
