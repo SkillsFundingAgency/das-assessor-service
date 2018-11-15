@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators
             _apiClient = apiClient;
         RuleFor(vm => vm).Custom((vm, context) =>
         {
-            var validationResult =  _apiClient.ValidateUpdateContact(vm.ContactId, vm.DisplayName, vm.Email).Result;
+            var validationResult =  _apiClient.ValidateUpdateContact(vm.ContactId, vm.DisplayName, vm.Email, vm.PhoneNumber).Result;
             if (validationResult.IsValid) return;
             foreach (var error in validationResult.Errors)
             {

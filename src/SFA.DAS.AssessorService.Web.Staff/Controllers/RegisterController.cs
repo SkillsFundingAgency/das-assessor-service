@@ -142,7 +142,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                EffectiveTo = viewModel.EffectiveTo,
                ContactId = viewModel.ContactId.ToString(),
                DeliveryAreas = viewModel.DeliveryAreas,
-               Comments = viewModel.Comments
+               Comments = viewModel.Comments,
+               DeliveryAreasComments = viewModel.DeliveryAreasComments
             };
 
             var organisationStandardId = await _apiClient.CreateEpaOrganisationStandard(addOrganisationStandardRequest);
@@ -192,7 +193,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 Comments = viewModel.Comments,
                 OrganisationStatus = viewModel.OrganisationStatus,
                 OrganisationStandardStatus = viewModel.Status,
-                ActionChoice = viewModel.ActionChoice
+                ActionChoice = viewModel.ActionChoice,
+                DeliveryAreasComments = viewModel.DeliveryAreasComments
             };
 
             var organisationStandardId = await _apiClient.UpdateEpaOrganisationStandard(updateOrganisationStandardRequest);
@@ -511,8 +513,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 DeliveryAreas = organisationStandard.DeliveryAreas,
                 OrganisationName = organisationStandard.OrganisationName,
                 OrganisationStatus = organisationStandard.OrganisationStatus,
-                DeliveryAreasDetails = organisationStandard.DeliveryAreasDetails
-    };
+                DeliveryAreasDetails = organisationStandard.DeliveryAreasDetails,
+                DeliveryAreasComments = organisationStandard.OrganisationStandardData?.DeliveryAreasComments
+            };
         }
     }
 }
