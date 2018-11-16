@@ -26,5 +26,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
         public EpaContact Contact { get; set; }
         public List<int> DeliveryAreas { get; set; }
         public List<OrganisationStandardDeliveryArea> DeliveryAreasDetails { get; set; }
+
+        public OrganisationStandardData OrganisationStandardData { get; set; }
     }
 }

@@ -17,5 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<bool> ContactIdIsValidForOrganisationId(Guid contactId, string organisationId);
         Task<bool> EpaOrganisationStandardExists(string organisationId, int standardCode);
         Task<bool> ContactExists(Guid contactId);
+
+        Task<bool> ContactDetailsAlreadyExist(string displayName, string email, string phone, Guid? contactId);
     }
 }

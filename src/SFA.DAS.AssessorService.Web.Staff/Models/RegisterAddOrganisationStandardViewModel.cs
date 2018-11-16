@@ -31,6 +31,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Models
         public Guid? ContactId { get; set; }
         public List<int> DeliveryAreas { get; set; }
         public string Comments { get; set; }
+        public string DeliveryAreasComments { get; set; }
 
     }
 }

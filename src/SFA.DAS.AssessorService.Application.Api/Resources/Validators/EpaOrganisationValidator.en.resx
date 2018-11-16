@@ -234,4 +234,7 @@
   <data name="StandardsAreNotPresent" xml:space="preserve">
     <value>The organisation cannot go live without at least one standard</value>
   </data>
+  <data name="ContactDetailsAreDuplicates" xml:space="preserve">
+    <value>There is already a contact with this name, email and phone number</value>
+  </data>
 </root>
