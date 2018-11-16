@@ -9,9 +9,6 @@ namespace SFA.DAS.AssessorService.ExternalApis.IFAStandards.Types
         public int Level { get; set; }
 
         // From GetAllStandards from IFA
-        ////public string Ssa1 { get; set; }    
-        ////public string Ssa2 { get; set; }
-
         public int? Duration { get; set; }
         public int? MaxFunding { get; set; }
         public DateTime? PublishedDate { get; set; }
