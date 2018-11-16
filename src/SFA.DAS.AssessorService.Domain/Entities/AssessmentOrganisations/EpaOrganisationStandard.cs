@@ -17,5 +17,6 @@ namespace SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations
         public string Status { get; set; }
 
         public Guid? ContactId { get; set; }
+        public OrganisationStandardData OrganisationStandardData { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿@using SFA.DAS.AssessorService.Web.Staff
+@using SFA.DAS.AssessorService.Web.Staff
 @using SFA.DAS.AssessorService.Web.Staff.Domain
 @{ ViewBag.Title = "Staff Dashboard"; }
 
@@ -18,7 +18,7 @@
     </div>
 </div>
 <div class="grid-row">
-    <div class="column-one-third" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam)">
+    <div class="column-one-third" sfa-show-for-roles="@string.Join(",", Roles.CertificationTeam, Roles.AssessmentDeliveryTeam)">
         <h2 class="heading-medium"><a asp-controller="Register">Register of EPAO</a></h2>
         <p>Search for add and edit EPAOs and standards. Add and edit contacts. Make standards and/or organisations live.</p>
     </div>
@@ -28,7 +28,7 @@
     </div>
 </div>
 <div class="grid-row">
-    <div class="column-one-third" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam)">
+    <div class="column-one-third" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam, Roles.AssessmentDeliveryTeam))">
         <h2 class="heading-medium"><a asp-controller="Reports">Reports</a></h2>
         <p>On demand reporting.</p>
     </div>
@@ -41,7 +41,5 @@
     <div class="column-one-third" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam)">
         <h2 class="heading-medium"><a asp-controller="ExternalApi">External API</a></h2>
         <p>Manage user's access and generate API keys.</p>
-    </div>
-    <div class="column-one-third" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam)">
     </div>
 </div>

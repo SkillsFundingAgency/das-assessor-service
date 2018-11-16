@@ -35,6 +35,8 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
         string CheckOrganisationStandardMakeLiveOrganisationStatus(string organisationStatus, string organisationStandardStatus);
         string CheckOrganisationStandardMakeLiveEffectiveFrom(DateTime? effectiveFrom, string organisationStandardStatus);
+        string CheckIfContactDetailsAlreadyPresentInSystem(string displayName, string email, string phone,
+            string contactId);
 
         string CheckOrganisationStandardFromDateIsWithinStandardDateRanges(DateTime? effectiveFrom,
             DateTime? standardEffectiveFrom, DateTime? standardEffectiveTo, DateTime? lastDateForNewStarts);

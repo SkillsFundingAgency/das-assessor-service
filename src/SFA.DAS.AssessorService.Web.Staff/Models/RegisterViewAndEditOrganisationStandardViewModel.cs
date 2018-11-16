@@ -43,5 +43,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Models
         public List<DeliveryArea> AvailableDeliveryAreas { get; set; }
 
         public string ActionChoice { get; set; }
+
+        public string DeliveryAreasComments { get; set; }
     }
 }

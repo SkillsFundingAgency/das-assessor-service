@@ -62,12 +62,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<ValidationResponse> ValidateUpdateContact(string contactId, string displayName, string email)
+        public async Task<ValidationResponse> ValidateUpdateContact(string contactId, string displayName, string email,string phoneNumber)
         {
             var newName = SanitizeUrlParam(displayName);
             var newEmail = SanitizeUrlParam(email);
             using (var request = new HttpRequestMessage(HttpMethod.Get,
-                $"/api/ao/assessment-organisations/contacts/validate-existing?displayName={newName}&email={newEmail}&contactId={contactId}"))
+                $"/api/ao/assessment-organisations/contacts/validate-existing?displayName={newName}&email={newEmail}&contactId={contactId}&phoneNumber={phoneNumber}"))
             {
                 return await RequestAndDeserialiseAsync<ValidationResponse>(request,
                     $"Could not check the validation for contact [{newName}] against contactId [{contactId}]");
@@ -200,7 +200,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task Update(UpdateOrganisationRequest organisationUpdateViewModel);
         Task Delete(Guid id);
         Task<ValidationResponse> ValidateCreateOrganisation(string name, string ukprn, string organisationTypeId);
-        Task<ValidationResponse> ValidateUpdateContact(string contactId, string displayName, string email);
+        Task<ValidationResponse> ValidateUpdateContact(string contactId, string displayName, string email, string phoneNumber);
         Task<ValidationResponse> ValidateUpdateOrganisation(string organisationId, string name, string ukprn, string organisationTypeId, string address1, string address2, string address3, string address4, string postcode, string status, string actionChoice);
         Task<ValidationResponse> ValidateCreateContact(string name, string organisationId, string email, string phone);
 
