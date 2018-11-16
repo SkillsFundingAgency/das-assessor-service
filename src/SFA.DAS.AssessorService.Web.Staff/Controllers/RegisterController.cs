@@ -11,13 +11,14 @@ using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
+using SFA.DAS.AssessorService.Web.Staff.Domain;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.Models;
 using SFA.DAS.AssessorService.Web.Staff.Services;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
     public class RegisterController: Controller
     {
         private readonly ApiClient _apiClient;
@@ -142,7 +143,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                EffectiveTo = viewModel.EffectiveTo,
                ContactId = viewModel.ContactId.ToString(),
                DeliveryAreas = viewModel.DeliveryAreas,
-               Comments = viewModel.Comments
+               Comments = viewModel.Comments,
+               DeliveryAreasComments = viewModel.DeliveryAreasComments
             };
 
             var organisationStandardId = await _apiClient.CreateEpaOrganisationStandard(addOrganisationStandardRequest);
@@ -192,7 +194,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 Comments = viewModel.Comments,
                 OrganisationStatus = viewModel.OrganisationStatus,
                 OrganisationStandardStatus = viewModel.Status,
-                ActionChoice = viewModel.ActionChoice
+                ActionChoice = viewModel.ActionChoice,
+                DeliveryAreasComments = viewModel.DeliveryAreasComments
             };
 
             var organisationStandardId = await _apiClient.UpdateEpaOrganisationStandard(updateOrganisationStandardRequest);
@@ -511,8 +514,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 DeliveryAreas = organisationStandard.DeliveryAreas,
                 OrganisationName = organisationStandard.OrganisationName,
                 OrganisationStatus = organisationStandard.OrganisationStatus,
-                DeliveryAreasDetails = organisationStandard.DeliveryAreasDetails
-    };
+                DeliveryAreasDetails = organisationStandard.DeliveryAreasDetails,
+                DeliveryAreasComments = organisationStandard.OrganisationStandardData?.DeliveryAreasComments
+            };
         }
     }
 }

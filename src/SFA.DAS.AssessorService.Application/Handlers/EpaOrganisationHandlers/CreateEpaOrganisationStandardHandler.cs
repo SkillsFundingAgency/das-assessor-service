@@ -83,7 +83,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 EffectiveTo = request.EffectiveTo,
                 DateStandardApprovedOnRegister = null,
                 Comments = request.Comments,
-                ContactId = contactId
+                ContactId = contactId,
+                OrganisationStandardData = new OrganisationStandardData { DeliveryAreasComments = request.DeliveryAreasComments}
             };
             return organisationStandard;
         }
