@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.ExternalApis.IFAStandards.Types
         public DateTime? PublishedDate { get; set; }
 
 
-        // From /standards/{id} on Ida
+        // From /standards/{id} on IFA
         public string ReferenceNumber { get; set; }
         public string Status { get; set; }
         public string Category { get; set; }
