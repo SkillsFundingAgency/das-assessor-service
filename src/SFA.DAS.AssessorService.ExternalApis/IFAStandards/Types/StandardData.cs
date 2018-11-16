@@ -13,11 +13,9 @@ namespace SFA.DAS.AssessorService.ExternalApis.IFAStandards.Types
         public DateTime? LastDateForNewStarts { get; set; }
         public bool IfaOnly { get; set; }
 
-        //public int? Duration { get; set; }
-        //public bool? IsPublished { get; set; }
-
-        //public int? TypicalLengthFrom { get; set; }
-        //public int? TypicalLengthTo { get; set; }
-        //public string TypicalLengthUnits { get; set; }
+        public int? Duration { get; set; }
+        public int? MaxFunding { get; set; }
+        public DateTime? PublishedDate { get; set; }
+        public bool? IsPublished { get; set; }
     }
 }

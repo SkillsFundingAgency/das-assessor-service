@@ -7,7 +7,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
     public interface IStandardRepository
     {
         Task<string> UpsertStandards(List<StandardCollation> standards);
-
         Task<List<StandardCollation>> GetStandardCollations();
     }
 }

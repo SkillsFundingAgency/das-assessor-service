@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.IFAStandards;
@@ -16,12 +17,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
         private readonly CacheService _cacheService;
         private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
         private readonly IIfaStandardsApiClient _ifaStandardsApiClient;
-
-        public StandardService(CacheService cacheService, IAssessmentOrgsApiClient assessmentOrgsApiClient, IIfaStandardsApiClient ifaStandardsApiClient)
+        private readonly ILogger<StandardService> _logger;
+        public StandardService(CacheService cacheService, IAssessmentOrgsApiClient assessmentOrgsApiClient, IIfaStandardsApiClient ifaStandardsApiClient, ILogger<StandardService> logger)
         {
             _cacheService = cacheService;
             _assessmentOrgsApiClient = assessmentOrgsApiClient;
             _ifaStandardsApiClient = ifaStandardsApiClient;
+            _logger = logger;
         }
 
         public async Task<IEnumerable<StandardSummary>> GetAllStandardSummaries()
@@ -32,36 +34,57 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             var standardSummaries = await _assessmentOrgsApiClient.GetAllStandardsV2();
             await _cacheService.SaveToCache("StandardSummaries", standardSummaries, 8);
             return standardSummaries;
-
         }
 
         public async Task<IEnumerable<StandardCollation>> GatherAllStandardDetails()
         {
-//            var hoursBetweenCaching = 8;
-//            var ifaResults = await _cacheService.RetrieveFromCache<IEnumerable<IfaStandard>>("IfaStandardSummaries");
-//
-//            if (ifaResults == null)
-//            {
-                var ifaStandards = await _ifaStandardsApiClient.GetAllStandards();
-                var fullIfaStandards = new List<IfaStandard>();
-                foreach (var ifaStandard in ifaStandards)
+            _logger.LogInformation("STANDARD COLLATION: Starting gathering of all IFA Standard details");
+            var ifaStandards = await _ifaStandardsApiClient.GetAllStandards();
+            _logger.LogInformation($"STANDARD COLLATION: Starting gathering of individual IFA Standard details: [{ifaStandards.Count}]");
+            var ifaResults = await GatherIfaStandardsOneAtATime(ifaStandards);
+            _logger.LogInformation("STANDARD COLLATION: Starting gathering of all Win Standard details");
+            var winResults = await _assessmentOrgsApiClient.GetAllStandardsV2();
+            _logger.LogInformation("STANDARD COLLATION: Start collating IFA and WIN standards");
+            var collation = CollateWinAndIfaStandardDetails(winResults, ifaResults);
+            _logger.LogInformation($"STANDARD COLLATION: Add unmatched Ifa Standards to list");
+            AddIfaOnlyStandardsToGatheredStandards(ifaResults, collation);
+            _logger.LogInformation($"STANDARD COLLATION: collation finished");
+            return collation;
+        }
+
+        private static void AddIfaOnlyStandardsToGatheredStandards(List<IfaStandard> ifaResults, List<StandardCollation> collation)
+        {
+            var uncollatedIfaStandards = ifaResults.Where(ifaStandard => collation.All(s => s.StandardId != ifaStandard.Id))
+                .ToList();
+
+            foreach (var ifaStandard in uncollatedIfaStandards)
+            {
+                var standard = new StandardCollation
                 {
-                    fullIfaStandards.Add(await _ifaStandardsApiClient.GetStandard(ifaStandard.Id));
-                }
+                    StandardId = ifaStandard.Id,
+                    ReferenceNumber = ifaStandard?.ReferenceNumber,
+                    Title = ifaStandard.Title,
+                    StandardData = new StandardData
+                    {
+                        Category = ifaStandard?.Category,
+                        IfaStatus = ifaStandard?.Status,
+                        EffectiveFrom = null,
+                        EffectiveTo = null,
+                        Level = ifaStandard.Level,
+                        LastDateForNewStarts = null,
+                        IfaOnly = true,
+                        Duration = ifaStandard.Duration,
+                        MaxFunding = ifaStandard.MaxFunding,
+                        PublishedDate = ifaStandard.PublishedDate,
+                        IsPublished = ifaStandard.IsPublished,
+                    }
+                };
+                collation.Add(standard);
+            }
+        }
 
-                var ifaResults = fullIfaStandards;
-                //await _cacheService.SaveToCache("IfaStandardSummaries", fullIfaStandards, hoursBetweenCaching);
-           // }
-
-//            var winResults = await _cacheService.RetrieveFromCache<IEnumerable<StandardSummary>>("StandardSummaries");
-//            if (winResults == null)
-//            { 
-            var standardSummaries = await _assessmentOrgsApiClient.GetAllStandardsV2();
-//            await _cacheService.SaveToCache("StandardSummaries", standardSummaries, hoursBetweenCaching);
-             var winResults = standardSummaries;
-
-            //}
-
+        private static List<StandardCollation> CollateWinAndIfaStandardDetails(List<StandardSummary> winResults, List<IfaStandard> ifaResults)
+        {
             var collation = new List<StandardCollation>();
             foreach (var winStandard in winResults)
             {
@@ -80,37 +103,28 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                         EffectiveTo = winStandard.EffectiveTo,
                         Level = winStandard.Level,
                         LastDateForNewStarts = winStandard.LastDateForNewStarts,
+                        Duration = ifaStandardToMatch?.Duration,
+                        MaxFunding = ifaStandardToMatch?.MaxFunding,
+                        PublishedDate = ifaStandardToMatch?.PublishedDate,
+                        IsPublished = ifaStandardToMatch?.IsPublished,
                         IfaOnly = false
                     }
                 };
                 collation.Add(standard);
             }
 
+            return collation;
+        }
 
-            var uncollatedIfaStandards = ifaResults.Where(ifaStandard => collation.All(s => s.StandardId != ifaStandard.Id)).ToList();
-
-            foreach (var ifaStandard in uncollatedIfaStandards)
+        private async Task<List<IfaStandard>> GatherIfaStandardsOneAtATime(IEnumerable<IfaStandard> ifaStandards)
+        {
+            var fullIfaStandards = new List<IfaStandard>();
+            foreach (var ifaStandard in ifaStandards)
             {
-                var standard = new StandardCollation
-                {
-                    StandardId = ifaStandard.Id,
-                    ReferenceNumber = ifaStandard?.ReferenceNumber,
-                    Title = ifaStandard.Title,
-                    StandardData = new StandardData
-                    {
-                        Category = ifaStandard?.Category,
-                        IfaStatus = ifaStandard?.Status,
-                        EffectiveFrom = null,
-                        EffectiveTo = null,
-                        Level = ifaStandard.Level,
-                        LastDateForNewStarts = null,
-                        IfaOnly = true
-                    }
-                };
-                collation.Add(standard);
+                fullIfaStandards.Add(await _ifaStandardsApiClient.GetStandard(ifaStandard.Id));
             }
 
-            return collation;
+            return fullIfaStandards;
         }
 
         public async Task<Standard> GetStandard(int standardId)
@@ -122,9 +136,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
     public interface IStandardService
     {
         Task<IEnumerable<StandardSummary>> GetAllStandardSummaries();
-
         Task<IEnumerable<StandardCollation>> GatherAllStandardDetails();
-
         Task<Standard> GetStandard(int standardId);
     }
 }

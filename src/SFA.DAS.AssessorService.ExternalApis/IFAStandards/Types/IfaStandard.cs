@@ -12,11 +12,12 @@ namespace SFA.DAS.AssessorService.ExternalApis.IFAStandards.Types
         ////public string Ssa1 { get; set; }    
         ////public string Ssa2 { get; set; }
 
-        ////public int? Duration { get; set; }
-        ////public int? MaxFunding { get; set; }
-        ////public DateTime? PublishedDate { get; set; }
-        
+        public int? Duration { get; set; }
+        public int? MaxFunding { get; set; }
+        public DateTime? PublishedDate { get; set; }
 
+
+        // From /standards/{id} on Ida
         public string ReferenceNumber { get; set; }
         public string Status { get; set; }
         public string Category { get; set; }

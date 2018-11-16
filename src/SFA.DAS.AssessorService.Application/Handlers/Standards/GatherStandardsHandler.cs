@@ -1,14 +1,10 @@
-﻿
-
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.ExternalApis.IFAStandards.Types;
 using SFA.DAS.AssessorService.Web.Staff.Services;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Standards
@@ -28,12 +24,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
 
         public async Task<string> Handle(GatherStandardsRequest request, CancellationToken cancellationToken)
         {
-            // check that call wasn't in last hour or so? MFCMFC
-
+            _logger.LogInformation("Gathering Standard Details from all sources in the handler");
             var results =  await _standardService.GatherAllStandardDetails();
-
+            _logger.LogInformation("Upserting gathered standards");
             var responseDetails = await _standardRepository.UpsertStandards(results.ToList());
-
 
             return responseDetails;
         }
