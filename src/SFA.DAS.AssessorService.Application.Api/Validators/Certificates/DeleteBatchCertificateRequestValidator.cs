@@ -30,17 +30,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                     {
                         context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate not found"));
                     }
-                    else if (existingCertificate.Status == CertificateStatus.Submitted)
-                    {
-                        context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate cannot be Deleted when in '{CertificateStatus.Submitted}' status"));
-                    }
-                    else if (existingCertificate.Status == CertificateStatus.Printed)
-                    {
-                        context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate cannot be Deleted when in '{CertificateStatus.Printed}' status"));
-                    }
                     else if (sumbittingEpao?.Id != existingCertificate.OrganisationId)
                     {
                         context.AddFailure(new ValidationFailure("CertificateReference", $"EPAO is not the creator of this Certificate"));
+                    }
+                    else if (existingCertificate.Status == CertificateStatus.Submitted || existingCertificate.Status == CertificateStatus.Printed
+                            || existingCertificate.Status == CertificateStatus.Reprint)
+                    {
+                        context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate cannot be Deleted when in '{CertificateStatus.Submitted}' status"));
                     }
                 });
 

@@ -28,17 +28,23 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                     var existingCertificate = certificateRepository.GetCertificate(m.Uln, m.StandardCode).GetAwaiter().GetResult();
                     var sumbittingEpao = organisationQueryRepository.GetByUkPrn(m.UkPrn).GetAwaiter().GetResult();
 
-                    if (existingCertificate == null || !string.Equals(existingCertificate.CertificateReference, m.CertificateReference))
+                    if (existingCertificate == null || !string.Equals(existingCertificate.CertificateReference, m.CertificateReference)
+                        || existingCertificate.Status == CertificateStatus.Deleted)
                     {
                         context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate not found"));
-                    }
-                    else if (existingCertificate.Status != CertificateStatus.Draft)
-                    {
-                        context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate is not in '{CertificateStatus.Draft}' status"));
                     }
                     else if (sumbittingEpao?.Id != existingCertificate.OrganisationId)
                     {
                         context.AddFailure(new ValidationFailure("CertificateReference", $"EPAO is not the creator of this Certificate"));
+                    }
+                    else if (existingCertificate.Status == CertificateStatus.Submitted || existingCertificate.Status == CertificateStatus.Printed
+                                || existingCertificate.Status == CertificateStatus.Reprint)
+                    {
+                        context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate has already been submitted"));
+                    }
+                    else if (existingCertificate.Status != CertificateStatus.Draft)
+                    {
+                        context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate is not in '{CertificateStatus.Draft}' status"));
                     }
                     else
                     {
