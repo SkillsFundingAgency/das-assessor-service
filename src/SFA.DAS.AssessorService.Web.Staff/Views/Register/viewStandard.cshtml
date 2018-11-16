@@ -64,21 +64,25 @@
                                 }
                             </td>
                         </tr>
-                        <tr>
-                            <td><span class="bold-small">Delivery Areas</span></td>
-                            <td>
-                                @if (Model.DeliveryAreasDetails != null && Model.DeliveryAreasDetails.Any())
+                    <tr>
+                        <td><span class="bold-small">Delivery Areas</span></td>
+                        <td>
+                            @if (Model.DeliveryAreasDetails != null && Model.DeliveryAreasDetails.Any())
+                            {
+                                for (var index = 0; index < Model.DeliveryAreas.Count; index++)
                                 {
-                                    for (var index = 0; index < Model.DeliveryAreas.Count; index++)
-                                    {
-                                        var deliveryArea = Model.DeliveryAreasDetails[index];
-                                        @deliveryArea.DeliveryArea
-                                        if (index < Model.DeliveryAreasDetails.Count - 1)
-                                        { @Html.Raw(", ")}
+                                    var deliveryArea = Model.DeliveryAreasDetails[index];
+                                    @deliveryArea.DeliveryArea
+                                    if (index < Model.DeliveryAreasDetails.Count - 1)
+                                    { @Html.Raw(", ")}
                                 }
                             }
-                            </td>
-                        </tr>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="bold-small">Delivery Area Notes</span></td>
+                        <td> @Model.DeliveryAreasComments</td>
+                    </tr>
                         <tr>
                             <td><span class="bold-small">Comments</span></td>
                             <td> @Model.Comments</td>

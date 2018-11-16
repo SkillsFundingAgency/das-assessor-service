@@ -9,10 +9,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Web.Staff.Domain;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {
-    [Authorize(Roles = Domain.Roles.OperationsTeam + "," + Domain.Roles.CertificationTeam)]
+    [Authorize(Roles = Roles.OperationsTeam + "," + Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
     public class ReportsController : Controller
     {
         private readonly ILogger<ReportsController> _logger;
@@ -28,7 +29,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         {
             var reports = await _apiClient.GetReportList();
 
-            ReportViewModel vm = new ReportViewModel { Reports = reports };
+            var vm = new ReportViewModel { Reports = reports };
 
             return View(vm);
         }
@@ -43,7 +44,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             {
                 var reports = await _apiClient.GetReportList();
                 var data = await _apiClient.GetReport(reportId);
-                ReportViewModel vm = new ReportViewModel { Reports = reports, ReportId = reportId, SelectedReportData = data };
+                var vm = new ReportViewModel { Reports = reports, ReportId = reportId, SelectedReportData = data };
 
                 return View(vm);
             }
