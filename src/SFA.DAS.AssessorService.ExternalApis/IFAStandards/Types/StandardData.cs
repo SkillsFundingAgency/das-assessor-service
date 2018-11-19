@@ -15,7 +15,15 @@ namespace SFA.DAS.AssessorService.ExternalApis.IFAStandards.Types
 
         public int? Duration { get; set; }
         public int? MaxFunding { get; set; }
+        public string Ssa1 { get; set; }
+        public string Ssa2 { get; set; }
+        public string OverviewOfRole { get; set; }
         public DateTime? PublishedDate { get; set; }
         public bool? IsPublished { get; set; }
+
+        public bool? IsActiveStandardInWin { get; set; }
+
+        public string FatUri { get; set; }
+        public string IfaUri { get; set; }
     }
 }

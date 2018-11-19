@@ -59,26 +59,30 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
 
             foreach (var ifaStandard in uncollatedIfaStandards)
             {
-                var standard = new StandardCollation
-                {
-                    StandardId = ifaStandard.Id,
-                    ReferenceNumber = ifaStandard?.ReferenceNumber,
-                    Title = ifaStandard.Title,
-                    StandardData = new StandardData
-                    {
-                        Category = ifaStandard?.Category,
-                        IfaStatus = ifaStandard?.Status,
-                        EffectiveFrom = null,
-                        EffectiveTo = null,
-                        Level = ifaStandard.Level,
-                        LastDateForNewStarts = null,
-                        IfaOnly = true,
-                        Duration = ifaStandard.Duration,
-                        MaxFunding = ifaStandard.MaxFunding,
-                        PublishedDate = ifaStandard.PublishedDate,
-                        IsPublished = ifaStandard.IsPublished,
-                    }
-                };
+                var standard = MapDataToStandardCollation(ifaStandard.Id, ifaStandard, null);
+                //var standard = new StandardCollation
+                //{
+                //    StandardId = ifaStandard.Id,
+                //    ReferenceNumber = ifaStandard?.ReferenceNumber,
+                //    Title = ifaStandard.Title,
+                //    StandardData = new StandardData
+                //    {
+                //        Category = ifaStandard.Category,
+                //        IfaStatus = ifaStandard.Status,
+                //        EffectiveFrom = null,
+                //        EffectiveTo = null,
+                //        Level = ifaStandard.Level,
+                //        LastDateForNewStarts = null,
+                //        IfaOnly = true,
+                //        Duration = ifaStandard.Duration,
+                //        MaxFunding = ifaStandard.MaxFunding,
+                //        PublishedDate = ifaStandard.PublishedDate,
+                //        IsPublished = ifaStandard.IsPublished,
+                //        Ssa1 = ifaStandard?.Ssa1,
+                //        Ssa2 = ifaStandard?.Ssa2,
+                //        OverviewOfRole = ifaStandard.OverviewOfRole
+                //    }
+                //};
                 collation.Add(standard);
             }
         }
@@ -90,30 +94,41 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             {
                 var ifaStandardToMatch = ifaResults.FirstOrDefault(x => x.Id.ToString() == winStandard.Id);
                 if (!int.TryParse(winStandard.Id, out int standardId)) continue;
-                var standard = new StandardCollation
-                {
-                    StandardId = standardId,
-                    ReferenceNumber = ifaStandardToMatch?.ReferenceNumber,
-                    Title = winStandard.Title,
-                    StandardData = new StandardData
-                    {
-                        Category = ifaStandardToMatch?.Category,
-                        IfaStatus = ifaStandardToMatch?.Status,
-                        EffectiveFrom = winStandard.EffectiveFrom,
-                        EffectiveTo = winStandard.EffectiveTo,
-                        Level = winStandard.Level,
-                        LastDateForNewStarts = winStandard.LastDateForNewStarts,
-                        Duration = ifaStandardToMatch?.Duration,
-                        MaxFunding = ifaStandardToMatch?.MaxFunding,
-                        PublishedDate = ifaStandardToMatch?.PublishedDate,
-                        IsPublished = ifaStandardToMatch?.IsPublished,
-                        IfaOnly = false
-                    }
-                };
+                var standard = MapDataToStandardCollation(standardId, ifaStandardToMatch, winStandard);
                 collation.Add(standard);
             }
 
             return collation;
+        }
+
+        private static StandardCollation MapDataToStandardCollation(int standardId, IfaStandard ifaStandard, StandardSummary winStandard)
+        {
+            return new StandardCollation
+            {
+                StandardId = standardId,
+                ReferenceNumber = ifaStandard?.ReferenceNumber,
+                Title = winStandard?.Title ?? ifaStandard?.Title,
+                StandardData = new StandardData
+                {
+                    Category = ifaStandard?.Category,
+                    IfaStatus = ifaStandard?.Status,
+                    EffectiveFrom = winStandard?.EffectiveFrom,
+                    EffectiveTo = winStandard?.EffectiveTo,
+                    Level = winStandard?.Level ?? ifaStandard?.Level,
+                    LastDateForNewStarts = winStandard?.LastDateForNewStarts,
+                    IfaOnly = winStandard == null,
+                    Duration = winStandard?.Duration ?? ifaStandard?.Duration,
+                    MaxFunding = winStandard?.CurrentFundingCap ?? ifaStandard?.MaxFunding,
+                    PublishedDate = ifaStandard?.PublishedDate,
+                    IsPublished = winStandard?.IsPublished ?? ifaStandard?.IsPublished,
+                    Ssa1 = ifaStandard?.Ssa1,
+                    Ssa2 = ifaStandard?.Ssa2,
+                    OverviewOfRole = ifaStandard?.OverviewOfRole,
+                    IsActiveStandardInWin = winStandard?.IsActiveStandard,
+                    FatUri =  winStandard?.Uri,
+                    IfaUri =  ifaStandard?.Uri
+                }
+            };
         }
 
         private async Task<List<IfaStandard>> GatherIfaStandardsOneAtATime(IEnumerable<IfaStandard> ifaStandards)
