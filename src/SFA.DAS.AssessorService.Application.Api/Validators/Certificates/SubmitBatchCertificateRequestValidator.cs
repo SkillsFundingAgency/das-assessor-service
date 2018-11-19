@@ -7,6 +7,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
+using System;
 using System.Linq;
 
 namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
@@ -28,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                     var existingCertificate = certificateRepository.GetCertificate(m.Uln, m.StandardCode).GetAwaiter().GetResult();
                     var sumbittingEpao = organisationQueryRepository.GetByUkPrn(m.UkPrn).GetAwaiter().GetResult();
 
-                    if (existingCertificate == null || !string.Equals(existingCertificate.CertificateReference, m.CertificateReference)
+                    if (existingCertificate == null || !string.Equals(existingCertificate.CertificateReference, m.CertificateReference, StringComparison.InvariantCultureIgnoreCase)
                         || existingCertificate.Status == CertificateStatus.Deleted)
                     {
                         context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate not found"));
@@ -65,7 +66,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                     var requestedIlr = ilrRepository.Get(m.Uln, m.StandardCode).GetAwaiter().GetResult();
                     var sumbittingEpao = organisationQueryRepository.GetByUkPrn(m.UkPrn).GetAwaiter().GetResult();
 
-                    if (requestedIlr == null || !string.Equals(requestedIlr.FamilyName, m.FamilyName))
+                    if (requestedIlr == null || !string.Equals(requestedIlr.FamilyName, m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
                     {
                         context.AddFailure(new ValidationFailure("Uln", "Cannot find apprentice with the specified Uln, FamilyName & StandardCode"));
                     }

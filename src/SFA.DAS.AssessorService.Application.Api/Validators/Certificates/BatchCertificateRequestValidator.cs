@@ -68,7 +68,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                     var requestedIlr = ilrRepository.Get(m.Uln, m.StandardCode).GetAwaiter().GetResult();
                     var sumbittingEpao = organisationQueryRepository.GetByUkPrn(m.UkPrn).GetAwaiter().GetResult();
 
-                    if (requestedIlr == null || !string.Equals(requestedIlr.FamilyName, m.FamilyName))
+                    if (requestedIlr == null || !string.Equals(requestedIlr.FamilyName, m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
                     {
                         context.AddFailure(new ValidationFailure("Uln", "Cannot find apprentice with the specified Uln, FamilyName & StandardCode"));
                     }
