@@ -24,7 +24,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             var certificate = new Certificate
             {
                 CertificateData = new CertificateData { CertificateReference = "SANDBOX" },
-                Status = new CertificateStatus { CurrentStatus = "Draft", CreatedAt = DateTime.UtcNow, CreatedBy = request.Email },
+                Status = new Status { CurrentStatus = "Draft" },
+                Created = new Created { CreatedAt = DateTime.UtcNow, CreatedBy = request.Email },
             };
 
             var response = new GetCertificateResponse
@@ -52,7 +53,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                     Certificate = validationErrors.Count > 0 ? null : new Certificate
                     {
                         CertificateData = req.CertificateData ?? new CertificateData { },
-                        Status = new CertificateStatus { CurrentStatus = "Draft", CreatedAt = DateTime.UtcNow, CreatedBy = req.Email },
+                        Status = new Status { CurrentStatus = "Draft" },
+                        Created = new Created { CreatedAt = DateTime.UtcNow, CreatedBy = req.Email },
                     }
                 };
 
@@ -78,7 +80,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                     Certificate = validationErrors.Count > 0 ? null : new Certificate
                     {
                         CertificateData = req.CertificateData ?? new CertificateData { },
-                        Status = new CertificateStatus { CurrentStatus = "Draft", CreatedAt = DateTime.UtcNow.AddHours(-1), CreatedBy = req.Email, UpdatedAt = DateTime.UtcNow, UpdatedBy = req.Email },
+                        Status = new Status { CurrentStatus = "Draft" },
+                        Created = new Created { CreatedAt = DateTime.UtcNow.AddHours(-1), CreatedBy = req.Email }
                     }
                 };
 
@@ -105,7 +108,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                     Certificate = new Certificate
                     {
                         CertificateData = new CertificateData { },
-                        Status = new CertificateStatus { CurrentStatus = "Submitted", CreatedAt = DateTime.UtcNow.AddHours(-1), CreatedBy = req.Email, UpdatedAt = DateTime.UtcNow, UpdatedBy = req.Email }
+                        Status = new Status { CurrentStatus = "Submitted" },
+                        Created = new Created { CreatedAt = DateTime.UtcNow.AddHours(-1), CreatedBy = req.Email },
+                        Submitted = new Submitted { SubmittedAt = DateTime.UtcNow, SubmittedBy = req.Email }
                     }
                 };
 
@@ -126,7 +131,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
         public Task<IEnumerable<Certificate>> Search(GetLearnerDetailsRequest searchQuery)
         {
             CertificateData certData1 = new CertificateData { CertificateReference = "SANDBOX", Learner = new Learner { Uln = searchQuery.Uln, GivenNames = "SANDBOX", FamilyName = searchQuery.FamilyName }, Standard = new Standard { StandardCode = searchQuery.StandardCode ?? 99, Level = 1, StandardName = "SANDBOX" } };
-            Certificate result1 = new Certificate { CertificateData  = certData1, Status = new CertificateStatus { CreatedBy = "SANDBOX", CreatedAt = DateTime.UtcNow, CurrentStatus = "Draft" } };
+            Certificate result1 = new Certificate { CertificateData  = certData1, Status = new Status { CurrentStatus = "Draft" }, Created = new Created { CreatedBy = "SANDBOX", CreatedAt = DateTime.UtcNow } };
 
             CertificateData certData2 = new CertificateData { Learner = new Learner { Uln = searchQuery.Uln, GivenNames = "SANDBOX", FamilyName = searchQuery.FamilyName }, Standard = new Standard { StandardCode = 1, Level = 1, StandardName = "SANDBOX" } };
             Certificate result2 = new Certificate { CertificateData = certData2 };

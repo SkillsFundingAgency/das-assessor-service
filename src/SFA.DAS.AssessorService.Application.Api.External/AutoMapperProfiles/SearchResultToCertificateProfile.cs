@@ -10,10 +10,10 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
         {
             CreateMap<SearchResult, Models.Certificates.Certificate>()
             .ForPath(x => x.Status.CurrentStatus, opt => opt.MapFrom(source => source.CertificateStatus))
-            .ForPath(x => x.Status.CreatedAt, opt => opt.MapFrom(source => source.CreatedAt))
-            .ForPath(x => x.Status.CreatedBy, opt => opt.MapFrom(source => source.CreatedBy))
-            .ForPath(x => x.Status.UpdatedAt, opt => opt.MapFrom(source => source.UpdatedAt))
-            .ForPath(x => x.Status.UpdatedBy, opt => opt.MapFrom(source => source.UpdatedBy))
+            .ForPath(x => x.Created.CreatedAt, opt => opt.MapFrom(source => source.CreatedAt))
+            .ForPath(x => x.Created.CreatedBy, opt => opt.MapFrom(source => source.CreatedBy))
+            .ForPath(x => x.Submitted.SubmittedAt, opt => opt.MapFrom(source => source.SubmittedAt))
+            .ForPath(x => x.Submitted.SubmittedBy, opt => opt.MapFrom(source => source.SubmittedBy))
             .ForPath(x => x.CertificateData.CertificateReference, opt => opt.MapFrom(source => source.CertificateReference))
             .ForPath(x => x.CertificateData.Learner.Uln, opt => opt.MapFrom(source => source.Uln))
             .ForPath(x => x.CertificateData.Learner.GivenNames, opt => opt.MapFrom(source => source.GivenNames))
@@ -35,7 +35,12 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
         {
             public void Process(SearchResult source, Models.Certificates.Certificate destination)
             {
-                if (destination.Status?.CreatedBy is null)
+                if (destination.Created?.CreatedBy is null)
+                {
+                    destination.Status = null;
+                }
+
+                if (destination.Submitted?.SubmittedBy is null)
                 {
                     destination.Status = null;
                 }

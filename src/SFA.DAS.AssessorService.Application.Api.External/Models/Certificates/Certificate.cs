@@ -6,7 +6,13 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
     {
         public CertificateData CertificateData { get; set; }
 
-        public CertificateStatus Status { get; set; }
+        public Status Status { get; set; }
+
+        public Created Created { get; set; }
+
+        public Submitted Submitted { get; set; }
+
+        public Printed Printed { get; set; }
 
         #region GetHashCode, Equals and IEquatable
         public override int GetHashCode()
@@ -19,6 +25,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
                 int hash = hashBase;
                 hash = (hash * multiplier) ^ (CertificateData is null ? 0 : CertificateData.GetHashCode());
                 hash = (hash * multiplier) ^ (Status is null ? 0 : Status.GetHashCode());
+                hash = (hash * multiplier) ^ (Created is null ? 0 : Created.GetHashCode());
+                hash = (hash * multiplier) ^ (Submitted is null ? 0 : Submitted.GetHashCode());
+                hash = (hash * multiplier) ^ (Printed is null ? 0 : Printed.GetHashCode());
                 return hash;
             }
         }
@@ -41,7 +50,10 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
         private bool IsEqual(Certificate other)
         {
             return Equals(CertificateData, other.CertificateData)
-                && Equals(Status, other.Status);
+                && Equals(Status, other.Status)
+                && Equals(Created, other.Created)
+                && Equals(Submitted, other.Submitted)
+                && Equals(Printed, other.Printed);
         }
 
         public static bool operator ==(Certificate left, Certificate right)

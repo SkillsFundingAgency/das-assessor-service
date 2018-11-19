@@ -8,9 +8,11 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Logging;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -91,7 +93,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             _logger.LogInformation(LoggingConstants.CertificateStarted);
             _logger.LogInformation($"Certificate with ID: {certificate.Id} Started with reference of {certificate.CertificateReference}");
 
-            return certificate;
+            return await ApplyStatusInformation(certificate);
         }
 
         private async Task<Provider> GetProviderFromUkprn(int ukprn)
@@ -151,6 +153,36 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
                 OverallGrade = data.OverallGrade,
                 Department = data.Department
             };
+        }
+
+        private async Task<Certificate> ApplyStatusInformation(Certificate certificate)
+        {  
+            var certificateLogs = await _certificateRepository.GetCertificateLogsFor(certificate.Id);
+
+            var createdLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Draft);
+            if (createdLogEntry != null)
+            {
+                var createdContact = await _contactQueryRepository.GetContact(createdLogEntry.Username);
+                certificate.CreatedAt = createdLogEntry.EventTime.UtcToTimeZoneTime();
+                certificate.CreatedBy = createdContact != null ? createdContact.DisplayName : createdLogEntry.Username;
+            }
+
+            var submittedLogEntry = certificateLogs?.FirstOrDefault(l => l.Status == CertificateStatus.Submitted);
+
+            // NOTE: THIS IS A DATA FRIG FOR EXTERNAL API AS WE NEED SUBMITTED INFORMATION!
+            if (submittedLogEntry != null)
+            {
+                var submittedContact = await _contactQueryRepository.GetContact(submittedLogEntry.Username);
+                certificate.UpdatedAt = submittedLogEntry.EventTime.UtcToTimeZoneTime();
+                certificate.UpdatedBy = submittedContact != null ? submittedContact.DisplayName : createdLogEntry.Username;
+            }
+            else
+            {
+                certificate.UpdatedAt = null;
+                certificate.UpdatedBy = null;
+            }
+
+            return certificate;
         }
     }
 }

@@ -5,6 +5,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Certificates.Batch;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using System;
@@ -44,6 +45,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
 
             if (certificate != null && allowedCertificateStatus.Contains(certificate.Status))
             {
+                certificate = await ApplyStatusInformation(certificate);
+
                 var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 
                 if(certData.LearnerFamilyName == request.FamilyName)
@@ -129,6 +132,36 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             }
 
             return contact;
+        }
+
+        private async Task<Certificate> ApplyStatusInformation(Certificate certificate)
+        {
+            var certificateLogs = await _certificateRepository.GetCertificateLogsFor(certificate.Id);
+
+            var createdLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Draft);
+            if (createdLogEntry != null)
+            {
+                var createdContact = await _contactQueryRepository.GetContact(createdLogEntry.Username);
+                certificate.CreatedAt = createdLogEntry.EventTime.UtcToTimeZoneTime();
+                certificate.CreatedBy = createdContact != null ? createdContact.DisplayName : createdLogEntry.Username;
+            }
+
+            var submittedLogEntry = certificateLogs?.FirstOrDefault(l => l.Status == CertificateStatus.Submitted);
+
+            // NOTE: THIS IS A DATA FRIG FOR EXTERNAL API AS WE NEED SUBMITTED INFORMATION!
+            if (submittedLogEntry != null)
+            {
+                var submittedContact = await _contactQueryRepository.GetContact(submittedLogEntry.Username);
+                certificate.UpdatedAt = submittedLogEntry.EventTime.UtcToTimeZoneTime();
+                certificate.UpdatedBy = submittedContact != null ? submittedContact.DisplayName : createdLogEntry.Username;
+            }
+            else
+            {
+                certificate.UpdatedAt = null;
+                certificate.UpdatedBy = null;
+            }
+
+            return certificate;
         }
     }
 }
