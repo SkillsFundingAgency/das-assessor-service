@@ -16,16 +16,23 @@ END
 
 IF NOT EXISTS(SELECT * FROM StaffReports)
 BEGIN
-	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder) VALUES ('Monthly detailed extract', 'StaffReports_DetailedExtract', 1)
-	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder) VALUES ('Monthly summary', 'StaffReports_MonthlySummary', 2)
-	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder) VALUES ('Weekly summary', 'StaffReports_WeeklySummary', 3)
-	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder) VALUES ('Batch', 'StaffReports_ByBatch', 4)
-	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder) VALUES ('EPAO', 'StaffReports_ByEpao', 5)
-	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder) VALUES ('EPAO, standard and grade', 'StaffReports_ByEpaoAndStandardAndGrade', 6)
-	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder) VALUES ('Provider', 'StaffReports_ByProvider', 7)
-	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder) VALUES ('Provider and grade', 'StaffReports_ByProviderAndGrade', 8)
-	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder) VALUES ('Standard', 'StaffReports_ByStandard', 9)
-	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder) VALUES ('Certificate count', 'StaffReports_CertificateCount', 10)
+	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('Monthly detailed extract', 'StaffReports_DetailedExtract', 1,'ViewOnScreen')
+	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('Monthly summary', 'StaffReports_MonthlySummary', 2,'ViewOnScreen')
+	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('Weekly summary', 'StaffReports_WeeklySummary', 3,'ViewOnScreen')
+	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('Batch', 'StaffReports_ByBatch', 4,'ViewOnScreen')
+	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('EPAO', 'StaffReports_ByEpao', 5,'ViewOnScreen')
+	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('EPAO, standard and grade', 'StaffReports_ByEpaoAndStandardAndGrade', 6,'ViewOnScreen')
+	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('Provider', 'StaffReports_ByProvider', 7,'ViewOnScreen')
+	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('Provider and grade', 'StaffReports_ByProviderAndGrade', 8,'ViewOnScreen')
+	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('Standard', 'StaffReports_ByStandard', 9,'ViewOnScreen')
+	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('Certificate count', 'StaffReports_CertificateCount', 10,'ViewOnScreen')
+END
+
+UPDATE StaffReports SET ReportType = 'ViewOnScreen' WHERE ReportType IS NULL
+
+IF NOT EXISTS (SELECT * FROM StaffReports WHERE ReportName = 'EPAO Register')
+BEGIN
+	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('EPAO Register', 'EPAO_Register', 11, 'DownloadExcel')
 END
 
 UPDATE CERTIFICATES
