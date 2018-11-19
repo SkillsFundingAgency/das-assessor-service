@@ -1,11 +1,12 @@
 ﻿using SFA.DAS.AssessorService.Application.Api.External.Messages;
 using SFA.DAS.AssessorService.Application.Api.External.Middleware;
+using SFA.DAS.AssessorService.Application.Api.External.Models.Certificates;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Certificate = SFA.DAS.AssessorService.Application.Api.External.Models.Certificates.Certificate;
+
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 {
@@ -22,8 +23,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
         {
             var certificate = new Certificate
             {
-                CertificateData = new Models.Certificates.CertificateData { CertificateReference = "SANDBOX" },
-                Status = new Models.Certificates.CertificateStatus { CurrentStatus = "Draft", CreatedAt = DateTime.UtcNow, CreatedBy = request.Email },
+                CertificateData = new CertificateData { CertificateReference = "SANDBOX" },
+                Status = new CertificateStatus { CurrentStatus = "Draft", CreatedAt = DateTime.UtcNow, CreatedBy = request.Email },
             };
 
             var response = new GetCertificateResponse
@@ -43,18 +44,19 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
             foreach (var req in request)
             {
+                var validationErrors = PerformBasicValidation(req.CertificateData);
                 var responseItem = new BatchCertificateResponse
                 {
                     ProvidedCertificateData = req.CertificateData,
-                    ValidationErrors = new List<string>(),
-                    Certificate = new Certificate
+                    ValidationErrors = validationErrors,
+                    Certificate = validationErrors.Count > 0 ? null : new Certificate
                     {
-                        CertificateData = req.CertificateData ?? new Models.Certificates.CertificateData { },
-                        Status = new Models.Certificates.CertificateStatus { CurrentStatus = "Draft", CreatedAt = DateTime.UtcNow, CreatedBy = req.Email },
+                        CertificateData = req.CertificateData ?? new CertificateData { },
+                        Status = new CertificateStatus { CurrentStatus = "Draft", CreatedAt = DateTime.UtcNow, CreatedBy = req.Email },
                     }
                 };
 
-                responseItem.Certificate.CertificateData.CertificateReference = "SANDBOX";
+                if (responseItem.Certificate != null) responseItem.Certificate.CertificateData.CertificateReference = "SANDBOX";
 
                 response.Add(responseItem);
             }
@@ -68,18 +70,19 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
             foreach (var req in request)
             {
+                var validationErrors = PerformBasicValidation(req.CertificateData);
                 var responseItem = new BatchCertificateResponse
                 {
                     ProvidedCertificateData = req.CertificateData,
-                    ValidationErrors = new List<string>(),
-                    Certificate = new Certificate
+                    ValidationErrors = validationErrors,
+                    Certificate = validationErrors.Count > 0 ? null : new Certificate
                     {
-                        CertificateData = req.CertificateData ?? new Models.Certificates.CertificateData { },
-                        Status = new Models.Certificates.CertificateStatus { CurrentStatus = "Draft", CreatedAt = DateTime.UtcNow.AddHours(-1), CreatedBy = req.Email, UpdatedAt = DateTime.UtcNow, UpdatedBy = req.Email },
+                        CertificateData = req.CertificateData ?? new CertificateData { },
+                        Status = new CertificateStatus { CurrentStatus = "Draft", CreatedAt = DateTime.UtcNow.AddHours(-1), CreatedBy = req.Email, UpdatedAt = DateTime.UtcNow, UpdatedBy = req.Email },
                     }
                 };
 
-                responseItem.Certificate.CertificateData.CertificateReference = "SANDBOX";
+                if (responseItem.Certificate != null) responseItem.Certificate.CertificateData.CertificateReference = "SANDBOX";
                 response.Add(responseItem);
             }
 
@@ -101,8 +104,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                     ValidationErrors = new List<string>(),
                     Certificate = new Certificate
                     {
-                        CertificateData = new Models.Certificates.CertificateData { },
-                        Status = new Models.Certificates.CertificateStatus { CurrentStatus = "Submitted", CreatedAt = DateTime.UtcNow.AddHours(-1), CreatedBy = req.Email, UpdatedAt = DateTime.UtcNow, UpdatedBy = req.Email }
+                        CertificateData = new CertificateData { },
+                        Status = new CertificateStatus { CurrentStatus = "Submitted", CreatedAt = DateTime.UtcNow.AddHours(-1), CreatedBy = req.Email, UpdatedAt = DateTime.UtcNow, UpdatedBy = req.Email }
                     }
                 };
 
@@ -112,6 +115,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
             return Task.FromResult(response.AsEnumerable());
         }
+
         public Task<ApiResponse> DeleteCertificate(DeleteCertificateRequest request)
         {
             ApiResponse response = null;
@@ -121,17 +125,79 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 
         public Task<IEnumerable<Certificate>> Search(GetLearnerDetailsRequest searchQuery)
         {
-            Certificate result1 = new Certificate { };// { Uln = searchQuery.Uln, GivenNames = "SANDBOX", FamilyName = searchQuery.Surname, StdCode = standardCode ?? 99, CertificateStatus = "Draft", CertificateReference = "SANDBOX" };
-            Certificate result2 = new Certificate { };//Uln = searchQuery.Uln, GivenNames = "SANDBOX", FamilyName = searchQuery.Surname, StdCode = 1 };
+            CertificateData certData1 = new CertificateData { CertificateReference = "SANDBOX", Learner = new Learner { Uln = searchQuery.Uln, GivenNames = "SANDBOX", FamilyName = searchQuery.FamilyName }, Standard = new Standard { StandardCode = searchQuery.StandardCode ?? 99, Level = 1, StandardName = "SANDBOX" } };
+            Certificate result1 = new Certificate { CertificateData  = certData1, Status = new CertificateStatus { CreatedBy = "SANDBOX", CreatedAt = DateTime.UtcNow, CurrentStatus = "Draft" } };
+
+            CertificateData certData2 = new CertificateData { Learner = new Learner { Uln = searchQuery.Uln, GivenNames = "SANDBOX", FamilyName = searchQuery.FamilyName }, Standard = new Standard { StandardCode = 1, Level = 1, StandardName = "SANDBOX" } };
+            Certificate result2 = new Certificate { CertificateData = certData2 };
 
             List<Certificate> response = new List<Certificate> { result1 };
 
-            if (!searchQuery.StandardCode.HasValue)
+            if (searchQuery.StandardCode is null || searchQuery.StandardCode != result2.CertificateData.Standard.StandardCode)
             {
                 response.Add(result2);
             }
 
             return Task.FromResult(response.AsEnumerable());
+        }
+
+        private List<string> PerformBasicValidation(CertificateData cert)
+        {
+            List<string> validationErrors = new List<string>();
+
+            if(cert.Learner?.Uln < 1000000000 || cert.Learner?.Uln > 9999999999)
+            {
+                validationErrors.Add("The apprentice's ULN should contain exactly 10 numbers");
+            }
+            if(string.IsNullOrEmpty(cert.Learner?.FamilyName))
+            {
+                validationErrors.Add("Enter the apprentice's last name");
+            }
+            if (cert.Standard?.StandardCode < 0)
+            {
+                validationErrors.Add("A standard should be selected");
+            }
+
+            if (string.IsNullOrEmpty(cert.PostalContact?.ContactName))
+            {
+                validationErrors.Add("Enter a contact name");
+            }
+            if (string.IsNullOrEmpty(cert.PostalContact?.Organisation))
+            {
+                validationErrors.Add("Enter an organisation");
+            }
+            if (string.IsNullOrEmpty(cert.PostalContact?.AddressLine1))
+            {
+                validationErrors.Add("Enter an address");
+            }
+            if (string.IsNullOrEmpty(cert.PostalContact?.City))
+            {
+                validationErrors.Add("Enter a city or town");
+            }
+            if (string.IsNullOrEmpty(cert.PostalContact?.PostCode))
+            {
+                validationErrors.Add("Enter a postcode");
+            }
+
+            if (string.IsNullOrEmpty(cert.LearningDetails?.OverallGrade))
+            {
+                validationErrors.Add("Select the grade the apprentice achieved");
+            }
+
+            if (cert.LearningDetails?.AchievementDate is null)
+            {
+                validationErrors.Add("Enter the achievement date");
+            }
+            else if (cert.LearningDetails.AchievementDate < new DateTime(2017, 1, 1))
+            {
+                validationErrors.Add("An achievement date cannot be before 01 01 2017");
+            }
+            else if (cert.LearningDetails.AchievementDate > DateTime.UtcNow)
+            {
+                validationErrors.Add("An achievement date cannot be in the future");
+            }
+
+            return validationErrors;
         }
     }
 }
