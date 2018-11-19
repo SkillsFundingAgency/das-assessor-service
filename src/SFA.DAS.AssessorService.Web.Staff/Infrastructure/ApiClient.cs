@@ -306,11 +306,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         {
             return await Get<IEnumerable<IDictionary<string, object>>>($"api/v1/staffreports/{reportId}");
         }
-
-        public async Task<ReportType> GetReportTypeFromId(Guid reportId)
-        {
-            return await Get<ReportType>($"api/v1/staffreports/{reportId}/report-type");
-        }
         #endregion
     }
 }

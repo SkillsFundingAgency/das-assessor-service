@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Interfaces;
@@ -41,29 +40,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
 
             return Ok(reportList);
         }
-
-        [HttpGet("{reportId}/report-type")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ReportType))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetReportTypeFromId(Guid reportId)
-        {
-            _logger.LogInformation($"Received request to get report type : {reportId}");
-
-            try
-            {
-                var result = await _staffReportRepository.GetReportTypeFromId(reportId);
-
-                return Ok(result);
-            }
-            catch (SqlException sqlEx)
-            {
-                _logger.LogInformation($"Could not get reportType because : {sqlEx.Message}");
-
-                return NoContent();
-            }
-        }
-
 
         [HttpGet("{reportId}")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<IDictionary<string, object>>))]
