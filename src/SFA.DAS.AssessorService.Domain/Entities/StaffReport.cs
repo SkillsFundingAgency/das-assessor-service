@@ -8,5 +8,8 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string ReportName { get; set; }
         public string StoredProcedure { get; set; }
         public int? DisplayOrder { get; set; }
+
+        public string ReportType { get; set; }
+        public string DownloadData { get; set; }
     }
 }

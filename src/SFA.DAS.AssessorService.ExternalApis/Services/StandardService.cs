@@ -60,29 +60,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             foreach (var ifaStandard in uncollatedIfaStandards)
             {
                 var standard = MapDataToStandardCollation(ifaStandard.Id, ifaStandard, null);
-                //var standard = new StandardCollation
-                //{
-                //    StandardId = ifaStandard.Id,
-                //    ReferenceNumber = ifaStandard?.ReferenceNumber,
-                //    Title = ifaStandard.Title,
-                //    StandardData = new StandardData
-                //    {
-                //        Category = ifaStandard.Category,
-                //        IfaStatus = ifaStandard.Status,
-                //        EffectiveFrom = null,
-                //        EffectiveTo = null,
-                //        Level = ifaStandard.Level,
-                //        LastDateForNewStarts = null,
-                //        IfaOnly = true,
-                //        Duration = ifaStandard.Duration,
-                //        MaxFunding = ifaStandard.MaxFunding,
-                //        PublishedDate = ifaStandard.PublishedDate,
-                //        IsPublished = ifaStandard.IsPublished,
-                //        Ssa1 = ifaStandard?.Ssa1,
-                //        Ssa2 = ifaStandard?.Ssa2,
-                //        OverviewOfRole = ifaStandard.OverviewOfRole
-                //    }
-                //};
                 collation.Add(standard);
             }
         }

@@ -10,6 +10,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Web.Staff.Domain;
+using SFA.DAS.AssessorService.Api.Types.Models;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {
@@ -43,10 +44,21 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             else
             {
                 var reports = await _apiClient.GetReportList();
-                var data = await _apiClient.GetReport(reportId);
-                var vm = new ReportViewModel { Reports = reports, ReportId = reportId, SelectedReportData = data };
 
-                return View(vm);
+                var reportType = await _apiClient.GetReportTypeFromId(reportId);
+                if (reportType == ReportType.ViewOnScreen)
+                {
+                    var data = await _apiClient.GetReport(reportId);
+                    var vm = new ReportViewModel {Reports = reports, ReportId = reportId, SelectedReportData = data};
+
+                    return View(vm);
+                }
+
+                var certCount = new Guid("0B188AC5-0A59-4B16-B63B-1031CC985728");
+                var fileToDownload = await Export(certCount);
+
+                return RedirectToAction("Index");
+
             }
         }
 

@@ -1,4 +1,6 @@
 ﻿using Dapper;
+using SFA.DAS.AssessorService.Api.Types;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System;
@@ -44,6 +46,20 @@ namespace SFA.DAS.AssessorService.Data.Staff
             }
 
             return (await _connection.QueryAsync(report.StoredProcedure, commandType: CommandType.StoredProcedure)).OfType<IDictionary<string, object>>().ToList();
+        }
+
+        Task<ReportType> IStaffReportRepository.GetReportTypeFromId(Guid reportId)
+        {
+            return Task.Run(() =>
+            {
+
+                var report = _assessorDbContext.StaffReports.FirstOrDefault(rep => rep.Id == reportId);
+
+                if (report != null && report.ReportType == "Download")
+                    return ReportType.Download;
+
+                return ReportType.ViewOnScreen;
+            });
         }
     }
 }
