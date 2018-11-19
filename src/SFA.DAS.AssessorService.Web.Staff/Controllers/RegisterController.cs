@@ -271,26 +271,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             var viewModel = MapContactModel(contact, organisation);
             return View(viewModel);
         }
-
-        [HttpGet("register/impage")]
-        public async Task<IActionResult> Impage()
-        {
-            var vm = new AssessmentOrgsImportResponse { Status = "Press to run" };
-            return View(vm);
-        }
-
-        [HttpGet("register/impage-{choice}")]
-        public async Task<IActionResult> Impage(string choice)
-        {
-            var vm = new AssessmentOrgsImportResponse { Status = "Running" };
-
-            if (choice == "DoIt")
-            {
-                var importResults = await _apiClient.ImportOrganisations();
-                vm.Status = importResults;
-            }
-            return View(vm);
-        }
             
         [HttpPost("register/add-organisation")]
         public async Task<IActionResult> AddOrganisation(RegisterOrganisationViewModel viewModel)
