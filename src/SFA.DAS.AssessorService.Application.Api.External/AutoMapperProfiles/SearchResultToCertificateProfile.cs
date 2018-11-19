@@ -37,12 +37,17 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
             {
                 if (destination.Created?.CreatedBy is null)
                 {
-                    destination.Status = null;
+                    destination.Created = null;
                 }
 
                 if (destination.Submitted?.SubmittedBy is null)
                 {
-                    destination.Status = null;
+                    destination.Submitted = null;
+                }
+
+                if (destination.Printed?.PrintedAt is null)
+                {
+                    destination.Printed = null;
                 }
 
                 if (destination.CertificateData.LearningDetails?.LearningStartDate == DateTime.MinValue)

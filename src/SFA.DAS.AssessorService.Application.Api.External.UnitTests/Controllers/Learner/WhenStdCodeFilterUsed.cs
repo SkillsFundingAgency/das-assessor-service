@@ -22,9 +22,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
             // NOTE: The API call results List<SearchResult>
             List<SearchResult> _apiItems = new List<SearchResult>
             {
-                new SearchResult { Uln = 1234, FamilyName = "test", StdCode = 1234, UkPrn = 0 },
-                new SearchResult { Uln = 1234, FamilyName = "test", StdCode = 4321, UkPrn = 0 },
-                new SearchResult { Uln = 1234, FamilyName = "test", StdCode = 9999, UkPrn = 0 }
+                new SearchResult { Uln = 1234, FamilyName = "test", StdCode = 1234, UkPrn = 0, CertificateStatus = "Draft" },
+                new SearchResult { Uln = 1234, FamilyName = "test", StdCode = 4321, UkPrn = 0, CertificateStatus = "Draft" },
+                new SearchResult { Uln = 1234, FamilyName = "test", StdCode = 9999, UkPrn = 0, CertificateStatus = "Draft" }
             };
 
             // NOTE: The end result maps these to List<Certificate>

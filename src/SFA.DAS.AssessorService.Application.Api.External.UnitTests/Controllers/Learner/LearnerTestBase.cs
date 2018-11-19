@@ -62,11 +62,12 @@ namespace SFA.DAS.AssessorService.Application.Api.External.UnitTests.Controllers
 
         protected Models.Certificates.Certificate BuildCertificate(long uln, string familyName, int standardCode, int ukprn)
         {
+            var status = new Models.Certificates.Status { CurrentStatus = "Draft" };
             var learner = new Models.Certificates.Learner { Uln = uln, FamilyName = familyName };
             var standard = new Models.Certificates.Standard { StandardCode = standardCode };
             var certData = new Models.Certificates.CertificateData { Learner = learner, Standard = standard };
 
-            return new Models.Certificates.Certificate { CertificateData = certData };
+            return new Models.Certificates.Certificate { CertificateData = certData, Status = status };
         }
     }
 }
