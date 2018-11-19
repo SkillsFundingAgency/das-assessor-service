@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Interfaces;
@@ -57,6 +58,25 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
             catch (SqlException sqlEx)
             {
                 _logger.LogInformation($"Could not get reportType because : {sqlEx.Message}");
+                return NoContent();
+            }
+        }
+
+        [HttpGet("{reportId}/report-details")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ReportDetails))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetReportDownloadDeatilsFromId(Guid reportId)
+        {
+            _logger.LogInformation($"Received request to get report details : {reportId}");
+            try
+            {
+                var result = await _staffReportRepository.GetReportDetailsFromId(reportId);
+                return Ok(result);
+            }
+            catch (SqlException sqlEx)
+            {
+                _logger.LogInformation($"Could not get report details because : {sqlEx.Message}");
                 return NoContent();
             }
         }

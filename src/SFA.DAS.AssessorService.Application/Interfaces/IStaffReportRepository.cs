@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
 
 namespace SFA.DAS.AssessorService.Application.Interfaces
 {
@@ -12,5 +13,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
         Task<IEnumerable<IDictionary<string, object>>> GetReport(Guid reportId);
         Task<ReportType> GetReportTypeFromId(Guid reportId);
+
+        Task<ReportDetails> GetReportDetailsFromId(Guid reportId);
     }
 }

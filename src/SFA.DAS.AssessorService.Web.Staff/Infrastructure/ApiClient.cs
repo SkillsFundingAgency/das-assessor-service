@@ -297,10 +297,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             return await Get<OrganisationStandard>($"/api/ao/assessment-organisations/organisation-standard/{organisationStandardId}");
         }
 
-        public async Task<ReportType> GetReportTypeFromId(Guid reportId)
-        {
-            return await Get<ReportType>($"api/v1/staffreports/{reportId}/report-type");
-        }
         #region Reports
         public async Task<IEnumerable<StaffReport>> GetReportList()
         {
@@ -310,6 +306,16 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         public async Task<IEnumerable<IDictionary<string, object>>> GetReport(Guid reportId)
         {
             return await Get<IEnumerable<IDictionary<string, object>>>($"api/v1/staffreports/{reportId}");
+        }
+
+        public async Task<ReportType> GetReportTypeFromId(Guid reportId)
+        {
+            return await Get<ReportType>($"api/v1/staffreports/{reportId}/report-type");
+        }
+
+        public async Task<ReportDetails> GetReportDetailsFromId(Guid reportId)
+        {
+            return await Get<ReportDetails>($"api/v1/staffreports/{reportId}/report-details");
         }
         #endregion
     }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SFA.DAS.AssessorService.Domain.JsonData
 {
-    public class ReportDownloadData
+    public class ReportDetails
     {
         public string Name { get; set; }
         public string Type { get; set; }

@@ -9,6 +9,6 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string StoredProcedure { get; set; }
         public int? DisplayOrder { get; set; }
         public string ReportType { get; set; }
-        public string DownloadData { get; set; }
+        public string ReportDetails { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System;
@@ -7,6 +8,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace SFA.DAS.AssessorService.Data.Staff
 {
@@ -55,6 +57,20 @@ namespace SFA.DAS.AssessorService.Data.Staff
                 if (report != null && report.ReportType == "Download")
                     return ReportType.Download;
                 return ReportType.ViewOnScreen;
+            });
+        }
+
+        public Task<ReportDetails> GetReportDetailsFromId(Guid reportId)
+        {
+            return Task.Run(() =>
+            {
+                var report = _assessorDbContext.StaffReports.FirstOrDefault(rep => rep.Id == reportId);
+
+                if (report?.ReportDetails == null)
+                    return new ReportDetails();
+
+                var reportDetails = JsonConvert.DeserializeObject<ReportDetails>(report?.ReportDetails);
+               return reportDetails;
             });
         }
     }

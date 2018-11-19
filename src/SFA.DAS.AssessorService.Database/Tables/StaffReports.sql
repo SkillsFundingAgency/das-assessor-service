@@ -8,7 +8,7 @@
     [UpdatedAt]    DATETIME2 (7)    NULL, 
     [DisplayOrder] INT NULL, 
     [ReportType] NVARCHAR(20) NULL, 
-    [DownloadData] NVARCHAR(MAX) NULL ,
+    [ReportDetails] NVARCHAR(MAX) NULL ,
 )
 
 GO

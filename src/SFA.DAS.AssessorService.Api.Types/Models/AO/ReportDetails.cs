@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.AO
 {
-    public class DownloadData
+    public class ReportDetails
     {
         public string Name { get; set; }
         public string Type { get; set; }

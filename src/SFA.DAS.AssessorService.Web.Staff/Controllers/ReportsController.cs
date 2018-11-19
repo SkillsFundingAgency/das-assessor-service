@@ -52,11 +52,31 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                     return View(vm);
                 }
                 var certCount = new Guid("0B188AC5-0A59-4B16-B63B-1031CC985728");
-                var fileToDownload = await Export(certCount);
-                return RedirectToAction("Index");
+                //var fileToDownload = await Export(certCount);
+                return RedirectToAction("DirectDownload", new {reportId = certCount, realReportId = reportId});
             }
         }
 
+        public async Task<FileContentResult> DirectDownload(Guid reportId, Guid realReportId)
+        {
+            //var data = await _apiClient.GetReport(reportId);
+
+            var reportDetails = await _apiClient.GetReportDetailsFromId(realReportId);
+           // ValueTask reportDetails = 
+            using (var package = new ExcelPackage())
+            {
+                foreach (var ws in reportDetails.Worksheets)
+                {
+                    var worksheetToAdd = package.Workbook.Worksheets.Add(ws.Worksheet);
+                    //worksheetToAdd.Cells.LoadFromDataTable(ToDataTable(data), true);
+                }
+                if (reportDetails.Type=="excel")
+                    return File(package.GetAsByteArray(), "application/excel", $"{reportDetails.Name}.xlsx");
+                
+                return null;
+                
+            }
+        }
 
         public async Task<FileContentResult> Export(Guid reportId)
         {
