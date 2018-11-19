@@ -89,7 +89,7 @@
     <Build Include="StoredProcedures\StaffReports_CertificateCount.sql" />
     <Build Include="StoredProcedures\StaffReports_MonthlySummary.sql" />
     <Build Include="StoredProcedures\StaffReports_WeeklySummary.sql" />
-    <Build Include="StoredProcedures\EPAO_Register.sql" />
+    <Build Include="StoredProcedures\EPAO_Register_register_organisation.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />

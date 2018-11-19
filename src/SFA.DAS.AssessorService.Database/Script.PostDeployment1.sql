@@ -32,7 +32,13 @@ UPDATE StaffReports SET ReportType = 'ViewOnScreen' WHERE ReportType IS NULL
 
 IF NOT EXISTS (SELECT * FROM StaffReports WHERE ReportName = 'EPAO Register')
 BEGIN
-	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('EPAO Register', 'EPAO_Register', 11, 'DownloadExcel')
+	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType,DownloadData) VALUES ('EPAO Register', '', 11, 'Download','{"Name":"EPAO Register","Type":"excel","Worksheets": [
+  {
+  "worksheet":"Register - Organisations",
+  "order": 1,
+  "StoredProcedure":"EPAO_Register_register_organisation"
+  }
+  ]}')
 END
 
 UPDATE CERTIFICATES

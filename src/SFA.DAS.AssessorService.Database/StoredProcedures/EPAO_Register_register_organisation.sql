@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].EPAO_Register
+﻿CREATE PROCEDURE [dbo].EPAO_Register_register_organisation
 AS
 
 SET NOCOUNT ON;
