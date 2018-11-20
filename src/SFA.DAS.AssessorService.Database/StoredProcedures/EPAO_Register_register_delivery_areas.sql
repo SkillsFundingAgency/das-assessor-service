@@ -19,6 +19,7 @@ update #OrganisationStandardDeliveryAreaDetails set DeliveryAreaList = 'All' whe
 
 DECLARE @osId int
 DECLARE @details varchar(500)
+SELECT @osId = 0
 
 while exists(select * from #OrganisationStandardDeliveryAreaDetails where DeliveryAreaList is null AND OrganisationStandardId != @osId)
   BEGIN
