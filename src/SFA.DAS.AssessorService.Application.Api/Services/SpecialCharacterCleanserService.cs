@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 {'’', '\''},
                 {'‘','\'' },
                 {'`', '\''},
-                {'–','-'},
+                {'–', '-'},
                 {'\u00A0',' '},
                 {'\t',' '},
                 {'%', ' '}

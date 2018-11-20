@@ -42,10 +42,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             }
             else
             {
-                var reports = await _apiClient.GetReportList();
+                var reports = await _apiClient.GetReportList();               
                 var data = await _apiClient.GetReport(reportId);
-                var vm = new ReportViewModel { Reports = reports, ReportId = reportId, SelectedReportData = data };
-
+                var vm = new ReportViewModel {Reports = reports, ReportId = reportId, SelectedReportData = data};
                 return View(vm);
             }
         }
