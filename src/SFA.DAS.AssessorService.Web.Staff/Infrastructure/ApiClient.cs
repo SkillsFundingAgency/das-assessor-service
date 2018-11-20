@@ -317,6 +317,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         {
             return await Get<ReportDetails>($"api/v1/staffreports/{reportId}/report-details");
         }
+
+        public async Task<IEnumerable<IDictionary<string, object>>> GetDataFromStoredProcedure(string storedProcedure)
+        {
+            return await Get<IEnumerable<IDictionary<string, object>>>($"api/v1/staffreports/report-content/{storedProcedure}");
+        }
         #endregion
     }
 }

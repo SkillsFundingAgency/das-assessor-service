@@ -53,28 +53,29 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 }
                 var certCount = new Guid("0B188AC5-0A59-4B16-B63B-1031CC985728");
                 //var fileToDownload = await Export(certCount);
-                return RedirectToAction("DirectDownload", new {reportId = certCount, realReportId = reportId});
+                return RedirectToAction("DirectDownload", new {reportId = reportId});
             }
         }
 
-        public async Task<FileContentResult> DirectDownload(Guid reportId, Guid realReportId)
+        public async Task<FileContentResult> DirectDownload(Guid reportId)
         {
             //var data = await _apiClient.GetReport(reportId);
 
-            var reportDetails = await _apiClient.GetReportDetailsFromId(realReportId);
+            var reportDetails = await _apiClient.GetReportDetailsFromId(reportId);
            // ValueTask reportDetails = 
             using (var package = new ExcelPackage())
             {
-                foreach (var ws in reportDetails.Worksheets)
+                foreach (var ws in reportDetails.Worksheets.OrderBy(w => w.Order))
                 {
                     var worksheetToAdd = package.Workbook.Worksheets.Add(ws.Worksheet);
-                    //worksheetToAdd.Cells.LoadFromDataTable(ToDataTable(data), true);
+                    var data = await _apiClient.GetDataFromStoredProcedure(ws.StoredProcedure);
+                    worksheetToAdd.Cells.LoadFromDataTable(ToDataTable(data), true);
                 }
                 if (reportDetails.Type=="excel")
                     return File(package.GetAsByteArray(), "application/excel", $"{reportDetails.Name}.xlsx");
-                
-                return null;
-                
+                else
+                    return null;
+
             }
         }
 

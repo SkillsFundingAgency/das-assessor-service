@@ -66,7 +66,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ReportDetails))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetReportDownloadDeatilsFromId(Guid reportId)
+        public async Task<IActionResult> GetReportDetailsFromId(Guid reportId)
         {
             _logger.LogInformation($"Received request to get report details : {reportId}");
             try
@@ -77,6 +77,28 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
             catch (SqlException sqlEx)
             {
                 _logger.LogInformation($"Could not get report details because : {sqlEx.Message}");
+                return NoContent();
+            }
+        }
+
+        [HttpGet("report-content/{storedProcedure}")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<IDictionary<string, object>>))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetWorksheetContent(string storedProcedure)
+        {
+            _logger.LogInformation($"Received request to generate report from stored procedure: {storedProcedure}");
+
+            try
+            {
+                var result = await _staffReportRepository.GetDataFromStoredProcedure(storedProcedure);
+
+                return Ok(result);
+            }
+            catch (SqlException sqlEx)
+            {
+                _logger.LogInformation($"Could not generate data from stored procedure [{storedProcedure}] report due to : {sqlEx.Message}");
+
                 return NoContent();
             }
         }

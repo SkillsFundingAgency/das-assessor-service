@@ -15,5 +15,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<ReportType> GetReportTypeFromId(Guid reportId);
 
         Task<ReportDetails> GetReportDetailsFromId(Guid reportId);
+
+        Task<IEnumerable<IDictionary<string, object>>> GetDataFromStoredProcedure(string storedProcedure);
     }
 }
