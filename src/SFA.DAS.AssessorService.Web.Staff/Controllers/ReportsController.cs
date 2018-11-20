@@ -43,7 +43,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             }
             else
             {
-                var reports = await _apiClient.GetReportList();
+                var reports = await _apiClient.GetReportList();               
                 var reportType = await _apiClient.GetReportTypeFromId(reportId);
 
                 if (reportType == ReportType.Download)
