@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _logger = logger;
             _mediator = mediator;
         }
-        [HttpPost("update-standards",Name = "update-standards/GatherAndStoreStandards")]
+        [HttpPost("update-standards",Name = "GatherAndStoreStandards")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(GatherStandardsResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.Conflict, Type = typeof(ApiResponse))]
@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> GatherAndStoreStandards([FromBody] GatherStandardsRequest request)
         {
             var processDetails = await _mediator.Send(request);
-            var compiledResponseText = processDetails + "; Processing of Standards Upsert complete";
+            var compiledResponseText = processDetails;
             _logger.LogInformation(compiledResponseText);
             return Ok(new GatherStandardsResponse(compiledResponseText));
         }
@@ -45,6 +45,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetCollatedStandards()
         {
+
+            await _mediator.Send(new GatherStandardsRequest());
             return Ok(await _mediator.Send(new GetCollatedStandardsRequest()));
         }
     }

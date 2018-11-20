@@ -29,6 +29,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         public async Task<IActionResult> Index()
         {
             var reports = await _apiClient.GetReportList();
+            _apiClient.GatherAndCollateStandards();
 
             var vm = new ReportViewModel {Reports = reports};
 
@@ -41,8 +42,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             {
                 return RedirectToAction("Index");
             }
-            else
-            {
+
                 var reports = await _apiClient.GetReportList();               
                 var reportType = await _apiClient.GetReportTypeFromId(reportId);
 
@@ -53,12 +53,15 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 var data = await _apiClient.GetReport(reportId);
                 var vm = new ReportViewModel {Reports = reports, ReportId = reportId, SelectedReportData = data};
                 return View(vm);
-            }
+            
         }
 
         public async Task<FileContentResult> DirectDownload(Guid reportId)
-        { 
+        {
+            _logger.LogInformation($"Standard Collation initiated");
+            await _apiClient.GatherAndCollateStandards();
 
+            _logger.LogInformation($"Standard Collation completed");
             var reportDetails = await _apiClient.GetReportDetailsFromId(reportId);
 
             using (var package = new ExcelPackage())
