@@ -77,9 +77,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 
                     return File(package.GetAsByteArray(), "application/excel", $"{reportDetails.Name}.xlsx");
                 }
-                else
-                    return null;
 
+                return null;
             }
         }
 

@@ -42,7 +42,7 @@ select os.EndPointAssessorOrganisationId EPA_organisation_identifier,
 inner join Organisations o on o.EndPointAssessorOrganisationId = os.EndPointAssessorOrganisationId --and os.EffectiveTo is null
 left outer join StandardCollation sc on os.StandardCode = sc.StandardId
 left outer join #OrganisationStandardDeliveryAreaDetails  dad on dad.organisationStandardId = os.Id
---where os.EffectiveTo is null
+where os.EffectiveTo is null
 order by o.EndPointAssessorOrganisationId, sc.Title
 
 
