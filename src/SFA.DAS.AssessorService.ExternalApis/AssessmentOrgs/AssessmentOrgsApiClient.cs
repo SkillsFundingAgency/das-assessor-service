@@ -193,6 +193,14 @@ namespace SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs
             }
         }
 
+        public async Task<List<StandardSummary>> GetAllStandardsV2()
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/standards/v2"))
+            {
+                return await RequestAndDeserialiseAsync<List<StandardSummary>>(request);
+            }
+        }
+
         public async Task<List<StandardSummary>> GetAllStandardSummaries()
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/standards"))
