@@ -133,8 +133,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             {
                 LearnerGivenNames = ilr.GivenNames,
                 LearnerFamilyName = ilr.FamilyName,
-                StandardName = standard.Title,
                 LearningStartDate = ilr.LearnStartDate,
+                StandardName = standard.Title,   
                 StandardLevel = standard.Level,
                 StandardPublicationDate = standard.EffectiveFrom.Value,
                 FullName = $"{ilr.GivenNames} {ilr.FamilyName}",
@@ -142,6 +142,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
 
                 ContactName = data.ContactName,
                 ContactOrganisation = data.ContactOrganisation,
+                Department = data.Department,
                 ContactAddLine1 = data.ContactAddLine1,
                 ContactAddLine2 = data.ContactAddLine2,
                 ContactAddLine3 = data.ContactAddLine3,
@@ -150,14 +151,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
                 Registration = data.Registration,
                 AchievementDate = data.AchievementDate,
                 CourseOption = data.CourseOption,
-                OverallGrade = data.OverallGrade,
-                Department = data.Department
+                OverallGrade = data.OverallGrade                
             };
         }
 
         private async Task<Certificate> ApplyStatusInformation(Certificate certificate)
         {  
             var certificateLogs = await _certificateRepository.GetCertificateLogsFor(certificate.Id);
+            certificateLogs = certificateLogs?.Where(l => l.ReasonForChange is null).ToList(); // this removes any admin changes done within staff app
 
             var createdLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Draft);
             if (createdLogEntry != null)

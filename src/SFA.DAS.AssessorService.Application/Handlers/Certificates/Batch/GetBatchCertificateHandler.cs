@@ -107,6 +107,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
 
             _logger.LogInformation("GetContactFromCertificateLogs Before GetCertificateLogsFor");
             var certificateLogs = await _certificateRepository.GetCertificateLogsFor(certificateId);
+            certificateLogs = certificateLogs?.Where(l => l.ReasonForChange is null).ToList(); // this removes any admin changes done within staff app
 
             var submittedLogEntry = certificateLogs?.FirstOrDefault(l => l.Status == CertificateStatus.Submitted);
             var createdLogEntry = certificateLogs?.FirstOrDefault(l => l.Status == CertificateStatus.Draft);
@@ -141,6 +142,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
         private async Task<Certificate> ApplyStatusInformation(Certificate certificate)
         {
             var certificateLogs = await _certificateRepository.GetCertificateLogsFor(certificate.Id);
+            certificateLogs = certificateLogs?.Where(l => l.ReasonForChange is null).ToList(); // this removes any admin changes done within staff app
 
             var createdLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Draft);
             if (createdLogEntry != null)

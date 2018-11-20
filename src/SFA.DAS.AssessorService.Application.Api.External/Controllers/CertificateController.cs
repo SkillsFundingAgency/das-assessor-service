@@ -34,6 +34,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [HttpGet("{uln}/{familyName}/{standardCode}")]
         [SwaggerResponse((int)HttpStatusCode.OK, "The current Certificate.", typeof(Certificate))]
         [SwaggerResponse((int)HttpStatusCode.NoContent, "There is no Certificate and you may create one.", typeof(Certificate))]
+        [SwaggerResponse((int)HttpStatusCode.Forbidden, "There are validation errors preventing you from retrieving the Certificate.", typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, "Refer to the Message for more information.", typeof(ApiResponse))]
         [SwaggerOperation("Get Certificate", "Gets the specified Certificate.")]
         public async Task<IActionResult> GetCertificate(long uln, string familyName, int standardCode)
@@ -43,7 +44,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
 
             if (response.ValidationErrors.Any())
             {
-                ApiResponse error = new ApiResponse((int)HttpStatusCode.BadRequest, string.Join("; ", response.ValidationErrors));
+                ApiResponse error = new ApiResponse((int)HttpStatusCode.Forbidden, string.Join("; ", response.ValidationErrors));
                 return BadRequest(error);
             }
             else if(response.Certificate is null)

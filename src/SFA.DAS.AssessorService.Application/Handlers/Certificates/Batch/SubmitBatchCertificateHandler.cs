@@ -61,6 +61,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
         private async Task<Certificate> ApplyStatusInformation(Certificate certificate)
         {
             var certificateLogs = await _certificateRepository.GetCertificateLogsFor(certificate.Id);
+            certificateLogs = certificateLogs?.Where(l => l.ReasonForChange is null).ToList(); // this removes any admin changes done within staff app
 
             var createdLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Draft);
             if (createdLogEntry != null)

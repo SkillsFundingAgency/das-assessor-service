@@ -6,6 +6,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Extensions;
+using SFA.DAS.AssessorService.Domain.JsonData;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -37,10 +38,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
 
             _logger.LogInformation("UpdateCertificate Before Get Certificate from db");
             var certificate = await _certificateRepository.GetCertificate(request.Uln, request.StandardCode);
+            var certData = CombineCertificateData(JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData), request.CertificateData);
 
             _logger.LogInformation("UpdateCertificate Before Update CertificateData");
-
-            certificate.CertificateData = JsonConvert.SerializeObject(request.CertificateData);
+            certificate.CertificateData = JsonConvert.SerializeObject(certData);
 
             if(certificate.Status == CertificateStatus.Deleted)
             {
@@ -65,9 +66,38 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             return contact;
         }
 
+        private CertificateData CombineCertificateData(CertificateData certData, CertificateData requestData)
+        {
+            return new CertificateData()
+            {
+                LearnerGivenNames = certData.LearnerGivenNames,
+                LearnerFamilyName = certData.LearnerFamilyName,
+                LearningStartDate = certData.LearningStartDate,
+                StandardName = certData.StandardName,     
+                StandardLevel = certData.StandardLevel,
+                StandardPublicationDate = certData.StandardPublicationDate,
+                FullName = certData.FullName,
+                ProviderName = certData.ProviderName,
+
+                ContactName = requestData.ContactName,
+                ContactOrganisation = requestData.ContactOrganisation,
+                Department = requestData.Department,
+                ContactAddLine1 = requestData.ContactAddLine1,
+                ContactAddLine2 = requestData.ContactAddLine2,
+                ContactAddLine3 = requestData.ContactAddLine3,
+                ContactAddLine4 = requestData.ContactAddLine4,
+                ContactPostCode = requestData.ContactPostCode,
+                Registration = requestData.Registration,
+                AchievementDate = requestData.AchievementDate,
+                CourseOption = requestData.CourseOption,
+                OverallGrade = requestData.OverallGrade                
+            };
+        }
+
         private async Task<Certificate> ApplyStatusInformation(Certificate certificate)
         {
             var certificateLogs = await _certificateRepository.GetCertificateLogsFor(certificate.Id);
+            certificateLogs = certificateLogs?.Where(l => l.ReasonForChange is null).ToList(); // this removes any admin changes done within staff app
 
             var createdLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Draft);
             if (createdLogEntry != null)
