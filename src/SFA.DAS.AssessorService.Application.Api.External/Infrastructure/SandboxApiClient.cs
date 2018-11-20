@@ -128,24 +128,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             return Task.FromResult(response);
         }
 
-        public Task<IEnumerable<Certificate>> Search(GetLearnerDetailsRequest searchQuery)
-        {
-            CertificateData certData1 = new CertificateData { CertificateReference = "SANDBOX", Learner = new Learner { Uln = searchQuery.Uln, GivenNames = "SANDBOX", FamilyName = searchQuery.FamilyName }, Standard = new Standard { StandardCode = searchQuery.StandardCode ?? 99, Level = 1, StandardName = "SANDBOX" } };
-            Certificate result1 = new Certificate { CertificateData  = certData1, Status = new Status { CurrentStatus = "Draft" }, Created = new Created { CreatedBy = "SANDBOX", CreatedAt = DateTime.UtcNow } };
-
-            CertificateData certData2 = new CertificateData { Learner = new Learner { Uln = searchQuery.Uln, GivenNames = "SANDBOX", FamilyName = searchQuery.FamilyName }, Standard = new Standard { StandardCode = 1, Level = 1, StandardName = "SANDBOX" } };
-            Certificate result2 = new Certificate { CertificateData = certData2 };
-
-            List<Certificate> response = new List<Certificate> { result1 };
-
-            if (searchQuery.StandardCode is null || searchQuery.StandardCode != result2.CertificateData.Standard.StandardCode)
-            {
-                response.Add(result2);
-            }
-
-            return Task.FromResult(response.AsEnumerable());
-        }
-
         private List<string> PerformBasicValidation(CertificateData cert)
         {
             List<string> validationErrors = new List<string>();
