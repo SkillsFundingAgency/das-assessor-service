@@ -60,6 +60,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
 
                         if (providedStandards.Any(s => s.StandardCode == certificate.StandardCode.ToString()))
                         {
+                            // Shared standard but not the EPAO who created the certificate
+                            // Must redact information
                             CertificateData redactedData = new CertificateData
                             {
                                 LearnerGivenNames = certData.LearnerGivenNames,
@@ -70,11 +72,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
                             };
 
                             certificate.CertificateData = JsonConvert.SerializeObject(redactedData);
+                            certificate.CertificateReference = null;
+                            certificate.CertificateReferenceId = null;
                             certificate.CreateDay = DateTime.MinValue;
                             certificate.CreatedAt = DateTime.MinValue;
                             certificate.CreatedBy = null;
-                            certificate.UpdatedBy = null;
                             certificate.UpdatedAt = null;
+                            certificate.UpdatedBy = null;
                             certificate.DeletedBy = null;
                             certificate.DeletedAt = null;
                         }
