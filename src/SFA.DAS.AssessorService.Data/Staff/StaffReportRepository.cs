@@ -76,7 +76,7 @@ namespace SFA.DAS.AssessorService.Data.Staff
                     return new ReportDetails();
 
                 var reportDetails = JsonConvert.DeserializeObject<ReportDetails>(report?.ReportDetails);
-               return reportDetails;
+                return reportDetails;
             });
         }
 

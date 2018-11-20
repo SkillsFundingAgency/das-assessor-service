@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
@@ -92,13 +91,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
             try
             {
                 var result = await _staffReportRepository.GetDataFromStoredProcedure(storedProcedure);
-
                 return Ok(result);
             }
             catch (SqlException sqlEx)
             {
                 _logger.LogInformation($"Could not generate data from stored procedure [{storedProcedure}] report due to : {sqlEx.Message}");
-
                 return NoContent();
             }
         }
@@ -114,13 +111,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers.Staff
             try
             {
                 var result = await _staffReportRepository.GetReport(reportId);
-
                 return Ok(result);
             }
             catch (SqlException sqlEx)
             {
                 _logger.LogInformation($"Could not generate report due to : {sqlEx.Message}");
-
                 return NoContent();
             }
         }
