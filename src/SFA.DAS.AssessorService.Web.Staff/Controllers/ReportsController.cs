@@ -45,34 +45,35 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             {
                 var reports = await _apiClient.GetReportList();
                 var reportType = await _apiClient.GetReportTypeFromId(reportId);
-                if (reportType == ReportType.ViewOnScreen)
-                {
-                    var data = await _apiClient.GetReport(reportId);
-                    var vm = new ReportViewModel {Reports = reports, ReportId = reportId, SelectedReportData = data};
-                    return View(vm);
-                }
-                var certCount = new Guid("0B188AC5-0A59-4B16-B63B-1031CC985728");
-                //var fileToDownload = await Export(certCount);
-                return RedirectToAction("DirectDownload", new {reportId = reportId});
+
+                if (reportType == ReportType.Download)
+                    return RedirectToAction("DirectDownload", new {reportId });
+
+
+                var data = await _apiClient.GetReport(reportId);
+                var vm = new ReportViewModel {Reports = reports, ReportId = reportId, SelectedReportData = data};
+                return View(vm);
             }
         }
 
         public async Task<FileContentResult> DirectDownload(Guid reportId)
-        {
-            //var data = await _apiClient.GetReport(reportId);
+        { 
 
             var reportDetails = await _apiClient.GetReportDetailsFromId(reportId);
-           // ValueTask reportDetails = 
+
             using (var package = new ExcelPackage())
             {
-                foreach (var ws in reportDetails.Worksheets.OrderBy(w => w.Order))
+                if (reportDetails.Type == "excel")
                 {
-                    var worksheetToAdd = package.Workbook.Worksheets.Add(ws.Worksheet);
-                    var data = await _apiClient.GetDataFromStoredProcedure(ws.StoredProcedure);
-                    worksheetToAdd.Cells.LoadFromDataTable(ToDataTable(data), true);
-                }
-                if (reportDetails.Type=="excel")
+                    foreach (var ws in reportDetails.Worksheets.OrderBy(w => w.Order))
+                    {
+                        var worksheetToAdd = package.Workbook.Worksheets.Add(ws.Worksheet);
+                        var data = await _apiClient.GetDataFromStoredProcedure(ws.StoredProcedure);
+                        worksheetToAdd.Cells.LoadFromDataTable(ToDataTable(data), true);
+                    }
+
                     return File(package.GetAsByteArray(), "application/excel", $"{reportDetails.Name}.xlsx");
+                }
                 else
                     return null;
 

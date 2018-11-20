@@ -32,14 +32,33 @@ UPDATE StaffReports SET ReportType = 'ViewOnScreen' WHERE ReportType IS NULL
 
 IF NOT EXISTS (SELECT * FROM StaffReports WHERE ReportName = 'EPAO Register')
 BEGIN
-	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType,ReportDetails) VALUES ('EPAO Register', '', 11, 'Download','{"Name":"EPAO Register","Type":"excel","Worksheets": [
+	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('EPAO Register', '', 11, 'Download')
+END
+
+
+UPDATE StaffReports SET ReportDetails ='{"Name":"EPAO Register","Type":"excel","Worksheets": [
   {
   "worksheet":"Register - Organisations",
   "order": 1,
   "StoredProcedure":"EPAO_Register_register_organisation"
+  },
+  {
+  "worksheet":"Register - Standards",
+  "order": 2,
+  "StoredProcedure":"EPAO_Register_register_standards"
+  },
+  {
+  "worksheet":"Register - Delivery areas",
+  "order": 3,
+  "StoredProcedure":"EPAO_Register_register_delivery_areas"
+  },
+  {
+  "worksheet":"Data Definitions",
+  "order": 4,
+  "StoredProcedure":"EPAO_Register_Data_Definitions"
   }
-  ]}')
-END
+  ]}' WHERE ReportName = 'EPAO Register'
+
 
 UPDATE CERTIFICATES
 set IsPrivatelyFunded = 0

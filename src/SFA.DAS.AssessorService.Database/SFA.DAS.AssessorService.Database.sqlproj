@@ -90,6 +90,9 @@
     <Build Include="StoredProcedures\StaffReports_MonthlySummary.sql" />
     <Build Include="StoredProcedures\StaffReports_WeeklySummary.sql" />
     <Build Include="StoredProcedures\EPAO_Register_register_organisation.sql" />
+    <Build Include="StoredProcedures\EPAO_Register_register_standards.sql" />
+    <Build Include="StoredProcedures\EPAO_Register_register_delivery_areas.sql" />
+    <Build Include="StoredProcedures\EPAO_Register_Data_Definitions.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />

@@ -1,4 +1,7 @@
+﻿CREATE PROCEDURE [dbo].[EPAO_Register_register_standards]
+AS
 
+SET NOCOUNT ON;
 select os.EndPointAssessorOrganisationId as EPA_organisation_identifier,
 o.EndPointAssessorName as 'EPA_organisation (lookup auto-populated)',
 os.StandardCode as Standard_code,
