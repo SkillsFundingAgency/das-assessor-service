@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         [TestCase("Colleges’ ", "Colleges'")]
         [TestCase("Colleges ", "Colleges")]
         [TestCase("Raj o`intel", "Raj o\'intel")]
-        [TestCase("Intel - Technologies Ltd", "Intel – Technologies Ltd")]
+        [TestCase("Intel – Technologies Ltd", "Intel - Technologies Ltd")]
         [TestCase("column 1\u00A0column 2", "column 1 column 2")]
         [TestCase("column 3\tcolumn 4", "column 3 column 4")]
         [TestCase("wildcard%", "wildcard" )]
