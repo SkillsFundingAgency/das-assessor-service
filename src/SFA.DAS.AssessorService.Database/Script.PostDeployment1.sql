@@ -59,10 +59,13 @@ UPDATE [OrganisationType] SET [Type] =  'PublicSector', [TypeDescription] = 'Inc
 
 -- 'college','Academy_FreeSchool'
 
-SET identity_insert OrganisationType ON
-INSERT INTO [OrganisationType] (ID,[Type],[Status], [TypeDescription]) VALUES (10,'College','Live','GFE College currently receiving funding from the ESFA, 6th form / FE college');
-INSERT INTO [OrganisationType] (ID,[Type],[Status], [TypeDescription]) VALUES (11,'Academy_FreeSchool','Live','Academy or Free school registered with the ESFA');
-SET identity_insert OrganisationType OFF
+IF NOT EXISTS(SELECT * FROM OrganisationType WHERE ID IN (10,11))
+BEGIN
+	SET identity_insert OrganisationType ON
+	INSERT INTO [OrganisationType] (ID,[Type],[Status], [TypeDescription]) VALUES (10,'College','Live','GFE College currently receiving funding from the ESFA, 6th form / FE college');
+	INSERT INTO [OrganisationType] (ID,[Type],[Status], [TypeDescription]) VALUES (11,'Academy_FreeSchool','Live','Academy or Free school registered with the ESFA');
+	SET identity_insert OrganisationType OFF
+END
 
 UPDATE [Organisations] SET [OrganisationTypeId] = 3 WHERE [EndPointAssessorOrganisationId] = 'EPA0027';
 UPDATE [Organisations] SET [OrganisationTypeId] = 9 WHERE [EndPointAssessorOrganisationId] = 'EPA0035';
