@@ -14,19 +14,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                     .ForPath(x => x.ProvidedCertificateData.Standard.StandardCode, opt => opt.MapFrom(source => source.StandardCode))
                     .ForMember(x => x.Certificate, opt => opt.MapFrom(source => Mapper.Map<Domain.Entities.Certificate, Models.Certificates.Certificate>(source.Certificate)))
                     .ForMember(x => x.ValidationErrors, opt => opt.MapFrom(source => source.ValidationErrors))
-                    .AfterMap<SetFamilyNameAction>()
                     .ForAllOtherMembers(x => x.Ignore());
-        }
-
-        public class SetFamilyNameAction : IMappingAction<AssessorService.Api.Types.Models.Certificates.Batch.BatchCertificateResponse, Messages.BatchCertificateResponse>
-        {
-            public void Process(AssessorService.Api.Types.Models.Certificates.Batch.BatchCertificateResponse source, Messages.BatchCertificateResponse destination)
-            {
-                if (destination.Certificate != null)
-                {
-                    destination.Certificate.CertificateData.Learner.FamilyName = source.FamilyName;
-                }
-            }
         }
     }
 }
