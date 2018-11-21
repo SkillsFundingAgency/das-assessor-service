@@ -72,7 +72,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
                             };
 
                             certificate.CertificateData = JsonConvert.SerializeObject(redactedData);
-                            certificate.CertificateReference = null;
+                            certificate.CertificateReference = "PRIVATE";
                             certificate.CertificateReferenceId = null;
                             certificate.CreateDay = DateTime.MinValue;
                             certificate.CreatedAt = DateTime.MinValue;
