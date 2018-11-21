@@ -14,10 +14,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
         {
             Include(new BatchCertificateRequestValidator(localiser, organisationQueryRepository, ilrRepository, certificateRepository, assessmentOrgsApiClient));
 
-            RuleFor(m => m.CertificateReference).Empty().WithMessage("Certificate reference must be empty");
-
-            RuleFor(m => m)
-                .Custom((m, context) =>
+            RuleFor(m => m.CertificateReference).Empty().WithMessage("Certificate reference must be empty").DependentRules(() =>
+            {
+                RuleFor(m => m).Custom((m, context) =>
                 {
                     var existingCertificate = certificateRepository.GetCertificate(m.Uln, m.StandardCode).Result;
 
@@ -26,6 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                         context.AddFailure(new ValidationFailure("CertificateData", $"Certificate already exists: {existingCertificate.CertificateReference}"));
                     }
                 });
+            });
         }
     }
 }

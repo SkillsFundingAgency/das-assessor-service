@@ -13,11 +13,57 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
     {
         public BatchCertificateRequestValidator(IStringLocalizer<BatchCertificateRequestValidator> localiser, IOrganisationQueryRepository organisationQueryRepository, IIlrRepository ilrRepository, ICertificateRepository certificateRepository, IAssessmentOrgsApiClient assessmentOrgsApiClient)
         {
-            RuleFor(m => m.Uln).InclusiveBetween(1000000000, 9999999999).WithMessage("The apprentice's ULN should contain exactly 10 numbers");
-            RuleFor(m => m.FamilyName).NotEmpty().WithMessage("Enter the apprentice's last name");
-            RuleFor(m => m.StandardCode).GreaterThan(0).WithMessage("A standard should be selected");
             RuleFor(m => m.UkPrn).InclusiveBetween(10000000, 99999999).WithMessage("The UKPRN should contain exactly 8 numbers");
             RuleFor(m => m.Email).NotEmpty();
+
+            RuleFor(m => m.FamilyName).NotEmpty().WithMessage("Enter the apprentice's last name");
+            RuleFor(m => m.StandardCode).GreaterThan(0).WithMessage("A standard should be selected").DependentRules(() =>
+            {
+                RuleFor(m => m).Custom((m, context) =>
+                {
+                    var courseOptions = certificateRepository.GetOptions(m.StandardCode).GetAwaiter().GetResult();
+
+                    if (!courseOptions.Any() && !string.IsNullOrEmpty(m.CertificateData?.CourseOption))
+                    {
+                        context.AddFailure(new ValidationFailure("CourseOption", $"Invalid course option for this Standard. Must be empty"));
+                    }
+                    else if (courseOptions.Any() && !courseOptions.Any(o => o.OptionName == m.CertificateData?.CourseOption))
+                    {
+                        string courseOptionsString = string.Join(", ", courseOptions.Select(o => o.OptionName));
+                        context.AddFailure(new ValidationFailure("CourseOption", $"Invalid course option for this Standard. Must be one of the following: {courseOptionsString}"));
+                    }
+                });
+            });
+
+            RuleFor(m => m.Uln).InclusiveBetween(1000000000, 9999999999).WithMessage("The apprentice's ULN should contain exactly 10 numbers").DependentRules(() =>
+            {
+                When(m => m.StandardCode > 0 && !string.IsNullOrEmpty(m.FamilyName) , () =>
+                {
+                    RuleFor(m => m).Custom((m, context) =>
+                    {
+                        var requestedIlr = ilrRepository.Get(m.Uln, m.StandardCode).GetAwaiter().GetResult();
+                        var sumbittingEpao = organisationQueryRepository.GetByUkPrn(m.UkPrn).GetAwaiter().GetResult();
+
+                        if (requestedIlr == null || !string.Equals(requestedIlr.FamilyName, m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            context.AddFailure(new ValidationFailure("Uln", "Cannot find apprentice with the specified Uln, FamilyName & StandardCode"));
+                        }
+                        else if (sumbittingEpao == null)
+                        {
+                            context.AddFailure(new ValidationFailure("UkPrn", "Cannot find EPAO for specified UkPrn"));
+                        }
+                        else
+                        {
+                            var providedStandards = assessmentOrgsApiClient.FindAllStandardsByOrganisationIdAsync(sumbittingEpao.EndPointAssessorOrganisationId).GetAwaiter().GetResult();
+
+                            if (!providedStandards.Any(s => s.StandardCode == m.StandardCode.ToString()))
+                            {
+                                context.AddFailure(new ValidationFailure("StandardCode", "EPAO does not provide this Standard"));
+                            }
+                        }
+                    });
+                });
+            });
 
             RuleFor(m => m.CertificateData).NotEmpty().WithMessage("Enter Certificate Data").DependentRules(() =>
             {
@@ -61,47 +107,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                         }
                     });
             });
-
-            RuleFor(m => m)
-                .Custom((m, context) =>
-                {
-                    var requestedIlr = ilrRepository.Get(m.Uln, m.StandardCode).GetAwaiter().GetResult();
-                    var sumbittingEpao = organisationQueryRepository.GetByUkPrn(m.UkPrn).GetAwaiter().GetResult();
-
-                    if (requestedIlr == null || !string.Equals(requestedIlr.FamilyName, m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        context.AddFailure(new ValidationFailure("Uln", "Cannot find apprentice with the specified Uln, FamilyName & StandardCode"));
-                    }
-                    else if (sumbittingEpao == null)
-                    {
-                        context.AddFailure(new ValidationFailure("UkPrn", "Cannot find EPAO for specified UkPrn"));
-                    }
-                    else
-                    {
-                        var providedStandards = assessmentOrgsApiClient.FindAllStandardsByOrganisationIdAsync(sumbittingEpao.EndPointAssessorOrganisationId).GetAwaiter().GetResult();
-
-                        if (!providedStandards.Any(s => s.StandardCode == m.StandardCode.ToString()))
-                        {
-                            context.AddFailure(new ValidationFailure("StandardCode", "EPAO does not provide this Standard"));
-                        }
-                    }
-                });
-
-            RuleFor(m => m)
-                .Custom((m, context) =>
-                {
-                    var courseOptions = certificateRepository.GetOptions(m.StandardCode).GetAwaiter().GetResult();
-
-                    if (!courseOptions.Any() && !string.IsNullOrEmpty(m.CertificateData?.CourseOption))
-                    {
-                        context.AddFailure(new ValidationFailure("CourseOption", $"Invalid course option for this Standard. Must be empty"));
-                    }
-                    else if (courseOptions.Any() && !courseOptions.Any(o => o.OptionName == m.CertificateData?.CourseOption))
-                    {
-                        string courseOptionsString = string.Join(", ", courseOptions.Select(o => o.OptionName));
-                        context.AddFailure(new ValidationFailure("CourseOption", $"Invalid course option for this Standard. Must be one of the following: {courseOptionsString}"));
-                    }
-                });
         }
     }
 }
