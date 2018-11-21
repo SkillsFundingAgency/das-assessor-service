@@ -49,15 +49,17 @@ namespace SFA.DAS.AssessorService.Data
         {
             var organisationTypes = new List<TypeOfOrganisation>
             {
-                new TypeOfOrganisation {Id = 1, Type = "Awarding Organisation", Status = "Live"},
-                new TypeOfOrganisation {Id = 2, Type = "Assessment Organisation", Status = "Live"},
-                new TypeOfOrganisation {Id = 3, Type = "Employer or trade body", Status = "Live"},
-                new TypeOfOrganisation {Id = 4, Type = "Professional Body", Status = "Live"},
-                new TypeOfOrganisation {Id = 5, Type = "Higher Education Institution", Status = "Live"},
-                new TypeOfOrganisation {Id = 6, Type = "Sector Skills Council", Status = "Live"},
-                new TypeOfOrganisation {Id = 7, Type = "Training Provider", Status = "Live"},
-                new TypeOfOrganisation {Id = 8, Type = "Other", Status = "Live"},
-                new TypeOfOrganisation {Id = 9, Type = "Non-departmental public body", Status = "Live"}
+                new TypeOfOrganisation {Id = 1, Type = "AwardingOrganisations", TypeDescription = "Awarding Organisations", Status = "Live"},
+                new TypeOfOrganisation {Id = 2, Type = "AssessmentOrganisations", TypeDescription = "Assessment Organisations", Status = "Live"},
+                new TypeOfOrganisation {Id = 3, Type = "TradeBody", TypeDescription = "Trade Body", Status = "Live"},
+                new TypeOfOrganisation {Id = 4, Type = "ProfessionalBody", TypeDescription = "Professional Body - approved by the relevant council", Status = "Live"},
+                new TypeOfOrganisation {Id = 5, Type = "HEI", TypeDescription = "HEI monitored and supported by OfS", Status = "Live"},
+                new TypeOfOrganisation {Id = 6, Type = "NSA_SSC", TypeDescription = "National Skills Academy / Sector Skills Council", Status = "Live"},
+                new TypeOfOrganisation {Id = 7, Type = "TrainingProvider", TypeDescription = "Training Provider - including HEI not in England", Status = "Live"},
+                new TypeOfOrganisation {Id = 8, Type = "Other", TypeDescription = null, Status = "Deleted"},
+                new TypeOfOrganisation {Id = 9, Type = "PublicSector", TypeDescription = "Incorporated as Public Sector Body, Local authority including LEA schools, Central Government Department / Executive Agency / Non-departmental public body, NHS Trust / Fire Authority, Police Constabulary or Police Crime Commissioner", Status = "Live"},
+                new TypeOfOrganisation {Id = 10, Type = "College", TypeDescription = "GFE College currently receiving funding from the ESFA, 6th form / FE college", Status = "Deleted"},
+                new TypeOfOrganisation {Id = 11, Type = "Academy_FreeSchool", TypeDescription = "Academy or Free school registered with the ESFA", Status = "Live"}
             };
 
             return organisationTypes;
