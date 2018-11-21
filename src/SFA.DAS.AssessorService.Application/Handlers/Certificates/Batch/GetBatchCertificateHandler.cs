@@ -49,7 +49,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
 
                 var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 
-                if(certData.LearnerFamilyName == request.FamilyName)
+                if(string.Equals(certData.LearnerFamilyName, request.FamilyName, StringComparison.InvariantCultureIgnoreCase))
                 {
                     var searchingContact = await _contactQueryRepository.GetContactFromEmailAddress(request.Email);
                     var certificateContact = await GetContactFromCertificateLogs(certificate.Id, certificate.UpdatedBy, certificate.CreatedBy);
