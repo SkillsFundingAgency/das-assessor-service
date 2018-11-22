@@ -126,7 +126,7 @@ namespace SFA.DAS.AssessorService.Data
 
                     if (organisationTypesToInsert.Count > 0)
                         connection.Execute(
-                            "set identity_insert [OrganisationType] ON; INSERT INTO [OrganisationType] (Id, [Type], [Status]) VALUES (@Id, @Type, @Status); set identity_insert [OrganisationType] OFF; ",
+                            "set identity_insert [OrganisationType] ON; INSERT INTO [OrganisationType] (Id, [Type], [Status], [TypeDescription]) VALUES (@Id, @Type, @Status, @TypeDescription); set identity_insert [OrganisationType] OFF; ",
                             organisationTypesToInsert);
                 }
                 connection.Close();
