@@ -303,8 +303,10 @@ namespace SFA.DAS.AssessorService.Data
                     await connection.OpenAsync();
 
                 var sql =
-                    "SELECT top 1 o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, o.OrganisationData, ot.Id as OrganisationTypeId, ot.Type as OrganisationType "
-                    + "FROM [Organisations] o LEFT OUTER JOIN [OrganisationType] ot ON ot.Id = o.OrganisationTypeId "
+                    "SELECT top 1 o.EndPointAssessorOrganisationId as Id, o.EndPointAssessorName as Name, o.EndPointAssessorUkprn as ukprn, o.OrganisationData, ot.Id as OrganisationTypeId, ot.Type as OrganisationType, pc.Email as Email "
+                    + "FROM [Organisations] o "
+                    + "LEFT OUTER JOIN [OrganisationType] ot ON ot.Id = o.OrganisationTypeId "
+                    + "LEFT OUTER JOIN [Contacts] pc ON pc.Username = o.PrimaryContact AND pc.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId "
                     + "LEFT JOIN [Contacts] c ON c.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId "
                     + "WHERE replace(c.Email, ' ','')  = replace(@email, ' ','')";
 
