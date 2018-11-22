@@ -183,7 +183,7 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        public async Task<string> UpdateEpaOrganisationContact(EpaContact contact)
+        public async Task<string> UpdateEpaOrganisationContact(EpaContact contact, string actionChoice)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
@@ -196,6 +196,12 @@ namespace SFA.DAS.AssessorService.Data
                     "[PhoneNumber] = @phoneNumber, [updatedAt] = getUtcDate() " +
                     "WHERE [Id] = @Id ",
                     new { contact.DisplayName, contact.Email, contact.PhoneNumber, contact.Id});
+
+                if (actionChoice == "MakePrimaryContact")
+                    connection.Execute("update o set PrimaryContact = c.Username from organisations o " +
+                                       "inner join contacts c on o.EndPointAssessorOrganisationId = c.EndPointAssessorOrganisationId " +
+                                       "Where c.id = @Id",
+                        new {contact.Id});
 
                 return contact.Id.ToString();
             }

@@ -10,5 +10,6 @@
         public string OrganisationId { get; set; }
         public string ContactDetails { get; set; }
         public bool IsPrimaryContact { get; set; }
+        public string ActionChoice { get; set; }
     }
 }

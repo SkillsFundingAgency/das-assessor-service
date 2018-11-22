@@ -257,7 +257,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 ContactId = viewAndEditModel.ContactId,
                 DisplayName =  viewAndEditModel.DisplayName,
                 Email = viewAndEditModel.Email,
-                PhoneNumber = viewAndEditModel.PhoneNumber 
+                PhoneNumber = viewAndEditModel.PhoneNumber,
+                ActionChoice = viewAndEditModel.ActionChoice
             };
             await _apiClient.UpdateEpaContact(request);
             return RedirectToAction("ViewContact", "register", new { contactId = viewAndEditModel.ContactId});
