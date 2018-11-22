@@ -67,7 +67,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                     else if (existingCertificate.Status == CertificateStatus.Submitted || existingCertificate.Status == CertificateStatus.Printed
                             || existingCertificate.Status == CertificateStatus.Reprint)
                     {
-                        context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate cannot be Deleted when in '{CertificateStatus.Submitted}' status"));
+                        context.AddFailure(new ValidationFailure("CertificateReference", $"Cannot delete a submitted Certificate"));
                     }
                 });
             });

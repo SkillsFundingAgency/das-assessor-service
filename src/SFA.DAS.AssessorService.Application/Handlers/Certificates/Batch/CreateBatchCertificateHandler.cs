@@ -76,7 +76,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
                         Status = CertificateStatus.Draft,
                         CertificateReference = "",
                         LearnRefNumber = ilr.LearnRefNumber
-                    });
+                    }); // As no Tracking???
 
                 certificate.CertificateReference = certificate.CertificateReferenceId.ToString().PadLeft(8, '0');
             }
@@ -93,7 +93,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             _logger.LogInformation(LoggingConstants.CertificateStarted);
             _logger.LogInformation($"Certificate with ID: {certificate.Id} Started with reference of {certificate.CertificateReference}");
 
-            return await ApplyStatusInformation(certificate);
+            return await ApplyStatusInformation(certificate); // TODO: See if this alters the usernames in the database!!
         }
 
         private async Task<Provider> GetProviderFromUkprn(int ukprn)
@@ -156,16 +156,20 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
         }
 
         private async Task<Certificate> ApplyStatusInformation(Certificate certificate)
-        {  
-            var certificateLogs = await _certificateRepository.GetCertificateLogsFor(certificate.Id);
+        {
+            // certificate is track-able entity. So we have to this do to stop it from updating in the database
+            var json = JsonConvert.SerializeObject(certificate);
+            var cert = JsonConvert.DeserializeObject<Certificate>(json);
+
+            var certificateLogs = await _certificateRepository.GetCertificateLogsFor(cert.Id);
             certificateLogs = certificateLogs?.Where(l => l.ReasonForChange is null).ToList(); // this removes any admin changes done within staff app
 
             var createdLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Draft);
             if (createdLogEntry != null)
             {
                 var createdContact = await _contactQueryRepository.GetContact(createdLogEntry.Username);
-                certificate.CreatedAt = createdLogEntry.EventTime.UtcToTimeZoneTime();
-                certificate.CreatedBy = createdContact != null ? createdContact.DisplayName : createdLogEntry.Username;
+                cert.CreatedAt = createdLogEntry.EventTime.UtcToTimeZoneTime();
+                cert.CreatedBy = createdContact != null ? createdContact.DisplayName : createdLogEntry.Username;
             }
 
             var submittedLogEntry = certificateLogs?.FirstOrDefault(l => l.Status == CertificateStatus.Submitted);
@@ -174,16 +178,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             if (submittedLogEntry != null)
             {
                 var submittedContact = await _contactQueryRepository.GetContact(submittedLogEntry.Username);
-                certificate.UpdatedAt = submittedLogEntry.EventTime.UtcToTimeZoneTime();
-                certificate.UpdatedBy = submittedContact != null ? submittedContact.DisplayName : createdLogEntry.Username;
+                cert.UpdatedAt = submittedLogEntry.EventTime.UtcToTimeZoneTime();
+                cert.UpdatedBy = submittedContact != null ? submittedContact.DisplayName : createdLogEntry.Username;
             }
             else
             {
-                certificate.UpdatedAt = null;
-                certificate.UpdatedBy = null;
+                cert.UpdatedAt = null;
+                cert.UpdatedBy = null;
             }
 
-            return certificate;
+            return cert;
         }
     }
 }

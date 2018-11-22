@@ -96,15 +96,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
 
         private async Task<Certificate> ApplyStatusInformation(Certificate certificate)
         {
-            var certificateLogs = await _certificateRepository.GetCertificateLogsFor(certificate.Id);
+            var json = JsonConvert.SerializeObject(certificate);
+            var cert = JsonConvert.DeserializeObject<Certificate>(json);
+
+            var certificateLogs = await _certificateRepository.GetCertificateLogsFor(cert.Id);
             certificateLogs = certificateLogs?.Where(l => l.ReasonForChange is null).ToList(); // this removes any admin changes done within staff app
 
             var createdLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Draft);
             if (createdLogEntry != null)
             {
                 var createdContact = await _contactQueryRepository.GetContact(createdLogEntry.Username);
-                certificate.CreatedAt = createdLogEntry.EventTime.UtcToTimeZoneTime();
-                certificate.CreatedBy = createdContact != null ? createdContact.DisplayName : createdLogEntry.Username;
+                cert.CreatedAt = createdLogEntry.EventTime.UtcToTimeZoneTime();
+                cert.CreatedBy = createdContact != null ? createdContact.DisplayName : createdLogEntry.Username;
             }
 
             var submittedLogEntry = certificateLogs?.FirstOrDefault(l => l.Status == CertificateStatus.Submitted);
@@ -113,16 +116,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             if (submittedLogEntry != null)
             {
                 var submittedContact = await _contactQueryRepository.GetContact(submittedLogEntry.Username);
-                certificate.UpdatedAt = submittedLogEntry.EventTime.UtcToTimeZoneTime();
-                certificate.UpdatedBy = submittedContact != null ? submittedContact.DisplayName : createdLogEntry.Username;
+                cert.UpdatedAt = submittedLogEntry.EventTime.UtcToTimeZoneTime();
+                cert.UpdatedBy = submittedContact != null ? submittedContact.DisplayName : createdLogEntry.Username;
             }
             else
             {
-                certificate.UpdatedAt = null;
-                certificate.UpdatedBy = null;
+                cert.UpdatedAt = null;
+                cert.UpdatedBy = null;
             }
 
-            return certificate;
+            return cert;
         }
     }
 }
