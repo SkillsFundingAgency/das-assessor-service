@@ -102,8 +102,23 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"/users/{userId}/subscriptions?api-version=2017-03-01"))
             {
                 var response = await RequestAndDeserialiseAsync<AzureSubscriptionResponse>(httpRequest, "Could not get Subscriptions for User");
+
+                foreach(var subscription in response.Subscriptions)
+                {
+                    var apiDetails = await GetApiDetailsForProduct(subscription.ProductId);
+                    subscription.ServiceUrl = apiDetails?.ServiceUrl;
+                }
+
                 return response.Subscriptions;
             }            
+        }
+
+        private async Task<AzureApi> GetApiDetailsForProduct(string productId)
+        {
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"/apis/{productId}?api-version=2017-03-01"))
+            {
+                return await RequestAndDeserialiseAsync<AzureApi>(httpRequest, "Could not get Api details for Product");
+            }
         }
 
         private async Task<IEnumerable<AzureGroup>> GetGroupsForUser(string userId)

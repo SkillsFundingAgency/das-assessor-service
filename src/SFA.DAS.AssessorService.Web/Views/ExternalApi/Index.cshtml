@@ -47,30 +47,30 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>Product</th>
-                                <th>Primary Key</th>
+                                <th>Service URL</th>
+                                <th>Subscription Key</th>
                                 <th></th>
-                                <th>Secondary Key</th>
-                                <th></th>
+                                @*<th>Secondary Subscription Key</th>
+                                <th></th>*@
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var subscription in Model.Subscriptions)
                             {
                                 <tr>
-                                    <td>@subscription.ProductId</td>
-                                    <td>@subscription.PrimaryKey</td>
+                                    <td>@subscription.ServiceUrl</td>
+                                    <td><span class="code">@subscription.PrimaryKey</span></td>
                                     <td>
                                         <form asp-action="RenewPrimaryKey" asp-controller="ExternalApi" asp-route-subscriptionId="@subscription.Id" asp-route-userId="@Model.Id" method="post">
                                             <input type="submit" value="Renew" class="button" />
                                         </form>
                                     </td>
-                                    <td>@subscription.SecondaryKey</td>
+                                    @*<td><span class="code">@subscription.SecondaryKey</span></td>
                                     <td>
                                         <form asp-action="RenewSecondaryKey" asp-controller="ExternalApi" asp-route-subscriptionId="@subscription.Id" asp-route-userId="@Model.Id" method="post">
                                             <input type="submit" value="Renew" class="button" />
                                         </form>
-                                    </td>
+                                    </td>*@
                                 </tr>
                             }
                         </tbody>
