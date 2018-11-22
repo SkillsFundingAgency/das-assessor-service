@@ -20,6 +20,9 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
     {
         private const string CERTIFICATE_STATUS_DRAFT = "Draft";
         private const string CERTIFICATE_STATUS_READY = "Ready";
+        private const string CERTIFICATE_STATUS_SUBMITTED = "Submitted";
+        private const string CERTIFICATE_STATUS_PRINTED = "Printed";
+        private const string CERTIFICATE_STATUS_REPRINT = "Reprint";
 
         private readonly ILogger<CertificateController> _logger;
         private readonly IHeaderInfo _headerInfo;
@@ -58,6 +61,10 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
                 if(IsDraftCertificateDeemedAsReady(response.Certificate))
                 {
                     response.Certificate.Status.CurrentStatus = CERTIFICATE_STATUS_READY;
+                }
+                else if (response.Certificate.Status.CurrentStatus == CERTIFICATE_STATUS_PRINTED || response.Certificate.Status.CurrentStatus == CERTIFICATE_STATUS_REPRINT)
+                {
+                    response.Certificate.Status.CurrentStatus = CERTIFICATE_STATUS_SUBMITTED;
                 }
 
                 return Ok(response.Certificate);
