@@ -4,6 +4,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
 {
     public class SubmitCertificate : IEquatable<SubmitCertificate>
     {
+        public string RequestId { get; set; }
         public long Uln { get; set; }
         public int StandardCode { get; set; }
         public string FamilyName { get; set; }

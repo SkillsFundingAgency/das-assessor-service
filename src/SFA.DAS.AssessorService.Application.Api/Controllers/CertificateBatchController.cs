@@ -85,11 +85,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
                 BatchCertificateResponse certResponse = new BatchCertificateResponse
                 {
+                    RequestId = request.RequestId,
                     Uln = request.Uln,
                     StandardCode = request.StandardCode,
                     FamilyName = request.FamilyName,
-                    ProvidedCertificateReference = request.CertificateReference,
-                    ProvidedCertificateData = request.CertificateData,
                     ValidationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList()
                 };
 
@@ -119,11 +118,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
                 BatchCertificateResponse certResponse = new BatchCertificateResponse
                 {
+                    RequestId = request.RequestId,
                     Uln = request.Uln,
                     StandardCode = request.StandardCode,
                     FamilyName = request.FamilyName,
-                    ProvidedCertificateReference = request.CertificateReference,
-                    ProvidedCertificateData = request.CertificateData,
                     ValidationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList()
                 };
 
@@ -153,10 +151,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
                 SubmitBatchCertificateResponse submitResponse = new SubmitBatchCertificateResponse
                 {
-                    Uln = request.Uln,
-                    StandardCode = request.StandardCode,
-                    FamilyName = request.FamilyName,
-                    CertificateReference = request.CertificateReference,
+                    RequestId = request.RequestId,
                     ValidationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList()
                 };
 
@@ -203,7 +198,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             }
             else
             {
-                ApiResponse response = new ApiResponse((int)HttpStatusCode.BadRequest, string.Join("; ", validationResult.Errors));
+                ApiResponse response = new ApiResponse((int)HttpStatusCode.Forbidden, string.Join("; ", validationResult.Errors));
                 return BadRequest(response);
             }
         }

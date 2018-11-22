@@ -10,6 +10,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.AutoMapperProfiles
                 .Include<Messages.BatchCertificateRequest, AssessorService.Api.Types.Models.Certificates.Batch.CreateBatchCertificateRequest>()
                 .Include<Messages.BatchCertificateRequest, AssessorService.Api.Types.Models.Certificates.Batch.UpdateBatchCertificateRequest>()
 
+                .ForMember(x => x.RequestId, opt => opt.MapFrom(source => source.RequestId))
                 .ForMember(x=> x.CertificateReference, opt => opt.MapFrom(source => source.CertificateData.CertificateReference))
                 .ForMember(x => x.CertificateData, opt => opt.MapFrom(source => Mapper.Map<Models.Certificates.CertificateData, Domain.JsonData.CertificateData>(source.CertificateData)))
                 .ForMember(x => x.Uln, opt => opt.MapFrom(source => source.CertificateData.Learner.Uln))

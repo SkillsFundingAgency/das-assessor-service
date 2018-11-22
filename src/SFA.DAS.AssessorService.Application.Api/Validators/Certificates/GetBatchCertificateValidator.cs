@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
 
                             if (!providedStandards.Any(s => s.StandardCode == m.StandardCode.ToString()))
                             {
-                                context.AddFailure(new ValidationFailure("StandardCode", "EPAO does not provide this Standard"));
+                                context.AddFailure(new ValidationFailure("StandardCode", "EPAO is not registered for this Standard"));
                             }
                         }
                     });

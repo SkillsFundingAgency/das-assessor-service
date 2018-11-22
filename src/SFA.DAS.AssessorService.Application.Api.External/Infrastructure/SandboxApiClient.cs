@@ -48,7 +48,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                 var validationErrors = PerformBasicValidation(req.CertificateData);
                 var responseItem = new BatchCertificateResponse
                 {
-                    ProvidedCertificateData = req.CertificateData,
+                    RequestId = req.RequestId,
                     ValidationErrors = validationErrors,
                     Certificate = validationErrors.Count > 0 ? null : new Certificate
                     {
@@ -75,7 +75,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                 var validationErrors = PerformBasicValidation(req.CertificateData);
                 var responseItem = new BatchCertificateResponse
                 {
-                    ProvidedCertificateData = req.CertificateData,
+                    RequestId = req.RequestId,
                     ValidationErrors = validationErrors,
                     Certificate = validationErrors.Count > 0 ? null : new Certificate
                     {
@@ -100,10 +100,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             {
                 var responseItem = new SubmitBatchCertificateResponse
                 {
-                    Uln = req.Uln,
-                    FamilyName = req.FamilyName,
-                    StandardCode = req.StandardCode,
-                    CertificateReference = req.CertificateReference,
+                    RequestId = req.RequestId,
                     ValidationErrors = new List<string>(),
                     Certificate = new Certificate
                     {

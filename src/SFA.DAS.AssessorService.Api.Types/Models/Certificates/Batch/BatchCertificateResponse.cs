@@ -6,12 +6,10 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates.Batch
 {
     public class BatchCertificateResponse
     {
+        public string RequestId { get; set; }
         public long Uln { get; set; }
         public int StandardCode { get; set; }
         public string FamilyName { get; set; }
-
-        public string ProvidedCertificateReference { get; set; }
-        public CertificateData ProvidedCertificateData { get; set; }
 
         public Certificate Certificate { get; set; }
 

@@ -5,6 +5,7 @@ using SFA.DAS.AssessorService.Application.Api.External.Messages;
 using SFA.DAS.AssessorService.Application.Api.External.Middleware;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Certificates;
 using Swashbuckle.AspNetCore.Annotations;
+using Swashbuckle.AspNetCore.Examples;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -32,10 +33,11 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         }
 
         [HttpGet("{uln}/{familyName}/{standardCode}")]
+        [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(SwaggerHelpers.Examples.CertificateExample))]
         [SwaggerResponse((int)HttpStatusCode.OK, "The current Certificate.", typeof(Certificate))]
-        [SwaggerResponse((int)HttpStatusCode.NoContent, "There is no Certificate and you may create one.", typeof(Certificate))]
+        [SwaggerResponse((int)HttpStatusCode.NoContent, "There is no Certificate and you may create one.")]
         [SwaggerResponse((int)HttpStatusCode.Forbidden, "There are validation errors preventing you from retrieving the Certificate.", typeof(ApiResponse))]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, "Refer to the Message for more information.", typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
         [SwaggerOperation("Get Certificate", "Gets the specified Certificate.")]
         public async Task<IActionResult> GetCertificate(long uln, string familyName, int standardCode)
         {
@@ -63,12 +65,26 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         }
 
         [HttpPost]
+        [SwaggerRequestExample(typeof(IEnumerable<CreateCertificate>), typeof(SwaggerHelpers.Examples.CreateCertificateExample))]
+        [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(SwaggerHelpers.Examples.BatchCertificateResponseExample))]
         [SwaggerResponse((int)HttpStatusCode.OK, "For each item: The created Certificate if valid, else a list of validation errors.", typeof(IEnumerable<BatchCertificateResponse>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
         [SwaggerOperation("Create Certificates", "Creates a new Certificate for each valid item within the request.")]
-        public async Task<IActionResult> CreateCertificates([FromBody] IEnumerable<CertificateData> request)
+        public async Task<IActionResult> CreateCertificates([FromBody] IEnumerable<CreateCertificate> request)
         {
-            IEnumerable<BatchCertificateRequest> bcRequest = request.Select(req => new BatchCertificateRequest { UkPrn = _headerInfo.Ukprn, Email = _headerInfo.Email, CertificateData = req });
+            IEnumerable<BatchCertificateRequest> bcRequest = request.Select(req => 
+                new BatchCertificateRequest {
+                    UkPrn = _headerInfo.Ukprn,
+                    Email = _headerInfo.Email,
+                    RequestId = req.RequestId,
+                    CertificateData = new CertificateData
+                        {
+                        Standard = req.Standard,
+                        Learner = req.Learner,
+                        LearningDetails = req.LearningDetails,
+                        PostalContact = req.PostalContact
+                    }
+                });
 
             var results = await _apiClient.CreateCertificates(bcRequest);
 
@@ -84,12 +100,28 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         }
 
         [HttpPut]
+        [SwaggerRequestExample(typeof(IEnumerable<UpdateCertificate>), typeof(SwaggerHelpers.Examples.UpdateCertificateExample))]
+        [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(SwaggerHelpers.Examples.BatchCertificateResponseExample))]
         [SwaggerResponse((int)HttpStatusCode.OK, "For each item: The updated Certificate if valid, else a list of validation errors.", typeof(IEnumerable<BatchCertificateResponse>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
         [SwaggerOperation("Update Certificates", "Updates the specified Certificate with the information contained in each valid request.")]
-        public async Task<IActionResult> UpdateCertificates([FromBody] IEnumerable<CertificateData> request)
+        public async Task<IActionResult> UpdateCertificates([FromBody] IEnumerable<UpdateCertificate> request)
         {
-            IEnumerable<BatchCertificateRequest> bcRequest = request.Select(req => new BatchCertificateRequest { UkPrn = _headerInfo.Ukprn, Email = _headerInfo.Email, CertificateData = req });
+            IEnumerable<BatchCertificateRequest> bcRequest = request.Select(req =>
+                new BatchCertificateRequest
+                {
+                    UkPrn = _headerInfo.Ukprn,
+                    Email = _headerInfo.Email,
+                    RequestId = req.RequestId,
+                    CertificateData = new CertificateData
+                    {
+                        CertificateReference = req.CertificateReference,
+                        Standard = req.Standard,
+                        Learner = req.Learner,
+                        LearningDetails = req.LearningDetails,
+                        PostalContact = req.PostalContact
+                    }
+                });
 
             var results = await _apiClient.UpdateCertificates(bcRequest);
 
@@ -105,12 +137,22 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         }
 
         [HttpPost("submit")]
+        [SwaggerRequestExample(typeof(IEnumerable<SubmitCertificate>), typeof(SwaggerHelpers.Examples.SubmitCertificateExample))]
+        [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(SwaggerHelpers.Examples.SubmitBatchCertificateResponseExample))]
         [SwaggerResponse((int)HttpStatusCode.OK, "For each item: The submitted Certificate if valid, else a list of validation errors.", typeof(IEnumerable<SubmitBatchCertificateResponse>))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
         [SwaggerOperation("Submit Certificates", "Submits the specified Certificate for each valid request.")]
         public async Task<IActionResult> SubmitCertificates([FromBody] IEnumerable<SubmitCertificate> request)
         {
-            IEnumerable<SubmitBatchCertificateRequest> scRequest = request.Select(req => new SubmitBatchCertificateRequest { UkPrn = _headerInfo.Ukprn, Email = _headerInfo.Email, Uln = req.Uln, StandardCode = req.StandardCode, FamilyName = req.FamilyName, CertificateReference = req.CertificateReference });
+            IEnumerable<SubmitBatchCertificateRequest> scRequest = request.Select(req => 
+                new SubmitBatchCertificateRequest
+                {
+                    UkPrn = _headerInfo.Ukprn,
+                    Email = _headerInfo.Email,
+                    RequestId = req.RequestId, Uln = req.Uln,
+                    StandardCode = req.StandardCode, FamilyName = req.FamilyName,
+                    CertificateReference = req.CertificateReference
+                });
 
             var results = await _apiClient.SubmitCertificates(scRequest);
 
@@ -119,7 +161,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
 
         [HttpDelete("{uln}/{familyName}/{standardCode}/{certificateReference}")]
         [SwaggerResponse((int)HttpStatusCode.NoContent, "The specified Certificate has been deleted.")]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, "Refer to the Message for more information.", typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.Forbidden, "There are validation errors preventing you from deleting the Certificate.", typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
         [SwaggerOperation("Delete Certificate", "Deletes the specified Certificate.")]
         public async Task<IActionResult> DeleteCertificate(long uln, string familyName, int standardCode, string certificateReference)
         {
