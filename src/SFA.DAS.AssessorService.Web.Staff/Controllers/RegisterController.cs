@@ -434,7 +434,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 PhoneNumber = contact.PhoneNumber,
                 DisplayName = contact.DisplayName,
                 OrganisationName = organisation.Name,
-                OrganisationId = organisation.OrganisationId
+                OrganisationId = organisation.OrganisationId,
+                IsPrimaryContact = contact.IsPrimaryContact
             };
 
             return viewModel;
