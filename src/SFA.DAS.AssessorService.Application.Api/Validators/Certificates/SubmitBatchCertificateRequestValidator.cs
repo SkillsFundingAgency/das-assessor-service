@@ -73,7 +73,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                     {
                         context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate has already been submitted"));
                     }
-                    else if (existingCertificate.Status != CertificateStatus.Draft || existingCertificate.Status != CertificateStatus.Ready)
+                    else if (existingCertificate.Status != CertificateStatus.Draft)
                     {
                         context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate is not in '{CertificateStatus.Ready}' status"));
                     }
