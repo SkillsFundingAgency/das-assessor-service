@@ -50,6 +50,18 @@ namespace SFA.DAS.AssessorService.Data
             return contact;
         }
 
+        public async Task<Contact> GetContactFromEmailAddress(string email)
+        {
+            var contact = await _assessorDbContext.Organisations
+                .Include(organisation => organisation.Contacts)
+                .Where(q => q.Status != OrganisationStatus.Deleted)
+                .SelectMany(q => q.Contacts)
+                .Where(q => q.Email == email)
+                .FirstOrDefaultAsync();
+
+            return contact;
+        }
+
         public async Task<bool> CheckContactExists(string userName)
         {
             var result = await _assessorDbContext.Contacts
