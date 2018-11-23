@@ -484,7 +484,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             if (viewModel.OrganisationTypeId != null)
             {
                 var organisationTypes = _apiClient.GetOrganisationTypes().Result;
-                viewModel.OrganisationType = organisationTypes.First(x => x.Id == viewModel.OrganisationTypeId).Type;
+                viewModel.OrganisationType = organisationTypes.FirstOrDefault(x => x.Id == viewModel.OrganisationTypeId)?.Type;
             }
             viewModel.OrganisationTypes = _apiClient.GetOrganisationTypes().Result;
             
