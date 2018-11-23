@@ -5,26 +5,13 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
-using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
-using SFA.DAS.AssessorService.Api.Types.Models.Register;
-using SFA.DAS.AssessorService.Api.Types.Models.Staff;
 using SFA.DAS.AssessorService.Application.Api.Client;
-using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.Paging;
-using SFA.DAS.AssessorService.Web.Staff.Models;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Web.Staff.ViewModels.Private;
-using SFA.DAS.Apprenticeships.Api.Types;
+using Microsoft.AspNetCore.Http;
+using SFA.DAS.AssessorService.ApplyTypes;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
 {
-    public class ApplyApiClient
+    public class ApplyApiClient : IApplyApiClient
     {
         private readonly HttpClient _client;
         private readonly ILogger<ApplyApiClient> _logger;
@@ -95,9 +82,42 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             }
         }
 
-        public async Task<List<CertificateResponse>> GetCertificates()
+        public async Task<List<ApplyTypes.Application>> ReviewApplications()
         {
-            return await Get<List<CertificateResponse>>("/Review");
+            return await Get<List<ApplyTypes.Application>>("/Review/Applications");
+        }
+        
+        public async Task ImportWorkflow(IFormFile file)
+        {
+            var formDataContent = new MultipartFormDataContent();
+
+            var fileContent = new StreamContent(file.OpenReadStream())
+                {Headers = {ContentLength = file.Length, ContentType = new MediaTypeHeaderValue(file.ContentType)}};
+            formDataContent.Add(fileContent, file.Name, file.FileName);
+
+            await _client.PostAsync($"/Import/Workflow", formDataContent);
+        }
+
+        public async Task<ApplicationSequence> GetActiveSequence(Guid applicationId)
+        {
+            return await Get<ApplicationSequence>($"/Review/Applications/{applicationId}");
+        }
+        
+        public async Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId, int sectionId)
+        {
+            return await Get<ApplicationSection>($"Application/{applicationId}/User/null/Sequences/{sequenceId}/Sections/{sectionId}");
+        }
+
+        public async Task<Page> GetPage(Guid applicationId, int sequenceId, int sectionId, string pageId)
+        {
+            return await Get<Page>($"Application/{applicationId}/User/null/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}");
+        }
+
+        public async Task AddFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, string message)
+        {
+            await Post(
+                $"Review/Applications/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/AddFeedback",
+                new {message, from = "Staff member", date = DateTime.UtcNow});
         }
     }
 }

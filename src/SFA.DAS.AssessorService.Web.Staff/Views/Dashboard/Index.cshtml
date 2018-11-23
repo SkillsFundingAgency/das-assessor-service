@@ -42,6 +42,8 @@
         <h2 class="heading-medium"><a asp-controller="ExternalApi">External API</a></h2>
         <p>Manage user's access and generate API keys.</p>
     </div>
-    <div class="column-one-third" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam)">
+    <div class="column-one-third">
+        <h2 class="heading-medium"><a asp-controller="Application" asp-action="Applications">Applications</a></h2>
+        <p>Review Applications</p>
     </div>
 </div>

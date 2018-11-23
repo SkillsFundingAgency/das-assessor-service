@@ -69,6 +69,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Web
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.PrintFunction.Tests", "SFA.DAS.AssessorService.PrintFunction.Tests\SFA.DAS.AssessorService.PrintFunction.Tests.csproj", "{55020A23-70EB-42D3-B7FB-E1156DF6D810}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.ApplyTypes", "SFA.DAS.AssessorService.ApplyTypes\SFA.DAS.AssessorService.ApplyTypes.csproj", "{7F682D43-DA65-439A-B4AC-27503270FA73}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -173,6 +175,10 @@ Global
 		{55020A23-70EB-42D3-B7FB-E1156DF6D810}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{55020A23-70EB-42D3-B7FB-E1156DF6D810}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{55020A23-70EB-42D3-B7FB-E1156DF6D810}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F682D43-DA65-439A-B4AC-27503270FA73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F682D43-DA65-439A-B4AC-27503270FA73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F682D43-DA65-439A-B4AC-27503270FA73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F682D43-DA65-439A-B4AC-27503270FA73}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

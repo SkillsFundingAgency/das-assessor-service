@@ -1,0 +1,25 @@
+@model List<SFA.DAS.AssessorService.ApplyTypes.Application>
+
+@{
+    ViewBag.Title = "Applications";
+}
+
+<h2>Applications</h2>
+
+
+
+<table>
+    <tr>
+        <th>Organisation</th>
+        <th>Status</th>
+        <th>View</th>
+    </tr>
+    @foreach (var appl in Model)
+    {
+        <tr>
+            <td>@appl.ApplyingOrganisation.Name</td>
+            <td>@appl.ApplicationStatus</td>
+            <td><a asp-action="Application" asp-controller="Application" asp-route-applicationId="@appl.Id">View</a></td>
+        </tr>
+    }
+</table>
