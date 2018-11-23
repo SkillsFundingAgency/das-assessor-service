@@ -3,6 +3,7 @@ AS
 
 SET NOCOUNT ON;
 
+
 CREATE TABLE #OrganisationStandardDeliveryAreaDetails
 (
 	organisationStandardId int,
@@ -31,19 +32,33 @@ while exists(select * from #OrganisationStandardDeliveryAreaDetails where Delive
   set @Details = null
   END
 
+  select distinct o.EndPointAssessorOrganisationId, max(DeliveryAreaList) DeliveryAreaList into #OrganisationDeliveryAreas from organisations o inner join OrganisationStandard os
+on o.EndPointAssessorOrganisationId = os.EndPointAssessorOrganisationId
+inner join #OrganisationStandardDeliveryAreaDetails sad on os.Id = sad.organisationStandardId
+group by o.EndPointAssessorOrganisationId
+
+
+
 select os.EndPointAssessorOrganisationId EPA_organisation_identifier,
   o.EndPointAssessorName as 'EPA_organisation (lookup auto-populated)',
   os.StandardCode as Standard_Code,
   sc.Title as 'StandardName (lookup auto-populated)',
-  dad.DeliveryAreaList as Delivery_area,
+  CASE isnull(dad.DeliveryAreaList,'')
+  WHEN '' THEN oda.DeliveryAreaList
+  ELSE dad.DeliveryAreaList
+  END
+  as Delivery_area,
   JSON_Value(os.OrganisationStandardData,'$.DeliveryAreasComments') as Comments
-  --os.EffectiveTo
+  --,os.EffectiveTo
  from OrganisationStandard os 
 inner join Organisations o on o.EndPointAssessorOrganisationId = os.EndPointAssessorOrganisationId --and os.EffectiveTo is null
 left outer join StandardCollation sc on os.StandardCode = sc.StandardId
 left outer join #OrganisationStandardDeliveryAreaDetails  dad on dad.organisationStandardId = os.Id
-where os.EffectiveTo is null
+left outer join #OrganisationDeliveryAreas oda on o.EndPointAssessorOrganisationId = oda.EndPointAssessorOrganisationId
+--where os.EffectiveTo is null
 order by o.EndPointAssessorOrganisationId, sc.Title
 
 
+drop table #OrganisationDeliveryAreas
 drop table #OrganisationStandardDeliveryAreaDetails
+
