@@ -71,17 +71,17 @@ END
 IF NOT EXISTS (SELECT * FROM StaffReports WHERE ReportName = 'Register List of Organisations')
 BEGIN
 	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType, ReportDetails) VALUES ('Register List of Organisations', '', 12, 'Download','
-	{"Name":"Register List Of Organisations [Month] [Year]","Type":"csv","Worksheets": [
-  {
-  "worksheet":"",
-  "order": 1,
-  "StoredProcedure":"EPAO_Register_list_of_organisations"
-  }
+	{"Name":"Register List Of Organisations [Month] [Year]","Worksheets": [
+	  {
+	  "worksheet":"Register List of Organisations",
+	  "order": 1,
+	  "StoredProcedure":"EPAO_Register_list_of_organisations"
+	  }
 	]}')
 END
 
 
-UPDATE StaffReports SET ReportDetails ='{"Name":"EPAO Register","Type":"excel","Worksheets": [
+UPDATE StaffReports SET ReportDetails ='{"Name":"EPAO Register","Worksheets": [
   {
   "worksheet":"Register - Organisations",
   "order": 1,

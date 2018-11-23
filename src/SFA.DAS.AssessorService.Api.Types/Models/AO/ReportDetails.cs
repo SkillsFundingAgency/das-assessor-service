@@ -5,7 +5,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
     public class ReportDetails
     {
         public string Name { get; set; }
-        public string Type { get; set; }
         public List<WorksheetDetails> Worksheets { get; set; }
     }
 }

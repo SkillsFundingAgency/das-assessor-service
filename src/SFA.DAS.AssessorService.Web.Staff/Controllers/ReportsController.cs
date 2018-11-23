@@ -69,8 +69,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 
             using (var package = new ExcelPackage())
             {
-                if (reportDetails.Type == "excel")
-                {
+
                     foreach (var ws in reportDetails.Worksheets.OrderBy(w => w.Order))
                     {
                         var worksheetToAdd = package.Workbook.Worksheets.Add(ws.Worksheet);
@@ -79,24 +78,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                     }
 
                     return File(package.GetAsByteArray(), "application/excel", $"{reportDetails.Name}.xlsx");
-                }
-
-                var ws1 = reportDetails.Worksheets.First();
-
-                //var worksheetToAdd1 = package.Workbook.Worksheets.Add("x");
-                var data1 = await _apiClient.GetDataFromStoredProcedure(ws1.StoredProcedure);
-                //worksheetToAdd1.Cells.LoadFromDataTable(ToDataTable(data1), true);
-                var dataTable = ToDataTable(data1);
-
-                //var sw = new StringWriter();
-                //var writer = new CsvWriter(sw);
-
-                var csv = ToCsv(dataTable);
-
-               // writer.WriteRecords(rows);
-                var bytes = Encoding.UTF8.GetBytes(csv);
-                //return File(bytes, "application/octet-stream", "text/csv");
-                return File(bytes, "text/csv", $"{reportDetails.Name}.csv");
+              
             }
         }
     
@@ -136,54 +118,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             }
 
             return dataTable;
-        }
-
-
-        public static string ToCsv(DataTable dataTable)
-        {
-            var listOfCharactersThatNeedQuoting = "\",";
-            
-            var sbData = new StringBuilder();
-            if (dataTable.Columns.Count == 0)
-                return null;
-
-            foreach (var col in dataTable.Columns)
-            {
-                if (col == null)
-                    sbData.Append(",");
-                else
-                {
-                    var detailToAppend = col.ToString().Replace("\"", "\"\"");
-                    if (detailToAppend.IndexOfAny(listOfCharactersThatNeedQuoting.ToCharArray()) != -1)
-                        detailToAppend = $"\"{detailToAppend}\"";
-
-                    sbData.Append($"{detailToAppend},");
-                }
-            }
-
-            sbData.Replace(",", System.Environment.NewLine, sbData.Length - 1, 1);
-
-            foreach (DataRow dr in dataTable.Rows)
-            {
-                foreach (var column in dr.ItemArray)
-                {
-                    if (column == null)
-                        sbData.Append(",");
-                    else
-                    {
-                        var detailToAppend = column.ToString().Replace("\"", "\"\"");
-
-                        if (detailToAppend.IndexOfAny(listOfCharactersThatNeedQuoting.ToCharArray()) != -1)
-                            detailToAppend = $"\"{detailToAppend}\"";
-
-                        sbData.Append($"{detailToAppend},");
-                    }
-                }
-            
-                sbData.Replace(",", System.Environment.NewLine, sbData.Length - 1, 1);
-            }
-
-            return sbData.ToString();
         }
     }
 }
