@@ -11,5 +11,7 @@ namespace SFA.DAS.AssessorService.Settings
         [JsonRequired] public string ApiBaseAddress { get; set; }
 
         [JsonRequired] public string ProductId { get; set; }
+
+        [JsonRequired] public string GroupId { get; set; }
     }
 }
