@@ -1,22 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
+﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Client;
-using SFA.DAS.AssessorService.Domain.Entities;
-using SearchQuery = SFA.DAS.AssessorService.Application.Api.External.Models.Search.SearchQuery;
-using SearchResult = SFA.DAS.AssessorService.Application.Api.External.Models.Search.SearchResult;
+using SFA.DAS.AssessorService.Application.Api.External.Messages;
+using SFA.DAS.AssessorService.Application.Api.External.Middleware;
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 {
-    public class ApiClient
+    public class ApiClient : IApiClient
     {
         private readonly HttpClient _client;
         private readonly ILogger<ApiClient> _logger;
@@ -67,10 +64,55 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             }
         }
 
-        public async Task<List<SearchResult>> Search(SearchQuery searchQuery, int? stdCodeFilter = null)
+        protected async Task<T> Delete<T>(string uri)
         {
-            List<SearchResult> results = await Post<SearchQuery, List<SearchResult>>("/api/v1/search", searchQuery);
-            return results.Where(s => stdCodeFilter is null || s.StdCode == stdCodeFilter).ToList();
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+
+            using (var response = await _client.DeleteAsync(new Uri(uri, UriKind.Relative)))
+            {
+                return await response.Content.ReadAsAsync<T>();
+            }
+        }
+
+        public async Task<GetCertificateResponse> GetCertificate(GetCertificateRequest request)
+        { 
+            var apiResponse = await Get<AssessorService.Api.Types.Models.Certificates.Batch.GetBatchCertificateResponse>($"/api/v1/certificates/batch/{request.Uln}/{request.FamilyName}/{request.StandardCode}/{request.UkPrn}/{request.Email}");
+
+            return Mapper.Map<AssessorService.Api.Types.Models.Certificates.Batch.GetBatchCertificateResponse, GetCertificateResponse>(apiResponse);
+        }
+
+        public async Task<IEnumerable<BatchCertificateResponse>> CreateCertificates(IEnumerable<BatchCertificateRequest> request)
+        {
+            var apiRequest = Mapper.Map<IEnumerable<BatchCertificateRequest>,IEnumerable<AssessorService.Api.Types.Models.Certificates.Batch.CreateBatchCertificateRequest>>(request);
+
+            var apiResponse = await Post<IEnumerable<AssessorService.Api.Types.Models.Certificates.Batch.CreateBatchCertificateRequest>, IEnumerable<AssessorService.Api.Types.Models.Certificates.Batch.BatchCertificateResponse>>("/api/v1/certificates/batch", apiRequest);
+
+            return Mapper.Map<IEnumerable<AssessorService.Api.Types.Models.Certificates.Batch.BatchCertificateResponse>, IEnumerable<BatchCertificateResponse>>(apiResponse);
+        }
+
+        public async Task<IEnumerable<BatchCertificateResponse>> UpdateCertificates(IEnumerable<BatchCertificateRequest> request)
+        {
+            var apiRequest = Mapper.Map<IEnumerable<BatchCertificateRequest>, IEnumerable<AssessorService.Api.Types.Models.Certificates.Batch.UpdateBatchCertificateRequest>>(request);
+
+            var apiResponse = await Put<IEnumerable<AssessorService.Api.Types.Models.Certificates.Batch.UpdateBatchCertificateRequest>, IEnumerable<AssessorService.Api.Types.Models.Certificates.Batch.BatchCertificateResponse>>("/api/v1/certificates/batch", apiRequest);
+
+            return Mapper.Map<IEnumerable<AssessorService.Api.Types.Models.Certificates.Batch.BatchCertificateResponse>, IEnumerable<BatchCertificateResponse>>(apiResponse);
+        }
+
+        public async Task<IEnumerable<SubmitBatchCertificateResponse>> SubmitCertificates(IEnumerable<SubmitBatchCertificateRequest> request)
+        {
+            var apiRequest = Mapper.Map<IEnumerable<SubmitBatchCertificateRequest>, IEnumerable<AssessorService.Api.Types.Models.Certificates.Batch.SubmitBatchCertificateRequest>>(request);
+
+            var apiResponse = await Post<IEnumerable<AssessorService.Api.Types.Models.Certificates.Batch.SubmitBatchCertificateRequest>, IEnumerable<AssessorService.Api.Types.Models.Certificates.Batch.SubmitBatchCertificateResponse>>("/api/v1/certificates/batch/submit", apiRequest);
+
+            return Mapper.Map<IEnumerable<AssessorService.Api.Types.Models.Certificates.Batch.SubmitBatchCertificateResponse>, IEnumerable<SubmitBatchCertificateResponse>>(apiResponse);
+        }
+
+        public async Task<ApiResponse> DeleteCertificate(DeleteCertificateRequest request)
+        {
+            var apiResponse = await Delete<ApiResponse>($"/api/v1/certificates/batch/{request.Uln}/{request.FamilyName}/{request.StandardCode}/{request.CertificateReference}/{request.UkPrn}/{request.Email}");
+
+            return apiResponse;
         }
     }
 }
