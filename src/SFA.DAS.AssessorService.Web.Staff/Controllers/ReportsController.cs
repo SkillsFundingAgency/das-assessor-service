@@ -5,9 +5,12 @@ using OfficeOpenXml;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Web.Staff.Domain;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
@@ -43,17 +46,17 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 return RedirectToAction("Index");
             }
 
-                var reports = await _apiClient.GetReportList();               
-                var reportType = await _apiClient.GetReportTypeFromId(reportId);
+            var reports = await _apiClient.GetReportList();
+            var reportType = await _apiClient.GetReportTypeFromId(reportId);
 
-                if (reportType == ReportType.Download)
-                    return RedirectToAction("DirectDownload", new {reportId });
+            if (reportType == ReportType.Download)
+                return RedirectToAction("DirectDownload", new {reportId});
 
 
-                var data = await _apiClient.GetReport(reportId);
-                var vm = new ReportViewModel {Reports = reports, ReportId = reportId, SelectedReportData = data};
-                return View(vm);
-            
+            var data = await _apiClient.GetReport(reportId);
+            var vm = new ReportViewModel {Reports = reports, ReportId = reportId, SelectedReportData = data};
+            return View(vm);
+
         }
 
         public async Task<FileContentResult> DirectDownload(Guid reportId)
@@ -78,11 +81,27 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                     return File(package.GetAsByteArray(), "application/excel", $"{reportDetails.Name}.xlsx");
                 }
 
-                return null;
+                var ws1 = reportDetails.Worksheets.First();
+
+                //var worksheetToAdd1 = package.Workbook.Worksheets.Add("x");
+                var data1 = await _apiClient.GetDataFromStoredProcedure(ws1.StoredProcedure);
+                //worksheetToAdd1.Cells.LoadFromDataTable(ToDataTable(data1), true);
+                var dataTable = ToDataTable(data1);
+
+                //var sw = new StringWriter();
+                //var writer = new CsvWriter(sw);
+
+                var csv = ToCsv(dataTable);
+
+               // writer.WriteRecords(rows);
+                var bytes = Encoding.UTF8.GetBytes(csv);
+                //return File(bytes, "application/octet-stream", "text/csv");
+                return File(bytes, "text/csv", $"{reportDetails.Name}.csv");
             }
         }
+    
 
-        public async Task<FileContentResult> Export(Guid reportId)
+    public async Task<FileContentResult> Export(Guid reportId)
         {
             var data = await _apiClient.GetReport(reportId);
 
@@ -117,6 +136,54 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             }
 
             return dataTable;
+        }
+
+
+        public static string ToCsv(DataTable dataTable)
+        {
+            var listOfCharactersThatNeedQuoting = "\",";
+            
+            var sbData = new StringBuilder();
+            if (dataTable.Columns.Count == 0)
+                return null;
+
+            foreach (var col in dataTable.Columns)
+            {
+                if (col == null)
+                    sbData.Append(",");
+                else
+                {
+                    var detailToAppend = col.ToString().Replace("\"", "\"\"");
+                    if (detailToAppend.IndexOfAny(listOfCharactersThatNeedQuoting.ToCharArray()) != -1)
+                        detailToAppend = $"\"{detailToAppend}\"";
+
+                    sbData.Append($"{detailToAppend},");
+                }
+            }
+
+            sbData.Replace(",", System.Environment.NewLine, sbData.Length - 1, 1);
+
+            foreach (DataRow dr in dataTable.Rows)
+            {
+                foreach (var column in dr.ItemArray)
+                {
+                    if (column == null)
+                        sbData.Append(",");
+                    else
+                    {
+                        var detailToAppend = column.ToString().Replace("\"", "\"\"");
+
+                        if (detailToAppend.IndexOfAny(listOfCharactersThatNeedQuoting.ToCharArray()) != -1)
+                            detailToAppend = $"\"{detailToAppend}\"";
+
+                        sbData.Append($"{detailToAppend},");
+                    }
+                }
+            
+                sbData.Replace(",", System.Environment.NewLine, sbData.Length - 1, 1);
+            }
+
+            return sbData.ToString();
         }
     }
 }
