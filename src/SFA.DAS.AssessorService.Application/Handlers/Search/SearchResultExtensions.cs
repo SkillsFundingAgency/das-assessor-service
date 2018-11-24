@@ -54,7 +54,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 if (submittedLogEntry == null) continue;
 
                 var submittingContact = contactRepository.GetContact(submittedLogEntry.Username).Result ?? contactRepository.GetContact(certificate.UpdatedBy).Result;
-                var createdContact = contactRepository.GetContact(createdLogEntry.Username).Result ?? contactRepository.GetContact(certificate.CreatedBy).Result;
+                var createdContact = contactRepository.GetContact(createdLogEntry?.Username).Result ?? contactRepository.GetContact(certificate.CreatedBy).Result;
 
                 var lastUpdatedLogEntry = certificateLogs.Aggregate((i1, i2) => i1.EventTime > i2.EventTime ? i1 : i2) ?? submittedLogEntry;
                 var lastUpdatedContact = contactRepository.GetContact(lastUpdatedLogEntry.Username).Result;
