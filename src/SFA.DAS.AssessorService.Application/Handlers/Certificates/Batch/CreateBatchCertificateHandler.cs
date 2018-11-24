@@ -93,7 +93,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             _logger.LogInformation(LoggingConstants.CertificateStarted);
             _logger.LogInformation($"Certificate with ID: {certificate.Id} Started with reference of {certificate.CertificateReference}");
 
-            return await ApplyStatusInformation(certificate); // TODO: See if this alters the usernames in the database!!
+            return await ApplyStatusInformation(certificate);
         }
 
         private async Task<Provider> GetProviderFromUkprn(int ukprn)
@@ -179,7 +179,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             {
                 var submittedContact = await _contactQueryRepository.GetContact(submittedLogEntry.Username);
                 cert.UpdatedAt = submittedLogEntry.EventTime.UtcToTimeZoneTime();
-                cert.UpdatedBy = submittedContact != null ? submittedContact.DisplayName : createdLogEntry.Username;
+                cert.UpdatedBy = submittedContact != null ? submittedContact.DisplayName : submittedLogEntry.Username;
             }
             else
             {

@@ -83,7 +83,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             {
                 var submittedContact = await _contactQueryRepository.GetContact(submittedLogEntry.Username);
                 cert.UpdatedAt = submittedLogEntry.EventTime.UtcToTimeZoneTime();
-                cert.UpdatedBy = submittedContact != null ? submittedContact.DisplayName : createdLogEntry.Username;
+                cert.UpdatedBy = submittedContact != null ? submittedContact.DisplayName : submittedLogEntry.Username;
             }
             else
             {
