@@ -67,20 +67,6 @@ BEGIN
 	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('EPAO Register', '', 11, 'Download')
 END
 
-
-IF NOT EXISTS (SELECT * FROM StaffReports WHERE ReportName = 'Register List of Organisations')
-BEGIN
-	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType, ReportDetails) VALUES ('Register List of Organisations', '', 12, 'Download','
-	{"Name":"Register List Of Organisations [Month] [Year]","Worksheets": [
-	  {
-	  "worksheet":"Register List of Organisations",
-	  "order": 1,
-	  "StoredProcedure":"EPAO_Register_list_of_organisations"
-	  }
-	]}')
-END
-
-
 UPDATE StaffReports SET ReportDetails ='{"Name":"EPAO Register","Worksheets": [
   {
   "worksheet":"Register - Organisations",
@@ -103,6 +89,21 @@ UPDATE StaffReports SET ReportDetails ='{"Name":"EPAO Register","Worksheets": [
   "StoredProcedure":"EPAO_Register_Data_Definitions"
   }
   ]}' WHERE ReportName = 'EPAO Register'
+
+
+
+IF NOT EXISTS (SELECT * FROM StaffReports WHERE ReportName = 'Register List of Organisations')
+BEGIN
+	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('Register List of Organisations', '', 12, 'Download')
+END
+
+UPDATE StaffReports SET ReportDetails = '{"Name":"Register List Of Organisations [Month] [Year]","Worksheets": [
+	  {
+	  "worksheet":"Register List of Organisations",
+	  "order": 1,
+	  "StoredProcedure":"EPAO_Register_list_of_organisations"
+	  }
+	]}'  WHERE ReportName = 'Register List of Organisations'
 
 
 -- -'Academy or Free School'
