@@ -120,3 +120,9 @@ UPDATE [Organisations] SET [OrganisationTypeId] = 7 WHERE [EndPointAssessorOrgan
 UPDATE CERTIFICATES
 set IsPrivatelyFunded = 0
 WHERE IsPrivatelyFunded IS NULL 
+
+
+
+
+
+----- Adding 
