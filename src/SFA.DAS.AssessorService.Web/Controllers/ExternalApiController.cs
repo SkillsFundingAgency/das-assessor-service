@@ -28,8 +28,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public async Task<IActionResult> Index()
         {
             var ukprn = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.portal.com/ukprn")?.Value;
+            var email = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.portal.com/mail")?.Value;
 
-            var user = await _apiClient.GetUserDetailsByUkprn(ukprn, true);
+            var user = await _apiClient.GetUserDetailsByUkprn(ukprn, true) ?? await _apiClient.GetUserDetailsByEmail(email, true);
             return View(user);
         }
 

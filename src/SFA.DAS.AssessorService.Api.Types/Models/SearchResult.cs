@@ -20,6 +20,8 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public Guid CertificateId { get; set; }
         public string CertificateReference { get; set; }
         public string CertificateStatus { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public string CreatedBy { get; set; }
         public DateTime? SubmittedAt { get; set; }
         public string SubmittedBy { get; set; }
         public DateTime? UpdatedAt { get; set; }
