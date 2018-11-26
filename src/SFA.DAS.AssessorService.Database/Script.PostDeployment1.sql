@@ -97,7 +97,7 @@ BEGIN
 	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('Register List of Organisations', '', 12, 'Download')
 END
 
-UPDATE StaffReports SET ReportDetails = '{"Name":"Register List Of Organisations [Month] [Year]","Worksheets": [
+UPDATE StaffReports SET ReportDetails = '{"Name":"Register List Of Organisations","Worksheets": [
 	  {
 	  "worksheet":"Register List of Organisations",
 	  "order": 1,
