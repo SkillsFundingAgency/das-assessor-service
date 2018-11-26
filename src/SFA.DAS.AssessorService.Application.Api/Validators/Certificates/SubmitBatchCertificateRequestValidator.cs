@@ -75,7 +75,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                     }
                     else if (existingCertificate.Status != CertificateStatus.Draft)
                     {
-                        context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate is not in '{CertificateStatus.Draft}' status"));
+                        context.AddFailure(new ValidationFailure("CertificateReference", $"Certificate is not in '{CertificateStatus.Ready}' status"));
                     }
                     else
                     {
