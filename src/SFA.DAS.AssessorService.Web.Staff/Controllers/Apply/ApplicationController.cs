@@ -55,5 +55,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
 
             return RedirectToAction("Page", new {applicationId, sequenceId, sectionId, pageId});
         }
+
+        [HttpPost("/Applications/{applicationId}/Sequence/{sequenceId}/Return")]
+        public async Task<IActionResult> Return(Guid applicationId, int sequenceId, string returnType)
+        {
+            await _applyApiClient.ReturnApplication(applicationId, sequenceId, returnType);
+
+            return RedirectToAction("Applications");
+        }
     }
 }

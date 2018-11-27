@@ -23,6 +23,14 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public string Status { get; set; }
         public bool IsActive { get; set; }
         public List<ApplicationSection> Sections { get; set; }
+
+        public bool HasFeedback
+        {
+            get
+            {
+                return Sections.SelectMany(s => s.Pages).Any(p => p.HasFeedback);
+            }
+        }
     }
 
     public class ApplicationSequenceStatus

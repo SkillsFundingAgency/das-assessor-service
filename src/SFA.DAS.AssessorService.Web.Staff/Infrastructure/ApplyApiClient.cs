@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
                 return await response.Content.ReadAsAsync<T>();
             }
         }
-
+        
         private async Task<U> Post<T, U>(string uri, T model)
         {
             _client.DefaultRequestHeaders.Authorization =
@@ -118,6 +118,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             await Post(
                 $"Review/Applications/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/AddFeedback",
                 new {message, from = "Staff member", date = DateTime.UtcNow});
+        }
+
+        public async Task ReturnApplication(Guid applicationId, int sequenceId, string returnType)
+        {
+            await Post($"Review/Applications/{applicationId}/Sequences/{sequenceId}/Return", new {returnType});
         }
     }
 }

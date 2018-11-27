@@ -30,6 +30,18 @@
                 }
             </ul>
 
+            <form asp-controller="Application" asp-action="Return" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId">
+                @if (Model.HasFeedback)
+                {
+                    <button type="submit" name="ReturnType" value="ReturnWithFeedback">Return with feedback</button>
+                }
+                else
+                {
+                    <button type="submit" name="ReturnType" value="Approve">Approve</button>
+                    <button type="submit" name="ReturnType" value="Reject">Reject</button>
+                }
+                
+            </form>
            
         </div>
     </div>
