@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
         Task<IEnumerable<Contact>> GetContacts(string endPointAssessorOrganisationId);
         Task<Contact> GetContact(string userName);
-
+        Task<Contact> GetContactFromEmailAddress(string email);
         Task<IEnumerable<Contact>> GetAllContacts(string endPointAssessorOrganisationId);
     }
 }
