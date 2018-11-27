@@ -1,4 +1,5 @@
 ﻿@using SFA.DAS.AssessorService.Web.Staff.Controllers
+@using SFA.DAS.AssessorService.Web.Staff.Domain
 @model RegisterViewAndEditContactViewModel
 @{
     ViewBag.Title = "View Contact";
@@ -38,7 +39,7 @@
                 </table>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam)">
                 <a class="button" href="/register/edit-contact/@Model.ContactId">Edit</a>
             </div>
         </div>    

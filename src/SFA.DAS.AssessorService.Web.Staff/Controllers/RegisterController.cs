@@ -32,11 +32,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             _assessmentOrgsApiClient = assessmentOrgsApiClient;
         }
 
+        [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam + "," + Roles.RegisterViewOnlyTeam)]
         public IActionResult Index()
         {
             return View(); 
         }
 
+        [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam + "," + Roles.RegisterViewOnlyTeam)]
         [HttpGet("register/results")]
         public async Task<IActionResult> Results(RegisterViewModel vm)
         {
@@ -151,6 +153,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             return Redirect($"/register/view-standard/{organisationStandardId}");
         }
 
+        [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam + "," + Roles.RegisterViewOnlyTeam)]
         [HttpGet("register/view-standard/{organisationStandardId}")]
         public async Task<IActionResult> ViewStandard(int organisationStandardId)
         {
@@ -162,7 +165,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 
             return View(viewModel);
         }
-
 
         [HttpGet("register/edit-standard/{organisationStandardId}")]
         public async Task<IActionResult> EditOrganisationStandard(int organisationStandardId)
@@ -262,7 +264,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             await _apiClient.UpdateEpaContact(request);
             return RedirectToAction("ViewContact", "register", new { contactId = viewAndEditModel.ContactId});
         }
-        
+
+        [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam + "," + Roles.RegisterViewOnlyTeam)]
         [HttpGet("register/view-contact/{contactId}")]
         public async Task<IActionResult> ViewContact(string contactId)
         {
