@@ -47,14 +47,14 @@
         {
         <div class="column-one-half form-group">
             <h2 class="bold-medium">@subscription.ProductId</h2>
-            <h3 class="heading-small">Service URL</h3>
-            <span class="code">@subscription.ServiceUrl</span>
-            <h3 class="heading-small">Primary key</h3>
+            <h3 class="heading-small">Api endpoint</h3>
+            <span class="code">@subscription.ApiEndPointUrl</span>
+            <h3 class="heading-small">Subscription key</h3>
             <form asp-action="RenewPrimaryKey" asp-controller="ExternalApi" asp-route-subscriptionId="@subscription.Id" asp-route-userId="@Model.Id" method="post">
                 <span class="code">@subscription.PrimaryKey</span>
                 <input class="button text-link" type="submit" value="renew key" />
             </form>
-            <h3 class="heading-small">Secondary key</h3>
+            <h3 class="heading-small">Secondary subscription key</h3>
             <form asp-action="RenewSecondaryKey" asp-controller="ExternalApi" asp-route-subscriptionId="@subscription.Id" asp-route-userId="@Model.Id" method="post">
                 <span class="code">@subscription.SecondaryKey</span>
                 <input class="button text-link" type="submit" value="renew key" />

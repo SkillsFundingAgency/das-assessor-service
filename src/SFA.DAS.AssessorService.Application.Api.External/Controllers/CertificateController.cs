@@ -50,7 +50,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             if (response.ValidationErrors.Any())
             {
                 ApiResponse error = new ApiResponse((int)HttpStatusCode.Forbidden, string.Join("; ", response.ValidationErrors));
-                return BadRequest(error);
+                return StatusCode(error.StatusCode, error);
             }
             else if(response.Certificate is null)
             {
