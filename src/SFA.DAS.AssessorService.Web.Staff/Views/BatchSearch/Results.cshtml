@@ -28,11 +28,11 @@
                 <tbody>
                     <tr>
                         <td class="bold">Batch Number</td>
-                        <td>@Model.PaginatedList.Items.First().BatchNumber</td>
+                        <td>@(Model.PaginatedList.Items.FirstOrDefault()?.BatchNumber ?? Model.BatchNumber)</td>
                     </tr>
                     <tr>
                         <td class="bold">Print date</td>
-                        <td>@Model.PaginatedList.Items.First().BatchPrintDate.UtcToTimeZoneTime()</td>
+                        <td>@Model.PaginatedList.Items.FirstOrDefault()?.BatchPrintDate.UtcToTimeZoneTime()</td>
                     </tr>
                     
                 </tbody>
