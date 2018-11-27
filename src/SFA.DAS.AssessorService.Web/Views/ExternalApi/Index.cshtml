@@ -40,41 +40,32 @@
                 </table>
             </div>
 
-            if (Model.Subscriptions.Any())
+            @if (Model.Subscriptions.Any())
             {
-                <h1 class="heading-large">Subscription Details</h1>
                 <div class="grid-row">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Service URL</th>
-                                <th>Subscription Key</th>
-                                <th></th>
-                                @*<th>Secondary Subscription Key</th>
-                                <th></th>*@
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var subscription in Model.Subscriptions)
-                            {
-                                <tr>
-                                    <td>@subscription.ServiceUrl</td>
-                                    <td><span class="code">@subscription.PrimaryKey</span></td>
-                                    <td>
-                                        <form asp-action="RenewPrimaryKey" asp-controller="ExternalApi" asp-route-subscriptionId="@subscription.Id" asp-route-userId="@Model.Id" method="post">
-                                            <input type="submit" value="Renew" class="button" />
-                                        </form>
-                                    </td>
-                                    @*<td><span class="code">@subscription.SecondaryKey</span></td>
-                                    <td>
-                                        <form asp-action="RenewSecondaryKey" asp-controller="ExternalApi" asp-route-subscriptionId="@subscription.Id" asp-route-userId="@Model.Id" method="post">
-                                            <input type="submit" value="Renew" class="button" />
-                                        </form>
-                                    </td>*@
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
+                    <div class="column-two-thirds">
+                        <h1 class="heading-large">Subscriptions</h1>
+                    </div>
+
+                    @foreach (var subscription in Model.Subscriptions)
+                    {
+                        <div class="column-one-half form-group">
+                            <h2 class="bold-medium">@subscription.ProductId</h2>
+                            <h3 class="heading-small">Api endpoint</h3>
+                            <span class="code">@subscription.ApiEndPointUrl</span>
+                            <h3 class="heading-small">Subscription key</h3>
+                            <form asp-action="RenewPrimaryKey" asp-controller="ExternalApi" asp-route-subscriptionId="@subscription.Id" asp-route-userId="@Model.Id" method="post">
+                                <span class="code">@subscription.PrimaryKey</span>
+                                <input type="submit" value="Renew" class="button" />
+                            </form>
+                            @*<h3 class="heading-small">Secondary key</h3>
+                            <form asp-action="RenewSecondaryKey" asp-controller="ExternalApi" asp-route-subscriptionId="@subscription.Id" asp-route-userId="@Model.Id" method="post">
+                                <span class="code">@subscription.SecondaryKey</span>
+                                <input type="submit" value="Renew" class="button" />
+                            </form>*@
+                        </div>
+                    }
+
                 </div>
             }
 
