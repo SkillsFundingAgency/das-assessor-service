@@ -2,6 +2,7 @@
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -16,10 +17,12 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Middleware
         private const string _InvalidEmailMessage = "Your account is not linked to a valid Email address";
 
         private readonly RequestDelegate _next;
+        private readonly ILogger<GetHeadersMiddleware> _logger;
 
-        public GetHeadersMiddleware(RequestDelegate next)
+        public GetHeadersMiddleware(RequestDelegate next, ILogger<GetHeadersMiddleware> logger)
         {
             _next = next;
+            _logger = logger;
         }
 
         public async Task Invoke(HttpContext context, IHeaderInfo headerInfo)
@@ -31,6 +34,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Middleware
 
             if(!TryExtractUkprnFromHeader(noteHeaderValue, out var ukprn))
             {
+                _logger.LogError("GetHeadersMiddleware - invalid or no UKPRN.");
                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 context.Response.ContentType = "application/json";
                 var json = GetApiResponseAsJson(context.Response.StatusCode, _InvalidUkprnMessage);
@@ -38,6 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Middleware
             }
             else if (string.IsNullOrWhiteSpace(email))
             {
+                _logger.LogError("GetHeadersMiddleware - no Email Address");
                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 context.Response.ContentType = "application/json";
                 var json = GetApiResponseAsJson(context.Response.StatusCode, _InvalidEmailMessage);
