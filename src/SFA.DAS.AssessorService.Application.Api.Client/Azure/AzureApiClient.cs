@@ -15,13 +15,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
     {
         private readonly string _groupId;
         private readonly string _productId;
+        private readonly Uri _requestBaseUri;
         protected readonly IOrganisationsApiClient _organisationsApiClient;
         protected readonly IContactsApiClient _contactsApiClient;
 
-        public AzureApiClient(string baseUri, string productId, string groupId, IAzureTokenService tokenService, ILogger<AzureApiClientBase> logger, IOrganisationsApiClient organisationsApiClient, IContactsApiClient contactsApiClient) : base(baseUri, tokenService, logger)
+        public AzureApiClient(string baseUri, string productId, string groupId, string requestBaseUri, IAzureTokenService tokenService, ILogger<AzureApiClientBase> logger, IOrganisationsApiClient organisationsApiClient, IContactsApiClient contactsApiClient) : base(baseUri, tokenService, logger)
         {
             _productId = productId;
             _groupId = groupId;
+            _requestBaseUri = new Uri(requestBaseUri);
             _organisationsApiClient = organisationsApiClient;
             _contactsApiClient = contactsApiClient;
         }
@@ -105,20 +107,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
 
                 foreach(var subscription in response.Subscriptions)
                 {
-                    var apiDetails = await GetApiDetailsForProduct(subscription.ProductId);
-                    subscription.ServiceUrl = apiDetails?.ServiceUrl;
+                    subscription.ApiEndPointUrl = new Uri(_requestBaseUri, subscription.ProductId).ToString();
                 }
 
                 return response.Subscriptions;
             }            
-        }
-
-        private async Task<AzureApi> GetApiDetailsForProduct(string productId)
-        {
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"/apis/{productId}?api-version=2017-03-01"))
-            {
-                return await RequestAndDeserialiseAsync<AzureApi>(httpRequest, "Could not get Api details for Product");
-            }
         }
 
         private async Task<IEnumerable<AzureGroup>> GetGroupsForUser(string userId)
@@ -325,7 +318,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
                     }
 
                     await RemoveUserFromGroup(user.Id, _groupId);
-                    await UpdateUserNote(user.Id, string.Empty);
                 }
 
                 if (!string.IsNullOrWhiteSpace(user.Ukprn))
