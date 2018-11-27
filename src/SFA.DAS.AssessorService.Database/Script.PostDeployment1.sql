@@ -106,6 +106,20 @@ UPDATE StaffReports SET ReportDetails = '{"Name":"Register List Of Organisations
 	]}'  WHERE ReportName = 'Register List of Organisations'
 
 
+IF NOT EXISTS (SELECT * FROM StaffReports WHERE ReportName = 'Register List of Standards')
+BEGIN
+	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('Register List of Standards', '', 13, 'Download')
+END
+
+UPDATE StaffReports SET ReportDetails = '{"Name":"Register List Of Standards","Worksheets": [
+	  {
+	  "worksheet":"Register List of Standards",
+	  "order": 1,
+	  "StoredProcedure":"EPAO_Register_list_of_standards"
+	  }
+	]}'  WHERE ReportName = 'Register List of Standards'
+
+
 -- -'Academy or Free School'
 IF NOT EXISTS(SELECT * FROM OrganisationType WHERE id = 11)
 BEGIN
