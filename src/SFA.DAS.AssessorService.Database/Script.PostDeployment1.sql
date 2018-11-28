@@ -46,6 +46,53 @@ BEGIN
 	UPDATE [OrganisationType] SET [Type] =  'College', [TypeDescription] = 'GFE College currently receiving funding from the ESFA, 6th form / FE college' WHERE id = 10;
 END
 
+
+IF NOT EXISTS(SELECT * FROM StaffReports)
+	BEGIN
+		INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('Monthly detailed extract', 'StaffReports_DetailedExtract', 1,'ViewOnScreen')
+		INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('Monthly summary', 'StaffReports_MonthlySummary', 2,'ViewOnScreen')
+		INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('Weekly summary', 'StaffReports_WeeklySummary', 3,'ViewOnScreen')
+		INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('Batch', 'StaffReports_ByBatch', 4,'ViewOnScreen')
+		INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('EPAO', 'StaffReports_ByEpao', 5,'ViewOnScreen')
+		INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('EPAO, standard and grade', 'StaffReports_ByEpaoAndStandardAndGrade', 6,'ViewOnScreen')
+		INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('Provider', 'StaffReports_ByProvider', 7,'ViewOnScreen')
+		INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('Provider and grade', 'StaffReports_ByProviderAndGrade', 8,'ViewOnScreen')
+		INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('Standard', 'StaffReports_ByStandard', 9,'ViewOnScreen')
+		INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('Certificate count', 'StaffReports_CertificateCount', 10,'ViewOnScreen')
+	END
+
+UPDATE StaffReports SET ReportType = 'ViewOnScreen' WHERE ReportType IS NULL
+
+IF NOT EXISTS (SELECT * FROM StaffReports WHERE ReportName = 'EPAO Register')
+BEGIN
+	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('EPAO Register', '', 11, 'Download')
+END
+
+
+UPDATE StaffReports SET ReportDetails ='{"Name":"EPAO Register","Type":"excel","Worksheets": [
+  {
+  "worksheet":"Register - Organisations",
+  "order": 1,
+  "StoredProcedure":"EPAO_Register_register_organisation"
+  },
+  {
+  "worksheet":"Register - Standards",
+  "order": 2,
+  "StoredProcedure":"EPAO_Register_register_standards"
+  },
+  {
+  "worksheet":"Register - Delivery areas",
+  "order": 3,
+  "StoredProcedure":"EPAO_Register_register_delivery_areas"
+  },
+  {
+  "worksheet":"Data Definitions",
+  "order": 4,
+  "StoredProcedure":"EPAO_Register_Data_Definitions"
+  }
+  ]}' WHERE ReportName = 'EPAO Register'
+
+
 -- -'Academy or Free School'
 IF NOT EXISTS(SELECT * FROM OrganisationType WHERE id = 11)
 BEGIN
@@ -68,3 +115,28 @@ UPDATE [Organisations] SET [OrganisationTypeId] = 6 WHERE [EndPointAssessorOrgan
 UPDATE [Organisations] SET [OrganisationTypeId] = 9 WHERE [EndPointAssessorOrganisationId] = 'EPA0141';
 UPDATE [Organisations] SET [OrganisationTypeId] = 10 WHERE [EndPointAssessorOrganisationId] = 'EPA0159';
 UPDATE [Organisations] SET [OrganisationTypeId] = 7 WHERE [EndPointAssessorOrganisationId] = 'EPA0173';
+
+
+UPDATE CERTIFICATES
+set IsPrivatelyFunded = 0
+WHERE IsPrivatelyFunded IS NULL 
+
+
+--- FIXES FOR BAD DATA IN SPREADSHEET IMPORT
+
+if not exists(select * from OrganisationStandardDeliveryArea where organisationStandardId in (select id from organisationStandard where EndPointAssessorOrganisationId='EPA0048' and StandardCode=320))
+BEGIN
+insert into OrganisationStandardDeliveryArea (OrganisationStandardId, DeliveryAreaId, Status)
+		select 
+			(select id from organisationStandard where EndPointAssessorOrganisationId='EPA0048' and StandardCode=320) as osid, id, 'Live' from deliveryArea
+END
+
+
+if not exists(select * from OrganisationStandardDeliveryArea where organisationStandardId in (select id from organisationStandard where EndPointAssessorOrganisationId='EPA0057' and StandardCode=318))
+BEGIN
+insert into OrganisationStandardDeliveryArea (OrganisationStandardId, DeliveryAreaId, Status)
+		select 
+			(select id from organisationStandard where EndPointAssessorOrganisationId='EPA0057' and StandardCode=318) as osid, id, 'Live' from deliveryArea
+END
+
+----- Adding 
