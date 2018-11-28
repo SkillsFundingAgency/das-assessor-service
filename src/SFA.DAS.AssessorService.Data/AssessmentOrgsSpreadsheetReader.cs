@@ -16,7 +16,7 @@ namespace SFA.DAS.AssessorService.Data
         private const string LookupsWorkSheetName = "Lookups";
         private const string OrganisationsWorkSheetName = "Register - Organisations";
         private const string EpaStandardsWorkSheetName = "Register - Standards";
-        private const string StandardsWorkSheetName = "Standards Lookup (LARS copy)";
+        //private const string StandardsWorkSheetName = "Standards Lookup (LARS copy)";
 
         private const string DeliveryAreasWorkSheetName = "Register - Delivery areas";
         private readonly ILogger<AssessmentOrgsSpreadsheetReader> _logger;
@@ -82,18 +82,7 @@ namespace SFA.DAS.AssessorService.Data
                      var epaOrganisationType = worksheet.Cells[i, 3].Value != null ? worksheet.Cells[i, 3].Value.ToString() : string.Empty;
                 var epaOrganisationTypeDetails = organisationTypes.FirstOrDefault(x => string.Equals(x.Type,
                     epaOrganisationType?.ToString(), StringComparison.CurrentCultureIgnoreCase));
-                if (epaOrganisationType == string.Empty || epaOrganisationTypeDetails.Type == string.Empty)
-                {
-                    if (epaOrganisationType == string.Empty)
-                    {
-                        throw new NoMatchingOrganisationTypeException(
-                            $"There is no stated organisation type for row {i} in worksheet [{OrganisationsWorkSheetName}]");
-                    }
-                    throw new NoMatchingOrganisationTypeException(
-                        $"There is no matching organisation type for [{epaOrganisationType}]");
-                }
-
-                var organisationTypeId = epaOrganisationTypeDetails.Id;
+                var organisationTypeId = epaOrganisationType == string.Empty || epaOrganisationTypeDetails.Type == string.Empty ? 0 : epaOrganisationTypeDetails.Id;
                 var websiteLink = worksheet.Cells[i, 4].Value != null ? worksheet.Cells[i, 4].Value.ToString() : string.Empty;
                 var contactAddress1 = worksheet.Cells[i, 5].Value != null ? worksheet.Cells[i, 5].Value.ToString() : string.Empty;
                 var contactAddress2 = worksheet.Cells[i, 6].Value != null ? worksheet.Cells[i, 6].Value.ToString() : string.Empty;
@@ -131,59 +120,59 @@ namespace SFA.DAS.AssessorService.Data
             return organisations;
         }
 
-        public List<ApprenticeshipStandard> HarvestStandards(ExcelPackage package)
-        {
-            var standards = new List<ApprenticeshipStandard>();
-            var worksheet = GetWorksheet(package, StandardsWorkSheetName);
+        //public List<ApprenticeshipStandard> HarvestStandards(ExcelPackage package)
+        //{
+        //    var standards = new List<ApprenticeshipStandard>();
+        //    var worksheet = GetWorksheet(package, StandardsWorkSheetName);
 
-            for (var i = worksheet.Dimension.Start.Row + 4; i <= worksheet.Dimension.End.Row; i++)
-            {
-                var standardCode = ProcessValueAsInt(worksheet.Cells[i, 1].Value?.ToString(), "StandardCode", StandardsWorkSheetName, i);
-                var version = ProcessValueAsInt(worksheet.Cells[i, 2].Value?.ToString(), "Version", StandardsWorkSheetName, i);
-                var standardName = worksheet.Cells[i, 3].Value?.ToString();
-                var standardSectorCode = ProcessValueAsInt(worksheet.Cells[i, 4].Value?.ToString(), "StandardSectorCode", StandardsWorkSheetName, i);
-                var notionalEndLevel = ProcessValueAsInt(worksheet.Cells[i, 5].Value?.ToString(), "NotionalEndLevel", StandardsWorkSheetName, i);
-                var effectiveFrom = ProcessValueAsDateTime(worksheet.Cells[i, 6].Value?.ToString(), "EffectiveFrom", StandardsWorkSheetName, i);
-                var effectiveTo = ProcessNullableDateValue(worksheet.Cells[i, 7].Value?.ToString());
-                var lastDateStarts = ProcessNullableDateValue(worksheet.Cells[i, 8].Value?.ToString());
-                var urlLink = worksheet.Cells[i, 9].Value?.ToString();
-                var sectorSubjectAreaTier1 = ProcessNullableIntValue(worksheet.Cells[i, 10].Value?.ToString());
-                var sectorSubjectAreaTier2 = worksheet.Cells[i, 11].Value?.ToString();
-                var integratedDegreeStandard = ProcessYesNoValuesIntoBoolean(worksheet.Cells[i, 12].Value?.ToString());
+        //    for (var i = worksheet.Dimension.Start.Row + 4; i <= worksheet.Dimension.End.Row; i++)
+        //    {
+        //        var standardCode = ProcessValueAsInt(worksheet.Cells[i, 1].Value?.ToString(), "StandardCode", StandardsWorkSheetName, i);
+        //        var version = ProcessValueAsInt(worksheet.Cells[i, 2].Value?.ToString(), "Version", StandardsWorkSheetName, i);
+        //        var standardName = worksheet.Cells[i, 3].Value?.ToString();
+        //        var standardSectorCode = ProcessValueAsInt(worksheet.Cells[i, 4].Value?.ToString(), "StandardSectorCode", StandardsWorkSheetName, i);
+        //        var notionalEndLevel = ProcessValueAsInt(worksheet.Cells[i, 5].Value?.ToString(), "NotionalEndLevel", StandardsWorkSheetName, i);
+        //        var effectiveFrom = ProcessValueAsDateTime(worksheet.Cells[i, 6].Value?.ToString(), "EffectiveFrom", StandardsWorkSheetName, i);
+        //        var effectiveTo = ProcessNullableDateValue(worksheet.Cells[i, 7].Value?.ToString());
+        //        var lastDateStarts = ProcessNullableDateValue(worksheet.Cells[i, 8].Value?.ToString());
+        //        var urlLink = worksheet.Cells[i, 9].Value?.ToString();
+        //        var sectorSubjectAreaTier1 = ProcessNullableIntValue(worksheet.Cells[i, 10].Value?.ToString());
+        //        var sectorSubjectAreaTier2 = worksheet.Cells[i, 11].Value?.ToString();
+        //        var integratedDegreeStandard = ProcessYesNoValuesIntoBoolean(worksheet.Cells[i, 12].Value?.ToString());
 
-                var createdOn = ProcessNullableDateValue(worksheet.Cells[i, 13].Value?.ToString());
-                var createdBy = worksheet.Cells[i, 14].Value?.ToString();
+        //        var createdOn = ProcessNullableDateValue(worksheet.Cells[i, 13].Value?.ToString());
+        //        var createdBy = worksheet.Cells[i, 14].Value?.ToString();
 
-                var modifiedOn = ProcessNullableDateValue(worksheet.Cells[i, 15].Value?.ToString());
-                var modifiedBy = worksheet.Cells[i, 16].Value?.ToString();
+        //        var modifiedOn = ProcessNullableDateValue(worksheet.Cells[i, 15].Value?.ToString());
+        //        var modifiedBy = worksheet.Cells[i, 16].Value?.ToString();
 
-                standards.Add(
-                    new ApprenticeshipStandard
-                    {
-                        StandardCode = standardCode,
-                        Version = version,
-                        StandardName = standardName,
-                        StandardSectorCode = standardSectorCode,
-                        NotionalEndLevel = notionalEndLevel,
-                        EffectiveFrom = effectiveFrom,
-                        EffectiveTo = effectiveTo,
-                        LastDateStarts = lastDateStarts,
-                        UrlLink = urlLink,
-                        SectorSubjectAreaTier1 = sectorSubjectAreaTier1,
-                        SectorSubjectAreaTier2 = sectorSubjectAreaTier2,
-                        IntegratedDegreeStandard = integratedDegreeStandard,
-                        CreatedOn = createdOn,
-                        CreatedBy = createdBy,
-                        ModifiedOn = modifiedOn,
-                        ModifiedBy = modifiedBy,
-                        Status = "Live"
-                    });
-            }
+        //        standards.Add(
+        //            new ApprenticeshipStandard
+        //            {
+        //                StandardCode = standardCode,
+        //                Version = version,
+        //                StandardName = standardName,
+        //                StandardSectorCode = standardSectorCode,
+        //                NotionalEndLevel = notionalEndLevel,
+        //                EffectiveFrom = effectiveFrom,
+        //                EffectiveTo = effectiveTo,
+        //                LastDateStarts = lastDateStarts,
+        //                UrlLink = urlLink,
+        //                SectorSubjectAreaTier1 = sectorSubjectAreaTier1,
+        //                SectorSubjectAreaTier2 = sectorSubjectAreaTier2,
+        //                IntegratedDegreeStandard = integratedDegreeStandard,
+        //                CreatedOn = createdOn,
+        //                CreatedBy = createdBy,
+        //                ModifiedOn = modifiedOn,
+        //                ModifiedBy = modifiedBy,
+        //                Status = "Live"
+        //            });
+        //    }
 
-            return standards;
-        }
+        //    return standards;
+        //}
 
-        public List<EpaOrganisationStandard> HarvestEpaOrganisationStandards(ExcelPackage package, List<EpaOrganisation> epaOrganisations, List<ApprenticeshipStandard> standards)
+        public List<EpaOrganisationStandard> HarvestEpaOrganisationStandards(ExcelPackage package, List<EpaOrganisation> epaOrganisations)
         {
             var epaOrganisationStandards = new List<EpaOrganisationStandard>();
             var worksheet = GetWorksheet(package, EpaStandardsWorkSheetName);
@@ -201,14 +190,9 @@ namespace SFA.DAS.AssessorService.Data
                     
                 }
 
-                var standardCode = ProcessNullableIntValue(worksheet.Cells[i, 3].Value?.ToString());
+                var standardCode = ProcessNullableIntValue(worksheet.Cells[i, 3].Value.ToString());
 
-                if (standardCode == null || standards.All(x => x.StandardCode != standardCode))
-                {
-                    if (standardCode != null)
-                        _logger.LogInformation($"Harvest OrganisationStandards skipped row {i}: Standard code that can be matched with harvested standards: [{standardCode}]");
-                    continue;          
-                }
+                
 
                 var effectiveFrom = ProcessNullableDateValue(worksheet.Cells[i, 5].Value?.ToString());
                 var effectiveTo = ProcessNullableDateValue(worksheet.Cells[i, 6].Value?.ToString());
@@ -238,7 +222,7 @@ namespace SFA.DAS.AssessorService.Data
             return epaOrganisationStandards;
         }
 
-        public List<EpaOrganisationStandardDeliveryArea> HarvestStandardDeliveryAreas(ExcelPackage package, List<EpaOrganisation> epaOrganisations, List<ApprenticeshipStandard> standards, List<DeliveryArea> deliveryAreas)
+        public List<EpaOrganisationStandardDeliveryArea> HarvestStandardDeliveryAreas(ExcelPackage package, List<EpaOrganisation> epaOrganisations,  List<DeliveryArea> deliveryAreas)
         {
             var standardDeliveryAreas = new List<EpaOrganisationStandardDeliveryArea>();
             var worksheet = GetWorksheet(package, DeliveryAreasWorkSheetName);
@@ -255,27 +239,7 @@ namespace SFA.DAS.AssessorService.Data
                     continue;        
                 }
 
-                var standardCode = ProcessNullableIntValue(worksheet.Cells[i, 3].Value?.ToString());
-
-                // compare by name if standard code missing - this happens
-                if (standardCode == null)
-                {
-                    var standardName = worksheet.Cells[i, 4].Value?.ToString();
-                    var res = standards.Where(x => x.StandardName == standardName).ToList();
-
-                    if (res.Count() == 1)
-                    {
-                        standardCode = res?.First()?.StandardCode;
-                    }
-                }
-
-                // skip if standard code is null or standard not actually available
-                if (standardCode == null || standards.All(x => x.StandardCode != standardCode.Value))
-                {
-                    if (standardCode != null)
-                        _logger.LogInformation($"Harvest OrganisationStandardsDeliveryAreas skipped row {i}: Standard not matched in harvested standards: [{standardCode}]");
-                    continue;
-                }
+                var standardCode = ProcessNullableIntValue(worksheet.Cells[i, 3].Value.ToString());
 
                 var deliveryArea = worksheet.Cells[i, 5].Value != null
                     ? worksheet.Cells[i, 5].Value.ToString().Trim()

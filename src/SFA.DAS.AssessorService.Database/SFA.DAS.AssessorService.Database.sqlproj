@@ -60,6 +60,7 @@
     <Folder Include="Properties" />
     <Folder Include="Tables" />
     <Folder Include="StoredProcedures" />
+    <Folder Include="DataToImport" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\CertificateLogs.sql" />

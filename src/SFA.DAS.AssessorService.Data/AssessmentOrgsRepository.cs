@@ -178,36 +178,39 @@ namespace SFA.DAS.AssessorService.Data
 
                 foreach (var org in organisationsToInsert)
                 {
+                    var organisationTypeIdValue = org.OrganisationTypeId != 0 ? (int?)org.OrganisationTypeId : null;
                     var id = ConvertStringToSqlValueString(org.Id.ToString());
                     var organisationData = JsonConvert.SerializeObject(org.OrganisationData);
                     var ukprn = ConvertIntToSqlValueString(org.EndPointAssessorUkprn);
                     var endPointAssessorName = ConvertStringToSqlValueString(org.EndPointAssessorName);
-
+                    var organisationTypeId = ConvertIntToSqlValueString(organisationTypeIdValue);
                     var sqlToAppend =
                         "INSERT INTO [Organisations] ([Id],[CreatedAt],[DeletedAt],[EndPointAssessorName],[EndPointAssessorOrganisationId], " +
                         "[EndPointAssessorUkprn],[Status],[UpdatedAt],[OrganisationTypeId],[PrimaryContact],[OrganisationData]) VALUES (" +
                         $@" {id}, getutcdate(), null, {endPointAssessorName}, '{org.EndPointAssessorOrganisationId}'," +
-                        $@"{ukprn}, '{org.Status}', null,  {org.OrganisationTypeId}, null, '{organisationData}' ); ";
+                        $@"{ukprn}, '{org.Status}', null,  {organisationTypeId}, null, '{organisationData}' ); ";
                     sql.Append(sqlToAppend);
+                    
                 }
 
                 foreach (var org in organisationsToUpdate)
-                {      
+                {
+                    var organisationTypeIdValue = org.OrganisationTypeId != 0 ? (int?)org.OrganisationTypeId : null;
                     var organisationData = JsonConvert.SerializeObject(org.OrganisationData);
-                
+                    var organisationTypeId = ConvertIntToSqlValueString(organisationTypeIdValue);
                     var sqlToAppendWhereStatusIsNotDeleted =
-                        $@"UPDATE [Organisations] SET [OrganisationTypeId] = {org.OrganisationTypeId}," +
+                        $@"UPDATE [Organisations] SET [OrganisationTypeId] = {organisationTypeId}," +
                         $@"[OrganisationData] = '{organisationData}', Status = 'Live' "+
                         $@"WHERE EndPointAssessorOrganisationId = '{org.EndPointAssessorOrganisationId}' and Status !='Deleted'; ";
 
                     var sqlToAppendWhereStatusIsDeleted =
-                        $@"UPDATE [Organisations] SET [OrganisationTypeId] = {org.OrganisationTypeId}," +
+                        $@"UPDATE [Organisations] SET [OrganisationTypeId] = {organisationTypeId}," +
                         $@"[OrganisationData] = '{organisationData}', PrimaryContact = '{org.PrimaryContact}' " +
                         $@"WHERE EndPointAssessorOrganisationId = '{org.EndPointAssessorOrganisationId}' and Status = 'Deleted'; ";
 
                     sql.Append(sqlToAppendWhereStatusIsNotDeleted);
                     sql.Append(sqlToAppendWhereStatusIsDeleted);
-                }
+            }
                 connection.Execute(sql.ToString());                           
                 connection.Close();
             }

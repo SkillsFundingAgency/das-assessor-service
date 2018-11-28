@@ -76,46 +76,46 @@ namespace SFA.DAS.AssessorService.Data
         {
             var spreadsheetDto = new AssessmentOrganisationsSpreadsheetDto();
 
-            var containerName = "assessmentorgs";
-            var initialiseContainer = new BlobContainerHelper(_configuration);
-
-            var container = initialiseContainer.GetContainer(containerName).Result;
-
-            var blob = container.GetBlockBlobReference(TemplateFile);
-
             using (var memoryStream = new MemoryStream())
             {
-                await blob.DownloadToStreamAsync(memoryStream);
 
-                using (var package = new ExcelPackage(memoryStream))
+
+                using (var fs = File.OpenRead($"..\\SFA.DAS.AssessorService.Database\\DataToImport\\{TemplateFile}"))
                 {
-                    LogProgress(progressStatus, "Reading from spreadsheet: Delivery Areas; ");
-                    spreadsheetDto.DeliveryAreas = _spreadsheetReader.HarvestDeliveryAreas();
-                    LogProgress(progressStatus, "Reading from spreadsheet: Organisation Types; ");
-                    spreadsheetDto.OrganisationTypes = _spreadsheetReader.HarvestOrganisationTypes();
-                    LogProgress(progressStatus, "Reading from spreadsheet: Organisations; ");
-                    spreadsheetDto.Organisations =
-                        _spreadsheetReader.HarvestEpaOrganisations(package, spreadsheetDto.OrganisationTypes);
-                    LogProgress(progressStatus, $"Reading from spreadsheet: Organisations gathered: {spreadsheetDto.Organisations?.Count}; ");
-                    LogProgress(progressStatus, "Reading from spreadsheet: Standards; ");
-                    var standards = _spreadsheetReader.HarvestStandards(package);
-                    LogProgress(progressStatus, "Reading from spreadsheet: Organisation-Standards; ");
-                    spreadsheetDto.OrganisationStandards =
-                        _spreadsheetReader.HarvestEpaOrganisationStandards(package, spreadsheetDto.Organisations,
-                            standards);
-                    LogProgress(progressStatus, "Reading from spreadsheet: Organisation-Standards-Delivery Areas; ");
-                    spreadsheetDto.OrganisationStandardDeliveryAreas =
-                        _spreadsheetReader.HarvestStandardDeliveryAreas(package, spreadsheetDto.Organisations,
-                            standards,
-                            spreadsheetDto.DeliveryAreas);
-                    LogProgress(progressStatus, "Reading from spreadsheet: Organisation-Standards-Delivery Areas gathering comments; ");
-                    _spreadsheetReader.MapDeliveryAreasCommentsIntoOrganisationStandards(spreadsheetDto.OrganisationStandardDeliveryAreas, spreadsheetDto.OrganisationStandards);
-                    LogProgress(progressStatus, "Reading from spreadsheet: Contacts; ");
-                    spreadsheetDto.Contacts = _spreadsheetReader.HarvestOrganisationContacts(
-                        spreadsheetDto.Organisations,
-                        spreadsheetDto.OrganisationStandards);
+                    fs.CopyTo(memoryStream);
 
-                    _spreadsheetReader.MapPrimaryContacts(spreadsheetDto.Organisations, spreadsheetDto.Contacts);
+                    using (var package = new ExcelPackage(memoryStream))
+                    {
+                        LogProgress(progressStatus, "Reading from spreadsheet: Delivery Areas; ");
+                        spreadsheetDto.DeliveryAreas = _spreadsheetReader.HarvestDeliveryAreas();
+                        LogProgress(progressStatus, "Reading from spreadsheet: Organisation Types; ");
+                        spreadsheetDto.OrganisationTypes = _spreadsheetReader.HarvestOrganisationTypes();
+                        LogProgress(progressStatus, "Reading from spreadsheet: Organisations; ");
+                        spreadsheetDto.Organisations =
+                            _spreadsheetReader.HarvestEpaOrganisations(package, spreadsheetDto.OrganisationTypes);
+                        LogProgress(progressStatus,
+                            $"Reading from spreadsheet: Organisations gathered: {spreadsheetDto.Organisations?.Count}; ");
+                        LogProgress(progressStatus, "Reading from spreadsheet: Standards; ");
+
+                        LogProgress(progressStatus, "Reading from spreadsheet: Organisation-Standards; ");
+                        spreadsheetDto.OrganisationStandards =
+                            _spreadsheetReader.HarvestEpaOrganisationStandards(package, spreadsheetDto.Organisations);
+                        LogProgress(progressStatus,
+                            "Reading from spreadsheet: Organisation-Standards-Delivery Areas; ");
+                        spreadsheetDto.OrganisationStandardDeliveryAreas =
+                            _spreadsheetReader.HarvestStandardDeliveryAreas(package, spreadsheetDto.Organisations,
+                                spreadsheetDto.DeliveryAreas);
+                        LogProgress(progressStatus,
+                            "Reading from spreadsheet: Organisation-Standards-Delivery Areas gathering comments; ");
+                        _spreadsheetReader.MapDeliveryAreasCommentsIntoOrganisationStandards(
+                            spreadsheetDto.OrganisationStandardDeliveryAreas, spreadsheetDto.OrganisationStandards);
+                        LogProgress(progressStatus, "Reading from spreadsheet: Contacts; ");
+                        spreadsheetDto.Contacts = _spreadsheetReader.HarvestOrganisationContacts(
+                            spreadsheetDto.Organisations,
+                            spreadsheetDto.OrganisationStandards);
+
+                        _spreadsheetReader.MapPrimaryContacts(spreadsheetDto.Organisations, spreadsheetDto.Contacts);
+                    }
                 }
             }
             LogProgress(progressStatus, "Finished extracting from spreadsheet");
