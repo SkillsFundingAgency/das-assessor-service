@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _localizer = localizer;
         }
 
-        [HttpGet("{ukprn}", Name = "SearchOrganisation")]
+        [HttpGet("ukprn/{ukprn}", Name = "SearchOrganisation")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(OrganisationResponse))]
         [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.NotFound, Type = typeof(string))]
