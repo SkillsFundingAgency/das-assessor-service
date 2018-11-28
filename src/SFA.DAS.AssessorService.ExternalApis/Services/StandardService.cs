@@ -36,6 +36,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             return standardSummaries;
         }
 
+        public async Task<Standard> GetStandard(int standardId)
+        {
+            return await _assessmentOrgsApiClient.GetStandard(standardId);
+        }
+    
+
         public async Task<IEnumerable<StandardCollation>> GatherAllStandardDetails()
         {
             _logger.LogInformation("STANDARD COLLATION: Starting gathering of all IFA Standard details");
@@ -84,7 +90,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             {
                 StandardId = standardId,
                 ReferenceNumber = ifaStandard?.ReferenceNumber,
-                Title = winStandard?.Title ?? ifaStandard?.Title,
+                Title = ifaStandard?.Title ?? winStandard?.Title,
                 StandardData = new StandardData
                 {
                     Category = ifaStandard?.Category,
@@ -117,12 +123,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             }
 
             return fullIfaStandards;
-        }
-
-        public async Task<Standard> GetStandard(int standardId)
-        {
-            return await _assessmentOrgsApiClient.GetStandard(standardId);
-        }
+        }     
     }
 
     public interface IStandardService
