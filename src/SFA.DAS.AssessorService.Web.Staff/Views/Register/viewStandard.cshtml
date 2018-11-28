@@ -33,16 +33,16 @@
                             <td> @Model.StandardTitle (@Model.StandardId)</td>
                         </tr>
                         <tr>
-                            <td><span class="bold-small">Standard effective from</span></td>
+                            <td><span class="bold-small">Effective from</span></td>
                             <td> @Model.EffectiveFrom.ToSfaShortDateString()</td>
                         </tr>
                         <tr>
-                            <td><span class="bold-small">Standard effective to</span></td>
+                            <td><span class="bold-small">Effective to</span></td>
                             <td> @Model.EffectiveTo.ToSfaShortDateString()</td>
                         </tr>
                         <tr>
                             <td><span class="bold-small">Date approved on register</span></td>
-                            <td> @Model.DateStandardApprovedOnRegister</td>
+                            <td> @Model.DateStandardApprovedOnRegister.ToSfaShortDateString()</td>
                         </tr>
                         <tr>
                             <td><span class="bold-small">Status</span></td>

@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Domain
         public const string OperationsTeam = "EPO";
         public const string AssessmentDeliveryTeam = "EPA";
         public const string ProviderRiskAssuranceTeam = "EPR";
-        public const string RegisterViewOnlyTeam = "RVO";
+        public const string RegisterViewOnlyTeam = "EPV";
 
         public static bool HasValidRole(this ClaimsPrincipal User)
         {
