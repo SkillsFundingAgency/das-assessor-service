@@ -90,7 +90,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             {
                 StandardId = standardId,
                 ReferenceNumber = ifaStandard?.ReferenceNumber,
-                Title = winStandard?.Title ?? ifaStandard?.Title,
+                Title = ifaStandard?.Title ?? winStandard?.Title,
                 StandardData = new StandardData
                 {
                     Category = ifaStandard?.Category,

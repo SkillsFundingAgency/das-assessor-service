@@ -135,7 +135,21 @@ set IsPrivatelyFunded = 0
 WHERE IsPrivatelyFunded IS NULL 
 
 
+--- FIXES FOR BAD DATA IN SPREADSHEET IMPORT
+
+if not exists(select * from OrganisationStandardDeliveryArea where organisationStandardId in (select id from organisationStandard where EndPointAssessorOrganisationId='EPA0048' and StandardCode=320))
+BEGIN
+insert into OrganisationStandardDeliveryArea (OrganisationStandardId, DeliveryAreaId, Status)
+		select 
+			(select id from organisationStandard where EndPointAssessorOrganisationId='EPA0048' and StandardCode=320) as osid, id, 'Live' from deliveryArea
+END
 
 
+if not exists(select * from OrganisationStandardDeliveryArea where organisationStandardId in (select id from organisationStandard where EndPointAssessorOrganisationId='EPA0057' and StandardCode=318))
+BEGIN
+insert into OrganisationStandardDeliveryArea (OrganisationStandardId, DeliveryAreaId, Status)
+		select 
+			(select id from organisationStandard where EndPointAssessorOrganisationId='EPA0057' and StandardCode=318) as osid, id, 'Live' from deliveryArea
+END
 
 ----- Adding 
