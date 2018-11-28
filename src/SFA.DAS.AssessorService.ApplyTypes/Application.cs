@@ -24,11 +24,11 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public bool IsActive { get; set; }
         public List<ApplicationSection> Sections { get; set; }
 
-        public bool HasFeedback
+        public bool HasNewFeedback
         {
             get
             {
-                return Sections.SelectMany(s => s.Pages).Any(p => p.HasFeedback);
+                return Sections.SelectMany(s => s.Pages).Any(p => p.HasFeedback && p.Feedback.All(f => !f.IsRead));
             }
         }
     }
@@ -165,6 +165,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public string From { get; set; }
         public string Message { get; set; }
         public DateTime Date { get; set; }
+        public bool IsRead { get; set; }
     }
     
     public class PageOfAnswers
