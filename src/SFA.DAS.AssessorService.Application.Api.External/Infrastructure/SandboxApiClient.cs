@@ -68,7 +68,15 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                     }
                 };
 
-                if (responseItem.Certificate != null) responseItem.Certificate.CertificateData.CertificateReference = "SANDBOX";
+                if (responseItem.Certificate != null)
+                {
+                    responseItem.Certificate.CertificateData.CertificateReference = "SANDBOX";
+                    responseItem.Certificate.CertificateData.Learner.GivenNames = "FIRSTNAME";
+                    responseItem.Certificate.CertificateData.Standard.Level = 1;
+                    responseItem.Certificate.CertificateData.Standard.StandardName = "STANDARD";
+                    responseItem.Certificate.CertificateData.LearningDetails.ProviderName = "PROVIDER";
+                    responseItem.Certificate.CertificateData.LearningDetails.ProviderUkPrn = req.UkPrn;
+                }
 
                 response.Add(responseItem);
             }
@@ -83,6 +91,12 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             foreach (var req in request)
             {
                 var validationErrors = PerformBasicBatchCertificateRequestValidation(req);
+
+                if (req.CertificateData != null && string.IsNullOrEmpty(req.CertificateData.CertificateReference))
+                {
+                    validationErrors.Add("Enter the certificate reference");
+                }
+
                 var responseItem = new BatchCertificateResponse
                 {
                     RequestId = req.RequestId,
@@ -95,7 +109,16 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                     }
                 };
 
-                if (responseItem.Certificate != null) responseItem.Certificate.CertificateData.CertificateReference = "SANDBOX";
+                if (responseItem.Certificate != null)
+                {
+                    responseItem.Certificate.CertificateData.CertificateReference = "SANDBOX";
+                    responseItem.Certificate.CertificateData.Learner.GivenNames = "FIRSTNAME";
+                    responseItem.Certificate.CertificateData.Standard.Level = 1;
+                    responseItem.Certificate.CertificateData.Standard.StandardName = "STANDARD";
+                    responseItem.Certificate.CertificateData.LearningDetails.ProviderName = "PROVIDER";
+                    responseItem.Certificate.CertificateData.LearningDetails.ProviderUkPrn = req.UkPrn;
+                }
+
                 response.Add(responseItem);
             }
 
