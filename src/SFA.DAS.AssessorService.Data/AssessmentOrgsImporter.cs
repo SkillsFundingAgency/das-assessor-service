@@ -16,6 +16,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
+using Microsoft.AspNetCore.Hosting;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -26,21 +27,31 @@ namespace SFA.DAS.AssessorService.Data
         private readonly IAssessmentOrgsSpreadsheetReader _spreadsheetReader;
         private readonly IWebConfiguration _configuration;
         private readonly ILogger<AssessmentOrgsImporter> _logger;
+        private readonly IHostingEnvironment _env;
         private readonly string TemplateFile = "assessmentOrgs.xlsx";
 
         public AssessmentOrgsImporter(IAssessmentOrgsRepository assessmentOrgsRepository,
                                         IAssessmentOrgsSpreadsheetReader spreadsheetReader,
                                         ILogger<AssessmentOrgsImporter> logger,
-                                        IWebConfiguration configuration)
+                                        IWebConfiguration configuration, IHostingEnvironment env)
         {
             _assessmentOrgsRepository = assessmentOrgsRepository;
             _spreadsheetReader = spreadsheetReader;
             _logger = logger;
             _configuration = configuration;
+            _env = env;
         }
 
         public AssessmentOrgsImportResponse ImportAssessmentOrganisations()
         {
+            if (!_env.IsDevelopment())
+            {
+                return new AssessmentOrgsImportResponse
+                {
+                    Status = "This patch will only run on development environments"
+                };
+            }
+
             var progressStatus = new StringBuilder();
            
            LogProgress(progressStatus,$"BUILDUP instituted at [{DateTime.Now.ToLongTimeString()}]; ");
