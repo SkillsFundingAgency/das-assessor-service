@@ -35,4 +35,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="OptionName" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="34c9a29b-17e9-445f-921b-daafdaacf0b7" ChangeDateTime="11/19/2018 15:19:30">
+    <Property Name="ElementName" Value="[dbo].[StaffReports].[DownloadReportData]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[StaffReports]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ReportDetails" />
+  </Operation>
 </Operations>
