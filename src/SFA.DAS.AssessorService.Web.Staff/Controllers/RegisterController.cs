@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
@@ -24,12 +25,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         private readonly ApiClient _apiClient;
         private readonly IStandardService _standardService;
         private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
-
-        public RegisterController(ApiClient apiClient, IStandardService standardService, IAssessmentOrgsApiClient assessmentOrgsApiClient)
+        private readonly IHostingEnvironment _env;
+        public RegisterController(ApiClient apiClient, IStandardService standardService, IAssessmentOrgsApiClient assessmentOrgsApiClient, IHostingEnvironment env)
         {
             _apiClient = apiClient;
             _standardService = standardService;
             _assessmentOrgsApiClient = assessmentOrgsApiClient;
+            _env = env;
         }
 
         public IActionResult Index()
@@ -272,18 +274,28 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             return View(viewModel);
         }
 
+
         [HttpGet("register/impage")]
         public async Task<IActionResult> Impage()
         {
+            var isDevelopment = _env.IsDevelopment();
+            if (!isDevelopment)
+                return NotFound();
+           
             var vm = new AssessmentOrgsImportResponse { Status = "Press to run" };
+
+           
             return View(vm);
         }
-
         [HttpGet("register/impage-{choice}")]
         public async Task<IActionResult> Impage(string choice)
         {
-            var vm = new AssessmentOrgsImportResponse { Status = "Running" };
+            var isDevelopment = _env.IsDevelopment();
 
+            if (!isDevelopment)
+                return NotFound();
+
+            var vm = new AssessmentOrgsImportResponse { Status = "Running" };
             if (choice == "DoIt")
             {
                 var importResults = await _apiClient.ImportOrganisations();
@@ -291,7 +303,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             }
             return View(vm);
         }
-            
+
+
         [HttpPost("register/add-organisation")]
         public async Task<IActionResult> AddOrganisation(RegisterOrganisationViewModel viewModel)
         {
