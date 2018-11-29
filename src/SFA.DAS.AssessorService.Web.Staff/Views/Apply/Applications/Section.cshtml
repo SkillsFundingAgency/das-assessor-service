@@ -5,7 +5,7 @@
     Layout = "_Layout";
 }
 
-<a href="@Url.Action("Applications", "Application", new {applicationId = Model.ApplicationId})" class="govuk-back-link">Back</a>
+<a href="@Url.Action("Application", "Application", new {applicationId = Model.ApplicationId})" class="govuk-back-link">Back</a>
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
@@ -33,6 +33,17 @@
                                         }
                                     </div>
                                 }
+                                
+                                @if (pg.HasNewFeedback)
+                                {
+                                    <span class="form-label-bold">Feedback added</span>
+                                }
+                                @if (pg.HasReadFeedback)
+                                {
+                                    <span class="form-label-bold">Answer updated</span>
+                                }
+                                
+                                
                                 <a href="@Url.Action("Page", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = pg.PageId})">
                                     Add feedback
                                 </a>
@@ -41,7 +52,7 @@
                     }
                 </dl>
 
-                <a href="@Url.Action("Applications", "Application", new {applicationId = Model.ApplicationId})" class="govuk-button">Return to application overview</a>
+                <a href="@Url.Action("Application", "Application", new {applicationId = Model.ApplicationId})" class="govuk-button">Return to application overview</a>
             }
         </div>
     </div>

@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         {
             get
             {
-                return Sections.SelectMany(s => s.Pages).Any(p => p.HasFeedback && p.Feedback.All(f => !f.IsRead));
+                return Sections.SelectMany(s => s.Pages).Any(p => p.HasFeedback && p.Feedback.Any(f => !f.IsCompleted));
             }
         }
     }
@@ -62,6 +62,21 @@ namespace SFA.DAS.AssessorService.ApplyTypes
             get { return Pages.Count(p => p.Active); }
         }
 
+        public bool HasNewFeedback
+        {
+            get
+            {
+                return Pages.Any(p => p.HasFeedback && p.Feedback.Any(f => !f.IsCompleted));
+            }
+        }
+        
+        public bool HasReadFeedback
+        {
+            get
+            {
+                return Pages.Any(p => p.HasFeedback && p.Feedback.Any(f => f.IsCompleted));
+            }
+        }
 
         public string Title { get; set; }
         public string LinkTitle { get; set; }
@@ -89,6 +104,22 @@ namespace SFA.DAS.AssessorService.ApplyTypes
       
         public List<Feedback> Feedback { get; set; }
         public bool HasFeedback => Feedback?.Any() ?? false;
+        
+        public bool HasNewFeedback
+        {
+            get
+            {
+                return HasFeedback && Feedback.Any(f => !f.IsCompleted);
+            }
+        }
+        
+        public bool HasReadFeedback
+        {
+            get
+            {
+                return HasFeedback && Feedback.Any(f => f.IsCompleted);
+            }
+        }
         
         public List<DisplayAnswerPage> DisplayAnswerPages
         {
@@ -165,7 +196,8 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public string From { get; set; }
         public string Message { get; set; }
         public DateTime Date { get; set; }
-        public bool IsRead { get; set; }
+        public bool IsCompleted { get; set; }
+        public bool IsNew { get; set; }
     }
     
     public class PageOfAnswers

@@ -24,7 +24,14 @@
                             <a href="@Url.Action("Section", "Application", new {applicationSection.ApplicationId, applicationSection.SequenceId, applicationSection.SectionId})">
                                 Go to @applicationSection.LinkTitle.ToLower()
                             </a>
-                        
+                        @if (applicationSection.HasNewFeedback)
+                        {
+                            <span class="form-label-bold">Feedback added</span>
+                        }
+                        @if (applicationSection.HasReadFeedback)
+                        {
+                            <span class="form-label-bold">Answer updated</span>
+                        }
                     </li>
                     <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
                 }
