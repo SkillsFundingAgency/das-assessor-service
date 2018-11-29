@@ -5,39 +5,46 @@
     Layout = "_Layout";
 }
 
-<a href="@Url.Action("Section", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId})" class="govuk-back-link">Back</a>
-<main class="govuk-main-wrapper " id="main-content" role="main">
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <h1>@Model.Title</h1>
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <a href="@Url.Action("Section", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId})" class="link-back">Back</a>
+            <h1 class="heading-xlarge">@Model.Title</h1>
 
             @foreach (var pageOfAnswers in Model.DisplayAnswerPages)
             {
                 <div>
                     @foreach (var answer in pageOfAnswers.DisplayAnswers)
                     {
-                        <span>@answer.Label</span>
-                        <span>@answer.Answer</span>
+                        <h2 class="heading-small">@answer.Label</h2>
+                        <p>@answer.Answer</p>
                     }
                 </div>
             }
 
+            <hr />
+
             @if (Model.HasFeedback)
             {
-                <div>Feedback</div>
+                <h2 class="heading-large">Current feedback</h2>
                 foreach (var feedback in Model.Feedback)
                 {
                     <div>
-                        <p>@feedback.From - @feedback.Date.ToShortDateString()</p>
+                        <h3 class="heading-small">@feedback.From</h3>
+                        <p class="font-xsmall">@feedback.Date.ToShortDateString()</p>
                         <p>@feedback.Message</p>
                     </div>
                 }
+                <hr />
             }
 
             <form asp-action="Feedback" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@Model.PageId">
-                <textarea name="message"></textarea>
-
-                <button type="submit">Add feedback</button>
+                <div class="form-group">
+                    <label class="form-label" for="message">
+                        Feedback
+                    </label>
+                    <textarea class="form-control form-control-3-4" name="message" id="message" rows="5"></textarea>
+                </div>
+                <button class="button" type="submit">Add feedback</button>
             </form>
         </div>
     </div>
