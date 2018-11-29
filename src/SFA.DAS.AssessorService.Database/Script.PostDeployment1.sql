@@ -46,7 +46,6 @@ BEGIN
 	UPDATE [OrganisationType] SET [Type] =  'College', [TypeDescription] = 'GFE College currently receiving funding from the ESFA, 6th form / FE college' WHERE id = 10;
 END
 
-
 IF NOT EXISTS(SELECT * FROM StaffReports)
 	BEGIN
 		INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('Monthly detailed extract', 'StaffReports_DetailedExtract', 1,'ViewOnScreen')
@@ -68,8 +67,7 @@ BEGIN
 	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('EPAO Register', '', 11, 'Download')
 END
 
-
-UPDATE StaffReports SET ReportDetails ='{"Name":"EPAO Register","Type":"excel","Worksheets": [
+UPDATE StaffReports SET ReportDetails ='{"Name":"EPAO Register","Worksheets": [
   {
   "worksheet":"Register - Organisations",
   "order": 1,
@@ -91,6 +89,35 @@ UPDATE StaffReports SET ReportDetails ='{"Name":"EPAO Register","Type":"excel","
   "StoredProcedure":"EPAO_Register_Data_Definitions"
   }
   ]}' WHERE ReportName = 'EPAO Register'
+
+
+
+IF NOT EXISTS (SELECT * FROM StaffReports WHERE ReportName = 'Register List of Organisations')
+BEGIN
+	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('Register List of Organisations', '', 12, 'Download')
+END
+
+UPDATE StaffReports SET ReportDetails = '{"Name":"Register List Of Organisations","Worksheets": [
+	  {
+	  "worksheet":"Register List of Organisations",
+	  "order": 1,
+	  "StoredProcedure":"EPAO_Register_list_of_organisations"
+	  }
+	]}'  WHERE ReportName = 'Register List of Organisations'
+
+
+IF NOT EXISTS (SELECT * FROM StaffReports WHERE ReportName = 'Register List of Standards')
+BEGIN
+	INSERT INTO StaffReports (ReportName, StoredProcedure, DisplayOrder, ReportType) VALUES ('Register List of Standards', '', 13, 'Download')
+END
+
+UPDATE StaffReports SET ReportDetails = '{"Name":"Register List Of Standards","Worksheets": [
+	  {
+	  "worksheet":"Register List of Standards",
+	  "order": 1,
+	  "StoredProcedure":"EPAO_Register_list_of_standards"
+	  }
+	]}'  WHERE ReportName = 'Register List of Standards'
 
 
 -- -'Academy or Free School'
