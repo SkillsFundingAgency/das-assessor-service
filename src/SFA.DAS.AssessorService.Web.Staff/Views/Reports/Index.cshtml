@@ -48,7 +48,11 @@
                         <div class="multiple-choice">
                             <input asp-for="ReportId" id="@report.Id" type="radio" value="@report.Id" />
                             <label for="@report.Id">
-                                @report.ReportName
+                                @report.ReportName  
+                                @if (report.ReportType == "Download")
+                                {
+                                    @Html.Raw(" (Download only)")
+                                }
                             </label>
                         </div>
                     }

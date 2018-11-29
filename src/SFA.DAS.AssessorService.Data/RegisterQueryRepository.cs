@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Data
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
-                var orgTypes = await connection.QueryAsync<OrganisationType>("select * from [OrganisationType] where Status <> 'Deleted' order by case Type when 'Other' then id + 1000 else id end");
+                var orgTypes = await connection.QueryAsync<OrganisationType>("select * from [OrganisationType] where Status <> 'Deleted'  order by id");
                 return orgTypes;
             }
         }
