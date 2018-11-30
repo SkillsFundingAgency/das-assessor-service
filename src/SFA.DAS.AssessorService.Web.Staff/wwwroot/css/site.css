@@ -25,10 +25,6 @@
   color: #2b8cc4;
 }
 
-/* .button:focus {
-  position: inherit;
-} */
-
 .govuk-related-items {
   margin-top: 30px;
   border-top: 10px solid #005ea5;
@@ -375,7 +371,6 @@ fieldset.after-error-summary {
   margin: 0;
 }
 
-/* :first-child:last-child === element has no siblings */
 .error-summary > *:last-child,
 .info-summary > *:last-child,
 .success-summary > *:last-child,
@@ -401,14 +396,6 @@ fieldset.after-error-summary {
     border-color: #2b8cc4;
   }
 }
-
-/* .info-summary .info-summary-list a {
-  color: #2e358b;
-} */
-
-/* .info-summary .info-dismiss {
-  color: #2e358b;
-} */
 
 .js-error-summary {
   display: none;
@@ -541,20 +528,6 @@ fieldset.after-error-summary {
   }
 }
 
-/* .close-postcode-lookup {
-  font-weight: bold;
-  font-size: 20px;
-  position: absolute;
-  right: 24px;
-  margin-top: 8px;
-  text-decoration: none;
-  line-height: 1;
-} */
-
-/* .close-postcode-lookup:visited {
-  color: #0b0c0c;
-} */
-
 .hide-nojs {
   display: none;
 }
@@ -650,135 +623,15 @@ fieldset.after-error-summary {
   margin-bottom: 10px;
 }
 
-/* Apply check your answers */
-/* 
-
-.app-check-your-answers {
-  font-family: "nta", Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  font-weight: 400;
-  font-size: 16px;
-  font-size: 1rem;
-  line-height: 1.25;
-  margin-top: 0;
-  margin-bottom: 40px;
+.form-control-full {
+  width: 100%;
 }
 
-@media print {
-  .app-check-your-answers {
-    font-family: sans-serif;
-  }
-}
-
-@media (min-width: 40.0625em) {
-  .app-check-your-answers {
-    font-size: 19px;
-    font-size: 1.1875rem;
-    line-height: 1.31579;
-  }
-}
-
-@media print {
-  .app-check-your-answers {
-    font-size: 14pt;
-    line-height: 1.15;
-  }
-}
-
-@media (min-width: 40.0625em) {
-  .app-check-your-answers {
-    margin-bottom: 60px;
-  }
-}
-
-@media (min-width: 48.0625em) {
-  .app-check-your-answers {
-    display: table;
-  }
-}
-
-@media (min-width: 48.0625em) {
-  .app-check-your-answers--short {
+@media (min-width: 641px) {
+  .form-control-full {
     width: 100%;
   }
-
-  .app-check-your-answers--short .app-check-your-answers__question {
-    width: 30%;
-  }
 }
-
-@media (min-width: 48.0625em) {
-  .app-check-your-answers--long {
-    width: 100%;
-  }
-
-  .app-check-your-answers--long .app-check-your-answers__question {
-    width: 50%;
-  }
-}
-
-.app-check-your-answers__contents {
-  position: relative;
-  border-bottom: 1px solid #bfc1c3;
-}
-
-@media (min-width: 48.0625em) {
-  .app-check-your-answers__contents {
-    display: table-row;
-    border-bottom-width: 0;
-  }
-}
-
-@media (min-width: 48.0625em) {
-  .app-check-your-answers__contents:first-child
-    .app-check-your-answers__question,
-  .app-check-your-answers__contents:first-child .app-check-your-answers__answer,
-  .app-check-your-answers__contents:first-child
-    .app-check-your-answers__change {
-    padding-top: 0;
-  }
-}
-
-.app-check-your-answers__question,
-.app-check-your-answers__answer,
-.app-check-your-answers__change {
-  display: block;
-  margin: 0;
-}
-
-@media (min-width: 48.0625em) {
-  .app-check-your-answers__question,
-  .app-check-your-answers__answer,
-  .app-check-your-answers__change {
-    display: table-cell;
-    border-bottom: 1px solid #bfc1c3;
-    padding: 0.63158em 1.05263em 0.47368em 0;
-  }
-}
-
-.app-check-your-answers__question {
-  font-weight: bold;
-  margin: 0.63158em 4em 0.21053em 0;
-}
-
-.app-check-your-answers__answer {
-  padding-bottom: 0.47368em;
-}
-
-.app-check-your-answers__change {
-  text-align: right;
-  position: absolute;
-  top: 0;
-  right: 0;
-}
-
-@media (min-width: 48.0625em) {
-  .app-check-your-answers__change {
-    position: static;
-    padding-right: 0;
-  }
-} */
 
 .header-user .header-inner {
   max-width: 960px;
@@ -937,10 +790,6 @@ table.responsive tr td:before {
 table.responsive tr td:last-child {
   border-bottom: none;
 }
-
-/* table.responsive tr td:empty {
-  display: none;
-} */
 
 table.responsive tr.total {
   border: 2px solid #000;

@@ -28,7 +28,7 @@
                 <h2 class="heading-large">Current feedback</h2>
                 foreach (var feedback in Model.Feedback)
                 {
-                    <div>
+                    <div class="das-feedback">
                         <h3 class="heading-small">@feedback.From</h3>
                         <p class="font-xsmall">@feedback.Date.ToShortDateString()</p>
                         <p>@feedback.Message</p>
@@ -42,7 +42,7 @@
                     <label class="form-label" for="message">
                         Feedback
                     </label>
-                    <textarea class="form-control form-control-3-4" name="message" id="message" rows="5"></textarea>
+                    <textarea class="form-control form-control-full" name="message" id="message" rows="15"></textarea>
                 </div>
                 <button class="button" type="submit">Add feedback</button>
             </form>
