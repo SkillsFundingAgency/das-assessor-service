@@ -63,6 +63,14 @@
         "SubscriptionApprovalRequired": {
             "type": "bool",
             "defaultValue": true
+        },
+        "ApimServiceLocation": {
+            "type": "string",
+            "allowedValues": [
+                "North Europe",
+                "West Europe"
+            ],
+            "defaultValue": "North Europe"
         }
     },
     "variables": {
@@ -114,7 +122,7 @@
                 "name": "[parameters('SkuTier')]",
                 "capacity": 1
             },
-            "location": "[resourceGroup().location]",
+            "location": "[parameters('ApimServiceLocation')]",
             "resources": [
                 {
                     "name": "[parameters('ApiName')]",

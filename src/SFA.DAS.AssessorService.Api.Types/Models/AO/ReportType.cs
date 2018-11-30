@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.AssessorService.Api.Types.Models
+﻿namespace SFA.DAS.AssessorService.Api.Types.Models.AO
 {
     public enum ReportType
     {

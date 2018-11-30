@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -35,6 +36,20 @@ namespace SFA.DAS.AssessorService.Data
                     var standards = await connection.QueryAsync<StandardCollation>("select * from [StandardCollation]");
                     return standards.ToList();
                 } 
+        }
+
+
+        public async Task<DateTime?> GetDateOfLastStandardCollation()
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                const string sql = "select top 1 coalesce(max(DateUpdated), max(DateAdded)) maxDate  from StandardCollation";
+                var dateOfLastCollation = await connection.QuerySingleAsync<DateTime?>(sql);
+                return dateOfLastCollation;
+            }
         }
 
         public async Task<string> UpsertStandards(List<StandardCollation> standards)
@@ -93,7 +108,8 @@ namespace SFA.DAS.AssessorService.Data
             );
         }
 
-        private static int UpdateContactsThatAreDeleted(SqlConnection connection, List<StandardCollation> standards, List<StandardCollation> currentStandards)
+        private static int UpdateContactsThatAreDeleted(SqlConnection connection, List<StandardCollation> standards,
+            List<StandardCollation> currentStandards)
         {
             var countRemoved = 0;
             var deletedStandards = new List<StandardCollation>();
