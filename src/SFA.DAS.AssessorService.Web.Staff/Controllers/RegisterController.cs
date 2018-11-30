@@ -487,13 +487,14 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 Status = organisation.Status
             };
 
+            viewModel.OrganisationTypes = _apiClient.GetOrganisationTypes().Result;
+
             if (viewModel.OrganisationTypeId != null)
             {
-                var organisationTypes = _apiClient.GetOrganisationTypes().Result;
-                viewModel.OrganisationType = organisationTypes.First(x => x.Id == viewModel.OrganisationTypeId).Type;
+                var organisationTypes = viewModel.OrganisationTypes;
+                viewModel.OrganisationType = organisationTypes.FirstOrDefault(x => x.Id == viewModel.OrganisationTypeId)?.Type;
             }
-            viewModel.OrganisationTypes = _apiClient.GetOrganisationTypes().Result;
-            
+               
             GatherOrganisationContacts(viewModel);
             GatherOrganisationStandards(viewModel);
 
