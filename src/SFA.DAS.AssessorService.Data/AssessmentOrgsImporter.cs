@@ -33,7 +33,8 @@ namespace SFA.DAS.AssessorService.Data
         public AssessmentOrgsImporter(IAssessmentOrgsRepository assessmentOrgsRepository,
                                         IAssessmentOrgsSpreadsheetReader spreadsheetReader,
                                         ILogger<AssessmentOrgsImporter> logger,
-                                        IWebConfiguration configuration, IHostingEnvironment env)
+                                        IWebConfiguration configuration, 
+                                        IHostingEnvironment env)
         {
             _assessmentOrgsRepository = assessmentOrgsRepository;
             _spreadsheetReader = spreadsheetReader;
@@ -89,12 +90,9 @@ namespace SFA.DAS.AssessorService.Data
 
             using (var memoryStream = new MemoryStream())
             {
-
-
                 using (var fs = File.OpenRead($"..\\SFA.DAS.AssessorService.Database\\DataToImport\\{TemplateFile}"))
                 {
                     fs.CopyTo(memoryStream);
-
                     using (var package = new ExcelPackage(memoryStream))
                     {
                         LogProgress(progressStatus, "Reading from spreadsheet: Delivery Areas; ");

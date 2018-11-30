@@ -13,11 +13,9 @@ namespace SFA.DAS.AssessorService.Data
 {
     public class AssessmentOrgsSpreadsheetReader: IAssessmentOrgsSpreadsheetReader
     {
-        private const string LookupsWorkSheetName = "Lookups";
         private const string OrganisationsWorkSheetName = "Register - Organisations";
         private const string EpaStandardsWorkSheetName = "Register - Standards";
-        //private const string StandardsWorkSheetName = "Standards Lookup (LARS copy)";
-
+   
         private const string DeliveryAreasWorkSheetName = "Register - Delivery areas";
         private readonly ILogger<AssessmentOrgsSpreadsheetReader> _logger;
 
@@ -119,58 +117,6 @@ namespace SFA.DAS.AssessorService.Data
 
             return organisations;
         }
-
-        //public List<ApprenticeshipStandard> HarvestStandards(ExcelPackage package)
-        //{
-        //    var standards = new List<ApprenticeshipStandard>();
-        //    var worksheet = GetWorksheet(package, StandardsWorkSheetName);
-
-        //    for (var i = worksheet.Dimension.Start.Row + 4; i <= worksheet.Dimension.End.Row; i++)
-        //    {
-        //        var standardCode = ProcessValueAsInt(worksheet.Cells[i, 1].Value?.ToString(), "StandardCode", StandardsWorkSheetName, i);
-        //        var version = ProcessValueAsInt(worksheet.Cells[i, 2].Value?.ToString(), "Version", StandardsWorkSheetName, i);
-        //        var standardName = worksheet.Cells[i, 3].Value?.ToString();
-        //        var standardSectorCode = ProcessValueAsInt(worksheet.Cells[i, 4].Value?.ToString(), "StandardSectorCode", StandardsWorkSheetName, i);
-        //        var notionalEndLevel = ProcessValueAsInt(worksheet.Cells[i, 5].Value?.ToString(), "NotionalEndLevel", StandardsWorkSheetName, i);
-        //        var effectiveFrom = ProcessValueAsDateTime(worksheet.Cells[i, 6].Value?.ToString(), "EffectiveFrom", StandardsWorkSheetName, i);
-        //        var effectiveTo = ProcessNullableDateValue(worksheet.Cells[i, 7].Value?.ToString());
-        //        var lastDateStarts = ProcessNullableDateValue(worksheet.Cells[i, 8].Value?.ToString());
-        //        var urlLink = worksheet.Cells[i, 9].Value?.ToString();
-        //        var sectorSubjectAreaTier1 = ProcessNullableIntValue(worksheet.Cells[i, 10].Value?.ToString());
-        //        var sectorSubjectAreaTier2 = worksheet.Cells[i, 11].Value?.ToString();
-        //        var integratedDegreeStandard = ProcessYesNoValuesIntoBoolean(worksheet.Cells[i, 12].Value?.ToString());
-
-        //        var createdOn = ProcessNullableDateValue(worksheet.Cells[i, 13].Value?.ToString());
-        //        var createdBy = worksheet.Cells[i, 14].Value?.ToString();
-
-        //        var modifiedOn = ProcessNullableDateValue(worksheet.Cells[i, 15].Value?.ToString());
-        //        var modifiedBy = worksheet.Cells[i, 16].Value?.ToString();
-
-        //        standards.Add(
-        //            new ApprenticeshipStandard
-        //            {
-        //                StandardCode = standardCode,
-        //                Version = version,
-        //                StandardName = standardName,
-        //                StandardSectorCode = standardSectorCode,
-        //                NotionalEndLevel = notionalEndLevel,
-        //                EffectiveFrom = effectiveFrom,
-        //                EffectiveTo = effectiveTo,
-        //                LastDateStarts = lastDateStarts,
-        //                UrlLink = urlLink,
-        //                SectorSubjectAreaTier1 = sectorSubjectAreaTier1,
-        //                SectorSubjectAreaTier2 = sectorSubjectAreaTier2,
-        //                IntegratedDegreeStandard = integratedDegreeStandard,
-        //                CreatedOn = createdOn,
-        //                CreatedBy = createdBy,
-        //                ModifiedOn = modifiedOn,
-        //                ModifiedBy = modifiedBy,
-        //                Status = "Live"
-        //            });
-        //    }
-
-        //    return standards;
-        //}
 
         public List<EpaOrganisationStandard> HarvestEpaOrganisationStandards(ExcelPackage package, List<EpaOrganisation> epaOrganisations)
         {

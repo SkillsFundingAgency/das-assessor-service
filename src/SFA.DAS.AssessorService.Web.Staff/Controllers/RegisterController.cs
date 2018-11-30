@@ -63,7 +63,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             return View(registerViewModel);
         }
 
-
         [HttpGet("register/edit-organisation/{organisationId}")]
         public async Task<IActionResult> EditOrganisation(string organisationId)
         {

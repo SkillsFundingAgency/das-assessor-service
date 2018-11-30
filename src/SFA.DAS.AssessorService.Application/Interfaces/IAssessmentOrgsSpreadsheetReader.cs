@@ -13,11 +13,11 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         List<EpaOrganisationStandard> HarvestEpaOrganisationStandards(ExcelPackage package,
             List<EpaOrganisation> epaOrganisations);
         List<EpaOrganisationStandardDeliveryArea> HarvestStandardDeliveryAreas(ExcelPackage package,
-            List<EpaOrganisation> epaOrganisations, List<DeliveryArea> deliveryAreas);
-        List<OrganisationContact> HarvestOrganisationContacts(List<EpaOrganisation> organisations, 
-                                                             List<EpaOrganisationStandard> organisationStandards);
-
-        void MapDeliveryAreasCommentsIntoOrganisationStandards(List<EpaOrganisationStandardDeliveryArea> osDeliveryAreas, List<EpaOrganisationStandard> organisationStandards);
+                                                     List<EpaOrganisation> epaOrganisations, List<DeliveryArea> deliveryAreas);
+        List<OrganisationContact> HarvestOrganisationContacts(List<EpaOrganisation> organisations,  
+                                                              List<EpaOrganisationStandard> organisationStandards);
+        void MapDeliveryAreasCommentsIntoOrganisationStandards(List<EpaOrganisationStandardDeliveryArea> osDeliveryAreas, 
+                                                                List<EpaOrganisationStandard> organisationStandards);
         void MapPrimaryContacts(List<EpaOrganisation> organisations, List<OrganisationContact> contacts);
     }
 }
