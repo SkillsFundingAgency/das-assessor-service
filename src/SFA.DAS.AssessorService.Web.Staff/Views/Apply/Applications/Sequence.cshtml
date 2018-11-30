@@ -27,14 +27,14 @@
                     <h2 class="heading-medium heading-medium--small-margin-bottom">
                         @applicationSection.LinkTitle
                     </h2>
-                    <span id="company-details-hint" class="form-hint form-hint--margin-bottom">
+                    <span class="form-hint form-hint--margin-bottom">
                         @applicationSection.PagesComplete of @applicationSection.PagesActive questions completed
                     </span>
                     <a href="@Url.Action("Section", "Application", new {applicationSection.ApplicationId, applicationSection.SequenceId, applicationSection.SectionId})">
                         Go to @applicationSection.LinkTitle.ToLower()
                     </a>
+                    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
                 </li>
-                <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
             }
         </ul>
 
