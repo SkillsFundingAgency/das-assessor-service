@@ -227,7 +227,7 @@ namespace SFA.DAS.AssessorService.Data
         }
         public async Task<CloudBlobContainer> GetContainer(string containerName)
         {
-            var storageAccount = CloudStorageAccount.Parse(_webConfiguration.IFATemplateStorageConnectionString);     
+            var storageAccount = CloudStorageAccount.DevelopmentStorageAccount;    
             var client = storageAccount.CreateCloudBlobClient();
             var blobContainer = client.GetContainerReference(containerName);
 
