@@ -277,21 +277,16 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         [HttpGet("register/impage")]
         public async Task<IActionResult> Impage()
         {
-            var isDevelopment = _env.IsDevelopment();
-            if (!isDevelopment)
+            if (!_env.IsDevelopment())
                 return NotFound();
            
-            var vm = new AssessmentOrgsImportResponse { Status = "Press to run" };
-
-           
+            var vm = new AssessmentOrgsImportResponse { Status = "Press to run" };         
             return View(vm);
         }
         [HttpGet("register/impage-{choice}")]
         public async Task<IActionResult> Impage(string choice)
         {
-            var isDevelopment = _env.IsDevelopment();
-
-            if (!isDevelopment)
+            if (!_env.IsDevelopment())
                 return NotFound();
 
             var vm = new AssessmentOrgsImportResponse { Status = "Running" };
