@@ -24,7 +24,7 @@
                                 @pg.LinkTitle
                             </dt>
                             
-                                    <dd class="cya-answer">
+                            <dd class="cya-answer">
                                 @foreach (var answerPage in pg.DisplayAnswerPages)
                                 {
                                         @foreach (var answer in answerPage.DisplayAnswers)
@@ -33,28 +33,35 @@
                                             <p>@answer.Answer</p>
                                         }
                                 }
-                                    </dd>
+                            </dd>
 
-                                <dd class="cya-change">
-                                    @if (pg.HasNewFeedback)
-                                    {
-                                        <span class="form-label-bold">Feedback added</span>
-                                    }
-                                    @if (pg.HasReadFeedback)
-                                    {
-                                        <span class="form-label-bold">Answer updated</span>
-                                    }
+                            <dd class="cya-change das-cya-change--responsive">
+                                @if (pg.HasNewFeedback)
+                                {
+                                    <div class="govuk-tag form-group">
+                                        Feedback added
+                                    </div>
+                                }
+                                @if (pg.HasReadFeedback)
+                                {
+                                    <div class="govuk-tag form-group">
+                                        Answer updated
+                                    </div>
+                                }
+
+                                <p>
                                     <a class="nowrap" href="@Url.Action("Page", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = pg.PageId})">
                                         @if (pg.HasNewFeedback)
                                         {
-                                            <text>Add more feedback</text>
+                                            <text>View or add feedback</text>
                                         }
                                         else
                                         {
                                             <text>Add feedback</text>
                                         }
                                     </a>
-                                </dd>
+                                </p>
+                            </dd>
                         </div>
                     }
                 </dl>

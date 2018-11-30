@@ -4,6 +4,39 @@
     ViewBag.Title = @Model.Title;
     Layout = "_Layout";
 }
+@*
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Month you apply</th>
+      <th class="numeric" scope="col">Rate for vehicles</th>
+      <th class="numeric" scope="col">Rate for bicycles</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">January</th>
+      <td class="numeric">£165.00</td>
+      <td class="numeric">£85.00</td>
+    </tr>
+    <tr>
+      <th scope="row">February</th>
+      <td class="numeric">£165.00</td>
+      <td class="numeric">£85.00</td>
+    </tr>
+    <tr>
+      <th scope="row">March</th>
+      <td class="numeric">£151.25</td>
+      <td class="numeric">£77.90</td>
+    </tr>
+    <tr>
+      <th scope="row">April</th>
+      <td class="numeric">£136.10</td>
+      <td class="numeric">£70.10</td>
+    </tr>
+  </tbody>
+</table>
+*@
 
 <div class="grid-row">
     <div class="column-two-thirds">
@@ -12,20 +45,28 @@
 
             @foreach (var pageOfAnswers in Model.DisplayAnswerPages)
             {
-                <div>
-                    @foreach (var answer in pageOfAnswers.DisplayAnswers)
-                    {
-                        <h2 class="heading-small">@answer.Label</h2>
-                        <p>@answer.Answer</p>
-                    }
-                </div>
+                <table class="form-group">
+                    <thead>
+                        <tr>
+                        <th scope="col">Question</th>
+                        <th scope="col">Answer</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var answer in pageOfAnswers.DisplayAnswers)
+                        {
+                            <tr>
+                                <td>@answer.Label</td>
+                                <td>@answer.Answer</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             }
-
-            <hr />
 
             @if (Model.HasFeedback)
             {
-                <h2 class="heading-large">Current feedback</h2>
+                <h2 class="heading-large">Feedback</h2>
                 foreach (var feedback in Model.Feedback)
                 {
                     <div class="das-feedback">
