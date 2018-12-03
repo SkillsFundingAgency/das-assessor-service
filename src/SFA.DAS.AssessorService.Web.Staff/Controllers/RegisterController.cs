@@ -19,7 +19,7 @@ using SFA.DAS.AssessorService.Web.Staff.Services;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {
-    [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
+    [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam + "," + Roles.RegisterViewOnlyTeam)]
     public class RegisterController: Controller
     {
         private readonly ApiClient _apiClient;
@@ -64,6 +64,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         }
 
 
+
+        [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
         [HttpGet("register/edit-organisation/{organisationId}")]
         public async Task<IActionResult> EditOrganisation(string organisationId)
         {
@@ -72,7 +74,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             return View(viewModel);
         }
 
-
+        [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
         [HttpPost("register/edit-organisation/{organisationId}")]
                  public async Task<IActionResult> EditOrganisation(RegisterViewAndEditOrganisationViewModel viewModel)
                  {
@@ -106,6 +108,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                      return RedirectToAction("ViewOrganisation", "register", new { organisationId = viewModel.OrganisationId});
                  }
 
+        [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
         [HttpGet("register/add-organisation")]
         public async Task<IActionResult> AddOrganisation()
         {
@@ -117,7 +120,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             return View(vm);
         }
 
-       [HttpGet("register/add-standard/organisation/{organisationId}/standard/{standardId}")]
+        [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
+        [HttpGet("register/add-standard/organisation/{organisationId}/standard/{standardId}")]
         public async Task<IActionResult> AddOrganisationStandard(string organisationId, int standardId)
        {
            var viewModelToHydrate =
@@ -128,6 +132,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
        }
 
 
+        [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
         [HttpPost("register/add-standard/organisation/{organisationId}/standard/{standardId}")]
         public async Task<IActionResult> AddOrganisationStandard(RegisterAddOrganisationStandardViewModel viewModel)
         {
@@ -165,7 +170,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             return View(viewModel);
         }
 
-
+        [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
         [HttpGet("register/edit-standard/{organisationStandardId}")]
         public async Task<IActionResult> EditOrganisationStandard(int organisationStandardId)
         {
@@ -176,6 +181,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             return View(vm);
         }
 
+        [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
         [HttpPost("register/edit-standard/{organisationStandardId}")]
         public async Task<IActionResult> EditOrganisationStandard(RegisterViewAndEditOrganisationStandardViewModel viewModel)
         {
@@ -204,6 +210,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             return Redirect($"/register/view-standard/{organisationStandardId}");
         }
 
+        [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
         [HttpGet("register/add-contact/{organisationId}")]
         public async Task<IActionResult> AddContact(string organisationId)
         {
@@ -215,6 +222,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             return View(vm);
         }
 
+        [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
         [HttpPost("register/add-contact/{organisationId}")]
         public async Task<IActionResult> AddContact(RegisterAddContactViewModel viewModel)
         {
@@ -237,6 +245,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             
         }
 
+        [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
         [HttpGet("register/edit-contact/{contactId}")]
         public async Task<IActionResult> EditContact(string contactId)
         {
@@ -246,6 +255,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             return View(viewModel);
         }
 
+        [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
         [HttpPost("register/edit-contact/{contactId}")]
         public async Task<IActionResult> EditContact(RegisterViewAndEditContactViewModel viewAndEditModel)
         {
@@ -265,7 +275,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             await _apiClient.UpdateEpaContact(request);
             return RedirectToAction("ViewContact", "register", new { contactId = viewAndEditModel.ContactId});
         }
-        
+
         [HttpGet("register/view-contact/{contactId}")]
         public async Task<IActionResult> ViewContact(string contactId)
         {
@@ -300,7 +310,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             return View(vm);
         }
 
-
+        [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
         [HttpPost("register/add-organisation")]
         public async Task<IActionResult> AddOrganisation(RegisterOrganisationViewModel viewModel)
         {
@@ -337,6 +347,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         }
 
 
+        [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
         [HttpGet("register/search-standards/{organisationId}")]
         public async Task<IActionResult> SearchStandards(string organisationId)
         {
@@ -346,6 +357,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             return View(vm);
         }
 
+        [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
         [HttpGet("register/search-standards-results")]
         public async Task<IActionResult> SearchStandardsResults(SearchStandardsViewModel vm)
         {
