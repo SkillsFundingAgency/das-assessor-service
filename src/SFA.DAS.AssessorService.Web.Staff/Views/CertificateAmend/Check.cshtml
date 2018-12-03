@@ -35,12 +35,9 @@
                     @Model.GivenNames
                 </dd>
                 <dd class="cya-change">
-                    @if (Model.IsPrivatelyFunded)
-                    {
                     <a asp-controller="CertificatePrivateFirstName" asp-action="FirstName" asp-route-certificateId=@Model.Id asp-route-stdcode=@Model.StandardCode asp-route-uln=@Model.Uln asp-route-searchstring=@Model.SearchString>
                         Change<span class="visually-hidden"> first name</span>
                     </a>
-                    }
                 </dd>
             </div>
 
@@ -52,12 +49,9 @@
                     @Model.FamilyName
                 </dd>
                 <dd class="cya-change">
-                    @if (Model.IsPrivatelyFunded)
-                    {
                     <a asp-controller="CertificatePrivateLastName" asp-action="LastName" asp-route-certificateId=@Model.Id asp-route-stdcode=@Model.StandardCode asp-route-uln=@Model.Uln asp-route-searchstring=@Model.SearchString>
                         Change<span class="visually-hidden"> last name</span>
                     </a>
-                    }
                 </dd>
             </div>
     
