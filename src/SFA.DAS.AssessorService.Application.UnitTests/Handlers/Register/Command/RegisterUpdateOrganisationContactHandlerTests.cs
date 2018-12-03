@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             _requestNoIssues = BuildRequest(_contactId, _displayName, _email,_phoneNumber);
             _expectedOrganisationContactNoIssues = BuildOrganisationStandard(_requestNoIssues);
 
-            _registerRepository.Setup(r => r.UpdateEpaOrganisationContact(It.IsAny<EpaContact>()))
+            _registerRepository.Setup(r => r.UpdateEpaOrganisationContact(It.IsAny<EpaContact>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(_expectedOrganisationContactNoIssues.Id.ToString()));
             
             _cleanserService.Setup(c => c.CleanseStringForSpecialCharacters(It.IsAny<string>()))
@@ -60,7 +60,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
         public void UpdateOrganisationContactDetailsRepoIsCalledWhenHandlerInvoked()
         {
             var res = _updateEpaOrganisationContactHandler.Handle(_requestNoIssues, new CancellationToken()).Result;
-            _registerRepository.Verify(r => r.UpdateEpaOrganisationContact(It.IsAny<EpaContact>()));
+            _registerRepository.Verify(r => r.UpdateEpaOrganisationContact(It.IsAny<EpaContact>(), It.IsAny<string>()));
         }
 
         [Test]
@@ -86,7 +86,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             _validator.Setup(v => v.ValidatorUpdateEpaOrganisationContactRequest(requestFailedContactDetails)).Returns(errorResponse);
             var ex = Assert.ThrowsAsync<BadRequestException>(() => _updateEpaOrganisationContactHandler.Handle(requestFailedContactDetails, new CancellationToken()));
             Assert.AreEqual(errorMessage + "; ", ex.Message);
-            _registerRepository.Verify(r => r.UpdateEpaOrganisationContact(It.IsAny<EpaContact>()), Times.Never);
+            _registerRepository.Verify(r => r.UpdateEpaOrganisationContact(It.IsAny<EpaContact>(),It.IsAny<string>()), Times.Never);
             _validator.Verify(v => v.ValidatorUpdateEpaOrganisationContactRequest(requestFailedContactDetails));
         }
 
