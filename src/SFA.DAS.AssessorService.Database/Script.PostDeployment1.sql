@@ -24,26 +24,26 @@ BEGIN
 END
 GO
 
-UPDATE [OrganisationType] SET [Type] =  'Awarding Organisations', [TypeDescription] = 'Awarding Organisations' WHERE id = 1;
-UPDATE [OrganisationType] SET [Type] =  'Assessment Organisations', [TypeDescription] = 'Assessment Organisations' WHERE id = 2;
-UPDATE [OrganisationType] SET [Type] =  'Trade Body', [TypeDescription] = 'Trade Body' WHERE id = 3;
-UPDATE [OrganisationType] SET [Type] =  'Professional Body', [TypeDescription] = 'Professional Body - approved by the relevant council' WHERE id = 4;
+UPDATE [OrganisationType] SET [Type] =  'Awarding Organisations', [TypeDescription] = 'Awarding organisations' WHERE id = 1;
+UPDATE [OrganisationType] SET [Type] =  'Assessment Organisations', [TypeDescription] = 'Assessment organisations' WHERE id = 2;
+UPDATE [OrganisationType] SET [Type] =  'Trade Body', [TypeDescription] = 'Trade body' WHERE id = 3;
+UPDATE [OrganisationType] SET [Type] =  'Professional Body', [TypeDescription] = 'Professional body - approved by the relevant council' WHERE id = 4;
 UPDATE [OrganisationType] SET [Type] =  'HEI', [TypeDescription] = 'HEI monitored and supported by OfS' WHERE id = 5;
-UPDATE [OrganisationType] SET [Type] =  'NSA or SSC', [TypeDescription] = 'National Skills Academy / Sector Skills Council' WHERE id = 6;
+UPDATE [OrganisationType] SET [Type] =  'NSA or SSC', [TypeDescription] = 'National skills academy or sector skills council' WHERE id = 6;
 UPDATE [OrganisationType] SET [Type] =  'Training Provider', [TypeDescription] = 'Training Provider - including HEI not in England' WHERE id = 7;
 UPDATE [OrganisationType] SET [Status] =  'Deleted' WHERE id = 8;
-UPDATE [OrganisationType] SET [Type] =  'Public Sector', [TypeDescription] = 'Incorporated as Public Sector Body, Local authority including LEA schools, Central Government Department / Executive Agency / Non-departmental public body, NHS Trust / Fire Authority, Police Constabulary or Police Crime Commissioner' WHERE id = 9;
+UPDATE [OrganisationType] SET [Type] =  'Public Sector', [TypeDescription] = 'Incorporated as public sector bodies' WHERE id = 9;
 
 -- 'College'
 IF NOT EXISTS(SELECT * FROM OrganisationType WHERE id = 10)
 BEGIN
 	SET identity_insert OrganisationType ON
-	INSERT INTO [OrganisationType] (ID,[Type],[Status], [TypeDescription]) VALUES (10,'College','Live','GFE College currently receiving funding from the ESFA, 6th form / FE college');
+	INSERT INTO [OrganisationType] (ID,[Type],[Status], [TypeDescription]) VALUES (10,'College','Live','GFE college currently receiving funding from the ESFA, 6th form or FE college');
 	SET identity_insert OrganisationType OFF
 END
 ELSE
 BEGIN
-	UPDATE [OrganisationType] SET [Type] =  'College', [TypeDescription] = 'GFE College currently receiving funding from the ESFA, 6th form / FE college' WHERE id = 10;
+	UPDATE [OrganisationType] SET [Type] =  'College', [TypeDescription] = 'GFE college currently receiving funding from the ESFA, 6th form or FE college' WHERE id = 10;
 END
 
 IF NOT EXISTS(SELECT * FROM StaffReports)
