@@ -10,6 +10,20 @@ Post-Deployment Script Template
 --------------------------------------------------------------------------------------
 */
 
+-- Add CertificateId, Username Index to CertificateLogs
+IF NOT EXISTS
+(
+	SELECT *
+	FROM sys.indexes
+	WHERE name='nci_wi_CertificateLogs_CertificateId_Username'
+)
+BEGIN
+	CREATE NONCLUSTERED INDEX [nci_wi_CertificateLogs_CertificateId_Username] ON [dbo].[CertificateLogs] ([CertificateId], [Username])
+	INCLUDE ([Action], [EventTime], [Status], [CertificateData], [BatchNumber], [ReasonForChange]) WITH (ONLINE = ON)
+END
+GO
+
+
 -- Amend Organisations Type to have description
 
 IF NOT EXISTS 
