@@ -1,4 +1,5 @@
 ﻿@using SFA.DAS.AssessorService.Web.Staff.Controllers
+@using SFA.DAS.AssessorService.Web.Staff.Domain
 @model RegisterViewAndEditOrganisationViewModel
 @{
 ViewBag.Title = "View Organisation";
@@ -79,7 +80,7 @@ Layout = "_Layout";
                 </table>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam)">
                 <a class="button" href="/register/edit-organisation/@Model.OrganisationId">Edit</a>
             </div>
         </div>
@@ -125,7 +126,7 @@ Layout = "_Layout";
             <span>There are no contacts</span>
             }
         </div>
-        <div class="form-group">
+        <div class="form-group" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam)">
             <a class="button" href="/register/add-contact/@Model.OrganisationId">Add New Contact</a>
         </div>
     </div>
@@ -166,11 +167,11 @@ Layout = "_Layout";
         <div class="form-group">
             @if (@Model.Contacts.Count > 0)
             {
-                <a class="button" href="/register/search-standards/@Model.OrganisationId">Add New Standard</a>
+                <a class="button" href="/register/search-standards/@Model.OrganisationId"  sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam)">Add New Standard</a>
             }
             else
             {
-                <span>You can add standards when there are 1 or more contacts added to the organisation</span>
+                <span  sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam)">You can add standards when there are 1 or more contacts added to the organisation</span>
             }
         </div>
     </div>
