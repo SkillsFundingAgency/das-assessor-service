@@ -1,5 +1,6 @@
 ﻿@using SFA.DAS.AssessorService.Web.Staff.Controllers
 @using SFA.DAS.AssessorService.Domain.Extensions
+@using SFA.DAS.AssessorService.Web.Staff.Domain
 @model RegisterViewAndEditOrganisationStandardViewModel
 @{
     ViewBag.Title = "View Organisation Standard";
@@ -32,16 +33,16 @@
                             <td> @Model.StandardTitle (@Model.StandardId)</td>
                         </tr>
                         <tr>
-                            <td><span class="bold-small">Standard effective from</span></td>
+                            <td><span class="bold-small">Effective from</span></td>
                             <td> @Model.EffectiveFrom.ToSfaShortDateString()</td>
                         </tr>
                         <tr>
-                            <td><span class="bold-small">Standard effective to</span></td>
+                            <td><span class="bold-small">Effective to</span></td>
                             <td> @Model.EffectiveTo.ToSfaShortDateString()</td>
                         </tr>
                         <tr>
                             <td><span class="bold-small">Date approved on register</span></td>
-                            <td> @Model.DateStandardApprovedOnRegister</td>
+                            <td> @Model.DateStandardApprovedOnRegister.ToSfaShortDateString()</td>
                         </tr>
                         <tr>
                             <td><span class="bold-small">Status</span></td>
@@ -91,7 +92,8 @@
                 </table>
             </div>
 
-            <div class="form-group">
+            <div class="form-group"  sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam)">
+
                 <a class="button" href="/register/edit-standard/@Model.OrganisationStandardId">Edit</a>
             </div>
         </div>
