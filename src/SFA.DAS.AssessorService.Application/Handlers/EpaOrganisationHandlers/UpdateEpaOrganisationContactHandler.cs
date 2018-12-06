@@ -48,7 +48,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 throw new Exception(message);
             }
             var contact = MapOrganisationContactRequestToContact(request);
-            return await _registerRepository.UpdateEpaOrganisationContact(contact);
+            return await _registerRepository.UpdateEpaOrganisationContact(contact, request.ActionChoice);
         }
 
         private static EpaContact MapOrganisationContactRequestToContact(UpdateEpaOrganisationContactRequest request)
