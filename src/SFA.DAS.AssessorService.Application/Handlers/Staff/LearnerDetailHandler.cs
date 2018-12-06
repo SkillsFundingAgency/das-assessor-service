@@ -61,8 +61,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             var learnerDetail = new LearnerDetail()
             {
                 Uln = learner.Uln,
-                FamilyName = learner.FamilyName,
-                GivenNames = learner.GivenNames,
+                FamilyName = !string.IsNullOrEmpty(certificateData?.LearnerFamilyName) ?  certificateData.LearnerFamilyName : learner.FamilyName,
+                GivenNames = !string.IsNullOrEmpty(certificateData?.LearnerGivenNames) ?  certificateData.LearnerGivenNames : learner.GivenNames,
                 LearnStartDate = learner.LearnStartDate,
                 StandardCode = learner.StdCode,
                 Standard = standard.Title,
