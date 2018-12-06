@@ -8,6 +8,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Azure;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Paging;
+using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
 {
@@ -19,11 +20,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
         protected readonly IOrganisationsApiClient _organisationsApiClient;
         protected readonly IContactsApiClient _contactsApiClient;
 
-        public AzureApiClient(string baseUri, string productId, string groupId, string requestBaseUri, IAzureTokenService tokenService, ILogger<AzureApiClientBase> logger, IOrganisationsApiClient organisationsApiClient, IContactsApiClient contactsApiClient) : base(baseUri, tokenService, logger)
+        public AzureApiClient(string baseUri, IAzureTokenService tokenService, ILogger<AzureApiClientBase> logger, IWebConfiguration webConfiguration, IOrganisationsApiClient organisationsApiClient, IContactsApiClient contactsApiClient) : base(baseUri, tokenService, logger)
         {
-            _productId = productId;
-            _groupId = groupId;
-            _requestBaseUri = new Uri(requestBaseUri);
+            _productId = webConfiguration.AzureApiAuthentication.ProductId;
+            _groupId = webConfiguration.AzureApiAuthentication.GroupId;
+            _requestBaseUri = new Uri(webConfiguration.AzureApiAuthentication.RequestBaseAddress);
             _organisationsApiClient = organisationsApiClient;
             _contactsApiClient = contactsApiClient;
         }
@@ -110,7 +111,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
                     subscription.ApiEndPointUrl = new Uri(_requestBaseUri, subscription.ProductId).ToString();
                 }
 
-                return response.Subscriptions;
+                return response.Subscriptions.Where(sub => sub.State != "cancelled").AsEnumerable();
             }            
         }
 
@@ -168,7 +169,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
                     await AddUserToGroup(user.Id, _groupId);
                 }
 
-                if (!user.Groups.Any(g => string.Equals(g.Id, _productId, StringComparison.InvariantCultureIgnoreCase)))
+                if (!user.Subscriptions.Any(s => string.Equals(s.ProductId, _productId, StringComparison.InvariantCultureIgnoreCase)))
                 {
                     await SubscribeUserToProduct(user.Id, _productId);
                 }
@@ -257,10 +258,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
 
         public async Task EnableUser(string userId)
         {
-            var user = await GetUserDetails(userId);
+            var user = await GetUserDetails(userId, true);
 
             if (user != null)
             {
+                foreach (var subscription in user.Subscriptions.Where(s => string.Equals(s.ProductId, _productId, StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    await EnableSubscription(subscription.Id);
+                }
+
                 var request = new EnableDisableAzureUserRequest { State = "active" };
                 using (var httpRequest = new HttpRequestMessage(new HttpMethod("PATCH"), $"/users/{userId}?api-version=2017-03-01"))
                 {
@@ -276,10 +282,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
 
         public async Task DisableUser(string userId)
         {
-            var user = await GetUserDetails(userId);
+            var user = await GetUserDetails(userId, true);
 
             if (user != null)
             {
+                foreach (var subscription in user.Subscriptions.Where(s => string.Equals(s.ProductId, _productId, StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    await DisableSubscription(subscription.Id);
+                }
+
                 var request = new EnableDisableAzureUserRequest { State = "blocked" };
                 using (var httpRequest = new HttpRequestMessage(new HttpMethod("PATCH"), $"/users/{userId}?api-version=2017-03-01"))
                 {

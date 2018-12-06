@@ -1,5 +1,7 @@
 ﻿@using SFA.DAS.AssessorService.Api.Types.Models.Azure;
-@using SFA.DAS.AssessorService.Domain.Extensions;
+
+@inject SFA.DAS.AssessorService.Settings.IWebConfiguration WebConfiguration
+
 @model AzureUser
 @{
     ViewBag.Title = "External API Details";
@@ -9,7 +11,7 @@
 <div class="grid-row">
     <div class="column-full">
         <h1 class="heading-large">External API Details</h1>
-        @if (Model == null)
+        @if (Model == null || Model.Subscriptions.All(s => s.ProductId != WebConfiguration.AzureApiAuthentication.ProductId))
         {
             <span class="form-hint">By enabling access you will be the primary contact.</span>
 
@@ -23,7 +25,6 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Name</th>
                             <th>Ukprn</th>
                             <th>Email</th>
                             <th>Access</th>
@@ -31,10 +32,9 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>@Model.LastName</td>
-                            <td>@Model.Ukprn</td>
-                            <td>@Model.Email</td>
-                            <td>@Html.Raw(string.Equals(@Model.State, "blocked") ? "Disabled" : "Enabled")</td>
+                            <td data-label="Ukprn">@Model.Ukprn</td>
+                            <td data-label="Email">@Model.Email</td>
+                            <td data-label="Access">@Html.Raw(string.Equals(@Model.State, "blocked") ? "Disabled" : "Enabled")</td>
                         </tr>
                     </tbody>
                 </table>
@@ -49,7 +49,7 @@
 
                     @foreach (var subscription in Model.Subscriptions)
                     {
-                        <div class="column-one-half form-group">
+                        <div class="column-full form-group">
                             <h2 class="bold-medium">@subscription.ProductId</h2>
                             <h3 class="heading-small">Api endpoint</h3>
                             <span class="code">@subscription.ApiEndPointUrl</span>
@@ -58,7 +58,7 @@
                                 <span class="code">@subscription.PrimaryKey</span>
                                 <input type="submit" value="Renew" class="button" />
                             </form>
-                            @*<h3 class="heading-small">Secondary key</h3>
+                            @*<h3 class="heading-small">Secondary subscription key</h3>
                             <form asp-action="RenewSecondaryKey" asp-controller="ExternalApi" asp-route-subscriptionId="@subscription.Id" asp-route-userId="@Model.Id" method="post">
                                 <span class="code">@subscription.SecondaryKey</span>
                                 <input type="submit" value="Renew" class="button" />
@@ -81,11 +81,11 @@
                             <div class="form-group">
                                 <h1>
                                     <label class="form-label">
-                                        <span class="heading-large">Remove access?</span>
+                                        <span class="heading-large">Remove External API access?</span>
                                         <span class="form-hint">Note that this will be immediate.</span>
                                     </label>
                                 </h1>
-                                <button class="button" type="submit">Remove Access</button>
+                                <button class="button" type="submit">Remove access</button>
                             </div>
                         </div>
                     </div>
