@@ -32,7 +32,7 @@ UPDATE [OrganisationType] SET [Type] =  'HEI', [TypeDescription] = 'HEI monitore
 UPDATE [OrganisationType] SET [Type] =  'NSA or SSC', [TypeDescription] = 'National skills academy or sector skills council' WHERE id = 6;
 UPDATE [OrganisationType] SET [Type] =  'Training Provider', [TypeDescription] = 'Training Provider - including HEI not in England' WHERE id = 7;
 UPDATE [OrganisationType] SET [Status] =  'Deleted' WHERE id = 8;
-UPDATE [OrganisationType] SET [Type] =  'Public Sector', [TypeDescription] = 'Incorporated as public sector bodies' WHERE id = 9;
+UPDATE [OrganisationType] SET [Type] =  'Public Sector', [TypeDescription] = 'Incorporated as a public sector body' WHERE id = 9;
 
 -- 'College'
 IF NOT EXISTS(SELECT * FROM OrganisationType WHERE id = 10)
