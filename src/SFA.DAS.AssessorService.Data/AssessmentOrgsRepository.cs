@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -51,6 +52,8 @@ namespace SFA.DAS.AssessorService.Data
                     connection.Execute("DELETE FROM [OrganisationStandardDeliveryArea]");
                     LogProgress(progressStatus, "Teardown: DELETING all items in [OrganisationStandard]; ");
                     connection.Execute("DELETE FROM [OrganisationStandard]");
+                    LogProgress(progressStatus, "Teardown: DELETING all items in [options]; ");
+                    connection.Execute("DELETE FROM [Options]");
                 }
             }
             catch (Exception e)
@@ -65,6 +68,48 @@ namespace SFA.DAS.AssessorService.Data
             _logger.LogInformation($"Progress status: {progressStatus}");
 
             return progressStatus.ToString();
+        }
+
+        public void WriteOptions(List<Option> options)
+        {
+            var connectionString = LocalConnectionString();
+            using (var connection = new SqlConnection(connectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    connection.Open();
+
+                var optionsToInsert = new List<Option>();
+
+                foreach (var option in options)
+                {
+                    var currentCount = connection
+                        .ExecuteScalar(
+                            "select count(0) from [options] where StdCode = @stdCode and OptionName = @optionName", new {option.StdCode, option.OptionName})
+                        .ToString();
+
+                    if (currentCount == "0")
+                    {
+                        optionsToInsert.Add(option);
+                    }
+                   
+                }
+
+                var sql = new StringBuilder();
+
+                foreach (var opt in optionsToInsert)
+                {          
+                    var sqlToAppend =
+                        $"INSERT INTO Options (StdCode, OptionName) VALUES ({opt.StdCode},'{opt.OptionName}'); ";
+                    sql.Append(sqlToAppend);
+
+                }
+
+                if (sql.ToString()!=string.Empty)
+                    connection.Execute(sql.ToString());
+
+                connection.Close();
+            }
+
         }
 
         public void WriteDeliveryAreas(List<DeliveryArea> deliveryAreas)
