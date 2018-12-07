@@ -92,7 +92,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         public void UpdateOrganisationContactCheckNewDetails()
         {
             var contactBeforeChange = OrganisationContactHandler.GetContactById(_contactId.ToString());
-            var returnedContactId = _repository.UpdateEpaOrganisationContact(_contactUpdated).Result;
+            var returnedContactId = _repository.UpdateEpaOrganisationContact(_contactUpdated,"Save").Result;
             var contactAfterChange = OrganisationContactHandler.GetContactById(_contactId.ToString());
    
             _contactBeforeChange.Should().BeEquivalentTo(contactBeforeChange);

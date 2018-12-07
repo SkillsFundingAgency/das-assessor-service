@@ -5,9 +5,12 @@ using OfficeOpenXml;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Web.Staff.Domain;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
@@ -43,17 +46,17 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 return RedirectToAction("Index");
             }
 
-                var reports = await _apiClient.GetReportList();               
-                var reportType = await _apiClient.GetReportTypeFromId(reportId);
+            var reports = await _apiClient.GetReportList();
+            var reportType = await _apiClient.GetReportTypeFromId(reportId);
 
-                if (reportType == ReportType.Download)
-                    return RedirectToAction("DirectDownload", new {reportId });
+            if (reportType == ReportType.Download)
+                return RedirectToAction("DirectDownload", new {reportId});
 
 
-                var data = await _apiClient.GetReport(reportId);
-                var vm = new ReportViewModel {Reports = reports, ReportId = reportId, SelectedReportData = data};
-                return View(vm);
-            
+            var data = await _apiClient.GetReport(reportId);
+            var vm = new ReportViewModel {Reports = reports, ReportId = reportId, SelectedReportData = data};
+            return View(vm);
+
         }
 
         public async Task<FileContentResult> DirectDownload(Guid reportId)
@@ -66,8 +69,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 
             using (var package = new ExcelPackage())
             {
-                if (reportDetails.Type == "excel")
-                {
+
                     foreach (var ws in reportDetails.Worksheets.OrderBy(w => w.Order))
                     {
                         var worksheetToAdd = package.Workbook.Worksheets.Add(ws.Worksheet);
@@ -76,13 +78,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                     }
 
                     return File(package.GetAsByteArray(), "application/excel", $"{reportDetails.Name}.xlsx");
-                }
-
-                return null;
+              
             }
         }
+    
 
-        public async Task<FileContentResult> Export(Guid reportId)
+    public async Task<FileContentResult> Export(Guid reportId)
         {
             var data = await _apiClient.GetReport(reportId);
 
