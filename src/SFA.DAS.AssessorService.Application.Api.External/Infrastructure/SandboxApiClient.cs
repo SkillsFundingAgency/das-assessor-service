@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                     {
                         CertificateReference = "SANDBOX",
                         Learner = new Learner { FamilyName = request.FamilyName, GivenNames = "FIRSTNAME", Uln = request.Uln },
-                        LearningDetails = new LearningDetails { OverallGrade = "Pass", AchievementDate = DateTime.UtcNow, ProviderName = "PROVIDER", ProviderUkPrn = request.UkPrn },
+                        LearningDetails = new LearningDetails { CourseOption = "COURSEOPTION", OverallGrade = "Pass", AchievementDate = DateTime.UtcNow, LearningStartDate = DateTime.UtcNow.AddYears(-1), ProviderName = "PROVIDER", ProviderUkPrn = request.UkPrn },
                         Standard = new Standard { Level = 1, StandardCode = request.StandardCode, StandardName = "STANDARD" },
                         PostalContact = new PostalContact { AddressLine1 = "ADDRESS1", City = "CITY", ContactName = "CONTACT", Organisation = "ORGANISATION", PostCode = "AB1 1AA" }
                     },
@@ -145,7 +145,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                         {
                             CertificateReference = "SANDBOX",
                             Learner = new Learner { FamilyName = req.FamilyName, GivenNames = "FIRSTNAME", Uln = req.Uln },
-                            LearningDetails = new LearningDetails { OverallGrade = "Pass", AchievementDate = DateTime.UtcNow, LearningStartDate = DateTime.UtcNow.AddYears(-1), ProviderName = "PROVIDER", ProviderUkPrn = req.UkPrn },
+                            LearningDetails = new LearningDetails { CourseOption = "COURSEOPTION", OverallGrade = "Pass", AchievementDate = DateTime.UtcNow, LearningStartDate = DateTime.UtcNow.AddYears(-1), ProviderName = "PROVIDER", ProviderUkPrn = req.UkPrn },
                             Standard = new Standard { Level = 1, StandardCode = req.StandardCode, StandardName = "STANDARD" },
                             PostalContact = new PostalContact { AddressLine1 = "ADDRESS1", City = "CITY", ContactName = "CONTACT", Organisation = "ORGANISATION", PostCode = "AB1 1AA" }
                         },
