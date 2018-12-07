@@ -11,6 +11,7 @@
         SftpSettings Sftp { get; set; }
         string AssessmentOrgsApiClientBaseUrl { get; set; }
         string IfaApiClientBaseUrl { get; set; }
+        string ProviderEventsClientBaseUrl { get; set; }
         string IFATemplateStorageConnectionString { get; set; }
         string SqlConnectionString { get; set; }
         string SpecflowDBTestConnectionString { get; set; }

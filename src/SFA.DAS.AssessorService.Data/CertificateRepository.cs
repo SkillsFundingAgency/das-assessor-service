@@ -147,7 +147,17 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<List<Certificate>> GetCompletedCertificatesFor(long uln)
         {
-            return await _context.Certificates.Where(c => c.Uln == uln && (c.Status == CertificateStatus.Reprint || c.Status == CertificateStatus.Printed || c.Status == CertificateStatus.Submitted))
+            return await _context.Certificates.Where(c =>
+                    c.Uln == uln && (c.Status == CertificateStatus.Reprint || c.Status == CertificateStatus.Printed ||
+                                     c.Status == CertificateStatus.Submitted))
+                .ToListAsync();
+        }
+
+        public async Task<List<Certificate>> GetCertificatesFor(long uln)
+        {
+            return await _context.Certificates.Where(c =>
+                    c.Uln == uln && (c.Status == CertificateStatus.Reprint || c.Status == CertificateStatus.Printed ||
+                                     c.Status == CertificateStatus.Submitted || c.Status == CertificateStatus.Draft))
                 .ToListAsync();
         }
 
@@ -369,8 +379,8 @@ namespace SFA.DAS.AssessorService.Data
                         q => q.CertificateReference == approvalResult.CertificateReference);
 
                 certificate.Status = approvalResult.IsApproved;
-
-                UpdateCertificateLog(certificate, CertificateActions.Status, userName);
+              
+                await UpdateCertificateLog(certificate, CertificateActions.Status, userName);
             }
 
             await _context.SaveChangesAsync();
@@ -394,6 +404,22 @@ namespace SFA.DAS.AssessorService.Data
 
             var certificateDataCompare = JsonConvert.DeserializeObject<CertificateData>(c.CertificateData);
             return certificateData.LearnerFamilyName == certificateDataCompare.LearnerFamilyName;
+        }
+
+        public async Task<List<Certificate>> GetCertificates(long uln, string familyName, int? standardCode = null)
+        {
+            var certificate = standardCode  == null ? await
+                    _context.Certificates
+                        .Where(q => q.Uln == uln && CheckCertificateDataForFamily(q, familyName)).ToListAsync<Certificate>()
+                : await _context.Certificates
+                    .Where(q => q.Uln == uln && q.StandardCode == standardCode && CheckCertificateDataForFamily(q, familyName)).ToListAsync<Certificate>();
+            return certificate;
+        }
+
+        private bool CheckCertificateDataForFamily(Certificate certificate, string familyName)
+        {
+            var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+            return (certificateData.LearnerFamilyName == familyName);
         }
     }
 }

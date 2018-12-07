@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using Newtonsoft.Json;
@@ -10,6 +11,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
+using SFA.DAS.AssessorService.ExternalApis.SubmissionEvents.Types;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 {
@@ -23,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 
             var certificateId = Guid.NewGuid();
 
-            CertificateRepository.Setup(r => r.GetCompletedCertificatesFor(1111111111))
+            CertificateRepository.Setup(r => r.GetCertificatesFor(1111111111))
                 .ReturnsAsync(new List<Certificate>
                 {
                     new Certificate
@@ -62,8 +64,20 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
             ContactRepository.Setup(cr => cr.GetContact("username"))
                 .ReturnsAsync(new Contact() {DisplayName = "EPAO User from same EAPOrg"});
 
-            IlrRepository.Setup(r => r.SearchForLearnerByUln(It.IsAny<long>()))
-                .ReturnsAsync(new List<Ilr> {new Ilr() {StdCode = 12, FamilyName = "Lamora"}});
+          
+            IlrRepository.Setup(r => r.SearchForLearnerByUlnAndFamilyName(It.IsAny<long>(), It.IsAny<string>()))
+                .ReturnsAsync(new List<Ilr>
+                {
+                    new Ilr()
+                    {
+                        Id = Guid.NewGuid(), StdCode = 12, FamilyName = "Lamora", Uln = 1111111111,
+                        CompletionStatus = CompletionStatus.Completed
+                    }
+                });
+
+            IlrRepository.Setup(r => r.RefreshFromSubmissionEventData(It.IsAny<Guid>(), It.IsAny<SubmissionEvent>()))
+                .Returns(Task.CompletedTask);
+            IlrRepository.Setup(r => r.MarkAllUpToDate(It.IsAny<long>())).Returns(Task.CompletedTask);
         }
 
 

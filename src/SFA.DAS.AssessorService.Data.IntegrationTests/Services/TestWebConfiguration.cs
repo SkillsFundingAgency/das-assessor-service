@@ -20,6 +20,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
         public string SpecflowDBTestConnectionString { get; set; }
         public string SessionRedisConnectionString { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public AuthSettings StaffAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string ProviderEventsClientBaseUrl { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
 
 }

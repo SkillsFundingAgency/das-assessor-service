@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
+using SFA.DAS.AssessorService.ExternalApis.SubmissionEvents.Types;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 {
@@ -26,7 +27,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
             var submittingEpaoOrgId = Guid.NewGuid();
             var searchingEpaoOrgId = Guid.NewGuid();
 
-            CertificateRepository.Setup(r => r.GetCompletedCertificatesFor(1111111111))
+            CertificateRepository.Setup(r => r.GetCertificatesFor(1111111111))
                 .ReturnsAsync(new List<Certificate>
                 {
                     new Certificate
@@ -46,20 +47,43 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                 });
 
             CertificateRepository.Setup(r => r.GetCertificateLogsFor(certificateId))
-                .ReturnsAsync(new List<CertificateLog>(){
-                    new CertificateLog(){Status = CertificateStatus.Submitted, EventTime = new DateTime(2018,2,3,13,23,33), Username = "differentuser"},
-                    new CertificateLog(){Status = CertificateStatus.Draft, EventTime = new DateTime(2018,2,3,13,23,32), Username = "differentuser"}
+                .ReturnsAsync(new List<CertificateLog>()
+                {
+                    new CertificateLog()
+                    {
+                        Status = CertificateStatus.Submitted, EventTime = new DateTime(2018, 2, 3, 13, 23, 33),
+                        Username = "differentuser"
+                    },
+                    new CertificateLog()
+                    {
+                        Status = CertificateStatus.Draft, EventTime = new DateTime(2018, 2, 3, 13, 23, 32),
+                        Username = "differentuser"
+                    }
                 });
 
             ContactRepository.Setup(cr => cr.GetContact("differentuser"))
-                .ReturnsAsync(new Contact() {DisplayName = "EPAO User from another EAPOrg", OrganisationId = submittingEpaoOrgId});
+                .ReturnsAsync(new Contact()
+                    {DisplayName = "EPAO User from another EAPOrg", OrganisationId = submittingEpaoOrgId});
 
             ContactRepository.Setup(cr => cr.GetContact("username"))
-                .ReturnsAsync(new Contact() {DisplayName = "EPAO User from this EAPOrg", OrganisationId = searchingEpaoOrgId});
+                .ReturnsAsync(new Contact()
+                    {DisplayName = "EPAO User from this EAPOrg", OrganisationId = searchingEpaoOrgId});
 
 
-            IlrRepository.Setup(r => r.SearchForLearnerByUln(It.IsAny<long>()))
-                .ReturnsAsync(new List<Ilr> {new Ilr() {StdCode = 12, FamilyName = "Lamora"}});
+            IlrRepository.Setup(r => r.SearchForLearnerByUlnAndFamilyName(It.IsAny<long>(), It.IsAny<string>()))
+                .ReturnsAsync(new List<Ilr>
+                {
+                    new Ilr()
+                    {
+                        Id = Guid.NewGuid(), StdCode = 12, FamilyName = "Lamora", Uln = 1111111111,
+                        CompletionStatus = CompletionStatus.Completed
+                    }
+                });
+
+            IlrRepository.Setup(r => r.RefreshFromSubmissionEventData(It.IsAny<Guid>(), It.IsAny<SubmissionEvent>()))
+                .Returns(Task.CompletedTask);
+            IlrRepository.Setup(r => r.MarkAllUpToDate(It.IsAny<long>())).Returns(Task.CompletedTask);
+
         }
 
 

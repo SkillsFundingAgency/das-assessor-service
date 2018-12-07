@@ -6,6 +6,8 @@ using SFA.DAS.Apprenticeships.Api.Types.AssessmentOrgs;
 using SFA.DAS.AssessorService.Application.Handlers.Search;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
+using SFA.DAS.AssessorService.ExternalApis.SubmissionEvents;
+using SFA.DAS.AssessorService.ExternalApis.SubmissionEvents.Types;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
@@ -17,6 +19,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
         protected Mock<IIlrRepository> IlrRepository;
         protected Mock<IAssessmentOrgsApiClient> AssessmentOrgsApiClient;
         protected Mock<IContactQueryRepository> ContactRepository;
+        protected Mock<ISubmissionEventProviderApiClient> ProviderEventsApiClientMock;
 
         public void Setup()
         {
@@ -36,6 +39,18 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
             AssessmentOrgsApiClient.Setup(c => c.GetStandard(13))
                 .ReturnsAsync(new Standard {Title = "Standard Name 13", Level = 3});
 
+            ProviderEventsApiClientMock = new Mock<ISubmissionEventProviderApiClient>();
+            ProviderEventsApiClientMock.Setup(c => c.GetLatestLearnerEventForStandards(1111111111,0))
+                .ReturnsAsync(new List<SubmissionEvent>
+                {
+                    new SubmissionEvent
+                    {
+                        FamilyName ="Lamora",
+                        Id=1,
+                        StandardCode=12,
+                        Uln = 1111111111
+                    }
+                });
             var orgQueryRepo = new Mock<IOrganisationQueryRepository>();
             orgQueryRepo.Setup(r => r.GetByUkPrn(12345))
                 .ReturnsAsync(new Organisation() {EndPointAssessorOrganisationId = "EPA001"});
@@ -44,13 +59,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                 .ReturnsAsync(new Organisation() {EndPointAssessorOrganisationId = "EPA0050"});
 
             IlrRepository = new Mock<IIlrRepository>();
-            
 
             CertificateRepository = new Mock<ICertificateRepository>();
 
             ContactRepository = new Mock<IContactQueryRepository>();
+          
             SearchHandler = new SearchHandler(AssessmentOrgsApiClient.Object, orgQueryRepo.Object, IlrRepository.Object,
-                CertificateRepository.Object, new Mock<ILogger<SearchHandler>>().Object, ContactRepository.Object);
+                CertificateRepository.Object, new Mock<ILogger<SearchHandler>>().Object, ContactRepository.Object, ProviderEventsApiClientMock.Object);
+            
         }
     }
 }
