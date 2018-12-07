@@ -4,22 +4,31 @@
     ViewBag.Title = "Applications";
 }
 
-<h2>Applications</h2>
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <h1 class="heading-xlarge">Applications</h1>
+            @if (Model != null && Model.Count > 0)
+            {
+                <table>
+                    <tr>
+                        <th>Organisation</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
 
-
-
-<table>
-    <tr>
-        <th>Organisation</th>
-        <th>Status</th>
-        <th>View</th>
-    </tr>
-    @foreach (var appl in Model)
-    {
-        <tr>
-            <td>@appl.ApplyingOrganisation.Name</td>
-            <td>@appl.ApplicationStatus</td>
-            <td><a asp-action="Application" asp-controller="Application" asp-route-applicationId="@appl.Id">View</a></td>
-        </tr>
-    }
-</table>
+                    @foreach (var appl in Model)
+                    {
+                        <tr>
+                            <td>@appl.ApplyingOrganisation.Name</td>
+                            <td>@appl.ApplicationStatus</td>
+                            <td><a asp-action="Application" asp-controller="Application" asp-route-applicationId="@appl.Id">View</a></td>
+                        </tr>
+                    }
+                </table>
+            }
+            else
+            {
+                <p>There are no new applications at this time.</p>
+            }
+    </div>
+</div>
