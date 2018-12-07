@@ -18,7 +18,7 @@
                 <h1 class="govuk-heading-xl">@Model.Title</h1>
                                                          
                 <dl class="app-check-your-answers app-check-your-answers--short">
-                    @foreach (var pg in Model.Pages.Where(p => p.Active))
+                    @foreach (var pg in Model.QnADataObject.Pages.Where(p => p.Active))
                     {
                         <div class="app-check-your-answers__contents">
                             <dt class="app-check-your-answers__question">

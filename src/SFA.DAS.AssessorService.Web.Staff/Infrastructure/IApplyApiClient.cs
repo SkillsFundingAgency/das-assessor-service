@@ -8,5 +8,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
     {
         Task<List<ApplyTypes.Application>> ReviewApplications();
         Task ImportWorkflow(IFormFile file);
+        Task<List<dynamic>> GetNewFinancialApplications();
     }
 }

@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using Microsoft.AspNetCore.Http;
 using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Web.Staff.Controllers.Apply;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
 {
@@ -98,6 +99,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             await _client.PostAsync($"/Import/Workflow", formDataContent);
         }
 
+        public async Task<List<dynamic>> GetNewFinancialApplications()
+        {
+            return await Get<List<dynamic>>($"/Financial/New");
+        }
+
         public async Task<ApplicationSequence> GetActiveSequence(Guid applicationId)
         {
             return await Get<ApplicationSequence>($"/Review/Applications/{applicationId}");
@@ -123,6 +129,29 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         public async Task ReturnApplication(Guid applicationId, int sequenceId, string returnType)
         {
             await Post($"Review/Applications/{applicationId}/Sequences/{sequenceId}/Return", new {returnType});
+        }
+
+        public async Task<HttpResponseMessage> DownloadFile(Guid applicationId, int pageId, string questionId, Guid userId, int sequenceId, int sectionId, string filename)
+        {
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+
+            return await _client.GetAsync(new Uri($"Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}/Question/{questionId}/{filename}/Download", UriKind.Relative));
+        }
+
+        public async Task UpdateFinancialGrade(Guid applicationId, FinancialApplicationGrade vmGrade)
+        {
+            await Post($"/Financial/{applicationId}/UpdateGrade", vmGrade);
+        }
+
+        public async Task StartFinancialReview(Guid applicationId)
+        {
+            await Post($"/Financial/{applicationId}/StartReview",new {applicationId}); 
+        }
+
+        public async Task<Organisation> GetOrganisationForApplication(Guid applicationId)
+        {
+            return await Get<Organisation>($"/Application/{applicationId}/Organisation");
         }
     }
 }

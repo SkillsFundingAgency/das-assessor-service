@@ -1,0 +1,76 @@
+@model SFA.DAS.AssessorService.Web.Staff.Controllers.Apply.FinancialApplicationViewModel
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<a href="@Url.Action("NewApplications", "Financial")" class="govuk-back-link">Back</a>
+
+<h2>Financial health evaluation</h2>
+
+<h3>Company details</h3>
+
+<table>
+    <tr>
+        <td>Registered name</td>
+        <td>@Model.Organisation.OrganisationDetails.LegalName</td>
+    </tr>
+    <tr>
+        <td>Trading name</td>
+        <td>@Model.Organisation.OrganisationDetails.TradingName</td>
+    </tr>
+</table>
+
+
+@foreach (var page in Model.Section.PagesContainingUploadQuestions)
+{
+    foreach (var uploadQuestion in page.UploadQuestions)
+    {
+        <div>
+            <a href="@Url.Action("Download", "Financial",
+                         new
+                         {
+                             Model.Section.ApplicationId,
+                             uploadQuestion.QuestionId,
+                             page.PageId
+                         })">
+                Download @uploadQuestion.Label</a>
+        </div>
+    }
+}
+
+<table>
+    <tr>
+        <th>
+            Questions
+        </th>
+        <th>
+            Answers
+        </th>
+    </tr>
+    @foreach (var pg in Model.Section.QnADataObject.Pages)
+    {
+        foreach (var question in pg.Questions.Where(q => q.Input.Type != "FileUpload"))
+        {
+            <tr>
+                <td>@question.Label</td>
+                <td>@pg.PageOfAnswers.SelectMany(poa => poa.Answers).SingleOrDefault(a => a.QuestionId == question.QuestionId)?.Value</td>
+            </tr>
+        }
+    }
+</table>
+
+
+<h1>What is the grade for this application?</h1>
+<form asp-action="Grade" asp-controller="Financial">
+    <input type="hidden" name="ApplicationId" value="@Model.ApplicationId"/>
+    <label for="outstanding">Outstanding</label> <input id="outstanding" type="radio" name="Grade.SelectedGrade" value="Outstanding"/>
+    <label for="good">Good</label> <input id="good" type="radio" name="Grade.SelectedGrade" value="Good"/>
+    <label for="satisfactory">Satisfactory</label> <input id="satisfactory" type="radio" name="Grade.SelectedGrade" value="Satisfactory"/>
+    <input type="text" name="Grade.SatisfactoryMoreInformation"/>
+    <label for="inadequate">Inadequate</label> <input id="inadequate" type="radio" name="Grade.SelectedGrade" value="Inadequate"/>
+    <input type="text" name="Grade.InadequateMoreInformation"/>
+    <label for="exempt">Exempt</label> <input id="exempt" type="radio" name="Grade.SelectedGrade" value="Exempt"/>
+    <button type="submit">Confirm and submit</button>
+</form>

@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         {
             get
             {
-                return Sections.SelectMany(s => s.Pages).Any(p => p.HasFeedback && p.Feedback.Any(f => !f.IsCompleted));
+                return Sections.SelectMany(s => s.QnADataObject.Pages).Any(p => p.HasFeedback && p.Feedback.Any(f => !f.IsCompleted));
             }
         }
     }
@@ -46,27 +46,33 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public int SequenceId { get; set; }
         public string QnAData { get; set; }
         
-        public List<Page> Pages
+        public QnAData QnADataObject
         {
-            get => JsonConvert.DeserializeObject<List<Page>>(QnAData);
+            get => JsonConvert.DeserializeObject<QnAData>(QnAData);
             set => QnAData = JsonConvert.SerializeObject(value);
         }
+        
+//        public List<Page> Pages
+//        {
+//            get => JsonConvert.DeserializeObject<List<Page>>(QnAData);
+//            set => QnAData = JsonConvert.SerializeObject(value);
+//        }
 
         public int PagesComplete
         {
-            get { return Pages.Count(p => p.Active && p.Complete); }
+            get { return QnADataObject.Pages.Count(p => p.Active && p.Complete); }
         }
         
         public int PagesActive
         {
-            get { return Pages.Count(p => p.Active); }
+            get { return QnADataObject.Pages.Count(p => p.Active); }
         }
 
         public bool HasNewFeedback
         {
             get
             {
-                return Pages.Any(p => p.HasFeedback && p.Feedback.Any(f => !f.IsCompleted));
+                return QnADataObject.Pages.Any(p => p.HasFeedback && p.Feedback.Any(f => !f.IsCompleted));
             }
         }
         
@@ -74,99 +80,17 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         {
             get
             {
-                return Pages.Any(p => p.HasFeedback && p.Feedback.Any(f => f.IsCompleted));
+                return QnADataObject.Pages.Any(p => p.HasFeedback && p.Feedback.Any(f => f.IsCompleted));
             }
         }
 
         public string Title { get; set; }
         public string LinkTitle { get; set; }
         public string DisplayType { get; set; }
-    }
-    
-    public class Page
-    {
-        public Guid ApplicationId { get; set; }
-        private List<DisplayAnswerPage> _displayAnswerPages;
-        public string PageId { get; set; }
-        public string SequenceId { get; set; }
-        public string SectionId { get; set; }
-        public string Title { get; set; }
-        public string LinkTitle { get; set; }
-        public string InfoText { get; set; }
-        public List<Question> Questions { get; set; }
-        public List<PageOfAnswers> PageOfAnswers { get; set; }
-        public List<Next> Next { get; set; }
-        public bool Complete { get; set; }
-        public bool AllowMultipleAnswers { get; set; }
-        public int? Order { get; set; }
-        public bool Active { get; set; }        
-        public bool Visible { get; set; }
-      
-        public List<Feedback> Feedback { get; set; }
-        public bool HasFeedback => Feedback?.Any() ?? false;
-        
-        public bool HasNewFeedback
-        {
-            get
-            {
-                return HasFeedback && Feedback.Any(f => !f.IsCompleted);
-            }
-        }
-        
-        public bool HasReadFeedback
-        {
-            get
-            {
-                return HasFeedback && Feedback.Any(f => f.IsCompleted);
-            }
-        }
-        
-        public List<DisplayAnswerPage> DisplayAnswerPages
-        {
-            get
-            {
-                if (_displayAnswerPages != null) return _displayAnswerPages;
-                
-                _displayAnswerPages = new List<DisplayAnswerPage>();
-                foreach (var answerPage in PageOfAnswers)
-                {
-                    var displayAnswerPage = new DisplayAnswerPage();
-                    displayAnswerPage.DisplayAnswers = new List<DisplayAnswer>();
-                        
-                    foreach (var answer in answerPage.Answers)
-                    {
-                        var question = Questions.SingleOrDefault(q => q.QuestionId == answer.QuestionId);
-                        if (question != null)
-                        {
-                            var displayAnswer = new DisplayAnswer
-                            {
-                                Answer = answer.Value,
-                                Label = question.Label
-                            };
 
-                            displayAnswerPage.DisplayAnswers.Add(displayAnswer);   
-                        }
-                        else
-                        {
-                            // question is null, try embedded questions in ComplexRadio / Further Questions
-                            question = Questions.Single(q => q.QuestionId == answer.QuestionId.Split(new[]{'.'},StringSplitOptions.RemoveEmptyEntries)[0]);
-
-                            var furtherQuestion = question.Input.Options.Where(o => o.FurtherQuestions != null).SelectMany(o => o.FurtherQuestions).Single(q => q.QuestionId == answer.QuestionId);
-                            
-                            var displayAnswer = new DisplayAnswer
-                            {
-                                Answer = answer.Value,
-                                Label = furtherQuestion.Label
-                            };
-
-                            displayAnswerPage.DisplayAnswers.Add(displayAnswer);   
-                        }
-                    }
-                        
-                    _displayAnswerPages.Add(displayAnswerPage);
-                }
-                return _displayAnswerPages;
-            }
+        public List<Page> PagesContainingUploadQuestions
+        {
+            get { return QnADataObject.Pages.Where(p => p.ContainsUploadQuestions).ToList(); }
         }
     }
 
@@ -189,6 +113,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public string Hint { get; set; }
         public Input Input { get; set; }
         public int? Order { get; set; }
+        public string PageId { get; set; }
     }
     
     public class Feedback

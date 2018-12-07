@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -27,6 +28,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
         public async Task<IActionResult> Application(Guid applicationId)
         {
             var activeSequence = await _applyApiClient.GetActiveSequence(applicationId);
+            activeSequence.Sections = activeSequence.Sections.Where(s => s.SectionId != 3).ToList();
             return View("~/Views/Apply/Applications/Sequence.cshtml", activeSequence);
         }
         

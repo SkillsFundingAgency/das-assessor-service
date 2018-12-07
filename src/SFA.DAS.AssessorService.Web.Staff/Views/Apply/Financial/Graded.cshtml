@@ -1,0 +1,34 @@
+@model SFA.DAS.AssessorService.ApplyTypes.ApplicationSection
+
+@{
+    ViewBag.Title = "title";
+}
+
+
+<main class="govuk-main-wrapper govuk-main-wrapper--l" id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <div class="govuk-panel govuk-panel--confirmation">
+                <h1 class="govuk-panel__title">Evaluation submitted</h1>
+                <div class="govuk-panel__body">
+                    The evaluation has been saved with a grade of <strong>@Model.QnADataObject.FinancialApplicationGrade.SelectedGrade</strong>
+                </div>
+            </div>
+            
+            <p class="govuk-body">You can view previous evaluations, including this one in the <a href="@Url.Action("PreviousApplications","Financial")">previous assessments</a> area.</p>
+
+            <h3 class="govuk-heading-m">What do you want to do next?</h3>
+
+            <p class="govuk-body">
+                <a href="@Url.Action("NewApplications", "Financial")">View new applications</a>
+            </p>
+            <p class="govuk-body">
+                <a asp-action="Index" asp-controller="Dashboard">Return to account home</a>
+            </p>
+            <p class="govuk-body">
+                <a href="https://urltosurvey">What did you think of this service?</a> (takes 30 seconds)
+            </p>
+        </div>
+    </div>
+</main>

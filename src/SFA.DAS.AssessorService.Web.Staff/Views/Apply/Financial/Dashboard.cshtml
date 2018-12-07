@@ -1,0 +1,21 @@
+
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <h1 class="heading-xlarge">Financial</h1>
+    </div>
+</div>
+<div class="grid-row">
+    <div class="column-one-third">
+        <h2 class="heading-medium"><a asp-controller="Financial" asp-action="NewApplications">New applications</a></h2>
+        <p>Review new applications to the register</p>
+    </div>
+    <div class="column-one-third">
+        <h2 class="heading-medium"><a asp-controller="Financial" asp-action="PreviousApplications">Previous applications</a></h2>
+        <p>View previous applications to the register</p>
+    </div>
+</div>
