@@ -126,7 +126,7 @@ Layout = "_Layout";
             <span>There are no contacts</span>
             }
         </div>
-        <div class="form-group" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam)">
+        <div class="form-group" sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">
             <a class="button" href="/register/add-contact/@Model.OrganisationId">Add New Contact</a>
         </div>
     </div>
@@ -167,11 +167,11 @@ Layout = "_Layout";
         <div class="form-group">
             @if (@Model.Contacts.Count > 0)
             {
-                <a class="button" href="/register/search-standards/@Model.OrganisationId"  sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam)">Add New Standard</a>
+                <a class="button" href="/register/search-standards/@Model.OrganisationId"  sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">Add New Standard</a>
             }
             else
             {
-                <span  sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam)">You can add standards when there are 1 or more contacts added to the organisation</span>
+                <span  sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">You can add standards when there are 1 or more contacts added to the organisation</span>
             }
         </div>
     </div>
