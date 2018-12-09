@@ -65,6 +65,13 @@ namespace SFA.DAS.AssessorService.Data
             if(learnerRecord.ApprenticeshipId != subEvent.ApprenticeshipId) learnerRecord.ApprenticeshipId = subEvent.ApprenticeshipId;
             if(learnerRecord.GivenNames != subEvent.GivenNames) learnerRecord.GivenNames = subEvent.GivenNames;
             if(learnerRecord.EpaOrgId != subEvent.EPAOrgId) learnerRecord.EpaOrgId = subEvent.EPAOrgId;
+            if (learnerRecord.CompletionStatus != subEvent.CompStatus)
+                learnerRecord.CompletionStatus = subEvent.CompStatus;
+            if (learnerRecord.PlannedEndDate != subEvent.PlannedEndDate)
+            {
+                if (subEvent.PlannedEndDate.HasValue)
+                    learnerRecord.PlannedEndDate = subEvent.PlannedEndDate.Value;
+            }
             learnerRecord.Source = ContactStatus.Live;
             learnerRecord.UpdatedAt = DateTime.Now;
             await _context.SaveChangesAsync();

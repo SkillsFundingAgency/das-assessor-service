@@ -28,6 +28,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             return searchResults;
         }
 
+        public static List<SearchResult> CleanFromSearchResultAnyMarkedAsRemove(this List<SearchResult> searchResults)
+        {
+            for (var i = searchResults.Count - 1; i >= 0; i--)
+                if(searchResults[i].RemoveFromCollection)
+                    searchResults.RemoveAt(i);
+
+            return searchResults;
+        }
+
         private static void MatchStandards(SearchResult searchResult, IEnumerable<Standard> allStandards, IAssessmentOrgsApiClient assessmentOrgsApiClient)
         {
             var standard = allStandards.SingleOrDefault(s => s.StandardId == searchResult.StdCode.ToString()) ??
@@ -80,7 +89,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             if (submittedLogEntry == null)
             {
                 if (createdLogEntry == null) return;
-
+                logger.LogInformation("DoCertificateMatchUp - Draft certificate found ");
                 var createdContact = contactRepository.GetContact(createdLogEntry.Username).Result ??
                                      contactRepository.GetContact(certificate.CreatedBy).Result;
                 var lastUpdatedLogEntry =
@@ -90,7 +99,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 var searchingContact = contactRepository.GetContact(request.Username).Result;
 
                 if (createdContact == null || searchingContact == null ||
-                    createdContact.OrganisationId != searchingContact.OrganisationId) return;
+                    createdContact.OrganisationId != searchingContact.OrganisationId)
+                {
+                    searchResult.RemoveFromCollection = true;
+                    return;
+                }
 
                 ApplyBasicCertificateInfo(searchResult, certificateData, certificate);
                 ApplyExtraCertificateInfo(searchResult, true, certificateData.OverallGrade,
@@ -102,18 +115,19 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             }
             else
             {
+                logger.LogInformation("DoCertificateMatchUp - Submitted certificate found ");
                 var submittingContact = contactRepository.GetContact(submittedLogEntry.Username).Result ??
                                         contactRepository.GetContact(certificate.UpdatedBy).Result;
-
                 var lastUpdatedLogEntry =
                     certificateLogs.Aggregate((i1, i2) => i1.EventTime > i2.EventTime ? i1 : i2) ?? submittedLogEntry;
                 var lastUpdatedContact = contactRepository.GetContact(lastUpdatedLogEntry.Username).Result;
-                logger.LogInformation("MatchUpExistingCompletedStandards After GetContact");
                 var searchingContact = contactRepository.GetContact(request.Username).Result;
+                //Apply Basic Info
+                ApplyBasicCertificateInfo(searchResult, certificateData, certificate);
                 if (submittingContact != null && submittingContact.OrganisationId == searchingContact.OrganisationId)
                 {
-                    ApplyBasicCertificateInfo(searchResult, certificateData, certificate);
                     //Use contact realname, local time for submitted at and updated by use contact real name
+                    //Apply extra info
                     ApplyExtraCertificateInfo(searchResult, true, certificateData.OverallGrade,
                         submittingContact.DisplayName,
                         submittedLogEntry.EventTime.UtcToTimeZoneTime(),
@@ -123,8 +137,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 }
                 else
                 {
-                    //partial info
-                    ApplyBasicCertificateInfo(searchResult, certificateData, certificate);
                     ApplyExtraCertificateInfo(searchResult, false, string.Empty, string.Empty, null, null, null, null);
                 }
             }

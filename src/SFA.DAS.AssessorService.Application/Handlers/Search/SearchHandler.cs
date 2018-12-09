@@ -102,7 +102,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
             var searchResults = Mapper.Map<List<SearchResult>>(ilrResults)
                 .MatchUpExistingCompletedStandards(request, _certificateRepository, _contactRepository, _logger)
-                .PopulateStandards(_assessmentOrgsApiClient, _logger);
+                .PopulateStandards(_assessmentOrgsApiClient, _logger)
+                .CleanFromSearchResultAnyMarkedAsRemove();
 
             await _ilrRepository.StoreSearchLog(new SearchLog()
             {
@@ -121,32 +122,27 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
         {
             //The ULN and FamilyName should be matched to the ILR cache
             var ilrResults = await _ilrRepository.SearchForLearnerByUlnAndFamilyName(request.Uln, likedSurname);
-            var dataForIlrsCache = ilrResults.ToList();
-            if (dataForIlrsCache.Any())
+         
+            //check if Eventid is Null or UpdateAt is earlier then today, if so then refresh cache
+            var updateIlrsCache = ilrResults.ToList();
+            foreach (var ilrResult in updateIlrsCache.Where(r => r.EventId == null ||
+                                                            (r.UpdatedAt != null && r.UpdatedAt?.Date < DateTime.Today)))
             {
-                //check if Eventid is Null or UpdateAt is earlier then today, then refresh cache
-                foreach (var ilrResult in dataForIlrsCache)
-                {
-                    if (ilrResult.EventId == null ||
-                        (ilrResult.UpdatedAt != null && ilrResult.UpdatedAt?.Date < DateTime.Today))
-                    {
-                        var submissionEventsList = ilrResult.EventId == null
-                            ? await _subProviderEventsApiClient.GetLatestLearnerEventForStandards(ilrResult.Uln)
-                            : await _subProviderEventsApiClient.GetLatestLearnerEventForStandards(ilrResult.Uln,
-                                ilrResult.EventId.Value);
+                 var submissionEventsList = ilrResult.EventId == null
+                    ? await _subProviderEventsApiClient.GetLatestLearnerEventForStandards(ilrResult.Uln)
+                    : await _subProviderEventsApiClient.GetLatestLearnerEventForStandards(ilrResult.Uln,
+                        ilrResult.EventId.Value);
 
-                        foreach (var submissionEvent in submissionEventsList)
-                        {
-                            if (submissionEvent.StandardCode != ilrResult.StdCode) continue;
-                            //ILR cache record needs updating
-                            await _ilrRepository.RefreshFromSubmissionEventData(ilrResult.Id, submissionEvent);
-                            await _ilrRepository.MarkAllUpToDate(ilrResult.Uln);
-                        }
-                    }
+                foreach (var submissionEvent in submissionEventsList)
+                {
+                    if (submissionEvent.StandardCode != ilrResult.StdCode) continue;
+                    //ILR cache record needs updating
+                    await _ilrRepository.RefreshFromSubmissionEventData(ilrResult.Id, submissionEvent);
+                    await _ilrRepository.MarkAllUpToDate(ilrResult.Uln);
                 }
             }
 
-            return dataForIlrsCache;
+            return updateIlrsCache;
         }
 
 
