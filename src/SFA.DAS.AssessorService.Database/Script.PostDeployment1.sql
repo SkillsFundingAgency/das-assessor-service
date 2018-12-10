@@ -124,12 +124,12 @@ UPDATE StaffReports SET ReportDetails = '{"Name":"Register List Of Standards","W
 IF NOT EXISTS(SELECT * FROM OrganisationType WHERE id = 11)
 BEGIN
 	SET identity_insert OrganisationType ON
-	INSERT INTO [OrganisationType] (ID,[Type],[Status], [TypeDescription]) VALUES (11,'Academy or Free School','Live','Academy or Free school registered with the ESFA');
+	INSERT INTO [OrganisationType] (ID,[Type],[Status], [TypeDescription]) VALUES (11,'Academy or Free School','Live','Academy or free school registered with the ESFA');
 	SET identity_insert OrganisationType OFF
 END
 ELSE
 BEGIN
-	UPDATE [OrganisationType] SET [Type] =  'Academy or Free School', [TypeDescription] = 'Academy or Free school registered with the ESFA' WHERE id = 11;
+	UPDATE [OrganisationType] SET [Type] =  'Academy or Free School', [TypeDescription] = 'Academy or free school registered with the ESFA' WHERE id = 11;
 END
 
 
