@@ -1,3 +1,4 @@
+@using Microsoft.EntityFrameworkCore.Internal
 @using Microsoft.EntityFrameworkCore.Query.Internal
 @model SFA.DAS.AssessorService.Web.Staff.Controllers.Apply.FinancialApplicationViewModel
 
@@ -29,23 +30,12 @@
     </tbody>
 </table>
 
-
-@foreach (var page in Model.Section.PagesContainingUploadQuestions)
+@if (Model.Section.PagesContainingUploadQuestions.Any())
 {
-    foreach (var uploadQuestion in page.UploadQuestions)
-    {
-        <div>
-            <a href="@Url.Action("Download", "Financial",
-                         new
-                         {
-                             Model.Section.ApplicationId,
-                             uploadQuestion.QuestionId,
-                             page.PageId
-                         })">
-            Download financial statement</a>
-                @* Download @uploadQuestion.Label</a> *@
-        </div>
-    }
+    <div>
+        <a href="@Url.Action("Download", "Financial", new { Model.Section.ApplicationId })">Download financial statements</a>
+        @* Download @uploadQuestion.Label</a> *@
+    </div>
 }
 
 <table>

@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -111,34 +113,65 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
             return View("~/Views/Apply/Financial/PreviousApplication.cshtml", vm);
         }
 
-        [HttpGet("/Financial/Download/{applicationId}/Page/{pageId}/QuestionId/{questionId}")]
-        public async Task<IActionResult> Download(Guid applicationId, int pageId, string questionId)
+        [HttpGet("/Financial/Download/{applicationId}")]
+        public async Task<IActionResult> Download(Guid applicationId)
         {
             var section = await _apiClient.GetSection(applicationId, 1, 3);
 
-            var answer = section.QnADataObject.Pages.SelectMany(p => p.PageOfAnswers).SelectMany(a => a.Answers).SingleOrDefault(a => a.QuestionId == questionId);
+            using (var zipStream = new MemoryStream())
+            {
+                using (var zipArchive = new ZipArchive(zipStream, ZipArchiveMode.Create, true))
+                {
+                    foreach (var uploadPage in section.PagesContainingUploadQuestions)
+                    {
+                        foreach (var uploadQuestion in uploadPage.UploadQuestions)
+                        {
+                            var answer = section.QnADataObject.Pages.SelectMany(p => p.PageOfAnswers).SelectMany(a => a.Answers).SingleOrDefault(a => a.QuestionId == uploadQuestion.QuestionId);
 
-            var fileDownloadName = answer.Value;
+                            var fileDownloadName = answer.Value;
             
-            var downloadedFile = await _apiClient.DownloadFile(applicationId, pageId, questionId, Guid.Empty, 1, 3, fileDownloadName);
+                            var downloadedFile = await _apiClient.DownloadFile(applicationId, int.Parse(uploadPage.PageId), uploadQuestion.QuestionId, Guid.Empty, 1, 3, fileDownloadName);
 
-            var stream = await downloadedFile.Content.ReadAsStreamAsync();
-            var contentType = downloadedFile.Content.Headers.ContentType.ToString();
-            return File(stream, contentType, fileDownloadName);
+                            var zipEntry = zipArchive.CreateEntry(fileDownloadName);
+                            using (var entryStream = zipEntry.Open())
+                            {
+                                var fileStream = await downloadedFile.Content.ReadAsStreamAsync();
+                                fileStream.CopyTo(entryStream);
+                            }
+                        }
+                    }
+                }
+                
+                zipStream.Position = 0;
+
+                var compressedBytes = zipStream.ToArray();
+                
+                return File(compressedBytes, "application/zip", "FinancialDocuments.zip");
+            }
+            
+            
+            
+
+            
+//            var stream = await downloadedFile.Content.ReadAsStreamAsync();
+//            var contentType = downloadedFile.Content.Headers.ContentType.ToString();
         }
 
         [HttpPost("/Financial/Grade")]
         public async Task<IActionResult> Grade(FinancialApplicationViewModel vm)
         {
-            // Get user.
-            
-            var givenName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")?.Value;
-            var surname = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname")?.Value;
+//            if (ModelState.IsValid)
+//            {
+                var givenName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")?.Value;
+                var surname = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname")?.Value;
 
-            vm.Grade.GradedBy = $"{givenName} {surname}";
+                vm.Grade.GradedBy = $"{givenName} {surname}";
             
-            await _apiClient.UpdateFinancialGrade(vm.ApplicationId, vm.Grade);
-            return RedirectToAction("Graded", new {vm.ApplicationId});
+                await _apiClient.UpdateFinancialGrade(vm.ApplicationId, vm.Grade);
+                return RedirectToAction("Graded", new {vm.ApplicationId});   
+//            }
+//            
+//            return View()
         }
 
         [HttpGet("/Financial/Graded")]
