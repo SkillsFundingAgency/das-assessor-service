@@ -1,3 +1,4 @@
+@using SFA.DAS.AssessorService.Web.Staff.Domain
 @model SFA.DAS.AssessorService.Web.Staff.Models.RegisterViewModel
 
 @{
@@ -46,7 +47,7 @@
 </div>
 }
 
-<div class="grid-row">
+<div class="grid-row" sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">
     <div class="column-two-thirds">
         <a class="button" href="/register/add-organisation">Add new<span class="visually-hidden"> organisation</span></a>
     </div>
