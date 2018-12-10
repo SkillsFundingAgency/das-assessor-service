@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
         public async Task<ValidationResponse> Handle(UpdateEpaOrganisationValidationRequest request, CancellationToken cancellationToken)
         {
-            return _validator.ValidatorUpdateEpaOrganisationRequest(new UpdateEpaOrganisationRequest
+            var result = _validator.ValidatorUpdateEpaOrganisationRequest(new UpdateEpaOrganisationRequest
             {
                 Name = request.Name,
                 Ukprn = request.Ukprn,
@@ -39,6 +39,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 Address4 = request.Address4,
                 Postcode = request.Postcode
             });
+
+            return await Task.FromResult(result);
         }
     }
 }

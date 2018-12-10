@@ -63,7 +63,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             var serializeObject = JsonConvert.SerializeObject(model);
 
             using (var response = await _client.PostAsync(new Uri(uri, UriKind.Relative),
-                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json"))) ;
+                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json"))) { }
         }
 
         protected async Task<U> Put<T, U>(string uri, T model)

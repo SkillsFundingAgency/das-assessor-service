@@ -40,7 +40,7 @@ namespace SFA.DAS.AssessorService.Web.Validators
                 var providerUkprn = Convert.ToInt32(ukprn);
                _apiClient.GetProvider(providerUkprn).GetAwaiter().GetResult();
             }
-            catch (EntityNotFoundException e)
+            catch (EntityNotFoundException)
             {
                 return false;
             }            

@@ -97,7 +97,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Private
                 Console.WriteLine(e);
                 throw;
             }
-            return null;
         }
     }
 

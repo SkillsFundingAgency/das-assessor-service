@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         public async Task<IActionResult> Index()
         {
             var reports = await _apiClient.GetReportList();
-            _apiClient.GatherAndCollateStandards();
+            await _apiClient.GatherAndCollateStandards();
 
             var vm = new ReportViewModel {Reports = reports};
 
