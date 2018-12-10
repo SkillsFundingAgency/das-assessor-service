@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
@@ -18,18 +19,19 @@ using SFA.DAS.AssessorService.Web.Staff.Services;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {
-    [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
+    [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam + "," + Roles.RegisterViewOnlyTeam)]
     public class RegisterController: Controller
     {
         private readonly ApiClient _apiClient;
         private readonly IStandardService _standardService;
         private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
-
-        public RegisterController(ApiClient apiClient, IStandardService standardService, IAssessmentOrgsApiClient assessmentOrgsApiClient)
+        private readonly IHostingEnvironment _env;
+        public RegisterController(ApiClient apiClient, IStandardService standardService, IAssessmentOrgsApiClient assessmentOrgsApiClient, IHostingEnvironment env)
         {
             _apiClient = apiClient;
             _standardService = standardService;
             _assessmentOrgsApiClient = assessmentOrgsApiClient;
+            _env = env;
         }
 
         public IActionResult Index()
@@ -62,6 +64,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         }
 
 
+
+        [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
         [HttpGet("register/edit-organisation/{organisationId}")]
         public async Task<IActionResult> EditOrganisation(string organisationId)
         {
@@ -70,7 +74,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             return View(viewModel);
         }
 
-
+        [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
         [HttpPost("register/edit-organisation/{organisationId}")]
                  public async Task<IActionResult> EditOrganisation(RegisterViewAndEditOrganisationViewModel viewModel)
                  {
@@ -104,6 +108,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                      return RedirectToAction("ViewOrganisation", "register", new { organisationId = viewModel.OrganisationId});
                  }
 
+        [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
         [HttpGet("register/add-organisation")]
         public async Task<IActionResult> AddOrganisation()
         {
@@ -115,7 +120,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             return View(vm);
         }
 
-       [HttpGet("register/add-standard/organisation/{organisationId}/standard/{standardId}")]
+        [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
+        [HttpGet("register/add-standard/organisation/{organisationId}/standard/{standardId}")]
         public async Task<IActionResult> AddOrganisationStandard(string organisationId, int standardId)
        {
            var viewModelToHydrate =
@@ -126,6 +132,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
        }
 
 
+        [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
         [HttpPost("register/add-standard/organisation/{organisationId}/standard/{standardId}")]
         public async Task<IActionResult> AddOrganisationStandard(RegisterAddOrganisationStandardViewModel viewModel)
         {
@@ -163,7 +170,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             return View(viewModel);
         }
 
-
+        [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
         [HttpGet("register/edit-standard/{organisationStandardId}")]
         public async Task<IActionResult> EditOrganisationStandard(int organisationStandardId)
         {
@@ -174,6 +181,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             return View(vm);
         }
 
+        [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
         [HttpPost("register/edit-standard/{organisationStandardId}")]
         public async Task<IActionResult> EditOrganisationStandard(RegisterViewAndEditOrganisationStandardViewModel viewModel)
         {
@@ -202,6 +210,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             return Redirect($"/register/view-standard/{organisationStandardId}");
         }
 
+        [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
         [HttpGet("register/add-contact/{organisationId}")]
         public async Task<IActionResult> AddContact(string organisationId)
         {
@@ -213,6 +222,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             return View(vm);
         }
 
+        [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
         [HttpPost("register/add-contact/{organisationId}")]
         public async Task<IActionResult> AddContact(RegisterAddContactViewModel viewModel)
         {
@@ -235,6 +245,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             
         }
 
+        [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
         [HttpGet("register/edit-contact/{contactId}")]
         public async Task<IActionResult> EditContact(string contactId)
         {
@@ -244,6 +255,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             return View(viewModel);
         }
 
+        [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
         [HttpPost("register/edit-contact/{contactId}")]
         public async Task<IActionResult> EditContact(RegisterViewAndEditContactViewModel viewAndEditModel)
         {
@@ -257,12 +269,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 ContactId = viewAndEditModel.ContactId,
                 DisplayName =  viewAndEditModel.DisplayName,
                 Email = viewAndEditModel.Email,
-                PhoneNumber = viewAndEditModel.PhoneNumber 
+                PhoneNumber = viewAndEditModel.PhoneNumber,
+                ActionChoice = viewAndEditModel.ActionChoice
             };
             await _apiClient.UpdateEpaContact(request);
             return RedirectToAction("ViewContact", "register", new { contactId = viewAndEditModel.ContactId});
         }
-        
+
         [HttpGet("register/view-contact/{contactId}")]
         public async Task<IActionResult> ViewContact(string contactId)
         {
@@ -272,18 +285,23 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             return View(viewModel);
         }
 
+
         [HttpGet("register/impage")]
         public async Task<IActionResult> Impage()
         {
-            var vm = new AssessmentOrgsImportResponse { Status = "Press to run" };
+            if (!_env.IsDevelopment())
+                return NotFound();
+           
+            var vm = new AssessmentOrgsImportResponse { Status = "Press to run" };         
             return View(vm);
         }
-
         [HttpGet("register/impage-{choice}")]
         public async Task<IActionResult> Impage(string choice)
         {
-            var vm = new AssessmentOrgsImportResponse { Status = "Running" };
+            if (!_env.IsDevelopment())
+                return NotFound();
 
+            var vm = new AssessmentOrgsImportResponse { Status = "Running" };
             if (choice == "DoIt")
             {
                 var importResults = await _apiClient.ImportOrganisations();
@@ -291,7 +309,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             }
             return View(vm);
         }
-            
+
+        [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
         [HttpPost("register/add-organisation")]
         public async Task<IActionResult> AddOrganisation(RegisterOrganisationViewModel viewModel)
         {
@@ -328,6 +347,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         }
 
 
+        [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
         [HttpGet("register/search-standards/{organisationId}")]
         public async Task<IActionResult> SearchStandards(string organisationId)
         {
@@ -337,6 +357,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             return View(vm);
         }
 
+        [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
         [HttpGet("register/search-standards-results")]
         public async Task<IActionResult> SearchStandardsResults(SearchStandardsViewModel vm)
         {
@@ -434,7 +455,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 PhoneNumber = contact.PhoneNumber,
                 DisplayName = contact.DisplayName,
                 OrganisationName = organisation.Name,
-                OrganisationId = organisation.OrganisationId
+                OrganisationId = organisation.OrganisationId,
+                IsPrimaryContact = contact.IsPrimaryContact
             };
 
             return viewModel;
@@ -479,13 +501,14 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 Status = organisation.Status
             };
 
+            viewModel.OrganisationTypes = _apiClient.GetOrganisationTypes().Result;
+
             if (viewModel.OrganisationTypeId != null)
             {
-                var organisationTypes = _apiClient.GetOrganisationTypes().Result;
-                viewModel.OrganisationType = organisationTypes.First(x => x.Id == viewModel.OrganisationTypeId).Type;
+                var organisationTypes = viewModel.OrganisationTypes;
+                viewModel.OrganisationType = organisationTypes.FirstOrDefault(x => x.Id == viewModel.OrganisationTypeId)?.Type;
             }
-            viewModel.OrganisationTypes = _apiClient.GetOrganisationTypes().Result;
-            
+               
             GatherOrganisationContacts(viewModel);
             GatherOrganisationStandards(viewModel);
 

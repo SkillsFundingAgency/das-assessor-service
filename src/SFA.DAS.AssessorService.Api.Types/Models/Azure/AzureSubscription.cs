@@ -30,5 +30,6 @@
         public string PrimaryKey { get; set; }
         public string SecondaryKey { get; set; }
         public string StateComment { get; set; }
+        public string ApiEndPointUrl { get; set; }
     }
 }

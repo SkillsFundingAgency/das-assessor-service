@@ -24,57 +24,48 @@
                     <thead>
                         <tr>
                             <th>Name</th>
-                            <th>UKPRN</th>
+                            <th>Ukprn</th>
                             <th>Email</th>
-                            <th>Registration Date</th>
+                            <th>Access</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>@Model.FirstName @Model.LastName</td>
-                            <td>@Model.Note</td>
+                            <td>@Model.LastName</td>
+                            <td>@Model.Ukprn</td>
                             <td>@Model.Email</td>
-                            <td>@Model.RegistrationDate.UtcToTimeZoneTime()</td>
+                            <td>@Html.Raw(string.Equals(@Model.State, "blocked") ? "Disabled" : "Enabled")</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
-            if (Model.Subscriptions.Any())
+            @if (Model.Subscriptions.Any())
             {
-                <h1 class="heading-large">Subscription Details</h1>
                 <div class="grid-row">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Product</th>
-                                <th>Primary Key</th>
-                                <th></th>
-                                <th>Secondary Key</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var subscription in Model.Subscriptions)
-                            {
-                                <tr>
-                                    <td>@subscription.ProductId</td>
-                                    <td>@subscription.PrimaryKey</td>
-                                    <td>
-                                        <form asp-action="RenewPrimaryKey" asp-controller="ExternalApi" asp-route-subscriptionId="@subscription.Id" asp-route-userId="@Model.Id" method="post">
-                                            <input type="submit" value="Renew" class="button" />
-                                        </form>
-                                    </td>
-                                    <td>@subscription.SecondaryKey</td>
-                                    <td>
-                                        <form asp-action="RenewSecondaryKey" asp-controller="ExternalApi" asp-route-subscriptionId="@subscription.Id" asp-route-userId="@Model.Id" method="post">
-                                            <input type="submit" value="Renew" class="button" />
-                                        </form>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
+                    <div class="column-two-thirds">
+                        <h1 class="heading-large">Subscriptions</h1>
+                    </div>
+
+                    @foreach (var subscription in Model.Subscriptions)
+                    {
+                        <div class="column-one-half form-group">
+                            <h2 class="bold-medium">@subscription.ProductId</h2>
+                            <h3 class="heading-small">Api endpoint</h3>
+                            <span class="code">@subscription.ApiEndPointUrl</span>
+                            <h3 class="heading-small">Subscription key</h3>
+                            <form asp-action="RenewPrimaryKey" asp-controller="ExternalApi" asp-route-subscriptionId="@subscription.Id" asp-route-userId="@Model.Id" method="post">
+                                <span class="code">@subscription.PrimaryKey</span>
+                                <input type="submit" value="Renew" class="button" />
+                            </form>
+                            @*<h3 class="heading-small">Secondary key</h3>
+                            <form asp-action="RenewSecondaryKey" asp-controller="ExternalApi" asp-route-subscriptionId="@subscription.Id" asp-route-userId="@Model.Id" method="post">
+                                <span class="code">@subscription.SecondaryKey</span>
+                                <input type="submit" value="Renew" class="button" />
+                            </form>*@
+                        </div>
+                    }
+
                 </div>
             }
 

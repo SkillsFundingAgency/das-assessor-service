@@ -114,7 +114,9 @@ namespace SFA.DAS.AssessorService.Web
 
                 config.For<IAzureTokenService>().Use<AzureTokenService>();
                 config.For<IAzureApiClient>().Use<AzureApiClient>().Ctor<string>("baseUri").Is(Configuration.AzureApiAuthentication.ApiBaseAddress)
-                                                                   .Ctor<string>("productId").Is(Configuration.AzureApiAuthentication.ProductId);
+                                                                   .Ctor<string>("productId").Is(Configuration.AzureApiAuthentication.ProductId)
+                                                                   .Ctor<string>("groupId").Is(Configuration.AzureApiAuthentication.GroupId)
+                                                                   .Ctor<string>("requestBaseUri").Is(Configuration.AzureApiAuthentication.RequestBaseAddress);
 
                 config.Populate(services);
             });

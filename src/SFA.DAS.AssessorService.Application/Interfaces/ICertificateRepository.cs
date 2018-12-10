@@ -17,6 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<Certificate> GetCertificate(string certificateReference, string lastName, DateTime? achievementDate);
         Task<List<Certificate>> GetCertificates(List<string> statuses);
         Task<Certificate> Update(Certificate certificate, string username, string action, bool updateLog = true, string reasonForChange = null);
+        Task Delete(long uln, int standardCode, string username, string action, bool updateLog = true);
         Task<Certificate> UpdateProviderName(Guid id, string providerName);
 
         Task UpdateStatuses(

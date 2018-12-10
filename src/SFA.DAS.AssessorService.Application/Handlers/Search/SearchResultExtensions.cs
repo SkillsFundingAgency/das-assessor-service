@@ -55,12 +55,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             {
                 DoCertificateMatchUp(searchResult, certificates,
                     request, certificateRepository, contactRepository, logger);
-              
             }
 
             return searchResults;
         }
-
      
         public static SearchResult MatchUpFoundCertificate(this SearchResult searchResult, SearchQuery request,
             List<Certificate> certificateList, IAssessmentOrgsApiClient assessmentOrgsApiClient,
