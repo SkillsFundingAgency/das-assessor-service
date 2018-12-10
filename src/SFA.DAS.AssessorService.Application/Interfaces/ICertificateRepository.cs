@@ -15,7 +15,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<Certificate> GetCertificate(long uln, int standardCode);
         Task<Certificate> GetPrivateCertificate(long uln, string endpointOrganisationId, string lastName);
         Task<Certificate> GetCertificate(string certificateReference, string lastName, DateTime? achievementDate);
-        Task<List<Certificate>> GetCompletedCertificatesFor(long uln);
         Task<List<Certificate>> GetCertificates(List<string> statuses);
         Task<Certificate> Update(Certificate certificate, string username, string action, bool updateLog = true, string reasonForChange = null);
         Task<Certificate> UpdateProviderName(Guid id, string providerName);
@@ -31,7 +30,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<List<Option>> GetOptions(int stdCode);
         Task ApproveCertificates(List<ApprovalResult> approvalResults, string userName);
         Task<List<Certificate>> GetCertificates(long uln, string familyName, int? standardCode = null);
-        Task<List<Certificate>> GetCertificatesFor(long uln);
+        Task<List<Certificate>> GetSubmittedAndDraftCertificatesFor(long uln);
 
     }
 }

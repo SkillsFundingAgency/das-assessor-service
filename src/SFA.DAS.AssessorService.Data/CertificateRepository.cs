@@ -145,15 +145,7 @@ namespace SFA.DAS.AssessorService.Data
             return (certificateData.AchievementDate == achievementDate && certificateData.LearnerFamilyName == lastName);
         }
 
-        public async Task<List<Certificate>> GetCompletedCertificatesFor(long uln)
-        {
-            return await _context.Certificates.Where(c =>
-                    c.Uln == uln && (c.Status == CertificateStatus.Reprint || c.Status == CertificateStatus.Printed ||
-                                     c.Status == CertificateStatus.Submitted))
-                .ToListAsync();
-        }
-
-        public async Task<List<Certificate>> GetCertificatesFor(long uln)
+        public async Task<List<Certificate>> GetSubmittedAndDraftCertificatesFor(long uln)
         {
             return await _context.Certificates.Where(c =>
                     c.Uln == uln && (c.Status == CertificateStatus.Reprint || c.Status == CertificateStatus.Printed ||

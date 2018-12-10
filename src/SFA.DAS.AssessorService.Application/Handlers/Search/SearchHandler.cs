@@ -68,7 +68,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
            likedSurname = DealWithSpecialCharactersAndSpaces(request, likedSurname, new List<Ilr>());
 
             //If standard code is provided along side of uln and likedsurname
-            if (!string.IsNullOrEmpty(request.StandardCode))
+            if (request.StandardCode != null)
             {
                var foundMatch = await RetrieveSearchResultFromMatchedCertificate(request, likedSurname);
                return foundMatch;
@@ -152,8 +152,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             var listOfSearchResults = new List<SearchResult>();
             //The ULN and FamilyName with  Standard Code  matched to existing Certificate then return details from certificate
             var certificates = await _certificateRepository.GetCertificates(request.Uln, likedSurname,
-                Int32.Parse(request.StandardCode));
-            if (certificates.Any() && certificates.Count == 1)
+                request.StandardCode);
+            if (certificates?.Count == 1)
             {
                 var ilr = new Ilr {StdCode = certificates[0].StandardCode};
                 var result = Mapper.Map<SearchResult>(ilr)

@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
         {
             Setup();
 
-            CertificateRepository.Setup(r => r.GetCertificatesFor(1111111111))
+            CertificateRepository.Setup(r => r.GetSubmittedAndDraftCertificatesFor(1111111111))
                 .ReturnsAsync(new List<Certificate>
                 {
                     new Certificate

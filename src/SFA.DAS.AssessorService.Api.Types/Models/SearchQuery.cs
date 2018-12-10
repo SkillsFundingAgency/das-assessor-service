@@ -9,6 +9,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public string Surname { get; set; }
         public int UkPrn { get; set; }
         public string Username { get; set; }
-        public string StandardCode { get; set; }
+        public int? StandardCode { get; set; }
     }
 }

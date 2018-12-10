@@ -150,7 +150,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 config.For<SingleInstanceFactory>().Use<SingleInstanceFactory>(ctx => t => ctx.GetInstance(t));
                 config.For<MultiInstanceFactory>().Use<MultiInstanceFactory>(ctx => t => ctx.GetAllInstances(t));
                 config.For<IMediator>().Use<Mediator>();
-                config.For<ISubmissionEventProviderApiClient>().Use( _ => new SubmissionEventProviderApiClient(Configuration.ProviderEventsClientBaseUrl));
+                config.For<ISubmissionEventProviderApiClient>().Use( () => new SubmissionEventProviderApiClient(Configuration.ProviderEventsClientBaseUrl));
                 config.For<IAssessmentOrgsApiClient>().Use(() => new AssessmentOrgsApiClient(Configuration.AssessmentOrgsApiClientBaseUrl));  
                 config.For<IIfaStandardsApiClient>().Use(() => new IfaStandardsApiClient(Configuration.IfaApiClientBaseUrl));
                 config.For<IDateTimeProvider>().Use<UtcDateTimeProvider>();

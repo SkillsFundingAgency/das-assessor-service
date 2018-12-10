@@ -49,7 +49,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
             SearchQuery request, ICertificateRepository certificateRepository, IContactQueryRepository contactRepository, ILogger<SearchHandler> logger)
         {
             logger.LogInformation("MatchUpExistingCompletedStandards Before Get Certificates for uln from db");
-            var certificates = certificateRepository.GetCertificatesFor(request.Uln).Result;
+            var certificates = certificateRepository.GetSubmittedAndDraftCertificatesFor(request.Uln).Result;
             logger.LogInformation("MatchUpExistingCompletedStandards After Get Certificates for uln from db");
             foreach (var searchResult in searchResults.Where(r => certificates.Select(s => s.StandardCode).Contains(r.StdCode)))
             {
@@ -105,7 +105,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                     return;
                 }
 
-                ApplyBasicCertificateInfo(searchResult, certificateData, certificate);
+                ApplyBasicCertificateInfo(searchResult, certificateData, certificate, true);
                 ApplyExtraCertificateInfo(searchResult, true, certificateData.OverallGrade,
                     createdLogEntry.Username,
                     createdLogEntry.EventTime.UtcFromTimeZoneTime(),
@@ -123,17 +123,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 var lastUpdatedContact = contactRepository.GetContact(lastUpdatedLogEntry.Username).Result;
                 var searchingContact = contactRepository.GetContact(request.Username).Result;
                 //Apply Basic Info
-                ApplyBasicCertificateInfo(searchResult, certificateData, certificate);
+                ApplyBasicCertificateInfo(searchResult, certificateData, certificate, false);
                 if (submittingContact != null && submittingContact.OrganisationId == searchingContact.OrganisationId)
                 {
                     //Use contact realname, local time for submitted at and updated by use contact real name
                     //Apply extra info
                     ApplyExtraCertificateInfo(searchResult, true, certificateData.OverallGrade,
                         submittingContact.DisplayName,
-                        submittedLogEntry.EventTime.UtcToTimeZoneTime(),
+                        submittedLogEntry.EventTime,
                         certificateData.AchievementDate,
                         lastUpdatedContact != null ? lastUpdatedContact.DisplayName : lastUpdatedLogEntry.Username,
-                        lastUpdatedLogEntry.EventTime.UtcToTimeZoneTime());
+                        lastUpdatedLogEntry.EventTime);
                 }
                 else
                 {
@@ -143,14 +143,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
         }
 
         private static void ApplyBasicCertificateInfo(SearchResult searchResult, CertificateData certificateData,
-            Certificate certificate)
+            Certificate certificate, bool isDraft)
         {
             searchResult.Uln = certificate.Uln;
             searchResult.FamilyName = certificateData.LearnerFamilyName;
             searchResult.GivenNames = certificateData.LearnerGivenNames;
             searchResult.StdCode = certificate.StandardCode;
             searchResult.UkPrn = certificate.ProviderUkPrn;
-            searchResult.CertificateReference = certificate.CertificateReference;
+            searchResult.CertificateReference = isDraft ? null:certificate.CertificateReference; //Set to null since the Web front end expects a null if draft - Needs revisting
             searchResult.CertificateId = certificate.Id;
             searchResult.CertificateStatus = certificate.Status;
             searchResult.LearnStartDate = certificateData.LearningStartDate;
@@ -158,15 +158,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
         }
 
         private static void ApplyExtraCertificateInfo(SearchResult searchResult,
-            bool showExtraInfo, string overallGrade, string submittedBy, DateTime? submittedAt, DateTime? achDate, string updatedBy, DateTime? UpdatedAt)
+            bool showExtraInfo, string overallGrade, string submittedBy, DateTime? submittedAt, DateTime? achDate, string updatedBy, DateTime? updatedAt)
         {
             searchResult.ShowExtraInfo = showExtraInfo;
             searchResult.OverallGrade = overallGrade;
+            searchResult.SubmittedAt = submittedAt?.UtcToTimeZoneTime();
             searchResult.SubmittedBy = submittedBy; // This needs to be contact real name
-            searchResult.SubmittedAt = submittedAt; // This needs to be local time 
-            searchResult.AchDate = achDate;
+            searchResult.AchDate = achDate?.UtcToTimeZoneTime(); ;
             searchResult.UpdatedBy = updatedBy; // This needs to be contact real name
-            searchResult.UpdatedAt = UpdatedAt; // This needs to be local time
+            searchResult.UpdatedAt = updatedAt?.UtcToTimeZoneTime(); ; // This needs to be local time
         }
 
     }

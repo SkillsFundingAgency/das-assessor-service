@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 
             var certificateId = Guid.NewGuid();
 
-            CertificateRepository.Setup(r => r.GetCertificatesFor(1111111111))
+            CertificateRepository.Setup(r => r.GetSubmittedAndDraftCertificatesFor(1111111111))
                 .ReturnsAsync(new List<Certificate>
                 {
                     new Certificate
@@ -92,7 +92,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
             result[0].SubmittedAt.Should().Be(new DateTime(2018,2,3,13,23,33));
             result[0].SubmittedBy.Should().Be("EPAO User from same EAPOrg");
             result[0].LearnStartDate.Should().Be(new DateTime(2015,06,01));
-            result[0].AchDate.Should().Be(new DateTime(2018,06,01));
+            result[0].AchDate.Should().Be(new DateTime(2018,06,01,01,00,00));
             result[0].OverallGrade.Should().Be("Distinction");
             result[0].ShowExtraInfo.Should().BeTrue();
         }

@@ -66,7 +66,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
             _organisationRepository.Setup(r => r.GetByUkPrn(12345)).ReturnsAsync(new Organisation()
                 { EndPointAssessorOrganisationId = "EPA0001" });
 
-            _certificateRepository.Setup(r => r.GetCertificatesFor(1111111111))
+            _certificateRepository.Setup(r => r.GetSubmittedAndDraftCertificatesFor(1111111111))
                 .ReturnsAsync(new List<Certificate>
                 {
                     new Certificate
