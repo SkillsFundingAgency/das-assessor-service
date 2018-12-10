@@ -81,7 +81,9 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                     policy =>
                     {
                         policy.RequireAssertion(context =>
-                            context.User.HasClaim("http://schemas.portal.com/service", Roles.ExternalApiAccess));
+                            context.User.HasClaim("http://schemas.portal.com/service", Roles.ExternalApiAccess)
+                            && context.User.HasClaim("http://schemas.portal.com/service", Roles.EpaoUser)
+                            );
                     });
             });
         }
@@ -95,5 +97,6 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
     public class Roles
     {
         public const string ExternalApiAccess = "EPI";
+        public const string EpaoUser = "EPA";
     }
 }
