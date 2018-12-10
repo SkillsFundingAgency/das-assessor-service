@@ -153,5 +153,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         {
             return await Get<Organisation>($"/Application/{applicationId}/Organisation");
         }
+
+        public async Task<List<dynamic>> GetPreviousFinancialApplications()
+        {
+            return await Get<List<dynamic>>($"/Financial/Previous");
+        }
     }
 }

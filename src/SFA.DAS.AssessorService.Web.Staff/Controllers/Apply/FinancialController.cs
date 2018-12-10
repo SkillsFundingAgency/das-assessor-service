@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using SFA.DAS.AssessorService.ApplyTypes;
@@ -10,13 +12,16 @@ using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
 {
+    [Authorize]
     public class FinancialController : Controller
     {
         private readonly ApplyApiClient _apiClient;
+        private readonly IHttpContextAccessor _contextAccessor;
 
-        public FinancialController(ApplyApiClient apiClient)
+        public FinancialController(ApplyApiClient apiClient, IHttpContextAccessor contextAccessor)
         {
             _apiClient = apiClient;
+            _contextAccessor = contextAccessor;
         }
         
         
@@ -44,9 +49,23 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
             return View("~/Views/Apply/Financial/NewApplications.cshtml", applicationViewModels);
         }
 
-        public IActionResult PreviousApplications()
+        [HttpGet("/Financial/PreviousApplications")]
+        public async Task<IActionResult> PreviousApplications()
         {
-            return View("~/Views/Apply/Financial/PreviousApplications.cshtml");
+            var applications = await _apiClient.GetPreviousFinancialApplications();
+
+            var applicationViewModels = applications.Select(a =>
+                new PreviousFinancialApplicationViewModel
+                {
+                    ApplicationId = a.applicationId,
+                    ApplyingOrganisationName = a.applyingOrganisationName,
+                    LinkText = "View application",
+                    Grade = a.grade,
+                    GradedBy = a.gradedBy,
+                    GradedDate = DateTime.Parse(a.gradedDateTime.ToString())
+                }).ToList();
+            
+            return View("~/Views/Apply/Financial/PreviousApplications.cshtml", applicationViewModels);
         }
 
         [HttpGet("/Financial/{applicationId}")]
@@ -69,6 +88,28 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
             
             return View("~/Views/Apply/Financial/Application.cshtml", vm);
         }
+        
+        [HttpGet("/Financial/{applicationId}/Graded")]
+        public async Task<IActionResult> ViewGradedApplication(Guid applicationId)
+        {
+            await _apiClient.StartFinancialReview(applicationId);
+            
+            var financialSectionId = 3;
+            var stage1SequenceId = 1;
+            var financialSection = await _apiClient.GetSection(applicationId, stage1SequenceId, financialSectionId);
+
+            var organisation = await _apiClient.GetOrganisationForApplication(applicationId);
+            
+            var vm = new FinancialApplicationViewModel
+            {
+                Organisation = organisation,
+                Section = financialSection,
+                ApplicationId = applicationId,
+                Grade = financialSection.QnADataObject.FinancialApplicationGrade
+            };
+            
+            return View("~/Views/Apply/Financial/PreviousApplication.cshtml", vm);
+        }
 
         [HttpGet("/Financial/Download/{applicationId}/Page/{pageId}/QuestionId/{questionId}")]
         public async Task<IActionResult> Download(Guid applicationId, int pageId, string questionId)
@@ -89,6 +130,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
         [HttpPost("/Financial/Grade")]
         public async Task<IActionResult> Grade(FinancialApplicationViewModel vm)
         {
+            // Get user.
+            
+            var givenName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")?.Value;
+            var surname = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname")?.Value;
+
+            vm.Grade.GradedBy = $"{givenName} {surname}";
+            
             await _apiClient.UpdateFinancialGrade(vm.ApplicationId, vm.Grade);
             return RedirectToAction("Graded", new {vm.ApplicationId});
         }
@@ -100,6 +148,16 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
 
             return View("~/Views/Apply/Financial/Graded.cshtml", section);
         }
+    }
+
+    public class PreviousFinancialApplicationViewModel
+    {
+        public Guid ApplicationId { get; set; }
+        public string ApplyingOrganisationName { get; set; }
+        public string LinkText { get; set; }
+        public string Grade { get; set; }
+        public string GradedBy { get; set; }
+        public DateTime GradedDate { get; set; }
     }
 
     public class FinancialApplicationViewModel

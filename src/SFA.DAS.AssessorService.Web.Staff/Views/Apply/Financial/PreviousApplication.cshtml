@@ -1,0 +1,70 @@
+@using Microsoft.EntityFrameworkCore.Query.Internal
+@model SFA.DAS.AssessorService.Web.Staff.Controllers.Apply.FinancialApplicationViewModel
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<a href="@Url.Action("PreviousApplications", "Financial")" class="govuk-back-link">Back</a>
+
+<h3>@Model.Organisation.OrganisationDetails.LegalName</h3>
+
+<table>
+    <thead>
+    <tr>
+        <th>Grade</th>
+        <th>Date reviewed</th>
+        <th>Comments</th>
+        <th>Reviewer</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>@Model.Grade.SelectedGrade</td>
+        <td>@Model.Grade.GradedDateTime.ToShortDateString()</td>
+        <td>@(Model.Grade.InadequateMoreInformation ?? Model.Grade.SatisfactoryMoreInformation ?? "")</td>
+        <td>@Model.Grade.GradedBy</td>
+    </tr>
+    </tbody>
+</table>
+
+
+@foreach (var page in Model.Section.PagesContainingUploadQuestions)
+{
+    foreach (var uploadQuestion in page.UploadQuestions)
+    {
+        <div>
+            <a href="@Url.Action("Download", "Financial",
+                         new
+                         {
+                             Model.Section.ApplicationId,
+                             uploadQuestion.QuestionId,
+                             page.PageId
+                         })">
+            Download financial statement</a>
+                @* Download @uploadQuestion.Label</a> *@
+        </div>
+    }
+}
+
+<table>
+    <tr>
+        <th>
+            Questions
+        </th>
+        <th>
+            Answers
+        </th>
+    </tr>
+    @foreach (var pg in Model.Section.QnADataObject.Pages)
+    {
+        foreach (var question in pg.Questions.Where(q => q.Input.Type != "FileUpload"))
+        {
+            <tr>
+                <td>@question.Label</td>
+                <td>@pg.PageOfAnswers.SelectMany(poa => poa.Answers).SingleOrDefault(a => a.QuestionId == question.QuestionId)?.Value</td>
+            </tr>
+        }
+    }
+</table>
