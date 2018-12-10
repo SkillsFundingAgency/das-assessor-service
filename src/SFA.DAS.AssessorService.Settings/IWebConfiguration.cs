@@ -10,6 +10,7 @@
         CertificateDetails CertificateDetails { get; set; }
         SftpSettings Sftp { get; set; }
         string AssessmentOrgsApiClientBaseUrl { get; set; }
+        string IfaApiClientBaseUrl { get; set; }
         string IFATemplateStorageConnectionString { get; set; }
         string SqlConnectionString { get; set; }
         string SpecflowDBTestConnectionString { get; set; }

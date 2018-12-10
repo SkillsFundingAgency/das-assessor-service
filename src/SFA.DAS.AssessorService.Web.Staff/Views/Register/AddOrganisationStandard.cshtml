@@ -15,9 +15,9 @@
             @Html.HiddenFor(c => c.StandardId)
             @Html.HiddenFor(c => c.Ukprn)
             @Html.HiddenFor(c => c.OrganisationName)
-            @Html.HiddenFor(c => c.StandardTitle)        
+            @Html.HiddenFor(c => c.StandardTitle)
             @Html.HiddenFor(m => m.StandardEffectiveFrom)
-            @Html.HiddenFor(m => m.StandardEffectiveTo)  
+            @Html.HiddenFor(m => m.StandardEffectiveTo)
             @Html.HiddenFor(c => c.StandardLastDateForNewStarts)
 
             <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
@@ -53,43 +53,43 @@
             <h1 class="heading-xlarge">Add an organisation standard</h1>
             <table>
                 <tbody>
-                <tr>
-                    <td><span class="bold-small">Organisation</span></td>
-                    <td>@Model.OrganisationName</td>
+                    <tr>
+                        <td><span class="bold-small">Organisation</span></td>
+                        <td>@Model.OrganisationName</td>
                 </tr>
                 <tr>
                     <td><span class="bold-small">Organisation status</span></td>
                     <td>@Model.OrganisationStatus</td>
-                </tr>
-                <tr>
-                    <td><span class="bold-small">Organisation ID</span></td>
-                    <td>@Model.OrganisationId</td>
-                </tr>
-                <tr>
-                    <td><span class="bold-small">UKPRN</span></td>
-                    <td>@Model.Ukprn</td>
-                </tr>
-                <tr>
-                    <td><span class="bold-small">Standard</span></td>
-                    <td>@Model.StandardTitle (@Model.StandardId)</td>
-                </tr>
-                <tr>
-                    <td><span class="bold-small">Standard effective from</span></td>
-                    <td>@Model.StandardEffectiveFrom.ToSfaShortDateString()</td>
-                </tr>
-                <tr>
-                    <td><span class="bold-small">Standard effective to</span></td>
-                    <td>@Model.StandardEffectiveTo.ToSfaShortDateString()</td>
-                </tr>
-                <tr>
-                    <td><span class="bold-small">Last date for new starts</span></td>
-                    <td>@Model.StandardLastDateForNewStarts.ToSfaShortDateString()</td>
-                </tr>
+                    </tr>
+                    <tr>
+                        <td><span class="bold-small">Organisation ID</span></td>
+                        <td>@Model.OrganisationId</td>
+                    </tr>
+                    <tr>
+                        <td><span class="bold-small">UKPRN</span></td>
+                        <td>@Model.Ukprn</td>
+                    </tr>
+                    <tr>
+                        <td><span class="bold-small">Standard</span></td>
+                        <td>@Model.StandardTitle (@Model.StandardId)</td>
+                    </tr>
+                    <tr>
+                        <td><span class="bold-small">Standard effective from</span></td>
+                        <td>@Model.StandardEffectiveFrom.ToSfaShortDateString()</td>
+                    </tr>
+                    <tr>
+                        <td><span class="bold-small">Standard effective to</span></td>
+                        <td>@Model.StandardEffectiveTo.ToSfaShortDateString()</td>
+                    </tr>
+                    <tr>
+                        <td><span class="bold-small">Last date for new starts</span></td>
+                        <td>@Model.StandardLastDateForNewStarts.ToSfaShortDateString()</td>
+                    </tr>
                 </tbody>
             </table>
 
             <h1 class="heading-large">New organisation standard details</h1>
-            
+
             <div class="form-group error-message-container" sfa-anyvalidationerror-class="form-group-error">
                 <span class="error-message" asp-validation-for="EffectiveFrom"></span>
                 <span class="error-message" asp-validation-for="EffectiveFromDay"></span>
@@ -140,7 +140,7 @@
                         <input class="form-control date-input js-integers-only" sfa-validation-for="EffectiveToYear" sfa-validationerror-class="form-control-error" asp-for="EffectiveToYear" type="text" maxlength="4" />
                     </div>
                 </span>
-            
+
             </div>
             <div class="form-group" sfa-validation-for="ContactId" sfa-validationerror-class="form-group-error">
                 <label for="ContactId">
@@ -150,13 +150,15 @@
                 @foreach (var contact in Model.Contacts)
                 {
                     <div class="multiple-choice">
-                        <input asp-for="ContactId" id="@contact.Id" type="radio" value="@contact.Id"/>
+                        <input asp-for="ContactId" id="@contact.Id" type="radio" value="@contact.Id" />
                         <label for="@contact.Id">
                             @contact.DisplayName
-                            @if (!String.IsNullOrEmpty( @contact.Email )) {
+                            @if (!String.IsNullOrEmpty(@contact.Email))
+                            {
                                 <br /><a href="mailto:@contact.Email">@contact.Email</a>
                             }
-                            @if (!String.IsNullOrEmpty( @contact.PhoneNumber )) {
+                            @if (!String.IsNullOrEmpty(@contact.PhoneNumber))
+                            {
                                 <br />@contact.PhoneNumber
                             }
                         </label>
@@ -170,20 +172,25 @@
                 </label>
                 @foreach (var deliveryArea in Model.AvailableDeliveryAreas)
                 {
-                var checkboxChecked = Model.DeliveryAreas != null && Model.DeliveryAreas.Any(x => x == deliveryArea.Id) ? "checked" : "";
-                <div class="multiple-choice">
-                    <input 
-                        id="@deliveryArea.Id"
-                        name="DeliveryAreas"
-                        type="checkbox"
-                        value="@deliveryArea.Id"
-                        @checkboxChecked
-                    />
-                    <label for="@deliveryArea.Id">
-                        @deliveryArea.Area
-                    </label>
-                </div>
+                    var checkboxChecked = Model.DeliveryAreas != null && Model.DeliveryAreas.Any(x => x == deliveryArea.Id) ? "checked" : "";
+                    <div class="multiple-choice">
+                        <input id="@deliveryArea.Id"
+                               name="DeliveryAreas"
+                               type="checkbox"
+                               value="@deliveryArea.Id"
+                               @checkboxChecked />
+                        <label for="@deliveryArea.Id">
+                            @deliveryArea.Area
+                        </label>
+                    </div>
                 }
+            </div>
+            <div class="form-group" sfa-validation-for="DeliveryAreasComments" sfa-validationerror-class="form-group-error">
+                <label class="form-label" for="DeliveryAreasComments">
+                    <span class="form-label-bold">Delivery Area Notes</span>
+                    <span class="error-message" asp-validation-for="DeliveryAreasComments"></span>
+                </label>
+                <textarea class="form-control form-control-3-4" maxlength="500" name="DeliveryAreasComments" id="DeliveryAreasComments" sfa-validationerror-class="form-control-error" asp-for="DeliveryAreasComments" rows="2"></textarea>
             </div>
             <div class="form-group" sfa-validation-for="Comments" sfa-validationerror-class="form-group-error">
                 <label class="form-label" for="Comments">
@@ -194,8 +201,9 @@
             </div>
             <div class="form-group">
                 <button class="button" type="submit">Save</button>
+                <a href="/register/search-standards/@Model.OrganisationId" class="button">Cancel</a>
             </div>
-                
+
         </form>
     </div>
 </div>

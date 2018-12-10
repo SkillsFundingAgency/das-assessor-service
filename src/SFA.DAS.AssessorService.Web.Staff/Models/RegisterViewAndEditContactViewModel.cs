@@ -8,5 +8,8 @@
         public string PhoneNumber { get; set; }
         public string OrganisationName { get; set; }
         public string OrganisationId { get; set; }
+        public string ContactDetails { get; set; }
+        public bool IsPrimaryContact { get; set; }
+        public string ActionChoice { get; set; }
     }
 }

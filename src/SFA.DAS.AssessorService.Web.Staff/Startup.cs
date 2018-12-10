@@ -20,6 +20,7 @@ using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Data;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
+using SFA.DAS.AssessorService.ExternalApis.IFAStandards;
 using SFA.DAS.AssessorService.ExternalApis.Services;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Infrastructure;
@@ -115,9 +116,12 @@ namespace SFA.DAS.AssessorService.Web.Staff
                 config.For<IContactsApiClient>().Use<ContactsApiClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
 //                config.For<IApplyApiClient>().Use<ApplyApiClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<IAssessmentOrgsApiClient>().Use(() => new AssessmentOrgsApiClient(ApplicationConfiguration.AssessmentOrgsApiClientBaseUrl));
+                config.For<IIfaStandardsApiClient>().Use(() => new IfaStandardsApiClient(ApplicationConfiguration.IfaApiClientBaseUrl));
                 config.For<IAzureTokenService>().Use<AzureTokenService>();
                 config.For<IAzureApiClient>().Use<AzureApiClient>().Ctor<string>("baseUri").Is(ApplicationConfiguration.AzureApiAuthentication.ApiBaseAddress)
-                                                                   .Ctor<string>("productId").Is(ApplicationConfiguration.AzureApiAuthentication.ProductId);
+                                                                   .Ctor<string>("productId").Is(ApplicationConfiguration.AzureApiAuthentication.ProductId)
+                                                                   .Ctor<string>("groupId").Is(ApplicationConfiguration.AzureApiAuthentication.GroupId)
+                                                                   .Ctor<string>("requestBaseUri").Is(ApplicationConfiguration.AzureApiAuthentication.RequestBaseAddress);
                 config.For<CacheService>().Use<CacheService>();
                 config.For<CertificateLearnerStartDateViewModelValidator>()
                     .Use<CertificateLearnerStartDateViewModelValidator>();

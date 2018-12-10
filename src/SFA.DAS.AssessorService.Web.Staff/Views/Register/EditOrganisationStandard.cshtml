@@ -174,13 +174,13 @@
                     </div>
                 }
             </div>
-            <div class="form-group" sfa-validation-for="DeliveryAreas" sfa-validationerror-class="form-group-error">
-                <label for="DeliveryAreas">
-                    <span class="form-label-bold">Delivery areas</span>
-                    <span class="error-message" asp-validation-for="DeliveryAreas"></span>
-                </label>
-                @foreach (var deliveryArea in Model.AvailableDeliveryAreas)
-                {
+        <div class="form-group" sfa-validation-for="DeliveryAreas" sfa-validationerror-class="form-group-error">
+            <label for="DeliveryAreas">
+                <span class="form-label-bold">Delivery areas</span>
+                <span class="error-message" asp-validation-for="DeliveryAreas"></span>
+            </label>
+            @foreach (var deliveryArea in Model.AvailableDeliveryAreas)
+            {
                 var checkboxChecked = Model.DeliveryAreas != null && Model.DeliveryAreas.Any(x => x == deliveryArea.Id) ? "checked" : "";
                 <div class="multiple-choice">
                     <input 
@@ -194,8 +194,16 @@
                         @deliveryArea.Area
                     </label>
                 </div>
-                }
-            </div>
+            }
+        </div>
+        <div class="form-group" sfa-validation-for="DeliveryAreasComments" sfa-validationerror-class="form-group-error">
+            <label class="form-label" for="DeliveryAreasComments">
+                <span class="form-label-bold">Delivery Area Notes</span>
+                <span class="error-message" asp-validation-for="DeliveryAreasComments"></span>
+            </label>
+            <textarea class="form-control form-control-3-4" maxlength="500" name="DeliveryAreasComments" id="DeliveryAreasComments" sfa-validationerror-class="form-control-error" asp-for="DeliveryAreasComments" rows="2"></textarea>
+        </div>
+
             <div class="form-group" sfa-validation-for="Comments" sfa-validationerror-class="form-group-error">
                 <label for="Comments">
                     <span class="form-label-bold">Comments</span>
@@ -209,7 +217,7 @@
                 {
                     <button class="button" type="submit" name="ActionChoice" value="MakeLive">Make Live</button>
                 }
-                <a href="/register/view-standard/@Model.OrganisationStandardId">Cancel</a>
+                <a class ="button" href="/register/view-standard/@Model.OrganisationStandardId">Cancel</a>
             </div>
             
         </form>

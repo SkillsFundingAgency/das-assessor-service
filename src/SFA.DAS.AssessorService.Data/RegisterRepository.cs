@@ -25,6 +25,7 @@ namespace SFA.DAS.AssessorService.Data
         {
             _configuration = configuration;
             SqlMapper.AddTypeHandler(typeof(OrganisationData), new OrganisationDataHandler());
+            SqlMapper.AddTypeHandler(typeof(OrganisationStandardData), new OrganisationStandardDataHandler());
         }
 
         public async Task<string> CreateEpaOrganisation(EpaOrganisation org)
@@ -77,14 +78,14 @@ namespace SFA.DAS.AssessorService.Data
 
 
                 var osdaId = connection.Query<string>(
-                    "INSERT INTO [dbo].[OrganisationStandard] ([EndPointAssessorOrganisationId],[StandardCode],[EffectiveFrom],[EffectiveTo],[DateStandardApprovedOnRegister] ,[Comments],[Status], [ContactId]) VALUES (" +
-                    "@organisationId, @standardCode, @effectiveFrom, @effectiveTo, null, @comments, 'New', @ContactId); SELECT CAST(SCOPE_IDENTITY() as varchar); ",
+                    "INSERT INTO [dbo].[OrganisationStandard] ([EndPointAssessorOrganisationId],[StandardCode],[EffectiveFrom],[EffectiveTo],[DateStandardApprovedOnRegister] ,[Comments],[Status], [ContactId], [OrganisationStandardData]) VALUES (" +
+                    "@organisationId, @standardCode, @effectiveFrom, @effectiveTo, null, @comments, 'New', @ContactId, @OrganisationStandardData); SELECT CAST(SCOPE_IDENTITY() as varchar); ",
                     new
                     {
                         organisationStandard.OrganisationId, organisationStandard.StandardCode,
                         organisationStandard.EffectiveFrom, organisationStandard.EffectiveTo,
                         organisationStandard.DateStandardApprovedOnRegister, organisationStandard.Comments,
-                        organisationStandard.ContactId
+                        organisationStandard.ContactId, organisationStandard.OrganisationStandardData
                     }).Single();
 
                 foreach (var deliveryAreaId in deliveryAreas.Distinct())
@@ -111,7 +112,7 @@ namespace SFA.DAS.AssessorService.Data
 
                 var osdaId = connection.Query<string>(
                     "UPDATE [OrganisationStandard] SET [EffectiveFrom] = @effectiveFrom, [EffectiveTo] = @EffectiveTo, " +
-                    "[Comments] = @comments, [ContactId] = @contactId " +
+                    "[Comments] = @comments, [ContactId] = @contactId, [OrganisationStandardData] = @organisationStandardData " +
                     "WHERE [EndPointAssessorOrganisationId] = @organisationId and [StandardCode] = @standardCode; SELECT top 1 id from [organisationStandard] where  [EndPointAssessorOrganisationId] = @organisationId and [StandardCode] = @standardCode;",
                     new
                     {
@@ -120,7 +121,8 @@ namespace SFA.DAS.AssessorService.Data
                         orgStandard.Comments,
                         orgStandard.ContactId,
                         orgStandard.OrganisationId,
-                        orgStandard.StandardCode
+                        orgStandard.StandardCode,
+                        orgStandard.OrganisationStandardData
                     }).Single();
 
                 connection.Execute(
@@ -172,11 +174,16 @@ namespace SFA.DAS.AssessorService.Data
                         contact.PhoneNumber
                     });
 
+                connection.Execute("UPDATE [dbo].[Organisations] set PrimaryContact=@username WHERE EndPointAssessorOrganisationId = @endPointAssessorOrganisationId and PrimaryContact is null",
+                    new
+                    {
+                        contact.EndPointAssessorOrganisationId, contact.Username
+                    });
                 return contact.Id.ToString();
             }
         }
 
-        public async Task<string> UpdateEpaOrganisationContact(EpaContact contact)
+        public async Task<string> UpdateEpaOrganisationContact(EpaContact contact, string actionChoice)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
@@ -190,6 +197,11 @@ namespace SFA.DAS.AssessorService.Data
                     "WHERE [Id] = @Id ",
                     new { contact.DisplayName, contact.Email, contact.PhoneNumber, contact.Id});
 
+                if (actionChoice == "MakePrimaryContact")
+                    connection.Execute("update o set PrimaryContact = c.Username from organisations o " +
+                                       "inner join contacts c on o.EndPointAssessorOrganisationId = c.EndPointAssessorOrganisationId " +
+                                       "Where c.id = @Id",
+                        new {contact.Id});
 
                 return contact.Id.ToString();
             }

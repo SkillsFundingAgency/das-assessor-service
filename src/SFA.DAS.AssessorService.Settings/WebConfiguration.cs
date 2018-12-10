@@ -20,6 +20,8 @@ namespace SFA.DAS.AssessorService.Settings
 
         [JsonRequired] public string AssessmentOrgsApiClientBaseUrl { get; set; }
 
+        [JsonRequired] public string IfaApiClientBaseUrl { get; set; }
+
         [JsonRequired] public string IFATemplateStorageConnectionString { get; set; }
 
         [JsonRequired] public string SqlConnectionString { get; set; }

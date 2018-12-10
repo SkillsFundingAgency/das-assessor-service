@@ -5,14 +5,19 @@ using OfficeOpenXml;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Web.Staff.Domain;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {
-    [Authorize(Roles = Domain.Roles.OperationsTeam + "," + Domain.Roles.CertificationTeam)]
+    [Authorize(Roles = Roles.OperationsTeam + "," + Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
     public class ReportsController : Controller
     {
         private readonly ILogger<ReportsController> _logger;
@@ -27,8 +32,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         public async Task<IActionResult> Index()
         {
             var reports = await _apiClient.GetReportList();
+            _apiClient.GatherAndCollateStandards();
 
-            ReportViewModel vm = new ReportViewModel { Reports = reports };
+            var vm = new ReportViewModel {Reports = reports};
 
             return View(vm);
         }
@@ -39,17 +45,45 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             {
                 return RedirectToAction("Index");
             }
-            else
-            {
-                var reports = await _apiClient.GetReportList();
-                var data = await _apiClient.GetReport(reportId);
-                ReportViewModel vm = new ReportViewModel { Reports = reports, ReportId = reportId, SelectedReportData = data };
 
-                return View(vm);
-            }
+            var reports = await _apiClient.GetReportList();
+            var reportType = await _apiClient.GetReportTypeFromId(reportId);
+
+            if (reportType == ReportType.Download)
+                return RedirectToAction("DirectDownload", new {reportId});
+
+
+            var data = await _apiClient.GetReport(reportId);
+            var vm = new ReportViewModel {Reports = reports, ReportId = reportId, SelectedReportData = data};
+            return View(vm);
+
         }
 
-        public async Task<FileContentResult> Export(Guid reportId)
+        public async Task<FileContentResult> DirectDownload(Guid reportId)
+        {
+            _logger.LogInformation($"Standard Collation initiated");
+            await _apiClient.GatherAndCollateStandards();
+
+            _logger.LogInformation($"Standard Collation completed");
+            var reportDetails = await _apiClient.GetReportDetailsFromId(reportId);
+
+            using (var package = new ExcelPackage())
+            {
+
+                    foreach (var ws in reportDetails.Worksheets.OrderBy(w => w.Order))
+                    {
+                        var worksheetToAdd = package.Workbook.Worksheets.Add(ws.Worksheet);
+                        var data = await _apiClient.GetDataFromStoredProcedure(ws.StoredProcedure);
+                        worksheetToAdd.Cells.LoadFromDataTable(ToDataTable(data), true);
+                    }
+
+                    return File(package.GetAsByteArray(), "application/excel", $"{reportDetails.Name}.xlsx");
+              
+            }
+        }
+    
+
+    public async Task<FileContentResult> Export(Guid reportId)
         {
             var data = await _apiClient.GetReport(reportId);
 
