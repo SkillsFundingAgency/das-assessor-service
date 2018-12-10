@@ -46,7 +46,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             certificateApprovalViewModel.UserName = ContextAccessor.HttpContext.User
                 .FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
-            await ApiClient.ApproveCertificates(certificateApprovalViewModel);
+            ApiClient.ApproveCertificates(certificateApprovalViewModel);
 
             return RedirectToAction("Index", "Dashboard");
         }

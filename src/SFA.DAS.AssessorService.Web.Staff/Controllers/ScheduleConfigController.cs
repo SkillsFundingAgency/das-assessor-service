@@ -86,7 +86,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             DateTime now = DateTime.UtcNow.UtcToTimeZoneTime();
 
@@ -133,7 +133,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         }
 
         [HttpGet]
-        public IActionResult RunNow(int scheduleType)
+        public async Task<IActionResult> RunNow(int scheduleType)
         {
             var viewModel = new ScheduleConfigViewModel
             {

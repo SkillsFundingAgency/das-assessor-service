@@ -212,7 +212,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 
         [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
         [HttpGet("register/add-contact/{organisationId}")]
-        public IActionResult AddContact(string organisationId)
+        public async Task<IActionResult> AddContact(string organisationId)
         {
             var vm = new RegisterAddContactViewModel
             {
@@ -287,7 +287,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 
 
         [HttpGet("register/impage")]
-        public IActionResult Impage()
+        public async Task<IActionResult> Impage()
         {
             if (!_env.IsDevelopment())
                 return NotFound();

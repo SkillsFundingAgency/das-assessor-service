@@ -22,12 +22,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
         {
             var searchstring = _cleanser.UnescapeAndRemoveNonAlphanumericCharacters(request.Searchstring);
 
-            var result = _validator.ValidatorSearchStandardsRequest(new SearchStandardsValidationRequest
+            return _validator.ValidatorSearchStandardsRequest(new SearchStandardsValidationRequest
             {
                 Searchstring = searchstring
             });
-
-            return await Task.FromResult(result);
         }
     }
 

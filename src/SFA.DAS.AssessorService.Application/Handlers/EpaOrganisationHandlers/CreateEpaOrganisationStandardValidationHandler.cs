@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
         public async Task<ValidationResponse> Handle(CreateEpaOrganisationStandardValidationRequest request, CancellationToken cancellationToken)
         {
-            var result = _validator.ValidatorCreateEpaOrganisationStandardRequest(new CreateEpaOrganisationStandardRequest
+            return _validator.ValidatorCreateEpaOrganisationStandardRequest(new CreateEpaOrganisationStandardRequest
             {
                 OrganisationId = request.OrganisationId,
                 StandardCode = request.StandardCode,
@@ -34,8 +34,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 ContactId = request.ContactId,
                 DeliveryAreas = request.DeliveryAreas
             });
-
-            return await Task.FromResult(result);
         }
     }
 }

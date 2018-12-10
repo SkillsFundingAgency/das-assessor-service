@@ -396,7 +396,7 @@ namespace SFA.DAS.AssessorService.Data
 
                 certificate.Status = approvalResult.IsApproved;
 
-                await UpdateCertificateLog(certificate, CertificateActions.Status, userName);
+                UpdateCertificateLog(certificate, CertificateActions.Status, userName);
             }
 
             await _context.SaveChangesAsync();
