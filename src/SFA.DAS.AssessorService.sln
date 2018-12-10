@@ -39,6 +39,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Azure", "Azure", "{F85262CD
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deployments", "deployments", "{3B16AB0E-5C83-4E5D-82B0-7021AB4C5B9F}"
 	ProjectSection(SolutionItems) = preProject
+		..\azure\deployments\apim-api-resources.json = ..\azure\deployments\apim-api-resources.json
+		..\azure\deployments\apim-config-resources.json = ..\azure\deployments\apim-config-resources.json
+		..\azure\deployments\apim-resources.json = ..\azure\deployments\apim-resources.json
 		..\azure\deployments\app-service-resources.json = ..\azure\deployments\app-service-resources.json
 		..\azure\deployments\function-app-resources.json = ..\azure\deployments\function-app-resources.json
 		..\azure\deployments\service-bus-resources.json = ..\azure\deployments\service-bus-resources.json

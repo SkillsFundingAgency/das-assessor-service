@@ -14,6 +14,7 @@ using SFA.DAS.AssessorService.EpaoImporter.Interfaces;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
 using SFA.DAS.AssessorService.EpaoImporter.Sftp;
 using SFA.DAS.AssessorService.Settings;
+using SFA.DAS.AssessorService.EpaoImporter.Extensions;
 
 namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 {
@@ -163,39 +164,10 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 
         private static string NameToTitleCase(string name)
         {
-            var convertToTitleCase = IsNameAllUpperOrAllLower(name);
-
-            if (!convertToTitleCase) return name;
-            var newNameCharacters = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name.ToLower()).ToCharArray();
-
-            FixTitleCaseForNamesWithApostrophesAndHyphens(newNameCharacters);
-            return new string(newNameCharacters);
+            name = name.NameCase();
+            return name;
         }
-
-        private static bool IsNameAllUpperOrAllLower(string name)
-        {
-            var convertToTitleCase = name.ToCharArray().Where(char.IsLetter).All(char.IsLower);
-            if (!convertToTitleCase)
-            {
-                convertToTitleCase = name.ToCharArray().Where(char.IsLetter).All(char.IsUpper);
-            }
-
-            return convertToTitleCase;
-        }
-
-        private static void FixTitleCaseForNamesWithApostrophesAndHyphens(char[] newNameCharacters)
-        {
-            for (var i = 0; i + 1 < newNameCharacters.Length; i++)
-            {
-                if (newNameCharacters[i].Equals('\'') ||
-                    newNameCharacters[i].Equals('`') ||
-                    newNameCharacters[i].Equals('-'))
-                {
-                    newNameCharacters[i + 1] = char.ToUpper(newNameCharacters[i + 1]);
-                }
-            }
-        }
-
+        
         private void CreateWorksheetData(ExcelWorksheet worksheet)
         {
             var row = 3;
