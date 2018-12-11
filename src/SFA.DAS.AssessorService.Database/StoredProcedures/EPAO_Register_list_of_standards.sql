@@ -10,8 +10,8 @@ SET NOCOUNT ON;
     row_number() over(partition by StandardCode order by StandardCode) seq into #sequencedOrgStandardDetails
   from (select os.StandardCode, EndPointAssessorName
 	from OrganisationStandard os
-	inner join organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId) as orgStandards
- 
+	inner join organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId WHERE o.EndPointAssessorOrganisationId <> 'EPA0000') as orgStandards
+    
  
  CREATE TABLE #OrganisationStandardTableSummary
 (
