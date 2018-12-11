@@ -28,7 +28,7 @@ UPDATE [OrganisationType] SET [Type] =  'Awarding Organisations', [TypeDescripti
 UPDATE [OrganisationType] SET [Type] =  'Assessment Organisations', [TypeDescription] = 'Assessment organisations' WHERE id = 2;
 UPDATE [OrganisationType] SET [Type] =  'Trade Body', [TypeDescription] = 'Trade body' WHERE id = 3;
 UPDATE [OrganisationType] SET [Type] =  'Professional Body', [TypeDescription] = 'Professional body - approved by the relevant council' WHERE id = 4;
-UPDATE [OrganisationType] SET [Type] =  'HEI', [TypeDescription] = 'HEI monitored and supported by OfS' WHERE id = 5;
+UPDATE [OrganisationType] SET [Type] =  'HEI', [TypeDescription] = 'Higher education institute (HEI) monitored and supported by the Office for Students (OfS)' WHERE id = 5;
 UPDATE [OrganisationType] SET [Type] =  'NSA or SSC', [TypeDescription] = 'National skills academy or sector skills council' WHERE id = 6;
 UPDATE [OrganisationType] SET [Type] =  'Training Provider', [TypeDescription] = 'Training Provider - including HEI not in England' WHERE id = 7;
 UPDATE [OrganisationType] SET [Status] =  'Deleted' WHERE id = 8;
@@ -38,12 +38,24 @@ UPDATE [OrganisationType] SET [Type] =  'Public Sector', [TypeDescription] = 'In
 IF NOT EXISTS(SELECT * FROM OrganisationType WHERE id = 10)
 BEGIN
 	SET identity_insert OrganisationType ON
-	INSERT INTO [OrganisationType] (ID,[Type],[Status], [TypeDescription]) VALUES (10,'College','Live','GFE college currently receiving funding from the ESFA, 6th form or FE college');
+	INSERT INTO [OrganisationType] (ID,[Type],[Status], [TypeDescription]) VALUES (10,'College','Live','General further education (GFE) college currently receiving funding from the ESFA, 6th form or further education (FE) college');
 	SET identity_insert OrganisationType OFF
 END
 ELSE
 BEGIN
-	UPDATE [OrganisationType] SET [Type] =  'College', [TypeDescription] = 'GFE college currently receiving funding from the ESFA, 6th form or FE college' WHERE id = 10;
+	UPDATE [OrganisationType] SET [Type] =  'College', [TypeDescription] = 'General further education (GFE) college currently receiving funding from the ESFA, 6th form or further education (FE) college' WHERE id = 10;
+END
+
+-- 'Academy or Free School'
+IF NOT EXISTS(SELECT * FROM OrganisationType WHERE id = 11)
+BEGIN
+	SET identity_insert OrganisationType ON
+	INSERT INTO [OrganisationType] (ID,[Type],[Status], [TypeDescription]) VALUES (11,'Academy or Free School','Live','Academy or free school registered with the ESFA');
+	SET identity_insert OrganisationType OFF
+END
+ELSE
+BEGIN
+	UPDATE [OrganisationType] SET [Type] =  'Academy or Free School', [TypeDescription] = 'Academy or free school registered with the ESFA' WHERE id = 11;
 END
 
 IF NOT EXISTS(SELECT * FROM StaffReports)
