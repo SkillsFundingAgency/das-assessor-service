@@ -16,5 +16,6 @@ select EndPointAssessorOrganisationId as EPA_organisation_identifier,
 	EndPointAssessorUkprn as UKPRN,
 	JSON_VALUE(OrganisationData,'$.LegalName') as 'Legal Name'
 	 from organisations o left outer join organisationType ot on o.OrganisationTypeId = ot.Id
+	 WHERE o.EndPointAssessorOrganisationId<> 'EPA0000'
 	order by EndPointAssessorOrganisationId
 

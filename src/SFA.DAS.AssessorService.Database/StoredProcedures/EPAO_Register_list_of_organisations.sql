@@ -303,7 +303,7 @@ left outer join contacts c1 on c1.EndPointAssessorOrganisationId = pofc.Organisa
 left outer join #DeliveryAreaSummary das on o.EndPointAssessorOrganisationId = das.OrganisationId
 left outer join OrganisationType ot on o.OrganisationTypeId = ot.Id 
 left outer join #OrganisationStandardTableSummary osts on osts.OrganisationId = o.EndPointAssessorOrganisationId
-where o.deletedat is null
+where o.deletedat is NULL AND o.EndPointAssessorOrganisationId<>'EPA0000'
 and c1.DeletedAt is null
 order by o.EndPointAssessorName
 
