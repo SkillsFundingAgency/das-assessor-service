@@ -14,7 +14,7 @@ c.Email as Contact_email,
 os.DateStandardApprovedOnRegister as 'Date standard Approved on the Register',
 os.Comments as Comments
  from organisationStandard os 
-inner join organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId
+inner join organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId and o.EndPointAssessorOrganisationId<> 'EPA0000'
 left outer join StandardCollation sc on os.StandardCode = sc.StandardId
 left outer join contacts c on os.ContactId = c.Id
 order by os.EndPointAssessorOrganisationId, os.StandardCode
