@@ -21,5 +21,9 @@
         public const string Uln = "Uln";
         public const string ProviderUkPrn = "ProviderUkPrn";
         public const string Status = "Status";
+
+        // Generated from the External API
+        public const string Amend = "Amend";
+        public const string Delete = "Delete";
     }
 }
