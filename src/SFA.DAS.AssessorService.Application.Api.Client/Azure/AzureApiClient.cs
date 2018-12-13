@@ -64,22 +64,26 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
             return user;
         }
 
-        public async Task<AzureUser> GetUserDetailsByUkprn(string ukprn, bool includeSubscriptions = false, bool includeGroups = false)
+        public async Task<IEnumerable<AzureUser>> GetUserDetailsByUkprn(string ukprn, bool includeSubscriptions = false, bool includeGroups = false)
         {
-            AzureUser user;
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"/users?api-version=2017-03-01&expandGroups={includeGroups}&$top=1&$filter=note eq 'ukprn={ukprn}'"))
+            List<AzureUser> users = new List<AzureUser>();
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"/users?api-version=2017-03-01&expandGroups={includeGroups}&$filter=contains(note,'ukprn') and contains(note,'{ukprn}')"))
             {
-                var response = await RequestAndDeserialiseAsync<AzureUserResponse>(httpRequest, "Could not get User");
-                user = response.Users.FirstOrDefault();
+                var response = await RequestAndDeserialiseAsync<AzureUserResponse>(httpRequest, "Could not get Users");
+
+                foreach(var user in response.Users)
+                {
+                    if (user.AzureId != null && includeSubscriptions)
+                    {
+                        var subscriptions = await GetSubscriptionsForUser(user.Id);
+                        user.Subscriptions.AddRange(subscriptions);
+                    }
+
+                    users.Add(user);
+                }
             }
 
-            if (user != null && user.AzureId != null && includeSubscriptions)
-            {
-                var subscriptions = await GetSubscriptionsForUser(user.Id);
-                user.Subscriptions.AddRange(subscriptions);
-            }
-
-            return user;
+            return users;
         }
 
         public async Task<AzureUser> GetUserDetailsByEmail(string email, bool includeSubscriptions = false, bool includeGroups = false)
@@ -111,7 +115,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
                     subscription.ApiEndPointUrl = new Uri(_requestBaseUri, subscription.ProductId).ToString();
                 }
 
-                return response.Subscriptions.Where(sub => sub.State != "cancelled").AsEnumerable();
+                return response.Subscriptions.Where(sub => !sub.IsCancelled).AsEnumerable();
             }            
         }
 
@@ -130,16 +134,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
             var contact = await _contactsApiClient.GetByUsername(username);
 
             AzureUser user = null;
-            AzureUser ukprnUser = await GetUserDetailsByUkprn(ukprn, true, true);
+            IEnumerable<AzureUser> ukprnUsers = await GetUserDetailsByUkprn(ukprn, true, true);
             AzureUser emailUser = await GetUserDetailsByEmail(contact?.Email, true, true);
 
-            if(ukprnUser != null && emailUser != null && ukprnUser.Id != emailUser.Id)
+            if(ukprnUsers != null && emailUser != null && ukprnUsers.All(u => u.Id != emailUser.Id))
             {
                 throw new Exceptions.EntityAlreadyExistsException($"Access is already enabled but not for the supplied ukprn and username.");
             }
-            else if (ukprnUser != null)
+            else if (ukprnUsers != null)
             {
-                user = ukprnUser;
+                user = ukprnUsers.First();
             }
             else if(emailUser != null)
             {

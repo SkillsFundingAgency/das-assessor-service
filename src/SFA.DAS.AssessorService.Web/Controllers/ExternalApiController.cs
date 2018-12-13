@@ -4,9 +4,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.Azure;
 using SFA.DAS.AssessorService.Application.Api.Client.Azure;
+using SFA.DAS.AssessorService.Settings;
+using SFA.DAS.AssessorService.Web.StartupConfiguration;
+using SFA.DAS.AssessorService.Web.ViewModels.ExternalApi;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Web.StartupConfiguration;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -15,12 +19,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     {
         private readonly ILogger<ExternalApiController> _logger;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly IWebConfiguration _webConfiguration;
         private readonly IAzureApiClient _apiClient;
 
-        public ExternalApiController(ILogger<ExternalApiController> logger, IHttpContextAccessor contextAccessor, IAzureApiClient apiClient)
+        public ExternalApiController(ILogger<ExternalApiController> logger, IHttpContextAccessor contextAccessor, IWebConfiguration webConfiguration, IAzureApiClient apiClient)
         {
             _logger = logger;
             _contextAccessor = contextAccessor;
+            _webConfiguration = webConfiguration;
             _apiClient = apiClient;
         }
 
@@ -30,8 +36,53 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var ukprn = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.portal.com/ukprn")?.Value;
             var email = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.portal.com/mail")?.Value;
 
-            var user = await _apiClient.GetUserDetailsByUkprn(ukprn, true) ?? await _apiClient.GetUserDetailsByEmail(email, true);
-            return View(user);
+            var productId = _webConfiguration.AzureApiAuthentication.ProductId;
+
+            var users = await GetAllUsers(ukprn, email);
+
+            var loggedInUser = users.Where(u => u.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+            var primaryContacts = users.Where(u => u.Subscriptions.Any(s => s.ProductId.Equals(productId, StringComparison.InvariantCultureIgnoreCase)));
+            var subscriptionsToShow = new List<AzureSubscription>();
+
+            if (loggedInUser != null)
+            {
+                subscriptionsToShow.AddRange(loggedInUser.Subscriptions.Where(s => s.IsActive));
+            }
+
+            // Note: For now we show all subscriptions from the primary contacts.
+            // Maybe in the future if the logged in user doesn't have a subscription to the product, but a primary contact does, then we add the first instance of it.
+            var primarySubscriptionsToShow = primaryContacts.SelectMany(u => u.Subscriptions.Where(s => s.IsActive));
+            subscriptionsToShow.AddRange(primarySubscriptionsToShow);
+
+            var viewmodel = new ExternalApiDetailsViewModel
+            {
+                LoggedInUser = loggedInUser,
+                PrimaryContacts = primaryContacts,
+                SubscriptionsToShow = subscriptionsToShow.GroupBy(s => s.Id).Select(s => s.First())
+            };
+
+            return View(viewmodel);
+        }
+
+        private async Task<IEnumerable<AzureUser>> GetAllUsers(string ukprn, string email)
+        {
+            var users = new List<AzureUser>();
+
+            var ukprnUsers = await _apiClient.GetUserDetailsByUkprn(ukprn, true);
+
+            if (ukprnUsers != null)
+            {
+                users.AddRange(ukprnUsers);
+            }
+
+            var emailuser = await _apiClient.GetUserDetailsByEmail(email, true);
+
+            if (emailuser != null && !users.Any(u => u.AzureId == emailuser.AzureId))
+            {
+                users.Add(emailuser);
+            }
+
+            return users;
         }
 
 
@@ -51,7 +102,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var ukprn = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.portal.com/ukprn")?.Value;
             var username = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
-            if (!string.Equals(viewModel.State, "blocked"))
+            if (viewModel.IsActive)
             {
                 await _apiClient.DeleteUser(viewModel.Id);
             }

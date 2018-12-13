@@ -16,6 +16,10 @@
         public string LastName { get; set; }
         public string Email { get; set; }
         public string State { get; set; }
+        [JsonIgnore]
+        public bool IsActive => string.Equals("active", State);
+        [JsonIgnore]
+        public bool IsBlocked => string.Equals("blocked", State);
         public DateTime RegistrationDate { get; set; }
         public string Note { get; set; }
         [JsonIgnore]
