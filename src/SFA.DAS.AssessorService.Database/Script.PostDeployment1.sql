@@ -68,3 +68,30 @@ UPDATE [Organisations] SET [OrganisationTypeId] = 6 WHERE [EndPointAssessorOrgan
 UPDATE [Organisations] SET [OrganisationTypeId] = 9 WHERE [EndPointAssessorOrganisationId] = 'EPA0141';
 UPDATE [Organisations] SET [OrganisationTypeId] = 10 WHERE [EndPointAssessorOrganisationId] = 'EPA0159';
 UPDATE [Organisations] SET [OrganisationTypeId] = 7 WHERE [EndPointAssessorOrganisationId] = 'EPA0173';
+
+
+IF NOT EXISTS (SELECT * FROM sys.tables t 
+    INNER JOIN sys.partitions p ON t.object_id = p.object_id 
+    WHERE t.name = 'IlrsCopy' AND p.rows > 0)
+	BEGIN
+	INSERT INTO [dbo].[IlrsCopy] ([Id]
+			,[Uln]
+			,[GivenNames]
+			,[FamilyName]
+			,[UkPrn]
+			,[StdCode]
+			,[LearnStartDate]
+			,[EpaOrgId]
+			,[FundingModel]
+			,[ApprenticeshipId]
+			,[EmployerAccountId]
+			,[Source]
+			,[CreatedAt]
+			,[UpdatedAt]
+			,[LearnRefNumber]
+			,[CompletionStatus]
+			,[EventId]
+			,[PlannedEndDate]) 
+			SELECT * FROM [dbo].[Ilrs]
+	END
+	GO

@@ -90,6 +90,7 @@
     <Build Include="StoredProcedures\StaffReports_MonthlySummary.sql" />
     <Build Include="StoredProcedures\StaffReports_WeeklySummary.sql" />
     <Build Include="Tables\StandardCollation.sql" />
+    <Build Include="Tables\IlrsCopy.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
