@@ -100,8 +100,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                          Address4 = viewModel.Address4,
                          Postcode = viewModel.Postcode,
                          Status = viewModel.Status,
-                         ActionChoice = viewModel.ActionChoice
-                     };
+                         ActionChoice = viewModel.ActionChoice,
+                         CompaniesHouseNumber = viewModel.CompaniesHouseNumber,
+                        CharitiesCommisionNumber = viewModel.CharitiesCommisionNumber
+    };
          
                      await _apiClient.UpdateEpaOrganisation(updateOrganisationRequest);
          
@@ -498,6 +500,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 Postcode = organisation.OrganisationData?.Postcode,
                 PrimaryContact = organisation.PrimaryContact,
                 PrimaryContactName = notSetDescription,
+                CharitiesCommisionNumber = organisation.OrganisationData?.CharitiesCommisionNumber,
+                CompaniesHouseNumber =  organisation.OrganisationData?.CompaniesHouseNumber,
                 Status = organisation.Status
             };
 

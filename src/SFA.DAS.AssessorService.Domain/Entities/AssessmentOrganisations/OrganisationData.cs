@@ -9,5 +9,8 @@
         public string Address3 { get; set; }
         public string Address4 { get; set; }
         public string Postcode { get; set; }
+
+        public string CompaniesHouseNumber { get; set; }
+        public string CharitiesCommisionNumber { get; set; }
     }
 }

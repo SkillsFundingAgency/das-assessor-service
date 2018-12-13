@@ -28,6 +28,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Models
         public string StandardsCount { get; set; }
         public List<OrganisationStandardSummary> OrganisationStandards { get; set; }
         public List<OrganisationType> OrganisationTypes { get; set; }
+        public string CompaniesHouseNumber { get; set; }
+        public string CharitiesCommisionNumber { get; set; }
 
         public string ActionChoice { get; set; }
     }
