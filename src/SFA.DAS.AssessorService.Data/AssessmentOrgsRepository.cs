@@ -160,8 +160,8 @@ namespace SFA.DAS.AssessorService.Data
                         Address3 = MakeStringSuitableForJson(organisation.OrganisationData?.Address3),
                         Address4 = MakeStringSuitableForJson(organisation.OrganisationData?.Address4),
                         Postcode = MakeStringSuitableForJson(organisation.OrganisationData?.Postcode),
-                        CompaniesHouseNumber = MakeStringSuitableForJson(organisation.OrganisationData?.CompaniesHouseNumber),
-                        CharitiesCommisionNumber = MakeStringSuitableForJson(organisation.OrganisationData?.CharitiesCommisionNumber)
+                        CompanyNumber = MakeStringSuitableForJson(organisation.OrganisationData?.CompanyNumber),
+                        CharityNumber = MakeStringSuitableForJson(organisation.OrganisationData?.CharityNumber)
                     };
 
                     organisation.OrganisationData = organisationData;

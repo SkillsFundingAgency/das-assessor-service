@@ -10,7 +10,7 @@
         public string Address4 { get; set; }
         public string Postcode { get; set; }
 
-        public string CompaniesHouseNumber { get; set; }
-        public string CharitiesCommisionNumber { get; set; }
+        public string CompanyNumber { get; set; }
+        public string CharityNumber { get; set; }
     }
 }
