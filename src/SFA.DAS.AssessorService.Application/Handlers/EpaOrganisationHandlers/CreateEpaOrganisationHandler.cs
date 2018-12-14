@@ -72,6 +72,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                     LegalName = request.LegalName,
                     Postcode = request.Postcode,
                     WebsiteLink = request.WebsiteLink,
+                    CompanyNumber = null,
+                    CharityNumber = null
 
                 }
             };
