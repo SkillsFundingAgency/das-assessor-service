@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -25,6 +26,23 @@ namespace SFA.DAS.AssessorService.ExternalApis
         protected ApiClientBase(HttpClient httpClient)
         {
             _httpClient = httpClient;
+        }
+
+        protected ApiClientBase(string baseUri , string bearerToken, string apiVersion = null)
+        {
+            _httpClient = new HttpClient
+            {
+                BaseAddress = new Uri(baseUri)
+            };
+            if (!string.IsNullOrEmpty(bearerToken))
+            {
+                _httpClient.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", bearerToken);
+            }
+            if (!string.IsNullOrEmpty(apiVersion))
+            {
+                _httpClient.DefaultRequestHeaders.Add("api-version", apiVersion);
+            }
         }
 
         protected static void RaiseResponseError(string message, HttpRequestMessage failedRequest, HttpResponseMessage failedResponse)

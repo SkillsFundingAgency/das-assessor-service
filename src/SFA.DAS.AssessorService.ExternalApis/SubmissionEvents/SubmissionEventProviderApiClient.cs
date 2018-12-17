@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.ExternalApis.SubmissionEvents
 {
     public class SubmissionEventProviderApiClient : ApiClientBase, ISubmissionEventProviderApiClient
     {
-        public SubmissionEventProviderApiClient(string baseUri = null) : base(baseUri)
+        public SubmissionEventProviderApiClient(string baseUri, string bearerToken, string version) : base(baseUri,bearerToken,version)
         {
         }
 
