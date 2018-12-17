@@ -67,6 +67,8 @@ namespace SFA.DAS.AssessorService.Data
                 {
                     TearDownDatabase(progressStatus);
                     BuildUpDatabase(spreadsheetDto, progressStatus);
+                    progressStatus.Append("Running post build script; ");
+                    _assessmentOrgsRepository.RunPostBuildScript();
                     transactionScope.Complete();
                     progressStatus.Append("Entire Teardown/buildup transaction completed; ");
                 }

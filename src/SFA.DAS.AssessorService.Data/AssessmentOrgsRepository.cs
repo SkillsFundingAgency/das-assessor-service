@@ -3,6 +3,7 @@ using System.Data;
 using System.Data.SqlClient;
 using Dapper;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Microsoft.Extensions.Logging;
@@ -351,6 +352,21 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
+        public void RunPostBuildScript()
+        {
+            var connectionString = LocalConnectionString();
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    connection.Open();
+                var script = File.ReadAllText(@"..\\SFA.DAS.AssessorService.Data\\Scripts\\PostBuildScript.sql");
+
+                connection.Execute(script);
+                connection.Close();
+            }
+        }
+
         public List<OrganisationContact>  UpsertThenGatherOrganisationContacts(List<OrganisationContact> contacts)
         {
             var connectionString = LocalConnectionString();
@@ -474,6 +490,6 @@ namespace SFA.DAS.AssessorService.Data
             return dateToProcess.Value < new DateTime(1980,1,1) 
                 ? "null" 
                 : $"'{dateToProcess.Value:yyyy-MM-dd}'";
-        }   
+        }
     }
 }
