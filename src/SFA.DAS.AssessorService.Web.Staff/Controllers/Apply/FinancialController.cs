@@ -9,12 +9,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using SFA.DAS.AssessorService.Web.Staff.Domain;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
 {
-    [Authorize]
+    [Authorize(Roles = Roles.FinancialHealthAssessmentTeam + "," + Roles.CertificationTeam)]
     public class FinancialController : Controller
     {
         private readonly ApplyApiClient _apiClient;

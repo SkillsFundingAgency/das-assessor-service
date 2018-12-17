@@ -44,11 +44,11 @@
     </div>
 </div>
 <div class="grid-row">
-    <div class="column-one-third">
+    <div class="column-one-third"  sfa-show-for-roles="@string.Join(",", Roles.ApprenticeshipAssuranceDeliveryTeam, Roles.CertificationTeam)">
         <h2 class="heading-medium"><a asp-controller="Application" asp-action="Applications">Applications</a></h2>
         <p>Review Applications</p>
     </div>
-    <div class="column-one-third">
+    <div class="column-one-third" sfa-show-for-roles="@string.Join(",", Roles.FinancialHealthAssessmentTeam, Roles.CertificationTeam)">
         <h2 class="heading-medium"><a asp-controller="Financial" asp-action="Dashboard">Financial</a></h2>
         <p>Financial</p>
     </div>

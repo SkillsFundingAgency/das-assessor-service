@@ -1,12 +1,14 @@
 using System;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.AssessorService.Web.Staff.Domain;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
 {
+    [Authorize(Roles = Roles.ApprenticeshipAssuranceDeliveryTeam + "," + Roles.CertificationTeam)]
     public class ApplicationController : Controller 
     {
         private readonly ApplyApiClient _applyApiClient;

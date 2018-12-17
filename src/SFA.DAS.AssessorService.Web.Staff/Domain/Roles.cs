@@ -11,6 +11,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Domain
         public const string AssessmentDeliveryTeam = "EPA";
         public const string ProviderRiskAssuranceTeam = "EPR";
         public const string RegisterViewOnlyTeam = "EPV";
+        public const string FinancialHealthAssessmentTeam = "FHA";
+        public const string ApprenticeshipAssuranceDeliveryTeam = "AAD";
 
         public static bool HasValidRole(this ClaimsPrincipal User)
         {
@@ -18,7 +20,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Domain
                    || User.IsInRole(OperationsTeam)
                    || User.IsInRole(AssessmentDeliveryTeam)
                    || User.IsInRole(ProviderRiskAssuranceTeam)
-                   || User.IsInRole(RegisterViewOnlyTeam);
+                   || User.IsInRole(RegisterViewOnlyTeam)
+                   || User.IsInRole(FinancialHealthAssessmentTeam)
+                   || User.IsInRole(ApprenticeshipAssuranceDeliveryTeam);
 
         }
     }
