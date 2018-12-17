@@ -6,7 +6,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
 {
     public interface IApplyApiClient
     {
-        Task<List<ApplyTypes.Application>> ReviewApplications();
+        Task<List<dynamic>> NewApplications();
         Task ImportWorkflow(IFormFile file);
         Task<List<dynamic>> GetNewFinancialApplications();
     }

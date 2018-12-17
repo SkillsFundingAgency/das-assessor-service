@@ -83,9 +83,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             }
         }
 
-        public async Task<List<ApplyTypes.Application>> ReviewApplications()
+        public async Task<List<dynamic>> NewApplications()
         {
-            return await Get<List<ApplyTypes.Application>>("/Review/Applications");
+            return await Get<List<dynamic>>("/Review/NewApplications");
         }
         
         public async Task ImportWorkflow(IFormFile file)
