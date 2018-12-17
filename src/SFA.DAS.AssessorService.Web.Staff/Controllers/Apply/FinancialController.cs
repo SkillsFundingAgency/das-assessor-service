@@ -15,7 +15,7 @@ using SFA.DAS.AssessorService.Web.Staff.ViewModels;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
 {
-    [Authorize(Roles = Roles.FinancialHealthAssessmentTeam + "," + Roles.CertificationTeam)]
+    [Authorize(Roles = Roles.ProviderRiskAssuranceTeam + "," + Roles.CertificationTeam)]
     public class FinancialController : Controller
     {
         private readonly ApplyApiClient _apiClient;

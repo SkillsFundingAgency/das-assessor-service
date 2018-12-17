@@ -8,7 +8,7 @@ using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
 {
-    [Authorize(Roles = Roles.ApprenticeshipAssuranceDeliveryTeam + "," + Roles.CertificationTeam)]
+    [Authorize(Roles = Roles.AssessmentDeliveryTeam + "," + Roles.CertificationTeam)]
     public class ApplicationController : Controller 
     {
         private readonly ApplyApiClient _applyApiClient;
