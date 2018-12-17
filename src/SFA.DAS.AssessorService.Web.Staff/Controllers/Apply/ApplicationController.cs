@@ -18,6 +18,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
             _applyApiClient = applyApiClient;
         }
 
+        [HttpGet("/Applications/Dashboard")]
+        public IActionResult Dashboard()
+        {
+            return View("~/Views/Apply/Applications/Dashboard.cshtml");
+        }
+
         [HttpGet("/Applications/New")]
         public async Task<IActionResult> Applications()
         {

@@ -14,15 +14,15 @@ namespace SFA.DAS.AssessorService.Web.Staff.Domain
         public const string FinancialHealthAssessmentTeam = "FHA";
         public const string ApprenticeshipAssuranceDeliveryTeam = "AAD";
 
-        public static bool HasValidRole(this ClaimsPrincipal User)
+        public static bool HasValidRole(this ClaimsPrincipal user)
         {
-            return User.IsInRole(CertificationTeam)
-                   || User.IsInRole(OperationsTeam)
-                   || User.IsInRole(AssessmentDeliveryTeam)
-                   || User.IsInRole(ProviderRiskAssuranceTeam)
-                   || User.IsInRole(RegisterViewOnlyTeam)
-                   || User.IsInRole(FinancialHealthAssessmentTeam)
-                   || User.IsInRole(ApprenticeshipAssuranceDeliveryTeam);
+            return user.IsInRole(CertificationTeam)
+                   || user.IsInRole(OperationsTeam)
+                   || user.IsInRole(AssessmentDeliveryTeam)
+                   || user.IsInRole(ProviderRiskAssuranceTeam)
+                   || user.IsInRole(RegisterViewOnlyTeam)
+                   || user.IsInRole(FinancialHealthAssessmentTeam)
+                   || user.IsInRole(ApprenticeshipAssuranceDeliveryTeam);
 
         }
     }
