@@ -89,9 +89,7 @@ IF NOT EXISTS (SELECT * FROM sys.tables t
 			,[CreatedAt]
 			,[UpdatedAt]
 			,[LearnRefNumber]
-			,[CompletionStatus]
-			,[EventId]
-			,[PlannedEndDate]) 
+			,[CompletionStatus]) 
 			SELECT * FROM [dbo].[Ilrs]
 	END
 	GO

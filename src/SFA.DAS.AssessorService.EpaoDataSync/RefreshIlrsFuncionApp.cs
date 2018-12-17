@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.EpaoDataSync
 
             if (string.IsNullOrEmpty(tableName))
                 return req.CreateResponse(HttpStatusCode.BadRequest,
-                    "Please pass a Ilrs table name on the query string ");
+                    "Please pass an Ilrs table name on the query string - <domain-name>/api/RefreshIlrsFromProviderEvents?tablename=IlrsCopy");
 
             Bootstrapper.StartUp(log, executionContext);
             var ilrRefresherService = Bootstrapper.Container.GetInstance<IIlrsRefresherService>();
