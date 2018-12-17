@@ -9,8 +9,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
+using SFA.DAS.AssessorService.Web.Staff.ViewModels;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
 {
@@ -157,11 +157,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
 //            var contentType = downloadedFile.Content.Headers.ContentType.ToString();
         }
 
-        [HttpPost("/Financial/Grade")]
-        public async Task<IActionResult> Grade(FinancialApplicationViewModel vm)
+        [HttpPost("/Financial/{applicationId}")]
+        public async Task<IActionResult> Grade(Guid applicationId, FinancialApplicationViewModel vm)
         {
-//            if (ModelState.IsValid)
-//            {
+            if (ModelState.IsValid)
+            {
                 var givenName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")?.Value;
                 var surname = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname")?.Value;
 
@@ -169,9 +169,24 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
             
                 await _apiClient.UpdateFinancialGrade(vm.ApplicationId, vm.Grade);
                 return RedirectToAction("Graded", new {vm.ApplicationId});   
-//            }
-//            
-//            return View()
+            }
+            else
+            {
+                var financialSectionId = 3;
+                var stage1SequenceId = 1;
+                var financialSection = await _apiClient.GetSection(vm.ApplicationId, stage1SequenceId, financialSectionId);
+
+                var organisation = await _apiClient.GetOrganisationForApplication(vm.ApplicationId);
+            
+                var newvm = new FinancialApplicationViewModel
+                {
+                    Organisation = organisation,
+                    Section = financialSection,
+                    ApplicationId = vm.ApplicationId
+                };
+                newvm.Grade.SelectedGrade = vm.Grade.SelectedGrade;
+                return View("~/Views/Apply/Financial/Application.cshtml", newvm);
+            }
         }
 
         [HttpGet("/Financial/Graded")]
@@ -181,36 +196,5 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
 
             return View("~/Views/Apply/Financial/Graded.cshtml", section);
         }
-    }
-
-    public class PreviousFinancialApplicationViewModel
-    {
-        public Guid ApplicationId { get; set; }
-        public string ApplyingOrganisationName { get; set; }
-        public string LinkText { get; set; }
-        public string Grade { get; set; }
-        public string GradedBy { get; set; }
-        public DateTime GradedDate { get; set; }
-    }
-
-    public class FinancialApplicationViewModel
-    {
-        public FinancialApplicationViewModel()
-        {
-            Grade = new FinancialApplicationGrade();
-        }
-        
-        public ApplicationSection Section { get; set; }
-        public FinancialApplicationGrade Grade { get; set; }
-        public Guid ApplicationId { get; set; }
-        public Organisation Organisation { get; set; }
-    }
-
-    public class NewFinancialApplicationViewModel
-    {
-        public string ApplyingOrganisationName { get; set; }
-        public string Status { get; set; }
-        public string LinkText { get; set; }
-        public Guid ApplicationId { get; set; }
     }
 }

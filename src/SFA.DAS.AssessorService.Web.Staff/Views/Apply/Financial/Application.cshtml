@@ -1,4 +1,4 @@
-@model SFA.DAS.AssessorService.Web.Staff.Controllers.Apply.FinancialApplicationViewModel
+@model SFA.DAS.AssessorService.Web.Staff.ViewModels.FinancialApplicationViewModel
 
 @{
     ViewBag.Title = "title";
@@ -8,6 +8,20 @@
 <a href="@Url.Action("NewApplications", "Financial")" class="govuk-back-link">Back</a>
 
 <h2>Financial health evaluation</h2>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+        <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+            There is a problem
+        </h2>
+        <ul class="error-summary-list">
+            <li><a sfa-validation-for="Grade.SelectedGrade"></a></li>
+            <li><a sfa-validation-for="Grade.InadequateMoreInformation"></a></li>
+            <li><a sfa-validation-for="Grade.SatisfactoryMoreInformation"></a></li>
+        </ul>
+    </div>
+}
 
 <h3>Company details</h3>
 
@@ -54,13 +68,17 @@
 
 <h1>What is the grade for this application?</h1>
 <form asp-action="Grade" asp-controller="Financial">
-    <input type="hidden" name="ApplicationId" value="@Model.ApplicationId"/>
-    <label for="outstanding">Outstanding</label> <input id="outstanding" type="radio" name="Grade.SelectedGrade" value="Outstanding"/>
-    <label for="good">Good</label> <input id="good" type="radio" name="Grade.SelectedGrade" value="Good"/>
-    <label for="satisfactory">Satisfactory</label> <input id="satisfactory" type="radio" name="Grade.SelectedGrade" value="Satisfactory"/>
-    <input type="text" name="Grade.SatisfactoryMoreInformation"/>
-    <label for="inadequate">Inadequate</label> <input id="inadequate" type="radio" name="Grade.SelectedGrade" value="Inadequate"/>
-    <input type="text" name="Grade.InadequateMoreInformation"/>
-    <label for="exempt">Exempt</label> <input id="exempt" type="radio" name="Grade.SelectedGrade" value="Exempt"/>
-    <button type="submit">Confirm and submit</button>
+    <div class="form-group error-message-container" sfa-anyvalidationerror-class="form-group-error">
+        <input type="hidden" name="ApplicationId" value="@Model.ApplicationId"/>
+        <label for="outstanding">Outstanding</label> <input id="outstanding" type="radio" name="Grade.SelectedGrade" value="Outstanding"/>
+        <label for="good">Good</label> <input id="good" type="radio" name="Grade.SelectedGrade" value="Good"/>
+        <label for="satisfactory">Satisfactory</label> 
+        <input id="satisfactory" type="radio" name="Grade.SelectedGrade" value="Satisfactory" @(Model.Grade.SelectedGrade == "Satisfactory" ? "checked" : "")/>
+        <input type="text" name="Grade.SatisfactoryMoreInformation" sfa-validation-for="Grade.SatisfactoryMoreInformation" sfa-validationerror-class="form-control-error"/>
+        <label for="inadequate">Inadequate</label> 
+        <input id="inadequate" type="radio" name="Grade.SelectedGrade" value="Inadequate"  @(Model.Grade.SelectedGrade == "Inadequate" ? "checked" : "")/>
+        <input type="text" name="Grade.InadequateMoreInformation" sfa-validation-for="Grade.InadequateMoreInformation" sfa-validationerror-class="form-control-error"/>
+        <label for="exempt">Exempt</label> <input id="exempt" type="radio" name="Grade.SelectedGrade" value="Exempt"/>
+        <button type="submit">Confirm and submit</button>
+    </div>
 </form>

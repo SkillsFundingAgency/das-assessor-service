@@ -1,5 +1,6 @@
 using FluentValidation;
 using SFA.DAS.AssessorService.Web.Staff.Controllers.Apply;
+using SFA.DAS.AssessorService.Web.Staff.ViewModels;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Validators
 {
