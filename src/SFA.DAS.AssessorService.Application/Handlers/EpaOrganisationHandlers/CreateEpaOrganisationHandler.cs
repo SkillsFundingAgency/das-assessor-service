@@ -52,6 +52,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             request.Address3 = _cleanser.CleanseStringForSpecialCharacters(request.Address3);
             request.Address4 = _cleanser.CleanseStringForSpecialCharacters(request.Address4);
             request.Postcode = _cleanser.CleanseStringForSpecialCharacters(request.Postcode);
+            request.CompanyNumber = _cleanser.CleanseStringForSpecialCharacters(request.CompanyNumber);
+            request.CharityNumber = _cleanser.CleanseStringForSpecialCharacters(request.CharityNumber);
         }
 
         private static EpaOrganisation MapOrganisationRequestToOrganisation(CreateEpaOrganisationRequest request, string newOrganisationId)
@@ -72,9 +74,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                     LegalName = request.LegalName,
                     Postcode = request.Postcode,
                     WebsiteLink = request.WebsiteLink,
-                    CompanyNumber = null,
-                    CharityNumber = null
-
+                    CompanyNumber = request.CompanyNumber,
+                    CharityNumber = request.CharityNumber
                 }
             };
 

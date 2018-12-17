@@ -45,7 +45,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
                 Address2 = "address 2",
                 Address3 = "address 3",
                 Address4 = "address 4",
-                Postcode = "postcode"
+                Postcode = "postcode",
+                CompanyNumber = "company number",
+                CharityNumber = "charity number"
             };
 
             _returnedOrganisation = new EpaOrganisation
@@ -65,7 +67,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
                     Address2 = _request.Address2,
                     Address3 = _request.Address3,
                     Address4 = _request.Address4,
-                    Postcode = _request.Postcode
+                    Postcode = _request.Postcode,
+                    CompanyNumber = _request.CompanyNumber,
+                    CharityNumber = _request.CharityNumber
                 }
             };
 
