@@ -73,6 +73,12 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Handlers
                 DeleteRecord(id);
             }
         }
+
+        public static void DeleteAllRecords()
+        {
+            var sql = $@"DELETE from Organisations";
+            DatabaseService.Execute(sql);
+        }
     }
 }
 
