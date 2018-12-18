@@ -184,7 +184,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
                     EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
                     EndPointAssessorUkprn = organisation.EndPointAssessorUkprn,
                     ApiEnabled = true,
-                    ApiUser = user.Id.ToString()
+                    ApiUser = user.Id
                 });
 
                 // Note: Multiple things could have happened by this point so refresh
@@ -341,13 +341,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
 
                     if (organisation != null)
                     {
+                        // If we have a result here then take the first result as the new api user
+                        var newApiUser = (await GetUserDetailsByUkprn(user.Ukprn)).FirstOrDefault();
+
                         await _organisationsApiClient.Update(new UpdateOrganisationRequest
                         {
                             EndPointAssessorName = organisation.EndPointAssessorName,
                             EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
                             EndPointAssessorUkprn = organisation.EndPointAssessorUkprn,
-                            ApiEnabled = false,
-                            ApiUser = null
+                            ApiEnabled = newApiUser != null,
+                            ApiUser = newApiUser?.Id
                         });
                     }
                 }
