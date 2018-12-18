@@ -35,24 +35,19 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             var ukprn = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.portal.com/ukprn")?.Value;
             var email = _contextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.portal.com/mail")?.Value;
-
             var productId = _webConfiguration.AzureApiAuthentication.ProductId;
 
             var users = await GetAllUsers(ukprn, email);
-
             var loggedInUser = users.Where(u => u.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
-            var primaryContacts = users.Where(u => u.Subscriptions.Any(s => s.ProductId.Equals(productId, StringComparison.InvariantCultureIgnoreCase)));
-            var subscriptionsToShow = new List<AzureSubscription>();
 
+            var subscriptionsToShow = users.SelectMany(u => u.Subscriptions.Where(s => s.IsActive && s.ProductId == productId)).ToList();
+            var primaryContacts = subscriptionsToShow.SelectMany(s => users.Where(u => u.Id == s.UserId)).ToList();
+
+            // For now we show all subscriptions from the logged in user and the 'productId' subscription if the primary contact has it too.
             if (loggedInUser != null)
             {
                 subscriptionsToShow.AddRange(loggedInUser.Subscriptions.Where(s => s.IsActive));
             }
-
-            // Note: For now we show all subscriptions from the primary contacts.
-            // Maybe in the future if the logged in user doesn't have a subscription to the product, but a primary contact does, then we add the first instance of it.
-            var primarySubscriptionsToShow = primaryContacts.SelectMany(u => u.Subscriptions.Where(s => s.IsActive));
-            subscriptionsToShow.AddRange(primarySubscriptionsToShow);
 
             var viewmodel = new ExternalApiDetailsViewModel
             {
