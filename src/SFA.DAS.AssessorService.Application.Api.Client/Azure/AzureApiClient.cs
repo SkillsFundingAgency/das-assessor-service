@@ -351,7 +351,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
                             EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
                             EndPointAssessorUkprn = organisation.EndPointAssessorUkprn,
                             ApiEnabled = newApiUser != null,
-                            ApiUser = newApiUser?.Id
+                            ApiUser = newApiUser?.UserId
                         });
                     }
                 }
