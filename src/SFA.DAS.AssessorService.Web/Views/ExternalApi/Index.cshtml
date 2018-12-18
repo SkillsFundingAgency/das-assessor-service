@@ -29,21 +29,21 @@
                         </tr>
                     </thead>
                     <tbody>
-                    @foreach (var user in Model.PrimaryContacts)
-                    {
-                        <tr>
-                            <td data-label="Ukprn">@user.Ukprn</td>
-                            <td data-label="Email">@user.Email</td>
-                            <td data-label="Access">@(user.IsActive ? "Enabled" : "Disabled")</td>
-                            <td>
-                                <form asp-action="RemoveAccess" asp-controller="ExternalApi" method="post">
-                                    @Html.Hidden("AzureId", user.AzureId, new { @id = "AzureId" })
-                                    @Html.Hidden("State", user.State, new { @id = "State" })
-                                    <button class="button" type="submit">Remove access</button>
-                                </form>
-                            </td>
-                        </tr>
-                    }
+                        @foreach (var user in Model.PrimaryContacts)
+                        {
+                            <tr>
+                                <td data-label="Ukprn">@user.Ukprn</td>
+                                <td data-label="Email">@user.Email</td>
+                                <td data-label="Access">@(user.IsActive ? "Enabled" : "Disabled")</td>
+                                <td>
+                                    <form asp-action="RemoveAccess" asp-controller="ExternalApi" method="post">
+                                        @Html.Hidden("AzureId", user.AzureId, new { @id = "AzureId" })
+                                        @Html.Hidden("State", user.State, new { @id = "State" })
+                                        <button class="button" type="submit">Remove access</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>
@@ -57,8 +57,14 @@
 
                     @foreach (var subscription in Model.SubscriptionsToShow)
                     {
+                        var subscriptionUser = Model.PrimaryContacts.Where(pc => pc.Id == subscription.UserId).FirstOrDefault() ?? Model.LoggedInUser;
                         <div class="column-full form-group">
-                            <h2 class="bold-medium">@subscription.ProductId</h2>
+                            <h2>
+                                <label class="form-label">
+                                    <span class="heading-medium">@subscription.ProductId</span>
+                                    <span class="form-hint">@subscriptionUser?.Email</span>
+                                </label>
+                            </h2>
                             <h3 class="heading-small">Api endpoint</h3>
                             <span class="code">@subscription.ApiEndPointUrl</span>
                             <h3 class="heading-small">Subscription key</h3>
@@ -66,11 +72,13 @@
                                 <span class="code">@subscription.PrimaryKey</span>
                                 <input type="submit" value="Renew" class="button" />
                             </form>
-                            @*<h3 class="heading-small">Secondary subscription key</h3>
+                            @*
+                                <h3 class="heading-small">Secondary subscription key</h3>
                                 <form asp-action="RenewSecondaryKey" asp-controller="ExternalApi" asp-route-subscriptionId="@subscription.Id" asp-route-userId="@subscription.UserId" method="post">
                                     <span class="code">@subscription.SecondaryKey</span>
                                     <input type="submit" value="Renew" class="button" />
-                                </form>*@
+                                </form>
+                            *@
                         </div>
                     }
 
