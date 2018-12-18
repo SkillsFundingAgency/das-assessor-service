@@ -56,7 +56,7 @@ namespace SFA.DAS.AssessorService.Data
                 new TypeOfOrganisation {Id = 7, Type = "Training Provider", TypeDescription = "Training Provider - including HEI not in England", Status = "Live"},
                 new TypeOfOrganisation {Id = 8, Type = "Other", TypeDescription = null, Status = "Deleted"},
                 new TypeOfOrganisation {Id = 9, Type = "Public Sector", TypeDescription = "Incorporated as Public Sector Body, Local authority including LEA schools, Central Government Department / Executive Agency / Non-departmental public body, NHS Trust / Fire Authority, Police Constabulary or Police Crime Commissioner", Status = "Live"},
-                new TypeOfOrganisation {Id = 10, Type = "College", TypeDescription = "GFE College currently receiving funding from the ESFA, 6th form / FE college", Status = "Deleted"},
+                new TypeOfOrganisation {Id = 10, Type = "College", TypeDescription = "GFE College currently receiving funding from the ESFA, 6th form / FE college", Status = "Live"},
                 new TypeOfOrganisation {Id = 11, Type = "Academy or Free School", TypeDescription = "Academy or Free school registered with the ESFA", Status = "Live"}
             };
 
