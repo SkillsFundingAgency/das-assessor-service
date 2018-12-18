@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Data
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
-                var orgTypes = await connection.QueryAsync<OrganisationType>("select * from [OrganisationType] order by case Type when 'Other' then id + 1000 else id end");
+                var orgTypes = await connection.QueryAsync<OrganisationType>("select * from [OrganisationType] where Status <> 'Deleted'  order by id");
                 return orgTypes;
             }
         }
@@ -327,7 +327,9 @@ namespace SFA.DAS.AssessorService.Data
                     + "FROM [Organisations] o "
                     + "LEFT OUTER JOIN [OrganisationType] ot ON ot.Id = o.OrganisationTypeId "
                     + "LEFT OUTER JOIN [Contacts] c ON c.Username = o.PrimaryContact AND c.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId "
-                    + "WHERE replace(o.EndPointAssessorName, ' ','') like @organisationName";
+                    + "WHERE replace(o.EndPointAssessorName, ' ','') like @organisationName "
+                    + "OR replace(JSON_VALUE(o.[OrganisationData], '$.TradingName'), ' ','') like @organisationName "
+                    + "OR replace(JSON_VALUE(o.[OrganisationData], '$.LegalName'), ' ','') like @organisationName";
 
                 var assessmentOrganisationSummaries = await connection.QueryAsync<AssessmentOrganisationSummary>(sql, new {organisationName =$"%{organisationName.Replace(" ","")}%" } );
                 return assessmentOrganisationSummaries;

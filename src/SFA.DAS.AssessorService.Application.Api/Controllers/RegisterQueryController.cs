@@ -143,7 +143,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return NoContent();
         }
 
-        [HttpGet("assessment-organisations/search/{searchstring}", Name = "SearchAssessmentOrganisations")]
+        [HttpGet("assessment-organisations/search/{*searchstring}", Name = "SearchAssessmentOrganisations")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<AssessmentOrganisationSummary>))]
         [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
@@ -164,7 +164,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
 
-        [HttpGet("assessment-organisations/standards/search/{searchstring}", Name = "SearchStandards")]
+        [HttpGet("assessment-organisations/standards/search/{*searchstring}", Name = "SearchStandards")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<StandardSummary>))]
         [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
