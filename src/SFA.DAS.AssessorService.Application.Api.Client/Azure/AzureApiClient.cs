@@ -342,7 +342,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
                     if (organisation != null)
                     {
                         // If we have a result here then take the first result as the new api user
-                        var newApiUser = (await GetUserDetailsByUkprn(user.Ukprn)).FirstOrDefault();
+                        var apiUsers = await GetUserDetailsByUkprn(user.Ukprn);
+                        var newApiUser = apiUsers.SelectMany(u => u.Subscriptions.Where(s => s.IsActive && s.ProductId == _productId)).FirstOrDefault();
 
                         await _organisationsApiClient.Update(new UpdateOrganisationRequest
                         {
