@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
-using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Domain.JsonData.Printing;
 using SFA.DAS.AssessorService.EpaoImporter.Interfaces;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
@@ -32,7 +29,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             _webConfiguration = webConfiguration;
         }
 
-        public void Create(int batchNumber, List<CertificateResponse> certificates)
+        public void Create(int batchNumber, List<CertificateResponse> certificates, string fileName)
         {
             var printOutput = new PrintOutput
             {
@@ -58,7 +55,6 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                     c.CertificateData.ContactAddLine4,
                     c.CertificateData.ContactPostCode
                 }).ToList();
-
 
             printOutput.Batch.PostalContactCount = groupedByRecipient.Count;
 
@@ -113,9 +109,8 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             byte[] array = Encoding.ASCII.GetBytes(serializedPrintOutput);
             using (var mystream = new MemoryStream(array))
             {
-                _fileTransferClient.Send(mystream, "test.json");
+                _fileTransferClient.Send(mystream, fileName);
             }
         }
     }
-
 }

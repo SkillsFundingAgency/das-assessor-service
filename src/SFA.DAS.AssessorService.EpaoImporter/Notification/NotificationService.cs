@@ -30,11 +30,9 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Notification
             _assessorServiceApi = assessorServiceApi;
         }
 
-        public async Task Send(int batchNumber, List<CertificateResponse> certificateResponses)
+        public async Task Send(int batchNumber, List<CertificateResponse> certificateResponses, string certificatesFileName)
         {
             var emailTemplate = await _assessorServiceApi.GetEmailTemplate(EMailTemplateNames.PrintAssessorCoverLetters);
-
-            var certificatesFileName = $"IFA-Certificate-{GetMonthYear()}-{batchNumber.ToString().PadLeft(3, '0')}.xlsx";
 
             var personalisation = CreatePersonalisationTokens(certificateResponses, certificatesFileName);
 
