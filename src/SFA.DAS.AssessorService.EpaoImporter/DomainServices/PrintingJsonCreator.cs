@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
-using SFA.DAS.AssessorService.Api.Types.Models.Printing;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Domain.JsonData.Printing;
@@ -116,10 +115,6 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             {
                 _fileTransferClient.Send(mystream, "test.json");
             }
-
-                var x = 1;
-            //File.WriteAllText("CertificatesPrintOutput.json", serializedPrintOutput); 
-
         }
     }
 

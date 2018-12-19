@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SFA.DAS.AssessorService.Api.Types.Models.Printing
+namespace SFA.DAS.AssessorService.Domain.JsonData.Printing
 {
     public class BatchDetails
     {
@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Printing
         public DateTime BatchDate { get; set; }
         public int PostalContactCount { get; set; }
         public int TotalCertificateCount { get; set; }
-        //public DateTime? PrintedDate { get; set; }
-        //public DateTime? PostedDate { get; set; }
+        public DateTime? PrintedDate { get; set; }
+        public DateTime? PostedDate { get; set; }
     }
 }

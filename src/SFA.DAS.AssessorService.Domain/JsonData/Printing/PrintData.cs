@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SFA.DAS.AssessorService.Api.Types.Models.Printing
+namespace SFA.DAS.AssessorService.Domain.JsonData.Printing
 {
     public class PrintData
     {
@@ -8,5 +8,4 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Printing
         public PostalContact PostalContact { get; set; }
         public List<PrintCertificate> Certificates { get; set; }
     }
-
 }

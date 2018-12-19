@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
     {
         private readonly IAggregateLogger _aggregateLogger;
         private readonly IPrintingSpreadsheetCreator _printingSpreadsheetCreator;
-        private readonly IPrintingJsonCreator _printingJsonCreator;
+        //private readonly IPrintingJsonCreator _printingJsonCreator;
         private readonly IAssessorServiceApi _assessorServiceApi;
         private readonly INotificationService _notificationService;
         private readonly IFileTransferClient _fileTransferClient;
@@ -26,14 +26,15 @@ namespace SFA.DAS.AssessorService.EpaoImporter
             IPrintingSpreadsheetCreator printingSpreadsheetCreator,
             IAssessorServiceApi assessorServiceApi,
             INotificationService notificationService,
-            IFileTransferClient fileTransferClient, IPrintingJsonCreator printingJsonCreator)
+            IFileTransferClient fileTransferClient)
+            //IPrintingJsonCreator printingJsonCreator
         {
             _aggregateLogger = aggregateLogger;
             _printingSpreadsheetCreator = printingSpreadsheetCreator;
             _assessorServiceApi = assessorServiceApi;
             _notificationService = notificationService;
             _fileTransferClient = fileTransferClient;
-            _printingJsonCreator = printingJsonCreator;
+            //_printingJsonCreator = printingJsonCreator;
         }
 
         public async Task Execute()
@@ -82,7 +83,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                             $"IFA-Certificate-{DateTime.UtcNow.UtcToTimeZoneTime():MMyy}-{batchNumber.ToString().PadLeft(3, '0')}.json"
                     };
 
-                    _printingJsonCreator.Create(batchNumber, certificates);
+                    //_printingJsonCreator.Create(batchNumber, certificates);
                     _printingSpreadsheetCreator.Create(batchNumber, certificates);
 
                     await _notificationService.Send(batchNumber, certificates);

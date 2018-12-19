@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SFA.DAS.AssessorService.Api.Types.Models.Printing
+namespace SFA.DAS.AssessorService.Domain.JsonData.Printing
 {
     public class PrintOutput
     {
