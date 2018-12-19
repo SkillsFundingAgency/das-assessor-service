@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             {
                 Batch = new BatchDetails()
                 {
-                    BatchNumber = 1,
+                    BatchNumber = batchNumber,
                     BatchDate = DateTime.UtcNow
                 },
                 PrintData = new List<PrintData>()
