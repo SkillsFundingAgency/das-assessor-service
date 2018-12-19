@@ -76,37 +76,39 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 
         [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
         [HttpPost("register/edit-organisation/{organisationId}")]
-                 public async Task<IActionResult> EditOrganisation(RegisterViewAndEditOrganisationViewModel viewModel)
-                 {
-                     if (!ModelState.IsValid)
-                     {
-                         viewModel.OrganisationTypes = await _apiClient.GetOrganisationTypes();
-                         GatherOrganisationContacts(viewModel);
-                         GatherOrganisationStandards(viewModel);
-                         return View(viewModel);
-                     }
+        public async Task<IActionResult> EditOrganisation(RegisterViewAndEditOrganisationViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                viewModel.OrganisationTypes = await _apiClient.GetOrganisationTypes();
+                GatherOrganisationContacts(viewModel);
+                GatherOrganisationStandards(viewModel);
+                return View(viewModel);
+            }
          
-                     var updateOrganisationRequest = new UpdateEpaOrganisationRequest
-                     {
-                         Name = viewModel.Name,
-                         OrganisationId = viewModel.OrganisationId,
-                         Ukprn = viewModel.Ukprn,
-                         OrganisationTypeId = viewModel.OrganisationTypeId,
-                         LegalName = viewModel.LegalName,
-                         WebsiteLink = viewModel.WebsiteLink,
-                         Address1 = viewModel.Address1,
-                         Address2 = viewModel.Address2,
-                         Address3 = viewModel.Address3,
-                         Address4 = viewModel.Address4,
-                         Postcode = viewModel.Postcode,
-                         Status = viewModel.Status,
-                         ActionChoice = viewModel.ActionChoice
-                     };
+            var updateOrganisationRequest = new UpdateEpaOrganisationRequest
+            {
+                Name = viewModel.Name,
+                OrganisationId = viewModel.OrganisationId,
+                Ukprn = viewModel.Ukprn,
+                OrganisationTypeId = viewModel.OrganisationTypeId,
+                LegalName = viewModel.LegalName,
+                WebsiteLink = viewModel.WebsiteLink,
+                Address1 = viewModel.Address1,
+                Address2 = viewModel.Address2,
+                Address3 = viewModel.Address3,
+                Address4 = viewModel.Address4,
+                Postcode = viewModel.Postcode,
+                Status = viewModel.Status,
+                ActionChoice = viewModel.ActionChoice,
+                CompanyNumber = viewModel.CompanyNumber,
+                CharityNumber = viewModel.CharityNumber
+            };
          
-                     await _apiClient.UpdateEpaOrganisation(updateOrganisationRequest);
+            await _apiClient.UpdateEpaOrganisation(updateOrganisationRequest);
          
-                     return RedirectToAction("ViewOrganisation", "register", new { organisationId = viewModel.OrganisationId});
-                 }
+            return RedirectToAction("ViewOrganisation", "register", new { organisationId = viewModel.OrganisationId});
+        }
 
         [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
         [HttpGet("register/add-organisation")]
@@ -331,7 +333,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 Address2 = viewModel.Address2,
                 Address3 = viewModel.Address3,
                 Address4 = viewModel.Address4,
-                Postcode = viewModel.Postcode
+                Postcode = viewModel.Postcode,
+                CompanyNumber = viewModel.CompanyNumber,
+                CharityNumber = viewModel.CharityNumber
             };
 
             var organisationId = await _apiClient.CreateEpaOrganisation(addOrganisationRequest);
@@ -498,6 +502,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 Postcode = organisation.OrganisationData?.Postcode,
                 PrimaryContact = organisation.PrimaryContact,
                 PrimaryContactName = notSetDescription,
+                CharityNumber = organisation.OrganisationData?.CharityNumber,
+                CompanyNumber =  organisation.OrganisationData?.CompanyNumber,
                 Status = organisation.Status
             };
 

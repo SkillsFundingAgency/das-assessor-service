@@ -39,6 +39,20 @@ Layout = "_Layout";
                             <td><span class="bold-small">Legal Name</span></td>
                             <td>@Model.LegalName</td>
                         </tr>
+                        @if (@Model.CompanyNumber != null)
+                        {
+                            <tr>
+                                <td><span class="bold-small">Company number</span></td>
+                                <td>@Model.CompanyNumber</td>
+                            </tr>
+                        }
+                        @if (@Model.CharityNumber != null)
+                        {
+                            <tr>
+                                <td><span class="bold-small">Charity number</span></td>
+                                <td>@Model.CharityNumber</td>
+                            </tr>
+                        }
                         <tr>
                             <td><span class="bold-small">Website</span></td>
                             <td>@Model.WebsiteLink</td>
@@ -48,34 +62,34 @@ Layout = "_Layout";
                             <td>
                                 @if (@Model.Address1 != null)
                                 {
-                                @Model.Address1<br />
+                                    @Model.Address1<br />
                                 }
                                 @if (@Model.Address2 != null)
                                 {
-                                @Model.Address2<br />
+                                    @Model.Address2<br />
                                 }
                                 @if (@Model.Address3 != null)
                                 {
-                                @Model.Address3<br />
+                                    @Model.Address3<br />
                                 }
                                 @if (@Model.Address4 != null)
                                 {
-                                @Model.Address4<br />
+                                    @Model.Address4<br />
                                 }
                                 @if (@Model.Postcode != null)
                                 {
-                                @Model.Postcode
+                                    @Model.Postcode
                                 }
                             </td>
                         </tr>
-                    <tr>
-                        <td><span class="bold-small">Primary contact</span></td>
-                        <td>@Model.PrimaryContactName</td>
-                    </tr>
-                    <tr>
-                        <td><span class="bold-small">Status</span></td>
-                        <td>@Model.Status</td>
-                    </tr>
+                        <tr>
+                            <td><span class="bold-small">Primary contact</span></td>
+                            <td>@Model.PrimaryContactName</td>
+                        </tr>
+                        <tr>
+                            <td><span class="bold-small">Status</span></td>
+                            <td>@Model.Status</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
