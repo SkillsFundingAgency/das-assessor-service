@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Renci.SshNet;
@@ -78,6 +80,20 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Sftp
                 if (fileDetails.Length > 0)
                     _aggregateLogger.LogInfo(
                         $"Uploaded Files to {_webConfiguration.Sftp.UploadDirectory} Contains\r\n{fileDetails}");
+            }
+        }
+
+        public async Task<List<string>> GetListOfDownloadedFiles()
+        {
+            using (var sftpClient = new SftpClient(_webConfiguration.Sftp.RemoteHost,
+                Convert.ToInt32(_webConfiguration.Sftp.Port),
+                _webConfiguration.Sftp.Username,
+                _webConfiguration.Sftp.Password))
+            {
+                sftpClient.Connect();
+
+                var fileList = await sftpClient.ListDirectoryAsync($"{_webConfiguration.Sftp.ProofDirectory}");
+                return fileList.Where(f => !f.IsDirectory).Select(file => file.Name).ToList();
             }
         }
 

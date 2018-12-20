@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -38,6 +39,31 @@ namespace SFA.DAS.AssessorService.EpaoImporter
         }
 
         public async Task Execute()
+        {
+            await UploadCertificateDetailsToPinter();
+            await DownloadCertificatePrinterResponses();
+        }
+
+        private async Task DownloadCertificatePrinterResponses()
+        {
+            //throw new NotImplementedException();
+            var fileList = await _fileTransferClient.GetListOfDownloadedFiles();
+
+            // printResponse-1218-009.json
+            var pattern = @"^[Pp]rint[Rr]esponse-[0-9]{4}-[0-9]{1,4}.json";
+
+            var certificateResponseFiles = fileList.Where(f => Regex.IsMatch(f, pattern));
+            if (fileList.Count == 0)
+            {
+                _aggregateLogger.LogInfo("No certificate responses to process");
+                return;
+
+            }
+
+            return;
+        }
+
+        private async Task UploadCertificateDetailsToPinter()
         {
             try
             {

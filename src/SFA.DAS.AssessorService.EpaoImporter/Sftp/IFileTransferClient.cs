@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.EpaoImporter.Sftp
@@ -7,5 +8,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Sftp
     {
         void Send(MemoryStream memoryStream, string fileName);
         Task LogUploadDirectory();
+
+        Task<List<string>> GetListOfDownloadedFiles();
     }
 }

@@ -7,7 +7,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
     public static class PrivatelyFundedCertificatesApprovalNotificationService
     {
         [FunctionName("PrivatelyFundedCertificatesApprovalNotificationService")]
-        public static void Run([TimerTrigger("0 0 8 4 * *")] TimerInfo myTimer, TraceWriter functionLogger,
+        public static void Run([TimerTrigger("0 0 8 4 * *"),Disable] TimerInfo myTimer, TraceWriter functionLogger,
             ExecutionContext context)
         {
 
