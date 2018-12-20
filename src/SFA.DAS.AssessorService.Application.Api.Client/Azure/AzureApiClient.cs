@@ -322,10 +322,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
 
             if (user != null)
             {
-                var apiGroups = user.Groups.Where(g => string.Equals(g.Id, "developers", StringComparison.InvariantCultureIgnoreCase) || string.Equals(g.Id, _groupId, StringComparison.InvariantCultureIgnoreCase));
-                if (!user.Groups.Except(apiGroups).Any())
+                var hasOtherSubscriptions = user.Subscriptions.Any(s => !string.Equals(s.ProductId, _productId, StringComparison.InvariantCultureIgnoreCase));
+
+                if (!hasOtherSubscriptions)
                 {
-                    // Doesn't belong to anything else; do an aggressive delete
+                    // No other subscriptions so do an aggressive delete
                     using (var httpRequest = new HttpRequestMessage(HttpMethod.Delete, $"/users/{userId}?api-version=2017-03-01&deleteSubscriptions=true"))
                     {
                         httpRequest.Headers.Add("If-Match", "*");
