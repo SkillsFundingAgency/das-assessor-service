@@ -36,5 +36,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Helpers
         {
             return (financeStatus == "Graded" && sequenceStatus == "Evaluated") ? "Yes" : "No";
         }
+
+        public static string ApplicationLink(string status)
+        {
+            return status == "Submitted" ? "Evaluate application" : "Continue";
+        }
     }
 }
