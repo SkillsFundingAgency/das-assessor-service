@@ -23,7 +23,7 @@
         public DateTime RegistrationDate { get; set; }
         public string Note { get; set; }
         [JsonIgnore]
-        public string Ukprn => Note?.Replace("ukprn=", string.Empty);
+        public string Ukprn => Note?.Trim().ToLower().Replace(" ", string.Empty).Replace("ukprn=", string.Empty);
         public List<AzureIdentity> Identities { get; set; } = new List<AzureIdentity>();
         public List<AzureGroup> Groups { get; set; } = new List<AzureGroup>();
         public List<AzureSubscription> Subscriptions { get; set; } = new List<AzureSubscription>();

@@ -116,7 +116,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
                 }
 
                 return response.Subscriptions.Where(sub => !sub.IsCancelled).AsEnumerable();
-            }            
+            }
         }
 
         private async Task<IEnumerable<AzureGroup>> GetGroupsForUser(string userId)
@@ -130,20 +130,28 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
 
         public async Task<AzureUser> CreateUser(string ukprn, string username)
         {
+            AzureUser user = null;
+
             var organisation = await _organisationsApiClient.Get(ukprn);
             var contact = await _contactsApiClient.GetByUsername(username);
 
-            AzureUser user = null;
             IEnumerable<AzureUser> ukprnUsers = await GetUserDetailsByUkprn(ukprn, true, true);
-            AzureUser emailUser = await GetUserDetailsByEmail(contact?.Email, true, true);
 
-            if(ukprnUsers != null && emailUser != null && ukprnUsers.All(u => u.Id != emailUser.Id))
+            var ukprnUsersWithSubscription = (from u in ukprnUsers
+                                              from subs in ukprnUsers.SelectMany(au => au.Subscriptions.Where(s => s.IsActive && s.ProductId == _productId))
+                                              where u.Id == subs.UserId
+                                              select u).ToList();
+
+            AzureUser emailUser = await GetUserDetailsByEmail(contact?.Email, true, true);
+            AzureUser ukprnUser = ukprnUsersWithSubscription.Where(u => u.Email.Equals(contact?.Email)).FirstOrDefault();
+            
+            if (ukprnUsersWithSubscription.Any() && ukprnUser is null)
             {
                 throw new Exceptions.EntityAlreadyExistsException($"Access is already enabled but not for the supplied ukprn and username.");
             }
-            else if (ukprnUsers != null)
+            else if (ukprnUser != null)
             {
-                user = ukprnUsers.First();
+                user = ukprnUser;
             }
             else if(emailUser != null)
             {
@@ -226,7 +234,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
             var request = new CreateAzureUserSubscriptionRequest { UserId = $"/users/{userId}", ProductId = $"/products/{productId}" };
 
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Put, $"/subscriptions/{subscriptionId}?api-version=2017-03-01"))
-            {     
+            {
                 return await PostPutRequestWithResponse<CreateAzureUserSubscriptionRequest, AzureSubscription>(httpRequest, request);
             }
         }
