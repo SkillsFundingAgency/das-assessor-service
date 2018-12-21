@@ -15,6 +15,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public string CertificatesFileName { get; set; }
         public DateTime FileUploadStartTime { get; set; }
         public DateTime FileUploadEndTime { get; set; }
-        public BatchDetails BatchData { get; set; }
+        public BatchData BatchData { get; set; }
     }
 }

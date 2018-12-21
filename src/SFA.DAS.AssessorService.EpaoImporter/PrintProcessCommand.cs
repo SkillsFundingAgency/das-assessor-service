@@ -69,27 +69,41 @@ namespace SFA.DAS.AssessorService.EpaoImporter
             foreach (var fileToProcess in filesToProcesses)
             {
                 var stringBatchResponse = await _fileTransferClient.DownloadFile(fileToProcess);
-                var batchDetails = JsonConvert.DeserializeObject<BatchResponse>(stringBatchResponse);
+                var batchData = JsonConvert.DeserializeObject<BatchResponse>(stringBatchResponse);
 
-                if (batchDetails?.Batch == null || batchDetails.Batch.BatchDate == DateTime.MinValue)
+                if (batchData?.Batch == null || batchData.Batch.BatchDate == DateTime.MinValue)
                 {
                     _aggregateLogger.LogInfo($"Could not process downloaded file to correct format [{fileToProcess}]");
                     continue;
                 }
 
-                batchDetails.Batch.DateOfResponse = DateTime.UtcNow;
+                batchData.Batch.DateOfResponse = DateTime.UtcNow;
                 var period = GetPeriodFromFilename(fileToProcess);
                 if (period == string.Empty)
                 {
                     _aggregateLogger.LogInfo($"Could not identify valid period (YYMM) in filename [{fileToProcess}]");
                     continue;
                 }
+                var batchNumber = batchData.Batch.BatchNumber.ToString();
+
+                var batchLogResponse = await _assessorServiceApi.GetGetBatchLogByPeriodAndBatchNumber(period, batchNumber);
+
+                if (batchLogResponse?.Id == null)
+                {
+                    _aggregateLogger.LogInfo($"Could not match an existing batch Log to period [{period}], Batch Number [{batchNumber}]");
+                    continue;
+                }
+
+                var batchDataString = JsonConvert.SerializeObject(batchData.Batch);
+                await _assessorServiceApi.UpdateBatchDataInBatchLog((Guid) batchLogResponse.Id, batchDataString);
+ 
+                // MFCMFC
+                // put in detailed logs
+                // delete the file on the ftp once the process is successful
+                // maybe rework to pass in BatchData rather than a string???
 
             }
             
-
-
-
 
             return;
         }

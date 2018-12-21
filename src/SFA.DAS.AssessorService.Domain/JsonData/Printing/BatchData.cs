@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace SFA.DAS.AssessorService.Domain.JsonData.Printing
 {
-    public class BatchDetails
+    public class BatchData
     {
         public int BatchNumber { get; set; }
         public DateTime BatchDate { get; set; }

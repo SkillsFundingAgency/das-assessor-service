@@ -11,6 +11,8 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
     {
         Task<BatchLogResponse> CreateBatchLog(CreateBatchLogRequest createBatchLogRequest);
         Task<BatchLogResponse> GetCurrentBatchLog();
+        Task<BatchLogResponse> GetGetBatchLogByPeriodAndBatchNumber(string period, string batchNumber);
+        Task UpdateBatchDataInBatchLog(Guid batchId, string batchData);
         Task<IEnumerable<CertificateResponse>> GetCertificatesToBePrinted();
         Task UpdatePrivatelyFundedCertificateRequestsToBeApproved();
         Task<IEnumerable<CertificateResponse>> GetCertificatesToBeApproved();

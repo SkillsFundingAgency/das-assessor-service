@@ -73,6 +73,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
             return certificates;
         }
 
+
         public async Task<BatchLogResponse> GetCurrentBatchLog()
         {
             var response = await _httpClient.GetAsync(
@@ -85,6 +86,14 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
                     BatchNumber = 0
                 };
             }
+
+            return await response.Content.ReadAsAsync<BatchLogResponse>();
+        }
+
+        public async Task<BatchLogResponse> GetGetBatchLogByPeriodAndBatchNumber(string period, string batchNumber)
+        {
+            var response = await _httpClient.GetAsync(
+                $"/api/v1/batches/{period}/{batchNumber}");
 
             return await response.Content.ReadAsAsync<BatchLogResponse>();
         }
@@ -107,6 +116,10 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
             await _httpClient.PutAsJsonAsync($"/api/v1/certificates/{batchNumber}", updateCertificatesBatchToIndicatePrintedRequest);
         }
 
+        public async Task UpdateBatchDataInBatchLog(Guid batchId, string batchData)
+        {
+            await _httpClient.PutAsJsonAsync($"/api/v1/batches/update-batch-data", new {Id = batchId, BatchData = batchData});
+        }
         public async Task<EMailTemplate> GetEmailTemplate(string templateName)
         {           
             var response = await _httpClient.GetAsync(

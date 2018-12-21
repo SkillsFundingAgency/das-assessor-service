@@ -37,7 +37,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(batchLog);
         }
 
-        [HttpGet("/{period}/{batchNumber}", Name = "GetBatchLogForPeriodAndBatchNumber")]
+        [HttpGet("{period}/{batchNumber}", Name = "GetBatchLogForPeriodAndBatchNumber")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(BatchLogResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
