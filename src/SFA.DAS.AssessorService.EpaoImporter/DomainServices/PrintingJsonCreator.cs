@@ -103,12 +103,13 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 
                 printOutput.PrintData.Add(printData);
             });
-        
 
-        var serializedPrintOutput = JsonConvert.SerializeObject(printOutput);
+            _aggregateLogger.LogInfo("Completed Certificates to print Json ....");
+            var serializedPrintOutput = JsonConvert.SerializeObject(printOutput);
             byte[] array = Encoding.ASCII.GetBytes(serializedPrintOutput);
             using (var mystream = new MemoryStream(array))
             {
+                _aggregateLogger.LogInfo("Sending Certificates to print Json ....");
                 _fileTransferClient.Send(mystream, fileName);
             }
         }
