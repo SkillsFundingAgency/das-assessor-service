@@ -1,6 +1,5 @@
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
-using SFA.DAS.AssessorService.EpaoImporter.Const;
 using SFA.DAS.AssessorService.EpaoImporter.Startup;
 
 namespace SFA.DAS.AssessorService.EpaoImporter

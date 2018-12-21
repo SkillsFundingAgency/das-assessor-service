@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Extensions;
+using SFA.DAS.AssessorService.Domain.JsonData.Printing;
 using SFA.DAS.AssessorService.EpaoImporter.Data;
 using SFA.DAS.AssessorService.EpaoImporter.DomainServices;
 using SFA.DAS.AssessorService.EpaoImporter.Interfaces;
@@ -50,17 +53,58 @@ namespace SFA.DAS.AssessorService.EpaoImporter
             var fileList = await _fileTransferClient.GetListOfDownloadedFiles();
 
             // printResponse-1218-009.json
-            var pattern = @"^[Pp]rint[Rr]esponse-[0-9]{4}-[0-9]{1,4}.json";
+            var pattern = @"^[Pp][Rr][Ii][Nn][Tt][Rr][Ee][Ss][Pp][Oo][Nn][Ss][Ee]-[0-9]{4}-[0-9]{1,4}.json";
 
             var certificateResponseFiles = fileList.Where(f => Regex.IsMatch(f, pattern));
-            if (fileList.Count == 0)
+            var filesToProcesses = certificateResponseFiles as string[] ?? certificateResponseFiles.ToArray();
+            if (!filesToProcesses.Any())
             {
                 _aggregateLogger.LogInfo("No certificate responses to process");
                 return;
 
             }
+            
+
+
+            foreach (var fileToProcess in filesToProcesses)
+            {
+                var stringBatchResponse = await _fileTransferClient.DownloadFile(fileToProcess);
+                var batchDetails = JsonConvert.DeserializeObject<BatchResponse>(stringBatchResponse);
+
+                if (batchDetails?.Batch == null || batchDetails.Batch.BatchDate == DateTime.MinValue)
+                {
+                    _aggregateLogger.LogInfo($"Could not process downloaded file to correct format [{fileToProcess}]");
+                    continue;
+                }
+
+                batchDetails.Batch.DateOfResponse = DateTime.UtcNow;
+                var period = GetPeriodFromFilename(fileToProcess);
+                if (period == string.Empty)
+                {
+                    _aggregateLogger.LogInfo($"Could not identify valid period (YYMM) in filename [{fileToProcess}]");
+                    continue;
+                }
+
+            }
+            
+
+
+
 
             return;
+        }
+
+        private string GetPeriodFromFilename(string fileToProcess)
+        {
+            var res = string.Empty;
+
+            var nameParts = fileToProcess.Split('-');
+            if (nameParts.Length != 3)
+                return string.Empty;
+           
+            var period = nameParts[1];
+
+            return period.Length != 4 ? string.Empty : period;
         }
 
         private async Task UploadCertificateDetailsToPinter()
@@ -114,7 +158,6 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                     await _assessorServiceApi.CreateBatchLog(batchLogRequest);
                     await _assessorServiceApi.ChangeStatusToPrinted(batchNumber, certificates);
                 }
-
                 await _assessorServiceApi.CompleteSchedule(scheduleRun.Id);
             }
             catch (Exception e)

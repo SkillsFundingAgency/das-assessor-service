@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Sftp
     {
         void Send(MemoryStream memoryStream, string fileName);
         Task LogUploadDirectory();
-
         Task<List<string>> GetListOfDownloadedFiles();
+        Task<string> DownloadFile(string filename);
     }
 }

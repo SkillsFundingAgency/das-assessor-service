@@ -13,5 +13,8 @@ namespace SFA.DAS.AssessorService.Domain.JsonData.Printing
         public DateTime? PrintedDate { get; set; }
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public DateTime? PostedDate { get; set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public DateTime? DateOfResponse { get; set; }
     }
 }
