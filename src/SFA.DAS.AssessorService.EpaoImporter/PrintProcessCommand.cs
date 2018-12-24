@@ -66,7 +66,6 @@ namespace SFA.DAS.AssessorService.EpaoImporter
              {
                  await ProcessEachFileToUploadThenDelete(fileToProcess);
              }
-
         }
 
         private async Task ProcessEachFileToUploadThenDelete(string fileToProcess)
@@ -104,8 +103,6 @@ namespace SFA.DAS.AssessorService.EpaoImporter
 
         private string GetPeriodFromFilename(string fileToProcess)
         {
-            var res = string.Empty;
-
             var nameParts = fileToProcess.Split('-');
             if (nameParts.Length != 3)
                 return string.Empty;
