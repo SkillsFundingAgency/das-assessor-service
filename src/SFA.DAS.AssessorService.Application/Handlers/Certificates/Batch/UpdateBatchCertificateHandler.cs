@@ -49,7 +49,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             }
 
             _logger.LogInformation("UpdateCertificate Before Update Cert in db");
-            await _certificateRepository.Update(certificate, contact.Username, null);
+            await _certificateRepository.Update(certificate, contact.Username, CertificateActions.Amend);
 
             return await ApplyStatusInformation(certificate);
         }

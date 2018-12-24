@@ -12,7 +12,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
         Task DisableUser(string userId);
         Task DeleteUser(string userId);
         Task<AzureUser> GetUserDetails(string userId, bool includeSubscriptions = false, bool includeGroups = false);
-        Task<AzureUser> GetUserDetailsByUkprn(string ukprn, bool includeSubscriptions = false, bool includeGroups = false);
+        Task<IEnumerable<AzureUser>> GetUserDetailsByUkprn(string ukprn, bool includeSubscriptions = false, bool includeGroups = false);
         Task<AzureUser> GetUserDetailsByEmail(string email, bool includeSubscriptions = false, bool includeGroups = false);
         Task<PaginatedList<AzureUser>> ListUsers(int page);
         Task<object> RegeneratePrimarySubscriptionKey(string subscriptionId);
