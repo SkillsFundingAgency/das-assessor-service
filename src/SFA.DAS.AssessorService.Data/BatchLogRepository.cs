@@ -41,8 +41,7 @@ namespace SFA.DAS.AssessorService.Data
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
                 var sqlForMainDetails =
-                    "select * " +
-                    " FROM BatchLogs " +
+                    "select * FROM BatchLogs " +
                     "WHERE Period = @period and BatchNumber = @batchNumber";
                 var orgs = await connection.QueryAsync<BatchLogResponse>(sqlForMainDetails, new { period, batchNumber });
                 var org = orgs.FirstOrDefault();

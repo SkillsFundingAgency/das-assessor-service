@@ -71,9 +71,9 @@ namespace SFA.DAS.AssessorService.EpaoImporter
         private async Task ProcessEachFileToUploadThenDelete(string fileToProcess)
         {
             var stringBatchResponse = await _fileTransferClient.DownloadFile(fileToProcess);
-            var batchData = JsonConvert.DeserializeObject<BatchResponse>(stringBatchResponse);
+            var batchResponse = JsonConvert.DeserializeObject<BatchResponse>(stringBatchResponse);
 
-            if (batchData?.Batch == null || batchData.Batch.BatchDate == DateTime.MinValue)
+            if (batchResponse?.Batch == null || batchResponse.Batch.BatchDate == DateTime.MinValue)
             {
                 _aggregateLogger.LogInfo($"Could not process downloaded file to correct format [{fileToProcess}]");
                 return;
@@ -86,8 +86,8 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                 return;
             }
 
-            batchData.Batch.DateOfResponse = DateTime.UtcNow;
-            var batchNumber = batchData.Batch.BatchNumber.ToString();
+            batchResponse.Batch.DateOfResponse = DateTime.UtcNow;
+            var batchNumber = batchResponse.Batch.BatchNumber.ToString();
   
             var batchLogResponse = await _assessorServiceApi.GetGetBatchLogByPeriodAndBatchNumber(period, batchNumber);
 
@@ -97,7 +97,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                 return;
             }
 
-            await _assessorServiceApi.UpdateBatchDataInBatchLog((Guid) batchLogResponse.Id, batchData.Batch);
+            await _assessorServiceApi.UpdateBatchDataInBatchLog((Guid) batchLogResponse.Id, batchResponse.Batch);
             _fileTransferClient.DeleteFile(fileToProcess);
         }
 
