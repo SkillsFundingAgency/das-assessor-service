@@ -8,37 +8,37 @@
     </div>
 </div>
 <div class="grid-row">
-    <div class="column-one-third" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam)">
+    <div class="column-half" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam)">
         <h2 class="heading-medium"><a asp-controller="Search">Search</a></h2>
         <p>Search by learner name, ULN, certificate reference or EPAO ID.</p>
     </div>
-    <div class="column-one-third" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam)">
+    <div class="column-half" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam)">
         <h2 class="heading-medium"><a asp-controller="BatchSearch">Batch search</a></h2>
         <p>View current batches and search for certificates by batch number.</p>
     </div>
 </div>
 <div class="grid-row">
-    <div class="column-one-third" sfa-show-for-roles="@string.Join(",", Roles.CertificationTeam, Roles.AssessmentDeliveryTeam)">
+    <div class="column-half" sfa-show-for-roles="@string.Join(",", Roles.CertificationTeam, Roles.AssessmentDeliveryTeam)">
         <h2 class="heading-medium"><a asp-controller="Register">Register of EPAO</a></h2>
         <p>Search for add and edit EPAOs and standards. Add and edit contacts. Make standards and/or organisations live.</p>
     </div>
-    <div class="column-one-third" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam)">
+    <div class="column-half" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam)">
         <h2 class="heading-medium"><a asp-controller="ScheduleConfig">Print schedule configuration</a></h2>
         <p>Print certificates. Create, delete and view existing print schedules.</p>
     </div>
 </div>
 <div class="grid-row">
-    <div class="column-one-third" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam, Roles.AssessmentDeliveryTeam)">
+    <div class="column-half" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam, Roles.AssessmentDeliveryTeam)">
         <h2 class="heading-medium"><a asp-controller="Reports">Reports</a></h2>
         <p>On demand reporting.</p>
     </div>
-    <div class="column-one-third" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam)">
-        <h2 class="heading-medium"><a asp-controller="CertificateApprovals" asp-action="Approvals">Privately funded certificate approvals</a></h2>
+    <div class="column-half" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam)">
+        <h2 class="heading-medium"><a asp-controller="CertificateApprovals" asp-action="New">Privately funded certificate approvals</a></h2>
         <p>A table of privately funded certificates with options to approve, send for approval or reject.</p>
     </div>
 </div>
 <div class="grid-row">
-    <div class="column-one-third" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam)">
+    <div class="column-half" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam)">
         <h2 class="heading-medium"><a asp-controller="ExternalApi">External API</a></h2>
         <p>Manage user's access and generate API keys.</p>
     </div>

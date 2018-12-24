@@ -161,7 +161,7 @@ namespace SFA.DAS.AssessorService.Data
                     .AsNoTracking()
                     .ToListAsync();
             }
-            else
+            else 
             {
                 return await _context.Certificates
                     .Include(q => q.Organisation)
@@ -370,7 +370,7 @@ namespace SFA.DAS.AssessorService.Data
 
                 certificate.Status = approvalResult.IsApproved;
 
-                UpdateCertificateLog(certificate, CertificateActions.Status, userName);
+               await UpdateCertificateLog(certificate, CertificateActions.Status, userName);
             }
 
             await _context.SaveChangesAsync();

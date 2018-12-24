@@ -9,22 +9,27 @@ namespace SFA.DAS.AssessorService.Web.Staff.Automapper.CustomResolvers
     public class ApprovalsViewModelResolver : IValueResolver<CertificateSummaryResponse, CertificateDetailApprovalViewModel,
         IEnumerable<SelectListItem>>
     {
-        public IEnumerable<SelectListItem> Resolve(CertificateSummaryResponse source, CertificateDetailApprovalViewModel destination,
+        public IEnumerable<SelectListItem> Resolve(CertificateSummaryResponse source,
+            CertificateDetailApprovalViewModel destination,
             IEnumerable<SelectListItem> destMember,
             ResolutionContext context)
         {
             return new List<SelectListItem>
             {
-                new SelectListItem {Text = "Please Select", Value = "ToBeApproved"},
+                new SelectListItem
+                {
+                    Text = "Send",
+                    Value = "ToBeApproved"
+                },
                 new SelectListItem
                 {
                     Text = "Approve",
-                    Value = "Approved"
+                    Value = "Submitted"
                 },
                 new SelectListItem
                 {
                     Text = "Reject",
-                    Value = "Rejected"
+                    Value = "Draft"
                 }
             };
         }

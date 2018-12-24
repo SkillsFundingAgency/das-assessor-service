@@ -37,8 +37,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             var statuses = new List<string>
             {
                 "ToBeApproved",
-                "Approved",
-                "Rejected"
+                "Submitted",
+                "Draft"
             };
 
             var certificates = await _certificateRepository.GetCertificates(statuses);
@@ -106,7 +106,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                         ContactAddLine3 = certificateData.ContactAddLine3,
                         ContactAddLine4 = certificateData.ContactAddLine4,
                         ContactPostCode = certificateData.ContactPostCode,
-                        Status = certificate.Status
+                        Status = certificate.Status,
+                        PrivatelyFundedStatus = certificate.PrivatelyFundedStatus
                     };
                 });
 

@@ -6,6 +6,7 @@
         public const string Ready = "Ready";
         public const string Submitted = "Submitted";
         public const string ToBeApproved = "ToBeApproved";
+        public const string SentForApproval = "SentForApproval";
         public const string Approved = "Approved";
         public const string Rejected = "Rejected";
         public const string Printed = "Printed";

@@ -99,6 +99,15 @@
     <Content Update="Views\CertificateAmend\_ViewImports.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\CertificateApprovals\Sent.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\CertificateApprovals\Rejected.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\CertificateApprovals\New.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Reports\Run.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

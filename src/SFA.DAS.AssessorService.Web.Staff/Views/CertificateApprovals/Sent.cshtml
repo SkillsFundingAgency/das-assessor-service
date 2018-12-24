@@ -4,12 +4,32 @@
 
 @{ ViewBag.Title = "Staff Dashboard"; }
 
+<div>
+    <nav class="app-navigation govuk-clearfix">
+        <ul class="app-navigation__list">
+          
+            <li class="app-navigation">
+                <a asp-controller="CertificateApprovals" asp-action="New">New</a>
+            </li>
+            <li class="app-navigation--current-page">
+                <a asp-controller="CertificateApprovals" asp-action="Sent">Sent For Approval</a>
+            </li>
+            <li class="app-navigation">
+                <a asp-controller="CertificateApprovals" asp-action="Approved">Approved</a>
+            </li>
+            <li class="app-navigation">
+                <a asp-controller="CertificateApprovals" asp-action="Rejected">Rejected</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
 <div class="grid-row">
 
-    <div class="column-three-thirds">
+    <div class="column-full">
 
         <form class="apprentice-approvals-form js-disable-on-submit" type="post" asp-controller="CertificateApprovals" asp-action="Approvals">
-            <a class="link-back" asp-controller="Dashboard" asp-action="Index">Back</a>
+            <a class="link-back" asp-controller="Dashboard" asp-action="Index">Return to dashboard</a>
 
             @* hidden with css by default *@
             <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
@@ -33,11 +53,11 @@
 
             <div sfa-anyvalidationerror-class="after-error-summary">
                 <h1 class="heading-large">
-                    To be Approved Privately Funded Certificates?
+                    Privately Funded Certificates - Sent For Approval
                 </h1>
                                             
                 @{
-                    var count = Model.ToBeApprovedCertificates.Count() + Model.ApprovedCertificates.Count() + Model.RejectedCertificates.Count();
+                    var count = Model.SentForApprovalCertificates.Count();
                     var approvalResults = 
                         new SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateDetailApprovalViewModel[count];
                     for (int i = 0; i < count; i++)
@@ -46,46 +66,26 @@
                     }
                 }
 
-                @if (@Model.ToBeApprovedCertificates.Any())
+                @if (@Model.SentForApprovalCertificates.Any())
                 {
-                    await Html.RenderPartialAsync("_ApprovalsDetailsPartial", Model.ToBeApprovedCertificates, new ViewDataDictionary(ViewData)
+                    await Html.RenderPartialAsync("_ApprovalsDetailsPartial", Model.SentForApprovalCertificates, new ViewDataDictionary(ViewData)
                     {
                         {
                             "Increment", 0                                                      
                         },
                         { "ApprovalResults", approvalResults }
                     });
+                    <button type="submit" class="button" role="button">Submit</button>
                 }
-                <h1 class="heading-large">
-                    Approved Privately Funded Certificates?
-                </h1>
-                            
-                @if (@Model.ApprovedCertificates.Any())
+                else
                 {
-                    await Html.RenderPartialAsync("_ApprovalsDetailsPartial", @Model.ApprovedCertificates, new ViewDataDictionary(ViewData)
-                    {
-                        {"Increment", Model.ToBeApprovedCertificates.Count()},
-                        {"ApprovalResults",approvalResults}
-                    });
+                    <div class="info-summary">
+                        <h3 class="heading-medium">No privately funded certificates found for approval</h3>
+                    </div>
                 }
 
-                <h1 class="heading-large">
-                    Rejected Privately Funded Certificates?
-                </h1>
-
-                @if (@Model.RejectedCertificates.Any())
-                {
-                    await Html.RenderPartialAsync("_ApprovalsDetailsPartial", @Model.RejectedCertificates,
-                        new ViewDataDictionary(ViewData)
-                        {
-                            {"Increment", Model.ToBeApprovedCertificates.Count() + @Model.ApprovedCertificates.Count()},
-                            {"ApprovalResults",approvalResults}
-                        });
-                }
+              
             </div>
-
-
-            <button type="submit" class="button">Submit</button>
         </form>
     </div>
 </div>

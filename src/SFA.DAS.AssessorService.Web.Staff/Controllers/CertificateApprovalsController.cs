@@ -21,22 +21,62 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             : base(logger, contextAccessor, apiClient)
         {
         }
+        
 
         [HttpGet]
-        public async Task<IActionResult> Approvals()
+        public async Task<IActionResult> New()
         {
             var certificates = await ApiClient.GetCertificatesToBeApproved();
             var certificatesToBeApproved = new CertificateApprovalViewModel
             {
                 ToBeApprovedCertificates = Mapper.Map<List<CertificateDetailApprovalViewModel>>(certificates
-                    .Where(q => q.Status == CertificateStatus.ToBeApproved)),
-                ApprovedCertificates = Mapper.Map<List<CertificateDetailApprovalViewModel>>(certificates
-                    .Where(q => q.Status == CertificateStatus.Approved)),
-                RejectedCertificates = Mapper.Map<List<CertificateDetailApprovalViewModel>>(certificates
-                    .Where(q => q.Status == CertificateStatus.Rejected))
+                    .Where(q => q.Status == CertificateStatus.ToBeApproved && q.PrivatelyFundedStatus == null))
             };
 
             return View(certificatesToBeApproved);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Sent()
+        {
+            var certificates = await ApiClient.GetCertificatesToBeApproved();
+            var certificatesSentForApproval = new CertificateApprovalViewModel
+            {
+                SentForApprovalCertificates = Mapper.Map<List<CertificateDetailApprovalViewModel>>(certificates
+                    .Where(q => q.Status == CertificateStatus.ToBeApproved && 
+                                q.PrivatelyFundedStatus == CertificateStatus.SentForApproval)),
+               
+            };
+
+            return View(certificatesSentForApproval);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Approved()
+        {
+            var certificates = await ApiClient.GetCertificatesToBeApproved();
+            var certificatesApproved = new CertificateApprovalViewModel
+            {
+
+                ApprovedCertificates = Mapper.Map<List<CertificateDetailApprovalViewModel>>(certificates
+                    .Where(q => q.Status == CertificateStatus.Submitted && q.PrivatelyFundedStatus == CertificateStatus.Approved))
+            };
+
+            return View(certificatesApproved);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Rejected()
+        {
+            var certificates = await ApiClient.GetCertificatesToBeApproved();
+            var certificatesThatAreRejected = new CertificateApprovalViewModel
+            {
+
+                RejectedCertificates = Mapper.Map<List<CertificateDetailApprovalViewModel>>(certificates
+                    .Where(q => q.Status == CertificateStatus.Draft && q.PrivatelyFundedStatus == CertificateStatus.Rejected))
+            };
+
+            return View(certificatesThatAreRejected);
         }
 
         [HttpPost(Name = "Approvals")]

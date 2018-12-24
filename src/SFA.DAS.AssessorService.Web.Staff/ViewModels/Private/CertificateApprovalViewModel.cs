@@ -8,5 +8,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels.Private
         public IEnumerable<CertificateDetailApprovalViewModel> ApprovedCertificates { get; set; }
         public IEnumerable<CertificateDetailApprovalViewModel> RejectedCertificates { get; set; }
         public IEnumerable<CertificateDetailApprovalViewModel> ToBeApprovedCertificates { get; set; }
+        public IEnumerable<CertificateDetailApprovalViewModel> SentForApprovalCertificates { get; set; }
     }
 }

@@ -27,5 +27,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
         public string ContactAddLine4 { get; set; }
         public string ContactPostCode { get; set; }
         public string Status { get; set; }
+        public string PrivatelyFundedStatus { get; set; }
     }
 }
