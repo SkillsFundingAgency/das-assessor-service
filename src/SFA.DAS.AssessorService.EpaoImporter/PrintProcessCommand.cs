@@ -44,16 +44,15 @@ namespace SFA.DAS.AssessorService.EpaoImporter
         public async Task Execute()
         {
             await UploadCertificateDetailsToPinter();
-            await DownloadCertificatePrinterResponses();
+            await DownloadAndDeleteCertificatePrinterResponses();
         }
 
-        private async Task DownloadCertificatePrinterResponses()
+        private async Task DownloadAndDeleteCertificatePrinterResponses()
         {
-            //throw new NotImplementedException();
             var fileList = await _fileTransferClient.GetListOfDownloadedFiles();
 
-            // printResponse-1218-009.json
-            var pattern = @"^[Pp][Rr][Ii][Nn][Tt][Rr][Ee][Ss][Pp][Oo][Nn][Ss][Ee]-[0-9]{4}-[0-9]{1,4}.json";
+            // printResponse-MMYY-XXX.json where XXX = 001, 002 etc
+            const string pattern = @"^[Pp][Rr][Ii][Nn][Tt][Rr][Ee][Ss][Pp][Oo][Nn][Ss][Ee]-[0-9]{4}-[0-9]{1,3}.json";
 
             var certificateResponseFiles = fileList.Where(f => Regex.IsMatch(f, pattern));
             var filesToProcesses = certificateResponseFiles as string[] ?? certificateResponseFiles.ToArray();
@@ -61,51 +60,46 @@ namespace SFA.DAS.AssessorService.EpaoImporter
             {
                 _aggregateLogger.LogInfo("No certificate responses to process");
                 return;
-
             }
-            
+           
+             foreach (var fileToProcess in filesToProcesses)
+             {
+                 await ProcessEachFileToUploadThenDelete(fileToProcess);
+             }
 
+        }
 
-            foreach (var fileToProcess in filesToProcesses)
+        private async Task ProcessEachFileToUploadThenDelete(string fileToProcess)
+        {
+            var stringBatchResponse = await _fileTransferClient.DownloadFile(fileToProcess);
+            var batchData = JsonConvert.DeserializeObject<BatchResponse>(stringBatchResponse);
+
+            if (batchData?.Batch == null || batchData.Batch.BatchDate == DateTime.MinValue)
             {
-                var stringBatchResponse = await _fileTransferClient.DownloadFile(fileToProcess);
-                var batchData = JsonConvert.DeserializeObject<BatchResponse>(stringBatchResponse);
-
-                if (batchData?.Batch == null || batchData.Batch.BatchDate == DateTime.MinValue)
-                {
-                    _aggregateLogger.LogInfo($"Could not process downloaded file to correct format [{fileToProcess}]");
-                    continue;
-                }
-
-                batchData.Batch.DateOfResponse = DateTime.UtcNow;
-                var period = GetPeriodFromFilename(fileToProcess);
-                if (period == string.Empty)
-                {
-                    _aggregateLogger.LogInfo($"Could not identify valid period (YYMM) in filename [{fileToProcess}]");
-                    continue;
-                }
-                var batchNumber = batchData.Batch.BatchNumber.ToString();
-
-                var batchLogResponse = await _assessorServiceApi.GetGetBatchLogByPeriodAndBatchNumber(period, batchNumber);
-
-                if (batchLogResponse?.Id == null)
-                {
-                    _aggregateLogger.LogInfo($"Could not match an existing batch Log to period [{period}], Batch Number [{batchNumber}]");
-                    continue;
-                }
-
-                var batchDataString = JsonConvert.SerializeObject(batchData.Batch);
-                await _assessorServiceApi.UpdateBatchDataInBatchLog((Guid) batchLogResponse.Id, batchDataString);
- 
-                // MFCMFC
-                // put in detailed logs
-                // delete the file on the ftp once the process is successful
-                // maybe rework to pass in BatchData rather than a string???
-
+                _aggregateLogger.LogInfo($"Could not process downloaded file to correct format [{fileToProcess}]");
+                return;
             }
-            
 
-            return;
+            var period = GetPeriodFromFilename(fileToProcess);
+            if (period == string.Empty)
+            {
+                _aggregateLogger.LogInfo($"Could not identify valid period (YYMM) in filename [{fileToProcess}]");
+                return;
+            }
+
+            batchData.Batch.DateOfResponse = DateTime.UtcNow;
+            var batchNumber = batchData.Batch.BatchNumber.ToString();
+  
+            var batchLogResponse = await _assessorServiceApi.GetGetBatchLogByPeriodAndBatchNumber(period, batchNumber);
+
+            if (batchLogResponse?.Id == null)
+            {
+                _aggregateLogger.LogInfo($"Could not match an existing batch Log to period [{period}], Batch Number [{batchNumber}]");
+                return;
+            }
+
+            await _assessorServiceApi.UpdateBatchDataInBatchLog((Guid) batchLogResponse.Id, batchData.Batch);
+            _fileTransferClient.DeleteFile(fileToProcess);
         }
 
         private string GetPeriodFromFilename(string fileToProcess)

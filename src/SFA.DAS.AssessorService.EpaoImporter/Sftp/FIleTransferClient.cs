@@ -131,19 +131,30 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Sftp
                             fileContent = reader.ReadToEnd();
                         }
                     }
-
-                    //                    sftpClient.UploadFile(memoryStream, $"{_webConfiguration.Sftp.UploadDirectory}/{fileName}",
-                    //                        UploadCallBack);
-                    //
-                    //                    _aggregateLogger.LogInfo(
-                    //                        $"Validating Upload length of file ... {_webConfiguration.Sftp.UploadDirectory}/{fileName} = {memoryStream.Length}");
-                    //                    ValidateUpload(sftpClient, fileName, memoryStream.Length);
-                    //
-                    //                    _aggregateLogger.LogInfo($"Validated the upload ...");
                 }
             }
 
             return fileContent;
+        }
+
+        public void DeleteFile(string filename)
+        {
+            var fileToDelete = $"{_webConfiguration.Sftp.ProofDirectory}/{filename}";
+            _aggregateLogger.LogInfo($"Deleting successfully processed file [{fileToDelete}]");
+
+            lock (_lock)
+            {
+                using (var sftpClient = new SftpClient(_webConfiguration.Sftp.RemoteHost,
+                    Convert.ToInt32(_webConfiguration.Sftp.Port),
+                    _webConfiguration.Sftp.Username,
+                    _webConfiguration.Sftp.Password))
+                {
+                    sftpClient.Connect();
+                    sftpClient.DeleteFile(fileToDelete);
+                    sftpClient.Disconnect();
+                    _aggregateLogger.LogInfo($"Deleted successfully processed file [{fileToDelete}]");
+                }
+            }
         }
 
         private void UploadCallBack(ulong uploaded)

@@ -50,7 +50,7 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        public async Task<ValidationResponse> UpdateBatchLogBatchWithDataRequest(Guid id, string batchData)
+        public async Task<ValidationResponse> UpdateBatchLogBatchWithDataRequest(Guid id, BatchData batchData)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {

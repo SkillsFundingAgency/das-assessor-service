@@ -10,5 +10,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Sftp
         Task LogUploadDirectory();
         Task<List<string>> GetListOfDownloadedFiles();
         Task<string> DownloadFile(string filename);
+
+        void DeleteFile(string filename);
     }
 }
