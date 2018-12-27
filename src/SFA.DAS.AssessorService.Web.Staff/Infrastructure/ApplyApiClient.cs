@@ -159,9 +159,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             return await Get<List<dynamic>>($"/Financial/Previous");
         }
 
-        public async Task StartApplicationReview(int sequenceId)
+        public async Task StartApplicationReview(Guid applicationId, int sequenceId)
         {
-            await Post($"/Review/Sequence/{sequenceId}", new {sequenceId});
+            await Post($"/Review/Applications/{applicationId}/Sequences/{sequenceId}/StartReview", new { sequenceId });
         }
     }
 }

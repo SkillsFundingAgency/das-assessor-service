@@ -37,9 +37,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
         {
             var activeSequence = await _applyApiClient.GetActiveSequence(applicationId);
             
-            await _applyApiClient.StartApplicationReview(activeSequence.SequenceId);
+            await _applyApiClient.StartApplicationReview(applicationId, activeSequence.SequenceId);
             
-            activeSequence.Sections = activeSequence.Sections.Where(s => s.SectionId != 3).ToList();
+            activeSequence.Sections = activeSequence.Sections.ToList();
             return View("~/Views/Apply/Applications/Sequence.cshtml", activeSequence);
         }
         
