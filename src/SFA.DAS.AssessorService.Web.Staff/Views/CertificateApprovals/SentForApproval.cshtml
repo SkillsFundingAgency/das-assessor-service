@@ -12,7 +12,7 @@
                 <a asp-controller="CertificateApprovals" asp-action="New">New</a>
             </li>
             <li class="app-navigation--current-page">
-                <a asp-controller="CertificateApprovals" asp-action="Sent">Sent For Approval</a>
+                <a asp-controller="CertificateApprovals" asp-action="SentForApproval">Sent For Approval</a>
             </li>
             <li class="app-navigation">
                 <a asp-controller="CertificateApprovals" asp-action="Approved">Approved</a>
@@ -51,41 +51,43 @@
                 </div>
             }
 
-            <div sfa-anyvalidationerror-class="after-error-summary">
-                <h1 class="heading-large">
-                    Privately Funded Certificates - Sent For Approval
-                </h1>
-                                            
-                @{
-                    var count = Model.SentForApprovalCertificates.Count();
-                    var approvalResults = 
-                        new SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateDetailApprovalViewModel[count];
-                    for (int i = 0; i < count; i++)
-                    {
-                        approvalResults[i] = new SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateDetailApprovalViewModel();
-                    }
-                }
+                <div sfa-anyvalidationerror-class="after-error-summary">
+                    <h1 class="heading-large">
+                        Privately Funded Certificates - Sent For Approval
+                    </h1>
 
-                @if (@Model.SentForApprovalCertificates.Any())
-                {
-                    await Html.RenderPartialAsync("_ApprovalsDetailsPartial", Model.SentForApprovalCertificates, new ViewDataDictionary(ViewData)
-                    {
+                    @{
+                        var count = Model.SentForApprovalCertificates.Count();
+                        var approvalResults =
+                            new SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateDetailApprovalViewModel[count];
+                        for (int i = 0; i < count; i++)
                         {
-                            "Increment", 0                                                      
-                        },
-                        { "ApprovalResults", approvalResults }
-                    });
-                    <button type="submit" class="button" role="button">Submit</button>
-                }
-                else
-                {
-                    <div class="info-summary">
-                        <h3 class="heading-medium">No privately funded certificates found for approval</h3>
-                    </div>
-                }
+                            approvalResults[i] = new SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateDetailApprovalViewModel();
+                        }
+                    }
 
-              
-            </div>
+                    @if (@Model.SentForApprovalCertificates.Any())
+                    {
+                        await Html.RenderPartialAsync("_ApprovalsDetailsPartial", Model.SentForApprovalCertificates, new ViewDataDictionary(ViewData)
+                            {
+                                {
+                                    "Increment", 0
+                                },
+                                { "ApprovalResults", approvalResults },
+                                {"ActionHint","Approved" }
+                            });
+
+                        <button type="submit" class="button" role="button">Submit</button>
+                    }
+                    else
+                    {
+                        <div class="info-summary">
+                            <h3 class="heading-medium">No privately funded certificates found for approval</h3>
+                        </div>
+                    }
+
+
+                </div>
         </form>
     </div>
 </div>

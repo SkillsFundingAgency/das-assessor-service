@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
                     MockApiClient                  
                     );
             
-            _result = certificateApprovalsController.Approvals().GetAwaiter().GetResult();
+            _result = certificateApprovalsController.Approvals(new CertificatePostApprovalViewModel()).GetAwaiter().GetResult();
 
             var result = _result as ViewResult;
             _viewModelResponse = result.Model as CertificateApprovalViewModel;

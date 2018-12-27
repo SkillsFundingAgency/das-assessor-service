@@ -354,7 +354,7 @@ namespace SFA.DAS.AssessorService.Data
             await _context.SaveChangesAsync();
         }
 
-        public async Task ApproveCertificates(List<ApprovalResult> approvalResults, string userName)
+        public async Task ApproveCertificates(List<ApprovalResult> approvalResults, string userName, string actionHint)
         {
             var certificateReferences =
                 approvalResults.Select(q => q.CertificateReference).ToList();
@@ -369,7 +369,7 @@ namespace SFA.DAS.AssessorService.Data
                         q => q.CertificateReference == approvalResult.CertificateReference);
 
                 certificate.Status = approvalResult.IsApproved;
-
+                certificate.PrivatelyFundedStatus = approvalResult.PrivatelyFundedStatus;
                await UpdateCertificateLog(certificate, CertificateActions.Status, userName);
             }
 

@@ -674,8 +674,7 @@ fieldset.after-error-summary {
 }
 
 /*Custom Table Settings for TD which contain radios */
-table .td-with-radios {
-    width: 30%;
+.table .td-with-radios {
     line-height: 1.75em;
 }
 

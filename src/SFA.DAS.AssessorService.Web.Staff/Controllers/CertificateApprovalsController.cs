@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -37,7 +38,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Sent()
+        public async Task<IActionResult> SentForApproval()
         {
             var certificates = await ApiClient.GetCertificatesToBeApproved();
             var certificatesSentForApproval = new CertificateApprovalViewModel
@@ -86,9 +87,38 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             certificateApprovalViewModel.UserName = ContextAccessor.HttpContext.User
                 .FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
-            ApiClient.ApproveCertificates(certificateApprovalViewModel);
+            foreach (var approvalResult in certificateApprovalViewModel.ApprovalResults)
+            {
+                if (approvalResult.IsApproved == CertificateStatus.ToBeApproved && approvalResult.PrivatelyFundedStatus == null)
+                {
+                    approvalResult.PrivatelyFundedStatus = CertificateStatus.SentForApproval;
+                }else if (approvalResult.IsApproved == CertificateStatus.ToBeApproved &&
+                          approvalResult.PrivatelyFundedStatus == CertificateStatus.SentForApproval)
+                {
+                    approvalResult.IsApproved = CertificateStatus.Submitted;
+                    approvalResult.PrivatelyFundedStatus = CertificateStatus.Approved;
+                }
+                else if(approvalResult.IsApproved == CertificateStatus.Draft &&
+                         (approvalResult.PrivatelyFundedStatus == null || approvalResult.PrivatelyFundedStatus == CertificateStatus.SentForApproval))
 
-            return RedirectToAction("Index", "Dashboard");
+                {
+                    approvalResult.PrivatelyFundedStatus = CertificateStatus.Rejected;
+                }
+                else if (approvalResult.IsApproved == CertificateStatus.Submitted &&
+                         (approvalResult.PrivatelyFundedStatus == CertificateStatus.Rejected))
+
+                {
+                    approvalResult.PrivatelyFundedStatus = CertificateStatus.Approved;
+                }
+            }
+
+            var match = certificateApprovalViewModel.ApprovalResults.Where(x =>
+                x.IsApproved == CertificateStatus.Approved || x.IsApproved == CertificateStatus.ToBeApproved || x.IsApproved == CertificateStatus.Submitted);
+            if (!match.Any())
+                certificateApprovalViewModel.ActionHint = CertificateStatus.Rejected;
+
+           await ApiClient.ApproveCertificates(certificateApprovalViewModel);
+            return RedirectToAction(certificateApprovalViewModel.ActionHint);
         }
     }
 }

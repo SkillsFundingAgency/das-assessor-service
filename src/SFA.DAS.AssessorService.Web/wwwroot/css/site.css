@@ -43,7 +43,7 @@ details {
 }
 
 .header-inner {
-  max-width: 960px;
+  max-width: 1280px;
   margin: 0 15px;
   padding: 0;
   color: #fff;
@@ -618,7 +618,7 @@ fieldset.after-error-summary {
 /* Fix .header-user nav on IE */
 
 .header-user .header-inner {
-  max-width: 960px;
+  max-width: 1280px;
   margin: 0 15px;
 }
 

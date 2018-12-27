@@ -99,7 +99,7 @@
     <Content Update="Views\CertificateAmend\_ViewImports.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\CertificateApprovals\Sent.cshtml">
+    <Content Update="Views\CertificateApprovals\SentForApproval.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\CertificateApprovals\Rejected.cshtml">

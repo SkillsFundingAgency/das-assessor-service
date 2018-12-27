@@ -11,7 +11,7 @@
                 <a asp-controller="CertificateApprovals" asp-action="New">New</a>
             </li>
             <li class="app-navigation">
-                <a asp-controller="CertificateApprovals" asp-action="Sent">Sent For Approval</a>
+                <a asp-controller="CertificateApprovals" asp-action="SentForApproval">Sent For Approval</a>
             </li>
             <li class="app-navigation">
                 <a asp-controller="CertificateApprovals" asp-action="Approved">Approved</a>
@@ -70,9 +70,10 @@
                             {
                                 "Increment", 0
                             },
-                            { "ApprovalResults", approvalResults }
+                            { "ApprovalResults", approvalResults },
+                            {"ActionHint","SentForApproval" }
                         });
-                    
+
                     <button type="submit" class="button">Submit</button>
                 }
                 else

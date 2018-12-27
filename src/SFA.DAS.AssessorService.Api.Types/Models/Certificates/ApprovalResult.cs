@@ -4,5 +4,6 @@
     {
         public string CertificateReference { get; set; }
         public string IsApproved { get; set; }
+        public string PrivatelyFundedStatus { get; set; }
     }
 }
