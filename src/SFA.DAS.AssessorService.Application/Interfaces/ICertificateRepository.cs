@@ -29,6 +29,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<string> GetPreviousProviderName(int providerUkPrn);
         Task<CertificateAddress> GetContactPreviousAddress(string userName, bool requestIsPrivatelyFunded);
         Task<List<Option>> GetOptions(int stdCode);
-        Task ApproveCertificates(List<ApprovalResult> approvalResults, string userName, string actionHint);
+        Task ApproveCertificates(List<ApprovalResult> approvalResults, string userName);
     }
 }

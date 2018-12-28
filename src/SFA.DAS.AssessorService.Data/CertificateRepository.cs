@@ -354,7 +354,7 @@ namespace SFA.DAS.AssessorService.Data
             await _context.SaveChangesAsync();
         }
 
-        public async Task ApproveCertificates(List<ApprovalResult> approvalResults, string userName, string actionHint)
+        public async Task ApproveCertificates(List<ApprovalResult> approvalResults, string userName)
         {
             var certificateReferences =
                 approvalResults.Select(q => q.CertificateReference).ToList();
