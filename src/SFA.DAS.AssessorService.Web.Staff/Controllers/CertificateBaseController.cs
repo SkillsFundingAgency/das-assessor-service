@@ -28,6 +28,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             ContextAccessor = contextAccessor;
             ApiClient = apiClient;           
         }
+
         protected async Task<IActionResult> LoadViewModel<T>(Guid id, string view) where T : ICertificateViewModel, new()
         {
             var username = ContextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;

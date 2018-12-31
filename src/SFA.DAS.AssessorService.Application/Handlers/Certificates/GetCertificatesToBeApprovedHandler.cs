@@ -52,6 +52,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
         private List<CertificateSummaryResponse> MapCertificates(IEnumerable<Certificate> certificates)
         {
             var trainingProviderName = string.Empty;
+            var firstName = string.Empty;
+            var lastName = string.Empty;
+
             var recordedBy = string.Empty;
 
             var certificateResponses = certificates.Select(
@@ -78,6 +81,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                         {
                             trainingProviderName = certificateData.ProviderName;
                         }
+
+                        firstName = certificateData.LearnerGivenNames;
+                        lastName = certificateData.LearnerFamilyName;
                     }
                     catch (EntityNotFoundException)
                     {
@@ -87,6 +93,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
                     return new CertificateSummaryResponse
                     {
+
                         CertificateReference = certificate.CertificateReference,
                         Uln = certificate.Uln,
                         CreatedAt = certificate.CreatedAt,
@@ -107,7 +114,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                         ContactAddLine4 = certificateData.ContactAddLine4,
                         ContactPostCode = certificateData.ContactPostCode,
                         Status = certificate.Status,
-                        PrivatelyFundedStatus = certificate.PrivatelyFundedStatus
+                        PrivatelyFundedStatus = certificate.PrivatelyFundedStatus,
+                        FirstName = firstName,
+                        LastName = lastName,
+                        Ukprn = certificate.ProviderUkPrn,
+                        StandardCode = certificate.StandardCode,
+                        EpaoId = certificate.Organisation?.EndPointAssessorOrganisationId,
+                        EpaoName = certificate.Organisation?.EndPointAssessorName
                     };
                 });
 

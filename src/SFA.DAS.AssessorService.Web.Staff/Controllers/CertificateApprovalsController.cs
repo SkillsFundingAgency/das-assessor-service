@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,8 +10,8 @@ using Microsoft.AspNetCore.Authorization;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels.Private;
 using AutoMapper;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using OfficeOpenXml;
-using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using CertificateStatus = SFA.DAS.AssessorService.Domain.Consts.CertificateStatus;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
@@ -27,6 +24,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             ApiClient apiClient)
             : base(logger, contextAccessor, apiClient)
         {
+            
         }
         
 
@@ -128,9 +126,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         public async Task<FileContentResult> ExportSentForApproval()
         {
             var certificates = await ApiClient.GetCertificatesToBeApproved();
-
             var data = certificates?.Where(q => q.Status == CertificateStatus.ToBeApproved &&
-                                                q.PrivatelyFundedStatus == CertificateStatus.SentForApproval).Select(ToDictionary<object>);
+                                                q.PrivatelyFundedStatus == CertificateStatus.SentForApproval)
+                .Select(x => ToDictionary<object>(x, ApprovalToExcelAttributeMappings()));
           
             using (var package = new ExcelPackage())
             {
@@ -141,11 +139,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             }
         }
 
-        private static Dictionary<string, TValue> ToDictionary<TValue>(object obj)
+        private static Dictionary<string, object> ToDictionary<TValue>(object obj,string sentForApprovalExcelAttributeMapping)
         {
-            var json = JsonConvert.SerializeObject(obj);
+           var json = JsonConvert.SerializeObject(obj);
             var dictionary = JsonConvert.DeserializeObject<Dictionary<string, TValue>>(json);
-            return dictionary;
+            var destDictionary = new Dictionary<string, object>();
+            JsonMapper.MatchAndCreateNewMapping(sentForApprovalExcelAttributeMapping, dictionary, destDictionary);
+            return destDictionary;
         }
 
         private static DataTable ToDataTable(IEnumerable<IDictionary<string, object>> list)
@@ -170,6 +170,28 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             }
 
             return dataTable;
+        }
+
+        private static string ApprovalToExcelAttributeMappings()
+        {
+            return new JObject
+            {
+                {"EpaoId" , "EPAO ID"},
+                {"EpaoName" , "EPAO Name"},
+                {"TrainingProvider","Provider Name" },
+                {"Ukprn" , "Provider UKPRN"},
+                {"Uln" ,"Unique Learner Number"},
+                {"FirstName" , "First Name"},
+                {"LastName" , "Family Name"},
+                {"StandardCode" , "Standard Code"},
+                {"StandardName", "Standard Name"},
+                {"Level" , "Level"},
+                {"CourseOption" , "Option (if applicable)"},
+                {"OverallGrade" , "Overall Grade"},
+                {"LearningStartDate" , "Learning Start Date"},
+                {"AchievementDate" , "Achievement Date"}
+            }.ToString();
+
         }
     }
 }
