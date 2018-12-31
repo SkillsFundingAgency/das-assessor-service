@@ -9,7 +9,7 @@ using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
 {
     [Authorize(Roles = Roles.AssessmentDeliveryTeam + "," + Roles.CertificationTeam)]
-    public class ApplicationController : Controller 
+    public class ApplicationController : Controller
     {
         private readonly ApplyApiClient _applyApiClient;
 
@@ -36,19 +36,31 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
         public async Task<IActionResult> Application(Guid applicationId)
         {
             var activeSequence = await _applyApiClient.GetActiveSequence(applicationId);
-            
-            await _applyApiClient.StartApplicationReview(applicationId, activeSequence.SequenceId);
-            
-            activeSequence.Sections = activeSequence.Sections.ToList();
+
+            if (activeSequence.Status == "Submitted")
+            {
+                await _applyApiClient.StartApplicationReview(applicationId, activeSequence.SequenceId);
+            }
+
             return View("~/Views/Apply/Applications/Sequence.cshtml", activeSequence);
         }
-        
+
         [HttpGet("/Applications/{applicationId}/Sequence/{sequenceId}/Section/{sectionId}")]
         public async Task<IActionResult> Section(Guid applicationId, int sequenceId, int sectionId)
         {
             var section = await _applyApiClient.GetSection(applicationId, sequenceId, sectionId);
-            
+
             return View("~/Views/Apply/Applications/Section.cshtml", section);
+        }
+
+        [HttpPost("/Applications/{applicationId}/Sequence/{sequenceId}/Section/{sectionId}")]
+        public async Task<IActionResult> GradeSection(Guid applicationId, int sequenceId, int sectionId, string feedbackComment, bool applyFeedbackComment, bool isSectionComplete)
+        {
+            if (!applyFeedbackComment) feedbackComment = null;
+
+            await _applyApiClient.GradeSection(applicationId, sequenceId, sectionId, feedbackComment, isSectionComplete);
+
+            return RedirectToAction("Application", new { applicationId });
         }
 
         [HttpGet("/Applications/{applicationId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}")]
@@ -57,7 +69,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
             var page = await _applyApiClient.GetPage(applicationId, sequenceId, sectionId, pageId);
 
             page.ApplicationId = applicationId;
-            
+
             return View("~/Views/Apply/Applications/Page.cshtml", page);
         }
 

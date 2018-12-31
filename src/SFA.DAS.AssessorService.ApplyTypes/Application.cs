@@ -44,6 +44,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public Guid ApplicationId { get; set; }
         public int SectionId { get; set; }
         public int SequenceId { get; set; }
+        public string FeedbackComment { get; set; }
         public string QnAData { get; set; }
         
         public QnAData QnADataObject

@@ -7,49 +7,58 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
+        <a class="link-back" asp-controller="Application" asp-action="Applications">Back</a>
         <h1 class="heading-xlarge">Application overview</h1>
         <ul class="govuk-list">
             @foreach (var applicationSection in Model.Sections.OrderBy(s => s.SectionId))
             {
-                <li>
-                    @if (applicationSection.HasNewFeedback)
-                    {
-                        <div class="govuk-tag govuk-tag--float-right">
-                            Feedback added
-                        </div>
-                    }
-                    @if (applicationSection.HasReadFeedback)
-                    {
-                        <div class="govuk-tag govuk-tag--float-right">
-                            Answer updated
-                        </div>
-                    }
-                    <h2 class="heading-medium heading-medium--small-margin-bottom">
-                        @applicationSection.LinkTitle
-                    </h2>
-                    <span class="form-hint form-hint--margin-bottom">
-                        @applicationSection.PagesComplete of @applicationSection.PagesActive questions completed
-                    </span>
+            <li>
+                @if (applicationSection.HasNewFeedback)
+                {
+                    <div class="govuk-tag govuk-tag--float-right">
+                        Feedback added
+                    </div>
+                }
+                @if (applicationSection.HasReadFeedback)
+                {
+                    <div class="govuk-tag govuk-tag--float-right">
+                        Answer updated
+                    </div>
+                }
+                @if (applicationSection.Status == "Graded")
+                {
+                    <div class="govuk-tag govuk-tag--float-right">
+                        Completed
+                    </div>
+                }
+                <h2 class="heading-medium heading-medium--small-margin-bottom">
                     <a href="@Url.Action("Section", "Application", new {applicationSection.ApplicationId, applicationSection.SequenceId, applicationSection.SectionId})">
-                        Go to @applicationSection.LinkTitle.ToLower()
+                        @applicationSection.LinkTitle
                     </a>
-                    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-                </li>
+                </h2>
+                <span class="form-hint form-hint--margin-bottom">
+                    @applicationSection.PagesComplete of @applicationSection.PagesActive questions completed
+                </span>
+                <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+            </li>
             }
         </ul>
 
-        <form asp-controller="Application" asp-action="Return" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId">
-            @if (Model.HasNewFeedback)
-            {
-                <button class="button" type="submit" name="ReturnType" value="ReturnWithFeedback">Return with feedback</button>
-            }
-            else
-            {
-                <button class="button" type="submit" name="ReturnType" value="Approve">Approve</button>
-                <button class="button" type="submit" name="ReturnType" value="Reject">Reject</button>
-            }
-            
-        </form>
-        
+        @* This code block is going to change when the new process is known *@
+        @if(Model.Sections.All(s => s.Status == "Graded"))
+        {
+            <form asp-controller="Application" asp-action="Return" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId">
+                @if (Model.HasNewFeedback)
+                {
+                    <button class="button" type="submit" name="ReturnType" value="ReturnWithFeedback">Return with feedback</button>
+                }
+                else
+                {
+                    <button class="button" type="submit" name="ReturnType" value="Approve">Approve</button>
+                    <button class="button" type="submit" name="ReturnType" value="Reject">Reject</button>
+                }
+
+            </form>
+        }
     </div>
 </div>
