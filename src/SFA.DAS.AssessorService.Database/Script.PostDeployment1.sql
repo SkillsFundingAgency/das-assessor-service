@@ -156,6 +156,30 @@ UPDATE [Organisations] SET [OrganisationTypeId] = 10 WHERE [EndPointAssessorOrga
 UPDATE [Organisations] SET [OrganisationTypeId] = 7 WHERE [EndPointAssessorOrganisationId] = 'EPA0173';
 
 
+IF NOT EXISTS (SELECT * FROM sys.tables t 
+    INNER JOIN sys.partitions p ON t.object_id = p.object_id 
+    WHERE t.name = 'IlrsCopy' AND p.rows > 0)
+	BEGIN
+	INSERT INTO [dbo].[IlrsCopy] ([Id]
+			,[Uln]
+			,[GivenNames]
+			,[FamilyName]
+			,[UkPrn]
+			,[StdCode]
+			,[LearnStartDate]
+			,[EpaOrgId]
+			,[FundingModel]
+			,[ApprenticeshipId]
+			,[EmployerAccountId]
+			,[Source]
+			,[CreatedAt]
+			,[UpdatedAt]
+			,[LearnRefNumber]
+			,[CompletionStatus]) 
+			SELECT * FROM [dbo].[Ilrs]
+	END
+	GO
+        
 UPDATE CERTIFICATES
 set IsPrivatelyFunded = 0
 WHERE IsPrivatelyFunded IS NULL 
@@ -178,4 +202,3 @@ insert into OrganisationStandardDeliveryArea (OrganisationStandardId, DeliveryAr
 			(select id from organisationStandard where EndPointAssessorOrganisationId='EPA0057' and StandardCode=318) as osid, id, 'Live' from deliveryArea
 END
 
------ Adding 
