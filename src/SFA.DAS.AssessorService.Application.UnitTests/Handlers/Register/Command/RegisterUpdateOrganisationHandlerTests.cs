@@ -82,7 +82,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
                 Address2 = "address 2",
                 Address3 = "address 3",
                 Address4 = "address 4",
-                Postcode = "postcode"
+                Postcode = "postcode",
+                CompanyNumber = "company number",
+                CharityNumber = "charity number"
             };
         }
 
@@ -105,7 +107,9 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
                     Address2 = request.Address2,
                     Address3 = request.Address3,
                     Address4 = request.Address4,
-                    Postcode = request.Postcode
+                    Postcode = request.Postcode,
+                    CompanyNumber = request.CompanyNumber,
+                    CharityNumber = request.CharityNumber
                 }
             };
         }
