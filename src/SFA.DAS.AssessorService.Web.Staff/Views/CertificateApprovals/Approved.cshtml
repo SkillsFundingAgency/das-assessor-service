@@ -49,7 +49,7 @@
                 <div sfa-anyvalidationerror-class="after-error-summary">
 
                     @{
-                        var count = Model.ApprovedCertificates.Count();
+                        var count = Model.ApprovedCertificates.Items.Count();
                         var approvalResults =
                             new SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateDetailApprovalViewModel[count];
                         for (int i = 0; i < count; i++)
@@ -61,7 +61,7 @@
                         Privately Funded Certificates - Approved
                     </h1>
 
-                    @if (@Model.ApprovedCertificates.Any())
+                    @if (@Model.ApprovedCertificates.Items.Any())
                     {
                         await Html.RenderPartialAsync("_ApprovalsDetailsPartial", @Model.ApprovedCertificates, new ViewDataDictionary(ViewData)
                             {
@@ -84,7 +84,44 @@
         </form>
     </div>
 </div>
+@if (Model.ApprovedCertificates.HasPreviousPage || Model.ApprovedCertificates.HasNextPage)
+{
+    <div class="grid-row">
+        <div class="column-full">
+            <div class="page-navigation">
 
+                @if (Model.ApprovedCertificates.HasPreviousPage)
+                {
+                    <a 
+                        asp-action="Approved"
+                        asp-controller="CertificateApprovals"
+                        asp-route-pageIndex="@(Model.ApprovedCertificates.PageIndex - 1)"
+                        class="previous"
+                    >
+                        <i class="arrow-button icon-left-open">&#xe800;</i>
+                        <span class="description">Previous <span class="hide-mob">page</span></span>
+                        <span class="counter">Page <span class="prevPage">@(Model.ApprovedCertificates.PageIndex - 1)</span> of <span class="totalPage">@(Model.ApprovedCertificates.TotalPages)</span></span>
+                    </a>
+                }
+
+                @if (Model.ApprovedCertificates.HasNextPage)
+                {
+                    <a 
+                        asp-action="Approved"
+                        asp-controller="CertificateApprovals"
+                        asp-route-pageIndex="@(Model.ApprovedCertificates.PageIndex + 1)"
+                        class="next"
+                    >
+                        <i class="arrow-button icon-right-open">&#xe801;</i>
+                        <span class="description">Next <span class="hide-mob">page</span></span>
+                        <span class="counter">Page <span class="nextPage">@(Model.ApprovedCertificates.PageIndex + 1)</span> of <span class="totalPage">@(Model.ApprovedCertificates.TotalPages)</span></span>
+                    </a>
+                }
+
+            </div>
+        </div>
+    </div>
+}
 
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }

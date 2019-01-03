@@ -1,7 +1,8 @@
 ﻿@using SFA.DAS.AssessorService.Domain.Consts;
-@model IEnumerable<SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateDetailApprovalViewModel>
+@using SFA.DAS.AssessorService.Domain.Paging
+@model SFA.DAS.AssessorService.Domain.Paging.PaginatedList<SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateDetailApprovalViewModel>
 @{
-    var results = Model.ToList();
+    var results = Model.Items.ToList();
     var approvalresults = ViewData["ApprovalResults"] as SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateDetailApprovalViewModel[];
     var actionHint = ViewData["ActionHint"] as string;
 }
@@ -74,6 +75,10 @@
                     }
 
                 @:</tr>
+
+
+
+
 
 
 

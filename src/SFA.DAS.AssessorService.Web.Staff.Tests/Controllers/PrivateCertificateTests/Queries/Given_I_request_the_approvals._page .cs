@@ -33,19 +33,19 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
         [Test]
         public void ThenShouldReturnApprovals()
         {      
-            _viewModelResponse.ApprovedCertificates.Count().Should().Be(3);            
+            _viewModelResponse.ApprovedCertificates.Items.Count().Should().Be(3);            
         }
 
         [Test]
         public void ThenShouldReturnRejections()
         {
-            _viewModelResponse.RejectedCertificates.Count().Should().Be(3);
+            _viewModelResponse.RejectedCertificates.Items.Count.Should().Be(3);
         }
 
         [Test]
         public void ThenShouldReturnToBeApproveds()
         {
-            _viewModelResponse.ToBeApprovedCertificates.Count().Should().Be(4);
+            _viewModelResponse.ToBeApprovedCertificates.Items.Count().Should().Be(4);
         }
     }
 }

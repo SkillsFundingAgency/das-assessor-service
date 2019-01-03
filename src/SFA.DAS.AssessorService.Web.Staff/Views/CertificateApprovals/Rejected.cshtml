@@ -51,7 +51,7 @@
             <div sfa-anyvalidationerror-class="after-error-summary">
 
                 @{
-                    var count = Model.RejectedCertificates.Count();
+                    var count = Model.RejectedCertificates.Items.Count();
                     var approvalResults =
                         new SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateDetailApprovalViewModel[count];
                     for (int i = 0; i < count; i++)
@@ -62,19 +62,18 @@
 
 
                 <h1 class="heading-large">
-                   Privately Funded Certificates - Rejected
+                    Privately Funded Certificates - Rejected
                 </h1>
 
-                @if (@Model.RejectedCertificates.Any())
+                @if (@Model.RejectedCertificates.Items.Any())
                 {
                     await Html.RenderPartialAsync("_ApprovalsDetailsPartial", @Model.RejectedCertificates,
                         new ViewDataDictionary(ViewData)
                         {
-                                {"Increment", 0},
-                                {"ApprovalResults",approvalResults},
-                                {"ActionHint","Approved" }
+                                    {"Increment", 0},
+                                    {"ApprovalResults",approvalResults},
+                                    {"ActionHint","Approved" }
                         });
-                    <button type="submit" class="button" role="button">Submit</button>
                 }
                 else
                 {
@@ -86,10 +85,45 @@
             </div>
 
 
-            
+
         </form>
     </div>
 </div>
+
+@if (Model.RejectedCertificates.HasPreviousPage || Model.RejectedCertificates.HasNextPage)
+{
+    <div class="grid-row">
+        <div class="column-full">
+            <div class="page-navigation">
+
+                @if (Model.RejectedCertificates.HasPreviousPage)
+                {
+                    <a asp-action="Rejected"
+                       asp-controller="CertificateApprovals"
+                       asp-route-pageIndex="@(Model.RejectedCertificates.PageIndex - 1)"
+                       class="previous">
+                        <i class="arrow-button icon-left-open">&#xe800;</i>
+                        <span class="description">Previous <span class="hide-mob">page</span></span>
+                        <span class="counter">Page <span class="prevPage">@(Model.RejectedCertificates.PageIndex - 1)</span> of <span class="totalPage">@(Model.RejectedCertificates.TotalPages)</span></span>
+                    </a>
+                }
+
+                @if (Model.RejectedCertificates.HasNextPage)
+                {
+                    <a asp-action="Rejected"
+                       asp-controller="CertificateApprovals"
+                       asp-route-pageIndex="@(Model.RejectedCertificates.PageIndex + 1)"
+                       class="next">
+                        <i class="arrow-button icon-right-open">&#xe801;</i>
+                        <span class="description">Next <span class="hide-mob">page</span></span>
+                        <span class="counter">Page <span class="nextPage">@(Model.RejectedCertificates.PageIndex + 1)</span> of <span class="totalPage">@(Model.RejectedCertificates.TotalPages)</span></span>
+                    </a>
+                }
+
+            </div>
+        </div>
+    </div>
+}
 
 
 @section Scripts {

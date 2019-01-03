@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.Web.Staff.Automapper.CustomResolvers;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels.Private;
 

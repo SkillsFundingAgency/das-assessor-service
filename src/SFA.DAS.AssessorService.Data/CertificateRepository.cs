@@ -171,6 +171,40 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
+        public async Task<PaginatedList<Certificate>> GetCertificatesForApproval(int pageIndex, int pageSize,string status, string privatelyFundedStatus)
+        {
+            if (status == null )
+            {
+                var count = await _context.Certificates.CountAsync();
+                if (pageSize == 0)
+                    pageSize = count == 0 ? 1 : count;
+                var certificates = await _context.Certificates
+                    .Include(q => q.Organisation)
+                    .Include(q => q.CertificateLogs)
+                    .Where(x => x.IsPrivatelyFunded)
+                    .OrderByDescending(q => q.UpdatedAt)
+                    .Skip((pageIndex - 1) * pageSize)
+                    .Take(pageSize).ToListAsync();
+                return new PaginatedList<Certificate>(certificates, count, pageIndex < 0 ? 1 : pageIndex, pageSize);
+            }
+            else
+            {
+                var count = await _context.Certificates.Where(x => x.Status == status && x.PrivatelyFundedStatus == privatelyFundedStatus).CountAsync();
+                if (pageSize == 0)
+                    pageSize = count == 0?1:count;
+                var certificates =  await _context.Certificates
+                    .Include(q => q.Organisation)
+                    .Include(q => q.CertificateLogs)
+                    .Where(x => x.IsPrivatelyFunded)
+                    .Where(x => x.Status == status && x.PrivatelyFundedStatus == privatelyFundedStatus)
+                    .OrderByDescending(q => q.UpdatedAt)
+                    .Skip((pageIndex - 1) * pageSize)
+                    .Take(pageSize).ToListAsync();
+                return new PaginatedList<Certificate>(certificates, count, pageIndex < 0 ? 1 : pageIndex, pageSize);
+            }
+        }
+
+
         public async Task<PaginatedList<Certificate>> GetCertificateHistory(string userName, int pageIndex, int pageSize)
         {
             var statuses = new List<string>

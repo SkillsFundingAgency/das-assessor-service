@@ -16,41 +16,37 @@ using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 {
-    public class GetCertificatesToBeApprovedHandler : IRequestHandler<GetToBeApprovedCertificatesRequest,
-        List<CertificateSummaryResponse>>
+    public class GetCertificatesToBeApprovedHandler : IRequestHandler<GetToBeApprovedCertificatesRequest, PaginatedList<CertificateSummaryResponse>>
     {
         private readonly ICertificateRepository _certificateRepository;
         private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
-        private readonly ILogger<GetCertificatesHistoryHandler> _logger;
+        private readonly ILogger<GetCertificatesToBeApprovedHandler> _logger;
 
         public GetCertificatesToBeApprovedHandler(ICertificateRepository certificateRepository,
             IAssessmentOrgsApiClient assessmentOrgsApiClient,
-            ILogger<GetCertificatesHistoryHandler> logger)
+            ILogger<GetCertificatesToBeApprovedHandler> logger)
         {
             _certificateRepository = certificateRepository;
             _assessmentOrgsApiClient = assessmentOrgsApiClient;
             _logger = logger;
         }
 
-        public async Task<List<CertificateSummaryResponse>> Handle(GetToBeApprovedCertificatesRequest request,
+        public async Task<PaginatedList<CertificateSummaryResponse>> Handle(GetToBeApprovedCertificatesRequest request,
             CancellationToken cancellationToken)
         {
-            var statuses = new List<string>
-            {
-                "ToBeApproved",
-                "Submitted",
-                "Draft"
-            };
-
-            var certificates = await _certificateRepository.GetCertificates(statuses);
-
+            var certificates = await _certificateRepository.GetCertificatesForApproval(
+                request.PageIndex ?? 1,
+                request.PageSize ?? 0,
+                request.Status,
+                request.PrivatelyFundedStatus);
+            
             // Please Note:- Cannot seem to automap this with custom value/type converters
             // so dealing with it manually for now.
             var approvals = MapCertificates(certificates);
             return approvals;
         }
 
-        private List<CertificateSummaryResponse> MapCertificates(IEnumerable<Certificate> certificates)
+        private PaginatedList<CertificateSummaryResponse> MapCertificates(PaginatedList<Certificate> certificates)
         {
             var trainingProviderName = string.Empty;
             var firstName = string.Empty;
@@ -58,7 +54,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
             var recordedBy = string.Empty;
 
-            var certificateResponses = certificates.Select(
+            var certificateResponses = certificates.Items.Select(
                 certificate =>
                 {
                     var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
@@ -127,7 +123,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                 });
 
             var responses = certificateResponses.ToList();
-            return responses;
+            var paginatedList = new PaginatedList<CertificateSummaryResponse>(responses,
+                certificates.TotalRecordCount,
+                certificates.PageIndex,
+                certificates.PageSize
+            );
+
+            return paginatedList;
         }
     }
 }

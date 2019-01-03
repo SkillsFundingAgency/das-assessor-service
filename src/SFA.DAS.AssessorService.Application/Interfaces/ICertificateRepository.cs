@@ -30,5 +30,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<CertificateAddress> GetContactPreviousAddress(string userName, bool requestIsPrivatelyFunded);
         Task<List<Option>> GetOptions(int stdCode);
         Task ApproveCertificates(List<ApprovalResult> approvalResults, string userName);
+        Task<PaginatedList<Certificate>> GetCertificatesForApproval(int pageIndex, int pageSize,string status, string privatelyFundedStatus);
     }
 }

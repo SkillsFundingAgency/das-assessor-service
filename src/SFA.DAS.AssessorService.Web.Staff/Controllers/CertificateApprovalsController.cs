@@ -13,6 +13,7 @@ using AutoMapper;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OfficeOpenXml;
+using SFA.DAS.AssessorService.Domain.Paging;
 using CertificateStatus = SFA.DAS.AssessorService.Domain.Consts.CertificateStatus;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
@@ -20,6 +21,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
     [Authorize]
     public class CertificateApprovalsController : CertificateBaseController
     {
+        private const int PageSize = 10;
         public CertificateApprovalsController(ILogger<CertificateAmendController> logger,
             IHttpContextAccessor contextAccessor,
             ApiClient apiClient)
@@ -30,27 +32,26 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         
 
         [HttpGet]
-        public async Task<IActionResult> New()
+        public async Task<IActionResult> New(int? pageIndex)
         {
-            var certificates = await ApiClient.GetCertificatesToBeApproved();
+            var certificates = await ApiClient.GetCertificatesToBeApproved(0, pageIndex ?? 1, CertificateStatus.ToBeApproved,null);
+            var items = Mapper.Map<List<CertificateDetailApprovalViewModel>>(certificates.Items);
             var certificatesToBeApproved = new CertificateApprovalViewModel
             {
-                ToBeApprovedCertificates = Mapper.Map<List<CertificateDetailApprovalViewModel>>(certificates
-                    .Where(q => q.Status == CertificateStatus.ToBeApproved && q.PrivatelyFundedStatus == null))
+                ToBeApprovedCertificates = new PaginatedList<CertificateDetailApprovalViewModel>(items,certificates.TotalRecordCount,certificates.PageIndex,certificates.PageSize)
             };
 
             return View(certificatesToBeApproved);
         }
 
         [HttpGet]
-        public async Task<IActionResult> SentForApproval()
+        public async Task<IActionResult> SentForApproval(int? pageIndex)
         {
-            var certificates = await ApiClient.GetCertificatesToBeApproved();
+            var certificates = await ApiClient.GetCertificatesToBeApproved(0, pageIndex ?? 1, CertificateStatus.ToBeApproved, CertificateStatus.SentForApproval);
+            var items = Mapper.Map<List<CertificateDetailApprovalViewModel>>(certificates.Items);
             var certificatesSentForApproval = new CertificateApprovalViewModel
             {
-                SentForApprovalCertificates = Mapper.Map<List<CertificateDetailApprovalViewModel>>(certificates
-                    .Where(q => q.Status == CertificateStatus.ToBeApproved &&
-                                q.PrivatelyFundedStatus == CertificateStatus.SentForApproval)),
+                SentForApprovalCertificates = new PaginatedList<CertificateDetailApprovalViewModel>(items, certificates.TotalRecordCount, certificates.PageIndex, certificates.PageSize)
 
             };
 
@@ -58,28 +59,26 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Approved()
+        public async Task<IActionResult> Approved(int? pageIndex)
         {
-            var certificates = await ApiClient.GetCertificatesToBeApproved();
+            var certificates = await ApiClient.GetCertificatesToBeApproved(PageSize, pageIndex ?? 1, CertificateStatus.Submitted, CertificateStatus.Approved);
+            var items = Mapper.Map<List<CertificateDetailApprovalViewModel>>(certificates.Items);
             var certificatesApproved = new CertificateApprovalViewModel
             {
-
-                ApprovedCertificates = Mapper.Map<List<CertificateDetailApprovalViewModel>>(certificates
-                    .Where(q => q.Status == CertificateStatus.Submitted && q.PrivatelyFundedStatus == CertificateStatus.Approved))
+                ApprovedCertificates = new PaginatedList<CertificateDetailApprovalViewModel>(items, certificates.TotalRecordCount, certificates.PageIndex, certificates.PageSize)
             };
 
             return View(certificatesApproved);
         }
 
         [HttpGet]
-        public async Task<IActionResult> Rejected()
+        public async Task<IActionResult> Rejected(int? pageIndex)
         {
-            var certificates = await ApiClient.GetCertificatesToBeApproved();
+            var certificates = await ApiClient.GetCertificatesToBeApproved(0, pageIndex ?? 1, CertificateStatus.Draft, CertificateStatus.Rejected);
+            var items = Mapper.Map<List<CertificateDetailApprovalViewModel>>(certificates.Items);
             var certificatesThatAreRejected = new CertificateApprovalViewModel
             {
-
-                RejectedCertificates = Mapper.Map<List<CertificateDetailApprovalViewModel>>(certificates
-                    .Where(q => q.Status == CertificateStatus.Draft && q.PrivatelyFundedStatus == CertificateStatus.Rejected))
+                RejectedCertificates = new PaginatedList<CertificateDetailApprovalViewModel>(items, certificates.TotalRecordCount, certificates.PageIndex, certificates.PageSize)
             };
 
             return View(certificatesThatAreRejected);
@@ -103,9 +102,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         [HttpGet]
         public async Task<FileContentResult> ExportSentForApproval()
         {
-            var certificates = await ApiClient.GetCertificatesToBeApproved();
-            var data = certificates?.Where(q => q.Status == CertificateStatus.ToBeApproved &&
-                                                q.PrivatelyFundedStatus == CertificateStatus.SentForApproval)
+            var certificates = await ApiClient.GetCertificatesToBeApproved(0,1, CertificateStatus.ToBeApproved, CertificateStatus.SentForApproval);
+            var data = certificates?.Items
                 .Select(x => ToDictionary<object>(x, ApprovalToExcelAttributeMappings()));
           
             using (var package = new ExcelPackage())

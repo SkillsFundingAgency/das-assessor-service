@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Domain.JsonData;
@@ -17,7 +18,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests
         public void Arrange()
         {
             var certificateGradeController = new CertificateOptionController(MockedLogger.Object, MockHttpContextAccessor.Object, ApiClient);
-            _result = certificateGradeController.Option(Certificate.Id).GetAwaiter().GetResult();           
+            _result = certificateGradeController.Option(Certificate.Id, true).GetAwaiter().GetResult();           
         }
 
         [Test]

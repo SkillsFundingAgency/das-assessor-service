@@ -1,13 +1,13 @@
-﻿@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateApprovalViewModel
-@using SFA.DAS.AssessorService.Web.Staff
-
+﻿@using SFA.DAS.AssessorService.Web.Staff
+@using SFA.DAS.AssessorService.Domain.Paging
+@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateApprovalViewModel
 
 @{ ViewBag.Title = "Staff Dashboard"; }
 
 <div>
     <nav class="app-navigation govuk-clearfix">
         <ul class="app-navigation__list">
-          
+
             <li class="app-navigation">
                 <a asp-controller="CertificateApprovals" asp-action="New">New</a>
             </li>
@@ -27,77 +27,109 @@
 <div class="grid-row">
 
     <div class="column-full">
-            @* hidden with css by default *@
-            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+        @* hidden with css by default *@
+        <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+            <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                There is a problem
+            </h2>
+            <ul class="js-error-summary-list error-summary-list"></ul>
+        </div>
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
                 <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
                     There is a problem
                 </h2>
-                <ul class="js-error-summary-list error-summary-list"></ul>
+                <ul class="error-summary-list"></ul>
             </div>
+        }
 
-            @if (!ViewData.ModelState.IsValid)
+        <div sfa-anyvalidationerror-class="after-error-summary">
+            <a class="link-back" asp-controller="Dashboard" asp-action="Index">Return to dashboard</a>
+            <h1 class="heading-large">
+                Privately Funded Certificates - Sent For Approval
+            </h1>
+
+
+            @if (@Model.SentForApprovalCertificates.Items.Any())
             {
-                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                        There is a problem
-                    </h2>
-                    <ul class="error-summary-list">
-                      
-                    </ul>
+                <div class="form-group">
+                    <form asp-action="ExportSentForApproval" method="get">
+                        <button type="submit" class="button">Export</button>
+                    </form>
                 </div>
             }
+            <form type="post" asp-controller="CertificateApprovals" asp-action="Approvals">
 
-                <div sfa-anyvalidationerror-class="after-error-summary">
-                    <a class="link-back" asp-controller="Dashboard" asp-action="Index">Return to dashboard</a>
-                    <h1 class="heading-large">
-                        Privately Funded Certificates - Sent For Approval
-                    </h1>
-
-
-                    @if (@Model.SentForApprovalCertificates.Any())
+                @{
+                    var count = Model.SentForApprovalCertificates.Items.Count();
+                    var approvalResults =
+                        new SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateDetailApprovalViewModel[count];
+                    for (int i = 0; i < count; i++)
                     {
-                        <div class="form-group">
-                            <form asp-action="ExportSentForApproval" method="get">
-                                <button type="submit" class="button">Export</button>
-                            </form>
-                        </div>
+                        approvalResults[i] = new SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateDetailApprovalViewModel();
                     }
-                    <form type="post" asp-controller="CertificateApprovals" asp-action="Approvals">
+                }
 
-                        @{
-                            var count = Model.SentForApprovalCertificates.Count();
-                            var approvalResults =
-                                new SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateDetailApprovalViewModel[count];
-                            for (int i = 0; i < count; i++)
-                            {
-                                approvalResults[i] = new SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateDetailApprovalViewModel();
-                            }
-                        }
+                @if (@Model.SentForApprovalCertificates.Items.Any())
+                {
+                    await Html.RenderPartialAsync("_ApprovalsDetailsPartial", @Model.SentForApprovalCertificates, new ViewDataDictionary(ViewData)
+                                                                            {
+                                                                                {
+                                                                                    "Increment", 0
+                                                                                },
+                                                                                { "ApprovalResults", approvalResults },
+                                                                                {"ActionHint","Approved" }
+                                                                            });
 
-                        @if (@Model.SentForApprovalCertificates.Any())
-                        {
-                            await Html.RenderPartialAsync("_ApprovalsDetailsPartial", Model.SentForApprovalCertificates, new ViewDataDictionary(ViewData)
-                                                            {
-                                                                {
-                                                                    "Increment", 0
-                                                                },
-                                                                { "ApprovalResults", approvalResults },
-                                                                {"ActionHint","Approved" }
-                                                            });
+                    <button type="submit" class="button" role="button">Submit</button>
+                }
+                else
+                {
+                    <div class="info-summary">
+                        <h3 class="heading-medium">No privately funded certificates found for approval</h3>
+                    </div>
+                }
+            </form>
 
-                            <button type="submit" class="button" role="button">Submit</button>
-                        }
-                        else
-                        {
-                            <div class="info-summary">
-                                <h3 class="heading-medium">No privately funded certificates found for approval</h3>
-                            </div>
-                        }
-                    </form>
-
-                </div>
+        </div>
     </div>
 </div>
+@if (Model.SentForApprovalCertificates.HasPreviousPage || Model.SentForApprovalCertificates.HasNextPage)
+{
+    <div class="grid-row">
+        <div class="column-full">
+            <div class="page-navigation">
+
+                @if (Model.SentForApprovalCertificates.HasPreviousPage)
+                {
+                    <a asp-action="SentForApproval"
+                       asp-controller="CertificateApprovals"
+                       asp-route-pageIndex="@(Model.SentForApprovalCertificates.PageIndex - 1)"
+                       class="previous">
+                        <i class="arrow-button icon-left-open">&#xe800;</i>
+                        <span class="description">Previous <span class="hide-mob">page</span></span>
+                        <span class="counter">Page <span class="prevPage">@(Model.SentForApprovalCertificates.PageIndex - 1)</span> of <span class="totalPage">@(Model.SentForApprovalCertificates.TotalPages)</span></span>
+                    </a>
+                }
+
+                @if (Model.SentForApprovalCertificates.HasNextPage)
+                {
+                    <a asp-action="SentForApproval"
+                       asp-controller="CertificateApprovals"
+                       asp-route-pageIndex="@(Model.SentForApprovalCertificates.PageIndex + 1)"
+                       class="next">
+                        <i class="arrow-button icon-right-open">&#xe801;</i>
+                        <span class="description">Next <span class="hide-mob">page</span></span>
+                        <span class="counter">Page <span class="nextPage">@(Model.SentForApprovalCertificates.PageIndex + 1)</span> of <span class="totalPage">@(Model.SentForApprovalCertificates.TotalPages)</span></span>
+                    </a>
+                }
+
+            </div>
+        </div>
+    </div>
+}
 
 
 @section Scripts {

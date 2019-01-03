@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
                     );
           
 
-            _result = certificatePrivateProviderUkprnController.Ukprn(Certificate.Id).GetAwaiter().GetResult();
+            _result = certificatePrivateProviderUkprnController.Ukprn(Certificate.Id, true).GetAwaiter().GetResult();
 
             var result = _result as ViewResult;
             _viewModelResponse = result.Model as CertificateUkprnViewModel;
