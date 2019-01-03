@@ -27,7 +27,7 @@
                             @foreach (var appl in Model)
                             {
                                 <tr>
-                                    <td>@appl.Name</td>
+                                    <td>@appl.OrganisationName</td>
                                     <td>@ApplicationReviewHelpers.TranslateApplicationStatus(appl.SequenceStatus.ToString())</td>
                                     <td>@ApplicationReviewHelpers.TranslateFinanceStatus(appl.FinanceStatus.ToString())</td>
                                     <td>@ApplicationReviewHelpers.ReadyToFeedback(appl.FinanceStatus.ToString(), appl.SequenceStatus.ToString())</td>

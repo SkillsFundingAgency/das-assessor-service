@@ -27,7 +27,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
         [HttpGet("/Applications/New")]
         public async Task<IActionResult> Applications()
         {
-            var applications = await _applyApiClient.NewApplications();
+            int sequenceId = 1;
+            var applications = await _applyApiClient.NewApplications(sequenceId);
 
             return View("~/Views/Apply/Applications/Index.cshtml", applications);
         }
