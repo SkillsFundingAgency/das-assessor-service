@@ -20,6 +20,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
             Level = CertificateData.StandardLevel;
             IsPrivatelyFunded = cert.IsPrivatelyFunded;
         }
+        public string PrivatelyFundedStatus { get; set; }
+        public bool FromApproval { get; set; }
         public Guid Id { get; set; }
         public string FamilyName { get; set; }
         public string GivenNames { get; set; }

@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.ExternalApis;
@@ -120,7 +121,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                         Ukprn = certificate.ProviderUkPrn,
                         StandardCode = certificate.StandardCode,
                         EpaoId = certificate.Organisation?.EndPointAssessorOrganisationId,
-                        EpaoName = certificate.Organisation?.EndPointAssessorName
+                        EpaoName = certificate.Organisation?.EndPointAssessorName,
+                        CertificateId = certificate.Id
                     };
                 });
 

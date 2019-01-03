@@ -7,31 +7,38 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateId=@Model.Id>Back</a>
+        @if (Model.FromApproval)
+        {
+            <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-fromapproval = "true" asp-route-certificateId=@Model.Id>Back</a>
+        }
+        else
+        {
+            <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateId=@Model.Id>Back</a>
+        }
 
-        <form class="apprentice-ukprn-form js-disable-on-submit" method="post" asp-action="Ukprn" asp-controller="CertificatePrivateProviderUkprn">
-            @Html.HiddenFor(c => c.Id)
-
-            @* hidden with css by default *@
-            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                    There is a problem
-                </h2>
-                <ul class="js-error-summary-list error-summary-list"></ul>
-            </div>
-
-            @if (!ViewData.ModelState.IsValid)
-            {
-                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+            <form class="apprentice-ukprn-form js-disable-on-submit" method="post" asp-action="Ukprn" asp-controller="CertificatePrivateProviderUkprn">
+                @Html.HiddenFor(c => c.Id)
+                @Html.HiddenFor(c => c.FromApproval)
+                @* hidden with css by default *@
+                <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
                     <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
                         There is a problem
                     </h2>
-                    <ul class="error-summary-list">
-                        <li><a sfa-validation-for="Ukprn"></a></li>
-                        <li><a sfa-validation-for="ReasonForChange"></a></li>
-                    </ul>
+                    <ul class="js-error-summary-list error-summary-list"></ul>
                 </div>
-            }
+
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                        <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                            There is a problem
+                        </h2>
+                        <ul class="error-summary-list">
+                            <li><a sfa-validation-for="Ukprn"></a></li>
+                            <li><a sfa-validation-for="ReasonForChange"></a></li>
+                        </ul>
+                    </div>
+                }
 
                 <div sfa-anyvalidationerror-class="after-error-summary">
                     <h1 class="heading-large">
@@ -59,15 +66,15 @@
                     </div>
                 </div>
 
-            <details>
-                <summary><span class="summary">What's a UKPRN?</span></summary>
-                <div class="panel panel-border-narrow" id="what-is-a-unique-learner-number">
-                    <p>A UKPRN is a unique 8 digit number given to training providers registered on the UK Register of Learning Providers (UKRLP).</p>
-                </div>
-            </details>
+                <details>
+                    <summary><span class="summary">What's a UKPRN?</span></summary>
+                    <div class="panel panel-border-narrow" id="what-is-a-unique-learner-number">
+                        <p>A UKPRN is a unique 8 digit number given to training providers registered on the UK Register of Learning Providers (UKRLP).</p>
+                    </div>
+                </details>
 
-            <button type="submit" class="button">Continue</button>
-        </form>
+                <button type="submit" class="button">Continue</button>
+            </form>
     </div>
 </div>
 

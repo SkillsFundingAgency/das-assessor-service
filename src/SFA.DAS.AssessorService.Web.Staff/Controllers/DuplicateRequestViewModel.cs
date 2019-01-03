@@ -1,4 +1,6 @@
 ﻿using System;
+using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using CertificateStatus = SFA.DAS.AssessorService.Domain.Consts.CertificateStatus;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {
@@ -14,6 +16,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         public bool BackToCheckPage { get; set; }
         public string CertificateReference { get; set; }
         public string Status { get; set; }
+        public string PrivatelyFundedStatus { get; set; }
         public string FullName { get; set; }
     }
 }

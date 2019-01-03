@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -91,33 +92,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             certificateApprovalViewModel.UserName = ContextAccessor.HttpContext.User
                 .FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
-            foreach (var approvalResult in certificateApprovalViewModel.ApprovalResults)
-            {
-                switch (approvalResult.IsApproved)
-                {
-                    case CertificateStatus.ToBeApproved when approvalResult.PrivatelyFundedStatus == null:
-                        approvalResult.PrivatelyFundedStatus = CertificateStatus.SentForApproval;
-                        break;
-                    case CertificateStatus.ToBeApproved when approvalResult.PrivatelyFundedStatus == CertificateStatus.SentForApproval:
-                        approvalResult.IsApproved = CertificateStatus.Submitted;
-                        approvalResult.PrivatelyFundedStatus = CertificateStatus.Approved;
-                        break;
-                    case CertificateStatus.Draft when (approvalResult.PrivatelyFundedStatus == null || 
-                                                       approvalResult.PrivatelyFundedStatus == CertificateStatus.SentForApproval):
-                        approvalResult.PrivatelyFundedStatus = CertificateStatus.Rejected;
-                        break;
-                    case CertificateStatus.Submitted when (approvalResult.PrivatelyFundedStatus == CertificateStatus.Rejected):
-                        approvalResult.PrivatelyFundedStatus = CertificateStatus.Approved;
-                        break;
-                }
-            }
-
-            var match = certificateApprovalViewModel.ApprovalResults.Where(x =>
-                x.IsApproved == CertificateStatus.Approved || x.IsApproved == CertificateStatus.ToBeApproved || x.IsApproved == CertificateStatus.Submitted);
-            if (!match.Any())
-                certificateApprovalViewModel.ActionHint = CertificateStatus.Rejected;
-
-           await ApiClient.ApproveCertificates(certificateApprovalViewModel);
+             SetApprovalStatues(certificateApprovalViewModel);
+             ModifyActionUsingCurrrentStatues(certificateApprovalViewModel);
+           
+            await ApiClient.ApproveCertificates(certificateApprovalViewModel);
             return RedirectToAction(certificateApprovalViewModel.ActionHint);
         }
 
@@ -139,12 +117,70 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             }
         }
 
+
+        private static void SetApprovalStatues(CertificatePostApprovalViewModel certificateApprovalViewModel)
+        {
+            foreach (var approvalResult in certificateApprovalViewModel.ApprovalResults)
+            {
+                switch (approvalResult.IsApproved)
+                {
+                    case CertificateStatus.ToBeApproved when approvalResult.PrivatelyFundedStatus == null:
+                        approvalResult.PrivatelyFundedStatus = CertificateStatus.SentForApproval;
+                        break;
+                    case CertificateStatus.Submitted when approvalResult.PrivatelyFundedStatus == CertificateStatus.SentForApproval:
+                        approvalResult.PrivatelyFundedStatus = CertificateStatus.Approved;
+                        break;
+                    case CertificateStatus.Draft when (approvalResult.PrivatelyFundedStatus == null ||
+                                                       approvalResult.PrivatelyFundedStatus == CertificateStatus.SentForApproval):
+                        approvalResult.PrivatelyFundedStatus = CertificateStatus.Rejected;
+                        break;
+                    case CertificateStatus.Submitted when (approvalResult.PrivatelyFundedStatus == CertificateStatus.Rejected):
+                        approvalResult.PrivatelyFundedStatus = CertificateStatus.Approved;
+                        break;
+                }
+            }
+        }
+
+        private static void ModifyActionUsingCurrrentStatues(CertificatePostApprovalViewModel certificateApprovalViewModel)
+        {
+            //If we are on the New Screen
+            if (certificateApprovalViewModel.ActionHint == CertificateStatus.SentForApproval)
+            {
+                //If all certificates are rejected just go to the rejected screen
+                if (certificateApprovalViewModel.ApprovalResults.All(x => x.IsApproved != CertificateStatus.ToBeApproved))
+                    certificateApprovalViewModel.ActionHint = CertificateStatus.Rejected;
+            }
+            else
+            {
+                //We got here that means our current screen is the Sent For Approval screen, since you can't submit from 
+                //Approved and Reject screen
+                if (certificateApprovalViewModel.ApprovalResults.Any(
+                    x => x.IsApproved == CertificateStatus.ToBeApproved))
+                {
+                    //If there are still some certificates left to be approved|rejected stay on the Sent For Approval screen
+                    certificateApprovalViewModel.ActionHint = CertificateStatus.SentForApproval;
+                }
+                else if (certificateApprovalViewModel.ApprovalResults.Any(
+                    x => x.IsApproved == CertificateStatus.Submitted))
+                {
+                    //If there where any certificates marked as approved, set the next screen as Approved
+                    certificateApprovalViewModel.ActionHint = CertificateStatus.Approved;
+                }
+                else
+                {
+                    //Only go to reject screen when all certificate where rejected
+                    certificateApprovalViewModel.ActionHint = CertificateStatus.Rejected;
+                }
+            }
+
+        }
+
         private static Dictionary<string, object> ToDictionary<TValue>(object obj,string sentForApprovalExcelAttributeMapping)
         {
            var json = JsonConvert.SerializeObject(obj);
             var dictionary = JsonConvert.DeserializeObject<Dictionary<string, TValue>>(json);
             var destDictionary = new Dictionary<string, object>();
-            JsonMapper.MatchAndCreateNewMapping(sentForApprovalExcelAttributeMapping, dictionary, destDictionary);
+            MatchAndCreateNewMapping(sentForApprovalExcelAttributeMapping, dictionary, destDictionary);
             return destDictionary;
         }
 
@@ -192,6 +228,24 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 {"AchievementDate" , "Achievement Date"}
             }.ToString();
 
+        }
+
+        private static void MatchAndCreateNewMapping(string mappingJson, dynamic sourceJson, IDictionary<string, object> destinationDictionary)
+        {
+            var mappings = JsonConvert.DeserializeObject<Dictionary<string, object>>(mappingJson);
+            foreach (var mapping in mappings)
+            {
+                foreach (KeyValuePair<string, object> source in sourceJson)
+                {
+                    if (mapping.Key != source.Key) continue;
+                    if (mapping.Key == "LearningStartDate" || mapping.Key == "AchievementDate")
+                        destinationDictionary.Add(mapping.Value.ToString(),
+                            ((DateTime?) source.Value)?.ToShortDateString());
+                    else
+                        destinationDictionary.Add(mapping.Value.ToString(), source.Value);
+                    break;
+                }
+            }
         }
     }
 }

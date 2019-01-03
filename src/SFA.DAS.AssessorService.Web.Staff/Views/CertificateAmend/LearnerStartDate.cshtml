@@ -6,12 +6,20 @@
 }
 <div class="grid-row">
     <div class="column-two-thirds">
-        <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateId=@Model.Id>Back</a>
+        @if (Model.FromApproval)
+        {
+            <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-fromapproval="true" asp-route-certificateId=@Model.Id>Back</a>
+        }
+        else
+        {
+            <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateId=@Model.Id>Back</a>
+        }
 
         <form class="apprentice-learner-date-form js-disable-on-submit" method="post" asp-controller="CertificatePrivateLearnerStartDate">
             <input type="hidden" name="fullDate" id="fullDate" class="date-input" />
             @Html.HiddenFor(c => c.Id)
             @Html.HiddenFor(m => m.StartDate)
+            @Html.HiddenFor(c => c.FromApproval)
             <input type="hidden" name="WarningShown" id="WarningShown" value="@Model.WarningShown" />
 
             @* hidden with css by default *@

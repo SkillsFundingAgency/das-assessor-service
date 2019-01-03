@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels;
+using SFA.DAS.AssessorService.Web.Staff.ViewModels.Private;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {
@@ -21,7 +22,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Check(Guid certificateId, string searchString, int page)
+        public async Task<IActionResult> Check(Guid certificateId, string searchString, int page, bool fromApproval)
         {
             var viewModel = await LoadViewModel<CertificateCheckViewModel>(certificateId, "~/Views/CertificateAmend/Check.cshtml");
             var viewResult = (viewModel as ViewResult);
@@ -29,13 +30,14 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 
             certificateCheckViewModel.Page = page;
             certificateCheckViewModel.SearchString = searchString;
-
+            certificateCheckViewModel.FromApproval = fromApproval;
 
             var options = await ApiClient.GetOptions(certificateCheckViewModel.StandardCode);
             TempData["HideOption"] = !options.Any();
 
             return viewModel;
         }
+
 
         [HttpPost(Name = "Check")]
         public async Task<IActionResult> ConfirmAndSubmit(CertificateCheckViewModel vm)
@@ -52,6 +54,27 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                         Page = vm.Page,
                         SearchString = vm.SearchString
                     });
+            }
+
+            if (vm.Status == CertificateStatus.Draft &
+                vm.PrivatelyFundedStatus == CertificateStatus.Rejected & vm.FromApproval)
+            {
+                var certificate = await ApiClient.GetCertificate(vm.Id);
+                var approvalResults = new ApprovalResult[1];
+                approvalResults[0]= new ApprovalResult
+                {
+                    IsApproved = CertificateStatus.Submitted,
+                    CertificateReference = certificate.CertificateReference,
+                    PrivatelyFundedStatus = CertificateStatus.Approved
+                };
+                
+                await ApiClient.ApproveCertificates(new CertificatePostApprovalViewModel
+                {
+                    UserName = ContextAccessor.HttpContext.User
+                    .FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value,
+                    ApprovalResults = approvalResults
+                });
+                return RedirectToAction("Approved", "CertificateApprovals");
             }
             else
             {

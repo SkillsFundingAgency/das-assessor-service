@@ -8,11 +8,18 @@
 <div class="grid-row">
     <div class="column-two-thirds">
 
-        <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateId=@Model.Id>Back</a>
+        @if (Model.FromApproval)
+        {
+            <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-fromapproval = "true" asp-route-certificateId=@Model.Id>Back</a>
+        }
+        else
+        {
+            <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateId=@Model.Id>Back</a>
+        }
 
         <form class="apprentice-grade-form" type="post" asp-controller="CertificateGrade">
             @Html.HiddenFor(c => c.Id)
-
+            @Html.HiddenFor(c => c.FromApproval)
             @* hidden with css by default *@
             <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
                 <h2 class="heading-medium error-summary-heading" id="error-summary-heading">

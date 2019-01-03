@@ -18,9 +18,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         { }
 
         [HttpGet]
-        public async Task<IActionResult> Grade(Guid certificateId)
+        public async Task<IActionResult> Grade(Guid certificateId, bool fromApproval)
         {
-            return await LoadViewModel<CertificateGradeViewModel>(certificateId, "~/Views/CertificateAmend/Grade.cshtml");
+            var viewModel = await LoadViewModel<CertificateGradeViewModel>(certificateId, "~/Views/CertificateAmend/Grade.cshtml");
+            if (viewModel is ViewResult viewResult && viewResult.Model is CertificateGradeViewModel certificateGradeViewModel)
+                certificateGradeViewModel.FromApproval = fromApproval;
+
+            return viewModel;
         }
 
         [HttpPost(Name = "Grade")]
@@ -28,7 +32,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         {
             return await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/CertificateAmend/Grade.cshtml",
-                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateId = vm.Id }), action: CertificateActions.Grade);
+                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateId = vm.Id , fromapproval = vm.FromApproval }), action: CertificateActions.Grade);
         }
     }
 }

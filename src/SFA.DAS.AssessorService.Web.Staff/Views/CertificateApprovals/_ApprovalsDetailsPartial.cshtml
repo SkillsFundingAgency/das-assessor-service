@@ -1,4 +1,5 @@
-﻿@model IEnumerable<SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateDetailApprovalViewModel>
+﻿@using SFA.DAS.AssessorService.Domain.Consts;
+@model IEnumerable<SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateDetailApprovalViewModel>
 @{
     var results = Model.ToList();
     var approvalresults = ViewData["ApprovalResults"] as SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateDetailApprovalViewModel[];
@@ -12,7 +13,7 @@
             <th>Employer</th>
             <th>Training Provider</th>
             <th>Date Requested</th>
-            @if (results[0]?.PrivatelyFundedStatus != "Approved")
+            @if (results[0]?.PrivatelyFundedStatus != CertificateStatus.Approved)
             {
                 <th>Action</th>
             }
@@ -35,9 +36,9 @@
                 if (approvalresults != null)
                 {
                     approvalresults[i].IsApproved = results[i].IsApproved;
-                    if (results[i].PrivatelyFundedStatus != "Approved")
+                    if (results[i].PrivatelyFundedStatus != CertificateStatus.Approved)
                     {
-                        @:<td data-label="Action" class="td-with-radios" style="width:35%">
+                        @:<td id="td-with-radios" data-label="Action">
                             <fieldset class="inline">
                                 @if (results[i].PrivatelyFundedStatus == null)
                                 {
@@ -51,10 +52,10 @@
                                         <label asp-for=@approvalresults[i].IsApproved>Reject</label>
                                     </div>
                                 }
-                                else if (results[i].PrivatelyFundedStatus == "SentForApproval")
+                                else if (results[i].PrivatelyFundedStatus == CertificateStatus.SentForApproval)
                                 {
                                     <div class="multiple-choice">
-                                        <input asp-for=@approvalresults[i].IsApproved type="radio" value="ToBeApproved">
+                                        <input asp-for=@approvalresults[i].IsApproved type="radio" value="Submitted">
                                         <label asp-for=@approvalresults[i].IsApproved>Approve</label>
                                     </div>
                                     <div class="multiple-choice">
@@ -64,115 +65,116 @@
                                 }
                                 else
                                 {
-                                    <div class="multiple-choice">
-                                        <input asp-for=@approvalresults[i].IsApproved type="radio" value="Submitted">
-                                        <label asp-for=@approvalresults[i].IsApproved>Approve</label>
+                                    <div>
+                                        <a asp-action="Check" asp-controller="CertificateAmend" asp-route-certificateId="@results[i].CertificateId" asp-route-stdcode="@results[i].StandardCode" asp-route-uln="@results[i].Uln" asp-route-searchstring="@results[i].Uln" asp-route-fromapproval="true">Amend certificate information</a>
                                     </div>
                                 }
                             </fieldset>
                         @:</td>
                     }
 
-
                 @:</tr>
+
+
+
 
                 {
                     approvalresults[i].CertificateReference = results[i].CertificateReference;
                     approvalresults[i].PrivatelyFundedStatus = results[i].PrivatelyFundedStatus;
-                
+
                 }
 
-                    @Html.HiddenFor(x => @approvalresults[i].CertificateReference)
-                    @Html.HiddenFor(x => @approvalresults[i].IsApproved)
-                    @Html.HiddenFor(x => @approvalresults[i].PrivatelyFundedStatus)
-                }
-                @Html.HiddenFor(x => @actionHint);
-                <tr class="js-expandble-cell js-hidden expandble-cell" aria-hidden="true">
-                    <td colspan="5">
-                        <div class="expandble-cell-content">
-                            <h2 class="heading-medium expandble-cell-content--first-heading">Certificate Details</h2>
-                            <ul>
-                                <li>
-                                    <p>
-                                        <span class="bold">Recorded by: </span> @Html.DisplayFor(modelItem => @results[i].RecordedBy)
-                                    </p>
-                                </li>
-                                <li>
-                                    <p>
-                                        <span class="bold">Standard: :</span> @Html.DisplayFor(modelItem => @results[i].StandardName)
-                                    </p>
-                                </li>
-                                <li>
-                                    <p>
-                                        <span class="bold">Level: </span> @Html.DisplayFor(modelItem => @results[i].Level)
-                                    </p>
-                                </li>
-                                <li>
-                                    <p>
-                                        <span class="bold">Grade: </span> @Html.DisplayFor(modelItem => @results[i].OverallGrade)
-                                    </p>
-                                </li>
-
-                                <li>
-                                    <p>
-                                        <span class="bold">Option: </span> @Html.DisplayFor(modelItem => @results[i].CourseOption)
-                                    </p>
-                                </li>
-                                <li>
-                                    <p>
-                                        <span class="bold">Apprenticeship start date: </span>
-                                        @{
-                                            var achievementStartDate = @results[i].LearningStartDate.HasValue ? @results[i].LearningStartDate.Value.ToString("dd/MM/yyyy") : "";
-                                        }
-                                        @achievementStartDate
-                                    </p>
-                                </li>
-                                <li>
-                                    <p>
-                                        <span class="bold">Achievement date: </span>
-                                        @{
-                                            var achievementDate = @results[i].AchievementDate.HasValue ? @results[i].AchievementDate.Value.ToString("dd/MM/yyyy") : "";
-                                        }
-                                        @achievementDate
-                                    </p>
-                                </li>
-                                <li>
-                                    <p>
-                                        <span class="bold">Certificate number:</span> @Html.DisplayFor(modelItem => @results[i].CertificateReference)
-                                    </p>
-                                </li>
-                            </ul>
-
-                            <h2 class="heading-medium">Postage details: </h2>
-                            <p>
-                                The certificate was posted to this address.
-                            </p>
-                            <ul>
-                                <li>
-                                    @Html.DisplayFor(modelItem => @results[i].ContactName)
-                                </li>
-                                <li>
-                                    @Html.DisplayFor(modelItem => @results[i].ContactOrganisation)
-                                </li>
-                                <li>
-                                    @Html.DisplayFor(modelItem => @results[i].ContactAddLine1)
-                                </li>
-                                <li>
-                                    @Html.DisplayFor(modelItem => @results[i].ContactAddLine2)
-                                </li>
-                                <li>
-                                    @Html.DisplayFor(modelItem => @results[i].ContactAddLine3)
-                                </li>
-                                <li>
-                                    @Html.DisplayFor(modelItem => @results[i].ContactAddLine4)
-                                </li>
-                                <li>
-                                    @Html.DisplayFor(modelItem => @results[i].ContactPostCode)
-                                </li>
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
+                @Html.HiddenFor(x => @approvalresults[i].CertificateReference)
+                @Html.HiddenFor(x => @approvalresults[i].IsApproved)
+                @Html.HiddenFor(x => @approvalresults[i].PrivatelyFundedStatus)
             }
+            @Html.HiddenFor(x => @actionHint);
+            <tr class="js-expandble-cell js-hidden expandble-cell" aria-hidden="true">
+                <td colspan="5">
+                    <div class="expandble-cell-content">
+                        <h2 class="heading-medium expandble-cell-content--first-heading">Certificate Details</h2>
+                        <ul>
+                            <li>
+                                <p>
+                                    <span class="bold">Recorded by: </span> @Html.DisplayFor(modelItem => @results[i].RecordedBy)
+                                </p>
+                            </li>
+                            <li>
+                                <p>
+                                    <span class="bold">Standard: :</span> @Html.DisplayFor(modelItem => @results[i].StandardName)
+                                </p>
+                            </li>
+                            <li>
+                                <p>
+                                    <span class="bold">Level: </span> @Html.DisplayFor(modelItem => @results[i].Level)
+                                </p>
+                            </li>
+                            <li>
+                                <p>
+                                    <span class="bold">Grade: </span> @Html.DisplayFor(modelItem => @results[i].OverallGrade)
+                                </p>
+                            </li>
+
+                            <li>
+                                <p>
+                                    <span class="bold">Option: </span> @Html.DisplayFor(modelItem => @results[i].CourseOption)
+                                </p>
+                            </li>
+                            <li>
+                                <p>
+                                    <span class="bold">Apprenticeship start date: </span>
+                                    @{
+                                        var achievementStartDate = @results[i].LearningStartDate.HasValue ? @results[i].LearningStartDate.Value.ToString("dd/MM/yyyy") : "";
+                                    }
+                                    @achievementStartDate
+                                </p>
+                            </li>
+                            <li>
+                                <p>
+                                    <span class="bold">Achievement date: </span>
+                                    @{
+                                        var achievementDate = @results[i].AchievementDate.HasValue ? @results[i].AchievementDate.Value.ToString("dd/MM/yyyy") : "";
+                                    }
+                                    @achievementDate
+                                </p>
+                            </li>
+                            <li>
+                                <p>
+                                    <span class="bold">Certificate number:</span> @Html.DisplayFor(modelItem => @results[i].CertificateReference)
+                                </p>
+                            </li>
+                        </ul>
+
+                        <h2 class="heading-medium">Postage details: </h2>
+                        <p>
+                            The certificate was posted to this address.
+                        </p>
+                        <ul>
+                            <li>
+                                @Html.DisplayFor(modelItem => @results[i].ContactName)
+                            </li>
+                            <li>
+                                @Html.DisplayFor(modelItem => @results[i].ContactOrganisation)
+                            </li>
+                            <li>
+                                @Html.DisplayFor(modelItem => @results[i].ContactAddLine1)
+                            </li>
+                            <li>
+                                @Html.DisplayFor(modelItem => @results[i].ContactAddLine2)
+                            </li>
+                            <li>
+                                @Html.DisplayFor(modelItem => @results[i].ContactAddLine3)
+                            </li>
+                            <li>
+                                @Html.DisplayFor(modelItem => @results[i].ContactAddLine4)
+                            </li>
+                            <li>
+                                @Html.DisplayFor(modelItem => @results[i].ContactPostCode)
+                            </li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

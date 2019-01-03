@@ -38,21 +38,21 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
         }
 
         [HttpGet]
-        public async Task<IActionResult> StandardCode(Guid certificateId)
+        public async Task<IActionResult> StandardCode(Guid certificateId, bool fromApproval)
         {
             var filteredStandardCodes = await GetFilteredStatusCodes(certificateId);
             var standards = (await GetAllStandards()).ToList();
 
             var results = GetSelectListItems(standards, filteredStandardCodes);
 
-            var viewResult = await LoadViewModel<CertificateStandardCodeListViewModel>(certificateId, "~/Views/CertificateAmend/StandardCode.cshtml");
-            if (viewResult is ViewResult)
+            var viewModel = await LoadViewModel<CertificateStandardCodeListViewModel>(certificateId, "~/Views/CertificateAmend/StandardCode.cshtml");
+            if (viewModel is ViewResult viewResult &&
+                viewResult.Model is CertificateStandardCodeListViewModel certificateStandardCodeListViewModel)
             {
-                var vm = ((viewResult as ViewResult).Model) as CertificateStandardCodeListViewModel;
-                vm.StandardCodes = results;
+                certificateStandardCodeListViewModel.FromApproval = fromApproval;
+                certificateStandardCodeListViewModel.StandardCodes = results;
             }
-
-            return viewResult;
+            return viewModel;
         }
 
         [HttpPost(Name = "StandardCode")]
@@ -74,7 +74,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
 
             var actionResult = await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/CertificateAmend/StandardCode.cshtml",
-                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateId = vm.Id }), action: CertificateActions.StandardCode);
+                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateId = vm.Id, fromapproval = vm.FromApproval }), action: CertificateActions.StandardCode);
 
             return actionResult;
         }
