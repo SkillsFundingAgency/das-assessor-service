@@ -54,11 +54,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
         }
 
         [HttpPost("/Applications/{applicationId}/Sequence/{sequenceId}/Section/{sectionId}")]
-        public async Task<IActionResult> GradeSection(Guid applicationId, int sequenceId, int sectionId, string feedbackComment, bool applyFeedbackComment, bool isSectionComplete)
+        public async Task<IActionResult> CompleteSection(Guid applicationId, int sequenceId, int sectionId, string feedbackComment, bool applyFeedbackComment, bool isSectionComplete)
         {
             if (!applyFeedbackComment) feedbackComment = null;
 
-            await _applyApiClient.GradeSection(applicationId, sequenceId, sectionId, feedbackComment, isSectionComplete);
+            await _applyApiClient.CompleteSection(applicationId, sequenceId, sectionId, feedbackComment, isSectionComplete);
 
             return RedirectToAction("Application", new { applicationId });
         }

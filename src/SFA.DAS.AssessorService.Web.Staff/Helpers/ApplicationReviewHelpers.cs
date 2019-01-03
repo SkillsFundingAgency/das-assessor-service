@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Helpers
                     return "Not started";
                 case "In Progress" :
                     return "Evaluation started";
-                case "Evaluated":
+                case "Completed":
                     return "Evaluated";
             }
 
@@ -26,6 +26,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Helpers
                 case "In Progress" :
                     return "Evaluation started";
                 case "Graded":
+                case "Completed":
                     return "Evaluated";
             }
 
@@ -34,7 +35,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Helpers
 
         public static string ReadyToFeedback(string financeStatus, string sequenceStatus)
         {
-            return (financeStatus == "Graded" && sequenceStatus == "Evaluated") ? "Yes" : "No";
+            return (financeStatus == "Completed" && sequenceStatus == "Completed") ? "Yes" : "No";
         }
 
         public static string ApplicationLink(string status)

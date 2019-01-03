@@ -16,100 +16,133 @@
         {
             <h1 class="heading-xlarge">@Model.Title</h1>
 
-            <dl class="govuk-check-your-answers cya-questions-short form-group">
-                @foreach (var pg in Model.QnADataObject.Pages.Where(p => p.Active))
-                {
-                    <div class="govuk-check-your-answers__contents">
-                        <dt class="cya-question heading-medium">
-                            @pg.LinkTitle
-                        </dt>
+            if (Model.SequenceId == 1 && Model.SectionId == 3)
+            {
+                // NOTE: The FHA Section has a read only view. See ON-1277
+                var financialApplication = Model.QnADataObject?.FinancialApplicationGrade;
+                var financialApplicationComments = financialApplication.InadequateMoreInformation ?? financialApplication.SatisfactoryMoreInformation;
 
-                        <dd class="cya-answer">
-                            @foreach (var answerPage in pg.DisplayAnswerPages)
-                            {
-                                foreach (var answer in answerPage.DisplayAnswers)
-                                {
-                                    <h3 class="heading-small">@answer.Label</h3>
-                                    <p>@answer.Answer</p>
-                                }
-                            }
-                        </dd>
-                        @* NOTE: FOR NOW THIS SECTION IS NOT TO BE SHOWN
-                        <dd class="cya-change das-cya-change--responsive">
-                            @if (pg.HasNewFeedback)
-                            {
-                                <div class="govuk-tag form-group">
-                                    Feedback added
-                                </div>
-                            }
-                            @if (pg.HasReadFeedback)
-                            {
-                                <div class="govuk-tag form-group">
-                                    Answer updated
-                                </div>
-                            }
-
-                            <p>
-                                <a class="nowrap" href="@Url.Action("Page", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = pg.PageId})">
-                                    @if (pg.HasNewFeedback)
-                                    {
-                                        <text>View or add feedback</text>
-                                    }
-                                    else
-                                    {
-                                        <text>Add feedback</text>
-                                    }
-                                </a>
-                            </p>
-                        </dd>
-                        *@
-                    </div>
-                }
-            </dl>
-
-            <form asp-action="GradeSection" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId">
-                <div>
-                    <div class="form-group">
-                        <div data-target="show-feedbackcomment-input">
-                            @{
-                                var checkboxChecked = Model.FeedbackComment != null ? "checked" : "";
-                            }
-                            <input name="ApplyFeedbackComment" id="checkbox_feedbackcomment" type="checkbox" value="true" @checkboxChecked />
-                            <label>
-                                Add a comment to the @Model.Title.ToLower() section
-                            </label>
-                        </div>
-                        <div class="panel panel-border-narrow js-hidden" id="show-feedbackcomment-input">
-                            <textarea class="form-control form-control-full" asp-for="FeedbackComment" rows="5"></textarea>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">
-                            Is this section complete?
-                        </label>
-                        <div class="multiple-choice">
-                            @{
-                                var radioChecked = Model.Status == "Graded" ? "checked" : "";
-                            }
-                            <input name="IsSectionComplete" id="options_yes" type="radio" value="True" @radioChecked />
-                            <label for="options_yes">
-                                Yes
-                            </label>
-                        </div>
-                        <div class="multiple-choice">
-                            <input name="IsSectionComplete" id="options_no" type="radio" value="False" />
-                            <label for="options_no">
-                                No
-                            </label>
-                        </div>
-                    </div>
-                    <button class="button" type="submit">Save</button>
+                <div class="form-group">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Grade</th>
+                                <th>Date reviewed</th>
+                                <th>Comments</th>
+                                <th>Reviewer</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>@financialApplication.SelectedGrade</td>
+                                <td>@financialApplication.GradedDateTime.ToShortDateString()</td>
+                                <td>@financialApplicationComments</td>
+                                <td>@financialApplication.GradedBy</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-            </form>
+            }
+            else
+            {
+                <dl class="govuk-check-your-answers cya-questions-short form-group">
+                    @foreach (var pg in Model.QnADataObject.Pages.Where(p => p.Active))
+                    {
+                        <div class="govuk-check-your-answers__contents">
+                            <dt class="cya-question heading-medium">
+                                @pg.LinkTitle
+                            </dt>
 
-            <br />
-            <a href="@Url.Action("Application", "Application", new {applicationId = Model.ApplicationId})" class="govuk-button">Return to application overview</a>
+                            <dd class="cya-answer">
+                                @foreach (var answerPage in pg.DisplayAnswerPages)
+                                {
+                                    foreach (var answer in answerPage.DisplayAnswers)
+                                    {
+                                        <h3 class="heading-small">@answer.Label</h3>
+                                        <p>@answer.Answer</p>
+                                    }
+                                }
+                            </dd>
+                            @* NOTE: FOR NOW THIS SECTION IS NOT TO BE SHOWN
+                            <dd class="cya-change das-cya-change--responsive">
+                                @if (pg.HasNewFeedback)
+                                {
+                                    <div class="govuk-tag form-group">
+                                        Feedback added
+                                    </div>
+                                }
+                                @if (pg.HasReadFeedback)
+                                {
+                                    <div class="govuk-tag form-group">
+                                        Answer updated
+                                    </div>
+                                }
+
+                                <p>
+                                    <a class="nowrap" href="@Url.Action("Page", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = pg.PageId})">
+                                        @if (pg.HasNewFeedback)
+                                        {
+                                            <text>View or add feedback</text>
+                                        }
+                                        else
+                                        {
+                                            <text>Add feedback</text>
+                                        }
+                                    </a>
+                                </p>
+                            </dd>
+                            *@
+                        </div>
+                    }
+                </dl>
+            }
+
+                <div class="form-group">
+                    <form asp-action="CompleteSection" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId">
+                        <div>
+                            <div class="form-group">
+                                <div data-target="show-feedbackcomment-input">
+                                    @{
+                                        var checkboxChecked = Model.FeedbackComment != null ? "checked" : "";
+                                    }
+                                    <input name="ApplyFeedbackComment" id="checkbox_feedbackcomment" type="checkbox" value="true" @checkboxChecked />
+                                    <label>
+                                        Add a comment to the @Model.Title.ToLower() section
+                                    </label>
+                                </div>
+                                <div class="panel panel-border-narrow js-hidden" id="show-feedbackcomment-input">
+                                    <textarea class="form-control form-control-full" asp-for="FeedbackComment" rows="5"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Is this section complete?
+                                </label>
+                                <div class="multiple-choice">
+                                    @{
+                                        var radioChecked = Model.Status == "Completed" ? "checked" : "";
+                                    }
+                                    <input name="IsSectionComplete" id="options_yes" type="radio" value="True" @radioChecked />
+                                    <label for="options_yes">
+                                        Yes
+                                    </label>
+                                </div>
+                                <div class="multiple-choice">
+                                    <input name="IsSectionComplete" id="options_no" type="radio" value="False" />
+                                    <label for="options_no">
+                                        No
+                                    </label>
+                                </div>
+                            </div>
+                            <button class="button" type="submit">Save</button>
+                        </div>
+                    </form>
+                </div>
         }
+
+        <div class="form-group">
+            <a href="@Url.Action("Application", "Application", new { applicationId = Model.ApplicationId })" class="govuk-button">Return to application overview</a>
+        </div>
     </div>
 </div>
