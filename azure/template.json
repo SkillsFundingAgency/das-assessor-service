@@ -53,6 +53,9 @@
         "functionAppNames": {
             "type": "array"
         },
+        "dataSyncFunctionAppName": {
+            "type": "string"
+        },
         "storageAccountName": {
             "type": "string"
         },
@@ -583,6 +586,38 @@
             "dependsOn": [
                 "StorageAccount"
             ]
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "DataSyncFunctionApp",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/function-app.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "functionAppName": {
+                        "value": "[parameters('dataSyncFunctionAppName')]"
+                    },
+                    "appServicePlanName": {
+                        "value": "[parameters('sharedAppServicePlanName')]"
+                    },
+                    "appServicePlanResourceGroup": {
+                        "value": "[parameters('sharedAppServicePlanResourceGroup')]"
+                    },
+                    "functionAppAppSettings": {
+                        "value": [
+                            {
+                                "name": "FUNCTIONS_EXTENSION_VERSION",
+                                "value": "~1"
+                            }
+                        ]
+                    }
+                }
+            },
+            "dependsOn": []
         },
         {
             "name": "ServiceBus",
