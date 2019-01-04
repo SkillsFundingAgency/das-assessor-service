@@ -1,3 +1,5 @@
+using SFA.DAS.AssessorService.ApplyTypes;
+
 namespace SFA.DAS.AssessorService.Web.Staff.Helpers
 {
     public static class ApplicationReviewHelpers
@@ -6,11 +8,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Helpers
         {
             switch (sequenceStatus)
             {
-                case "Submitted" :
+                case ApplicationSectionStatus.Submitted:
                     return "Not started";
-                case "In Progress" :
+                case ApplicationSectionStatus.InProgress:
                     return "Evaluation started";
-                case "Completed":
+                case ApplicationSectionStatus.Evaluated:
                     return "Evaluated";
             }
 
@@ -21,12 +23,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Helpers
         {
             switch (financeStatus)
             {
-                case "Submitted" :
+                case ApplicationSectionStatus.Submitted:
                     return "Not started";
-                case "In Progress" :
+                case ApplicationSectionStatus.InProgress:
                     return "Evaluation started";
-                case "Graded":
-                case "Completed":
+                case ApplicationSectionStatus.Graded:
+                case ApplicationSectionStatus.Evaluated:
                     return "Evaluated";
             }
 
@@ -35,12 +37,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Helpers
 
         public static string ReadyToFeedback(string financeStatus, string sequenceStatus)
         {
-            return (financeStatus == "Completed" && sequenceStatus == "Completed") ? "Yes" : "No";
+            return (financeStatus == ApplicationSectionStatus.Evaluated && sequenceStatus == ApplicationSectionStatus.Evaluated) ? "Yes" : "No";
         }
 
         public static string ApplicationLink(string status)
         {
-            return status == "Submitted" ? "Evaluate application" : "Continue";
+            return status == ApplicationSectionStatus.Submitted ? "Evaluate application" : "Continue";
         }
     }
 }

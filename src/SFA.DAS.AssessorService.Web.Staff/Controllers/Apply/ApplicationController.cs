@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Web.Staff.Domain;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 
@@ -54,12 +55,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
             return View("~/Views/Apply/Applications/Section.cshtml", section);
         }
 
-        [HttpPost("/Applications/{applicationId}/Sequence/{sequenceId}/Section/{sectionId}")]
-        public async Task<IActionResult> CompleteSection(Guid applicationId, int sequenceId, int sectionId, string feedbackComment, bool applyFeedbackComment, bool isSectionComplete)
+        [HttpPost("/Applications/{applicationId}/Sequence/{sequenceId}/Section/{sectionId}/Evaluate")]
+        public async Task<IActionResult> EvaluateSection(Guid applicationId, int sequenceId, int sectionId, string feedbackComment, bool applyFeedbackComment, bool isSectionComplete)
         {
             if (!applyFeedbackComment) feedbackComment = null;
 
-            await _applyApiClient.CompleteSection(applicationId, sequenceId, sectionId, feedbackComment, isSectionComplete);
+            await _applyApiClient.EvaluateSection(applicationId, sequenceId, sectionId, feedbackComment, isSectionComplete);
 
             return RedirectToAction("Application", new { applicationId });
         }
@@ -87,9 +88,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
         {
             var activeSequence = await _applyApiClient.GetActiveSequence(applicationId);
 
-            if (activeSequence is null || activeSequence.SequenceId != sequenceId || activeSequence.Sections.Any(s => s.Status != "Completed"))
+            if (activeSequence is null || activeSequence.SequenceId != sequenceId || activeSequence.Sections.Any(s => s.Status != ApplicationSectionStatus.Evaluated))
             {
-                // This is to stop the wrong sequence being approved or if not all sections are completed
+                // This is to stop the wrong sequence being approved or if not all sections are Evaluated
                 return RedirectToAction("Applications");
             }
 
