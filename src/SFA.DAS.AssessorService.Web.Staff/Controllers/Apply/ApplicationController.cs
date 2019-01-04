@@ -82,6 +82,20 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
             return RedirectToAction("Page", new {applicationId, sequenceId, sectionId, pageId});
         }
 
+        [HttpGet("/Applications/{applicationId}/Sequence/{sequenceId}/Assessment")]
+        public async Task<IActionResult> Assessment(Guid applicationId, int sequenceId)
+        {
+            var activeSequence = await _applyApiClient.GetActiveSequence(applicationId);
+
+            if (activeSequence is null || activeSequence.SequenceId != sequenceId || activeSequence.Sections.Any(s => s.Status != "Completed"))
+            {
+                // This is to stop the wrong sequence being approved or if not all sections are completed
+                return RedirectToAction("Applications");
+            }
+
+            return View("~/Views/Apply/Applications/Assessment.cshtml", activeSequence);
+        }
+
         [HttpPost("/Applications/{applicationId}/Sequence/{sequenceId}/Return")]
         public async Task<IActionResult> Return(Guid applicationId, int sequenceId, string returnType)
         {

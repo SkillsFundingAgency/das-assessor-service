@@ -12,7 +12,7 @@
         <ul class="govuk-list">
             @foreach (var applicationSection in Model.Sections.OrderBy(s => s.SectionId))
             {
-                @if(applicationSection.SequenceId == 1 && applicationSection.SectionId == 3 && !(applicationSection.Status == "Graded" || applicationSection.Status == "Completed"))
+            @if(applicationSection.SequenceId == 1 && applicationSection.SectionId == 3 && !(applicationSection.Status == "Graded" || applicationSection.Status == "Completed"))
                 {
                     // NOTE: FHA Section should only be shown if it has been Graded or Completed. See ON-1277
                     continue;
@@ -20,21 +20,21 @@
             <li>
                 @if (applicationSection.HasNewFeedback)
                 {
-                    <div class="govuk-tag govuk-tag--float-right">
-                        Feedback added
-                    </div>
+                <div class="govuk-tag govuk-tag--float-right">
+                    Feedback added
+                </div>
                 }
                 @if (applicationSection.HasReadFeedback)
                 {
-                    <div class="govuk-tag govuk-tag--float-right">
-                        Answer updated
-                    </div>
+                <div class="govuk-tag govuk-tag--float-right">
+                    Answer updated
+                </div>
                 }
                 @if (applicationSection.Status == "Completed")
                 {
-                    <div class="govuk-tag govuk-tag--float-right">
-                        Completed
-                    </div>
+                <div class="govuk-tag govuk-tag--float-right">
+                    Completed
+                </div>
                 }
                 <h2 class="heading-medium heading-medium--small-margin-bottom">
                     <a href="@Url.Action("Section", "Application", new {applicationSection.ApplicationId, applicationSection.SequenceId, applicationSection.SectionId})">
@@ -49,20 +49,10 @@
             }
         </ul>
 
-        @* This code block is going to change when the new process is known *@
         @if(Model.Sections.All(s => s.Status == "Completed"))
         {
-            <form asp-controller="Application" asp-action="Return" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId">
-                @if (Model.HasNewFeedback)
-                {
-                    <button class="button" type="submit" name="ReturnType" value="ReturnWithFeedback">Return with feedback</button>
-                }
-                else
-                {
-                    <button class="button" type="submit" name="ReturnType" value="Approve">Approve</button>
-                    <button class="button" type="submit" name="ReturnType" value="Reject">Reject</button>
-                }
-
+            <form asp-controller="Application" asp-action="Assessment" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" method="get">
+                <button class="button" type="submit">Complete review</button>
             </form>
         }
     </div>

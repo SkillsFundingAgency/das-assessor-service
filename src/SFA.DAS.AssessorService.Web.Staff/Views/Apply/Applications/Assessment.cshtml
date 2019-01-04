@@ -1,0 +1,56 @@
+@using SFA.DAS.AssessorService.ApplyTypes
+@model SFA.DAS.AssessorService.ApplyTypes.ApplicationSequence
+
+@{
+    ViewBag.Title = "Assessment summary";
+}
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <a class="link-back" asp-controller="Application" asp-action="Application" asp-route-applicationId="@Model.ApplicationId">Back</a>
+        <h1 class="heading-xlarge">Assessment summary</h1>
+
+        <div class="form-group">
+            <form asp-controller="Application" asp-action="Return" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId">
+                @if (Model.Sections.All(s => s.FeedbackComment == null)) // In the future this is likely to be if(!Model.HasNewFeedback)
+                {
+                    <div class="form-group">
+                        <span>You are about to approve the first stage of this application, without comments. This means that the applicant will be able to apply for a standard. You are also satisfied with the information the applicant has provided so far, and require no further information.</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label-bold">
+                            Would you like to add any general comments?
+                        </label>
+                        <div class="multiple-choice" data-target="show-feedback-input">
+                            <input name="ApproveWithComment" id="options_yes" type="radio" value="True" />
+                            <label for="options_yes">
+                                Yes, I want to add general comments
+                            </label>
+                        </div>
+                        <div class="panel panel-border-narrow js-hidden" id="show-feedback-input">
+                            @* TODO: Add comments to Sequence section *@
+                            <textarea class="form-control form-control-full" rows="5"></textarea>
+                        </div>
+                        <div class="multiple-choice">
+                            <input name="ApproveWithComment" id="options_no" type="radio" value="False" />
+                            <label for="options_no">
+                                No, I do not want to add any more comments
+                            </label>
+                        </div>
+                    </div>
+
+                    <button class="button" type="submit" name="ReturnType" value="Approve">Approve application</button>
+                }
+                else
+                {
+
+                }
+            </form>
+        </div>
+
+        <div class="form-group">
+            <a asp-controller="Application" asp-action="Application" asp-route-applicationId="@Model.ApplicationId" class="govuk-button">Return to application overview</a>
+        </div>
+    </div>
+</div>
