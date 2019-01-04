@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates.Batch;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,7 +33,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             var contact = await GetContactFromEmailAddress(request.Email);
 
             _logger.LogInformation("DeleteCertificate Before set Certificate to Deleted in db");
-            await _certificateRepository.Delete(request.Uln, request.StandardCode, contact.Username, null);
+            await _certificateRepository.Delete(request.Uln, request.StandardCode, contact.Username, CertificateActions.Delete);
             _logger.LogInformation("DeleteCertificate Certificate set to Deleted in db");
         }
 

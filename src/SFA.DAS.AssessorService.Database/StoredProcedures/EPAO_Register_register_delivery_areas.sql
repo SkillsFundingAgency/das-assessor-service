@@ -44,6 +44,7 @@ inner join Organisations o on o.EndPointAssessorOrganisationId = os.EndPointAsse
 left outer join StandardCollation sc on os.StandardCode = sc.StandardId
 left outer join #OrganisationStandardDeliveryAreaDetails  dad on dad.organisationStandardId = os.Id
 where DeliveryAreaList is not null
+and o.EndPointAssessorOrganisationId <> 'EPA0000'
 order by o.EndPointAssessorOrganisationId, sc.Title
 
 drop table #OrganisationStandardDeliveryAreaDetails
