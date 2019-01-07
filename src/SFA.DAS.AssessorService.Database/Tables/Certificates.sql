@@ -19,6 +19,7 @@
 	[LearnRefNumber] NVARCHAR(12) NULL,
 	[CreateDay] DATE NOT NULL,
 	[IsPrivatelyFunded] BIT, 
+	 [PrivatelyFundedStatus] NVARCHAR(20) NULL, 
     CONSTRAINT [PK_Certificates] PRIMARY KEY ([Id]),
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
