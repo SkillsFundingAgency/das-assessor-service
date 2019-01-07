@@ -282,7 +282,7 @@ namespace SFA.DAS.AssessorService.Data
             return Task.FromResult(certificate);
         }
 
-        private async Task UpdateCertificateLog(Certificate cert, string action, string username, string reasonForChange = null, bool wasRejected = false)
+        private async Task UpdateCertificateLog(Certificate cert, string action, string username, string reasonForChange = null)
         {
             if (action != null)
             {
@@ -296,8 +296,7 @@ namespace SFA.DAS.AssessorService.Data
                     CertificateData = cert.CertificateData,
                     Username = username,
                     BatchNumber = cert.BatchNumber,
-                    ReasonForChange = reasonForChange,
-                    WasRejected = wasRejected
+                    ReasonForChange = reasonForChange
                 };
 
                 await _context.CertificateLogs.AddAsync(certLog);
@@ -405,7 +404,7 @@ namespace SFA.DAS.AssessorService.Data
 
                 certificate.Status = approvalResult.IsApproved;
                 certificate.PrivatelyFundedStatus = approvalResult.PrivatelyFundedStatus;
-               await UpdateCertificateLog(certificate, CertificateActions.Status, userName,approvalResult.ReasonForChange, (!string.IsNullOrEmpty(approvalResult.ReasonForChange)));
+               await UpdateCertificateLog(certificate, approvalResult.PrivatelyFundedStatus, userName,approvalResult.ReasonForChange);
             }
 
             await _context.SaveChangesAsync();

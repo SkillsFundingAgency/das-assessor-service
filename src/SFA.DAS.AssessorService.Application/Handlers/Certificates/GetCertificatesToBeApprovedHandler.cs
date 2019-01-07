@@ -53,7 +53,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             var firstName = string.Empty;
             var lastName = string.Empty;
             var recordedBy = string.Empty;
-            var ReasonForChange = String.Empty;
+            var ReasonForChange = string.Empty;
 
             var certificateResponses = certificates.Items.Select(
                 certificate =>
@@ -85,7 +85,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                         ReasonForChange = certificate.CertificateLogs
                             .OrderByDescending(q => q.EventTime)
                             .FirstOrDefault(certificateLog =>
-                                certificateLog.Status == Domain.Consts.CertificateStatus.Draft && certificateLog.WasRejected == true)?.ReasonForChange;
+                                certificateLog.Status == Domain.Consts.CertificateStatus.Draft && certificateLog.Action == Domain.Consts.CertificateStatus.Rejected)?.ReasonForChange;
                     }
                     catch (EntityNotFoundException)
                     {
