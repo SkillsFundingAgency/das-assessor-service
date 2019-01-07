@@ -108,7 +108,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
                 Organisation = organisation,
                 Section = financialSection,
                 ApplicationId = applicationId,
-                Grade = financialSection.QnADataObject.FinancialApplicationGrade
+                Grade = financialSection.QnAData.FinancialApplicationGrade
             };
             
             return View("~/Views/Apply/Financial/PreviousApplication.cshtml", vm);
@@ -127,7 +127,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
                     {
                         foreach (var uploadQuestion in uploadPage.UploadQuestions)
                         {
-                            var answer = section.QnADataObject.Pages.SelectMany(p => p.PageOfAnswers).SelectMany(a => a.Answers).SingleOrDefault(a => a.QuestionId == uploadQuestion.QuestionId);
+                            var answer = section.QnAData.Pages.SelectMany(p => p.PageOfAnswers).SelectMany(a => a.Answers).SingleOrDefault(a => a.QuestionId == uploadQuestion.QuestionId);
 
                             var fileDownloadName = answer.Value;
             

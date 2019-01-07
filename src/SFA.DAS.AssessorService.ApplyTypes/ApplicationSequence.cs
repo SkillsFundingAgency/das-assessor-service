@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         {
             get
             {
-                return Sections.SelectMany(s => s.QnADataObject.Pages).Any(p => p.HasFeedback && p.Feedback.Any(f => !f.IsCompleted));
+                return Sections.SelectMany(s => s.QnAData.Pages).Any(p => p.HasFeedback && p.Feedback.Any(f => !f.IsCompleted));
             }
         }
     }

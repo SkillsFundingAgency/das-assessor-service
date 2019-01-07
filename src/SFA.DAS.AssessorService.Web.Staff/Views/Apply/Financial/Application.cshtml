@@ -53,7 +53,7 @@
             Answers
         </th>
     </tr>
-    @foreach (var pg in Model.Section.QnADataObject.Pages)
+    @foreach (var pg in Model.Section.QnAData.Pages)
     {
         foreach (var question in pg.Questions.Where(q => q.Input.Type != "FileUpload"))
         {

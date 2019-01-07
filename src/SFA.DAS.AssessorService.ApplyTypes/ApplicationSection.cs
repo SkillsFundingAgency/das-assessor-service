@@ -11,35 +11,23 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public int SectionId { get; set; }
         public int SequenceId { get; set; }
         public string FeedbackComment { get; set; }
-        public string QnAData { get; set; }
-
-        public QnAData QnADataObject
-        {
-            get => JsonConvert.DeserializeObject<QnAData>(QnAData);
-            set => QnAData = JsonConvert.SerializeObject(value);
-        }
-
-        //        public List<Page> Pages
-        //        {
-        //            get => JsonConvert.DeserializeObject<List<Page>>(QnAData);
-        //            set => QnAData = JsonConvert.SerializeObject(value);
-        //        }
+        public QnAData QnAData { get; set; }
 
         public int PagesComplete
         {
-            get { return QnADataObject.Pages.Count(p => p.Active && p.Complete); }
+            get { return QnAData.Pages.Count(p => p.Active && p.Complete); }
         }
 
         public int PagesActive
         {
-            get { return QnADataObject.Pages.Count(p => p.Active); }
+            get { return QnAData.Pages.Count(p => p.Active); }
         }
 
         public bool HasNewFeedback
         {
             get
             {
-                return QnADataObject.Pages.Any(p => p.HasFeedback && p.Feedback.Any(f => !f.IsCompleted));
+                return QnAData.Pages.Any(p => p.HasFeedback && p.Feedback.Any(f => !f.IsCompleted));
             }
         }
 
@@ -47,7 +35,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         {
             get
             {
-                return QnADataObject.Pages.Any(p => p.HasFeedback && p.Feedback.Any(f => f.IsCompleted));
+                return QnAData.Pages.Any(p => p.HasFeedback && p.Feedback.Any(f => f.IsCompleted));
             }
         }
 
@@ -57,7 +45,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
 
         public List<Page> PagesContainingUploadQuestions
         {
-            get { return QnADataObject.Pages.Where(p => p.ContainsUploadQuestions).ToList(); }
+            get { return QnAData.Pages.Where(p => p.ContainsUploadQuestions).ToList(); }
         }
     }
 

@@ -20,7 +20,7 @@
             if (Model.SequenceId == 1 && Model.SectionId == 3)
             {
                 // NOTE: The FHA Section has a read only view. See ON-1277
-                var financialApplication = Model.QnADataObject?.FinancialApplicationGrade;
+                var financialApplication = Model.QnAData?.FinancialApplicationGrade;
                 var financialApplicationComments = financialApplication.InadequateMoreInformation ?? financialApplication.SatisfactoryMoreInformation;
 
                 <div class="form-group">
@@ -47,7 +47,7 @@
             else
             {
                 <dl class="govuk-check-your-answers cya-questions-short form-group">
-                    @foreach (var pg in Model.QnADataObject.Pages.Where(p => p.Active))
+                    @foreach (var pg in Model.QnAData.Pages.Where(p => p.Active))
                     {
                         <div class="govuk-check-your-answers__contents">
                             <dt class="cya-question heading-medium">
@@ -64,7 +64,7 @@
                                     }
                                 }
                             </dd>
-                            @* NOTE: FOR NOW THIS SECTION IS NOT TO BE SHOWN
+                             @* NOTE: FOR NOW THIS SECTION IS NOT TO BE SHOWN
                             <dd class="cya-change das-cya-change--responsive">
                                 @if (pg.HasNewFeedback)
                                 {
