@@ -22,7 +22,7 @@
 
         // show and hide based on click and update aria tags
         $(this).on("click keypress", function(event) {
-          event.preventDefault();
+          //event.preventDefault();
           if (event.type === "keypress" && event.keyCode !== 13) return;
           if ($expandable.hasClass("js-hidden")) {
             // SHOW CONTENT
@@ -45,7 +45,42 @@
               .text("\u25ba");
           }
         });
-      });
+        });
+
+        $(".js-expand-table-row-for-radio").each(function () {
+            var ariaControlId = "table-content-" + $(this).data("expand-id");
+            var $expandable = $(this)
+                .closest("tr")
+                .nextAll("tr.js-expandble-cell-for-radio:first");
+           
+            var $notRejected = $(this).find("aria-labelledby");
+            $(this).attr({
+                "aria-expanded": "false",
+                "aria-controls": ariaControlId
+            });
+            $expandable.attr({ "aria-hidden": "true", id: ariaControlId });
+            // show and hide based on click and update aria tags
+            $(this).on("click keypress", function (event) {
+                if (event.type === "keypress" && event.keyCode !== 13) return;
+                if ($(this).attr("data-hide")) {
+                    //FORCE HIDE CONTENT
+                    $(this).attr("aria-expanded", "false");
+                    $expandable
+                        .addClass("js-hidden")
+                        .attr({ "aria-hidden": "true", id: ariaControlId });
+                }
+                else if ($expandable.hasClass("js-hidden")) {
+                    // SHOW CONTENT
+                    $(this).attr({
+                        "aria-expanded": "true",
+                        "aria-controls": ariaControlId
+                    });
+                    $expandable.removeClass("js-hidden").attr("aria-hidden", "false");
+                  
+                } 
+            });
+        });
+
     }
   };
 

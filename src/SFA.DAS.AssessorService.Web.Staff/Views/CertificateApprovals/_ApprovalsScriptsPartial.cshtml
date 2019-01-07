@@ -1,13 +1,17 @@
 <script>
-
-var epaoApprovalsFormElement = $('.apprentice-approvals-form ');
-var epaoApprovalsValidationRulesObject = {
-    rules: {       
-    },
-    messages: {       
+    var epaoApprovalsFormElement = $('.apprentice-approvals-form ');
+    var numberOfElements = $('.apprentice-approvals-form ').find("textarea").length;
+    var rules = {};
+    var messages = {};
+    for (var i = 0; i < numberOfElements; i++) {
+        rules["approvalresults[" + i + "].ReasonForChange"] = { required: true }
+        messages["approvalresults[" + i + "].ReasonForChange"] = { required: 'Enter a reason for the rejection' }
     }
-};
+    var epaoApprovalsValidationRulesObject = {
+        rules,
+        messages
+    };
 
-GOVUK.epaoValidate(epaoApprovalsFormElement, epaoApprovalsValidationRulesObject);
+    GOVUK.epaoValidate(epaoApprovalsFormElement, epaoApprovalsValidationRulesObject);
 
 </script>

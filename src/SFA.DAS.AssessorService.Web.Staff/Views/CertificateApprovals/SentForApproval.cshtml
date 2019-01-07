@@ -41,7 +41,18 @@
                 <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
                     There is a problem
                 </h2>
-                <ul class="error-summary-list"></ul>
+                <ul class="error-summary-list">
+                    <ul class="error-summary-list">
+                        @if (ViewData.ModelState.ErrorCount > 1)
+                        {
+                            <li>Please enter reasons for @ViewData.ModelState.ErrorCount rejections! </li>
+                        }
+                        else
+                        {
+                            <li>Please enter a reason for the rejection! </li>
+                        }
+                    </ul>
+                </ul>
             </div>
         }
 
@@ -60,7 +71,7 @@
                     </form>
                 </div>
             }
-            <form type="post" asp-controller="CertificateApprovals" asp-action="Approvals">
+            <form class="apprentice-approvals-form js-disable-on-submit" type="post" asp-controller="CertificateApprovals" asp-action="Approvals">
 
                 @{
                     var count = Model.SentForApprovalCertificates.Items.Count();
@@ -82,7 +93,7 @@
                                                                                 { "ApprovalResults", approvalResults },
                                                                                 {"ActionHint","Approved" }
                                                                             });
-
+                   
                     <button type="submit" class="button" role="button">Submit</button>
                 }
                 else

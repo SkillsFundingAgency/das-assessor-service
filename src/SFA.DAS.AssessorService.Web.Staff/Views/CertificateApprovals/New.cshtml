@@ -44,7 +44,16 @@
                     <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
                         There is a problem
                     </h2>
-                    <ul class="error-summary-list"></ul>
+                    <ul class="error-summary-list">
+                        @if (ViewData.ModelState.ErrorCount > 1)
+                        {
+                            <li>Please enter reasons for @ViewData.ModelState.ErrorCount rejections! </li>
+                        }
+                        else
+                        {
+                            <li>Please enter a reason for the rejection! </li>
+                        }
+                    </ul>
                 </div>
             }
 
@@ -66,14 +75,14 @@
                 @if (@Model.ToBeApprovedCertificates.Items.Any())
                 {
                     await Html.RenderPartialAsync("_ApprovalsDetailsPartial", Model.ToBeApprovedCertificates, new ViewDataDictionary(ViewData)
-                            {
-                                {
-                                    "Increment", 0
-                                },
-                                { "ApprovalResults", approvalResults },
-                                {"ActionHint","SentForApproval" }
-                            });
-
+                                            {
+                                                {
+                                                    "Increment", 0
+                                                },
+                                                { "ApprovalResults", approvalResults },
+                                                { "PageIndex", @Model.ToBeApprovedCertificates.PageIndex },
+                                                {"ActionHint","SentForApproval" }
+                                            });
                     <button type="submit" class="button">Submit</button>
                 }
                 else

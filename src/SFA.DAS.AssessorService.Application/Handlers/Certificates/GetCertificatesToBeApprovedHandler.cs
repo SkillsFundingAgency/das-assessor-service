@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -51,8 +52,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             var trainingProviderName = string.Empty;
             var firstName = string.Empty;
             var lastName = string.Empty;
-
             var recordedBy = string.Empty;
+            var ReasonForChange = String.Empty;
 
             var certificateResponses = certificates.Items.Select(
                 certificate =>
@@ -81,6 +82,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
 
                         firstName = certificateData.LearnerGivenNames;
                         lastName = certificateData.LearnerFamilyName;
+                        ReasonForChange = certificate.CertificateLogs
+                            .OrderByDescending(q => q.EventTime)
+                            .FirstOrDefault(certificateLog =>
+                                certificateLog.Status == Domain.Consts.CertificateStatus.Draft && certificateLog.WasRejected == true)?.ReasonForChange;
                     }
                     catch (EntityNotFoundException)
                     {
@@ -118,7 +123,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                         StandardCode = certificate.StandardCode,
                         EpaoId = certificate.Organisation?.EndPointAssessorOrganisationId,
                         EpaoName = certificate.Organisation?.EndPointAssessorName,
-                        CertificateId = certificate.Id
+                        CertificateId = certificate.Id,
+                        ReasonForChange = ReasonForChange
                     };
                 });
 

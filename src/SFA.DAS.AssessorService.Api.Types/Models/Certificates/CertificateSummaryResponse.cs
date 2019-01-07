@@ -35,5 +35,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
         public int StandardCode { get; set; }
         public string EpaoId { get; set; }
         public string EpaoName { get; set; }
+        public string ReasonForChange { get; set; }
     }
 }

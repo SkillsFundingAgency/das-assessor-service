@@ -74,7 +74,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         [HttpGet]
         public async Task<IActionResult> Rejected(int? pageIndex)
         {
-            var certificates = await ApiClient.GetCertificatesToBeApproved(0, pageIndex ?? 1, CertificateStatus.Draft, CertificateStatus.Rejected);
+            var certificates = await ApiClient.GetCertificatesToBeApproved(PageSize, pageIndex ?? 1, CertificateStatus.Draft, CertificateStatus.Rejected);
             var items = Mapper.Map<List<CertificateDetailApprovalViewModel>>(certificates.Items);
             var certificatesThatAreRejected = new CertificateApprovalViewModel
             {
@@ -88,17 +88,20 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         public async Task<IActionResult> Approvals(
             CertificatePostApprovalViewModel certificateApprovalViewModel)
         {
+            var approvalsValidationFailed = await ValidateReasonForChange1(certificateApprovalViewModel);
+            if (approvalsValidationFailed != null)
+                return approvalsValidationFailed;
+
             certificateApprovalViewModel.UserName = ContextAccessor.HttpContext.User
                 .FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
-             SetApprovalStatues(certificateApprovalViewModel);
-             ModifyActionUsingCurrrentStatues(certificateApprovalViewModel);
-           
+            SetPrivatelyFundedCertApprovalStatus(certificateApprovalViewModel);
+            DeterminNextActionUsingCurrrentStatus(certificateApprovalViewModel);
+
             await ApiClient.ApproveCertificates(certificateApprovalViewModel);
             return RedirectToAction(certificateApprovalViewModel.ActionHint);
         }
-
-
+        
         [HttpGet]
         public async Task<FileContentResult> ExportSentForApproval()
         {
@@ -116,12 +119,71 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         }
 
 
-        private static void SetApprovalStatues(CertificatePostApprovalViewModel certificateApprovalViewModel)
+        private async Task<IActionResult> ValidateReasonForChange1(CertificatePostApprovalViewModel certificateApprovalViewModel)
+        {
+            ValidateReasonForChange(certificateApprovalViewModel);
+            if (ModelState.IsValid) return null;
+
+            if (certificateApprovalViewModel.ApprovalResults.Any(
+                x => x.IsApproved == CertificateStatus.Draft && string.IsNullOrEmpty(x.PrivatelyFundedStatus)))
+            {
+                var certificates = await ApiClient.GetCertificatesToBeApproved(PageSize,
+                    certificateApprovalViewModel.PageIndex ?? 1, CertificateStatus.ToBeApproved, null);
+                var items = Mapper.Map<List<CertificateDetailApprovalViewModel>>(certificates.Items);
+                var certificatesToBeApproved = new CertificateApprovalViewModel
+                {
+                    ToBeApprovedCertificates = new PaginatedList<CertificateDetailApprovalViewModel>(items,
+                        certificates.TotalRecordCount,
+                        certificateApprovalViewModel.PageIndex ?? certificates.PageIndex, certificates.PageSize)
+                };
+
+                return View("~/Views/CertificateApprovals/New.cshtml", certificatesToBeApproved);
+            }
+
+            if (certificateApprovalViewModel.ApprovalResults.Any(
+                x => (x.IsApproved == CertificateStatus.ToBeApproved || x.IsApproved == CertificateStatus.Draft) &&
+                     x.PrivatelyFundedStatus == CertificateStatus.SentForApproval))
+            {
+                var certificates = await ApiClient.GetCertificatesToBeApproved(PageSize,
+                    certificateApprovalViewModel.PageIndex ?? 1, CertificateStatus.ToBeApproved,
+                    CertificateStatus.SentForApproval);
+                var items = Mapper.Map<List<CertificateDetailApprovalViewModel>>(certificates.Items);
+                var certificatesSentForApproval = new CertificateApprovalViewModel
+                {
+                    SentForApprovalCertificates = new PaginatedList<CertificateDetailApprovalViewModel>(items,
+                        certificates.TotalRecordCount,
+                        certificateApprovalViewModel.PageIndex ?? certificates.PageIndex, certificates.PageSize)
+                };
+
+                {
+                    return View("~/Views/CertificateApprovals/SentForApproval.cshtml", certificatesSentForApproval);
+                }
+            }
+
+            return null;
+        }
+
+        private void ValidateReasonForChange(CertificatePostApprovalViewModel certificateApprovalViewModel)
+        {
+            var count = 0;
+            foreach (var approvalResult in certificateApprovalViewModel.ApprovalResults)
+            {
+                //Will only have status of draft if rejected, so check reason for change is updated
+                if (string.IsNullOrEmpty(approvalResult.ReasonForChange) &&
+                    approvalResult.IsApproved == CertificateStatus.Draft)
+                {
+                    ModelState.AddModelError($"approvalResults[{count++}].ReasonForChange", "Please enter a reason for rejection");
+                }
+            }
+        }
+
+        private static void SetPrivatelyFundedCertApprovalStatus(CertificatePostApprovalViewModel certificateApprovalViewModel)
         {
             foreach (var approvalResult in certificateApprovalViewModel.ApprovalResults)
             {
                 switch (approvalResult.IsApproved)
                 {
+                    //When its a new certificate that needs approval the PrivatelyFundedStatus will always be null 
                     case CertificateStatus.ToBeApproved when approvalResult.PrivatelyFundedStatus == null:
                         approvalResult.PrivatelyFundedStatus = CertificateStatus.SentForApproval;
                         break;
@@ -139,7 +201,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             }
         }
 
-        private static void ModifyActionUsingCurrrentStatues(CertificatePostApprovalViewModel certificateApprovalViewModel)
+        private static void DeterminNextActionUsingCurrrentStatus(CertificatePostApprovalViewModel certificateApprovalViewModel)
         {
             //If we are on the New Screen
             if (certificateApprovalViewModel.ActionHint == CertificateStatus.SentForApproval)

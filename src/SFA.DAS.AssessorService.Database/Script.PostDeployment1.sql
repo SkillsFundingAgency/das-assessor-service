@@ -68,3 +68,27 @@ UPDATE [Organisations] SET [OrganisationTypeId] = 6 WHERE [EndPointAssessorOrgan
 UPDATE [Organisations] SET [OrganisationTypeId] = 9 WHERE [EndPointAssessorOrganisationId] = 'EPA0141';
 UPDATE [Organisations] SET [OrganisationTypeId] = 10 WHERE [EndPointAssessorOrganisationId] = 'EPA0159';
 UPDATE [Organisations] SET [OrganisationTypeId] = 7 WHERE [EndPointAssessorOrganisationId] = 'EPA0173';
+
+IF NOT EXISTS 
+(
+    SELECT * 
+    FROM INFORMATION_SCHEMA.COLUMNS 
+    WHERE table_name = 'Certificates'
+    AND column_name = 'PrivatelyFundedStatus'
+)
+BEGIN
+    ALTER TABLE [Certificates] ADD [PrivatelyFundedStatus] NVARCHAR(20) NULL;
+END
+GO
+
+IF NOT EXISTS 
+(
+    SELECT * 
+    FROM INFORMATION_SCHEMA.COLUMNS 
+    WHERE table_name = 'CertificateLogs'
+    AND column_name = 'WasRejected'
+)
+BEGIN
+    ALTER TABLE [CertificateLogs] ADD [WasRejected] bit NULL;
+END
+GO

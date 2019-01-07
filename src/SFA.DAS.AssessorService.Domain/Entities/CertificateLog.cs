@@ -18,5 +18,6 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public int? BatchNumber { get; set; }
 
         public string ReasonForChange { get; set; }
+        public bool? WasRejected { get; set; }
     }
 }

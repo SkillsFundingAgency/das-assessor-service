@@ -1,10 +1,12 @@
-﻿@using SFA.DAS.AssessorService.Domain.Consts;
+﻿@using Microsoft.AspNetCore.Mvc.ModelBinding
+@using SFA.DAS.AssessorService.Domain.Consts;
 @using SFA.DAS.AssessorService.Domain.Paging
 @model SFA.DAS.AssessorService.Domain.Paging.PaginatedList<SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateDetailApprovalViewModel>
 @{
     var results = Model.Items.ToList();
     var approvalresults = ViewData["ApprovalResults"] as SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateDetailApprovalViewModel[];
     var actionHint = ViewData["ActionHint"] as string;
+    var pageIndex = ViewData["PageIndex"] as int?;
 }
 <table class="table responsive table-font-xsmall table-spaced">
     <thead>
@@ -13,6 +15,10 @@
             <th>ULN</th>
             <th>Employer</th>
             <th>Training Provider</th>
+            @if (results[0]?.PrivatelyFundedStatus == CertificateStatus.Rejected)
+            {
+            <th>Reason For Change</th>
+            }
             <th>Date Requested</th>
             @if (results[0]?.PrivatelyFundedStatus != CertificateStatus.Approved)
             {
@@ -24,63 +30,66 @@
         @for (int i = 0; i < results.Count; i++)
         {
             @:<tr>
-                <td data-label="Apprentice" class="nowrap">
-                    <div role="button" tabindex="0" class="js-expand-table-row expand-table-row" data-expand-id="@results[i].Uln"><i class="arrow arrow-closed">►</i> <span>@results[i].FullName</span></div>
-                </td>
-                <td data-label="ULN">@results[i].Uln</td>
-                <td data-label="Employer">@results[i].ContactOrganisation</td>
-                <td data-label="Training Provider">@results[i].TrainingProvider</td>
-                <td data-label="Date Requested">@results[i].CreatedAt.ToString("dd/MM/yyyy")</td>
+            <td data-label="Apprentice" class="nowrap">
+                <div role="button" tabindex="0" class="js-expand-table-row expand-table-row" data-expand-id="@results[i].Uln"><i class="arrow arrow-closed">►</i> <span>@results[i].FullName</span></div>
+            </td>
+            <td data-label="ULN">@results[i].Uln</td>
+            <td data-label="Employer">@results[i].ContactOrganisation</td>
+            <td data-label="Training Provider">@results[i].TrainingProvider</td>
+            if (results[0]?.PrivatelyFundedStatus == CertificateStatus.Rejected)
+            {
+                <td data-label="Reason For Rejection">@results[i].ReasonForChange</td>
+            }
+            <td data-label="Date Requested">@results[i].CreatedAt.ToString("dd/MM/yyyy")</td>
 
 
 
-                if (approvalresults != null)
+            if (approvalresults != null)
+            {
+                approvalresults[i].IsApproved = results[i].IsApproved;
+                if (results[i].PrivatelyFundedStatus != CertificateStatus.Approved)
                 {
-                    approvalresults[i].IsApproved = results[i].IsApproved;
-                    if (results[i].PrivatelyFundedStatus != CertificateStatus.Approved)
+                    var radioId = string.Empty;
+                    if (results[0]?.PrivatelyFundedStatus != CertificateStatus.Rejected)
                     {
-                        @:<td id="td-with-radios" data-label="Action">
-                            <fieldset class="inline">
-                                @if (results[i].PrivatelyFundedStatus == null)
-                                {
-
-                                    <div class="multiple-choice">
-                                        <input asp-for=@approvalresults[i].IsApproved type="radio" value="ToBeApproved">
-                                        <label asp-for=@approvalresults[i].IsApproved>Send</label>
-                                    </div>
-                                    <div class="multiple-choice">
-                                        <input asp-for=@approvalresults[i].IsApproved type="radio" value="Draft">
-                                        <label asp-for=@approvalresults[i].IsApproved>Reject</label>
-                                    </div>
-                                }
-                                else if (results[i].PrivatelyFundedStatus == CertificateStatus.SentForApproval)
-                                {
-                                    <div class="multiple-choice">
-                                        <input asp-for=@approvalresults[i].IsApproved type="radio" value="Submitted">
-                                        <label asp-for=@approvalresults[i].IsApproved>Approve</label>
-                                    </div>
-                                    <div class="multiple-choice">
-                                        <input asp-for=@approvalresults[i].IsApproved type="radio" value="Draft">
-                                        <label asp-for=@approvalresults[i].IsApproved>Reject</label>
-                                    </div>
-                                }
-                                else
-                                {
-                                    <div>
-                                        <a asp-action="Check" asp-controller="CertificateAmend" asp-route-certificateId="@results[i].CertificateId" asp-route-stdcode="@results[i].StandardCode" asp-route-uln="@results[i].Uln" asp-route-searchstring="@results[i].Uln" asp-route-fromapproval="true">Amend certificate information</a>
-                                    </div>
-                                }
-                            </fieldset>
-                        @:</td>
+                        radioId = "td-with-radios";
                     }
+                    <td id="@radioId" data-label="Action">
+                        <fieldset class="inline">
+                            @if (results[i].PrivatelyFundedStatus == null)
+                            {
+
+                                <div class="multiple-choice">
+                                    <input asp-for=@approvalresults[i].IsApproved type="radio" value="ToBeApproved" data-hide="true" class="js-expand-table-row-for-radio" data-expand-id="@approvalresults[i].IsApproved">
+                                    <label asp-for=@approvalresults[i].IsApproved>Send</label>
+                                </div>
+                                <div class="multiple-choice">
+                                    <input asp-for=@approvalresults[i].IsApproved type="radio" value="Draft" class="js-expand-table-row-for-radio" data-expand-id="@approvalresults[i].IsApproved">
+                                    <label asp-for=@approvalresults[i].IsApproved>Reject</label>
+                                </div>
+                            }
+                            else if (results[i].PrivatelyFundedStatus == CertificateStatus.SentForApproval)
+                            {
+                                <div class="multiple-choice">
+                                    <input asp-for=@approvalresults[i].IsApproved type="radio" value="Submitted"  data-hide="true" class="js-expand-table-row-for-radio" data-expand-id="@approvalresults[i].IsApproved">
+                                    <label asp-for=@approvalresults[i].IsApproved>Approve</label>
+                                </div>
+                                <div class="multiple-choice">
+                                    <input asp-for=@approvalresults[i].IsApproved class="js-expand-table-row-for-radio" data-expand-id="@approvalresults[i].IsApproved" type="radio" value="Draft">
+                                    <label asp-for=@approvalresults[i].IsApproved>Reject</label>
+                                </div>
+                            }
+                            else
+                            {
+                                <div>
+                                    <a asp-action="Check" asp-controller="CertificateAmend" asp-route-certificateId="@results[i].CertificateId" asp-route-stdcode="@results[i].StandardCode" asp-route-uln="@results[i].Uln" asp-route-searchstring="@results[i].Uln" asp-route-fromapproval="true">Amend</a>
+                                </div>
+                            }
+                        </fieldset>
+                    </td>
+                }
 
                 @:</tr>
-
-
-
-
-
-
 
 
                 {
@@ -92,8 +101,31 @@
                 @Html.HiddenFor(x => @approvalresults[i].CertificateReference)
                 @Html.HiddenFor(x => @approvalresults[i].IsApproved)
                 @Html.HiddenFor(x => @approvalresults[i].PrivatelyFundedStatus)
+
             }
-            @Html.HiddenFor(x => @actionHint);
+            @Html.HiddenFor(x => @actionHint) ;
+            @Html.HiddenFor(x => @pageIndex) ;
+            var hidden = "js-hidden";
+            var modelStateVal = ViewData.ModelState["approvalresults["+i+"].ReasonForChange"];
+            if (modelStateVal?.ValidationState == ModelValidationState.Invalid)
+            {
+                hidden = "";
+            }
+
+            <tr class="js-expandble-cell-for-radio @hidden" aria-hidden="true">
+                <td colspan="6">
+                    <div class="expandble-cell-content">
+                        <div class="form-group" sfa-validation-for="@approvalresults[i].ReasonForChange" sfa-validationerror-class="form-group-error">
+                            <label for="@approvalresults[i].ReasonForChange">
+                                <span class="form-label-bold">Reason for rejection</span>
+                                <span class="form-hint">Please could you provide more detail as to why this certificate is rejected.</span>
+                                <span class="error-message" asp-validation-for="@approvalresults[i].ReasonForChange"></span>
+                            </label>
+                            <textarea class="form-control form-control-3-4" rows="6" sfa-validation-for="ReasonForChange" sfa-validationerror-class="form-control-error" asp-for=@approvalresults[i].ReasonForChange></textarea>
+                        </div>
+                    </div>
+                </td>
+            </tr>
             <tr class="js-expandble-cell js-hidden expandble-cell" aria-hidden="true">
                 <td colspan="5">
                     <div class="expandble-cell-content">
