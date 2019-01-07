@@ -14,11 +14,6 @@ using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.Web.Staff.Models;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels.Private;
 using SFA.DAS.Apprenticeships.Api.Types;
 
@@ -296,6 +291,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         {
             return await Get<OrganisationStandard>($"/api/ao/assessment-organisations/organisation-standard/{organisationStandardId}");
         }
+
         #region Reports
         public async Task<IEnumerable<StaffReport>> GetReportList()
         {
@@ -305,6 +301,26 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         public async Task<IEnumerable<IDictionary<string, object>>> GetReport(Guid reportId)
         {
             return await Get<IEnumerable<IDictionary<string, object>>>($"api/v1/staffreports/{reportId}");
+        }
+
+        public async Task<ReportType> GetReportTypeFromId(Guid reportId)
+        {
+            return await Get<ReportType>($"api/v1/staffreports/{reportId}/report-type");
+        }
+
+        public async Task<ReportDetails> GetReportDetailsFromId(Guid reportId)
+        {
+            return await Get<ReportDetails>($"api/v1/staffreports/{reportId}/report-details");
+        }
+
+        public async Task GatherAndCollateStandards()
+        {
+             await Post($"api/ao/update-standards", new GatherStandardsRequest());
+        }
+
+        public async Task<IEnumerable<IDictionary<string, object>>> GetDataFromStoredProcedure(string storedProcedure)
+        {
+            return await Get<IEnumerable<IDictionary<string, object>>>($"api/v1/staffreports/report-content/{storedProcedure}");
         }
         #endregion
     }

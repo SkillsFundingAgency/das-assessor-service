@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -24,12 +25,19 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
 
         public async Task<string> Handle(GatherStandardsRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Gathering Standard Details from all sources in the handler");
-            var results =  await _standardService.GatherAllStandardDetails();
-            _logger.LogInformation("Upserting gathered standards");
-            var responseDetails = await _standardRepository.UpsertStandards(results.ToList());
+            var minimumHoursBetweenCollations = 24;
+            var dateOfLastCollation = await _standardRepository.GetDateOfLastStandardCollation();
+            if (dateOfLastCollation == null || dateOfLastCollation.Value.AddHours(minimumHoursBetweenCollations) < DateTime.Now)
+            {
+                _logger.LogInformation("Gathering Standard Details from all sources in the handler");
+                var results = await _standardService.GatherAllStandardDetails();
+                _logger.LogInformation("Upserting gathered standards");
+                var responseDetails = await _standardRepository.UpsertStandards(results.ToList());
+                _logger.LogInformation("Processing of Standards Upsert complete");
+                return responseDetails;
+            }
 
-            return responseDetails;
+            return $"Collation was last done on {dateOfLastCollation.Value}.  There is a minimum of {minimumHoursBetweenCollations} hours between collation runs";
         }
     }
 }

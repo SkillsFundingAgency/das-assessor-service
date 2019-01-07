@@ -39,6 +39,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Azure", "Azure", "{F85262CD
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deployments", "deployments", "{3B16AB0E-5C83-4E5D-82B0-7021AB4C5B9F}"
 	ProjectSection(SolutionItems) = preProject
+		..\azure\deployments\apim-api-resources.json = ..\azure\deployments\apim-api-resources.json
+		..\azure\deployments\apim-config-resources.json = ..\azure\deployments\apim-config-resources.json
+		..\azure\deployments\apim-resources.json = ..\azure\deployments\apim-resources.json
 		..\azure\deployments\app-service-resources.json = ..\azure\deployments\app-service-resources.json
 		..\azure\deployments\function-app-resources.json = ..\azure\deployments\function-app-resources.json
 		..\azure\deployments\service-bus-resources.json = ..\azure\deployments\service-bus-resources.json
@@ -68,6 +71,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Web.Extensions", "SFA.DAS.AssessorService.Web.Extensions\SFA.DAS.AssessorService.Web.Extensions.csproj", "{33F5D8D1-8C5C-4863-A049-E165C1167B2B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.PrintFunction.Tests", "SFA.DAS.AssessorService.PrintFunction.Tests\SFA.DAS.AssessorService.PrintFunction.Tests.csproj", "{55020A23-70EB-42D3-B7FB-E1156DF6D810}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.EpaoDataSync", "SFA.DAS.AssessorService.EpaoDataSync\SFA.DAS.AssessorService.EpaoDataSync.csproj", "{2CD0ED7B-43B3-4736-8A59-086AD47C41EF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -173,6 +178,10 @@ Global
 		{55020A23-70EB-42D3-B7FB-E1156DF6D810}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{55020A23-70EB-42D3-B7FB-E1156DF6D810}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{55020A23-70EB-42D3-B7FB-E1156DF6D810}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2CD0ED7B-43B3-4736-8A59-086AD47C41EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CD0ED7B-43B3-4736-8A59-086AD47C41EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CD0ED7B-43B3-4736-8A59-086AD47C41EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CD0ED7B-43B3-4736-8A59-086AD47C41EF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

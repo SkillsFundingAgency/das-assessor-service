@@ -26,11 +26,7 @@
         <div class="info-summary">
             <h2 class="heading-medium">Please check before submitting</h2>
             <p>The apprentice and apprenticeship details will be printed on the certificate.</p>
-            @if (Model.PrivatelyFundedStatus != CertificateStatus.Rejected & Model.Status != CertificateStatus.Draft & !Model.FromApproval)
-            {
-                <p>If the name, standard or level is incorrect, you need to agree on the correct details along with the training provider and the employer. The training provider needs to then update the Individualised Learner Record (<abbr title="Individualised Learner Record">ILR</abbr>).</p>
-            }
-        </div>
+         </div>
 
         <h2 class="heading-medium">
             Apprentice details
@@ -45,12 +41,9 @@
                     @Model.GivenNames
                 </dd>
                 <dd class="cya-change">
-                    @if (Model.IsPrivatelyFunded)
-                    {
-                        <a asp-controller="CertificatePrivateFirstName" asp-action="FirstName" asp-route-fromapproval=@Model.FromApproval asp-route-certificateId=@Model.Id asp-route-stdcode=@Model.StandardCode asp-route-uln=@Model.Uln asp-route-searchstring=@Model.SearchString>
-                            Change<span class="visually-hidden"> first name</span>
-                        </a>
-                    }
+                    <a asp-controller="CertificatePrivateFirstName" asp-action="FirstName" asp-route-fromapproval=@Model.FromApproval asp-route-certificateId=@Model.Id asp-route-stdcode=@Model.StandardCode asp-route-uln=@Model.Uln asp-route-searchstring=@Model.SearchString>
+                        Change<span class="visually-hidden"> first name</span>
+                    </a>
                 </dd>
             </div>
 
@@ -62,12 +55,9 @@
                     @Model.FamilyName
                 </dd>
                 <dd class="cya-change">
-                    @if (Model.IsPrivatelyFunded)
-                    {
-                        <a asp-controller="CertificatePrivateLastName" asp-action="LastName" asp-route-fromapproval=@Model.FromApproval asp-route-certificateId=@Model.Id asp-route-stdcode=@Model.StandardCode asp-route-uln=@Model.Uln asp-route-searchstring=@Model.SearchString>
-                            Change<span class="visually-hidden"> last name</span>
-                        </a>
-                    }
+                    <a asp-controller="CertificatePrivateLastName" asp-action="LastName" asp-route-fromapproval=@Model.FromApproval asp-route-certificateId=@Model.Id asp-route-stdcode=@Model.StandardCode asp-route-uln=@Model.Uln asp-route-searchstring=@Model.SearchString>
+                        Change<span class="visually-hidden"> last name</span>
+                    </a>
                 </dd>
             </div>
 

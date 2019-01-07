@@ -22,6 +22,10 @@
         public string ProductId => AzureProductId?.Replace("/products/", string.Empty);
         public string Name { get; set; }
         public string State { get; set; }
+        [JsonIgnore]
+        public bool IsActive => string.Equals("active", State);
+        [JsonIgnore]
+        public bool IsCancelled => string.Equals("cancelled", State);
         public DateTime CreatedDate { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? ExpirationDate { get; set; }
@@ -30,5 +34,6 @@
         public string PrimaryKey { get; set; }
         public string SecondaryKey { get; set; }
         public string StateComment { get; set; }
+        public string ApiEndPointUrl { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿@using SFA.DAS.AssessorService.Web.Staff.Controllers
+@using SFA.DAS.AssessorService.Web.Staff.Domain
 @model RegisterViewAndEditOrganisationViewModel
 @{
 ViewBag.Title = "View Organisation";
@@ -38,6 +39,20 @@ Layout = "_Layout";
                             <td><span class="bold-small">Legal Name</span></td>
                             <td>@Model.LegalName</td>
                         </tr>
+                        @if (@Model.CompanyNumber != null)
+                        {
+                            <tr>
+                                <td><span class="bold-small">Company number</span></td>
+                                <td>@Model.CompanyNumber</td>
+                            </tr>
+                        }
+                        @if (@Model.CharityNumber != null)
+                        {
+                            <tr>
+                                <td><span class="bold-small">Charity number</span></td>
+                                <td>@Model.CharityNumber</td>
+                            </tr>
+                        }
                         <tr>
                             <td><span class="bold-small">Website</span></td>
                             <td>@Model.WebsiteLink</td>
@@ -47,39 +62,39 @@ Layout = "_Layout";
                             <td>
                                 @if (@Model.Address1 != null)
                                 {
-                                @Model.Address1<br />
+                                    @Model.Address1<br />
                                 }
                                 @if (@Model.Address2 != null)
                                 {
-                                @Model.Address2<br />
+                                    @Model.Address2<br />
                                 }
                                 @if (@Model.Address3 != null)
                                 {
-                                @Model.Address3<br />
+                                    @Model.Address3<br />
                                 }
                                 @if (@Model.Address4 != null)
                                 {
-                                @Model.Address4<br />
+                                    @Model.Address4<br />
                                 }
                                 @if (@Model.Postcode != null)
                                 {
-                                @Model.Postcode
+                                    @Model.Postcode
                                 }
                             </td>
                         </tr>
-                    <tr>
-                        <td><span class="bold-small">Primary contact</span></td>
-                        <td>@Model.PrimaryContactName</td>
-                    </tr>
-                    <tr>
-                        <td><span class="bold-small">Status</span></td>
-                        <td>@Model.Status</td>
-                    </tr>
+                        <tr>
+                            <td><span class="bold-small">Primary contact</span></td>
+                            <td>@Model.PrimaryContactName</td>
+                        </tr>
+                        <tr>
+                            <td><span class="bold-small">Status</span></td>
+                            <td>@Model.Status</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" sfa-show-for-roles="@string.Join(",", Roles.CertificationTeam, Roles.AssessmentDeliveryTeam)">
                 <a class="button" href="/register/edit-organisation/@Model.OrganisationId">Edit</a>
             </div>
         </div>
@@ -125,7 +140,7 @@ Layout = "_Layout";
             <span>There are no contacts</span>
             }
         </div>
-        <div class="form-group">
+        <div class="form-group" sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">
             <a class="button" href="/register/add-contact/@Model.OrganisationId">Add New Contact</a>
         </div>
     </div>
@@ -166,11 +181,11 @@ Layout = "_Layout";
         <div class="form-group">
             @if (@Model.Contacts.Count > 0)
             {
-                <a class="button" href="/register/search-standards/@Model.OrganisationId">Add New Standard</a>
+                <a class="button" href="/register/search-standards/@Model.OrganisationId"  sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">Add New Standard</a>
             }
             else
             {
-                <span>You can add standards when there are 1 or more contacts added to the organisation</span>
+                <span  sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">You can add standards when there are 1 or more contacts added to the organisation</span>
             }
         </div>
     </div>

@@ -8,6 +8,7 @@
     [Username] NVARCHAR(50) NOT NULL,
 	[BatchNumber] [int] NULL,
     [ReasonForChange] NVARCHAR(MAX) NULL, 
+	[WasRejected] BIT NULL, 
     CONSTRAINT [PK_CertificateLogs] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
@@ -17,6 +18,11 @@ GO
 
 ALTER TABLE [dbo].[CertificateLogs]  ADD  CONSTRAINT [FK_CertificateLogs_Certificates_CertificateId] FOREIGN KEY([CertificateId])
 REFERENCES [dbo].[Certificates] ([Id]);
-
 GO
- ALTER TABLE [dbo].[CertificateLogs] CHECK CONSTRAINT [FK_CertificateLogs_Certificates_CertificateId]
+
+ALTER TABLE [dbo].[CertificateLogs] CHECK CONSTRAINT [FK_CertificateLogs_Certificates_CertificateId]
+GO
+
+CREATE NONCLUSTERED INDEX [nci_wi_CertificateLogs_CertificateId_Username] ON [dbo].[CertificateLogs] ([CertificateId], [Username])
+INCLUDE ([Action], [EventTime], [Status], [CertificateData], [BatchNumber], [ReasonForChange]) WITH (ONLINE = ON)
+GO

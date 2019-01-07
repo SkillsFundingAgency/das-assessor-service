@@ -18,5 +18,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Register
         public string Address3 { get; set; }
         public string Address4 { get; set; }
         public string Postcode { get; set; }
+        public string CompanyNumber { get; set; }
+        public string CharityNumber { get; set; }
     }
 }

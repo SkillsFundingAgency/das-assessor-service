@@ -90,6 +90,13 @@
     <Build Include="StoredProcedures\StaffReports_MonthlySummary.sql" />
     <Build Include="StoredProcedures\StaffReports_WeeklySummary.sql" />
     <Build Include="Tables\StandardCollation.sql" />
+    <Build Include="Tables\IlrsCopy.sql" />
+    <Build Include="StoredProcedures\EPAO_Register_register_organisation.sql" />
+    <Build Include="StoredProcedures\EPAO_Register_register_standards.sql" />
+    <Build Include="StoredProcedures\EPAO_Register_register_delivery_areas.sql" />
+    <Build Include="StoredProcedures\EPAO_Register_Data_Definitions.sql" />
+    <Build Include="StoredProcedures\EPAO_Register_list_of_organisations.sql" />
+    <Build Include="StoredProcedures\EPAO_Register_list_of_standards.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />
