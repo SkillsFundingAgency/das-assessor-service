@@ -1,4 +1,5 @@
 using FluentValidation;
+using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Web.Staff.Controllers.Apply;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels;
 
@@ -10,11 +11,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators
         {
             RuleFor(vm => vm).Custom((vm, context) =>
             {
-                if (vm.Grade.SelectedGrade == "Inadequate" && string.IsNullOrWhiteSpace(vm.Grade.InadequateMoreInformation))
+                if (vm.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate && string.IsNullOrWhiteSpace(vm.Grade.InadequateMoreInformation))
                 {
                     context.AddFailure("Grade.InadequateMoreInformation", "Please enter a value for Inadequate");
                 }
-                else if (vm.Grade.SelectedGrade == "Satisfactory" && string.IsNullOrWhiteSpace(vm.Grade.SatisfactoryMoreInformation))
+                else if (vm.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Satisfactory && string.IsNullOrWhiteSpace(vm.Grade.SatisfactoryMoreInformation))
                 {
                     context.AddFailure("Grade.SatisfactoryMoreInformation", "Please enter a value for Satisfactory");
                 }
