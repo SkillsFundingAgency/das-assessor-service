@@ -114,10 +114,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             return await Get<ApplicationSection>($"Application/{applicationId}/User/null/Sequences/{sequenceId}/Sections/{sectionId}");
         }
 
-        public async Task EvaluateSection(Guid applicationId, int sequenceId, int sectionId, string feedbackComment, bool isSectionComplete)
+        public async Task EvaluateSection(Guid applicationId, int sequenceId, int sectionId, Feedback feedback, bool isSectionComplete)
         {
             await Post($"Review/Applications/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Evaluate",
-                new { feedbackComment, isSectionComplete });
+                new { feedback, isSectionComplete });
         }
 
         public async Task<Page> GetPage(Guid applicationId, int sequenceId, int sectionId, string pageId)

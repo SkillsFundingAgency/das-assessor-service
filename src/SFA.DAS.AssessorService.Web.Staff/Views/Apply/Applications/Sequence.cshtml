@@ -18,13 +18,13 @@
                     continue;
                 }
             <li>
-                @if (applicationSection.HasNewFeedback)
+                @if (applicationSection.HasNewPageFeedback || applicationSection.HasNewSectionFeedback)
                 {
                 <div class="govuk-tag govuk-tag--float-right">
                     Feedback added
                 </div>
                 }
-                @if (applicationSection.HasReadFeedback)
+                @if (applicationSection.HasCompletedPageFeedback || applicationSection.HasCompletedSectionFeedback)
                 {
                 <div class="govuk-tag govuk-tag--float-right">
                     Answer updated

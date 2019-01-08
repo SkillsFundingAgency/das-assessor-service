@@ -12,7 +12,7 @@
 
         <div class="form-group">
             <form asp-controller="Application" asp-action="Return" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId">
-                @if (Model.Sections.All(s => s.FeedbackComment == null)) // In the future this is likely to be if(!Model.HasNewFeedback)
+                @if (Model.Sections.All(s => !s.HasNewPageFeedback) && Model.Sections.All(s => !s.HasNewSectionFeedback))
                 {
                     <div class="form-group">
                         <span>You are about to approve the first stage of this application, without comments. This means that the applicant will be able to apply for a standard. You are also satisfied with the information the applicant has provided so far, and require no further information.</span>
@@ -52,9 +52,10 @@
 
                     @foreach (var sec in Model.Sections)
                     {
+                        var feedback = sec.QnAData.Feedback.FirstOrDefault(f => f.IsNew);
                         <div class="form-group">
                             <label class="form-label-bold">@sec.LinkTitle</label>
-                            <span>@(sec.FeedbackComment ?? "No comments.")</span>
+                            <span>@(feedback?.Message ?? "No comments.")</span>
                         </div>
                     }
 

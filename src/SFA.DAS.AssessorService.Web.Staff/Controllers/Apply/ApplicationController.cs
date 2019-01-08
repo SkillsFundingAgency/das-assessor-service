@@ -56,11 +56,16 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
         }
 
         [HttpPost("/Applications/{applicationId}/Sequence/{sequenceId}/Section/{sectionId}/Evaluate")]
-        public async Task<IActionResult> EvaluateSection(Guid applicationId, int sequenceId, int sectionId, string feedbackComment, bool applyFeedbackComment, bool isSectionComplete)
+        public async Task<IActionResult> EvaluateSection(Guid applicationId, int sequenceId, int sectionId, string feedbackMessage, bool addFeedback, bool isSectionComplete)
         {
-            if (!applyFeedbackComment) feedbackComment = null;
+            Feedback feedback = null;
 
-            await _applyApiClient.EvaluateSection(applicationId, sequenceId, sectionId, feedbackComment, isSectionComplete);
+            if (addFeedback && !string.IsNullOrEmpty(feedbackMessage))
+            {
+                feedback = new Feedback { Message = feedbackMessage, From = "Staff member", Date = DateTime.UtcNow };
+            }
+
+            await _applyApiClient.EvaluateSection(applicationId, sequenceId, sectionId, feedback, isSectionComplete);
 
             return RedirectToAction("Application", new { applicationId });
         }

@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public Guid ApplicationId { get; set; }
         public int SectionId { get; set; }
         public int SequenceId { get; set; }
-        public string FeedbackComment { get; set; }
+
         public QnAData QnAData { get; set; }
 
         public int PagesComplete
@@ -23,21 +23,11 @@ namespace SFA.DAS.AssessorService.ApplyTypes
             get { return QnAData.Pages.Count(p => p.Active); }
         }
 
-        public bool HasNewFeedback
-        {
-            get
-            {
-                return QnAData.Pages.Any(p => p.HasFeedback && p.Feedback.Any(f => !f.IsCompleted));
-            }
-        }
+        public bool HasNewPageFeedback => QnAData.Pages.Any(p => p.HasNewFeedback);
+        public bool HasCompletedPageFeedback => QnAData.Pages.Any(p => p.HasCompletedFeedback);
 
-        public bool HasReadFeedback
-        {
-            get
-            {
-                return QnAData.Pages.Any(p => p.HasFeedback && p.Feedback.Any(f => f.IsCompleted));
-            }
-        }
+        public bool HasNewSectionFeedback => QnAData.HasNewFeedback;
+        public bool HasCompletedSectionFeedback => QnAData.HasCompletedFeedback;
 
         public string Title { get; set; }
         public string LinkTitle { get; set; }

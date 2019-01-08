@@ -26,6 +26,8 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         
         public List<Feedback> Feedback { get; set; }
         public bool HasFeedback => Feedback?.Any() ?? false;
+        public bool HasNewFeedback => HasFeedback && Feedback.Any(f => f.IsNew || !f.IsCompleted);
+        public bool HasCompletedFeedback => HasFeedback && Feedback.Any(f => f.IsCompleted);
 
         public bool ContainsUploadQuestions
         {
@@ -34,23 +36,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
                 return Questions.Any(q => q.Input.Type == "FileUpload");
             }
         }
-        
-        public bool HasNewFeedback
-        {
-            get
-            {
-                return HasFeedback && Feedback.Any(f => !f.IsCompleted);
-            }
-        }
-        
-        public bool HasReadFeedback
-        {
-            get
-            {
-                return HasFeedback && Feedback.Any(f => f.IsCompleted);
-            }
-        }
-        
+                
         public List<DisplayAnswerPage> DisplayAnswerPages
         {
             get
