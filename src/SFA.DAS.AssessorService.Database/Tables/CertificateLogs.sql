@@ -8,6 +8,7 @@
     [Username] NVARCHAR(50) NOT NULL,
 	[BatchNumber] [int] NULL,
     [ReasonForChange] NVARCHAR(MAX) NULL, 
+	[WasRejected] BIT NULL, 
     CONSTRAINT [PK_CertificateLogs] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
