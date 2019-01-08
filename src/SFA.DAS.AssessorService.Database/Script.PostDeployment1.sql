@@ -202,3 +202,9 @@ insert into OrganisationStandardDeliveryArea (OrganisationStandardId, DeliveryAr
 			(select id from organisationStandard where EndPointAssessorOrganisationId='EPA0057' and StandardCode=318) as osid, id, 'Live' from deliveryArea
 END
 
+IF EXISTS(SELECT 1 FROM sys.columns
+         WHERE Name = N'WasRejected'
+         AND Object_ID = OBJECT_ID(N'certificateLogs'))
+BEGIN
+    ALTER TABLE [CertificateLogs] DROP COLUMN [WasRejected]
+END
