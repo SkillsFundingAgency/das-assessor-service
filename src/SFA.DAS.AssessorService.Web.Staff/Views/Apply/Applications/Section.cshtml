@@ -64,15 +64,15 @@
                                     }
                                 }
                             </dd>
-                             @* NOTE: FOR NOW THIS SECTION IS NOT TO BE SHOWN
+                              
                             <dd class="cya-change das-cya-change--responsive">
-                                @if (pg.HasNewPageFeedback)
+                                @if (pg.HasNewFeedback)
                                 {
                                     <div class="govuk-tag form-group">
                                         Feedback added
                                     </div>
                                 }
-                                @if (pg.HasCompletedPageFeedback)
+                                @if (pg.HasCompletedFeedback)
                                 {
                                     <div class="govuk-tag form-group">
                                         Answer updated
@@ -81,7 +81,7 @@
 
                                 <p>
                                     <a class="nowrap" href="@Url.Action("Page", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = pg.PageId})">
-                                        @if (pg.HasNewPageFeedback)
+                                        @if (pg.HasNewFeedback)
                                         {
                                             <text>View or add feedback</text>
                                         }
@@ -92,7 +92,7 @@
                                     </a>
                                 </p>
                             </dd>
-                            *@
+                            
                         </div>
                     }
                 </dl>
