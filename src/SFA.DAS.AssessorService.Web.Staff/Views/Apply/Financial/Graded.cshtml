@@ -1,7 +1,7 @@
 @model SFA.DAS.AssessorService.ApplyTypes.ApplicationSection
 
 @{
-    ViewBag.Title = "title";
+    ViewBag.Title = "Evaluation submitted";
 }
 
 
@@ -16,12 +16,12 @@
                 </div>
             </div>
             
-            <p class="govuk-body">You can view previous evaluations, including this one in the <a href="@Url.Action("PreviousApplications","Financial")">previous assessments</a> area.</p>
+            <p class="govuk-body">You can view previous evaluations, including this one in the <a asp-action="PreviousApplications" asp-controller="Financial">previous assessments</a> area.</p>
 
             <h3 class="govuk-heading-m">What do you want to do next?</h3>
 
             <p class="govuk-body">
-                <a href="@Url.Action("NewApplications", "Financial")">View new applications</a>
+                <a asp-action="NewApplications" asp-controller="Financial">View new applications</a>
             </p>
             <p class="govuk-body">
                 <a asp-action="Index" asp-controller="Dashboard">Return to account home</a>
