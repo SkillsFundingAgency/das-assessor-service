@@ -52,11 +52,28 @@
 
                     @foreach (var sec in Model.Sections)
                     {
-                        var feedback = sec.QnAData.Feedback.FirstOrDefault(f => f.IsNew);
-                        <div class="form-group">
-                            <label class="form-label-bold">@sec.LinkTitle</label>
-                            <span>@(feedback?.Message ?? "No comments.")</span>
-                        </div>
+                    <div class="form-group">
+                        <label class="form-label-bold">@sec.LinkTitle</label>
+                        @if (!sec.HasNewSectionFeedback && !sec.HasNewPageFeedback)
+                        {
+                            <span>No comments.</span>
+                        }
+                        else
+                        {
+                            foreach (var newSectionFeedback in sec.QnAData.Feedback.Where(f => f.IsNew))
+                            {
+                                <p>@newSectionFeedback.Message</p>
+                            }
+
+                            foreach (var pageWithNewFeedback in sec.QnAData.Pages.Where(p => p.HasNewFeedback))
+                            {
+                                foreach (var newPageFeedback in pageWithNewFeedback.Feedback.Where(f => f.IsNew))
+                                {
+                                    <p>@pageWithNewFeedback.LinkTitle : @newPageFeedback.Message</p>
+                                }
+                            }
+                        }
+                    </div>
                     }
 
                     <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
