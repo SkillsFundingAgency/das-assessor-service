@@ -1,0 +1,29 @@
+@{
+    ViewBag.Title = "Feedback Sent";
+}
+
+<main class="govuk-main-wrapper govuk-main-wrapper--l" id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <div class="govuk-panel govuk-panel--confirmation">
+                <h1 class="govuk-panel__title">Feedback sent</h1>
+                <div class="govuk-panel__body">
+                    Any email has been sent to the applicant.
+                </div>
+            </div>
+
+            <h3 class="govuk-heading-m">What do you want to do next?</h3>
+
+            <p class="govuk-body">
+                <a asp-action="Applications" asp-controller="Application">View new applications</a>
+            </p>
+            <p class="govuk-body">
+                <a asp-action="Index" asp-controller="Dashboard">Return to account home</a>
+            </p>
+            <p class="govuk-body">
+                <a href="https://urltosurvey">What did you think of this service?</a> (takes 30 seconds)
+            </p>
+        </div>
+    </div>
+</main>

@@ -107,7 +107,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
         {
             await _applyApiClient.ReturnApplication(applicationId, sequenceId, returnType);
 
-            return RedirectToAction("Applications");
+            return RedirectToAction("Returned", new { applicationId });
+        }
+
+        [HttpGet("/Applications/Returned")]
+        public IActionResult Returned(Guid applicationId)
+        {
+            return View("~/Views/Apply/Applications/Returned.cshtml");
         }
     }
 }
