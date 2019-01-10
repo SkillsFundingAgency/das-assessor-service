@@ -6,26 +6,33 @@
 }
 
 
-<a href="@Url.Action("Dashboard", "Financial")" class="govuk-back-link">Back</a>
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <a href="@Url.Action("Dashboard", "Financial")" class="link-back">Return to account home</a>
 
-<h2>Previous applications</h2>
-
-<table>
-    <tr>
-        <th>Applying organisation</th>
-        <th>Date reviewed</th>
-        <th>Grade</th>
-        <th>Reviewer</th>
-        <th></th>
-    </tr>
-    @foreach (var application in Model)
-    {
-        <tr>
-            <td>@application.ApplyingOrganisationName</td>
-            <td>@application.GradedDate.ToShortDateString()</td>
-            <td>@application.Grade</td>
-            <td>@application.GradedBy</td>
-            <td><a asp-action="ViewGradedApplication" asp-controller="Financial" asp-route-applicationId="@application.ApplicationId">@application.LinkText</a></td>
-        </tr>
-    }
-</table>
+        <h1 class="heading-xlarge">Previous applications</h1>
+    </div>
+</div>
+<div class="grid-row">
+    <div class="column-full">
+        <table>
+            <tr>
+                <th>Applying organisation</th>
+                <th>Date reviewed</th>
+                <th>Grade</th>
+                <th>Reviewer</th>
+                <th></th>
+            </tr>
+            @foreach (var application in Model)
+            {
+                <tr>
+                    <td>@application.ApplyingOrganisationName</td>
+                    <td>@application.GradedDate.ToShortDateString()</td>
+                    <td>@application.Grade</td>
+                    <td>@application.GradedBy</td>
+                    <td class="numeric"><a asp-action="ViewGradedApplication" asp-controller="Financial" asp-route-applicationId="@application.ApplicationId">@application.LinkText</a></td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>
