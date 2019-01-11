@@ -1,0 +1,105 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model object
+
+@{
+    ViewData["Title"] = "ACME Assessments";
+    Layout = "_DashboardLayout";
+}
+
+<div>
+    <div class="grid-row">
+        <div class="column-two-thirds">
+            <h1 class="heading-large">Assessments</h1>
+        </div>
+    </div>
+    <div class="grid-row">
+        <div class="column-full">
+            <nav class="app-navigation govuk-clearfix">
+                <ul class="app-navigation__list">
+                    <li class="app-navigation--current-page">
+                        <a asp-controller="Dashboard" asp-action="">Dashboard</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Dashboard" asp-action="">Record a grade</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Dashboard" asp-action="">Completed EPAs</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Dashboard" asp-action="">Standards</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Dashboard" asp-action="">Pipeline</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Dashboard" asp-action="">Users</a>
+                    </li>
+                    <li>
+                        <a asp-controller="Dashboard" asp-action="">Organisation</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="column-one-third">
+            <div class="dashboard-box">
+                <div class="dashboard-box-content">
+                    <div class="data">
+                        <span class="data-item bold-xxlarge">324</span>
+                        <span class="data-item bold-small">Assessments</span>
+                    </div>
+                    <div>
+                        <a href="">Record an EPA grade</a>
+                        <br>
+                        <a href="">Show completed EPAs</a>
+                    </div>
+                </div>  
+            </div>
+        </div>
+        <div class="column-one-third">
+            <div class="dashboard-box">
+                <div class="dashboard-box-content">
+                    <div class="data">
+                        <span class="data-item bold-xxlarge">9</span>
+                        <span class="data-item bold-small">Standards</span>
+                    </div>
+                    <div>
+                        <a href="">Standards you are approved for</a>
+                        <br>
+                        <a href="">Apply to assess a new standard</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="column-one-third">
+            <div class="dashboard-box">
+                <div class="dashboard-box-content">
+                    <div class="data">
+                        <span class="data-item bold-xxlarge">120</span>
+                        <span class="data-item bold-small ">Pipeline for EPAs</span>
+                    </div>
+                    <div>
+                        <a href="">View your EPA pipeline</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="grid-row">
+        <div class="column-full">
+            <div class="dashboard-box">
+                <div class="dashboard-box-content">
+                    <div class="data">
+                        <span class="data-item bold-large">Users</span>
+                    </div>
+                    <div>
+                        <a href="">Manage Users</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+

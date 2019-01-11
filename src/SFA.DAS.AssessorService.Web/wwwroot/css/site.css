@@ -1203,3 +1203,39 @@ table.responsive tr.total {
     display: inline-block;
   }
 }
+
+/*Dashboard*/
+
+.dashboard-box {
+    margin-top: 0.9em;
+    padding: 0.2em;
+    border: 1px solid #6F777B;
+    height: 11.0em;
+}
+
+.dashboard-box-content {
+    padding: 0.8em;
+}
+
+div.data {
+    color: #006435;
+}
+
+@media screen and  (max-width: 1020px) {
+    .dashboard-box {
+        height: 13.5em;
+    }
+}
+
+
+@media screen and  (max-width: 769px) {
+    .dashboard-box {
+        height: 14.5em;
+    }
+}
+
+@media screen and (max-width: 641px) {
+    .dashboard-box {
+        height: 11.5em;
+    }
+}
