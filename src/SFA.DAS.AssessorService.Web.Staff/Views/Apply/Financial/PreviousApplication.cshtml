@@ -13,20 +13,20 @@
 
 <table>
     <thead>
-    <tr>
-        <th>Grade</th>
-        <th>Date reviewed</th>
-        <th>Comments</th>
-        <th>Reviewer</th>
-    </tr>
+        <tr>
+            <th>Grade</th>
+            <th>Date reviewed</th>
+            <th>Comments</th>
+            <th>Reviewer</th>
+        </tr>
     </thead>
     <tbody>
-    <tr>
-        <td>@Model.Grade.SelectedGrade</td>
-        <td>@Model.Grade.GradedDateTime.ToShortDateString()</td>
-        <td>@(Model.Grade.InadequateMoreInformation ?? Model.Grade.SatisfactoryMoreInformation ?? "")</td>
-        <td>@Model.Grade.GradedBy</td>
-    </tr>
+        <tr>
+            <td>@Model.Grade.SelectedGrade</td>
+            <td>@Model.Grade.GradedDateTime.ToShortDateString()</td>
+            <td>@(Model.Grade.InadequateMoreInformation ?? Model.Grade.SatisfactoryMoreInformation ?? "")</td>
+            <td>@Model.Grade.GradedBy</td>
+        </tr>
     </tbody>
 </table>
 
@@ -58,3 +58,7 @@
         }
     }
 </table>
+
+<div class="form-group">
+    <a asp-controller="Financial" asp-action="PreviousApplications" class="govuk-button">Return to previous applications</a>
+</div>

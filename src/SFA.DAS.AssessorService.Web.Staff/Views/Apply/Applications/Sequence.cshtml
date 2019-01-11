@@ -55,5 +55,9 @@
                 <button class="button" type="submit">Complete review</button>
             </form>
         }
+
+        <div class="form-group">
+            <a href="@Url.Action("Application", "Application", new { applicationId = Model.ApplicationId })" class="govuk-button">Return to application overview</a>
+        </div>
     </div>
 </div>
