@@ -109,7 +109,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                     OverviewOfRole = ifaStandard?.OverviewOfRole,
                     IsActiveStandardInWin = winStandard?.IsActiveStandard,
                     FatUri =  winStandard?.Uri,
-                    IfaUri =  ifaStandard?.Uri
+                    IfaUri =  ifaStandard?.Uri,
+                    AssessmentPlanUrl = ifaStandard?.AssessmentPlanUrl
                 }
             };
         }
