@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using SFA.DAS.AssessorService.Web.Staff.Domain;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
-using SFA.DAS.AssessorService.Web.Staff.ViewModels;
+using SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Financial;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
 {
