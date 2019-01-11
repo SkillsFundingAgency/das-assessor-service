@@ -5,23 +5,32 @@
     Layout = "_Layout";
 }
 
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <a href="@Url.Action("Dashboard", "Financial")" class="link-back">Return to account home</a>
 
-<a href="@Url.Action("Dashboard", "Financial")" class="govuk-back-link">Back</a>
+        <h1 class="heading-xlarge">New applications</h1>
+    </div>
+</div>
+<div class="grid-row">
+    <div class="column-full">
+        <table>
+            <thead>
+                <tr>
+                    <th>Applying organisation</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            @foreach (var application in Model)
+            {
+                <tr>
+                    <td>@application.ApplyingOrganisationName</td>
+                    <td>@application.Status</td>
+                    <td class="numeric"><a asp-action="ViewApplication" asp-controller="Financial" asp-route-applicationId="@application.ApplicationId">@application.LinkText</a></td>
+                </tr>
+            }
+        </table>
 
-<h2>New applications</h2>
-
-<table>
-    <tr>
-        <th>Applying organisation</th>
-        <th>Status</th>
-        <th></th>
-    </tr>
-    @foreach (var application in Model)
-    {
-        <tr>
-            <td>@application.ApplyingOrganisationName</td>
-            <td>@application.Status</td>
-            <td><a asp-action="ViewApplication" asp-controller="Financial" asp-route-applicationId="@application.ApplicationId">@application.LinkText</a></td>
-        </tr>
-    }
-</table>
+    </div>
+</div>
