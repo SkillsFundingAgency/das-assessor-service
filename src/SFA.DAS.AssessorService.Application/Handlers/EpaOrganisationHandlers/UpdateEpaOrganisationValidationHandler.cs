@@ -37,7 +37,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 Address2 = request.Address2,
                 Address3 = request.Address3,
                 Address4 = request.Address4,
-                Postcode = request.Postcode
+                Postcode = request.Postcode,
+                CompanyNumber = request.CompanyNumber,
+                CharityNumber = request.CharityNumber
             });
         }
     }

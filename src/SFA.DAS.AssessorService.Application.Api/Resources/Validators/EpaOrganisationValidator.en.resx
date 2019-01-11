@@ -237,4 +237,16 @@
   <data name="ContactDetailsAreDuplicates" xml:space="preserve">
     <value>There is already a contact with this name, email and phone number</value>
   </data>
+  <data name="OrganisationCharityNumberAlreadyUsed" xml:space="preserve">
+    <value>There is already an organisation with this charity number</value>
+  </data>
+  <data name="OrganisationCompanyNumberAlreadyUsed" xml:space="preserve">
+    <value>There is already an organisation with this company number</value>
+  </data>
+  <data name="OrganisationCharityNumberNotValid" xml:space="preserve">
+    <value>The charity commission number must contain only numbers</value>
+  </data>
+  <data name="OrganisationCompanyNumberNotValid" xml:space="preserve">
+    <value>The company number must be 8 numbers, or 2 letters followed by 6 numbers</value>
+  </data>
 </root>

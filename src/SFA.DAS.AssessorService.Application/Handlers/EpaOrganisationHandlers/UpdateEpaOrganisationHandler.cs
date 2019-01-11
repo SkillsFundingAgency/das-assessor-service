@@ -18,17 +18,32 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
         private readonly IRegisterRepository _registerRepository;
         private readonly ILogger<UpdateEpaOrganisationHandler> _logger;
         private readonly ISpecialCharacterCleanserService _cleanser;
+        private readonly IEpaOrganisationValidator _validator;
         
-        public UpdateEpaOrganisationHandler(IRegisterRepository registerRepository,  ILogger<UpdateEpaOrganisationHandler> logger, ISpecialCharacterCleanserService cleanser)
+        public UpdateEpaOrganisationHandler(IRegisterRepository registerRepository,  ILogger<UpdateEpaOrganisationHandler> logger, ISpecialCharacterCleanserService cleanser,
+            IEpaOrganisationValidator validator)
         {
             _registerRepository = registerRepository;
             _logger = logger;
             _cleanser = cleanser;
+            _validator = validator;
         }
 
         public async Task<string> Handle(UpdateEpaOrganisationRequest request, CancellationToken cancellationToken)
         {
             ProcessRequestFieldsForSpecialCharacters(request);
+
+            ValidationResponse validationResponse = _validator.ValidatorUpdateEpaOrganisationRequest(request);
+
+            if (!validationResponse.IsValid)
+            {
+                var message = validationResponse.Errors.Aggregate(string.Empty, (current, error) => current + error.ErrorMessage + "; ");
+                _logger.LogError(message);
+                if (validationResponse.Errors.Any(x => x.StatusCode == ValidationStatusCode.BadRequest.ToString()))
+                {
+                    throw new BadRequestException(message);
+                }
+            }
 
             var organisation = MapOrganisationRequestToOrganisation(request);
 
