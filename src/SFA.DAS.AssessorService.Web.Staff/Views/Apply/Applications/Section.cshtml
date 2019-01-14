@@ -1,5 +1,5 @@
 @using SFA.DAS.AssessorService.ApplyTypes;
-@model SFA.DAS.AssessorService.ApplyTypes.ApplicationSection
+@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Applications.ApplicationSectionViewModel
 
 @{
     ViewBag.Title = @Model.Title;
@@ -17,10 +17,22 @@
         {
             <h1 class="heading-xlarge">@Model.Title</h1>
 
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                        There is a problem
+                    </h2>
+                    <ul class="error-summary-list">
+                        <li><a sfa-validation-for="FeedbackMessage"></a></li>
+                    </ul>
+                </div>
+            }
+
             if (Model.SequenceId == 1 && Model.SectionId == 3)
             {
                 // NOTE: The FHA Section has a read only view. See ON-1277
-                var financialApplication = Model.QnAData?.FinancialApplicationGrade;
+                var financialApplication = Model.Section.QnAData?.FinancialApplicationGrade;
                 var financialApplicationComments = financialApplication.InadequateMoreInformation ?? financialApplication.SatisfactoryMoreInformation;
 
                 <div class="form-group">
@@ -47,7 +59,7 @@
             else
             {
                 <dl class="govuk-check-your-answers cya-questions-short form-group">
-                    @foreach (var pg in Model.QnAData.Pages.Where(p => p.Active))
+                    @foreach (var pg in Model.Section.QnAData.Pages.Where(p => p.Active))
                     {
                         <div class="govuk-check-your-answers__contents">
                             <dt class="cya-question heading-medium">
@@ -64,7 +76,7 @@
                                     }
                                 }
                             </dd>
-                              
+
                             <dd class="cya-change das-cya-change--responsive">
                                 @if (pg.HasNewFeedback)
                                 {
@@ -92,13 +104,13 @@
                                     </a>
                                 </p>
                             </dd>
-                            
+
                         </div>
                     }
                 </dl>
             }
 
-            if (Model.QnAData.HasCompletedFeedback)
+            if (Model.Section.QnAData.HasCompletedFeedback)
             {
                 <div class="form-group">
                     <label class="form-label-bold">
@@ -113,12 +125,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var feedback in Model.QnAData.Feedback.Where(f => f.IsCompleted))
+                            @foreach (var feedback in Model.Section.QnAData.Feedback.Where(f => f.IsCompleted))
                             {
-                            <tr>
-                                <td>@feedback.Date.ToShortDateString()</td>
-                                <td>@feedback.Message</td>
-                            </tr>
+                                <tr>
+                                    <td>@feedback.Date.ToShortDateString()</td>
+                                    <td>@feedback.Message</td>
+                                </tr>
                             }
                         </tbody>
                     </table>
@@ -128,19 +140,16 @@
             <div class="form-group">
                 <form asp-action="EvaluateSection" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId">
                     <div>
-                        <div class="form-group">
-                            @{
-                                var newFeedback = Model.QnAData?.Feedback?.Where(f => f.IsNew).FirstOrDefault();
-                                var checkboxChecked = newFeedback != null ? "checked" : "";
-                            }
+                        <div class="form-group error-message-container" sfa-anyvalidationerror-class="form-group-error">
                             <div data-target="show-feedback-input">
-                                <input name="addFeedback" id="checkbox_feedback" type="checkbox" value="true" @checkboxChecked />
+                                <input asp-for="AddFeedbackMessage" type="checkbox" value="true" />
                                 <label>
                                     Add a comment to the @Model.Title.ToLower() section
                                 </label>
                             </div>
                             <div class="panel panel-border-narrow js-hidden" id="show-feedback-input">
-                                <textarea class="form-control form-control-full" name="feedbackMessage" id="feedbackMessage" rows="5">@newFeedback?.Message</textarea>
+                                <span class="error-message" asp-validation-for="FeedbackMessage"></span>
+                                <textarea class="form-control form-control-full" rows="5" sfa-validation-for="FeedbackMessage" sfa-validationerror-class="form-control-error" asp-for="FeedbackMessage"></textarea>
                             </div>
                         </div>
 
@@ -149,16 +158,13 @@
                                 Is this section complete?
                             </label>
                             <div class="multiple-choice">
-                                @{
-                                    var radioChecked = Model.Status == ApplicationSectionStatus.Evaluated ? "checked" : "";
-                                }
-                                <input name="isSectionComplete" id="options_yes" type="radio" value="True" @radioChecked />
+                                <input asp-for="IsSectionComplete" id="options_yes" type="radio" value="True" />
                                 <label for="options_yes">
                                     Yes
                                 </label>
                             </div>
                             <div class="multiple-choice">
-                                <input name="isSectionComplete" id="options_no" type="radio" value="False" />
+                                <input asp-for="IsSectionComplete" id="options_no" type="radio" value="False" />
                                 <label for="options_no">
                                     No
                                 </label>

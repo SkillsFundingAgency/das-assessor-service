@@ -61,16 +61,27 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
         public async Task<IActionResult> Section(Guid applicationId, int sequenceId, int sectionId)
         {
             var section = await _applyApiClient.GetSection(applicationId, sequenceId, sectionId);
-
-            return View("~/Views/Apply/Applications/Section.cshtml", section);
+            var sectionVm = new ApplicationSectionViewModel(section);
+            return View("~/Views/Apply/Applications/Section.cshtml", sectionVm);
         }
 
-        [HttpPost("/Applications/{applicationId}/Sequence/{sequenceId}/Section/{sectionId}/Evaluate")]
-        public async Task<IActionResult> EvaluateSection(Guid applicationId, int sequenceId, int sectionId, string feedbackMessage, bool addFeedback, bool isSectionComplete)
+        [HttpPost("/Applications/{applicationId}/Sequence/{sequenceId}/Section/{sectionId}")]
+        public async Task<IActionResult> EvaluateSection(Guid applicationId, int sequenceId, int sectionId, string feedbackMessage, bool addFeedbackMessage, bool isSectionComplete)
         {
+            if (addFeedbackMessage && string.IsNullOrWhiteSpace(feedbackMessage))
+            {
+                string key = "FeedbackMessage";
+                string errorMessage = "Please enter a feedback comment";
+                ModelState.AddModelError(key, errorMessage);
+
+                var section = await _applyApiClient.GetSection(applicationId, sequenceId, sectionId);
+                var sectionVm = new ApplicationSectionViewModel(section);
+                return View("~/Views/Apply/Applications/Section.cshtml", sectionVm);
+            }
+
             Feedback feedback = null;
 
-            if (addFeedback && !string.IsNullOrEmpty(feedbackMessage))
+            if (addFeedbackMessage)
             {
                 feedback = new Feedback { Message = feedbackMessage, From = "Staff member", Date = DateTime.UtcNow };
             }
@@ -95,7 +106,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
             if(string.IsNullOrWhiteSpace(feedbackMessage))
             {
                 string key = "FeedbackMessage";
-                string errorMessage = "You must enter a feedback message";
+                string errorMessage = "Please enter a feedback comment";
                 ModelState.AddModelError(key, errorMessage);
 
                 var page = await _applyApiClient.GetPage(applicationId, sequenceId, sectionId, pageId);
