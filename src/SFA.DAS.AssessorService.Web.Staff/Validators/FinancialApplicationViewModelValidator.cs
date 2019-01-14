@@ -13,15 +13,15 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators
             {
                 if (vm.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate && string.IsNullOrWhiteSpace(vm.Grade.InadequateMoreInformation))
                 {
-                    context.AddFailure("Grade.InadequateMoreInformation", "Please enter a value for Inadequate");
+                    context.AddFailure("Grade.InadequateMoreInformation", "Enter why the application was graded inadequate");
                 }
                 else if (vm.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Satisfactory && string.IsNullOrWhiteSpace(vm.Grade.SatisfactoryMoreInformation))
                 {
-                    context.AddFailure("Grade.SatisfactoryMoreInformation", "Please enter a value for Satisfactory");
+                    context.AddFailure("Grade.SatisfactoryMoreInformation", "Enter why the application was graded satisfactory");
                 }
                 else if (string.IsNullOrWhiteSpace(vm.Grade.SelectedGrade))
                 {
-                    context.AddFailure("Grade.SelectedGrade", "Please select a grade");
+                    context.AddFailure("Grade.SelectedGrade", "Select a grade for this application");
                 }
             });
         }

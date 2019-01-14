@@ -108,7 +108,7 @@
                         </div>
 
                         <div class="multiple-choice" data-target="satisfactory-more-info">
-                            <input id="satisfactory" type="radio" name="Grade.SelectedGrade" value="Satisfactory" @(Model.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Satisfactory ? "checked" : "") />
+                            <input id="satisfactory" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Satisfactory)" @(Model.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Satisfactory ? "checked" : "") />
                             <label for="satisfactory">Satisfactory</label>
                         </div>
                         <div class="panel panel-border-narrow js-hidden" id="satisfactory-more-info">
@@ -117,7 +117,7 @@
                         </div>
 
                         <div class="multiple-choice" data-target="inadequate-more-info">
-                            <input id="inadequate" type="radio" name="Grade.SelectedGrade" value="Inadequate" @(Model.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate ? "checked" : "") />
+                            <input id="inadequate" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Inadequate)" @(Model.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate ? "checked" : "") />
                             <label for="inadequate">Inadequate</label>
                         </div>
                         <div class="panel panel-border-narrow js-hidden" id="inadequate-more-info">
