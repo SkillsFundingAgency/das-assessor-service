@@ -40,6 +40,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task<EpaOrganisationStandardsCountResponse> GetEpaoStandardsCount(string epaoId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/organisations/organisation/{epaoId}"))
+            {
+                return await RequestAndDeserialiseAsync<EpaOrganisationStandardsCountResponse>(request,
+                    $"Could not find the organisation {epaoId}");
+            }
+        }
+
         public async Task<OrganisationResponse> Create(CreateOrganisationRequest organisationCreateViewModel)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/organisations/"))
@@ -208,6 +217,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         Task<ValidationResponse> ValidateCreateOrganisationStandard(string organisationId, int standardId, DateTime? effectiveFrom, DateTime? effectiveTo, Guid? contactId, List<int> deliveryAreas);
         Task<ValidationResponse> ValidateUpdateOrganisationStandard(string organisationId, int standardId, DateTime? effectiveFrom, DateTime? effectiveTo, Guid? contactId, List<int> deliveryAreas, string actionChoice, string organisationStandardStatus, string organisationStatus);
-
+        Task<EpaOrganisationStandardsCountResponse> GetEpaoStandardsCount(string epaoId);
     }
 }

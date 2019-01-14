@@ -1205,36 +1205,62 @@ table.responsive tr.total {
 }
 
 /*Dashboard*/
+.dashboard-title {
+    margin-bottom: 0.55em;
+}
 
 .dashboard-box {
-    margin-top: 0.9em;
+    margin-top: 1.5em;
     padding: 0.2em;
     border: 1px solid #6F777B;
     height: 11.0em;
 }
 
 .dashboard-box-content {
-    padding: 0.8em;
+    margin: 0.6em;
 }
 
-div.data {
-    color: #006435;
+.dashboard__link-list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    margin-bottom: 1.25em;
 }
 
-@media screen and  (max-width: 1020px) {
+.dashboard__link {
+    line-height: 1.5;
+}
+
+.dashboard__link a:visited {
+    color: #005ea5;
+}
+
+.dashboard__link a:focus {
+    outline: 3px solid #ffbf47;
+}
+
+.dashboard__link a:hover {
+    color: #2b8cc4;
+}
+
+.data-color {
+    color: #0B0C0C;
+}
+
+@media  (max-width: 1020px) {
     .dashboard-box {
         height: 13.5em;
     }
 }
 
 
-@media screen and  (max-width: 769px) {
+@media  (max-width: 769px) {
     .dashboard-box {
         height: 14.5em;
     }
 }
 
-@media screen and (max-width: 641px) {
+@media  (max-width: 641px) {
     .dashboard-box {
         height: 11.5em;
     }

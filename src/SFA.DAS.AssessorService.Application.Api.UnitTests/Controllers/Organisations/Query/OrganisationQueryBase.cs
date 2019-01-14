@@ -1,8 +1,12 @@
-﻿using AutoMapper;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using AutoMapper;
+using MediatR;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Consts;
 using SFA.DAS.AssessorService.Application.Api.Controllers;
 using SFA.DAS.AssessorService.Application.Api.UnitTests.Helpers;
@@ -37,12 +41,14 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
             {
                 cfg.CreateMap<Organisation, OrganisationResponse>();
             });
-           
-
+            EpaOrganisationStandardsCountResponse response = new EpaOrganisationStandardsCountResponse(1);
+            var mediator = new Mock<IMediator>();
+            mediator.Setup(q => q.Send(Moq.It.IsAny<GetEpaOrganisationStandardsCountRequest>(), new CancellationToken()))
+                .Returns(Task.FromResult(response));
             //SetupOrchestratorMocks();
             SetupControllerMocks();
 
-            OrganisationQueryController = new OrganisationQueryController(ControllerLoggerMock.Object, OrganisationQueryRepositoryMock.Object, UkPrnValidator, OrganisationControllerLocaliserMock.Object);
+            OrganisationQueryController = new OrganisationQueryController(ControllerLoggerMock.Object, OrganisationQueryRepositoryMock.Object, UkPrnValidator, OrganisationControllerLocaliserMock.Object, mediator.Object);
         }
 
         private void SetupControllerMocks()

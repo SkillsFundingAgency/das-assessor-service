@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Http
 @using SFA.DAS.AssessorService.Web.Infrastructure
 @using SFA.DAS.AssessorService.Web.StartupConfiguration
+@using SFA.DAS.AssessorService.Web.Constants
 @inject ISessionService SessionService
 <!DOCTYPE html>
 <html lang="en">
@@ -117,6 +118,8 @@
     }
 
     @if (User.Identity.IsAuthenticated) {
+        var currentPage = SessionService.Get("CurrentPage");
+
     <div class="header-user">
         <div id="global-header-bar" class="global-header-bar--dark-blue"></div>
         <div class="header-inner">
@@ -146,16 +149,51 @@
     </div>
     }
 
-<main id="content" role="main">
-    <div class="phase-banner">
-        <p>
-            <strong class="phase-tag">BETA</strong>
-            <span>This is a new service – your
-                <a href="https://www.surveymonkey.co.uk/r/P8YBH9J">feedback</a> will help us to improve it.</span>
-        </p>
-    </div>
-    @RenderBody()
-</main>
+    <main id="content" role="main">
+        <div class="phase-banner">
+            <p>
+                <strong class="phase-tag">BETA</strong>
+                <span>
+                    This is a new service – your
+                    <a href="https://www.surveymonkey.co.uk/r/P8YBH9J">feedback</a> will help us to improve it.
+                </span>
+            </p>
+        </div>
+        @if (User.Identity.IsAuthenticated)
+        {
+            var currentPage = SessionService.Get("CurrentPage");
+            <div class="grid-row">
+                <div class="column-full">
+                    <nav class="app-navigation govuk-clearfix">
+                        <ul class="app-navigation__list">
+                            <li @(currentPage == Pages.Dashboard?"class=app-navigation--current-page":"")>
+                                <a asp-controller="Dashboard" asp-action="Index">Home</a>
+                            </li>
+                            <li  @(currentPage == Pages.Standards?"class=app-navigation--current-page":"")>
+                                <a asp-controller="Dashboard" asp-action="">Standards</a>
+                            </li>
+                            <li  @(currentPage == Pages.Pipeline?"class=app-navigation--current-page":"")>
+                                <a asp-controller="Dashboard" asp-action="">Pipeline</a>
+                            </li>
+                            <li  @(currentPage == Pages.RecordAGrade?"class=app-navigation--current-page":"")>
+                                <a asp-controller="Search" asp-action="Index">Record a grade</a>
+                            </li>
+                            <li  @(currentPage == Pages.Assessments?"class=app-navigation--current-page":"")>
+                                <a asp-controller="CertificateHistory" asp-action="Index">Assessments</a>
+                            </li>
+                            <li  @(currentPage == Pages.Users?"class=app-navigation--current-page":"")>
+                                <a asp-controller="Dashboard" asp-action="">Users</a>
+                            </li>
+                            <li  @(currentPage == Pages.Organisations?"class=app-navigation--current-page":"")>
+                                <a asp-controller="Dashboard" asp-action="">Organisation</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        }
+        @RenderBody()
+    </main>
 
     <footer class="group js-footer" id="footer" role="contentinfo">
 

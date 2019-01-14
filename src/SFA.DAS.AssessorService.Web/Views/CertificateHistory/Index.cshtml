@@ -6,25 +6,13 @@
 
 @{
     ViewBag.Title = "Previous assessments";
-    Layout = "_Layout";
+    Layout = "_DashboardLayout";
 }
 
-<div>
-    <nav class="app-navigation govuk-clearfix">
-        <ul class="app-navigation__list">
-            <li>
-                <a asp-controller="Search" asp-action="Index">Search</a>
-            </li>
-            <li class="app-navigation--current-page">
-                <a asp-controller="CertificateHistory" asp-action="Index">Previous assessments</a>
-            </li>
-        </ul>
-    </nav>
-</div>
-
-<div class="grid-row">
-    <div class="column-full">
-        <h1 class="heading-large">Previous assessments</h1>
+<div>   
+    <div class="grid-row">
+        <div class="column-full">
+            <h1 class="heading-large">Previous assessments</h1>
 
             <table class="table responsive table-font-xsmall">
                 <thead>
@@ -63,7 +51,7 @@
                                 @Html.DisplayFor(modelItem => item.TrainingProvider)
                             </td>
                             <td data-label="@Localizer["DateRequested"]">
-                                @item.CreatedAt.ToString("dd/MM/yyyy") 
+                                @item.CreatedAt.ToString("dd/MM/yyyy")
                             </td>
                         </tr>
                         <tr class="js-expandble-cell js-hidden expandble-cell" aria-hidden="true">
@@ -143,9 +131,9 @@
                     }
                 </tbody>
             </table>
+        </div>
     </div>
 </div>
-
 @if (Model.HasPreviousPage || Model.HasNextPage)
 {
 <div class="grid-row">
