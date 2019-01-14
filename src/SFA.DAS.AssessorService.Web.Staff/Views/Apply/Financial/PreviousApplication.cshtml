@@ -3,62 +3,107 @@
 @model SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Financial.FinancialApplicationViewModel
 
 @{
-    ViewBag.Title = "title";
+    ViewBag.Title = "Previous application";
     Layout = "_Layout";
 }
 
-<a href="@Url.Action("PreviousApplications", "Financial")" class="govuk-back-link">Back</a>
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <a href="@Url.Action("PreviousApplications", "Financial")" class="link-back">Back</a>
 
-<h3>@Model.Organisation.OrganisationDetails.LegalName</h3>
-
-<table>
-    <thead>
-        <tr>
-            <th>Grade</th>
-            <th>Date reviewed</th>
-            <th>Comments</th>
-            <th>Reviewer</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>@Model.Grade.SelectedGrade</td>
-            <td>@Model.Grade.GradedDateTime.ToShortDateString()</td>
-            <td>@(Model.Grade.InadequateMoreInformation ?? Model.Grade.SatisfactoryMoreInformation ?? "")</td>
-            <td>@Model.Grade.GradedBy</td>
-        </tr>
-    </tbody>
-</table>
-
-@if (Model.Section.PagesContainingUploadQuestions.Any())
-{
-    <div>
-        <a href="@Url.Action("Download", "Financial", new { Model.Section.ApplicationId })">Download financial statements</a>
-        @* Download @uploadQuestion.Label</a> *@
+        <h1 class="heading-xlarge">@Model.Organisation.OrganisationDetails.LegalName</h1>
     </div>
-}
+</div>
 
-<table>
-    <tr>
-        <th>
-            Questions
-        </th>
-        <th>
-            Answers
-        </th>
-    </tr>
-    @foreach (var pg in Model.Section.QnAData.Pages)
-    {
-        foreach (var question in pg.Questions.Where(q => q.Input.Type != "FileUpload"))
+@*
+Switched axis - leaving in as we may move to this.
+<div class="grid-row">
+    <div class="column-full">
+        <table class="table-spaced">
+            <caption class="heading-small">Application details</caption>
+            <tbody>
+                <tr>
+                    <td class="bold-small">Grade</td>
+                    <td>@Model.Grade.SelectedGrade</td>
+                </tr>
+                <tr>
+                    <td class="bold-small">Date reviewed</td>
+                    <td>@Model.Grade.GradedDateTime.ToShortDateString()</td>
+                </tr>
+                <tr>
+                    <td class="bold-small">Comments</td>
+                    <td>@(Model.Grade.InadequateMoreInformation ?? Model.Grade.SatisfactoryMoreInformation ?? "")</td>
+                </tr>
+                <tr>
+                    <td class="bold-small">Reviewer</td>
+                    <td>@Model.Grade.GradedBy</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+*@
+
+<div class="grid-row">
+    <div class="column-full">
+        <table class="table-spaced">
+            <thead>
+                <tr>
+                    <th>Grade</th>
+                    <th>Date reviewed</th>
+                    <th>Comments</th>
+                    <th>Reviewer</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>@Model.Grade.SelectedGrade</td>
+                    <td>@Model.Grade.GradedDateTime.ToShortDateString()</td>
+                    <td>@(Model.Grade.InadequateMoreInformation ?? Model.Grade.SatisfactoryMoreInformation ?? "")</td>
+                    <td>@Model.Grade.GradedBy</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        @if (Model.Section.PagesContainingUploadQuestions.Any())
         {
-            <tr>
-                <td>@question.Label</td>
-                <td>@pg.PageOfAnswers.SelectMany(poa => poa.Answers).SingleOrDefault(a => a.QuestionId == question.QuestionId)?.Value</td>
-            </tr>
+            <div class="form-group">
+                <a href="@Url.Action("Download", "Financial", new { Model.Section.ApplicationId })">Download financial statements</a>
+                @* Download @uploadQuestion.Label</a> *@
+            </div>
         }
-    }
-</table>
+    </div>
+</div>
 
-<div class="form-group">
-    <a asp-controller="Financial" asp-action="PreviousApplications" class="govuk-button">Return to previous applications</a>
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        Questions
+                    </th>
+                    <th>
+                        Answers
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var pg in Model.Section.QnAData.Pages)
+                {
+                    foreach (var question in pg.Questions.Where(q => q.Input.Type != "FileUpload"))
+                    {
+                        <tr>
+                            <td>@question.Label</td>
+                            <td>@pg.PageOfAnswers.SelectMany(poa => poa.Answers).SingleOrDefault(a => a.QuestionId == question.QuestionId)?.Value</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
 </div>

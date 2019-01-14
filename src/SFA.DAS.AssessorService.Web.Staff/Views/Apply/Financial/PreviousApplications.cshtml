@@ -16,23 +16,27 @@
 <div class="grid-row">
     <div class="column-full">
         <table>
-            <tr>
-                <th>Applying organisation</th>
-                <th>Date reviewed</th>
-                <th>Grade</th>
-                <th>Reviewer</th>
-                <th></th>
-            </tr>
-            @foreach (var application in Model)
-            {
+            <thead>
                 <tr>
-                    <td>@application.ApplyingOrganisationName</td>
-                    <td>@application.GradedDate.ToShortDateString()</td>
-                    <td>@application.Grade</td>
-                    <td>@application.GradedBy</td>
-                    <td class="numeric"><a asp-action="ViewGradedApplication" asp-controller="Financial" asp-route-applicationId="@application.ApplicationId">@application.LinkText</a></td>
+                    <th>Applying organisation</th>
+                    <th>Date reviewed</th>
+                    <th>Grade</th>
+                    <th>Reviewer</th>
+                    <th></th>
                 </tr>
-            }
+            </thead>
+            <tbody>
+                @foreach (var application in Model)
+                {
+                    <tr>
+                        <td>@application.ApplyingOrganisationName</td>
+                        <td>@application.GradedDate.ToShortDateString()</td>
+                        <td>@application.Grade</td>
+                        <td>@application.GradedBy</td>
+                        <td class="numeric"><a asp-action="ViewGradedApplication" asp-controller="Financial" asp-route-applicationId="@application.ApplicationId">@application.LinkText</a></td>
+                    </tr>
+                }
+            </tbody>
         </table>
     </div>
 </div>
