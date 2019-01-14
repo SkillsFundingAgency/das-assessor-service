@@ -22,14 +22,16 @@
                     <th></th>
                 </tr>
             </thead>
-            @foreach (var application in Model)
-            {
-                <tr>
-                    <td>@application.ApplyingOrganisationName</td>
-                    <td>@application.Status</td>
-                    <td class="numeric"><a asp-action="ViewApplication" asp-controller="Financial" asp-route-applicationId="@application.ApplicationId">@application.LinkText</a></td>
-                </tr>
-            }
+            <tbody>
+                @foreach (var application in Model)
+                {
+                    <tr>
+                        <td>@application.ApplyingOrganisationName</td>
+                        <td>@application.Status</td>
+                        <td class="numeric"><a asp-action="ViewApplication" asp-controller="Financial" asp-route-applicationId="@application.ApplicationId">@application.LinkText</a></td>
+                    </tr>
+                }
+            </tbody>
         </table>
 
     </div>

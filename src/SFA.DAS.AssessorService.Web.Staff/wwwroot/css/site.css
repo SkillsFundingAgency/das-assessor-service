@@ -156,7 +156,6 @@ label > .heading-xlarge {
   #header-user--nav nav#user-nav > ul li {
     border: none;
     display: inline-block;
-    float: left;
     padding: 0;
   }
   #header-user--nav nav#user-nav > ul li > a.js-toggle {
@@ -224,7 +223,6 @@ nav.global-nav ul {
 
 nav.global-nav ul li {
   display: inline-block;
-  float: left;
 }
 
 nav.global-nav ul li a {
