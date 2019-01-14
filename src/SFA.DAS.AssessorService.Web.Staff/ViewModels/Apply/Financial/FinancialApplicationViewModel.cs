@@ -1,7 +1,7 @@
 using System;
 using SFA.DAS.AssessorService.ApplyTypes;
 
-namespace SFA.DAS.AssessorService.Web.Staff.ViewModels
+namespace SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Financial
 {
     public class FinancialApplicationViewModel
     {
