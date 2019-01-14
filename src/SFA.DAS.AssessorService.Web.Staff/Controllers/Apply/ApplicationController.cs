@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Web.Staff.Domain;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
+using SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Applications;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
 {
@@ -83,16 +84,27 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
         public async Task<IActionResult> Page(Guid applicationId, int sequenceId, int sectionId, string pageId)
         {
             var page = await _applyApiClient.GetPage(applicationId, sequenceId, sectionId, pageId);
+            var pageVm = new PageViewModel(page);
 
-            page.ApplicationId = applicationId;
-
-            return View("~/Views/Apply/Applications/Page.cshtml", page);
+            return View("~/Views/Apply/Applications/Page.cshtml", pageVm);
         }
 
         [HttpPost("/Applications/{applicationId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}")]
-        public async Task<IActionResult> Feedback(Guid applicationId, int sequenceId, int sectionId, string pageId, string message)
+        public async Task<IActionResult> Feedback(Guid applicationId, int sequenceId, int sectionId, string pageId, string feedbackMessage)
         {
-            await _applyApiClient.AddFeedback(applicationId, sequenceId, sectionId, pageId, message);
+            if(string.IsNullOrWhiteSpace(feedbackMessage))
+            {
+                string key = "FeedbackMessage";
+                string errorMessage = "You must enter a feedback message";
+                ModelState.AddModelError(key, errorMessage);
+
+                var page = await _applyApiClient.GetPage(applicationId, sequenceId, sectionId, pageId);
+                var pageVm = new PageViewModel(page);
+
+                return View("~/Views/Apply/Applications/Page.cshtml", pageVm);
+            }
+
+            await _applyApiClient.AddFeedback(applicationId, sequenceId, sectionId, pageId, feedbackMessage);
 
             return RedirectToAction("Page", new {applicationId, sequenceId, sectionId, pageId});
         }

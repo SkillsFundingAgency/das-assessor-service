@@ -122,7 +122,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
 
         public async Task<Page> GetPage(Guid applicationId, int sequenceId, int sectionId, string pageId)
         {
-            return await Get<Page>($"Application/{applicationId}/User/null/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}");
+            var page = await Get<Page>($"Application/{applicationId}/User/null/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}");
+            if(page != null) page.ApplicationId = applicationId;
+            return page;
         }
 
         public async Task AddFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, string message)
