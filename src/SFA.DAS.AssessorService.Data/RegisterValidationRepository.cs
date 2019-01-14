@@ -44,6 +44,19 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
+        public async Task<bool> EpaOrganisationExistsWithCompanyNumber(string companyNumber)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+                var sqlToCheckExists =
+                    "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Organisations] " +
+                    "WHERE JSON_VALUE(OrganisationData, '$.CompanyNumber') = @companyNumber";
+                return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { companyNumber });
+            }
+        }
+
         public async Task<bool> EpaOrganisationExistsWithCharityNumber(string organisationIdToExclude, string charityNumber)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
@@ -55,6 +68,19 @@ namespace SFA.DAS.AssessorService.Data
                     "WHERE JSON_VALUE(OrganisationData, '$.CharityNumber') = @charityNumber " +
                     "AND EndPointAssessorOrganisationId != @organisationIdToExclude";
                 return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { organisationIdToExclude, charityNumber });
+            }
+        }
+
+        public async Task<bool> EpaOrganisationExistsWithCharityNumber(string charityNumber)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+                var sqlToCheckExists =
+                    "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Organisations] " +
+                    "WHERE JSON_VALUE(OrganisationData, '$.CharityNumber') = @charityNumber";
+                return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { charityNumber });
             }
         }
 

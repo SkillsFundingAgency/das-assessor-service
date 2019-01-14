@@ -403,9 +403,29 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             return string.Empty;
         }
 
+        public string CheckIfOrganisationCompanyNumberExists(string companyNumber)
+        {
+            Task<bool> companyAlreadyRegistered = _registerRepository.EpaOrganisationExistsWithCompanyNumber(companyNumber);
+            if (companyAlreadyRegistered.Result)
+            {
+                return FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationCompanyNumberAlreadyUsed);
+            }
+            return string.Empty;
+        }
+
         public string CheckIfOrganisationCharityNumberExists(string organisationIdToExclude, string charityNumber)
         {
             Task<bool> charityAlreadyRegistered = _registerRepository.EpaOrganisationExistsWithCharityNumber(organisationIdToExclude, charityNumber);
+            if (charityAlreadyRegistered.Result)
+            {
+                return FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationCharityNumberAlreadyUsed);
+            }
+            return string.Empty;
+        }
+
+        public string CheckIfOrganisationCharityNumberExists(string charityNumber)
+        {
+            Task<bool> charityAlreadyRegistered = _registerRepository.EpaOrganisationExistsWithCharityNumber(charityNumber);
             if (charityAlreadyRegistered.Result)
             {
                 return FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationCharityNumberAlreadyUsed);
@@ -422,6 +442,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             RunValidationCheckAndAppendAnyError("Ukprn", CheckUkprnIsValid(request.Ukprn), validationResult, ValidationStatusCode.BadRequest);    
             RunValidationCheckAndAppendAnyError("Name", CheckOrganisationNameNotUsed(request.Name), validationResult, ValidationStatusCode.AlreadyExists);
             RunValidationCheckAndAppendAnyError("Ukprn", CheckIfOrganisationUkprnExists(request.Ukprn), validationResult, ValidationStatusCode.AlreadyExists);
+            RunValidationCheckAndAppendAnyError("CompanyNumber", CheckCompanyNumberIsValid(request.CompanyNumber), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("CompanyNumber", CheckIfOrganisationCompanyNumberExists(request.CompanyNumber), validationResult, ValidationStatusCode.AlreadyExists);
+            RunValidationCheckAndAppendAnyError("CharityNumber", CheckCharityNumberIsValid(request.CharityNumber), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("CharityNumber", CheckIfOrganisationCharityNumberExists(request.CharityNumber), validationResult, ValidationStatusCode.AlreadyExists);
 
             return validationResult;
         }

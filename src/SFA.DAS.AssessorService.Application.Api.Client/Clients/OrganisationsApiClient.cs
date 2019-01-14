@@ -49,12 +49,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<ValidationResponse> ValidateCreateOrganisation(string name, string ukprn, string organisationTypeId)
+        public async Task<ValidationResponse> ValidateCreateOrganisation(string name, string ukprn, string organisationTypeId, string companyNumber, string charityNumber)
         {
-
             var newName = SanitizeUrlParam(name);
             using (var request = new HttpRequestMessage(HttpMethod.Get,
-                $"/api/ao/assessment-organisations/validate-new?name={newName}&ukprn={ukprn}&organisationTypeId={organisationTypeId}")
+                $"/api/ao/assessment-organisations/validate-new?name={newName}&ukprn={ukprn}&organisationTypeId={organisationTypeId}&companyNumber={companyNumber}&charityNumber={charityNumber}")
             )
             {
                 return await RequestAndDeserialiseAsync<ValidationResponse>(request,
@@ -199,7 +198,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<OrganisationResponse> Create(CreateOrganisationRequest organisationCreateViewModel);
         Task Update(UpdateOrganisationRequest organisationUpdateViewModel);
         Task Delete(Guid id);
-        Task<ValidationResponse> ValidateCreateOrganisation(string name, string ukprn, string organisationTypeId);
+        Task<ValidationResponse> ValidateCreateOrganisation(string name, string ukprn, string organisationTypeId, string companyNumber, string charityNumber);
         Task<ValidationResponse> ValidateUpdateContact(string contactId, string displayName, string email, string phoneNumber);
         Task<ValidationResponse> ValidateUpdateOrganisation(string organisationId, string name, string ukprn, string organisationTypeId, string address1, string address2, string address3, string address4, string postcode, string status, string actionChoice, string companyNumber, string charityNumber);
         Task<ValidationResponse> ValidateCreateContact(string name, string organisationId, string email, string phone);

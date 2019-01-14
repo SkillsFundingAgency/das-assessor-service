@@ -7,7 +7,9 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
     {
         Task<bool> EpaOrganisationExistsWithOrganisationId(string organisationId);
         Task<bool> EpaOrganisationExistsWithCompanyNumber(string organisationIdToExclude, string companyId);
+        Task<bool> EpaOrganisationExistsWithCompanyNumber(string companyId);
         Task<bool> EpaOrganisationExistsWithCharityNumber(string organisationIdToExclude, string charityId);
+        Task<bool> EpaOrganisationExistsWithCharityNumber(string charityId);
         Task<bool> EpaOrganisationExistsWithUkprn(long ukprn);
         Task<bool> OrganisationTypeExists(int organisationTypeId);
         Task<bool> EpaOrganisationAlreadyUsingUkprn(long ukprn, string organisationId);
