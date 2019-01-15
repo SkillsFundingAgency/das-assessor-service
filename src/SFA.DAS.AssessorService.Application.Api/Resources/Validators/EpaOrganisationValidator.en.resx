@@ -244,9 +244,9 @@
     <value>There is already an organisation with this company number</value>
   </data>
   <data name="OrganisationCharityNumberNotValid" xml:space="preserve">
-    <value>Enter a charity registration number using numbers only</value>
+    <value>Enter valid charity number</value>
   </data>
   <data name="OrganisationCompanyNumberNotValid" xml:space="preserve">
-    <value>Enter a company number using 8 characters</value>
+    <value>Enter valid company number</value>
   </data>
 </root>
