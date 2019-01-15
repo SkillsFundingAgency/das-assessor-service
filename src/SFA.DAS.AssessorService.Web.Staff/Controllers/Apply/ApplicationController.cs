@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -66,13 +67,26 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
         }
 
         [HttpPost("/Applications/{applicationId}/Sequence/{sequenceId}/Section/{sectionId}")]
-        public async Task<IActionResult> EvaluateSection(Guid applicationId, int sequenceId, int sectionId, string feedbackMessage, bool addFeedbackMessage, bool isSectionComplete)
+        public async Task<IActionResult> EvaluateSection(Guid applicationId, int sequenceId, int sectionId, string feedbackMessage, bool addFeedbackMessage, bool? isSectionComplete)
         {
+            var errorMessages = new Dictionary<string, string>();
+
             if (addFeedbackMessage && string.IsNullOrWhiteSpace(feedbackMessage))
             {
-                string key = "FeedbackMessage";
-                string errorMessage = "Please enter a feedback comment";
-                ModelState.AddModelError(key, errorMessage);
+                errorMessages["FeedbackMessage"] = "Please enter a feedback comment";
+            }
+
+            if(!isSectionComplete.HasValue)
+            {
+                errorMessages["IsSectionComplete"] = "Please state if this section is completed";
+            }
+
+            if (errorMessages.Any())
+            {
+                foreach(var error in errorMessages)
+                {
+                    ModelState.AddModelError(error.Key, error.Value);
+                }               
 
                 var section = await _applyApiClient.GetSection(applicationId, sequenceId, sectionId);
                 var sectionVm = new ApplicationSectionViewModel(section);
@@ -86,7 +100,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
                 feedback = new Feedback { Message = feedbackMessage, From = "Staff member", Date = DateTime.UtcNow };
             }
 
-            await _applyApiClient.EvaluateSection(applicationId, sequenceId, sectionId, feedback, isSectionComplete);
+            await _applyApiClient.EvaluateSection(applicationId, sequenceId, sectionId, feedback, isSectionComplete.Value);
 
             return RedirectToAction("Application", new { applicationId });
         }

@@ -25,6 +25,7 @@
                     </h2>
                     <ul class="error-summary-list">
                         <li><a sfa-validation-for="FeedbackMessage"></a></li>
+                        <li><a sfa-validation-for="IsSectionComplete"></a></li>
                     </ul>
                 </div>
             }
@@ -139,8 +140,8 @@
 
             <div class="form-group">
                 <form asp-action="EvaluateSection" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId">
-                    <div>
-                        <div class="form-group error-message-container" sfa-anyvalidationerror-class="form-group-error">
+                    <div class="error-message-container" sfa-anyvalidationerror-class="form-group-error">
+                        <div class="form-group">
                             <div data-target="show-feedback-input">
                                 <input asp-for="AddFeedbackMessage" type="checkbox" value="true" />
                                 <label>
@@ -157,14 +158,15 @@
                             <label class="form-label-bold">
                                 Is this section complete?
                             </label>
+                            <span id="IsSectionComplete" class="error-message" asp-validation-for="IsSectionComplete"></span>
                             <div class="multiple-choice">
-                                <input asp-for="IsSectionComplete" id="options_yes" type="radio" value="True" />
+                                <input asp-for="IsSectionComplete" id="options_yes" type="radio" value="True" sfa-validation-for="IsSectionComplete" sfa-validationerror-class="form-control-error" />
                                 <label for="options_yes">
                                     Yes
                                 </label>
                             </div>
                             <div class="multiple-choice">
-                                <input asp-for="IsSectionComplete" id="options_no" type="radio" value="False" />
+                                <input asp-for="IsSectionComplete" id="options_no" type="radio" value="False" sfa-validation-for="IsSectionComplete" sfa-validationerror-class="form-control-error" />
                                 <label for="options_no">
                                     No
                                 </label>

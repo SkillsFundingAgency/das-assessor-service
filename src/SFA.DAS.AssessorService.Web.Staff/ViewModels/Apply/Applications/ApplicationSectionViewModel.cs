@@ -18,7 +18,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Applications
 
         public bool AddFeedbackMessage { get; set; }
         public string FeedbackMessage { get; set; }
-        public bool IsSectionComplete { get; set; }
+        public bool? IsSectionComplete { get; set; }
 
         public ApplicationSectionViewModel(ApplicationSection section)
         {
@@ -30,7 +30,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Applications
 
             FeedbackMessage = section.QnAData?.Feedback?.Where(f => f.IsNew).Select(f => f.Message).FirstOrDefault();
             AddFeedbackMessage = !string.IsNullOrWhiteSpace(FeedbackMessage);
-            IsSectionComplete = section.Status == ApplicationSectionStatus.Evaluated;
+
+            if (section.Status == ApplicationSectionStatus.Evaluated)
+            {
+                IsSectionComplete = true;
+            }
         }
     }
 }
