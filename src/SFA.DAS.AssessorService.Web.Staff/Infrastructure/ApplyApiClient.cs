@@ -134,9 +134,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
                 new {message, from = "Staff member", date = DateTime.UtcNow});
         }
 
-        public async Task ReturnApplication(Guid applicationId, int sequenceId, string returnType)
+        public async Task ReturnApplication(Guid applicationId, int sequenceId, Feedback feedback, string returnType)
         {
-            await Post($"Review/Applications/{applicationId}/Sequences/{sequenceId}/Return", new {returnType});
+            await Post($"Review/Applications/{applicationId}/Sequences/{sequenceId}/Return", new { feedback, returnType });
         }
 
         public async Task<HttpResponseMessage> DownloadFile(Guid applicationId, int pageId, string questionId, Guid userId, int sequenceId, int sectionId, string filename)

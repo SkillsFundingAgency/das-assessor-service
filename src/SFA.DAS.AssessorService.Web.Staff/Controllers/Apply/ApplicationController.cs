@@ -145,13 +145,55 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
                 return RedirectToAction("Applications");
             }
 
-            return View("~/Views/Apply/Applications/Assessment.cshtml", activeSequence);
+            var viewModel = new ApplicationSequenceAssessmentViewModel(activeSequence);
+            return View("~/Views/Apply/Applications/Assessment.cshtml", viewModel);
         }
 
         [HttpPost("/Applications/{applicationId}/Sequence/{sequenceId}/Return")]
-        public async Task<IActionResult> Return(Guid applicationId, int sequenceId, string returnType)
+        public async Task<IActionResult> Return(Guid applicationId, int sequenceId, string returnType, bool addFeedbackMessage, string feedbackMessage, bool? approvewithcomment)
         {
-            await _applyApiClient.ReturnApplication(applicationId, sequenceId, returnType);
+            var errorMessages = new Dictionary<string, string>();
+
+            if(string.IsNullOrWhiteSpace(returnType))
+            {
+                errorMessages["ReturnType"] = "Please state what you would like to do next";
+            }
+            else if(returnType == "Approve")
+            {
+                if (approvewithcomment == null)
+                {
+                    errorMessages["ReturnType"] = "Please state what you would like to do next";
+                }
+                else if (approvewithcomment == true && string.IsNullOrWhiteSpace(feedbackMessage))
+                {
+                    errorMessages["FeedbackMessage"] = "Please enter a feedback comment";
+                }
+            }
+            else if(addFeedbackMessage == true && string.IsNullOrWhiteSpace(feedbackMessage))
+            {
+                errorMessages["FeedbackMessage"] = "Please enter a feedback comment";
+            }
+
+            if (errorMessages.Any())
+            {
+                foreach (var error in errorMessages)
+                {
+                    ModelState.AddModelError(error.Key, error.Value);
+                }
+
+                var activeSequence = await _applyApiClient.GetActiveSequence(applicationId);
+                var viewModel = new ApplicationSequenceAssessmentViewModel(activeSequence);
+                return View("~/Views/Apply/Applications/Assessment.cshtml", viewModel);
+            }
+
+            Feedback feedback = null;
+
+            if (addFeedbackMessage)
+            {
+                feedback = new Feedback { Message = feedbackMessage, From = "Staff member", Date = DateTime.UtcNow };
+            }
+
+            await _applyApiClient.ReturnApplication(applicationId, sequenceId, feedback, returnType);
 
             return RedirectToAction("Returned", new { applicationId });
         }
