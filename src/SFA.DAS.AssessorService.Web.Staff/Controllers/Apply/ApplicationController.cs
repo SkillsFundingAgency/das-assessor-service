@@ -150,7 +150,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
         }
 
         [HttpPost("/Applications/{applicationId}/Sequence/{sequenceId}/Return")]
-        public async Task<IActionResult> Return(Guid applicationId, int sequenceId, string returnType, bool addFeedbackMessage, string feedbackMessage, bool? approvewithcomment)
+        public async Task<IActionResult> Return(Guid applicationId, int sequenceId, string returnType, bool addFeedbackMessage, string feedbackMessage, bool? approveWithComment)
         {
             var errorMessages = new Dictionary<string, string>();
 
@@ -160,11 +160,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
             }
             else if(returnType == "Approve")
             {
-                if (approvewithcomment == null)
+                if (approveWithComment == null)
                 {
                     errorMessages["ReturnType"] = "Please state what you would like to do next";
                 }
-                else if (approvewithcomment == true && string.IsNullOrWhiteSpace(feedbackMessage))
+                else if (approveWithComment == true && string.IsNullOrWhiteSpace(feedbackMessage))
                 {
                     errorMessages["FeedbackMessage"] = "Please enter a feedback comment";
                 }
@@ -188,7 +188,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
 
             Feedback feedback = null;
 
-            if (addFeedbackMessage)
+            if (addFeedbackMessage || approveWithComment == true)
             {
                 feedback = new Feedback { Message = feedbackMessage, From = "Staff member", Date = DateTime.UtcNow };
             }
