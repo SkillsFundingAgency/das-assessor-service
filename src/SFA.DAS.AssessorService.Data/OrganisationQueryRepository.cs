@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
 using Microsoft.EntityFrameworkCore;
 using SFA.DAS.Apprenticeships.Api.Types.AssessmentOrgs;
 using SFA.DAS.AssessorService.Application.Interfaces;
@@ -16,10 +18,12 @@ namespace SFA.DAS.AssessorService.Data
     public class OrganisationQueryRepository : IOrganisationQueryRepository
     {
         private readonly AssessorDbContext _assessorDbContext;
+        private readonly IDbConnection _connection;
 
-        public OrganisationQueryRepository(AssessorDbContext assessorDbContext)
+        public OrganisationQueryRepository(AssessorDbContext assessorDbContext, IDbConnection connection)
         {
             _assessorDbContext = assessorDbContext;
+            _connection = connection;
         }
 
         public async Task<IEnumerable<Organisation>> GetAllOrganisations()
@@ -84,5 +88,22 @@ namespace SFA.DAS.AssessorService.Data
             await _assessorDbContext.Database.ExecuteSqlCommandAsync("EXEC EPAO_Standards_Count @EPAOId, @Count out",  epaoId, count);
             return (int)count.Value;
         }
+
+        public async Task<int> GetEpaoPipelineCount(string endPointAssessorOrganisationId)
+        {
+            var result = await _connection.QueryAsync<EPAOPipeline>("GetEPAO_Pipelines", new {
+                EPAOId= endPointAssessorOrganisationId
+            },
+                commandType: CommandType.StoredProcedure);
+
+            var epaoPipelines = result?.ToList();
+            if (epaoPipelines != null && epaoPipelines.Any())
+            {
+                return epaoPipelines.Sum(x => x.Pipeline);
+            }
+
+            return 0;
+        }
+
     }
 }

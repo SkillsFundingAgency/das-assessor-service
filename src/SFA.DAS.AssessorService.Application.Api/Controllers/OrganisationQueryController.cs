@@ -90,7 +90,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(organisation);
         }
 
-        [HttpGet("organisation/{epaoId}", Name = "GetEpaOrganisationStandardsCount")]
+        [HttpGet("pipeline/count/{epaoId}", Name = "GetEpaOrganisationPipelineCount")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(int))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetEpaOrganisationPipelineCount(string epaoId)
+        {
+            _logger.LogInformation($"Received request to retrieve EPA Pipline count for Organisation {epaoId}");
+            return Ok(await _mediator.Send(new GetEpaOrganisationPipelineCountRequest(epaoId)));
+        }
+
+        [HttpGet("count/{epaoId}", Name = "GetEpaOrganisationStandardsCount")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(int))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetEpaOrganisationStandardsCount(string epaoId)

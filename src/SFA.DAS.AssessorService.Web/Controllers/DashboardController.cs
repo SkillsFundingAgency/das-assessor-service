@@ -21,12 +21,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly ISessionService _sessionService;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IOrganisationsApiClient _organisationApiClient;
+        private readonly ICertificateApiClient _certificateApiClieet;
 
-        public DashboardController(ISessionService sessionService,  IHttpContextAccessor contextAccessor , IOrganisationsApiClient organisationApiClient)
+        public DashboardController(ISessionService sessionService,  IHttpContextAccessor contextAccessor , 
+            IOrganisationsApiClient organisationApiClient, ICertificateApiClient certificateApiClieet)
         {
             _sessionService = sessionService;
             _organisationApiClient = organisationApiClient;
             _contextAccessor = contextAccessor;
+            _certificateApiClieet = certificateApiClieet;
         }
 
 
@@ -35,7 +38,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             _sessionService.Set("CurrentPage", Pages.Dashboard);
             var dashboardStatisticsModel = new DashboardStatisticsModel();
-            var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn").Value;
+            var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
+            var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
             try
             {
                var  organisation = await _organisationApiClient.Get(ukprn);
@@ -43,7 +47,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 {
                     dashboardStatisticsModel.StandardsCount =
                         (await _organisationApiClient.GetEpaoStandardsCount(organisation.EndPointAssessorOrganisationId)).Count;
+                    dashboardStatisticsModel.PipelinesCount =
+                        (await _organisationApiClient.GetEpaoPipelineCount(organisation.EndPointAssessorOrganisationId))
+                        .Count;
+                    dashboardStatisticsModel.AssessmentsCount =
+                    (await _certificateApiClieet.GetCertificatesCount(username)).Count;
                 }
+                
             }
             catch (EntityNotFoundException)
             {

@@ -17,5 +17,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<bool> CheckIfOrganisationHasContacts(string endPointAssessorOrganisationId);
 
         Task<int> GetEpaOrganisationStandardsCount(string endPointAssessorOrganisationId);
+        Task<int> GetEpaoPipelineCount(string endPointAssessorOrganisationId);
     }
 }

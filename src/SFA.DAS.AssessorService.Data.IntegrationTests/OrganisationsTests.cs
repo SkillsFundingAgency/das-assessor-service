@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using Dapper;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
@@ -18,11 +19,17 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
         private OrganisationModel _organisation2;
         private readonly DatabaseService _databaseService = new DatabaseService();
         private OrganisationQueryRepository _repository;
+        private IDbConnection _connection;
 
         [OneTimeSetUp]
         public void SetupOrganisationTests()
         {
-            _repository = new OrganisationQueryRepository(_databaseService.TestContext);
+             _connection = _databaseService.TestContext.Database.GetDbConnection();
+             if (_connection.State != ConnectionState.Open)
+             {
+                 _connection.Open();
+             }
+            _repository = new OrganisationQueryRepository(_databaseService.TestContext, _connection);
             _organisation1 = new OrganisationModel
             {
                 Id = Guid.NewGuid(),
