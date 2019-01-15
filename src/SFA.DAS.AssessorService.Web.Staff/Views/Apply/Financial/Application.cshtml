@@ -98,35 +98,35 @@
 
                     <div class="form-group" sfa-anyvalidationerror-class="form-group-error">
                         <div class="multiple-choice">
-                            <input id="excellent" type="radio" name="SelectedGrade" value="@(FinancialApplicationSelectedGrade.Excellent)">
+                            <input id="excellent" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Excellent)">
                             <label for="excellent">Excellent</label>
                         </div>
 
                         <div class="multiple-choice">
-                            <input id="good" type="radio" name="SelectedGrade" value="@(FinancialApplicationSelectedGrade.Good)">
+                            <input id="good" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Good)">
                             <label for="good">Good</label>
                         </div>
 
                         <div class="multiple-choice" data-target="satisfactory-more-info">
-                            <input id="satisfactory" type="radio" name="SelectedGrade" value="Satisfactory" @(Model.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Satisfactory ? "checked" : "") />
+                            <input id="satisfactory" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Satisfactory)" @(Model.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Satisfactory ? "checked" : "") />
                             <label for="satisfactory">Satisfactory</label>
                         </div>
                         <div class="panel panel-border-narrow js-hidden" id="satisfactory-more-info">
-                            <label class="form-label" for="Grade.SatisfactoryMoreInformation">More information</label>
-                            <input class="form-control form-control-3-4" type="text" name="Grade.SatisfactoryMoreInformation" sfa-validation-for="Grade.SatisfactoryMoreInformation" sfa-validationerror-class="form-control-error" />
+                            <label class="form-label" for="Grade.SatisfactoryMoreInformation">Why is the application satisfactory?</label>
+                            <textarea class="form-control form-control-full" rows="4" name="Grade.SatisfactoryMoreInformation" sfa-validation-for="Grade.SatisfactoryMoreInformation" sfa-validationerror-class="form-control-error"></textarea>
                         </div>
 
                         <div class="multiple-choice" data-target="inadequate-more-info">
-                            <input id="inadequate" type="radio" name="SelectedGrade" value="Inadequate" @(Model.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate ? "checked" : "") />
+                            <input id="inadequate" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Inadequate)" @(Model.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate ? "checked" : "") />
                             <label for="inadequate">Inadequate</label>
                         </div>
                         <div class="panel panel-border-narrow js-hidden" id="inadequate-more-info">
-                            <label class="form-label" for="Grade.InadequateMoreInformation">More information</label>
-                            <input class="form-control form-control-3-4" type="text" name="Grade.InadequateMoreInformation" sfa-validation-for="Grade.InadequateMoreInformation" sfa-validationerror-class="form-control-error" />
+                            <label class="form-label" for="Grade.InadequateMoreInformation">Why is the application inadequate?</label>
+                            <textarea class="form-control form-control-full" rows="4" name="Grade.InadequateMoreInformation" sfa-validation-for="Grade.InadequateMoreInformation" sfa-validationerror-class="form-control-error"></textarea>
                         </div>
 
                         <div class="multiple-choice">
-                            <input id="exempt" type="radio" name="SelectedGrade" value="@(FinancialApplicationSelectedGrade.Exempt)">
+                            <input id="exempt" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Exempt)">
                             <label for="exempt">Exempt</label>
                         </div>
                     </div>

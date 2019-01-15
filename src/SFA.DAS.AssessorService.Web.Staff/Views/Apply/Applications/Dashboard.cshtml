@@ -1,19 +1,15 @@
 @{
-    ViewBag.Title = "Applications";
+    ViewBag.Title = "Account home - Applications";
     Layout = "_Layout";
 }
+
 <div class="grid-row">
     <div class="column-two-thirds">
-        <h1 class="heading-xlarge">Applications</h1>
-    </div>
-</div>
-<div class="grid-row">
-    <div class="column-one-third">
-        <h2 class="heading-medium"><a asp-controller="Application" asp-action="Applications">Account applications</a></h2>
+        <h1 class="heading-xlarge">Account home</h1>
+        <h2 class="heading-medium">Application evaluation</h2>
+        <h3 class="heading-small"><a asp-controller="Application" asp-action="Applications">Account applications</a></h3>
         <p>Evaluate applications for an EPAO account</p>
-    </div>
-    <div class="column-one-third">
-        <h2 class="heading-medium"><a asp-controller="Application" asp-action="Standards">Standard applications</a></h2>
+        <h3 class="heading-small"><a asp-controller="Application" asp-action="Standards">Standard applications</a></h3>
         <p>Evaluate applications for standards</p>
     </div>
 </div>
