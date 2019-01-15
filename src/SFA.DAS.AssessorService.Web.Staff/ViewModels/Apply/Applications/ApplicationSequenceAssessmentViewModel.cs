@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Applications
             Title = "Assessment summary";
             ApplicationId = sequence.ApplicationId;
             SequenceId = sequence.SequenceId;
-            HasNewFeedback = true;//sequence.Sections.Any(s => s.HasNewPageFeedback) || sequence.Sections.Any(s => s.HasNewSectionFeedback);
+            HasNewFeedback = sequence.Sections.Any(s => s.HasNewPageFeedback) || sequence.Sections.Any(s => s.HasNewSectionFeedback);
         }
     }
 }
