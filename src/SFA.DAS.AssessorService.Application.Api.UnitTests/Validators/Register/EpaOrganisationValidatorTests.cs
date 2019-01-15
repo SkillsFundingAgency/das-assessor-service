@@ -195,8 +195,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         [TestCase("", true)]
         [TestCase("01234567", true)]
         [TestCase("1234567", true)]
-        [TestCase("A123456", false)]
-        [TestCase("ABC12345", false)]
+        [TestCase("A123456", true)]
+        [TestCase("ABC12345", true)]
+        [TestCase("12345679-1", true)]
         public void CheckCharityNumberIsValid(string charityNumber, bool isAcceptable)
         {
             var noMessageReturned = _validator.CheckCharityNumberIsValid(charityNumber).Length == 0;
