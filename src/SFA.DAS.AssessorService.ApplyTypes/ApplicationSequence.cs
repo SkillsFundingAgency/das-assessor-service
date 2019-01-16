@@ -11,15 +11,13 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public int SequenceId { get; set; }
         public string Status { get; set; }
         public bool IsActive { get; set; }
+        public SequenceData SequenceData { get; set; }
         public List<ApplicationSection> Sections { get; set; }
+    }
 
-        public bool HasNewFeedback
-        {
-            get
-            {
-                return Sections.SelectMany(s => s.QnAData.Pages).Any(p => p.HasFeedback && p.Feedback.Any(f => !f.IsCompleted));
-            }
-        }
+    public class SequenceData
+    {
+        public List<Feedback> Feedback { get; set; }
     }
 
     public class ApplicationSequenceStatus
