@@ -6,7 +6,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Financial
     {
         public string ApplyingOrganisationName { get; set; }
         public string Status { get; set; }
-        public string LinkText { get; set; }
         public Guid ApplicationId { get; set; }
     }
 }

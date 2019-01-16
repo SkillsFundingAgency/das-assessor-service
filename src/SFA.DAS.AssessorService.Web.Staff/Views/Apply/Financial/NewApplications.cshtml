@@ -1,4 +1,5 @@
-@model List<SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Financial.NewFinancialApplicationViewModel >
+@using SFA.DAS.AssessorService.Web.Staff.Helpers
+@model List<SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Financial.NewFinancialApplicationViewModel>
 
 @{
     ViewBag.Title = "New applications";
@@ -13,7 +14,7 @@
     </div>
 </div>
 
-@if( Model.Count() > 0 )
+@if (Model.Count() > 0)
 {
     <div class="grid-row">
         <div class="column-full">
@@ -30,8 +31,8 @@
                     {
                         <tr>
                             <td>@application.ApplyingOrganisationName</td>
-                            <td>@application.Status</td>
-                            <td class="numeric"><a asp-action="ViewApplication" asp-controller="Financial" asp-route-applicationId="@application.ApplicationId">@application.LinkText</a></td>
+                            <td>@FinancialApplicationReviewHelpers.TranslateApplicationStatus(application.Status)</td>
+                            <td class="numeric"><a asp-action="ViewApplication" asp-controller="Financial" asp-route-applicationId="@application.ApplicationId">@FinancialApplicationReviewHelpers.ApplicationLink(application.Status)</a></td>
                         </tr>
                     }
                 </tbody>
