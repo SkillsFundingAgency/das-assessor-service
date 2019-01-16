@@ -24,5 +24,7 @@ namespace SFA.DAS.AssessorService.ExternalApis.IFAStandards.Types
         public string OverviewOfRole { get; set; }
         public bool IsPublished { get; set; }
         public string Uri { get; set; }
+
+        public string AssessmentPlanUrl { get; set; }
     }
 }
