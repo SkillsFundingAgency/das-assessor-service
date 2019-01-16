@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpPost(Name = "CreateBatchLog")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(EpaOrganisationResponse))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(BatchLogResponse))]
         [SwaggerResponse((int)HttpStatusCode.NotFound, typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.Gone, Type = typeof(ApiResponse))]
