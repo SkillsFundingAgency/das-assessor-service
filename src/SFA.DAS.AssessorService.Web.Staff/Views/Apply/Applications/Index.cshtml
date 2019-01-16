@@ -35,7 +35,7 @@
                                     <td>@ApplicationReviewHelpers.TranslateApplicationStatus(appl.SequenceStatus.ToString())</td>
                                     <td>@ApplicationReviewHelpers.TranslateFinanceStatus(appl.FinanceStatus.ToString())</td>
                                     <td>@ApplicationReviewHelpers.ReadyToFeedback(appl.FinanceStatus.ToString(), appl.SequenceStatus.ToString())</td>
-                                    <td><a asp-action="Application" asp-controller="Application" asp-route-applicationId="@appl.ApplicationId">@ApplicationReviewHelpers.ApplicationLink(appl.SequenceStatus.ToString())</a></td>
+                                    <td class="numeric"><a asp-action="Application" asp-controller="Application" asp-route-applicationId="@appl.ApplicationId">@ApplicationReviewHelpers.ApplicationLink(appl.SequenceStatus.ToString())</a></td>
                                 </tr>
                             }
                         </tbody>
