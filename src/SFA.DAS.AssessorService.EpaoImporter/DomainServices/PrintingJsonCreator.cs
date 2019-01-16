@@ -6,6 +6,7 @@ using System.Text;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Domain.JsonData.Printing;
+using SFA.DAS.AssessorService.EpaoImporter.Extensions;
 using SFA.DAS.AssessorService.EpaoImporter.Interfaces;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
 using SFA.DAS.AssessorService.EpaoImporter.Sftp;
@@ -58,13 +59,18 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 
             printOutput.Batch.PostalContactCount = groupedByRecipient.Count;
 
+
             groupedByRecipient.ForEach(g =>
             {
+                var contactName = string.Empty;
+                if (g.Key.ContactName != null)
+                    contactName = g.Key.ContactName.Replace("\t", " ");
+
                 var printData = new PrintData
                 {
                     PostalContact = new PostalContact
                     {
-                        Name = g.Key.ContactName,
+                        Name = contactName,
                         Department = g.Key.Department,
                         EmployerName = g.Key.ContactOrganisation,
                         AddressLine1 = g.Key.ContactAddLine1,
@@ -84,16 +90,23 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 
                 g.ToList().ForEach(c =>
                 {
+                    var learnerName  = 
+                        !string.IsNullOrEmpty(c.CertificateData.FullName)
+                            ? c.CertificateData.FullName
+                            : $"{c.CertificateData.LearnerGivenNames} {c.CertificateData.LearnerFamilyName}";
+
+                   
+
                     printData.Certificates.Add(new PrintCertificate
                     {
                         CertificateNumber = c.CertificateReference,
                         ApprenticeName =
-                            $"{c.CertificateData.LearnerGivenNames} {c.CertificateData.LearnerFamilyName}",
+                            learnerName.NameCase(),
                         LearningDetails = new LearningDetails()
                         {
                             StandardTitle = c.CertificateData.StandardName,
                             Level = $"LEVEL {c.CertificateData.StandardLevel}",
-                            Option = c.CertificateData.CourseOption,
+                            Option = string.IsNullOrWhiteSpace(c.CertificateData?.CourseOption) ? string.Empty: c.CertificateData.CourseOption,
                             GradeText = string.IsNullOrWhiteSpace(c.CertificateData.OverallGrade) ? null : "achieving a",
                             Grade = c.CertificateData.OverallGrade,
                             AchievementDate = $"{c.CertificateData.AchievementDate.Value:dd MMM, yyyy}",
