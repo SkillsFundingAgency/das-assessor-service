@@ -95,10 +95,21 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                             ? c.CertificateData.FullName
                             : $"{c.CertificateData.LearnerGivenNames} {c.CertificateData.LearnerFamilyName}";
 
-                   
+                    var noGradeGiven = string.IsNullOrWhiteSpace(c.CertificateData.OverallGrade);
+                    var gradeText = string.Empty;
+                    var grade = string.Empty;
+
+                    if (!noGradeGiven)
+                    {
+                        gradeText = "Achieved grade ";
+                        grade = c.CertificateData.OverallGrade;
+                    }
 
                     printData.Certificates.Add(new PrintCertificate
                     {
+                      
+
+
                         CertificateNumber = c.CertificateReference,
                         ApprenticeName =
                             learnerName.NameCase(),
@@ -107,8 +118,8 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                             StandardTitle = c.CertificateData.StandardName,
                             Level = $"LEVEL {c.CertificateData.StandardLevel}",
                             Option = string.IsNullOrWhiteSpace(c.CertificateData?.CourseOption) ? string.Empty: c.CertificateData.CourseOption,
-                            GradeText = string.IsNullOrWhiteSpace(c.CertificateData.OverallGrade) ? null : "achieving a",
-                            Grade = c.CertificateData.OverallGrade,
+                            GradeText = gradeText,
+                            Grade = grade,
                             AchievementDate = $"{c.CertificateData.AchievementDate.Value:dd MMM, yyyy}",
                         }
                     });
