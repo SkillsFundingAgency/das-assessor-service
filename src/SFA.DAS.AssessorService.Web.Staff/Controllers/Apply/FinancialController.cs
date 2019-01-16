@@ -44,8 +44,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
                 {
                     ApplicationId = a.applicationId,
                     ApplyingOrganisationName = a.applyingOrganisationName,
-                    Status = a.status,
-                    LinkText = a.status == "Submitted" ? "Review application" : "Continue"
+                    Status = a.status
                 }).ToList();
             
             
