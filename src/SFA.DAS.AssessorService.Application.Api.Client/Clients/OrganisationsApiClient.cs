@@ -5,7 +5,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
-using SFA.DAS.AssessorService.Domain.Paging;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
@@ -37,33 +36,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             {
                 return await RequestAndDeserialiseAsync<OrganisationResponse>(request,
                     $"Could not find the organisation {ukprn}");
-            }
-        }
-
-        public async Task<EpaOrganisationStandardsCountResponse> GetEpaoStandardsCount(string epaoId)
-        {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/organisations/count/{epaoId}"))
-            {
-                return await RequestAndDeserialiseAsync<EpaOrganisationStandardsCountResponse>(request,
-                    $"Could not find the organisation {epaoId}");
-            }
-        }
-
-        public async Task<EpaOrganisationPipelineCountResponse> GetEpaoPipelineCount(string epaoId)
-        {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/organisations/pipeline/count/{epaoId}"))
-            {
-                return await RequestAndDeserialiseAsync<EpaOrganisationPipelineCountResponse>(request,
-                    $"Could not find the organisation {epaoId}");
-            }
-        }
-
-        public async Task<PaginatedList<GetEpaoRegisteredStandardsResponse>> GetEpaoRegisteredStandards(string epaoId, int? pageIndex = null)
-        {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/organisations/standards/{epaoId}?pageIndex={pageIndex}"))
-            {
-                return await RequestAndDeserialiseAsync<PaginatedList<GetEpaoRegisteredStandardsResponse>>(request,
-                    $"Could not find the organisation {epaoId}");
             }
         }
 
@@ -235,10 +207,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         Task<ValidationResponse> ValidateCreateOrganisationStandard(string organisationId, int standardId, DateTime? effectiveFrom, DateTime? effectiveTo, Guid? contactId, List<int> deliveryAreas);
         Task<ValidationResponse> ValidateUpdateOrganisationStandard(string organisationId, int standardId, DateTime? effectiveFrom, DateTime? effectiveTo, Guid? contactId, List<int> deliveryAreas, string actionChoice, string organisationStandardStatus, string organisationStatus);
-        Task<EpaOrganisationStandardsCountResponse> GetEpaoStandardsCount(string epaoId);
-        Task<EpaOrganisationPipelineCountResponse> GetEpaoPipelineCount(string epaoId);
-
-        Task<PaginatedList<GetEpaoRegisteredStandardsResponse>> GetEpaoRegisteredStandards(string epaoId,
-            int? pageIndex);
+      
     }
 }

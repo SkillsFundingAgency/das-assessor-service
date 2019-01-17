@@ -23,14 +23,19 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly ISessionService _sessionService;
         private readonly IOrganisationsApiClient _organisationsApiClient;
+        private readonly IStandardsApiClient _standardsApiClient;
 
-        public OrganisationStandardsController(ILogger<OrganisationStandardsController> logger, ISessionService sessionService,
-            IOrganisationsApiClient organisationsApiClient, IHttpContextAccessor contextAccessor)
+        public OrganisationStandardsController(ILogger<OrganisationStandardsController> logger, 
+            ISessionService sessionService,
+            IOrganisationsApiClient organisationsApiClient,
+            IStandardsApiClient standardsApiClient,
+            IHttpContextAccessor contextAccessor)
         {
             _logger = logger;
             _sessionService = sessionService;
             _organisationsApiClient = organisationsApiClient;
             _contextAccessor = contextAccessor;
+            _standardsApiClient = standardsApiClient;
         }
 
         [HttpGet]
@@ -47,7 +52,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 var organisation = await _organisationsApiClient.Get(ukprn);
                 if (organisation != null)
                 {
-                    epaoRegisteredStandardsResponse = await _organisationsApiClient.GetEpaoRegisteredStandards(organisation.EndPointAssessorOrganisationId, pageIndex ?? 1);
+                    epaoRegisteredStandardsResponse = await _standardsApiClient.GetEpaoRegisteredStandards(organisation.EndPointAssessorOrganisationId, pageIndex ?? 1);
                 }
 
             }

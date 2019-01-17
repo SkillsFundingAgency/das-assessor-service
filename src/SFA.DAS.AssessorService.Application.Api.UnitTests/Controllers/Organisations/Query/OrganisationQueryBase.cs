@@ -1,6 +1,8 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using FizzWare.NBuilder;
 using MediatR;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
@@ -13,6 +15,7 @@ using SFA.DAS.AssessorService.Application.Api.UnitTests.Helpers;
 using SFA.DAS.AssessorService.Application.Api.Validators;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.Paging;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisations.Query
 {
@@ -21,34 +24,32 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
         protected OrganisationQueryController OrganisationQueryController;
         protected UkPrnValidator UkPrnValidator;
 
-       // protected Mock<GetOrganisationsOrchestrator> GetOrganisationsOrchestratorMock;
-
         protected Mock<IOrganisationQueryRepository> OrganisationQueryRepositoryMock;
 
+        protected Mock<IMediator> Mediator = new Mock<IMediator>();
+
         protected Mock<IStringLocalizer<OrganisationQueryController>> OrganisationControllerLocaliserMock;
-        //protected Mock<IStringLocalizer<GetOrganisationsOrchestrator>> GetOrganisationsOrchestratorLocaliserMock;
-           
+
         protected Mock<ILogger<OrganisationQueryController>> ControllerLoggerMock;
-       // protected Mock<ILogger<GetOrganisationsOrchestrator>> OrchestratorLoggerMock;
       
         private MockStringLocaliserBuilder _mockStringLocaliserBuilder;
-        ////private GetOrganisationsOrchestrator _getOrganisationsOrchestrator;
 
         protected  void Setup()
         {
+            Mediator = new Mock<IMediator>();
+
             Mapper.Reset();
             Mapper.Initialize(cfg =>
             {
                 cfg.CreateMap<Organisation, OrganisationResponse>();
             });
             EpaOrganisationStandardsCountResponse response = new EpaOrganisationStandardsCountResponse(1);
-            var mediator = new Mock<IMediator>();
-            mediator.Setup(q => q.Send(Moq.It.IsAny<GetEpaOrganisationStandardsCountRequest>(), new CancellationToken()))
+         
+            Mediator.Setup(q => q.Send(Moq.It.IsAny<GetEpaOrganisationStandardsCountRequest>(), new CancellationToken()))
                 .Returns(Task.FromResult(response));
-            //SetupOrchestratorMocks();
             SetupControllerMocks();
 
-            OrganisationQueryController = new OrganisationQueryController(ControllerLoggerMock.Object, OrganisationQueryRepositoryMock.Object, UkPrnValidator, OrganisationControllerLocaliserMock.Object, mediator.Object);
+            OrganisationQueryController = new OrganisationQueryController(ControllerLoggerMock.Object, OrganisationQueryRepositoryMock.Object, UkPrnValidator, OrganisationControllerLocaliserMock.Object, Mediator.Object);
         }
 
         private void SetupControllerMocks()
@@ -73,25 +74,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
 
             ControllerLoggerMock = new Mock<ILogger<OrganisationQueryController>>();
         }
-
-        //private void SetupOrchestratorMocks()
-        //{         
-           
-
-            
-
-        //    GetOrganisationsOrchestratorLocaliserMock = _mockStringLocaliserBuilder
-        //        .WithKey(ResourceMessageName.NoAssesmentProviderFound)
-        //        .WithKeyValue("100000000")
-        //        .Build<GetOrganisationsOrchestrator>();
-
-        //    OrchestratorLoggerMock = new Mock<ILogger<GetOrganisationsOrchestrator>>();
-
-        //    _getOrganisationsOrchestrator = new GetOrganisationsOrchestrator(
-        //        OrganisationQueryRepositoryMock.Object,
-        //        GetOrganisationsOrchestratorLocaliserMock.Object,
-        //        UkPrnValidator,
-        //        OrchestratorLoggerMock.Object);
-        //}
+        
     }
 }
