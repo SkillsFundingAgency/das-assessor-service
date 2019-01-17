@@ -2,28 +2,28 @@
     ViewBag.Title = "Feedback Sent";
 }
 
-<main class="govuk-main-wrapper govuk-main-wrapper--l" id="main-content" role="main">
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-
-            <div class="govuk-panel govuk-panel--confirmation">
-                <h1 class="govuk-panel__title">Feedback sent</h1>
-                <div class="govuk-panel__body">
-                    An email has been sent to the applicant.
-                </div>
-            </div>
-
-            <h3 class="govuk-heading-m">What do you want to do next?</h3>
-
-            <p class="govuk-body">
-                <a asp-action="Applications" asp-controller="Application">View new applications</a>
-            </p>
-            <p class="govuk-body">
-                <a asp-action="Dashboard" asp-controller="Application">Return to account home</a>
-            </p>
-            <p class="govuk-body">
-                <a href="https://urltosurvey">What did you think of this service?</a> (takes 30 seconds)
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <div class="govuk-box-highlight">
+            <h1 class="heading-xlarge">
+                Feedback sent
+            </h1>
+            <p class="font-medium">
+                An email has been sent to the applicant.
             </p>
         </div>
+        @*<p>You can view previous evaluations, including this one in the <a asp-action="PreviousApplications" asp-controller="Applications">previous assessments</a> area.</p>*@
+        <h3 class="heading-medium">What do you want to do next?</h3>
+        <ul class="list list-bullet">
+            <li>
+                <a asp-action="Applications" asp-controller="Application">View new applications</a>
+            </li>
+            <li>
+                <a asp-action="Dashboard" asp-controller="Application">Return to account home</a>
+            </li>
+            <li>
+                <a href="https://www.surveymonkey.co.uk/r/P8YBH9J">What did you think of this service?</a> (takes 30 seconds)
+            </li>
+        </ul>
     </div>
-</main>
+</div>
