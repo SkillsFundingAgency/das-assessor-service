@@ -169,9 +169,6 @@
                             <li @(currentPage == Pages.Dashboard?"class=app-navigation--current-page":"")>
                                 <a asp-controller="Dashboard" asp-action="Index">Home</a>
                             </li>
-                            <li  @(currentPage == Pages.Standards?"class=app-navigation--current-page":"")>
-                                <a asp-controller="Dashboard" asp-action="">Standards</a>
-                            </li>
                             <li  @(currentPage == Pages.Pipeline?"class=app-navigation--current-page":"")>
                                 <a asp-controller="Dashboard" asp-action="">Pipeline</a>
                             </li>
@@ -180,6 +177,9 @@
                             </li>
                             <li  @(currentPage == Pages.Assessments?"class=app-navigation--current-page":"")>
                                 <a asp-controller="CertificateHistory" asp-action="Index">Assessments</a>
+                            </li>
+                            <li  @(currentPage == Pages.Standards?"class=app-navigation--current-page":"")>
+                                <a asp-controller="Dashboard" asp-action="">Standards</a>
                             </li>
                             <li  @(currentPage == Pages.Users?"class=app-navigation--current-page":"")>
                                 <a asp-controller="Dashboard" asp-action="">Users</a>
