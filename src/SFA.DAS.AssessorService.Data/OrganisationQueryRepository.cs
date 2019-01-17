@@ -89,14 +89,16 @@ namespace SFA.DAS.AssessorService.Data
         public async Task<int> GetEpaoPipelineCount(string endPointAssessorOrganisationId)
         {
             var result = await _connection.QueryAsync<EPAOPipeline>("GetEPAO_Pipelines", new {
-                EPAOId= endPointAssessorOrganisationId
+                EPAOId= endPointAssessorOrganisationId,
+                SKIP = 0,
+                TAKE = 1
             },
                 commandType: CommandType.StoredProcedure);
 
             var epaoPipelines = result?.ToList();
             if (epaoPipelines != null && epaoPipelines.Any())
             {
-                return epaoPipelines.Sum(x => x.Pipeline);
+                return epaoPipelines.Select(x => x.TotalRows).First();
             }
 
             return 0;
