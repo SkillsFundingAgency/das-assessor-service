@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
-using SFA.DAS.Apprenticeships.Api.Types.AssessmentOrgs;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
-
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.AssessorService.Data
@@ -103,6 +100,20 @@ namespace SFA.DAS.AssessorService.Data
             }
 
             return 0;
+        }
+
+        public async Task<EpoRegisteredStandardsResult> GetEpaoRegisteredStandards(string endPointAssessorOrganisationId, int pageSize, int? pageIndex)
+        {
+            var total = await GetEpaOrganisationStandardsCount(endPointAssessorOrganisationId);
+            var skip = ((pageIndex ?? 1) - 1) * pageSize;
+             var result = await _connection.QueryAsync<EPORegisteredStandards>("EPAO_Registered_Standards", new
+            {
+                EPAOId = endPointAssessorOrganisationId,
+                Skip = skip,
+                Take =  pageSize
+            }, commandType: CommandType.StoredProcedure);
+
+            return new EpoRegisteredStandardsResult { PageOfResults= result?.ToList(), TotalCount =  total};
         }
 
     }

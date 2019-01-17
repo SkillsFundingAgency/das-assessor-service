@@ -824,14 +824,15 @@ table.responsive tr.total {
     border-bottom-style: solid;
     width: auto;
   }
+
   table.responsive tr th:first-child,
   table.responsive tr td:first-child {
     padding-left: 0;
   }
-  table.responsive tr th:last-child,
-  table.responsive tr td:last-child {
-    padding-right: 0;
-  }
+    table.responsive tr th:last-child,
+    table.responsive tr td:last-child {
+        padding-right: 0;
+    }
   table.responsive tr th:before,
   table.responsive tr td:before {
     display: none;
