@@ -48,6 +48,8 @@
     </div>
 </div>
 
+@if (Model.Section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type != "FileUpload"))
+{
 <div class="grid-row">
     <div class="column-full">
         <table class="table-spaced">
@@ -76,6 +78,7 @@
         </table>
     </div>
 </div>
+}
 
 <div class="grid-row">
     <div class="column-two-thirds">
