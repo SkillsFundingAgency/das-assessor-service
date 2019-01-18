@@ -20,10 +20,10 @@
                         <th>
                             @Localizer["Standard"]
                         </th>
-                        <th>
+                        <th class="numeric">
                             @Localizer["Code"]
                         </th>
-                        <th>
+                        <th class="numeric">
                             @Localizer["Level"]
                         </th>
                     </tr>
@@ -35,10 +35,10 @@
                             <td data-label="@Localizer["Standard name"]" class="nowrap">
                                 @Html.DisplayFor(modelItem => item.StandardName)
                             </td>
-                            <td data-label="@Localizer["Standard code"]">
+                            <td data-label="@Localizer["Standard code"]" class="numeric">
                                 @Html.DisplayFor(modelItem => item.StandardCode)
                             </td>
-                            <td data-label="@Localizer["Standard level"]">
+                            <td data-label="@Localizer["Standard level"]" class="numeric">
                                 @Html.DisplayFor(modelItem => item.Level)
                             </td>
                         </tr>

@@ -237,6 +237,7 @@
         <script src="~/js/shim-links-with-button-role.js" asp-append-version="true"></script>
         <script src="~/js/show-hide-content.js" asp-append-version="true"></script>
         <script src="~/js/expandable-table.js" asp-append-version="true"></script>
+        <script src="~/js/sortable-table.js" asp-append-version="true"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
     </environment>
 
@@ -246,7 +247,11 @@
     </environment>
 
     @RenderSection("Scripts", required: false)
-    <script>if (typeof window.GOVUK === 'undefined') document.body.className = document.body.className.replace('js-enabled', '');</script>
+<script>if (typeof window.GOVUK === 'undefined') document.body.className = document.body.className.replace('js-enabled', '');</script>
+<script>
+    var table = document.getElementById('pipeline');
+    new SortableTable(table);
+</script>
 </body>
 
 </html>
