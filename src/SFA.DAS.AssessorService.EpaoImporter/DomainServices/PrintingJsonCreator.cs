@@ -98,7 +98,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                     var gradeText = string.Empty;
                     var grade = string.Empty;
 
-                    if (!string.IsNullOrWhiteSpace(c.CertificateData.OverallGrade))
+                    if (!string.IsNullOrWhiteSpace(c.CertificateData.OverallGrade) && c.CertificateData.OverallGrade!= "No grade awarded")
                     {
                         gradeText = "Achieved grade ";
                         grade = c.CertificateData.OverallGrade;
