@@ -48,11 +48,18 @@
             <h2 class="heading-large">Feedback</h2>
             foreach (var feedback in Model.Page.Feedback)
             {
-                <div class="das-feedback">
-                    <h3 class="heading-small">@feedback.From</h3>
-                    <p class="font-xsmall">@feedback.Date.ToShortDateString()</p>
-                    <p>@feedback.Message</p>
-                </div>
+            <div class="das-feedback">
+                <h3 class="heading-small">@feedback.From</h3>
+                <p class="font-xsmall">@feedback.Date.ToShortDateString()</p>
+                <p>@feedback.Message</p>
+                @if (feedback.IsNew)
+                {
+                <form asp-action="DeleteFeedback" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@Model.PageId">
+                    <input type="hidden" name="FeedbackId" value="@feedback.Id" />
+                    <button class="button" type="submit">Delete</button>
+                </form>
+                }
+            </div>
             }
             <hr />
         }
@@ -60,8 +67,8 @@
         <div class="form-group">
             <form asp-action="Feedback" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@Model.PageId">
                 <div class="form-group error-message-container" sfa-anyvalidationerror-class="form-group-error">
-                    <label class="form-label" for="message">
-                        Feedback
+                    <label class="form-label-bold" for="message">
+                        Add Feedback
                     </label>
                     <span class="error-message" asp-validation-for="FeedbackMessage"></span>
                     <textarea class="form-control form-control-full" rows="15" sfa-validation-for="FeedbackMessage" sfa-validationerror-class="form-control-error" asp-for="FeedbackMessage"></textarea>

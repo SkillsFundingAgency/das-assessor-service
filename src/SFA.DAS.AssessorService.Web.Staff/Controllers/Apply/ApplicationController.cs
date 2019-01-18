@@ -131,6 +131,14 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
             return RedirectToAction("Section", new {applicationId, sequenceId, sectionId});
         }
 
+        [HttpPost("/Applications/{applicationId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}/DeleteFeedback")]
+        public async Task<IActionResult> DeleteFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid feedbackId)
+        {
+            await _applyApiClient.DeleteFeedback(applicationId, sequenceId, sectionId, pageId, feedbackId);
+
+            return RedirectToAction("Page", new { applicationId, sequenceId, sectionId, pageId });
+        }
+
         [HttpGet("/Applications/{applicationId}/Sequence/{sequenceId}/Assessment")]
         public async Task<IActionResult> Assessment(Guid applicationId, int sequenceId)
         {

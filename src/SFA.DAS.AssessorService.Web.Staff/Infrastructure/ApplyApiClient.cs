@@ -134,6 +134,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
                 feedback);
         }
 
+        public async Task DeleteFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid feedbackId)
+        {
+            await Post(
+                $"Review/Applications/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/DeleteFeedback",
+                feedbackId);
+        }
+
         public async Task ReturnApplication(Guid applicationId, int sequenceId, string returnType)
         {
             await Post($"Review/Applications/{applicationId}/Sequences/{sequenceId}/Return", new { returnType });

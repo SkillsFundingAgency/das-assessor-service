@@ -37,6 +37,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
     
     public class Feedback
     {
+        public Guid Id { get; set; }
         public string From { get; set; }
         public string Message { get; set; }
         public DateTime Date { get; set; }
