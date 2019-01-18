@@ -15,18 +15,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
     public class GetEpaoRegisteredStandardsHandler : IRequestHandler<GetEpaoRegisteredStandardsRequest, PaginatedList<GetEpaoRegisteredStandardsResponse>>
     {
         private readonly ILogger<GetEpaoRegisteredStandardsHandler> _logger;
-        private readonly IOrganisationQueryRepository _organisationQueryRepository;
-        public GetEpaoRegisteredStandardsHandler(ILogger<GetEpaoRegisteredStandardsHandler> logger, IOrganisationQueryRepository organisationQueryRepository)
+        private readonly IStandardRepository _standardRepository;
+        public GetEpaoRegisteredStandardsHandler(ILogger<GetEpaoRegisteredStandardsHandler> logger, IStandardRepository standardRepository)
         {
             _logger = logger;
-            _organisationQueryRepository = organisationQueryRepository;
+            _standardRepository = standardRepository;
         }
 
         public async Task<PaginatedList<GetEpaoRegisteredStandardsResponse>> Handle(GetEpaoRegisteredStandardsRequest request, CancellationToken cancellationToken)
         {
             const int pageSize = 10;
-
-            var result =  await _organisationQueryRepository.GetEpaoRegisteredStandards(request.EpaoId, pageSize, request.PageIndex ?? 1);
+            _logger.LogInformation("Retreiving Epao registered standards");
+            var result =  await _standardRepository.GetEpaoRegisteredStandards(request.EpaoId, pageSize, request.PageIndex ?? 1);
 
             var epaoRegisteredStandardsResult = result.PageOfResults.Select(o =>
                 new GetEpaoRegisteredStandardsResponse

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Apprenticeships.Api.Types.Exceptions;
+using SFA.DAS.AssessorService.Api.Types;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Paging;
@@ -62,6 +63,32 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             }
             
             return View("Index", epaoRegisteredStandardsResponse);
+        }
+
+        [HttpGet]
+        [Route("/[controller]/pipelines")]
+        public async Task<IActionResult> Pipeline(int? pageIndex)
+        {
+            _sessionService.Set("CurrentPage", Pages.Pipeline);
+            var epaoPipelineStandardsResponse = new PaginatedList<GetEpaoPipelineStandardsResponse>(new List<GetEpaoPipelineStandardsResponse>(), 0, 1, 1);
+
+            var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
+            try
+            {
+
+                var organisation = await _organisationsApiClient.Get(ukprn);
+                if (organisation != null)
+                {
+                    epaoPipelineStandardsResponse = await _standardsApiClient.GetEpaoPipelineStandards(organisation.EndPointAssessorOrganisationId, pageIndex ?? 1);
+                }
+
+            }
+            catch (EntityNotFoundException)
+            {
+                return RedirectToAction("NotRegistered", "Home");
+            }
+
+            return View("Pipelines", epaoPipelineStandardsResponse);
         }
     }
 }

@@ -32,8 +32,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Standard
             mediator.Setup(q => q.Send(Moq.It.IsAny<GetEpaoRegisteredStandardsRequest>(), new CancellationToken()))
                 .Returns(Task.FromResult(registeredStandardsPaginatedList));
             var epoRegisteredStandardsResult = Builder<EpoRegisteredStandardsResult>.CreateNew().Build();
-            var organisationQueryRepositoryMock = new Mock<IOrganisationQueryRepository>();
-            organisationQueryRepositoryMock.Setup(x =>
+            var standardRepositoryMock = new Mock<IStandardRepository>();
+            standardRepositoryMock.Setup(x =>
                     x.GetEpaoRegisteredStandards(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int?>()))
                 .Returns(Task.FromResult(epoRegisteredStandardsResult));
 

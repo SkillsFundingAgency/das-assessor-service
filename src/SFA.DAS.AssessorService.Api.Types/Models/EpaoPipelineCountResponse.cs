@@ -1,8 +1,8 @@
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    public class EpaOrganisationPipelineCountResponse
+    public class EpaoPipelineCountResponse
     {
-        public EpaOrganisationPipelineCountResponse(int count)
+        public EpaoPipelineCountResponse(int count)
         {
             Count = count;
         }

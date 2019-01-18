@@ -1,0 +1,91 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@using Microsoft.AspNetCore.Mvc.Localization
+@using SFA.DAS.AssessorService.Domain.Paging
+@model SFA.DAS.AssessorService.Domain.Paging.PaginatedList<SFA.DAS.AssessorService.Api.Types.GetEpaoPipelineStandardsResponse>
+
+@{
+    ViewBag.Title = "Pipeline";
+    Layout = "_DashboardLayout";
+}
+
+<div>
+    <div class="grid-row">
+        <div class="column-full">
+            <h1 class="heading-large">Pipeline</h1>
+
+            <table class="table responsive table-font-xsmall">
+                <thead>
+                    <tr>
+                        <th>
+                            @Localizer["Standard"]
+                        </th>
+                        <th>
+                            @Localizer["Training Provider"]
+                        </th>
+                        <th>
+                            @Localizer["Apprentices"]
+                        </th>
+                        <th>
+                            @Localizer["Estimated Gateway"]
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                    <tr>
+                        <td data-label="@Localizer["StandardName"]" class="nowrap">
+                            @Html.DisplayFor(modelItem => item.StandardName)
+                        </td>
+                        <td data-label="@Localizer["TrainingProvider"]">
+                            @Html.DisplayFor(modelItem => item.TrainingProvider)
+                        </td>
+                        <td data-label="@Localizer["Apprenticeds"]">
+                            @Html.DisplayFor(modelItem => item.Pipeline)
+                        </td>
+                        <td data-label="@Localizer["EstimatedDate"]" style="font-weight:700">
+                            @Html.DisplayFor(modelItem => item.EstimatedDate)
+                        </td>
+                    </tr>
+
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+@if (Model.HasPreviousPage || Model.HasNextPage)
+{
+<div class="grid-row">
+    <div class="column-full">
+        <div class="page-navigation">
+
+            @if (Model.HasPreviousPage)
+            {
+            <a asp-action="Pipeline"
+               asp-controller="OrganisationStandards"
+               asp-route-pageIndex="@(Model.PageIndex - 1)"
+               class="previous">
+                <i class="arrow-button icon-left-open">&#xe800;</i>
+                <span class="description">Previous <span class="hide-mob">page</span></span>
+                <span class="counter">Page <span class="prevPage">@(Model.PageIndex - 1)</span> of <span class="totalPage">@(Model.TotalPages)</span></span>
+            </a>
+            }
+
+            @if (Model.HasNextPage)
+            {
+            <a asp-controller="OrganisationStandards"
+               asp-action="Pipeline"
+               asp-route-pageIndex="@(Model.PageIndex + 1)"
+               class="next">
+                <i class="arrow-button icon-right-open">&#xe801;</i>
+                <span class="description">Next <span class="hide-mob">page</span></span>
+                <span class="counter">Page <span class="nextPage">@(Model.PageIndex + 1)</span> of <span class="totalPage">@(Model.TotalPages)</span></span>
+            </a>
+            }
+
+        </div>
+    </div>
+</div>
+}

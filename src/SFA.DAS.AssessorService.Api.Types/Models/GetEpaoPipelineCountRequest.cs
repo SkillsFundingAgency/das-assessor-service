@@ -5,9 +5,9 @@ using MediatR;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    public class GetEpaOrganisationPipelineCountRequest: IRequest<EpaOrganisationPipelineCountResponse>
+    public class GetEpaoPipelineCountRequest: IRequest<EpaoPipelineCountResponse>
     {
-        public GetEpaOrganisationPipelineCountRequest(string endPointAssessorOrganisationId)
+        public GetEpaoPipelineCountRequest(string endPointAssessorOrganisationId)
         {
             EndPointAssessorOrganisationId = endPointAssessorOrganisationId;
         }

@@ -4,9 +4,9 @@ using System.Text;
 
 namespace SFA.DAS.AssessorService.Domain.Entities
 {
-    public class EPAOPipeline
+    public class EpaoPipelineStandard
     {
-        public int StdCode { get; set; }
+        public string Title { get; set; }
         public int Pipeline { get; set; }
         public DateTime EstimateDate { get; set; }
         public int TotalRows { get; set; }

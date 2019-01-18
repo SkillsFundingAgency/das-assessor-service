@@ -67,7 +67,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         [Test]
         public void NotFoundResultsAreOfTypeEpaOrganisationStandardResponse()
         {
-            ((NotFoundObjectResult)_result).Value.Should().BeOfType<EpaOrganisationStandardResponse>();
+            ((NotFoundObjectResult)_result).Value.Should().BeOfType<EpaoStandardResponse>();
         }
     }
 }

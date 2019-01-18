@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
              {
                  _connection.Open();
              }
-            _repository = new OrganisationQueryRepository(_databaseService.TestContext, _connection);
+            _repository = new OrganisationQueryRepository(_databaseService.TestContext);
             _organisation1 = new OrganisationModel
             {
                 Id = Guid.NewGuid(),

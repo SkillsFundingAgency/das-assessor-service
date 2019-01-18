@@ -4,10 +4,10 @@ using System.Text;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    public class EpaOrganisationStandardsCountResponse
+    public class EpaoStandardsCountResponse
     {
 
-        public EpaOrganisationStandardsCountResponse(int count)
+        public EpaoStandardsCountResponse(int count)
         {
             Count = count;
         }

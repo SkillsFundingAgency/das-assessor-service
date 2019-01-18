@@ -15,12 +15,10 @@ namespace SFA.DAS.AssessorService.Data
     public class OrganisationQueryRepository : IOrganisationQueryRepository
     {
         private readonly AssessorDbContext _assessorDbContext;
-        private readonly IDbConnection _connection;
 
-        public OrganisationQueryRepository(AssessorDbContext assessorDbContext, IDbConnection connection)
+        public OrganisationQueryRepository(AssessorDbContext assessorDbContext)
         {
             _assessorDbContext = assessorDbContext;
-            _connection = connection;
         }
 
         public async Task<IEnumerable<Organisation>> GetAllOrganisations()
@@ -72,51 +70,6 @@ namespace SFA.DAS.AssessorService.Data
                     q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId);
             return organisation.Contacts.Count() != 0;
         }
-
-        public async Task<int> GetEpaOrganisationStandardsCount(string endPointAssessorOrganisationId)
-        {
-            
-            var epaoId = new SqlParameter("@EPAOId", endPointAssessorOrganisationId);
-            var count = new SqlParameter("@Count", SqlDbType.Int)
-            {
-                Direction = ParameterDirection.Output
-            };
-            
-            await _assessorDbContext.Database.ExecuteSqlCommandAsync("EXEC EPAO_Standards_Count @EPAOId, @Count out",  epaoId, count);
-            return (int)count.Value;
-        }
-
-        public async Task<int> GetEpaoPipelineCount(string endPointAssessorOrganisationId)
-        {
-            var result = await _connection.QueryAsync<EPAOPipeline>("GetEPAO_Pipelines", new {
-                EPAOId= endPointAssessorOrganisationId,
-                SKIP = 0,
-                TAKE = 1
-            },
-                commandType: CommandType.StoredProcedure);
-
-            var epaoPipelines = result?.ToList();
-            if (epaoPipelines != null && epaoPipelines.Any())
-            {
-                return epaoPipelines.Select(x => x.TotalRows).First();
-            }
-
-            return 0;
-        }
-
-        public async Task<EpoRegisteredStandardsResult> GetEpaoRegisteredStandards(string endPointAssessorOrganisationId, int pageSize, int? pageIndex)
-        {
-            var total = await GetEpaOrganisationStandardsCount(endPointAssessorOrganisationId);
-            var skip = ((pageIndex ?? 1) - 1) * pageSize;
-             var result = await _connection.QueryAsync<EPORegisteredStandards>("EPAO_Registered_Standards", new
-            {
-                EPAOId = endPointAssessorOrganisationId,
-                Skip = skip,
-                Take =  pageSize
-            }, commandType: CommandType.StoredProcedure);
-
-            return new EpoRegisteredStandardsResult { PageOfResults= result?.ToList(), TotalCount =  total};
-        }
-
+        
     }
 }
