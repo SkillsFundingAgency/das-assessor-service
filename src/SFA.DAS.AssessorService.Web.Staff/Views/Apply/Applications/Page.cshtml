@@ -57,16 +57,18 @@
             <hr />
         }
 
-        <form asp-action="Feedback" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@Model.PageId">
-            <div class="form-group error-message-container" sfa-anyvalidationerror-class="form-group-error">
-                <label class="form-label" for="message">
-                    Feedback
-                </label>
-                <span class="error-message" asp-validation-for="FeedbackMessage"></span>
-                <textarea class="form-control form-control-full" rows="15" sfa-validation-for="FeedbackMessage" sfa-validationerror-class="form-control-error" asp-for="FeedbackMessage"></textarea>
-            </div>
-            <button class="button" type="submit">Add feedback</button>
-        </form>
+        <div class="form-group">
+            <form asp-action="Feedback" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@Model.PageId">
+                <div class="form-group error-message-container" sfa-anyvalidationerror-class="form-group-error">
+                    <label class="form-label" for="message">
+                        Feedback
+                    </label>
+                    <span class="error-message" asp-validation-for="FeedbackMessage"></span>
+                    <textarea class="form-control form-control-full" rows="15" sfa-validation-for="FeedbackMessage" sfa-validationerror-class="form-control-error" asp-for="FeedbackMessage"></textarea>
+                </div>
+                <button class="button" type="submit">Add feedback</button>
+            </form>
+        </div>
 
         <div class="form-group">
             <a href="@Url.Action("Section", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId})" class="govuk-button">Return to section overview</a>

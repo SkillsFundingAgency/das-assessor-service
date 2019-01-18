@@ -11,13 +11,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public int SequenceId { get; set; }
         public string Status { get; set; }
         public bool IsActive { get; set; }
-        public SequenceData SequenceData { get; set; }
         public List<ApplicationSection> Sections { get; set; }
-    }
-
-    public class SequenceData
-    {
-        public List<Feedback> Feedback { get; set; }
     }
 
     public class ApplicationSequenceStatus
@@ -28,11 +22,5 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public const string FeedbackAdded = "FeedbackAdded";
         public const string Rejected = "Rejected";
         public const string Approved = "Approved";
-    }
-
-    public enum SequenceId
-    {
-        Stage1 = 1,
-        Stage2 = 2
     }
 }

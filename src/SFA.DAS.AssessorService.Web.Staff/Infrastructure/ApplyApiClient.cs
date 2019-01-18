@@ -114,10 +114,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             return await Get<ApplicationSection>($"Application/{applicationId}/User/null/Sequences/{sequenceId}/Sections/{sectionId}");
         }
 
-        public async Task EvaluateSection(Guid applicationId, int sequenceId, int sectionId, Feedback feedback, bool isSectionComplete)
+        public async Task EvaluateSection(Guid applicationId, int sequenceId, int sectionId, bool isSectionComplete)
         {
             await Post($"Review/Applications/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Evaluate",
-                new { feedback, isSectionComplete });
+                new { isSectionComplete });
         }
 
         public async Task<Page> GetPage(Guid applicationId, int sequenceId, int sectionId, string pageId)
@@ -127,16 +127,16 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             return page;
         }
 
-        public async Task AddFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, string message)
+        public async Task AddFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, Feedback feedback)
         {
             await Post(
                 $"Review/Applications/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/AddFeedback",
-                new {message, from = "Staff member", date = DateTime.UtcNow});
+                feedback);
         }
 
-        public async Task ReturnApplication(Guid applicationId, int sequenceId, Feedback feedback, string returnType)
+        public async Task ReturnApplication(Guid applicationId, int sequenceId, string returnType)
         {
-            await Post($"Review/Applications/{applicationId}/Sequences/{sequenceId}/Return", new { feedback, returnType });
+            await Post($"Review/Applications/{applicationId}/Sequences/{sequenceId}/Return", new { returnType });
         }
 
         public async Task<HttpResponseMessage> DownloadFile(Guid applicationId, int pageId, string questionId, Guid userId, int sequenceId, int sectionId, string filename)

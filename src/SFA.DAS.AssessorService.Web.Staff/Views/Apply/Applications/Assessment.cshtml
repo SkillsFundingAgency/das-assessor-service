@@ -18,7 +18,6 @@
                 </h2>
                 <ul class="error-summary-list">
                     <li><a sfa-validation-for="ReturnType"></a></li>
-                    <li><a sfa-validation-for="FeedbackMessage"></a></li>
                 </ul>
             </div>
         }
@@ -28,57 +27,31 @@
                 @if (!Model.HasNewFeedback)
                 {
                     <div class="form-group">
-                        <span>You are about to approve the first stage of this application, without comments. This means that the applicant will be able to apply for a standard. You are also satisfied with the information the applicant has provided so far, and require no further information.</span>
+                        <span>You are about to approve the first stage of this application. This means that the applicant will be able to apply for a standard. You are also satisfied with the information the applicant has provided so far, and require no further information.</span>
                     </div>
 
-                    <div class="form-group error-message-container" sfa-anyvalidationerror-class="form-group-error">
-                        <label class="form-label-bold">
-                            Would you like to add any general comments?
-                        </label>
-                        <span id="ReturnType" class="error-message" asp-validation-for="ReturnType"></span>
-                        <div class="multiple-choice" data-target="show-feedback-input">
-                            <input asp-for="ApproveWithComment" id="options_yes" type="radio" value="True" sfa-validation-for="ReturnType" sfa-validationerror-class="form-control-error"  />
-                            <label for="options_yes">
-                                Yes, I want to add general comments
-                            </label>
-                        </div>
-                        <div class="panel panel-border-narrow js-hidden" id="show-feedback-input">
-                            <span class="error-message" asp-validation-for="FeedbackMessage"></span>
-                            <textarea class="form-control form-control-full" rows="5" sfa-validation-for="FeedbackMessage" sfa-validationerror-class="form-control-error" asp-for="FeedbackMessage"></textarea>
-                        </div>
-                        <div class="multiple-choice">
-                            <input asp-for="ApproveWithComment" id="options_no" type="radio" value="False" sfa-validation-for="ReturnType" sfa-validationerror-class="form-control-error"  />
-                            <label for="options_no">
-                                No, I do not want to add any more comments
-                            </label>
-                        </div>
-                    </div>
                     <input type="hidden" asp-for="ReturnType" value="Approve" />
                     <button class="button" type="submit">Approve application</button>
                 }
                 else
                 {
                     <div class="form-group">
-                        <span>You are about to approve or reject the first stage of this application. If you approve the application, the applicant will be able to apply for a standard.</span>
-                        <span>If you reject the application, the applicant will have to start a new application.</span>
-                        <span>Before submitting you assessment back to the applicant, review the comments that you added.</span>
+                        @*<span>You are about to approve or reject the first stage of this application. If you approve the application, the applicant will be able to apply for a standard.</span>*@
+                        @*<span>If you reject the application, the applicant will have to start a new application.</span>*@
+                        <span>You are about to send back the first stage of this application. This means that the applicant will have to action any comments and resubmit.</span>
+                        <span>Before returning your assessment back to the applicant, review the comments that you added.</span>
                     </div>
 
                     @foreach (var sec in Model.Sequence.Sections)
                     {
                         <div class="form-group">
                             <label class="form-label-bold">@sec.LinkTitle</label>
-                            @if (!sec.HasNewSectionFeedback && !sec.HasNewPageFeedback)
+                            @if (!sec.HasNewPageFeedback)
                             {
                                 <span>No comments.</span>
                             }
                             else
                             {
-                                foreach (var newSectionFeedback in sec.QnAData.Feedback.Where(f => f.IsNew))
-                                {
-                                    <p>@newSectionFeedback.Message</p>
-                                }
-
                                 foreach (var pageWithNewFeedback in sec.QnAData.Pages.Where(p => p.HasNewFeedback))
                                 {
                                     foreach (var newPageFeedback in pageWithNewFeedback.Feedback.Where(f => f.IsNew))
@@ -92,20 +65,10 @@
 
                     <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
 
-                    <div class="error-message-container" sfa-anyvalidationerror-class="form-group-error">
-                        <div class="form-group">
-                            <div data-target="show-feedbackcomment-input">
-                                <input asp-for="AddFeedbackMessage" type="checkbox" value="true" />
-                                <label>
-                                    Add a general comment about the entire application
-                                </label>
-                            </div>
-                            <div class="panel panel-border-narrow js-hidden" id="show-feedbackcomment-input">
-                                <span class="error-message" asp-validation-for="FeedbackMessage"></span>
-                                <textarea class="form-control form-control-full" rows="5" sfa-validation-for="FeedbackMessage" sfa-validationerror-class="form-control-error" asp-for="FeedbackMessage"></textarea>
-                            </div>
-                        </div>
+                    <input type="hidden" asp-for="ReturnType" value="ReturnWithFeedback" />
+                    <button class="button" type="submit">Return application</button>
 
+                    @*<div class="error-message-container" sfa-anyvalidationerror-class="form-group-error">
                         <div class="form-group">
                             <label class="form-label-bold">
                                 Is the application approved?
@@ -123,24 +86,21 @@
                                     Yes. Send feedback and continue
                                 </label>
                             </div>
-                            @* 
-                            ** Commented out for now as Reject isn't part of the new process flow
                             <div class="multiple-choice">
                                 <input name="ReturnType" id="options_no" type="radio" value="Reject" />
                                 <label for="options_no">
                                     No. Reject the application
                                 </label>
                             </div>
-                            *@
                         </div>
                     </div>
-                    <button class="button" type="submit">Submit assessment</button>
+                    <button class="button" type="submit">Submit assessment</button>*@
                 }
             </form>
         </div>
 
         <div class="form-group">
-            <a asp-controller="Application" asp-action="Application" asp-route-applicationId="@Model.ApplicationId" class="govuk-button">Return to application overview</a>
+            <a asp-controller="Application" asp-action="Application" asp-route-applicationId="@Model.ApplicationId" class="govuk-button">Return to account home</a>
         </div>
     </div>
 </div>

@@ -26,9 +26,6 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public bool HasNewPageFeedback => QnAData.Pages.Any(p => p.HasNewFeedback);
         public bool HasCompletedPageFeedback => QnAData.Pages.Any(p => p.HasCompletedFeedback);
 
-        public bool HasNewSectionFeedback => QnAData.HasNewFeedback;
-        public bool HasCompletedSectionFeedback => QnAData.HasCompletedFeedback;
-
         public string Title { get; set; }
         public string LinkTitle { get; set; }
         public string DisplayType { get; set; }

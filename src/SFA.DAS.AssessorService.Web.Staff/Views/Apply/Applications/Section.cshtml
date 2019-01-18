@@ -1,4 +1,3 @@
-@using SFA.DAS.AssessorService.ApplyTypes;
 @model SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Applications.ApplicationSectionViewModel
 
 @{
@@ -24,7 +23,6 @@
                         There is a problem
                     </h2>
                     <ul class="error-summary-list">
-                        <li><a sfa-validation-for="FeedbackMessage"></a></li>
                         <li><a sfa-validation-for="IsSectionComplete"></a></li>
                     </ul>
                 </div>
@@ -57,7 +55,7 @@
                     </table>
                 </div>
             }
-            else
+
             {
                 <dl class="govuk-check-your-answers cya-questions-short form-group">
                     @foreach (var pg in Model.Section.QnAData.Pages.Where(p => p.Active))
@@ -111,49 +109,9 @@
                 </dl>
             }
 
-            if (Model.Section.QnAData.HasCompletedFeedback)
-            {
-                <div class="form-group">
-                    <label class="form-label-bold">
-                        Comment history
-                    </label>
-
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Comment</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var feedback in Model.Section.QnAData.Feedback.Where(f => f.IsCompleted))
-                            {
-                                <tr>
-                                    <td>@feedback.Date.ToShortDateString()</td>
-                                    <td>@feedback.Message</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            }
-
             <div class="form-group">
                 <form asp-action="EvaluateSection" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId">
                     <div class="error-message-container" sfa-anyvalidationerror-class="form-group-error">
-                        <div class="form-group">
-                            <div data-target="show-feedback-input">
-                                <input asp-for="AddFeedbackMessage" type="checkbox" value="true" />
-                                <label>
-                                    Add a comment to the @Model.Title.ToLower() section
-                                </label>
-                            </div>
-                            <div class="panel panel-border-narrow js-hidden" id="show-feedback-input">
-                                <span class="error-message" asp-validation-for="FeedbackMessage"></span>
-                                <textarea class="form-control form-control-full" rows="5" sfa-validation-for="FeedbackMessage" sfa-validationerror-class="form-control-error" asp-for="FeedbackMessage"></textarea>
-                            </div>
-                        </div>
-
                         <div class="form-group">
                             <label class="form-label-bold">
                                 Is this section complete?

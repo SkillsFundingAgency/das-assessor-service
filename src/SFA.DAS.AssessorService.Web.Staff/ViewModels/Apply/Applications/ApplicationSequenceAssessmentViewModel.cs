@@ -18,19 +18,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Applications
 
         public string ReturnType { get; set; }
 
-        public bool? ApproveWithComment { get; set; }
-
-        public bool AddFeedbackMessage { get; set; }
-
-        public string FeedbackMessage { get; set; }
-
         public ApplicationSequenceAssessmentViewModel(ApplicationSequence sequence)
         {
             Sequence = sequence;
             Title = "Assessment summary";
             ApplicationId = sequence.ApplicationId;
             SequenceId = sequence.SequenceId;
-            HasNewFeedback = sequence.Sections.Any(s => s.HasNewPageFeedback) || sequence.Sections.Any(s => s.HasNewSectionFeedback);
+            HasNewFeedback = sequence.Sections.Any(s => s.HasNewPageFeedback);
         }
     }
 }

@@ -67,14 +67,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
         }
 
         [HttpPost("/Applications/{applicationId}/Sequence/{sequenceId}/Section/{sectionId}")]
-        public async Task<IActionResult> EvaluateSection(Guid applicationId, int sequenceId, int sectionId, string feedbackMessage, bool addFeedbackMessage, bool? isSectionComplete)
+        public async Task<IActionResult> EvaluateSection(Guid applicationId, int sequenceId, int sectionId, bool? isSectionComplete)
         {
             var errorMessages = new Dictionary<string, string>();
-
-            if (addFeedbackMessage && string.IsNullOrWhiteSpace(feedbackMessage))
-            {
-                errorMessages["FeedbackMessage"] = "Please enter a feedback comment";
-            }
 
             if(!isSectionComplete.HasValue)
             {
@@ -93,14 +88,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
                 return View("~/Views/Apply/Applications/Section.cshtml", sectionVm);
             }
 
-            Feedback feedback = null;
-
-            if (addFeedbackMessage)
-            {
-                feedback = new Feedback { Message = feedbackMessage, From = "Staff member", Date = DateTime.UtcNow };
-            }
-
-            await _applyApiClient.EvaluateSection(applicationId, sequenceId, sectionId, feedback, isSectionComplete.Value);
+            await _applyApiClient.EvaluateSection(applicationId, sequenceId, sectionId, isSectionComplete.Value);
 
             return RedirectToAction("Application", new { applicationId });
         }
@@ -117,21 +105,30 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
         [HttpPost("/Applications/{applicationId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}")]
         public async Task<IActionResult> Feedback(Guid applicationId, int sequenceId, int sectionId, string pageId, string feedbackMessage)
         {
-            if(string.IsNullOrWhiteSpace(feedbackMessage))
+            var errorMessages = new Dictionary<string, string>();
+
+            if (string.IsNullOrWhiteSpace(feedbackMessage))
             {
-                string key = "FeedbackMessage";
-                string errorMessage = "Please enter a feedback comment";
-                ModelState.AddModelError(key, errorMessage);
+                errorMessages["FeedbackMessage"] = "Please enter a feedback comment";
+            }
+
+            if (errorMessages.Any())
+            {
+                foreach (var error in errorMessages)
+                {
+                    ModelState.AddModelError(error.Key, error.Value);
+                }
 
                 var page = await _applyApiClient.GetPage(applicationId, sequenceId, sectionId, pageId);
                 var pageVm = new PageViewModel(page);
-
                 return View("~/Views/Apply/Applications/Page.cshtml", pageVm);
             }
 
-            await _applyApiClient.AddFeedback(applicationId, sequenceId, sectionId, pageId, feedbackMessage);
+            Feedback feedback = new Feedback { Message = feedbackMessage, From = "Staff member", Date = DateTime.UtcNow, IsNew = true };
 
-            return RedirectToAction("Page", new {applicationId, sequenceId, sectionId, pageId});
+            await _applyApiClient.AddFeedback(applicationId, sequenceId, sectionId, pageId, feedback);
+
+            return RedirectToAction("Section", new {applicationId, sequenceId, sectionId});
         }
 
         [HttpGet("/Applications/{applicationId}/Sequence/{sequenceId}/Assessment")]
@@ -150,28 +147,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
         }
 
         [HttpPost("/Applications/{applicationId}/Sequence/{sequenceId}/Return")]
-        public async Task<IActionResult> Return(Guid applicationId, int sequenceId, string returnType, bool addFeedbackMessage, string feedbackMessage, bool? approveWithComment)
+        public async Task<IActionResult> Return(Guid applicationId, int sequenceId, string returnType)
         {
             var errorMessages = new Dictionary<string, string>();
 
             if(string.IsNullOrWhiteSpace(returnType))
             {
                 errorMessages["ReturnType"] = "Please state what you would like to do next";
-            }
-            else if(returnType == "Approve")
-            {
-                if (approveWithComment == null)
-                {
-                    errorMessages["ReturnType"] = "Please state what you would like to do next";
-                }
-                else if (approveWithComment == true && string.IsNullOrWhiteSpace(feedbackMessage))
-                {
-                    errorMessages["FeedbackMessage"] = "Please enter a feedback comment";
-                }
-            }
-            else if(addFeedbackMessage == true && string.IsNullOrWhiteSpace(feedbackMessage))
-            {
-                errorMessages["FeedbackMessage"] = "Please enter a feedback comment";
             }
 
             if (errorMessages.Any())
@@ -186,14 +168,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
                 return View("~/Views/Apply/Applications/Assessment.cshtml", viewModel);
             }
 
-            Feedback feedback = null;
-
-            if (addFeedbackMessage || approveWithComment == true)
-            {
-                feedback = new Feedback { Message = feedbackMessage, From = "Staff member", Date = DateTime.UtcNow };
-            }
-
-            await _applyApiClient.ReturnApplication(applicationId, sequenceId, feedback, returnType);
+            await _applyApiClient.ReturnApplication(applicationId, sequenceId, returnType);
 
             return RedirectToAction("Returned", new { applicationId });
         }
