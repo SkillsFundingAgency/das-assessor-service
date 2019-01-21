@@ -1,8 +1,6 @@
 ﻿CREATE PROCEDURE [dbo].[GetEPAO_Pipelines]
 	-- Add the parameters for the stored procedure here
-	  @EPAOID NVARCHAR(12),
-	  @SKIP AS INT,
-	  @TAKE AS INT
+	  @EPAOID NVARCHAR(12)
 AS
 BEGIN	
 -- Apparently much more efficient then COUNT(*) OVER() or two seperate queries one for count and one for data
@@ -40,9 +38,7 @@ AS
 SELECT *
 FROM Data_CTE
 CROSS JOIN Count_CTE
-ORDER BY 1,3
-OFFSET @Skip ROWS 
-    FETCH NEXT @Take ROWS ONLY
+ORDER BY 2,5
 END
 GO
 
