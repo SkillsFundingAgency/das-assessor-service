@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
         }
         public async Task<PaginatedList<EpaoPipelineStandardsResponse>> Handle(EpaoPipelineStandardsRequest request, CancellationToken cancellationToken)
         {
-            const int pageSize = 1;
+            const int pageSize = 10;
             _logger.LogInformation("Retreiving Epao pipeline information");
             var result =
                 await _standardRepository.GetEpaoPipelineStandards(request.EpaoId, request.OrderBy,request.OrderDirection,pageSize,
