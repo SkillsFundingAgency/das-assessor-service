@@ -29,9 +29,20 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
                 })
-                .AddCookie()
+                .AddCookie(options => { 
+                    options.Cookie.Name = ".Apply.Cookies";
+                    options.Cookie.HttpOnly = true;
+                })
                 .AddOpenIdConnect(options =>
                 {
+                    options.CorrelationCookie = new CookieBuilder()
+                    {
+                        Name = ".Apply.Correlation.", 
+                        HttpOnly = true,
+                        SameSite = SameSiteMode.None,
+                        SecurePolicy = CookieSecurePolicy.SameAsRequest
+                    };
+                    
                     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                     options.MetadataAddress = "https://signin-test-oidc-as.azurewebsites.net/.well-known/openid-configuration";
 

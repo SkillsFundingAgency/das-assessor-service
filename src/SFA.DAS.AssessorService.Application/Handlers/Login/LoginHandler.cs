@@ -78,7 +78,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
         private async Task<bool> UserDoesNotHaveAcceptableRole(Guid contactId)
         {
             var roles = await _contactQueryRepository.GetRolesFor(contactId);
-            return roles.All(r => r.Role != "SuperUser");
+            return roles.All(r => r.RoleName != "SuperUser");
                 
             //TODO: This needs to look up the user by the id and check they are in the appropriate role.
             //return !roles.Contains(_config.Authentication.Role);

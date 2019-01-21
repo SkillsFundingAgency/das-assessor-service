@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -52,6 +54,7 @@ namespace SFA.DAS.AssessorService.Web
                 options.SupportedCultures = new List<CultureInfo> { new CultureInfo("en-GB") };
                 options.RequestCultureProviders.Clear();
             });
+            
             services.AddMvc(options => { options.Filters.Add<CheckSessionFilter>(); })
                 .AddControllersAsServices()
                 .AddSessionStateTempDataProvider()
@@ -59,6 +62,10 @@ namespace SFA.DAS.AssessorService.Web
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
+            services.AddDataProtection()
+                .PersistKeysToFileSystem(new DirectoryInfo(@"C:\SFA\Keys"))
+                .SetApplicationName("SharedCookieApp");
+            
 
             services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Assessors.AntiForgery", HttpOnly = true });
 
