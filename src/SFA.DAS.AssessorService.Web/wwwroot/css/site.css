@@ -927,8 +927,8 @@ table.responsive tr td.bold {
   }
 }
 
-[aria-sort] button,
-[aria-sort] button:hover {
+[aria-sort] a,
+[aria-sort] a:hover {
     background-color: transparent;
     border-width: 0;
     -webkit-box-shadow: 0 0 0 0;
@@ -943,14 +943,15 @@ table.responsive tr td.bold {
     position: relative;
     text-align: inherit;
     font-size: 1em;
+    text-decoration: none;
     margin: 0;
 }
 
-[aria-sort]:first-child button {
+[aria-sort]:first-child a {
     right: auto;
 }
 
-[aria-sort] button:before {
+[aria-sort] a:before {
     content: " \25bc";
     position: absolute;
     right: -2px;
@@ -958,7 +959,7 @@ table.responsive tr td.bold {
     font-size: 0.5em;
 }
 
-[aria-sort] button:after {
+[aria-sort] a:after {
     content: " \25b2";
     position: absolute;
     right: -2px;
@@ -966,12 +967,12 @@ table.responsive tr td.bold {
     font-size: 0.5em;
 }
 
-[aria-sort="ascending"] button:before,
-[aria-sort="descending"] button:before {
+[aria-sort="ascending"] a:before,
+[aria-sort="descending"] a:before {
     content: none;
 }
 
-[aria-sort="ascending"] button:after {
+[aria-sort="ascending"] a:after {
     content: " \25b2";
     font-size: .7em;
     position: absolute;
@@ -979,25 +980,13 @@ table.responsive tr td.bold {
     top: 2px;
 }
 
-[aria-sort="descending"] button:after {
+[aria-sort="descending"] a:after {
     content: " \25bc";
     font-size: .7em;
     position: absolute;
     right: -2px;
     top: 2px;
 }
-
-.sortable-table-status {
-    position: absolute;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    height: 1px;
-    width: 1px;
-    margin: -1px;
-    padding: 0;
-    border: 0
-}
-
 
 .nowrap {
   white-space: nowrap;

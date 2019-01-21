@@ -11,7 +11,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<EpaoPipelineCountResponse> GetEpaoPipelineCount(string epaoId);
         Task<PaginatedList<GetEpaoRegisteredStandardsResponse>> GetEpaoRegisteredStandards(string epaoId,
             int? pageIndex);
-        Task<PaginatedList<GetEpaoPipelineStandardsResponse>> GetEpaoPipelineStandards(string epaoId,
-            int? pageIndex = null);
+
+        Task<PaginatedList<EpaoPipelineStandardsResponse>> GetEpaoPipelineStandards(string epaoId, string orderBy,
+            string orderDirection, int? pageIndex = null);
     }
 }

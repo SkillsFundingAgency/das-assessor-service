@@ -13,7 +13,7 @@ using SFA.DAS.AssessorService.Domain.Paging;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Standards
 {
-    public class GetEpaoPipelineStandardsHandler : IRequestHandler<GetEpaoPipelineStandardsRequest, PaginatedList<GetEpaoPipelineStandardsResponse>>
+    public class GetEpaoPipelineStandardsHandler : IRequestHandler<EpaoPipelineStandardsRequest, PaginatedList<EpaoPipelineStandardsResponse>>
     {
         private readonly ILogger<GetEpaoPipelineStandardsHandler> _logger;
         private readonly IStandardRepository _standardRepository;
@@ -23,23 +23,24 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
             _logger = logger;
             _standardRepository = standardRepository;
         }
-        public async Task<PaginatedList<GetEpaoPipelineStandardsResponse>> Handle(GetEpaoPipelineStandardsRequest request, CancellationToken cancellationToken)
+        public async Task<PaginatedList<EpaoPipelineStandardsResponse>> Handle(EpaoPipelineStandardsRequest request, CancellationToken cancellationToken)
         {
-            const int pageSize = 10;
+            const int pageSize = 1;
             _logger.LogInformation("Retreiving Epao pipeline information");
             var result =
-                await _standardRepository.GetEpaoPipelineStandards(request.EpaoId, pageSize,
+                await _standardRepository.GetEpaoPipelineStandards(request.EpaoId, request.OrderBy,request.OrderDirection,pageSize,
                     request.PageIndex);
             var epaoPipelinStandardsResult = result.PageOfResults.Select(o =>
-                new GetEpaoPipelineStandardsResponse
+                new EpaoPipelineStandardsResponse
                 {
                     EstimatedDate = o.EstimateDate.UtcToTimeZoneTime().Date.ToString("MMM yyyy"),
                     Pipeline = o.Pipeline,
-                    StandardName= o.Title
+                    StandardName= o.Title,
+                    TrainingProvider = o.UkPrn.ToString() //Temp will change to actual name once we have the Provider Name for external API
                     
                 }).ToList();
 
-            return new PaginatedList<GetEpaoPipelineStandardsResponse>(epaoPipelinStandardsResult, result.TotalCount, request.PageIndex ?? 1, pageSize);
+            return new PaginatedList<EpaoPipelineStandardsResponse>(epaoPipelinStandardsResult, result.TotalCount, request.PageIndex ?? 1, pageSize);
         }
     }
 }

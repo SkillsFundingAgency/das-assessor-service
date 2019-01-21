@@ -61,11 +61,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [HttpGet("pipelines/{epaoId}", Name = "GetEpaoPipelineStandards")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(int))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetEpaoPipelineStandards(string epaoId, int? pageIndex = null)
+        public async Task<IActionResult> GetEpaoPipelineStandards(string epaoId, string orderBy, string orderDirection, int? pageIndex = null)
         {
             var normalisedPageIndex = (pageIndex == null || pageIndex == 0) ? 1 : pageIndex;
             _logger.LogInformation($"Received request to retrieve pipeline for standards of the organisation {epaoId}");
-            return Ok(await _mediator.Send(new GetEpaoPipelineStandardsRequest(epaoId, normalisedPageIndex)));
+            return Ok(await _mediator.Send(new EpaoPipelineStandardsRequest(epaoId, orderBy, orderDirection,normalisedPageIndex)));
         }
     }
 }

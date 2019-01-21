@@ -13,6 +13,7 @@ using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.Web.Constants;
 using SFA.DAS.AssessorService.Web.Infrastructure;
+using SFA.DAS.AssessorService.Web.ViewModels.OrganisationStandards;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -69,26 +70,76 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [Route("/[controller]/pipelines")]
         public async Task<IActionResult> Pipeline(int? pageIndex)
         {
+            OrderedListResultViewModel orderedListResultViewModel;
             _sessionService.Set("CurrentPage", Pages.Pipeline);
-            var epaoPipelineStandardsResponse = new PaginatedList<GetEpaoPipelineStandardsResponse>(new List<GetEpaoPipelineStandardsResponse>(), 0, 1, 1);
+            var orderDirection = "none";
+            string orderBy = null;
 
-            var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
+            if (_sessionService.Get("orderDirection") != null && _sessionService.Get("orderBy") != null)
+            {
+                orderDirection = _sessionService.Get("orderDirection");
+                orderBy = _sessionService.Get("orderBy");
+            }
+
             try
             {
-
-                var organisation = await _organisationsApiClient.Get(ukprn);
-                if (organisation != null)
-                {
-                    epaoPipelineStandardsResponse = await _standardsApiClient.GetEpaoPipelineStandards(organisation.EndPointAssessorOrganisationId, pageIndex ?? 1);
-                }
-
+                orderedListResultViewModel = await GetPipeline(orderBy, orderDirection, pageIndex);
             }
             catch (EntityNotFoundException)
             {
                 return RedirectToAction("NotRegistered", "Home");
             }
 
-            return View("Pipelines", epaoPipelineStandardsResponse);
+            return View("Pipelines", orderedListResultViewModel);
+        }
+
+        [HttpGet]
+        [Route("/[controller]/pipeline/{orderBy}/{orderDirection}")]
+        public async Task<IActionResult> OrderPipeline(string orderBy, string orderDirection, int? pageIndex)
+        {
+            OrderedListResultViewModel orderedListResultViewModel;
+            var newOrderdDirection = NextOrderDirection(orderDirection, orderBy);
+            try
+            {
+                orderedListResultViewModel = await GetPipeline(orderBy, newOrderdDirection, pageIndex);
+            }
+            catch (EntityNotFoundException)
+            {
+                return RedirectToAction("NotRegistered", "Home");
+            }
+
+            return View("Pipelines", orderedListResultViewModel);
+        }
+
+
+        private async Task<OrderedListResultViewModel> GetPipeline(string orderBy, string orderDirection, int? pageIndex)
+        {
+            var orderedListResultViewModel = new OrderedListResultViewModel
+            {
+                OrderDirection = string.IsNullOrEmpty(orderDirection) ? "none" : orderDirection,
+                OrderedBy = string.IsNullOrEmpty(orderBy) ? null : orderBy,
+                Response = new PaginatedList<EpaoPipelineStandardsResponse>(new List<EpaoPipelineStandardsResponse>(),
+                    0, 1, 1)
+            };
+            var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
+
+            var organisation = await _organisationsApiClient.Get(ukprn);
+            if (organisation != null)
+            {
+                orderedListResultViewModel.Response =
+                    await _standardsApiClient.GetEpaoPipelineStandards(organisation.EndPointAssessorOrganisationId,
+                        orderBy, orderDirection, pageIndex ?? 1);
+            }
+
+            return orderedListResultViewModel;
+        }
+
+        private string NextOrderDirection(string sortDirection, string orderBy)
+        {
+            var newSortDirection = sortDirection == "none" || sortDirection == "ascending" ? "descending" : "ascending";
+            _sessionService.Set("orderDirection", newSortDirection);
+            _sessionService.Set("orderBy", orderBy);
+            return newSortDirection;
         }
     }
 }

@@ -2,8 +2,7 @@
 @inject IViewLocalizer Localizer
 @using Microsoft.AspNetCore.Mvc.Localization
 @using SFA.DAS.AssessorService.Domain.Paging
-@model SFA.DAS.AssessorService.Domain.Paging.PaginatedList<SFA.DAS.AssessorService.Api.Types.GetEpaoPipelineStandardsResponse>
-
+@model SFA.DAS.AssessorService.Web.ViewModels.OrganisationStandards.OrderedListResultViewModel
 @{
     ViewBag.Title = "Pipeline";
     Layout = "_DashboardLayout";
@@ -14,7 +13,7 @@
         <div class="column-full">
             <h1 class="heading-large">Pipeline</h1>
 
-            <table id="pipeline" class="table responsive table-font-xsmall striped sortable">
+            <table id="pipeline" class="table responsive table-font-xsmall striped">
                 <thead>
                     <tr>
                         <th>
@@ -26,13 +25,19 @@
                         <th class="numeric">
                             @Localizer["Apprentices"]
                         </th>
-                        <th class="numeric" aria-sort="none ">
-                            @Localizer["Estimated Gateway"]
+                        <th class="numeric" aria-sort="@(Model.OrderDirection)">
+                            <a asp-controller="OrganisationStandards"
+                               asp-action="OrderPipeline"
+                               asp-route-pageIndex="@(Model.Response.PageIndex)" 
+                               asp-route-orderBy ="EstimateDate"
+                               asp-route-orderDirection="@(Model.OrderDirection)">
+                                @Localizer["Estimated Gateway"]
+                            </a>
                         </th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model.Items)
+                    @foreach (var item in Model.Response.Items)
                     {
                         <tr>
                             <td data-label="@Localizer["StandardName"]" class="nowrap">
@@ -55,40 +60,37 @@
         </div>
     </div>
 </div>
-@if (Model.HasPreviousPage || Model.HasNextPage)
+@if (Model.Response.HasPreviousPage || Model.Response.HasNextPage)
 {
     <div class="grid-row">
         <div class="column-full">
             <div class="page-navigation">
 
-                @if (Model.HasPreviousPage)
+                @if (Model.Response.HasPreviousPage)
                 {
                     <a asp-action="Pipeline"
                        asp-controller="OrganisationStandards"
-                       asp-route-pageIndex="@(Model.PageIndex - 1)"
+                       asp-route-pageIndex="@(Model.Response.PageIndex - 1)"
                        class="previous">
                         <i class="arrow-button icon-left-open">&#xe800;</i>
                         <span class="description">Previous <span class="hide-mob">page</span></span>
-                        <span class="counter">Page <span class="prevPage">@(Model.PageIndex - 1)</span> of <span class="totalPage">@(Model.TotalPages)</span></span>
+                        <span class="counter">Page <span class="prevPage">@(Model.Response.PageIndex - 1)</span> of <span class="totalPage">@(Model.Response.TotalPages)</span></span>
                     </a>
                 }
 
-                @if (Model.HasNextPage)
+                @if (Model.Response.HasNextPage)
                 {
                     <a asp-controller="OrganisationStandards"
                        asp-action="Pipeline"
-                       asp-route-pageIndex="@(Model.PageIndex + 1)"
+                       asp-route-pageIndex="@(Model.Response.PageIndex + 1)"
                        class="next">
                         <i class="arrow-button icon-right-open">&#xe801;</i>
                         <span class="description">Next <span class="hide-mob">page</span></span>
-                        <span class="counter">Page <span class="nextPage">@(Model.PageIndex + 1)</span> of <span class="totalPage">@(Model.TotalPages)</span></span>
+                        <span class="counter">Page <span class="nextPage">@(Model.Response.PageIndex + 1)</span> of <span class="totalPage">@(Model.Response.TotalPages)</span></span>
                     </a>
                 }
 
             </div>
         </div>
     </div>
-}
-@section Scripts {
-    @{ await Html.RenderPartialAsync("_PipelineSortedTable"); }
 }

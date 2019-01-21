@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SFA.DAS.AssessorService.Api.Types
 {
-    public class GetEpaoPipelineStandardsResponse
+    public class EpaoPipelineStandardsResponse
     {
         public string StandardName { get; set; }
         public string TrainingProvider { get; set; }

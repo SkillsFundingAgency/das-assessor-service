@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Linq.Dynamic.Core;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -113,9 +114,7 @@ namespace SFA.DAS.AssessorService.Data
         {
             var result = await _connection.QueryAsync<EpaoPipelineStandard>("GetEPAO_Pipelines", new
             {
-                EPAOId = endPointAssessorOrganisationId,
-                SKIP = 0,
-                TAKE = 1
+                EPAOId = endPointAssessorOrganisationId
             },
                 commandType: CommandType.StoredProcedure);
 
@@ -153,8 +152,9 @@ namespace SFA.DAS.AssessorService.Data
             return epoRegisteredStandardsResult;
         }
 
-        public async Task<EpaoPipelineStandardsResult> GetEpaoPipelineStandards(string endPointAssessorOrganisationId, int pageSize, int? pageIndex)
+        public async Task<EpaoPipelineStandardsResult> GetEpaoPipelineStandards(string endPointAssessorOrganisationId, string orderBy, string orderDirection, int pageSize, int? pageIndex)
         {
+            IEnumerable<EpaoPipelineStandard> epaoPipelines;
             var epaoPipelineStandardsResult = new EpaoPipelineStandardsResult
             {
                 PageOfResults = new List<EpaoPipelineStandard>(),
@@ -164,18 +164,30 @@ namespace SFA.DAS.AssessorService.Data
             var skip = ((pageIndex ?? 1) - 1) * pageSize;
             var result = await _connection.QueryAsync<EpaoPipelineStandard>("GetEPAO_Pipelines", new
             {
-                EPAOId = endPointAssessorOrganisationId,
-                SKIP = skip,
-                TAKE = pageSize
+                EPAOId = endPointAssessorOrganisationId
             },
-                commandType: CommandType.StoredProcedure);
-            var epaoPipelines = result?.ToList();
+            commandType: CommandType.StoredProcedure);
 
+           
+            if (string.IsNullOrEmpty(orderBy))
+            {
+                epaoPipelines = result?.ToList().Skip(skip)
+                    .Take(pageSize);
+            }
+            else
+            {
+                orderDirection = orderDirection == "none" ? "descending" : orderDirection;
+                epaoPipelines = result?.AsQueryable().OrderBy($"{orderBy} {orderDirection}").ToList().Skip(skip)
+                    .Take(pageSize);
+
+            }
+          
             if (epaoPipelines == null || !epaoPipelines.Any())
                 return epaoPipelineStandardsResult;
 
             epaoPipelineStandardsResult.TotalCount = epaoPipelines.Select(x => x.TotalRows).First();
             epaoPipelineStandardsResult.PageOfResults = epaoPipelines;
+           
 
             return epaoPipelineStandardsResult;
         }

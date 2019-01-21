@@ -44,12 +44,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                     $"Could not find the organisation {epaoId}");
             }
         }
-
-        public async Task<PaginatedList<GetEpaoPipelineStandardsResponse>> GetEpaoPipelineStandards(string epaoId, int? pageIndex = null)
+        
+        public async Task<PaginatedList<EpaoPipelineStandardsResponse>> GetEpaoPipelineStandards(string epaoId, string orderBy, string orderDirection, int? pageIndex = null)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standards/pipelines/{epaoId}?pageIndex={pageIndex}"))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standards/pipelines/{epaoId}?pageIndex={pageIndex}&orderBy={orderBy}&orderDirection={orderDirection}"))
             {
-                return await RequestAndDeserialiseAsync<PaginatedList<GetEpaoPipelineStandardsResponse>>(request,
+                return await RequestAndDeserialiseAsync<PaginatedList<EpaoPipelineStandardsResponse>>(request,
                     $"Could not find the organisation {epaoId}");
             }
         }
