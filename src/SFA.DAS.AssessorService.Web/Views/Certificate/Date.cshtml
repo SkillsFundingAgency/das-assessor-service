@@ -56,31 +56,34 @@
             }
 
             <div sfa-anyvalidationerror-class="after-error-summary">
-                <div id="Date">
-                    <h1 class="heading-medium">
-                        @*<span class="heading-secondary">@Model.GivenNames @Model.FamilyName</span>*@
-                        @Localizer["Heading"]
-                    </h1>
-                </div>
+                <h1 class="heading-large">
+                    @Localizer["Heading"]
+                </h1>                
 
                 <div class="form-group error-message-container" sfa-anyvalidationerror-class="form-group-error">
+                    <span class="error-message" asp-validation-for="Date"></span>
+                    <span class="error-message" asp-validation-for="Day"></span>
+                    <span class="error-message" asp-validation-for="Month"></span>
+                    <span class="error-message" asp-validation-for="Year"></span>
+                    
                     <span class="form-hint">
                         @Localizer["DateHint"]
                     </span>
                     <div class="form-date">
                         <div class="form-group form-group-day">
                             <label for="Day">Day</label>
-                            <input class="form-control date-input js-integers-only" sfa-validation-for="Day" sfa-validationerror-class="form-control-error" asp-for="Day" type="text" maxlength="2" />
-                        </div>
+                            <input class="form-control date-input js-integers-only" sfa-validation-for="Day" sfa-validationerror-class="form-control-error" asp-for="Day" type="text" maxlength="2" />                                                
+                            </div>
 
                         <div class="form-group form-group-month">
                             <label for="Month">Month</label>
                             <input class="form-control date-input js-integers-only" sfa-validation-for="Month" sfa-validationerror-class="form-control-error" asp-for="Month" type="text" maxlength="2" />
+                         
                         </div>
 
                         <div class="form-group form-group-year">
                             <label for="Year">Year</label>
-                            <input class="form-control date-input js-integers-only" sfa-validation-for="Year" sfa-validationerror-class="form-control-error" asp-for="Year" type="text" maxlength="4" />
+                            <input class="form-control date-input js-integers-only" sfa-validation-for="Year" sfa-validationerror-class="form-control-error" asp-for="Year" type="text" maxlength="4" />                            
                         </div>
                     </div>
                 </div>

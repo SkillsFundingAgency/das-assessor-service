@@ -19,11 +19,19 @@ using SFA.DAS.AssessorService.Application.Api.Client.Azure;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Data;
+using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
+using SFA.DAS.AssessorService.ExternalApis.IFAStandards;
+using SFA.DAS.AssessorService.ExternalApis.Services;
 using SFA.DAS.AssessorService.Settings;
+using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.Helpers;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
+using SFA.DAS.AssessorService.Web.Staff.Services;
 using SFA.DAS.AssessorService.Web.Staff.Validators;
 using StructureMap;
+using CheckSessionFilter = SFA.DAS.AssessorService.Web.Staff.Infrastructure.CheckSessionFilter;
+using ISessionService = SFA.DAS.AssessorService.Web.Staff.Infrastructure.ISessionService;
+
 namespace SFA.DAS.AssessorService.Web.Staff
 {
     public class Startup
@@ -96,9 +104,16 @@ namespace SFA.DAS.AssessorService.Web.Staff
                 config.For<CertificateDateViewModelValidator>().Use<CertificateDateViewModelValidator>();
                 config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<IContactsApiClient>().Use<ContactsApiClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
+                config.For<IAssessmentOrgsApiClient>().Use(() => new AssessmentOrgsApiClient(ApplicationConfiguration.AssessmentOrgsApiClientBaseUrl));
+                config.For<IIfaStandardsApiClient>().Use(() => new IfaStandardsApiClient(ApplicationConfiguration.IfaApiClientBaseUrl));
                 config.For<IAzureTokenService>().Use<AzureTokenService>();
-                config.For<IAzureApiClient>().Use<AzureApiClient>().Ctor<string>("baseUri").Is(ApplicationConfiguration.AzureApiAuthentication.ApiBaseAddress)
-                                                                   .Ctor<string>("productId").Is(ApplicationConfiguration.AzureApiAuthentication.ProductId);
+                config.For<IAzureApiClient>().Use<AzureApiClient>().Ctor<string>().Is(ApplicationConfiguration.AzureApiAuthentication.ApiBaseAddress);
+                config.For<CacheService>().Use<CacheService>();
+                config.For<CertificateLearnerStartDateViewModelValidator>()
+                    .Use<CertificateLearnerStartDateViewModelValidator>();
+                config.For<IRegisterValidator>().Use<RegisterValidator>();
+
+                config.For<IStandardService>().Use<StandardService>();
                 config.Populate(services);
             });
             return container.GetInstance<IServiceProvider>();
@@ -115,41 +130,11 @@ namespace SFA.DAS.AssessorService.Web.Staff
             {
                 options.Wtrealm = ApplicationConfiguration.StaffAuthentication.WtRealm;
                 options.MetadataAddress = ApplicationConfiguration.StaffAuthentication.MetadataAddress;
+                options.TokenValidationParameters.RoleClaimType = Domain.Roles.RoleClaimType;
             }).AddCookie();
-
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy(Policies.OperationsAndCertificationTeam,
-                    policy =>
-                    {
-                        policy.RequireAssertion(context => 
-                            context.User.HasClaim("http://service/service", Roles.AssessmentService) &&
-                            (context.User.HasClaim("http://service/service", Roles.CertificationTeam) ||
-                             context.User.HasClaim("http://service/service", Roles.OperationsTeam)));
-                    });
-                
-                options.AddPolicy(Policies.OperationsTeamOnly,
-                    policy =>
-                    {
-                        policy.RequireAssertion(context =>
-                            context.User.HasClaim("http://service/service", Roles.AssessmentService) &&
-                            context.User.HasClaim("http://service/service", Roles.OperationsTeam));
-                    });
-            });
         }
 
-        public class Roles
-        {
-            public const string AssessmentService = "ASS";
-            public const string CertificationTeam = "EPC";
-            public const string OperationsTeam = "EPO";
-        }
 
-        public class Policies
-        {
-            public const string OperationsAndCertificationTeam = "OperationsAndCertificationTeam";
-            public const string OperationsTeamOnly = "OperationsTeamOnly";
-        }
         
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

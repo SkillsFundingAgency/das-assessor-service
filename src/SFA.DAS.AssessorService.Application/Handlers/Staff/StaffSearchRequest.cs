@@ -5,7 +5,7 @@ using SFA.DAS.AssessorService.Domain.Paging;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 {
-    public class StaffSearchRequest : IRequest<PaginatedList<StaffSearchResult>>
+    public class StaffSearchRequest : IRequest<StaffSearchResult>
     {
         public StaffSearchRequest(string searchQuery, int page)
         {

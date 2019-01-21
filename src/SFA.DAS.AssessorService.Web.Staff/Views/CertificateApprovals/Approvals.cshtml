@@ -1,0 +1,97 @@
+﻿@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateApprovalViewModel
+@using SFA.DAS.AssessorService.Web.Staff
+
+
+@{ ViewBag.Title = "Staff Dashboard"; }
+
+<div class="grid-row">
+
+    <div class="column-three-thirds">
+
+        <form class="apprentice-approvals-form js-disable-on-submit" type="post" asp-controller="CertificateApprovals" asp-action="Approvals">
+            <a class="link-back" asp-controller="Dashboard" asp-action="Index">Back</a>
+
+            @* hidden with css by default *@
+            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                    There is a problem
+                </h2>
+                <ul class="js-error-summary-list error-summary-list"></ul>
+            </div>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                        There is a problem
+                    </h2>
+                    <ul class="error-summary-list">
+                      
+                    </ul>
+                </div>
+            }
+
+            <div sfa-anyvalidationerror-class="after-error-summary">
+                <h1 class="heading-large">
+                    To be Approved Privately Funded Certificates?
+                </h1>
+                                            
+                @{
+                    var count = Model.ToBeApprovedCertificates.Count() + Model.ApprovedCertificates.Count() + Model.RejectedCertificates.Count();
+                    var approvalResults = 
+                        new SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateDetailApprovalViewModel[count];
+                    for (int i = 0; i < count; i++)
+                    {
+                        approvalResults[i] = new SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateDetailApprovalViewModel();
+                    }
+                }
+
+                @if (@Model.ToBeApprovedCertificates.Any())
+                {
+                    await Html.RenderPartialAsync("_ApprovalsDetailsPartial", Model.ToBeApprovedCertificates, new ViewDataDictionary(ViewData)
+                    {
+                        {
+                            "Increment", 0                                                      
+                        },
+                        { "ApprovalResults", approvalResults }
+                    });
+                }
+                <h1 class="heading-large">
+                    Approved Privately Funded Certificates?
+                </h1>
+                            
+                @if (@Model.ApprovedCertificates.Any())
+                {
+                    await Html.RenderPartialAsync("_ApprovalsDetailsPartial", @Model.ApprovedCertificates, new ViewDataDictionary(ViewData)
+                    {
+                        {"Increment", Model.ToBeApprovedCertificates.Count()},
+                        {"ApprovalResults",approvalResults}
+                    });
+                }
+
+                <h1 class="heading-large">
+                    Rejected Privately Funded Certificates?
+                </h1>
+
+                @if (@Model.RejectedCertificates.Any())
+                {
+                    await Html.RenderPartialAsync("_ApprovalsDetailsPartial", @Model.RejectedCertificates,
+                        new ViewDataDictionary(ViewData)
+                        {
+                            {"Increment", Model.ToBeApprovedCertificates.Count() + @Model.ApprovedCertificates.Count()},
+                            {"ApprovalResults",approvalResults}
+                        });
+                }
+            </div>
+
+
+            <button type="submit" class="button">Submit</button>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    @{ await Html.RenderPartialAsync("~/Views/CertificateApprovals/_ApprovalsScriptsPartial.cshtml"); }
+}

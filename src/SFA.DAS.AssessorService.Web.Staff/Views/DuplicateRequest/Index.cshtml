@@ -1,4 +1,7 @@
-@using SFA.DAS.AssessorService.Web.Staff.Controllers
+@using Newtonsoft.Json
+@using SFA.DAS.AssessorService.Domain.JsonData
+@using SFA.DAS.AssessorService.Domain.Consts
+
 @model SFA.DAS.AssessorService.Web.Staff.Controllers.DuplicateRequestViewModel
 
 @{
@@ -8,15 +11,47 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <a asp-action="Index" asp-controller="Search" class="link-back">Search Again</a>
+        <a asp-action="Index" asp-controller="Search" class="link-back">Search again</a>
         <h1 class="heading-large">Re-print certificate</h1>
-        @if (!Model.IsConfirmed)
+        @if (! (Model.Status == CertificateStatus.Printed || Model.Status == CertificateStatus.Reprint) )
         {
-            <p class="lede text">Request a duplicate print of the following certificate: <span class="bold-medium">@Model.Certificate.CertificateReference</span></p>
-            
+            <p>Certificate is in an invalid status to request a reprint.</p>
+        }
+        else if (!Model.IsConfirmed)
+        {
+            <p class="lede text">Request a duplicate print of the following certificate: </p>
+
+            <div class="grid-row">
+                <div class="column-one-half">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td class="bold">Certificate number</td>
+                                <td>@Model.CertificateReference</td>
+                            </tr>
+                            <tr>
+                                <td class="bold">Name</td>
+                                <td>@Model.FullName</td>
+                            </tr>
+                            <tr>
+                                <td class="bold"><abbr title="Unique learner number">ULN</abbr></td>
+                                <td>@Model.Uln</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             <form asp-action="Index" asp-controller="DuplicateRequest" method="post">
-                @Html.HiddenFor(m => m.Certificate.Id)
-                <button class="button">Confirm</button>
+                @Html.HiddenFor(m => m.CertificateId)
+                @Html.HiddenFor(m => m.SearchString)
+                <button class="button">Confirm reprint</button>
+            </form>
+            <br />
+            <form asp-action="Check" asp-controller="CertificateAmend" method="get">
+                @Html.Hidden("certificateId", Model.CertificateId, new { @id = "certificateId" })
+                @Html.Hidden("searchString", Model.SearchString, new { @id = "searchString" })
+                <button class="button">Amend before reprint</button>
             </form>
         }
         else

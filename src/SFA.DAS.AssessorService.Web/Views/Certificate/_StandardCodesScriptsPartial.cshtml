@@ -1,0 +1,45 @@
+<script src="~/lib/accessible-autocomplete/accessible-autocomplete.min.js"></script>
+
+<script>
+  var selectOptionsArray = Array.from($('select#SelectedStandardCode')[0].options);
+  var standardCodeArr = $.map(selectOptionsArray, function (code) {
+    return code.innerHTML;
+  });
+  var epaoStandardCodesFormElement = $('.apprentice-standard-codes-form');
+  var epaoStandardCodesValidationRulesObject = {
+    rules: {
+      StandardCodes: {
+        required: true,
+        equals: standardCodeArr
+      }
+    },
+    messages: {
+      StandardCodes: {
+        required: 'Select the standard',
+        equals: 'Select an available standard'
+      }
+    }
+  };
+
+  GOVUK.epaoValidate(epaoStandardCodesFormElement, epaoStandardCodesValidationRulesObject);
+
+  $(document).ready(function () {
+    accessibleAutocomplete.enhanceSelectElement({
+      selectElement: document.querySelector('#SelectedStandardCode'),
+      name: 'StandardCodes',
+      defaultValue: '',
+      autoselect: false,
+      showAllValues: true
+    })
+  });
+
+  // Empty field on click when coming from check and amend page
+  $(window).load(function () {
+      if (window.location.search.indexOf('redirecttocheck=true') === -1) return false;
+
+    $('#SelectedStandardCode').click(function () {
+      $(this).val('')
+    });
+  });
+
+</script>

@@ -1,27 +1,192 @@
 ﻿@using SFA.DAS.AssessorService.Web.Staff.Controllers
-@model RegisterViewOrganisationViewModel
+@using SFA.DAS.AssessorService.Web.Staff.Domain
+@model RegisterViewAndEditOrganisationViewModel
 @{
-    ViewBag.Title = "View Organisation";
-    Layout = "_Layout";
+ViewBag.Title = "View Organisation";
+Layout = "_Layout";
 }
 <div class="grid-row">
     <div class="column-two-thirds">
         <a asp-action="Index" asp-controller="Register" class="link-back">Return to organisation search</a>
-        
-            <h1>
-                <label class="form-label" for="">
-                    <span class="heading-xlarge">View organisation</span>
-                </label>
-            </h1>
 
-            <div id="organisationWrapper">
-               
-                    <label for="OrganisationId">
-                        <span class="form-label-bold">Organisation ID</span>
-                        
-                        <input class="form-control" name="OrganisationId" asp-for="OrganisationId" type="text" readonly="readonly" />
-                    </label>
-                </div>
+        <h1>
+            <label class="form-label" for="">
+                <span class="heading-xlarge">View organisation</span>
+            </label>
+        </h1>
 
+        <div id="organisationWrapper">
+            <div class="form-group">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td><span class="bold-small">Name</span></td>
+                            <td>@Model.Name</td>
+                        </tr>
+                        <tr>
+                            <td><span class="bold-small">Organisation ID</span></td>
+                            <td>@Model.OrganisationId</td>
+                        </tr>
+                        <tr>
+                            <td><span class="bold-small">UKPRN</span></td>
+                            <td>@Model.Ukprn</td>
+                        </tr>
+                        <tr>
+                            <td><span class="bold-small">Organisation Type</span></td>
+                            <td>@Model.OrganisationType</td>
+                        </tr>
+                        <tr>
+                            <td><span class="bold-small">Legal Name</span></td>
+                            <td>@Model.LegalName</td>
+                        </tr>
+                        @if (@Model.CompanyNumber != null)
+                        {
+                            <tr>
+                                <td><span class="bold-small">Company number</span></td>
+                                <td>@Model.CompanyNumber</td>
+                            </tr>
+                        }
+                        @if (@Model.CharityNumber != null)
+                        {
+                            <tr>
+                                <td><span class="bold-small">Charity number</span></td>
+                                <td>@Model.CharityNumber</td>
+                            </tr>
+                        }
+                        <tr>
+                            <td><span class="bold-small">Website</span></td>
+                            <td>@Model.WebsiteLink</td>
+                        </tr>
+                        <tr>
+                            <td><span class="bold-small">Address</span></td>
+                            <td>
+                                @if (@Model.Address1 != null)
+                                {
+                                    @Model.Address1<br />
+                                }
+                                @if (@Model.Address2 != null)
+                                {
+                                    @Model.Address2<br />
+                                }
+                                @if (@Model.Address3 != null)
+                                {
+                                    @Model.Address3<br />
+                                }
+                                @if (@Model.Address4 != null)
+                                {
+                                    @Model.Address4<br />
+                                }
+                                @if (@Model.Postcode != null)
+                                {
+                                    @Model.Postcode
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="bold-small">Primary contact</span></td>
+                            <td>@Model.PrimaryContactName</td>
+                        </tr>
+                        <tr>
+                            <td><span class="bold-small">Status</span></td>
+                            <td>@Model.Status</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="form-group" sfa-show-for-roles="@string.Join(",", Roles.CertificationTeam, Roles.AssessmentDeliveryTeam)">
+                <a class="button" href="/register/edit-organisation/@Model.OrganisationId">Edit</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid-row">
+    <div class="column-full">
+        <h2 class="heading-large">Contacts</h2>
+        <div class="form-group">
+            @if (@Model.Contacts.Count > 0)
+            {
+            <table class="table responsive table-font-xsmall">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone number</th>
+                        <th>Username</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var result in Model.Contacts.OrderBy(x => x.DisplayName))
+                    {
+                    <tr>
+                        <td data-label="Name"><a href="/register/view-contact/@result.Id">@result.DisplayName</a></td>
+                        <td data-label="Email">@result.Email</td>
+                        <td data-label="Phone number">@result.PhoneNumber</td>
+                        <td data-label="Username">
+                            @if (!result.Username.Contains("unknown"))
+                            {
+                                @result.Username
+                            }
+                        </td>
+                                                     
+                    </tr>
+                    }
+                </tbody>
+            </table>
+            }
+            else
+            {
+            <span>There are no contacts</span>
+            }
+        </div>
+        <div class="form-group" sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">
+            <a class="button" href="/register/add-contact/@Model.OrganisationId">Add New Contact</a>
+        </div>
+    </div>
+</div>
+
+<div class="grid-row">
+    <div class="column-full">
+        <h2 class="heading-large">Standards</h2>
+        <div class="form-group">
+            @if (@Model.OrganisationStandards.Count > 0)
+            {
+            <table class="table responsive table-font-xsmall">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Code</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var result in Model.OrganisationStandards.OrderBy(x =>
+                    x.StandardSummary.Title))
+                    {
+                    <tr>
+                        <td data-label="Name">@result.StandardSummary.Title</td>
+                        <td data-label="ID">@result.StandardCode</td>
+                        <td><a href="/register/view-standard/@result.Id">View</a></td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+            }
+            else
+            {
+            <span>There are no standards</span>
+            }
+        </div>
+        <div class="form-group">
+            @if (@Model.Contacts.Count > 0)
+            {
+                <a class="button" href="/register/search-standards/@Model.OrganisationId"  sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">Add New Standard</a>
+            }
+            else
+            {
+                <span  sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">You can add standards when there are 1 or more contacts added to the organisation</span>
+            }
+        </div>
     </div>
 </div>

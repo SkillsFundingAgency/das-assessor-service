@@ -19,41 +19,21 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
     {
         private readonly IRegisterRepository _registerRepository;
         private readonly ILogger<CreateEpaOrganisationHandler> _logger;
-        private readonly IEpaOrganisationValidator _validator;
         private readonly IEpaOrganisationIdGenerator _organisationIdGenerator;
         private readonly ISpecialCharacterCleanserService _cleanser;
         
-        public CreateEpaOrganisationHandler(IRegisterRepository registerRepository, IEpaOrganisationValidator validator, IEpaOrganisationIdGenerator orgIdGenerator, ILogger<CreateEpaOrganisationHandler> logger, ISpecialCharacterCleanserService cleanser)
+        public CreateEpaOrganisationHandler(IRegisterRepository registerRepository, IEpaOrganisationIdGenerator orgIdGenerator, ILogger<CreateEpaOrganisationHandler> logger, ISpecialCharacterCleanserService cleanser)
         {
             _registerRepository = registerRepository;
             _logger = logger;
             _cleanser = cleanser;
             _organisationIdGenerator = orgIdGenerator;
-            _validator = validator;
         }
 
         public async Task<string> Handle(CreateEpaOrganisationRequest request, CancellationToken cancellationToken)
         {
             ProcessRequestFieldsForSpecialCharacters(request);
-            var validationResponse = _validator.ValidatorCreateEpaOrganisationRequest(request);
-
-            if (!validationResponse.IsValid)
-            {
-                var message = validationResponse.Errors.Aggregate(string.Empty, (current, error) => current + error.ErrorMessage + "; ");
-                _logger.LogError(message);
-                if (validationResponse.Errors.Any(x => x.StatusCode == ValidationStatusCode.BadRequest.ToString()))
-                {     
-                    throw new BadRequestException(message);
-                }
-
-                if (validationResponse.Errors.Any(x => x.StatusCode == ValidationStatusCode.AlreadyExists.ToString()))
-                {
-                    throw new AlreadyExistsException(message);
-                }
-
-                throw new Exception(message);
-            }
-
+ 
             var newOrganisationId = _organisationIdGenerator.GetNextOrganisationId();
             if (newOrganisationId == string.Empty)
                 throw new Exception("A valid organisation Id could not be generated");
@@ -64,14 +44,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
         private void ProcessRequestFieldsForSpecialCharacters(CreateEpaOrganisationRequest request)
         {
-            request.Name = _cleanser.CleanseStringForSpecialCharacters(request.Name?.Trim())?.Trim();           
-            request.LegalName = _cleanser.CleanseStringForSpecialCharacters(request.LegalName?.Trim())?.Trim();
-            request.WebsiteLink = _cleanser.CleanseStringForSpecialCharacters(request.WebsiteLink?.Trim())?.Trim();
-            request.Address1 = _cleanser.CleanseStringForSpecialCharacters(request.Address1?.Trim())?.Trim();
-            request.Address2 = _cleanser.CleanseStringForSpecialCharacters(request.Address2?.Trim())?.Trim();
-            request.Address3 = _cleanser.CleanseStringForSpecialCharacters(request.Address3?.Trim())?.Trim();
-            request.Address4 = _cleanser.CleanseStringForSpecialCharacters(request.Address4?.Trim());
-            request.Postcode = _cleanser.CleanseStringForSpecialCharacters(request.Postcode?.Trim());
+            request.Name = _cleanser.CleanseStringForSpecialCharacters(request.Name);           
+            request.LegalName = _cleanser.CleanseStringForSpecialCharacters(request.LegalName);
+            request.WebsiteLink = _cleanser.CleanseStringForSpecialCharacters(request.WebsiteLink);
+            request.Address1 = _cleanser.CleanseStringForSpecialCharacters(request.Address1);
+            request.Address2 = _cleanser.CleanseStringForSpecialCharacters(request.Address2);
+            request.Address3 = _cleanser.CleanseStringForSpecialCharacters(request.Address3);
+            request.Address4 = _cleanser.CleanseStringForSpecialCharacters(request.Address4);
+            request.Postcode = _cleanser.CleanseStringForSpecialCharacters(request.Postcode);
+            request.CompanyNumber = _cleanser.CleanseStringForSpecialCharacters(request.CompanyNumber);
+            request.CharityNumber = _cleanser.CleanseStringForSpecialCharacters(request.CharityNumber);
         }
 
         private static EpaOrganisation MapOrganisationRequestToOrganisation(CreateEpaOrganisationRequest request, string newOrganisationId)
@@ -91,7 +73,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                     Address4 = request.Address4,
                     LegalName = request.LegalName,
                     Postcode = request.Postcode,
-                    WebsiteLink = request.WebsiteLink
+                    WebsiteLink = request.WebsiteLink,
+                    CompanyNumber = request.CompanyNumber,
+                    CharityNumber = request.CharityNumber
                 }
             };
 

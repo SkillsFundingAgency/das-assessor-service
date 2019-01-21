@@ -1,6 +1,6 @@
 ﻿@using SFA.DAS.AssessorService.Domain.Consts
 @using SFA.DAS.AssessorService.Domain.Extensions
-@using SFA.DAS.AssessorService.Web.Staff.Controllers
+
 @model SFA.DAS.AssessorService.Web.Staff.Controllers.LearnerDetailViewModel
 
 @{
@@ -72,6 +72,10 @@
                         <td>@Model.Learner.OrganisationName</td>
                     </tr>
                     <tr>
+                        <td><span class="bold">EPAO ID</span></td>
+                        <td>@Model.Learner.OrganisationId</td>
+                    </tr>
+                    <tr>
                         <td><span class="bold">Standard</span></td>
                         <td>@Model.Learner.Standard (@Model.Learner.StandardCode)</td>
                     </tr>
@@ -115,37 +119,57 @@
         <div class="column-full">
             <h2 class="heading-large">History</h2>
             <div class="form-group">
-                <table class="table js-history-table">
+                <table class="table responsive table-font-xsmall">
                     <thead>
                         <tr>
                             <th>Date and time</th>
                             <th>Action</th>
-                            <th>By</th>
+                            <th>User</th>
                             <th>Status</th>
                             <th>Batch</th>
-                            <th>Changed</th>
+                            <th>@if (Model.Learner.CertificateLogs.Count() > 1) { @Html.Raw("Change"); }</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var log in Model.Learner.CertificateLogs)
                         {
                             <tr>
-                                <td>@log.EventTime.UtcToTimeZoneTime()</td>
-                                <td>@log.Action</td>
-                                <td>@log.ActionBy</td>
-                                <td>@log.Status</td>
-                                <td>@log.BatchNumber</td>
-                                <td>
+                                <td data-label="Date and time">@log.EventTime.UtcToTimeZoneTime()</td>
+                                <td data-label="Action">@log.Action</td>
+                                <td data-label="By">
+                                    @log.ActionBy<br />
+                                    @log.ActionByEmail
+                                </td>
+                                <td data-label="Status">@log.Status</td>
+                                <td data-label="Batch">@log.BatchNumber</td>
+                                <td data-label="Change">
                                     @{
                                         if (Model.Learner.CertificateLogs.Count() > 1)
                                         {
                                             foreach (var change in log.DifferencesToPrevious)
                                             {
-                                                <span class="bold">@(change.Key)<text>:</text></span>
-                                                @change.Value<br />
+                                                <p>
+                                                    <span class="bold">@(change.Key)<text>:</text></span>
+                                                    @change.Value
+                                                </p>
+                                            }
+                                            if (log.ReasonForChange != null)
+                                            {
+                                                <div role="button" tabindex="0" class="js-expand-table-row expand-table-row" data-expand-id="@log.EventTime.Ticks">
+                                                    <i class="arrow arrow-closed">►</i>
+                                                    <span>Show reason for change</span>
+                                                </div>
                                             }
                                         }
                                     }
+                                </td>
+                            </tr>
+                            <tr class="js-expandble-cell js-hidden expandble-cell" aria-hidden="true">
+                                <td data-label="Reason for change" colspan="6">
+                                    <div class="expandble-cell-content">
+                                        <h3 class="heading-small expandble-cell-content--first-heading">Reason for change</h3>
+                                        @log.ReasonForChange
+                                    </div>
                                 </td>
                             </tr>
                         }
@@ -194,11 +218,11 @@ else
     <div class="column-two-thirds">
         @if (Model.ShowDetail)
         {
-            <a class="button" asp-action="Select" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString" asp-route-alllogs=true>Show all History</a>
+            <a class="button" asp-action="Select" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString" asp-route-alllogs=true>Show all history</a>
         }
         else
         {
-            <a class="button" asp-action="Select" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString" asp-route-alllogs=false>Show Summary</a>
+            <a class="button" asp-action="Select" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString" asp-route-alllogs=false>Show summary</a>
         }
     </div>
 </div>
@@ -209,8 +233,14 @@ else
         <ul class="list list-bullet">
             @if (Model.Learner.CertificateReference != null)
             {
-                <li><a asp-action="Index" asp-controller="DuplicateRequest" asp-route-certificateId="@Model.Learner.CertificateId">request duplicate certificate</a></li>
-                <li><a asp-action="Check" asp-controller="CertificateAmend" asp-route-certificateId="@Model.Learner.CertificateId">amend certificate information</a></li>        
+                if(Model.Learner.CertificateStatus == CertificateStatus.Printed || Model.Learner.CertificateStatus == CertificateStatus.Reprint)
+                { 
+                    <li><a asp-action="Index" asp-controller="DuplicateRequest" asp-route-certificateId="@Model.Learner.CertificateId" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString">request duplicate certificate</a></li>
+                }
+                else if (Model.Learner.CertificateStatus == CertificateStatus.Draft || Model.Learner.CertificateStatus == CertificateStatus.Submitted)
+                {
+                    <li><a asp-action="Check" asp-controller="CertificateAmend" asp-route-certificateId="@Model.Learner.CertificateId" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString">amend certificate information</a></li>
+                }
             }
             <li><a asp-controller="Search" asp-action="Index">Search for another apprentice</a></li>
         </ul>

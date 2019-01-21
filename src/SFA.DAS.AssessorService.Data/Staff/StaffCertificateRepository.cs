@@ -25,7 +25,9 @@ namespace SFA.DAS.AssessorService.Data.Staff
 
         public async Task<List<CertificateForSearch>> GetCertificatesFor(long[] ulns)
         {
-            return (await _connection.QueryAsync<CertificateForSearch>(@"SELECT cert.StandardCode, 
+            return (await _connection.QueryAsync<CertificateForSearch>(@"SELECT 
+                                                                            org.EndPointAssessorOrganisationId,
+                                                                            cert.StandardCode, 
                                                                             cert.Uln, 
                                                                             cert.CertificateReference, 
                                                                             JSON_VALUE(CertificateData, '$.LearnerGivenNames') AS GivenNames, 
@@ -33,6 +35,8 @@ namespace SFA.DAS.AssessorService.Data.Staff
 		                                                                    cert.Status,
 		                                                                    cert.UpdatedAt AS LastUpdatedAt
                                                                             FROM Certificates cert
+																			INNER JOIN Organisations org
+																			ON cert.OrganisationId = org.Id                                                                            
                                                                             WHERE Uln IN @ulns",
 
                 new {ulns})).ToList();
@@ -44,7 +48,7 @@ namespace SFA.DAS.AssessorService.Data.Staff
             if (allRecords)
             {
                 return (await _connection.QueryAsync<CertificateLogSummary>(
-                    @"SELECT EventTime, Action, ISNULL(c.DisplayName, logs.Username) AS ActionBy, logs.Status, logs.CertificateData, logs.BatchNumber 
+                    @"SELECT EventTime, Action, ISNULL(c.DisplayName, logs.Username) AS ActionBy, ISNULL(c.Email, '') AS ActionByEmail, logs.Status, logs.CertificateData, logs.BatchNumber, logs.ReasonForChange  
                     FROM CertificateLogs logs
                     LEFT OUTER JOIN Contacts c ON c.Username = logs.Username
                     WHERE CertificateId = @certificateId
@@ -63,7 +67,7 @@ namespace SFA.DAS.AssessorService.Data.Staff
 
                                 SELECT @FirstSubmitTime = MIN(EventTime) FROM CertificateLogs WHERE CertificateId = @certificateId AND Action = 'Submit' 
 
-                                SELECT EventTime, Action, ISNULL(c.DisplayName, logs.Username) AS ActionBy, logs.Status, logs.CertificateData, logs.BatchNumber 
+                                SELECT EventTime, Action, ISNULL(c.DisplayName, logs.Username) AS ActionBy, ISNULL(c.Email, '') AS ActionByEmail, logs.Status, logs.CertificateData, logs.BatchNumber, logs.ReasonForChange  
                                 FROM CertificateLogs logs
                                 LEFT OUTER JOIN Contacts c ON c.Username = logs.Username
                                 WHERE CertificateId = @certificateId 
@@ -74,7 +78,7 @@ namespace SFA.DAS.AssessorService.Data.Staff
                 else
                 {
                     return (await _connection.QueryAsync<CertificateLogSummary>(@"
-                        SELECT TOP(1) EventTime, Action, ISNULL(c.DisplayName, logs.Username) AS ActionBy, logs.Status, logs.CertificateData, logs.BatchNumber
+                        SELECT TOP(1) EventTime, Action, ISNULL(c.DisplayName, logs.Username) AS ActionBy, ISNULL(c.Email, '') AS ActionByEmail, logs.Status, logs.CertificateData, logs.BatchNumber, logs.ReasonForChange 
                         FROM CertificateLogs logs
                             LEFT OUTER JOIN Contacts c ON c.Username = logs.Username
                         WHERE CertificateId = @certificateId

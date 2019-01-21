@@ -4,13 +4,14 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.Apprenticeships.Api.Types;
+using SFA.DAS.Apprenticeships.Api.Types.Providers;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Handlers.Certificates;
+using SFA.DAS.AssessorService.Application.Handlers.Staff;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.StartCertificateHandlerTests
@@ -50,7 +51,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
 
             var assessmentOrgsApiClient = new Mock<IAssessmentOrgsApiClient>();
             assessmentOrgsApiClient.Setup(c => c.GetStandard(30))
-                .ReturnsAsync(new Standard() {Title = "Standard Name"});
+                .ReturnsAsync(new Standard() {Title = "Standard Name", EffectiveFrom = new DateTime(2016,09,01)});
             assessmentOrgsApiClient.Setup(c => c.GetProvider(It.IsAny<long>()))
                 .ReturnsAsync(new Provider {ProviderName = "A Provider"});
 
@@ -86,7 +87,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
         public void Then_the_reference_number_is_padded_to_8_characters_with_zeroes()
         {
             _returnedCertificate.CertificateReference.Should().Be("00010000");
-            _certificateRepository.Verify(r => r.Update(It.Is<Certificate>(c => c.CertificateReference == "00010000"), "user", null, true));
+            _certificateRepository.Verify(r => r.Update(It.Is<Certificate>(c => c.CertificateReference == "00010000"), "user", null, true, null));
         }
     }
 }

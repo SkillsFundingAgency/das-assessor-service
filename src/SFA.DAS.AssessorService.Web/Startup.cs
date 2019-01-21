@@ -12,6 +12,8 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Azure;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
+using SFA.DAS.AssessorService.ExternalApis.IFAStandards;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
@@ -34,7 +36,7 @@ namespace SFA.DAS.AssessorService.Web
             _env = env;
         }
 
-        public IWebConfiguration Configuration { get; set; }
+        private IWebConfiguration Configuration { get; set; }
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
@@ -83,10 +85,10 @@ namespace SFA.DAS.AssessorService.Web
 
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
             
-            return ConfigureIOC(services);
+            return ConfigureIoc(services);
         }        
 
-        private IServiceProvider ConfigureIOC(IServiceCollection services)
+        private IServiceProvider ConfigureIoc(IServiceCollection services)
         {
             var container = new Container();
 
@@ -106,11 +108,12 @@ namespace SFA.DAS.AssessorService.Web
                 config.For<IContactsApiClient>().Use<ContactsApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<ISearchApiClient>().Use<SearchApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<ICertificateApiClient>().Use<CertificateApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
+                config.For<IAssessmentOrgsApiClient>().Use(() => new AssessmentOrgsApiClient(Configuration.AssessmentOrgsApiClientBaseUrl));
+                config.For<IIfaStandardsApiClient>().Use(() => new IfaStandardsApiClient(Configuration.AssessmentOrgsApiClientBaseUrl));
                 config.For<ILoginApiClient>().Use<LoginApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
 
                 config.For<IAzureTokenService>().Use<AzureTokenService>();
-                config.For<IAzureApiClient>().Use<AzureApiClient>().Ctor<string>("baseUri").Is(Configuration.AzureApiAuthentication.ApiBaseAddress)
-                                                                   .Ctor<string>("productId").Is(Configuration.AzureApiAuthentication.ProductId);
+                config.For<IAzureApiClient>().Use<AzureApiClient>().Ctor<string>().Is(Configuration.AzureApiAuthentication.ApiBaseAddress);
 
                 config.Populate(services);
             });

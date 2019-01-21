@@ -1,3 +1,4 @@
+@using SFA.DAS.AssessorService.Web.Staff.Domain
 @model SFA.DAS.AssessorService.Web.Staff.Models.RegisterViewModel
 
 @{
@@ -12,7 +13,6 @@
         <h1 class="heading-xlarge">
             Organisation search results
             <span class="heading-secondary">Number of results: @Model.Results.Count</span>
-            @*<span class="heading-secondary">Matching results for '@Model.SearchString': @Model.Results.Count</span>*@
         </h1>
     </div>
 </div>
@@ -29,17 +29,15 @@
                     <th>Name</th>
                     <th>ID</th>
                     <th>UKPRN</th>
-                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
                 @foreach (var result in Model.Results.OrderBy(x => x.Name))
                 {
                     <tr>
-                        <td data-label="Name">@result.Name</td>
+                        <td data-label="Name"><a href="/register/view-organisation/@result.Id">@result.Name</a></td>
                         <td data-label="ID">@result.Id</td>
                         <td data-label="UKPRN">@result.Ukprn</td>
-                        <td class="numeric"><a href="/register/view-organisation/@result.Id">View<span class="visually-hidden"> organisation</span></a></td>
                     </tr>
                 }
                 </tbody>
@@ -49,7 +47,7 @@
 </div>
 }
 
-<div class="grid-row">
+<div class="grid-row" sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">
     <div class="column-two-thirds">
         <a class="button" href="/register/add-organisation">Add new<span class="visually-hidden"> organisation</span></a>
     </div>

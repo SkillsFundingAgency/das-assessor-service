@@ -29,6 +29,16 @@ namespace SFA.DAS.AssessorService.Data
             return contacts;
         }
 
+        public async Task<IEnumerable<Contact>> GetAllContacts(string endPointAssessorOrganisationId)
+        {
+            var contacts = await _assessorDbContext.Organisations
+                .Include(organisation => organisation.Contacts)
+                .Where(organisation => organisation.EndPointAssessorOrganisationId == endPointAssessorOrganisationId)
+                .SelectMany(q => q.Contacts).ToListAsync();
+
+            return contacts;
+        }
+
         public async Task<Contact> GetContact(string userName)
         {
             var contact = await _assessorDbContext.Organisations
@@ -36,6 +46,18 @@ namespace SFA.DAS.AssessorService.Data
                 .Where(q => q.Status != OrganisationStatus.Deleted)
                 .SelectMany(q => q.Contacts)
                 .Where(q => q.Username == userName)
+                .FirstOrDefaultAsync();
+
+            return contact;
+        }
+
+        public async Task<Contact> GetContactFromEmailAddress(string email)
+        {
+            var contact = await _assessorDbContext.Organisations
+                .Include(organisation => organisation.Contacts)
+                .Where(q => q.Status != OrganisationStatus.Deleted)
+                .SelectMany(q => q.Contacts)
+                .Where(q => q.Email == email)
                 .FirstOrDefaultAsync();
 
             return contact;

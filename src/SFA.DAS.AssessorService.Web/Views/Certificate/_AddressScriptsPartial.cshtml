@@ -1,5 +1,3 @@
-
-
 <environment include="Development">
   <script src="~/lib/jquery-ui/dist/jquery-ui.min.js"></script>
   <script src="~/js/postcode-lookup-service.js"></script>
@@ -9,64 +7,64 @@
 </environment>
 <script>
 
-var epaoAddressFormElement = $('.apprentice-address-form');
-var epaoAddressValidationRulesObject = {
-  rules: {
-    postcodeSearch: {
-      required: function () {
-        return !$('#SelectPreviousAddress').is(':checked') ? !$('.info-highlighted').is(':visible') : false
+  var epaoAddressFormElement = $('.apprentice-address-form');
+  var epaoAddressValidationRulesObject = {
+    rules: {
+      postcodeSearch: {
+        required: function () {
+          return !$('#SelectPreviousAddress').is(':checked') ? !$('.info-highlighted').is(':visible') : false
+        },
+        addressFound: true
       },
-      addressFound: true
+      Employer: {
+        required: true
+      },
+      Name: {
+        required: true
+      },
+      AddressLine1: {
+        required: true
+      },
+      City: {
+        required: true
+      },
+      Postcode: {
+        required: true,
+        postcodeUK: true
+      }
     },
-    Employer: {
-      required: true
-    },
-    Name: {
-      required: true
-    },
-    AddressLine1: {
-      required: true
-    },
-    City: {
-      required: true
-    },
-    Postcode: {
-      required: true,
-      postcodeUK: true
+    messages: {
+      postcodeSearch: {
+        required: 'Enter a company name, address or postcode',
+        addressFound: 'Select an address or enter one manually'
+      },
+      Employer: {
+        required: 'Enter an employer'
+      },
+      Name: {
+        required: 'Enter a name'
+      },
+      AddressLine1: {
+        required: 'Enter an address'
+      },
+      City: {
+        required: 'Enter a city or town'
+      },
+      Postcode: {
+        required: 'Enter a postcode',
+        postcodeUK: 'Enter a valid UK postcode'
+      }
     }
-  },
-  messages: {
-    postcodeSearch: {
-      required: 'Enter a company name, address or postcode',
-      addressFound: 'Select an address or enter one manually'
-    },
-    Employer: {
-      required: 'Enter an employer'
-    },
-    Name: {
-      required: 'Enter a name'
-    },
-    AddressLine1: {
-      required: 'Enter an address'
-    },
-    City: {
-      required: 'Enter a city or town'
-    },
-    Postcode: {
-      required: 'Enter a postcode',
-      postcodeUK: 'Enter a valid UK postcode'
-    }
+  };
+
+  GOVUK.epaoValidate(epaoAddressFormElement, epaoAddressValidationRulesObject);
+
+  // Run this before doc. ready
+  if (window.location.search.indexOf('edit=true') !== -1) {
+    $('#address-details').removeClass('js-hidden');
   }
-};
 
-GOVUK.epaoValidate(epaoAddressFormElement, epaoAddressValidationRulesObject);
-
-// Run this before doc. ready
-if (window.location.search.indexOf('edit=true') !== -1) {
-  $('#address-details').removeClass('js-hidden');
-}
-
-$(document).ready(function () {
+  $(document).ready(function () {
     // Only allow alphanumerics
     $('.js-no-special-chars').on('keydown', function (e) {
       // Allow: space, backspace, delete, tab, escape and enter

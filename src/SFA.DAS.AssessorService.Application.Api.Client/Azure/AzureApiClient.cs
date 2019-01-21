@@ -8,18 +8,23 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Azure;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Paging;
+using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
 {
     public class AzureApiClient : AzureApiClientBase, IAzureApiClient
     {
+        private readonly string _groupId;
         private readonly string _productId;
+        private readonly Uri _requestBaseUri;
         protected readonly IOrganisationsApiClient _organisationsApiClient;
         protected readonly IContactsApiClient _contactsApiClient;
 
-        public AzureApiClient(string baseUri, string productId, IAzureTokenService tokenService, ILogger<AzureApiClientBase> logger, IOrganisationsApiClient organisationsApiClient, IContactsApiClient contactsApiClient) : base(baseUri, tokenService, logger)
+        public AzureApiClient(string baseUri, IAzureTokenService tokenService, ILogger<AzureApiClientBase> logger, IWebConfiguration webConfiguration, IOrganisationsApiClient organisationsApiClient, IContactsApiClient contactsApiClient) : base(baseUri, tokenService, logger)
         {
-            _productId = productId;
+            _productId = webConfiguration.AzureApiAuthentication.ProductId;
+            _groupId = webConfiguration.AzureApiAuthentication.GroupId;
+            _requestBaseUri = new Uri(webConfiguration.AzureApiAuthentication.RequestBaseAddress);
             _organisationsApiClient = organisationsApiClient;
             _contactsApiClient = contactsApiClient;
         }
@@ -29,14 +34,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
             int pageSize = 5;
             int skip = (page - 1) * pageSize;
 
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"/users?api-version=2017-03-01&expandGroups=false&$skip={skip}&$top={pageSize}"))
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"/groups/{_groupId}/users?api-version=2017-03-01&$skip={skip}&$top={pageSize}"))
             {
                 var response = await RequestAndDeserialiseAsync<AzureUserResponse>(httpRequest, "Could not get Users");
                 return new PaginatedList<AzureUser>(response.Users.ToList(), response.TotalCount, page, pageSize);
             }
         }
 
-        public async Task<AzureUser> GetUserDetails(string userId, bool includeSubscriptions = false)
+        public async Task<AzureUser> GetUserDetails(string userId, bool includeSubscriptions = false, bool includeGroups = false)
         {
             AzureUser user;
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"/users/{userId}?api-version=2017-03-01"))
@@ -50,31 +55,41 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
                 user.Subscriptions.AddRange(subscriptions);
             }
 
-            return user;
-        }
-
-        public async Task<AzureUser> GetUserDetailsByUkprn(string ukprn, bool includeSubscriptions = false)
-        {
-            AzureUser user;
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"/users?api-version=2017-03-01&expandGroups=false&$top=1&$filter=note eq '{ukprn}'"))
+            if (user.AzureId != null && includeGroups)
             {
-                var response = await RequestAndDeserialiseAsync<AzureUserResponse>(httpRequest, "Could not get User");
-                user = response.Users.FirstOrDefault();
-            }
-
-            if (user != null && user.AzureId != null && includeSubscriptions)
-            {
-                var subscriptions = await GetSubscriptionsForUser(user.Id);
-                user.Subscriptions.AddRange(subscriptions);
+                var groups = await GetGroupsForUser(userId);
+                user.Groups.AddRange(groups);
             }
 
             return user;
         }
 
-        public async Task<AzureUser> GetUserDetailsByEmail(string email, bool includeSubscriptions = false)
+        public async Task<IEnumerable<AzureUser>> GetUserDetailsByUkprn(string ukprn, bool includeSubscriptions = false, bool includeGroups = false)
+        {
+            List<AzureUser> users = new List<AzureUser>();
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"/users?api-version=2017-03-01&expandGroups={includeGroups}&$filter=contains(note,'ukprn') and contains(note,'{ukprn}')"))
+            {
+                var response = await RequestAndDeserialiseAsync<AzureUserResponse>(httpRequest, "Could not get Users");
+
+                foreach(var user in response.Users)
+                {
+                    if (user.AzureId != null && includeSubscriptions)
+                    {
+                        var subscriptions = await GetSubscriptionsForUser(user.Id);
+                        user.Subscriptions.AddRange(subscriptions);
+                    }
+
+                    users.Add(user);
+                }
+            }
+
+            return users;
+        }
+
+        public async Task<AzureUser> GetUserDetailsByEmail(string email, bool includeSubscriptions = false, bool includeGroups = false)
         {
             AzureUser user;
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"/users?api-version=2017-03-01&expandGroups=false&$top=1&$filter=email eq '{email}'"))
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"/users?api-version=2017-03-01&expandGroups={includeGroups}&$top=1&$filter=email eq '{email}'"))
             {
                 var response = await RequestAndDeserialiseAsync<AzureUserResponse>(httpRequest, "Could not get User");
                 user = response.Users.FirstOrDefault();
@@ -94,50 +109,123 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"/users/{userId}/subscriptions?api-version=2017-03-01"))
             {
                 var response = await RequestAndDeserialiseAsync<AzureSubscriptionResponse>(httpRequest, "Could not get Subscriptions for User");
-                return response.Subscriptions;
-            }            
+
+                foreach(var subscription in response.Subscriptions)
+                {
+                    subscription.ApiEndPointUrl = new Uri(_requestBaseUri, subscription.ProductId).ToString();
+                }
+
+                return response.Subscriptions.Where(sub => !sub.IsCancelled).AsEnumerable();
+            }
+        }
+
+        private async Task<IEnumerable<AzureGroup>> GetGroupsForUser(string userId)
+        {
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"/users/{userId}/groups?api-version=2017-03-01"))
+            {
+                var response = await RequestAndDeserialiseAsync<AzureGroupResponse>(httpRequest, "Could not get Groups for User");
+                return response.Groups;
+            }
         }
 
         public async Task<AzureUser> CreateUser(string ukprn, string username)
         {
-            var userId = Guid.NewGuid();
+            AzureUser user = null;
+
             var organisation = await _organisationsApiClient.Get(ukprn);
             var contact = await _contactsApiClient.GetByUsername(username);
 
-            if (await GetUserDetailsByUkprn(ukprn) != null) throw new Exceptions.EntityAlreadyExistsException($"Access is already enabled for ukprn {ukprn}");
-            else if (await GetUserDetailsByEmail(contact.Email) != null) throw new Exceptions.EntityAlreadyExistsException($"Access is already enabled for username {username}");
+            IEnumerable<AzureUser> ukprnUsers = await GetUserDetailsByUkprn(ukprn, true, true);
 
-            var request = new CreateAzureUserRequest
-            {
-                FirstName = organisation.EndPointAssessorName,
-                LastName = "EPAO",
-                Email = contact.Email,
-                Note = ukprn,
-                Password = "3pa0Pa55w0rd!"
-            };
+            var ukprnUsersWithSubscription = (from u in ukprnUsers
+                                              from subs in ukprnUsers.SelectMany(au => au.Subscriptions.Where(s => s.IsActive && s.ProductId == _productId))
+                                              where u.Id == subs.UserId
+                                              select u).ToList();
 
-            AzureUser user;
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Put, $"/users/{userId}?api-version=2017-03-01"))
+            AzureUser emailUser = await GetUserDetailsByEmail(contact?.Email, true, true);
+            AzureUser ukprnUser = ukprnUsersWithSubscription.Where(u => u.Email.Equals(contact?.Email)).FirstOrDefault();
+            
+            if (ukprnUsersWithSubscription.Any() && ukprnUser is null)
             {
-                user = await PostPutRequestWithResponse<CreateAzureUserRequest, AzureUser>(httpRequest, request);
+                throw new Exceptions.EntityAlreadyExistsException($"Access is already enabled but not for the supplied ukprn and username.");
+            }
+            else if (ukprnUser != null)
+            {
+                user = ukprnUser;
+            }
+            else if(emailUser != null)
+            {
+                user = emailUser;
+                await UpdateUserNote(user.Id, $"ukprn={ukprn}");
+            }
+            else
+            {
+                var request = new CreateAzureUserRequest
+                {
+                    FirstName = organisation.EndPointAssessorName,
+                    LastName = contact.DisplayName,
+                    Email = contact.Email,
+                    Note = $"ukprn={ukprn}"
+                };
+
+                using (var httpRequest = new HttpRequestMessage(HttpMethod.Put, $"/users/{Guid.NewGuid()}?api-version=2017-03-01"))
+                {
+                    user = await PostPutRequestWithResponse<CreateAzureUserRequest, AzureUser>(httpRequest, request);
+                }
             }
 
-            if (user.AzureId != null)
+            if (user != null && !string.IsNullOrEmpty(user.Id))
             {
-                var subscription = await SubscribeUserToProduct(user.Id, _productId);
-                user.Subscriptions.Add(subscription);
-            }
+                if (!user.Groups.Any(g => string.Equals(g.Id, _groupId, StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    await AddUserToGroup(user.Id, _groupId);
+                }
 
-            await _organisationsApiClient.Update(new UpdateOrganisationRequest
-            {
-                EndPointAssessorName = organisation.EndPointAssessorName,
-                EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
-                EndPointAssessorUkprn = organisation.EndPointAssessorUkprn,
-                ApiEnabled = true,
-                ApiUser = userId.ToString()
-            });
+                if (!user.Subscriptions.Any(s => string.Equals(s.ProductId, _productId, StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    await SubscribeUserToProduct(user.Id, _productId);
+                }
+
+                await _organisationsApiClient.Update(new UpdateOrganisationRequest
+                {
+                    EndPointAssessorName = organisation.EndPointAssessorName,
+                    EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
+                    EndPointAssessorUkprn = organisation.EndPointAssessorUkprn,
+                    ApiEnabled = true,
+                    ApiUser = user.Id
+                });
+
+                // Note: Multiple things could have happened by this point so refresh
+                user = await GetUserDetails(user.Id, true, true);
+            }
 
             return user;
+        }
+
+        private async Task UpdateUserNote(string userId, string note)
+        {
+            var request = new UpdateAzureUserNoteRequest { Note = note };
+            using (var httpRequest = new HttpRequestMessage(new HttpMethod("PATCH"), $"/users/{userId}?api-version=2017-03-01"))
+            {
+                httpRequest.Headers.Add("If-Match", "*");
+                await PostPutRequest(httpRequest, request);
+            }
+        }
+
+        private async Task AddUserToGroup(string userId, string groupId)
+        {
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Put, $"/groups/{groupId}/users/{userId}?api-version=2017-03-01"))
+            {
+                await PostPutRequest(httpRequest);
+            }
+        }
+
+        private async Task RemoveUserFromGroup(string userId, string groupId)
+        {
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Delete, $"/groups/{groupId}/users/{userId}?api-version=2017-03-01"))
+            {
+                await PostPutRequest(httpRequest);
+            }
         }
 
         private async Task<AzureSubscription> SubscribeUserToProduct(string userId, string productId)
@@ -146,17 +234,51 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
             var request = new CreateAzureUserSubscriptionRequest { UserId = $"/users/{userId}", ProductId = $"/products/{productId}" };
 
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Put, $"/subscriptions/{subscriptionId}?api-version=2017-03-01"))
-            {     
+            {
                 return await PostPutRequestWithResponse<CreateAzureUserSubscriptionRequest, AzureSubscription>(httpRequest, request);
+            }
+        }
+
+        private async Task EnableSubscription(string subscriptionId)
+        {
+            var request = new EnableDisableAzureUserRequest { State = "active" };
+            using (var httpRequest = new HttpRequestMessage(new HttpMethod("PATCH"), $"/subscriptions/{subscriptionId}?api-version=2017-03-01"))
+            {
+                httpRequest.Headers.Add("If-Match", "*");
+                await PostPutRequest(httpRequest, request);
+            }
+        }
+
+        private async Task DisableSubscription(string subscriptionId)
+        {
+            var request = new EnableDisableAzureUserRequest { State = "suspended" };
+            using (var httpRequest = new HttpRequestMessage(new HttpMethod("PATCH"), $"/subscriptions/{subscriptionId}?api-version=2017-03-01"))
+            {
+                httpRequest.Headers.Add("If-Match", "*");
+                await PostPutRequest(httpRequest, request);
+            }
+        }
+
+        private async Task DeleteSubscription(string subscriptionId)
+        {
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Delete, $"/subscriptions/{subscriptionId}?api-version=2017-03-01"))
+            {
+                httpRequest.Headers.Add("If-Match", "*");
+                await Delete(httpRequest);
             }
         }
 
         public async Task EnableUser(string userId)
         {
-            var user = await GetUserDetails(userId);
+            var user = await GetUserDetails(userId, true);
 
             if (user != null)
             {
+                foreach (var subscription in user.Subscriptions.Where(s => string.Equals(s.ProductId, _productId, StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    await EnableSubscription(subscription.Id);
+                }
+
                 var request = new EnableDisableAzureUserRequest { State = "active" };
                 using (var httpRequest = new HttpRequestMessage(new HttpMethod("PATCH"), $"/users/{userId}?api-version=2017-03-01"))
                 {
@@ -172,10 +294,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
 
         public async Task DisableUser(string userId)
         {
-            var user = await GetUserDetails(userId);
+            var user = await GetUserDetails(userId, true);
 
             if (user != null)
             {
+                foreach (var subscription in user.Subscriptions.Where(s => string.Equals(s.ProductId, _productId, StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    await DisableSubscription(subscription.Id);
+                }
+
                 var request = new EnableDisableAzureUserRequest { State = "blocked" };
                 using (var httpRequest = new HttpRequestMessage(new HttpMethod("PATCH"), $"/users/{userId}?api-version=2017-03-01"))
                 {
@@ -191,38 +318,52 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
 
         public async Task DeleteUser(string userId)
         {
-            var user = await GetUserDetails(userId);
+            var user = await GetUserDetails(userId, true, true);
 
             if (user != null)
             {
-                using (var httpRequest = new HttpRequestMessage(HttpMethod.Delete, $"/users/{userId}?api-version=2017-03-01&deleteSubscriptions=true"))
-                {
-                    httpRequest.Headers.Add("If-Match", "*");
-                    await Delete(httpRequest);
-                }
+                var hasOtherSubscriptions = user.Subscriptions.Any(s => !string.Equals(s.ProductId, _productId, StringComparison.InvariantCultureIgnoreCase));
 
-                if (!string.IsNullOrWhiteSpace(user.Note))
+                if (!hasOtherSubscriptions)
                 {
-                    var organisation = await _organisationsApiClient.Get(user.Note);
-                    await _organisationsApiClient.Update(new UpdateOrganisationRequest
+                    // No other subscriptions so do an aggressive delete
+                    using (var httpRequest = new HttpRequestMessage(HttpMethod.Delete, $"/users/{userId}?api-version=2017-03-01&deleteSubscriptions=true"))
                     {
-                        EndPointAssessorName = organisation.EndPointAssessorName,
-                        EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
-                        EndPointAssessorUkprn = organisation.EndPointAssessorUkprn,
-                        ApiEnabled = false,
-                        ApiUser = null
-                    });
+                        httpRequest.Headers.Add("If-Match", "*");
+                        await Delete(httpRequest);
+                    }
                 }
-            }
+                else
+                {
+                    // Only remove the appropriate subscriptions such that they can continue using other APIs
+                    foreach (var subscription in user.Subscriptions.Where(s => string.Equals(s.ProductId, _productId, StringComparison.InvariantCultureIgnoreCase)))
+                    {
+                        await DeleteSubscription(subscription.Id);
+                    }
 
-        }
+                    await RemoveUserFromGroup(user.Id, _groupId);
+                }
 
-        public async Task<IEnumerable<AzureProduct>> ListProducts()
-        {
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"/products?api-version=2017-03-01'"))
-            {
-                var response = await RequestAndDeserialiseAsync<AzureProductResponse>(httpRequest, "Could not get Products");
-                return response.Products;
+                if (!string.IsNullOrWhiteSpace(user.Ukprn))
+                {
+                    var organisation = await _organisationsApiClient.Get(user.Ukprn);
+
+                    if (organisation != null)
+                    {
+                        // If we have a result here then take the first result as the new api user
+                        var apiUsers = await GetUserDetailsByUkprn(user.Ukprn);
+                        var newApiUser = apiUsers.SelectMany(u => u.Subscriptions.Where(s => s.IsActive && s.ProductId == _productId)).FirstOrDefault();
+
+                        await _organisationsApiClient.Update(new UpdateOrganisationRequest
+                        {
+                            EndPointAssessorName = organisation.EndPointAssessorName,
+                            EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
+                            EndPointAssessorUkprn = organisation.EndPointAssessorUkprn,
+                            ApiEnabled = newApiUser != null,
+                            ApiUser = newApiUser?.UserId
+                        });
+                    }
+                }
             }
         }
 
@@ -231,7 +372,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Post, $"/subscriptions/{subscriptionId}/regeneratePrimaryKey?api-version=2017-03-01"))
             {
                 await PostPutRequest(httpRequest);
-                return null; // TODO: return key ??
+                return null;
             }
         }
 
@@ -240,7 +381,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Post, $"/subscriptions/{subscriptionId}/regenerateSecondaryKey?api-version=2017-03-01"))
             {
                 await PostPutRequest(httpRequest);
-                return null; // TODO: return key ??
+                return null;
             }
         }
     }

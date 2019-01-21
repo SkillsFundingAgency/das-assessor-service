@@ -16,6 +16,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
+using Microsoft.AspNetCore.Hosting;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -26,21 +27,31 @@ namespace SFA.DAS.AssessorService.Data
         private readonly IAssessmentOrgsSpreadsheetReader _spreadsheetReader;
         private readonly IWebConfiguration _configuration;
         private readonly ILogger<AssessmentOrgsImporter> _logger;
+        private readonly IHostingEnvironment _env;
         private readonly string TemplateFile = "assessmentOrgs.xlsx";
 
         public AssessmentOrgsImporter(IAssessmentOrgsRepository assessmentOrgsRepository,
                                         IAssessmentOrgsSpreadsheetReader spreadsheetReader,
                                         ILogger<AssessmentOrgsImporter> logger,
-                                        IWebConfiguration configuration)
+                                        IWebConfiguration configuration, IHostingEnvironment env)
         {
             _assessmentOrgsRepository = assessmentOrgsRepository;
             _spreadsheetReader = spreadsheetReader;
             _logger = logger;
             _configuration = configuration;
+            _env = env;
         }
 
         public AssessmentOrgsImportResponse ImportAssessmentOrganisations()
         {
+            if (!_env.IsDevelopment())
+            {
+                return new AssessmentOrgsImportResponse
+                {
+                    Status = "This patch will only run on development environments"
+                };
+            }
+
             var progressStatus = new StringBuilder();
            
            LogProgress(progressStatus,$"BUILDUP instituted at [{DateTime.Now.ToLongTimeString()}]; ");
@@ -96,6 +107,7 @@ namespace SFA.DAS.AssessorService.Data
                     LogProgress(progressStatus, "Reading from spreadsheet: Organisations; ");
                     spreadsheetDto.Organisations =
                         _spreadsheetReader.HarvestEpaOrganisations(package, spreadsheetDto.OrganisationTypes);
+                    LogProgress(progressStatus, $"Reading from spreadsheet: Organisations gathered: {spreadsheetDto.Organisations?.Count}; ");
                     LogProgress(progressStatus, "Reading from spreadsheet: Standards; ");
                     var standards = _spreadsheetReader.HarvestStandards(package);
                     LogProgress(progressStatus, "Reading from spreadsheet: Organisation-Standards; ");
@@ -107,13 +119,17 @@ namespace SFA.DAS.AssessorService.Data
                         _spreadsheetReader.HarvestStandardDeliveryAreas(package, spreadsheetDto.Organisations,
                             standards,
                             spreadsheetDto.DeliveryAreas);
+                    LogProgress(progressStatus, "Reading from spreadsheet: Organisation-Standards-Delivery Areas gathering comments; ");
+                    _spreadsheetReader.MapDeliveryAreasCommentsIntoOrganisationStandards(spreadsheetDto.OrganisationStandardDeliveryAreas, spreadsheetDto.OrganisationStandards);
                     LogProgress(progressStatus, "Reading from spreadsheet: Contacts; ");
                     spreadsheetDto.Contacts = _spreadsheetReader.HarvestOrganisationContacts(
                         spreadsheetDto.Organisations,
                         spreadsheetDto.OrganisationStandards);
+
+                    _spreadsheetReader.MapPrimaryContacts(spreadsheetDto.Organisations, spreadsheetDto.Contacts);
                 }
             }
-            LogProgress(progressStatus, "Finished extrcacting from spreadsheet");
+            LogProgress(progressStatus, "Finished extracting from spreadsheet");
             return spreadsheetDto;
 
         }
@@ -149,11 +165,11 @@ namespace SFA.DAS.AssessorService.Data
                 progressStatus.Append(message); _logger.LogInformation(message);
                 _assessmentOrgsRepository.WriteOrganisationTypes(spreadsheetDto.OrganisationTypes);
 
-                message = "WRITING TO DATABASE: Organisations; ";
+                message = $"WRITING TO DATABASE: Organisations ({spreadsheetDto.Organisations?.Count}); ";
                 progressStatus.Append(message); _logger.LogInformation(message);
                 _assessmentOrgsRepository.WriteOrganisations(spreadsheetDto.Organisations);
 
-                message = "WRITING TO DATABASE: Contacts;  ";
+                message = $"WRITING TO DATABASE: Contacts ({spreadsheetDto.Contacts?.Count});  ";
                 progressStatus.Append(message); _logger.LogInformation(message);
                 var contactsFromDatabase = _assessmentOrgsRepository.UpsertThenGatherOrganisationContacts(spreadsheetDto.Contacts);
 
@@ -161,7 +177,7 @@ namespace SFA.DAS.AssessorService.Data
 
                 AttachContactsToOrganisationStandards(orgStandards, contactsFromDatabase);
 
-                message = "WRITING TO DATABASE: Organisation-Standards; ";
+                message = $"WRITING TO DATABASE: Organisation-Standards  ({orgStandards?.Count});";
                 progressStatus.Append(message); _logger.LogInformation(message);
                 var organisationStandards = _assessmentOrgsRepository.WriteEpaOrganisationStandards(orgStandards);
 
@@ -211,7 +227,7 @@ namespace SFA.DAS.AssessorService.Data
         }
         public async Task<CloudBlobContainer> GetContainer(string containerName)
         {
-            var storageAccount = CloudStorageAccount.Parse(_webConfiguration.IFATemplateStorageConnectionString);     
+            var storageAccount = CloudStorageAccount.DevelopmentStorageAccount;    
             var client = storageAccount.CreateCloudBlobClient();
             var blobContainer = client.GetContainerReference(containerName);
 

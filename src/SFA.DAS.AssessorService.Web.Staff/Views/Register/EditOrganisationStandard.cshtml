@@ -1,0 +1,229 @@
+﻿@using SFA.DAS.AssessorService.Domain.Extensions
+@model SFA.DAS.AssessorService.Web.Staff.Models.RegisterViewAndEditOrganisationStandardViewModel
+@{
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Edit organisation standard";
+    Layout = "_Layout";
+}
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <a href="/register/search-standards/@Model.OrganisationId" class="link-back">Return to standard search</a>
+
+        <form class="add-organisation-form" asp-action="EditOrganisationStandard" asp-controller="Register" method="POST">
+            <input type="hidden" name="fullDate" id="fullDate" class="date-input" />
+            @Html.HiddenFor(c => c.OrganisationId)
+            @Html.HiddenFor(c => c.StandardId)
+            @Html.HiddenFor(c => c.Ukprn)
+            @Html.HiddenFor(c => c.OrganisationName)
+            @Html.HiddenFor(c => c.StandardTitle)        
+            @Html.HiddenFor(m => m.StandardEffectiveFrom)
+            @Html.HiddenFor(m => m.StandardEffectiveTo)  
+            @Html.HiddenFor(c => c.StandardLastDateForNewStarts)
+            @Html.HiddenFor(c => c.Status)
+            @Html.HiddenFor(c => c.OrganisationStatus)
+
+            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                    There is a problem
+                </h2>
+                <ul class="js-error-summary-list error-summary-list"></ul>
+            </div>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                        There is a problem
+                    </h2>
+                    <ul class="error-summary-list">
+                        <li><a sfa-validation-for="OrganisationId"></a></li>
+                        <li><a sfa-validation-for="StandardId"></a></li>
+                        <li><a sfa-validation-for="EffectiveFrom"></a></li>
+                        <li><a sfa-validation-for="EffectiveFromDay"></a></li>
+                        <li><a sfa-validation-for="EffectiveFromMonth"></a></li>
+                        <li><a sfa-validation-for="EffectiveFromYear"></a></li>
+                        <li><a sfa-validation-for="EffectiveTo"></a></li>
+                        <li><a sfa-validation-for="EffectiveToDay"></a></li>
+                        <li><a sfa-validation-for="EffectiveToMonth"></a></li>
+                        <li><a sfa-validation-for="EffectiveToYear"></a></li>
+                        <li><a sfa-validation-for="ContactId"></a></li>
+                        <li><a sfa-validation-for="DeliveryAreas"></a></li>
+                        <li><a sfa-validation-for="ActionChoice"></a></li>
+                    </ul>
+                </div>
+            }
+
+            <h1 class="heading-xlarge">Edit an organisation standard</h1>
+            <table>
+                <tbody>
+                <tr>
+                    <td><span class="bold-small">Organisation</span></td>
+                    <td>@Model.OrganisationName</td>
+                </tr>
+                <tr>
+                    <td><span class="bold-small">Organisation status</span></td>
+                    <td>@Model.OrganisationStatus</td>
+                </tr>
+                <tr>
+                    <td><span class="bold-small">Organisation ID</span></td>
+                    <td>@Model.OrganisationId</td>
+                </tr>
+                <tr>
+                    <td><span class="bold-small">UKPRN</span></td>
+                    <td>@Model.Ukprn</td>
+                </tr>
+                <tr>
+                    <td><span class="bold-small">Standard</span></td>
+                    <td>@Model.StandardTitle (@Model.StandardId)</td>
+                </tr>
+                <tr>
+                    <td><span class="bold-small">Standard effective from</span></td>
+                    <td>@Model.StandardEffectiveFrom.ToSfaShortDateString()</td>
+                </tr>
+                <tr>
+                    <td><span class="bold-small">Standard effective to</span></td>
+                    <td>@Model.StandardEffectiveTo.ToSfaShortDateString()</td>
+                </tr>
+                <tr>
+                    <td><span class="bold-small">Last date for new starts</span></td>
+                    <td>@Model.StandardLastDateForNewStarts.ToSfaShortDateString()</td>
+                </tr>
+                <tr>
+                    <td><span class="bold-small">Date approved on register</span></td>
+                    <td> @Model.DateStandardApprovedOnRegister.ToSfaShortDateString()</td>
+                </tr>
+                <tr>
+                    <td><span class="bold-small">Standard status</span></td>
+                    <td>@Model.Status</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <h1 class="heading-large">New organisation standard details</h1>
+        
+            <div class="form-group error-message-container" sfa-anyvalidationerror-class="form-group-error">
+                <span class="error-message" asp-validation-for="EffectiveFrom"></span>
+                <span class="error-message" asp-validation-for="EffectiveFromDay"></span>
+                <span class="error-message" asp-validation-for="EffectiveFromMonth"></span>
+                <span class="error-message" asp-validation-for="EffectiveFromYear"></span>
+                <label for="EffectiveFrom">
+                    <span class="form-label-bold">Effective from</span>
+                </label>
+                <span class="form-date">
+                    <div class="form-group form-group-day">
+                        <label for="EffectiveFromDay">Day</label>
+                        <input class="form-control date-input js-integers-only" sfa-validation-for="EffectiveFromDay" sfa-validationerror-class="form-control-error" asp-for="EffectiveFromDay" type="text" maxlength="2" />
+                    </div>
+
+                    <div class="form-group form-group-month">
+                        <label for="EffectiveFromMonth">Month</label>
+                        <input class="form-control date-input js-integers-only" sfa-validation-for="EffectiveFromMonth" sfa-validationerror-class="form-control-error" asp-for="EffectiveFromMonth" type="text" maxlength="2" />
+                    </div>
+
+                    <div class="form-group form-group-year">
+                        <label for="EffectiveFromYear">Year</label>
+                        <input class="form-control date-input js-integers-only" sfa-validation-for="EffectiveFromYear" sfa-validationerror-class="form-control-error" asp-for="EffectiveFromYear" type="text" maxlength="4" />
+                    </div>
+                </span>
+           
+            </div>
+            <div class="form-group error-message-container" sfa-anyvalidationerror-class="form-group-error">
+                <span class="error-message" asp-validation-for="EffectiveTo"></span>
+                <span class="error-message" asp-validation-for="EffectiveToDay"></span>
+                <span class="error-message" asp-validation-for="EffectiveToMonth"></span>
+                <span class="error-message" asp-validation-for="EffectiveToYear"></span>
+                <label for="EffectiveFrom">
+                    <span class="form-label-bold">Effective to</span>
+                </label>
+                <span class="form-date">
+                    <div class="form-group form-group-day">
+                        <label for="EffectiveToDay">Day</label>
+                        <input class="form-control date-input js-integers-only" sfa-validation-for="EffectiveToDay" sfa-validationerror-class="form-control-error" asp-for="EffectiveToDay" type="text" maxlength="2" />
+                    </div>
+
+                    <div class="form-group form-group-month">
+                        <label for="EffectiveToMonth">Month</label>
+                        <input class="form-control date-input js-integers-only" sfa-validation-for="EffectiveToMonth" sfa-validationerror-class="form-control-error" asp-for="EffectiveToMonth" type="text" maxlength="2" />
+                    </div>
+
+                    <div class="form-group form-group-year">
+                        <label for="EffectiveToYear">Year</label>
+                        <input class="form-control date-input js-integers-only" sfa-validation-for="EffectiveToYear" sfa-validationerror-class="form-control-error" asp-for="EffectiveToYear" type="text" maxlength="4" />
+                    </div>
+                </span>
+           
+            </div>
+            <div class="form-group" sfa-validation-for="ContactId" sfa-validationerror-class="form-group-error">
+                <label for="ContactId">
+                    <span class="form-label-bold">Contact</span>
+                    <span class="error-message" asp-validation-for="ContactId"></span>
+                </label>
+                @foreach (var contact in Model.Contacts)
+                {
+                    <div class="multiple-choice">
+                        <input asp-for="ContactId" id="@contact.Id" type="radio" value="@contact.Id"/>
+                        <label for="@contact.Id">
+                            @contact.DisplayName
+                            @if (!String.IsNullOrEmpty( @contact.Email )) {
+                                <br /><a href="mailto:@contact.Email">@contact.Email</a>
+                            }
+                            @if (!String.IsNullOrEmpty( @contact.PhoneNumber )) {
+                                <br />@contact.PhoneNumber
+                            }
+                        </label>
+                    </div>
+                }
+            </div>
+        <div class="form-group" sfa-validation-for="DeliveryAreas" sfa-validationerror-class="form-group-error">
+            <label for="DeliveryAreas">
+                <span class="form-label-bold">Delivery areas</span>
+                <span class="error-message" asp-validation-for="DeliveryAreas"></span>
+            </label>
+            @foreach (var deliveryArea in Model.AvailableDeliveryAreas)
+            {
+                var checkboxChecked = Model.DeliveryAreas != null && Model.DeliveryAreas.Any(x => x == deliveryArea.Id) ? "checked" : "";
+                <div class="multiple-choice">
+                    <input 
+                        id="@deliveryArea.Id"
+                        name="DeliveryAreas"
+                        type="checkbox"
+                        value="@deliveryArea.Id"
+                        @checkboxChecked
+                    />
+                    <label for="@deliveryArea.Id">
+                        @deliveryArea.Area
+                    </label>
+                </div>
+            }
+        </div>
+        <div class="form-group" sfa-validation-for="DeliveryAreasComments" sfa-validationerror-class="form-group-error">
+            <label class="form-label" for="DeliveryAreasComments">
+                <span class="form-label-bold">Delivery Area Notes</span>
+                <span class="error-message" asp-validation-for="DeliveryAreasComments"></span>
+            </label>
+            <textarea class="form-control form-control-3-4" maxlength="500" name="DeliveryAreasComments" id="DeliveryAreasComments" sfa-validationerror-class="form-control-error" asp-for="DeliveryAreasComments" rows="2"></textarea>
+        </div>
+
+            <div class="form-group" sfa-validation-for="Comments" sfa-validationerror-class="form-group-error">
+                <label for="Comments">
+                    <span class="form-label-bold">Comments</span>
+                    <span class="error-message" asp-validation-for="Comments"></span>
+                </label>
+                <textarea class="form-control form-control-3-4" maxlength="500" name="Comments" id="Comments" sfa-validationerror-class="form-control-error" asp-for="Comments" rows="5"></textarea>
+            </div>
+            <div class="form-group">
+                <button class="button" type="submit" name="ActionChoice" value="Save">Save</button>
+                @if (Model.OrganisationStatus == "Live" && Model.Status == "New")
+                {
+                    <button class="button" type="submit" name="ActionChoice" value="MakeLive">Make Live</button>
+                }
+                <a class ="button" href="/register/view-standard/@Model.OrganisationStandardId">Cancel</a>
+            </div>
+            
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

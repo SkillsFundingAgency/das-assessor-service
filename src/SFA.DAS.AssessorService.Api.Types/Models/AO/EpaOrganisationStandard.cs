@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+
 namespace SFA.DAS.AssessorService.Api.Types.Models.AO
 {
     public class EpaOrganisationStandard
@@ -12,5 +14,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
         public string Comments { get; set; }
         public string Status { get; set; }
         public Guid? ContactId { get; set; }
+
+        public OrganisationStandardData OrganisationStandardData { get; set; }
     }
 }

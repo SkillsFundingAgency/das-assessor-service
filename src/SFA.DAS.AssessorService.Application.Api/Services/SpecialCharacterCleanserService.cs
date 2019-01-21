@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc.Razor;
 using SFA.DAS.AssessorService.Application.Interfaces;
 
 namespace SFA.DAS.AssessorService.Application.Api.Services
@@ -20,7 +22,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 {'’', '\''},
                 {'‘','\'' },
                 {'`', '\''},
-                {'-', '–'},
+                {'–', '-'},
                 {'\u00A0',' '},
                 {'\t',' '},
                 {'%', ' '}
@@ -30,7 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
         public string CleanseStringForSpecialCharacters(string inputString)
         {
             if (string.IsNullOrEmpty(inputString)) return null;
-            var processedString = inputString;
+            var processedString = inputString.Trim();
 
             var specialCharacters = SpecialCharactersInString(processedString);
 
@@ -42,7 +44,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
                 processedString = processedString.Replace(matchingEntry.Key, matchingEntry.Value);
             }
 
-            return processedString;
+            return processedString.Trim();
+        }
+
+        public string UnescapeAndRemoveNonAlphanumericCharacters(string text)
+        {
+
+            var unescapedText = "";
+            if (!string.IsNullOrEmpty(text))
+                unescapedText = Uri.UnescapeDataString(text?.Trim());
+            return string.Concat(unescapedText.Where(char.IsLetterOrDigit));
         }
 
         private char[] SpecialCharactersInString(string inputString)

@@ -1,0 +1,65 @@
+﻿@using SFA.DAS.AssessorService.Web.Staff.ViewModels
+@model ReportViewModel
+
+@{
+ViewBag.Title = "Viewing report";
+Layout = "_Layout";
+}
+
+<div class="grid-row">
+  <div class="column-two-thirds">
+    <a asp-action="Index" asp-controller="Reports" class="link-back">Go back</a>
+
+    <h1 class="heading-xlarge">
+      Viewing report
+      <span class="heading-secondary">@Model.SelectedReport?.ReportName</span>
+    </h1>
+  </div>
+</div>
+
+<div class="grid-row">
+  <div class="column-full">
+    @if (Model.SelectedReportData != null && Model.SelectedReportData.Any())
+    {
+    <div class="form-group">
+      <form class="report-selection-form" asp-action="Export" method="get">
+        @Html.HiddenFor(m => m.ReportId)
+        <button type="submit" class="button">Export</button>
+      </form>
+    </div>
+    <div class="form-group">
+      <div class="scrollable-table-scroll-container">
+        <div class="scrollable-table-container">
+          <table class="table staff-report-table table-font-xsmall">
+            <thead>
+              <tr>
+                @foreach (var key in Model.SelectedReportData.First().Keys)
+                {
+                <th>@key</th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @foreach (var entry in Model.SelectedReportData)
+              {
+              <tr>
+                @foreach (var kvp in entry)
+                {
+                <td data-label="@kvp.Key">@kvp.Value</td>
+                }
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    }
+    else
+    {
+    <div class="form-group">
+      <p>No records present for this report.</p>
+    </div>
+    }
+  </div>
+</div>

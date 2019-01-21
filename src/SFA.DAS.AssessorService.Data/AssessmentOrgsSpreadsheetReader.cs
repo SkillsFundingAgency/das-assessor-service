@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mime;
 using System.Text;
+using Microsoft.Extensions.Logging;
 using OfficeOpenXml;
 using SFA.DAS.AssessorService.Data.Exceptions;
 using SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations;
@@ -18,6 +19,13 @@ namespace SFA.DAS.AssessorService.Data
         private const string StandardsWorkSheetName = "Standards Lookup (LARS copy)";
 
         private const string DeliveryAreasWorkSheetName = "Register - Delivery areas";
+        private readonly ILogger<AssessmentOrgsSpreadsheetReader> _logger;
+
+        public AssessmentOrgsSpreadsheetReader(ILogger<AssessmentOrgsSpreadsheetReader> logger)
+        {
+            _logger = logger;
+        }
+
 
         public List<DeliveryArea> HarvestDeliveryAreas()
         {
@@ -41,15 +49,17 @@ namespace SFA.DAS.AssessorService.Data
         {
             var organisationTypes = new List<TypeOfOrganisation>
             {
-                new TypeOfOrganisation {Id = 1, Type = "Awarding Organisation", Status = "Live"},
-                new TypeOfOrganisation {Id = 2, Type = "Assessment Organisation", Status = "Live"},
-                new TypeOfOrganisation {Id = 3, Type = "Employer or trade body", Status = "Live"},
-                new TypeOfOrganisation {Id = 4, Type = "Professional Body", Status = "Live"},
-                new TypeOfOrganisation {Id = 5, Type = "Higher Education Institution", Status = "Live"},
-                new TypeOfOrganisation {Id = 6, Type = "Sector Skills Council", Status = "Live"},
-                new TypeOfOrganisation {Id = 7, Type = "Training Provider", Status = "Live"},
-                new TypeOfOrganisation {Id = 8, Type = "Other", Status = "Live"},
-                new TypeOfOrganisation {Id = 9, Type = "Non-departmental public body", Status = "Live"}
+                new TypeOfOrganisation {Id = 1, Type = "Awarding Organisations", TypeDescription = "Awarding Organisations", Status = "Live"},
+                new TypeOfOrganisation {Id = 2, Type = "Assessment Organisations", TypeDescription = "Assessment Organisations", Status = "Live"},
+                new TypeOfOrganisation {Id = 3, Type = "Trade Body", TypeDescription = "Trade Body", Status = "Live"},
+                new TypeOfOrganisation {Id = 4, Type = "Professional Body", TypeDescription = "Professional Body - approved by the relevant council", Status = "Live"},
+                new TypeOfOrganisation {Id = 5, Type = "HEI", TypeDescription = "HEI monitored and supported by OfS", Status = "Live"},
+                new TypeOfOrganisation {Id = 6, Type = "NSA or SSC", TypeDescription = "National Skills Academy / Sector Skills Council", Status = "Live"},
+                new TypeOfOrganisation {Id = 7, Type = "Training Provider", TypeDescription = "Training Provider - including HEI not in England", Status = "Live"},
+                new TypeOfOrganisation {Id = 8, Type = "Other", TypeDescription = null, Status = "Deleted"},
+                new TypeOfOrganisation {Id = 9, Type = "Public Sector", TypeDescription = "Incorporated as Public Sector Body, Local authority including LEA schools, Central Government Department / Executive Agency / Non-departmental public body, NHS Trust / Fire Authority, Police Constabulary or Police Crime Commissioner", Status = "Live"},
+                new TypeOfOrganisation {Id = 10, Type = "College", TypeDescription = "GFE College currently receiving funding from the ESFA, 6th form / FE college", Status = "Deleted"},
+                new TypeOfOrganisation {Id = 11, Type = "Academy or Free School", TypeDescription = "Academy or Free school registered with the ESFA", Status = "Live"}
             };
 
             return organisationTypes;
@@ -66,7 +76,8 @@ namespace SFA.DAS.AssessorService.Data
                 var epaOrganisationName = worksheet.Cells[i, 2].Value != null ? worksheet.Cells[i, 2].Value.ToString() : string.Empty;
                 if (epaOrganisationIdentifier == string.Empty || epaOrganisationName == string.Empty)
                 {
-                    break;
+                    _logger.LogInformation($"Harvest Organisations skipped row {i}: Either no identifier [{epaOrganisationIdentifier}] or name[{epaOrganisationName}] present");
+                    continue;
                 }
                      var epaOrganisationType = worksheet.Cells[i, 3].Value != null ? worksheet.Cells[i, 3].Value.ToString() : string.Empty;
                 var epaOrganisationTypeDetails = organisationTypes.FirstOrDefault(x => string.Equals(x.Type,
@@ -113,7 +124,7 @@ namespace SFA.DAS.AssessorService.Data
                                                                 Address4 = contactAddress4,
                                                                 Postcode = postcode},
                         EndPointAssessorUkprn = ukprn,                    
-                        Status = "New"
+                        Status = "Live"
                     });
             }
 
@@ -181,13 +192,23 @@ namespace SFA.DAS.AssessorService.Data
                 var epaOrganisationIdentifier = worksheet.Cells[i, 1].Value?.ToString();
 
                 var status = "Live";
-                if (epaOrganisationIdentifier == null || epaOrganisations.All(x => x.EndPointAssessorOrganisationId != epaOrganisationIdentifier))
+                if (epaOrganisationIdentifier == null ||
+                    epaOrganisations.All(x => x.EndPointAssessorOrganisationId != epaOrganisationIdentifier))
+                {
+                    if (epaOrganisationIdentifier != null)
+                        _logger.LogInformation($"Harvest OrganisationStandards skipped row {i}: Identifier not matched with harvested organisations: [{epaOrganisationIdentifier}]");
                     continue;
+                    
+                }
 
                 var standardCode = ProcessNullableIntValue(worksheet.Cells[i, 3].Value?.ToString());
-                 
+
                 if (standardCode == null || standards.All(x => x.StandardCode != standardCode))
-                    continue;
+                {
+                    if (standardCode != null)
+                        _logger.LogInformation($"Harvest OrganisationStandards skipped row {i}: Standard code that can be matched with harvested standards: [{standardCode}]");
+                    continue;          
+                }
 
                 var effectiveFrom = ProcessNullableDateValue(worksheet.Cells[i, 5].Value?.ToString());
                 var effectiveTo = ProcessNullableDateValue(worksheet.Cells[i, 6].Value?.ToString());
@@ -196,6 +217,7 @@ namespace SFA.DAS.AssessorService.Data
                 var contactEmail = worksheet.Cells[i, 9].Value?.ToString();
                 var dateStandardApprovedOnRegister = ProcessNullableDateValue(worksheet.Cells[i, 10].Value?.ToString());
                 var comments = worksheet.Cells[i, 11].Value?.ToString();
+
 
                 epaOrganisationStandards.Add(
                     new EpaOrganisationStandard
@@ -223,9 +245,15 @@ namespace SFA.DAS.AssessorService.Data
             for (var i = worksheet.Dimension.Start.Row + 1; i <= worksheet.Dimension.End.Row; i++)
             {
                 var epaOrganisationIdentifier = worksheet.Cells[i, 1].Value?.ToString();
-                
-                if (epaOrganisationIdentifier == null || epaOrganisations.All(x => x.EndPointAssessorOrganisationId != epaOrganisationIdentifier))
-                    continue;
+
+                if (epaOrganisationIdentifier == null ||
+                    epaOrganisations.All(x => x.EndPointAssessorOrganisationId != epaOrganisationIdentifier))
+                {
+                    if (epaOrganisationIdentifier!=null)
+                        _logger.LogInformation($"Harvest OrganisationStandardsDeliveryAreas skipped row {i}: organisation identifier not matched in harvested organisations: [{epaOrganisationIdentifier}]");
+
+                    continue;        
+                }
 
                 var standardCode = ProcessNullableIntValue(worksheet.Cells[i, 3].Value?.ToString());
 
@@ -243,7 +271,11 @@ namespace SFA.DAS.AssessorService.Data
 
                 // skip if standard code is null or standard not actually available
                 if (standardCode == null || standards.All(x => x.StandardCode != standardCode.Value))
+                {
+                    if (standardCode != null)
+                        _logger.LogInformation($"Harvest OrganisationStandardsDeliveryAreas skipped row {i}: Standard not matched in harvested standards: [{standardCode}]");
                     continue;
+                }
 
                 var deliveryArea = worksheet.Cells[i, 5].Value != null
                     ? worksheet.Cells[i, 5].Value.ToString().Trim()
@@ -397,6 +429,30 @@ namespace SFA.DAS.AssessorService.Data
 
             if (worksheet == null) throw new WorksheetNotAvailableException($"Worksheet [{worksheetname}] not found");
             return worksheet;
+        }
+
+        public void MapDeliveryAreasCommentsIntoOrganisationStandards(List<EpaOrganisationStandardDeliveryArea> osDeliveryAreas, List<EpaOrganisationStandard> organisationStandards)
+        {
+            foreach (var organisationStandard in organisationStandards)
+            {
+                organisationStandard.OrganisationStandardData = new OrganisationStandardData();
+                var firstDeliveryArea =
+                    osDeliveryAreas.FirstOrDefault(x => x.EndPointAssessorOrganisationId == organisationStandard.EndPointAssessorOrganisationId && x.StandardCode == organisationStandard.StandardCode);
+                if (firstDeliveryArea != null)
+                    organisationStandard.OrganisationStandardData.DeliveryAreasComments = firstDeliveryArea.Comments;
+            }
+        }
+
+        public void MapPrimaryContacts(List<EpaOrganisation> organisations, List<OrganisationContact> contacts)
+        {
+            foreach (var organisation in organisations)
+            {
+                var contactMatch =
+                    contacts.FirstOrDefault(c => c.EndPointAssessorOrganisationId ==
+                                                 organisation.EndPointAssessorOrganisationId);
+                if (contactMatch != null)
+                    organisation.PrimaryContact = contactMatch.Username;
+            }
         }
     }
 }

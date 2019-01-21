@@ -32,20 +32,19 @@
 
             @if (!ViewData.ModelState.IsValid)
             {
-                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                        There's a problem
-                    </h2>
-                    <ul class="error-summary-list">
-                        <li><a sfa-validation-for="Option"></a></li>
-                    </ul>
-                </div>
+            <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                    There's a problem
+                </h2>
+                <ul class="error-summary-list">
+                    <li><a sfa-validation-for="Option"></a></li>
+                </ul>
+            </div>
             }
 
             <div sfa-anyvalidationerror-class="after-error-summary">
-                <div id="Option">
-                    <h1 class="heading-medium">
-                        @*<span class="heading-secondary">@Model.GivenNames @Model.FamilyName</span>*@
+                <div>
+                    <h1 class="heading-large">
                         @Localizer["Heading"]
                     </h1>
                     <p>You may know options as 'occupational options', 'pathways', 'specialisms' or 'specialist functions'.</p>

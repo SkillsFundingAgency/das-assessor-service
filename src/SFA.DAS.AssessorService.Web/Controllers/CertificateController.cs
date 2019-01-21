@@ -8,6 +8,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate;
+using SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -19,13 +20,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly ILogger<CertificateController> _logger;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly ICertificateApiClient _certificateApiClient;
+        private readonly IOrganisationsApiClient _organisationsApiClient;
         private readonly ISessionService _sessionService;
 
-        public CertificateController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor, ICertificateApiClient certificateApiClient, ISessionService sessionService)
+        public CertificateController(ILogger<CertificateController> logger, IHttpContextAccessor contextAccessor,
+            ICertificateApiClient certificateApiClient, 
+            IOrganisationsApiClient organisationsApiClient,
+            ISessionService sessionService)
         {
             _logger = logger;
             _contextAccessor = contextAccessor;
             _certificateApiClient = certificateApiClient;
+            _organisationsApiClient = organisationsApiClient;
             _sessionService = sessionService;
         }
 
@@ -34,9 +40,11 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             _sessionService.Remove("CertificateSession");
             var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
-            var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
+            var username = _contextAccessor.HttpContext.User
+                .FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
-            _logger.LogInformation($"Start of Certificate Start for ULN {vm.Uln} and Standard Code: {vm.StdCode} by user {username}");
+            _logger.LogInformation(
+                $"Start of Certificate Start for ULN {vm.Uln} and Standard Code: {vm.StdCode} by user {username}");
 
             var cert = await _certificateApiClient.Start(new StartCertificateRequest()
             {
@@ -45,6 +53,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 Uln = vm.Uln,
                 Username = username
             });
+
+            var organisation = await _organisationsApiClient.Get(ukprn);
 
             var options = (await _certificateApiClient.GetOptions(cert.StandardCode)).Select(o => o.OptionName).ToList();
 
@@ -56,9 +66,47 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 Options = options
             });
 
-            _logger.LogInformation($"New Certificate received for ULN {vm.Uln} and Standard Code: {vm.StdCode} with ID {cert.Id}");
+            _logger.LogInformation(
+                $"New Certificate received for ULN {vm.Uln} and Standard Code: {vm.StdCode} with ID {cert.Id}");
 
             return RedirectToAction("Declare", "CertificateDeclaration");
+        }
+
+        [HttpPost]
+        [Route("certificate/private")]
+        public async Task<IActionResult> StartPrivate(CertificateStartPrivateViewModel certificateStartPrivateViewModel)
+        {
+            _sessionService.Remove("CertificateSession");
+            var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
+            var username = _contextAccessor.HttpContext.User
+                .FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
+
+            _logger.LogInformation(
+                $"Start of Private Certificate");
+
+            var organisation = await _organisationsApiClient.Get(ukprn);
+
+            var certificate = await _certificateApiClient.StartPrivate(new StartCertificatePrivateRequest()
+            {
+                UkPrn = int.Parse(ukprn),
+                Uln = certificateStartPrivateViewModel.Uln,
+                LastName = certificateStartPrivateViewModel.Surname,
+                Username = username,
+                EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId
+            });
+       
+            _sessionService.Set("EndPointAsessorOrganisationId", organisation.EndPointAssessorOrganisationId);
+           
+           _sessionService.Set("CertificateSession", new CertificateSession()
+            {
+                CertificateId = certificate.Id,
+                Uln = certificateStartPrivateViewModel.Uln
+            });
+
+            _logger.LogInformation(
+                $"New Private Certificate received with ID {certificate.Id}");
+
+            return RedirectToAction("FirstName", "CertificatePrivateFirstName");
         }
     }
 }

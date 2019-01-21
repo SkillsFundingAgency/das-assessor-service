@@ -2,6 +2,7 @@
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -9,42 +10,75 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Middleware
 {
     public class GetHeadersMiddleware
     {
-        private readonly RequestDelegate _next;
+        private const string _UserIdHeader = "x-request-context-user-id";
+        private const string _UserEmailHeader = "x-request-context-user-email";
+        private const string _UserNoteHeader = "x-request-context-user-note";
+        private const string _InvalidUkprnMessage = "Your account is not linked to a valid UKPRN";
+        private const string _InvalidEmailMessage = "Your account is not linked to a valid Email address";
 
-        public GetHeadersMiddleware(RequestDelegate next)
+        private readonly RequestDelegate _next;
+        private readonly ILogger<GetHeadersMiddleware> _logger;
+
+        public GetHeadersMiddleware(RequestDelegate next, ILogger<GetHeadersMiddleware> logger)
         {
             _next = next;
+            _logger = logger;
         }
 
         public async Task Invoke(HttpContext context, IHeaderInfo headerInfo)
         {
-            context.Request.Headers.TryGetValue("x-username", out var usernameHeaderValue);
-            context.Request.Headers.TryGetValue("x-ukprn", out var ukprnHeaderValue);
-            
-            bool validUkPrn = int.TryParse(ukprnHeaderValue.FirstOrDefault(), out int ukprn);
-            string username = usernameHeaderValue.FirstOrDefault() ?? string.Empty;
+            context.Request.Headers.TryGetValue(_UserEmailHeader, out var emailHeaderValue);
+            context.Request.Headers.TryGetValue(_UserNoteHeader, out var noteHeaderValue);
 
-            if (validUkPrn && !string.IsNullOrWhiteSpace(username))
+            string email = emailHeaderValue.FirstOrDefault();
+
+            if(!TryExtractUkprnFromHeader(noteHeaderValue, out var ukprn))
             {
-                headerInfo.Ukprn = ukprn;
-                headerInfo.Username = username;
-
-                await _next(context);
+                _logger.LogError("GetHeadersMiddleware - invalid or no UKPRN.");
+                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                context.Response.ContentType = "application/json";
+                var json = GetApiResponseAsJson(context.Response.StatusCode, _InvalidUkprnMessage);
+                await context.Response.WriteAsync(json);
+            }
+            else if (string.IsNullOrWhiteSpace(email))
+            {
+                _logger.LogError("GetHeadersMiddleware - no Email Address");
+                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                context.Response.ContentType = "application/json";
+                var json = GetApiResponseAsJson(context.Response.StatusCode, _InvalidEmailMessage);
+                await context.Response.WriteAsync(json);
             }
             else
             {
-                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                context.Response.ContentType = "application/json";
+                headerInfo.Ukprn = ukprn;
+                headerInfo.Email = email;
 
-                var response = new ApiResponse(context.Response.StatusCode, "Invalid Headers");
-                var json = JsonConvert.SerializeObject(response,
-                    new JsonSerializerSettings
-                    {
-                        ContractResolver = new CamelCasePropertyNamesContractResolver()
-                    });
-
-                await context.Response.WriteAsync(json);
+                await _next(context);
             }
+        }
+
+        private static bool TryExtractUkprnFromHeader(string header, out int ukprn)
+        {
+            ukprn = 0;
+
+            if (string.IsNullOrWhiteSpace(header)) return false;
+
+            string strippedValue = header.Trim().ToLower()
+                                    .Replace(" ", string.Empty)
+                                    .Replace("ukprn=", string.Empty);
+
+            return int.TryParse(strippedValue, out ukprn);
+        }
+
+        private static string GetApiResponseAsJson(int statusCode, string message)
+        {
+            var apiResponse = new ApiResponse(statusCode, message);
+
+            return JsonConvert.SerializeObject(apiResponse,
+                new JsonSerializerSettings
+                {
+                    ContractResolver = new CamelCasePropertyNamesContractResolver()
+                });
         }
     }
 }

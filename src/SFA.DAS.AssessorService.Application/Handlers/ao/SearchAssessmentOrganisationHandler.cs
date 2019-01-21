@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
         {
             _logger.LogInformation("Handling Search AssessmentOrganisations Request");
             
-            var searchstring = _cleanser.CleanseStringForSpecialCharacters(request.Searchstring.Trim());
+            var searchstring = _cleanser.CleanseStringForSpecialCharacters(request.SearchTerm.Trim());
 
             if (searchstring.Length < 2)
                 throw new BadRequestException("The searchstring is too short to do a valid search");
@@ -41,20 +41,39 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             if (_validator.IsValidEpaOrganisationId(searchstring))
             {
                 _logger.LogInformation($@"Searching AssessmentOrganisations based on organisationId: [{searchstring}]");
-                var result = await _registerQueryRepository.GetAssessmentOrganisationsByOrganisationId(searchstring);
-                return result.ToList();
+                var resultFromEpaCode = await _registerQueryRepository.GetAssessmentOrganisationsByOrganisationId(searchstring);
+                return resultFromEpaCode.ToList();
             }
 
+            IEnumerable<AssessmentOrganisationSummary> resultFromUkprn = null;
             if (_validator.IsValidUkprn(searchstring))
             {
-                _logger.LogInformation($@"Searching AssessmentOrganisations based on ukprn: [{searchstring}]");
-                var result = await _registerQueryRepository.GetAssessmentOrganisationsByUkprn(searchstring);
-                return result.ToList();
+                _logger.LogInformation($@"Searching AssessmentOrganisations based on ukprn: [{searchstring}]");         
+                resultFromUkprn = await _registerQueryRepository.GetAssessmentOrganisationsByUkprn(searchstring);
             }
 
-            _logger.LogInformation($@"Searching AssessmentOrganisations based on name wildcard: [{searchstring}]");
-            var resultMain = await _registerQueryRepository.GetAssessmentOrganisationsbyName(searchstring);
-            return resultMain.ToList();
+            _logger.LogInformation($@"Searching AssessmentOrganisations based on name or charity number or company number wildcard: [{searchstring}]");
+            var resultMain = await _registerQueryRepository.GetAssessmentOrganisationsByNameOrCharityNumberOrCompanyNumber(searchstring);
+
+            var result = resultMain.ToList();
+            if (resultFromUkprn != null)    
+                result.AddRange(resultFromUkprn);
+        
+            return result.Distinct(new AssessmentOrganisationSummaryEqualityComparer()).ToList();
+        }
+
+    }
+
+    internal class AssessmentOrganisationSummaryEqualityComparer : IEqualityComparer<AssessmentOrganisationSummary>
+    {
+        public bool Equals(AssessmentOrganisationSummary x, AssessmentOrganisationSummary y)
+        {
+            return y != null && (x != null && x.Id == y.Id);
+        }
+
+        public int GetHashCode(AssessmentOrganisationSummary obj)
+        {
+            return obj.Id.GetHashCode();
         }
     }
 }

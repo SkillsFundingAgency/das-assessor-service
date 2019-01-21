@@ -1,13 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs.Types;
+using SFA.DAS.Apprenticeships.Api.Types;
+using SFA.DAS.Apprenticeships.Api.Types.AssessmentOrgs;
+using SFA.DAS.Apprenticeships.Api.Types.Providers;
 
 namespace SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs
 {
     public class AssessmentOrgsApiClient : ApiClientBase, IAssessmentOrgsApiClient
     {
         public AssessmentOrgsApiClient(string baseUri = null) : base(baseUri)
+        {
+        }
+
+        public AssessmentOrgsApiClient(HttpClient httpClient) : base(httpClient)
         {
         }
 
@@ -187,11 +193,35 @@ namespace SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs
             }
         }
 
+        public async Task<List<StandardSummary>> GetAllStandardsV2()
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/standards/v2"))
+            {
+                return await RequestAndDeserialiseAsync<List<StandardSummary>>(request);
+            }
+        }
+
+        public async Task<List<StandardSummary>> GetAllStandardSummaries()
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/standards"))
+            {
+                return await RequestAndDeserialiseAsync<List<StandardSummary>>(request);
+            }
+        }
+
         public async Task<Provider> GetProvider(long providerUkPrn)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/providers/{providerUkPrn}"))
             {
                 return await RequestAndDeserialiseAsync<Provider>(request);
+            }
+        }
+
+        public async Task<List<Provider>> GetProviders()
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/providers"))
+            {
+                return await RequestAndDeserialiseAsync<List<Provider>>(request);
             }
         }
     }

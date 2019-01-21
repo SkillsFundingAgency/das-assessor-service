@@ -1,0 +1,55 @@
+﻿@using SFA.DAS.AssessorService.Domain.Extensions
+@model SFA.DAS.AssessorService.Web.Staff.Models.SearchStandardsViewModel
+
+@{
+    ViewBag.Title = "Search results";
+    Layout = "_Layout";
+}
+@Html.HiddenFor(c => c.OrganisationId)
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <a href="/register/search-standards/@Model.OrganisationId" class="link-back">Return to standards search</a>
+        <h1 class="heading-xlarge">
+            <span class="heading-secondary">@Model.OrganisationId</span>
+            Standard search results for @Model.OrganisationName
+            <span class="heading-secondary">Number of results: @Model.Results.Count</span>
+        </h1>
+    </div>
+</div>
+
+
+@if (@Model.Results.Count > 0)
+{
+    <div class="grid-row">
+        <div class="column-full">
+            <div class="form-group">
+                <table class="table responsive table-font-xsmall">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Standard ID</th>
+                            <th>Effective from</th>
+                            <th>Effective to</th>
+                            <th>Last date for new starts</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var result in Model.Results.OrderBy(x => x.Title))
+                        {
+                            <tr>
+                                <td data-label="Name">@result.Title</td>
+                                <td data-label="ID">@result.Id</td>
+                                <td data-label="Effective from">@result.EffectiveFrom.ToSfaShortestDateString()</td>
+                                <td data-label="Effective to">@result.EffectiveTo.ToSfaShortestDateString()</td>
+                                <td data-label="Last date for new starts">@result.LastDateForNewStarts.ToSfaShortestDateString()</td>
+                                <td class="numeric"><a href="/register/add-standard/organisation/@Model.OrganisationId/standard/@result.Id">Add to organisation</a></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}

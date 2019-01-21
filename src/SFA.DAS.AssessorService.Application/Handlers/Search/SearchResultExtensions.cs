@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
 
             foreach (var searchResult in searchResults)
             {
-                var standard = allStandards.SingleOrDefault(s => s.Id == searchResult.StdCode);
+                var standard = allStandards.SingleOrDefault(s => s.StandardId == searchResult.StdCode.ToString());
                 if (standard == null)
                 {
                     standard = assessmentOrgsApiClient.GetStandard(searchResult.StdCode).Result;
@@ -44,15 +44,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                 searchResult.CertificateReference = certificate.CertificateReference;
                 searchResult.CertificateId = certificate.Id;
                 searchResult.CertificateStatus = certificate.Status;
-                searchResult.LearnStartDate = certificateData.LearningStartDate == DateTime.MinValue ? null : new DateTime?(certificateData.LearningStartDate) ;
+                searchResult.LearnStartDate = certificateData.LearningStartDate;
                 searchResult.Option = certificateData.CourseOption;
 
                 var certificateLogs = certificateRepository.GetCertificateLogsFor(certificate.Id).Result;
                 logger.LogInformation("MatchUpExistingCompletedStandards After GetCertificateLogsFor");
-                var submittedLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Submitted);                
+                var submittedLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Submitted);
+                var createdLogEntry = certificateLogs.FirstOrDefault(l => l.Status == CertificateStatus.Draft);
                 if (submittedLogEntry == null) continue;
-                
-                var submittingContact = contactRepository.GetContact(submittedLogEntry.Username).Result;
+
+                var submittingContact = contactRepository.GetContact(submittedLogEntry.Username).Result ?? contactRepository.GetContact(certificate.UpdatedBy).Result;
+                var createdContact = contactRepository.GetContact(createdLogEntry?.Username).Result ?? contactRepository.GetContact(certificate.CreatedBy).Result;
 
                 var lastUpdatedLogEntry = certificateLogs.Aggregate((i1, i2) => i1.EventTime > i2.EventTime ? i1 : i2) ?? submittedLogEntry;
                 var lastUpdatedContact = contactRepository.GetContact(lastUpdatedLogEntry.Username).Result;
@@ -66,6 +68,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Search
                     searchResult.ShowExtraInfo = true;
                     searchResult.OverallGrade = certificateData.OverallGrade;
                     searchResult.SubmittedBy = submittingContact.DisplayName; // This needs to be contact real name
+                    searchResult.SubmittedAt = submittedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time 
+                    searchResult.AchDate = certificateData.AchievementDate;
+                    searchResult.UpdatedBy = lastUpdatedContact != null ? lastUpdatedContact.DisplayName : lastUpdatedLogEntry.Username; // This needs to be contact real name
+                    searchResult.UpdatedAt = lastUpdatedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time
+                }
+                else if (createdContact != null && searchingContact != null && createdContact.OrganisationId == searchingContact.OrganisationId)
+                {
+                    searchResult.ShowExtraInfo = true;
+                    searchResult.OverallGrade = certificateData.OverallGrade;
+                    searchResult.SubmittedBy = submittedLogEntry.Username; // This needs to be contact real name
                     searchResult.SubmittedAt = submittedLogEntry.EventTime.UtcToTimeZoneTime(); // This needs to be local time 
                     searchResult.AchDate = certificateData.AchievementDate;
                     searchResult.UpdatedBy = lastUpdatedContact != null ? lastUpdatedContact.DisplayName : lastUpdatedLogEntry.Username; // This needs to be contact real name

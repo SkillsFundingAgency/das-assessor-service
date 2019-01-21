@@ -3,6 +3,6 @@
     public class HeaderInfo : IHeaderInfo
     {
         public int Ukprn { get; set; }
-        public string Username { get; set; }
+        public string Email { get; set; }
     }
 }

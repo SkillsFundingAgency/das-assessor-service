@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ using SFA.DAS.AssessorService.EpaoImporter.Interfaces;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
 using SFA.DAS.AssessorService.EpaoImporter.Sftp;
 using SFA.DAS.AssessorService.Settings;
+using SFA.DAS.AssessorService.EpaoImporter.Extensions;
 
 namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 {
@@ -74,7 +76,6 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
         private void CreateWorkSheet(int batchNumber, ExcelPackage package,
             IEnumerable<CertificateResponse> certificates)
         {
-
             var utcNow = DateTime.UtcNow;
             var gmtNow = utcNow.UtcToTimeZoneTime(TimezoneNames.GmtStandardTimeZone);
 
@@ -161,6 +162,12 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             worksheet.Cells["A1:J1"].Value = monthYear + " Print Data - Batch " + batchNumber.ToString();
         }
 
+        private static string NameToTitleCase(string name)
+        {
+            name = name.NameCase();
+            return name;
+        }
+        
         private void CreateWorksheetData(ExcelWorksheet worksheet)
         {
             var row = 3;
@@ -169,24 +176,30 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
             {
                 var certificateData = certificate.CertificateData;
                 if (certificateData.AchievementDate.HasValue)
-                    worksheet.Cells[row, 1].Value = certificateData.AchievementDate.Value.ToString("dd MMMM, yyyy");
+                    worksheet.Cells[row, 1].Value = certificateData.AchievementDate.Value.ToString("dd MMMM yyyy");
 
                 var learnerName = $"{certificateData.LearnerGivenNames} {certificateData.LearnerFamilyName}";
-                worksheet.Cells[row, 2].Value = certificateData.FullName != null ? 
-                    certificateData.FullName.ToUpper() : learnerName.ToUpper();
+
+                worksheet.Cells[row, 2].Value = NameToTitleCase(
+                    !string.IsNullOrEmpty(certificateData.FullName) 
+                        ? certificateData.FullName 
+                        : learnerName
+                );
 
                 if (certificateData.StandardName != null)
                     worksheet.Cells[row, 3].Value = certificateData.StandardName.ToUpper();
 
                 if (certificateData.CourseOption != null)
-                    worksheet.Cells[row, 4].Value = certificateData.CourseOption.ToUpper();
+                    worksheet.Cells[row, 4].Value = "(" + certificateData.CourseOption.ToUpper() + "):";
 
                 worksheet.Cells[row, 5].Value = $"Level {certificateData.StandardLevel}".ToUpper();
 
-                if (certificateData.OverallGrade != null && !certificateData.OverallGrade.ToLower().Contains("no grade awarded"))
-                    worksheet.Cells[row, 6].Value = "achieving a ";
+                if (certificateData.OverallGrade != null &&
+                    !certificateData.OverallGrade.ToLower().Contains("no grade awarded"))
+                    worksheet.Cells[row, 6].Value = "Achieved grade ";
 
-                if (certificateData.OverallGrade != null && !certificateData.OverallGrade.ToLower().Contains("no grade awarded"))
+                if (certificateData.OverallGrade != null &&
+                    !certificateData.OverallGrade.ToLower().Contains("no grade awarded"))
                     worksheet.Cells[row, 7].Value = certificateData.OverallGrade.ToUpper();
 
                 if (certificate.CertificateReference != null)
@@ -219,7 +232,8 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                 if (certificateData.ContactPostCode != null)
                     worksheet.Cells[row, 18].Value = certificateData.ContactPostCode;
 
-                _aggregateLogger.LogInfo($"Processing Certificate For IFA Certificate - {certificate.CertificateReference}");
+                _aggregateLogger.LogInfo(
+                    $"Processing Certificate For IFA Certificate - {certificate.CertificateReference}");
 
                 row++;
             }

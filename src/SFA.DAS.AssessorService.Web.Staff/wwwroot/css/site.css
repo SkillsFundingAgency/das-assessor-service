@@ -8,21 +8,26 @@
   text-decoration: underline;
   color: #005ea5;
   border: none;
-  padding: 4px 4px 2px;
-  font-size: 14px;
-  line-height: 1;
-  width: auto;
-  text-align: left;
+  padding: 0.526315em 0.789473em 0.263157em;
+  line-height: 1.25;
+  text-align: center;
 }
+
 @media (min-width: 641px) {
   .button.text-link {
+    width: auto;
+    text-align: left;
     margin-left: 5px;
   }
 }
-
-.button:focus {
-  position: inherit;
+.button.text-link:hover,
+.button.text-link:focus {
+  color: #2b8cc4;
 }
+
+/* .button:focus {
+  position: inherit;
+} */
 
 .govuk-related-items {
   margin-top: 30px;
@@ -242,7 +247,7 @@ nav.global-nav ul li.current a {
 }
 
 nav.global-nav ul li.current a:after {
-  content: '';
+  content: "";
   display: block;
   height: 5px;
   position: absolute;
@@ -353,20 +358,20 @@ fieldset.after-error-summary {
   }
 }
 
-.error-summary [class^='heading-'],
-.info-summary [class^='heading-'],
-.success-summary [class^='heading-'],
-.warning-summary [class^='heading-'],
-.info-highlighted [class^='heading-'] {
+.error-summary [class^="heading-"],
+.info-summary [class^="heading-"],
+.success-summary [class^="heading-"],
+.warning-summary [class^="heading-"],
+.info-highlighted [class^="heading-"] {
   margin-top: 0;
 }
 
 /* :first-child:last-child === element has no siblings */
-.error-summary [class^='heading-']:first-child:last-child,
-.info-summary [class^='heading-']:first-child:last-child,
-.success-summary [class^='heading-']:first-child:last-child,
-.warning-summary [class^='heading-']:first-child:last-child,
-.info-highlighted [class^='heading-']:first-child:last-child {
+.error-summary [class^="heading-"]:first-child:last-child,
+.info-summary [class^="heading-"]:first-child:last-child,
+.success-summary [class^="heading-"]:first-child:last-child,
+.warning-summary [class^="heading-"]:first-child:last-child,
+.info-highlighted [class^="heading-"]:first-child:last-child {
   margin: 0;
 }
 
@@ -469,7 +474,7 @@ fieldset.after-error-summary {
 }
 .ui-autocomplete .ui-menu-item {
   cursor: pointer;
-  font-family: 'nta', Arial, sans-serif;
+  font-family: "nta", Arial, sans-serif;
   font-size: 16px;
   line-height: 1.25;
   font-weight: 300;
@@ -711,7 +716,7 @@ fieldset.after-error-summary {
   float: left;
   font-size: 2.5em;
   line-height: 1;
-  font-family: 'fontello';
+  font-family: "fontello";
   font-style: normal;
   font-weight: normal;
   speak: none;
@@ -748,14 +753,14 @@ fieldset.after-error-summary {
 }
 
 @font-face {
-  font-family: 'fontello';
-  src: url('../assets/stylesheets/fonts/fontello.eot?30491483');
-  src: url('../assets/stylesheets/fonts/fontello.eot?30491483#iefix')
-      format('embedded-opentype'),
-    url('../assets/stylesheets/fonts/fontello.woff?30491483') format('woff'),
-    url('../assets/stylesheets/fonts/fontello.ttf?30491483') format('truetype'),
-    url('../assets/stylesheets/fonts/fontello.svg?30491483#fontello')
-      format('svg');
+  font-family: "fontello";
+  src: url("../assets/stylesheets/fonts/fontello.eot?30491483");
+  src: url("../assets/stylesheets/fonts/fontello.eot?30491483#iefix")
+      format("embedded-opentype"),
+    url("../assets/stylesheets/fonts/fontello.woff?30491483") format("woff"),
+    url("../assets/stylesheets/fonts/fontello.ttf?30491483") format("truetype"),
+    url("../assets/stylesheets/fonts/fontello.svg?30491483#fontello")
+      format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -903,5 +908,137 @@ table.responsive tr.total {
   }
   table.responsive tr th.tw-70 {
     width: 70%;
+  }
+
+  .expandble-cell-content {
+    border-left-style: solid;
+    border-color: #bfc1c3;
+    border-left-width: 5px;
+  }
+
+  table.responsive tr td:empty {
+    display: table-cell;
+  }
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.scrollable-table-scroll-container {
+  display: block;
+  width: calc(100% + 20px);
+  margin: 0 -20px;
+  overflow-x: auto;
+  padding-top: 30px;
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+  mask-image: -webkit-linear-gradient(
+    to right,
+    transparent,
+    white 20px,
+    white 97%,
+    transparent
+  );
+  mask-image: -moz-linear-gradient(
+    to right,
+    transparent,
+    white 20px,
+    white 97%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    white 20px,
+    white 97%,
+    transparent
+  );
+  -webkit-mask-image: -webkit-linear-gradient(
+    to right,
+    transparent,
+    white 20px,
+    white 97%,
+    transparent
+  );
+  -webkit-mask-image: -moz-linear-gradient(
+    to right,
+    transparent,
+    white 20px,
+    white 97%,
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    white 20px,
+    white 97%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    white 20px,
+    white 97%,
+    transparent
+  );
+}
+
+.scrollable-table-container {
+  display: inline-block;
+  position: relative;
+  margin: 0 20px;
+}
+
+.expand-table-row {
+  display: inline-block;
+  color: #005ea5;
+  cursor: pointer;
+  position: relative;
+}
+
+.expand-table-row span {
+  text-decoration: underline;
+}
+
+.expand-table-row:visited {
+  color: #005ea5;
+}
+
+.expand-table-row:focus {
+  outline: 3px solid #ffbf47;
+}
+
+.expand-table-row:hover {
+  color: #2b8cc4;
+}
+
+.expandble-cell-content {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  clear: both;
+  padding: 0.78947em;
+  text-align: left;
+}
+
+.expandble-cell-content .expandble-cell-content--first-heading {
+  margin-top: 0;
+  margin-bottom: 1.25em;
+}
+
+.select-min-width-pfc-table {
+  min-width: 123px;
+}
+
+.arrow {
+  color: #005ea5;
+  cursor: pointer;
+  display: none;
+}
+
+@media (min-width: 641px) {
+  .arrow {
+    display: inline-block;
   }
 }

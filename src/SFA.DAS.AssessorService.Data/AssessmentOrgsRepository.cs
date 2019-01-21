@@ -10,8 +10,8 @@ using System.Transactions;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations;
 using SFA.DAS.AssessorService.Settings;
+using SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -24,6 +24,7 @@ namespace SFA.DAS.AssessorService.Data
         {
             _configuration = configuration;
             _logger = logger;
+           
         }
 
         public string TearDownData()
@@ -125,7 +126,7 @@ namespace SFA.DAS.AssessorService.Data
 
                     if (organisationTypesToInsert.Count > 0)
                         connection.Execute(
-                            "set identity_insert [OrganisationType] ON; INSERT INTO [OrganisationType] (Id, [Type], [Status]) VALUES (@Id, @Type, @Status); set identity_insert [OrganisationType] OFF; ",
+                            "set identity_insert [OrganisationType] ON; INSERT INTO [OrganisationType] (Id, [Type], [Status], [TypeDescription]) VALUES (@Id, @Type, @Status, @TypeDescription); set identity_insert [OrganisationType] OFF; ",
                             organisationTypesToInsert);
                 }
                 connection.Close();
@@ -158,7 +159,9 @@ namespace SFA.DAS.AssessorService.Data
                         Address2 = MakeStringSuitableForJson(organisation.OrganisationData?.Address2),
                         Address3 = MakeStringSuitableForJson(organisation.OrganisationData?.Address3),
                         Address4 = MakeStringSuitableForJson(organisation.OrganisationData?.Address4),
-                        Postcode = MakeStringSuitableForJson(organisation.OrganisationData?.Postcode)
+                        Postcode = MakeStringSuitableForJson(organisation.OrganisationData?.Postcode),
+                        CompanyNumber = MakeStringSuitableForJson(organisation.OrganisationData?.CompanyNumber),
+                        CharityNumber = MakeStringSuitableForJson(organisation.OrganisationData?.CharityNumber)
                     };
 
                     organisation.OrganisationData = organisationData;
@@ -184,9 +187,9 @@ namespace SFA.DAS.AssessorService.Data
 
                     var sqlToAppend =
                         "INSERT INTO [Organisations] ([Id],[CreatedAt],[DeletedAt],[EndPointAssessorName],[EndPointAssessorOrganisationId], " +
-                        "[EndPointAssessorUkprn],[PrimaryContact],[Status],[UpdatedAt],[OrganisationTypeId],[OrganisationData]) VALUES (" +
+                        "[EndPointAssessorUkprn],[Status],[UpdatedAt],[OrganisationTypeId],[PrimaryContact],[OrganisationData]) VALUES (" +
                         $@" {id}, getutcdate(), null, {endPointAssessorName}, '{org.EndPointAssessorOrganisationId}'," +
-                        $@"{ukprn}, null, '{org.Status}', null,  {org.OrganisationTypeId}, '{organisationData}' ); ";
+                        $@"{ukprn}, '{org.Status}', null,  {org.OrganisationTypeId}, null, '{organisationData}' ); ";
                     sql.Append(sqlToAppend);
                 }
 
@@ -194,11 +197,18 @@ namespace SFA.DAS.AssessorService.Data
                 {      
                     var organisationData = JsonConvert.SerializeObject(org.OrganisationData);
                 
-                    var sqlToAppend =
+                    var sqlToAppendWhereStatusIsNotDeleted =
                         $@"UPDATE [Organisations] SET [OrganisationTypeId] = {org.OrganisationTypeId}," +
-                        $@"[OrganisationData] = '{organisationData}' "+
-                        $@"WHERE EndPointAssessorOrganisationId = '{org.EndPointAssessorOrganisationId}'; ";
-                    sql.Append(sqlToAppend);
+                        $@"[OrganisationData] = '{organisationData}', Status = 'Live' "+
+                        $@"WHERE EndPointAssessorOrganisationId = '{org.EndPointAssessorOrganisationId}' and Status !='Deleted'; ";
+
+                    var sqlToAppendWhereStatusIsDeleted =
+                        $@"UPDATE [Organisations] SET [OrganisationTypeId] = {org.OrganisationTypeId}," +
+                        $@"[OrganisationData] = '{organisationData}', PrimaryContact = '{org.PrimaryContact}' " +
+                        $@"WHERE EndPointAssessorOrganisationId = '{org.EndPointAssessorOrganisationId}' and Status = 'Deleted'; ";
+
+                    sql.Append(sqlToAppendWhereStatusIsNotDeleted);
+                    sql.Append(sqlToAppendWhereStatusIsDeleted);
                 }
                 connection.Execute(sql.ToString());                           
                 connection.Close();
@@ -220,22 +230,28 @@ namespace SFA.DAS.AssessorService.Data
                 if (currentNumber != "0") return organisationStandardsFromDatabase.ToList();
                 foreach (var organisationStandard in orgStandards)
                 {
-
+                    
                     var comments = ConvertStringToSqlValueString(organisationStandard.Comments);
                     var contactId = ConvertGuidToSqlValueString(organisationStandard.ContactId);
                     var effectiveFrom = ConvertDateToSqlValueString(organisationStandard.EffectiveFrom);
                     var effectiveTo = ConvertDateToSqlValueString(organisationStandard.EffectiveTo);
+                    var organisationStandardData = JsonConvert.SerializeObject(organisationStandard.OrganisationStandardData);
                     var dateStandardApprovedOnRegister =
                         ConvertDateToSqlValueString(organisationStandard.DateStandardApprovedOnRegister);
 
-                    var sqlToInsert = "INSERT INTO [OrganisationStandard] ([EndPointAssessorOrganisationId],[StandardCode],[EffectiveFrom],[EffectiveTo],[DateStandardApprovedOnRegister],[Comments],[Status], [ContactId])" +
-                                      $"VALUES ('{organisationStandard.EndPointAssessorOrganisationId}' ,'{organisationStandard.StandardCode}' ,{effectiveFrom} ,{effectiveTo} ,{dateStandardApprovedOnRegister} ,{comments} ,'{organisationStandard.Status}', {contactId}); ";
-
+                    var sqlToInsert = "INSERT INTO [OrganisationStandard] ([EndPointAssessorOrganisationId],[StandardCode],[EffectiveFrom],[EffectiveTo],[DateStandardApprovedOnRegister],[Comments],[Status], [ContactId], [OrganisationStandardData])" +
+                                      $"VALUES ('{organisationStandard.EndPointAssessorOrganisationId}' ,'{organisationStandard.StandardCode}' ,{effectiveFrom} ,{effectiveTo} ,{dateStandardApprovedOnRegister} ,{comments} ,'{organisationStandard.Status}', {contactId}, '{organisationStandardData}'); ";
+                    
                     sql.Append(sqlToInsert);
                 }
                 connection.Execute(sql.ToString());
-                organisationStandardsFromDatabase = connection.QueryAsync<EpaOrganisationStandard>("select * from [OrganisationStandard]").Result.ToList();                
-                connection.Close();
+                organisationStandardsFromDatabase = connection.QueryAsync<EpaOrganisationStandard>($"select [Id],[EndPointAssessorOrganisationId]," +
+                                                                                                    $"[StandardCode],[EffectiveFrom] ,[EffectiveTo]," +
+                                                                                                    $"[DateStandardApprovedOnRegister], " +
+                                                                                                    $"[Comments],[Status],[ContactId] " +
+                                                                                                    $" from [OrganisationStandard]").Result.ToList();
+
+                   connection.Close();
             }
 
             return organisationStandardsFromDatabase.ToList();
@@ -280,12 +296,10 @@ namespace SFA.DAS.AssessorService.Data
                     sql.Append($@"INSERT INTO [OrganisationStandardDeliveryArea]
                                         ([OrganisationStandardId]
                                         ,[DeliveryAreaId]
-                                        ,[Comments]
                                         ,[Status])
                                     VALUES
                                         ('{organisationStandardDeliveryArea.OrganisationStandardId}'
                                         , {organisationStandardDeliveryArea.DeliveryAreaId}
-                                        , '{organisationStandardDeliveryArea.Comments}'
                                         , '{organisationStandardDeliveryArea.Status}'); ");
 
                 }
@@ -312,8 +326,9 @@ namespace SFA.DAS.AssessorService.Data
                 {
                     var numberOfMatches = connection
                         .ExecuteScalar(
-                            "select count(0) from [Contacts] where [EndPointAssessorOrganisationId] = @EndPointAssessorOrganisationId and email = @email",
+                            "select count(0) from [Contacts] where ([EndPointAssessorOrganisationId] = @EndPointAssessorOrganisationId and email = @email) or username=@username ",
                             contact).ToString();
+
                     if (numberOfMatches == "0")
                     {
                        contactsToInsert.Add(contact);              
@@ -321,8 +336,8 @@ namespace SFA.DAS.AssessorService.Data
                     else
                     {
                         var username = connection
-                            .ExecuteScalar("select username from [Contacts] where [EndPointAssessorOrganisationId] = @EndPointAssessorOrganisationId and email = @email",
-                                contact).ToString();
+                                .ExecuteScalar("select username from [Contacts] where ([EndPointAssessorOrganisationId] = @EndPointAssessorOrganisationId and email = @email) or username=@username",
+                                    contact).ToString();
                         contact.Username = username;
                         contactsToUpdate.Add(contact);
                     }
