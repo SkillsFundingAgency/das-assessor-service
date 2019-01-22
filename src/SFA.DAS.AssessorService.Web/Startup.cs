@@ -20,6 +20,7 @@ using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.StartupConfiguration;
 using StructureMap;
+using StackExchange.Redis;
 
 namespace SFA.DAS.AssessorService.Web
 {
@@ -62,9 +63,11 @@ namespace SFA.DAS.AssessorService.Web
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
+            var redis = ConnectionMultiplexer.Connect("localhost");
+            
             services.AddDataProtection()
-                .PersistKeysToFileSystem(new DirectoryInfo(@"C:\SFA\Keys"))
-                .SetApplicationName("SharedCookieApp");
+                .PersistKeysToStackExchangeRedis(redis, "AssessorApply-DataProtectionKeys")
+                .SetApplicationName("AssessorApply");
             
 
             services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Assessors.AntiForgery", HttpOnly = true });
