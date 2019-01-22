@@ -47,7 +47,7 @@ namespace SFA.DAS.AssessorService.Data
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
-                var deliveryAreas = await connection.QueryAsync<DeliveryArea>("select * from [DeliveryArea]");
+                var deliveryAreas = await connection.QueryAsync<DeliveryArea>("select * from [DeliveryArea] order by ordering");
                 return deliveryAreas;
             }
          }
@@ -314,7 +314,7 @@ namespace SFA.DAS.AssessorService.Data
                 return organisation;
             }
         }
-        public async Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsByName(string organisationName)
+        public async Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsByNameOrCharityNumberOrCompanyNumber(string searchString)
         {
             var connectionString = _configuration.SqlConnectionString;
             using (var connection = new SqlConnection(connectionString))
@@ -327,9 +327,12 @@ namespace SFA.DAS.AssessorService.Data
                     + "FROM [Organisations] o "
                     + "LEFT OUTER JOIN [OrganisationType] ot ON ot.Id = o.OrganisationTypeId "
                     + "LEFT OUTER JOIN [Contacts] c ON c.Username = o.PrimaryContact AND c.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId "
-                    + "WHERE replace(o.EndPointAssessorName, ' ','') like @organisationName";
-
-                var assessmentOrganisationSummaries = await connection.QueryAsync<AssessmentOrganisationSummary>(sql, new {organisationName =$"%{organisationName.Replace(" ","")}%" } );
+                    + "WHERE replace(o.EndPointAssessorName, ' ','') like @searchString "
+                    + "OR replace(JSON_VALUE(o.[OrganisationData], '$.TradingName'), ' ','') like @searchString "
+                    + "OR replace(JSON_VALUE(o.[OrganisationData], '$.LegalName'), ' ','') like @searchString "
+                    + "OR replace(JSON_VALUE(o.[OrganisationData], '$.CompanyNumber'), ' ','') like @searchString "
+                    + "OR replace(JSON_VALUE(o.[OrganisationData], '$.CharityNumber'), ' ','') like @searchString ";
+                var assessmentOrganisationSummaries = await connection.QueryAsync<AssessmentOrganisationSummary>(sql, new {searchString =$"%{searchString.Replace(" ","")}%" } );
                 return assessmentOrganisationSummaries;
             }
         }
@@ -368,7 +371,8 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        public async Task<IEnumerable<OrganisationStandardDeliveryArea>> GetDeliveryAreasByOrganisationStandardId(int organisationStandardId)
+        public async Task<IEnumerable<OrganisationStandardDeliveryArea>> GetDeliveryAreasByOrganisationStandardId(
+            int organisationStandardId)
         {
             var connectionString = _configuration.SqlConnectionString;
 
@@ -380,7 +384,8 @@ namespace SFA.DAS.AssessorService.Data
                 var sql =
                     "select *  from organisationStandardDeliveryArea" +
                     " where OrganisationStandardId = @organisationStandardId";
-                var deliveryAreas = await connection.QueryAsync<OrganisationStandardDeliveryArea>(sql, new { organisationStandardId });
+                var deliveryAreas =
+                    await connection.QueryAsync<OrganisationStandardDeliveryArea>(sql, new {organisationStandardId});
                 return deliveryAreas;
             }
         }

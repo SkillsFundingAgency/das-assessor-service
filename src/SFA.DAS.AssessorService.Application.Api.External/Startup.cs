@@ -92,6 +92,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External
                     .AddJsonOptions(options =>
                     {
                         options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                        options.SerializerSettings.DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate;
+                        options.SerializerSettings.NullValueHandling = NullValueHandling.Include;
                     });
 
                 services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });

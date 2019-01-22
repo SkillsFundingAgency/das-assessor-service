@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].EPAO_Register_register_organisation
+CREATE PROCEDURE [dbo].EPAO_Register_register_organisation
 AS
 
 SET NOCOUNT ON;
@@ -16,5 +16,7 @@ select EndPointAssessorOrganisationId as EPA_organisation_identifier,
 	EndPointAssessorUkprn as UKPRN,
 	JSON_VALUE(OrganisationData,'$.LegalName') as 'Legal Name'
 	 from organisations o left outer join organisationType ot on o.OrganisationTypeId = ot.Id
+	 WHERE o.EndPointAssessorOrganisationId<> 'EPA0000' 
+	 AND o.[Status] <> 'Deleted'
 	order by EndPointAssessorOrganisationId
 
