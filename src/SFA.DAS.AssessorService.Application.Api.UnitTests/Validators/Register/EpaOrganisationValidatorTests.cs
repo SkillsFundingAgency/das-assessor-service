@@ -140,6 +140,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         [TestCase("", true)]
         [TestCase("01234567", true)]
         [TestCase("RC123456", true)]
+        [TestCase("rc123456", true)]
         [TestCase("1234567", false)]
         [TestCase("ABC12345", false)]
         public void CheckCompanyNumberIsValid(string companyNumber, bool isAcceptable)

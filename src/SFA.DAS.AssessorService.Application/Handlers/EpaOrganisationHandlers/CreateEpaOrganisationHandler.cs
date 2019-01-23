@@ -73,6 +73,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
         private static EpaOrganisation MapOrganisationRequestToOrganisation(CreateEpaOrganisationRequest request, string newOrganisationId)
         {
+            if (!String.IsNullOrWhiteSpace(request.CompanyNumber))
+            {
+                request.CompanyNumber = request.CompanyNumber.ToUpper();
+            }
+
             var organisation = new EpaOrganisation
             {
                 Name = request.Name.Trim(),

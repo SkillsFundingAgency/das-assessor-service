@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         private readonly IStringLocalizer<EpaOrganisationValidator> _localizer;
         private readonly ISpecialCharacterCleanserService _cleanserService;
 
-        private const string CompaniesHouseNumberRegex = "[A-Z0-9]{2}[0-9]{6}";
+        private const string CompaniesHouseNumberRegex = "[A-Za-z0-9]{2}[0-9]{6}";
         private const string CharityNumberRegex = "[A-Z0-9\\-]";
 
         public EpaOrganisationValidator( IRegisterValidationRepository registerRepository,  IRegisterQueryRepository registerQueryRepository, 
