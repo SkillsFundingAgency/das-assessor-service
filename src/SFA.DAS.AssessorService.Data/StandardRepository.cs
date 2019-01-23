@@ -168,20 +168,25 @@ namespace SFA.DAS.AssessorService.Data
             },
             commandType: CommandType.StoredProcedure);
 
-           
-            if (string.IsNullOrEmpty(orderBy))
+
+            if (!string.IsNullOrEmpty(orderBy) || pageSize <= 0)
+            {
+                if (string.IsNullOrEmpty(orderBy) && pageSize == 0)
+                {
+                    epaoPipelines = result?.ToList();
+                }
+                else
+                {
+                    epaoPipelines = result?.AsQueryable().OrderBy($"{orderBy} {orderDirection}").ToList().Skip(skip)
+                        .Take(pageSize);
+                }
+            }
+            else
             {
                 epaoPipelines = result?.ToList().Skip(skip)
                     .Take(pageSize);
             }
-            else
-            {
-                orderDirection = orderDirection == "none" ? "descending" : orderDirection;
-                epaoPipelines = result?.AsQueryable().OrderBy($"{orderBy} {orderDirection}").ToList().Skip(skip)
-                    .Take(pageSize);
 
-            }
-          
             if (epaoPipelines == null || !epaoPipelines.Any())
                 return epaoPipelineStandardsResult;
 
@@ -217,7 +222,7 @@ namespace SFA.DAS.AssessorService.Data
 
             foreach (var standard in currentStandards)
             {
-                if (!standards.Any(s => s.StandardId == standard.StandardId))
+                if (standards.All(s => s.StandardId != standard.StandardId))
                     deletedStandards.Add(standard);
             }
 

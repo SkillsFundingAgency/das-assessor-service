@@ -6,9 +6,16 @@ details {
   margin-bottom: 30px;
 }
 
-.button:focus {
+/*  I commented this bit of styling because the
+    button stays active and focused even when you click away.
+    The side efect is multiple submission when
+    another element is clicked. Plays havoc with buttons that 
+    do not refresh the page.
+*/
+/*.button:focus {
   position: inherit;
-}
+*/
+
 
 .govuk-related-items {
   margin-top: 30px;
@@ -927,7 +934,7 @@ table.responsive tr td.bold {
   }
 }
 
-[aria-sort] a,
+table.responsive [aria-sort] a, table.responsive 
 [aria-sort] a:hover {
     background-color: transparent;
     border-width: 0;
@@ -947,11 +954,11 @@ table.responsive tr td.bold {
     margin: 0;
 }
 
-[aria-sort]:first-child a {
+table.responsive [aria-sort]:first-child a {
     right: auto;
 }
 
-[aria-sort] a:before {
+table.responsive [aria-sort] a:before {
     content: " \25bc";
     position: absolute;
     right: -2px;
@@ -959,7 +966,7 @@ table.responsive tr td.bold {
     font-size: 0.5em;
 }
 
-[aria-sort] a:after {
+table.responsive [aria-sort] a:after {
     content: " \25b2";
     position: absolute;
     right: -2px;
@@ -967,12 +974,12 @@ table.responsive tr td.bold {
     font-size: 0.5em;
 }
 
-[aria-sort="ascending"] a:before,
+table.responsive [aria-sort="ascending"] a:before, table.responsive
 [aria-sort="descending"] a:before {
     content: none;
 }
 
-[aria-sort="ascending"] a:after {
+table.responsive [aria-sort="ascending"] a:after {
     content: " \25b2";
     font-size: .7em;
     position: absolute;
@@ -980,7 +987,7 @@ table.responsive tr td.bold {
     top: 2px;
 }
 
-[aria-sort="descending"] a:after {
+table.responsive [aria-sort="descending"] a:after {
     content: " \25bc";
     font-size: .7em;
     position: absolute;
@@ -990,6 +997,13 @@ table.responsive tr td.bold {
 
 .nowrap {
   white-space: nowrap;
+}
+
+@media (min-width: 641px) {
+    .align-button-right {
+        margin-top: 2.55em;
+        float: right
+    }
 }
 
 /* Page navigation */
@@ -1331,7 +1345,7 @@ table.responsive tr td.bold {
 }
 
 
-@media  (max-width: 769px) {
+@media (max-width: 769px) {
     .dashboard-box {
         height: 14.5em;
     }

@@ -13,6 +13,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             int? pageIndex);
 
         Task<PaginatedList<EpaoPipelineStandardsResponse>> GetEpaoPipelineStandards(string epaoId, string orderBy,
-            string orderDirection, int? pageIndex = null);
+            string orderDirection, int pageSize, int? pageIndex = null);
     }
 }

@@ -25,10 +25,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
         }
         public async Task<PaginatedList<EpaoPipelineStandardsResponse>> Handle(EpaoPipelineStandardsRequest request, CancellationToken cancellationToken)
         {
-            const int pageSize = 10;
             _logger.LogInformation("Retreiving Epao pipeline information");
             var result =
-                await _standardRepository.GetEpaoPipelineStandards(request.EpaoId, request.OrderBy,request.OrderDirection,pageSize,
+                await _standardRepository.GetEpaoPipelineStandards(request.EpaoId, request.OrderBy,request.OrderDirection,request.PageSize,
                     request.PageIndex);
             var epaoPipelinStandardsResult = result.PageOfResults.Select(o =>
                 new EpaoPipelineStandardsResponse
@@ -40,7 +39,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
                     
                 }).ToList();
 
-            return new PaginatedList<EpaoPipelineStandardsResponse>(epaoPipelinStandardsResult, result.TotalCount, request.PageIndex ?? 1, pageSize);
+            return new PaginatedList<EpaoPipelineStandardsResponse>(epaoPipelinStandardsResult, result.TotalCount, request.PageIndex ?? 1, request.PageSize);
         }
     }
 }

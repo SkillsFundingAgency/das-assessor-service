@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -26,6 +26,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly ISessionService _sessionService;
         private readonly IOrganisationsApiClient _organisationsApiClient;
         private readonly IStandardsApiClient _standardsApiClient;
+        private const int PageSize = 10;
 
         public OrganisationStandardsController(ILogger<OrganisationStandardsController> logger, 
             ISessionService sessionService,
@@ -45,24 +46,23 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public async Task<IActionResult> Index(int? pageIndex)
         {
             _sessionService.Set("CurrentPage", Pages.Standards);
-            var epaoRegisteredStandardsResponse = new PaginatedList<GetEpaoRegisteredStandardsResponse>( new List<GetEpaoRegisteredStandardsResponse>(),0,1,1);
-
-            var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
+            var epaoRegisteredStandardsResponse =
+                new PaginatedList<GetEpaoRegisteredStandardsResponse>(new List<GetEpaoRegisteredStandardsResponse>(), 0,
+                    1, 1);
             try
             {
-               
+                var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
                 var organisation = await _organisationsApiClient.Get(ukprn);
                 if (organisation != null)
-                {
-                    epaoRegisteredStandardsResponse = await _standardsApiClient.GetEpaoRegisteredStandards(organisation.EndPointAssessorOrganisationId, pageIndex ?? 1);
-                }
-
+                    epaoRegisteredStandardsResponse =
+                        await _standardsApiClient.GetEpaoRegisteredStandards(
+                            organisation.EndPointAssessorOrganisationId, pageIndex ?? 1);
             }
             catch (EntityNotFoundException)
             {
                 return RedirectToAction("NotRegistered", "Home");
             }
-            
+
             return View("Index", epaoRegisteredStandardsResponse);
         }
 
@@ -71,19 +71,20 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public async Task<IActionResult> Pipeline(int? pageIndex)
         {
             OrderedListResultViewModel orderedListResultViewModel;
-            _sessionService.Set("CurrentPage", Pages.Pipeline);
-            var orderDirection = "none";
-            string orderBy = null;
-
-            if (_sessionService.Get("orderDirection") != null && _sessionService.Get("orderBy") != null)
-            {
-                orderDirection = _sessionService.Get("orderDirection");
-                orderBy = _sessionService.Get("orderBy");
-            }
-
             try
             {
-                orderedListResultViewModel = await GetPipeline(orderBy, orderDirection, pageIndex);
+                _sessionService.Set("CurrentPage", Pages.Pipeline);
+                var orderDirection = TableColumnOrder.None;
+                string orderBy = null;
+
+                if (_sessionService.Get("orderDirection") != null && _sessionService.Get("orderBy") != null)
+                {
+                    orderDirection = _sessionService.Get("orderDirection");
+                    orderBy = _sessionService.Get("orderBy");
+                }
+
+
+                orderedListResultViewModel = await GetPipeline(orderBy, orderDirection, PageSize, pageIndex);
             }
             catch (EntityNotFoundException)
             {
@@ -98,10 +99,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public async Task<IActionResult> OrderPipeline(string orderBy, string orderDirection, int? pageIndex)
         {
             OrderedListResultViewModel orderedListResultViewModel;
-            var newOrderdDirection = NextOrderDirection(orderDirection, orderBy);
             try
             {
-                orderedListResultViewModel = await GetPipeline(orderBy, newOrderdDirection, pageIndex);
+                var newOrderdDirection = NextOrderDirection(orderDirection, orderBy);
+                orderedListResultViewModel = await GetPipeline(orderBy, newOrderdDirection, PageSize, pageIndex);
             }
             catch (EntityNotFoundException)
             {
@@ -111,12 +112,42 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return View("Pipelines", orderedListResultViewModel);
         }
 
+        [HttpGet]
+        [Route("/[controller]/DownloadCsv")]
+        public async Task<FileContentResult> ExportEpaPipelineAsCsv()
+        {
+            _logger.LogInformation("Starting to download Pipeline EPA CSV File");
+            var orderedListResultViewModel = await GetPipeline(null, TableColumnOrder.None, 0,null);
+            string[] columnHeaders = {
+                "Standard Name",
+                "Training Provider",
+                "Estimated Gateway"
+            };
 
-        private async Task<OrderedListResultViewModel> GetPipeline(string orderBy, string orderDirection, int? pageIndex)
+            var piplelineRecords = (from pipeline in orderedListResultViewModel?.Response.Items
+                select new object[]
+                {
+                    $"{pipeline.StandardName}",
+                    $"\"{pipeline.TrainingProvider}\"",
+                    $"\"{pipeline.EstimatedDate}\"",
+
+                }).ToList();
+
+            var pipelineCsv = new StringBuilder();
+            piplelineRecords.ForEach(line =>
+            {
+                pipelineCsv.AppendLine(string.Join(",", line));
+            });
+            var buffer = Encoding.ASCII.GetBytes($"{string.Join(",", columnHeaders)}\r\n{pipelineCsv}");
+            _logger.LogInformation($"Downloading {buffer.Length} bytes.");
+            return File(buffer, "text/csv", $"EpaPipeline.csv");
+        }
+
+        private async Task<OrderedListResultViewModel> GetPipeline(string orderBy, string orderDirection,int pageSize, int? pageIndex)
         {
             var orderedListResultViewModel = new OrderedListResultViewModel
             {
-                OrderDirection = string.IsNullOrEmpty(orderDirection) ? "none" : orderDirection,
+                OrderDirection = string.IsNullOrEmpty(orderDirection) ? TableColumnOrder.None : orderDirection,
                 OrderedBy = string.IsNullOrEmpty(orderBy) ? null : orderBy,
                 Response = new PaginatedList<EpaoPipelineStandardsResponse>(new List<EpaoPipelineStandardsResponse>(),
                     0, 1, 1)
@@ -128,7 +159,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             {
                 orderedListResultViewModel.Response =
                     await _standardsApiClient.GetEpaoPipelineStandards(organisation.EndPointAssessorOrganisationId,
-                        orderBy, orderDirection, pageIndex ?? 1);
+                        orderBy, orderDirection, pageSize, pageIndex ?? 1);
             }
 
             return orderedListResultViewModel;
@@ -136,10 +167,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         private string NextOrderDirection(string sortDirection, string orderBy)
         {
-            var newSortDirection = sortDirection == "none" || sortDirection == "ascending" ? "descending" : "ascending";
+            var newSortDirection = sortDirection == TableColumnOrder.None || sortDirection == TableColumnOrder.Ascending
+                ? TableColumnOrder.Descending
+                : TableColumnOrder.Ascending;
             _sessionService.Set("orderDirection", newSortDirection);
             _sessionService.Set("orderBy", orderBy);
             return newSortDirection;
         }
+        
     }
 }

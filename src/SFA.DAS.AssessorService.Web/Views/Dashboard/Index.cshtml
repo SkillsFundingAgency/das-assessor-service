@@ -37,7 +37,10 @@
                     <div>
                         <ul class="dashboard__link-list">
                             <li class="dashboard__link ">
-                                <a asp-controller="OrganisationStandards" asp-action="Pipelines">View your EPA pipeline</a>
+                                <a asp-controller="OrganisationStandards" asp-action="Pipelines">View pipeline</a>
+                            </li>
+                            <li class="dashboard__link">
+                                <a asp-controller="Search" asp-action="Index">Record an EPA grade</a>
                             </li>
                         </ul>
 
@@ -55,10 +58,7 @@
                     <div>
                         <ul class="dashboard__link-list">
                             <li class="dashboard__link">
-                                <a asp-controller="Search" asp-action="Index">Record an EPA grade</a>
-                            </li>
-                            <li class="dashboard__link">
-                                <a asp-controller="CertificateHistory" asp-action="Index">Show completed EPAs</a>
+                                <a asp-controller="CertificateHistory" asp-action="Index">Show completed assessments</a>
                             </li>
                         </ul>
                     </div>
@@ -67,11 +67,11 @@
         </div>
     </div>
     <div class="grid-row">
-        <div class="column-full">
+        <div class="column-one-half">
             <div class="dashboard-box">
                 <div class="dashboard-box-content">
                     <div class="data data-color">
-                        <span class="data-item bold-large">Users</span>
+                        <span class="data-item bold-medium">Organisations</span>
                     </div>
                     <div>
                         <ul class="dashboard__link-list">
@@ -79,6 +79,18 @@
                                 <a href="">Manage Users</a>
                             </li>
                         </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="column-one-half">
+            <div class="dashboard-box">
+                <div class="dashboard-box-content">
+                    <div class="data data-color">
+                        <span class="data-item bold-medium">Use the API</span>
+                    </div>
+                    <div class="data">
+                        <span class="data-item font-small">Connect your organisations own systems directly with the register for end point assessments.</span>
                     </div>
                 </div>
             </div>

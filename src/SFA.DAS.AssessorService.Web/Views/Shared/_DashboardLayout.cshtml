@@ -170,7 +170,7 @@
                                 <a asp-controller="Dashboard" asp-action="Index">Home</a>
                             </li>
                             <li  @(currentPage == Pages.Pipeline?"class=app-navigation--current-page":"")>
-                                <a asp-controller="OrganisationStandards" asp-action="Pipeline">Pipeline</a>
+                                <a asp-controller="OrganisationStandards" asp-action="Pipelines">Pipeline</a>
                             </li>
                             <li  @(currentPage == Pages.RecordAGrade?"class=app-navigation--current-page":"")>
                                 <a asp-controller="Search" asp-action="Index">Record a grade</a>
@@ -237,7 +237,6 @@
         <script src="~/js/shim-links-with-button-role.js" asp-append-version="true"></script>
         <script src="~/js/show-hide-content.js" asp-append-version="true"></script>
         <script src="~/js/expandable-table.js" asp-append-version="true"></script>
-        <script src="~/js/sortable-table.js" asp-append-version="true"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
     </environment>
 
