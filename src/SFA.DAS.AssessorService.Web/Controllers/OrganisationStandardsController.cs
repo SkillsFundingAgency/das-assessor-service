@@ -121,6 +121,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             string[] columnHeaders = {
                 "Standard Name",
                 "Training Provider",
+                "Apprentices",
                 "Estimated Gateway"
             };
 
@@ -129,6 +130,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 {
                     $"{pipeline.StandardName}",
                     $"\"{pipeline.TrainingProvider}\"",
+                    $"\"{pipeline.Pipeline}\"",
                     $"\"{pipeline.EstimatedDate}\"",
 
                 }).ToList();

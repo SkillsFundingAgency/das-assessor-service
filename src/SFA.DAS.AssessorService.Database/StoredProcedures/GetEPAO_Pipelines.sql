@@ -15,7 +15,7 @@ AS
 	FROM (
 	-- The most recent (as far as we can tell) record from ilr
 	SELECT * FROM (
-	SELECT Uln, StdCode, FamilyName, EPAORGID, completionStatus, row_number() OVER (PARTITION BY Uln, StdCode, FamilyName ORDER BY source DESC, learnstartdate desc) rownumber, 
+	SELECT Uln, StdCode, FamilyName, EPAORGID, completionStatus, row_number() OVER (PARTITION BY Uln, StdCode ORDER BY source DESC, learnstartdate desc) rownumber, 
 	[LearnStartDate]
 	FROM ilrs
 	) ab1 WHERE ab1.rownumber = 1 AND ab1.CompletionStatus IN (1,2) 
