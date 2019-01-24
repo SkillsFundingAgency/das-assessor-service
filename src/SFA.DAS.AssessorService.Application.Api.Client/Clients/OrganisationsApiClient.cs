@@ -164,13 +164,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 await Delete(request);
             }
         }
-        public async Task<EpaOrganisation> GetEpaOrganisation(string EndPointAssessorOrganisationId)
+        public async Task<EpaOrganisation> GetEpaOrganisation(string endPointAssessorOrganisationId)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get,
-                $"/api/ao/assessment-organisations/{EndPointAssessorOrganisationId}"))
+                $"/api/ao/assessment-organisations/{endPointAssessorOrganisationId}"))
             {
                 return await RequestAndDeserialiseAsync<EpaOrganisation>(request,
-                    $"Could not retrieve details for the organisation with an Id of {EndPointAssessorOrganisationId}");
+                    $"Could not retrieve details for the organisation with an Id of {endPointAssessorOrganisationId}");
             }
         }
 
