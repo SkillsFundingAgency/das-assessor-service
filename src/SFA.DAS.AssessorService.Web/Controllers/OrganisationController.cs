@@ -8,6 +8,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
+using SFA.DAS.AssessorService.Web.Constants;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels;
 
@@ -19,11 +20,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     {
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IOrganisationsApiClient _apiClient;
+        private readonly ISessionService _sessionService;
 
-        public OrganisationController(ILogger<OrganisationController> logger, IHttpContextAccessor contextAccessor, IOrganisationsApiClient apiClient)
+        public OrganisationController(ILogger<OrganisationController> logger, IHttpContextAccessor contextAccessor, IOrganisationsApiClient apiClient, ISessionService sessionService)
         {
             _contextAccessor = contextAccessor;
             _apiClient = apiClient;
+            _sessionService = sessionService;
         }
 
         [HttpGet]
@@ -48,6 +51,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> OrganisationDetails()
         {
+            _sessionService.Set("CurrentPage", Pages.Organisations);
             var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn").Value;
             try
             {
