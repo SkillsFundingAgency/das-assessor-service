@@ -65,7 +65,7 @@ namespace SFA.DAS.AssessorService.PrintFunction.Tests
                     Id = Guid.NewGuid()
                 }));
 
-            notificationService.Send(1, certificateResponses).GetAwaiter().GetResult();
+            notificationService.Send(1, certificateResponses, "filename.json").GetAwaiter().GetResult();
         }
 
         [Test]

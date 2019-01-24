@@ -47,7 +47,7 @@ namespace SFA.DAS.AssessorService.Data
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
-                var deliveryAreas = await connection.QueryAsync<DeliveryArea>("select * from [DeliveryArea]");
+                var deliveryAreas = await connection.QueryAsync<DeliveryArea>("select * from [DeliveryArea] order by ordering");
                 return deliveryAreas;
             }
          }
