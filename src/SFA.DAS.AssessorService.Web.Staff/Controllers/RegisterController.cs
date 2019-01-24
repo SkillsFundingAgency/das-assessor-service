@@ -64,7 +64,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         }
 
 
-
         [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
         [HttpGet("register/edit-organisation/{organisationId}")]
         public async Task<IActionResult> EditOrganisation(string organisationId)
