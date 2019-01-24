@@ -176,6 +176,10 @@ UPDATE [Organisations] SET [OrganisationData] = JSON_MODIFY([OrganisationData],'
 UPDATE [Organisations] SET [OrganisationData] = JSON_MODIFY([OrganisationData],'$.CompanyNumber', '8467452' ) WHERE [EndPointAssessorUkprn] = 10041486;
 
 
+
+--- MFC 24/01/19 NOT SURE ANY OF THE SECTION BELOW IS NOW NEEDED
+/*
+
 -- COPY of postbuild deploy
 
 UPDATE [OrganisationType] SET [Type] =  'Awarding Organisations', [TypeDescription] = 'Awarding Organisations' WHERE id = 1;
@@ -189,7 +193,7 @@ UPDATE [OrganisationType] SET [Status] =  'Deleted' WHERE id = 8;
 UPDATE [OrganisationType] SET [Type] =  'Public Sector', [TypeDescription] = 'Incorporated as Public Sector Body, Local authority including LEA schools, Central Government Department / Executive Agency / Non-departmental public body, NHS Trust / Fire Authority, Police Constabulary or Police Crime Commissioner' WHERE id = 9;
 UPDATE [OrganisationType] SET [Type] =  'College', [TypeDescription] = 'GFE College currently receiving funding from the ESFA, 6th form / FE college' WHERE id = 10;
 UPDATE [OrganisationType] SET [Type] =  'Academy or Free School', [TypeDescription] = 'Academy or Free school registered with the ESFA' WHERE id = 11;
-
+*/
 
 
 IF NOT EXISTS(SELECT * FROM StaffReports)
