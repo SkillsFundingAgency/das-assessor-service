@@ -136,6 +136,9 @@
       <Pack>$(IncludeRazorContentInPack)</Pack>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
+    <Content Update="Views\Organisation\OrganisationDetails.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Shared\_DashboardLayout.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

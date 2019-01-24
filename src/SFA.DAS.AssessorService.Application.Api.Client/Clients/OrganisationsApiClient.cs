@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
@@ -163,6 +164,25 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 await Delete(request);
             }
         }
+        public async Task<EpaOrganisation> GetEpaOrganisation(string EndPointAssessorOrganisationId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get,
+                $"/api/ao/assessment-organisations/{EndPointAssessorOrganisationId}"))
+            {
+                return await RequestAndDeserialiseAsync<EpaOrganisation>(request,
+                    $"Could not retrieve details for the organisation with an Id of {EndPointAssessorOrganisationId}");
+            }
+        }
+
+        public async Task<List<OrganisationType>> GetOrganisationTypes()
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get,
+                $"/api/ao/organisation-types"))
+            {
+                return await RequestAndDeserialiseAsync<List<OrganisationType>>(request,
+                    $"Could not retrieve organisation types.");
+            }
+        }
 
         private string SanitizeUrlParam(string rawParam)
         {
@@ -207,6 +227,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         Task<ValidationResponse> ValidateCreateOrganisationStandard(string organisationId, int standardId, DateTime? effectiveFrom, DateTime? effectiveTo, Guid? contactId, List<int> deliveryAreas);
         Task<ValidationResponse> ValidateUpdateOrganisationStandard(string organisationId, int standardId, DateTime? effectiveFrom, DateTime? effectiveTo, Guid? contactId, List<int> deliveryAreas, string actionChoice, string organisationStandardStatus, string organisationStatus);
-      
+        Task<EpaOrganisation> GetEpaOrganisation(string organisationId);
+        Task<List<OrganisationType>> GetOrganisationTypes();
     }
 }
