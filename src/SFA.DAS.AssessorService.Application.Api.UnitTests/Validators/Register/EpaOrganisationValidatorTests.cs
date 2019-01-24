@@ -143,6 +143,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         [TestCase("rc123456", true)]
         [TestCase("1234567", false)]
         [TestCase("ABC12345", false)]
+        [TestCase("1000$!&*^%", false)]
+        [TestCase("!£$%^&*()", false)]
         public void CheckCompanyNumberIsValid(string companyNumber, bool isAcceptable)
         {
             var noMessageReturned = _validator.CheckCompanyNumberIsValid(companyNumber).Length == 0;
@@ -199,6 +201,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         [TestCase("A123456", true)]
         [TestCase("ABC12345", true)]
         [TestCase("12345679-1", true)]
+        [TestCase("1000$!&*^%", false)]
+        [TestCase("!£$%^&*()", false)]
+        [TestCase("010101888-1££££''''", false)]
         public void CheckCharityNumberIsValid(string charityNumber, bool isAcceptable)
         {
             var noMessageReturned = _validator.CheckCharityNumberIsValid(charityNumber).Length == 0;

@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         private readonly ISpecialCharacterCleanserService _cleanserService;
 
         private const string CompaniesHouseNumberRegex = "[A-Za-z0-9]{2}[0-9]{6}";
-        private const string CharityNumberRegex = "[A-Z0-9\\-]";
+        private const string CharityNumberInvalidCharactersRegex = "[^a-zA-Z0-9\\-]";
 
         public EpaOrganisationValidator( IRegisterValidationRepository registerRepository,  IRegisterQueryRepository registerQueryRepository, 
                                          ISpecialCharacterCleanserService cleanserService, IStringLocalizer<EpaOrganisationValidator> localizer) 
@@ -121,7 +121,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 return string.Empty;
             }
 
-            if (!Regex.IsMatch(charityNumber, CharityNumberRegex))
+            if (Regex.IsMatch(charityNumber, CharityNumberInvalidCharactersRegex))
             {
                 return FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationCharityNumberNotValid);
             }
