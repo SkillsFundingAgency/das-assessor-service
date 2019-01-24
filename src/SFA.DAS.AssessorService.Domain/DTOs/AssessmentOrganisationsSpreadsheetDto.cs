@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations;
 
 namespace SFA.DAS.AssessorService.Domain.DTOs
@@ -11,5 +12,7 @@ namespace SFA.DAS.AssessorService.Domain.DTOs
             public List<EpaOrganisationStandard> OrganisationStandards { get; set; }
             public List<EpaOrganisationStandardDeliveryArea> OrganisationStandardDeliveryAreas { get; set; }
             public List<OrganisationContact> Contacts { get; set; }
+
+            public List<Option> Options { get; set; }
         }
 }
