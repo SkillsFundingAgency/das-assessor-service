@@ -1,7 +1,9 @@
 ﻿@model SFA.DAS.AssessorService.Web.ViewModels.Dashboard.DashboardStatisticsModel
-
+@using SFA.DAS.AssessorService.Web.Infrastructure
+@using SFA.DAS.AssessorService.Web.StartupConfiguration
+@inject ISessionService SessionService
 @{
-    ViewData["Title"] = "Assessments";
+    ViewData["Title"] = "Home";
     Layout = "_DashboardLayout";
 }
 
@@ -20,8 +22,8 @@
                                 <a asp-controller="OrganisationStandards" asp-action="Index">Standards you are approved for</a>
                             </li>
                             @*<li class="dashboard__link">
-                                <a href="">Apply to assess a new standard</a>
-                            </li>*@
+                                    <a href="">Apply to assess a new standard</a>
+                                </li>*@
                         </ul>
                     </div>
                 </div>
@@ -37,7 +39,7 @@
                     <div>
                         <ul class="dashboard__link-list">
                             <li class="dashboard__link ">
-                                <a asp-controller="OrganisationStandards" asp-action="Pipelines">View pipeline</a>
+                                <a asp-controller="OrganisationStandards" asp-action="Pipeline">View pipeline</a>
                             </li>
                             <li class="dashboard__link">
                                 <a asp-controller="Search" asp-action="Index">Record an EPA grade</a>
@@ -92,10 +94,16 @@
                     <div class="data">
                         <span class="data-item font-small">Connect your organisations own systems directly with the register for end point assessments.</span>
                     </div>
+                    <div>
+                        <ul class="dashboard__link-list">
+                            <li>
+                                <a sfa-show-for-policy="@Policies.ExternalApiAccess" asp-controller="ExternalApi" asp-action="Index">External API keys</a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
 

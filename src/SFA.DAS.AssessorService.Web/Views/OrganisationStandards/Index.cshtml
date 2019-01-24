@@ -13,39 +13,49 @@
     <div class="grid-row">
         <div class="column-full">
             <h1 class="heading-large">Standards</h1>
-
+        @if (Model.Items.Any())
+        {
             <table class="table responsive table-font-xsmall">
                 <thead>
-                    <tr>
-                        <th>
-                            @Localizer["Standard"]
-                        </th>
-                        <th class="numeric">
-                            @Localizer["Code"]
-                        </th>
-                        <th class="numeric">
-                            @Localizer["Level"]
-                        </th>
-                    </tr>
+                <tr>
+                    <th>
+                        @Localizer["Standard"]
+                    </th>
+                    <th class="numeric">
+                        @Localizer["Code"]
+                    </th>
+                    <th class="numeric">
+                        @Localizer["Level"]
+                    </th>
+                </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model.Items)
-                    {
-                        <tr>
-                            <td data-label="@Localizer["Standard name"]" class="nowrap">
-                                @Html.DisplayFor(modelItem => item.StandardName)
-                            </td>
-                            <td data-label="@Localizer["Standard code"]" class="numeric">
-                                @Html.DisplayFor(modelItem => item.StandardCode)
-                            </td>
-                            <td data-label="@Localizer["Standard level"]" class="numeric">
-                                @Html.DisplayFor(modelItem => item.Level)
-                            </td>
-                        </tr>
-                       
-                    }
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td data-label="@Localizer["Standard name"]" class="nowrap">
+                            @Html.DisplayFor(modelItem => item.StandardName)
+                        </td>
+                        <td data-label="@Localizer["Standard code"]" class="numeric">
+                            @Html.DisplayFor(modelItem => item.StandardCode)
+                        </td>
+                        <td data-label="@Localizer["Standard level"]" class="numeric">
+                            @Html.DisplayFor(modelItem => item.Level)
+                        </td>
+                    </tr>
+
+                }
                 </tbody>
             </table>
+        }
+        else
+        {
+            <div class="column-full">
+                <div class="info-summary">
+                    <h3 class="heading-medium">You are not registered with any standards.</h3>
+                </div>
+            </div>
+        }
         </div>
     </div>
 </div>

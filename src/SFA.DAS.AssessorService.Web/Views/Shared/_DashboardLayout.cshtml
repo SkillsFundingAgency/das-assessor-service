@@ -170,7 +170,7 @@
                                 <a asp-controller="Dashboard" asp-action="Index">Home</a>
                             </li>
                             <li  @(currentPage == Pages.Pipeline?"class=app-navigation--current-page":"")>
-                                <a asp-controller="OrganisationStandards" asp-action="Pipelines">Pipeline</a>
+                                <a asp-controller="OrganisationStandards" asp-action="Pipeline">Pipeline</a>
                             </li>
                             <li  @(currentPage == Pages.RecordAGrade?"class=app-navigation--current-page":"")>
                                 <a asp-controller="Search" asp-action="Index">Record a grade</a>
@@ -181,11 +181,11 @@
                             <li  @(currentPage == Pages.Standards?"class=app-navigation--current-page":"")>
                                 <a asp-controller="OrganisationStandards" asp-action="Index">Standards</a>
                             </li>
-                            <li  @(currentPage == Pages.Users?"class=app-navigation--current-page":"")>
+                            @*<li  @(currentPage == Pages.Users?"class=app-navigation--current-page":"")>
                                 <a asp-controller="Dashboard" asp-action="">Users</a>
-                            </li>
-                            <li  @(currentPage == Pages.Organisations?"class=app-navigation--current-page":"")>
-                                <a asp-controller="Dashboard" asp-action="">Organisation</a>
+                            </li>*@
+                            <li @(currentPage == Pages.Organisations ? "class=app-navigation--current-page" : "")>
+                                <a asp-controller="Organisation" asp-action="OrganisationDetails">Organisation</a>
                             </li>
                         </ul>
                     </nav>
