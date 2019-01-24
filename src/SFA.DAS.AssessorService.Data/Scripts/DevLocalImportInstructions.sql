@@ -1,4 +1,9 @@
-﻿/*
+﻿-- MFC 24/01/2019
+-- This script is for DEVS only, to be run on local when setting up or rebuilding the assessor-service database after you have
+-- 1) 'published' the assessor-service database locally
+-- 2) run up the API project and imported the local spreadsheet (das-assessor-service\src\SFA.DAS.AssessorService.Database\DataToImport\assessmentorgs.xlsx)
+--    using the endpoint PATCH /api/ao/assessment-organisations
+-- Happy updating!
 UPDATE [Organisations] SET [OrganisationData] = JSON_MODIFY([OrganisationData],'$.CompanyNumber', 'RC000724' ) WHERE [EndPointAssessorUkprn] = 10022712;
 UPDATE [Organisations] SET [OrganisationData] = JSON_MODIFY([OrganisationData],'$.CharityNumber', '292786') WHERE [EndPointAssessorUkprn] = 10022712;
 UPDATE [Organisations] SET [OrganisationData] = JSON_MODIFY([OrganisationData],'$.CompanyNumber', '2849598' ) WHERE [EndPointAssessorUkprn] = 10029857;
@@ -315,4 +320,3 @@ insert into OrganisationStandardDeliveryArea (OrganisationStandardId, DeliveryAr
 END
 
 ----- Adding 
-*/
