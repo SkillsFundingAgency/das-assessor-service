@@ -1,3 +1,4 @@
+@using SFA.DAS.AssessorService.ApplyTypes
 @model SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Applications.ApplicationSectionViewModel
 
 @{
@@ -16,7 +17,7 @@
         {
             <h1 class="heading-xlarge">@Model.Title</h1>
 
-            @if (!ViewData.ModelState.IsValid)
+            if (!ViewData.ModelState.IsValid)
             {
                 <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
                     <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
@@ -71,7 +72,25 @@
                                     foreach (var answer in answerPage.DisplayAnswers)
                                     {
                                         <h3 class="heading-small">@answer.Label</h3>
-                                        <p>@answer.Answer</p>
+
+                                        if (answer is FileUploadDisplayAnswer)
+                                        {
+                                            var fuAnswer = answer as FileUploadDisplayAnswer;
+                                            <p><a href="@Url.Action("Download","Application", 
+                                                         new
+                                                         {
+                                                             applicationId = Model.ApplicationId, 
+                                                             sequenceId = fuAnswer.SequenceId,
+                                                             sectionId = fuAnswer.SectionId,
+                                                             pageId = fuAnswer.PageId,
+                                                             questionId = fuAnswer.QuestionId,
+                                                             filename = fuAnswer.FileName
+                                                         })">@fuAnswer.FileName</a></p>
+                                        }
+                                        else
+                                        {
+                                            <p>@answer.Answer()</p>
+                                        }
                                     }
                                 }
                             </dd>

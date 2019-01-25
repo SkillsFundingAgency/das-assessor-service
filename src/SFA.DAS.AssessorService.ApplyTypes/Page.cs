@@ -47,20 +47,39 @@ namespace SFA.DAS.AssessorService.ApplyTypes
                 foreach (var answerPage in PageOfAnswers)
                 {
                     var displayAnswerPage = new DisplayAnswerPage();
-                    displayAnswerPage.DisplayAnswers = new List<DisplayAnswer>();
+                    displayAnswerPage.DisplayAnswers = new List<IDisplayAnswer>();
                         
                     foreach (var answer in answerPage.Answers)
                     {
                         var question = Questions.SingleOrDefault(q => q.QuestionId == answer.QuestionId);
                         if (question != null)
                         {
-                            var displayAnswer = new DisplayAnswer
-                            {
-                                Answer = answer.Value,
-                                Label = question.Label
-                            };
 
-                            displayAnswerPage.DisplayAnswers.Add(displayAnswer);   
+                            if (question.Input.Type== "FileUpload")
+                            {
+                                var displayAnswer = new FileUploadDisplayAnswer()
+                                {
+                                    Label = question.Label,
+                                    ApplicationId = ApplicationId,
+                                    SequenceId = SequenceId,
+                                    SectionId = SectionId,
+                                    PageId = PageId,
+                                    QuestionId = question.QuestionId,
+                                    FileName = answer.Value
+                                };
+                                
+                                displayAnswerPage.DisplayAnswers.Add(displayAnswer);
+                            }
+                            else
+                            {
+                                var displayAnswer = new DisplayAnswer
+                                {
+                                    Answer = answer.Value,
+                                    Label = question.Label
+                                };
+
+                                displayAnswerPage.DisplayAnswers.Add(displayAnswer);
+                            }   
                         }
                         else
                         {

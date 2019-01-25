@@ -12,50 +12,50 @@
         <ul class="govuk-list">
             @foreach (var applicationSection in Model.Sections.OrderBy(s => s.SectionId))
             {
-            @if(applicationSection.SequenceId == 1 && applicationSection.SectionId == 3 && !(applicationSection.Status == ApplicationSectionStatus.Graded || applicationSection.Status == ApplicationSectionStatus.Evaluated))
+                if (applicationSection.SequenceId == 1 && applicationSection.SectionId == 3 && !(applicationSection.Status == ApplicationSectionStatus.Graded || applicationSection.Status == ApplicationSectionStatus.Evaluated))
                 {
                     // NOTE: FHA Section should only be shown if it has been Graded or Completed. See ON-1277
                     continue;
                 }
-            <li>
-                @if (applicationSection.HasNewPageFeedback)
-                {
-                <div class="govuk-tag govuk-tag--float-right">
-                    Feedback added
-                </div>
-                }
-                @*@if (applicationSection.HasCompletedPageFeedback)
+                <li>
+                    @if (applicationSection.HasNewPageFeedback)
+                    {
+                        <div class="govuk-tag govuk-tag--float-right">
+                            Feedback added
+                        </div>
+                    }
+                    @*@if (applicationSection.HasCompletedPageFeedback)
                 {
                 <div class="govuk-tag govuk-tag--float-right">
                     Answer updated
                 </div>
                 }*@
-                @if (applicationSection.Status == ApplicationSectionStatus.Evaluated)
-                {
-                <div class="govuk-tag govuk-tag--float-right">
-                    Evaluated
-                </div>
-                }
-                <h2 class="heading-medium heading-medium--small-margin-bottom">
-                    <a href="@Url.Action("Section", "Application", new {applicationSection.ApplicationId, applicationSection.SequenceId, applicationSection.SectionId})">
-                        @applicationSection.LinkTitle
-                    </a>
-                </h2>
-                <span class="form-hint form-hint--margin-bottom">
-                    @applicationSection.PagesComplete of @applicationSection.PagesActive questions completed
-                </span>
-                <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-            </li>
+                    @if (applicationSection.Status == ApplicationSectionStatus.Evaluated)
+                    {
+                        <div class="govuk-tag govuk-tag--float-right">
+                            Evaluated
+                        </div>
+                    }
+                    <h2 class="heading-medium heading-medium--small-margin-bottom">
+                        <a href="@Url.Action("Section", "Application", new {applicationSection.ApplicationId, applicationSection.SequenceId, applicationSection.SectionId})">
+                            @applicationSection.LinkTitle
+                        </a>
+                    </h2>
+                    <span class="form-hint form-hint--margin-bottom">
+                        @applicationSection.PagesComplete of @applicationSection.PagesActive questions completed
+                    </span>
+                    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+                </li>
             }
         </ul>
 
-        @if(Model.Sections.All(s => s.Status == ApplicationSectionStatus.Evaluated))
+        @if (Model.Sections.All(s => s.Status == ApplicationSectionStatus.Evaluated))
         {
-        <div class="form-group">
-            <form asp-controller="Application" asp-action="Assessment" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" method="get">
-                <button class="button" type="submit">Complete review</button>
-            </form>
-        </div>
+            <div class="form-group">
+                <form asp-controller="Application" asp-action="Assessment" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" method="get">
+                    <button class="button" type="submit">Complete review</button>
+                </form>
+            </div>
         }
 
         <div class="form-group">
