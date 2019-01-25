@@ -40,7 +40,7 @@
                         <th>Organisation name</th>
                         <th>Application type</th>
                         <th>Date submitted</th>
-                        <th>Financial status</th>
+                        <th>Financial review</th>
                         <th>Current status</th>
                     </tr>
                 </thead>
@@ -57,7 +57,7 @@
                             <td data-label="Date submitted">
                                 @item.SubmittedDate.ToSfaShortDateString()
                             </td>
-                            <td data-label="Financial status">
+                            <td data-label="Financial review">
                                 @(item.FinancialStatus ?? "---")
                             </td>
                             <td data-label="Current status">
@@ -78,6 +78,12 @@
                                             // This status doesn't exist as of yet
                                             <div class="govuk-tag govuk-tag--float-right">
                                                 Updated
+                                            </div>
+                                            break;
+                                        case "feedback added":
+                                            // This status doesn't exist as of yet
+                                            <div class="govuk-tag govuk-tag--float-right">
+                                                Declined
                                             </div>
                                             break;
                                         default:
