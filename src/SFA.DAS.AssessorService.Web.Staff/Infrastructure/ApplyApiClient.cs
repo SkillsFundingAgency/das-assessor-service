@@ -83,6 +83,16 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             }
         }
 
+        public async Task<List<ApplicationSummaryItem>> GetOpenApplications()
+        {
+            return await Get<List<ApplicationSummaryItem>>($"/Review/OpenApplications");
+        }
+
+        public async Task<List<ApplicationSummaryItem>> GetClosedApplications()
+        {
+            return await Get<List<ApplicationSummaryItem>>($"/Review/ClosedApplications");
+        }
+
         public async Task<List<dynamic>> NewApplications(int sequenceId)
         {
             return await Get<List<dynamic>>($"/Review/NewApplications/{sequenceId}");
