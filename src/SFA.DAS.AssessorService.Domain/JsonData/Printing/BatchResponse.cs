@@ -2,6 +2,7 @@
 { 
     public class BatchResponse
     {
-        public BatchData Batch { get; set; }
+        public BatchDataResponse Batch { get; set; }
+
     }
 }

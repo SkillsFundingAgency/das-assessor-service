@@ -17,4 +17,20 @@ namespace SFA.DAS.AssessorService.Domain.JsonData.Printing
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public DateTime? DateOfResponse { get; set; }
     }
+
+
+    public class BatchDataResponse
+    {
+        public string BatchNumber { get; set; }
+        public DateTime BatchDate { get; set; }
+        public int PostalContactCount { get; set; }
+        public int TotalCertificateCount { get; set; }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public DateTime? PrintedDate { get; set; }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public DateTime? PostedDate { get; set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public DateTime? DateOfResponse { get; set; }
+    }
 }

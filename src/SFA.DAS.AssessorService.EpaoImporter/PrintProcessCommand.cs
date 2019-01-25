@@ -87,7 +87,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
             }
 
             batchResponse.Batch.DateOfResponse = DateTime.UtcNow;
-            var batchNumber = batchResponse.Batch.BatchNumber.ToString();
+            var batchNumber = batchResponse.Batch.BatchNumber;
   
             var batchLogResponse = await _assessorServiceApi.GetGetBatchLogByPeriodAndBatchNumber(period, batchNumber);
 
@@ -97,7 +97,24 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                 return;
             }
 
-            await _assessorServiceApi.UpdateBatchDataInBatchLog((Guid) batchLogResponse.Id, batchResponse.Batch);
+            if (!int.TryParse(batchNumber, out int batchNumberToInt))
+            {
+                _aggregateLogger.LogInfo($"The Batch Number is not an integer [{batchNumber}]");
+                return;
+            }
+
+            var batch = new BatchData
+            {
+                BatchNumber = batchNumberToInt,
+                BatchDate = batchResponse.Batch.BatchDate,
+                PostalContactCount = batchResponse.Batch.PostalContactCount,
+                TotalCertificateCount = batchResponse.Batch.TotalCertificateCount,
+                PrintedDate = batchResponse.Batch.PrintedDate,
+                PostedDate = batchResponse.Batch.PostedDate,
+                DateOfResponse = batchResponse.Batch.DateOfResponse
+            };
+
+            await _assessorServiceApi.UpdateBatchDataInBatchLog((Guid) batchLogResponse.Id, batch);
             _fileTransferClient.DeleteFile(fileToProcess);
         }
 
