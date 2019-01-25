@@ -95,11 +95,10 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                             ? c.CertificateData.FullName
                             : $"{c.CertificateData.LearnerGivenNames} {c.CertificateData.LearnerFamilyName}";
 
-                    var noGradeGiven = string.IsNullOrWhiteSpace(c.CertificateData.OverallGrade);
                     var gradeText = string.Empty;
                     var grade = string.Empty;
 
-                    if (!noGradeGiven)
+                    if (!string.IsNullOrWhiteSpace(c.CertificateData.OverallGrade) && c.CertificateData.OverallGrade!= "No grade awarded")
                     {
                         gradeText = "Achieved grade ";
                         grade = c.CertificateData.OverallGrade;
@@ -107,9 +106,6 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 
                     printData.Certificates.Add(new PrintCertificate
                     {
-                      
-
-
                         CertificateNumber = c.CertificateReference,
                         ApprenticeName =
                             learnerName.NameCase(),
