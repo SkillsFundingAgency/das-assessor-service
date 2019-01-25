@@ -45,7 +45,7 @@
 </div>
 <div class="grid-row">
     <div class="column-one-third"  sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">
-        <h2 class="heading-medium"><a asp-controller="Application" asp-action="Dashboard">Applications</a></h2>
+        <h2 class="heading-medium"><a asp-controller="Application" asp-action="OpenApplications">Applications</a></h2>
         <p>Review Applications</p>
     </div>
     <div class="column-one-third" sfa-show-for-roles="@string.Join(",", Roles.ProviderRiskAssuranceTeam, Roles.CertificationTeam)">

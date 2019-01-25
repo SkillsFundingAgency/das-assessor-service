@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.Web.Staff.Domain;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Applications;
@@ -21,28 +22,28 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
             _applyApiClient = applyApiClient;
         }
 
-        [HttpGet("/Applications/Dashboard")]
-        public IActionResult Dashboard()
+        [HttpGet("/Applications/Open")]
+        public async Task<IActionResult> OpenApplications(int page = 1)
         {
-            return View("~/Views/Apply/Applications/Dashboard.cshtml");
+            var applications = await _applyApiClient.GetOpenApplications();
+
+            var paginatedApplications = new PaginatedList<ApplicationSummaryItem>(applications, applications.Count(), page, int.MaxValue);
+
+            var viewmodel = new DashboardViewModel { Applications = paginatedApplications };
+
+            return View("~/Views/Apply/Applications/OpenApplications.cshtml", viewmodel);
         }
 
-        [HttpGet("/Applications/New")]
-        public async Task<IActionResult> Applications()
+        [HttpGet("/Applications/Closed")]
+        public async Task<IActionResult> ClosedApplications(int page = 1)
         {
-            int sequenceId = 1;
-            var applications = await _applyApiClient.NewApplications(sequenceId);
+            var applications = await _applyApiClient.GetClosedApplications();
 
-            return View("~/Views/Apply/Applications/Index.cshtml", applications);
-        }
+            var paginatedApplications = new PaginatedList<ApplicationSummaryItem>(applications, applications.Count(), page, int.MaxValue);
 
-        [HttpGet("/Applications/Standards/New")]
-        public async Task<IActionResult> Standards()
-        {
-            int sequenceId = 2;
-            var applications = await _applyApiClient.NewApplications(sequenceId);
+            var viewmodel = new DashboardViewModel { Applications = paginatedApplications };
 
-            return View("~/Views/Apply/Applications/Index.cshtml", applications);
+            return View("~/Views/Apply/Applications/ClosedApplications.cshtml", viewmodel);
         }
 
         [HttpGet("/Applications/{applicationId}")]
@@ -147,7 +148,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
             if (activeSequence is null || activeSequence.SequenceId != sequenceId || activeSequence.Sections.Any(s => s.Status != ApplicationSectionStatus.Evaluated))
             {
                 // This is to stop the wrong sequence being approved or if not all sections are Evaluated
-                return RedirectToAction("Applications");
+                return RedirectToAction("OpenApplications");
             }
 
             var viewModel = new ApplicationSequenceAssessmentViewModel(activeSequence);
