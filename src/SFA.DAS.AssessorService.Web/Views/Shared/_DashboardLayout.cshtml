@@ -110,6 +110,13 @@
                     </a>
                 </div>
             </div>
+            <div class="header-proposition">
+                <div class="content">
+                    <nav id="proposition-menu">
+                        <a id="proposition-name" href="/">The register of end point assessment organisations</a>
+                    </nav>
+                </div>
+            </div>
         </div>
     </header>
 
@@ -176,7 +183,7 @@
                                 <a asp-controller="Search" asp-action="Index">Record a grade</a>
                             </li>
                             <li  @(currentPage == Pages.Assessments?"class=app-navigation--current-page":"")>
-                                <a asp-controller="CertificateHistory" asp-action="Index">Assessments</a>
+                                <a asp-controller="CertificateHistory" asp-action="Index">Completed Assessments</a>
                             </li>
                             <li  @(currentPage == Pages.Standards?"class=app-navigation--current-page":"")>
                                 <a asp-controller="OrganisationStandards" asp-action="Index">Standards</a>
@@ -185,7 +192,7 @@
                                 <a asp-controller="Dashboard" asp-action="">Users</a>
                             </li>*@
                             <li @(currentPage == Pages.Organisations ? "class=app-navigation--current-page" : "")>
-                                <a asp-controller="Organisation" asp-action="OrganisationDetails">Organisation</a>
+                                <a asp-controller="Organisation" asp-action="OrganisationDetails">Organisation details</a>
                             </li>
                         </ul>
                     </nav>
