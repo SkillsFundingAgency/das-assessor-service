@@ -18,5 +18,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
         Task<EMailTemplate> GetEmailTemplate(string templateName);
         Task<ScheduleRun> GetSchedule(ScheduleType scheduleType);
         Task CompleteSchedule(Guid scheduleRunId);
+
+        Task GatherStandards();
     }
 }
