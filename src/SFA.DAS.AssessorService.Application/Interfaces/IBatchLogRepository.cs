@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
     public interface IBatchLogRepository
     {
         Task<BatchLog> Create(BatchLog batchLog);
-        Task<BatchLogResponse> GetBatchLogFromPeriodAndBatchNumber(string requestPeriod, string requestBatchNumber);
+        Task<BatchLogResponse> GetBatchLogFromBatchNumber(string requestBatchNumber);
         Task<ValidationResponse> UpdateBatchLogBatchWithDataRequest(Guid requestId, BatchData requestBatchData);
     }
 }

@@ -12,7 +12,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
     {
         Task<BatchLogResponse> CreateBatchLog(CreateBatchLogRequest createBatchLogRequest);
         Task<BatchLogResponse> GetCurrentBatchLog();
-        Task<BatchLogResponse> GetGetBatchLogByPeriodAndBatchNumber(string period, string batchNumber);
+        Task<BatchLogResponse> GetGetBatchLogByBatchNumber(string batchNumber);
         Task UpdateBatchDataInBatchLog(Guid batchId, BatchData batchData);
         Task<IEnumerable<CertificateResponse>> GetCertificatesToBePrinted();
         Task UpdatePrivatelyFundedCertificateRequestsToBeApproved();

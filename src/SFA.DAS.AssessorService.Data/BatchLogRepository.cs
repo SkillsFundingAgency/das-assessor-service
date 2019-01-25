@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Data
             return batchLog;
         }
 
-        public async Task<BatchLogResponse> GetBatchLogFromPeriodAndBatchNumber(string period, string batchNumber)
+        public async Task<BatchLogResponse> GetBatchLogFromBatchNumber(string batchNumber)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
             {
@@ -42,8 +42,8 @@ namespace SFA.DAS.AssessorService.Data
                     await connection.OpenAsync();
                 var sqlForMainDetails =
                     "select * FROM BatchLogs " +
-                    "WHERE Period = @period and BatchNumber = @batchNumber";
-                var orgs = await connection.QueryAsync<BatchLogResponse>(sqlForMainDetails, new { period, batchNumber });
+                    "WHERE BatchNumber = @batchNumber";
+                var orgs = await connection.QueryAsync<BatchLogResponse>(sqlForMainDetails, new { batchNumber });
                 var org = orgs.FirstOrDefault();
                 return org;
             }

@@ -37,13 +37,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(batchLog);
         }
 
-        [HttpGet("{period}/{batchNumber}", Name = "GetBatchLogForPeriodAndBatchNumber")]
+        [HttpGet("{batchNumber}", Name = "GetBatchLogForBatchNumber")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(BatchLogResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetBatchLogForPeriodAndBatchNumber(string period, string batchNumber)
+        public async Task<IActionResult> GetBatchLogForPeriodAndBatchNumber(string batchNumber)
         {
-            var batchLog = await _mediator.Send(new GetBatchFromPeriodAndBatchNumberRequest {Period = period, BatchNumber = batchNumber});
+            var batchLog = await _mediator.Send(new GetBatchFromBatchNumberRequest {BatchNumber = batchNumber});
             if (batchLog == null)
                 return NoContent();
             return Ok(batchLog);

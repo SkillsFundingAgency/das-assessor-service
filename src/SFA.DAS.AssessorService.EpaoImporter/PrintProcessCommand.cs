@@ -51,8 +51,8 @@ namespace SFA.DAS.AssessorService.EpaoImporter
         {
             var fileList = await _fileTransferClient.GetListOfDownloadedFiles();
 
-            // printResponse-MMYY-XXX.json where XXX = 001, 002 etc
-            const string pattern = @"^[Pp][Rr][Ii][Nn][Tt][Rr][Ee][Ss][Pp][Oo][Nn][Ss][Ee]-[0-9]{4}-[0-9]{1,3}.json";
+            // printResponse-MMYY-XXXXXX.json where XXX = 001, 002... 999999 etc
+            const string pattern = @"^[Pp][Rr][Ii][Nn][Tt][Rr][Ee][Ss][Pp][Oo][Nn][Ss][Ee]-[0-9]{4}-[0-9]{1,6}.json";
 
             var certificateResponseFiles = fileList.Where(f => Regex.IsMatch(f, pattern));
             var filesToProcesses = certificateResponseFiles as string[] ?? certificateResponseFiles.ToArray();
@@ -79,21 +79,16 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                 return;
             }
 
-            var period = GetPeriodFromFilename(fileToProcess);
-            if (period == string.Empty)
-            {
-                _aggregateLogger.LogInfo($"Could not identify valid period (YYMM) in filename [{fileToProcess}]");
-                return;
-            }
+            
 
             batchResponse.Batch.DateOfResponse = DateTime.UtcNow;
             var batchNumber = batchResponse.Batch.BatchNumber;
   
-            var batchLogResponse = await _assessorServiceApi.GetGetBatchLogByPeriodAndBatchNumber(period, batchNumber);
+            var batchLogResponse = await _assessorServiceApi.GetGetBatchLogByBatchNumber( batchNumber);
 
             if (batchLogResponse?.Id == null)
             {
-                _aggregateLogger.LogInfo($"Could not match an existing batch Log to period [{period}], Batch Number [{batchNumber}]");
+                _aggregateLogger.LogInfo($"Could not match an existing batch Log Batch Number [{batchNumber}]");
                 return;
             }
 
@@ -118,16 +113,6 @@ namespace SFA.DAS.AssessorService.EpaoImporter
             _fileTransferClient.DeleteFile(fileToProcess);
         }
 
-        private string GetPeriodFromFilename(string fileToProcess)
-        {
-            var nameParts = fileToProcess.Split('-');
-            if (nameParts.Length != 3)
-                return string.Empty;
-           
-            var period = nameParts[1];
-
-            return period.Length != 4 ? string.Empty : period;
-        }
 
         private async Task UploadCertificateDetailsToPinter()
         {

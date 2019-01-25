@@ -91,10 +91,10 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
             return await response.Content.ReadAsAsync<BatchLogResponse>();
         }
 
-        public async Task<BatchLogResponse> GetGetBatchLogByPeriodAndBatchNumber(string period, string batchNumber)
+        public async Task<BatchLogResponse> GetGetBatchLogByBatchNumber(string batchNumber)
         {
             var response = await _httpClient.GetAsync(
-                $"/api/v1/batches/{period}/{batchNumber}");
+                $"/api/v1/batches/{batchNumber}");
 
             return await response.Content.ReadAsAsync<BatchLogResponse>();
         }
