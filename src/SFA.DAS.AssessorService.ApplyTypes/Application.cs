@@ -15,13 +15,39 @@ namespace SFA.DAS.AssessorService.ApplyTypes
 
     public class DisplayAnswerPage
     {
-        public List<DisplayAnswer> DisplayAnswers { get; set; }
+        public List<IDisplayAnswer> DisplayAnswers { get; set; }
     }
 
-    public class DisplayAnswer
+    public class DisplayAnswer : IDisplayAnswer
     {
         public string Label { get; set; }
-        public string Answer { get; set; }
+        string IDisplayAnswer.Answer()
+        {
+            return Answer;
+        }
+
+        public string Answer { private get; set; }
+    }
+
+    public class FileUploadDisplayAnswer : IDisplayAnswer
+    {
+        public string Label { get; set; }
+        public Guid ApplicationId { get; set; }
+        public int SequenceId { get; set; }
+        public int SectionId { get; set; }
+        public string PageId { get; set; }
+        public string QuestionId { get; set; }
+        public string FileName { get; set; }
+        public string Answer()
+        {
+            return "";
+        }
+    }
+    
+    public interface IDisplayAnswer
+    {
+        string Label { get; set; }
+        string Answer();
     }
 
 

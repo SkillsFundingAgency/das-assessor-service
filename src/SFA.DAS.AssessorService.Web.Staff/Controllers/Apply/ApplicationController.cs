@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -186,6 +187,22 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
         public IActionResult Returned(Guid applicationId)
         {
             return View("~/Views/Apply/Applications/Returned.cshtml");
+        }
+        
+        [HttpGet("Application/{applicationId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}/Question/{questionId}/{filename}/Download")]
+        
+        //[HttpGet("/Application/{applicationId}/Page/{pageId}/Question/{questionId}/File/{filename}/Download")]
+        public async Task<IActionResult> Download(Guid applicationId, int sequenceId, int sectionId, string pageId, string questionId, string filename)
+        {
+            var userId = Guid.NewGuid();
+
+            var fileInfo = await _applyApiClient.FileInfo(applicationId, userId, sequenceId, sectionId, pageId, questionId, filename);
+            
+            var file = await _applyApiClient.Download(applicationId, userId, sequenceId,sectionId, pageId, questionId, filename);
+
+            var fileStream = await file.Content.ReadAsStreamAsync();
+            
+            return File(fileStream, fileInfo.ContentType, fileInfo.Filename);
         }
     }
 }
