@@ -91,15 +91,22 @@
                     <div class="data data-color">
                         <span class="data-item bold-medium">Use the API</span>
                     </div>
-                    <div class="data">
-                        <span class="data-item font-small">Connect your organisations own systems directly with the register for end point assessments.</span>
+                    <div sfa-policy-exists-show="@Policies.ExternalApiAccess">
+                        <div class="data">
+                            <span class="data-item font-small">Connect your organisations own systems directly with the register for end point assessments.</span>
+                        </div>
+                        <div>
+                            <ul class="dashboard__link-list">
+                                <li class="dashboard__link">
+                                    <a asp-controller="ExternalApi" asp-action="Index">External API keys</a>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
-                    <div>
-                        <ul class="dashboard__link-list">
-                            <li>
-                                <a sfa-show-for-policy="@Policies.ExternalApiAccess" asp-controller="ExternalApi" asp-action="Index">External API keys</a>
-                            </li>
-                        </ul>
+                    <div sfa-policy-not-exists-show="@Policies.ExternalApiAccess">
+                        <div class="data">
+                            <span class="data-item font-small">Currently you lack privilages to connect your organisations own systems directly with the register for end point assessments.</span>
+                        </div>
                     </div>
                 </div>
             </div>

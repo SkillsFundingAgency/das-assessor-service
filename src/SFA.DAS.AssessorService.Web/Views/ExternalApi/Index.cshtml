@@ -6,6 +6,12 @@
 }
 
 <div class="grid-row">
+    <div class="column-one-third">
+        <a class="link-back" asp-controller="Dashboard" asp-action="Index">Home</a>
+    </div>
+</div>
+
+<div class="grid-row">
     <div class="column-full">
         <h1 class="heading-large">External API Details</h1>
         @if (!Model.PrimaryContacts.Any())
