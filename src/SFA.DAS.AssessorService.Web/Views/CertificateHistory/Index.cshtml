@@ -5,14 +5,14 @@
 @model SFA.DAS.AssessorService.Domain.Paging.PaginatedList<SFA.DAS.AssessorService.Api.Types.Models.Certificates.CertificateSummaryResponse>
 
 @{
-    ViewBag.Title = "Assessments";
+    ViewBag.Title = "Completed assessments";
     Layout = "_DashboardLayout";
 }
 
 <div>   
     <div class="grid-row">
         <div class="column-full">
-            <h1 class="heading-large">Assessments</h1>
+            <h1 class="heading-large">Completed assessments</h1>
         @if (Model.Items.Any())
         {
             <table class="table responsive table-font-xsmall">
