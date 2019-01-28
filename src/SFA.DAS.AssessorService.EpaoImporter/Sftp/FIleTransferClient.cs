@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Renci.SshNet;
@@ -78,6 +80,80 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Sftp
                 if (fileDetails.Length > 0)
                     _aggregateLogger.LogInfo(
                         $"Uploaded Files to {_webConfiguration.Sftp.UploadDirectory} Contains\r\n{fileDetails}");
+            }
+        }
+
+        public async Task<List<string>> GetListOfDownloadedFiles()
+        {
+            using (var sftpClient = new SftpClient(_webConfiguration.Sftp.RemoteHost,
+                Convert.ToInt32(_webConfiguration.Sftp.Port),
+                _webConfiguration.Sftp.Username,
+                _webConfiguration.Sftp.Password))
+            {
+                sftpClient.Connect();
+                var fileList = await sftpClient.ListDirectoryAsync($"{_webConfiguration.Sftp.ProofDirectory}");
+                return fileList.Where(f => !f.IsDirectory).Select(file => file.Name).ToList();
+            }
+        }
+
+        public async Task<string> DownloadFile(string fileName)
+        {
+            _fileName = fileName;
+            var fileContent = string.Empty;
+            var fileToDownload = $"{_webConfiguration.Sftp.ProofDirectory}/{fileName}";
+
+            _aggregateLogger.LogInfo($"Connection = {_webConfiguration.Sftp.RemoteHost}");
+            _aggregateLogger.LogInfo($"Port = {_webConfiguration.Sftp.Port}");
+            _aggregateLogger.LogInfo($"Username = {_webConfiguration.Sftp.Username}");
+            _aggregateLogger.LogInfo($"Upload Directory = {_webConfiguration.Sftp.UploadDirectory}");
+            _aggregateLogger.LogInfo($"Proof Directory = {_webConfiguration.Sftp.ProofDirectory}");
+            _aggregateLogger.LogInfo($"FileName = {fileToDownload}");
+
+            lock (_lock)
+            {
+                using (var sftpClient = new SftpClient(_webConfiguration.Sftp.RemoteHost,
+                    Convert.ToInt32(_webConfiguration.Sftp.Port),
+                    _webConfiguration.Sftp.Username,
+                    _webConfiguration.Sftp.Password))
+                {
+                    sftpClient.Connect();
+
+                         
+
+                    _aggregateLogger.LogInfo($"Downloading file ... {fileToDownload}");
+
+                    using (var stream = new MemoryStream())
+                    {
+                        sftpClient.DownloadFile(fileToDownload, stream);
+                        stream.Position = 0;
+                        using (var reader = new StreamReader(stream, Encoding.UTF8))
+                        {
+                            fileContent = reader.ReadToEnd();
+                        }
+                    }
+                }
+            }
+
+            return fileContent;
+        }
+
+        public void DeleteFile(string filename)
+        {
+            var fileToDelete = $"{_webConfiguration.Sftp.ProofDirectory}/{filename}";
+            _aggregateLogger.LogInfo($"Deleting successfully processed file [{fileToDelete}]");
+
+            lock (_lock)
+            {
+                using (var sftpClient = new SftpClient(_webConfiguration.Sftp.RemoteHost,
+                    Convert.ToInt32(_webConfiguration.Sftp.Port),
+                    _webConfiguration.Sftp.Username,
+                    _webConfiguration.Sftp.Password))
+                {
+                    sftpClient.Connect();
+                    sftpClient.DeleteFile(fileToDelete);
+                    sftpClient.Disconnect();
+                    _aggregateLogger.LogInfo($"Deleted successfully processed file [{fileToDelete}]");
+                }
             }
         }
 

@@ -35,7 +35,6 @@ namespace SFA.DAS.AssessorService.PrintFunction.Tests
             certificateSummary.Batch.TotalCertificateCount.Should().Be(1);
         }
 
-
         [Test]
         public void ThenTwoItemsWithSameAddressReturnsPostalContact1TotalCertificate2()
         {
@@ -43,7 +42,6 @@ namespace SFA.DAS.AssessorService.PrintFunction.Tests
             {
                 DefaultCertificateResponse("address line 1", "123"),
                 DefaultCertificateResponse("address line 1", "456")
-
             });
 
             certificateSummary.Batch.PostalContactCount.Should().Be(1);
@@ -59,7 +57,6 @@ namespace SFA.DAS.AssessorService.PrintFunction.Tests
                 DefaultCertificateResponse("address line 1", "123"),
                 DefaultCertificateResponse("address line 1", "456"),
                 DefaultCertificateResponse("address line 1b", "789")
-
             });
 
             certificateSummary.Batch.PostalContactCount.Should().Be(2);
@@ -110,7 +107,7 @@ namespace SFA.DAS.AssessorService.PrintFunction.Tests
             spreadsheetStream.Should().NotBeNull();
 
             var newStream = new MemoryStream(spreadsheetStream.ToArray());
-            //var serializedPrintOutput = JsonConvert.DeserializeObject(newStream.Read());
+ 
             return JsonConvert.DeserializeObject<PrintOutput>(System.Text.Encoding.Default.GetString(newStream.ToArray()));
         }
     }
