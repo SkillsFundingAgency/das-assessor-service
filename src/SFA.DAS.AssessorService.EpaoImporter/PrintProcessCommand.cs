@@ -17,11 +17,13 @@ namespace SFA.DAS.AssessorService.EpaoImporter
     {
         private readonly IAggregateLogger _aggregateLogger;
         private readonly IPrintingSpreadsheetCreator _printingSpreadsheetCreator;
+        private readonly IPrintingJsonCreator _printingJsonCreator;
         private readonly IAssessorServiceApi _assessorServiceApi;
         private readonly INotificationService _notificationService;
         private readonly IFileTransferClient _fileTransferClient;
 
         public PrintProcessCommand(IAggregateLogger aggregateLogger,
+            IPrintingJsonCreator printingJsonCreator,
             IPrintingSpreadsheetCreator printingSpreadsheetCreator,
             IAssessorServiceApi assessorServiceApi,
             INotificationService notificationService,
@@ -32,6 +34,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
             _assessorServiceApi = assessorServiceApi;
             _notificationService = notificationService;
             _fileTransferClient = fileTransferClient;
+            _printingJsonCreator = printingJsonCreator;
         }
 
         public async Task Execute()
@@ -60,19 +63,21 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                 }
                 else
                 {
+                    var certificateFileName =
+                        $"IFA-Certificate-{DateTime.UtcNow.UtcToTimeZoneTime():MMyy}-{batchNumber.ToString().PadLeft(3, '0')}.json";
                     var batchLogRequest = new CreateBatchLogRequest
                     {
                         BatchNumber = batchNumber,
                         FileUploadStartTime = DateTime.UtcNow,
                         Period = DateTime.UtcNow.UtcToTimeZoneTime().ToString("MMyy"),
                         BatchCreated = DateTime.UtcNow,
-                        CertificatesFileName =
-                            $"IFA-Certificate-{DateTime.UtcNow.UtcToTimeZoneTime():MMyy}-{batchNumber.ToString().PadLeft(3, '0')}.xlsx"
+                        CertificatesFileName = certificateFileName
                     };
 
+                    _printingJsonCreator.Create(batchNumber, certificates, certificateFileName);
                     _printingSpreadsheetCreator.Create(batchNumber, certificates);
 
-                    await _notificationService.Send(batchNumber, certificates);
+                    await _notificationService.Send(batchNumber, certificates, certificateFileName);
 
                     batchLogRequest.FileUploadEndTime = DateTime.UtcNow;
                     batchLogRequest.NumberOfCertificates = certificates.Count;
@@ -80,9 +85,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                     batchLogRequest.ScheduledDate = batchLogResponse.ScheduledDate;
 
                     await _fileTransferClient.LogUploadDirectory();
-
                     await _assessorServiceApi.CreateBatchLog(batchLogRequest);
-
                     await _assessorServiceApi.ChangeStatusToPrinted(batchNumber, certificates);
                 }
 

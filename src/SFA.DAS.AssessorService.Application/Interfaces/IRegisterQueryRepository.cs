@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsByOrganisationId(string organisationId);
 
         Task<AssessmentOrganisationSummary> GetAssessmentOrganisationByContactEmail(string email);
-        Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsByName(string organisationName);
+        Task<IEnumerable<AssessmentOrganisationSummary>> GetAssessmentOrganisationsByNameOrCharityNumberOrCompanyNumber(string organisationName);
         Task<IEnumerable<int>> GetDeliveryAreaIdsByOrganisationStandardId(int organisationStandardId);
         Task<IEnumerable<OrganisationStandardSummary>> GetOrganisationStandardByOrganisationId(string organisationId);
         Task<OrganisationStandard> GetOrganisationStandardFromOrganisationStandardId(int organisationStandardId);

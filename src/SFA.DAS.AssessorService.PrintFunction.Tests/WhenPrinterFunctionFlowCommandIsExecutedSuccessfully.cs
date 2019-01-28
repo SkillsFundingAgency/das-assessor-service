@@ -25,11 +25,12 @@ namespace SFA.DAS.AssessorService.PrintFunction.Tests
         private Mock<IAssessorServiceApi> _assessorServiceApi;
         private Mock<INotificationService> _notificationService;
         private Mock<IFileTransferClient> _fileTransferClient;
-
+        private Mock<IPrintingJsonCreator> _printingJsonCreator;
         [SetUp]
         public void Arrange()
         {
             _aggregateLogger = new Mock<IAggregateLogger>();
+            _printingJsonCreator = new Mock<IPrintingJsonCreator>();
             _printingSpreadsheetCreator = new Mock<IPrintingSpreadsheetCreator>();
             _assessorServiceApi = new Mock<IAssessorServiceApi>();
             _notificationService = new Mock<INotificationService>();
@@ -37,6 +38,7 @@ namespace SFA.DAS.AssessorService.PrintFunction.Tests
 
             _printProcessCommand = new PrintProcessCommand(
                 _aggregateLogger.Object,
+                _printingJsonCreator.Object,
                 _printingSpreadsheetCreator.Object,
                 _assessorServiceApi.Object,
                 _notificationService.Object,
@@ -91,7 +93,7 @@ namespace SFA.DAS.AssessorService.PrintFunction.Tests
         public void ItShouldSendANotification()
         {
             _notificationService.Verify(q =>
-                q.Send(It.IsAny<int>(), It.IsAny<List<CertificateResponse>>()), Times.Once());
+                q.Send(It.IsAny<int>(), It.IsAny<List<CertificateResponse>>(), It.IsAny<string>()), Times.Once());
         }
 
 

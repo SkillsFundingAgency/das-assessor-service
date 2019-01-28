@@ -7,6 +7,6 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Notification
 {
     public interface INotificationService
     {
-        Task Send(int batchNumber, List<CertificateResponse> certificates);
+        Task Send(int batchNumber, List<CertificateResponse> certificates, string certificatesFileName);
     }
 }

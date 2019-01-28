@@ -43,7 +43,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
                 Address2 = "address 2",
                 Address3 = "address 3",
                 Address4 = "address 4",
-                Postcode = "postcode"
+                Postcode = "postcode",
+                CompanyNumber = "company number",
+                CharityNumber = "charity number"
             };
 
             _mediator.Setup(m =>

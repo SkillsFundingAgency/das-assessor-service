@@ -45,7 +45,7 @@
 
         @foreach (var subscription in Model.Subscriptions)
         {
-        <div class="column-one-half form-group">
+        <div class="column-full form-group">
             <h2 class="bold-medium">@subscription.ProductId</h2>
             <h3 class="heading-small">Api endpoint</h3>
             <span class="code">@subscription.ApiEndPointUrl</span>
@@ -97,7 +97,7 @@
         </div>
 
         <div class="form-group">
-            <p class="bold-xsmall">The button below will completely revoke access from all API subscriptions for this user. To reinstate access their account will need to be set up again.</p>
+            <p class="bold-xsmall">The button below will revoke access to the External API subscription for this user.</p>
             <form asp-action="DeleteUser" asp-controller="ExternalApi" asp-route-userId="@Model.Id" method="post">
                 <button class="button" type="submit">Remove access</button>
             </form>
