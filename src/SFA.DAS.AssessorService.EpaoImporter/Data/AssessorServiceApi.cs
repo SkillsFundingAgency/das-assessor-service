@@ -139,5 +139,10 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
         {
             await _httpClient.PostAsync($"/api/v1/schedule?scheduleRunId={scheduleRunId}", null);
         }
+
+        public async Task GatherStandards()
+        {
+            await _httpClient.GetAsync("/api/ao/assessment-organisations/collated-standards");
+        }
     }
 }
