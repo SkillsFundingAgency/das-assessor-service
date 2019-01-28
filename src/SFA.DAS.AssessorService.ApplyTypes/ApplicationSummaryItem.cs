@@ -9,6 +9,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public string ApplicationType { get; set; }
         public DateTime? SubmittedDate { get; set; }
         public DateTime? ClosedDate { get; set; }
+        public int SubmissionCount { get; set; }
         public string FinancialStatus { get; set; }
         public string CurrentStatus { get; set; }
     }

@@ -65,19 +65,23 @@
                                     switch (item.CurrentStatus?.ToLower())
                                     {
                                         case "submitted":
-                                            <div class="govuk-tag govuk-tag--float-right">
-                                                Unassigned
-                                            </div>
+                                            if (item.SubmissionCount > 1)
+                                            {
+                                                // Been resubmitted
+                                                <div class="govuk-tag govuk-tag--float-right">
+                                                    Updated
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="govuk-tag govuk-tag--float-right">
+                                                    Unassigned
+                                                </div>
+                                            }
                                             break;
                                         case "in progress":
                                             <div class="govuk-tag govuk-tag--float-right">
                                                 In Progress
-                                            </div>
-                                            break;
-                                        case "resubmitted":
-                                            // This status doesn't exist as of yet
-                                            <div class="govuk-tag govuk-tag--float-right">
-                                                Updated
                                             </div>
                                             break;
                                         case "feedback added":
