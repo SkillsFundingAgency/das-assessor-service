@@ -113,7 +113,7 @@
             <div class="header-proposition">
                 <div class="content">
                     <nav id="proposition-menu">
-                        <a id="proposition-name" href="/">The register of end point assessment organisations</a>
+                        <a id="proposition-name" href="/">Record apprentice end-point assessment grades</a>
                     </nav>
                 </div>
             </div>
@@ -174,25 +174,25 @@
                     <nav class="app-navigation govuk-clearfix">
                         <ul class="app-navigation__list">
                             <li @(currentPage == Pages.Dashboard?"class=app-navigation--current-page":"")>
-                                <a asp-controller="Dashboard" asp-action="Index">Home</a>
+                                <a id="Home" asp-controller="Dashboard" asp-action="Index">Home</a>
                             </li>
                             <li  @(currentPage == Pages.Pipeline?"class=app-navigation--current-page":"")>
-                                <a asp-controller="OrganisationStandards" asp-action="Pipeline">Pipeline</a>
+                                <a id="Pipeline" asp-controller="OrganisationStandards" asp-action="Pipeline">Pipeline</a>
                             </li>
                             <li  @(currentPage == Pages.RecordAGrade?"class=app-navigation--current-page":"")>
-                                <a asp-controller="Search" asp-action="Index">Record a grade</a>
+                                <a id="Record a grade" asp-controller="Search" asp-action="Index">Record a grade</a>
                             </li>
                             <li  @(currentPage == Pages.Assessments?"class=app-navigation--current-page":"")>
-                                <a asp-controller="CertificateHistory" asp-action="Index">Completed assessments</a>
+                                <a id="Completed assessments" asp-controller="CertificateHistory" asp-action="Index">Completed assessments</a>
                             </li>
                             <li  @(currentPage == Pages.Standards?"class=app-navigation--current-page":"")>
-                                <a asp-controller="OrganisationStandards" asp-action="Index">Standards</a>
+                                <a id="Standards" asp-controller="OrganisationStandards" asp-action="Index">Standards</a>
                             </li>
                             @*<li  @(currentPage == Pages.Users?"class=app-navigation--current-page":"")>
                                 <a asp-controller="Dashboard" asp-action="">Users</a>
                             </li>*@
                             <li @(currentPage == Pages.Organisations ? "class=app-navigation--current-page" : "")>
-                                <a asp-controller="Organisation" asp-action="OrganisationDetails">Organisation details</a>
+                                <a id="Organisation details" asp-controller="Organisation" asp-action="OrganisationDetails">Organisation details</a>
                             </li>
                         </ul>
                     </nav>

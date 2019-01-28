@@ -69,7 +69,7 @@
         </div>
     </div>
     <div class="grid-row">
-        <div class="column-one-half">
+        <div class="column-full">
             <div class="dashboard-box">
                 <div class="dashboard-box-content">
                     <div class="data data-custom">
@@ -78,14 +78,17 @@
                     <div>
                         <ul class="dashboard__link-list">
                             <li class="dashboard__link ">
-                                <a asp-controller="Organisation" asp-action="OrganisationDetails">Organisation details</a>
+                                <a asp-controller="Organisation" asp-action="OrganisationDetails">View organisation details</a>
+                            </li>
+                            <li class="dashboard__link">
+                                <a  sfa-policy-exists-show="@Policies.ExternalApiAccess" asp-controller="ExternalApi" asp-action="Index">External API keys</a>
                             </li>
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="column-one-half">
+        @*<div class="column-one-half">
             <div class="dashboard-box">
                 <div class="dashboard-box-content">
                     <div class="data data-custom">
@@ -110,7 +113,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div>*@
     </div>
 </div>
 
