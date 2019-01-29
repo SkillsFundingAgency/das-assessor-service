@@ -19,7 +19,6 @@
                 <ul class="error-summary-list">
                     <li><a sfa-validation-for="Grade.SelectedGrade"></a></li>
                     <li><a sfa-validation-for="Grade.InadequateMoreInformation"></a></li>
-                    <li><a sfa-validation-for="Grade.SatisfactoryMoreInformation"></a></li>
                 </ul>
             </div>
         }
@@ -98,19 +97,33 @@
                         <div sfa-anyvalidationerror-class="form-group-error">
                             <span class="error-message" asp-validation-for="Grade.SelectedGrade"></span>
                             <span class="error-message" asp-validation-for="Grade.InadequateMoreInformation"></span>
-                            <span class="error-message" asp-validation-for="Grade.SatisfactoryMoreInformation"></span>
+                            <span class="error-message" asp-validation-for="Grade.OutstandingFinancialDueDate"></span>
+                            <span class="error-message" asp-validation-for="Grade.GoodFinancialDueDate"></span>
+                            <span class="error-message" asp-validation-for="Grade.SatisfactoryFinancialDueDate"></span>
                         </div>
                     </legend>
 
                     <div class="form-group" sfa-anyvalidationerror-class="form-group-error">
-                        <div class="multiple-choice">
-                            <input id="excellent" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Excellent)">
-                            <label for="excellent">Excellent</label>
+                        <div class="multiple-choice" data-target="outstanding-more-info">
+                            <input id="excellent" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Outstanding)"  @(Model.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Outstanding ? "checked" : "")>
+                            <label for="excellent">Outstanding</label>
+                        </div>
+                        <div class="panel panel-border-narrow js-hidden" id="outstanding-more-info">
+                            <label class="form-label" for="Grade.OutstandingFinancialDueDate">What is the good until date?</label>
+                            <input type="text" name="Grade.OutstandingFinancialDueDate.Day" sfa-validation-for="Grade.OutstandingFinancialDueDate" sfa-validationerror-class="form-control-error" value="@Model.Grade.OutstandingFinancialDueDate.Day"/>
+                            <input type="text" name="Grade.OutstandingFinancialDueDate.Month" sfa-validation-for="Grade.OutstandingFinancialDueDate" sfa-validationerror-class="form-control-error" value="@Model.Grade.OutstandingFinancialDueDate.Month"/>
+                            <input type="text" name="Grade.OutstandingFinancialDueDate.Year" sfa-validation-for="Grade.OutstandingFinancialDueDate" sfa-validationerror-class="form-control-error" value="@Model.Grade.OutstandingFinancialDueDate.Year"/>
                         </div>
 
-                        <div class="multiple-choice">
-                            <input id="good" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Good)">
+                        <div class="multiple-choice" data-target="good-more-info">
+                            <input id="good" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Good)"  @(Model.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Good ? "checked" : "")>
                             <label for="good">Good</label>
+                        </div>
+                        <div class="panel panel-border-narrow js-hidden" id="good-more-info">
+                            <label class="form-label" for="Grade.GoodFinancialDueDate">What is the good until date?</label>
+                            <input type="text" name="Grade.GoodFinancialDueDate.Day" sfa-validation-for="Grade.GoodFinancialDueDate" sfa-validationerror-class="form-control-error" value="@Model.Grade.GoodFinancialDueDate.Day"/>
+                            <input type="text" name="Grade.GoodFinancialDueDate.Month" sfa-validation-for="Grade.GoodFinancialDueDate" sfa-validationerror-class="form-control-error" value="@Model.Grade.GoodFinancialDueDate.Month"/>
+                            <input type="text" name="Grade.GoodFinancialDueDate.Year" sfa-validation-for="Grade.GoodFinancialDueDate" sfa-validationerror-class="form-control-error" value="@Model.Grade.GoodFinancialDueDate.Year"/>
                         </div>
 
                         <div class="multiple-choice" data-target="satisfactory-more-info">
@@ -118,8 +131,10 @@
                             <label for="satisfactory">Satisfactory</label>
                         </div>
                         <div class="panel panel-border-narrow js-hidden" id="satisfactory-more-info">
-                            <label class="form-label" for="Grade.SatisfactoryMoreInformation">Why is the application satisfactory?</label>
-                            <textarea class="form-control form-control-full" rows="4" name="Grade.SatisfactoryMoreInformation" sfa-validation-for="Grade.SatisfactoryMoreInformation" sfa-validationerror-class="form-control-error"></textarea>
+                            <label class="form-label" for="Grade.SatisfactoryFinancialDueDate">What is the good until date?</label>
+                            <input type="text" name="Grade.SatisfactoryFinancialDueDate.Day" sfa-validation-for="Grade.SatisfactoryFinancialDueDate" sfa-validationerror-class="form-control-error" value="@Model.Grade.SatisfactoryFinancialDueDate.Day"/>
+                            <input type="text" name="Grade.SatisfactoryFinancialDueDate.Month" sfa-validation-for="Grade.SatisfactoryFinancialDueDate" sfa-validationerror-class="form-control-error" value="@Model.Grade.SatisfactoryFinancialDueDate.Month"/>
+                            <input type="text" name="Grade.SatisfactoryFinancialDueDate.Year" sfa-validation-for="Grade.SatisfactoryFinancialDueDate" sfa-validationerror-class="form-control-error" value="@Model.Grade.SatisfactoryFinancialDueDate.Year"/>
                         </div>
 
                         <div class="multiple-choice" data-target="inadequate-more-info">

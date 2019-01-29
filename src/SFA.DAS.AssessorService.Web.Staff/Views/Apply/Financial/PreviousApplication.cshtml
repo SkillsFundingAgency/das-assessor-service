@@ -59,7 +59,7 @@ Switched axis - leaving in as we may move to this.
                 <tr>
                     <td>@Model.Grade.SelectedGrade</td>
                     <td>@Model.Grade.GradedDateTime.ToShortDateString()</td>
-                    <td>@(Model.Grade.InadequateMoreInformation ?? Model.Grade.SatisfactoryMoreInformation ?? "")</td>
+                    <td>@(Model.Grade.InadequateMoreInformation ?? "")</td>
                     <td>@Model.Grade.GradedBy</td>
                 </tr>
             </tbody>

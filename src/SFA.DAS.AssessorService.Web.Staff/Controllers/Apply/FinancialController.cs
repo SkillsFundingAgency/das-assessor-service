@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Web.Staff.Domain;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Financial;
@@ -85,7 +86,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
             {
                 Organisation = organisation,
                 Section = financialSection,
-                ApplicationId = applicationId
+                ApplicationId = applicationId,
+                Grade = new FinancialApplicationGrade()
+                {
+                    OutstandingFinancialDueDate = new FinancialDueDate(),
+                    GoodFinancialDueDate = new FinancialDueDate(),
+                    SatisfactoryFinancialDueDate = new FinancialDueDate()
+                }
             };
             
             return View("~/Views/Apply/Financial/Application.cshtml", vm);
@@ -168,7 +175,20 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
                 var surname = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname")?.Value;
 
                 vm.Grade.GradedBy = $"{givenName} {surname}";
-            
+
+                if (vm.Grade.SelectedGrade == "Outstanding")
+                {
+                    vm.Grade.FinancialDueDate = vm.Grade.OutstandingFinancialDueDate.ToDateTime();
+                }
+                else if (vm.Grade.SelectedGrade == "Good")
+                {
+                    vm.Grade.FinancialDueDate = vm.Grade.GoodFinancialDueDate.ToDateTime();
+                }
+                else if (vm.Grade.SelectedGrade == "Satisfactory")
+                {
+                    vm.Grade.FinancialDueDate = vm.Grade.SatisfactoryFinancialDueDate.ToDateTime();
+                }
+                
                 await _apiClient.UpdateFinancialGrade(vm.ApplicationId, vm.Grade);
                 return RedirectToAction("Graded", new {vm.ApplicationId});   
             }
@@ -187,6 +207,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
                     ApplicationId = vm.ApplicationId
                 };
                 newvm.Grade.SelectedGrade = vm.Grade.SelectedGrade;
+                newvm.Grade.OutstandingFinancialDueDate = vm.Grade.OutstandingFinancialDueDate;
+                newvm.Grade.GoodFinancialDueDate = vm.Grade.GoodFinancialDueDate;
+                newvm.Grade.SatisfactoryFinancialDueDate = vm.Grade.SatisfactoryFinancialDueDate;
                 return View("~/Views/Apply/Financial/Application.cshtml", newvm);
             }
         }
