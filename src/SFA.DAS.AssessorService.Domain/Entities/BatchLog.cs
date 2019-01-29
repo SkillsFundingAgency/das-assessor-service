@@ -14,5 +14,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string CertificatesFileName { get; set; }      
         public DateTime FileUploadStartTime { get; set; }
         public DateTime FileUploadEndTime { get; set; }
+        public string BatchData { get; set; }
+
     }
 }

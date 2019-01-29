@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
         {
             var printOutput = new PrintOutput
             {
-                Batch = new BatchDetails()
+                Batch = new BatchData()
                 {
                     BatchNumber = batchNumber,
                     BatchDate = DateTime.UtcNow

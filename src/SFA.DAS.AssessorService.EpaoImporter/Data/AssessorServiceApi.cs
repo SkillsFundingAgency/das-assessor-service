@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.JsonData.Printing;
 using SFA.DAS.AssessorService.EpaoImporter.Const;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
 
@@ -73,6 +74,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
             return certificates;
         }
 
+
         public async Task<BatchLogResponse> GetCurrentBatchLog()
         {
             var response = await _httpClient.GetAsync(
@@ -85,6 +87,14 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
                     BatchNumber = 0
                 };
             }
+
+            return await response.Content.ReadAsAsync<BatchLogResponse>();
+        }
+
+        public async Task<BatchLogResponse> GetGetBatchLogByBatchNumber(string batchNumber)
+        {
+            var response = await _httpClient.GetAsync(
+                $"/api/v1/batches/{batchNumber}");
 
             return await response.Content.ReadAsAsync<BatchLogResponse>();
         }
@@ -107,6 +117,10 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Data
             await _httpClient.PutAsJsonAsync($"/api/v1/certificates/{batchNumber}", updateCertificatesBatchToIndicatePrintedRequest);
         }
 
+        public async Task UpdateBatchDataInBatchLog(Guid batchId, BatchData batchData)
+        {
+            await _httpClient.PutAsJsonAsync($"/api/v1/batches/update-batch-data", new {Id = batchId, BatchData = batchData});
+        }
         public async Task<EMailTemplate> GetEmailTemplate(string templateName)
         {           
             var response = await _httpClient.GetAsync(
