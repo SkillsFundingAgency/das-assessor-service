@@ -32,10 +32,13 @@
                 <td class="bold-small">Registered name</td>
                 <td>@Model.Organisation.OrganisationDetails.LegalName</td>
             </tr>
+            @if (!string.IsNullOrWhiteSpace(Model.Organisation.OrganisationDetails.TradingName))
+            {
             <tr>
                 <td class="bold-small">Trading name</td>
                 <td>@Model.Organisation.OrganisationDetails.TradingName</td>
             </tr>
+            }
         </table>
 
         @if (Model.Section.PagesContainingUploadQuestions.Any())
