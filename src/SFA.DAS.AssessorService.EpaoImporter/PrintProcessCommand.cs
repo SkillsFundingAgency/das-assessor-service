@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Extensions;
+using SFA.DAS.AssessorService.Domain.JsonData.Printing;
 using SFA.DAS.AssessorService.EpaoImporter.Data;
 using SFA.DAS.AssessorService.EpaoImporter.DomainServices;
 using SFA.DAS.AssessorService.EpaoImporter.Interfaces;
@@ -38,6 +42,79 @@ namespace SFA.DAS.AssessorService.EpaoImporter
         }
 
         public async Task Execute()
+        {
+            await UploadCertificateDetailsToPinter();
+            await DownloadAndDeleteCertificatePrinterResponses();
+        }
+
+        private async Task DownloadAndDeleteCertificatePrinterResponses()
+        {
+            var fileList = await _fileTransferClient.GetListOfDownloadedFiles();
+
+            // printResponse-MMYY-XXXXXX.json where XXX = 001, 002... 999999 etc
+            const string pattern = @"^[Pp][Rr][Ii][Nn][Tt][Rr][Ee][Ss][Pp][Oo][Nn][Ss][Ee]-[0-9]{4}-[0-9]{1,6}.json";
+
+            var certificateResponseFiles = fileList.Where(f => Regex.IsMatch(f, pattern));
+            var filesToProcesses = certificateResponseFiles as string[] ?? certificateResponseFiles.ToArray();
+            if (!filesToProcesses.Any())
+            {
+                _aggregateLogger.LogInfo("No certificate responses to process");
+                return;
+            }
+           
+             foreach (var fileToProcess in filesToProcesses)
+             {
+                 await ProcessEachFileToUploadThenDelete(fileToProcess);
+             }
+        }
+
+        private async Task ProcessEachFileToUploadThenDelete(string fileToProcess)
+        {
+            var stringBatchResponse = await _fileTransferClient.DownloadFile(fileToProcess);
+            var batchResponse = JsonConvert.DeserializeObject<BatchResponse>(stringBatchResponse);
+
+            if (batchResponse?.Batch == null || batchResponse.Batch.BatchDate == DateTime.MinValue)
+            {
+                _aggregateLogger.LogInfo($"Could not process downloaded file to correct format [{fileToProcess}]");
+                return;
+            }
+
+            
+
+            batchResponse.Batch.DateOfResponse = DateTime.UtcNow;
+            var batchNumber = batchResponse.Batch.BatchNumber;
+  
+            var batchLogResponse = await _assessorServiceApi.GetGetBatchLogByBatchNumber( batchNumber);
+
+            if (batchLogResponse?.Id == null)
+            {
+                _aggregateLogger.LogInfo($"Could not match an existing batch Log Batch Number [{batchNumber}]");
+                return;
+            }
+
+            if (!int.TryParse(batchNumber, out int batchNumberToInt))
+            {
+                _aggregateLogger.LogInfo($"The Batch Number is not an integer [{batchNumber}]");
+                return;
+            }
+
+            var batch = new BatchData
+            {
+                BatchNumber = batchNumberToInt,
+                BatchDate = batchResponse.Batch.BatchDate,
+                PostalContactCount = batchResponse.Batch.PostalContactCount,
+                TotalCertificateCount = batchResponse.Batch.TotalCertificateCount,
+                PrintedDate = batchResponse.Batch.PrintedDate,
+                PostedDate = batchResponse.Batch.PostedDate,
+                DateOfResponse = batchResponse.Batch.DateOfResponse
+            };
+
+            await _assessorServiceApi.UpdateBatchDataInBatchLog((Guid) batchLogResponse.Id, batch);
+            _fileTransferClient.DeleteFile(fileToProcess);
+        }
+
+
+        private async Task UploadCertificateDetailsToPinter()
         {
             try
             {
@@ -88,7 +165,6 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                     await _assessorServiceApi.CreateBatchLog(batchLogRequest);
                     await _assessorServiceApi.ChangeStatusToPrinted(batchNumber, certificates);
                 }
-
                 await _assessorServiceApi.CompleteSchedule(scheduleRun.Id);
             }
             catch (Exception e)

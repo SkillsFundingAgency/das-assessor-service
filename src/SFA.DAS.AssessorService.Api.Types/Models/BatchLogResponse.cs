@@ -1,9 +1,11 @@
 ﻿using System;
+using SFA.DAS.AssessorService.Domain.JsonData.Printing;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
     public class BatchLogResponse
     {
+        public Guid? Id { get; set; }
         public DateTime BatchCreated { get; set; }
         public DateTime ScheduledDate { get; set; }
         public string Period { get; set; }
@@ -13,5 +15,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public string CertificatesFileName { get; set; }
         public DateTime FileUploadStartTime { get; set; }
         public DateTime FileUploadEndTime { get; set; }
+        public BatchData BatchData { get; set; }
     }
 }
