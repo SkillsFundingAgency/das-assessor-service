@@ -15,7 +15,9 @@
     [CreatedAt] DATETIME2 NOT NULL, 
     [UpdatedAt] DATETIME2 NULL,
 	[LearnRefNumber] NVARCHAR(12) NULL,
-	[CompletionStatus] [int] NULL
+	[CompletionStatus] [int] NULL, 
+    [EventId] BIGINT NULL, 
+    [PlannedEndDate] DATETIME2 NULL
 )
 
 GO

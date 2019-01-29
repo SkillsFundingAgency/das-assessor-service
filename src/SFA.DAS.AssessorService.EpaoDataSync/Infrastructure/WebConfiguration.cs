@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using SFA.DAS.AssessorService.EpaoDataSync.Infrastructure.Settings;
 using SFA.DAS.AssessorService.Settings;
+using ProviderEventsClientConfiguration = SFA.DAS.AssessorService.EpaoDataSync.Infrastructure.Settings.ProviderEventsClientConfiguration;
 
 namespace SFA.DAS.AssessorService.EpaoDataSync.Infrastructure
 {
