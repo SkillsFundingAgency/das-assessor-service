@@ -28,7 +28,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         private readonly IRegisterQueryRepository _registerQueryRepository;
         private readonly IStringLocalizer<EpaOrganisationValidator> _localizer;
         private readonly ISpecialCharacterCleanserService _cleanserService;
-       
+
+        private const string CompaniesHouseNumberRegex = "[A-Za-z0-9]{2}[0-9]{6}";
+        private const string CharityNumberInvalidCharactersRegex = "[^a-zA-Z0-9\\-]";
+
+
         public EpaOrganisationValidator( IRegisterValidationRepository registerRepository,  IRegisterQueryRepository registerQueryRepository, 
                                          ISpecialCharacterCleanserService cleanserService, IStringLocalizer<EpaOrganisationValidator> localizer) 
         {
@@ -92,6 +96,38 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             if (ukprn == null) return string.Empty;
             var isValid = ukprn >= 10000000 && ukprn <= 99999999;
             return isValid ? string.Empty : FormatErrorMessage(EpaOrganisationValidatorMessageName.UkprnIsInvalid);
+        }
+
+        public string CheckCompanyNumberIsValid(string companyNumber)
+        {
+
+            if (String.IsNullOrWhiteSpace(companyNumber))
+            {
+                return string.Empty;
+            }
+
+            if ((companyNumber.Length != 8) ||
+             !Regex.IsMatch(companyNumber, CompaniesHouseNumberRegex))
+            {
+                return FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationCompanyNumberNotValid);
+            }
+
+            return string.Empty;
+        }
+
+        public string CheckCharityNumberIsValid(string charityNumber)
+        {
+            if (String.IsNullOrWhiteSpace(charityNumber))
+            {
+                return string.Empty;
+            }
+
+            if (Regex.IsMatch(charityNumber, CharityNumberInvalidCharactersRegex))
+            {
+                return FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationCharityNumberNotValid);
+            }
+
+            return string.Empty;
         }
 
         public string CheckOrganisationNameNotUsed(string name)
@@ -355,6 +391,46 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             return string.Empty;
         }
 
+        public string CheckIfOrganisationCompanyNumberExists(string organisationIdToExclude, string companyNumber)
+        {
+            Task<bool> companyAlreadyRegistered = _registerRepository.EpaOrganisationExistsWithCompanyNumber(organisationIdToExclude, companyNumber);
+            if (companyAlreadyRegistered.Result)
+            {
+                return FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationCompanyNumberAlreadyUsed);
+            }
+            return string.Empty;
+        }
+
+        public string CheckIfOrganisationCompanyNumberExists(string companyNumber)
+        {
+            Task<bool> companyAlreadyRegistered = _registerRepository.EpaOrganisationExistsWithCompanyNumber(companyNumber);
+            if (companyAlreadyRegistered.Result)
+            {
+                return FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationCompanyNumberAlreadyUsed);
+            }
+            return string.Empty;
+        }
+
+        public string CheckIfOrganisationCharityNumberExists(string organisationIdToExclude, string charityNumber)
+        {
+            Task<bool> charityAlreadyRegistered = _registerRepository.EpaOrganisationExistsWithCharityNumber(organisationIdToExclude, charityNumber);
+            if (charityAlreadyRegistered.Result)
+            {
+                return FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationCharityNumberAlreadyUsed);
+            }
+            return string.Empty;
+        }
+
+        public string CheckIfOrganisationCharityNumberExists(string charityNumber)
+        {
+            Task<bool> charityAlreadyRegistered = _registerRepository.EpaOrganisationExistsWithCharityNumber(charityNumber);
+            if (charityAlreadyRegistered.Result)
+            {
+                return FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationCharityNumberAlreadyUsed);
+            }
+            return string.Empty;
+        }
+
         public ValidationResponse ValidatorCreateEpaOrganisationRequest(CreateEpaOrganisationRequest request)
         {
             var validationResult = new ValidationResponse();
@@ -364,6 +440,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             RunValidationCheckAndAppendAnyError("Ukprn", CheckUkprnIsValid(request.Ukprn), validationResult, ValidationStatusCode.BadRequest);    
             RunValidationCheckAndAppendAnyError("Name", CheckOrganisationNameNotUsed(request.Name), validationResult, ValidationStatusCode.AlreadyExists);
             RunValidationCheckAndAppendAnyError("Ukprn", CheckIfOrganisationUkprnExists(request.Ukprn), validationResult, ValidationStatusCode.AlreadyExists);
+            RunValidationCheckAndAppendAnyError("CompanyNumber", CheckCompanyNumberIsValid(request.CompanyNumber), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("CompanyNumber", CheckIfOrganisationCompanyNumberExists(request.CompanyNumber), validationResult, ValidationStatusCode.AlreadyExists);
+            RunValidationCheckAndAppendAnyError("CharityNumber", CheckCharityNumberIsValid(request.CharityNumber), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("CharityNumber", CheckIfOrganisationCharityNumberExists(request.CharityNumber), validationResult, ValidationStatusCode.AlreadyExists);
 
             return validationResult;
         }
@@ -475,6 +555,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             if (!validationResult.IsValid)
                 return validationResult;
 
+            RunValidationCheckAndAppendAnyError("CompanyNumber", CheckCompanyNumberIsValid(request.CompanyNumber), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("CompanyNumber", CheckIfOrganisationCompanyNumberExists(request.OrganisationId, request.CompanyNumber), validationResult, ValidationStatusCode.BadRequest);
+
+            RunValidationCheckAndAppendAnyError("CharityNumber", CheckCharityNumberIsValid(request.CharityNumber), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("CharityNumber", CheckIfOrganisationCharityNumberExists(request.OrganisationId, request.CharityNumber), validationResult, ValidationStatusCode.BadRequest);
+            
             var contacts = _registerQueryRepository.GetAssessmentOrganisationContacts(request.OrganisationId).Result;
             var standards = _registerQueryRepository.GetOrganisationStandardByOrganisationId(request.OrganisationId).Result;
 
