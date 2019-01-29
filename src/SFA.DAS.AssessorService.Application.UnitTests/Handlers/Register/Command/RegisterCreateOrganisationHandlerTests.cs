@@ -24,6 +24,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
         private string _returnedOrganisationId;
         private Mock<ILogger<CreateEpaOrganisationHandler>> _logger;
         private Mock<IEpaOrganisationIdGenerator> _idGenerator;
+        private Mock<IEpaOrganisationValidator> _validator;
         private CreateEpaOrganisationRequest _requestNoIssues;
         private EpaOrganisation _expectedOrganisationNoIssues;
         private string _organisationId;
@@ -35,6 +36,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             _cleanserService = new Mock<ISpecialCharacterCleanserService>();
             _logger = new Mock<ILogger<CreateEpaOrganisationHandler>>();
             _idGenerator = new Mock<IEpaOrganisationIdGenerator>();
+            _validator = new Mock<IEpaOrganisationValidator>();
             _organisationId = "EPA999";
 
             _requestNoIssues = BuildRequest("name 1",123321);
@@ -45,7 +47,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
 
             _cleanserService.Setup(c => c.CleanseStringForSpecialCharacters(It.IsAny<string>()))
                 .Returns((string s) => s);
-            _createEpaOrganisationHandler = new CreateEpaOrganisationHandler(_registerRepository.Object, _idGenerator.Object,_logger.Object, _cleanserService.Object);
+
+            var validationResponse = new ValidationResponse();
+            _validator.Setup(x => x.ValidatorCreateEpaOrganisationRequest(It.IsAny<CreateEpaOrganisationRequest>()))
+                .Returns(validationResponse);
+
+            _createEpaOrganisationHandler = new CreateEpaOrganisationHandler(_registerRepository.Object, _idGenerator.Object,_logger.Object, _cleanserService.Object, _validator.Object);
           }
 
         [Test]
@@ -68,6 +75,22 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             _returnedOrganisationId = _createEpaOrganisationHandler.Handle(_requestNoIssues, new CancellationToken()).Result;
             _returnedOrganisationId.Should().BeEquivalentTo(_expectedOrganisationNoIssues.OrganisationId);
         }
+
+        [Test]
+        public void CreateOrganisationFailsValidation()
+        {
+            var validationResponse = BuildErrorResponse("Message", ValidationStatusCode.BadRequest);
+            _validator.Setup(x => x.ValidatorCreateEpaOrganisationRequest(It.IsAny<CreateEpaOrganisationRequest>()))
+                .Returns(validationResponse);
+
+            CreateEpaOrganisationRequest request = BuildRequest("Name", 100001234);
+
+            Task<string> createOperation = _createEpaOrganisationHandler.Handle(request, new CancellationToken());
+            string message;
+            _registerRepository.Verify(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Never);
+
+            Assert.Throws<AggregateException>(() => message = createOperation.Result);
+        }
     
 
         private CreateEpaOrganisationRequest BuildRequest(string name, long? ukprn)
@@ -84,8 +107,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
                 Address3 = "address 3",
                 Address4 = "address 4",
                 Postcode = "postcode",
-                CompanyNumber = "company number",
-                CharityNumber = "charity number"
+                CompanyNumber = "12345678",
+                CharityNumber = "12345678"
             };
         }
 
@@ -113,6 +136,13 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
                     CharityNumber = request.CharityNumber
                 }
             };
+        }
+
+        private ValidationResponse BuildErrorResponse(string errorMessage, ValidationStatusCode statusCode)
+        {
+            var validationResponse = new ValidationResponse();
+            validationResponse.Errors.Add(new ValidationErrorDetail(errorMessage, statusCode));
+            return validationResponse;
         }
     }
 }
