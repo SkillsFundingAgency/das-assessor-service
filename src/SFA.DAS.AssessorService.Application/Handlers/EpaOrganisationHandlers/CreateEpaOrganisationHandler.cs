@@ -21,19 +21,34 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
         private readonly ILogger<CreateEpaOrganisationHandler> _logger;
         private readonly IEpaOrganisationIdGenerator _organisationIdGenerator;
         private readonly ISpecialCharacterCleanserService _cleanser;
-        
-        public CreateEpaOrganisationHandler(IRegisterRepository registerRepository, IEpaOrganisationIdGenerator orgIdGenerator, ILogger<CreateEpaOrganisationHandler> logger, ISpecialCharacterCleanserService cleanser)
+        private readonly IEpaOrganisationValidator _validator;
+
+        public CreateEpaOrganisationHandler(IRegisterRepository registerRepository, IEpaOrganisationIdGenerator orgIdGenerator, ILogger<CreateEpaOrganisationHandler> logger, 
+                                            ISpecialCharacterCleanserService cleanser, IEpaOrganisationValidator validator)
         {
             _registerRepository = registerRepository;
             _logger = logger;
             _cleanser = cleanser;
             _organisationIdGenerator = orgIdGenerator;
+            _validator = validator;
         }
 
         public async Task<string> Handle(CreateEpaOrganisationRequest request, CancellationToken cancellationToken)
         {
             ProcessRequestFieldsForSpecialCharacters(request);
- 
+
+            ValidationResponse validationResponse = _validator.ValidatorCreateEpaOrganisationRequest(request);
+
+            if (!validationResponse.IsValid)
+            {
+                var message = validationResponse.Errors.Aggregate(string.Empty, (current, error) => current + error.ErrorMessage + "; ");
+                _logger.LogError(message);
+                if (validationResponse.Errors.Any(x => x.StatusCode == ValidationStatusCode.BadRequest.ToString()))
+                {
+                    throw new BadRequestException(message);
+                }
+            }
+
             var newOrganisationId = _organisationIdGenerator.GetNextOrganisationId();
             if (newOrganisationId == string.Empty)
                 throw new Exception("A valid organisation Id could not be generated");
@@ -58,6 +73,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
         private static EpaOrganisation MapOrganisationRequestToOrganisation(CreateEpaOrganisationRequest request, string newOrganisationId)
         {
+            if (!String.IsNullOrWhiteSpace(request.CompanyNumber))
+            {
+                request.CompanyNumber = request.CompanyNumber.ToUpper();
+            }
+
             var organisation = new EpaOrganisation
             {
                 Name = request.Name.Trim(),

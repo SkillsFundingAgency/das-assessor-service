@@ -9,6 +9,10 @@
         public const string OrganisationNameTooShort = "OrganisationNameTooShort";
         public const string OrganisationIdAlreadyUsed = "OrganisationIdAlreadyUsed";
         public const string UkprnAlreadyUsed = "UkprnAlreadyUsed";
+        public const string OrganisationCompanyNumberNotValid = "OrganisationCompanyNumberNotValid";
+        public const string OrganisationCharityNumberNotValid = "OrganisationCharityNumberNotValid";
+        public const string OrganisationCompanyNumberAlreadyUsed = "OrganisationCompanyNumberAlreadyUsed";
+        public const string OrganisationCharityNumberAlreadyUsed = "OrganisationCharityNumberAlreadyUsed";
         public const string OrganisationTypeIsInvalid = "OrganisationTypeIsInvalid";
         public const string AnotherOrganisationUsingTheUkprn = "AnotherOrganisationUsingTheUkprn";
         public const string UkprnIsInvalid = "UkprnIsInvalid";

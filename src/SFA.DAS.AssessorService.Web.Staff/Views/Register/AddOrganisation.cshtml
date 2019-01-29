@@ -25,6 +25,8 @@
                     </h2>
                     <ul class="error-summary-list">
                         <li><a sfa-validation-for="Name"></a></li>
+                        <li><a sfa-validation-for="CompanyNumber"></a></li>
+                        <li><a sfa-validation-for="CharityNumber"></a></li>
                         <li><a sfa-validation-for="LegalName"></a></li>
                         <li><a sfa-validation-for="Address1"></a></li>
                         <li><a sfa-validation-for="Address2"></a></li>
@@ -42,8 +44,6 @@
                 <label class="form-label" for="">
                     <span class="heading-xlarge">Add an organisation</span>
                 </label>
-                @Html.HiddenFor(c => c.CharityNumber)
-                @Html.HiddenFor(c => c.CompanyNumber)
             </h1>
 
             <!-- Put in partial?? -->
@@ -63,6 +63,20 @@
                     </label>
                     <input class="form-control" name="LegalName" sfa-validation-for="LegalName" sfa-validationerror-class="form-control-error" asp-for="LegalName" type="text" />
                 </div>
+                <div class="form-group" sfa-validation-for="CompanyNumber" sfa-validationerror-class="form-group-error">
+                    <label for="CompanyNumber">
+                        <span class="form-label-bold">Company number (optional)</span>
+                        <span class="error-message" asp-validation-for="CompanyNumber"></span>
+                    </label>
+                    <input class="form-control js-alphanumeric-only" name="CompanyNumber" sfa-validation-for="CompanyNumber" sfa-validationerror-class="form-control-error" asp-for="CompanyNumber" type="text" />
+                </div>
+                <div class="form-group" sfa-validation-for="CharityNumber" sfa-validationerror-class="form-group-error">
+                    <label for="CharityNumber">
+                        <span class="form-label-bold">Charity number (optional)</span>
+                        <span class="error-message" asp-validation-for="CharityNumber"></span>
+                    </label>
+                    <input class="form-control" name="CharityNumber" sfa-validation-for="CharityNumber" sfa-validationerror-class="form-control-error" asp-for="CharityNumber" type="text" />
+                </div>
                 <div class="form-group" sfa-validation-for="Ukprn" sfa-validationerror-class="form-group-error">
                     <label for="Ukprn">
                         <span class="form-label-bold">UKPRN (optional)</span>
@@ -76,12 +90,12 @@
                     @Html.HiddenFor(c => c.OrganisationTypes)
                     @foreach (var organisation in Model.OrganisationTypes)
                     {
-                    <div class="multiple-choice">
-                        <input asp-for="OrganisationTypeId" id="organisation-type-@organisation.Type.Replace(" ", "_")" type="radio" value="@organisation.Id" />
-                        <label for="organisation-type-@organisation.Type.Replace(" ", "_")">
-                            @organisation.Type
-                        </label>
-                    </div>
+                        <div class="multiple-choice">
+                            <input asp-for="OrganisationTypeId" id="organisation-type-@organisation.Type.Replace(" ", "_")" type="radio" value="@organisation.Id" />
+                            <label for="organisation-type-@organisation.Type.Replace(" ", "_")">
+                                @organisation.Type
+                            </label>
+                        </div>
                     }
                 </div>
                 <div class="form-group" sfa-validation-for="WebsiteLink" sfa-validationerror-class="form-group-error">

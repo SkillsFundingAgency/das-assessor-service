@@ -8,5 +8,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Register
         public string Name { get; set; }
         public long? Ukprn { get; set; }
         public int? OrganisationTypeId { get; set; }
+        public string CompanyNumber { get; set; }
+        public string CharityNumber { get; set; }
     }
 }

@@ -32,7 +32,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             {
                 Name = request.Name,
                 Ukprn = request.Ukprn,
-                OrganisationTypeId = request.OrganisationTypeId
+                OrganisationTypeId = request.OrganisationTypeId,
+                CompanyNumber = request.CompanyNumber,
+                CharityNumber = request.CharityNumber
             } );   
         }
     }
