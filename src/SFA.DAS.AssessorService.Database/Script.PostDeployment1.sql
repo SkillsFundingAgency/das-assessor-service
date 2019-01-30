@@ -155,30 +155,6 @@ UPDATE [Organisations] SET [OrganisationTypeId] = 9 WHERE [EndPointAssessorOrgan
 UPDATE [Organisations] SET [OrganisationTypeId] = 10 WHERE [EndPointAssessorOrganisationId] = 'EPA0159';
 UPDATE [Organisations] SET [OrganisationTypeId] = 7 WHERE [EndPointAssessorOrganisationId] = 'EPA0173';
 
-
-IF NOT EXISTS (SELECT * FROM sys.tables t 
-    INNER JOIN sys.partitions p ON t.object_id = p.object_id 
-    WHERE t.name = 'IlrsCopy' AND p.rows > 0)
-	BEGIN
-	INSERT INTO [dbo].[IlrsCopy] ([Id]
-			,[Uln]
-			,[GivenNames]
-			,[FamilyName]
-			,[UkPrn]
-			,[StdCode]
-			,[LearnStartDate]
-			,[EpaOrgId]
-			,[FundingModel]
-			,[ApprenticeshipId]
-			,[EmployerAccountId]
-			,[Source]
-			,[CreatedAt]
-			,[UpdatedAt]
-			,[LearnRefNumber]
-			,[CompletionStatus]) 
-			SELECT * FROM [dbo].[Ilrs]
-	END
-	GO
         
 UPDATE CERTIFICATES
 set IsPrivatelyFunded = 0
@@ -212,3 +188,7 @@ update deliveryarea set Ordering=6 where Area='East of England'
 update deliveryarea set Ordering=7 where Area='London'
 update deliveryarea set Ordering=8 where Area='South East'
 update deliveryarea set Ordering=9 where Area='South West'
+
+
+-- update FHA details STORY ON-1058
+:r UpdateFHADetails.sql
