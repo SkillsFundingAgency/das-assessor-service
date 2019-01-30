@@ -16,5 +16,6 @@
         string SpecflowDBTestConnectionString { get; set; }
         string SessionRedisConnectionString { get; set; }
         AuthSettings StaffAuthentication { get; set; }
+        ClientApiAuthentication ApplyApiAuthentication { get; set; }
     }
 }
