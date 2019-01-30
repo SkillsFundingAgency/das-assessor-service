@@ -176,18 +176,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
 
                 vm.Grade.GradedBy = $"{givenName} {surname}";
 
-                if (vm.Grade.SelectedGrade == "Outstanding")
-                {
-                    vm.Grade.FinancialDueDate = vm.Grade.OutstandingFinancialDueDate.ToDateTime();
-                }
-                else if (vm.Grade.SelectedGrade == "Good")
-                {
-                    vm.Grade.FinancialDueDate = vm.Grade.GoodFinancialDueDate.ToDateTime();
-                }
-                else if (vm.Grade.SelectedGrade == "Satisfactory")
-                {
-                    vm.Grade.FinancialDueDate = vm.Grade.SatisfactoryFinancialDueDate.ToDateTime();
-                }
+                GetFinancialDueDate(vm);
                 
                 await _apiClient.UpdateFinancialGrade(vm.ApplicationId, vm.Grade);
                 return RedirectToAction("Graded", new {vm.ApplicationId});   
@@ -211,6 +200,22 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
                 newvm.Grade.GoodFinancialDueDate = vm.Grade.GoodFinancialDueDate;
                 newvm.Grade.SatisfactoryFinancialDueDate = vm.Grade.SatisfactoryFinancialDueDate;
                 return View("~/Views/Apply/Financial/Application.cshtml", newvm);
+            }
+        }
+
+        private static void GetFinancialDueDate(FinancialApplicationViewModel vm)
+        {
+            if (vm.Grade.SelectedGrade == "Outstanding")
+            {
+                vm.Grade.FinancialDueDate = vm.Grade.OutstandingFinancialDueDate.ToDateTime();
+            }
+            else if (vm.Grade.SelectedGrade == "Good")
+            {
+                vm.Grade.FinancialDueDate = vm.Grade.GoodFinancialDueDate.ToDateTime();
+            }
+            else if (vm.Grade.SelectedGrade == "Satisfactory")
+            {
+                vm.Grade.FinancialDueDate = vm.Grade.SatisfactoryFinancialDueDate.ToDateTime();
             }
         }
 
