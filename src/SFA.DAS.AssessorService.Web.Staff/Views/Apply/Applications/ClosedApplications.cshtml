@@ -49,9 +49,7 @@
                     {
                         <tr>
                             <td data-label="Organisation name" class="nowrap">
-                                @item.OrganisationName
-                                @* NOTE : Viewing Closed Applications has not been implemented*@
-                                @*<a asp-action="Application" asp-controller="Application" asp-route-applicationId="@item.ApplicationId">@item.OrganisationName</a>*@
+                                <a asp-action="Sequence" asp-controller="Application" asp-route-applicationId="@item.ApplicationId" asp-route-sequenceId="@item.SequenceId">@item.OrganisationName</a>
                             </td>
                             <td data-label="Application type">
                                 @item.ApplicationType

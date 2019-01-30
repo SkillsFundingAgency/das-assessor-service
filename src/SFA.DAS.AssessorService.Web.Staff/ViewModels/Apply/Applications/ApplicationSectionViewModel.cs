@@ -18,17 +18,26 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Applications
 
         public bool? IsSectionComplete { get; set; }
 
-        public ApplicationSectionViewModel(ApplicationSection section)
+        public ApplicationSectionViewModel(Guid applicationId, int sequenceId,  int sectionId, ApplicationSection section)
         {
-            Section = section;
-            Title = section.Title;
-            ApplicationId = section.ApplicationId;
-            SequenceId = section.SequenceId;
-            SectionId = section.SectionId;
-
-            if (section.Status == ApplicationSectionStatus.Evaluated)
+            if (section != null)
             {
-                IsSectionComplete = true;
+                Section = section;
+                Title = section.Title;
+                ApplicationId = section.ApplicationId;
+                SequenceId = section.SequenceId;
+                SectionId = section.SectionId;
+
+                if (section.Status == ApplicationSectionStatus.Evaluated)
+                {
+                    IsSectionComplete = true;
+                }
+            }
+            else
+            {
+                ApplicationId = applicationId;
+                SequenceId = sequenceId;
+                SectionId = sectionId;
             }
         }
     }

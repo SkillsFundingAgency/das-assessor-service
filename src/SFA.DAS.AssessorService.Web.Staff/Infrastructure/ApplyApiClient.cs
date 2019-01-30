@@ -118,7 +118,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         {
             return await Get<ApplicationSequence>($"/Review/Applications/{applicationId}");
         }
-        
+
+        public async Task<ApplicationSequence> GetSequence(Guid applicationId, int sequenceId)
+        {
+            return await Get<ApplicationSequence>($"Application/{applicationId}/User/null/Sequences/{sequenceId}");
+        }
+
         public async Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId, int sectionId)
         {
             return await Get<ApplicationSection>($"Application/{applicationId}/User/null/Sequences/{sequenceId}/Sections/{sectionId}");
