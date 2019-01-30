@@ -128,8 +128,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
                         {
                             var answer = section.QnAData.Pages.SelectMany(p => p.PageOfAnswers).SelectMany(a => a.Answers).SingleOrDefault(a => a.QuestionId == uploadQuestion.QuestionId);
 
+                            if (answer == null || string.IsNullOrWhiteSpace(answer.Value)) continue;
+                            
                             var fileDownloadName = answer.Value;
-            
+
                             var downloadedFile = await _apiClient.DownloadFile(applicationId, int.Parse(uploadPage.PageId), uploadQuestion.QuestionId, Guid.Empty, 1, 3, fileDownloadName);
 
                             var zipEntry = zipArchive.CreateEntry(fileDownloadName);

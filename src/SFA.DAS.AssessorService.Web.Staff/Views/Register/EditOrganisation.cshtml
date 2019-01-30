@@ -24,6 +24,8 @@ Layout = "_Layout";
                 <ul class="error-summary-list">
                     <li><a sfa-validation-for="OrganisationId"></a></li>
                     <li><a sfa-validation-for="Name"></a></li>
+                    <li><a sfa-validation-for="CompanyNumber"></a></li>
+                    <li><a sfa-validation-for="CharityNumber"></a></li>
                     <li><a sfa-validation-for="Ukprn"></a></li>
                     <li><a sfa-validation-for="OrganisationTypeId"></a></li>
                     <li><a sfa-validation-for="LegalName"></a></li>
@@ -45,8 +47,6 @@ Layout = "_Layout";
                 <!-- <span class="heading-secondary">Organisation ID: @Model.OrganisationId</span> -->
                 @Html.HiddenFor(c => c.OrganisationId)
                 @Html.HiddenFor(c => c.Status)
-                @Html.HiddenFor(c => c.CharityNumber)
-                @Html.HiddenFor(c => c.CompanyNumber)
             </h1>
 
             <div id="organisationWrapper">
@@ -71,6 +71,20 @@ Layout = "_Layout";
                         <span class="error-message" asp-validation-for="LegalName"></span>
                     </label>
                     <input class="form-control" name="LegalName" sfa-validation-for="LegalName" sfa-validationerror-class="form-control-error" asp-for="LegalName" type="text" />
+                </div>
+                <div class="form-group" sfa-validation-for="CompanyNumber" sfa-validationerror-class="form-group-error">
+                    <label for="CompanyNumber">
+                        <span class="form-label-bold">Company number (optional)</span>
+                        <span class="error-message" asp-validation-for="CompanyNumber"></span>
+                    </label>
+                    <input class="form-control js-alphanumeric-only" name="CompanyNumber" sfa-validation-for="CompanyNumber" sfa-validationerror-class="form-control-error" asp-for="CompanyNumber" type="text" />
+                </div>
+                <div class="form-group" sfa-validation-for="CharityNumber" sfa-validationerror-class="form-group-error">
+                    <label for="CharityNumber">
+                        <span class="form-label-bold">Charity number (optional)</span>
+                        <span class="error-message" asp-validation-for="CharityNumber"></span>
+                    </label>
+                    <input class="form-control" name="CharityNumber" sfa-validation-for="CharityNumber" sfa-validationerror-class="form-control-error" asp-for="CharityNumber" type="text" />
                 </div>
                 <div class="form-group" sfa-validation-for="Ukprn" sfa-validationerror-class="form-group-error">
                     <label for="Ukprn">
