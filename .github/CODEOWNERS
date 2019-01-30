@@ -1,4 +1,4 @@
 # CODEOWNERS file for das-assessor-service.
 # The following users will be automatically added as Reviewers to all PRs.
 
-* @MarkFCain @jcoxhead @martin-hornsby @alandburns @davidgouge @gdbarnes
+* @MarkFCain @martin-hornsby @alandburns @davidgouge @gdbarnes @ArshedMust
