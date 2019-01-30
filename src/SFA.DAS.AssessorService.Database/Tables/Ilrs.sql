@@ -22,4 +22,5 @@
 
 GO
 
-CREATE INDEX [IX_Ilrs_Uln_FamilyName_StdCode] ON [dbo].[Ilrs] ([Uln], [FamilyName], [StdCode])
+CREATE UNIQUE INDEX [IXU_Ilrs_Uln_StdCode] ON [Ilrs] ([Uln], [StdCode]) INCLUDE ([FamilyName])
+
