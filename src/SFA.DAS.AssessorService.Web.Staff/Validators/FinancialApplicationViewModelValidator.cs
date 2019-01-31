@@ -14,6 +14,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators
         {
             RuleFor(vm => vm).Custom((vm, context) =>
             {
+                if (vm.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Exempt)
+                {
+                    return;
+                }
+                
                 if (vm.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate && string.IsNullOrWhiteSpace(vm.Grade.InadequateMoreInformation))
                 {
                     context.AddFailure("Grade.InadequateMoreInformation", "Enter why the application was graded inadequate");
