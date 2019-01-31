@@ -74,6 +74,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.Pri
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.EpaoDataSync", "SFA.DAS.AssessorService.EpaoDataSync\SFA.DAS.AssessorService.EpaoDataSync.csproj", "{2CD0ED7B-43B3-4736-8A59-086AD47C41EF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.ApplyTypes", "SFA.DAS.AssessorService.ApplyTypes\SFA.DAS.AssessorService.ApplyTypes.csproj", "{7F682D43-DA65-439A-B4AC-27503270FA73}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -182,6 +184,10 @@ Global
 		{2CD0ED7B-43B3-4736-8A59-086AD47C41EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2CD0ED7B-43B3-4736-8A59-086AD47C41EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2CD0ED7B-43B3-4736-8A59-086AD47C41EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F682D43-DA65-439A-B4AC-27503270FA73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F682D43-DA65-439A-B4AC-27503270FA73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F682D43-DA65-439A-B4AC-27503270FA73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F682D43-DA65-439A-B4AC-27503270FA73}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

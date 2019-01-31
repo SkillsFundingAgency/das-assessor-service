@@ -1,0 +1,32 @@
+@model SFA.DAS.AssessorService.ApplyTypes.ApplicationSection
+
+@{
+    ViewBag.Title = "Evaluation submitted";
+}
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <div class="govuk-box-highlight">
+            <h1 class="heading-xlarge">
+                Evaluation submitted
+            </h1>
+            <p class="font-medium">
+                The evaluation has been saved with a grade of <br>
+                <span class="bold">@Model.QnAData.FinancialApplicationGrade.SelectedGrade</span>.
+            </p>
+        </div>
+        <p>You can view previous evaluations, including this one in the <a asp-action="PreviousApplications" asp-controller="Financial">previous assessments</a> area.</p>
+        <h3 class="heading-medium">What do you want to do next?</h3>
+        <ul class="list list-bullet">
+            <li>
+                <a asp-action="NewApplications" asp-controller="Financial">View new applications</a>
+            </li>
+            <li>
+                <a asp-action="Dashboard" asp-controller="Financial">Return to account home</a>
+            </li>
+            <li>
+                <a href="https://www.surveymonkey.co.uk/r/P8YBH9J">What did you think of this service?</a> (takes 30 seconds)
+            </li>
+        </ul>
+    </div>
+</div>

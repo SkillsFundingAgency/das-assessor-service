@@ -9,6 +9,7 @@ namespace SFA.DAS.AssessorService.Web.Extensions.TagHelpers
 {
   [HtmlTargetElement("div", Attributes = ValidationForAttributeName + "," + ValidationErrorClassName)]
   [HtmlTargetElement("input", Attributes = ValidationForAttributeName + "," + ValidationErrorClassName)]
+  [HtmlTargetElement("textarea", Attributes = ValidationForAttributeName + "," + ValidationErrorClassName)]
   public class ValidationClassTagHelper : TagHelper
   {
     public const string ValidationErrorClassName = "sfa-validationerror-class";

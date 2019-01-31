@@ -1,0 +1,122 @@
+@using SFA.DAS.AssessorService.ApplyTypes
+@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Applications.ApplicationSequenceAssessmentViewModel
+
+@{
+    ViewBag.Title = Model.Title;
+}
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <a class="link-back" asp-controller="Application" asp-action="Application" asp-route-applicationId="@Model.ApplicationId">Back</a>
+        <h1 class="heading-xlarge">@Model.Title</h1>
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                    There is a problem
+                </h2>
+                <ul class="error-summary-list">
+                    <li><a sfa-validation-for="ReturnType"></a></li>
+                </ul>
+            </div>
+        }
+
+        <div class="form-group">
+            <form asp-controller="Application" asp-action="Return" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId">
+                @if (!Model.HasNewFeedback)
+                {
+                    if (Model.SequenceId == 1)
+                    {
+                        <div class="form-group">
+                            <span>You are about to approve the first stage of this application. This means that the applicant will be able to apply for a standard. You are also satisfied with the information the applicant has provided so far, and require no further information.</span>
+                        </div>
+                    }
+                    else if (Model.SequenceId == 2)
+                    {
+                        <div class="form-group">
+                            <span>You are about to approve the second stage of this application. You are also satisfied with the information the applicant has provided so far, and require no further information.</span>
+                        </div>
+                    }
+
+                    <input type="hidden" asp-for="ReturnType" value="Approve" />
+                    <button class="button" type="submit">Approve application</button>
+                }
+                else
+                {
+                    <div class="form-group">
+                        @if (Model.SequenceId == 1)
+                        {
+                            @*<span>You are about to approve or reject the first stage of this application. If you approve the application, the applicant will be able to apply for a standard.</span>*@
+                            @*<span>If you reject the application, the applicant will have to start a new application.</span>*@
+                            <span>You are about to send back the first stage of this application. This means that the applicant will have to action any comments and resubmit.</span>
+                        }
+                        else if (Model.SequenceId == 2)
+                        {
+                            <span>You are about to send back the second stage of this application. This means that the applicant will have to action any comments and resubmit.</span>
+                        }
+                        <span>Before returning your assessment back to the applicant, review the comments that you added.</span>
+                    </div>
+
+                    foreach (var sec in Model.Sequence.Sections)
+                    {
+                        <div class="form-group">
+                            <label class="form-label-bold">@sec.LinkTitle</label>
+                            @if (!sec.HasNewPageFeedback)
+                            {
+                                <span>No comments.</span>
+                            }
+                            else
+                            {
+                                foreach (var pageWithNewFeedback in sec.QnAData.Pages.Where(p => p.HasNewFeedback))
+                                {
+                                    foreach (var newPageFeedback in pageWithNewFeedback.Feedback.Where(f => f.IsNew))
+                                    {
+                                        <p>@pageWithNewFeedback.LinkTitle : @newPageFeedback.Message</p>
+                                    }
+                                }
+                            }
+                        </div>
+                    }
+
+                    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+                    <input type="hidden" asp-for="ReturnType" value="ReturnWithFeedback" />
+                    <button class="button" type="submit">Return application</button>
+
+                    @*<div class="error-message-container" sfa-anyvalidationerror-class="form-group-error">
+                <div class="form-group">
+                    <label class="form-label-bold">
+                        Is the application approved?
+                    </label>
+                    <span id="ReturnType" class="error-message" asp-validation-for="ReturnType"></span>
+                    <div class="multiple-choice">
+                        <input name="ReturnType" id="options_feedback" type="radio" value="ReturnWithFeedback" sfa-validation-for="ReturnType" sfa-validationerror-class="form-control-error" />
+                        <label for="options_feedback">
+                            No. Send feedback and stop
+                        </label>
+                    </div>
+                    <div class="multiple-choice">
+                        <input name="ReturnType" id="options_yes" type="radio" value="ApproveWithFeedback" sfa-validation-for="ReturnType" sfa-validationerror-class="form-control-error" />
+                        <label for="options_yes">
+                            Yes. Send feedback and continue
+                        </label>
+                    </div>
+                    <div class="multiple-choice">
+                        <input name="ReturnType" id="options_no" type="radio" value="Reject" />
+                        <label for="options_no">
+                            No. Reject the application
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <button class="button" type="submit">Submit assessment</button>*@
+                }
+            </form>
+        </div>
+
+        <div class="form-group">
+            <a asp-controller="Application" asp-action="Application" asp-route-applicationId="@Model.ApplicationId" class="govuk-button">Return to application overview</a>
+        </div>
+    </div>
+</div>

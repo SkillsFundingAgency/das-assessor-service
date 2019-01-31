@@ -1,0 +1,81 @@
+@using SFA.DAS.AssessorService.ApplyTypes
+@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Applications.PageViewModel
+
+@{
+    ViewBag.Title = @Model.Title ?? "Page not active";
+    Layout = "_Layout";
+}
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <a href="@Url.Action("Section", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId})" class="link-back">Back</a>
+        @if (Model.Page == null)
+        {
+            <h1 class="heading-xlarge">Page not active</h1>
+        }
+        else
+        {
+            <h1 class="heading-xlarge">@Model.Title</h1>
+
+            @foreach (var pageOfAnswers in Model.Page.DisplayAnswerPages)
+            {
+                <table class="form-group">
+                    <thead>
+                        <tr>
+                            <th scope="col">Question</th>
+                            <th scope="col">Answer</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var answer in pageOfAnswers.DisplayAnswers)
+                        {
+                            <tr>
+                                <td>@answer.Label</td>
+
+                                @if (answer is FileUploadDisplayAnswer)
+                                {
+                                    var fuAnswer = answer as FileUploadDisplayAnswer;
+                                    <p>
+                                        <a href="@Url.Action("Download", "Application",
+                                             new
+                                             {
+                                                 applicationId = fuAnswer.ApplicationId,
+                                                 sequenceId = fuAnswer.SequenceId,
+                                                 sectionId = fuAnswer.SectionId,
+                                                 pageId = fuAnswer.PageId,
+                                                 questionId = fuAnswer.QuestionId,
+                                                 filename = fuAnswer.FileName
+                                             })">
+                                        </a>
+                                    </p>
+                                }
+                                else
+                                {
+                                    <td>@answer.Answer()</td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+
+            @if (Model.Page.HasFeedback)
+            {
+                <h2 class="heading-large">Feedback</h2>
+                foreach (var feedback in Model.Page.Feedback)
+                {
+                    <div class="das-feedback">
+                        <h3 class="heading-small">@feedback.From</h3>
+                        <p class="font-xsmall">@feedback.Date.ToShortDateString()</p>
+                        <p>@feedback.Message</p>
+                    </div>
+                }
+                <hr />
+            }
+        }
+
+        <div class="form-group">
+            <a href="@Url.Action("Section", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId})" class="govuk-button">Return to section overview</a>
+        </div>
+    </div>
+</div>
