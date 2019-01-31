@@ -15,16 +15,18 @@
 </div>
 
 <div class="grid-row">
-    <nav class="app-navigation govuk-clearfix">
-        <ul class="app-navigation__list">
-            <li class="app-navigation--current-page">
-                <a asp-action="OpenApplications" asp-controller="Application">Open</a>
-            </li>
-            <li class="app-navigation">
-                <a asp-action="ClosedApplications" asp-controller="Application">Closed</a>
-            </li>
-        </ul>
-    </nav>
+    <div class="column-full">
+        <nav class="app-navigation govuk-clearfix">
+            <ul class="app-navigation__list">
+                <li class="app-navigation--current-page">
+                    <a asp-action="OpenApplications" asp-controller="Application">Open</a>
+                </li>
+                <li>
+                    <a asp-action="ClosedApplications" asp-controller="Application">Closed</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
 </div>
 
 <div class="grid-row">
@@ -42,7 +44,7 @@
                         <th>Application type</th>
                         <th>Date submitted</th>
                         <th>Financial review</th>
-                        <th>Current status</th>
+                        <th class="numeric">Current status</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -68,29 +70,29 @@
                             <td data-label="Financial review">
                                 @(item.FinancialStatus ?? "---")
                             </td>
-                            <td data-label="Current status">
+                            <td class="numeric" data-label="Current status">
                                 @{
                                     switch (item.CurrentStatus)
                                     {
                                         case ApplicationSectionStatus.Submitted:
-                                            <div class="govuk-tag govuk-tag--float-right">
-                                                Unassigned
+                                            <div class="govuk-tag">
+                                                unassigned
                                             </div>
                                             break;
                                         case ApplicationSectionStatus.InProgress:
                                         case ApplicationSectionStatus.Evaluated:
-                                            <div class="govuk-tag govuk-tag--float-right">
-                                                In Progress
+                                            <div class="govuk-tag">
+                                                in progress
                                             </div>
                                             break;
                                         case ApplicationSequenceStatus.Resubmitted:
-                                            <div class="govuk-tag govuk-tag--float-right">
-                                                Updated
+                                            <div class="govuk-tag">
+                                                updated
                                             </div>
                                             break;
                                         case ApplicationSequenceStatus.FeedbackAdded:
-                                            <div class="govuk-tag govuk-tag--float-right">
-                                                Declined
+                                            <div class="govuk-tag">
+                                                declined
                                             </div>
                                             break;
                                         default:
