@@ -95,8 +95,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                     WebsiteLink = request.WebsiteLink,
                     CompanyNumber = request.CompanyNumber,
                     CharityNumber = request.CharityNumber,
+                    FHADetails = new FHADetails { 
                     FinancialDueDate = request.FinancialDueDate,
                     FinancialExempt = request.FinancialExempt
+                    }
                 },
                 Status = status
             };

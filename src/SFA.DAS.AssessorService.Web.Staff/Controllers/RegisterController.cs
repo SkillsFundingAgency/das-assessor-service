@@ -506,8 +506,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 CharityNumber = organisation.OrganisationData?.CharityNumber,
                 CompanyNumber =  organisation.OrganisationData?.CompanyNumber,
                 Status = organisation.Status,
-                FinancialDueDate = organisation.OrganisationData?.FinancialDueDate,
-                FinancialExempt = organisation.OrganisationData?.FinancialExempt
+                FinancialDueDate = organisation.OrganisationData?.FHADetails?.FinancialDueDate,
+                FinancialExempt = organisation.OrganisationData?.FHADetails?.FinancialExempt
             };
 
             viewModel.OrganisationTypes = _apiClient.GetOrganisationTypes().Result;
