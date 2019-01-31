@@ -16,8 +16,10 @@ AS
     FROM (
     -- The active records from ilr
     SELECT Uln, StdCode, UkPrn, EPAORGID, LearnStartDate, PlannedEndDate
-    FROM ilrs
-    WHERE CompletionStatus IN (1,2) AND EpaOrgId = @EPAOID
+    FROM ilrs il1
+    JOIN OrganisationStandard os ON il1.EpaOrgId = os.EndPointAssessorOrganisationId AND il1.StdCode = os.StandardCode AND 
+         os.[Status] <> 'Deleted' AND (os.[EffectiveTo] IS NULL OR os.[EffectiveTo] >= GETDATE())
+    WHERE CompletionStatus IN (1,2) AND EpaOrgId = @EPAOID 
     ) il
     JOIN (SELECT standardid, title, CONVERT(numeric,JSON_VALUE([StandardData],'$.Duration')) Duration FROM [dbo].[StandardCollation]) std ON std.StandardId = il.StdCode
     -- ignore already created certs
