@@ -25,13 +25,13 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
         Task UpdatePrivatelyFundedCertificatesToBeApproved();
         Task<List<CertificateLog>> GetCertificateLogsFor(Guid certificateId);
-        Task<PaginatedList<Certificate>> GetCertificateHistory(string userName, int pageIndex, int pageSize);
+        Task<PaginatedList<Certificate>> GetCertificateHistory(string userName, int pageIndex, int pageSize, List<string> statuses);
         Task<string> GetPreviousProviderName(int providerUkPrn);
         Task<CertificateAddress> GetContactPreviousAddress(string userName, bool requestIsPrivatelyFunded);
         Task<List<Option>> GetOptions(int stdCode);
         Task ApproveCertificates(List<ApprovalResult> approvalResults, string userName);
         Task<List<Certificate>> GetCertificates(long uln, string familyName, int? standardCode = null);
         Task<List<Certificate>> GetSubmittedAndDraftCertificatesFor(long uln);
-
+        Task<int> GetCertificatesCount(string userName, List<string> statuses);
     }
 }

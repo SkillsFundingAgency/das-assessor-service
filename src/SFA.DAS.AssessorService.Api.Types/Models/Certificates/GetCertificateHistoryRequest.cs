@@ -12,4 +12,13 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
         public int? PageIndex { get; set; }
         public string Username { get; set; }
     }
+
+    public class GetCertificatesCountRequest :  IRequest<CertificatesCountResponse>
+    {
+        public GetCertificatesCountRequest()
+        {
+        }
+        
+        public string Username { get; set; }
+    }
 }

@@ -173,23 +173,10 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        public async Task<PaginatedList<Certificate>> GetCertificateHistory(string userName, int pageIndex, int pageSize)
+        public async Task<PaginatedList<Certificate>> GetCertificateHistory(string userName, int pageIndex, int pageSize, List<string> statuses)
         {
-            var statuses = new List<string>
-            {
-                CertificateStatus.Submitted,
-                CertificateStatus.Printed,
-                CertificateStatus.Reprint
-            };
-
-            var count = await (from certificate in _context.Certificates
-                               join organisation in _context.Organisations on
-                                 certificate.OrganisationId equals organisation.Id
-                               join contact in _context.Contacts on
-                                 organisation.Id equals contact.OrganisationId
-                               where contact.Username == userName
-                                  && statuses.Contains(certificate.Status)
-                               select certificate).CountAsync();
+          
+            var count = await GetCertificatesCount(userName, statuses);
 
             var ids = await (from certificate in _context.Certificates
                              join organisation in _context.Organisations on
@@ -213,7 +200,20 @@ namespace SFA.DAS.AssessorService.Data
                 .ToListAsync();
 
             return new PaginatedList<Certificate>(certificates, count, pageIndex, pageSize);
-        }       
+        }
+
+        public async Task<int> GetCertificatesCount(string userName, List<string> statuses)
+        {
+           
+            return  await (from certificate in _context.Certificates
+                join organisation in _context.Organisations on
+                    certificate.OrganisationId equals organisation.Id
+                join contact in _context.Contacts on
+                    organisation.Id equals contact.OrganisationId
+                where contact.Username == userName
+                      && statuses.Contains(certificate.Status)
+                select certificate).CountAsync();
+        }
 
         public async Task<Certificate> Update(Certificate certificate, string username, string action, bool updateLog = true, string reasonForChange = null)
         {
