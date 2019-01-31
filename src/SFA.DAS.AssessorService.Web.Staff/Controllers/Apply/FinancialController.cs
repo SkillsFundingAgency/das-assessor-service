@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -8,8 +6,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.Web.Staff.Domain;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Financial;
@@ -21,11 +20,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
     {
         private readonly ApplyApiClient _apiClient;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly ApiClient _assessorApiClient;
 
-        public FinancialController(ApplyApiClient apiClient, IHttpContextAccessor contextAccessor)
+        public FinancialController(ApplyApiClient apiClient, IHttpContextAccessor contextAccessor, ApiClient assessorApiClient)
         {
             _apiClient = apiClient;
             _contextAccessor = contextAccessor;
+            _assessorApiClient = assessorApiClient;
         }
         
         
@@ -179,6 +180,19 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
                 GetFinancialDueDate(vm);
                 
                 await _apiClient.UpdateFinancialGrade(vm.ApplicationId, vm.Grade);
+
+                var org = await _apiClient.GetOrganisationForApplication(vm.ApplicationId);
+                
+                if (org.RoEPAOApproved)
+                {
+                    await _assessorApiClient.UpdateFinancials(new UpdateFinancialsRequest
+                    {
+                        EpaOrgId = org.OrganisationDetails.OrganisationReferenceId,
+                        FinancialDueDate = vm.Grade.FinancialDueDate,
+                        FinancialExempt = vm.Grade.SelectedGrade == "Exempt"
+                    });
+                }
+
                 return RedirectToAction("Graded", new {vm.ApplicationId});   
             }
             else

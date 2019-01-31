@@ -323,5 +323,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             return await Get<IEnumerable<IDictionary<string, object>>>($"api/v1/staffreports/report-content/{storedProcedure}");
         }
         #endregion
+
+        public async Task UpdateFinancials(UpdateFinancialsRequest updateFinancialsRequest)
+        {
+            await Post("api/ao/assessment-organisations/update-financials", updateFinancialsRequest);
+        }
     }
 }
