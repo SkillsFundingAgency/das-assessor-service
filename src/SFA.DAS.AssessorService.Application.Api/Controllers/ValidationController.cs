@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
        
 
-        [HttpGet("email-is-valid/{emailToValidate}", Name = "ValidateEmail")]
+        [HttpGet("is-email-format/{emailToValidate}", Name = "ValidateEmail")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
@@ -46,13 +46,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(await _mediator.Send(new ValidationRequest { ValidationType = "notEmpty", ValidationString = stringToValidate }));
         }
 
-        [HttpGet("ukprn/{ukprn}", Name = "ValidateUkprn")]
+        [HttpGet("is-ukprn-format/{ukprnToValidate}", Name = "ValidateUkprn")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(bool))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> ValidateUkprn(string ukprn)
+        public async Task<IActionResult> ValidateUkprn(string ukprnToValidate)
         {
-            return Ok(await _mediator.Send(new ValidationRequest { ValidationType = "ukprn", ValidationString = ukprn }));
+            return Ok(await _mediator.Send(new ValidationRequest { ValidationType = "ukprn", ValidationString = ukprnToValidate }));
         }
     }
 }

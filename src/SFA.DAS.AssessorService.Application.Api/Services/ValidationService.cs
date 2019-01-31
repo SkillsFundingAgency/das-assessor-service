@@ -7,6 +7,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
     {
         public bool CheckEmailIsValid(string emailToCheck)
         {
+            if (string.IsNullOrEmpty(emailToCheck)) return true;
             var validationResults = new EmailCheckValidator().Validate(new EmailCheck { EmailToCheck = emailToCheck });
             return validationResults.IsValid;
         }
@@ -18,6 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
         public bool UkprnIsValid(string ukprnToCheck)
         {
+            if (string.IsNullOrEmpty(ukprnToCheck)) return true;
             if (!int.TryParse(ukprnToCheck, out int ukprn))
                 return false;
 
