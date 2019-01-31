@@ -101,7 +101,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 Status = viewModel.Status,
                 ActionChoice = viewModel.ActionChoice,
                 CompanyNumber = viewModel.CompanyNumber,
-                CharityNumber = viewModel.CharityNumber
+                CharityNumber = viewModel.CharityNumber,
+                FinancialDueDate = viewModel.FinancialDueDate,
+                FinancialExempt = viewModel.FinancialExempt
             };
          
             await _apiClient.UpdateEpaOrganisation(updateOrganisationRequest);
@@ -503,7 +505,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 PrimaryContactName = notSetDescription,
                 CharityNumber = organisation.OrganisationData?.CharityNumber,
                 CompanyNumber =  organisation.OrganisationData?.CompanyNumber,
-                Status = organisation.Status
+                Status = organisation.Status,
+                FinancialDueDate = organisation.OrganisationData?.FinancialDueDate,
+                FinancialExempt = organisation.OrganisationData?.FinancialExempt
             };
 
             viewModel.OrganisationTypes = _apiClient.GetOrganisationTypes().Result;
