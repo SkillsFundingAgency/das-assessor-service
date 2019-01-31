@@ -65,6 +65,16 @@ namespace SFA.DAS.AssessorService.Web.Staff
             })
                 .SetHandlerLifetime(TimeSpan.FromMinutes(5))  //Set lifetime to five minutes
                 .AddPolicyHandler(GetRetryPolicy());
+            
+            services.AddHttpClient<ApplyApiClient>("ApplyApiClient", config =>
+                {
+                    config.BaseAddress = new Uri(ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress);
+                    config.DefaultRequestHeaders.Add("Accept", "Application/json");
+                })
+                .SetHandlerLifetime(TimeSpan.FromMinutes(5))  //Set lifetime to five minutes
+                .AddPolicyHandler(GetRetryPolicy());
+            
+            
             AddAuthentication(services);
             services.Configure<RequestLocalizationOptions>(options =>
             {
@@ -104,6 +114,7 @@ namespace SFA.DAS.AssessorService.Web.Staff
                 config.For<CertificateDateViewModelValidator>().Use<CertificateDateViewModelValidator>();
                 config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<IContactsApiClient>().Use<ContactsApiClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
+//                config.For<IApplyApiClient>().Use<ApplyApiClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<IAssessmentOrgsApiClient>().Use(() => new AssessmentOrgsApiClient(ApplicationConfiguration.AssessmentOrgsApiClientBaseUrl));
                 config.For<IIfaStandardsApiClient>().Use(() => new IfaStandardsApiClient(ApplicationConfiguration.IfaApiClientBaseUrl));
                 config.For<IAzureTokenService>().Use<AzureTokenService>();

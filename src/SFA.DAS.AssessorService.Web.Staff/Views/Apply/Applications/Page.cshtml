@@ -1,0 +1,115 @@
+@using SFA.DAS.AssessorService.ApplyTypes
+@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Applications.PageViewModel
+
+@{
+    ViewBag.Title = @Model.Title ?? "Page not active";
+    Layout = "_Layout";
+}
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <a href="@Url.Action("Section", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId})" class="link-back">Back</a>
+        @if (Model.Page == null)
+        {
+            <h1 class="heading-xlarge">Page not active</h1>
+        }
+        else
+        {
+            <h1 class="heading-xlarge">@Model.Title</h1>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                        There is a problem
+                    </h2>
+                    <ul class="error-summary-list">
+                        <li>
+                            <a sfa-validation-for="FeedbackMessage"></a>
+                        </li>
+                    </ul>
+                </div>
+            }
+
+            @foreach (var pageOfAnswers in Model.Page.DisplayAnswerPages)
+            {
+                <table class="form-group">
+                    <thead>
+                        <tr>
+                            <th scope="col">Question</th>
+                            <th scope="col">Answer</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var answer in pageOfAnswers.DisplayAnswers)
+                        {
+                            <tr>
+                                <td>@answer.Label</td>
+
+                                @if (answer is FileUploadDisplayAnswer)
+                                {
+                                    var fuAnswer = answer as FileUploadDisplayAnswer;
+                                    <p>
+                                        <a href="@Url.Action("Download", "Application",
+                             new
+                             {
+                                 applicationId = fuAnswer.ApplicationId,
+                                 sequenceId = fuAnswer.SequenceId,
+                                 sectionId = fuAnswer.SectionId,
+                                 pageId = fuAnswer.PageId,
+                                 questionId = fuAnswer.QuestionId,
+                                 filename = fuAnswer.FileName
+                             })">
+                                        </a>
+                                    </p>
+                                }
+                                else
+                                {
+                                    <td>@answer.Answer()</td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+
+            @if (Model.Page.HasFeedback)
+            {
+                <h2 class="heading-large">Feedback</h2>
+                foreach (var feedback in Model.Page.Feedback)
+                {
+                    <div class="das-feedback">
+                        <h3 class="heading-small">@feedback.From</h3>
+                        <p class="font-xsmall">@feedback.Date.ToShortDateString()</p>
+                        <p>@feedback.Message</p>
+                        @if (feedback.IsNew)
+                        {
+                            <form asp-action="DeleteFeedback" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@Model.PageId">
+                                <input type="hidden" name="FeedbackId" value="@feedback.Id"/>
+                                <button class="button" type="submit">Delete</button>
+                            </form>
+                        }
+                    </div>
+                }
+                <hr/>
+            }
+
+            <div class="form-group">
+                <form asp-action="Feedback" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@Model.PageId">
+                    <div class="form-group error-message-container" sfa-anyvalidationerror-class="form-group-error">
+                        <label class="form-label-bold" for="message">
+                            Add Feedback
+                        </label>
+                        <span class="error-message" asp-validation-for="FeedbackMessage"></span>
+                        <textarea class="form-control form-control-full" rows="15" sfa-validation-for="FeedbackMessage" sfa-validationerror-class="form-control-error" asp-for="FeedbackMessage"></textarea>
+                    </div>
+                    <button class="button" type="submit">Add feedback</button>
+                </form>
+            </div>
+        }
+
+        <div class="form-group">
+            <a href="@Url.Action("Section", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId})" class="govuk-button">Return to section overview</a>
+        </div>
+    </div>
+</div>

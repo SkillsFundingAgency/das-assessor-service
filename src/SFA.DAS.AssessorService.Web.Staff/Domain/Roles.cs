@@ -8,17 +8,17 @@ namespace SFA.DAS.AssessorService.Web.Staff.Domain
 
         public const string CertificationTeam = "EPC";
         public const string OperationsTeam = "EPO";
-        public const string AssessmentDeliveryTeam = "EPA";
-        public const string ProviderRiskAssuranceTeam = "EPR";
+        public const string AssessmentDeliveryTeam = "EPA"; // AAD
+        public const string ProviderRiskAssuranceTeam = "EPR"; // FHA
         public const string RegisterViewOnlyTeam = "EPV";
-
-        public static bool HasValidRole(this ClaimsPrincipal User)
+        
+        public static bool HasValidRole(this ClaimsPrincipal user)
         {
-            return User.IsInRole(CertificationTeam)
-                   || User.IsInRole(OperationsTeam)
-                   || User.IsInRole(AssessmentDeliveryTeam)
-                   || User.IsInRole(ProviderRiskAssuranceTeam)
-                   || User.IsInRole(RegisterViewOnlyTeam);
+            return user.IsInRole(CertificationTeam)
+                   || user.IsInRole(OperationsTeam)
+                   || user.IsInRole(AssessmentDeliveryTeam)
+                   || user.IsInRole(ProviderRiskAssuranceTeam)
+                   || user.IsInRole(RegisterViewOnlyTeam);
 
         }
     }
