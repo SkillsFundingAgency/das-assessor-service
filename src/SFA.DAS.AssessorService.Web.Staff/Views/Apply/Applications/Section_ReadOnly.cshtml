@@ -61,6 +61,18 @@
                                     {
                                         <h3 class="heading-small">@answer.Label</h3>
 
+                                        @if (!string.IsNullOrWhiteSpace(pg.BodyText))
+                                        {
+                                            <div class="form-group">
+                                                <details>
+                                                    <summary><span class="summary">view detail...</span></summary>
+                                                    <div class="panel panel-border-narrow" id="question-text">
+                                                        @Html.Raw(pg.BodyText)
+                                                    </div>
+                                                </details>
+                                            </div>
+                                        }
+
                                         if (answer is FileUploadDisplayAnswer)
                                         {
                                             var fuAnswer = answer as FileUploadDisplayAnswer;
