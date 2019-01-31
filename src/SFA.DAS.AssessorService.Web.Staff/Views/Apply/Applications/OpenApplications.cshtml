@@ -52,7 +52,7 @@
                             <td data-label="Organisation name" class="nowrap">
                                 @if (item.CurrentStatus == ApplicationSequenceStatus.FeedbackAdded)
                                 {
-                                    @item.OrganisationName
+                                    <a asp-action="Sequence" asp-controller="Application" asp-route-applicationId="@item.ApplicationId" asp-route-sequenceId="@item.SequenceId">@item.OrganisationName</a>
                                 }
                                 else
                                 {

@@ -3,11 +3,14 @@
 
 @{
     ViewBag.Title = "Application overview";
+
+    var OpenStatusList = new string[] { ApplicationSequenceStatus.Submitted, ApplicationSequenceStatus.FeedbackAdded };
+    var BackAction = (Model == null || OpenStatusList.Contains(Model.Status)) ? "OpenApplications" : "ClosedApplications";
 }
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <a class="link-back" asp-controller="Application" asp-action="OpenApplications">Back</a>
+        <a class="link-back" asp-controller="Application" asp-action="@BackAction">Back</a>
         @if (Model == null)
         {
             <h1 class="heading-xlarge">Sequence not active</h1>
@@ -18,11 +21,6 @@
             <ul class="govuk-list">
                 @foreach (var applicationSection in Model.Sections.OrderBy(s => s.SectionId))
                 {
-                    if (applicationSection.SequenceId == 1 && applicationSection.SectionId == 3 && !(applicationSection.Status == ApplicationSectionStatus.Graded || applicationSection.Status == ApplicationSectionStatus.Evaluated))
-                    {
-                        // NOTE: FHA Section should only be shown if it has been Graded or Completed. See ON-1277
-                        continue;
-                    }
                     <li>
                         @if (applicationSection.HasNewPageFeedback)
                         {
@@ -30,12 +28,6 @@
                                 Feedback added
                             </div>
                         }
-                        @*@if (applicationSection.HasCompletedPageFeedback)
-                            {
-                            <div class="govuk-tag govuk-tag--float-right">
-                                Answer updated
-                            </div>
-                            }*@
                         @if (applicationSection.Status == ApplicationSectionStatus.Evaluated)
                         {
                             <div class="govuk-tag govuk-tag--float-right">
@@ -54,19 +46,10 @@
                     </li>
                 }
             </ul>
-
-            @if (Model.Sections.All(s => s.Status == ApplicationSectionStatus.Evaluated))
-            {
-                <div class="form-group">
-                    <form asp-controller="Application" asp-action="Assessment" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" method="get">
-                        <button class="button" type="submit">Complete review</button>
-                    </form>
-                </div>
-            }
         }
 
         <div class="form-group">
-            <a class="govuk-button" asp-controller="Application" asp-action="OpenApplications">Return to account home</a>
+            <a class="govuk-button" asp-controller="Application" asp-action="@BackAction">Return to account home</a>
         </div>
     </div>
 </div>

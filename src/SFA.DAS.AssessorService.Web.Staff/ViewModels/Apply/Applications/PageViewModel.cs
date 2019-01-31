@@ -19,14 +19,24 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Applications
 
         public string FeedbackMessage { get; set; }
 
-        public PageViewModel(Page page)
+        public PageViewModel(Guid applicationId, int sequenceId, int sectionId, string pageId, Page page)
         {
-            Page = page;
-            Title = page.Title;
-            ApplicationId = page.ApplicationId;
-            SequenceId = page.SequenceId;
-            SectionId = page.SectionId;
-            PageId = page.PageId;
+            if (page != null)
+            {
+                Page = page;
+                Title = page.Title;
+                ApplicationId = page.ApplicationId;
+                SequenceId = page.SequenceId;
+                SectionId = page.SectionId;
+                PageId = page.PageId;
+            }
+            else
+            {
+                ApplicationId = applicationId;
+                SequenceId = sequenceId;
+                SectionId = sectionId;
+                PageId = pageId;
+            }
         }
     }
 }

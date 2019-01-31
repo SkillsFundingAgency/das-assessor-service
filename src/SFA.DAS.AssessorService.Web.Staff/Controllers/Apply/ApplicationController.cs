@@ -52,7 +52,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
         {
             var activeSequence = await _applyApiClient.GetActiveSequence(applicationId);
 
-            if (activeSequence.Status == "Submitted")
+            if (activeSequence?.Status == ApplicationSequenceStatus.Submitted)
             {
                 await _applyApiClient.StartApplicationReview(applicationId, activeSequence.SequenceId);
             }
@@ -60,12 +60,35 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
             return View("~/Views/Apply/Applications/Sequence.cshtml", activeSequence);
         }
 
+        [HttpGet("/Applications/{applicationId}/Sequence/{sequenceId}")]
+        public async Task<IActionResult> Sequence(Guid applicationId, int sequenceId)
+        {
+            var sequence = await _applyApiClient.GetSequence(applicationId, sequenceId);
+            if (sequence?.Status == ApplicationSequenceStatus.Submitted)
+            {
+                return View("~/Views/Apply/Applications/Sequence.cshtml", sequence);
+            }
+            else
+            {
+                return View("~/Views/Apply/Applications/Sequence_ReadOnly.cshtml", sequence);
+            }
+        }
+
         [HttpGet("/Applications/{applicationId}/Sequence/{sequenceId}/Section/{sectionId}")]
         public async Task<IActionResult> Section(Guid applicationId, int sequenceId, int sectionId)
         {
             var section = await _applyApiClient.GetSection(applicationId, sequenceId, sectionId);
-            var sectionVm = new ApplicationSectionViewModel(section);
-            return View("~/Views/Apply/Applications/Section.cshtml", sectionVm);
+            var sectionVm = new ApplicationSectionViewModel(applicationId, sequenceId, sectionId, section);
+
+            var sequence = await _applyApiClient.GetSequence(applicationId, sequenceId);
+            if (sequence?.Status == ApplicationSequenceStatus.Submitted)
+            {
+                return View("~/Views/Apply/Applications/Section.cshtml", sectionVm);
+            }
+            else
+            {
+                return View("~/Views/Apply/Applications/Section_ReadOnly.cshtml", sectionVm);
+            }
         }
 
         [HttpPost("/Applications/{applicationId}/Sequence/{sequenceId}/Section/{sectionId}")]
@@ -86,7 +109,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
                 }               
 
                 var section = await _applyApiClient.GetSection(applicationId, sequenceId, sectionId);
-                var sectionVm = new ApplicationSectionViewModel(section);
+                var sectionVm = new ApplicationSectionViewModel(applicationId, sequenceId, sectionId, section);
                 return View("~/Views/Apply/Applications/Section.cshtml", sectionVm);
             }
 
@@ -99,9 +122,17 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
         public async Task<IActionResult> Page(Guid applicationId, int sequenceId, int sectionId, string pageId)
         {
             var page = await _applyApiClient.GetPage(applicationId, sequenceId, sectionId, pageId);
-            var pageVm = new PageViewModel(page);
+            var pageVm = new PageViewModel(applicationId, sequenceId, sectionId, pageId, page);
 
-            return View("~/Views/Apply/Applications/Page.cshtml", pageVm);
+            var sequence = await _applyApiClient.GetSequence(applicationId, sequenceId);
+            if (sequence?.Status == ApplicationSequenceStatus.Submitted)
+            {
+                return View("~/Views/Apply/Applications/Page.cshtml", pageVm);
+            }
+            else
+            {
+                return View("~/Views/Apply/Applications/Page_ReadOnly.cshtml", pageVm);
+            }
         }
 
         [HttpPost("/Applications/{applicationId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}")]
@@ -122,7 +153,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
                 }
 
                 var page = await _applyApiClient.GetPage(applicationId, sequenceId, sectionId, pageId);
-                var pageVm = new PageViewModel(page);
+                var pageVm = new PageViewModel(applicationId, sequenceId, sectionId, pageId, page);
                 return View("~/Views/Apply/Applications/Page.cshtml", pageVm);
             }
 

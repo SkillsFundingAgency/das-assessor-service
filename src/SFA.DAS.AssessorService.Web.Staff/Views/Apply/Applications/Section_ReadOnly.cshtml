@@ -8,7 +8,7 @@
 
 <div class="grid-row">
     <div class="column-full">
-        <a href="@Url.Action("Application", "Application", new {applicationId = Model.ApplicationId})" class="link-back">Back</a>
+        <a class="link-back" asp-action="Sequence" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId">Back</a>
         @if (Model.Section == null)
         {
             <h1 class="heading-xlarge">Section not active</h1>
@@ -17,23 +17,11 @@
         {
             <h1 class="heading-xlarge">@Model.Title</h1>
 
-            if (!ViewData.ModelState.IsValid)
-            {
-                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                        There is a problem
-                    </h2>
-                    <ul class="error-summary-list">
-                        <li><a sfa-validation-for="IsSectionComplete"></a></li>
-                    </ul>
-                </div>
-            }
-
             if (Model.SequenceId == 1 && Model.SectionId == 3)
             {
                 // NOTE: The FHA Section has a read only view. See ON-1277
                 var financialApplication = Model.Section.QnAData?.FinancialApplicationGrade;
-                var financialApplicationComments = financialApplication.InadequateMoreInformation;
+                var financialApplicationComments = financialApplication.InadequateMoreInformation ?? financialApplication.SatisfactoryMoreInformation;
 
                 <div class="form-group">
                     <table class="table">
@@ -88,16 +76,18 @@
                                         if (answer is FileUploadDisplayAnswer)
                                         {
                                             var fuAnswer = answer as FileUploadDisplayAnswer;
-                                            <p><a href="@Url.Action("Download","Application", 
+                                            <p>
+                                                <a href="@Url.Action("Download","Application",
                                                          new
                                                          {
-                                                             applicationId = Model.ApplicationId, 
+                                                             applicationId = Model.ApplicationId,
                                                              sequenceId = fuAnswer.SequenceId,
                                                              sectionId = fuAnswer.SectionId,
                                                              pageId = fuAnswer.PageId,
                                                              questionId = fuAnswer.QuestionId,
                                                              filename = fuAnswer.FileName
-                                                         })">@fuAnswer.FileName</a></p>
+                                                         })">@fuAnswer.FileName</a>
+                                                    </p>
                                                 }
                                                 else
                                                 {
@@ -121,54 +111,21 @@
                                     </div>
                                 }
 
-                                <p>
-                                    <a class="nowrap" href="@Url.Action("Page", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = pg.PageId})">
-                                        @if (pg.HasNewFeedback)
-                                        {
-                                            <text>View or amend feedback</text>
-                                        }
-                                        else
-                                        {
-                                            <text>Add feedback</text>
-                                        }
-                                    </a>
-                                </p>
+                                @if (pg.HasFeedback)
+                                {
+                                    <p>
+                                        <a class="nowrap" asp-action="Page" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@pg.PageId">View feedback</a>
+                                    </p>
+                                }
                             </dd>
-
                         </div>
                     }
                 </dl>
             }
-
-            <div class="form-group">
-                <form asp-action="EvaluateSection" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId">
-                    <div class="error-message-container" sfa-anyvalidationerror-class="form-group-error">
-                        <div class="form-group">
-                            <label class="form-label-bold">
-                                Is this section complete?
-                            </label>
-                            <span id="IsSectionComplete" class="error-message" asp-validation-for="IsSectionComplete"></span>
-                            <div class="multiple-choice">
-                                <input asp-for="IsSectionComplete" id="options_yes" type="radio" value="True" sfa-validation-for="IsSectionComplete" sfa-validationerror-class="form-control-error" />
-                                <label for="options_yes">
-                                    Yes
-                                </label>
-                            </div>
-                            <div class="multiple-choice">
-                                <input asp-for="IsSectionComplete" id="options_no" type="radio" value="False" sfa-validation-for="IsSectionComplete" sfa-validationerror-class="form-control-error" />
-                                <label for="options_no">
-                                    No
-                                </label>
-                            </div>
-                        </div>
-                        <button class="button" type="submit">Save</button>
-                    </div>
-                </form>
-            </div>
         }
 
         <div class="form-group">
-            <a href="@Url.Action("Application", "Application", new { applicationId = Model.ApplicationId })" class="govuk-button">Return to application overview</a>
+            <a class="govuk-button" asp-action="Sequence" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId">Return to application overview</a>
         </div>
     </div>
 </div>

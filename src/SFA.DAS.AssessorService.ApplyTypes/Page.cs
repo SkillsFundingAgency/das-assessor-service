@@ -22,6 +22,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public int? Order { get; set; }
         public bool Active { get; set; }        
         public bool Visible { get; set; }
+        public string BodyText { get; set; }
         public FinancialApplicationGrade FinancialApplicationGrade { get; set; }
         
         public List<Feedback> Feedback { get; set; }
