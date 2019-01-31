@@ -6,9 +6,16 @@ details {
   margin-bottom: 30px;
 }
 
-.button:focus {
+/*  I commented this bit of styling because the
+    button stays active and focused even when you click away.
+    The side efect is multiple submission when
+    another element is clicked. Plays havoc with buttons that 
+    do not refresh the page.
+*/
+/*.button:focus {
   position: inherit;
-}
+*/
+
 
 .govuk-related-items {
   margin-top: 30px;
@@ -785,6 +792,8 @@ table.responsive tr td {
   border-bottom: 1px dotted #bfc1c3;
 }
 
+
+
 table.responsive tr td:before {
   content: attr(data-label);
   float: left;
@@ -803,6 +812,19 @@ table.responsive tr td:empty {
 table.responsive tr.total {
   border: 2px solid #000;
 }
+
+table.responsive.striped tbody tr:nth-child(even) {
+    background-color: #FFFFFF;
+}
+
+table.responsive.striped tbody tr:nth-child(odd) {
+    background-color: #F8F8F8;
+}
+
+table.responsive tr td.bold {
+    font-weight: 700;
+}
+
 
 @media (min-width: 768px) {
   table.responsive thead {
@@ -824,14 +846,15 @@ table.responsive tr.total {
     border-bottom-style: solid;
     width: auto;
   }
+
   table.responsive tr th:first-child,
   table.responsive tr td:first-child {
     padding-left: 0;
   }
-  table.responsive tr th:last-child,
-  table.responsive tr td:last-child {
-    padding-right: 0;
-  }
+    table.responsive tr th:last-child,
+    table.responsive tr td:last-child {
+        padding-right: 0;
+    }
   table.responsive tr th:before,
   table.responsive tr td:before {
     display: none;
@@ -911,8 +934,76 @@ table.responsive tr.total {
   }
 }
 
+table.responsive [aria-sort] a, table.responsive 
+[aria-sort] a:hover {
+    background-color: transparent;
+    border-width: 0;
+    -webkit-box-shadow: 0 0 0 0;
+    -moz-box-shadow: 0 0 0 0;
+    box-shadow: 0 0 0 0;
+    color: #005ea5;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    padding: 0 10px 0 0;
+    position: relative;
+    text-align: inherit;
+    font-size: 1em;
+    text-decoration: none;
+    margin: 0;
+}
+
+table.responsive [aria-sort]:first-child a {
+    right: auto;
+}
+
+table.responsive [aria-sort] a:before {
+    content: " \25bc";
+    position: absolute;
+    right: -2px;
+    top: 8px;
+    font-size: 0.5em;
+}
+
+table.responsive [aria-sort] a:after {
+    content: " \25b2";
+    position: absolute;
+    right: -2px;
+    top: 1px;
+    font-size: 0.5em;
+}
+
+table.responsive [aria-sort="ascending"] a:before, table.responsive
+[aria-sort="descending"] a:before {
+    content: none;
+}
+
+table.responsive [aria-sort="ascending"] a:after {
+    content: " \25b2";
+    font-size: .7em;
+    position: absolute;
+    right: -2px;
+    top: 2px;
+}
+
+table.responsive [aria-sort="descending"] a:after {
+    content: " \25bc";
+    font-size: .7em;
+    position: absolute;
+    right: -2px;
+    top: 2px;
+}
+
 .nowrap {
   white-space: nowrap;
+}
+
+@media (min-width: 641px) {
+    .align-button-right {
+        margin-top: 2.55em;
+        float: right
+    }
 }
 
 /* Page navigation */
@@ -1202,4 +1293,133 @@ table.responsive tr.total {
   .arrow {
     display: inline-block;
   }
+}
+
+/*Dashboard*/
+
+.dashboard-body {
+    padding: 0;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.dashboard-box,
+.dashboard-box__green,
+.dashboard-box__lightblue,
+.dashboard-box__darkblue { 
+    margin-top: 1.5em;
+    padding: 0;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.dashboard-box {
+    border: 1px solid #BFC1C3;
+    height: 9.5em;
+    background-color: #F8F8F8;
+}
+
+.dashboard-box__green {
+    height: 11.8em;
+    border: 1px solid #28A197;
+}
+
+.dashboard-box__lightblue {
+    height: 11.8em;
+    border: 1px solid #2B8CC4;
+}
+
+.dashboard-box__darkblue {
+    height: 11.8em;
+    border: 1px solid #2b8cc4;
+}
+
+.dashboard-box-content {
+    margin: 0.7em;
+}
+
+.dashboard__link-list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    margin-bottom: 1.25em;
+}
+
+.dashboard__link {
+    line-height: 1.5;
+}
+
+.dashboard__link a:visited {
+    color: #005ea5;
+}
+
+.dashboard__link a:focus {
+    outline: 3px solid #ffbf47;
+}
+
+.dashboard__link a:hover {
+    color: #2b8cc4;
+}
+
+.data-stats {
+    color: #FFFFFF;
+    padding: 0.7em;
+    margin-top: 0;
+}
+
+.data-custom {
+    color: #005EA5;
+}
+
+.data-item-custom {
+    line-height: 1.5;
+    font-weight: 500;
+}
+
+.data-background__green {
+    background-color:  #28A197;
+}
+
+.data-background__lightblue {
+    background-color: #2B8CC4;
+}
+
+.data-background__darkblue {
+    background-color: #005EA5;
+}
+
+@media  (max-width: 1020px) {
+    .dashboard-box__green, 
+    .dashboard-box__lightblue, 
+    .dashboard-box__darkblue {
+        height: 13.5em;
+    }
+    .dashboard-box {
+        height: 11.5em;
+    }
+}
+
+@media (max-width: 769px) {
+    .dashboard-box__green,
+    .dashboard-box__lightblue,
+    .dashboard-box__darkblue {
+        height: 14.5em;
+    }
+    .dashboard-box {
+        height: 13.0em;
+    }
+}
+
+@media  (max-width: 641px) {
+    .dashboard-box__green,
+    .dashboard-box__lightblue,
+    .dashboard-box__darkblue {
+        height: 11.5em;
+    }
+
+    .dashboard-box {
+        height: 10.0em;
+    }
 }
