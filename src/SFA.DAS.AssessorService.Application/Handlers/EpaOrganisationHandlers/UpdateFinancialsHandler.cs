@@ -1,6 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Interfaces;
 
@@ -19,11 +20,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
         
         public async Task Handle(UpdateFinancialsRequest message, CancellationToken cancellationToken)
         {
-
             var epaOrg = await _registerQueryRepository.GetEpaOrganisationByOrganisationId(message.EpaOrgId);
-
-            epaOrg.OrganisationData.FinancialDueDate = message.FinancialDueDate;
-            epaOrg.OrganisationData.FinancialExempt = message.FinancialExempt;
+ 
+            epaOrg.OrganisationData.FHADetails = new FHADetails()
+            {
+                FinancialDueDate = message.FinancialDueDate,
+                FinancialExempt = message.FinancialExempt
+            };
 
             await _registerRepository.UpdateEpaOrganisation(epaOrg);
         }

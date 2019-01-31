@@ -187,7 +187,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
                 {
                     await _assessorApiClient.UpdateFinancials(new UpdateFinancialsRequest
                     {
-                        EpaOrgId = org.OrganisationDetails.OrganisationReferenceId,
+                        EpaOrgId = GetEpaOrgId(org),
                         FinancialDueDate = vm.Grade.FinancialDueDate,
                         FinancialExempt = vm.Grade.SelectedGrade == "Exempt"
                     });
@@ -215,6 +215,18 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
                 newvm.Grade.SatisfactoryFinancialDueDate = vm.Grade.SatisfactoryFinancialDueDate;
                 return View("~/Views/Apply/Financial/Application.cshtml", newvm);
             }
+        }
+
+        private static string GetEpaOrgId(Organisation org)
+        {
+            var referenceId = org.OrganisationDetails.OrganisationReferenceId;
+            if (!referenceId.Contains(","))
+            {
+                return referenceId;                
+            }
+
+            var ids = referenceId.Split(',', StringSplitOptions.RemoveEmptyEntries);
+            return ids.First(i => i.StartsWith("EPA"));
         }
 
         private static void GetFinancialDueDate(FinancialApplicationViewModel vm)
