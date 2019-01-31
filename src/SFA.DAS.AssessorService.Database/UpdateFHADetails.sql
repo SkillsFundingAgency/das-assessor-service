@@ -8847,3 +8847,25 @@ update organisations set OrganisationData= JSON_MODIFY(OrganisationData,'$.Finan
 update organisations set OrganisationData= JSON_MODIFY(OrganisationData,'$.FinancialExempt','true')  where convert(varchar,EndPointAssessorukprn)='90000581'
 update organisations set OrganisationData= JSON_MODIFY(OrganisationData,'$.FinancialExempt','true')  where convert(varchar,EndPointAssessorukprn)='90000619'
 END
+GO
+update organisations set organisationData = stuff(organisationData,len(organisationDAta),1,
+',"FHADetails": {"FinancialDueDate": '+
+CASE WHEN (ISNULL(JSON_Value(organisationData,'$.FinancialDueDate'),'x') = 'x')
+THEN 'null'
+ELSE
+   '"'+ JSON_Value(organisationData,'$.FinancialDueDate') +'"'
+END
++
+', "FinancialExempt": ' +
+CASE WHEN (ISNULL(JSON_Value(organisationData,'$.FinancialExempt'),'x') = 'x')
+THEN 'null'
+ELSE
+   JSON_Value(organisationData,'$.FinancialExempt')
+END +
+'}}'
+) 
+
+GO
+update organisations set OrganisationData= JSON_MODIFY(OrganisationData,'$.FinancialDueDate',null)
+update organisations set OrganisationData= JSON_MODIFY(OrganisationData,'$.FinancialExempt',null) 
+GO
