@@ -15,8 +15,14 @@
         </div>
         @if (Model.Response.Items.Any())
         {
+            <div class="column-two-thirds">
+                <div class="panel panel-border-wide">
+                    <p>
+                        Assessment numbers may vary because of data changes on the individualised learner record (ILR) and certification service.
+                    </p>
+                </div>
+            </div>
             <div class="column-one-third">
-
                 <div class="form-group align-button-right">
                     <form asp-controller="OrganisationStandards" asp-action="ExportEpaPipelineAsCsv" method="get">
                         <button type="submit" class="button">Download as csv</button>
@@ -73,7 +79,6 @@
                                 @Html.DisplayFor(modelItem => item.EstimatedDate)
                             </td>
                         </tr>
-
                     }
                     </tbody>
                 </table>
@@ -82,11 +87,18 @@
         else
         {
             <div class="column-full">
+                <div class="panel panel-border-wide">
+                    <p>
+                        Assessment numbers may vary because of data changes on the individualised learner record (ILR) and certification service.
+                    </p>
+                </div>
+            </div>
+            <div class="column-full">
                 <div class="info-summary">
                     <h3 class="heading-medium">Your pipeline is empty.</h3>
                 </div>
             </div>
-        }    
+        }
     </div>
 </div>
 @if (Model.Response.HasPreviousPage || Model.Response.HasNextPage)
