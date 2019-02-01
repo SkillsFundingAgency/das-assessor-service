@@ -10,7 +10,7 @@ namespace SFA.DAS.AssessorService.EpaoDataSync
     public static class RefreshIlrsTriggeredFunctionApp
     {
         [FunctionName("RefreshIlrsFromProviderEventsTriggered")]
-        public static async Task Run([TimerTrigger("0 0 0 * * *", RunOnStartup = true)] TimerInfo myTimer, TraceWriter functionLogger,
+        public static async Task Run([TimerTrigger("0 0 0 * * *")] TimerInfo myTimer, TraceWriter functionLogger,
             ExecutionContext context)
         {
             functionLogger.Info($"C# Timer trigger function executed at: {DateTime.Now}");

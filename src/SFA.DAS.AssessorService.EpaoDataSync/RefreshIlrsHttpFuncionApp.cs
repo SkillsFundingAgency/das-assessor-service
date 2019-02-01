@@ -19,12 +19,12 @@ namespace SFA.DAS.AssessorService.EpaoDataSync
             ExecutionContext executionContext)
         {
             var eventTime = req.GetQueryNameValuePairs()
-                .FirstOrDefault(q => string.Compare(q.Key, "eventTime", StringComparison.OrdinalIgnoreCase) == 0)
+                .FirstOrDefault(q => string.Compare(q.Key, "sinceTime", StringComparison.OrdinalIgnoreCase) == 0)
                 .Value;
 
             if (string.IsNullOrEmpty(eventTime))
                 return req.CreateResponse(HttpStatusCode.BadRequest,
-                    "Please pass an eventTime on the query string - <domain-name>/api/RefreshIlrsFromProviderEvents?eventTime=2018-09-09T11:07:19");
+                    "Please pass an sinceTime on the query string - <domain-name>/api/RefreshIlrsFromProviderEvents?sinceTime=2018-09-09T11:07:19");
 
             Bootstrapper.StartUp(log, executionContext);
             var ilrRefresherService = Bootstrapper.Container.GetInstance<IIlrsRefresherService>();

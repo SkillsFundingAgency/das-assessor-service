@@ -5,10 +5,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.EpaoDataSync.Data;
 using SFA.DAS.AssessorService.EpaoDataSync.Data.Types;
 using SFA.DAS.AssessorService.EpaoDataSync.Logger;
+using SFA.DAS.AssessorService.EpaoDataSync.Extensions;
 
 namespace SFA.DAS.AssessorService.EpaoDataSync.Domain
 {
@@ -30,7 +30,7 @@ namespace SFA.DAS.AssessorService.EpaoDataSync.Domain
        
         public async Task UpdateIlRsTable()
         {
-            _aggregateLogger.LogInfo(@"Starting to update Update IlRs Table From Submissions ....");
+            _aggregateLogger.LogInfo(@"Starting to update IlRs Table From Submissions ....");
             var changedRecordsUlnCache = new List<long>();
             var totalNumbersEffected = 0L;
             var ilrResult =
@@ -55,7 +55,7 @@ namespace SFA.DAS.AssessorService.EpaoDataSync.Domain
             }
 
             _aggregateLogger.LogInfo(
-                $"Finished inserting into Ilrs table, rows effected {totalNumbersEffected}");
+                $"Finished inserting into Ilrs table. Number of updates {totalNumbersEffected}");
 
             await ProcessFromLearners(changedRecordsUlnCache);
         }
@@ -89,7 +89,7 @@ namespace SFA.DAS.AssessorService.EpaoDataSync.Domain
             }
 
             _aggregateLogger.LogInfo(
-                $"Finished updating/inserting into Ilrs table from submissions, rows effected {totalNumbersEffected}");
+                $"Finished updating/inserting into Ilrs table from submissions. Number of updates {totalNumbersEffected}");
          
              await ProcessFromLearners(changedRecordsUlnCache);
             
@@ -113,15 +113,16 @@ namespace SFA.DAS.AssessorService.EpaoDataSync.Domain
             }
 
             _aggregateLogger.LogInfo(
-                $"Finished updating/inserting into Ilrs table from learners, rows effected {totalNumbersEffected}");
+                $"Finished updating/inserting into Ilrs table from learners. Number of updates {totalNumbersEffected}");
         }
 
         private async Task<long> ProcessFromSubmissions(long totalNumbersEffected, SubmissionEvents apiResults, ICollection<long> changedRecordsUlnCache)
         {
             foreach (var submissionEvent in apiResults.Items)
             {
-                if (submissionEvent.StandardCode == null)
+                if (submissionEvent.StandardCode == null || submissionEvent.Uln == 9999999999)
                     continue;
+
                 try
                 {
                     totalNumbersEffected += await InsertFromSubmission(submissionEvent);
@@ -194,38 +195,40 @@ namespace SFA.DAS.AssessorService.EpaoDataSync.Domain
             var totalNumbersEffected = 0;
 
             var apiResults = await _eventServiceApi.GetLatestLearnerEventForStandards(uln, eventId - 1);
-            if (apiResults != null && apiResults.Any())
+            if (apiResults == null || !apiResults.Any())
+                return totalNumbersEffected;
+
+            foreach (var apiResult in apiResults)
             {
-                foreach (var apiResult in apiResults)
-                {
-                    var sql =
-                        $"update Ilrs set Source={(apiResult.AcademicYear == null ? "Source":"'"+apiResult.AcademicYear+"'" )}, " +
-                        $"ApprenticeshipId = {(apiResult.ApprenticeshipId == null ? "ApprenticeshipId" : "'"+apiResult.ApprenticeshipId+ "'")}, " +
-                        $"GivenNames = @givenNames, " +
-                        $"FamilyName = @familyNames, " +
-                        $"EpaOrgId = {(apiResult.EPAOrgId == null ? "EpaOrgId" : "'" + apiResult.EPAOrgId + "'")}," +
-                        $"CompletionStatus = {(apiResult.CompStatus == null? "CompletionStatus" : "'" + apiResult.CompStatus+ "'")  }, " +
-                        $"LearnStartDate ={(apiResult.ActualStartDate == null ? "LearnStartDate" : "'" + apiResult.ActualStartDate.Value.ToString("yyyy-MM-ddTHH:mm:ss") + "'")}, " +
-                        $"PlannedEndDate =  {(apiResult.PlannedEndDate == null ? "PlannedEndDate" : "'" + apiResult.PlannedEndDate.Value.ToString("yyyy-MM-ddTHH:mm:ss") + "'")} " +
-                        $"where Uln = {apiResult.Uln} and StdCode={apiResult.StandardCode} and EventId = {apiResult.Id}";
+                var givenNamesTmp = apiResult.GivenNames.NameCase();
+                var familyNameTmp = apiResult.FamilyName.NameCase();
+
+                var sql =
+                    $"update Ilrs set Source={(apiResult.AcademicYear == null ? "Source":"'"+apiResult.AcademicYear+"'" )}, " +
+                    $"ApprenticeshipId = {(apiResult.ApprenticeshipId == null ? "ApprenticeshipId" : "'"+apiResult.ApprenticeshipId+ "'")}, " +
+                    $"GivenNames = @givenNames, " +
+                    $"FamilyName = @familyName, " +
+                    $"EpaOrgId = {(apiResult.EPAOrgId == null ? "EpaOrgId" : "'" + apiResult.EPAOrgId + "'")}," +
+                    $"CompletionStatus = {(apiResult.CompStatus == null? "CompletionStatus" : "'" + apiResult.CompStatus+ "'")  }, " +
+                    $"LearnStartDate ={(apiResult.ActualStartDate == null ? "LearnStartDate" : "'" + apiResult.ActualStartDate.Value.ToString("yyyy-MM-ddTHH:mm:ss") + "'")}, " +
+                    $"PlannedEndDate =  {(apiResult.PlannedEndDate == null ? "PlannedEndDate" : "'" + apiResult.PlannedEndDate.Value.ToString("yyyy-MM-ddTHH:mm:ss") + "'")} " +
+                    $"where Uln = {apiResult.Uln} and StdCode={apiResult.StandardCode} and EventId = {apiResult.Id}";
 
                  
-                    try
+                try
+                {
+                    totalNumbersEffected += await _connection.ExecuteAsync(sql, new
                     {
-                        totalNumbersEffected += await _connection.ExecuteAsync(sql, new
-                        {
-                            givenNames= apiResult.GivenNames,
-                            familyNames= apiResult.FamilyName
-                        });
-                    }
-                    catch (Exception e)
-                    {
-                         _aggregateLogger.LogInfo(
-                                                 $"{sql} : Exception {e.Message}");
-                    }
+                        givenNames= givenNamesTmp,
+                        familyName= familyNameTmp
+                    });
+                }
+                catch (Exception e)
+                {
+                    _aggregateLogger.LogInfo($"{sql} : Exception {e.Message}");
                 }
             }
-            
+
             return totalNumbersEffected;
         }
 
