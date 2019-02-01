@@ -1045,6 +1045,10 @@ table.responsive tr.total {
   text-transform: uppercase;
 }
 
+.govuk-tag + .govuk-tag {
+  margin-top: 2px;
+}
+
 @media print {
   .govuk-tag {
     font-family: sans-serif;
@@ -1072,13 +1076,24 @@ table.responsive tr.total {
 .govuk-tag--inactive {
   background-color: #6f777b;
 }
+
 .govuk-tag--rejected {
   background-color: #b10e1e;
+}
+
+.govuk-tag--approved {
+  background-color: #006435;
 }
 
 .govuk-check-your-answers .das-cya-change--responsive {
   position: relative;
   text-align: left;
+}
+
+@media (min-width: 769px) {
+  .govuk-check-your-answers .das-cya-change--responsive {
+    text-align: right;
+  }
 }
 
 /**
@@ -1190,4 +1205,18 @@ table.responsive tr.total {
 .app-navigation__list > li a:focus {
   color: #2b8cc4;
   background-color: inherit;
+}
+
+.grid-row:after,
+#content:after,
+.notice:after,
+.panel:after,
+fieldset:after,
+.form-section:after,
+.form-group:after,
+.form-group-error:after,
+.breadcrumbs ol:after {
+  content: "";
+  display: block;
+  clear: both;
 }
