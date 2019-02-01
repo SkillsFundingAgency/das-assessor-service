@@ -25,6 +25,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.0.1" />
     <PackageReference Include="Microsoft.WindowsAzure.ConfigurationManager" Version="3.2.3" />
+    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.0.9.2" />
     <PackageReference Include="WindowsAzure.Storage" Version="9.0.0" />
   </ItemGroup>
 
