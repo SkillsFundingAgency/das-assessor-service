@@ -15,16 +15,18 @@
 </div>
 
 <div class="grid-row">
-    <nav class="app-navigation govuk-clearfix">
-        <ul class="app-navigation__list">
-            <li class="app-navigation">
-                <a asp-action="OpenApplications" asp-controller="Application">Open</a>
-            </li>
-            <li class="app-navigation--current-page">
-                <a asp-action="ClosedApplications" asp-controller="Application">Closed</a>
-            </li>
-        </ul>
-    </nav>
+    <div class="column-full">
+        <nav class="app-navigation govuk-clearfix">
+            <ul class="app-navigation__list">
+                <li>
+                    <a asp-action="OpenApplications" asp-controller="Application">Open</a>
+                </li>
+                <li class="app-navigation--current-page">
+                    <a asp-action="ClosedApplications" asp-controller="Application">Closed</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
 </div>
 
 <div class="grid-row">
@@ -41,7 +43,7 @@
                         <th>Organisation name</th>
                         <th>Application type</th>
                         <th>Date closed</th>
-                        <th>Current status</th>
+                        <th class="numeric">Current status</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -57,18 +59,18 @@
                             <td data-label="Date closed">
                                 @item.ClosedDate.ToSfaShortDateString()
                             </td>
-                            <td data-label="Current status">
+                            <td  class="numeric" data-label="Current status">
                                 @{
                                     switch (item.CurrentStatus)
                                     {
                                         case ApplicationSequenceStatus.Approved:
-                                            <div class="govuk-tag govuk-tag--float-right">
-                                                Passed
+                                            <div class="govuk-tag govuk-tag--approved">
+                                                passed
                                             </div>
                                             break;
                                         case ApplicationSequenceStatus.Rejected:
-                                            <div class="govuk-tag govuk-tag--float-right">
-                                                Failed
+                                            <div class="govuk-tag govuk-tag--rejected">
+                                                failed
                                             </div>
                                             break;
                                         default:
