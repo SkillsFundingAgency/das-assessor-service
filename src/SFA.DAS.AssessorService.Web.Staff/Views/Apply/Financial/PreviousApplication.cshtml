@@ -1,5 +1,5 @@
 @using Microsoft.EntityFrameworkCore.Internal
-@using Microsoft.EntityFrameworkCore.Query.Internal
+
 @model SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Financial.FinancialApplicationViewModel
 
 @{
@@ -9,7 +9,7 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <a href="@Url.Action("PreviousApplications", "Financial")" class="link-back">Back</a>
+        <a asp-action="ClosedApplications" asp-controller="Financial" class="link-back">Back</a>
 
         <h1 class="heading-xlarge">@Model.Organisation.OrganisationDetails.LegalName</h1>
     </div>

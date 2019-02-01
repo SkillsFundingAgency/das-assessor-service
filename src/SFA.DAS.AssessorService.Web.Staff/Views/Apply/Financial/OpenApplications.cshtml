@@ -1,0 +1,140 @@
+@using SFA.DAS.AssessorService.Domain.Extensions;
+@using SFA.DAS.AssessorService.ApplyTypes;
+
+@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Financial.FinancialDashboardViewModel
+
+@{
+    ViewBag.Title = "Account home  - Open applications";
+    Layout = "_Layout";
+}
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <h1 class="heading-xlarge">Account home</h1>
+    </div>
+</div>
+
+<div class="grid-row">
+    <nav class="app-navigation govuk-clearfix">
+        <ul class="app-navigation__list">
+            <li class="app-navigation--current-page">
+                <a asp-action="OpenApplications" asp-controller="Financial">Open</a>
+            </li>
+            <li class="app-navigation">
+                <a asp-action="ClosedApplications" asp-controller="Financial">Closed</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<div class="grid-row">
+    <div class="column-full">
+        <h1 class="heading-large">
+            Open applications
+        </h1>
+
+        @if (@Model.Applications.Items.Any())
+        {
+            <table class="table responsive table-font-xsmall table-spaced">
+                <thead>
+                    <tr>
+                        <th>Organisation name</th>
+                        <th>Date submitted</th>
+                        <th>Current status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Applications.Items)
+                    {
+                        <tr>
+                            <td data-label="Organisation name" class="nowrap">
+                                @if (item.CurrentStatus == ApplicationSequenceStatus.FeedbackAdded)
+                                {
+                                    <a asp-action="ViewGradedApplication" asp-controller="Financial" asp-route-applicationId="@item.ApplicationId">@item.OrganisationName</a>
+                                }
+                                else
+                                {
+                                    <a asp-action="ViewApplication" asp-controller="Financial" asp-route-applicationId="@item.ApplicationId">@item.OrganisationName</a>
+                                }
+                            </td>
+                            <td data-label="Date submitted">
+                                @item.SubmittedDate.ToSfaShortDateString()
+                            </td>
+                            <td data-label="Current status">
+                                @{
+                                    switch (item.CurrentStatus)
+                                    {
+                                        case ApplicationSectionStatus.Submitted:
+                                            <div class="govuk-tag govuk-tag--float-right">
+                                                Unassigned
+                                            </div>
+                                            break;
+                                        case ApplicationSectionStatus.InProgress:
+                                            <div class="govuk-tag govuk-tag--float-right">
+                                                In Progress
+                                            </div>
+                                            break;
+                                        case ApplicationSequenceStatus.Resubmitted:
+                                            <div class="govuk-tag govuk-tag--float-right">
+                                                Updated
+                                            </div>
+                                            break;
+                                        case ApplicationSequenceStatus.FeedbackAdded:
+                                            <div class="govuk-tag govuk-tag--float-right">
+                                                Declined
+                                            </div>
+                                            break;
+                                        default:
+                                            <text>---</text>
+                                            break;
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="info-summary">
+                <h3 class="heading-medium">There are no open applications at this time.</h3>
+            </div>
+        }
+
+    </div>
+</div>
+
+@if (Model.Applications.HasPreviousPage || Model.Applications.HasNextPage)
+{
+    <div class="grid-row">
+        <div class="column-full">
+            <div class="page-navigation">
+
+                @if (Model.Applications.HasPreviousPage)
+                {
+                    <a asp-action="OpenApplications"
+                       asp-controller="Financial"
+                       asp-route-page="@(Model.Applications.PageIndex - 1)"
+                       class="previous">
+                        <i class="arrow-button icon-left-open">&#xe800;</i>
+                        <span class="description">Previous <span class="hide-mob">page</span></span>
+                        <span class="counter">Page <span class="prevPage">@(Model.Applications.PageIndex - 1)</span> of <span class="totalPage">@(Model.Applications.TotalPages)</span></span>
+                    </a>
+                }
+
+                @if (Model.Applications.HasNextPage)
+                {
+                    <a asp-action="OpenApplications"
+                       asp-controller="Financial"
+                       asp-route-page="@(Model.Applications.PageIndex + 1)"
+                       class="next">
+                        <i class="arrow-button icon-right-open">&#xe801;</i>
+                        <span class="description">Next <span class="hide-mob">page</span></span>
+                        <span class="counter">Page <span class="nextPage">@(Model.Applications.PageIndex + 1)</span> of <span class="totalPage">@(Model.Applications.TotalPages)</span></span>
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+}

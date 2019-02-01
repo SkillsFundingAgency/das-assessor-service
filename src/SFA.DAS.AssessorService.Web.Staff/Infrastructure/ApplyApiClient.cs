@@ -93,11 +93,16 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             return await Get<List<ApplicationSummaryItem>>($"/Review/ClosedApplications");
         }
 
-        public async Task<List<dynamic>> NewApplications(int sequenceId)
+        public async Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications()
         {
-            return await Get<List<dynamic>>($"/Review/NewApplications/{sequenceId}");
+            return await Get<List<FinancialApplicationSummaryItem>>($"/Financial/OpenApplications");
         }
-        
+
+        public async Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications()
+        {
+            return await Get<List<FinancialApplicationSummaryItem>>($"/Financial/ClosedApplications");
+        }
+
         public async Task ImportWorkflow(IFormFile file)
         {
             var formDataContent = new MultipartFormDataContent();
@@ -109,10 +114,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             await _client.PostAsync($"/Import/Workflow", formDataContent);
         }
 
-        public async Task<List<dynamic>> GetNewFinancialApplications()
-        {
-            return await Get<List<dynamic>>($"/Financial/New");
-        }
 
         public async Task<ApplicationSequence> GetActiveSequence(Guid applicationId)
         {
@@ -203,11 +204,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         public async Task<Organisation> GetOrganisationForApplication(Guid applicationId)
         {
             return await Get<Organisation>($"/Application/{applicationId}/Organisation");
-        }
-
-        public async Task<List<dynamic>> GetPreviousFinancialApplications()
-        {
-            return await Get<List<dynamic>>($"/Financial/Previous");
         }
 
         public async Task StartApplicationReview(Guid applicationId, int sequenceId)

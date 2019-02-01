@@ -1,0 +1,129 @@
+@using SFA.DAS.AssessorService.Domain.Extensions;
+@using SFA.DAS.AssessorService.ApplyTypes;
+
+@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Financial.FinancialDashboardViewModel
+
+@{
+    ViewBag.Title = "Account home  - Closed applications";
+    Layout = "_Layout";
+}
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <h1 class="heading-xlarge">Account home</h1>
+    </div>
+</div>
+
+<div class="grid-row">
+    <nav class="app-navigation govuk-clearfix">
+        <ul class="app-navigation__list">
+            <li class="app-navigation">
+                <a asp-action="OpenApplications" asp-controller="Financial">Open</a>
+            </li>
+            <li class="app-navigation--current-page">
+                <a asp-action="ClosedApplications" asp-controller="Financial">Closed</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<div class="grid-row">
+    <div class="column-full">
+        <h1 class="heading-large">
+            Closed applications
+        </h1>
+
+        @if (@Model.Applications.Items.Any())
+        {
+            <table class="table responsive table-font-xsmall table-spaced">
+                <thead>
+                    <tr>
+                        <th>Organisation name</th>
+                        <th>Date graded</th>
+                        <th>Grade</th>
+                        <th>Current status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Applications.Items)
+                    {
+                    <tr>
+                        <td data-label="Organisation name" class="nowrap">
+                            <a asp-action="ViewGradedApplication" asp-controller="Financial" asp-route-applicationId="@item.ApplicationId">@item.OrganisationName</a>
+                        </td>
+                        <td data-label="Date graded">
+                            @item.Grade.GradedDateTime.ToSfaShortDateString()
+                        </td>
+                        <td data-label="Grade">
+                            @item.Grade.SelectedGrade
+                        </td>
+                        <td data-label="Current status">
+                            @{
+                                switch (item.CurrentStatus)
+                                {
+                                    case ApplicationSectionStatus.Graded:
+                                    case ApplicationSectionStatus.Evaluated:
+                                    case ApplicationSequenceStatus.Approved:
+                                        <div class="govuk-tag govuk-tag--float-right">
+                                            Passed
+                                        </div>
+                                        break;
+                                    case ApplicationSequenceStatus.Rejected:
+                                        <div class="govuk-tag govuk-tag--float-right">
+                                            Failed
+                                        </div>
+                                        break;
+                                    default:
+                                        <text>---</text>
+                                        break;
+                                }
+                            }
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="info-summary">
+                <h3 class="heading-medium">There are no closed applications at this time.</h3>
+            </div>
+        }
+
+    </div>
+</div>
+
+@if (Model.Applications.HasPreviousPage || Model.Applications.HasNextPage)
+{
+    <div class="grid-row">
+        <div class="column-full">
+            <div class="page-navigation">
+
+                @if (Model.Applications.HasPreviousPage)
+                {
+                    <a asp-action="ClosedApplications"
+                       asp-controller="Financial"
+                       asp-route-page="@(Model.Applications.PageIndex - 1)"
+                       class="previous">
+                        <i class="arrow-button icon-left-open">&#xe800;</i>
+                        <span class="description">Previous <span class="hide-mob">page</span></span>
+                        <span class="counter">Page <span class="prevPage">@(Model.Applications.PageIndex - 1)</span> of <span class="totalPage">@(Model.Applications.TotalPages)</span></span>
+                    </a>
+                }
+
+                @if (Model.Applications.HasNextPage)
+                {
+                    <a asp-action="ClosedApplications"
+                       asp-controller="Financial"
+                       asp-route-page="@(Model.Applications.PageIndex + 1)"
+                       class="next">
+                        <i class="arrow-button icon-right-open">&#xe801;</i>
+                        <span class="description">Next <span class="hide-mob">page</span></span>
+                        <span class="counter">Page <span class="nextPage">@(Model.Applications.PageIndex + 1)</span> of <span class="totalPage">@(Model.Applications.TotalPages)</span></span>
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+}

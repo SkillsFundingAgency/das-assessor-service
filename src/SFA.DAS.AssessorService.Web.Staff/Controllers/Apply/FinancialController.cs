@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.Web.Staff.Domain;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Financial;
@@ -27,47 +29,28 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
             _contextAccessor = contextAccessor;
         }
         
-        
-        [HttpGet("/Financial/Dashboard")]
-        public IActionResult Dashboard()
+        [HttpGet("/Financial/Open")]
+        public async Task<IActionResult> OpenApplications(int page = 1)
         {
-            return View("~/Views/Apply/Financial/Dashboard.cshtml");
+            var applications = await _apiClient.GetOpenFinancialApplications();
+
+            var paginatedApplications = new PaginatedList<FinancialApplicationSummaryItem>(applications, applications.Count(), page, int.MaxValue);
+
+            var viewmodel = new FinancialDashboardViewModel { Applications = paginatedApplications };
+
+            return View("~/Views/Apply/Financial/OpenApplications.cshtml", viewmodel);
         }
 
-        [HttpGet("/Financial/NewApplications")]
-        public async Task<IActionResult> NewApplications()
+        [HttpGet("/Financial/Closed")]
+        public async Task<IActionResult> ClosedApplications(int page = 1)
         {
-            var applications = await _apiClient.GetNewFinancialApplications();
+            var applications = await _apiClient.GetClosedFinancialApplications();
 
-            var applicationViewModels = applications.Select(a =>
-                new NewFinancialApplicationViewModel
-                {
-                    ApplicationId = a.applicationId,
-                    ApplyingOrganisationName = a.applyingOrganisationName,
-                    Status = a.status
-                }).ToList();
-            
-            
-            return View("~/Views/Apply/Financial/NewApplications.cshtml", applicationViewModels);
-        }
+            var paginatedApplications = new PaginatedList<FinancialApplicationSummaryItem>(applications, applications.Count(), page, int.MaxValue);
 
-        [HttpGet("/Financial/PreviousApplications")]
-        public async Task<IActionResult> PreviousApplications()
-        {
-            var applications = await _apiClient.GetPreviousFinancialApplications();
+            var viewmodel = new FinancialDashboardViewModel { Applications = paginatedApplications };
 
-            var applicationViewModels = applications.Select(a =>
-                new PreviousFinancialApplicationViewModel
-                {
-                    ApplicationId = a.applicationId,
-                    ApplyingOrganisationName = a.applyingOrganisationName,
-                    LinkText = "View application",
-                    Grade = a.grade,
-                    GradedBy = a.gradedBy,
-                    GradedDate = DateTime.Parse(a.gradedDateTime.ToString())
-                }).ToList();
-            
-            return View("~/Views/Apply/Financial/PreviousApplications.cshtml", applicationViewModels);
+            return View("~/Views/Apply/Financial/ClosedApplications.cshtml", viewmodel);
         }
 
         [HttpGet("/Financial/{applicationId}")]
