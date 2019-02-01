@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
@@ -25,17 +26,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
         private readonly UkPrnValidator _ukPrnValidator;
         private readonly IStringLocalizer<OrganisationQueryController> _localizer;
+        private readonly IMediator _mediator;
 
         public OrganisationQueryController(
-            ILogger<OrganisationQueryController> logger, IOrganisationQueryRepository organisationQueryRepository, UkPrnValidator ukPrnValidator, IStringLocalizer<OrganisationQueryController> localizer
+            ILogger<OrganisationQueryController> logger, IOrganisationQueryRepository organisationQueryRepository, UkPrnValidator ukPrnValidator, IStringLocalizer<OrganisationQueryController> localizer,
+            IMediator mediator
         )
         {
             _logger = logger;
             _organisationQueryRepository = organisationQueryRepository;
             _ukPrnValidator = ukPrnValidator;
             _localizer = localizer;
+            _mediator = mediator;
         }
-
+        
         [HttpGet("ukprn/{ukprn}", Name = "SearchOrganisation")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(OrganisationResponse))]
         [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
