@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.AssessorService.Web.Constants;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Orchestrators.Search;
 using SFA.DAS.AssessorService.Web.ViewModels.Search;
@@ -31,7 +32,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             _sessionService.Remove("SelectedStandard");
             _sessionService.Remove("SearchResultsChooseStandard");
             _sessionService.Remove("EndPointAsessorOrganisationId");
-
+            _sessionService.Set("CurrentPage", Pages.RecordAGrade);
             return View("Index");
         }
 
