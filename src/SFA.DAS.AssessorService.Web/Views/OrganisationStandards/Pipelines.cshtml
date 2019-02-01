@@ -16,7 +16,9 @@
         @if (Model.Response.Items.Any())
         {
             <div class="column-one-third">
-
+                <div class="govuk-inset-text">
+                    Assessment numbers may vary because of data changes on the individualised learner record (ILR) and certification service.
+                </div>
                 <div class="form-group align-button-right">
                     <form asp-controller="OrganisationStandards" asp-action="ExportEpaPipelineAsCsv" method="get">
                         <button type="submit" class="button">Download as csv</button>
