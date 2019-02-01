@@ -70,13 +70,13 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
         [Test]
         public void ResultsAreOfTypeOrganisationStandardId()
         {
-            ((OkObjectResult)_result).Value.Should().BeOfType<EpaOrganisationStandardResponse>();
+            ((OkObjectResult)_result).Value.Should().BeOfType<EpaoStandardResponse>();
         }
 
         [Test]
         public void ResultsMatchExpectedOrganisationStandardId()
         {
-            var organisationStandardId = ((OkObjectResult)_result).Value as EpaOrganisationStandardResponse;
+            var organisationStandardId = ((OkObjectResult)_result).Value as EpaoStandardResponse;
             organisationStandardId.Details.Should().Be(_organisationStandardId.ToString());
         }
     }
