@@ -4,7 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Api.Types;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
@@ -49,12 +49,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<ValidationResponse> ValidateCreateOrganisation(string name, string ukprn, string organisationTypeId)
+        public async Task<ValidationResponse> ValidateCreateOrganisation(string name, string ukprn, string organisationTypeId, string companyNumber, string charityNumber)
         {
-
             var newName = SanitizeUrlParam(name);
             using (var request = new HttpRequestMessage(HttpMethod.Get,
-                $"/api/ao/assessment-organisations/validate-new?name={newName}&ukprn={ukprn}&organisationTypeId={organisationTypeId}")
+                $"/api/ao/assessment-organisations/validate-new?name={newName}&ukprn={ukprn}&organisationTypeId={organisationTypeId}&companyNumber={companyNumber}&charityNumber={charityNumber}")
             )
             {
                 return await RequestAndDeserialiseAsync<ValidationResponse>(request,
@@ -74,7 +73,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
         
-        public async Task<ValidationResponse> ValidateUpdateOrganisation(string organisationId, string name, string ukprn, string organisationTypeId, string address1, string address2, string address3, string address4, string postcode, string status, string actionChoice)
+        public async Task<ValidationResponse> ValidateUpdateOrganisation(string organisationId, string name, string ukprn, string organisationTypeId, string address1, string address2, string address3, string address4, string postcode, string status, string actionChoice, string companyNumber, string charityNumber)
         {
             var newName = SanitizeUrlParam(name);
             var newAddress1 = SanitizeUrlParam(address1);
@@ -85,7 +84,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/ao/assessment-organisations/validate-existing?organisationId={organisationId}&name={newName}&ukprn={ukprn}" +
                                                                         $"&organisationTypeId={organisationTypeId}&address1={newAddress1}&address2={newAddress2}&address3={newAddress3}&address4={newAddress4}" +
-                                                                        $"&postcode={newPostcode}&status={status}&actionChoice={actionChoice}"))
+                                                                        $"&postcode={newPostcode}&status={status}&actionChoice={actionChoice}&companyNumber={companyNumber}&charityNumber={charityNumber}"))
             {
                 return await RequestAndDeserialiseAsync<ValidationResponse>(request, $"Could not check the validation for existing organisation [{organisationId}]");
             }
@@ -164,6 +163,25 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 await Delete(request);
             }
         }
+        public async Task<EpaOrganisation> GetEpaOrganisation(string endPointAssessorOrganisationId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get,
+                $"/api/ao/assessment-organisations/{endPointAssessorOrganisationId}"))
+            {
+                return await RequestAndDeserialiseAsync<EpaOrganisation>(request,
+                    $"Could not retrieve details for the organisation with an Id of {endPointAssessorOrganisationId}");
+            }
+        }
+
+        public async Task<List<OrganisationType>> GetOrganisationTypes()
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get,
+                $"/api/ao/organisation-types"))
+            {
+                return await RequestAndDeserialiseAsync<List<OrganisationType>>(request,
+                    $"Could not retrieve organisation types.");
+            }
+        }
 
         private string SanitizeUrlParam(string rawParam)
         {
@@ -199,15 +217,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<OrganisationResponse> Create(CreateOrganisationRequest organisationCreateViewModel);
         Task Update(UpdateOrganisationRequest organisationUpdateViewModel);
         Task Delete(Guid id);
-        Task<ValidationResponse> ValidateCreateOrganisation(string name, string ukprn, string organisationTypeId);
+        Task<ValidationResponse> ValidateCreateOrganisation(string name, string ukprn, string organisationTypeId, string companyNumber, string charityNumber);
         Task<ValidationResponse> ValidateUpdateContact(string contactId, string displayName, string email, string phoneNumber);
-        Task<ValidationResponse> ValidateUpdateOrganisation(string organisationId, string name, string ukprn, string organisationTypeId, string address1, string address2, string address3, string address4, string postcode, string status, string actionChoice);
+        Task<ValidationResponse> ValidateUpdateOrganisation(string organisationId, string name, string ukprn, string organisationTypeId, string address1, string address2, string address3, string address4, string postcode, string status, string actionChoice, string companyNumber, string charityNumber);
         Task<ValidationResponse> ValidateCreateContact(string name, string organisationId, string email, string phone);
 
         Task<ValidationResponse> ValidateSearchStandards(string searchstring);
 
         Task<ValidationResponse> ValidateCreateOrganisationStandard(string organisationId, int standardId, DateTime? effectiveFrom, DateTime? effectiveTo, Guid? contactId, List<int> deliveryAreas);
         Task<ValidationResponse> ValidateUpdateOrganisationStandard(string organisationId, int standardId, DateTime? effectiveFrom, DateTime? effectiveTo, Guid? contactId, List<int> deliveryAreas, string actionChoice, string organisationStandardStatus, string organisationStatus);
-
+        Task<EpaOrganisation> GetEpaOrganisation(string organisationId);
+        Task<List<OrganisationType>> GetOrganisationTypes();
     }
 }

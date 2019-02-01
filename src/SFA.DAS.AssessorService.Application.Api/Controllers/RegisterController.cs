@@ -161,22 +161,22 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             {
                 _logger.LogInformation("Creating new Organisation Standard");
                 var result = await _mediator.Send(request);
-                return Ok(new EpaOrganisationStandardResponse(result));
+                return Ok(new EpaoStandardResponse(result));
             }
             catch (NotFound ex)
             {
                 _logger.LogError($@"Record is not available for organisation / standard: [{request.OrganisationId}, {request.StandardCode}]");
-                return NotFound(new EpaOrganisationStandardResponse(ex.Message));
+                return NotFound(new EpaoStandardResponse(ex.Message));
             }
             catch (AlreadyExistsException ex)
             {
                 _logger.LogError($@"Record already exists for organisation/standard [{request.OrganisationId}, {request.StandardCode}]");
-                return Conflict(new EpaOrganisationStandardResponse(ex.Message));
+                return Conflict(new EpaoStandardResponse(ex.Message));
             }
             catch (BadRequestException ex)
             {
                 _logger.LogError(ex.Message);
-                return BadRequest(new EpaOrganisationStandardResponse(ex.Message));
+                return BadRequest(new EpaoStandardResponse(ex.Message));
             }
             catch (Exception ex)
             {
@@ -197,12 +197,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             {
                 _logger.LogInformation($@"Updating Organisation Standard [{request.OrganisationId}, {request.StandardCode}]");
                 var result = await _mediator.Send(request);
-                return Ok(new EpaOrganisationStandardResponse(result));
+                return Ok(new EpaoStandardResponse(result));
             }      
             catch (Exception ex)
             {
                 _logger.LogError($@"Bad request, Message: [{ex.Message}]");
-                return BadRequest(new EpaOrganisationStandardResponse(ex.Message));
+                return BadRequest(new EpaoStandardResponse(ex.Message));
             }
         }
     }

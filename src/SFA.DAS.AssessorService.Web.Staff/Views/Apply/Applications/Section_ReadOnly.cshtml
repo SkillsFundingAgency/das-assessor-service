@@ -1,0 +1,131 @@
+@using SFA.DAS.AssessorService.ApplyTypes
+@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Applications.ApplicationSectionViewModel
+
+@{
+    ViewBag.Title = @Model.Title ?? "Section not active";
+    Layout = "_Layout";
+}
+
+<div class="grid-row">
+    <div class="column-full">
+        <a class="link-back" asp-action="Sequence" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId">Back</a>
+        @if (Model.Section == null)
+        {
+            <h1 class="heading-xlarge">Section not active</h1>
+        }
+        else
+        {
+            <h1 class="heading-xlarge">@Model.Title</h1>
+
+            if (Model.SequenceId == 1 && Model.SectionId == 3)
+            {
+                // NOTE: The FHA Section has a read only view. See ON-1277
+                var financialApplication = Model.Section.QnAData?.FinancialApplicationGrade;
+                var financialApplicationComments = financialApplication.InadequateMoreInformation ?? financialApplication.SatisfactoryMoreInformation;
+
+                <div class="form-group">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Grade</th>
+                                <th>Date reviewed</th>
+                                <th>Comments</th>
+                                <th>Reviewer</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>@financialApplication.SelectedGrade</td>
+                                <td>@financialApplication.GradedDateTime.ToShortDateString()</td>
+                                <td>@financialApplicationComments</td>
+                                <td>@financialApplication.GradedBy</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            }
+
+            {
+                <dl class="govuk-check-your-answers cya-questions-short form-group">
+                    @foreach (var pg in Model.Section.QnAData.Pages.Where(p => p.Active))
+                    {
+                        <div class="govuk-check-your-answers__contents">
+                            <dt class="cya-question heading-medium">
+                                @pg.LinkTitle
+                            </dt>
+
+                            <dd class="cya-answer">
+                                @foreach (var answerPage in pg.DisplayAnswerPages)
+                                {
+                                    foreach (var answer in answerPage.DisplayAnswers)
+                                    {
+                                        <h3 class="heading-small">@answer.Label</h3>
+
+                                        @if (!string.IsNullOrWhiteSpace(pg.BodyText))
+                                        {
+                                            <div class="form-group">
+                                                <details>
+                                                    <summary><span class="summary">view detail...</span></summary>
+                                                    <div class="panel panel-border-narrow" id="question-text">
+                                                        @Html.Raw(pg.BodyText)
+                                                    </div>
+                                                </details>
+                                            </div>
+                                        }
+
+                                        if (answer is FileUploadDisplayAnswer)
+                                        {
+                                            var fuAnswer = answer as FileUploadDisplayAnswer;
+                                            <p>
+                                                <a href="@Url.Action("Download","Application",
+                                                         new
+                                                         {
+                                                             applicationId = Model.ApplicationId,
+                                                             sequenceId = fuAnswer.SequenceId,
+                                                             sectionId = fuAnswer.SectionId,
+                                                             pageId = fuAnswer.PageId,
+                                                             questionId = fuAnswer.QuestionId,
+                                                             filename = fuAnswer.FileName
+                                                         })">@fuAnswer.FileName</a>
+                                                    </p>
+                                                }
+                                                else
+                                                {
+                                                    <p>@answer.Answer()</p>
+                                                }
+                                            }
+                                        }
+                            </dd>
+
+                            <dd class="cya-change das-cya-change--responsive">
+                                @if (pg.HasNewFeedback)
+                                {
+                                    <div class="govuk-tag form-group">
+                                        Feedback added
+                                    </div>
+                                }
+                                @if (pg.HasCompletedFeedback)
+                                {
+                                    <div class="govuk-tag form-group">
+                                        Answer updated
+                                    </div>
+                                }
+
+                                @if (pg.HasFeedback)
+                                {
+                                    <p>
+                                        <a class="nowrap" asp-action="Page" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@pg.PageId">View feedback</a>
+                                    </p>
+                                }
+                            </dd>
+                        </div>
+                    }
+                </dl>
+            }
+        }
+
+        <div class="form-group">
+            <a class="govuk-button" asp-action="Sequence" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId">Return to application overview</a>
+        </div>
+    </div>
+</div>
