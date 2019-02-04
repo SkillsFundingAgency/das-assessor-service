@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -32,11 +33,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
         public async Task<PaginatedList<CertificateSummaryResponse>> Handle(GetCertificateHistoryRequest request, CancellationToken cancellationToken)
         {
             const int pageSize = 10;
+            var statuses = new List<string>
+            {
+                Domain.Consts.CertificateStatus.Submitted,
+                Domain.Consts.CertificateStatus.Printed,
+                Domain.Consts.CertificateStatus.Reprint
+            };
 
             var certificates = await _certificateRepository.GetCertificateHistory(
                 request.Username,
                 request.PageIndex ?? 1,
-                pageSize);
+                pageSize, statuses);
 
             // Please Note:- Cannot seem to automap this with custom value/type converters
             // so dealing with it manually for now.

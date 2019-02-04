@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.AssessorService.Web.Controllers;
 using SFA.DAS.AssessorService.Api.Types;
+using SFA.DAS.AssessorService.Web.Infrastructure;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
 {
@@ -17,7 +18,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
         protected static OrganisationController OrganisationController;
         //protected static Mock<IOrganisationService> OrganisationService;
         protected static Mock<ITokenService> TokenService;
-
+        protected static Mock<ISessionService> SessionService;
         protected static Mock<IOrganisationsApiClient> ApiClient;
 
         public static void Setup()
@@ -35,14 +36,14 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrganisationControllerTests
                 });
 
             var logger = new Mock<ILogger<OrganisationController>>();
-
+            SessionService = new Mock<ISessionService>();
             TokenService = new Mock<ITokenService>();
             TokenService.Setup(s => s.GetToken()).Returns("jwt");
 
             ApiClient = new Mock<IOrganisationsApiClient>();
             ApiClient.Setup(c => c.Get("12345")).ReturnsAsync(new OrganisationResponse() { });
 
-            OrganisationController = new OrganisationController(logger.Object, httpContext.Object, ApiClient.Object);
+            OrganisationController = new OrganisationController(logger.Object, httpContext.Object, ApiClient.Object, SessionService.Object);
         }
     }
 }

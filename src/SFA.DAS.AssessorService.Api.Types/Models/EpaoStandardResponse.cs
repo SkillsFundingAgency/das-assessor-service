@@ -1,8 +1,8 @@
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    public class EpaOrganisationStandardResponse
+    public class EpaoStandardResponse
     {
-        public EpaOrganisationStandardResponse(string details)
+        public EpaoStandardResponse(string details)
         {
             Details = details;
         }
