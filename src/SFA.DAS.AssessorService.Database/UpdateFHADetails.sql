@@ -1,7 +1,7 @@
 If NOT EXISTS (SELECT *
   FROM [Organisations]
-  where JSON_VAlue(OrganisationDAta,'$.FinancialDueDate') is  not null
-  OR JSON_VAlue(OrganisationDAta,'$.FinancialExempt') is not null) 
+  where JSON_VAlue(OrganisationDAta,'$.FHADetails.FinancialDueDate') is  not null
+  OR JSON_VAlue(OrganisationDAta,'$.FHADetails.FinancialExempt') is not null) 
 BEGIN
 update organisations set OrganisationData= JSON_MODIFY(OrganisationData,'$.FinancialDueDate','2013-09-30')  where convert(varchar,EndPointAssessorukprn)='10000001'
 update organisations set OrganisationData= JSON_MODIFY(OrganisationData,'$.FinancialDueDate','2013-09-30')  where convert(varchar,EndPointAssessorukprn)='10000002'
@@ -1224,7 +1224,6 @@ update organisations set OrganisationData= JSON_MODIFY(OrganisationData,'$.Finan
 update organisations set OrganisationData= JSON_MODIFY(OrganisationData,'$.FinancialDueDate','2017-11-30')  where convert(varchar,EndPointAssessorukprn)='10009994'
 update organisations set OrganisationData= JSON_MODIFY(OrganisationData,'$.FinancialDueDate','2017-04-30')  where convert(varchar,EndPointAssessorukprn)='10009995'
 update organisations set OrganisationData= JSON_MODIFY(OrganisationData,'$.FinancialDueDate','2016-09-30')  where convert(varchar,EndPointAssessorukprn)='10010017'
-update organisations set OrganisationData= JSON_MODIFY(OrganisationData,'$.FinancialDueDate','2018-04-22')  where convert(varchar,EndPointAssessorukprn)='10010019564'
 update organisations set OrganisationData= JSON_MODIFY(OrganisationData,'$.FinancialDueDate','2018-12-21')  where convert(varchar,EndPointAssessorukprn)='10010025'
 update organisations set OrganisationData= JSON_MODIFY(OrganisationData,'$.FinancialDueDate','2014-12-31')  where convert(varchar,EndPointAssessorukprn)='10010028'
 update organisations set OrganisationData= JSON_MODIFY(OrganisationData,'$.FinancialDueDate','2013-06-30')  where convert(varchar,EndPointAssessorukprn)='10010029'
