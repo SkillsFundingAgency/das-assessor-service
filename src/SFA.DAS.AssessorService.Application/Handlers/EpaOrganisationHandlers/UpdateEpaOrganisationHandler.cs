@@ -94,7 +94,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                     Postcode = request.Postcode,
                     WebsiteLink = request.WebsiteLink,
                     CompanyNumber = request.CompanyNumber,
-                    CharityNumber = request.CharityNumber 
+                    CharityNumber = request.CharityNumber,
+                    FHADetails = new FHADetails { 
+                    FinancialDueDate = request.FinancialDueDate,
+                    FinancialExempt = request.FinancialExempt
+                    }
                 },
                 Status = status
             };
