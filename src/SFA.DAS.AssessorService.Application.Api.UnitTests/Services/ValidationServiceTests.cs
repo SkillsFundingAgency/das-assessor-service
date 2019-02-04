@@ -1,5 +1,4 @@
 ﻿using System;
-using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Api.Services;
 using SFA.DAS.AssessorService.Application.Interfaces;
@@ -18,7 +17,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
             _validationService = new ValidationService();
         }
 
-
         [TestCase("", true)]
         [TestCase("a", false)]
         [TestCase("marky..mark@test.com", false)]
@@ -29,7 +27,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
             var checkResult = _validationService.CheckEmailIsValid(emailAddress);
             Assert.AreEqual(expectedResult,checkResult);
         }
-
 
         [TestCase("", false)]
         [TestCase("a", true)]
@@ -107,7 +104,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         [TestCase("1/may/2018", true)]
         [TestCase("28 Feb 2018", true)]
         [TestCase("29 Feb 2018", false)]
-
         public void CheckDateIsValid(string dateToCheck, bool expectedResult)
         {
             var checkResult = _validationService.DateIsValid(dateToCheck);
@@ -121,7 +117,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         [TestCase("today", true)]
         [TestCase("yesterday", false)]
         [TestCase("inayear", true)]
-
         public void CheckDateIsTodayOrInFuture(string dateToCheck, bool expectedResult)
         {
             dateToCheck = MapDateToRelativeWords(dateToCheck);
@@ -137,7 +132,6 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         [TestCase("yesterday", true)]
         [TestCase("tomorrow", false)]
         [TestCase("inayear", false)]
-
         public void CheckDateIsTodayOrInPast(string dateToCheck, bool expectedResult)
         {
             dateToCheck = MapDateToRelativeWords(dateToCheck);
@@ -186,7 +180,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
             Assert.AreEqual(expectedResult, checkResult);
         }
 
-        private static string MapDateToRelativeWords(string dateCheck)
+        private string MapDateToRelativeWords(string dateCheck)
         {
             switch (dateCheck)
             {
