@@ -11,5 +11,3 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         }
     }
 }
-
-}
