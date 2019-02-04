@@ -99,7 +99,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         [TestCase(" ", true)]
         [TestCase(",,", true)]
         [TestCase("1", false)]
-        [TestCase("31-12-2018", true)]
+        [TestCase("31-DEC-2018", true)]
         [TestCase("2018-01-01", true)]
         [TestCase("1/may/2018", true)]
         [TestCase("28 Feb 2018", true)]
@@ -185,13 +185,13 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
             switch (dateCheck)
             {
                 case "today":
-                    return DateTime.Today.ToString("dd-MM-yyyy");
+                    return DateTime.Today.ToString("dd-MMM-yyyy");
                 case "yesterday":
-                    return DateTime.Today.AddDays(-1).ToString("dd-MM-yyyy");
+                    return DateTime.Today.AddDays(-1).ToString("dd-MMM-yyyy");
                 case "tomorrow":
-                    return DateTime.Today.AddDays(1).ToString("dd-MM-yyyy");
+                    return DateTime.Today.AddDays(1).ToString("dd-MMM-yyyy");
                 case "inayear":
-                    return DateTime.Today.AddYears(1).ToString("dd-MM-yyyy");
+                    return DateTime.Today.AddYears(1).ToString("dd-MMM-yyyy");
                 default:
                     return dateCheck;
             }
