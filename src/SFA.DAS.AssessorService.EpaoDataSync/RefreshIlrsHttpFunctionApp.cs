@@ -11,7 +11,7 @@ using SFA.DAS.AssessorService.EpaoDataSync.Startup;
 
 namespace SFA.DAS.AssessorService.EpaoDataSync
 {
-    public static class RefreshIlrsHttpFuncionApp
+    public static class RefreshIlrsHttpFunctionApp
     {
         [FunctionName("RefreshIlrsFromProviderEvents")]
         public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]HttpRequestMessage req,
