@@ -6,9 +6,9 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Validation
     {
 
 
-        public string ValidationType { get; set; }
-        public string ValidationString { get; set; }
-        public string ValidationMatchValue { get; set; }
+        public string Type { get; set; }
+        public string Value { get; set; }
+        public string MatchCriteria { get; set; }
 
     }
 }

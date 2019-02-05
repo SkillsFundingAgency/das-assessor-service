@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> ValidateEmail(string emailToValidate)
         {
-            return Ok(await _mediator.Send(new ValidationRequest{ValidationType = "email", ValidationString = emailToValidate}));
+            return Ok(await _mediator.Send(new ValidationRequest{Type = "email", Value = emailToValidate}));
         }
 
 
@@ -43,7 +43,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> ValidateRequired(string stringToValidate)
         {
-            return Ok(await _mediator.Send(new ValidationRequest { ValidationType = "notEmpty", ValidationString = stringToValidate }));
+            return Ok(await _mediator.Send(new ValidationRequest { Type = "notEmpty", Value = stringToValidate }));
         }
 
         [HttpGet("is-ukprn-format/{ukprnToValidate}", Name = "ValidateUkprn")]
@@ -52,7 +52,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> ValidateUkprn(string ukprnToValidate)
         {
-            return Ok(await _mediator.Send(new ValidationRequest { ValidationType = "ukprn", ValidationString = ukprnToValidate }));
+            return Ok(await _mediator.Send(new ValidationRequest { Type = "ukprn", Value = ukprnToValidate }));
         }
 
         [HttpGet("is-uln-format/{ulnToValidate}", Name = "ValidateUln")]
@@ -61,7 +61,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> ValidateUln(string ulnToValidate)
         {
-            return Ok(await _mediator.Send(new ValidationRequest { ValidationType = "uln", ValidationString = ulnToValidate }));
+            return Ok(await _mediator.Send(new ValidationRequest { Type = "uln", Value = ulnToValidate }));
         }
 
         [HttpGet("is-minimum-length-or-more/{stringToValidate}/{minimumLength}", Name = "ValidateMinimumLength")]
@@ -70,7 +70,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> ValidateMinimumLength(string stringToValidate, int minimumLength)
         {
-            return Ok(await _mediator.Send(new ValidationRequest { ValidationType = "minimumLength", ValidationString = stringToValidate, ValidationMatchValue = minimumLength.ToString() }));
+            return Ok(await _mediator.Send(new ValidationRequest { Type = "minimumLength", Value = stringToValidate, MatchCriteria = minimumLength.ToString() }));
         }
 
         [HttpGet("is-maximum-length-or-less/{stringToValidate}/{maximumLength}", Name = "ValidateMaximumLength")]
@@ -79,7 +79,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> ValidateMaximumLength(string stringToValidate, int maximumLength)
         {
-            return Ok(await _mediator.Send(new ValidationRequest { ValidationType = "maximumLength", ValidationString = stringToValidate, ValidationMatchValue = maximumLength.ToString() }));
+            return Ok(await _mediator.Send(new ValidationRequest { Type = "maximumLength", Value = stringToValidate, MatchCriteria = maximumLength.ToString() }));
         }
 
         [HttpGet("is-valid-date/{dateToCheck}", Name = "ValidateDate")]
@@ -88,7 +88,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> ValidateDate(string dateToCheck)
         {
-            return Ok(await _mediator.Send(new ValidationRequest { ValidationType = "validDate", ValidationString = dateToCheck }));
+            return Ok(await _mediator.Send(new ValidationRequest { Type = "validDate", Value = dateToCheck }));
         }
 
         [HttpGet("is-date-today-or-in-future/{dateToCheck}", Name = "ValidateDateTodayOrInFuture")]
@@ -97,7 +97,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> ValidateDateTodayOrInFuture(string dateToCheck)
         {
-            return Ok(await _mediator.Send(new ValidationRequest { ValidationType = "dateIsTodayOrInFuture", ValidationString = dateToCheck }));
+            return Ok(await _mediator.Send(new ValidationRequest { Type = "dateIsTodayOrInFuture", Value = dateToCheck }));
         }
 
         [HttpGet("is-date-today-or-in-past/{dateToCheck}", Name = "ValidateDateTodayOrInPast")]
@@ -106,7 +106,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> ValidateDateTodayOrInPast(string dateToCheck)
         {
-            return Ok(await _mediator.Send(new ValidationRequest { ValidationType = "dateIsTodayOrInPast", ValidationString = dateToCheck }));
+            return Ok(await _mediator.Send(new ValidationRequest { Type = "dateIsTodayOrInPast", Value = dateToCheck }));
         }
 
         [HttpGet("is-organisation-id-format/{organisationIdToValidate}", Name = "ValidateOrganisationId")]
@@ -115,7 +115,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> ValidateOrganisationId(string organisationIdToValidate)
         {
-            return Ok(await _mediator.Send(new ValidationRequest { ValidationType = "organisationId", ValidationString = organisationIdToValidate }));
+            return Ok(await _mediator.Send(new ValidationRequest { Type = "organisationId", Value = organisationIdToValidate }));
         }
 
         [HttpGet("is-company-number-format/{companyNumberToCheck}", Name = "ValidateCompanyNumber")]
@@ -124,7 +124,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> ValidateCompanyNumber(string companyNumberToCheck)
         {
-            return Ok(await _mediator.Send(new ValidationRequest { ValidationType = "companyNumber", ValidationString = companyNumberToCheck }));
+            return Ok(await _mediator.Send(new ValidationRequest { Type = "companyNumber", Value = companyNumberToCheck }));
         }
 
         [HttpGet("is-company-number-format/{charityNumberToCheck}", Name = "ValidateCharityNumber")]
@@ -133,7 +133,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> ValidateCharityNumber(string charityNumberToCheck)
         {
-            return Ok(await _mediator.Send(new ValidationRequest { ValidationType = "charityNumber", ValidationString = charityNumberToCheck }));
+            return Ok(await _mediator.Send(new ValidationRequest { Type = "charityNumber", Value = charityNumberToCheck }));
         }
 
         

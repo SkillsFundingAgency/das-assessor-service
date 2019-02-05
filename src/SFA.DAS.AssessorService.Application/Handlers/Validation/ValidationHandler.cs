@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentValidation;
-using FluentValidation.Validators;
 using MediatR;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Interfaces;
@@ -22,38 +18,38 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Validation
 
         public async Task<bool> Handle(ValidationRequest request, CancellationToken cancellationToken)
         {
-            switch (request.ValidationType.ToLower())
+            switch (request.Type.ToLower())
             {
                 case "email":
-                    return _validationService.CheckEmailIsValid(request.ValidationString);
+                    return _validationService.CheckEmailIsValid(request.Value);
                 case "notempty":
-                    return _validationService.IsNotEmpty(request.ValidationString);
+                    return _validationService.IsNotEmpty(request.Value);
                 case "ukprn":
-                    return _validationService.UkprnIsValid(request.ValidationString);
+                    return _validationService.UkprnIsValid(request.Value);
                 case "uln":
-                    return _validationService.UlnIsValid(request.ValidationString);
+                    return _validationService.UlnIsValid(request.Value);
                 case "minimumlength":
-                    if (!int.TryParse(request.ValidationMatchValue, out int validationMatchValue))
-                        throw new Exception($"Validation Match Value [{request.ValidationMatchValue}] cannot be mapped to an minimum length integer");
+                    if (!int.TryParse(request.MatchCriteria, out int validationMatchValue))
+                        throw new Exception($"Validation Match Value [{request.MatchCriteria}] cannot be mapped to an minimum length integer");
                     else
-                        return _validationService.IsMinimumLengthOrMore(request.ValidationString, validationMatchValue);
+                        return _validationService.IsMinimumLengthOrMore(request.Value, validationMatchValue);
                 case "maximumlength":
-                    if (!int.TryParse(request.ValidationMatchValue, out int validationMatchVal))
-                        throw new Exception($"Validation Match Value [{request.ValidationMatchValue}] cannot be mapped to an maximum length integer");
+                    if (!int.TryParse(request.MatchCriteria, out int validationMatchVal))
+                        throw new Exception($"Validation Match Value [{request.MatchCriteria}] cannot be mapped to an maximum length integer");
                     else
-                        return _validationService.IsMaximumLengthOrLess(request.ValidationString, validationMatchVal);
+                        return _validationService.IsMaximumLengthOrLess(request.Value, validationMatchVal);
                 case "validdate":
-                    return _validationService.DateIsValid(request.ValidationString);
+                    return _validationService.DateIsValid(request.Value);
                 case "dateistodayorinfuture":
-                    return _validationService.DateIsTodayOrInFuture(request.ValidationString);
+                    return _validationService.DateIsTodayOrInFuture(request.Value);
                 case "dateistodayorinpast":
-                    return _validationService.DateIsTodayOrInPast(request.ValidationString);
+                    return _validationService.DateIsTodayOrInPast(request.Value);
                 case "organisationid":
-                    return _validationService.OrganisationIdIsValid(request.ValidationString);
+                    return _validationService.OrganisationIdIsValid(request.Value);
                 case "companynumber":
-                    return _validationService.CompanyNumberIsValid(request.ValidationString);
+                    return _validationService.CompanyNumberIsValid(request.Value);
                 case "charitynumber":
-                    return _validationService.CharityNumberIsValid(request.ValidationString);
+                    return _validationService.CharityNumberIsValid(request.Value);
             }
 
             throw new Exception("Type not recognised");
