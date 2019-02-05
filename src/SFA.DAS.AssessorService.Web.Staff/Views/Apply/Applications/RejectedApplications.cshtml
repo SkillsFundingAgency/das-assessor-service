@@ -47,7 +47,7 @@
                         <th>Organisation name</th>
                         <th>Application type</th>
                         <th>Date rejected</th>
-                        <th>Current status</th>
+                        <th class="numeric">Current status</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -63,13 +63,13 @@
                             <td data-label="Date rejected">
                                 @item.FeedbackAddedDate.ToSfaShortDateString()
                             </td>
-                            <td data-label="Current status">
+                            <td class="numeric" data-label="Current status">
                                 @{
                                     switch (item.CurrentStatus)
                                     {
                                         case ApplicationSequenceStatus.FeedbackAdded:
-                                            <div class="govuk-tag govuk-tag--float-right">
-                                                Rejected
+                                            <div class="govuk-tag govuk-tag--rejected">
+                                                rejected
                                             </div>
                                             break;
                                         default:
