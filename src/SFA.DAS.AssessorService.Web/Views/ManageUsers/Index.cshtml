@@ -1,0 +1,68 @@
+﻿@model IList<SFA.DAS.AssessorService.Api.Types.Models.ContactsWithRolesResponse>
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@{
+    ViewBag.Title = "Manage users";
+    Layout = "_DashboardLayout";
+}
+
+<div>
+    <div class="grid-row">
+        <div class="column-full">
+            <h1 class="heading-large">Users</h1>
+            @if (Model.Any())
+            {
+                <table class="table responsive table-font-xsmall user-content">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Localizer["User details"]
+                            </th>
+                            <th>
+                                @Localizer["What they can do"]
+                            </th>
+                            <th>
+                                @Localizer["Status"]
+                            </th>
+                            <th>
+                                @Localizer["Action required"]
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td data-label="@Localizer["User details"]" class="nowrap" >
+                                    @Html.DisplayFor(modelItem => item.DisplayName)<br />
+                                    <span>@Html.DisplayFor(modelItem => item.Email)</span>
+                                </td>
+                                <td data-label="@Localizer["What they can do"]" >
+                                    <ul>
+                                        @foreach (var role in item.Roles )
+                                        {
+                                        <li> @Html.DisplayFor(modelItem => role)</li>
+                                        }
+                                    </ul>
+                                </td>
+                                <td data-label="@Localizer["Status"]" >
+                                    @Html.DisplayFor(modelItem => item.Status)
+                                </td>
+                                <td data-label="@Localizer["Action required"]">
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <div class="column-full">
+                    <div class="info-summary">
+                        <h3 class="heading-medium">There are no users to manage.</h3>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

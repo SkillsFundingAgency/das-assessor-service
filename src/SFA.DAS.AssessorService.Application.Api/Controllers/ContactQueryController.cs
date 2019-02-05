@@ -3,9 +3,11 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Validators;
@@ -21,15 +23,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
     {
         private readonly SearchOrganisationForContactsValidator _searchOrganisationForContactsValidator;
         private readonly IContactQueryRepository _contactQueryRepository;
+        private readonly IMediator _mediator;
         private readonly ILogger<ContactQueryController> _logger;
 
         public ContactQueryController(IContactQueryRepository contactQueryRepository,
             SearchOrganisationForContactsValidator searchOrganisationForContactsValidator,
+            IMediator mediator,
             ILogger<ContactQueryController> logger)
         {
             _contactQueryRepository = contactQueryRepository;
             _logger = logger;
             _searchOrganisationForContactsValidator = searchOrganisationForContactsValidator;
+            _mediator = mediator;
         }
 
         [HttpGet("{endPointAssessorOrganisationId}", Name = "SearchContactsForAnOrganisation")]
@@ -80,6 +85,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             if (contact == null)
                 throw new ResourceNotFoundException();
             return Ok(Mapper.Map<ContactResponse>(contact));
+        }
+
+        [HttpGet("{endPointAssessorOrganisationId}/withroles", Name = "GetAllContactsWithTheirRoles")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ContactResponse>))]
+        [SwaggerResponse((int)HttpStatusCode.NotFound)]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetAllContactsWithTheirRoles(string endPointAssessorOrganisationId)
+        {
+            _logger.LogInformation(
+                $"Received Search for Contacts and their Roles using endPointAssessorOrganisationId = {endPointAssessorOrganisationId}");
+
+            return Ok(await _mediator.Send(new GetContactsRequest(endPointAssessorOrganisationId)));
         }
     }
 }

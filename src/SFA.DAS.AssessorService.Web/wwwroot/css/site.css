@@ -688,7 +688,7 @@ fieldset.after-error-summary {
 
 @media (min-width: 40.0625em) {
   .app-navigation {
-    font-size: 0.97em;
+    font-size: 19px;
     line-height: 25px;
   }
 }
@@ -844,6 +844,17 @@ table.responsive tr td.bold {
     font-weight: 700;
 }
 
+table.responsive.user-content tbody tr > td {
+    vertical-align: top;
+}
+
+table.responsive.user-content tbody tr > td span {
+    color: #6F777B;
+}
+
+table.responsive.user-content tbody tr > td ul {
+    list-style: disc outside;
+}
 
 @media (min-width: 768px) {
   table.responsive thead {

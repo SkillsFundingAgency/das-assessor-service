@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
@@ -41,6 +42,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 return await PostPutRequestWithResponse<UpdateContactRequest, ContactResponse>(request, updateContactRequest);
             }
         }
+
+        public async Task<List<ContactsWithRolesResponse>> GetContactsWithRoles(string endPointAssessorOrganisationId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/{endPointAssessorOrganisationId}/withroles"))
+            {
+                return await RequestAndDeserialiseAsync<List<ContactsWithRolesResponse>>(request, $"Could not find contacts for {endPointAssessorOrganisationId}");
+            }
+        }
     }
 
     public interface IContactsApiClient
@@ -50,5 +59,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<ContactResponse> Create(CreateContactRequest contact);
 
         Task<ContactResponse> Update(UpdateContactRequest updateContactRequest);
+
+        Task<List<ContactsWithRolesResponse>> GetContactsWithRoles(string endPointAssessorOrganisationId);
     }
 }

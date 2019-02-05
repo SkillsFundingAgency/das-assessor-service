@@ -101,6 +101,8 @@
     <Build Include="StoredProcedures\EPAO_Standards_Count.sql" />
     <Build Include="StoredProcedures\GetEPAO_Pipelines.sql" />
     <Build Include="StoredProcedures\EPAO_Registered_Standards.sql" />
+    <Build Include="Tables\Roles.sql" />
+    <Build Include="Tables\ContactRoles.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.AssessorService.Database.refactorlog" />

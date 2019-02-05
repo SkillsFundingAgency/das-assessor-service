@@ -27,6 +27,8 @@ namespace SFA.DAS.AssessorService.Data
         public virtual DbSet<BatchLog> BatchLogs { get; set; }
         public virtual DbSet<SearchLog> SearchLogs { get; set; }
         public virtual DbSet<StaffReport> StaffReports { get; set; }
+        public virtual DbSet<ContactsRole> ContactsRoles { get; set; }
+        public virtual DbSet<Role> Roles { get; set; }
 
         public override int SaveChanges()
         {
@@ -58,6 +60,22 @@ namespace SFA.DAS.AssessorService.Data
         public virtual void MarkAsModified<T>(T item) where T : class
         {
             Entry(item).State = EntityState.Modified;
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<ContactsRole>().HasKey(sc => new { sc.ContactId, sc.RoleId });
+
+            modelBuilder.Entity<ContactsRole>()
+                .HasOne<Contact>(sc => sc.Contact)
+                .WithMany(s => s.ContactsRoles)
+                .HasForeignKey(sc => sc.ContactId);
+
+
+            modelBuilder.Entity<ContactsRole>()
+                .HasOne<Role>(sc => sc.Role)
+                .WithMany(s => s.ContactsRoles)
+                .HasForeignKey(sc => sc.RoleId);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -36,6 +37,23 @@ namespace SFA.DAS.AssessorService.Data
                 .SelectMany(q => q.Contacts).ToListAsync();
 
             return contacts;
+        }
+
+        public async Task<IEnumerable<IGrouping<Contact, ContactsRole>>> GetAllContactsWithRoles(
+            string endPointAssessorOrganisationId)
+        {
+            var groupedContactRoles = await _assessorDbContext.Organisations
+                .Include(organisation => organisation.Contacts)
+                .Where(organisation => organisation.EndPointAssessorOrganisationId == endPointAssessorOrganisationId)
+                .SelectMany(q => q.Contacts).SelectMany(a => a.ContactsRoles.Select(c => new ContactsRole
+                {
+                    ContactId = c.ContactId,
+                    RoleId = c.RoleId,
+                    Contact = c.Contact,
+                    Role = c.Role
+                })).GroupBy(x => x.Contact).ToListAsync();
+
+            return groupedContactRoles;
         }
 
         public async Task<Contact> GetContact(string userName)
