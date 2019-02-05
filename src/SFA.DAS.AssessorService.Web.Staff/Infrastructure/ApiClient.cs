@@ -162,7 +162,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         public async Task<string> CreateEpaOrganisationStandard(CreateEpaOrganisationStandardRequest request)
         {
             var result =
-                await Post<CreateEpaOrganisationStandardRequest, EpaOrganisationStandardResponse>("api/ao/assessment-organisations/standards",
+                await Post<CreateEpaOrganisationStandardRequest, EpaoStandardResponse>("api/ao/assessment-organisations/standards",
                     request);
             return result.Details;
         }
@@ -170,7 +170,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         public async Task<string> UpdateEpaOrganisationStandard(UpdateEpaOrganisationStandardRequest request)
         {
             var result =
-                await Put<UpdateEpaOrganisationStandardRequest, EpaOrganisationStandardResponse>("api/ao/assessment-organisations/standards",
+                await Put<UpdateEpaOrganisationStandardRequest, EpaoStandardResponse>("api/ao/assessment-organisations/standards",
                     request);
             return result.Details;
         }

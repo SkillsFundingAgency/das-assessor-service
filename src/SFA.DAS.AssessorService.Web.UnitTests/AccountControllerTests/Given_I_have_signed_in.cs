@@ -80,7 +80,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
             result.Should().BeOfType<RedirectToActionResult>();
 
             var redirectResult = result as RedirectToActionResult;
-            redirectResult.ControllerName.Should().Be("Search");
+            redirectResult.ControllerName.Should().Be("Dashboard");
             redirectResult.ActionName.Should().Be("Index");
         }
     }
