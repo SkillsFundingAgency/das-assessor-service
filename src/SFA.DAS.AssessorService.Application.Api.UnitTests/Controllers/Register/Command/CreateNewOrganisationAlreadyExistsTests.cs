@@ -41,6 +41,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
                 Ukprn = 123321,
                 OrganisationTypeId = 5,
                 LegalName = "legal name 1",
+                TradingName = "name 1",
                 WebsiteLink = "website link 1",
                 Address1 = "address 1",
                 Address2 = "address 2",
@@ -64,6 +65,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
                 OrganisationData = new OrganisationData
                 {
                     LegalName = _request.LegalName,
+                    TradingName = _request.TradingName,
                     Address1 = _request.Address1,
                     Address2 = _request.Address2,
                     Address3 = _request.Address3,
