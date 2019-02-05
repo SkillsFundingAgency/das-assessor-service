@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.AssessorService.Api.Types.Models.AO
+﻿using System;
+
+namespace SFA.DAS.AssessorService.Api.Types.Models.AO
 {
     public class OrganisationData
     {
@@ -11,5 +13,12 @@
         public string Postcode { get; set; }
         public string CompanyNumber { get; set; }
         public string CharityNumber { get; set; }
+        public FHADetails FHADetails { get; set; }
+    }
+
+    public class FHADetails
+    {
+        public DateTime? FinancialDueDate { get; set; }
+        public bool? FinancialExempt { get; set; }
     }
 }
