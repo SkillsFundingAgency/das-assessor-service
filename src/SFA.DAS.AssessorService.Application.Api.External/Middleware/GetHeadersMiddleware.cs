@@ -27,33 +27,40 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Middleware
 
         public async Task Invoke(HttpContext context, IHeaderInfo headerInfo)
         {
-            context.Request.Headers.TryGetValue(_UserEmailHeader, out var emailHeaderValue);
-            context.Request.Headers.TryGetValue(_UserNoteHeader, out var noteHeaderValue);
-
-            string email = emailHeaderValue.FirstOrDefault();
-
-            if(!TryExtractUkprnFromHeader(noteHeaderValue, out var ukprn))
+            if (context.Request.Path == "/Ping")
             {
-                _logger.LogError("GetHeadersMiddleware - invalid or no UKPRN.");
-                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                context.Response.ContentType = "application/json";
-                var json = GetApiResponseAsJson(context.Response.StatusCode, _InvalidUkprnMessage);
-                await context.Response.WriteAsync(json);
-            }
-            else if (string.IsNullOrWhiteSpace(email))
-            {
-                _logger.LogError("GetHeadersMiddleware - no Email Address");
-                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                context.Response.ContentType = "application/json";
-                var json = GetApiResponseAsJson(context.Response.StatusCode, _InvalidEmailMessage);
-                await context.Response.WriteAsync(json);
+                await _next(context);
             }
             else
             {
-                headerInfo.Ukprn = ukprn;
-                headerInfo.Email = email;
+                context.Request.Headers.TryGetValue(_UserEmailHeader, out var emailHeaderValue);
+                context.Request.Headers.TryGetValue(_UserNoteHeader, out var noteHeaderValue);
 
-                await _next(context);
+                string email = emailHeaderValue.FirstOrDefault();
+
+                if(!TryExtractUkprnFromHeader(noteHeaderValue, out var ukprn))
+                {
+                    _logger.LogError("GetHeadersMiddleware - invalid or no UKPRN.");
+                    context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    context.Response.ContentType = "application/json";
+                    var json = GetApiResponseAsJson(context.Response.StatusCode, _InvalidUkprnMessage);
+                    await context.Response.WriteAsync(json);
+                }
+                else if (string.IsNullOrWhiteSpace(email))
+                {
+                    _logger.LogError("GetHeadersMiddleware - no Email Address");
+                    context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    context.Response.ContentType = "application/json";
+                    var json = GetApiResponseAsJson(context.Response.StatusCode, _InvalidEmailMessage);
+                    await context.Response.WriteAsync(json);
+                }
+                else
+                {
+                    headerInfo.Ukprn = ukprn;
+                    headerInfo.Email = email;
+
+                    await _next(context);
+                }    
             }
         }
 

@@ -1,0 +1,94 @@
+﻿@model SFA.DAS.AssessorService.Web.ViewModels.ViewAndEditOrganisationViewModel
+@{
+    ViewBag.Title = "Organisation Details";
+    Layout = "_DashboardLayout";
+}
+<div>
+    <div class="grid-row">
+        <div class="column-two-thirds">
+
+            <h1 class="heading-large">Organisation details</h1>
+         
+            <div id="organisationWrapper">
+                <div class="form-group">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td><span class="bold-small">Name</span></td>
+                                <td>@Model.Name</td>
+                            </tr>
+                            <tr>
+                                <td><span class="bold-small">Organisation ID</span></td>
+                                <td>@Model.OrganisationId</td>
+                            </tr>
+                            <tr>
+                                <td><span class="bold-small">UKPRN</span></td>
+                                <td>@Model.Ukprn</td>
+                            </tr>
+                            <tr>
+                                <td><span class="bold-small">Organisation Type</span></td>
+                                <td>@Model.OrganisationType</td>
+                            </tr>
+                            <tr>
+                                <td><span class="bold-small">Legal Name</span></td>
+                                <td>@Model.LegalName</td>
+                            </tr>
+                            @if (@Model.CompanyNumber != null)
+                            {
+                                <tr>
+                                    <td><span class="bold-small">Company number</span></td>
+                                    <td>@Model.CompanyNumber</td>
+                                </tr>
+                            }
+                            @if (@Model.CharityNumber != null)
+                            {
+                                <tr>
+                                    <td><span class="bold-small">Charity number</span></td>
+                                    <td>@Model.CharityNumber</td>
+                                </tr>
+                            }
+                            <tr>
+                                <td><span class="bold-small">Website</span></td>
+                                <td>@Model.WebsiteLink</td>
+                            </tr>
+                            <tr>
+                                <td><span class="bold-small">Address</span></td>
+                                <td>
+                                    @if (@Model.Address1 != null)
+                                    {
+                                        @Model.Address1<br />
+                                    }
+                                    @if (@Model.Address2 != null)
+                                    {
+                                        @Model.Address2<br />
+                                    }
+                                    @if (@Model.Address3 != null)
+                                    {
+                                        @Model.Address3<br />
+                                    }
+                                    @if (@Model.Address4 != null)
+                                    {
+                                        @Model.Address4<br />
+                                    }
+                                    @if (@Model.Postcode != null)
+                                    {
+                                        @Model.Postcode
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="bold-small">Primary contact</span></td>
+                                <td>@Model.PrimaryContactName</td>
+                            </tr>
+                            <tr>
+                                <td><span class="bold-small">Status</span></td>
+                                <td>@Model.Status</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

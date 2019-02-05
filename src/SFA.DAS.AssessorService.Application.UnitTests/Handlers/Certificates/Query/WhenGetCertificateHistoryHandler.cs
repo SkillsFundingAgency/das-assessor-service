@@ -32,6 +32,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Qu
         public void Arrange()
         {
             MappingBootstrapper.Initialize();
+            var statuses = new List<string>
+            {
+                Domain.Consts.CertificateStatus.Submitted,
+                Domain.Consts.CertificateStatus.Printed,
+                Domain.Consts.CertificateStatus.Reprint
+            };
 
             var certificateData = JsonConvert.SerializeObject(Builder<CertificateData>.CreateNew().Build());
             var certificates = Builder<Certificate>.CreateListOfSize(10)
@@ -43,7 +49,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Qu
                 ).Build().ToList();
                                     
             _certificateRepositoryMock = new Mock<ICertificateRepository>();
-            _certificateRepositoryMock.Setup(r => r.GetCertificateHistory(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>()))
+            _certificateRepositoryMock.Setup(r => r.GetCertificateHistory(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), statuses))
                 .Returns(Task.FromResult(new PaginatedList<Certificate>(certificates, 40, 1, 10)));
 
             _assessmentOrgsApiClientMock = new Mock<IAssessmentOrgsApiClient>();

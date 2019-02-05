@@ -48,7 +48,7 @@
                         <th>Organisation name</th>
                         <th>Financial review</th>
                         <th>Date submitted</th>
-                        <th>Current status</th>
+                        <th class="numeric">Current status</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -64,24 +64,24 @@
                             <td data-label="Date submitted">
                                 @item.SubmittedDate.ToSfaShortDateString()
                             </td>
-                            <td data-label="Current status">
+                            <td class="numeric" data-label="Current status">
                                 @{
                                     switch (item.CurrentStatus)
                                     {
                                         case ApplicationSectionStatus.Submitted:
-                                            <div class="govuk-tag govuk-tag--float-right">
-                                                Unassigned
+                                            <div class="govuk-tag">
+                                                unassigned
                                             </div>
                                             break;
                                         case ApplicationSectionStatus.InProgress:
                                         case ApplicationSectionStatus.Evaluated:
-                                            <div class="govuk-tag govuk-tag--float-right">
-                                                In Progress
+                                            <div class="govuk-tag">
+                                                in progress
                                             </div>
                                             break;
                                         case ApplicationSequenceStatus.Resubmitted:
-                                            <div class="govuk-tag govuk-tag--float-right">
-                                                Updated
+                                            <div class="govuk-tag">
+                                                updated
                                             </div>
                                             break;
                                         default:

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
 using Microsoft.EntityFrameworkCore;
-using SFA.DAS.Apprenticeships.Api.Types.AssessmentOrgs;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
@@ -68,5 +70,6 @@ namespace SFA.DAS.AssessorService.Data
                     q.EndPointAssessorOrganisationId == endPointAssessorOrganisationId);
             return organisation.Contacts.Count() != 0;
         }
+        
     }
 }

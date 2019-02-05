@@ -47,7 +47,7 @@
                         <th>Organisation name</th>
                         <th>Standard</th>
                         <th>Date submitted</th>
-                        <th>Current status</th>
+                        <th class="numeric">Current status</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -63,23 +63,23 @@
                             <td data-label="Date submitted">
                                 @item.SubmittedDate.ToSfaShortDateString()
                             </td>
-                            <td data-label="Current status">
+                            <td class="numeric" data-label="Current status">
                                 @{
                                     switch (item.CurrentStatus)
                                     {
                                         case ApplicationSectionStatus.Submitted:
-                                            <div class="govuk-tag govuk-tag--float-right">
+                                            <div class="govuk-tag">
                                                 Unassigned
                                             </div>
                                             break;
                                         case ApplicationSectionStatus.InProgress:
                                         case ApplicationSectionStatus.Evaluated:
-                                            <div class="govuk-tag govuk-tag--float-right">
+                                            <div class="govuk-tag">
                                                 In Progress
                                             </div>
                                             break;
                                         case ApplicationSequenceStatus.Resubmitted:
-                                            <div class="govuk-tag govuk-tag--float-right">
+                                            <div class="govuk-tag">
                                                 Updated
                                             </div>
                                             break;
