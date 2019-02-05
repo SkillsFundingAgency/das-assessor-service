@@ -23,16 +23,43 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
             _applyApiClient = applyApiClient;
         }
 
-        [HttpGet("/Applications/Open")]
-        public async Task<IActionResult> OpenApplications(int page = 1)
+        [HttpGet("/Applications/Midpoint")]
+        public async Task<IActionResult> MidpointApplications(int page = 1)
         {
-            var applications = await _applyApiClient.GetOpenApplications();
+            const int midpointSequenceId = 1;
+            var applications = await _applyApiClient.GetOpenApplications(midpointSequenceId);
 
             var paginatedApplications = new PaginatedList<ApplicationSummaryItem>(applications, applications.Count(), page, int.MaxValue);
 
             var viewmodel = new DashboardViewModel { Applications = paginatedApplications };
 
-            return View("~/Views/Apply/Applications/OpenApplications.cshtml", viewmodel);
+            return View("~/Views/Apply/Applications/MidpointApplications.cshtml", viewmodel);
+        }
+
+        [HttpGet("/Applications/Standard")]
+        public async Task<IActionResult> StandardApplications(int page = 1)
+        {
+            const int standardSequenceId = 2;
+            var applications = await _applyApiClient.GetOpenApplications(standardSequenceId);
+
+            var paginatedApplications = new PaginatedList<ApplicationSummaryItem>(applications, applications.Count(), page, int.MaxValue);
+
+            var viewmodel = new DashboardViewModel { Applications = paginatedApplications };
+
+            return View("~/Views/Apply/Applications/StandardApplications.cshtml", viewmodel);
+        }
+
+        [HttpGet("/Applications/Rejected")]
+        public async Task<IActionResult> RejectedApplications(int page = 1)
+        {
+            // NOTE: Rejected actually means Feedback Added
+            var applications = await _applyApiClient.GetFeedbackAddedApplications();
+
+            var paginatedApplications = new PaginatedList<ApplicationSummaryItem>(applications, applications.Count(), page, int.MaxValue);
+
+            var viewmodel = new DashboardViewModel { Applications = paginatedApplications };
+
+            return View("~/Views/Apply/Applications/RejectedApplications.cshtml", viewmodel);
         }
 
         [HttpGet("/Applications/Closed")]
@@ -211,13 +238,14 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
 
             await _applyApiClient.ReturnApplication(applicationId, sequenceId, returnType);
 
-            return RedirectToAction("Returned", new { applicationId });
+            return RedirectToAction("Returned", new { applicationId, sequenceId });
         }
 
         [HttpGet("/Applications/Returned")]
-        public IActionResult Returned(Guid applicationId)
+        public IActionResult Returned(Guid applicationId, int sequenceId)
         {
-            return View("~/Views/Apply/Applications/Returned.cshtml");
+            var viewModel = new ApplicationReturnedViewModel(applicationId, sequenceId);
+            return View("~/Views/Apply/Applications/Returned.cshtml", viewModel);
         }
         
         [HttpGet("Application/{applicationId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}/Question/{questionId}/{filename}/Download")]
