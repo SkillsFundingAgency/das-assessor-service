@@ -1045,6 +1045,10 @@ table.responsive tr.total {
   text-transform: uppercase;
 }
 
+.govuk-tag + .govuk-tag {
+  margin-top: 2px;
+}
+
 @media print {
   .govuk-tag {
     font-family: sans-serif;
@@ -1073,11 +1077,28 @@ table.responsive tr.total {
   background-color: #6f777b;
 }
 
+.govuk-tag--updated {
+    background-color: #f47738;
+}
+
+.govuk-tag--rejected {
+  background-color: #b10e1e;
+}
+
+.govuk-tag--approved {
+  background-color: #006435;
+}
+
 .govuk-check-your-answers .das-cya-change--responsive {
   position: relative;
   text-align: left;
 }
 
+@media (min-width: 769px) {
+  .govuk-check-your-answers .das-cya-change--responsive {
+    text-align: right;
+  }
+}
 
 /**
   * App navigation
@@ -1088,42 +1109,44 @@ table.responsive tr.total {
 ***/
 
 .govuk-clearfix:after {
-    content: "";
-    display: block;
-    clear: both;
+  content: "";
+  display: block;
+  clear: both;
 }
 
 .app-navigation {
-    /* padding-right: 15px;
+  /* 
+  padding-right: 15px;
   padding-left: 15px;
-  background-color: #f8f8f8; */
-    border-bottom: 1px solid #bfc1c3;
-    font-family: "nta", Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    font-weight: 700;
-    font-size: 16px;
-    line-height: 20px;
+  background-color: #f8f8f8;
+  */
+  border-bottom: 1px solid #bfc1c3;
+  font-family: "nta", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 20px;
 }
 
 @media print {
-    .app-navigation {
-        font-family: sans-serif;
-    }
+  .app-navigation {
+    font-family: sans-serif;
+  }
 }
 
 @media (min-width: 40.0625em) {
-    .app-navigation {
-        font-size: 19px;
-        line-height: 25px;
-    }
+  .app-navigation {
+    font-size: 19px;
+    line-height: 25px;
+  }
 }
 
 @media print {
-    .app-navigation {
-        font-size: 14pt;
-        line-height: 1.15;
-    }
+  .app-navigation {
+    font-size: 14pt;
+    line-height: 1.15;
+  }
 }
 
 /* @media (max-width: 40.0525em) {
@@ -1133,57 +1156,71 @@ table.responsive tr.total {
 } */
 
 .app-navigation__list {
-    margin: 0;
-    padding: 0;
-    list-style: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-    .app-navigation__list > li {
-        box-sizing: border-box;
-        height: 53px;
-        line-height: 53px;
-        -moz-box-sizing: border-box;
-        -webkit-box-sizing: border-box;
-    }
+.app-navigation__list > li {
+  box-sizing: border-box;
+  height: 53px;
+  line-height: 53px;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
 
 @media (min-width: 311px) {
-    .app-navigation__list > li {
-        float: left;
-    }
+  .app-navigation__list > li {
+    float: left;
+  }
 }
 
 .app-navigation__list > li:hover {
-    border-bottom: 4px solid #2b8cc4;
+  border-bottom: 4px solid #2b8cc4;
 }
 
 .app-navigation__list > li.app-navigation--current-page {
-    border-bottom: 4px solid #005ea5 !important;
+  border-bottom: 4px solid #005ea5 !important;
 }
 
-    .app-navigation__list > li.app-navigation--current-page a:hover {
-        color: #005ea5;
-    }
+.app-navigation__list > li.app-navigation--current-page a:hover {
+  color: #005ea5;
+}
 
 .app-navigation__list > li a {
-    font-weight: 700;
-    display: block;
-    padding: 0;
-    color: #005ea5;
-    text-decoration: none;
+  font-weight: 700;
+  display: block;
+  padding: 0;
+  color: #005ea5;
+  text-decoration: none;
 }
 
 @media (min-width: 311px) {
-    .app-navigation__list > li a {
-        padding: 0 15px;
-    }
+  .app-navigation__list > li a {
+    padding: 0 15px;
+  }
 }
 
 .app-navigation__list > li a:visited {
-    color: #005ea5;
+  color: #005ea5;
 }
 
 .app-navigation__list > li a:hover,
 .app-navigation__list > li a:focus {
-    color: #2b8cc4;
-    background-color: inherit;
+  color: #2b8cc4;
+  background-color: inherit;
+}
+
+.grid-row:after,
+#content:after,
+.notice:after,
+.panel:after,
+fieldset:after,
+.form-section:after,
+.form-group:after,
+.form-group-error:after,
+.breadcrumbs ol:after {
+  content: "";
+  display: block;
+  clear: both;
 }

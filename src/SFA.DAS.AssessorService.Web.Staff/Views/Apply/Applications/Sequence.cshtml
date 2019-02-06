@@ -1,13 +1,16 @@
 @using SFA.DAS.AssessorService.ApplyTypes
+@using SFA.DAS.AssessorService.Web.Staff.Helpers;
+
 @model SFA.DAS.AssessorService.ApplyTypes.ApplicationSequence
 
 @{
     ViewBag.Title = "Application overview";
+    var BackAction = ApplicationReviewHelpers.ApplicationBacklinkAction(Model?.Status, Model?.SequenceId);
 }
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <a class="link-back" asp-controller="Application" asp-action="OpenApplications">Back</a>
+        <a class="link-back" asp-controller="Application" asp-action="@BackAction">Back</a>
         @if (Model == null)
         {
             <h1 class="heading-xlarge">Sequence not active</h1>
@@ -24,24 +27,6 @@
                         continue;
                     }
                     <li>
-                        @if (applicationSection.HasNewPageFeedback)
-                        {
-                            <div class="govuk-tag govuk-tag--float-right">
-                                Feedback added
-                            </div>
-                        }
-                        @*@if (applicationSection.HasCompletedPageFeedback)
-                            {
-                            <div class="govuk-tag govuk-tag--float-right">
-                                Answer updated
-                            </div>
-                            }*@
-                        @if (applicationSection.Status == ApplicationSectionStatus.Evaluated)
-                        {
-                            <div class="govuk-tag govuk-tag--float-right">
-                                Evaluated
-                            </div>
-                        }
                         <h2 class="heading-medium heading-medium--small-margin-bottom">
                             <a href="@Url.Action("Section", "Application", new {applicationSection.ApplicationId, applicationSection.SequenceId, applicationSection.SectionId})">
                                 @applicationSection.LinkTitle
@@ -50,6 +35,24 @@
                         <span class="form-hint form-hint--margin-bottom">
                             @applicationSection.PagesComplete of @applicationSection.PagesActive questions completed
                         </span>
+                        @if (applicationSection.HasNewPageFeedback)
+                        {
+                            <div class="govuk-tag">
+                                Feedback added
+                            </div>
+                        }
+                        @*@if (applicationSection.HasCompletedPageFeedback)
+                            {
+                            <div class="govuk-tag">
+                                Answer updated
+                            </div>
+                            }*@
+                        @if (applicationSection.Status == ApplicationSectionStatus.Evaluated)
+                        {
+                            <div class="govuk-tag">
+                                Evaluated
+                            </div>
+                        }
                         <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
                     </li>
                 }
@@ -66,7 +69,7 @@
         }
 
         <div class="form-group">
-            <a class="govuk-button" asp-controller="Application" asp-action="OpenApplications">Return to account home</a>
+            <a class="govuk-button" asp-controller="Application" asp-action="@BackAction">Return to applications</a>
         </div>
     </div>
 </div>
