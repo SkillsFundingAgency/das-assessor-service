@@ -31,6 +31,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             _organisationsApiClient = organisationsApiClient;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             _sessionService.Set("CurrentPage", Pages.Organisations);
@@ -51,5 +52,17 @@ namespace SFA.DAS.AssessorService.Web.Controllers
            
             return View(response);
         }
+
+        [HttpGet]
+        [Route("/[controller]/status/{id}/{status}")]
+        public async Task<IActionResult> SetStatus(string id, string status)
+        {
+            if (!string.IsNullOrEmpty(id) && !string.IsNullOrEmpty(status))
+            {
+                await _contactsApiClient.UpdateStatus(new UpdateContactStatusRequest(id, status));
+            }
+            return  RedirectToAction("Index");
+        }
+            
     }
 }

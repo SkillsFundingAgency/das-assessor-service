@@ -33,13 +33,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
                     continue;
                 var contactsWithRolesResponse = new ContactsWithRolesResponse
                 {
-                    EndPointAssessorOrganisationId= result.Key.EndPointAssessorOrganisationId,
-                    PhoneNumber = result.Key.PhoneNumber,
-                    DisplayName = result.Key.DisplayName,
-                    Email = result.Key.Email,
-                    Id = result.Key.Id,
-                    Status = result.Key.Status == ContactStatus.Live?ContactStatus.Active: result.Key.Status
+                    Contact = result.Key
                 };
+                contactsWithRolesResponse.Contact.Status = result.Key.Status == ContactStatus.Live
+                    ? ContactStatus.Active
+                    : result.Key.Status;
                 foreach (var role in result)
                 {
                     contactsWithRolesResponse.Roles.Add(role.Role?.UserRole);

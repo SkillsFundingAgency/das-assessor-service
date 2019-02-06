@@ -59,6 +59,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return NoContent();
         }
 
+        [HttpPut("status", Name = "UpdateContactStatus")]
+        [SwaggerResponse((int)HttpStatusCode.NoContent)]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> UpdateContactStatus([FromBody] UpdateContactStatusRequest updateContactStatusRequest)
+        {
+            _logger.LogInformation("Received Update Contact Status Request");
+
+            await _mediator.Send(updateContactStatusRequest);
+
+            return NoContent();
+        }
+
         [HttpDelete(Name = "Delete")]
         [SwaggerResponse((int)HttpStatusCode.NoContent)]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]

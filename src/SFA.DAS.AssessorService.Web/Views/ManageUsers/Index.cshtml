@@ -1,5 +1,6 @@
 ﻿@model IList<SFA.DAS.AssessorService.Api.Types.Models.ContactsWithRolesResponse>
 @using Microsoft.AspNetCore.Mvc.Localization
+@using SFA.DAS.AssessorService.Domain.Consts
 @inject IViewLocalizer Localizer
 @{
     ViewBag.Title = "Manage users";
@@ -34,21 +35,26 @@
                         {
                             <tr>
                                 <td data-label="@Localizer["User details"]" class="nowrap" >
-                                    @Html.DisplayFor(modelItem => item.DisplayName)<br />
-                                    <span>@Html.DisplayFor(modelItem => item.Email)</span>
+                                    @Html.DisplayFor(modelItem => item.Contact.DisplayName)<br />
+                                    <span>@Html.DisplayFor(modelItem => item.Contact.Email)</span>
                                 </td>
                                 <td data-label="@Localizer["What they can do"]" >
                                     <ul>
                                         @foreach (var role in item.Roles )
                                         {
-                                        <li> @Html.DisplayFor(modelItem => role)</li>
+                                            <li> @Html.DisplayFor(modelItem => role)</li>
                                         }
                                     </ul>
                                 </td>
                                 <td data-label="@Localizer["Status"]" >
-                                    @Html.DisplayFor(modelItem => item.Status)
+                                    @Html.DisplayFor(modelItem => item.Contact.Status)
                                 </td>
                                 <td data-label="@Localizer["Action required"]">
+                                    @if (item.Contact.Status == ContactStatus.InvitePending)
+                                    {
+                                        <a asp-controller="ManageUsers" asp-action="SetStatus" asp-route-status="@ContactStatus.Approve" asp-route-id="@item.Contact.Id">Approve</a>
+                                        <a asp-controller="ManageUsers" asp-action="SetStatus" asp-route-status="@ContactStatus.Reject" asp-route-id="@item.Contact.Id">Reject</a>
+                                    }
                                 </td>
                             </tr>
                         }

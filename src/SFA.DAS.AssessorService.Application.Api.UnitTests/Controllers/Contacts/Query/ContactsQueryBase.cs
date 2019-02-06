@@ -1,3 +1,4 @@
+using MediatR;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -28,7 +29,8 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts
 
 
         protected Mock<ILogger<ContactQueryController>> ControllerLoggerMock;
-        
+
+        protected Mock<IMediator> MediatorMock;
 
         private MockStringLocaliserBuilder _mockStringLocaliserBuilder;
         
@@ -44,6 +46,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts
             ContactQueryController = new ContactQueryController(
                 ContactQueryRepositoryMock.Object,
                 _searchOrganisationForContactsValidator,
+                MediatorMock.Object,
                 ControllerLoggerMock.Object);
         }
 

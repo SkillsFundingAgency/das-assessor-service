@@ -43,6 +43,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task<ContactResponse> UpdateStatus(UpdateContactStatusRequest updateContactStatusRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/contacts/status"))
+            {
+                return await PostPutRequestWithResponse<UpdateContactStatusRequest, ContactResponse>(request, updateContactStatusRequest);
+            }
+        }
+
         public async Task<List<ContactsWithRolesResponse>> GetContactsWithRoles(string endPointAssessorOrganisationId)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/{endPointAssessorOrganisationId}/withroles"))
@@ -61,5 +69,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<ContactResponse> Update(UpdateContactRequest updateContactRequest);
 
         Task<List<ContactsWithRolesResponse>> GetContactsWithRoles(string endPointAssessorOrganisationId);
+
+        Task<ContactResponse> UpdateStatus(UpdateContactStatusRequest updateContactStatusRequest);
     }
 }
