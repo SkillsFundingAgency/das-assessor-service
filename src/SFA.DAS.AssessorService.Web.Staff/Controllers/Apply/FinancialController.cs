@@ -41,6 +41,19 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
             return View("~/Views/Apply/Financial/OpenApplications.cshtml", viewmodel);
         }
 
+        [HttpGet("/Financial/Rejected")]
+        public async Task<IActionResult> RejectedApplications(int page = 1)
+        {
+            // NOTE: Rejected actually means Feedback Added or it was graded as Inadequate
+            var applications = await _apiClient.GetFeedbackAddedFinancialApplications();
+
+            var paginatedApplications = new PaginatedList<FinancialApplicationSummaryItem>(applications, applications.Count(), page, int.MaxValue);
+
+            var viewmodel = new FinancialDashboardViewModel { Applications = paginatedApplications };
+
+            return View("~/Views/Apply/Financial/RejectedApplications.cshtml", viewmodel);
+        }
+
         [HttpGet("/Financial/Closed")]
         public async Task<IActionResult> ClosedApplications(int page = 1)
         {
@@ -77,8 +90,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
         [HttpGet("/Financial/{applicationId}/Graded")]
         public async Task<IActionResult> ViewGradedApplication(Guid applicationId)
         {
-            await _apiClient.StartFinancialReview(applicationId);
-            
             var financialSectionId = 3;
             var stage1SequenceId = 1;
             var financialSection = await _apiClient.GetSection(applicationId, stage1SequenceId, financialSectionId);
@@ -93,7 +104,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
                 Grade = financialSection.QnAData.FinancialApplicationGrade
             };
             
-            return View("~/Views/Apply/Financial/PreviousApplication.cshtml", vm);
+            return View("~/Views/Apply/Financial/Application_ReadOnly.cshtml", vm);
         }
 
         [HttpGet("/Financial/Download/{applicationId}")]

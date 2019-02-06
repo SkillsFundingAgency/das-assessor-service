@@ -4,7 +4,7 @@
 @model SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Financial.FinancialDashboardViewModel
 
 @{
-    ViewBag.Title = "Account home  - Closed assessments";
+    ViewBag.Title = "Account home  - Rejected assessments";
     Layout = "_Layout";
 }
 
@@ -20,12 +20,12 @@
             <li class="app-navigation">
                 <a asp-action="OpenApplications" asp-controller="Financial">New assessments</a>
             </li>
-            <li class="app-navigation">
+            <li class="app-navigation--current-page">
                 <a asp-action="RejectedApplications" asp-controller="Financial">Rejected assessments</a>
             </li>
-            <li class="app-navigation--current-page">
-                <a asp-action="ClosedApplications" asp-controller="Financial">Closed assessments</a>
-            </li>
+            @*<li class="app-navigation">
+                    <a asp-action="ClosedApplications" asp-controller="Financial">Closed assessments</a>
+                </li>*@
         </ul>
     </nav>
 </div>
@@ -33,7 +33,7 @@
 <div class="grid-row">
     <div class="column-full">
         <h1 class="heading-large">
-            Closed assessments
+            Rejected assessments
         </h1>
 
         @if (@Model.Applications.Items.Any())
@@ -42,7 +42,7 @@
                 <thead>
                     <tr>
                         <th>Organisation name</th>
-                        <th>Date graded</th>
+                        <th>Date rejected</th>
                         <th>Grade</th>
                         <th class="numeric">Current status</th>
                     </tr>
@@ -54,8 +54,8 @@
                             <td data-label="Organisation name" class="nowrap">
                                 <a asp-action="ViewGradedApplication" asp-controller="Financial" asp-route-applicationId="@item.ApplicationId">@item.OrganisationName</a>
                             </td>
-                            <td data-label="Date graded">
-                                @item.Grade.GradedDateTime.ToSfaShortDateString()
+                            <td data-label="Date rejected">
+                                @item.FeedbackAddedDate.ToSfaShortDateString()
                             </td>
                             <td data-label="Grade">
                                 @item.Grade.SelectedGrade
@@ -64,16 +64,9 @@
                                 @{
                                     switch (item.CurrentStatus)
                                     {
-                                        case ApplicationSectionStatus.Graded:
-                                        case ApplicationSectionStatus.Evaluated:
-                                        case ApplicationSequenceStatus.Approved:
-                                            <div class="govuk-tag govuk-tag--approved">
-                                                passed
-                                            </div>
-                                            break;
-                                        case ApplicationSequenceStatus.Rejected:
+                                        case ApplicationSequenceStatus.FeedbackAdded:
                                             <div class="govuk-tag govuk-tag--rejected">
-                                                failed
+                                                rejected
                                             </div>
                                             break;
                                         default:
@@ -90,7 +83,7 @@
         else
         {
             <div class="info-summary">
-                <h3 class="heading-medium">There are no closed assessments at this time.</h3>
+                <h3 class="heading-medium">There are no rejected assessments at this time.</h3>
             </div>
         }
 
@@ -105,7 +98,7 @@
 
                 @if (Model.Applications.HasPreviousPage)
                 {
-                    <a asp-action="ClosedApplications"
+                    <a asp-action="OpenApplications"
                        asp-controller="Financial"
                        asp-route-page="@(Model.Applications.PageIndex - 1)"
                        class="previous">
@@ -117,7 +110,7 @@
 
                 @if (Model.Applications.HasNextPage)
                 {
-                    <a asp-action="ClosedApplications"
+                    <a asp-action="OpenApplications"
                        asp-controller="Financial"
                        asp-route-page="@(Model.Applications.PageIndex + 1)"
                        class="next">

@@ -103,6 +103,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             return await Get<List<FinancialApplicationSummaryItem>>($"/Financial/OpenApplications");
         }
 
+        public async Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications()
+        {
+            return await Get<List<FinancialApplicationSummaryItem>>($"/Financial/FeedbackAddedApplications");
+        }
+
         public async Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications()
         {
             return await Get<List<FinancialApplicationSummaryItem>>($"/Financial/ClosedApplications");

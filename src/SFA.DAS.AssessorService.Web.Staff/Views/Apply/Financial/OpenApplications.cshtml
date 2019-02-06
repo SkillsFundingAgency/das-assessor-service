@@ -4,13 +4,13 @@
 @model SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Financial.FinancialDashboardViewModel
 
 @{
-    ViewBag.Title = "Account home  - Open applications";
+    ViewBag.Title = "Account home  - Open assessments";
     Layout = "_Layout";
 }
 
 <div class="grid-row">
-    <div class="column-two-thirds">
-        <h1 class="heading-xlarge">Account home</h1>
+    <div class="column-two-thirds nowrap">
+        <h1 class="heading-xlarge">Financial Health Assessments</h1>
     </div>
 </div>
 
@@ -18,11 +18,14 @@
     <nav class="app-navigation govuk-clearfix">
         <ul class="app-navigation__list">
             <li class="app-navigation--current-page">
-                <a asp-action="OpenApplications" asp-controller="Financial">Open</a>
+                <a asp-action="OpenApplications" asp-controller="Financial">New assessments</a>
             </li>
             <li class="app-navigation">
-                <a asp-action="ClosedApplications" asp-controller="Financial">Closed</a>
+                <a asp-action="RejectedApplications" asp-controller="Financial">Rejected assessments</a>
             </li>
+            @*<li class="app-navigation">
+                <a asp-action="ClosedApplications" asp-controller="Financial">Closed assessments</a>
+            </li>*@
         </ul>
     </nav>
 </div>
@@ -30,7 +33,7 @@
 <div class="grid-row">
     <div class="column-full">
         <h1 class="heading-large">
-            Open applications
+            New assessments
         </h1>
 
         @if (@Model.Applications.Items.Any())
@@ -40,7 +43,7 @@
                     <tr>
                         <th>Organisation name</th>
                         <th>Date submitted</th>
-                        <th>Current status</th>
+                        <th class="numeric">Current status</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -48,40 +51,28 @@
                     {
                         <tr>
                             <td data-label="Organisation name" class="nowrap">
-                                @if (item.CurrentStatus == ApplicationSequenceStatus.FeedbackAdded)
-                                {
-                                    <a asp-action="ViewGradedApplication" asp-controller="Financial" asp-route-applicationId="@item.ApplicationId">@item.OrganisationName</a>
-                                }
-                                else
-                                {
-                                    <a asp-action="ViewApplication" asp-controller="Financial" asp-route-applicationId="@item.ApplicationId">@item.OrganisationName</a>
-                                }
+                                <a asp-action="ViewApplication" asp-controller="Financial" asp-route-applicationId="@item.ApplicationId">@item.OrganisationName</a>
                             </td>
                             <td data-label="Date submitted">
                                 @item.SubmittedDate.ToSfaShortDateString()
                             </td>
-                            <td data-label="Current status">
+                            <td class="numeric" data-label="Current status">
                                 @{
                                     switch (item.CurrentStatus)
                                     {
                                         case ApplicationSectionStatus.Submitted:
-                                            <div class="govuk-tag govuk-tag--float-right">
-                                                Unassigned
+                                            <div class="govuk-tag govuk-tag--inactive">
+                                                unassigned
                                             </div>
                                             break;
                                         case ApplicationSectionStatus.InProgress:
-                                            <div class="govuk-tag govuk-tag--float-right">
-                                                In Progress
+                                            <div class="govuk-tag">
+                                                in progress
                                             </div>
                                             break;
                                         case ApplicationSequenceStatus.Resubmitted:
-                                            <div class="govuk-tag govuk-tag--float-right">
+                                            <div class="govuk-tag govuk-tag--updated">
                                                 Updated
-                                            </div>
-                                            break;
-                                        case ApplicationSequenceStatus.FeedbackAdded:
-                                            <div class="govuk-tag govuk-tag--float-right">
-                                                Declined
                                             </div>
                                             break;
                                         default:
@@ -98,7 +89,7 @@
         else
         {
             <div class="info-summary">
-                <h3 class="heading-medium">There are no open applications at this time.</h3>
+                <h3 class="heading-medium">There are no new assessments at this time.</h3>
             </div>
         }
 
