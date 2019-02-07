@@ -200,15 +200,19 @@ namespace SFA.DAS.AssessorService.EpaoDataSync.Domain
 
             foreach (var apiResult in apiResults)
             {
-                var givenNamesTmp = apiResult.GivenNames.NameCase();
-                var familyNameTmp = apiResult.FamilyName.NameCase();
+                var givenNamesTmp = apiResult.GivenNames?.NameCase();
+                if (!string.IsNullOrEmpty(givenNamesTmp))
+                    givenNamesTmp = givenNamesTmp.Replace("'", "''");
+                var familyNameTmp = apiResult.FamilyName?.NameCase();
+                if (!string.IsNullOrEmpty(givenNamesTmp))
+                    familyNameTmp = familyNameTmp.Replace("'", "''");
 
                 var sql =
                     $"update Ilrs set Source={(apiResult.AcademicYear == null ? "Source":"'"+apiResult.AcademicYear+"'" )}, " +
                     $"ApprenticeshipId = {(apiResult.ApprenticeshipId == null ? "ApprenticeshipId" : "'"+apiResult.ApprenticeshipId+ "'")}, " +
-                    $"GivenNames = @givenNames, " +
-                    $"FamilyName = @familyName, " +
-                    $"EpaOrgId = {(apiResult.EPAOrgId == null ? "EpaOrgId" : "'" + apiResult.EPAOrgId + "'")}," +
+                    $"GivenNames = {(string.IsNullOrEmpty(givenNamesTmp) ? "GivenNames" : "'" + givenNamesTmp + "'")}," +
+                    $"FamilyName = {(string.IsNullOrEmpty(familyNameTmp) ? "FamilyName" : "'" + familyNameTmp + "'")}," +
+                    $"EpaOrgId = {(string.IsNullOrEmpty(apiResult.EPAOrgId) ? "EpaOrgId" : "'" + apiResult.EPAOrgId + "'")}," +
                     $"CompletionStatus = {(apiResult.CompStatus == null? "CompletionStatus" : "'" + apiResult.CompStatus+ "'")  }, " +
                     $"LearnStartDate ={(apiResult.ActualStartDate == null ? "LearnStartDate" : "'" + apiResult.ActualStartDate.Value.ToString("yyyy-MM-ddTHH:mm:ss") + "'")}, " +
                     $"PlannedEndDate =  {(apiResult.PlannedEndDate == null ? "PlannedEndDate" : "'" + apiResult.PlannedEndDate.Value.ToString("yyyy-MM-ddTHH:mm:ss") + "'")} " +
@@ -217,11 +221,7 @@ namespace SFA.DAS.AssessorService.EpaoDataSync.Domain
                  
                 try
                 {
-                    totalNumbersEffected += await _connection.ExecuteAsync(sql, new
-                    {
-                        givenNames= givenNamesTmp,
-                        familyName= familyNameTmp
-                    });
+                    totalNumbersEffected += await _connection.ExecuteAsync(sql);
                 }
                 catch (Exception e)
                 {
