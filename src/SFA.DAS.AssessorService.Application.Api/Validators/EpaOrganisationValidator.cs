@@ -578,9 +578,5 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             return validationResult;
 
         }
-
-       
     }
-
-    
 }
