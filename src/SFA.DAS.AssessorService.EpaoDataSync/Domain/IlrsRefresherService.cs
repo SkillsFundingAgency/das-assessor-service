@@ -38,13 +38,13 @@ namespace SFA.DAS.AssessorService.EpaoDataSync.Domain
                     $"Select distinct Max(EventId) as EventId from Ilrs where EventId is not null");
             if (ilrResult != null)
             {
-                var apiResults = await _eventServiceApi.GetSubmissionsEventsByEventId(ilrResult.EventId, 1);
+                var apiResults = await _eventServiceApi.GetSubmissionsEventsByEventId(ilrResult.EventId.GetValueOrDefault(), 1);
                 var numberOfPages = apiResults.TotalNumberOfPages;
                 for (var pageNumber = 1; pageNumber <= numberOfPages; pageNumber++)
                 {
                     if (pageNumber > 1)
                         apiResults =
-                            await _eventServiceApi.GetSubmissionsEventsByEventId(ilrResult.EventId, pageNumber);
+                            await _eventServiceApi.GetSubmissionsEventsByEventId(ilrResult.EventId.GetValueOrDefault(), pageNumber);
 
                     if (apiResults?.Items == null || !apiResults.Items.Any())
                         continue;
@@ -108,7 +108,7 @@ namespace SFA.DAS.AssessorService.EpaoDataSync.Domain
                     continue;
                 foreach (var listOfIlr in listOfIlrs)
                 {
-                    totalNumbersEffected += await UpdateFromLearners(uln,listOfIlr.EventId);
+                    totalNumbersEffected += await UpdateFromLearners(uln,listOfIlr.EventId.GetValueOrDefault());
                 }
             }
 
