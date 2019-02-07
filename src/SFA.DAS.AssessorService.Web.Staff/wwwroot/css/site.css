@@ -1220,3 +1220,66 @@ fieldset:after,
   display: block;
   clear: both;
 }
+
+/* Add list from new govuk-* stylesheet */
+
+.govuk-list {
+  color: #0b0c0c;
+}
+.govuk-list {
+  font-family: nta, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  line-height: 1.25;
+  margin-top: 0;
+  margin-bottom: 15px;
+  padding-left: 0;
+  list-style-type: none;
+}
+@media print {
+  .govuk-list {
+    font-family: sans-serif;
+  }
+}
+@media (min-width: 40.0625em) {
+  .govuk-list {
+    line-height: 1.31579;
+  }
+}
+@media print {
+  .govuk-list {
+    font-size: 14pt;
+    line-height: 1.15;
+    color: #000;
+  }
+}
+@media (min-width: 40.0625em) {
+  .govuk-list {
+    margin-bottom: 20px;
+  }
+}
+.govuk-list .govuk-list {
+  margin-top: 10px;
+}
+.govuk-list > li {
+  margin-bottom: 5px;
+}
+.govuk-list--bullet {
+  padding-left: 20px;
+  list-style-type: disc;
+}
+.govuk-list--number {
+  padding-left: 20px;
+  list-style-type: decimal;
+}
+.govuk-list--bullet > li,
+.govuk-list--number > li {
+  margin-bottom: 0;
+}
+@media (min-width: 40.0625em) {
+  .govuk-list--bullet > li,
+  .govuk-list--number > li {
+    margin-bottom: 5px;
+  }
+}
