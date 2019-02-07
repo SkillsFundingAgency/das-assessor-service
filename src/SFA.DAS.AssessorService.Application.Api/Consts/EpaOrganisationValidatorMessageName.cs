@@ -43,6 +43,7 @@
         public const string OrganisationStandardCannotBeUpdatedBecauseOrganisationNotLive = "OrganisationStandardCannotBeUpdatedBecauseOrganisationNotLive";
         public const string OrganisationStandardCannotBeMadeLiveBecauseEffectiveFromNotSet = "OrganisationStandardCannotBeMadeLiveBecauseEffectiveFromNotSet";
         public const string OrganisationStandardCannotBeUpdatedBecauseEffectiveFromNotSet = "OrganisationStandardCannotBeUpdatedBecauseEffectiveFromNotSet";
+        public const string OrganisationStandardCannotBeAddedBecauseEffectiveFromNotSet = "OrganisationStandardCannotBeAddedBecauseEffectiveFromNotSet";
         public const string OrganisationTypeIsRequired = "OrganisationTypeIsRequired";
         public const string AddressIsNotEntered = "AddressIsNotEntered";
         public const string PostcodeIsNotEntered = "PostcodeIsNotEntered";
