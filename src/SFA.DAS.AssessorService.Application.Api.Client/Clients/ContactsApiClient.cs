@@ -51,13 +51,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<List<ContactsWithRolesResponse>> GetContactsWithRoles(string endPointAssessorOrganisationId)
+        public async Task<List<ContactsWithPrivilegesResponse>> GetContactsWithPrivileges(string endPointAssessorOrganisationId)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/{endPointAssessorOrganisationId}/withroles"))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/{endPointAssessorOrganisationId}/withprivileges"))
             {
-                return await RequestAndDeserialiseAsync<List<ContactsWithRolesResponse>>(request, $"Could not find contacts for {endPointAssessorOrganisationId}");
+                return await RequestAndDeserialiseAsync<List<ContactsWithPrivilegesResponse>>(request, $"Could not find contacts for {endPointAssessorOrganisationId}");
             }
         }
+        
     }
 
     public interface IContactsApiClient
@@ -68,8 +69,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         Task<ContactResponse> Update(UpdateContactRequest updateContactRequest);
 
-        Task<List<ContactsWithRolesResponse>> GetContactsWithRoles(string endPointAssessorOrganisationId);
+        Task<List<ContactsWithPrivilegesResponse>> GetContactsWithPrivileges(string endPointAssessorOrganisationId);
 
         Task<ContactResponse> UpdateStatus(UpdateContactStatusRequest updateContactStatusRequest);
+        
     }
 }

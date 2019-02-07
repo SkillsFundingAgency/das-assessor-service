@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
+using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Models;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
@@ -8,10 +9,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     public class HomeController : Controller
     {
         private readonly IDistributedCache _cache;
+        private readonly ISessionService _sessionService;
 
-        public HomeController(IDistributedCache cache)
+        public HomeController(IDistributedCache cache, ISessionService sessionService)
         {
             _cache = cache;
+            _sessionService = sessionService;
         }
 
         [Route("/")]
@@ -50,5 +53,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return View();
         }
 
+        public IActionResult InvitePending()
+        {
+            return View((object)_sessionService.Get("OrganisationName"));
+        }
+
+        public IActionResult Rejected()
+        {
+            return View((object)_sessionService.Get("OrganisationName"));
+        }
     }
 }

@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Logging;
@@ -71,7 +72,24 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
 
             _logger.LogInformation(LoggingConstants.SignInSuccessful);
 
-            response.Result = LoginResult.Valid;
+            var status = await GetUserStatus(organisation.EndPointAssessorOrganisationId, request.Username);
+            switch (status)
+            {
+                case ContactStatus.Live:
+                    response.Result = LoginResult.Valid;
+                    break;
+                case ContactStatus.InvitePending:
+                    response.Result = LoginResult.InvitePending;
+                    break;
+                case ContactStatus.Inactive:
+                    response.Result = LoginResult.Rejected;
+                    break;
+                default:
+                    response.Result = LoginResult.NotRegistered;
+                    break;
+            }
+
+
             response.OrganisationName = organisation.EndPointAssessorName;
             return response;
         }
@@ -79,6 +97,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
         private bool UserDoesNotHaveAcceptableRole(List<string> roles)
         {
             return !roles.Contains(_config.Authentication.Role);
+        }
+
+        private async Task<string> GetUserStatus(string endPointAssessorOrganisationId, string userName)
+        {
+            return await _contactQueryRepository.GetContactStatus(endPointAssessorOrganisationId, userName);
         }
 
         private async Task<Contact> GetContact(string username, string email, string displayName)

@@ -22,6 +22,8 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
     {
         Valid,
         NotRegistered,
-        InvalidRole
+        InvalidRole,
+        Rejected,
+        InvitePending
     }
 }

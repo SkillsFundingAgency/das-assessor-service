@@ -39,21 +39,21 @@ namespace SFA.DAS.AssessorService.Data
             return contacts;
         }
 
-        public async Task<IEnumerable<IGrouping<Contact, ContactsRole>>> GetAllContactsWithRoles(
+        public async Task<IEnumerable<IGrouping<Contact, ContactsPrivilege>>> GetAllContactsWithPrivileges(
             string endPointAssessorOrganisationId)
         {
-            var groupedContactRoles = await _assessorDbContext.Organisations
+            var groupedContactPrivileges = await _assessorDbContext.Organisations
                 .Include(organisation => organisation.Contacts)
                 .Where(organisation => organisation.EndPointAssessorOrganisationId == endPointAssessorOrganisationId)
-                .SelectMany(q => q.Contacts).SelectMany(a => a.ContactsRoles.Select(c => new ContactsRole
+                .SelectMany(q => q.Contacts).SelectMany(a => a.ContactsPrivileges.Select(c => new ContactsPrivilege
                 {
                     ContactId = c.ContactId,
-                    RoleId = c.RoleId,
+                    PrivilegeId = c.PrivilegeId,
                     Contact = c.Contact,
-                    Role = c.Role
+                    Privilege = c.Privilege
                 })).GroupBy(x => x.Contact).ToListAsync();
 
-            return groupedContactRoles;
+            return groupedContactPrivileges;
         }
 
         public async Task<Contact> GetContact(string userName)
@@ -85,6 +85,15 @@ namespace SFA.DAS.AssessorService.Data
             var result = await _assessorDbContext.Contacts
                 .AnyAsync(q => q.Username == userName);
             return result;
+        }
+
+        public async Task<string> GetContactStatus(string endPointAssessorOrganisationId, string userName)
+        {
+            var contactStatus = await _assessorDbContext.Contacts.Where(x =>
+                    x.EndPointAssessorOrganisationId == endPointAssessorOrganisationId && x.Username == userName)
+                .FirstOrDefaultAsync();
+
+            return contactStatus?.Status;
         }
     }
 }

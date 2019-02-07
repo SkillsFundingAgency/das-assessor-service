@@ -48,6 +48,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     return RedirectToAction("NotRegistered", "Home");
                 case LoginResult.InvalidRole:
                     return RedirectToAction("InvalidRole", "Home");
+                case LoginResult.InvitePending:
+                    ResetCookies();
+                    _sessionService.Set("OrganisationName", loginResult.OrganisationName);
+                    return RedirectToAction("InvitePending", "Home");
+                case LoginResult.Rejected:
+                    ResetCookies();
+                    _sessionService.Set("OrganisationName", loginResult.OrganisationName);
+                    return RedirectToAction("Rejected", "Home");
                 default:
                     throw new ApplicationException();
             }
@@ -58,10 +66,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         {
             var callbackUrl = Url.Action(nameof(SignedOut), "Account", values: null, protocol: Request.Scheme);
 
-            foreach (var cookie in Request.Cookies.Keys)
-            {
-                Response.Cookies.Delete(cookie);
-            }
+            ResetCookies();
             
             return SignOut(
                 new AuthenticationProperties { RedirectUri = callbackUrl },
@@ -85,6 +90,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public IActionResult AccessDenied()
         {
             return View();
+        }
+
+        private void ResetCookies()
+        {
+            foreach (var cookie in Request.Cookies.Keys)
+            {
+                Response.Cookies.Delete(cookie);
+            }
         }
     }
 }

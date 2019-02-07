@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using MediatR;
-using SFA.DAS.AssessorService.Api.Types.Models;
 
-namespace SFA.DAS.AssessorService.Api.Types
+namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    public class GetContactsRequest: IRequest<List<ContactsWithRolesResponse>>
+    public class GetContactsRequest: IRequest<List<ContactsWithPrivilegesResponse>>
     {
         public GetContactsRequest(string endPointAssessorOrganisationId)
         {

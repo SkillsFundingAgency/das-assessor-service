@@ -21,7 +21,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string Status { get; set; }
         public string PhoneNumber { get; set; }
 
-        public IList<ContactsRole> ContactsRoles { get; set; }
+        public IList<ContactsPrivilege> ContactsPrivileges { get; set; }
 
     }
 }

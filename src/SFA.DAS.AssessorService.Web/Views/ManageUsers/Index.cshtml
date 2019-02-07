@@ -1,4 +1,4 @@
-﻿@model IList<SFA.DAS.AssessorService.Api.Types.Models.ContactsWithRolesResponse>
+﻿@model IList<SFA.DAS.AssessorService.Api.Types.Models.ContactsWithPrivilegesResponse>
 @using Microsoft.AspNetCore.Mvc.Localization
 @using SFA.DAS.AssessorService.Domain.Consts
 @inject IViewLocalizer Localizer
@@ -40,7 +40,7 @@
                                 </td>
                                 <td data-label="@Localizer["What they can do"]" >
                                     <ul>
-                                        @foreach (var role in item.Roles )
+                                        @foreach (var role in item.Privileges )
                                         {
                                             <li> @Html.DisplayFor(modelItem => role)</li>
                                         }

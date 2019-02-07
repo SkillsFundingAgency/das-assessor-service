@@ -35,13 +35,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public async Task<IActionResult> Index()
         {
             _sessionService.Set("CurrentPage", Pages.Organisations);
-            var response = new List<ContactsWithRolesResponse>();
+            var response = new List<ContactsWithPrivilegesResponse>();
             try
             {
                 var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
                 var organisation = await _organisationsApiClient.Get(ukprn);
                 if (organisation != null)
-                 response = await _contactsApiClient.GetContactsWithRoles(organisation.EndPointAssessorOrganisationId);
+                 response = await _contactsApiClient.GetContactsWithPrivileges(organisation.EndPointAssessorOrganisationId);
                
             }
             catch (EntityNotFoundException)

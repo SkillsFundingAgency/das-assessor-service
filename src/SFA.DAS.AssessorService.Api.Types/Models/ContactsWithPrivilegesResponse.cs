@@ -5,13 +5,13 @@ using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {
-    public class ContactsWithRolesResponse
+    public class ContactsWithPrivilegesResponse
     {
-        public ContactsWithRolesResponse()
+        public ContactsWithPrivilegesResponse()
         {
-            Roles = new List<string>();
+            Privileges = new List<string>();
         }
         public Contact Contact { get; set; }
-        public List<string> Roles { get;  }
+        public List<string> Privileges { get;  }
     }
 }

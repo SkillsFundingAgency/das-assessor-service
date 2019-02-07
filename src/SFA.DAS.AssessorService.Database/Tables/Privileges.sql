@@ -1,7 +1,7 @@
-﻿CREATE TABLE [dbo].[Roles](
+﻿CREATE TABLE [dbo].[Privileges](
 	[Id] [uniqueidentifier] NOT NULL,
-	[UserRole] [nvarchar](120) NOT NULL,
- CONSTRAINT [PK_Roles] PRIMARY KEY CLUSTERED 
+	[UserPrivilage] [nvarchar](120) NOT NULL,
+ CONSTRAINT [PK_Privileges] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]

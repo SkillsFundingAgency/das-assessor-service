@@ -4,11 +4,11 @@ using System.Text;
 
 namespace SFA.DAS.AssessorService.Domain.Entities
 {
-    public class Role
+    public class Privilege
     {
        public Guid Id { get; set; }
-       public string UserRole { get; set; }
+       public string UserPrivilege { get; set; }
 
-       public IList<ContactsRole> ContactsRoles { get; set; }
+       public IList<ContactsPrivilege> ContactsPrivileges { get; set; }
     }
 }

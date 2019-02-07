@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
                 
             var newContact = Mapper.Map<Contact>(createContactRequest);           
             newContact.OrganisationId = organisation.Id;
-            newContact.Status = ContactStatus.Live;
+            newContact.Status = ContactStatus.InvitePending;
 
             if (!(await _organisationQueryRepository.CheckIfOrganisationHasContacts(createContactRequest.EndPointAssessorOrganisationId)))
             {

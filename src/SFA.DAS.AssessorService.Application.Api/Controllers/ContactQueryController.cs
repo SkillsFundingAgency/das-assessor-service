@@ -87,14 +87,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(Mapper.Map<ContactResponse>(contact));
         }
 
-        [HttpGet("{endPointAssessorOrganisationId}/withroles", Name = "GetAllContactsWithTheirRoles")]
+        [HttpGet("{endPointAssessorOrganisationId}/withprivileges", Name = "GetAllContactsWithTheirPrivilages")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ContactResponse>))]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetAllContactsWithTheirRoles(string endPointAssessorOrganisationId)
+        public async Task<IActionResult> GetAllContactsWithTheirPrivileges(string endPointAssessorOrganisationId)
         {
             _logger.LogInformation(
-                $"Received Search for Contacts and their Roles using endPointAssessorOrganisationId = {endPointAssessorOrganisationId}");
+                $"Received Search for Contacts and their Privileges using endPointAssessorOrganisationId = {endPointAssessorOrganisationId}");
 
             return Ok(await _mediator.Send(new GetContactsRequest(endPointAssessorOrganisationId)));
         }

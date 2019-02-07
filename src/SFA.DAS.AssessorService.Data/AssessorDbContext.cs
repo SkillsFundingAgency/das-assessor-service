@@ -27,8 +27,8 @@ namespace SFA.DAS.AssessorService.Data
         public virtual DbSet<BatchLog> BatchLogs { get; set; }
         public virtual DbSet<SearchLog> SearchLogs { get; set; }
         public virtual DbSet<StaffReport> StaffReports { get; set; }
-        public virtual DbSet<ContactsRole> ContactsRoles { get; set; }
-        public virtual DbSet<Role> Roles { get; set; }
+        public virtual DbSet<ContactsPrivilege> ContactsPrivileges { get; set; }
+        public virtual DbSet<Privilege> Privileges { get; set; }
 
         public override int SaveChanges()
         {
@@ -64,18 +64,18 @@ namespace SFA.DAS.AssessorService.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<ContactsRole>().HasKey(sc => new { sc.ContactId, sc.RoleId });
+            modelBuilder.Entity<ContactsPrivilege>().HasKey(sc => new { sc.ContactId, sc.PrivilegeId });
 
-            modelBuilder.Entity<ContactsRole>()
+            modelBuilder.Entity<ContactsPrivilege>()
                 .HasOne<Contact>(sc => sc.Contact)
-                .WithMany(s => s.ContactsRoles)
+                .WithMany(s => s.ContactsPrivileges)
                 .HasForeignKey(sc => sc.ContactId);
 
 
-            modelBuilder.Entity<ContactsRole>()
-                .HasOne<Role>(sc => sc.Role)
-                .WithMany(s => s.ContactsRoles)
-                .HasForeignKey(sc => sc.RoleId);
+            modelBuilder.Entity<ContactsPrivilege>()
+                .HasOne<Privilege>(sc => sc.Privilege)
+                .WithMany(s => s.ContactsPrivileges)
+                .HasForeignKey(sc => sc.PrivilegeId);
         }
     }
 }
