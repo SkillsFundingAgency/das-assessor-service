@@ -21,7 +21,7 @@
             {
                 // NOTE: The FHA Section has a read only view. See ON-1277
                 var financialApplication = Model.Section.QnAData?.FinancialApplicationGrade;
-                var financialApplicationComments = financialApplication.InadequateMoreInformation ?? financialApplication.SatisfactoryMoreInformation;
+                var financialApplicationComments = financialApplication.InadequateMoreInformation;
 
                 <div class="form-group">
                     <table class="table">
