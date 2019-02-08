@@ -1,20 +1,17 @@
-using System;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.ApplyTypes;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.Web.Staff.Domain;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Financial;
+using System;
+using System.IO;
+using System.IO.Compression;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
 {
@@ -153,13 +150,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
                 
                 return File(compressedBytes, "application/zip", "FinancialDocuments.zip");
             }
-            
-            
-            
-
-            
-//            var stream = await downloadedFile.Content.ReadAsStreamAsync();
-//            var contentType = downloadedFile.Content.Headers.ContentType.ToString();
         }
 
         [HttpPost("/Financial/{applicationId}")]
@@ -202,12 +192,15 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
                 {
                     Organisation = organisation,
                     Section = financialSection,
-                    ApplicationId = vm.ApplicationId
+                    ApplicationId = vm.ApplicationId,
+                    Grade = new FinancialApplicationGrade
+                    {
+                        SelectedGrade = vm.Grade.SelectedGrade,
+                        OutstandingFinancialDueDate = vm.Grade.OutstandingFinancialDueDate,
+                        GoodFinancialDueDate = vm.Grade.GoodFinancialDueDate,
+                        SatisfactoryFinancialDueDate = vm.Grade.SatisfactoryFinancialDueDate
+                    }
                 };
-                newvm.Grade.SelectedGrade = vm.Grade.SelectedGrade;
-                newvm.Grade.OutstandingFinancialDueDate = vm.Grade.OutstandingFinancialDueDate;
-                newvm.Grade.GoodFinancialDueDate = vm.Grade.GoodFinancialDueDate;
-                newvm.Grade.SatisfactoryFinancialDueDate = vm.Grade.SatisfactoryFinancialDueDate;
                 return View("~/Views/Apply/Financial/Application.cshtml", newvm);
             }
         }
@@ -215,7 +208,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
         private static string GetEpaOrgId(Organisation org)
         {
             var referenceId = org.OrganisationDetails.OrganisationReferenceId;
-            if (!referenceId.Contains(","))
+            if (string.IsNullOrEmpty(referenceId) || !referenceId.Contains(","))
             {
                 return referenceId;                
             }
@@ -226,17 +219,21 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
 
         private static void GetFinancialDueDate(FinancialApplicationViewModel vm)
         {
-            if (vm.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Outstanding)
+            switch (vm?.Grade?.SelectedGrade)
             {
-                vm.Grade.FinancialDueDate = vm.Grade.OutstandingFinancialDueDate.ToDateTime();
-            }
-            else if (vm.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Good)
-            {
-                vm.Grade.FinancialDueDate = vm.Grade.GoodFinancialDueDate.ToDateTime();
-            }
-            else if (vm.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Satisfactory)
-            {
-                vm.Grade.FinancialDueDate = vm.Grade.SatisfactoryFinancialDueDate.ToDateTime();
+                case FinancialApplicationSelectedGrade.Outstanding:
+                    vm.Grade.FinancialDueDate = vm.Grade.OutstandingFinancialDueDate.ToDateTime();
+                    break;
+                case FinancialApplicationSelectedGrade.Good:
+                    vm.Grade.FinancialDueDate = vm.Grade.GoodFinancialDueDate.ToDateTime();
+                    break;
+                case FinancialApplicationSelectedGrade.Satisfactory:
+                    vm.Grade.FinancialDueDate = vm.Grade.SatisfactoryFinancialDueDate.ToDateTime();
+                    break;
+                case null:
+                default:
+                    break;
+
             }
         }
 
