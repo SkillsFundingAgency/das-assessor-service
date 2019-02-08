@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Helpers
                 case ApplicationSectionStatus.Evaluated:
                     switch(grade)
                     {
-                        case FinancialApplicationSelectedGrade.Excellent:
+                        case FinancialApplicationSelectedGrade.Outstanding:
                         case FinancialApplicationSelectedGrade.Good:
                         case FinancialApplicationSelectedGrade.Satisfactory:
                             return "Passed";
