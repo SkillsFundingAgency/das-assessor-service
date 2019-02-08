@@ -23,13 +23,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators
                 {
                     context.AddFailure("Grade.InadequateMoreInformation", "Enter why the application was graded inadequate");
                 }
-                else if (vm.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Excellent 
+                else if (vm.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Outstanding 
                          || vm.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Good 
                          || vm.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Satisfactory)
                 {
                     switch (vm.Grade.SelectedGrade)
                     {
-                        case FinancialApplicationSelectedGrade.Excellent:
+                        case FinancialApplicationSelectedGrade.Outstanding:
                             ProcessDate(vm.Grade.OutstandingFinancialDueDate, "Grade.OutstandingFinancialDueDate", context);
                             break;
                         case FinancialApplicationSelectedGrade.Good:
