@@ -223,6 +223,6 @@ namespace SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs
             {
                 return await RequestAndDeserialiseAsync<List<Provider>>(request);
             }
-        }
+        }    
     }
 }

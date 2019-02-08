@@ -83,19 +83,19 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             }
         }
 
-        public async Task<List<ApplicationSummaryItem>> GetOpenApplications()
+        public async Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceId)
         {
-            return await Get<List<ApplicationSummaryItem>>($"/Review/OpenApplications");
+            return await Get<List<ApplicationSummaryItem>>($"/Review/OpenApplications?sequenceId={sequenceId}");
+        }
+
+        public async Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications()
+        {
+            return await Get<List<ApplicationSummaryItem>>($"/Review/FeedbackAddedApplications");
         }
 
         public async Task<List<ApplicationSummaryItem>> GetClosedApplications()
         {
             return await Get<List<ApplicationSummaryItem>>($"/Review/ClosedApplications");
-        }
-
-        public async Task<List<dynamic>> NewApplications(int sequenceId)
-        {
-            return await Get<List<dynamic>>($"/Review/NewApplications/{sequenceId}");
         }
         
         public async Task ImportWorkflow(IFormFile file)
