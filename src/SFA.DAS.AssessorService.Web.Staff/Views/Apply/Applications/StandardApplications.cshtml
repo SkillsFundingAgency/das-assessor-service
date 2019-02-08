@@ -4,36 +4,39 @@
 @model SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Applications.DashboardViewModel
 
 @{
-    ViewBag.Title = "Account home  - Open applications";
+    ViewBag.Title = "Account home  - Standard applications";
     Layout = "_Layout";
 }
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <a asp-action="Index" asp-controller="Dashboard" class="link-back">Return to dashboard</a>
-        <h1 class="heading-xlarge">Account home</h1>
+        <h1 class="heading-xlarge">Applications</h1>
     </div>
 </div>
 
 <div class="grid-row">
-    <div class="column-full">
-        <nav class="app-navigation govuk-clearfix">
-            <ul class="app-navigation__list">
-                <li class="app-navigation--current-page">
-                    <a asp-action="OpenApplications" asp-controller="Application">Open</a>
-                </li>
-                <li>
-                    <a asp-action="ClosedApplications" asp-controller="Application">Closed</a>
-                </li>
-            </ul>
-        </nav>
-    </div>
+    <nav class="app-navigation govuk-clearfix">
+        <ul class="app-navigation__list">
+            <li class="app-navigation">
+                <a asp-action="MidpointApplications" asp-controller="Application">Mid point assessments</a>
+            </li>
+            <li class="app-navigation--current-page">
+                <a asp-action="StandardApplications" asp-controller="Application">Standard applications</a>
+            </li>
+            <li class="app-navigation">
+                <a asp-action="RejectedApplications" asp-controller="Application">Rejected applications</a>
+            </li>
+            <li class="app-navigation">
+                <a asp-action="ClosedApplications" asp-controller="Application">Completed applications</a>
+            </li>
+        </ul>
+    </nav>
 </div>
 
 <div class="grid-row">
     <div class="column-full">
         <h1 class="heading-large">
-            Open applications
+            Standard assessments
         </h1>
 
         @if (@Model.Applications.Items.Any())
@@ -42,9 +45,8 @@
                 <thead>
                     <tr>
                         <th>Organisation name</th>
-                        <th>Application type</th>
+                        <th>Standard</th>
                         <th>Date submitted</th>
-                        <th>Financial review</th>
                         <th class="numeric">Current status</th>
                     </tr>
                 </thead>
@@ -53,30 +55,20 @@
                     {
                         <tr>
                             <td data-label="Organisation name" class="nowrap">
-                                @if (item.CurrentStatus == ApplicationSequenceStatus.FeedbackAdded)
-                                {
-                                    <a asp-action="Sequence" asp-controller="Application" asp-route-applicationId="@item.ApplicationId" asp-route-sequenceId="@item.SequenceId">@item.OrganisationName</a>
-                                }
-                                else
-                                {
-                                    <a asp-action="Application" asp-controller="Application" asp-route-applicationId="@item.ApplicationId">@item.OrganisationName</a>
-                                }
+                                <a asp-action="Application" asp-controller="Application" asp-route-applicationId="@item.ApplicationId">@item.OrganisationName</a>
                             </td>
-                            <td data-label="Application type">
-                                @item.ApplicationType
+                            <td data-label="Standard">
+                                @item.StandardName (@item.StandardCode)
                             </td>
                             <td data-label="Date submitted">
                                 @item.SubmittedDate.ToSfaShortDateString()
-                            </td>
-                            <td data-label="Financial review">
-                                @(item.FinancialStatus ?? "---")
                             </td>
                             <td class="numeric" data-label="Current status">
                                 @{
                                     switch (item.CurrentStatus)
                                     {
                                         case ApplicationSectionStatus.Submitted:
-                                            <div class="govuk-tag">
+                                            <div class="govuk-tag govuk-tag--inactive">
                                                 unassigned
                                             </div>
                                             break;
@@ -87,13 +79,8 @@
                                             </div>
                                             break;
                                         case ApplicationSequenceStatus.Resubmitted:
-                                            <div class="govuk-tag">
+                                            <div class="govuk-tag govuk-tag--updated">
                                                 updated
-                                            </div>
-                                            break;
-                                        case ApplicationSequenceStatus.FeedbackAdded:
-                                            <div class="govuk-tag">
-                                                declined
                                             </div>
                                             break;
                                         default:
@@ -125,7 +112,7 @@
 
                 @if (Model.Applications.HasPreviousPage)
                 {
-                    <a asp-action="OpenApplications"
+                    <a asp-action="StandardApplications"
                        asp-controller="Application"
                        asp-route-page="@(Model.Applications.PageIndex - 1)"
                        class="previous">
@@ -137,7 +124,7 @@
 
                 @if (Model.Applications.HasNextPage)
                 {
-                    <a asp-action="OpenApplications"
+                    <a asp-action="StandardApplications"
                        asp-controller="Application"
                        asp-route-page="@(Model.Applications.PageIndex + 1)"
                        class="next">
