@@ -14,7 +14,8 @@ Layout = "_Layout";
                 </h2>
                 <ul class="js-error-summary-list error-summary-list"></ul>
             </div>
-
+            @Html.HiddenFor(c=>c.FinancialDueDate)
+            @Html.HiddenFor(c=>c.FinancialExempt)
             @if (!ViewData.ModelState.IsValid)
             {
             <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
