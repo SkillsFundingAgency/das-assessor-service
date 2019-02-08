@@ -1,4 +1,5 @@
 using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Web.Staff.Controllers.Apply;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Helpers
 {
@@ -19,30 +20,54 @@ namespace SFA.DAS.AssessorService.Web.Staff.Helpers
             return "";
         }
 
-        public static string TranslateFinanceStatus(string financeStatus)
+        public static string TranslateFinancialStatus(string financeStatus, string grade)
         {
             switch (financeStatus)
             {
                 case ApplicationSectionStatus.Submitted:
                     return "Not started";
                 case ApplicationSectionStatus.InProgress:
-                    return "Evaluation started";
+                    return "In Progress";
                 case ApplicationSectionStatus.Graded:
                 case ApplicationSectionStatus.Evaluated:
-                    return "Evaluated";
+                    switch(grade)
+                    {
+                        case FinancialApplicationSelectedGrade.Outstanding:
+                        case FinancialApplicationSelectedGrade.Good:
+                        case FinancialApplicationSelectedGrade.Satisfactory:
+                            return "Passed";
+                        case FinancialApplicationSelectedGrade.Exempt:
+                            return "Exempt";
+                        case FinancialApplicationSelectedGrade.Inadequate:
+                            return "Rejected";
+                    }
+                    break;
             }
 
             return "";
         }
 
-        public static string ReadyToFeedback(string financeStatus, string sequenceStatus)
+        public static string ApplicationBacklinkAction(string sequenceStatus, int? sequenceId)
         {
-            return (financeStatus == ApplicationSectionStatus.Evaluated && sequenceStatus == ApplicationSectionStatus.Evaluated) ? "Yes" : "No";
-        }
-
-        public static string ApplicationLink(string status)
-        {
-            return status == ApplicationSectionStatus.Submitted ? "Evaluate application" : "Continue";
+            switch(sequenceStatus)
+            {
+                case ApplicationSequenceStatus.FeedbackAdded:
+                    return nameof(ApplicationController.RejectedApplications);
+                case ApplicationSequenceStatus.Approved:
+                case ApplicationSequenceStatus.Rejected:
+                    return nameof(ApplicationController.ClosedApplications);
+                case null:
+                default:
+                    switch (sequenceId)
+                    {
+                        case 2:
+                            return nameof(ApplicationController.StandardApplications);
+                        case 1:
+                        case null:
+                        default:
+                            return nameof(ApplicationController.MidpointApplications);
+                    }
+            }
         }
     }
 }
