@@ -205,5 +205,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 return BadRequest(new EpaoStandardResponse(ex.Message));
             }
         }
+
+        [HttpPost("update-financials")]
+        public async Task<IActionResult> UpdateOrganisationFinancials([FromBody] UpdateFinancialsRequest request)
+        {
+            await _mediator.Send(request);
+            return Ok();
+        }
     }
 }
