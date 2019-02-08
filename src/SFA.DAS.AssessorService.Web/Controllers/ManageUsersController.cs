@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
+using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Web.Constants;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 
@@ -21,14 +23,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly IContactsApiClient _contactsApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IOrganisationsApiClient _organisationsApiClient;
+        private readonly IEmailApiClient _emailApiClient;
 
         public ManageUsersController(ISessionService sessionService, IContactsApiClient contactsApiClient,
-            IHttpContextAccessor contextAccessor, IOrganisationsApiClient organisationsApiClient)
+            IHttpContextAccessor contextAccessor, IOrganisationsApiClient organisationsApiClient, IEmailApiClient emailApiClient)
         {
             _sessionService = sessionService;
             _contactsApiClient = contactsApiClient;
             _contextAccessor = contextAccessor;
             _organisationsApiClient = organisationsApiClient;
+            _emailApiClient = emailApiClient;
         }
 
         [HttpGet]
@@ -55,11 +59,18 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         [HttpGet]
         [Route("/[controller]/status/{id}/{status}")]
-        public async Task<IActionResult> SetStatus(string id, string status)
+        public async Task<IActionResult> SetStatusAndNotify(string id, string status)
         {
             if (!string.IsNullOrEmpty(id) && !string.IsNullOrEmpty(status))
             {
                 await _contactsApiClient.UpdateStatus(new UpdateContactStatusRequest(id, status));
+                var contactResponse = await _contactsApiClient.GetById(id);
+                var emailTemplate =
+                    await _emailApiClient.GetEmailTemplate(EmailTemplateName.ASSESSOR_EPAO_APPROVE_CONFIRM);
+                await _emailApiClient.SendEmailWithTemplate(new SendEmailRequest(contactResponse.Email, emailTemplate, new
+                {
+                    contactname= $"{contactResponse.DisplayName}"
+                }));
             }
             return  RedirectToAction("Index");
         }

@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
 using System.IO;
+using System.Net.Http;
 using System.Threading.Tasks;
 using FluentValidation.AspNetCore;
 using JWT;
@@ -25,6 +26,9 @@ using SFA.DAS.AssessorService.Data.TestData;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.IFAStandards;
 using SFA.DAS.AssessorService.Settings;
+using SFA.DAS.Http;
+using SFA.DAS.Http.TokenGenerators;
+using SFA.DAS.Notifications.Api.Client;
 using StructureMap;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -160,6 +164,12 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 config.For<AssessorDbContext>().Use(c => new AssessorDbContext(option.Options));
                 config.For<IDbConnection>().Use(c => new SqlConnection(Configuration.SqlConnectionString));
               
+
+                config.For<INotificationsApi>().Use<NotificationsApi>().Ctor<HttpClient>().Is(string.IsNullOrWhiteSpace(NotificationConfiguration().ClientId)
+                    ? new HttpClientBuilder().WithBearerAuthorisationHeader(new JwtBearerTokenGenerator(NotificationConfiguration())).Build()
+                    : new HttpClientBuilder().WithBearerAuthorisationHeader(new AzureADBearerTokenGenerator(NotificationConfiguration())).Build());
+
+                config.For<Notifications.Api.Client.Configuration.INotificationsApiClientConfiguration>().Use(NotificationConfiguration());
                 config.Populate(services);
             });
 
@@ -195,5 +205,19 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
             }
 
         }
+
+        private Notifications.Api.Client.Configuration.INotificationsApiClientConfiguration NotificationConfiguration()
+        {
+            return new Notifications.Api.Client.Configuration.NotificationsApiClientConfiguration
+            {
+                ApiBaseUrl = Configuration.NotificationsApiClientConfiguration.ApiBaseUrl,
+                ClientToken = Configuration.NotificationsApiClientConfiguration.ClientToken,
+                ClientId = "",
+                ClientSecret = "",
+                IdentifierUri = "",
+                Tenant = ""
+            };
+        }
+    
     }
 }

@@ -95,5 +95,10 @@ namespace SFA.DAS.AssessorService.Data
 
             return contactStatus?.Status;
         }
+
+        public async Task<Contact> GetContactById(Guid id)
+        {
+            return await _assessorDbContext.Contacts.Where(x => x.Id == id).FirstOrDefaultAsync();
+        }
     }
 }

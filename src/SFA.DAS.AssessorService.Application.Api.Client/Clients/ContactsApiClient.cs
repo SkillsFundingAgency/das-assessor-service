@@ -27,6 +27,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task<ContactResponse> GetById(string id)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/user/{id}"))
+            {
+                return await RequestAndDeserialiseAsync<ContactResponse>(request, $"Could not find the contact");
+            }
+        }
+
         public async Task<ContactResponse> Create(CreateContactRequest contact)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/contacts/"))
@@ -72,6 +80,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<List<ContactsWithPrivilegesResponse>> GetContactsWithPrivileges(string endPointAssessorOrganisationId);
 
         Task<ContactResponse> UpdateStatus(UpdateContactStatusRequest updateContactStatusRequest);
-        
+
+        Task<ContactResponse> GetById(string id);
+
     }
 }

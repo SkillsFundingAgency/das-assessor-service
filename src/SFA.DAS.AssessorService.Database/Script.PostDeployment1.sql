@@ -22,3 +22,4 @@ update deliveryarea set Ordering=8 where Area='South East'
 update deliveryarea set Ordering=9 where Area='South West'
 
 alter table Contacts alter column Status nvarchar(20) not null
+alter table EMailTemplates alter column Recipients nvarchar(max) null

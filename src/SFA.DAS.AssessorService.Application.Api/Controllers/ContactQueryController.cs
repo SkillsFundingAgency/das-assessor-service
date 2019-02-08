@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Validators;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Entities;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
@@ -97,6 +99,31 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 $"Received Search for Contacts and their Privileges using endPointAssessorOrganisationId = {endPointAssessorOrganisationId}");
 
             return Ok(await _mediator.Send(new GetContactsRequest(endPointAssessorOrganisationId)));
+        }
+
+        [HttpGet("user/{id}", Name = "GetContactById")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ContactResponse))]
+        [SwaggerResponse((int)HttpStatusCode.NotFound)]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetContactById(string id)
+        {
+            Contact contact = null;
+            _logger.LogInformation($" Get Request using user id = {id}");
+            try
+            {
+                var guidId = Guid.Parse(id);
+                contact = await _contactQueryRepository.GetContactById(guidId);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Failed to retrieve contact with id : {id} : {e.Message}");
+            }
+
+            if (contact == null) { 
+                throw new ResourceNotFoundException();
+            }
+         
+            return Ok(Mapper.Map<ContactResponse>(contact));
         }
     }
 }

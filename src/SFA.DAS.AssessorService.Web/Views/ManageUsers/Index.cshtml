@@ -52,8 +52,8 @@
                                 <td data-label="@Localizer["Action required"]">
                                     @if (item.Contact.Status == ContactStatus.InvitePending)
                                     {
-                                        <a asp-controller="ManageUsers" asp-action="SetStatus" asp-route-status="@ContactStatus.Approve" asp-route-id="@item.Contact.Id">Approve</a>
-                                        <a asp-controller="ManageUsers" asp-action="SetStatus" asp-route-status="@ContactStatus.Reject" asp-route-id="@item.Contact.Id">Reject</a>
+                                        <a asp-controller="ManageUsers" asp-action="SetStatusAndNotify" asp-route-status="@ContactStatus.Approve" asp-route-id="@item.Contact.Id">Approve</a>
+                                        <a asp-controller="ManageUsers" asp-action="SetStatusAndNotify" asp-route-status="@ContactStatus.Reject" asp-route-id="@item.Contact.Id">Reject</a>
                                     }
                                 </td>
                             </tr>
