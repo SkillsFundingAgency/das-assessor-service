@@ -1,10 +1,11 @@
 @using SFA.DAS.AssessorService.Domain.Extensions;
+@using SFA.DAS.AssessorService.Web.Staff.Helpers;
 @using SFA.DAS.AssessorService.ApplyTypes;
 
 @model SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Applications.DashboardViewModel
 
 @{
-    ViewBag.Title = "Account home  - Completed applications";
+    ViewBag.Title = "Account home  - Mid point assessments";
     Layout = "_Layout";
 }
 
@@ -17,7 +18,7 @@
 <div class="grid-row">
     <nav class="app-navigation govuk-clearfix">
         <ul class="app-navigation__list">
-            <li class="app-navigation">
+            <li class="app-navigation--current-page">
                 <a asp-action="MidpointApplications" asp-controller="Application">Mid point assessments</a>
             </li>
             <li class="app-navigation">
@@ -26,7 +27,7 @@
             <li class="app-navigation">
                 <a asp-action="RejectedApplications" asp-controller="Application">Rejected applications</a>
             </li>
-            <li class="app-navigation--current-page">
+            <li class="app-navigation">
                 <a asp-action="ClosedApplications" asp-controller="Application">Completed applications</a>
             </li>
         </ul>
@@ -36,7 +37,7 @@
 <div class="grid-row">
     <div class="column-full">
         <h1 class="heading-large">
-            Completed applications
+            Mid point assessments
         </h1>
 
         @if (@Model.Applications.Items.Any())
@@ -45,8 +46,8 @@
                 <thead>
                     <tr>
                         <th>Organisation name</th>
-                        <th>Application type</th>
-                        <th>Date closed</th>
+                        <th>Financial review</th>
+                        <th>Date submitted</th>
                         <th class="numeric">Current status</th>
                     </tr>
                 </thead>
@@ -55,26 +56,32 @@
                     {
                         <tr>
                             <td data-label="Organisation name" class="nowrap">
-                                <a asp-action="Sequence" asp-controller="Application" asp-route-applicationId="@item.ApplicationId" asp-route-sequenceId="@item.SequenceId">@item.OrganisationName</a>
+                                <a asp-action="Application" asp-controller="Application" asp-route-applicationId="@item.ApplicationId">@item.OrganisationName</a>
                             </td>
-                            <td data-label="Application type">
-                                @item.ApplicationType
+                            <td data-label="Financial review">
+                                @ApplicationReviewHelpers.TranslateFinancialStatus(item.FinancialStatus, item.FinancialGrade)
                             </td>
-                            <td data-label="Date closed">
-                                @item.ClosedDate.ToSfaShortDateString()
+                            <td data-label="Date submitted">
+                                @item.SubmittedDate.ToSfaShortDateString()
                             </td>
-                            <td  class="numeric" data-label="Current status">
+                            <td class="numeric" data-label="Current status">
                                 @{
                                     switch (item.CurrentStatus)
                                     {
-                                        case ApplicationSequenceStatus.Approved:
-                                            <div class="govuk-tag govuk-tag--approved">
-                                                passed
+                                        case ApplicationSectionStatus.Submitted:
+                                            <div class="govuk-tag govuk-tag--inactive">
+                                                unassigned
                                             </div>
                                             break;
-                                        case ApplicationSequenceStatus.Rejected:
-                                            <div class="govuk-tag govuk-tag--rejected">
-                                                failed
+                                        case ApplicationSectionStatus.InProgress:
+                                        case ApplicationSectionStatus.Evaluated:
+                                            <div class="govuk-tag">
+                                                in progress
+                                            </div>
+                                            break;
+                                        case ApplicationSequenceStatus.Resubmitted:
+                                            <div class="govuk-tag govuk-tag--updated">
+                                                updated
                                             </div>
                                             break;
                                         default:
@@ -91,7 +98,7 @@
         else
         {
             <div class="info-summary">
-                <h3 class="heading-medium">There are no closed applications at this time.</h3>
+                <h3 class="heading-medium">There are no open applications at this time.</h3>
             </div>
         }
 
@@ -106,7 +113,7 @@
 
                 @if (Model.Applications.HasPreviousPage)
                 {
-                    <a asp-action="ClosedApplications"
+                    <a asp-action="MidpointApplications"
                        asp-controller="Application"
                        asp-route-page="@(Model.Applications.PageIndex - 1)"
                        class="previous">
@@ -118,7 +125,7 @@
 
                 @if (Model.Applications.HasNextPage)
                 {
-                    <a asp-action="ClosedApplications"
+                    <a asp-action="MidpointApplications"
                        asp-controller="Application"
                        asp-route-page="@(Model.Applications.PageIndex + 1)"
                        class="next">

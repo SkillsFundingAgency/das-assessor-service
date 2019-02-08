@@ -231,15 +231,15 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
 
         private static void GetFinancialDueDate(FinancialApplicationViewModel vm)
         {
-            if (vm.Grade.SelectedGrade == "Outstanding")
+            if (vm.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Outstanding)
             {
                 vm.Grade.FinancialDueDate = vm.Grade.OutstandingFinancialDueDate.ToDateTime();
             }
-            else if (vm.Grade.SelectedGrade == "Good")
+            else if (vm.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Good)
             {
                 vm.Grade.FinancialDueDate = vm.Grade.GoodFinancialDueDate.ToDateTime();
             }
-            else if (vm.Grade.SelectedGrade == "Satisfactory")
+            else if (vm.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Satisfactory)
             {
                 vm.Grade.FinancialDueDate = vm.Grade.SatisfactoryFinancialDueDate.ToDateTime();
             }
