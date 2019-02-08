@@ -1,11 +1,13 @@
 @using SFA.DAS.AssessorService.ApplyTypes
+@using SFA.DAS.AssessorService.Web.Staff.Helpers;
+
 @model SFA.DAS.AssessorService.ApplyTypes.ApplicationSequence
 
 @{
     ViewBag.Title = "Application overview";
 
     var OpenStatusList = new string[] { ApplicationSequenceStatus.Submitted, ApplicationSequenceStatus.FeedbackAdded };
-    var BackAction = (Model == null || OpenStatusList.Contains(Model.Status)) ? "OpenApplications" : "ClosedApplications";
+    var BackAction = ApplicationReviewHelpers.ApplicationBacklinkAction(Model?.Status, Model?.SequenceId);
 }
 
 <div class="grid-row">
@@ -49,7 +51,7 @@
         }
 
         <div class="form-group">
-            <a class="govuk-button" asp-controller="Application" asp-action="@BackAction">Return to account home</a>
+            <a class="govuk-button" asp-controller="Application" asp-action="@BackAction">Return to applications</a>
         </div>
     </div>
 </div>
