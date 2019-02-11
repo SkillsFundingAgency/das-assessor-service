@@ -70,7 +70,16 @@
                                             </div>
                                             break;
                                         default:
-                                            <text>---</text>
+                                            if (item.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate)
+                                            {
+                                                <div class="govuk-tag govuk-tag--rejected">
+                                                    rejected
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <text>---</text>
+                                            }
                                             break;
                                     }
                                 }
