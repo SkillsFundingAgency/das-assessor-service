@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using System;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Models
 {
@@ -32,5 +33,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Models
         public string CharityNumber { get; set; }
 
         public string ActionChoice { get; set; }
+
+        public DateTime? FinancialDueDate { get; set; }
+        public bool? FinancialExempt { get; set; }
     }
 }

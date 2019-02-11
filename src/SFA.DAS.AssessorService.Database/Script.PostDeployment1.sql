@@ -23,3 +23,6 @@ update deliveryarea set Ordering=9 where Area='South West'
 
 alter table Contacts alter column Status nvarchar(20) not null
 alter table EMailTemplates alter column Recipients nvarchar(max) null
+
+-- update FHA details STORY ON-1058
+:r UpdateFHADetails.sql
