@@ -63,7 +63,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             return Ok(organisation);
         }
-
+        
         [HttpGet(Name="GetAllOrganisations")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<OrganisationResponse>))]
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]

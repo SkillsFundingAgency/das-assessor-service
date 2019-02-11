@@ -163,7 +163,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(await _mediator.Send(new GetAssessmentOrganisationByEmailRequest { Email = emailAddress }));
         }
 
-
         [HttpGet("assessment-organisations/standards/search/{*searchstring}", Name = "SearchStandards")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<StandardSummary>))]
         [SwaggerResponse((int) HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]

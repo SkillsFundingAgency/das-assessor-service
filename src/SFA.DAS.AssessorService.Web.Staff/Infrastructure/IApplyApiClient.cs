@@ -8,7 +8,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
 {
     public interface IApplyApiClient
     {
-        Task<List<dynamic>> NewApplications(int sequenceId);
         Task ImportWorkflow(IFormFile file);
         Task<List<dynamic>> GetNewFinancialApplications();
         Task<HttpResponseMessage> Download(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId, string filename);
