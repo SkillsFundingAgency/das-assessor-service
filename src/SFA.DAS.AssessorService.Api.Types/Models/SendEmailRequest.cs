@@ -12,7 +12,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
             Tokens = tokens;
         }
 
-        public EMailTemplate EmailTemplate { get; }
+        public EMailTemplate EmailTemplate { get;  }
         public string Email { get; set; }
         public dynamic Tokens { get; }
     }

@@ -60,7 +60,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EmailHandlers
                 }
                 catch (JsonException je)
                 {
-                    _logger.LogError($"Failed to read personalisation tokens : {je.Message}");
+                    _logger.LogError(je,$"Failed to read personalisation tokens");
                 }
             }
 

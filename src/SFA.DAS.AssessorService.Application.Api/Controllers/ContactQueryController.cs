@@ -116,7 +116,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"Failed to retrieve contact with id : {id} : {e.Message}");
+                _logger.LogError(e,$"Failed to retrieve contact with id : {id}");
             }
 
             if (contact == null) { 
