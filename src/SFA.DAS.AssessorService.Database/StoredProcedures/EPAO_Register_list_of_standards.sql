@@ -18,6 +18,7 @@ select StandardCode, EndPointAssessorName,
 		JSON_Value(StandardData,'$.EffectiveTo') is null OR
 		JSON_Value(StandardData,'$.EffectiveTo') > GETDATE()
 		)
+	AND os.[Status] <>'Deleted'
 	) as orgStandards
     
  

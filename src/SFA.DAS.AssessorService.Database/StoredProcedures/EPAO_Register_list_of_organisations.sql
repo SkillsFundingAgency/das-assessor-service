@@ -138,6 +138,7 @@ select os.EndPointAssessorOrganisationId as organisationid, Title + ' - Level ' 
 		JSON_Value(StandardData,'$.EffectiveTo') is null OR
 		JSON_Value(StandardData,'$.EffectiveTo') > GETDATE()
 		)
+	AND os.Status <>'Deleted'
 	order by EndPointAssessorOrganisationId, sc.Title
 
 select organisationId, StandardDetails,
