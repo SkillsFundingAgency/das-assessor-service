@@ -11,7 +11,7 @@ select StandardCode, EndPointAssessorName,
   from (select os.StandardCode, EndPointAssessorName
 	from OrganisationStandard os
 	inner join organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId 
-	left outer join StandardCollation sc on os.StandardCode = sc.Id
+	left outer join StandardCollation sc on os.StandardCode = sc.StandardId
 	WHERE o.EndPointAssessorOrganisationId <> 'EPA0000'
 	and (os.effectiveTo is null OR os.EffectiveTo > GETDATE())
 	and (
