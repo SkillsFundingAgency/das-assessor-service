@@ -1,17 +1,32 @@
 @using Microsoft.EntityFrameworkCore.Internal
-@using Microsoft.EntityFrameworkCore.Query.Internal
+
 @model SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Financial.FinancialApplicationViewModel
 
 @{
-    ViewBag.Title = "Previous application";
+    ViewBag.Title = "Financial health evaluation";
     Layout = "_Layout";
 }
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <a href="@Url.Action("PreviousApplications", "Financial")" class="link-back">Back</a>
+        <a asp-action="RejectedApplications" asp-controller="Financial" class="link-back">Back</a>
 
-        <h1 class="heading-xlarge">@Model.Organisation.OrganisationDetails.LegalName</h1>
+        <h1 class="heading-xlarge">Financial health evaluation</h1>
+        <h2 class="heading-medium">Organisation details</h2>
+
+        <table class="table-spaced">
+            <tr>
+                <td class="bold-small">Registered name</td>
+                <td>@Model.Organisation.OrganisationDetails.LegalName</td>
+            </tr>
+            @if (!string.IsNullOrWhiteSpace(Model.Organisation.OrganisationDetails.TradingName))
+            {
+                <tr>
+                    <td class="bold-small">Trading name</td>
+                    <td>@Model.Organisation.OrganisationDetails.TradingName</td>
+                </tr>
+            }
+        </table>
     </div>
 </div>
 
