@@ -17,6 +17,55 @@
         {
             <h1 class="heading-xlarge">@Model.Title</h1>
 
+            @if (Model.SequenceId == 1 && Model.SectionId == 1)
+            {
+                <table class="table-spaced">
+                    @if (!string.IsNullOrWhiteSpace(Model.ApplicationReference))
+                    {
+                        <tr>
+                            <td class="bold-small">Application reference</td>
+                            <td>@Model.ApplicationReference</td>
+                        </tr>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.LegalName))
+                    {
+                        <tr>
+                            <td class="bold-small">Registered name</td>
+                            <td>@Model.LegalName</td>
+                        </tr>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.TradingName))
+                    {
+                        <tr>
+                            <td class="bold-small">Trading name</td>
+                            <td>@Model.TradingName</td>
+                        </tr>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.ProviderName))
+                    {
+                        <tr>
+                            <td class="bold-small">Provider name</td>
+                            <td>@Model.ProviderName</td>
+                        </tr>
+                    }
+                    @if (Model.Ukprn.HasValue)
+                    {
+                        <tr>
+                            <td class="bold-small">Ukprn</td>
+                            <td>@Model.Ukprn</td>
+                        </tr>
+                    }
+                </table>
+
+                @if (!string.IsNullOrWhiteSpace(Model.CompanyNumber))
+                {
+                    <div class="form-group">
+                        <a target="_blank" href="@string.Format("https://beta.companieshouse.gov.uk/company/{0}", Model.CompanyNumber)">View companies house information</a>
+                    </div>
+                    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+                }
+            }
+
             if (Model.SequenceId == 1 && Model.SectionId == 3)
             {
                 // NOTE: The FHA Section has a read only view. See ON-1277
