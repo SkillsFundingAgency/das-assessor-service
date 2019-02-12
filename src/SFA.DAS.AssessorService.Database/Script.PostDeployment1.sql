@@ -21,6 +21,10 @@ update deliveryarea set Ordering=7 where Area='London'
 update deliveryarea set Ordering=8 where Area='South East'
 update deliveryarea set Ordering=9 where Area='South West'
 
-
+/* DONE
 -- update FHA details STORY ON-1058
 :r UpdateFHADetails.sql
+*/
+
+-- load December 2018 report DATABASE
+:r setDec18EPAReport.sql
