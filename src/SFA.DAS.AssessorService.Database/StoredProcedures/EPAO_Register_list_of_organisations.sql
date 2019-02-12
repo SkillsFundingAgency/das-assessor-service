@@ -130,13 +130,14 @@ drop table #sequencedAreaList
 -- GAther standard details, excluding those that have expired or expire today
 select os.EndPointAssessorOrganisationId as organisationid, Title + ' - Level ' + JSON_Value(StandardData,'$.Level') as StandardDetails 
 	into #StandardDetails
-	from organisationStandard os inner join standardCollation sc on os.StandardCode = sc.StandardId 
+	from organisationStandard os 
+	inner join standardCollation sc on os.StandardCode = sc.StandardId 
 	where StandardData is not NULL
-	and isnull(os.effectiveTo,dateadd(day,1,convert(date,getdate()))) > convert(date,getdate())
-	and os.StandardCode not in (
-			select  standardId from standardcollation 
-			where isnull(JSON_Value(StandardData,'$.EffectiveTo'),dateadd(day,1,convert(date,getdate()))) <= convert(date,getdate())
-			)
+	and (os.effectiveTo is null OR os.EffectiveTo > GETDATE())
+	and (
+		JSON_Value(StandardData,'$.EffectiveTo') is null OR
+		JSON_Value(StandardData,'$.EffectiveTo') > GETDATE()
+		)
 	order by EndPointAssessorOrganisationId, sc.Title
 
 select organisationId, StandardDetails,

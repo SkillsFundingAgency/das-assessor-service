@@ -6,17 +6,18 @@
 SET NOCOUNT ON;
 
 
-	select StandardCode, EndPointAssessorName,
+select StandardCode, EndPointAssessorName,
     row_number() over(partition by StandardCode order by StandardCode) seq into #sequencedOrgStandardDetails
   from (select os.StandardCode, EndPointAssessorName
 	from OrganisationStandard os
 	inner join organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId 
+	left outer join StandardCollation sc on os.StandardCode = sc.Id
 	WHERE o.EndPointAssessorOrganisationId <> 'EPA0000'
-	and isnull(os.effectiveTo,dateadd(day,1,convert(date,getdate()))) > convert(date,getdate())
-	and os.StandardCode not in (
-			select  standardId from standardcollation 
-			where isnull(JSON_Value(StandardData,'$.EffectiveTo'),dateadd(day,1,convert(date,getdate()))) <= convert(date,getdate())
-			)
+	and (os.effectiveTo is null OR os.EffectiveTo > GETDATE())
+	and (
+		JSON_Value(StandardData,'$.EffectiveTo') is null OR
+		JSON_Value(StandardData,'$.EffectiveTo') > GETDATE()
+		)
 	) as orgStandards
     
  
@@ -112,7 +113,10 @@ select '' as Trailblazer,
 WHERE ISJSON(StandardData) > 0
 and ReferenceNumber is not null
 and JSON_Value(standardData, '$.EffectiveFrom') is not null
-and isnull(JSON_Value(StandardData,'$.EffectiveTo'),dateadd(day,1,convert(date,getdate()))) > convert(date,getdate())
+and (
+		JSON_Value(StandardData,'$.EffectiveTo') is null OR
+		JSON_Value(StandardData,'$.EffectiveTo') > GETDATE()
+		)
 --and StandardCode in (select standardCode from organisationStandard)
 order by Title
 
