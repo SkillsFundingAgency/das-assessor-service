@@ -10,7 +10,14 @@ SET NOCOUNT ON;
     row_number() over(partition by StandardCode order by StandardCode) seq into #sequencedOrgStandardDetails
   from (select os.StandardCode, EndPointAssessorName
 	from OrganisationStandard os
-	inner join organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId WHERE o.EndPointAssessorOrganisationId <> 'EPA0000') as orgStandards
+	inner join organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId 
+	WHERE o.EndPointAssessorOrganisationId <> 'EPA0000'
+	and isnull(os.effectiveTo,dateadd(day,1,convert(date,getdate()))) > convert(date,getdate())
+	and os.StandardCode not in (
+			select  standardId from standardcollation 
+			where isnull(JSON_Value(StandardData,'$.EffectiveTo'),dateadd(day,1,convert(date,getdate()))) <= convert(date,getdate())
+			)
+	) as orgStandards
     
  
  CREATE TABLE #OrganisationStandardTableSummary
@@ -105,7 +112,9 @@ select '' as Trailblazer,
 WHERE ISJSON(StandardData) > 0
 and ReferenceNumber is not null
 and JSON_Value(standardData, '$.EffectiveFrom') is not null
+and isnull(JSON_Value(StandardData,'$.EffectiveTo'),dateadd(day,1,convert(date,getdate()))) > convert(date,getdate())
 --and StandardCode in (select standardCode from organisationStandard)
 order by Title
 
 DROP TABLE #OrganisationStandardTableSummary
+
