@@ -200,6 +200,8 @@ namespace SFA.DAS.AssessorService.EpaoDataSync.Domain
 
             foreach (var apiResult in apiResults)
             {
+                if (apiResult.StandardCode == null)
+                    continue;
                 var givenNamesTmp = apiResult.GivenNames?.NameCase();
                 if (!string.IsNullOrEmpty(givenNamesTmp))
                     givenNamesTmp = givenNamesTmp.Replace("'", "''");
@@ -208,17 +210,17 @@ namespace SFA.DAS.AssessorService.EpaoDataSync.Domain
                     familyNameTmp = familyNameTmp.Replace("'", "''");
 
                 var sql =
-                    $"update Ilrs set Source={(apiResult.AcademicYear == null ? "Source":"'"+apiResult.AcademicYear+"'" )}, " +
-                    $"ApprenticeshipId = {(apiResult.ApprenticeshipId == null ? "ApprenticeshipId" : "'"+apiResult.ApprenticeshipId+ "'")}, " +
+                    $"update Ilrs set Source={(apiResult.AcademicYear == null ? "Source" : "'" + apiResult.AcademicYear + "'")}, " +
+                    $"ApprenticeshipId = {(apiResult.ApprenticeshipId == null ? "ApprenticeshipId" : "'" + apiResult.ApprenticeshipId + "'")}, " +
                     $"GivenNames = {(string.IsNullOrEmpty(givenNamesTmp) ? "GivenNames" : "'" + givenNamesTmp + "'")}," +
                     $"FamilyName = {(string.IsNullOrEmpty(familyNameTmp) ? "FamilyName" : "'" + familyNameTmp + "'")}," +
                     $"EpaOrgId = {(string.IsNullOrEmpty(apiResult.EPAOrgId) ? "EpaOrgId" : "'" + apiResult.EPAOrgId + "'")}," +
-                    $"CompletionStatus = {(apiResult.CompStatus == null? "CompletionStatus" : "'" + apiResult.CompStatus+ "'")  }, " +
+                    $"CompletionStatus = {(apiResult.CompStatus == null ? "CompletionStatus" : "'" + apiResult.CompStatus + "'")}, " +
                     $"LearnStartDate ={(apiResult.ActualStartDate == null ? "LearnStartDate" : "'" + apiResult.ActualStartDate.Value.ToString("yyyy-MM-ddTHH:mm:ss") + "'")}, " +
                     $"PlannedEndDate =  {(apiResult.PlannedEndDate == null ? "PlannedEndDate" : "'" + apiResult.PlannedEndDate.Value.ToString("yyyy-MM-ddTHH:mm:ss") + "'")} " +
                     $"where Uln = {apiResult.Uln} and StdCode={apiResult.StandardCode} and EventId = {apiResult.Id}";
 
-                 
+
                 try
                 {
                     totalNumbersEffected += await _connection.ExecuteAsync(sql);
