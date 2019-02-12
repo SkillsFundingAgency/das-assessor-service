@@ -8,7 +8,7 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <a href="@Url.Action("NewApplications", "Financial")" class="link-back">Back</a>
+        <a asp-action="OpenApplications" asp-controller="Financial" class="link-back">Back</a>
 
         @if (!ViewData.ModelState.IsValid)
         {

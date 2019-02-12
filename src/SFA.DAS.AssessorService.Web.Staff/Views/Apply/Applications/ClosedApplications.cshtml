@@ -10,6 +10,7 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
+        <a asp-action="Index" asp-controller="Dashboard" class="link-back">Return to dashboard</a>
         <h1 class="heading-xlarge">Applications</h1>
     </div>
 </div>
@@ -69,12 +70,12 @@
                                     {
                                         case ApplicationSequenceStatus.Approved:
                                             <div class="govuk-tag govuk-tag--approved">
-                                                passed
+                                                accepted
                                             </div>
                                             break;
                                         case ApplicationSequenceStatus.Rejected:
                                             <div class="govuk-tag govuk-tag--rejected">
-                                                failed
+                                                declined
                                             </div>
                                             break;
                                         default:
