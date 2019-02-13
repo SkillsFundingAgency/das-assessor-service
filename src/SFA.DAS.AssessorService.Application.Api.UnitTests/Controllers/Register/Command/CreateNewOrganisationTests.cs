@@ -38,6 +38,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Register
                 Ukprn = 123321,
                 OrganisationTypeId = 5,
                 LegalName = "legal name 1",
+                TradingName = "name 1",
                 WebsiteLink = "website link 1",
                 Address1 = "address 1",
                 Address2 = "address 2",
