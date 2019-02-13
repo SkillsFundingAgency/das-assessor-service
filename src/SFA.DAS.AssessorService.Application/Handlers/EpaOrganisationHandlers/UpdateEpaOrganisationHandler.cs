@@ -55,6 +55,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             request.OrganisationId = _cleanser.CleanseStringForSpecialCharacters(request.OrganisationId);  
             request.Name = _cleanser.CleanseStringForSpecialCharacters(request.Name);  
             request.LegalName = _cleanser.CleanseStringForSpecialCharacters(request.LegalName);
+            request.TradingName = _cleanser.CleanseStringForSpecialCharacters(request.TradingName);
             request.WebsiteLink = _cleanser.CleanseStringForSpecialCharacters(request.WebsiteLink);
             request.Address1 = _cleanser.CleanseStringForSpecialCharacters(request.Address1);
             request.Address2 = _cleanser.CleanseStringForSpecialCharacters(request.Address2);
@@ -91,6 +92,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                     Address3 = request.Address3,
                     Address4 = request.Address4,
                     LegalName = request.LegalName,
+                    TradingName = request.TradingName,
                     Postcode = request.Postcode,
                     WebsiteLink = request.WebsiteLink,
                     CompanyNumber = request.CompanyNumber,
