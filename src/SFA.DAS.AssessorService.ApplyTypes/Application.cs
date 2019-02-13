@@ -51,6 +51,8 @@ namespace SFA.DAS.AssessorService.ApplyTypes
             return Answer;
         }
 
+        public string QuestionId { get; set; }
+
         public string Answer { private get; set; }
     }
 
@@ -73,6 +75,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
     {
         string Label { get; set; }
         string Answer();
+        string QuestionId { get; set; }
     }
 
 
@@ -84,6 +87,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public Input Input { get; set; }
         public int? Order { get; set; }
         public string PageId { get; set; }
+        public string QuestionBodyText { get; set; }
     }
     
     public class Feedback
