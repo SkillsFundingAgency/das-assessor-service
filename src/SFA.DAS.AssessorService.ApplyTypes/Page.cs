@@ -76,7 +76,8 @@ namespace SFA.DAS.AssessorService.ApplyTypes
                                 var displayAnswer = new DisplayAnswer
                                 {
                                     Answer = answer.Value,
-                                    Label = question.Label
+                                    Label = question.Label,
+                                    QuestionId = question.QuestionId
                                 };
 
                                 displayAnswerPage.DisplayAnswers.Add(displayAnswer);
