@@ -109,14 +109,15 @@
                                     foreach (var answer in answerPage.DisplayAnswers)
                                     {
                                         <h3 class="heading-small">@answer.Label</h3>
+                                        var question = pg.Questions.SingleOrDefault(q => q.QuestionId == answer.QuestionId);
 
-                                        @if (!string.IsNullOrWhiteSpace(pg.BodyText))
+                                        if (question != null && !string.IsNullOrWhiteSpace(question.QuestionBodyText))
                                         {
                                             <div class="form-group">
                                                 <details>
-                                                    <summary><span class="summary">view detail...</span></summary>
+                                                    <summary><span class="summary">View question details</span></summary>
                                                     <div class="panel panel-border-narrow" id="question-text">
-                                                        @Html.Raw(pg.BodyText)
+                                                        @Html.Raw(question.QuestionBodyText)
                                                     </div>
                                                 </details>
                                             </div>
