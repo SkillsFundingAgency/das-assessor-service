@@ -29,19 +29,18 @@
                     <td>@Model.LegalName</td>
                 </tr>
             }
-            else if (!string.IsNullOrWhiteSpace(Model.ProviderName))
-            {
-                <tr>
-                    <td class="bold-small">Provider name</td>
-                    <td>@Model.ProviderName</td>
-                </tr>
-            }
-
             @if (!string.IsNullOrWhiteSpace(Model.TradingName))
             {
                 <tr>
                     <td class="bold-small">Trading name</td>
                     <td>@Model.TradingName</td>
+                </tr>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.ProviderName))
+            {
+                <tr>
+                    <td class="bold-small">Provider name</td>
+                    <td>@Model.ProviderName</td>
                 </tr>
             }
             @if (Model.Ukprn.HasValue)
