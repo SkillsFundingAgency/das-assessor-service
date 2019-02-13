@@ -101,6 +101,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
                 Ukprn = ukprn,
                 OrganisationTypeId = 5,
                 LegalName = "legal name 1",
+                TradingName = name,
                 WebsiteLink = "website link 1",
                 Address1 = "address 1",
                 Address2 = "address 2",
@@ -127,6 +128,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
                 OrganisationData = new OrganisationData
                 {
                     LegalName = request.LegalName,
+                    TradingName = request.TradingName,
                     Address1 = request.Address1,
                     Address2 = request.Address2,
                     Address3 = request.Address3,
