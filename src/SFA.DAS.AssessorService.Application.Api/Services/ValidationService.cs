@@ -86,7 +86,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             if (!long.TryParse(ulnToCheck, out long uln))
                 return false;
 
-            return uln  <= 9999999999;
+            return uln  <= 9999999999 && uln>=0;
         }
     }
 }

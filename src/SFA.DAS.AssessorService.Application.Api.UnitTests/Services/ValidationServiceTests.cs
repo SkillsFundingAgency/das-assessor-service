@@ -59,6 +59,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         [TestCase("9999999", true)]
         [TestCase("9999999999",true)]
         [TestCase("10000000000", false)]
+        [TestCase("-1", false)]
 
         public void CheckUlnIsValid(string stringToCheck, bool expectedResult)
         {
