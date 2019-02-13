@@ -11,10 +11,11 @@ Post-Deployment Script Template
 */
 
 -- backup ILRS before data synch
+/* DONE
 DELETE FROM IlrsCopy
 
 INSERT INTO IlrsCopy SELECT * FROM Ilrs
-
+*/
 
 --- STORY ON-1392 ordering delivery area as per UX requirements
 /* DONE
@@ -34,5 +35,7 @@ update deliveryarea set Ordering=9 where Area='South West'
 :r UpdateFHADetails.sql
 */
 
+/* DONE
 -- load December 2018 report DATABASE
 :r setDec18EPAReport.sql
+*/
