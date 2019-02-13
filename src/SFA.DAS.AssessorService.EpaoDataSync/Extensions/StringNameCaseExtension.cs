@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace SFA.DAS.AssessorService.EpaoImporter.Extensions
+namespace SFA.DAS.AssessorService.EpaoDataSync.Extensions
 {
     public static class StringNameCaseExtension
     {
