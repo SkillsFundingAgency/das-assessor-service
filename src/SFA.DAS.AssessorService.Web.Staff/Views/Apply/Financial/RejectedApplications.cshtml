@@ -1,35 +1,31 @@
 @using SFA.DAS.AssessorService.Domain.Extensions;
-@using SFA.DAS.AssessorService.Web.Staff.Helpers;
 @using SFA.DAS.AssessorService.ApplyTypes;
 
-@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Applications.DashboardViewModel
+@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Financial.FinancialDashboardViewModel
 
 @{
-    ViewBag.Title = "Account home  - Mid point assessments";
+    ViewBag.Title = "Account home  - Rejected assessments";
     Layout = "_Layout";
 }
 
 <div class="grid-row">
-    <div class="column-two-thirds">
+    <div class="column-two-thirds nowrap">
         <a asp-action="Index" asp-controller="Dashboard" class="link-back">Return to dashboard</a>
-        <h1 class="heading-xlarge">Applications</h1>
+        <h1 class="heading-xlarge">Financial Health Assessments</h1>
     </div>
 </div>
 
 <div class="grid-row">
     <nav class="app-navigation govuk-clearfix">
         <ul class="app-navigation__list">
+            <li class="app-navigation">
+                <a asp-action="OpenApplications" asp-controller="Financial">New assessments</a>
+            </li>
             <li class="app-navigation--current-page">
-                <a asp-action="MidpointApplications" asp-controller="Application">Mid point assessments</a>
+                <a asp-action="RejectedApplications" asp-controller="Financial">Rejected assessments</a>
             </li>
             <li class="app-navigation">
-                <a asp-action="StandardApplications" asp-controller="Application">Standard applications</a>
-            </li>
-            <li class="app-navigation">
-                <a asp-action="RejectedApplications" asp-controller="Application">Rejected applications</a>
-            </li>
-            <li class="app-navigation">
-                <a asp-action="ClosedApplications" asp-controller="Application">Completed applications</a>
+                <a asp-action="ClosedApplications" asp-controller="Financial">Closed assessments</a>
             </li>
         </ul>
     </nav>
@@ -38,7 +34,7 @@
 <div class="grid-row">
     <div class="column-full">
         <h1 class="heading-large">
-            Mid point assessments
+            Rejected assessments
         </h1>
 
         @if (@Model.Applications.Items.Any())
@@ -47,8 +43,8 @@
                 <thead>
                     <tr>
                         <th>Organisation name</th>
-                        <th>Financial review</th>
-                        <th>Date submitted</th>
+                        <th>Date rejected</th>
+                        <th>Grade</th>
                         <th class="numeric">Current status</th>
                     </tr>
                 </thead>
@@ -57,36 +53,34 @@
                     {
                         <tr>
                             <td data-label="Organisation name" class="nowrap">
-                                <a asp-action="Application" asp-controller="Application" asp-route-applicationId="@item.ApplicationId">@item.OrganisationName</a>
+                                <a asp-action="ViewGradedApplication" asp-controller="Financial" asp-route-applicationId="@item.ApplicationId">@item.OrganisationName</a>
                             </td>
-                            <td data-label="Financial review">
-                                @ApplicationReviewHelpers.TranslateFinancialStatus(item.FinancialStatus, item.FinancialGrade)
+                            <td data-label="Date rejected">
+                                @item.FeedbackAddedDate.ToSfaShortDateString()
                             </td>
-                            <td data-label="Date submitted">
-                                @item.SubmittedDate.ToSfaShortDateString()
+                            <td data-label="Grade">
+                                @item.Grade.SelectedGrade
                             </td>
                             <td class="numeric" data-label="Current status">
                                 @{
                                     switch (item.CurrentStatus)
                                     {
-                                        case ApplicationSectionStatus.Submitted:
-                                            <div class="govuk-tag govuk-tag--inactive">
-                                                unassigned
-                                            </div>
-                                            break;
-                                        case ApplicationSectionStatus.InProgress:
-                                        case ApplicationSectionStatus.Evaluated:
-                                            <div class="govuk-tag">
-                                                in progress
-                                            </div>
-                                            break;
-                                        case ApplicationSequenceStatus.Resubmitted:
-                                            <div class="govuk-tag govuk-tag--updated">
-                                                updated
+                                        case ApplicationSequenceStatus.FeedbackAdded:
+                                            <div class="govuk-tag govuk-tag--rejected">
+                                                rejected
                                             </div>
                                             break;
                                         default:
-                                            <text>---</text>
+                                            if (item.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate)
+                                            {
+                                                <div class="govuk-tag govuk-tag--rejected">
+                                                    rejected
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <text>---</text>
+                                            }
                                             break;
                                     }
                                 }
@@ -99,7 +93,7 @@
         else
         {
             <div class="info-summary">
-                <h3 class="heading-medium">There are no open applications at this time.</h3>
+                <h3 class="heading-medium">There are no rejected assessments at this time.</h3>
             </div>
         }
 
@@ -114,8 +108,8 @@
 
                 @if (Model.Applications.HasPreviousPage)
                 {
-                    <a asp-action="MidpointApplications"
-                       asp-controller="Application"
+                    <a asp-action="OpenApplications"
+                       asp-controller="Financial"
                        asp-route-page="@(Model.Applications.PageIndex - 1)"
                        class="previous">
                         <i class="arrow-button icon-left-open">&#xe800;</i>
@@ -126,8 +120,8 @@
 
                 @if (Model.Applications.HasNextPage)
                 {
-                    <a asp-action="MidpointApplications"
-                       asp-controller="Application"
+                    <a asp-action="OpenApplications"
+                       asp-controller="Financial"
                        asp-route-page="@(Model.Applications.PageIndex + 1)"
                        class="next">
                         <i class="arrow-button icon-right-open">&#xe801;</i>

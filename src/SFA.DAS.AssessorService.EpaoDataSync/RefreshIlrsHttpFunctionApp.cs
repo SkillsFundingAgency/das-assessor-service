@@ -11,26 +11,26 @@ using SFA.DAS.AssessorService.EpaoDataSync.Startup;
 
 namespace SFA.DAS.AssessorService.EpaoDataSync
 {
-    public static class RefreshIlrsFuncionApp
+    public static class RefreshIlrsHttpFunctionApp
     {
         [FunctionName("RefreshIlrsFromProviderEvents")]
         public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]HttpRequestMessage req,
             TraceWriter log, 
             ExecutionContext executionContext)
         {
-            var tableName = req.GetQueryNameValuePairs()
-                .FirstOrDefault(q => string.Compare(q.Key, "tablename", StringComparison.OrdinalIgnoreCase) == 0)
+            var eventTime = req.GetQueryNameValuePairs()
+                .FirstOrDefault(q => string.Compare(q.Key, "sinceTime", StringComparison.OrdinalIgnoreCase) == 0)
                 .Value;
 
-            if (string.IsNullOrEmpty(tableName))
+            if (string.IsNullOrEmpty(eventTime))
                 return req.CreateResponse(HttpStatusCode.BadRequest,
-                    "Please pass an Ilrs table name on the query string - <domain-name>/api/RefreshIlrsFromProviderEvents?tablename=IlrsCopy");
+                    "Please pass an sinceTime on the query string - <domain-name>/api/RefreshIlrsFromProviderEvents?sinceTime=2018-09-09T11:07:19");
 
             Bootstrapper.StartUp(log, executionContext);
             var ilrRefresherService = Bootstrapper.Container.GetInstance<IIlrsRefresherService>();
-            var response = await ilrRefresherService.UpdateIlRsTable(tableName);
+            await ilrRefresherService.UpdateIlRsTable(eventTime);
             
-            return req.CreateResponse(HttpStatusCode.OK, $"Number of rows updated {response}");
+            return req.CreateResponse(HttpStatusCode.OK, $"Finished updating ILRS table.");
 
         }
     }
