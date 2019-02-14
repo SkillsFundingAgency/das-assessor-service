@@ -1,6 +1,7 @@
 ﻿using SFA.DAS.AssessorService.Application.Interfaces;
 using System;
 using System.Text.RegularExpressions;
+using System.Web;
 
 namespace SFA.DAS.AssessorService.Application.Api.Services
 {
@@ -43,8 +44,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
         public bool DateIsValid(string dateToCheck)
         {
-            if (string.IsNullOrEmpty(dateToCheck?.Trim()) || dateToCheck?.Trim()==",,") return true;
-            return DateTime.TryParse(dateToCheck, out DateTime _);
+            var dateUnescaped = HttpUtility.UrlDecode(dateToCheck);
+            if (string.IsNullOrEmpty(dateUnescaped?.Trim()) || dateUnescaped?.Trim()==",,") return true;
+            return DateTime.TryParse(dateUnescaped, out DateTime _);
         }
 
         public bool IsMaximumLengthOrLess(string stringToCheck, int maximumLength)
