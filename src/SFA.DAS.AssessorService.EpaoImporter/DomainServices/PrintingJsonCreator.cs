@@ -59,7 +59,6 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
 
             printOutput.Batch.PostalContactCount = groupedByRecipient.Count;
 
-
             groupedByRecipient.ForEach(g =>
             {
                 var contactName = string.Empty;

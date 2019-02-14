@@ -16,7 +16,6 @@
                 </h2>
                 <ul class="js-error-summary-list error-summary-list"></ul>
             </div>
-
             @if (!ViewData.ModelState.IsValid)
             {
                 <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
@@ -28,6 +27,7 @@
                         <li><a sfa-validation-for="CompanyNumber"></a></li>
                         <li><a sfa-validation-for="CharityNumber"></a></li>
                         <li><a sfa-validation-for="LegalName"></a></li>
+                        <li><a sfa-validation-for="TradingName"></a></li>
                         <li><a sfa-validation-for="Address1"></a></li>
                         <li><a sfa-validation-for="Address2"></a></li>
                         <li><a sfa-validation-for="Address3"></a></li>
@@ -62,6 +62,14 @@
                         <span class="error-message" asp-validation-for="LegalName"></span>
                     </label>
                     <input class="form-control" name="LegalName" sfa-validation-for="LegalName" sfa-validationerror-class="form-control-error" asp-for="LegalName" type="text" />
+                </div>
+                <div class="form-group" sfa-validation-for="TradingName" sfa-validationerror-class="form-group-error">
+                    <label for="TradingName">
+                        <span class="form-label-bold">Trading name (optional)</span>
+                        <span class="form-hint">if different from organisation name</span>
+                        <span class="error-message" asp-validation-for="TradingName"></span>
+                    </label>
+                    <input class="form-control" name="TradingName" sfa-validation-for="TradingName" sfa-validationerror-class="form-control-error" asp-for="TradingName" type="text" />
                 </div>
                 <div class="form-group" sfa-validation-for="CompanyNumber" sfa-validationerror-class="form-group-error">
                     <label for="CompanyNumber">

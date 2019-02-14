@@ -198,6 +198,7 @@ namespace SFA.DAS.AssessorService.Data
                     {
                         WebsiteLink = MakeStringSuitableForJson(organisation.OrganisationData?.WebsiteLink),
                         LegalName = MakeStringSuitableForJson(organisation.OrganisationData?.LegalName),
+                        TradingName = MakeStringSuitableForJson(organisation.OrganisationData?.TradingName),
                         Address1 = MakeStringSuitableForJson(organisation.OrganisationData?.Address1),
                         Address2 = MakeStringSuitableForJson(organisation.OrganisationData?.Address2),
                         Address3 = MakeStringSuitableForJson(organisation.OrganisationData?.Address3),
