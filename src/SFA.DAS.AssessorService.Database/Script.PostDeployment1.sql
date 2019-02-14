@@ -37,7 +37,7 @@ UPDATE organisationStandard
 	AND contactId IS NOT NULL
 	AND Status='New'
 
-/*
+/* DONE
 -- ON-1058 update FHA details STORY 
 :r UpdateFHADetails.sql
 */
