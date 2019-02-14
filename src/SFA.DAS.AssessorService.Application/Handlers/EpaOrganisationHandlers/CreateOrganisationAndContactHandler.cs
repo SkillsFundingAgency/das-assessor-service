@@ -33,6 +33,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
         
         public async Task<CreateOrganisationContactResponse> Handle(CreateOrganisationContactRequest request, CancellationToken cancellationToken)
         {
+            var noOrganisationNameMessage =
+                "organisation name missing - no organisation or contact added";
+
+            var organisationNameTooShort = "organisation name too short - no organisation or contact added";
             var contactAdded = false;
             var organisationAdded = false;
             var warningMessages = new List<string>();
@@ -46,7 +50,22 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
           
             // organisation checks
             // check is is there and is 2 characters or more
-            var organisationNameFormatValid = _organisationValidator.CheckOrganisationName(organisationName) == string.Empty; 
+            var organisationNameEmpty = string.IsNullOrEmpty(organisationName);
+            var organisationNameFormatValid = _organisationValidator.CheckOrganisationName(organisationName) == string.Empty;
+
+            if (organisationNameEmpty)
+            {   
+                warningMessages.Add(noOrganisationNameMessage);
+            }
+            if (!organisationNameFormatValid)
+            {
+                warningMessages.Add(organisationNameTooShort);
+            }
+
+            if (warningMessages.Count>0)
+                return new CreateOrganisationContactResponse(null, false, false, warningMessages);
+    
+            
             var organisationNameNotAlreadyUsed = _organisationValidator.CheckOrganisationNameNotUsed(organisationName) == string.Empty;
 
             // we need to have a warning message if it's null, SO DIFFERENT FROM THIS
