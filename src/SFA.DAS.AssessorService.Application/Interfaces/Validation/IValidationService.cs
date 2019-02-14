@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.AssessorService.Application.Interfaces
+﻿namespace SFA.DAS.AssessorService.Application.Interfaces.Validation
 {
     public interface IValidationService
     {
