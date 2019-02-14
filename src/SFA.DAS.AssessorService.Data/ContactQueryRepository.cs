@@ -97,10 +97,10 @@ namespace SFA.DAS.AssessorService.Data
             return result;
         }
 
-        public async Task<string> GetContactStatus(string endPointAssessorOrganisationId, string userName)
+        public async Task<string> GetContactStatus(string endPointAssessorOrganisationId, Guid signInId)
         {
             var contactStatus = await _assessorDbContext.Contacts.Where(x =>
-                    x.EndPointAssessorOrganisationId == endPointAssessorOrganisationId && x.Username == userName)
+                    x.EndPointAssessorOrganisationId == endPointAssessorOrganisationId && x.SignInId == signInId)
                 .FirstOrDefaultAsync();
 
             return contactStatus?.Status;

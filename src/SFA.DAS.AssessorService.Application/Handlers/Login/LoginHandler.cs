@@ -71,7 +71,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
 
             _logger.LogInformation(LoggingConstants.SignInSuccessful);
 
-            var status = await GetUserStatus(organisation.EndPointAssessorOrganisationId, request.Username);
+            var status = await GetUserStatus(organisation.EndPointAssessorOrganisationId, request.SignInId);
             switch (status)
             {
                 case ContactStatus.Live:
@@ -102,9 +102,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
             //return !roles.Contains(_config.Authentication.Role);
         }
 
-        private async Task<string> GetUserStatus(string endPointAssessorOrganisationId, string userName)
+        private async Task<string> GetUserStatus(string endPointAssessorOrganisationId, Guid signInId)
         {
-            return await _contactQueryRepository.GetContactStatus(endPointAssessorOrganisationId, userName);
+            return await _contactQueryRepository.GetContactStatus(endPointAssessorOrganisationId, signInId);
         }
 
         private async Task<Contact> GetContact(string username, string email, string displayName)

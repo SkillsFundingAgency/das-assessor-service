@@ -61,7 +61,7 @@ namespace SFA.DAS.AssessorService.Web
                 .AddSessionStateTempDataProvider()
                 .AddViewLocalization(opts => { opts.ResourcesPath = "Resources"; })
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             var redis = ConnectionMultiplexer.Connect("localhost");
             

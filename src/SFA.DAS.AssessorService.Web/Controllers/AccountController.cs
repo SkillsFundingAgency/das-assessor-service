@@ -70,9 +70,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             ResetCookies();
             
             return SignOut(
-                new AuthenticationProperties { RedirectUri = callbackUrl },
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                WsFederationDefaults.AuthenticationScheme);
+                CookieAuthenticationDefaults.AuthenticationScheme,OpenIdConnectDefaults.AuthenticationScheme);
         }
 
         [HttpGet]

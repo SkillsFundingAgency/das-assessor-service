@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Web.StartupConfiguration
@@ -72,7 +74,8 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 
                     options.SaveTokens = true;
                     //options.CallbackPath = new PathString(Configuration["auth:oidc:callbackPath"]);
-                    //options.SignedOutCallbackPath = new PathString(Configuration["auth:oidc:signedOutCallbackPath"]);
+                    options.SignedOutCallbackPath = new PathString("/SignedOut");
+                    options.SignedOutRedirectUri = new PathString("/SignedOut");
                     options.SecurityTokenValidator = new JwtSecurityTokenHandler
                     {
                         InboundClaimTypeMap = new Dictionary<string, string>(),
@@ -130,80 +133,45 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                         // that event is called after the OIDC middleware received the auhorisation code,
                         // redeemed it for an access token and a refresh token,
                         // and validated the identity token
-//                        OnTokenValidated = x =>
-//                        {
-//                            // store both access and refresh token in the claims - hence in the cookie
-//                            var identity = (ClaimsIdentity) x.Principal.Identity;
-//                            identity.AddClaims(new[]
-//                            {
-//                                new Claim("access_token", x.TokenEndpointResponse.AccessToken),
-//                                new Claim("refresh_token", x.TokenEndpointResponse.RefreshToken)
-//                            });
-//
-//                            // so that we don't issue a session cookie but one with a fixed expiration
-//                            x.Properties.IsPersistent = true;
-//
-//                            return Task.CompletedTask;
-//                        }
+                        //                        OnTokenValidated = x =>
+                        //                        {
+                        //                            // store both access and refresh token in the claims - hence in the cookie
+                        //                            var identity = (ClaimsIdentity) x.Principal.Identity;
+                        //                            identity.AddClaims(new[]
+                        //                            {
+                        //                                new Claim("access_token", x.TokenEndpointResponse.AccessToken),
+                        //                                new Claim("refresh_token", x.TokenEndpointResponse.RefreshToken)
+                        //                            });
+                        //
+                        //                            // so that we don't issue a session cookie but one with a fixed expiration
+                        //                            x.Properties.IsPersistent = true;
+                        //
+                        //                            return Task.CompletedTask;
+                        //                        }
+
+                        OnTokenValidated =  context =>
+                        {
+                            var client = context.HttpContext.RequestServices.GetRequiredService<ContactsApiClient>();
+                            var organisation = context.HttpContext.RequestServices
+                                .GetRequiredService<OrganisationsApiClient>();
+                            var signInId = context.Principal.FindFirst("sub").Value;
+                           // var user = await client.GetContactBySignInId(signInId);
+                            var identity = new ClaimsIdentity(new List<Claim>()
+                            {
+                                new Claim("UserId", /*user.Id.ToString()*/ "c850524a-863c-4b4b-a4db-deca07a48b82"),
+                                new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn","ISP-epao0002p" ),
+                                new Claim("http://schemas.portal.com/ukprn", "10022712")
+                            });
+                            
+                            context.Principal.AddIdentity(identity);
+                            return Task.CompletedTask;
+                        }
+
+
                     };
                 });
-            
-//            services.AddAuthentication(sharedOptions =>
-//                {
-//                    sharedOptions.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-//                    sharedOptions.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-//                    sharedOptions.DefaultChallengeScheme = WsFederationDefaults.AuthenticationScheme;
-//                    sharedOptions.DefaultSignOutScheme = WsFederationDefaults.AuthenticationScheme;
-//                })
-//                .AddWsFederation(options =>
-//                {
-//                    options.Wtrealm = configuration.Authentication.WtRealm;
-//                    options.MetadataAddress = configuration.Authentication.MetadataAddress;
-//                    options.Events = new WsFederationEvents()
-//                    {
-//                        OnMessageReceived = context =>
-//                        {
-//                           logger.LogInformation($"WSFED MessageReceived: {context.ProtocolMessage.Wresult}");
-//                            return Task.FromResult(0);
-//                        },
-//                        OnRedirectToIdentityProvider = context =>
-//                        {
-//                            logger.LogInformation($"WSFED RedirectToIdentityProvider: {context.ProtocolMessage.ToString()}");
-//
-//                            return Task.FromResult(0);
-//                        },
-//                        OnSecurityTokenReceived = context =>
-//                        {
-//                            logger.LogInformation($"WSFED SecurityTokenReceived: {context.ProtocolMessage.ToString()}");
-//                            return Task.FromResult(0);
-//                        },
-//                        OnSecurityTokenValidated = context =>
-//                        {
-//                            logger.LogInformation($"WSFED SecurityTokenValidated: {context.ProtocolMessage.ToString()}");
-//                            return Task.FromResult(0);
-//                        },
-//                        OnAuthenticationFailed = context =>
-//                        {
-//                            logger.LogInformation($"WSFED AuthenticationFailed: {context.ProtocolMessage.ToString()}");
-//                            return Task.FromResult(0);
-//                        },
-//                        OnRemoteSignOut = context =>
-//                        {
-//                            logger.LogInformation($"WSFED RemoteSignOut: {context.ProtocolMessage.ToString()}");
-//                            return Task.FromResult(0);
-//                        }, 
-//                        OnRemoteFailure = context =>
-//                        {
-//                            logger.LogInformation($"WSFED RemoteFailure: {context.Failure.Message}");
-//                            return Task.FromResult(0);
-//                        }
-//                    };
-//                })
-//                .AddCookie(options =>
-//                {
-//                    options.Cookie = new CookieBuilder() {Name = ".Assessors.Cookies", HttpOnly = true};
-//                });
-            
+
+
             services.AddAuthorization(options =>
             {
                 options.AddPolicy(Policies.ExternalApiAccess,
