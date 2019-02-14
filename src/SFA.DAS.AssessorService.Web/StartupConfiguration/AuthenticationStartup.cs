@@ -74,8 +74,8 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 
                     options.SaveTokens = true;
                     //options.CallbackPath = new PathString(Configuration["auth:oidc:callbackPath"]);
-                    options.SignedOutCallbackPath = new PathString("/SignedOut");
-                    options.SignedOutRedirectUri = new PathString("/SignedOut");
+                   // options.SignedOutCallbackPath = new PathString("/SignedOut");
+                   // options.SignedOutRedirectUri = new PathString("/SignedOut");
                     options.SecurityTokenValidator = new JwtSecurityTokenHandler
                     {
                         InboundClaimTypeMap = new Dictionary<string, string>(),
@@ -149,22 +149,22 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                         //                            return Task.CompletedTask;
                         //                        }
 
-                        OnTokenValidated =  context =>
+                        OnTokenValidated = async context =>
                         {
-                            var client = context.HttpContext.RequestServices.GetRequiredService<ContactsApiClient>();
-                            var organisation = context.HttpContext.RequestServices
-                                .GetRequiredService<OrganisationsApiClient>();
+                            var contactClient = context.HttpContext.RequestServices.GetRequiredService<IContactsApiClient>();
+                            var orgClient = context.HttpContext.RequestServices
+                                .GetRequiredService<IOrganisationsApiClient>();
                             var signInId = context.Principal.FindFirst("sub").Value;
-                           // var user = await client.GetContactBySignInId(signInId);
+                            var user = await contactClient.GetContactBySignInId(signInId);
+                            var organisation = await orgClient.GetEpaOrganisation(user.EndPointAssessorOrganisationId);
                             var identity = new ClaimsIdentity(new List<Claim>()
                             {
-                                new Claim("UserId", /*user.Id.ToString()*/ "c850524a-863c-4b4b-a4db-deca07a48b82"),
-                                new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn","ISP-epao0002p" ),
-                                new Claim("http://schemas.portal.com/ukprn", "10022712")
+                                new Claim("UserId", user.Id.ToString()),
+                                new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn",user.Username),
+                                new Claim("http://schemas.portal.com/ukprn", organisation.Ukprn.ToString())
                             });
                             
                             context.Principal.AddIdentity(identity);
-                            return Task.CompletedTask;
                         }
 
 

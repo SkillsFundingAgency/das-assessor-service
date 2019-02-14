@@ -6,6 +6,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
 {
     public class LoginRequest : IRequest<LoginResponse>
     {
+        public string Username { get; set; }
         public string Email { get; set; }
         public string DisplayName { get; set; }
         public Guid SignInId { get; set; }
