@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Interfaces;
 
@@ -18,15 +19,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
         private readonly IRegisterQueryRepository _registerQueryRepository;
         private readonly ILogger<CreateOrganisationAndContactHandler> _logger;
         private readonly IEpaOrganisationValidator _organisationValidator;
-        // private readonly IEpaOrganisationValidator _validator;
-        // private readonly ISpecialCharacterCleanserService _cleanser;
+        private readonly IEpaOrganisationIdGenerator _organisationIdGenerator;
+        private readonly ISpecialCharacterCleanserService _cleanser;
 
 
-        public CreateOrganisationAndContactHandler(IRegisterRepository registerRepository, IRegisterQueryRepository registerQueryRepository, ILogger<CreateOrganisationAndContactHandler> logger, IEpaOrganisationValidator organisationValidator)
+        public CreateOrganisationAndContactHandler(IRegisterRepository registerRepository, IRegisterQueryRepository registerQueryRepository, ILogger<CreateOrganisationAndContactHandler> logger, IEpaOrganisationValidator organisationValidator, IEpaOrganisationIdGenerator organisationIdGenerator, ISpecialCharacterCleanserService cleanser)
         {
             _registerRepository = registerRepository;
             _logger = logger;
             _organisationValidator = organisationValidator;
+            _organisationIdGenerator = organisationIdGenerator;
+            _cleanser = cleanser;
             _registerQueryRepository = registerQueryRepository;
         }
       
@@ -45,7 +48,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 "The company number is already used by another organisation so not added to this organisation in register";
             var charityNumberNotValidMessage = "Charity number is an invalid format so not added to this organisation in register";
             var charityNumberAlreadyUsedMessage =
-                "The chairity number is already used by another organisation so not added to this organisation in register";
+                "The charity number is already used by another organisation so not added to this organisation in register";
 
             var contactAdded = false;
             var organisationAdded = false;
@@ -107,7 +110,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             }
 
             var companyNumberAlreadyUsed = _organisationValidator.CheckIfOrganisationCompanyNumberExists(companyNumber) != string.Empty;
-            if (!companyNumberAlreadyUsed)
+            if (companyNumberAlreadyUsed)
             {
                 companyNumber = null;
                 warningMessages.Add(companyNumberAlreadyUsedMessage);
@@ -128,18 +131,23 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             }
 
             // do the organisation insert if name is present and get the new organisation Id
+            var newOrganisationId = _organisationIdGenerator.GetNextOrganisationId();
+            if (newOrganisationId == string.Empty)
+                throw new Exception("A valid organisation Id could not be generated");
+
+            var organisation = MapRequestToOrganisation(request, newOrganisationId, organisationName, companyNumber, charityNumber,
+                ukprnAsLong, organisationTypeId);
+            var organisationSaved = await _registerRepository.CreateEpaOrganisation(organisation);
 
             organisationAdded = true;
-            var organisationId = "ABC"; // this is gathered at the point of adding the organisation;
-
 
             // contact checks (as long as an organisation is added)
 
             //return _organisationValidator.ValidatorCreateEpaOrganisationContactRequest(new CreateEpaOrganisationContactRequest...
-            
+
             // maybe separate the test to change message?
             var emailPresentAndValid = _organisationValidator.CheckIfEmailIsPresentAndInSuitableFormat(request.ContactEmail) == string.Empty;
-            var emailAleadyPresentInOtherOrganisation = _organisationValidator.CheckIfEmailAlreadyPresentInAnotherOrganisation(request.ContactEmail, organisationId) != string.Empty;
+            var emailAleadyPresentInOtherOrganisation = _organisationValidator.CheckIfEmailAlreadyPresentInAnotherOrganisation(request.ContactEmail, newOrganisationId) != string.Empty;
 
             var contactDetailsAlreadyPresent = emailPresentAndValid && !emailAleadyPresentInOtherOrganisation && _organisationValidator.CheckIfContactDetailsAlreadyPresentInSystem(request.ContactName, request.ContactEmail, request.ContactPhoneNumber, null)!=string.Empty;
 
@@ -154,7 +162,52 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
             // do the contact update and mark contactAdded is true, if it is done
 
-            return new CreateOrganisationContactResponse(organisationId, organisationAdded, contactAdded, warningMessages);
+            return new CreateOrganisationContactResponse(newOrganisationId, organisationAdded, contactAdded, warningMessages);
+        }
+
+        private EpaOrganisation MapRequestToOrganisation(CreateOrganisationContactRequest request, string newOrganisationId, string organisationName, string companyNumber, string charityNumber, long? ukprnAsLong, int? organisationTypeId)
+        {
+            organisationName = _cleanser.CleanseStringForSpecialCharacters(organisationName);
+            var legalName = _cleanser.CleanseStringForSpecialCharacters(request.OrganisationName);
+            var tradingName = _cleanser.CleanseStringForSpecialCharacters(request.TradingName);
+            var website = _cleanser.CleanseStringForSpecialCharacters(request.StandardWebsite);
+            var address1 = _cleanser.CleanseStringForSpecialCharacters(request.ContactAddress1);
+            var address2 = _cleanser.CleanseStringForSpecialCharacters(request.ContactAddress2);
+            var address3 = _cleanser.CleanseStringForSpecialCharacters(request.ContactAddress3);
+            var address4 = _cleanser.CleanseStringForSpecialCharacters(request.ContactAddress4);
+            var postcode = _cleanser.CleanseStringForSpecialCharacters(request.ContactPostcode);
+            companyNumber = _cleanser.CleanseStringForSpecialCharacters(companyNumber);
+            charityNumber = _cleanser.CleanseStringForSpecialCharacters(charityNumber);
+
+            if (!string.IsNullOrWhiteSpace(companyNumber))
+            {
+                companyNumber = companyNumber.ToUpper();
+            }
+
+            var organisation = new EpaOrganisation
+            {
+                Name = organisationName,
+                OrganisationId = newOrganisationId,
+                OrganisationTypeId = organisationTypeId,
+                Ukprn = ukprnAsLong,
+                Id = Guid.NewGuid(),
+                OrganisationData = new OrganisationData
+                {
+                    Address1 = address1,
+                    Address2 = address2,
+                    Address3 = address3,
+                    Address4 = address4,
+                    LegalName = legalName,
+                    TradingName = tradingName,
+                    Postcode = postcode,
+                    WebsiteLink = website,
+                    CompanyNumber = companyNumber,
+                    CharityNumber = charityNumber
+                }
+            };
+
+            return organisation;
+
         }
 
         private async Task<int?> GetOrganisationTypeIdFromDescriptor(string organisationType)
