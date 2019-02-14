@@ -10,7 +10,14 @@ Post-Deployment Script Template
 --------------------------------------------------------------------------------------
 */
 
---- ON-1392 ordering delivery area as per UX requirements
+-- backup ILRS before data synch
+/* DONE
+DELETE FROM IlrsCopy
+
+INSERT INTO IlrsCopy SELECT * FROM Ilrs
+*/
+
+/* DONE
 update deliveryarea set Ordering=1 where Area='North East'
 update deliveryarea set Ordering=2 where Area='North West'
 update deliveryarea set Ordering=3 where Area='Yorkshire and the Humber'
@@ -20,6 +27,7 @@ update deliveryarea set Ordering=6 where Area='East of England'
 update deliveryarea set Ordering=7 where Area='London'
 update deliveryarea set Ordering=8 where Area='South East'
 update deliveryarea set Ordering=9 where Area='South West'
+*/
 
 -- ON-1374 update any new organisation standards to 'Live' if minimum acceptance criteria for live is available
 UPDATE organisationStandard 
@@ -29,6 +37,12 @@ UPDATE organisationStandard
 	AND contactId IS NOT NULL
 	AND Status='New'
 
-
+/*
 -- ON-1058 update FHA details STORY 
 :r UpdateFHADetails.sql
+*/
+
+/* DONE
+-- load December 2018 report DATABASE
+:r setDec18EPAReport.sql
+*/

@@ -127,11 +127,18 @@ drop table #sequencedAreaList
 -- OPERATION 2 COMPLETED
 
 -- OPERATION 3 Gather and pivot Standard title and level
--- GAther standard details
+-- GAther standard details, excluding those that have expired or expire today
 select os.EndPointAssessorOrganisationId as organisationid, Title + ' - Level ' + JSON_Value(StandardData,'$.Level') as StandardDetails 
 	into #StandardDetails
-	from organisationStandard os inner join standardCollation sc on os.StandardCode = sc.StandardId 
-	where StandardData is not null
+	from organisationStandard os 
+	inner join standardCollation sc on os.StandardCode = sc.StandardId 
+	where StandardData is not NULL
+	and (os.effectiveTo is null OR os.EffectiveTo > GETDATE())
+	and (
+		JSON_Value(StandardData,'$.EffectiveTo') is null OR
+		JSON_Value(StandardData,'$.EffectiveTo') > GETDATE()
+		)
+	AND os.Status <>'Deleted'
 	order by EndPointAssessorOrganisationId, sc.Title
 
 select organisationId, StandardDetails,

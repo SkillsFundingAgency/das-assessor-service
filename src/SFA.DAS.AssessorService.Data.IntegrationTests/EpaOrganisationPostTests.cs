@@ -48,6 +48,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 OrganisationData = new OrganisationData
                 {
                     LegalName = " legal name",
+                    TradingName = "trading name",
                     Address1 = "address 1",
                     Address2 = "address 2",
                     Address3 = "address 3",
