@@ -10,6 +10,7 @@ using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.JsonData.Printing;
 using SFA.DAS.AssessorService.EpaoImporter.Data;
 using SFA.DAS.AssessorService.EpaoImporter.DomainServices;
+using SFA.DAS.AssessorService.EpaoImporter.InfrastructureServices;
 using SFA.DAS.AssessorService.EpaoImporter.Interfaces;
 using SFA.DAS.AssessorService.EpaoImporter.Logger;
 using SFA.DAS.AssessorService.EpaoImporter.Notification;
@@ -142,6 +143,9 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                 {
                     var certificateFileName =
                         $"IFA-Certificate-{DateTime.UtcNow.UtcToTimeZoneTime():MMyy}-{batchNumber.ToString().PadLeft(3, '0')}.json";
+
+                    var excelFileName = $"IFA-Certificate-{DateTime.UtcNow.UtcToTimeZoneTime()}-{batchNumber.ToString().PadLeft(3, '0')}.xlsx";
+
                     var batchLogRequest = new CreateBatchLogRequest
                     {
                         BatchNumber = batchNumber,
@@ -151,10 +155,21 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                         CertificatesFileName = certificateFileName
                     };
 
-                    _printingJsonCreator.Create(batchNumber, certificates, certificateFileName);
-                    _printingSpreadsheetCreator.Create(batchNumber, certificates);
+                    var configuration = ConfigurationHelper.GetConfiguration();
 
-                    await _notificationService.Send(batchNumber, certificates, certificateFileName);
+                    if (configuration.Sftp.UseJson)
+                    {
+                        _printingJsonCreator.Create(batchNumber, certificates, certificateFileName);
+                        await _notificationService.Send(batchNumber, certificates, certificateFileName);
+
+                    }
+                    else
+                    {
+                        _printingSpreadsheetCreator.Create(batchNumber, certificates);
+                        await _notificationService.Send(batchNumber, certificates, excelFileName);
+
+                    }
+
 
                     batchLogRequest.FileUploadEndTime = DateTime.UtcNow;
                     batchLogRequest.NumberOfCertificates = certificates.Count;
