@@ -26,6 +26,6 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public DateTime? UpdatedAt { get; set; }
         public string LearnRefNumber { get; set; }
         public long? EventId { get;set; }
-        public DateTime PlannedEndDate { get; set; }
+        public DateTime? PlannedEndDate { get; set; }
     }
 }
