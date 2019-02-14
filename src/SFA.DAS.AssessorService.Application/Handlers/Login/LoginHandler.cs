@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 using SFA.DAS.AssessorService.Api.Types.Models;
@@ -33,18 +36,20 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
         public async Task<LoginResponse> Handle(LoginRequest request, CancellationToken cancellationToken)
         {
             var response =new LoginResponse();
-            if (UserDoesNotHaveAcceptableRole(request.Roles))
+
+            var contact = await _contactQueryRepository.GetBySignInId(request.SignInId);
+            
+            if (await UserDoesNotHaveAcceptableRole(contact.Id))
             {
                 _logger.LogInformation("Invalid Role");
                 _logger.LogInformation(LoggingConstants.SignInIncorrectRole);
                 response.Result = LoginResult.InvalidRole;
                 return response;
             }
-
+            
             _logger.LogInformation("Role is good");
-
-            _logger.LogInformation($"Getting Org with ukprn: {request.UkPrn}");
-            var organisation = await _organisationQueryRepository.GetByUkPrn(request.UkPrn);
+            
+            var organisation = await _organisationQueryRepository.Get(contact.OrganisationId.Value);
 
             if (organisation == null)
             {
@@ -62,13 +67,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
                 return response;
             }
 
-            _logger.LogInformation($"Got Org with ukprn: {request.UkPrn}, Id: {organisation.EndPointAssessorOrganisationId}");
-
-            var contact = await GetContact(request.Username, request.Email, request.DisplayName);
-            if (contact == null)
-            {
-                await CreateNewContact(request.Email, organisation, request.DisplayName, request.Username);
-            }
+            _logger.LogInformation($"Got Org with ukprn: {organisation.EndPointAssessorUkprn}, Id: {organisation.EndPointAssessorOrganisationId}");
 
             _logger.LogInformation(LoggingConstants.SignInSuccessful);
 
@@ -94,9 +93,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
             return response;
         }
 
-        private bool UserDoesNotHaveAcceptableRole(List<string> roles)
+        private async Task<bool> UserDoesNotHaveAcceptableRole(Guid contactId)
         {
-            return !roles.Contains(_config.Authentication.Role);
+            var roles = await _contactQueryRepository.GetRolesFor(contactId);
+            return roles.All(r => r.RoleName != "SuperUser");
+                
+            //TODO: This needs to look up the user by the id and check they are in the appropriate role.
+            //return !roles.Contains(_config.Authentication.Role);
         }
 
         private async Task<string> GetUserStatus(string endPointAssessorOrganisationId, string userName)
