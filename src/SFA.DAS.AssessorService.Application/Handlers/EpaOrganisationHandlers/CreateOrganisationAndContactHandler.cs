@@ -33,10 +33,20 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
         
         public async Task<CreateOrganisationContactResponse> Handle(CreateOrganisationContactRequest request, CancellationToken cancellationToken)
         {
-            var noOrganisationNameMessage =
-                "organisation name missing - no organisation or contact added";
+            var noOrganisationNameMessage = "organisation name missing - no organisation or contact added";
+            var organisationNameTooShortMessage = "organisation name too short - no organisation or contact added";
+            var organisationNameAlreadyUsedMessage = "organisation name already used - no organisation or contact added";
+            var organisationTypeNotIdentifiedMessage = "organisation type not identified so not added to organisation in register";
+            var ukprnNotValidMessage = "Ukprn is an invalid format so not added to this organisation in register";
+            var ukprnAlreadyUsedMessage =
+                "The ukprn is already used by another organisation so not added to this organisation in register";
+            var companyNumberNotValidMessage = "Company number is an invalid format so not added to this organisation in register";
+            var companyNumberAlreadyUsedMessage =
+                "The company number is already used by another organisation so not added to this organisation in register";
+            var charityNumberNotValidMessage = "Charity number is an invalid format so not added to this organisation in register";
+            var charityNumberAlreadyUsedMessage =
+                "The chairity number is already used by another organisation so not added to this organisation in register";
 
-            var organisationNameTooShort = "organisation name too short - no organisation or contact added";
             var contactAdded = false;
             var organisationAdded = false;
             var warningMessages = new List<string>();
@@ -44,45 +54,78 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             var organisationName = DecideOrganisationName(request.UseTradingName,request.TradingName, request.OrganisationName);
             var ukprnAsLong = GetUkprnFromRequestDetails(request.OrganisationUkprn, request.CompanyUkprn);
             var organisationTypeId = await GetOrganisationTypeIdFromDescriptor(request.OrganisationType);
-
+            var companyNumber = request.CompanyNumber;
+            var charityNumber = request.CharityNumber;
 
             //var organisationValidation = _organisationValidator.ValidatorCreateEpaOrganisationRequest(new CreateEpaOrganisationRequest...
-          
+
             // organisation checks
-            // check is is there and is 2 characters or more
+
             var organisationNameEmpty = string.IsNullOrEmpty(organisationName);
+
+            // check is is there and is 2 characters or more  MFCMFC
             var organisationNameFormatValid = _organisationValidator.CheckOrganisationName(organisationName) == string.Empty;
 
             if (organisationNameEmpty)
-            {   
                 warningMessages.Add(noOrganisationNameMessage);
-            }
-            if (!organisationNameFormatValid)
-            {
-                warningMessages.Add(organisationNameTooShort);
-            }
 
-            if (warningMessages.Count>0)
-                return new CreateOrganisationContactResponse(null, false, false, warningMessages);
-    
-            
+            if (!organisationNameFormatValid)
+                warningMessages.Add(organisationNameTooShortMessage);
+
             var organisationNameNotAlreadyUsed = _organisationValidator.CheckOrganisationNameNotUsed(organisationName) == string.Empty;
 
-            // we need to have a warning message if it's null, SO DIFFERENT FROM THIS
-            var organisationTypeValid = _organisationValidator.CheckOrganisationTypeIsNullOrExists(organisationTypeId) == string.Empty;  // probably redundant given pre-processing code
+            if (!organisationNameNotAlreadyUsed)
+                warningMessages.Add(organisationNameAlreadyUsedMessage);
 
+            // If details make adding organisation impossible, then eject here
+            if (warningMessages.Count>0)
+                return new CreateOrganisationContactResponse(null, false, false, warningMessages);
+
+            if (organisationTypeId == null)
+                warningMessages.Add(organisationTypeNotIdentifiedMessage);
 
             var ukprnValid = _organisationValidator.CheckUkprnIsValid(ukprnAsLong)==string.Empty; // check it's a validly formed ukprn ? use new endpoint?
+
+            if (!ukprnValid)
+            {
+                ukprnAsLong = null;
+                warningMessages.Add(ukprnNotValidMessage);
+            }
+
             var ukprnAlreadyUsed = _organisationValidator.CheckIfOrganisationUkprnExists(ukprnAsLong) != string.Empty;
+            if (ukprnAlreadyUsed)
+            {
+                ukprnAsLong = null;
+                warningMessages.Add(ukprnAlreadyUsedMessage);
+            }
+            
+            var companyNumberValid = _organisationValidator.CheckCompanyNumberIsValid(companyNumber) == string.Empty;  // use new service?
+            if (!companyNumberValid)
+            {
+                companyNumber = null;
+                warningMessages.Add(companyNumberNotValidMessage);
+            }
 
+            var companyNumberAlreadyUsed = _organisationValidator.CheckIfOrganisationCompanyNumberExists(companyNumber) != string.Empty;
+            if (!companyNumberAlreadyUsed)
+            {
+                companyNumber = null;
+                warningMessages.Add(companyNumberAlreadyUsedMessage);
+            }
 
-            var companyNumberValid = _organisationValidator.CheckCompanyNumberIsValid(request.CompanyNumber) == string.Empty;  // use new service?
-            var companyNumberAlreadyUsed = _organisationValidator.CheckIfOrganisationCompanyNumberExists(request.CompanyNumber) != string.Empty;
+            var charityNumberValid = _organisationValidator.CheckCharityNumberIsValid(charityNumber) == string.Empty;  // use new service?
+            if (!charityNumberValid)
+            {
+                charityNumber = null;
+                warningMessages.Add(charityNumberNotValidMessage);
+            }
 
-
-            var charityNumberValid = _organisationValidator.CheckCharityNumberIsValid(request.CharityNumber) == string.Empty;  // use new service?
-            var charityNumberAlreadyUsed = _organisationValidator.CheckIfOrganisationCharityNumberExists(request.CharityNumber) != string.Empty;
-
+            var charityNumberAlreadyUsed = _organisationValidator.CheckIfOrganisationCharityNumberExists(charityNumber) != string.Empty;
+            if (charityNumberAlreadyUsed)
+            {
+                charityNumber = null;
+                warningMessages.Add(charityNumberAlreadyUsedMessage);
+            }
 
             // do the organisation insert if name is present and get the new organisation Id
 
