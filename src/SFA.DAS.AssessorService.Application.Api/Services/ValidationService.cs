@@ -10,8 +10,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
         public bool CharityNumberIsValid(string charityNumberToCheck)
         {
             if (string.IsNullOrEmpty(charityNumberToCheck?.Trim())) return true;
-            var regex = new Regex(@"[0-9-]{1,}");
-            return regex.Match(charityNumberToCheck).Success && regex.Match(charityNumberToCheck).Value == charityNumberToCheck;
+            var regex = new Regex(@"[^a-zA-Z0-9\\-]");
+            return !regex.Match(charityNumberToCheck).Success; 
         }
 
         public bool CheckEmailIsValid(string emailToCheck)
