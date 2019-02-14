@@ -143,7 +143,6 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                 {
                     var certificateFileName =
                         $"IFA-Certificate-{DateTime.UtcNow.UtcToTimeZoneTime():MMyy}-{batchNumber.ToString().PadLeft(3, '0')}.json";
-
                     var excelFileName = $"IFA-Certificate-{DateTime.UtcNow.UtcToTimeZoneTime()}-{batchNumber.ToString().PadLeft(3, '0')}.xlsx";
 
                     var batchLogRequest = new CreateBatchLogRequest
@@ -161,15 +160,12 @@ namespace SFA.DAS.AssessorService.EpaoImporter
                     {
                         _printingJsonCreator.Create(batchNumber, certificates, certificateFileName);
                         await _notificationService.Send(batchNumber, certificates, certificateFileName);
-
                     }
                     else
                     {
                         _printingSpreadsheetCreator.Create(batchNumber, certificates);
                         await _notificationService.Send(batchNumber, certificates, excelFileName);
-
                     }
-
 
                     batchLogRequest.FileUploadEndTime = DateTime.UtcNow;
                     batchLogRequest.NumberOfCertificates = certificates.Count;
