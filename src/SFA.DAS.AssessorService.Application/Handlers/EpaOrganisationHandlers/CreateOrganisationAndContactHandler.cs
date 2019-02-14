@@ -129,6 +129,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
             // do the organisation insert if name is present and get the new organisation Id
 
+            organisationAdded = true;
             var organisationId = "ABC"; // this is gathered at the point of adding the organisation;
 
 
