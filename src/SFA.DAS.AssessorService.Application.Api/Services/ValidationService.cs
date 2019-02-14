@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
         public bool CompanyNumberIsValid(string companyNumberToCheck)
         {
             if (string.IsNullOrEmpty(companyNumberToCheck?.Trim())) return true;
-            var regex = new Regex(@"[A-Za-z0-9]{2}[0-9]{6,}");
+            var regex = new Regex(@"[A-Za-z0-9]{2}[0-9]{5,}");
             return regex.Match(companyNumberToCheck).Success;
         }
 

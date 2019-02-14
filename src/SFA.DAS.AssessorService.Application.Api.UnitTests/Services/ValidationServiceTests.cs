@@ -160,7 +160,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
         }
 
         [TestCase("33333", false)]
-        [TestCase("3333333", false)]
+        [TestCase("3333333", true)]
         [TestCase("33333333", true)]
         [TestCase("rc333333", true)]
         public void CheckCompanyNumber(string companyNumberToCheck, bool expectedResult)
