@@ -199,19 +199,6 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
-        public async Task<bool> EmailAlreadyPresentInAnotherOrganisation(string email)
-        {
-            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
-            {
-                if (connection.State != ConnectionState.Open)
-                    await connection.OpenAsync();
-                const string sqlToCheckExists =
-                    "select CASE count(0) WHEN 0 THEN 0 else 1 end result FROM [Contacts] " +
-                    "WHERE email  = @email";
-                return await connection.ExecuteScalarAsync<bool>(sqlToCheckExists, new { email });
-            }
-        }
-
         public async Task<bool> EmailAlreadyPresentInAnOrganisationNotAssociatedWithContact(string email, Guid contactId)
         {
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
