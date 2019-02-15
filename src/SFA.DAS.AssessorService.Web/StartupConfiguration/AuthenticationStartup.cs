@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.Authentication.WsFederation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -74,8 +71,8 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 
                     options.SaveTokens = true;
                     //options.CallbackPath = new PathString(Configuration["auth:oidc:callbackPath"]);
-                   // options.SignedOutCallbackPath = new PathString("/SignedOut");
-                   // options.SignedOutRedirectUri = new PathString("/SignedOut");
+                    //options.SignedOutCallbackPath = new PathString("/SignedOut");
+                    options.SignedOutRedirectUri = new PathString("/SignedOut");
                     options.SecurityTokenValidator = new JwtSecurityTokenHandler
                     {
                         InboundClaimTypeMap = new Dictionary<string, string>(),
@@ -119,7 +116,9 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                         // This is derived from the recommended approach: https://github.com/aspnet/Security/issues/1165
                         OnRemoteFailure = ctx =>
                         {
-                            ctx.Response.Redirect("/");
+                            ctx.Response.Redirect(ctx.Failure.Message.Contains("Could not find contact")
+                                ? configuration.ApplyBaseAddress
+                                : "/");
                             ctx.HandleResponse();
                             return Task.FromResult(0);
                         },
@@ -130,40 +129,22 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                             return Task.CompletedTask;
                         },
 
-                        // that event is called after the OIDC middleware received the auhorisation code,
-                        // redeemed it for an access token and a refresh token,
-                        // and validated the identity token
-                        //                        OnTokenValidated = x =>
-                        //                        {
-                        //                            // store both access and refresh token in the claims - hence in the cookie
-                        //                            var identity = (ClaimsIdentity) x.Principal.Identity;
-                        //                            identity.AddClaims(new[]
-                        //                            {
-                        //                                new Claim("access_token", x.TokenEndpointResponse.AccessToken),
-                        //                                new Claim("refresh_token", x.TokenEndpointResponse.RefreshToken)
-                        //                            });
-                        //
-                        //                            // so that we don't issue a session cookie but one with a fixed expiration
-                        //                            x.Properties.IsPersistent = true;
-                        //
-                        //                            return Task.CompletedTask;
-                        //                        }
-
                         OnTokenValidated = async context =>
                         {
                             var contactClient = context.HttpContext.RequestServices.GetRequiredService<IContactsApiClient>();
                             var orgClient = context.HttpContext.RequestServices
                                 .GetRequiredService<IOrganisationsApiClient>();
-                            var signInId = context.Principal.FindFirst("sub").Value;
+                            var signInId = context.Principal.FindFirst("sub")?.Value;
                             var user = await contactClient.GetContactBySignInId(signInId);
-                            var organisation = await orgClient.GetEpaOrganisation(user.EndPointAssessorOrganisationId);
+                            var organisation =
+                                await orgClient.GetEpaOrganisation(user.EndPointAssessorOrganisationId);
                             var identity = new ClaimsIdentity(new List<Claim>()
                             {
-                                new Claim("UserId", user.Id.ToString()),
-                                new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn",user.Username),
+                                new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn",
+                                    user.Username),
                                 new Claim("http://schemas.portal.com/ukprn", organisation.Ukprn.ToString())
                             });
-                            
+
                             context.Principal.AddIdentity(identity);
                         }
 

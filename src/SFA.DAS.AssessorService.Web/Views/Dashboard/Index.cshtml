@@ -1,4 +1,5 @@
-﻿@model SFA.DAS.AssessorService.Web.ViewModels.Dashboard.DashboardStatisticsModel
+﻿@model SFA.DAS.AssessorService.Web.ViewModels.Dashboard.DashboardViewModel
+@using SFA.DAS.AssessorService.Settings
 @using SFA.DAS.AssessorService.Web.Infrastructure
 @using SFA.DAS.AssessorService.Web.StartupConfiguration
 @inject ISessionService SessionService
@@ -22,9 +23,9 @@
                         <li class="dashboard__link">
                             <a asp-controller="OrganisationStandards" asp-action="Index">Standards approved to assess</a>
                         </li>
-                        @*<li class="dashboard__link">
-                <a href="">Apply to assess a new standard</a>
-            </li>*@
+                        <li class="dashboard__link">
+                            <a href="@Model.ApplyRedirectPath">Apply to assess a new standard</a>
+                        </li>
                     </ul>
                 </div>
             </div>

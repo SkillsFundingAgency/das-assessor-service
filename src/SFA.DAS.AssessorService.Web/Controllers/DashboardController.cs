@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
+using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Constants;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Dashboard;
@@ -19,18 +20,21 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly IOrganisationsApiClient _organisationApiClient;
         private readonly IStandardsApiClient _standardsApiClient;
         private readonly ICertificateApiClient _certificateApiClient;
+        private readonly IWebConfiguration _webConfiguration;
 
         public DashboardController(ISessionService sessionService,  
             IHttpContextAccessor contextAccessor , 
             IStandardsApiClient standardsApiClient,
             IOrganisationsApiClient organisationApiClient, 
-            ICertificateApiClient certificateApiClieet)
+            ICertificateApiClient certificateApiClieet,
+            IWebConfiguration webConfiguration)
         {
             _sessionService = sessionService;
             _organisationApiClient = organisationApiClient;
             _contextAccessor = contextAccessor;
             _certificateApiClient = certificateApiClieet;
             _standardsApiClient = standardsApiClient;
+            _webConfiguration = webConfiguration;
         }
 
 
@@ -38,7 +42,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public async Task<IActionResult> Index()
         {
             _sessionService.Set("CurrentPage", Pages.Dashboard);
-            var dashboardStatisticsModel = new DashboardStatisticsModel();
+            var dashboardViewModel = new DashboardViewModel($"{_webConfiguration.ApplyBaseAddress}/Applications");
             var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
             var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
             try
@@ -46,12 +50,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                var  organisation = await _organisationApiClient.Get(ukprn);
                 if (organisation != null)
                 {
-                    dashboardStatisticsModel.StandardsCount =
+                    dashboardViewModel.StandardsCount =
                         (await _standardsApiClient.GetEpaoStandardsCount(organisation.EndPointAssessorOrganisationId)).Count;
-                    dashboardStatisticsModel.PipelinesCount =
+                    dashboardViewModel.PipelinesCount =
                         (await _standardsApiClient.GetEpaoPipelineCount(organisation.EndPointAssessorOrganisationId))
                         .Count;
-                    dashboardStatisticsModel.AssessmentsCount =
+                    dashboardViewModel.AssessmentsCount =
                     (await _certificateApiClient.GetCertificatesCount(username)).Count;
                 }
                 
@@ -60,7 +64,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             {
                 return RedirectToAction("NotRegistered", "Home");
             }
-            return View(dashboardStatisticsModel);
+            return View(dashboardViewModel);
         }
     }
 }

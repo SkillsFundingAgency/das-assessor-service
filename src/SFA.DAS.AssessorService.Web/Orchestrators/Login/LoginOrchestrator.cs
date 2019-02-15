@@ -15,16 +15,12 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators.Login
         private readonly ILogger<LoginOrchestrator> _logger;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly ILoginApiClient _loginApiClient;
-        private readonly IContactsApiClient _contactsApiClient;
-        private readonly IOrganisationsApiClient _organisationsApiClient;
 
-        public LoginOrchestrator(ILogger<LoginOrchestrator> logger, IHttpContextAccessor contextAccessor, ILoginApiClient loginApiClient, IContactsApiClient contactsApiClient, IOrganisationsApiClient organisationsApiClient)
+        public LoginOrchestrator(ILogger<LoginOrchestrator> logger, IHttpContextAccessor contextAccessor, ILoginApiClient loginApiClient)
         {
             _logger = logger;
             _contextAccessor = contextAccessor;
             _loginApiClient = loginApiClient;
-            _contactsApiClient = contactsApiClient;
-            _organisationsApiClient = organisationsApiClient;
         }
         public async Task<LoginResponse> Login()
         {
@@ -38,8 +34,6 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators.Login
 
 
             var signinId = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "sub")?.Value;
-
-            var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
             var email = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "email")?.Value;
             var givenName = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "given_name")?.Value;
             var familyName = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "family_name")?.Value;
@@ -48,8 +42,7 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators.Login
             {
                 DisplayName = givenName + " " + familyName,
                 Email = email,
-                SignInId = Guid.Parse(signinId),
-                Username = username
+                SignInId = Guid.Parse(signinId)
             });
 
             return loginResult;
