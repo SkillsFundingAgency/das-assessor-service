@@ -29,14 +29,36 @@ update deliveryarea set Ordering=7 where Area='London'
 update deliveryarea set Ordering=8 where Area='South East'
 update deliveryarea set Ordering=9 where Area='South West*/
 
-alter table Contacts alter column Status nvarchar(20) not null
-alter table EMailTemplates alter column Recipients nvarchar(max) NULL
+alter table Contacts alter column Status nvarchar(20) not NULL
+alter table Contacts add SignInId uniqueidentifier 
+
+ALTER table EMailTemplates alter column Recipients nvarchar(max) NULL
 
 IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'EPAOUserApproveConfirm')
 BEGIN
 INSERT EMailTemplates VALUES (N'4df42e62-c08f-4e1c-ae8e-7ddf599ed3f6', N'EPAOUserApproveConfirm', N'539204f8-e99a-4efa-9d1f-d0e58b26dd7b', NULL, GETDATE(), NULL, NULL)
 END
 alter table EMailTemplates alter column Recipients nvarchar(max) null
+
+
+/* This table will be droppped and a new one created in the future with many-to-many relationships between, it and privilages table*/
+IF (NOT EXISTS (SELECT * 
+                 FROM INFORMATION_SCHEMA.TABLES 
+                 WHERE TABLE_SCHEMA = 'dbo' 
+                 AND  TABLE_NAME = 'ContactRoles'))
+BEGIN
+	CREATE TABLE [dbo].[ContactRoles](
+	[Id] [uniqueidentifier] NOT NULL,
+	[RoleName] [nvarchar](255) NULL,
+	[ContactId] [uniqueidentifier] NOT NULL,
+ CONSTRAINT [PK_ContactRoles] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+END
+
+
 
 /* DONE
 -- update FHA details STORY ON-1058
@@ -47,3 +69,4 @@ alter table EMailTemplates alter column Recipients nvarchar(max) null
 -- load December 2018 report DATABASE
 :r setDec18EPAReport.sql
 */
+
