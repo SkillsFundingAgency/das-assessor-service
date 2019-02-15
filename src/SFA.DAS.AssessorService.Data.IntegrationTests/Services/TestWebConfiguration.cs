@@ -21,6 +21,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
         public string SessionRedisConnectionString { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public AuthSettings StaffAuthentication { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ClientApiAuthentication ApplyApiAuthentication { get; set; }
+        public string ApplyBaseAddress { get; set; }
     }
 
 }

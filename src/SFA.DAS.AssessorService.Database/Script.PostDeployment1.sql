@@ -38,8 +38,6 @@ IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'EPAOUserAppro
 BEGIN
 INSERT EMailTemplates VALUES (N'4df42e62-c08f-4e1c-ae8e-7ddf599ed3f6', N'EPAOUserApproveConfirm', N'539204f8-e99a-4efa-9d1f-d0e58b26dd7b', NULL, GETDATE(), NULL, NULL)
 END
-alter table EMailTemplates alter column Recipients nvarchar(max) null
-
 
 /* This table will be droppped and a new one created in the future with many-to-many relationships between, it and privilages table*/
 IF (NOT EXISTS (SELECT * 
