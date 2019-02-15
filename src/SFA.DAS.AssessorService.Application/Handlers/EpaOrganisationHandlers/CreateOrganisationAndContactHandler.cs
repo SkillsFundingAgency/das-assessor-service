@@ -1,47 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
-using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Interfaces.Validation;
+
 
 namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 {
     public class CreateOrganisationAndContactHandler : IRequestHandler<CreateOrganisationContactRequest, CreateOrganisationContactResponse>
     {
-        private readonly IRegisterRepository _registerRepository;
-        private readonly IRegisterValidationRepository _registerValidationRepository;
+        private readonly IValidationService _validationService;
+        private readonly IAssessorValidationService _assessorValidationService;
+
+        private readonly IRegisterRepository _registerRepository;     
         private readonly IRegisterQueryRepository _registerQueryRepository;
+
         private readonly ILogger<CreateOrganisationAndContactHandler> _logger;
-        private readonly IEpaOrganisationValidator _organisationValidator;
         private readonly IEpaOrganisationIdGenerator _organisationIdGenerator;
         private readonly ISpecialCharacterCleanserService _cleanser;
-        private readonly IValidationService _validationService;
 
-
-        public CreateOrganisationAndContactHandler(IRegisterRepository registerRepository, IRegisterQueryRepository registerQueryRepository, ILogger<CreateOrganisationAndContactHandler> logger, IEpaOrganisationValidator organisationValidator, IEpaOrganisationIdGenerator organisationIdGenerator, ISpecialCharacterCleanserService cleanser, IValidationService validationService, IRegisterValidationRepository registerValidationRepository)
+        public CreateOrganisationAndContactHandler(IValidationService validationService, IAssessorValidationService assessorValidationService, IRegisterRepository registerRepository, IRegisterQueryRepository registerQueryRepository, ILogger<CreateOrganisationAndContactHandler> logger, IEpaOrganisationIdGenerator organisationIdGenerator, ISpecialCharacterCleanserService cleanser)
         {
+            _validationService = validationService;
+            _assessorValidationService = assessorValidationService;
             _registerRepository = registerRepository;
+            _registerQueryRepository = registerQueryRepository;
             _logger = logger;
-            _organisationValidator = organisationValidator;
             _organisationIdGenerator = organisationIdGenerator;
             _cleanser = cleanser;
-            _validationService = validationService;
-            _registerValidationRepository = registerValidationRepository;
-            _registerQueryRepository = registerQueryRepository;
         }
-      
-        
+
+
         public async Task<CreateOrganisationContactResponse> Handle(CreateOrganisationContactRequest request, CancellationToken cancellationToken)
         {
-            var noOrganisationNameMessage = "organisation name missing - no organisation or contact added";
+            var noOrganisationNameMessage = "Organisation name missing - no organisation or contact added";
             var organisationNameTooShortMessage = "organisation name too short - no organisation or contact added";
             var organisationNameAlreadyUsedMessage = "organisation name already used - no organisation or contact added";
             var organisationTypeNotIdentifiedMessage = "organisation type not identified so not added to organisation in register";
@@ -61,7 +59,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 "The email is invalid so the contact will not be added to the register";
             var emailAlreadyUsedMessage =
                 "The email is already used by another organisation so the contact will not be added to the register";
-
+            var contactNameIsMissingMessage =
+                "The contact name is missing so the contact will not be added to the register";
+            var contactNameIsInvalidMessage =
+                "The contact name is invalid so the contact will not be added to the register";
 
             var contactAdded = false;
             var organisationAdded = false;
@@ -74,13 +75,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             var charityNumber = request.CharityNumber;
 
             // organisation checks ////////////////////////////////
-            if (!_validationService.IsNotEmpty(organisationName))
-                warningMessages.Add(noOrganisationNameMessage);
+            RaiseWarningIfNoOrganisationName(organisationName, warningMessages, noOrganisationNameMessage);
 
             if (!_validationService.IsMinimumLengthOrMore(organisationName, 2))
                 warningMessages.Add(organisationNameTooShortMessage);
 
-            if (await _registerValidationRepository.EpaOrganisationAlreadyUsingName(organisationName, string.Empty))
+            if (await _assessorValidationService.IsOrganisationNameTaken(organisationName))
                 warningMessages.Add(organisationNameAlreadyUsedMessage);
 
             // If details make adding organisation impossible, then eject here
@@ -96,7 +96,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 warningMessages.Add(ukprnNotValidMessage);
             }
 
-            if (ukprnAsLong.HasValue && await _registerValidationRepository.EpaOrganisationExistsWithUkprn(ukprnAsLong.Value))
+            if (ukprnAsLong.HasValue && await _assessorValidationService.IsOrganisationUkprnTaken(ukprnAsLong.Value))
             {
                 ukprnAsLong = null;
                 warningMessages.Add(ukprnAlreadyUsedMessage);
@@ -108,7 +108,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 warningMessages.Add(companyNumberNotValidMessage);
             }
 
-            if (await _registerValidationRepository.EpaOrganisationExistsWithCompanyNumber(companyNumber))
+            if (await _assessorValidationService.IsCompanyNumberTaken(companyNumber))
             {
                 companyNumber = null;
                 warningMessages.Add(companyNumberAlreadyUsedMessage);
@@ -120,7 +120,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 warningMessages.Add(charityNumberNotValidMessage);
             }
 
-            if (await _registerValidationRepository.EpaOrganisationExistsWithCharityNumber(charityNumber))
+            if (await _assessorValidationService.IsCharityNumberTaken(charityNumber))
             {
                 charityNumber = null;
                 warningMessages.Add(charityNumberAlreadyUsedMessage);
@@ -136,28 +136,66 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
             organisationAdded = true;
 
-            // contact checks (as long as an organisation is added)
 
-            //return _organisationValidator.ValidatorCreateEpaOrganisationContactRequest(new CreateEpaOrganisationContactRequest...
+            // Contact ////////////////////////////////
+            var warningMessagesContact = new List<string>();
 
-            // maybe separate the test to change message?
-            var emailPresentAndValid = _organisationValidator.CheckIfEmailIsPresentAndInSuitableFormat(request.ContactEmail) == string.Empty;
-            var emailAleadyPresentInOtherOrganisation = _organisationValidator.CheckIfEmailAlreadyPresentInAnotherOrganisation(request.ContactEmail, newOrganisationId) != string.Empty;
-
-            var contactDetailsAlreadyPresent = emailPresentAndValid && !emailAleadyPresentInOtherOrganisation && _organisationValidator.CheckIfContactDetailsAlreadyPresentInSystem(request.ContactName, request.ContactEmail, request.ContactPhoneNumber, null)!=string.Empty;
-
-            // redundant I think
-            //var organisationNotFound = _organisationValidator.CheckIfOrganisationNotFound(organisationId) == string.Empty;
-
-            // checking if present and 2 characters or more....
-            var contactNameValid = _organisationValidator.CheckDisplayName(request.ContactName) == string.Empty;
+            if (!_validationService.IsNotEmpty(request.ContactEmail))
+                warningMessagesContact.Add(emailIsMissingMessage);
             
+            if(!_validationService.CheckEmailIsValid(request.ContactEmail))
+                warningMessagesContact.Add(emailIsInvalidMessage);
 
-        
+            if(await _assessorValidationService.IsEmailTaken(request.ContactEmail))
+                warningMessagesContact.Add(emailAlreadyUsedMessage);
 
-            // do the contact update and mark contactAdded is true, if it is done
+            if (!_validationService.IsNotEmpty(request.ContactName))
+                warningMessagesContact.Add(contactNameIsMissingMessage);
 
+            if (!_validationService.IsMinimumLengthOrMore(request.ContactName,2))
+                warningMessagesContact.Add(contactNameIsMissingMessage);
+
+
+
+            if (warningMessagesContact.Count > 0)
+                warningMessages.AddRange(warningMessagesContact);
+            else
+            {
+                var newUsername = _organisationIdGenerator.GetNextContactUsername();
+                if (newUsername == string.Empty)
+                    throw new Exception("A valid contact user name could not be generated");
+
+                var contact = MapRequestToContact(request.ContactName,request.ContactEmail,organisationSaved,request.ContactPhoneNumber, newUsername);
+                await _registerRepository.CreateEpaOrganisationContact(contact);
+                contactAdded = true;
+            }
+           
             return new CreateOrganisationContactResponse(newOrganisationId, organisationAdded, contactAdded, warningMessages);
+        }
+
+        private void RaiseWarningIfNoOrganisationName(string organisationName, List<string> warningMessages,
+            string noOrganisationNameMessage)
+        {
+            if (!_validationService.IsNotEmpty(organisationName))
+                warningMessages.Add(noOrganisationNameMessage);
+        }
+
+
+        private EpaContact MapRequestToContact(string contactName, string contactEmail, string organisationId, string contactPhoneNumber, string username)
+        {
+            contactName = _cleanser.CleanseStringForSpecialCharacters(contactName);
+            contactEmail = _cleanser.CleanseStringForSpecialCharacters(contactEmail);
+            contactPhoneNumber = _cleanser.CleanseStringForSpecialCharacters(contactPhoneNumber);
+
+            return new EpaContact
+            {
+                DisplayName = contactName,
+                Email = contactEmail,
+                EndPointAssessorOrganisationId = organisationId,
+                Id = Guid.NewGuid(),
+                PhoneNumber = contactPhoneNumber,
+                Username = username
+            };
         }
 
         private EpaOrganisation MapRequestToOrganisation(CreateOrganisationContactRequest request, string newOrganisationId, string organisationName, string companyNumber, string charityNumber, long? ukprnAsLong, int? organisationTypeId)
