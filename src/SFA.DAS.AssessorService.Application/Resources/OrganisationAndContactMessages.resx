@@ -117,7 +117,49 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CharityNumberAlreadyUsed" xml:space="preserve">
+    <value>The charity number is already used by another organisation so not added to this organisation in register</value>
+  </data>
+  <data name="CharityNumberNotValid" xml:space="preserve">
+    <value>Charity number is an invalid format so not added to this organisation in register</value>
+  </data>
+  <data name="CompanyNumberAlreadyUsed" xml:space="preserve">
+    <value>The company number is already used by another organisation so not added to this organisation in register</value>
+  </data>
+  <data name="CompanyNumberNotValid" xml:space="preserve">
+    <value>Company number is an invalid format so not added to this organisation in register</value>
+  </data>
+  <data name="ContactNameIsMissing" xml:space="preserve">
+    <value>The contact name is missing so the contact will not be added to the register</value>
+  </data>
+  <data name="ContactNameIsTooShort" xml:space="preserve">
+    <value>The contact name is too short so the contact will not be added to the register</value>
+  </data>
+  <data name="EmailAlreadyUsed" xml:space="preserve">
+    <value>The email is already used by another organisation so the contact will not be added to the register</value>
+  </data>
+  <data name="EmailIsInvalid" xml:space="preserve">
+    <value>The email is invalid so the contact will not be added to the register</value>
+  </data>
+  <data name="EmailIsMissing" xml:space="preserve">
+    <value>The email is missing so the contact will not be added to the register</value>
+  </data>
   <data name="NoOrganisationName" xml:space="preserve">
     <value>Organisation name missing - no organisation or contact added</value>
+  </data>
+  <data name="OrganisationNameAlreadyUsed" xml:space="preserve">
+    <value>Organisation name already used - no organisation or contact added</value>
+  </data>
+  <data name="OrganisationNameTooShort" xml:space="preserve">
+    <value>Organisation name too short - no organisation or contact added</value>
+  </data>
+  <data name="OrganisationTypeNotIdentified" xml:space="preserve">
+    <value>Organisation type not identified so not added to organisation in register</value>
+  </data>
+  <data name="UkprnAlreadyUsed" xml:space="preserve">
+    <value>The ukprn is already used by another organisation so not added to this organisation in register</value>
+  </data>
+  <data name="UkprnIsInvalidFormat" xml:space="preserve">
+    <value>Ukprn is an invalid format so not added to this organisation in register</value>
   </data>
 </root>

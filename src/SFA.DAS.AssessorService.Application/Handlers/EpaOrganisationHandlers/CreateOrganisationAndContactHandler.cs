@@ -4,11 +4,13 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Interfaces.Validation;
+using SFA.DAS.AssessorService.Application.Resources;
 
 
 namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
@@ -34,38 +36,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             _logger = logger;
             _organisationIdGenerator = organisationIdGenerator;
             _cleanser = cleanser;
+
         }
 
 
         public async Task<CreateOrganisationContactResponse> Handle(CreateOrganisationContactRequest request, CancellationToken cancellationToken)
         {
-            var noOrganisationNameMessage = "Organisation name missing - no organisation or contact added";
-            var organisationNameTooShortMessage = "organisation name too short - no organisation or contact added";
-            var organisationNameAlreadyUsedMessage = "organisation name already used - no organisation or contact added";
-            var organisationTypeNotIdentifiedMessage = "organisation type not identified so not added to organisation in register";
-            var ukprnNotValidMessage = "Ukprn is an invalid format so not added to this organisation in register";
-            var ukprnAlreadyUsedMessage =
-                "The ukprn is already used by another organisation so not added to this organisation in register";
-            var companyNumberNotValidMessage = "Company number is an invalid format so not added to this organisation in register";
-            var companyNumberAlreadyUsedMessage =
-                "The company number is already used by another organisation so not added to this organisation in register";
-            var charityNumberNotValidMessage = "Charity number is an invalid format so not added to this organisation in register";
-            var charityNumberAlreadyUsedMessage =
-                "The charity number is already used by another organisation so not added to this organisation in register";
-
-            var emailIsMissingMessage =
-                "The email is missing so the contact will not be added to the register";
-            var emailIsInvalidMessage =
-                "The email is invalid so the contact will not be added to the register";
-            var emailAlreadyUsedMessage =
-                "The email is already used by another organisation so the contact will not be added to the register";
-            var contactNameIsMissingMessage =
-                "The contact name is missing so the contact will not be added to the register";
-            var contactNameIsInvalidMessage =
-                "The contact name is invalid so the contact will not be added to the register";
-
             var contactAdded = false;
-            var organisationAdded = false;
             var warningMessages = new List<string>();
 
             var organisationName = DecideOrganisationName(request.UseTradingName,request.TradingName, request.OrganisationName);
@@ -75,56 +52,20 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             var charityNumber = request.CharityNumber;
 
             // organisation checks ////////////////////////////////
-            RaiseWarningIfNoOrganisationName(organisationName, warningMessages, noOrganisationNameMessage);
+            RaiseBreakingWarningIfNoOrganisationName(organisationName, warningMessages);
+            RaiseBreakingWarningIfOrganisationNameTooShort(organisationName, warningMessages);
+            await RaiseBreakingWarningIfOrganisationNameAlreadyUsed(organisationName, warningMessages);
 
-            if (!_validationService.IsMinimumLengthOrMore(organisationName, 2))
-                warningMessages.Add(organisationNameTooShortMessage);
-
-            if (await _assessorValidationService.IsOrganisationNameTaken(organisationName))
-                warningMessages.Add(organisationNameAlreadyUsedMessage);
-
-            // If details make adding organisation impossible, then eject here
             if (warningMessages.Count>0)
                 return new CreateOrganisationContactResponse(null, false, false, warningMessages);
 
-            if (organisationTypeId == null)
-                warningMessages.Add(organisationTypeNotIdentifiedMessage);
-
-            if (!_validationService.UkprnIsValid(ukprnAsLong?.ToString()))
-            {
-                ukprnAsLong = null;
-                warningMessages.Add(ukprnNotValidMessage);
-            }
-
-            if (ukprnAsLong.HasValue && await _assessorValidationService.IsOrganisationUkprnTaken(ukprnAsLong.Value))
-            {
-                ukprnAsLong = null;
-                warningMessages.Add(ukprnAlreadyUsedMessage);
-            }
-
-            if (!_validationService.CompanyNumberIsValid(companyNumber))
-            {
-                companyNumber = null;
-                warningMessages.Add(companyNumberNotValidMessage);
-            }
-
-            if (await _assessorValidationService.IsCompanyNumberTaken(companyNumber))
-            {
-                companyNumber = null;
-                warningMessages.Add(companyNumberAlreadyUsedMessage);
-            }
-
-            if (!_validationService.CharityNumberIsValid(charityNumber))
-            {
-                charityNumber = null;
-                warningMessages.Add(charityNumberNotValidMessage);
-            }
-
-            if (await _assessorValidationService.IsCharityNumberTaken(charityNumber))
-            {
-                charityNumber = null;
-                warningMessages.Add(charityNumberAlreadyUsedMessage);
-            }
+            RaiseWarningOrganisationTypeNotIdentified(organisationTypeId, warningMessages);
+            ukprnAsLong = RaiseWarningAndResetIfUkprnIsInvalid(ukprnAsLong, warningMessages);
+            ukprnAsLong = await RaiseWarningAndResetIfUkprnIsAlreadyUsed(warningMessages, ukprnAsLong);
+            companyNumber = RaiseWarningAndResetIfCompanyNumberIsInvalid(companyNumber, warningMessages);
+            companyNumber = await RaiseWarningAndResetIfCompanyNumberAlreadyUsed(companyNumber, warningMessages);
+            charityNumber = RaiseWarningAndResetIfCharityNumberIsInvalid(charityNumber, warningMessages);
+            charityNumber = await RaiseWarningAndResetIfCharityNumberAlreadyUsed(charityNumber, warningMessages);
 
             var newOrganisationId = _organisationIdGenerator.GetNextOrganisationId();
             if (newOrganisationId == string.Empty)
@@ -134,28 +75,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 ukprnAsLong, organisationTypeId);
             var organisationSaved = await _registerRepository.CreateEpaOrganisation(organisation);
 
-            organisationAdded = true;
-
-
             // Contact ////////////////////////////////
             var warningMessagesContact = new List<string>();
 
-            if (!_validationService.IsNotEmpty(request.ContactEmail))
-                warningMessagesContact.Add(emailIsMissingMessage);
-            
-            if(!_validationService.CheckEmailIsValid(request.ContactEmail))
-                warningMessagesContact.Add(emailIsInvalidMessage);
-
-            if(await _assessorValidationService.IsEmailTaken(request.ContactEmail))
-                warningMessagesContact.Add(emailAlreadyUsedMessage);
-
-            if (!_validationService.IsNotEmpty(request.ContactName))
-                warningMessagesContact.Add(contactNameIsMissingMessage);
-
-            if (!_validationService.IsMinimumLengthOrMore(request.ContactName,2))
-                warningMessagesContact.Add(contactNameIsMissingMessage);
-
-
+            RaiseBreakingWarningIfEmailIsMissingInvalidOrAlreadyUsed(request.ContactEmail, warningMessagesContact);
+            RaiseWarningIfContactNameIsMissingOrTooShort(request.ContactName, warningMessagesContact);
 
             if (warningMessagesContact.Count > 0)
                 warningMessages.AddRange(warningMessagesContact);
@@ -170,14 +94,94 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 contactAdded = true;
             }
            
-            return new CreateOrganisationContactResponse(newOrganisationId, organisationAdded, contactAdded, warningMessages);
+            return new CreateOrganisationContactResponse(newOrganisationId, true, contactAdded, warningMessages);
         }
 
-        private void RaiseWarningIfNoOrganisationName(string organisationName, List<string> warningMessages,
-            string noOrganisationNameMessage)
+        private void RaiseWarningIfContactNameIsMissingOrTooShort(string contactName, List<string> warningMessagesContact)
+        {
+            if (!_validationService.IsNotEmpty(contactName))
+                warningMessagesContact.Add(OrganisationAndContactMessages.ContactNameIsMissing);
+
+            if (!_validationService.IsMinimumLengthOrMore(contactName, 2))
+                warningMessagesContact.Add(OrganisationAndContactMessages.ContactNameIsTooShort);
+        }
+
+        private void RaiseBreakingWarningIfEmailIsMissingInvalidOrAlreadyUsed(string email, ICollection<string> warningMessagesContact)
+        {
+            if (!_validationService.IsNotEmpty(email))
+                warningMessagesContact.Add(OrganisationAndContactMessages.EmailIsMissing);
+
+            if (!_validationService.CheckEmailIsValid(email))
+                warningMessagesContact.Add(OrganisationAndContactMessages.EmailIsInvalid);
+
+            if (_assessorValidationService.IsEmailTaken(email).Result)
+                warningMessagesContact.Add(OrganisationAndContactMessages.EmailAlreadyUsed);
+        }
+
+        private async Task<string> RaiseWarningAndResetIfCharityNumberAlreadyUsed(string charityNumber, ICollection<string> warningMessages)
+        {
+            if (!await _assessorValidationService.IsCharityNumberTaken(charityNumber)) return charityNumber;
+            warningMessages.Add(OrganisationAndContactMessages.CharityNumberAlreadyUsed);
+            return null;
+        }
+
+        private string RaiseWarningAndResetIfCharityNumberIsInvalid(string charityNumber, ICollection<string> warningMessages)
+        {
+            if (_validationService.CharityNumberIsValid(charityNumber)) return charityNumber;
+            warningMessages.Add(OrganisationAndContactMessages.CharityNumberNotValid);
+            return null;
+        }
+
+        private async Task<string> RaiseWarningAndResetIfCompanyNumberAlreadyUsed(string companyNumber, ICollection<string> warningMessages)
+        {
+            if (!await _assessorValidationService.IsCompanyNumberTaken(companyNumber)) return companyNumber;
+            warningMessages.Add(OrganisationAndContactMessages.CompanyNumberAlreadyUsed);
+            return null;
+        }
+
+        private string RaiseWarningAndResetIfCompanyNumberIsInvalid(string companyNumber, ICollection<string> warningMessages)
+        {
+            if (_validationService.CompanyNumberIsValid(companyNumber)) return companyNumber;
+            warningMessages.Add(OrganisationAndContactMessages.CompanyNumberNotValid);
+            return null;
+        }
+
+        private async Task<long?> RaiseWarningAndResetIfUkprnIsAlreadyUsed(ICollection<string> warningMessages, long? ukprnAsLong)
+        {
+            if (!ukprnAsLong.HasValue || !await _assessorValidationService.IsOrganisationUkprnTaken(ukprnAsLong.Value)) return ukprnAsLong;
+            warningMessages.Add(OrganisationAndContactMessages.UkprnAlreadyUsed);
+            return null;
+        }
+
+        private long? RaiseWarningAndResetIfUkprnIsInvalid(long? ukprnAsLong, ICollection<string> warningMessages)
+        {
+            if (_validationService.UkprnIsValid(ukprnAsLong?.ToString())) return ukprnAsLong;
+            warningMessages.Add(OrganisationAndContactMessages.UkprnIsInvalidFormat);
+            return null;
+        }
+
+        private static void RaiseWarningOrganisationTypeNotIdentified(int? organisationTypeId, ICollection<string> warningMessages)
+        {
+            if (organisationTypeId == null)
+                warningMessages.Add(OrganisationAndContactMessages.OrganisationTypeNotIdentified);
+        }
+
+        private async Task RaiseBreakingWarningIfOrganisationNameAlreadyUsed(string organisationName, ICollection<string> warningMessages)
+        {
+              if (await _assessorValidationService.IsOrganisationNameTaken(organisationName))
+                warningMessages.Add(OrganisationAndContactMessages.OrganisationNameAlreadyUsed);
+        }
+
+        private void RaiseBreakingWarningIfOrganisationNameTooShort(string organisationName, ICollection<string> warningMessages)
+        {
+            if (!_validationService.IsMinimumLengthOrMore(organisationName, 2))
+                warningMessages.Add(OrganisationAndContactMessages.OrganisationNameTooShort);
+        }
+
+        private void RaiseBreakingWarningIfNoOrganisationName(string organisationName, ICollection<string> warningMessages)
         {
             if (!_validationService.IsNotEmpty(organisationName))
-                warningMessages.Add(noOrganisationNameMessage);
+                warningMessages.Add(OrganisationAndContactMessages.NoOrganisationName);
         }
 
 
@@ -267,6 +271,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             return useTradingName && !string.IsNullOrEmpty(tradingName)
                 ? tradingName
                 : organisationName;
-        }
+        }  
     }
 }
