@@ -1,0 +1,39 @@
+@using SFA.DAS.AssessorService.Web.Staff
+@using SFA.DAS.AssessorService.Web.Staff.Domain
+@{ ViewBag.Title = "Search for an apprenticeship training provider"; }
+
+<style type="text/css">
+    
+</style>
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <h1 class="heading-xlarge">Search for an apprenticeship training provider</h1>
+    </div>
+</div>
+<div class="govuk-width-container">
+    
+    <main class="govuk-main-wrapper " id="main-content" role="main">
+          
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                
+                <form method="post">
+                    <div id="searchControls" class="govuk-form-group govuk-!-margin-bottom-1">
+                        <label for="search" class="govuk-label govuk-!-font-size-24 roatp-search-label">Organisation name or UKPRN </label>
+                        <input autocomplete="off" type="search" id="search" class="govuk-input govuk-!-width-full govuk-!-font-size-36 govuk-!-padding-2 roatp-search-field" name="search">
+                        <input type="submit" class="roatp-search-button" value="Search">
+                    </div>
+        
+                </form>
+            </div>
+        </div>
+        
+        <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+        
+        <ul class="govuk-list govuk-!-margin-top-9">
+            <li><a class="govuk-link govuk-body-l" href="org-details-select-route">Add a new training provider</a></li>
+            <li><a class=" govuk-link govuk-body-l" href="#">Download the register</a></li>
+        </ul>
+    </main>
+</div>
