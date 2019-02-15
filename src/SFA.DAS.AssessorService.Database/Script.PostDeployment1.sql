@@ -30,7 +30,7 @@ update deliveryarea set Ordering=8 where Area='South East'
 update deliveryarea set Ordering=9 where Area='South West*/
 
 alter table Contacts alter column Status nvarchar(20) not NULL
-alter table Contacts add SignInId uniqueidentifier 
+alter table Contacts add SignInId uniqueidentifier NULL 
 
 ALTER table EMailTemplates alter column Recipients nvarchar(max) NULL
 
