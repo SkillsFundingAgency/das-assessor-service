@@ -27,8 +27,8 @@ JSON_VALUE(CertificateData, '$.LearnerFamilyName') AS CertFamilyName
 FROM Certificates ce1 
 JOIN Organisations org ON ce1.OrganisationId = org.id
 LEFT JOIN Ilrs il1 ON ce1.standardcode = il1.stdcode AND ce1.uln = il1.uln
-WHERE REPLACE(JSON_VALUE(CertificateData, '$.LearnerFamilyName'),' ','') = @Search
-   OR REPLACE(JSON_VALUE(CertificateData, '$.LearnerGivenNames'),' ','') = @Search
+WHERE JSON_VALUE(CertificateData, '$.LearnerFamilyName') = @Search
+   OR JSON_VALUE(CertificateData, '$.LearnerGivenNames') = @Search
    OR REPLACE(JSON_VALUE(CertificateData, '$.LearnerGivenNames'),' ','') + REPLACE(JSON_VALUE(CertificateData, '$.LearnerFamilyName'),' ','') = REPLACE(@Search, ' ','') 
 UNION ALL
 SELECT 
@@ -56,8 +56,8 @@ JOIN StandardCollation sc ON il1.StdCode = sc.StandardId
 LEFT JOIN Certificates ce1 ON ce1.standardcode = il1.stdcode AND ce1.uln = il1.uln
 WHERE 
 ce1.uln IS  NULL
-AND(REPLACE(FamilyName, ' ','') = @Search 
-    OR REPLACE(GivenNames, ' ','') = @Search 
+AND(FamilyName = @Search 
+    OR GivenNames = @Search 
     OR REPLACE(GivenNames, ' ','') + REPLACE(FamilyName, ' ','') =  REPLACE(@Search, ' ','') 	)  
 ORDER BY x, CreatedAt
         OFFSET @Skip ROWS 
