@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
@@ -39,7 +38,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
         }
 
-
         public async Task<CreateOrganisationContactResponse> Handle(CreateOrganisationContactRequest request, CancellationToken cancellationToken)
         {
             var warningMessages = new List<string>();
@@ -50,12 +48,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             var charityNumber = request.CharityNumber;
 
             // organisation checks ////////////////////////////////
-            RaiseBreakingWarningIfNoOrganisationName(organisationName, warningMessages);
-            RaiseBreakingWarningIfOrganisationNameTooShort(organisationName, warningMessages);
-            await RaiseBreakingWarningIfOrganisationNameAlreadyUsed(organisationName, warningMessages);
-
-        
-
+            RaiseWarningIfNoOrganisationName(organisationName, warningMessages);
+            RaiseWarningIfOrganisationNameTooShort(organisationName, warningMessages);
+            await RaiseWarningIfOrganisationNameAlreadyUsed(organisationName, warningMessages);
             RaiseWarningOrganisationTypeNotIdentified(organisationTypeId, warningMessages);
             ukprnAsLong = RaiseWarningAndResetIfUkprnIsInvalid(ukprnAsLong, warningMessages);
             ukprnAsLong = await RaiseWarningAndResetIfUkprnIsAlreadyUsed(warningMessages, ukprnAsLong);
@@ -66,31 +61,35 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
             var newOrganisationId = _organisationIdGenerator.GetNextOrganisationId();
             if (newOrganisationId == string.Empty)
+            {
+                _logger.LogWarning("A valid organisation Id could not be generated");
                 throw new Exception("A valid organisation Id could not be generated");
-
+            }
             var organisation = MapRequestToOrganisation(request, newOrganisationId, organisationName, companyNumber, charityNumber,
                 ukprnAsLong, organisationTypeId);
         
-            // Contact ////////////////////////////////
+            // Contact checks ////////////////////////////////
             var warningMessagesContact = new List<string>();
 
-            RaiseBreakingWarningIfEmailIsMissingInvalidOrAlreadyUsed(request.ContactEmail, warningMessagesContact);
+            RaiseWarningIfEmailIsMissingInvalidOrAlreadyUsed(request.ContactEmail, warningMessagesContact);
             RaiseWarningIfContactNameIsMissingOrTooShort(request.ContactName, warningMessagesContact);
 
-            if (warningMessagesContact.Count > 0)
+            
                 warningMessages.AddRange(warningMessagesContact);
-            else
+
+            if (warningMessages.Count == 0)
             {
                 var newUsername = _organisationIdGenerator.GetNextContactUsername();
                 if (newUsername == string.Empty)
+                {
+                    _logger.LogWarning("A valid contact user name could not be generated");
                     throw new Exception("A valid contact user name could not be generated");
+                }
                 newOrganisationId = await _registerRepository.CreateEpaOrganisation(organisation);
                 var contact = MapRequestToContact(request.ContactName,request.ContactEmail,newOrganisationId,request.ContactPhoneNumber, newUsername);
                 await _registerRepository.CreateEpaOrganisationContact(contact);
-
             }
-
-            if (warningMessages.Count > 0)
+            else
                 newOrganisationId = null;
 
             return new CreateOrganisationContactResponse(newOrganisationId, warningMessages);
@@ -105,7 +104,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 warningMessagesContact.Add(OrganisationAndContactMessages.ContactNameIsTooShort);
         }
 
-        private void RaiseBreakingWarningIfEmailIsMissingInvalidOrAlreadyUsed(string email, ICollection<string> warningMessagesContact)
+        private void RaiseWarningIfEmailIsMissingInvalidOrAlreadyUsed(string email, ICollection<string> warningMessagesContact)
         {
             if (!_validationService.IsNotEmpty(email))
                 warningMessagesContact.Add(OrganisationAndContactMessages.EmailIsMissing);
@@ -165,24 +164,23 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 warningMessages.Add(OrganisationAndContactMessages.OrganisationTypeNotIdentified);
         }
 
-        private async Task RaiseBreakingWarningIfOrganisationNameAlreadyUsed(string organisationName, ICollection<string> warningMessages)
+        private async Task RaiseWarningIfOrganisationNameAlreadyUsed(string organisationName, ICollection<string> warningMessages)
         {
               if (await _assessorValidationService.IsOrganisationNameTaken(organisationName))
                 warningMessages.Add(OrganisationAndContactMessages.OrganisationNameAlreadyUsed);
         }
 
-        private void RaiseBreakingWarningIfOrganisationNameTooShort(string organisationName, ICollection<string> warningMessages)
+        private void RaiseWarningIfOrganisationNameTooShort(string organisationName, ICollection<string> warningMessages)
         {
             if (!_validationService.IsMinimumLengthOrMore(organisationName, 2))
                 warningMessages.Add(OrganisationAndContactMessages.OrganisationNameTooShort);
         }
 
-        private void RaiseBreakingWarningIfNoOrganisationName(string organisationName, ICollection<string> warningMessages)
+        private void RaiseWarningIfNoOrganisationName(string organisationName, ICollection<string> warningMessages)
         {
             if (!_validationService.IsNotEmpty(organisationName))
                 warningMessages.Add(OrganisationAndContactMessages.NoOrganisationName);
         }
-
 
         private EpaContact MapRequestToContact(string contactName, string contactEmail, string organisationId, string contactPhoneNumber, string username)
         {
