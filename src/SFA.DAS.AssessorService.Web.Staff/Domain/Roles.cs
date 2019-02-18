@@ -23,9 +23,19 @@ namespace SFA.DAS.AssessorService.Web.Staff.Domain
                    || user.IsInRole(RoatpGatewayTeam);
         }
 
-        public static bool HasRoatpRole(this ClaimsPrincipal user)
+        public static bool HasRoatpRoleOnly(this ClaimsPrincipal user)
         {
-            return user.IsInRole(RoatpGatewayTeam);
+            if (user.IsInRole(RoatpGatewayTeam)
+                && !user.IsInRole(CertificationTeam)
+                && !user.IsInRole(OperationsTeam)
+                && !user.IsInRole(AssessmentDeliveryTeam)
+                && !user.IsInRole(ProviderRiskAssuranceTeam)
+                && !user.IsInRole(RegisterViewOnlyTeam))
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }
