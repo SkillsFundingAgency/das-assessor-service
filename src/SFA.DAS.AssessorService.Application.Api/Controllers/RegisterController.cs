@@ -71,7 +71,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int) HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> CreateOrganisationAndContact([FromBody] CreateOrganisationContactRequest request)
         {
-            return Ok(await _mediator.Send(request)); 
+            var response = await _mediator.Send(request); 
+
+            if (response.OrganisationId == null)
+                return Conflict(response);
+
+            return Ok(response);
         }
 
 

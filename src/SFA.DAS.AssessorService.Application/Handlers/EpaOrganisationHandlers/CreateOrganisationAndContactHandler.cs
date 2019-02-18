@@ -42,9 +42,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
         public async Task<CreateOrganisationContactResponse> Handle(CreateOrganisationContactRequest request, CancellationToken cancellationToken)
         {
-            var contactAdded = false;
             var warningMessages = new List<string>();
-
             var organisationName = DecideOrganisationName(request.UseTradingName,request.TradingName, request.OrganisationName);
             var ukprnAsLong = GetUkprnFromRequestDetails(request.OrganisationUkprn, request.CompanyUkprn);
             var organisationTypeId = await GetOrganisationTypeIdFromDescriptor(request.OrganisationType);
@@ -56,8 +54,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             RaiseBreakingWarningIfOrganisationNameTooShort(organisationName, warningMessages);
             await RaiseBreakingWarningIfOrganisationNameAlreadyUsed(organisationName, warningMessages);
 
-            if (warningMessages.Count>0)
-                return new CreateOrganisationContactResponse(null, false, false, warningMessages);
+        
 
             RaiseWarningOrganisationTypeNotIdentified(organisationTypeId, warningMessages);
             ukprnAsLong = RaiseWarningAndResetIfUkprnIsInvalid(ukprnAsLong, warningMessages);
@@ -73,8 +70,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
 
             var organisation = MapRequestToOrganisation(request, newOrganisationId, organisationName, companyNumber, charityNumber,
                 ukprnAsLong, organisationTypeId);
-            var organisationSaved = await _registerRepository.CreateEpaOrganisation(organisation);
-
+        
             // Contact ////////////////////////////////
             var warningMessagesContact = new List<string>();
 
@@ -88,13 +84,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 var newUsername = _organisationIdGenerator.GetNextContactUsername();
                 if (newUsername == string.Empty)
                     throw new Exception("A valid contact user name could not be generated");
-
-                var contact = MapRequestToContact(request.ContactName,request.ContactEmail,organisationSaved,request.ContactPhoneNumber, newUsername);
+                newOrganisationId = await _registerRepository.CreateEpaOrganisation(organisation);
+                var contact = MapRequestToContact(request.ContactName,request.ContactEmail,newOrganisationId,request.ContactPhoneNumber, newUsername);
                 await _registerRepository.CreateEpaOrganisationContact(contact);
-                contactAdded = true;
+
             }
-           
-            return new CreateOrganisationContactResponse(newOrganisationId, true, contactAdded, warningMessages);
+
+            if (warningMessages.Count > 0)
+                newOrganisationId = null;
+
+            return new CreateOrganisationContactResponse(newOrganisationId, warningMessages);
         }
 
         private void RaiseWarningIfContactNameIsMissingOrTooShort(string contactName, List<string> warningMessagesContact)
