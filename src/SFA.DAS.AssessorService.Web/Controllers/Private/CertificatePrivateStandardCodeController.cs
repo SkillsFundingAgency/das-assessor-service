@@ -12,6 +12,7 @@ using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
+using SFA.DAS.AssessorService.ExternalApis.Services;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private;
 
@@ -25,18 +26,21 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
         private readonly CacheHelper _cacheHelper;
         private readonly ICertificateApiClient _certificateApiClient;
         private readonly ISessionService _sessionService;
+        private readonly IStandardService _standardService;
 
         public CertificatePrivateStandardCodeController(ILogger<CertificateController> logger,
             IHttpContextAccessor contextAccessor,
             IAssessmentOrgsApiClient assessmentOrgsApiClient,
             CacheHelper cacheHelper,
-            ICertificateApiClient certificateApiClient, ISessionService sessionService)
+            ICertificateApiClient certificateApiClient, ISessionService sessionService, 
+            IStandardService standardService)
             : base(logger, contextAccessor, certificateApiClient, sessionService)
         {
             _assessmentOrgsApiClient = assessmentOrgsApiClient;
             _cacheHelper = cacheHelper;
             _certificateApiClient = certificateApiClient;
             _sessionService = sessionService;
+            _standardService = standardService;
         }
 
         [HttpGet]
@@ -127,7 +131,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
             var results = await _cacheHelper.RetrieveFromCache<IEnumerable<StandardSummary>>("Standards");
             if (results == null)
             {
-                var standards = await _assessmentOrgsApiClient.GetAllStandardSummaries();
+                var standards = await _standardService.GetAllStandardSummaries();
                 await _cacheHelper.SaveToCache("Standards", standards, 1);
 
                 results = standards;

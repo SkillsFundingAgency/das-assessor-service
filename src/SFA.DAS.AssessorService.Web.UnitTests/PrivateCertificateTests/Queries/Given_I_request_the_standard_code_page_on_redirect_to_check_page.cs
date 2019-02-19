@@ -25,7 +25,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Queries
                     MockAssessmentOrgsApiClient,
                     new CacheHelper(mockDistributedCache.Object),
                     MockCertificateApiClient,
-                    MockSession.Object
+                    MockSession.Object,
+                    MockStandardService.Object
                     );
 
             SetupSession();

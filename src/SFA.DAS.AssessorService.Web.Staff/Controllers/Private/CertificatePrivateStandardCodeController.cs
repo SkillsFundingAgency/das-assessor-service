@@ -22,6 +22,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
     public class CertificatePrivateStandardCodeController : CertificateBaseController
     {
         private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
+        private readonly IStandardService _standardService;
         private readonly CacheService _cacheHelper;
         private readonly ApiClient _apiClient;       
 
@@ -29,12 +30,14 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
             IHttpContextAccessor contextAccessor,
             IAssessmentOrgsApiClient assessmentOrgsApiClient,
             CacheService cacheHelper,
-            ApiClient apiClient)
+            ApiClient apiClient, 
+            IStandardService standardService)
             : base(logger, contextAccessor, apiClient)
         {
             _assessmentOrgsApiClient = assessmentOrgsApiClient;
             _cacheHelper = cacheHelper;
             _apiClient = apiClient;
+            _standardService = standardService;
         }
 
         [HttpGet]
@@ -106,7 +109,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
             var results = await _cacheHelper.RetrieveFromCache<IEnumerable<StandardSummary>>("Standards");
             if (results == null)
             {
-                var standards = await _assessmentOrgsApiClient.GetAllStandardSummaries();
+                var standards = await _standardService.GetAllStandardSummaries();
                 await _cacheHelper.SaveToCache("Standards", standards, 1);
 
                 results = standards;

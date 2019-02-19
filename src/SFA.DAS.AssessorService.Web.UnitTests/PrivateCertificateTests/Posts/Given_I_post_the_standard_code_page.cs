@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AssessorService.ExternalApis.Services;
 using SFA.DAS.AssessorService.Web.Controllers.Private;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.ViewModels.Certificate.Private;
@@ -25,7 +26,8 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Posts
                     MockAssessmentOrgsApiClient,
                     new CacheHelper(distributedCacheMock.Object), 
                     MockCertificateApiClient,
-                    MockSession.Object
+                    MockSession.Object,
+                   MockStandardService.Object
                     );
 
             var vm = new CertificateStandardCodeListViewModel
