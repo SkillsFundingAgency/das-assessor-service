@@ -75,7 +75,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 OrganisationName = epao.EndPointAssessorName,
                 OrganisationId = epao.EndPointAssessorOrganisationId,
                 CertificateLogs = logs,
-                FundingModel = learner.FundingModel,
+                FundingModel = learner?.FundingModel,
                 CertificateId = certificate?.Id
             };
 
