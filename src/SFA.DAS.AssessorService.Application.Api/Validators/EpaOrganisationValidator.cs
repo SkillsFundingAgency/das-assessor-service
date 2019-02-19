@@ -16,6 +16,7 @@ using SFA.DAS.AssessorService.Application.Api.Consts;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
+using SFA.DAS.AssessorService.ExternalApis.Services;
 using StructureMap.Diagnostics;
 using Swashbuckle.AspNetCore.Swagger;
 using ValidationResult = FluentValidation.Results.ValidationResult;
@@ -28,18 +29,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         private readonly IRegisterQueryRepository _registerQueryRepository;
         private readonly IStringLocalizer<EpaOrganisationValidator> _localizer;
         private readonly ISpecialCharacterCleanserService _cleanserService;
+        private readonly IStandardService _standardService;
 
         private const string CompaniesHouseNumberRegex = "[A-Za-z0-9]{2}[0-9]{6}";
         private const string CharityNumberInvalidCharactersRegex = "[^a-zA-Z0-9\\-]";
 
 
         public EpaOrganisationValidator( IRegisterValidationRepository registerRepository,  IRegisterQueryRepository registerQueryRepository, 
-                                         ISpecialCharacterCleanserService cleanserService, IStringLocalizer<EpaOrganisationValidator> localizer) 
+                                         ISpecialCharacterCleanserService cleanserService, IStringLocalizer<EpaOrganisationValidator> localizer, IStandardService standardService) 
         {
             _registerRepository = registerRepository;
             _registerQueryRepository = registerQueryRepository;
             _cleanserService = cleanserService;
             _localizer = localizer;
+            _standardService = standardService;
         }
         
         public string CheckOrganisationIdIsPresentAndValid(string organisationId)
@@ -185,17 +188,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
 
         public Standard GetStandard(int standardCode)
         {
-            var apiClient = new AssessmentOrgsApiClient();
-
-            try
-            {
-                var res = apiClient.GetStandard(standardCode).Result;
-                return res;
-            }
-            catch
-            {
-                return (Standard)null;
-            }
+            return _standardService.GetStandard(standardCode).Result;
         }
 
         public string CheckIfOrganisationStandardAlreadyExists(string organisationId, int standardCode)

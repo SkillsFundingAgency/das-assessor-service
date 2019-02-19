@@ -26,7 +26,6 @@ using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.Helpers;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
-using SFA.DAS.AssessorService.Web.Staff.Services;
 using SFA.DAS.AssessorService.Web.Staff.Validators;
 using StructureMap;
 using CheckSessionFilter = SFA.DAS.AssessorService.Web.Staff.Infrastructure.CheckSessionFilter;

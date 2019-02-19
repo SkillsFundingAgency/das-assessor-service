@@ -11,7 +11,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Web.Staff.Services;
+using SFA.DAS.AssessorService.ExternalApis.Services;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ao
 {
@@ -49,7 +49,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             }
             var isAnInt = int.TryParse(searchstring, out _);
            
-            var allStandards = await _standardSearch.GetAllStandardSummaries();
+            var allStandards = await _standardSearch.GetAllStandardsV2();
             return isAnInt 
                 ? allStandards.Where(x => x.Id == searchstring).ToList() 
                 : allStandards.Where(x => 

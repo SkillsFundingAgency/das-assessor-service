@@ -12,10 +12,10 @@ using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
+using SFA.DAS.AssessorService.ExternalApis.Services;
 using SFA.DAS.AssessorService.Web.Staff.Domain;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.Models;
-using SFA.DAS.AssessorService.Web.Staff.Services;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {
@@ -24,13 +24,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
     {
         private readonly ApiClient _apiClient;
         private readonly IStandardService _standardService;
-        private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
         private readonly IHostingEnvironment _env;
-        public RegisterController(ApiClient apiClient, IStandardService standardService, IAssessmentOrgsApiClient assessmentOrgsApiClient, IHostingEnvironment env)
+        public RegisterController(ApiClient apiClient, IStandardService standardService,  IHostingEnvironment env)
         {
             _apiClient = apiClient;
             _standardService = standardService;
-            _assessmentOrgsApiClient = assessmentOrgsApiClient;
             _env = env;
         }
 
@@ -396,7 +394,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         private async Task<RegisterAddOrganisationStandardViewModel> ConstructOrganisationAndStandardDetails(RegisterAddOrganisationStandardViewModel vm)
         {
             var organisation = await _apiClient.GetEpaOrganisation(vm.OrganisationId);
-            var standard = await _assessmentOrgsApiClient.GetStandard(vm.StandardId);
+            var standard = await _standardService.GetStandard(vm.StandardId);
             var availableDeliveryAreas = await _apiClient.GetDeliveryAreas();
 
             vm.Contacts = await _apiClient.GetEpaOrganisationContacts(vm.OrganisationId);

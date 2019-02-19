@@ -6,6 +6,7 @@ using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Api.Consts;
 using SFA.DAS.AssessorService.Application.Api.Validators;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.ExternalApis.Services;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register.OrganisationStandards
 {
@@ -14,6 +15,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register.
     {
         private Mock<IStringLocalizer<EpaOrganisationValidator>> _localizer;
         private EpaOrganisationValidator _validator;
+        private Mock<IStandardService> _standardService;
 
         [SetUp]
         public void Setup()
@@ -21,8 +23,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register.
             _localizer = new Mock<IStringLocalizer<EpaOrganisationValidator>>();
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.OrganisationStandardEffectiveFromAfterEffectiveTo])
                 .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationStandardEffectiveFromAfterEffectiveTo, "fail"));
-        
-            _validator = new EpaOrganisationValidator(Mock.Of<IRegisterValidationRepository>(), Mock.Of<IRegisterQueryRepository>(), Mock.Of<ISpecialCharacterCleanserService>(), _localizer.Object);
+            _standardService = new Mock<IStandardService>();
+
+            _validator = new EpaOrganisationValidator(Mock.Of<IRegisterValidationRepository>(), Mock.Of<IRegisterQueryRepository>(), Mock.Of<ISpecialCharacterCleanserService>(), _localizer.Object, _standardService.Object);
         }
 
         [Test]

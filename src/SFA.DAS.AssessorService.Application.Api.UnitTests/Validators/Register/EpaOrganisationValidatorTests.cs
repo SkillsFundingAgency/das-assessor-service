@@ -9,6 +9,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Api.Consts;
 using SFA.DAS.AssessorService.Application.Api.Validators;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.ExternalApis.Services;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
@@ -21,6 +22,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
         private Mock<IStringLocalizer<EpaOrganisationValidator>> _localizer;
         private Mock<ISpecialCharacterCleanserService> _cleanserService;
         private Mock<IRegisterQueryRepository> _registerQueryRepository;
+        private Mock<IStandardService> _standardService;
 
         [SetUp]
         public void Setup()
@@ -32,8 +34,9 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Register
             _cleanserService.Setup(c => c.CleanseStringForSpecialCharacters(It.IsAny<string>()))
                 .Returns((string s) => s);
 
+            _standardService = new Mock<IStandardService>();
             _validator = new EpaOrganisationValidator(_registerRepository.Object, _registerQueryRepository.Object,
-                _cleanserService.Object, _localizer.Object);
+                _cleanserService.Object, _localizer.Object, _standardService.Object);
 
             _localizer.Setup(l => l[EpaOrganisationValidatorMessageName.OrganisationTypeIsInvalid])
                 .Returns(new LocalizedString(EpaOrganisationValidatorMessageName.OrganisationTypeIsInvalid, "fail"));

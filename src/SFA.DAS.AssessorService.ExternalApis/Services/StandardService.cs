@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -7,10 +6,8 @@ using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.IFAStandards;
 using SFA.DAS.AssessorService.ExternalApis.IFAStandards.Types;
-using SFA.DAS.AssessorService.ExternalApis.Services;
 
-
-namespace SFA.DAS.AssessorService.Web.Staff.Services
+namespace SFA.DAS.AssessorService.ExternalApis.Services
 {
     public class StandardService: IStandardService
     {
@@ -26,7 +23,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             _logger = logger;
         }
 
-        public async Task<IEnumerable<StandardSummary>> GetAllStandardSummaries()
+        public async Task<IEnumerable<StandardSummary>> GetAllStandardsV2()
         {          
             var results = await _cacheService.RetrieveFromCache<IEnumerable<StandardSummary>>("StandardSummaries");
             if (results != null) return results;
@@ -36,11 +33,21 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             return standardSummaries;
         }
 
+        public async Task<IEnumerable<Standard>> GetAllStandards()
+        {
+            return await _assessmentOrgsApiClient.GetAllStandards();
+        }
+
         public async Task<Standard> GetStandard(int standardId)
         {
             return await _assessmentOrgsApiClient.GetStandard(standardId);
         }
-    
+
+        public async Task<IEnumerable<StandardSummary>> GetAllStandardSummaries()
+        {
+            return await _assessmentOrgsApiClient.GetAllStandardSummaries();
+        }
+
 
         public async Task<IEnumerable<StandardCollation>> GatherAllStandardDetails()
         {
@@ -129,8 +136,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
 
     public interface IStandardService
     {
-        Task<IEnumerable<StandardSummary>> GetAllStandardSummaries();
+        Task<IEnumerable<StandardSummary>> GetAllStandardsV2();
+        Task<IEnumerable<Standard>> GetAllStandards();
         Task<IEnumerable<StandardCollation>> GatherAllStandardDetails();
         Task<Standard> GetStandard(int standardId);
+        Task<IEnumerable<StandardSummary>> GetAllStandardSummaries();
+
     }
 }
