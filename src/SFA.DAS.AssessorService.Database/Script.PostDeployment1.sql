@@ -39,3 +39,7 @@ update deliveryarea set Ordering=9 where Area='South West'
 -- load December 2018 report DATABASE
 :r setDec18EPAReport.sql
 */
+
+-- patch FundingModel, where this was not set by data sync
+UPDATE Ilrs SET FundingModel = 36 WHERE FundingModel IS NULL
+
