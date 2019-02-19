@@ -124,6 +124,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             await _client.PostAsync($"/Import/Workflow", formDataContent);
         }
 
+        public async Task<ApplyTypes.Application> GetApplication(Guid applicationId)
+        {
+            return await Get<ApplyTypes.Application>($"/Application/{applicationId}");
+        }
 
         public async Task<ApplicationSequence> GetActiveSequence(Guid applicationId)
         {
