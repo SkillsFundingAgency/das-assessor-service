@@ -17,14 +17,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
 {
     public class SearchStandardsHandler: IRequestHandler<SearchStandardsRequest, List<StandardSummary>>
     {
-        private readonly IStandardService _standardSearch;
+        private readonly IStandardService _standardService;
         private readonly ILogger<SearchStandardsHandler> _logger;
         private readonly ISpecialCharacterCleanserService _cleanser;
         private readonly IEpaOrganisationValidator _validator;
 
-        public SearchStandardsHandler(IStandardService standardSearch, ILogger<SearchStandardsHandler> logger, ISpecialCharacterCleanserService cleanser, IEpaOrganisationValidator validator)
+        public SearchStandardsHandler(IStandardService standardService, ILogger<SearchStandardsHandler> logger, ISpecialCharacterCleanserService cleanser, IEpaOrganisationValidator validator)
         {
-            _standardSearch = standardSearch;
+            _standardService = standardService;
             _logger = logger;
             _cleanser = cleanser;
             _validator = validator;
@@ -49,7 +49,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
             }
             var isAnInt = int.TryParse(searchstring, out _);
            
-            var allStandards = await _standardSearch.GetAllStandardsV2();
+            var allStandards = await _standardService.GetAllStandardsV2();
             return isAnInt 
                 ? allStandards.Where(x => x.Id == searchstring).ToList() 
                 : allStandards.Where(x => 
