@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
 using SFA.DAS.AssessorService.Settings;
@@ -39,9 +40,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
 
         [Route("Dashboard")]
+        [TypeFilter(typeof(MenuFilter), Arguments = new object[] {Pages.Dashboard })]
         public async Task<IActionResult> Index()
         {
-            _sessionService.Set("CurrentPage", Pages.Dashboard);
+           
             var dashboardViewModel = new DashboardViewModel($"{_webConfiguration.ApplyBaseAddress}/Applications");
             var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
             var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;

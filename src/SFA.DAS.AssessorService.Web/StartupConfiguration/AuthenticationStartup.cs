@@ -71,7 +71,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 
                     options.SaveTokens = true;
                     //options.CallbackPath = new PathString(Configuration["auth:oidc:callbackPath"]);
-                    //options.SignedOutCallbackPath = new PathString("/SignedOut");
+                    options.SignedOutCallbackPath = new PathString("/SignedOut");
                     options.SignedOutRedirectUri = new PathString("/SignedOut");
                     options.SecurityTokenValidator = new JwtSecurityTokenHandler
                     {
@@ -140,6 +140,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                                 await orgClient.GetEpaOrganisation(user.EndPointAssessorOrganisationId);
                             var identity = new ClaimsIdentity(new List<Claim>()
                             {
+                                new Claim("UserId", user.Id.ToString()),
                                 new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn",
                                     user.Username),
                                 new Claim("http://schemas.portal.com/ukprn", organisation.Ukprn.ToString())
@@ -147,7 +148,6 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 
                             context.Principal.AddIdentity(identity);
                         }
-
 
                     };
                 });
