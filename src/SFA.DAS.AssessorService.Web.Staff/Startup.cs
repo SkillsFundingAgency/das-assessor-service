@@ -22,6 +22,7 @@ using SFA.DAS.AssessorService.Data;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.IFAStandards;
 using SFA.DAS.AssessorService.ExternalApis.Services;
+using SFA.DAS.AssessorService.ExternalApis.StandardCollationApiClient;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.Helpers;
@@ -116,7 +117,7 @@ namespace SFA.DAS.AssessorService.Web.Staff
 //                config.For<IApplyApiClient>().Use<ApplyApiClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<IAssessmentOrgsApiClient>().Use(() => new AssessmentOrgsApiClient(ApplicationConfiguration.AssessmentOrgsApiClientBaseUrl));
                 config.For<IIfaStandardsApiClient>().Use(() => new IfaStandardsApiClient(ApplicationConfiguration.IfaApiClientBaseUrl));
-                config.For<IAzureTokenService>().Use<AzureTokenService>();
+                config.For<IStandardCollationApiClient>().Use(() => new StandardCollationApiClient(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress)); config.For<IAzureTokenService>().Use<AzureTokenService>();
                 config.For<IAzureApiClient>().Use<AzureApiClient>().Ctor<string>().Is(ApplicationConfiguration.AzureApiAuthentication.ApiBaseAddress);
                 config.For<CacheService>().Use<CacheService>();
                 config.For<CertificateLearnerStartDateViewModelValidator>()

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.ExternalApis.IFAStandards.Types;
+using SFA.DAS.AssessorService.ExternalApis.StandardCollationApiClient.Types;
 
 namespace SFA.DAS.AssessorService.Application.Interfaces
 {

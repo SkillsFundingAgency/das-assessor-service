@@ -9,6 +9,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.ExternalApis.IFAStandards.Types;
+using SFA.DAS.AssessorService.ExternalApis.StandardCollationApiClient.Types;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
@@ -47,6 +48,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             await _mediator.Send(new GatherStandardsRequest());
             return Ok(await _mediator.Send(new GetCollatedStandardsRequest()));
+        }
+
+        [HttpGet("assessment-organisations/collated-standards/{standardId}", Name = "GetCollatedStandard")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(StandardCollation))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetCollatedStandard(int standardId)
+        {
+            var response = await _mediator.Send(new GetCollatedStandardRequest {StandardId = standardId});
+
+            return Ok(response);
+            
         }
     }
 }

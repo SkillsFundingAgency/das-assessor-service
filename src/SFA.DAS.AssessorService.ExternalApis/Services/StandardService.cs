@@ -6,6 +6,8 @@ using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.IFAStandards;
 using SFA.DAS.AssessorService.ExternalApis.IFAStandards.Types;
+using SFA.DAS.AssessorService.ExternalApis.StandardCollationApiClient;
+using SFA.DAS.AssessorService.ExternalApis.StandardCollationApiClient.Types;
 
 namespace SFA.DAS.AssessorService.ExternalApis.Services
 {
@@ -15,37 +17,74 @@ namespace SFA.DAS.AssessorService.ExternalApis.Services
         private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
         private readonly IIfaStandardsApiClient _ifaStandardsApiClient;
         private readonly ILogger<StandardService> _logger;
-        public StandardService(CacheService cacheService, IAssessmentOrgsApiClient assessmentOrgsApiClient, IIfaStandardsApiClient ifaStandardsApiClient, ILogger<StandardService> logger)
+        private readonly IStandardCollationApiClient _standardCollationApiClient;
+        public StandardService(CacheService cacheService, IAssessmentOrgsApiClient assessmentOrgsApiClient, IIfaStandardsApiClient ifaStandardsApiClient, ILogger<StandardService> logger, IStandardCollationApiClient standardCollationApiClient)
         {
             _cacheService = cacheService;
             _assessmentOrgsApiClient = assessmentOrgsApiClient;
             _ifaStandardsApiClient = ifaStandardsApiClient;
             _logger = logger;
+            _standardCollationApiClient = standardCollationApiClient;
         }
 
         public async Task<IEnumerable<StandardSummary>> GetAllStandardsV2()
-        {          
+        {
             var results = await _cacheService.RetrieveFromCache<IEnumerable<StandardSummary>>("StandardSummaries");
-            if (results != null) return results;
+
+            if (results != null)
+                return results;
+
+            var standardCollations = await _standardCollationApiClient.GetStandardCollations();
 
             var standardSummaries = await _assessmentOrgsApiClient.GetAllStandardsV2();
+
+            foreach (var standard in standardSummaries)
+            {
+                var match = standardCollations.FirstOrDefault(x => x.StandardId?.ToString() == standard.Id  && x.Title != standard.Title);
+                if (match != null)
+                    standard.Title = match.Title;
+            }
+
             await _cacheService.SaveToCache("StandardSummaries", standardSummaries, 8);
             return standardSummaries;
         }
 
         public async Task<IEnumerable<Standard>> GetAllStandards()
         {
-            return await _assessmentOrgsApiClient.GetAllStandards();
+            var standardCollations = await _standardCollationApiClient.GetStandardCollations();
+            var standards = await _assessmentOrgsApiClient.GetAllStandards();
+
+            foreach (var standard in standards)
+            {
+                var match = standardCollations.FirstOrDefault(x => x.StandardId?.ToString() == standard.StandardId && x.Title != standard.Title);
+                if (match != null)
+                    standard.Title = match.Title;
+            }
+            return standards;
         }
 
         public async Task<Standard> GetStandard(int standardId)
         {
-            return await _assessmentOrgsApiClient.GetStandard(standardId);
+            var standardCollation = await _standardCollationApiClient.GetStandardCollation(standardId);
+            var standard = await _assessmentOrgsApiClient.GetStandard(standardId);
+            if (standardCollation != null && standard !=null)
+                standard.Title = standardCollation.Title;
+
+            return standard;
         }
 
         public async Task<IEnumerable<StandardSummary>> GetAllStandardSummaries()
         {
-            return await _assessmentOrgsApiClient.GetAllStandardSummaries();
+            var standardCollations = await _standardCollationApiClient.GetStandardCollations();
+            var standardSummaries = await _assessmentOrgsApiClient.GetAllStandardSummaries();
+            foreach (var standard in standardSummaries)
+            {
+                var match = standardCollations.FirstOrDefault(x => x.StandardId?.ToString() == standard.Id && x.Title != standard.Title);
+                if (match != null)
+                    standard.Title = match.Title;
+            }
+
+            return standardSummaries;
         }
 
 

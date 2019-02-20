@@ -13,6 +13,7 @@ using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.ExternalApis.IFAStandards.Types;
 using SFA.DAS.AssessorService.Settings;
+using SFA.DAS.AssessorService.ExternalApis.StandardCollationApiClient.Types;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -55,7 +56,10 @@ namespace SFA.DAS.AssessorService.Data
                     await connection.OpenAsync();
 
                 var standards = await connection.QueryAsync<StandardCollation>("select * from [StandardCollation] where standardId = @standardId",new {standardId});
+
                 return standards.FirstOrDefault();
+
+
             }
         }
 

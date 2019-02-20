@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.AssessorService.ExternalApis.IFAStandards.Types
+﻿namespace SFA.DAS.AssessorService.ExternalApis.StandardCollationApiClient.Types
 {
     public class StandardCollation
     {

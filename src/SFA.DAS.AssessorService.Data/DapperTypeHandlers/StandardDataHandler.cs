@@ -2,6 +2,7 @@
 using Dapper;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.ExternalApis.IFAStandards.Types;
+using SFA.DAS.AssessorService.ExternalApis.StandardCollationApiClient.Types;
 
 namespace SFA.DAS.AssessorService.Data.DapperTypeHandlers
 {
