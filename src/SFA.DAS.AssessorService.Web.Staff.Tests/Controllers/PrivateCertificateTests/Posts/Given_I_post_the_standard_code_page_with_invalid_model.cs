@@ -25,7 +25,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
                     MockHttpContextAccessor.Object,
                     MockAssessmentOrgsApiClient,
                     new CacheService(distributedCacheMock.Object), 
-                    MockApiClient                    
+                    MockApiClient,
+                    MockStandardService.Object
                     );
 
             var vm = new CertificateStandardCodeListViewModel
@@ -33,7 +34,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
                 Id = Certificate.Id,
                 FullName = "James Corley",
                 SelectedStandardCode = "93",
-                IsPrivatelyFunded = true
+                IsPrivatelyFunded = true,
+                ReasonForChange = "stuff"
             };                     
 
             MockSession.Setup(q => q.Get("EndPointAsessorOrganisationId"))

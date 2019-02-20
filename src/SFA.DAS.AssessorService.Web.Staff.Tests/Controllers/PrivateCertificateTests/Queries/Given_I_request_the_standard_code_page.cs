@@ -28,7 +28,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
                     MockHttpContextAccessor.Object,
                     MockAssessmentOrgsApiClient,
                     new CacheService(mockDistributedCache.Object),
-                    MockApiClient                    
+                    MockApiClient,
+                    MockStandardService.Object
                     );      
 
             _result = certificatePrivateStandardCodeController.StandardCode(Certificate.Id).GetAwaiter().GetResult();

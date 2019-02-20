@@ -81,26 +81,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Posts
 
             MockStandardService.Setup(s => s.GetAllStandardSummaries()).Returns(Task.FromResult(standards.AsEnumerable()));
 
-            //var standardOrganisartionSummaries = new List<StandardOrganisationSummary>
-            //{
-            //    new StandardOrganisationSummary
-            //    {
-            //        StandardCode = "93"
-            //    },
-            //    new StandardOrganisationSummary
-            //    {
-            //        StandardCode = "92"
-            //    },
-            //    new StandardOrganisationSummary
-            //    {
-            //        StandardCode = "91"
-            //    }
-            //};
-
-
-           
-
-
             MockHttpContextAccessor = MockedHttpContextAccessor.Setup();
             MockCertificateApiClient = MockedCertificateApiClient.Setup(Certificate, mockedApiClientLogger);
 

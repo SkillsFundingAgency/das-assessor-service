@@ -34,7 +34,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
                 Day = "12",
                 Month = "12",
                 Year = "2017",
-                IsPrivatelyFunded = true
+                IsPrivatelyFunded = true,
+                ReasonForChange = "stuff"
             };        
 
             certificatePrivateLearnerStartDateController.ModelState.AddModelError("", "Error");

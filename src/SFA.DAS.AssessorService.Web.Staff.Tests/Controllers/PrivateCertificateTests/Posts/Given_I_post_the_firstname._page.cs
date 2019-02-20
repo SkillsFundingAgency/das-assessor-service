@@ -28,7 +28,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
                 GivenNames = "James",
                 Level = 2,
                 Standard = "91",
-                IsPrivatelyFunded = true
+                IsPrivatelyFunded = true,
+                ReasonForChange = "stuff"
             };                      
 
             var result = certificatePrivateFirstNameController.FirstName(vm).GetAwaiter().GetResult();

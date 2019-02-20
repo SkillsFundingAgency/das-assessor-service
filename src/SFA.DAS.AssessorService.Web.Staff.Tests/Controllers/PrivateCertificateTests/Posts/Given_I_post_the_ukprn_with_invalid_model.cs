@@ -23,7 +23,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
             {
                 Id = Certificate.Id,
                 Ukprn = "",
-                IsPrivatelyFunded = true
+                IsPrivatelyFunded = true,
+                ReasonForChange = "stuff"
             };          
 
             certificatePrivateProviderUkprnController.ModelState.AddModelError("", "Error");

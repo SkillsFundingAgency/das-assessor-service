@@ -1,12 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using FizzWare.NBuilder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
+using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
+using SFA.DAS.AssessorService.ExternalApis.Services;
 using SFA.DAS.AssessorService.Web.Staff.Controllers;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.Tests.MockedObjects;
@@ -25,6 +30,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
 
         protected Certificate Certificate;
         protected CertificateData CertificateData;
+        protected Mock<IStandardService> MockStandardService;
 
         public CertificatePostBase()
         {
@@ -37,6 +43,46 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
 
             MockHttpContextAccessor = MockedHttpContextAccessor.Setup();
             MockApiClient = MockedApiClient.Setup(Certificate, mockedApiClientLogger);
+            MockStandardService = new Mock<IStandardService>();
+
+
+            var standards = new List<StandardSummary>
+            {
+                new StandardSummary
+                {
+                    Id = "91",
+                    Level = 2,
+                    Title = "Test Title 1"
+                },
+                new StandardSummary
+                {
+                    Id = "92",
+                    Level = 3,
+                    Title = "Test Title 2"
+                },
+                new StandardSummary
+                {
+                    Id = "93",
+                    Level = 5,
+                    Title = "Test Title 3"
+                },
+                new StandardSummary
+                {
+                    Id = "94",
+                    Level = 2,
+                    Title = "Test Title 4"
+                },
+                new StandardSummary
+                {
+                    Id = "95",
+                    Level = 2,
+                    Title = "Test Title 5"
+                },
+            };
+
+            //MFCMFC
+            MockStandardService.Setup(s => s.GetAllStandardSummaries()).Returns(Task.FromResult(standards.AsEnumerable()));
+            MockStandardService.Setup(s => s.GetAllStandardsV2()).Returns(Task.FromResult(standards.AsEnumerable()));
 
             MockAssessmentOrgsApiClient = MockedAssessmentOrgsApiClient.Setup(mockedApiClientLogger);
 

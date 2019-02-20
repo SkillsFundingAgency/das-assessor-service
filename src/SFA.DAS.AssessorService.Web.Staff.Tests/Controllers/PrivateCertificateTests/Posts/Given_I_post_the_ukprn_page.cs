@@ -23,7 +23,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
             {
                 Id = Certificate.Id,
                 Ukprn = "10000008",                            
-                IsPrivatelyFunded = true
+                IsPrivatelyFunded = true,
+                ReasonForChange = "stuff"
             };                      
 
             var result = certificatePrivateProviderUkprnController.Ukprn(vm).GetAwaiter().GetResult();
