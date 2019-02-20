@@ -9,6 +9,8 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
     {
         Task<string> UpsertStandards(List<StandardCollation> standards);
         Task<List<StandardCollation>> GetStandardCollations();
+        Task<StandardCollation> GetStandardCollationByStandardId(int standardId);
+        Task<StandardCollation> GetStandardCollationByReferenceNumber(string referenceNumber);
         Task<DateTime?> GetDateOfLastStandardCollation();
         Task<int> GetEpaoStandardsCount(string endPointAssessorOrganisationId);
         Task<int> GetEpaoPipelineCount(string endPointAssessorOrganisationId);
