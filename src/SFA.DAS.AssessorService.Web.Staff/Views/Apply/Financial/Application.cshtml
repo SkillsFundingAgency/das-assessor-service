@@ -30,18 +30,42 @@
         <h2 class="heading-medium">Organisation details</h2>
 
         <table class="table-spaced">
-            <tr>
-                <td class="bold-small">Registered name</td>
-                <td>@Model.Organisation.OrganisationDetails.LegalName</td>
-            </tr>
-            @if (!string.IsNullOrWhiteSpace(Model.Organisation.OrganisationDetails.TradingName))
+            @if (!string.IsNullOrWhiteSpace(Model.ApplicationReference))
             {
-            <tr>
-                <td class="bold-small">Trading name</td>
-                <td>@Model.Organisation.OrganisationDetails.TradingName</td>
-            </tr>
+                <tr>
+                    <td class="bold-small">Application reference</td>
+                    <td>@Model.ApplicationReference</td>
+                </tr>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.LegalName))
+            {
+                <tr>
+                    <td class="bold-small">Registered name</td>
+                    <td>@Model.LegalName</td>
+                </tr>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.TradingName) || !string.IsNullOrWhiteSpace(Model.ProviderName))
+            {
+                <tr>
+                    <td class="bold-small">Trading name</td>
+                    <td>@(Model.TradingName ?? Model.ProviderName)</td>
+                </tr>
+            }
+            @if (Model.Ukprn.HasValue)
+            {
+                <tr>
+                    <td class="bold-small">Ukprn</td>
+                    <td>@Model.Ukprn</td>
+                </tr>
             }
         </table>
+
+        @if (!string.IsNullOrWhiteSpace(Model.CompanyNumber))
+        {
+            <div class="form-group">
+                <a target="_blank" href="@string.Format("https://beta.companieshouse.gov.uk/company/{0}", Model.CompanyNumber)">View companies house information</a>
+            </div>
+        }
 
         @if (Model.Section.PagesContainingUploadQuestions.Any())
         {
