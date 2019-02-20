@@ -75,20 +75,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
             var stage1SequenceId = 1;
             var financialSection = await _apiClient.GetSection(applicationId, stage1SequenceId, financialSectionId);
 
-            var organisation = await _apiClient.GetOrganisationForApplication(applicationId);
-            
-            var vm = new FinancialApplicationViewModel
-            {
-                Organisation = organisation,
-                Section = financialSection,
-                ApplicationId = applicationId,
-                Grade = new FinancialApplicationGrade()
-                {
-                    OutstandingFinancialDueDate = new FinancialDueDate(),
-                    GoodFinancialDueDate = new FinancialDueDate(),
-                    SatisfactoryFinancialDueDate = new FinancialDueDate()
-                }
-            };
+            var grade = financialSection?.QnAData?.FinancialApplicationGrade;
+            var application = await _apiClient.GetApplication(applicationId);
+
+            var vm = new FinancialApplicationViewModel(applicationId, financialSection, grade, application);
             
             return View("~/Views/Apply/Financial/Application.cshtml", vm);
         }
@@ -100,15 +90,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
             var stage1SequenceId = 1;
             var financialSection = await _apiClient.GetSection(applicationId, stage1SequenceId, financialSectionId);
 
-            var organisation = await _apiClient.GetOrganisationForApplication(applicationId);
-            
-            var vm = new FinancialApplicationViewModel
-            {
-                Organisation = organisation,
-                Section = financialSection,
-                ApplicationId = applicationId,
-                Grade = financialSection.QnAData.FinancialApplicationGrade
-            };
+            var grade = financialSection?.QnAData?.FinancialApplicationGrade;
+            var application = await _apiClient.GetApplication(applicationId);
+
+            var vm = new FinancialApplicationViewModel(applicationId, financialSection, grade, application);
             
             return View("~/Views/Apply/Financial/Application_ReadOnly.cshtml", vm);
         }
@@ -186,21 +171,16 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
                 var stage1SequenceId = 1;
                 var financialSection = await _apiClient.GetSection(vm.ApplicationId, stage1SequenceId, financialSectionId);
 
-                var organisation = await _apiClient.GetOrganisationForApplication(vm.ApplicationId);
-            
-                var newvm = new FinancialApplicationViewModel
+                var grade = new FinancialApplicationGrade
                 {
-                    Organisation = organisation,
-                    Section = financialSection,
-                    ApplicationId = vm.ApplicationId,
-                    Grade = new FinancialApplicationGrade
-                    {
-                        SelectedGrade = vm.Grade.SelectedGrade,
-                        OutstandingFinancialDueDate = vm.Grade.OutstandingFinancialDueDate,
-                        GoodFinancialDueDate = vm.Grade.GoodFinancialDueDate,
-                        SatisfactoryFinancialDueDate = vm.Grade.SatisfactoryFinancialDueDate
-                    }
+                    SelectedGrade = vm.Grade.SelectedGrade,
+                    OutstandingFinancialDueDate = vm.Grade.OutstandingFinancialDueDate,
+                    GoodFinancialDueDate = vm.Grade.GoodFinancialDueDate,
+                    SatisfactoryFinancialDueDate = vm.Grade.SatisfactoryFinancialDueDate
                 };
+                var application = await _apiClient.GetApplication(vm.ApplicationId);
+
+                var newvm = new FinancialApplicationViewModel(vm.ApplicationId, financialSection, grade, application);
                 return View("~/Views/Apply/Financial/Application.cshtml", newvm);
             }
         }
