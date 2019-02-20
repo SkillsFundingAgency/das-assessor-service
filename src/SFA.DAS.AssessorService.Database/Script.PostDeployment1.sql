@@ -43,3 +43,14 @@ update deliveryarea set Ordering=9 where Area='South West'
 -- patch FundingModel, where this was not set by data sync
 UPDATE Ilrs SET FundingModel = 36 WHERE FundingModel IS NULL
 
+-- fix options
+UPDATE [Certificates]
+SET [CertificateData] = JSON_MODIFY([CertificateData], '$.CourseOption','Alcoholic Beverage Service') 
+WHERE json_value(certificatedata,'$.CourseOption') = 'Alcholic beverage service'
+
+UPDATE [Options] 
+SET [OptionName] = 'Alcoholic Beverage Service'
+WHERE [OptionName] = 'Alcholic beverage service'
+
+
+
