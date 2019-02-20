@@ -18,12 +18,14 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public DateTime LearnStartDate { get; set; }
         public string EpaOrgId { get; set; }
 
-        public int FundingModel { get; set; }
+        public int? FundingModel { get; set; }
         public long? ApprenticeshipId { get; set; }
         public long? EmployerAccountId { get; set; }
         public string Source { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public string LearnRefNumber { get; set; }
+        public long? EventId { get;set; }
+        public DateTime? PlannedEndDate { get; set; }
     }
 }

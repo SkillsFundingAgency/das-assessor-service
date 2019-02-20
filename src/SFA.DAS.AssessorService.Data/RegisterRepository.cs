@@ -79,7 +79,7 @@ namespace SFA.DAS.AssessorService.Data
 
                 var osdaId = connection.Query<string>(
                     "INSERT INTO [dbo].[OrganisationStandard] ([EndPointAssessorOrganisationId],[StandardCode],[EffectiveFrom],[EffectiveTo],[DateStandardApprovedOnRegister] ,[Comments],[Status], [ContactId], [OrganisationStandardData]) VALUES (" +
-                    "@organisationId, @standardCode, @effectiveFrom, @effectiveTo, null, @comments, 'New', @ContactId, @OrganisationStandardData); SELECT CAST(SCOPE_IDENTITY() as varchar); ",
+                    "@organisationId, @standardCode, @effectiveFrom, @effectiveTo, getutcdate(), @comments, 'Live', @ContactId,  @OrganisationStandardData); SELECT CAST(SCOPE_IDENTITY() as varchar); ",
                     new
                     {
                         organisationStandard.OrganisationId, organisationStandard.StandardCode,
@@ -102,7 +102,7 @@ namespace SFA.DAS.AssessorService.Data
         }
 
         public async Task<string> UpdateEpaOrganisationStandard(EpaOrganisationStandard orgStandard,
-            List<int> deliveryAreas, string actionChoice)
+            List<int> deliveryAreas)
         {
 
             using (var connection = new SqlConnection(_configuration.SqlConnectionString))
@@ -112,7 +112,7 @@ namespace SFA.DAS.AssessorService.Data
 
                 var osdaId = connection.Query<string>(
                     "UPDATE [OrganisationStandard] SET [EffectiveFrom] = @effectiveFrom, [EffectiveTo] = @EffectiveTo, " +
-                    "[Comments] = @comments, [ContactId] = @contactId, [OrganisationStandardData] = @organisationStandardData " +
+                    "[Comments] = @comments, [ContactId] = @contactId, [OrganisationStandardData] = @organisationStandardData, [Status]='Live' " +
                     "WHERE [EndPointAssessorOrganisationId] = @organisationId and [StandardCode] = @standardCode; SELECT top 1 id from [organisationStandard] where  [EndPointAssessorOrganisationId] = @organisationId and [StandardCode] = @standardCode;",
                     new
                     {
@@ -139,14 +139,11 @@ namespace SFA.DAS.AssessorService.Data
                     );
                 }
 
-                if (actionChoice == "MakeLive")
-                {
                     connection.Execute(
-                        "UPDATE [OrganisationStandard] SET [Status] = 'Live', [DateStandardApprovedOnRegister] = getutcdate() where Id = @osdaId ",
+                        "UPDATE [OrganisationStandard] SET [DateStandardApprovedOnRegister] = getutcdate() where Id = @osdaId and [DateStandardApprovedOnRegister] is null",
                         new { osdaId }
                     );
-                }
-
+              
                 return osdaId;
             }
         }

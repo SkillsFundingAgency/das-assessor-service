@@ -1,27 +1,67 @@
 @using SFA.DAS.AssessorService.ApplyTypes
 @using SFA.DAS.AssessorService.Web.Staff.Helpers;
 
-@model SFA.DAS.AssessorService.ApplyTypes.ApplicationSequence
+@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Applications.ApplicationSequenceViewModel
 
 @{
     ViewBag.Title = "Application overview";
 
     var OpenStatusList = new string[] { ApplicationSequenceStatus.Submitted, ApplicationSequenceStatus.FeedbackAdded };
-    var BackAction = ApplicationReviewHelpers.ApplicationBacklinkAction(Model?.Status, Model?.SequenceId);
+    var BackAction = ApplicationReviewHelpers.ApplicationBacklinkAction(Model.Sequence?.Status, Model.SequenceId);
 }
 
 <div class="grid-row">
-    <div class="column-two-thirds">
+    <div class="column-full">
         <a class="link-back" asp-controller="Application" asp-action="@BackAction">Back</a>
-        @if (Model == null)
+        @if (Model.Sequence == null)
         {
             <h1 class="heading-xlarge">Sequence not active</h1>
         }
         else
         {
             <h1 class="heading-xlarge">Application overview</h1>
+
+            <table class="table-spaced">
+                @if (!string.IsNullOrWhiteSpace(Model.ApplicationReference))
+                {
+                    <tr>
+                        <td class="bold-small">Application reference</td>
+                        <td>@Model.ApplicationReference</td>
+                    </tr>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.LegalName))
+                {
+                    <tr>
+                        <td class="bold-small">Registered name</td>
+                        <td>@Model.LegalName</td>
+                    </tr>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.TradingName) || !string.IsNullOrWhiteSpace(Model.ProviderName))
+                {
+                    <tr>
+                        <td class="bold-small">Trading name</td>
+                        <td>@(Model.TradingName ?? Model.ProviderName)</td>
+                    </tr>
+                }
+                @if (Model.Ukprn.HasValue)
+                {
+                    <tr>
+                        <td class="bold-small">Ukprn</td>
+                        <td>@Model.Ukprn</td>
+                    </tr>
+                }
+            </table>
+
+            @if (!string.IsNullOrWhiteSpace(Model.CompanyNumber))
+            {
+                <div class="form-group">
+                    <a target="_blank" href="@string.Format("https://beta.companieshouse.gov.uk/company/{0}", Model.CompanyNumber)">View companies house information</a>
+                </div>
+                <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+            }
+
             <ul class="govuk-list">
-                @foreach (var applicationSection in Model.Sections.OrderBy(s => s.SectionId))
+                @foreach (var applicationSection in Model.Sequence.Sections.OrderBy(s => s.SectionId))
                 {
                     <li>
                         @if (applicationSection.HasNewPageFeedback)
