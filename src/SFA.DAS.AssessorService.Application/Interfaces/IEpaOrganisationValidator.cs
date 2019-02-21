@@ -33,8 +33,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         string CheckIfEmailAlreadyPresentInOrganisationNotAssociatedWithContact(string email, string contactId);
         string CheckIfDeliveryAreasAreValid(List<int> DeliveryAreas);
 
-        string CheckOrganisationStandardMakeLiveOrganisationStatus(string organisationStatus, string organisationStandardStatus);
-        string CheckOrganisationStandardMakeLiveEffectiveFrom(DateTime? effectiveFrom, string organisationStandardStatus);
+        string CheckOrganisationStandardEffectiveFromIsEntered(DateTime? effectiveFrom);
         string CheckIfContactDetailsAlreadyPresentInSystem(string displayName, string email, string phone,
             string contactId);
 

@@ -40,16 +40,7 @@ namespace SFA.DAS.AssessorService.Data.Staff
             long.TryParse(searchRequest.SearchQuery, out var uln);
 
             return (await _connection.QueryAsync<Ilr>(
-                            @"SELECT ilr.*
-                            	FROM
-	                            (
-		                            SELECT *,
-		                            DENSE_RANK() OVER (PARTITION BY [Uln], [StdCode] ORDER BY [Source] DESC,[LearnStartDate] DESC) AS rownumber
-		                            FROM ilrs 
-		                            WHERE [Uln] = @uln
-	                            ) AS ilr
-                            WHERE rownumber = 1
-                            ORDER BY [Id] DESC
+                            @"SELECT * from Ilrs WHERE [Uln] = @uln ORDER BY [Source] DESC,[LearnStartDate] DESC 
                             OFFSET @skip ROWS 
 		                    FETCH NEXT @take ROWS ONLY",
                 new { uln, skip = (searchRequest.Page - 1) * 10, take = 10 })).ToList();
@@ -80,7 +71,6 @@ namespace SFA.DAS.AssessorService.Data.Staff
                         @"SELECT org.EndPointAssessorOrganisationId, cert.Uln, JSON_VALUE(CertificateData, '$.LearnerGivenNames') AS GivenNames, JSON_VALUE(CertificateData, '$.LearnerFamilyName') AS FamilyName, cert.StandardCode AS StdCode, cert.UpdatedAt 
 		                    FROM Certificates cert
                             INNER JOIN Organisations org ON org.Id = cert.OrganisationId
-                            INNER JOIN Ilrs ilr ON ilr.Uln = cert.Uln AND ilr.StdCode = cert.StandardCode
                             WHERE org.EndPointAssessorOrganisationId = @epaOrgId
 		                    ORDER BY cert.UpdatedAt DESC 		            
 		                    OFFSET @skip ROWS 
@@ -90,7 +80,6 @@ namespace SFA.DAS.AssessorService.Data.Staff
                 TotalCount = await _connection.ExecuteScalarAsync<int>(@"SELECT COUNT(1)
                     FROM Certificates cert
                         INNER JOIN Organisations org ON org.Id = cert.OrganisationId
-                    INNER JOIN Ilrs ilr ON ilr.Uln = cert.Uln AND ilr.StdCode = cert.StandardCode
                     WHERE org.EndPointAssessorOrganisationId = @epaOrgId", new { epaOrgId = searchRequest.SearchQuery.ToLower() })
             };
 

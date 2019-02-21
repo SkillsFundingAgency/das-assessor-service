@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
         public async Task<LearnerDetail> Handle(LearnerDetailRequest request, CancellationToken cancellationToken)
         {
             var learner = await _ilrRepository.Get(request.Uln, request.StdCode);
-            var standard = await _apiClient.GetStandard(learner.StdCode);
+            var standard = await _apiClient.GetStandard(request.StdCode);
             var certificate = await _certificateRepository.GetCertificate(request.Uln, request.StdCode);
 
             var logs = new List<CertificateLogSummary>();
@@ -60,11 +60,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             
             var learnerDetail = new LearnerDetail()
             {
-                Uln = learner.Uln,
-                FamilyName = !string.IsNullOrEmpty(certificateData?.LearnerFamilyName) ?  certificateData.LearnerFamilyName : learner.FamilyName,
-                GivenNames = !string.IsNullOrEmpty(certificateData?.LearnerGivenNames) ?  certificateData.LearnerGivenNames : learner.GivenNames,
-                LearnStartDate = learner.LearnStartDate,
-                StandardCode = learner.StdCode,
+                Uln = request.Uln,
+                FamilyName = !string.IsNullOrEmpty(certificateData?.LearnerFamilyName) ?  certificateData.LearnerFamilyName : learner?.FamilyName,
+                GivenNames = !string.IsNullOrEmpty(certificateData?.LearnerGivenNames) ?  certificateData.LearnerGivenNames : learner?.GivenNames,
+                LearnStartDate = certificateData?.LearningStartDate != null ? certificateData?.LearningStartDate : learner?.LearnStartDate,
+                StandardCode = request.StdCode,
                 Standard = standard.Title,
                 CertificateReference = certificate?.CertificateReference, 
                 CertificateStatus = certificate?.Status, 
@@ -75,7 +75,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 OrganisationName = epao.EndPointAssessorName,
                 OrganisationId = epao.EndPointAssessorOrganisationId,
                 CertificateLogs = logs,
-                FundingModel = learner.FundingModel,
+                FundingModel = learner?.FundingModel,
                 CertificateId = certificate?.Id
             };
 

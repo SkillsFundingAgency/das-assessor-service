@@ -335,20 +335,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
 
         }
 
-        public string CheckOrganisationStandardMakeLiveOrganisationStatus(string organisationStatus, string organisationStandardStatus)
-        {
-            return organisationStatus != "Live" 
-                ? FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationStandardCannotBeUpdatedBecauseOrganisationNotLive) 
-                : string.Empty;
-        }
-
-        public string CheckOrganisationStandardMakeLiveEffectiveFrom(DateTime? effectiveFrom, string organisationStandardStatus)
+        public string CheckOrganisationStandardEffectiveFromIsEntered(DateTime? effectiveFrom)
         {
             return effectiveFrom != null 
                 ? string.Empty 
-                : FormatErrorMessage(organisationStandardStatus == "New" 
-                    ? EpaOrganisationValidatorMessageName.OrganisationStandardCannotBeMadeLiveBecauseEffectiveFromNotSet
-                    : EpaOrganisationValidatorMessageName.OrganisationStandardCannotBeUpdatedBecauseEffectiveFromNotSet);
+                : FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationStandardCannotBeAddedBecauseEffectiveFromNotSet);
         }
 
         public string CheckAddressDetailsForOrganisation(string address1, string address2, string address3, string address4)
@@ -485,8 +476,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             RunValidationCheckAndAppendAnyError("OrganisationId", CheckIfOrganisationNotFound(request.OrganisationId), validationResult, ValidationStatusCode.NotFound);
             if (!validationResult.IsValid) return validationResult;
 
-
-
             RunValidationCheckAndAppendAnyError("OrganisationId", CheckIfOrganisationStandardAlreadyExists(request.OrganisationId, request.StandardCode), validationResult, ValidationStatusCode.AlreadyExists);
             if (!validationResult.IsValid) return validationResult;
 
@@ -498,13 +487,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 return validationResult;
             }
 
+            RunValidationCheckAndAppendAnyError("EffectiveFrom", CheckOrganisationStandardFromDateIsWithinStandardDateRanges(request.EffectiveFrom, standard.EffectiveFrom, standard.EffectiveTo, standard.LastDateForNewStarts), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("EffectiveFrom", CheckEffectiveFromIsOnOrBeforeEffectiveTo(request.EffectiveFrom, request.EffectiveTo), validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("EffectiveFrom", CheckOrganisationStandardEffectiveFromIsEntered(request.EffectiveFrom), validationResult, ValidationStatusCode.BadRequest);
+
             RunValidationCheckAndAppendAnyError("OrganisationId", CheckOrganisationIdIsPresentAndValid(request.OrganisationId), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("ContactId", CheckIfContactIdIsValid(request.ContactId, request.OrganisationId), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("DeliveryAreas", CheckIfDeliveryAreasAreValid(request.DeliveryAreas), validationResult, ValidationStatusCode.BadRequest);
-            RunValidationCheckAndAppendAnyError("EffectiveFrom", CheckOrganisationStandardFromDateIsWithinStandardDateRanges(request.EffectiveFrom, standard.EffectiveFrom, standard.EffectiveTo, standard.LastDateForNewStarts), validationResult, ValidationStatusCode.BadRequest);
-            RunValidationCheckAndAppendAnyError("EffectiveFrom", CheckEffectiveFromIsOnOrBeforeEffectiveTo(request.EffectiveFrom, request.EffectiveTo), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("EffectiveTo", CheckOrganisationStandardToDateIsWithinStandardDateRanges(request.EffectiveTo, standard.EffectiveFrom, standard.EffectiveTo), validationResult, ValidationStatusCode.BadRequest);
-
+   
             return validationResult;
         }
 
@@ -525,12 +516,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             RunValidationCheckAndAppendAnyError("EffectiveFrom", CheckOrganisationStandardFromDateIsWithinStandardDateRanges(request.EffectiveFrom, standard.EffectiveFrom, standard.EffectiveTo, standard.LastDateForNewStarts), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("EffectiveFrom", CheckEffectiveFromIsOnOrBeforeEffectiveTo(request.EffectiveFrom, request.EffectiveTo), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("EffectiveTo", CheckOrganisationStandardToDateIsWithinStandardDateRanges(request.EffectiveTo, standard.EffectiveFrom, standard.EffectiveTo), validationResult, ValidationStatusCode.BadRequest);
-
-            if (request.ActionChoice == "MakeLive" || request.OrganisationStandardStatus!="New")
-            {
-                RunValidationCheckAndAppendAnyError("ActionChoice", CheckOrganisationStandardMakeLiveOrganisationStatus(request.OrganisationStatus, request.OrganisationStandardStatus), validationResult, ValidationStatusCode.BadRequest);
-                RunValidationCheckAndAppendAnyError("EffectiveFrom", CheckOrganisationStandardMakeLiveEffectiveFrom(request.EffectiveFrom, request.OrganisationStandardStatus), validationResult, ValidationStatusCode.BadRequest);   
-            }
+            RunValidationCheckAndAppendAnyError("EffectiveFrom", CheckOrganisationStandardEffectiveFromIsEntered(request.EffectiveFrom), validationResult, ValidationStatusCode.BadRequest);   
 
             return validationResult;
         }
