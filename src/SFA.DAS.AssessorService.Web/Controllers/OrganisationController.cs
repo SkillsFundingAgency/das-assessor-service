@@ -49,9 +49,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [HttpGet]
+        [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Organisations })]
         public async Task<IActionResult> OrganisationDetails()
         {
-            _sessionService.Set("CurrentPage", Pages.Organisations);
             var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn").Value;
             try
             {

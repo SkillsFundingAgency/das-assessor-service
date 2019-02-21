@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using FluentValidation.Results;
-using Microsoft.AspNetCore.Identity.UI.Pages.Internal.Account;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Apprenticeships.Api.Types;

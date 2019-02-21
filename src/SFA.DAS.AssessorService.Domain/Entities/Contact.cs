@@ -19,6 +19,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string Email { get; set; }
 
         public string Status { get; set; }
+        public Guid? SignInId { get; set; }
         public string PhoneNumber { get; set; }
 
         public IList<ContactsPrivilege> ContactsPrivileges { get; set; }

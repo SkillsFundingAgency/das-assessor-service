@@ -80,6 +80,16 @@ namespace SFA.DAS.AssessorService.Data
             return contact;
         }
 
+        public async Task<Contact> GetBySignInId(Guid requestSignInId)
+        {
+            return await _assessorDbContext.Contacts.FirstOrDefaultAsync(c => c.SignInId == requestSignInId);
+        }
+
+        public async Task<IList<ContactRole>> GetRolesFor(Guid contactId)
+        {
+            return await _assessorDbContext.ContactRoles.Where(cr => cr.ContactId == contactId).ToListAsync();
+        }
+
         public async Task<bool> CheckContactExists(string userName)
         {
             var result = await _assessorDbContext.Contacts
@@ -87,10 +97,10 @@ namespace SFA.DAS.AssessorService.Data
             return result;
         }
 
-        public async Task<string> GetContactStatus(string endPointAssessorOrganisationId, string userName)
+        public async Task<string> GetContactStatus(string endPointAssessorOrganisationId, Guid signInId)
         {
             var contactStatus = await _assessorDbContext.Contacts.Where(x =>
-                    x.EndPointAssessorOrganisationId == endPointAssessorOrganisationId && x.Username == userName)
+                    x.EndPointAssessorOrganisationId == endPointAssessorOrganisationId && x.SignInId == signInId)
                 .FirstOrDefaultAsync();
 
             return contactStatus?.Status;

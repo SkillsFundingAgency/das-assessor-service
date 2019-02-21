@@ -24,6 +24,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Qu
     {                     
         private Mock<ICertificateRepository> _certificateRepositoryMock;
         private Mock<IAssessmentOrgsApiClient> _assessmentOrgsApiClientMock;
+        private Mock<IContactQueryRepository> _contactQueryRepositoryMock;
         private Mock<ILogger<GetCertificatesHistoryHandler>> _loggermock;
 
         private PaginatedList<CertificateSummaryResponse> _result;
@@ -52,6 +53,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Qu
             _certificateRepositoryMock.Setup(r => r.GetCertificateHistory(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), statuses))
                 .Returns(Task.FromResult(new PaginatedList<Certificate>(certificates, 40, 1, 10)));
 
+            _contactQueryRepositoryMock = new Mock<IContactQueryRepository>();
+            _contactQueryRepositoryMock.Setup(r => r.GetContact(It.IsAny<string>())).Returns(Task.FromResult(new Contact
+            {
+                DisplayName = "Test Name"
+            }));
+
             _assessmentOrgsApiClientMock = new Mock<IAssessmentOrgsApiClient>();
             _assessmentOrgsApiClientMock.Setup(r => r.GetProvider(It.IsAny<long>()))
                 .Returns(Task.FromResult(new Provider
@@ -64,7 +71,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.Qu
 
             var getCertificatesHitoryHandler =
                 new GetCertificatesHistoryHandler(_certificateRepositoryMock.Object,
-                    _assessmentOrgsApiClientMock.Object,
+                    _assessmentOrgsApiClientMock.Object, _contactQueryRepositoryMock.Object,
                     _loggermock.Object);
 
             _result = getCertificatesHitoryHandler.Handle(new GetCertificateHistoryRequest

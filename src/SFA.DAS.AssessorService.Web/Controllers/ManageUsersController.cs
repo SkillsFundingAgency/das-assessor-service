@@ -36,9 +36,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         }
 
         [HttpGet]
+        [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Organisations })]
         public async Task<IActionResult> Index()
         {
-            _sessionService.Set("CurrentPage", Pages.Organisations);
             var response = new List<ContactsWithPrivilegesResponse>();
             try
             {

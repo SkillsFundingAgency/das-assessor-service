@@ -66,7 +66,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 return await RequestAndDeserialiseAsync<List<ContactsWithPrivilegesResponse>>(request, $"Could not find contacts for {endPointAssessorOrganisationId}");
             }
         }
-        
+
+        public async Task<ContactResponse> GetContactBySignInId(string signInId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/signInId/{signInId}"))
+            {
+                return await RequestAndDeserialiseAsync<ContactResponse>(request, $"Could not find contact with {signInId}");
+            }
+        }
+
     }
 
     public interface IContactsApiClient
@@ -82,6 +90,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<ContactResponse> UpdateStatus(UpdateContactStatusRequest updateContactStatusRequest);
 
         Task<ContactResponse> GetById(string id);
+
+        Task<ContactResponse> GetContactBySignInId(string signInId);
 
     }
 }

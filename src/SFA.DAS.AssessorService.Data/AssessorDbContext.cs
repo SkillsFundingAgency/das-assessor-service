@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,6 +30,7 @@ namespace SFA.DAS.AssessorService.Data
         public virtual DbSet<StaffReport> StaffReports { get; set; }
         public virtual DbSet<ContactsPrivilege> ContactsPrivileges { get; set; }
         public virtual DbSet<Privilege> Privileges { get; set; }
+        public virtual DbSet<ContactRole> ContactRoles { get; set; }
 
         public override int SaveChanges()
         {
