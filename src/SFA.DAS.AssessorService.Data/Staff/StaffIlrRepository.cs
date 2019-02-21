@@ -74,11 +74,13 @@ namespace SFA.DAS.AssessorService.Data.Staff
                             AND [Uln] = @uln 
                             ) ab1 WHERE rownumber = 1
                             UNION
-                            SELECT *, 4 choice
+                            SELECT [Id] ,[Uln] ,[GivenNames] ,[FamilyName] ,[UkPrn] ,[StdCode] ,[LearnStartDate] ,[EpaOrgId] ,[FundingModel] ,[ApprenticeshipId] ,
+                                  [EmployerAccountId] ,[Source] ,[CreatedAt] ,[UpdatedAt] ,[LearnRefNumber] ,[CompletionStatus] ,[EventId] ,[PlannedEndDate], 4 choice
                             FROM [Ilrs] 
                             WHERE [Uln] = @uln 
                             ) ab2 
                             ) ab3 WHERE rownumber2 = 1 
+                            ORDER BY [UpdatedAt] DESC, [CreatedAt] DESC  
                             OFFSET @skip ROWS 
                             FETCH NEXT @take ROWS ONLY",
                 new { uln, skip = (searchRequest.Page - 1) * 10, take = 10 })).ToList();
