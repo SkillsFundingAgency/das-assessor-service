@@ -164,7 +164,7 @@ namespace SFA.DAS.AssessorService.EpaoDataSync.Domain
         private async Task<long> InsertFromSubmission(SubmissionEvent submissionEvent)
         {
             var totalNumbersEffected = await _connection.ExecuteAsync(
-                $"insert into Ilrs (Source,Uln, StdCode, ApprenticeshipId,UkPrn,PlannedEndDate,CreatedAt,EmployerAccountId,EventId) values (" +
+                $"insert into Ilrs (Source,Uln, StdCode, ApprenticeshipId,UkPrn,PlannedEndDate,CreatedAt,EmployerAccountId,EventId,FundingModel) values (" +
                 "@academicYear, " +
                 "@uln, " +
                 "@standardCode, " +
@@ -173,7 +173,8 @@ namespace SFA.DAS.AssessorService.EpaoDataSync.Domain
                 "@plannedEndDate, " +
                 "@submittedDateTime, " +
                 "@employerReferenceNumber, " +
-                "@id )",
+                "@id, " +
+			    "36 )",
                 new
                 {
                     academicYear = submissionEvent.AcademicYear,
@@ -218,7 +219,7 @@ namespace SFA.DAS.AssessorService.EpaoDataSync.Domain
                     $"CompletionStatus = {(apiResult.CompStatus == null ? "CompletionStatus" : "'" + apiResult.CompStatus + "'")}, " +
                     $"LearnStartDate ={(apiResult.ActualStartDate == null ? "LearnStartDate" : "'" + apiResult.ActualStartDate.Value.ToString("yyyy-MM-ddTHH:mm:ss") + "'")}, " +
                     $"PlannedEndDate =  {(apiResult.PlannedEndDate == null ? "PlannedEndDate" : "'" + apiResult.PlannedEndDate.Value.ToString("yyyy-MM-ddTHH:mm:ss") + "'")} " +
-                    $"where Uln = {apiResult.Uln} and StdCode={apiResult.StandardCode} and EventId = {apiResult.Id}";
+                    $"where Uln = {apiResult.Uln} and StdCode={apiResult.StandardCode}";
 
 
                 try
