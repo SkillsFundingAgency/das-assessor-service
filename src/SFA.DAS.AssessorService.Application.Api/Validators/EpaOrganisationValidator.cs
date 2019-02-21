@@ -186,9 +186,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationNotFound);
         }
 
-        public Standard GetStandard(int standardCode)
+        public async Task<Standard> GetStandard(int standardCode)
         {
-            return _standardService.GetStandard(standardCode).Result;
+            return await _standardService.GetStandard(standardCode);
         }
 
         public string CheckIfOrganisationStandardAlreadyExists(string organisationId, int standardCode)
@@ -472,7 +472,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             RunValidationCheckAndAppendAnyError("OrganisationId", CheckIfOrganisationStandardAlreadyExists(request.OrganisationId, request.StandardCode), validationResult, ValidationStatusCode.AlreadyExists);
             if (!validationResult.IsValid) return validationResult;
 
-            var standard = GetStandard(request.StandardCode);
+            var standard = GetStandard(request.StandardCode).Result;
             if (standard is null)
             {
                 var standardErrorMessage = FormatErrorMessage(EpaOrganisationValidatorMessageName.StandardNotFound);
@@ -495,7 +495,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         public ValidationResponse ValidatorUpdateEpaOrganisationStandardRequest(UpdateEpaOrganisationStandardRequest request)
         {
             var validationResult = new ValidationResponse();
-            var standard = GetStandard(request.StandardCode);
+            var standard = GetStandard(request.StandardCode).Result;
             if (standard is null)
             {
                 var standardErrorMessage = FormatErrorMessage(EpaOrganisationValidatorMessageName.StandardNotFound);

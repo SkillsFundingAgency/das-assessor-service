@@ -70,7 +70,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             var searchResults = Mapper.Map<List<StaffSearchItems>>(searchResult.PageOfResults);
 
             searchResults = MatchUpExistingCompletedStandards(searchResults);
-            searchResults = PopulateStandards(searchResults, _standardService, _logger);
+            searchResults = await PopulateStandards(searchResults, _standardService, _logger);
 
             return new StaffSearchResult
             {
@@ -143,9 +143,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             return searchResults;
         }
 
-        private List<StaffSearchItems> PopulateStandards(List<StaffSearchItems> searchResults, IStandardService standardService, ILogger<SearchHandler> logger)
+        private async Task<List<StaffSearchItems>> PopulateStandards(List<StaffSearchItems> searchResults, IStandardService standardService, ILogger<SearchHandler> logger)
         {
-            var allStandards = standardService.GetAllStandards().Result;
+            var allStandards = await standardService.GetAllStandards();
 
             foreach (var searchResult in searchResults)
             {
