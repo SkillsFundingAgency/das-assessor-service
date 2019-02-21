@@ -89,7 +89,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(Mapper.Map<ContactResponse>(contact));
         }
 
-        [HttpGet("{endPointAssessorOrganisationId}/withprivileges", Name = "GetAllContactsWithTheirPrivilages")]
+        [HttpGet("{endPointAssessorOrganisationId}/withprivileges", Name = "GetAllContactsWithTheirPrivileges")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ContactResponse>))]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]

@@ -49,4 +49,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="UserRole" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="4835501f-e3d1-4313-95f7-837ee198b75f" ChangeDateTime="02/21/2019 17:07:27">
+    <Property Name="ElementName" Value="[dbo].[Privileges].[UserPrivilege]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Privileges]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="UserPrivilege" />
+  </Operation>
 </Operations>
