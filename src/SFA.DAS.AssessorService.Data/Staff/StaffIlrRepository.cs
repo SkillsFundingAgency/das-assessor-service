@@ -38,9 +38,30 @@ namespace SFA.DAS.AssessorService.Data.Staff
         public async Task<IEnumerable<Ilr>> SearchForLearnerByUln(StaffSearchRequest searchRequest)
         {
             long.TryParse(searchRequest.SearchQuery, out var uln);
-
+			/* get rows from Certificates and/or Ilrs */
             return (await _connection.QueryAsync<Ilr>(
-                            @"SELECT * from Ilrs WHERE [Uln] = @uln ORDER BY [Source] DESC,[LearnStartDate] DESC 
+                            @"SELECT Uln,StdCode, FamilyName, GivenNames, CertificateReference, [Status], [UpdatedAt]
+								FROM (
+								SELECT Uln,StdCode, FamilyName, GivenNames, CertificateReference, [Status], [UpdatedAt], row_number() OVER (PARTITION BY uln,Stdcode ORDER BY choice) rownumber2
+								FROM (
+								SELECT Uln, StdCode, 2 choice, FamilyName, GivenNames, CertificateReference, [Status], [UpdatedAt]
+								FROM (
+								SELECT Row_number() OVER (ORDER BY certificatereferenceid DESC) rownumber, 
+								Uln,Standardcode Stdcode, 
+								json_value(certificatedata, '$.LearnerFamilyName') FamilyName,
+								json_value(certificatedata, '$.LearnerGivenNames') GivenNames,
+								CertificateReference,
+								[Status],
+								[UpdatedAt]
+								FROM [Certificates] WHERE [Status] <> 'Deleted'
+								AND [Uln] = @uln 
+								) ab1 WHERE rownumber = 1
+								UNION
+								SELECT Uln, Stdcode, 4 choice, FamilyName, GivenNames, NULL CertificateReference, Null [Status], Null [UpdatedAt]
+								FROM [Ilrs] 
+								WHERE [Uln] = @uln 
+								) ab2 
+								) ab3 WHERE rownumber2 = 1 
                             OFFSET @skip ROWS 
 		                    FETCH NEXT @take ROWS ONLY",
                 new { uln, skip = (searchRequest.Page - 1) * 10, take = 10 })).ToList();
