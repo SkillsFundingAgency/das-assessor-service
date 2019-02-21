@@ -10,8 +10,33 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public DateTime WithdrawnAt { get; set; }
         public string WithdrawnBy { get; set; }
         public string ApplicationStatus { get; set; }
-        public List<ApplicationSequence> Sequences { get; set; }
+        public ApplicationData ApplicationData { get; set; }
     }
+
+    public class ApplicationData
+    {
+        public string ReferenceNumber { get; set; }
+        public int StandardCode { get; set; }
+        public string StandardName { get; set; }
+        public List<Submission> InitSubmissions { get; set; }
+        public int InitSubmissionsCount { get; set; }
+        public DateTime? LatestInitSubmissionDate { get; set; }
+        public DateTime? InitSubmissionFeedbackAddedDate { get; set; }
+        public DateTime? InitSubmissionClosedDate { get; set; }
+        public List<Submission> StandardSubmissions { get; set; }
+        public int StandardSubmissionsCount { get; set; }
+        public DateTime? LatestStandardSubmissionDate { get; set; }
+        public DateTime? StandardSubmissionFeedbackAddedDate { get; set; }
+        public DateTime? StandardSubmissionClosedDate { get; set; }
+    }
+
+    public class Submission
+    {
+        public DateTime SubmittedAt { get; set; }
+        public Guid SubmittedBy { get; set; }
+        public string SubmittedByEmail { get; set; }
+    }
+
 
     public class DisplayAnswerPage
     {
@@ -25,6 +50,8 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         {
             return Answer;
         }
+
+        public string QuestionId { get; set; }
 
         public string Answer { private get; set; }
     }
@@ -48,6 +75,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
     {
         string Label { get; set; }
         string Answer();
+        string QuestionId { get; set; }
     }
 
 
@@ -59,6 +87,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public Input Input { get; set; }
         public int? Order { get; set; }
         public string PageId { get; set; }
+        public string QuestionBodyText { get; set; }
     }
     
     public class Feedback

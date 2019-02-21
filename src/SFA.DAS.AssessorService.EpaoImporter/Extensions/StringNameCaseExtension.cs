@@ -8,8 +8,8 @@ namespace SFA.DAS.AssessorService.EpaoImporter.Extensions
     public static class StringNameCaseExtension
     {
         private static Dictionary<NameOptions, bool> Options = new Dictionary<NameOptions, bool>();
-        private readonly static Dictionary<string, string> Exceptions = new Dictionary<string, string>();
-        private readonly static Dictionary<string, string> Replacements = new Dictionary<string, string>();
+        private static readonly Dictionary<string, string> Exceptions = new Dictionary<string, string>();
+        private static readonly Dictionary<string, string> Replacements = new Dictionary<string, string>();
         private static readonly string[] Conjunctions = new string[] { "Y", "E", "I" };
         // Roman letters regexp.
         private static readonly string RomanRegex = @"\b((?:[Xx]{1,3}|[Xx][Ll]|[Ll][Xx]{0,3})?(?:[Ii]{1,3}|[Ii][VvXx]|[Vv][Ii]{0,3})?)\b";
