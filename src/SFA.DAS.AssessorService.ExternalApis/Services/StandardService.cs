@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -40,7 +41,7 @@ namespace SFA.DAS.AssessorService.ExternalApis.Services
 
             foreach (var standard in standardSummaries)
             {
-                var match = standardCollations.FirstOrDefault(x => x.StandardId?.ToString() == standard.Id  && x.Title != standard.Title);
+                var match = standardCollations.FirstOrDefault(x => x.StandardId?.ToString() == standard.Id  && !string.Equals(x.Title, standard.Title, StringComparison.CurrentCultureIgnoreCase));
                 if (match != null)
                     standard.Title = match.Title;
             }
@@ -56,7 +57,7 @@ namespace SFA.DAS.AssessorService.ExternalApis.Services
 
             foreach (var standard in standards)
             {
-                var match = standardCollations.FirstOrDefault(x => x.StandardId?.ToString() == standard.StandardId && x.Title != standard.Title);
+                var match = standardCollations.FirstOrDefault(x => x.StandardId?.ToString() == standard.StandardId && !string.Equals(x.Title, standard.Title, StringComparison.CurrentCultureIgnoreCase));
                 if (match != null)
                     standard.Title = match.Title;
             }
@@ -67,7 +68,7 @@ namespace SFA.DAS.AssessorService.ExternalApis.Services
         {
             var standardCollation = await _standardCollationApiClient.GetStandardCollation(standardId);
             var standard = await _assessmentOrgsApiClient.GetStandard(standardId);
-            if (standardCollation != null && standard !=null)
+            if (standardCollation != null && standard !=null && !string.Equals(standard.Title, standardCollation.Title, StringComparison.CurrentCultureIgnoreCase))
                 standard.Title = standardCollation.Title;
 
             return standard;
@@ -79,7 +80,7 @@ namespace SFA.DAS.AssessorService.ExternalApis.Services
             var standardSummaries = await _assessmentOrgsApiClient.GetAllStandardSummaries();
             foreach (var standard in standardSummaries)
             {
-                var match = standardCollations.FirstOrDefault(x => x.StandardId?.ToString() == standard.Id && x.Title != standard.Title);
+                var match = standardCollations.FirstOrDefault(x => x.StandardId?.ToString() == standard.Id && !string.Equals(x.Title, standard.Title, StringComparison.CurrentCultureIgnoreCase));
                 if (match != null)
                     standard.Title = match.Title;
             }
