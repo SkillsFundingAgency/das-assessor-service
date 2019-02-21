@@ -4,7 +4,7 @@ AS
 SET NOCOUNT ON;
 
 -- Register - Organisation
-select EndPointAssessorOrganisationId as EPA_organisation_identifier, 
+select o.EndPointAssessorOrganisationId as EPA_organisation_identifier, 
 	EndPointAssessorName as EPA_Organisation,
 	ot.Type as Organisation_Type,
 	JSON_VALUE(OrganisationData,'$.WebsiteLink') as Website_Link,
@@ -15,8 +15,14 @@ select EndPointAssessorOrganisationId as EPA_organisation_identifier,
 	JSON_VALUE(OrganisationData,'$.Postcode') as Contact_postcode,
 	EndPointAssessorUkprn as UKPRN,
 	JSON_VALUE(OrganisationData,'$.LegalName') as 'Legal Name'
-	 from organisations o left outer join organisationType ot on o.OrganisationTypeId = ot.Id
+	 from organisations o 
+	 left outer join organisationType ot on o.OrganisationTypeId = ot.Id
+	 join (select EndPointAssessorOrganisationId 
+		   from OrganisationStandard
+		   where Status <> 'Deleted'
+		   group by EndPointAssessorOrganisationId
+     ) ab ON ab.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId
 	 WHERE o.EndPointAssessorOrganisationId<> 'EPA0000' 
 	 AND o.[Status] <> 'Deleted'
-	order by EndPointAssessorOrganisationId
+	order by o.EndPointAssessorOrganisationId
 
