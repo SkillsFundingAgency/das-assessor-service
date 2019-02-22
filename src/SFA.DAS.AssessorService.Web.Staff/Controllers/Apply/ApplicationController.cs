@@ -243,9 +243,20 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
                 return View("~/Views/Apply/Applications/Assessment.cshtml", viewModel);
             }
 
+         
+            if (sequenceId == 2 && returnType == "Approved")
+            {
+                var warnings = InjectApplyDataIntoRegister(applicationId);
+            }
+
             await _applyApiClient.ReturnApplication(applicationId, sequenceId, returnType);
 
             return RedirectToAction("Returned", new { applicationId, sequenceId });
+        }
+
+        private List<string> InjectApplyDataIntoRegister(Guid applicationId)
+        {
+            return new List<string>();
         }
 
         [HttpGet("/Applications/Returned")]
