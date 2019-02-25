@@ -97,9 +97,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 // Search string is a long of 10 length so must be a uln.
                 var sr = new StaffReposSearchResult
                 {
-                    TotalCount = (await _ilrRepository.SearchForLearnerByUln(uln)).Count(),
                     PageOfResults = await _staffIlrRepository.SearchForLearnerByUln(request)
                 };
+                sr.TotalCount = sr.PageOfResults.Count();
                 return sr;
             }
 
@@ -108,9 +108,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 var sr = new StaffReposSearchResult
                 {
                     DisplayEpao = true,
-                    TotalCount = (await _staffIlrRepository.SearchForLearnerByCertificateReference(request.SearchQuery)).Count(),
                     PageOfResults = await _staffIlrRepository.SearchForLearnerByCertificateReference(request.SearchQuery)
                 };
+                sr.TotalCount = sr.PageOfResults.Count();
                 return sr;
             }
 
