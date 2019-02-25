@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public int StandardCode { get; set; }
         public string Standard { get; set; }
         public int Level { get; set; }
-        public int FundingModel { get; set; }
+        public int? FundingModel { get; set; }
         public string Option { get; set; }
         public string OrganisationName { get; set; }
         public string OrganisationId { get; set; }

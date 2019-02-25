@@ -204,9 +204,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 ContactId = viewModel.ContactId.ToString(),
                 DeliveryAreas = viewModel.DeliveryAreas,
                 Comments = viewModel.Comments,
-                OrganisationStatus = viewModel.OrganisationStatus,
-                OrganisationStandardStatus = viewModel.Status,
-                ActionChoice = viewModel.ActionChoice,
                 DeliveryAreasComments = viewModel.DeliveryAreasComments
             };
 

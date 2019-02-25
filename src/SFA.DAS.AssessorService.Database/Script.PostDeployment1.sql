@@ -17,7 +17,6 @@ DELETE FROM IlrsCopy
 INSERT INTO IlrsCopy SELECT * FROM Ilrs
 */
 
---- STORY ON-1392 ordering delivery area as per UX requirements
 /* DONE
 update deliveryarea set Ordering=1 where Area='North East'
 update deliveryarea set Ordering=2 where Area='North West'
@@ -27,12 +26,16 @@ update deliveryarea set Ordering=5 where Area='West Midlands'
 update deliveryarea set Ordering=6 where Area='East of England'
 update deliveryarea set Ordering=7 where Area='London'
 update deliveryarea set Ordering=8 where Area='South East'
-update deliveryarea set Ordering=9 where Area='South West*/
+update deliveryarea set Ordering=9 where Area='South West'
+*/
 
-alter table Contacts alter column Status nvarchar(20) not NULL
-alter table Contacts add SignInId uniqueidentifier NULL 
-
-ALTER table EMailTemplates alter column Recipients nvarchar(max) NULL
+-- ON-1374 update any new organisation standards to 'Live' if minimum acceptance criteria for live is available
+UPDATE organisationStandard 
+	SET Status='Live', 
+	DateStandardApprovedOnRegister = ISNULL(DateStandardApprovedOnRegister, CONVERT(DATE, GETDATE()))
+	WHERE Id IN (SELECT organisationStandardId FROM  OrganisationStandardDeliveryArea)
+	AND contactId IS NOT NULL
+	AND Status='New'
 
 IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'EPAOUserApproveConfirm')
 BEGIN
@@ -40,7 +43,7 @@ INSERT EMailTemplates VALUES (N'4df42e62-c08f-4e1c-ae8e-7ddf599ed3f6', N'EPAOUse
 END
 
 /* DONE
--- update FHA details STORY ON-1058
+-- ON-1058 update FHA details STORY 
 :r UpdateFHADetails.sql
 */
 
@@ -48,4 +51,22 @@ END
 -- load December 2018 report DATABASE
 :r setDec18EPAReport.sql
 */
+
+-- patch FundingModel, where this was not set by data sync
+UPDATE Ilrs SET FundingModel = 36 WHERE FundingModel IS NULL
+
+-- fix options
+UPDATE [Certificates]
+SET [CertificateData] = JSON_MODIFY([CertificateData], '$.CourseOption','Alcoholic Beverage Service') 
+WHERE json_value(certificatedata,'$.CourseOption') = 'Alcholic beverage service'
+
+UPDATE [Options] 
+SET [OptionName] = 'Alcoholic Beverage Service'
+WHERE [OptionName] = 'Alcholic beverage service'
+
+
+IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'EPAOUserApproveConfirm')
+BEGIN
+INSERT EMailTemplates VALUES (N'4df42e62-c08f-4e1c-ae8e-7ddf599ed3f6', N'EPAOUserApproveConfirm', N'539204f8-e99a-4efa-9d1f-d0e58b26dd7b', NULL, GETDATE(), NULL, NULL)
+END
 
