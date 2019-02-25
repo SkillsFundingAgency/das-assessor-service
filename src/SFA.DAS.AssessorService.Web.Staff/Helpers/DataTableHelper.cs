@@ -1,13 +1,12 @@
-﻿namespace SFA.DAS.AssessorService.Web.Staff.Controllers
+﻿namespace SFA.DAS.AssessorService.Web.Staff.Helpers
 {
-    using Microsoft.AspNetCore.Mvc;
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
 
-    public class ExcelAwareController : Controller
+    public class DataTableHelper : IDataTableHelper
     {
-        protected static DataTable ToDataTable(IEnumerable<IDictionary<string, object>> list)
+        public DataTable ToDataTable(IEnumerable<IDictionary<string, object>> list)
         {
             var dataTable = new DataTable();
 

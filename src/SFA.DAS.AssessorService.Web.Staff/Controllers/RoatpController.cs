@@ -2,22 +2,26 @@
 {
     using System;
     using System.Threading.Tasks;
+    using Helpers;
     using Infrastructure;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using OfficeOpenXml;
 
     [Authorize]
-    public class RoatpController : ExcelAwareController
+    public class RoatpController : Controller
     {
         private IRoatpApiClient _apiClient;
+        private IDataTableHelper _dataTableHelper;
 
         private const string CompleteRegisterWorksheetName = "Providers";
         private const string AuditHistoryWorksheetName = "Provider history";
-
-        public RoatpController(IRoatpApiClient apiClient)
+        private const string ExcelFileName = "_RegisterOfApprenticeshipTrainingProviders.xlsx";
+        
+        public RoatpController(IRoatpApiClient apiClient, IDataTableHelper dataTableHelper)
         {
             _apiClient = apiClient;
+            _dataTableHelper = dataTableHelper;
         } 
         
         public IActionResult Index()
@@ -31,13 +35,13 @@
             {
                 var completeRegisterWorkSheet = package.Workbook.Worksheets.Add(CompleteRegisterWorksheetName);
                 var registerData = await _apiClient.GetCompleteRegister();
-                completeRegisterWorkSheet.Cells.LoadFromDataTable(ToDataTable(registerData), true);
+                completeRegisterWorkSheet.Cells.LoadFromDataTable(_dataTableHelper.ToDataTable(registerData), true);
 
                 var auditHistoryWorksheet = package.Workbook.Worksheets.Add(AuditHistoryWorksheetName);
                 var auditHistoryData = await _apiClient.GetAuditHistory();
-                auditHistoryWorksheet.Cells.LoadFromDataTable(ToDataTable(auditHistoryData), true);
+                auditHistoryWorksheet.Cells.LoadFromDataTable(_dataTableHelper.ToDataTable(auditHistoryData), true);
 
-                return File(package.GetAsByteArray(), "application/excel", $"{DateTime.Now.ToString("yyyyMMdd")}_RegisterOfApprenticeshipTrainingProviders.xlsx");
+                return File(package.GetAsByteArray(), "application/excel", $"{DateTime.Now.ToString("yyyyMMdd")}{ExcelFileName}");
             }
         }
     }

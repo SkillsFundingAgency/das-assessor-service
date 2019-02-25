@@ -9,19 +9,22 @@ using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Web.Staff.Domain;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using SFA.DAS.AssessorService.Web.Staff.Helpers;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {
     [Authorize(Roles = Roles.OperationsTeam + "," + Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
-    public class ReportsController : ExcelAwareController
+    public class ReportsController : Controller
     {
         private readonly ILogger<ReportsController> _logger;
         private readonly ApiClient _apiClient;
+        private readonly IDataTableHelper _dataTableHelper;
 
-        public ReportsController(ILogger<ReportsController> logger, ApiClient apiClient)
+        public ReportsController(ILogger<ReportsController> logger, ApiClient apiClient, IDataTableHelper dataTableHelper)
         {
             _logger = logger;
             _apiClient = apiClient;
+            _dataTableHelper = dataTableHelper;
         }
 
         public async Task<IActionResult> Index()
@@ -69,7 +72,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                     {
                         var worksheetToAdd = package.Workbook.Worksheets.Add(ws.Worksheet);
                         var data = await _apiClient.GetDataFromStoredProcedure(ws.StoredProcedure);
-                        worksheetToAdd.Cells.LoadFromDataTable(ToDataTable(data), true);
+                        worksheetToAdd.Cells.LoadFromDataTable(_dataTableHelper.ToDataTable(data), true);
                     }
 
                     return File(package.GetAsByteArray(), "application/excel", $"{reportDetails.Name}.xlsx");
@@ -84,7 +87,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             using (var package = new ExcelPackage())
             {
                 var worksheet = package.Workbook.Worksheets.Add("Sheet1");
-                worksheet.Cells.LoadFromDataTable(ToDataTable(data), true);
+                worksheet.Cells.LoadFromDataTable(_dataTableHelper.ToDataTable(data), true);
 
                 return File(package.GetAsByteArray(), "application/excel", $"report.xlsx");
             }
