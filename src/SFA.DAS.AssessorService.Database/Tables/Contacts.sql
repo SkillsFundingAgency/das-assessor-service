@@ -6,7 +6,7 @@
 	[Email] [nvarchar](120) NULL,
 	[EndPointAssessorOrganisationId] [nvarchar](12) NOT NULL,
 	[OrganisationId] [uniqueidentifier] NULL,
-	[Status] [nvarchar](10) NOT NULL,
+	[Status] [nvarchar](20) NOT NULL,
 	[UpdatedAt] [datetime2](7) NULL,
 	[Username] [nvarchar](30) NOT NULL,
 	[PhoneNumber] [NVARCHAR] (50) NULL
@@ -14,6 +14,7 @@
 (
 	[Id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY],
+    [SignInId] UNIQUEIDENTIFIER NULL, 
     CONSTRAINT [AK_Contacts_Username] UNIQUE NONCLUSTERED 
 (
 	[Username] ASC

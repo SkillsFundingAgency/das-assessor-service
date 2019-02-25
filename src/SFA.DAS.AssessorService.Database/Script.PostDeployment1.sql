@@ -36,6 +36,11 @@ UPDATE organisationStandard
 	AND contactId IS NOT NULL
 	AND Status='New'
 
+IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'EPAOUserApproveConfirm')
+BEGIN
+INSERT EMailTemplates VALUES (N'4df42e62-c08f-4e1c-ae8e-7ddf599ed3f6', N'EPAOUserApproveConfirm', N'539204f8-e99a-4efa-9d1f-d0e58b26dd7b', NULL, GETDATE(), NULL, NULL)
+END
+
 /* DONE
 -- ON-1058 update FHA details STORY 
 :r UpdateFHADetails.sql
@@ -59,10 +64,8 @@ SET [OptionName] = 'Alcoholic Beverage Service'
 WHERE [OptionName] = 'Alcholic beverage service'
 
 
-alter table Contacts alter column Status nvarchar(20) not null
-alter table EMailTemplates alter column Recipients nvarchar(max) NULL
-
 IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'EPAOUserApproveConfirm')
 BEGIN
 INSERT EMailTemplates VALUES (N'4df42e62-c08f-4e1c-ae8e-7ddf599ed3f6', N'EPAOUserApproveConfirm', N'539204f8-e99a-4efa-9d1f-d0e58b26dd7b', NULL, GETDATE(), NULL, NULL)
 END
+
