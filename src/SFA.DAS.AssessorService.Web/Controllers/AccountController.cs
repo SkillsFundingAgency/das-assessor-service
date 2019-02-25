@@ -46,7 +46,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     _sessionService.Set("OrganisationName", loginResult.OrganisationName);
                     return RedirectToAction("Index", "Dashboard");
                 case LoginResult.NotRegistered:
-                    return RedirectToAction("NotRegistered", "Home");
+                    return RedirectToAction("Index", "OrganisationSearch");
                 case LoginResult.InvalidRole:
                     return RedirectToAction("InvalidRole", "Home");
                 case LoginResult.InvitePending:

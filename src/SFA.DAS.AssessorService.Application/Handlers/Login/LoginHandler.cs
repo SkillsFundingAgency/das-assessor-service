@@ -48,7 +48,13 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
             }
             
             _logger.LogInformation("Role is good");
-            
+
+            if (contact.OrganisationId == null)
+            {
+                response.Result = LoginResult.NotRegistered;
+                return response;
+            }
+
             var organisation = await _organisationQueryRepository.Get(contact.OrganisationId.Value);
 
             if (organisation == null)
@@ -90,6 +96,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
 
 
             response.OrganisationName = organisation.EndPointAssessorName;
+
             return response;
         }
 
