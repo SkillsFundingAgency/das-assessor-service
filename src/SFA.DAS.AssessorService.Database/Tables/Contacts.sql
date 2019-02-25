@@ -6,7 +6,7 @@
 	[Email] [nvarchar](120) NULL,
 	[EndPointAssessorOrganisationId] [nvarchar](12) NOT NULL,
 	[OrganisationId] [uniqueidentifier] NULL,
-	[Status] [nvarchar](10) NOT NULL,
+	[Status] [nvarchar](20) NOT NULL,
 	[UpdatedAt] [datetime2](7) NULL,
 	[Username] [nvarchar](30) NOT NULL,
 	[PhoneNumber] [NVARCHAR] (50) NULL
