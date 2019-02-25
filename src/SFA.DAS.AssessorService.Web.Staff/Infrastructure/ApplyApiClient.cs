@@ -7,8 +7,13 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using SFA.DAS.Apprenticeships.Api.Types.Providers;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Web.Staff.Controllers.Apply;
+using SFA.DAS.AssessorService.Web.Staff.Services;
+using Feedback = SFA.DAS.AssessorService.ApplyTypes.Feedback;
+using Page = SFA.DAS.AssessorService.ApplyTypes.Page;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
 {
@@ -25,17 +30,47 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             _tokenService = tokenService;
         }
 
+        public ApplyApiClient(string baseUri, ILogger<ApplyApiClient> logger, ITokenService tokenService)
+        {
+            _client = new HttpClient { BaseAddress = new Uri(baseUri) };
+            _logger = logger;
+            _tokenService = tokenService;
+        }
+
+        //public ApplyApiClient(HttpClient httpClient) //: base(httpClient)
+        //{
+        //    _client = httpClient;
+        //}
+
         private async Task<T> Get<T>(string uri)
         {
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
 
+            var type = typeof(T);
+
             using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
             {
-                return await response.Content.ReadAsAsync<T>();
+                //var stringContent = response.Content.ReadAsStringSync();
+                var res = await response.Content.ReadAsAsync<T>();
+                
+                return res;
             }
         }
-        
+
+        //private async Task<string> GetString(string uri)
+        //{
+        //    _client.DefaultRequestHeaders.Authorization =
+        //        new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+
+        //    using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
+        //    {
+        //        var res = await response.Content.ReadAsStringAsync();
+
+        //        return res;
+        //    }
+        //}
+
         private async Task<U> Post<T, U>(string uri, T model)
         {
             _client.DefaultRequestHeaders.Authorization =
@@ -205,6 +240,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             return downloadResponse;
         }
 
+
         public async Task UpdateFinancialGrade(Guid applicationId, FinancialApplicationGrade vmGrade)
         {
             await Post($"/Financial/{applicationId}/UpdateGrade", vmGrade);
@@ -223,6 +259,21 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         public async Task StartApplicationReview(Guid applicationId, int sequenceId)
         {
             await Post($"/Review/Applications/{applicationId}/Sequences/{sequenceId}/StartReview", new { sequenceId });
+        }
+
+        //public async Task<HttpResponseMessage> GetAnswer(Guid applicationId, string questionTag)
+        //{
+        //    var result= await Get<HttpResponseMessage>($"/Answer/{questionTag}/{applicationId}");
+
+        //    return result;
+        //}
+
+
+        public async Task<GetAnswersResponse> GetAnswer(Guid applicationId, string questionTag)
+        {
+            var result= await Get<GetAnswersResponse>($"/Answer/{questionTag}/{applicationId}");
+
+            return result;
         }
     }
 }
