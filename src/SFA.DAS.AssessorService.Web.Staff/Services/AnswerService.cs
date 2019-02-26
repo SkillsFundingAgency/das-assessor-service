@@ -92,9 +92,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             return response.Answer;
         }
 
-        public async Task<List<string>> InjectApplyOrganisationAndContactDetailsIntoRegister(
-            CreateOrganisationContactCommand command)
+        public async Task<List<string>> InjectApplyOrganisationAndContactDetailsIntoRegister(CreateOrganisationContactCommand command)
         {
+            
             var warningMessages = new List<string>();
             var organisationName = DecideOrganisationName(command.UseTradingName, command.TradingName, command.OrganisationName);
             var ukprnAsLong = GetUkprnFromRequestDetails(command.OrganisationUkprn, command.CompanyUkprn);

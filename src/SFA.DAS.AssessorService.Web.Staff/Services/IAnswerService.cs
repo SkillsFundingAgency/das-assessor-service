@@ -8,8 +8,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
 {
     public interface IAnswerService
     {
-        Task<CreateOrganisationContactCommand> GatherAnswersForOrganisationAndContactForApplication(Guid applicationId);
         Task<string> GetAnswer(Guid applicationId, string questionTag);
-        Task<List<string>> InjectApplyOrganisationAndContactDetailsIntoRegister(CreateOrganisationContactCommand createOrganisationAndContactCommand);
+        Task<List<string>> InjectApplyOrganisationAndContactDetailsIntoRegister(CreateOrganisationContactCommand command);
+        Task<CreateOrganisationContactCommand> GatherAnswersForOrganisationAndContactForApplication(Guid applicationId);
     }
 }
