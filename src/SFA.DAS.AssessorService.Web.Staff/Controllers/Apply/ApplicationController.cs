@@ -249,7 +249,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
             var warningMessages = new List<string>();
             if (sequenceId == 2 && returnType == "Approve")
             {
-                //warningMessages = await _answerService.InjectApplyOrganisationAndContactIntoRegister(applicationId);
                 var command = await _answerService.GatherAnswersForOrganisationAndContactForApplication(applicationId);
                 warningMessages = await _answerService.InjectApplyOrganisationAndContactDetailsIntoRegister(command);
             }
@@ -267,7 +266,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
         }
 
         [HttpGet("Application/{applicationId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}/Question/{questionId}/{filename}/Download")]
-
         //[HttpGet("/Application/{applicationId}/Page/{pageId}/Question/{questionId}/File/{filename}/Download")]
         public async Task<IActionResult> Download(Guid applicationId, int sequenceId, int sectionId, string pageId, string questionId, string filename)
         {

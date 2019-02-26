@@ -17,7 +17,10 @@ using Polly.Extensions.Http;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Azure;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Application.Api.Services;
+using SFA.DAS.AssessorService.Application.Api.Services.Validation;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Application.Interfaces.Validation;
 using SFA.DAS.AssessorService.Data;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.IFAStandards;
@@ -117,6 +120,16 @@ namespace SFA.DAS.AssessorService.Web.Staff
                 config.For<IApplyApiClient>().Use<ApplyApiClient>().Ctor<string>().Is(ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress);
                 //config.For<IApplyApiClient>().Use(() => new ApplyApiClient(ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress));
 
+                config.For<IRegisterQueryRepository>().Use<RegisterQueryRepository>();
+                config.For<IRegisterRepository>().Use<RegisterRepository>();
+
+                config.For<IValidationService>().Use<ValidationService>();
+                config.For<IAssessorValidationService>().Use<AssessorValidationService>();
+                config.For<IRegisterValidationRepository>().Use<RegisterValidationRepository>();
+                config.For<IEpaOrganisationIdGenerator>().Use<EpaOrganisationIdGenerator>();
+                config.For<ISpecialCharacterCleanserService>().Use<SpecialCharacterCleanserService>();
+
+                
                 config.For<IAssessmentOrgsApiClient>().Use(() => new AssessmentOrgsApiClient(ApplicationConfiguration.AssessmentOrgsApiClientBaseUrl));
                 config.For<IIfaStandardsApiClient>().Use(() => new IfaStandardsApiClient(ApplicationConfiguration.IfaApiClientBaseUrl));
                 config.For<IAzureTokenService>().Use<AzureTokenService>();
