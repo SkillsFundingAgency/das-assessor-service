@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Api.Types.Commands;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 
@@ -17,12 +18,15 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             _applyApiClient = applyApiClient;
         }
 
-        public async Task<List<string>> InjectApplyOrganisationAndContactIntoRegister(Guid applicationId)
+        public async Task<CreateOrganisationContactCommand> GatherAnswersForOrganisationAndContactForApplication(Guid applicationId)
         {
             var tradingName = await GetAnswer(applicationId, "trading-name");
-            var useTradingName = await GetAnswer(applicationId, "use-trading-name");
+            var useTradingNameString = await GetAnswer(applicationId, "use-trading-name");
             var contactName = await GetAnswer(applicationId, "contact-name");
-            var contactAddress = await GetAnswer(applicationId, "contact-address");  //MFCMFC deal with address better
+            var contactAddress1 = await GetAnswer(applicationId, "contact-address") ?? await GetAnswer(applicationId, "contact-address1");
+            var contactAddress2 = await GetAnswer(applicationId, "contact-address2");
+            var contactAddress3 = await GetAnswer(applicationId, "contact-address3");
+            var contactAddress4 = await GetAnswer(applicationId, "contact-address4");
             var contactPostcode = await GetAnswer(applicationId, "contact-postcode");
             var contactEmail = await GetAnswer(applicationId, "contact-email");
             var contactPhoneNumber = await GetAnswer(applicationId, "contact-phone-number");
@@ -30,38 +34,49 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             var companyNumber = await GetAnswer(applicationId, "company-number");
             var charityNumber = await GetAnswer(applicationId, "charity-number");
             var standardWebsite = await GetAnswer(applicationId, "standard-website");
+            var organisation = await _applyApiClient.GetOrganisationForApplication(applicationId);
+            var organisationName = organisation.Name;
+            var organisationType = organisation.OrganisationType;
+            var organisationUkprn = organisation.OrganisationUkprn;
 
-            var request = new CreateOrganisationContactRequest
-            {
-                OrganisationName = "to get",
-                OrganisationType = "to get",
-                OrganisationUkprn = "to get",
-                TradingName = tradingName,
-                UseTradingName = true, //useTradingName,
-                ContactName = contactName,
-                ContactAddress1 = contactAddress,
-                ContactAddress2 = null,
-                ContactAddress3 = null,
-                ContactAddress4 = null,
 
-                ContactPostcode = contactPostcode,
-                ContactEmail = contactEmail,
-                ContactPhoneNumber = contactPhoneNumber,
-                CompanyUkprn = companyUkprn,
-                CompanyNumber = companyNumber,
-                CharityNumber = charityNumber,
-                StandardWebsite = standardWebsite
-            };
-            
+            var useTradingName = useTradingNameString != null && (useTradingNameString.ToLower() == "yes" || useTradingNameString.ToLower() == "true" || useTradingNameString.ToLower() == "1");
 
-            return new List<string>();
+            var command = new CreateOrganisationContactCommand
+            (organisationName,
+                organisationType,
+                organisationUkprn?.ToString(),
+                tradingName,
+                useTradingName,
+                contactName,
+                contactAddress1,
+                contactAddress2,
+                contactAddress3,
+                contactAddress4,
+                contactPostcode,
+                contactEmail,
+                contactPhoneNumber,
+                companyUkprn,
+                companyNumber,
+                charityNumber,
+                standardWebsite);
+
+
+            return command;
         }
-
         public async Task<string> GetAnswer(Guid applicationId, string questionTag)
         {
            var response= await _applyApiClient.GetAnswer(applicationId, questionTag);
 
             return response.Answer;
         }
+
+        public async Task<List<string>> InjectApplyOrganisationAndContactDetailsIntoRegister(
+            CreateOrganisationContactCommand createOrganisationAndContactCommand)
+        {
+            return new List<string>();
+        }
     }
+
+  
 }

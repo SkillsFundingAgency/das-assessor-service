@@ -1,10 +1,9 @@
-﻿using SFA.DAS.AssessorService.Api.Types.Commands;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Api.Types.Commands;
 
-namespace SFA.DAS.AssessorService.Web.Staff.Services
+namespace SFA.DAS.AssessorService.Application.Interfaces
 {
     public interface IAnswerService
     {

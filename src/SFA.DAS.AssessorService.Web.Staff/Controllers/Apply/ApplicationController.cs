@@ -249,7 +249,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
             var warningMessages = new List<string>();
             if (sequenceId == 2 && returnType == "Approve")
             {
-                warningMessages = await _answerService.InjectApplyOrganisationAndContactIntoRegister(applicationId);
+                //warningMessages = await _answerService.InjectApplyOrganisationAndContactIntoRegister(applicationId);
+                var command = await _answerService.GatherAnswersForOrganisationAndContactForApplication(applicationId);
+                warningMessages = await _answerService.InjectApplyOrganisationAndContactDetailsIntoRegister(command);
             }
 
             await _applyApiClient.ReturnApplication(applicationId, sequenceId, returnType);
