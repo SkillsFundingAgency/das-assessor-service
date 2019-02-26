@@ -37,39 +37,16 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             _tokenService = tokenService;
         }
 
-        //public ApplyApiClient(HttpClient httpClient) //: base(httpClient)
-        //{
-        //    _client = httpClient;
-        //}
-
         private async Task<T> Get<T>(string uri)
         {
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
 
-            var type = typeof(T);
-
             using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
             {
-                //var stringContent = response.Content.ReadAsStringSync();
-                var res = await response.Content.ReadAsAsync<T>();
-                
-                return res;
+                return await response.Content.ReadAsAsync<T>();
             }
         }
-
-        //private async Task<string> GetString(string uri)
-        //{
-        //    _client.DefaultRequestHeaders.Authorization =
-        //        new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-
-        //    using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
-        //    {
-        //        var res = await response.Content.ReadAsStringAsync();
-
-        //        return res;
-        //    }
-        //}
 
         private async Task<U> Post<T, U>(string uri, T model)
         {
@@ -261,19 +238,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             await Post($"/Review/Applications/{applicationId}/Sequences/{sequenceId}/StartReview", new { sequenceId });
         }
 
-        //public async Task<HttpResponseMessage> GetAnswer(Guid applicationId, string questionTag)
-        //{
-        //    var result= await Get<HttpResponseMessage>($"/Answer/{questionTag}/{applicationId}");
-
-        //    return result;
-        //}
-
-
         public async Task<GetAnswersResponse> GetAnswer(Guid applicationId, string questionTag)
         {
-            var result= await Get<GetAnswersResponse>($"/Answer/{questionTag}/{applicationId}");
-
-            return result;
+            return await Get<GetAnswersResponse>($"/Answer/{questionTag}/{applicationId}");
         }
     }
 }

@@ -60,7 +60,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             var organisationType = organisation.OrganisationType;
             var organisationUkprn = organisation.OrganisationUkprn;
 
-
             var useTradingName = useTradingNameString != null && (useTradingNameString.ToLower() == "yes" || useTradingNameString.ToLower() == "true" || useTradingNameString.ToLower() == "1");
 
             var command = new CreateOrganisationContactCommand
@@ -81,7 +80,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                 companyNumber,
                 charityNumber,
                 standardWebsite);
-
 
             return command;
         }
@@ -139,7 +137,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                 var contact = MapCommandToContact(command.ContactName, command.ContactEmail, newOrganisationId, command.ContactPhoneNumber, newUsername);
                 await _registerRepository.CreateEpaOrganisationContact(contact);
             }
-
             return warningMessages;
         }
 
