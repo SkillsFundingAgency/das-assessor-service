@@ -101,7 +101,7 @@
             @if (Model.Sequence.Sections.All(s => s.Status == ApplicationSectionStatus.Evaluated))
             {
                 <div class="form-group">
-                    <form asp-controller="Application" asp-action="Assessment" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" method="get">
+                    <form class="js-disable-on-submit" asp-controller="Application" asp-action="Assessment" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" method="get">
                         <button class="button" type="submit">Complete review</button>
                     </form>
                 </div>
