@@ -9,7 +9,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Applications
         public int SequenceId { get; }
 
         public List<string> WarningMessages { get; set; }
-
         public ApplicationReturnedViewModel(Guid applicationId, int sequenceId, List<string> warningMessages)
         {
             ApplicationId = applicationId;

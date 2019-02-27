@@ -59,13 +59,16 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             var organisationName = organisation.Name;
             var organisationType = organisation.OrganisationType;
             var organisationUkprn = organisation.OrganisationUkprn;
-
+            var organisationReferenceType = organisation?.OrganisationDetails?.OrganisationReferenceType;
+            var isEpaoApproved = organisation.RoEPAOApproved;
             var useTradingName = useTradingNameString != null && (useTradingNameString.ToLower() == "yes" || useTradingNameString.ToLower() == "true" || useTradingNameString.ToLower() == "1");
-
+            
             var command = new CreateOrganisationContactCommand
             (organisationName,
                 organisationType,
                 organisationUkprn?.ToString(),
+                organisationReferenceType,
+                isEpaoApproved,
                 tradingName,
                 useTradingName,
                 contactName,
@@ -90,10 +93,25 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             return response.Answer;
         }
 
-        public async Task<List<string>> InjectApplyOrganisationAndContactDetailsIntoRegister(CreateOrganisationContactCommand command)
+        public async Task<CreateOrganisationAndContactFromApplyResponse> InjectApplyOrganisationAndContactDetailsIntoRegister(CreateOrganisationContactCommand command)
         {
-            
+            var response = new CreateOrganisationAndContactFromApplyResponse { IsEpaoApproved = false, ApplySourceIsEpao = false, WarningMessages =new List<string>()};
+            if (command.OrganisationReferenceType != null &&
+                command.OrganisationReferenceType.ToLower().Contains("epao"))
+            {
+                response.ApplySourceIsEpao = true;
+                return response;
+            }
+
+            if (command.IsEpaoApproved)
+            {
+                response.IsEpaoApproved = true;
+                return response;
+            }
+   
             var warningMessages = new List<string>();
+
+            
             var organisationName = DecideOrganisationName(command.UseTradingName, command.TradingName, command.OrganisationName);
             var ukprnAsLong = GetUkprnFromRequestDetails(command.OrganisationUkprn, command.CompanyUkprn);
             var organisationTypeId = await GetOrganisationTypeIdFromDescriptor(command.OrganisationType);
@@ -137,7 +155,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                 var contact = MapCommandToContact(command.ContactName, command.ContactEmail, newOrganisationId, command.ContactPhoneNumber, newUsername);
                 await _registerRepository.CreateEpaOrganisationContact(contact);
             }
-            return warningMessages;
+
+            response.WarningMessages = warningMessages;
+
+            return response;
         }
 
         private static string DecideOrganisationName(bool useTradingName, string tradingName, string organisationName)

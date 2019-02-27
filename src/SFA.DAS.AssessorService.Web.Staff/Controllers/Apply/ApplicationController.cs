@@ -247,15 +247,17 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
             }
 
             var warningMessages = new List<string>();
+            var ukprnAlreadyPresent = false;
             if (sequenceId == 2 && returnType == "Approve")
             {
                 var command = await _answerService.GatherAnswersForOrganisationAndContactForApplication(applicationId);
-                warningMessages = await _answerService.InjectApplyOrganisationAndContactDetailsIntoRegister(command);
+                var response = await _answerService.InjectApplyOrganisationAndContactDetailsIntoRegister(command);
+                warningMessages = response.WarningMessages;
             }
 
             await _applyApiClient.ReturnApplication(applicationId, sequenceId, returnType);
 
-            return RedirectToAction("Returned", new { applicationId, sequenceId, warningMessages });
+            return RedirectToAction("Returned", new { applicationId, sequenceId, warningMessages});
         }
 
         [HttpGet("/Applications/Returned")]

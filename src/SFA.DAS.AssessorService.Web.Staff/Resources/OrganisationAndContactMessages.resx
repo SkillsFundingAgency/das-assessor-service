@@ -157,7 +157,7 @@
     <value>Organisation type not identified so not added to organisation in register</value>
   </data>
   <data name="UkprnAlreadyUsed" xml:space="preserve">
-    <value>The ukprn is already used by another organisation so not added to this organisation in register</value>
+    <value>The ukprn indicates this organisation is already in the register, so will not be added</value>
   </data>
   <data name="UkprnIsInvalidFormat" xml:space="preserve">
     <value>Ukprn is an invalid format so not added to this organisation in register</value>

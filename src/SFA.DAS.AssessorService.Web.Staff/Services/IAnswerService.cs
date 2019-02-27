@@ -1,4 +1,5 @@
 ﻿using SFA.DAS.AssessorService.Api.Types.Commands;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
     public interface IAnswerService
     {
         Task<string> GetAnswer(Guid applicationId, string questionTag);
-        Task<List<string>> InjectApplyOrganisationAndContactDetailsIntoRegister(CreateOrganisationContactCommand command);
+        Task<CreateOrganisationAndContactFromApplyResponse> InjectApplyOrganisationAndContactDetailsIntoRegister(CreateOrganisationContactCommand command);
         Task<CreateOrganisationContactCommand> GatherAnswersForOrganisationAndContactForApplication(Guid applicationId);
     }
 }
