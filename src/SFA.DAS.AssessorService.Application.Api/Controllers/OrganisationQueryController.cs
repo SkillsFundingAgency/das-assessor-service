@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Consts;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
@@ -88,6 +89,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 await _organisationQueryRepository.Get(id);
 
             return Ok(organisation);
+        }
+
+        [HttpGet("search/{searchTerm}", Name = "SearchForOrganisations")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<OrganisationSearchResult>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> SearchForOrganisations(string searchTerm)
+        {
+            _logger.LogInformation($@"Search organisations for search term {searchTerm}");
+            return Ok(await _mediator.Send(new OrganisationSearchRequest(searchTerm)));
         }
     }
 }

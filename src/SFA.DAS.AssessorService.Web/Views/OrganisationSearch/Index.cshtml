@@ -1,7 +1,7 @@
 ﻿@model SFA.DAS.AssessorService.Web.ViewModels.Organisation.OrganisationSearchViewModel
 @{
     ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Organisation search";
-    Layout = "_DashboardLayout";
+    Layout = "_Layout";
 
     bool showErrors = TempData["ShowErrors"] as bool? ?? false;
 

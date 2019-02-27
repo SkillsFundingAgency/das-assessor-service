@@ -16,11 +16,14 @@ details {
   position: inherit;
 */
 
+.govuk-margin-bottom-0 {
+    margin-bottom: 0
+}
 
 .govuk-related-items {
-  margin-top: 30px;
-  border-top: 10px solid #005ea5;
-  padding-top: 5px;
+    margin-top: 30px;
+    border-top: 10px solid #005ea5;
+    padding-top: 5px;
 }
 
 .govuk-related-items .heading-medium {
@@ -1445,4 +1448,19 @@ table.responsive [aria-sort="descending"] a:after {
     .dashboard-box {
         height: 10.0em;
     }
+}
+
+.button-looks-like-a-link {
+    background: none !important;
+    color: #005EA5;
+    border: none;
+    padding: 0 !important;
+    font: inherit;
+    font-weight: bold;
+    border-bottom: 1px solid #005EA5;
+    cursor: pointer;
+}
+
+.button-looks-like-a-link:hover {
+    color: #2b8cc4;
 }

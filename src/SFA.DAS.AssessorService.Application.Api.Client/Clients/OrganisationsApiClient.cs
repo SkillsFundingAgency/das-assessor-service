@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.Apprenticeships.Api.Types.AssessmentOrgs;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 
@@ -183,6 +184,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+
+        public async Task<IEnumerable<OrganisationSearchResult>> SearchForOrganisations(string searchTerm)
+        {
+
+            using (var request = new HttpRequestMessage(HttpMethod.Get,
+                $"/api/v1/organisations/search/{searchTerm}"))
+            {
+                return await RequestAndDeserialiseAsync<List<OrganisationSearchResult>>(request,
+                    $"Could not retrieve organisations for search {searchTerm}.");
+            }
+        }
+
         private string SanitizeUrlParam(string rawParam)
         {
             var result = rawParam;
@@ -228,5 +241,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<ValidationResponse> ValidateUpdateOrganisationStandard(string organisationId, int standardId, DateTime? effectiveFrom, DateTime? effectiveTo, Guid? contactId, List<int> deliveryAreas, string actionChoice, string organisationStandardStatus, string organisationStatus);
         Task<EpaOrganisation> GetEpaOrganisation(string organisationId);
         Task<List<OrganisationType>> GetOrganisationTypes();
+        Task<IEnumerable<OrganisationSearchResult>> SearchForOrganisations(string searchTerm);
     }
 }
