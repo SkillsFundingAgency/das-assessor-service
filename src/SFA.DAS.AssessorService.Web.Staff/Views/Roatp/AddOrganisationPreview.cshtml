@@ -1,0 +1,131 @@
+@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp.AddOrganisationViewModel
+
+@using SFA.DAS.AssessorService.Web.Staff
+@using SFA.DAS.AssessorService.Web.Staff.Domain
+@{ ViewBag.Title = "Confirm details"; }
+
+@{ await Html.RenderPartialAsync("_StylesPartial"); }
+
+    <div class="grid-row">
+        <div class="column-two-thirds">
+            <h1 class="heading-xlarge roatp-heading">Confirm details</h1>
+        </div>
+    </div>
+    <div class="govuk-width-container">
+
+        <main class="govuk-main-wrapper " id="main-content" role="main">
+
+            <div class="govuk-body govuk-grid-row">
+
+                <div class="govuk-grid-column-two-thirds">
+                    <dl class="govuk-summary-list">
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Legal name
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Html.Raw(Model.LegalName)
+                            </dd>
+
+                        </div>
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                UKPRN
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Html.Raw(Model.UKPRN)
+                            </dd>
+
+                        </div>
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Type of provider
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Html.Raw(Model.ProviderTypes.FirstOrDefault(x => x.Id == Model.ProviderTypeId).Type)
+                            </dd>
+
+                        </div>
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Type of organisation
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Html.Raw(Model.OrganisationTypes.FirstOrDefault(x => x.Id == Model.OrganisationTypeId).Type)
+                            </dd>
+
+                        </div>
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Company number
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @if (!String.IsNullOrWhiteSpace(Model.CompanyNumber))
+                                {
+                                    @Html.Raw(Model.CompanyNumber)
+                                }
+                                else
+                                {
+                                    <span class='govuk-hint'>Not applicable</span>
+                                }
+                            </dd>
+
+                        </div>
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Charity registration number
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @if (!String.IsNullOrWhiteSpace(Model.CharityNumber))
+                                {
+                                    @Html.Raw(Model.CharityNumber)
+                                }
+                                else
+                                {
+                                    <span class='govuk-hint'>Not applicable</span>
+                                }
+                            </dd>
+
+                        </div>
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Trading name
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @if (!String.IsNullOrWhiteSpace(Model.TradingName))
+                                {
+                                    @Html.Raw(Model.TradingName)
+                                }
+                                else
+                                {
+                                    <span class='govuk-hint'>Not applicable</span>
+                                }
+                            </dd>
+
+                        </div>
+
+                    </dl>
+
+                    <form method="post" asp-action="CreateOrganisation" asp-controller="Roatp">
+                        @Html.Hidden("LegalName", Model.LegalName)
+                        @Html.Hidden("UKPRN", Model.UKPRN)
+                        @Html.Hidden("ProviderTypeId", Model.ProviderTypeId)
+                        @Html.Hidden("OrganisationTypeId", Model.OrganisationTypeId)
+                        @Html.Hidden("CompanyNumber", Model.CompanyNumber)
+                        @Html.Hidden("CharityNumber", Model.CharityNumber)
+                        @Html.Hidden("TradingName", Model.TradingName)
+                        <input type="submit" class="roatp-button" value="Confirm and add" />
+                    </form>
+                </div>
+
+            </div>
+
+        </main>
+    </div>

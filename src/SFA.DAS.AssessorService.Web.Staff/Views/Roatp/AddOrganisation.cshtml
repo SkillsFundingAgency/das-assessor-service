@@ -1,0 +1,45 @@
+@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp.AddOrganisationViewModel
+
+@using SFA.DAS.AssessorService.Web.Staff
+@using SFA.DAS.AssessorService.Web.Staff.Domain
+@{ ViewBag.Title = "What is the new training provider?"; }
+
+@{ await Html.RenderPartialAsync("_StylesPartial"); }
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <h1 class="heading-xlarge roatp-heading">What is the new training provider?</h1>
+    </div>
+</div>
+<div class="govuk-width-container">
+
+    <main class="govuk-main-wrapper " id="main-content" role="main">
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <form method="post" asp-action="AddOrganisationDetails" asp-controller="Roatp">
+
+                    <div class="govuk-form-group">
+                        <fieldset class="govuk-fieldset">
+
+                            <div class="roatp-radios">
+
+                                @foreach (var providerType in Model.ProviderTypes)
+                                {
+                                    <div class="roatp-radios__item">
+                                        <input class="roatp-radios__input" id="route-@providerType.Id" name="ProviderTypeId" type="radio" value="@providerType.Id">
+                                        <label class="roatp-label roatp-radios__label" for="route-@providerType.Id">
+                                            @providerType.Type
+                                        </label>
+                                    </div>
+                                }
+                            </div>
+                        </fieldset>
+                    </div>
+
+                    <input type="submit" class="roatp-button" value="Continue" />
+                </form>
+            </div>
+        </div>
+    </main>
+</div>

@@ -1287,26 +1287,3 @@ fieldset:after,
     margin-bottom: 5px;
   }
 }
-
-.roatp-search-button {
-    position: relative;
-    width: 59px;
-    height: 59px;
-    background-color: #005ea5;
-    background-image: url(/images/search-button.png);
-    color: #ffffff;
-    border: none;
-    text-indent: -10000px;
-    background-size: 80.5px auto;
-    background-position: 115% 50%;
-    cursor: pointer;
-}
-.roatp-search-label {
-    display: block;
-}
-.roatp-search-field {
-    height: 39px;
-    width: 70% !important;
-    border: 2px solid #0b0c0c;
-    padding: 10px !important;
-}

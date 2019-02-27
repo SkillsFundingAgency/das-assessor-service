@@ -7,6 +7,8 @@
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Threading.Tasks;
+    using Newtonsoft.Json;
+    using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
 
     public class RoatpApiClient : IRoatpApiClient
     {
@@ -40,6 +42,21 @@
             return await Get<IEnumerable<IDictionary<string, object>>>($"{_baseUrl}/api/v1/download/complete");
         }
 
+        public async Task<IEnumerable<OrganisationType>> GetOrganisationTypes(int providerTypeId)
+        {
+            return await Get<IEnumerable<OrganisationType>>($"{_baseUrl}/api/v1/lookupData/organisationTypes?providerTypeId={providerTypeId}");
+        }
+
+        public async Task<IEnumerable<ProviderType>> GetProviderTypes()
+        {
+            return await Get<IEnumerable<ProviderType>>($"{_baseUrl}/api/v1/lookupData/providerTypes");
+        }
+        
+        public async Task CreateOrganisation(CreateOrganisationRequest organisationRequest)
+        {
+            await Post<CreateOrganisationRequest>($"{_baseUrl}/api/v1/organisation/create", organisationRequest);
+        }
+
         private async Task<T> Get<T>(string uri)
         {
             _client.DefaultRequestHeaders.Authorization =
@@ -49,6 +66,16 @@
             {
                 return await response.Content.ReadAsAsync<T>();
             }
+        }
+
+        private async Task Post<T>(string uri, T model)
+        {
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            var serializeObject = JsonConvert.SerializeObject(model);
+
+            using (var response = await _client.PostAsync(new Uri(uri, UriKind.Absolute),
+                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json"))) ;
         }
 
     }
