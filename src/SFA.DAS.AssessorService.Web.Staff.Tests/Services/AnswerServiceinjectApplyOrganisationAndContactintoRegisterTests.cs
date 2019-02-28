@@ -82,36 +82,36 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
         [SetUp]
         public void Arrange()
         {
-            _applicationId = Guid.NewGuid();
-            _mockApplyApiClient = new Mock<IApplyApiClient>();
-            _mockRegisterQueryRepository = new Mock<IRegisterQueryRepository>();
-            _mockValidationService = new Mock<IValidationService>();
-            _mockAssessorValidationService = new Mock<IAssessorValidationService>();
-            _mockEpaOrganisationIdGenerator = new Mock<IEpaOrganisationIdGenerator>();
-            _mockLogger = new Mock<ILogger<AnswerService>>();
-            _mockSpecialCharacterCleanserService = new Mock<ISpecialCharacterCleanserService>();
-            _mockRegisterRepository = new Mock<IRegisterRepository>();
+            //_applicationId = Guid.NewGuid();
+            //_mockApplyApiClient = new Mock<IApplyApiClient>();
+            //_mockRegisterQueryRepository = new Mock<IRegisterQueryRepository>();
+            //_mockValidationService = new Mock<IValidationService>();
+            //_mockAssessorValidationService = new Mock<IAssessorValidationService>();
+            //_mockEpaOrganisationIdGenerator = new Mock<IEpaOrganisationIdGenerator>();
+            //_mockLogger = new Mock<ILogger<AnswerService>>();
+            //_mockSpecialCharacterCleanserService = new Mock<ISpecialCharacterCleanserService>();
+            //_mockRegisterRepository = new Mock<IRegisterRepository>();
+            ////_answerService = new AnswerService(
+            ////    _mockApplyApiClient.Object,
+            ////    Mock.Of<IValidationService>(),
+            ////    Mock.Of<IAssessorValidationService>(),
+            ////    Mock.Of<IRegisterQueryRepository>(),
+            ////    Mock.Of<IRegisterRepository>(),
+            ////    Mock.Of<IEpaOrganisationIdGenerator>(),
+            ////    Mock.Of<ISpecialCharacterCleanserService>(),
+            ////    Mock.Of<ILogger<AnswerService>>()
+            ////);
+
             //_answerService = new AnswerService(
             //    _mockApplyApiClient.Object,
-            //    Mock.Of<IValidationService>(),
-            //    Mock.Of<IAssessorValidationService>(),
-            //    Mock.Of<IRegisterQueryRepository>(),
-            //    Mock.Of<IRegisterRepository>(),
-            //    Mock.Of<IEpaOrganisationIdGenerator>(),
-            //    Mock.Of<ISpecialCharacterCleanserService>(),
-            //    Mock.Of<ILogger<AnswerService>>()
+            //    _mockValidationService.Object,
+            //    _mockAssessorValidationService.Object,
+            //    _mockRegisterQueryRepository.Object,
+            //    _mockRegisterRepository.Object,
+            //    _mockEpaOrganisationIdGenerator.Object,
+            //    _mockSpecialCharacterCleanserService.Object,
+            //    _mockLogger.Object
             //);
-
-            _answerService = new AnswerService(
-                _mockApplyApiClient.Object,
-                _mockValidationService.Object,
-                _mockAssessorValidationService.Object,
-                _mockRegisterQueryRepository.Object,
-                _mockRegisterRepository.Object,
-                _mockEpaOrganisationIdGenerator.Object,
-                _mockSpecialCharacterCleanserService.Object,
-                _mockLogger.Object
-            );
         }
 
 

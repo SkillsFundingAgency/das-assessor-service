@@ -19,11 +19,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
     {
         private readonly ApplyApiClient _applyApiClient;
         private readonly IAnswerService _answerService;
+        private readonly IAnswerInjectionService _answerInjectionService;
 
-        public ApplicationController(ApplyApiClient applyApiClient, IAnswerService answerService)
+        public ApplicationController(ApplyApiClient applyApiClient, IAnswerService answerService, IAnswerInjectionService answerInjectionService)
         {
             _applyApiClient = applyApiClient;
             _answerService = answerService;
+            _answerInjectionService = answerInjectionService;
         }
 
         [HttpGet("/Applications/Midpoint")]
@@ -250,7 +252,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
             if (sequenceId == 2 && returnType == "Approve")
             {
                 var command = await _answerService.GatherAnswersForOrganisationAndContactForApplication(applicationId);
-                var response = await _answerService.InjectApplyOrganisationAndContactDetailsIntoRegister(command);
+                var response = await _answerInjectionService.InjectApplyOrganisationAndContactDetailsIntoRegister(command);
                 warningMessages = response.WarningMessages;
             }
 

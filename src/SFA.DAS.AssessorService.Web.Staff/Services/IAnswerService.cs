@@ -10,7 +10,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
     public interface IAnswerService
     {
         Task<string> GetAnswer(Guid applicationId, string questionTag);
-        Task<CreateOrganisationAndContactFromApplyResponse> InjectApplyOrganisationAndContactDetailsIntoRegister(CreateOrganisationContactCommand command);
         Task<CreateOrganisationContactCommand> GatherAnswersForOrganisationAndContactForApplication(Guid applicationId);
     }
 }

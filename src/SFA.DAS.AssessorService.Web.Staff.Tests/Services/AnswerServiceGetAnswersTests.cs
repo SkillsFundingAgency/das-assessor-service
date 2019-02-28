@@ -24,14 +24,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
             _applicationId = Guid.NewGuid();
             _mockApplyApiClient = new Mock<IApplyApiClient>();
             _answerService = new AnswerService(
-                _mockApplyApiClient.Object,
-                Mock.Of<IValidationService>(),
-                Mock.Of<IAssessorValidationService>(),
-                Mock.Of<IRegisterQueryRepository>(),
-                Mock.Of<IRegisterRepository>(),
-                Mock.Of<IEpaOrganisationIdGenerator>(),
-                Mock.Of<ISpecialCharacterCleanserService>(),
-                Mock.Of<ILogger<AnswerService>>()
+                _mockApplyApiClient.Object
             );
         }
 
