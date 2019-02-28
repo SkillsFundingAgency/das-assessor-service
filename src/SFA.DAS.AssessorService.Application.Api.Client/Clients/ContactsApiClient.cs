@@ -75,6 +75,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task<List<ContactResponse>> GetAllContactsForOrganisation(string epaoId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/get-all/{epaoId}"))
+            {
+                return await RequestAndDeserialiseAsync<List<ContactResponse>>(request, $"Could not find contact with organisation {epaoId}");
+            }
+        }
+
     }
 
     public interface IContactsApiClient
@@ -92,6 +100,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<ContactResponse> GetById(string id);
 
         Task<ContactResponse> GetContactBySignInId(string signInId);
+        Task<List<ContactResponse>> GetAllContactsForOrganisation(string epaoId);
 
     }
 }
