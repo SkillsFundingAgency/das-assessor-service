@@ -3,7 +3,6 @@
     using System.Collections.Generic;
     using Settings;
     using Microsoft.Extensions.Logging;
-    using SFA.DAS.AssessorService.Application.Api.Client;
     using System;
     using System.Net.Http;
     using System.Net.Http.Headers;
@@ -13,11 +12,11 @@
     {
         private readonly HttpClient _client;
         private readonly ILogger<RoatpApiClient> _logger;
-        private readonly ITokenService _tokenService;
+        private readonly IRoatpTokenService _tokenService;
         private IWebConfiguration _configuration;
         private string _baseUrl;
 
-        public RoatpApiClient(ILogger<RoatpApiClient> logger, ITokenService tokenService, IWebConfiguration configuration)
+        public RoatpApiClient(ILogger<RoatpApiClient> logger, IRoatpTokenService tokenService, IWebConfiguration configuration)
         {
             _logger = logger;
             _tokenService = tokenService;
@@ -28,11 +27,15 @@
 
         public async Task<IEnumerable<IDictionary<string, object>>> GetAuditHistory()
         {
-            return await Get<IEnumerable<IDictionary<string, object>>>($"{_baseUrl}/api/v1/download/audit");
+            string url = $"{_baseUrl}/api/v1/download/audit";
+            _logger.LogInformation($"Retrieving register audit history data from {url}");
+
+            return await Get<IEnumerable<IDictionary<string, object>>>(url);
         }
 
         public async Task<IEnumerable<IDictionary<string, object>>> GetCompleteRegister()
         {
+            string url = "{_baseUrl}/api/v1/download/complete";
             return await Get<IEnumerable<IDictionary<string, object>>>($"{_baseUrl}/api/v1/download/complete");
         }
 

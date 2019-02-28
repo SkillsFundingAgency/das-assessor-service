@@ -33,5 +33,7 @@ namespace SFA.DAS.AssessorService.Settings
         [JsonRequired] public ClientApiAuthentication ApplyApiAuthentication { get; set; }
 
         [JsonRequired] public string RoatpApiClientBaseUrl { get; set; }
+
+        [JsonRequired] public ClientApiAuthentication RoatpApiAuthentication { get; set; }
     }
 }
