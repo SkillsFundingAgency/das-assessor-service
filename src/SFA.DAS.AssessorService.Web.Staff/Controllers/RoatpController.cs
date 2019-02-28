@@ -36,14 +36,14 @@
             {
                 var completeRegisterWorkSheet = package.Workbook.Worksheets.Add(CompleteRegisterWorksheetName);
                 var registerData = await _apiClient.GetCompleteRegister();
-                if (registerData.Any())
+                if (registerData != null && registerData.Any())
                 {
                     completeRegisterWorkSheet.Cells.LoadFromDataTable(_dataTableHelper.ToDataTable(registerData), true);
                 }
 
                 var auditHistoryWorksheet = package.Workbook.Worksheets.Add(AuditHistoryWorksheetName);
                 var auditHistoryData = await _apiClient.GetAuditHistory();
-                if (auditHistoryData.Any())
+                if (auditHistoryData != null && auditHistoryData.Any())
                 {
                     auditHistoryWorksheet.Cells.LoadFromDataTable(_dataTableHelper.ToDataTable(auditHistoryData), true);
                 }
