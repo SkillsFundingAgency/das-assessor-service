@@ -11,7 +11,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Commands
         public string OrganisationType { get; set; }
         public string OrganisationUkprn { get; set; }
         public string OrganisationReferenceType { get; set; }
-        public bool IsEpaoApproved { get; set; }
+        public bool? IsEpaoApproved { get; set; }
         public string TradingName { get; set; }
         public bool UseTradingName { get; set; }
         public string ContactName { get; set; }
@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Commands
         public string CharityNumber { get; set; }
         public string StandardWebsite { get; set; }
 
-        public CreateOrganisationContactCommand(string organisationName, string organisationType, string organisationUkprn, string organisationReferenceType, bool isEpaoApproved, string tradingName, bool useTradingName, string contactName, string contactAddress1, string contactAddress2, string contactAddress3, string contactAddress4, string contactPostcode, string contactEmail, string contactPhoneNumber, string companyUkprn, string companyNumber, string charityNumber, string standardWebsite)
+        public CreateOrganisationContactCommand(string organisationName, string organisationType, string organisationUkprn, string organisationReferenceType, bool? isEpaoApproved, string tradingName, bool useTradingName, string contactName, string contactAddress1, string contactAddress2, string contactAddress3, string contactAddress4, string contactPostcode, string contactEmail, string contactPhoneNumber, string companyUkprn, string companyNumber, string charityNumber, string standardWebsite)
         {
             OrganisationName = organisationName;
             OrganisationType = organisationType;
@@ -49,6 +49,10 @@ namespace SFA.DAS.AssessorService.Api.Types.Commands
             CompanyNumber = companyNumber;
             CharityNumber = charityNumber;
             StandardWebsite = standardWebsite;
+        }
+
+        public CreateOrganisationContactCommand()
+        {
         }
     }
 }

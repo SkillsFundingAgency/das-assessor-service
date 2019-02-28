@@ -27,16 +27,18 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
         private readonly IEpaOrganisationIdGenerator _organisationIdGenerator;
         private readonly ISpecialCharacterCleanserService _cleanser;
 
-        public AnswerService(IApplyApiClient applyApiClient, IRegisterQueryRepository registerQueryRepository, IValidationService validationService, IAssessorValidationService assessorValidationService, IEpaOrganisationIdGenerator organisationIdGenerator, ILogger<AnswerService> logger, ISpecialCharacterCleanserService cleanser, IRegisterRepository registerRepository)
+        public AnswerService(IApplyApiClient applyApiClient, IValidationService validationService, IAssessorValidationService assessorValidationService,  IRegisterQueryRepository registerQueryRepository, IRegisterRepository registerRepository, IEpaOrganisationIdGenerator organisationIdGenerator, ISpecialCharacterCleanserService cleanser, ILogger<AnswerService> logger)
         {
             _applyApiClient = applyApiClient;
-            _registerQueryRepository = registerQueryRepository;
             _validationService = validationService;
             _assessorValidationService = assessorValidationService;
-            _organisationIdGenerator = organisationIdGenerator;
-            _logger = logger;
-            _cleanser = cleanser;
+            _registerQueryRepository = registerQueryRepository;
             _registerRepository = registerRepository;
+            _organisationIdGenerator = organisationIdGenerator;
+            _cleanser = cleanser;
+            _logger = logger;
+
+
         }
 
         public async Task<CreateOrganisationContactCommand> GatherAnswersForOrganisationAndContactForApplication(Guid applicationId)
@@ -56,11 +58,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             var charityNumber = await GetAnswer(applicationId, "charity-number");
             var standardWebsite = await GetAnswer(applicationId, "standard-website");
             var organisation = await _applyApiClient.GetOrganisationForApplication(applicationId);
-            var organisationName = organisation.Name;
-            var organisationType = organisation.OrganisationType;
-            var organisationUkprn = organisation.OrganisationUkprn;
+            var organisationName = organisation?.Name;
+            var organisationType = organisation?.OrganisationType;
+            var organisationUkprn = organisation?.OrganisationUkprn;
             var organisationReferenceType = organisation?.OrganisationDetails?.OrganisationReferenceType;
-            var isEpaoApproved = organisation.RoEPAOApproved;
+            var isEpaoApproved = organisation?.RoEPAOApproved;
             var useTradingName = useTradingNameString != null && (useTradingNameString.ToLower() == "yes" || useTradingNameString.ToLower() == "true" || useTradingNameString.ToLower() == "1");
             
             var command = new CreateOrganisationContactCommand
@@ -103,7 +105,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                 return response;
             }
 
-            if (command.IsEpaoApproved)
+            if (command.IsEpaoApproved.Value)
             {
                 response.IsEpaoApproved = true;
                 return response;

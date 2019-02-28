@@ -5,7 +5,7 @@ using SFA.DAS.AssessorService.Application.Interfaces.Validation;
 
 namespace SFA.DAS.AssessorService.Application.Api.Services.Validation
 {
-    public class AssessorValidationService: IAssessorValidationService
+    public class AssessorValidationService: IAssessorValidationService   // MFCMFC ValidationService, IAssessorValidationService
     {
         private readonly IRegisterValidationRepository _registerValidationRepository;
 

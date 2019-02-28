@@ -247,7 +247,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
             }
 
             var warningMessages = new List<string>();
-            var ukprnAlreadyPresent = false;
             if (sequenceId == 2 && returnType == "Approve")
             {
                 var command = await _answerService.GatherAnswersForOrganisationAndContactForApplication(applicationId);
