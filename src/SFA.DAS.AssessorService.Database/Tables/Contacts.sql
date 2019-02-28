@@ -4,9 +4,9 @@
 	[DeletedAt] [datetime2](7) NULL,
 	[DisplayName] [nvarchar](120) NOT NULL,
 	[Email] [nvarchar](120) NULL,
-	[EndPointAssessorOrganisationId] [nvarchar](12) NOT NULL,
+	[EndPointAssessorOrganisationId] [nvarchar](12) NULL,
 	[OrganisationId] [uniqueidentifier] NULL,
-	[Status] [nvarchar](10) NOT NULL,
+	[Status] [nvarchar](20) NOT NULL,
 	[UpdatedAt] [datetime2](7) NULL,
 	[Username] [nvarchar](30) NOT NULL,
 	[PhoneNumber] [NVARCHAR] (50) NULL
@@ -14,7 +14,8 @@
 (
 	[Id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY],
- CONSTRAINT [AK_Contacts_Username] UNIQUE NONCLUSTERED 
+ [SignInId] UNIQUEIDENTIFIER NULL, 
+    CONSTRAINT [AK_Contacts_Username] UNIQUE NONCLUSTERED 
 (
 	[Username] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
