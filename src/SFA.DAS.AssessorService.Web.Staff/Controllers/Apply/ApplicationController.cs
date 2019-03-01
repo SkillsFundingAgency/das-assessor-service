@@ -161,6 +161,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
         public async Task<IActionResult> Page(Guid applicationId, int sequenceId, int sectionId, string pageId)
         {
             var page = await _applyApiClient.GetPage(applicationId, sequenceId, sectionId, pageId);
+
+            if (page?.Active == false || page?.NotRequired == true)
+            {
+                // DO NOT show any information
+                page = null;
+            }
+
             var pageVm = new PageViewModel(applicationId, sequenceId, sectionId, pageId, page);
 
             var sequence = await _applyApiClient.GetSequence(applicationId, sequenceId);
