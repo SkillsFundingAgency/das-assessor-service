@@ -1,9 +1,9 @@
 ﻿namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
 {
+    using System;
     using System.Collections.Generic;
     using Settings;
     using Microsoft.Extensions.Logging;
-    using System;
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Threading.Tasks;
@@ -28,7 +28,7 @@
         public async Task<IEnumerable<IDictionary<string, object>>> GetAuditHistory()
         {
             string url = $"{_baseUrl}/api/v1/download/audit";
-            _logger.LogInformation($"Retrieving register audit history data from {url}");
+            _logger.LogInformation($"Retrieving RoATP register audit history data from {url}");
 
             return await Get<IEnumerable<IDictionary<string, object>>>(url);
         }
@@ -36,6 +36,7 @@
         public async Task<IEnumerable<IDictionary<string, object>>> GetCompleteRegister()
         {
             string url = "{_baseUrl}/api/v1/download/complete";
+            _logger.LogInformation($"Retrieving RoATP complete register data from {url}");
             return await Get<IEnumerable<IDictionary<string, object>>>($"{_baseUrl}/api/v1/download/complete");
         }
 
