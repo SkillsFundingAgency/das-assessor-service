@@ -19,7 +19,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.AO;
 namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
 {
     [TestFixture]
-    public class AnswerInjectionserviceApplyOrganisationAndContactintoRegisterTests
+    public class AnswerInjectionServiceApplyOrganisationAndContactintoRegisterTests
     {
         private AnswerInjectionService _answerInjectionService;
         private Mock<IRegisterQueryRepository> _mockRegisterQueryRepository;
