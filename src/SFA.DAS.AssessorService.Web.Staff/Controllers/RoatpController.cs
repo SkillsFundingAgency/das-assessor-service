@@ -11,7 +11,6 @@
     using OfficeOpenXml;
     using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
     using System;
-    using System.Collections.Generic;
     using System.Threading.Tasks;
     using Domain;
     using ViewModels.Roatp;
@@ -74,21 +73,18 @@
         [Route("new-training-provider")]
         public async Task<IActionResult> AddOrganisation()
         {
-            var providerTypes = await _apiClient.GetProviderTypes();
-
             var model = new AddOrganisationViewModel
             {
-                ProviderTypes = providerTypes
+                ProviderTypes = await _apiClient.GetProviderTypes()
             };
-
+        
             return View(model);
         }
 
         [Route("enter-details")]
         public async Task<IActionResult> AddOrganisationDetails(AddOrganisationViewModel model)
         {
-            var organisationTypes = await _apiClient.GetOrganisationTypes(model.ProviderTypeId);
-            model.OrganisationTypes = organisationTypes;
+            model.OrganisationTypes = await _apiClient.GetOrganisationTypes(model.ProviderTypeId);
 
             return View(model);
         }
@@ -96,10 +92,8 @@
         [Route("confirm-details")]
         public async Task<IActionResult> AddOrganisationPreview(AddOrganisationViewModel model)
         {
-            var organisationTypes = await _apiClient.GetOrganisationTypes(model.ProviderTypeId);
-            var providerTypes = await _apiClient.GetProviderTypes();
-            model.OrganisationTypes = organisationTypes;
-            model.ProviderTypes = providerTypes;
+            model.OrganisationTypes = await _apiClient.GetOrganisationTypes(model.ProviderTypeId);
+            model.ProviderTypes = await _apiClient.GetProviderTypes();
 
             return View(model);
         }
@@ -136,10 +130,13 @@
                 OrganisationData = new OrganisationData
                 {
                     CharityNumber = model.CharityNumber,
-                    CompanyNumber = model.CompanyNumber
+                    CompanyNumber = model.CompanyNumber,
+                    FinancialTrackRecord = true,
+                    NonLevyContract = false,
+                    ParentCompanyGuarantee = false
                 },
                 UKPRN = model.UKPRN,
-                OrganisationStatus = new OrganisationStatus { Id = 1 },
+                OrganisationStatus = new OrganisationStatus { Id = 1 }, // Active
                 StatusDate = DateTime.Now,
                 OrganisationType = new OrganisationType { Id = model.OrganisationTypeId },
                 ProviderType = new ProviderType { Id = model.ProviderTypeId }
