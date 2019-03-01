@@ -52,8 +52,10 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
         string CheckCompanyNumberIsValid(string companyNumber);
         string CheckIfOrganisationCompanyNumberExists(string organisationIdToExclude, string companyNumber);
+        string CheckIfOrganisationCompanyNumberExists(string companyNumber);
         string CheckCharityNumberIsValid(string charityNumber);
         string CheckIfOrganisationCharityNumberExists(string organisationIdToExclude, string charityNumber);
+        string CheckIfOrganisationCharityNumberExists(string charityNumber);
 
         ValidationResponse ValidatorCreateEpaOrganisationRequest(CreateEpaOrganisationRequest request);
         ValidationResponse ValidatorCreateEpaOrganisationContactRequest(CreateEpaOrganisationContactRequest request);
