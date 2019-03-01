@@ -111,7 +111,7 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <form asp-action="Grade" asp-controller="Financial">
+        <form class="js-disable-on-submit" asp-action="Grade" asp-controller="Financial">
             <input type="hidden" name="ApplicationId" value="@Model.ApplicationId" />
             <div class="form-group">
                 <fieldset>
