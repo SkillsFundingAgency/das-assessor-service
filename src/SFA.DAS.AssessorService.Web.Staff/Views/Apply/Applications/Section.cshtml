@@ -184,7 +184,7 @@
                 </dl>
             }
 
-            <form asp-action="EvaluateSection" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId">
+            <form class="js-disable-on-submit" asp-action="EvaluateSection" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId">
                 <div class="form-group">
                     <fieldset class="after-error-summary inline">
                         <legend id="IsSectionComplete">
