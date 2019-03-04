@@ -65,6 +65,15 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
             Assert.IsFalse(exists);
         }
 
+        [TestCase(876533, true)]
+        [TestCase(1234, false)]
+
+        public void CheckEpaOrganisationIsAlreadyUsingUkprn(long ukprn, bool doesExist)
+        {
+            var exists = _validationRepository.EpaOrganisationExistsWithUkprn(ukprn).Result;
+            Assert.AreEqual(doesExist,exists);
+        }
+
         [Test]
         public void CheckEpaOrganisationIsntAlreadyUsingUkprnWhenCheckingUnusedUkprn()
         {

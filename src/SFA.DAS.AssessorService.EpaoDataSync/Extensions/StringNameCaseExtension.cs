@@ -32,7 +32,7 @@ namespace SFA.DAS.AssessorService.EpaoDataSync.Extensions
         static StringNameCaseExtension()
         {
             Options.Add(NameOptions.lazy, false);
-            Options.Add(NameOptions.spanish, true);
+            Options.Add(NameOptions.spanish, false);
 
 
             Exceptions.Add("\bMacEvicius", "Macevicius");

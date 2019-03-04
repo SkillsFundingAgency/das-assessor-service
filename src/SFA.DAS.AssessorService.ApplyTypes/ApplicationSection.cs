@@ -15,12 +15,12 @@ namespace SFA.DAS.AssessorService.ApplyTypes
 
         public int PagesComplete
         {
-            get { return QnAData.Pages.Count(p => p.Active && p.Complete); }
+            get { return QnAData.Pages.Count(p => !p.NotRequired && p.Active && p.Complete); }
         }
 
         public int PagesActive
         {
-            get { return QnAData.Pages.Count(p => p.Active); }
+            get { return QnAData.Pages.Count(p => !p.NotRequired && p.Active); }
         }
 
         public bool HasNewPageFeedback => QnAData.Pages.Any(p => p.HasNewFeedback);
