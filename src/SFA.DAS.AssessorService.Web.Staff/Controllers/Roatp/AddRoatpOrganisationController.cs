@@ -55,8 +55,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             var validationMessages = _validator.ValidateProviderType(model.ProviderTypeId);
             if (validationMessages.Any())
             {
-                model.ValidationErrors = new List<string>();
-                model.ValidationErrors.AddRange(validationMessages);
+                model.ValidationErrors = new List<string>(validationMessages);
                 model.ProviderTypes = await _apiClient.GetProviderTypes();
                 return View("~/Views/Roatp/AddOrganisation.cshtml", model);
             }
@@ -83,8 +82,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             var validationMessages = _validator.ValidateOrganisationDetails(model);
             if (validationMessages.Any())
             {
-                model.ValidationErrors = new List<string>();
-                model.ValidationErrors.AddRange(validationMessages);
+                model.ValidationErrors = new List<string>(validationMessages);
                 model.ProviderTypes = await _apiClient.GetProviderTypes();
                 return View("~/Views/Roatp/AddOrganisationDetails.cshtml", model);
             }
