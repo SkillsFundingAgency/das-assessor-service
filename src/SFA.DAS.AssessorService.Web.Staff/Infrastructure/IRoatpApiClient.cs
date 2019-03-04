@@ -11,6 +11,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
        Task<IEnumerable<IDictionary<string, object>>> GetAuditHistory();
        Task<IEnumerable<ProviderType>> GetProviderTypes();
        Task<IEnumerable<OrganisationType>> GetOrganisationTypes(int providerTypeId);
-       Task CreateOrganisation(CreateOrganisationRequest organisationRequest);
+       Task<bool> CreateOrganisation(CreateOrganisationRequest organisationRequest);
     }
 }

@@ -7,8 +7,10 @@
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Diagnostics;
     using Newtonsoft.Json;
     using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
+    using System.Net;
 
     public class RoatpApiClient : IRoatpApiClient
     {
@@ -52,9 +54,11 @@
             return await Get<IEnumerable<ProviderType>>($"{_baseUrl}/api/v1/lookupData/providerTypes");
         }
         
-        public async Task CreateOrganisation(CreateOrganisationRequest organisationRequest)
+        public async Task<bool> CreateOrganisation(CreateOrganisationRequest organisationRequest)
         {
-            await Post<CreateOrganisationRequest>($"{_baseUrl}/api/v1/organisation/create", organisationRequest);
+           HttpStatusCode result = await Post<CreateOrganisationRequest>($"{_baseUrl}/api/v1/organisation/create", organisationRequest);
+
+           return await Task.FromResult(result == HttpStatusCode.OK);
         }
 
         private async Task<T> Get<T>(string uri)
@@ -68,15 +72,17 @@
             }
         }
 
-        private async Task Post<T>(string uri, T model)
+        private async Task<HttpStatusCode> Post<T>(string uri, T model)
         {
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
             var serializeObject = JsonConvert.SerializeObject(model);
 
-            using (var response = await _client.PostAsync(new Uri(uri, UriKind.Absolute),
-                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json"))) ;
-        }
+            var response = await _client.PostAsync(new Uri(uri, UriKind.Absolute),
+                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json"));
+
+             return response.StatusCode;
+         }
 
     }
 }

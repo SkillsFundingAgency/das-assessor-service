@@ -1,81 +1,39 @@
-﻿namespace SFA.DAS.AssessorService.Web.Staff.Controllers
+﻿
+namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
 {
-    using Domain;
-    using Helpers;
-    using Infrastructure;
-    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.EntityFrameworkCore.Internal;
     using Microsoft.Extensions.Logging;
-    using OfficeOpenXml;
     using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
+    using SFA.DAS.AssessorService.Web.Staff.Domain;
+    using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
+    using SFA.DAS.AssessorService.Web.Staff.Validators.Roatp;
+    using SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp;
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
-    using Validators.Roatp;
-    using ViewModels.Roatp;
 
-    [Authorize]
-    public class RoatpController : Controller
+    public class AddRoatpOrganisationController : Controller
     {
         private IRoatpApiClient _apiClient;
-        private IDataTableHelper _dataTableHelper;
-        private ILogger<RoatpController> _logger;
+        private ILogger<AddRoatpOrganisationController> _logger;
         private IAddOrganisationValidator _validator;
         private IRoatpSessionService _sessionService;
 
         private const string CompleteRegisterWorksheetName = "Providers";
         private const string AuditHistoryWorksheetName = "Provider history";
         private const string ExcelFileName = "_RegisterOfApprenticeshipTrainingProviders.xlsx";
-        
-        public RoatpController(IRoatpApiClient apiClient, IDataTableHelper dataTableHelper, 
-                               ILogger<RoatpController> logger, IAddOrganisationValidator validator,
-                               IRoatpSessionService sessionService)
+
+        public AddRoatpOrganisationController(IRoatpApiClient apiClient, ILogger<AddRoatpOrganisationController> logger, 
+            IAddOrganisationValidator validator, IRoatpSessionService sessionService)
         {
             _apiClient = apiClient;
-            _dataTableHelper = dataTableHelper;
             _logger = logger;
             _validator = validator;
             _sessionService = sessionService;
-        } 
+        }
         
-        [Route("manage-apprenticeship-training-providers")]
-        public IActionResult Index()
-        {
-            return View();
-        }
-
-        [Route("download-register")]
-        public async Task<IActionResult> Download()
-        {
-            using (var package = new ExcelPackage())
-            {
-                var completeRegisterWorkSheet = package.Workbook.Worksheets.Add(CompleteRegisterWorksheetName);
-                var registerData = await _apiClient.GetCompleteRegister();
-                if (registerData != null && registerData.Any())
-                {
-                    completeRegisterWorkSheet.Cells.LoadFromDataTable(_dataTableHelper.ToDataTable(registerData), true);
-                }
-                else
-                {
-                    _logger.LogError("Unable to retrieve register data from RoATP API");
-                }
-
-                var auditHistoryWorksheet = package.Workbook.Worksheets.Add(AuditHistoryWorksheetName);
-                var auditHistoryData = await _apiClient.GetAuditHistory();
-                if (auditHistoryData != null && auditHistoryData.Any())
-                {
-                    auditHistoryWorksheet.Cells.LoadFromDataTable(_dataTableHelper.ToDataTable(auditHistoryData), true);
-                }
-                else
-                {
-                    _logger.LogError("Unable to retrieve audit history data from RoATP API");
-                }
-
-                return File(package.GetAsByteArray(), "application/excel", $"{DateTime.Now.ToString("yyyyMMdd")}{ExcelFileName}");
-            }
-        }
-
         [Route("new-training-provider")]
         public async Task<IActionResult> AddOrganisation(AddOrganisationViewModel model)
         {
@@ -83,12 +41,12 @@
             {
                 model = new AddOrganisationViewModel();
             }
-            
+
             model.ProviderTypes = await _apiClient.GetProviderTypes();
-        
+
             _sessionService.SetAddOrganisationDetails(model);
 
-            return View(model);
+            return View("~/Views/Roatp/AddOrganisation.cshtml", model);
         }
 
         [Route("enter-details")]
@@ -100,7 +58,7 @@
                 model.ValidationErrors = new List<string>();
                 model.ValidationErrors.AddRange(validationMessages);
                 model.ProviderTypes = await _apiClient.GetProviderTypes();
-                return View("AddOrganisation", model);
+                return View("~/Views/Roatp/AddOrganisation.cshtml", model);
             }
 
             model.OrganisationTypes = await _apiClient.GetOrganisationTypes(model.ProviderTypeId);
@@ -113,7 +71,7 @@
 
             _sessionService.SetAddOrganisationDetails(model);
 
-            return View(model);
+            return View("~/Views/Roatp/AddOrganisationDetails.cshtml", model);
         }
 
         [Route("confirm-details")]
@@ -128,12 +86,12 @@
                 model.ValidationErrors = new List<string>();
                 model.ValidationErrors.AddRange(validationMessages);
                 model.ProviderTypes = await _apiClient.GetProviderTypes();
-                return View("AddOrganisationDetails", model);
+                return View("~/Views/Roatp/AddOrganisationDetails.cshtml", model);
             }
 
             _sessionService.SetAddOrganisationDetails(model);
 
-            return View(model);
+            return View("~/Views/Roatp/AddOrganisationPreview.cshtml", model);
         }
 
         [Route("successfully-added")]
@@ -141,11 +99,22 @@
         {
             var request = CreateAddOrganisationRequestFromModel(model);
 
-            await _apiClient.CreateOrganisation(request);
+            var success = await _apiClient.CreateOrganisation(request);
 
-            var bannerModel = new BannerViewModel {CreateOrganisationCompanyName = model.LegalName};
+            if (!success)
+            {
+                model.OrganisationTypes = await _apiClient.GetOrganisationTypes(model.ProviderTypeId);
+                model.ProviderTypes = await _apiClient.GetProviderTypes();
+                model.ValidationErrors = new List<string>
+                {
+                    $"An error occurred when adding the organisation '{model.LegalName}'.<br/> Please try again later."
+                };
+                return View("~/Views/Roatp/AddOrganisationPreview.cshtml", model);
+            }
 
-            return View("Index", bannerModel);
+            var bannerModel = new BannerViewModel { CreateOrganisationCompanyName = model.LegalName };
+
+            return View("~/Views/Roatp/Index.cshtml", bannerModel);
         }
 
         [Route("back")]
@@ -192,4 +161,3 @@
         }
     }
 }
-

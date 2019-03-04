@@ -1,0 +1,17 @@
+﻿@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp.AddOrganisationViewModel
+
+@if (Model.ValidationErrors != null && Model.ValidationErrors.Any())
+{
+    <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+        <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+            There is a problem
+        </h2>
+        <ul class="error-summary-list">
+            @foreach (var errorMessage in Model.ValidationErrors)
+            {
+                
+                <li><a href="#">@Html.Raw(errorMessage)</a></li>
+            }
+            </ul>
+    </div>
+}

@@ -4,7 +4,15 @@
 @using SFA.DAS.AssessorService.Web.Staff.Domain
 @{ ViewBag.Title = "What is the new training provider?"; }
 
-@{ await Html.RenderPartialAsync("_StylesPartial"); }
+@{
+    await Html.RenderPartialAsync("~/Views/Roatp/_StylesPartial.cshtml");
+}
+
+<form asp-controller="RoatpHome" asp-action="Index" method="post" name="backForm">
+    <div class="govuk-grid-column-one-half">
+        <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
+    </div>
+</form>
 
 <div class="grid-row">
     <div class="column-two-thirds">
@@ -17,8 +25,11 @@
 
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <form method="post" asp-action="AddOrganisationDetails" asp-controller="Roatp">
-
+                <form method="post" asp-action="AddOrganisationDetails" asp-controller="AddRoatpOrganisation">
+                    @{
+                        await Html.RenderPartialAsync("~/Views/Roatp/_AddOrganisationValidationErrorsPartial.cshtml");
+                    }
+    
                     <div class="govuk-form-group">
                         <fieldset class="govuk-fieldset">
 
@@ -27,7 +38,8 @@
                                 @foreach (var providerType in Model.ProviderTypes)
                                 {
                                     <div class="roatp-radios__item">
-                                        <input class="roatp-radios__input" id="route-@providerType.Id" name="ProviderTypeId" type="radio" value="@providerType.Id">
+                                        
+                                        <input asp-for="ProviderTypeId" class="roatp-radios__input" id="route-@providerType.Id" name="ProviderTypeId" type="radio" value="@providerType.Id">
                                         <label class="roatp-label roatp-radios__label" for="route-@providerType.Id">
                                             @providerType.Type
                                         </label>
@@ -36,7 +48,12 @@
                             </div>
                         </fieldset>
                     </div>
-
+                    <input type="hidden" asp-for="LegalName" />
+                    <input type="hidden" asp-for="TradingName" />
+                    <input type="hidden" asp-for="OrganisationTypeId" />
+                    <input type="hidden" asp-for="UKPRN" />
+                    <input type="hidden" asp-for="CompanyNumber" />
+                    <input type="hidden" asp-for="CharityNumber" />
                     <input type="submit" class="roatp-button" value="Continue" />
                 </form>
             </div>
