@@ -66,7 +66,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             var sessionModel = _sessionService.GetAddOrganisationDetails(model.OrganisationId);
             if (sessionModel.ProviderTypeId != model.ProviderTypeId)
             {
-                sessionModel.OrganisationTypeId = 0;
+                model.OrganisationTypeId = 0;
             }
 
             _sessionService.SetAddOrganisationDetails(model);
