@@ -196,6 +196,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task SendEmailsToOrgApprovedUsers(EmailAllApprovedContactsRequest emailAllApprovedContactsRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Put,
+                $"/api/v1/organisations/NotifyAllApprovedUsers"))
+            {
+                 await PostPutRequest (request, emailAllApprovedContactsRequest);
+            }
+        }
+
         private string SanitizeUrlParam(string rawParam)
         {
             var result = rawParam;
@@ -242,5 +251,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<EpaOrganisation> GetEpaOrganisation(string organisationId);
         Task<List<OrganisationType>> GetOrganisationTypes();
         Task<IEnumerable<OrganisationSearchResult>> SearchForOrganisations(string searchTerm);
+        Task SendEmailsToOrgApprovedUsers(EmailAllApprovedContactsRequest emailAllApprovedContactsRequest);
+
     }
 }

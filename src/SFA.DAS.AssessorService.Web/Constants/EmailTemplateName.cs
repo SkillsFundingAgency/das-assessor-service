@@ -7,6 +7,7 @@ namespace SFA.DAS.AssessorService.Web.Constants
 {
     public static class EmailTemplateName
     {
-        public const string ASSESSOR_EPAO_APPROVE_CONFIRM = "EPAOUserApproveConfirm";
+        public const string AssessorEpaoApproveConfirm = "EPAOUserApproveConfirm";
+        public const string AssessorEpoApproveRequest = "EPAOUserApproveRequest";
     }
 }

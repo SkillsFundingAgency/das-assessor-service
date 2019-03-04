@@ -98,7 +98,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _logger.LogInformation(
                 $"Received Search for Contacts and their Privileges using endPointAssessorOrganisationId = {endPointAssessorOrganisationId}");
 
-            return Ok(await _mediator.Send(new GetContactsRequest(endPointAssessorOrganisationId)));
+            return Ok(await _mediator.Send(new GetContactsWithPrivilagesRequest(endPointAssessorOrganisationId)));
         }
 
         [HttpGet("user/{id}", Name = "GetContactById")]

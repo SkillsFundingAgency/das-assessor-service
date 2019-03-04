@@ -83,6 +83,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task<ContactResponse> UpdateOrgAndStatus(UpdateContactWithOrgAndStausRequest updateContactWithOrgAndStausRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/contacts/updateContactWithOrgAndStatus"))
+            {
+                return await PostPutRequestWithResponse<UpdateContactWithOrgAndStausRequest, ContactResponse>(request,updateContactWithOrgAndStausRequest);
+            }
+        }
+
     }
 
     public interface IContactsApiClient
@@ -101,6 +109,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         Task<ContactResponse> GetContactBySignInId(string signInId);
         Task<List<ContactResponse>> GetAllContactsForOrganisation(string epaoId);
+
+        Task<ContactResponse> UpdateOrgAndStatus(
+            UpdateContactWithOrgAndStausRequest updateContactWithOrgAndStausRequest);
 
     }
 }

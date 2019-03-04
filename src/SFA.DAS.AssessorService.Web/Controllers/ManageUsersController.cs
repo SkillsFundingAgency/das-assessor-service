@@ -69,7 +69,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 {
                     var contactResponse = await _contactsApiClient.GetById(id);
                     var emailTemplate =
-                        await _emailApiClient.GetEmailTemplate(EmailTemplateName.ASSESSOR_EPAO_APPROVE_CONFIRM);
+                        await _emailApiClient.GetEmailTemplate(EmailTemplateName.AssessorEpaoApproveConfirm);
                     await _emailApiClient.SendEmailWithTemplate(new SendEmailRequest(contactResponse.Email,
                         emailTemplate, new
                         {

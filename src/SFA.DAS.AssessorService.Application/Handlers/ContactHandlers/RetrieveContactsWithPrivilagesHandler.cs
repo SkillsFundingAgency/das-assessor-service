@@ -8,15 +8,15 @@ using SFA.DAS.AssessorService.Domain.Consts;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
 {
-    public class RetrieveContactsHandler : IRequestHandler<GetContactsRequest, List<ContactsWithPrivilegesResponse>>
+    public class RetrieveContactsWithPrivilagesHandler : IRequestHandler<GetContactsWithPrivilagesRequest, List<ContactsWithPrivilegesResponse>>
     {
         private readonly IContactQueryRepository _contactQueryRepository;
-        public RetrieveContactsHandler(IContactQueryRepository contactQueryRepository)
+        public RetrieveContactsWithPrivilagesHandler(IContactQueryRepository contactQueryRepository)
         {
             _contactQueryRepository = contactQueryRepository;
         }
 
-        public async Task<List<ContactsWithPrivilegesResponse>> Handle(GetContactsRequest request,
+        public async Task<List<ContactsWithPrivilegesResponse>> Handle(GetContactsWithPrivilagesRequest request,
             CancellationToken cancellationToken)
         {
             var response = new List<ContactsWithPrivilegesResponse>();

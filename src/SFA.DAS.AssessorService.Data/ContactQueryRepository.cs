@@ -28,6 +28,7 @@ namespace SFA.DAS.AssessorService.Data
 
             return contacts;
         }
+        
 
         public async Task<IEnumerable<Contact>> GetAllContacts(string endPointAssessorOrganisationId)
         {

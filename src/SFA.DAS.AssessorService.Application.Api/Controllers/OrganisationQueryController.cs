@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
@@ -8,13 +10,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Api.Types;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Consts;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Validators;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Settings;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
@@ -27,18 +29,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
         private readonly UkPrnValidator _ukPrnValidator;
         private readonly IStringLocalizer<OrganisationQueryController> _localizer;
-        private readonly IMediator _mediator;
+        private readonly IWebConfiguration _config;
 
         public OrganisationQueryController(
             ILogger<OrganisationQueryController> logger, IOrganisationQueryRepository organisationQueryRepository, UkPrnValidator ukPrnValidator, IStringLocalizer<OrganisationQueryController> localizer,
-            IMediator mediator
+            IWebConfiguration config
         )
         {
             _logger = logger;
             _organisationQueryRepository = organisationQueryRepository;
             _ukPrnValidator = ukPrnValidator;
             _localizer = localizer;
-            _mediator = mediator;
+            _config = config;
         }
         
         [HttpGet("ukprn/{ukprn}", Name = "SearchOrganisation")]
@@ -97,7 +99,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         public async Task<IActionResult> SearchForOrganisations(string searchTerm)
         {
             _logger.LogInformation($@"Search organisations for search term {searchTerm}");
-            return Ok(await _mediator.Send(new OrganisationSearchRequest(searchTerm)));
+
+            using (var httpClient = new HttpClient()
+                {BaseAddress = new Uri(_config.ApplyApiAuthentication.ApiBaseAddress)})
+            {
+                httpClient.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", _config.ApplyApiAuthentication.ClientSecret);
+
+                var response = await httpClient.GetAsync($"/OrganisationSearch?searchTerm={searchTerm}");
+
+                return Ok(await response.Content.ReadAsAsync<IEnumerable<OrganisationSearchResult>>());
+            }
         }
+    
     }
 }

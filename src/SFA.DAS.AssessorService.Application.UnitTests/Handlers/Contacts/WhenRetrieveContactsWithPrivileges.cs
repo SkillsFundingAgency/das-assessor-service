@@ -45,8 +45,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Contacts
 
             contactQueryRepositoryMock.Setup(x => x.GetAllContactsWithPrivileges(It.IsAny<string>()))
                 .Returns(Task.FromResult(listOfGroupedContactsWithPrivileges));
-            var getContactsRequest = new GetContactsRequest("organisationId");
-            var retrieveContactsHandler = new RetrieveContactsHandler(contactQueryRepositoryMock.Object);
+            var getContactsRequest = new GetContactsWithPrivilagesRequest("organisationId");
+            var retrieveContactsHandler = new RetrieveContactsWithPrivilagesHandler(contactQueryRepositoryMock.Object);
             _result = retrieveContactsHandler.Handle(getContactsRequest,new CancellationToken()).Result;
         }
 

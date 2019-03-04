@@ -95,34 +95,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(OrganisationSearchViewModel viewModel)
         {
-            var signinId = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "sub")?.Value;
-            var user = await _contactsApiClient.GetContactBySignInId(signinId);
-
-            if (user.EndPointAssessorOrganisationId != null && user.OrganisationId != null && user.Status == ContactStatus.Live)
-                return RedirectToAction("Index", "Dashboard");
-
-            if (string.IsNullOrEmpty(viewModel.Name) || viewModel.SearchString.Length < 2)
-            {
-                ModelState.AddModelError(nameof(viewModel.Name), "Enter a valid search string");
-                TempData["ShowErrors"] = true;
-                return RedirectToAction(nameof(Index));
-            }
-
             var organisationSearchResult = await GetOrganisation(viewModel.SearchString, viewModel.Name, viewModel.Ukprn, viewModel.OrganisationType, viewModel.Postcode);
-          
-
             if (organisationSearchResult != null)
             {
                 TempData["EpaoId"] = organisationSearchResult.OrganisationReferenceId;
                 return View(nameof(NoAccess), viewModel);
             }
-            else
-            {
-                viewModel.Organisations = new List<OrganisationSearchResult> { organisationSearchResult };
-                viewModel.OrganisationTypes = await _organisationsApiClient.GetOrganisationTypes();
+               
+           viewModel.OrganisationTypes = await _organisationsApiClient.GetOrganisationTypes();
 
-                //Forward to apply
-            }
+           //Forward to apply
 
             return View(nameof(DealingWithRequest), viewModel);
         }
@@ -131,6 +113,28 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> DealingWithRequest(OrganisationSearchViewModel viewModel)
         {
+            var signinId = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "sub")?.Value;
+            var user = await _contactsApiClient.GetContactBySignInId(signinId);
+
+            if (user.EndPointAssessorOrganisationId != null && user.OrganisationId != null && user.Status == ContactStatus.Live)
+                return RedirectToAction("Index", "Dashboard");
+
+            var organisationSearchResult = await GetOrganisation(viewModel.SearchString, viewModel.Name, viewModel.Ukprn, viewModel.OrganisationType, viewModel.Postcode);
+            if (organisationSearchResult != null)
+            {
+                var registeredOrganisation =  await _organisationsApiClient.Get(organisationSearchResult.Ukprn?.ToString());
+                if (registeredOrganisation != null)
+                {
+                    await _contactsApiClient.UpdateOrgAndStatus(new UpdateContactWithOrgAndStausRequest(
+                        user.Id.ToString(),
+                        registeredOrganisation.Id.ToString(),
+                        organisationSearchResult.Id,
+                        ContactStatus.InvitePending));
+                    await _organisationsApiClient.SendEmailsToOrgApprovedUsers( new EmailAllApprovedContactsRequest(user.DisplayName, organisationSearchResult
+                        .OrganisationReferenceId));
+                }
+            }
+
             return View(viewModel);
         }
 

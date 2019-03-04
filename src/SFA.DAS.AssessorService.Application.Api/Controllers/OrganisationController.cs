@@ -9,6 +9,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Exceptions;
+using SFA.DAS.AssessorService.Web.Constants;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using NotFound = SFA.DAS.AssessorService.Domain.Exceptions.NotFound;
 
@@ -79,6 +80,36 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 };
 
                 await _mediator.Send(deleteOrganisationRequest);
+            }
+            catch (NotFound)
+            {
+                throw new ResourceNotFoundException();
+            }
+
+            return NoContent();
+        }
+
+        [HttpPut("NotifyAllApprovedUsers", Name = "NotifyAllApprovedUsers")]
+        [ValidateBadRequest]
+        [SwaggerResponse((int)HttpStatusCode.NoContent)]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> NotifyAllApprovedUsers([FromBody]EmailAllApprovedContactsRequest emailAllApprovedContactsRequest)
+        {
+            _logger.LogInformation("Received request to Notify Organisation Users");
+
+            try
+            {
+               var emailTemplate = await _mediator.Send(new GetEMailTemplateRequest
+                       {TemplateName= EmailTemplateName.AssessorEpoApproveRequest});
+               var contacts= await _mediator.Send(new GetContactsForOrganisationRequest(emailAllApprovedContactsRequest.OrganisationReferenceId));
+               foreach (var contact in contacts)
+               {
+                   await _mediator.Send(new SendEmailRequest(contact.Email, emailTemplate, new
+                   {
+                       username = $"{emailAllApprovedContactsRequest.DisplayName}"
+                   }));
+               }
             }
             catch (NotFound)
             {

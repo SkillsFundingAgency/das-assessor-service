@@ -144,6 +144,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                                 new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn",
                                     user.Username),
                                 new Claim("http://schemas.portal.com/ukprn", organisation.Ukprn.ToString())
+
                             });
 
                             context.Principal.AddIdentity(identity);
@@ -153,17 +154,17 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                 });
 
 
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy(Policies.ExternalApiAccess,
-                    policy =>
-                    {
-                        policy.RequireAssertion(context =>
-                            context.User.HasClaim("http://schemas.portal.com/service", Roles.ExternalApiAccess)
-                            && context.User.HasClaim("http://schemas.portal.com/service", Roles.EpaoUser)
-                            );
-                    });
-            });
+            //services.AddAuthorization(options =>
+            //{
+            //    options.AddPolicy(Policies.ExternalApiAccess,
+            //        policy =>
+            //        {
+            //            policy.RequireAssertion(context =>
+            //                context.User.HasClaim("http://schemas.portal.com/service", Roles.ExternalApiAccess)
+            //                && context.User.HasClaim("http://schemas.portal.com/service", Roles.EpaoUser)
+            //                );
+            //        });
+            //});
         }
     }
 

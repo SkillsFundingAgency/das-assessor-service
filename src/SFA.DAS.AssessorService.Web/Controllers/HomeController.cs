@@ -16,7 +16,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             _cache = cache;
             _sessionService = sessionService;
         }
-
+        [HttpGet]
         [Route("/")]
         public IActionResult Index()
         {

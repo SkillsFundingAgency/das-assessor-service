@@ -38,7 +38,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             _webConfiguration = webConfiguration;
         }
 
-
+        [HttpGet]
         [Route("Dashboard")]
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] {Pages.Dashboard })]
         public async Task<IActionResult> Index()
