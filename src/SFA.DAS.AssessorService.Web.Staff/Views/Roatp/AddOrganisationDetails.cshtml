@@ -7,68 +7,70 @@
 @{
     await Html.RenderPartialAsync("~/Views/Roatp/_StylesPartial.cshtml");
 }
-
-<form asp-controller="AddRoatpOrganisation" asp-action="Back" method="post" name="backForm">
-    <div class="govuk-grid-column-one-half">
-        <input type="hidden" asp-for="OrganisationId" />
-        <input type="hidden" name="action" value="AddOrganisation" />
-        <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
-    </div>
-</form>
-
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <h1 class="heading-xlarge roatp-heading">Enter details</h1>
-    </div>
-</div>
-<div class="govuk-width-container">
-
-    <main class="govuk-main-wrapper " id="main-content" role="main">
-
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <form method="post" asp-action="AddOrganisationPreview" asp-controller="AddRoatpOrganisation">
-                    @{
-                        await Html.RenderPartialAsync("~/Views/Roatp/_AddOrganisationValidationErrorsPartial.cshtml");
-                    }
-                    <input type="hidden" asp-for="ProviderTypeId" />
-                    <div class="govuk-form-group">
-                        <label for="LegalName" class="roatp-label">Legal name</label>
-                        <input id="LegalName" name="LegalName" type="text" class="roatp-input" asp-for="LegalName" />
-                    </div>
-                    <div class="govuk-form-group">
-                        <label for="UKPRN" class="roatp-label">UKPRN</label>
-                        <input id="UKPRN" name="UKPRN" type="text" class="roatp-input govuk-!-width-one-third" asp-for="UKPRN" />
-                    </div>
-
-                    <div class="govuk-form-group">
-                        <label class="roatp-label" for="OrganisationTypeId">
-                            Type of organisation
-                        </label>
-                        <select class="roatp-select" id="OrganisationTypeId" name="OrganisationTypeId" asp-for="OrganisationTypeId">
-                            @foreach (var organisationType in Model.OrganisationTypes)
-                            {
-                                <option value="@organisationType.Id">@organisationType.Type</option>
-                            }
-                        </select>
-                    </div>
-
-                    <div class="govuk-form-group">
-                        <label for="CompanyNumber" class="roatp-label">Company number, if applicable</label>
-                        <input id="CompanyNumber" name="CompanyNumber" type="text" class="roatp-input govuk-!-width-one-third" asp-for="CompanyNumber" />
-                    </div>
-                    <div class="govuk-form-group">
-                        <label for="CharityNumber" class="roatp-label">Charity registration number, if applicable</label>
-                        <input id="CharityNumber" name="charityNumber" type="text" class="roatp-input govuk-!-width-one-third" asp-for="CharityNumber" />
-                    </div>
-
-                    <div class="govuk-form-group">
-                        <label for="TradingName" class="roatp-label">Trading name, if applicable</label>
-                        <input id="TradingName" name="TradingName" type="text" class="roatp-input" asp-for="TradingName" />
-                    </div>
-                    <input type="submit" class="roatp-button" value="Add" />
-                </form>
-            </div>
+    <div class="grid-row">
+    <form asp-controller="AddRoatpOrganisation" asp-action="Back" method="post" name="backForm">
+        <div class="govuk-grid-column-one-half">
+            <input type="hidden" asp-for="OrganisationId" />
+            <input type="hidden" name="action" value="AddOrganisation" />
+            <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
         </div>
-    </main>
-</div>
+    </form>
+    </div>
+
+    @{
+        await Html.RenderPartialAsync("~/Views/Roatp/_AddOrganisationValidationErrorsPartial.cshtml");
+    }
+    <div class="grid-row">
+        <div class="column-two-thirds">
+            <h1 class="heading-xlarge roatp-heading">Enter details</h1>
+        </div>
+    </div>
+    <div class="govuk-width-container">
+
+        <main class="govuk-main-wrapper " id="main-content" role="main">
+
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    <form method="post" asp-action="AddOrganisationPreview" asp-controller="AddRoatpOrganisation">
+
+                        <input type="hidden" asp-for="ProviderTypeId" />
+                        <div class="govuk-form-group">
+                            <label for="LegalName" class="roatp-label">Legal name</label>
+                            <input id="LegalName" name="LegalName" type="text" class="roatp-input" asp-for="LegalName" />
+                        </div>
+                        <div class="govuk-form-group">
+                            <label for="UKPRN" class="roatp-label">UKPRN</label>
+                            <input id="UKPRN" name="UKPRN" type="text" class="roatp-input govuk-!-width-one-third" asp-for="UKPRN" />
+                        </div>
+
+                        <div class="govuk-form-group">
+                            <label class="roatp-label" for="OrganisationTypeId">
+                                Type of organisation
+                            </label>
+                            <select class="roatp-select" id="OrganisationTypeId" name="OrganisationTypeId" asp-for="OrganisationTypeId">
+                                @foreach (var organisationType in Model.OrganisationTypes)
+                                {
+                                    <option value="@organisationType.Id">@organisationType.Type</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="govuk-form-group">
+                            <label for="CompanyNumber" class="roatp-label">Company number, if applicable</label>
+                            <input id="CompanyNumber" name="CompanyNumber" type="text" class="roatp-input govuk-!-width-one-third" asp-for="CompanyNumber" />
+                        </div>
+                        <div class="govuk-form-group">
+                            <label for="CharityNumber" class="roatp-label">Charity registration number, if applicable</label>
+                            <input id="CharityNumber" name="charityNumber" type="text" class="roatp-input govuk-!-width-one-third" asp-for="CharityNumber" />
+                        </div>
+
+                        <div class="govuk-form-group">
+                            <label for="TradingName" class="roatp-label">Trading name, if applicable</label>
+                            <input id="TradingName" name="TradingName" type="text" class="roatp-input" asp-for="TradingName" />
+                        </div>
+                        <input type="submit" class="roatp-button" value="Add" />
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
