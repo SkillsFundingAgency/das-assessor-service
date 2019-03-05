@@ -1464,3 +1464,7 @@ table.responsive [aria-sort="descending"] a:after {
 .button-looks-like-a-link:hover {
     color: #2b8cc4;
 }
+
+.govuk-body-anchor {
+    line-height: 2.5em;
+}

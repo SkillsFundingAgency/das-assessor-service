@@ -12,8 +12,8 @@
 
 <div class="grid-row">
     <div class="column-full">
-        <form method="get" asp-action="Results" asp-controller="OrganisationSearch"  class="js-disable-on-submit" novalidate>
-            
+        <form method="get" asp-action="FromResults" asp-controller="OrganisationSearch" class="js-disable-on-submit" novalidate>
+
             @* hidden with css by default *@
             <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
                 <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
@@ -29,22 +29,29 @@
                         There's a problem
                     </h2>
                     <ul class="error-summary-list">
-                        <li>Please select an organisation</li>
+                        <li><a sfa-validation-for="SearchString">Enter some text to identify your organisation</a></li>
                     </ul>
                 </div>
             }
 
-            <div class="form-group">
-                <h1 class="heading-large">
-                    Select your organisation
-                </h1>
-                <span class="form-hint">
-                    or search again
-                </span>
-
-                <input class="form-control" asp-for="SearchString" minlength="2" required/>
+            <div sfa-anyvalidationerror-class="after-error-summary">
+                <div class="form-group" sfa-validation-for="SearchString" sfa-validationerror-class="form-group-error">
+                    <h1 class="heading-large">
+                        Select your organisation
+                    </h1>
+                    <span class="form-hint">
+                        or search again
+                    </span>
+                    @if (!ViewData.ModelState.IsValid || showErrors)
+                    {
+                        <span id="search-string-error" class="error-message">
+                            Enter some text to identify your organisation
+                        </span>
+                    }
+                    <input class="form-control" sfa-validationerror-class="form-control-error" sfa-validation-for="SearchString" asp-for="SearchString" minlength="2" required />
+                </div>
+                <button type="submit" class="button">Search</button>
             </div>
-            <button type="submit" class="button">Search</button>
         </form>
     </div>
 </div>
@@ -55,72 +62,72 @@
         {
             <table class="table.responsive">
                 <tbody>
-                @foreach (var result in Model.Organisations)
-                {
-                    <tr>
-                        <td>
-                            <form method="post" asp-action="@(result.OrganisationType != null ? "Create" : "Type")" asp-controller="OrganisationSearch" novalidate>
-                                <input asp-for="SearchString" type="hidden" />
-                                <input asp-for="Name" value="@result.Name" type="hidden" />
-                                <input asp-for="Ukprn" value="@result.Ukprn" type="hidden" />
-                                <input asp-for="OrganisationType" value="@result.OrganisationType" type="hidden" />
-                                <input asp-for="Postcode" value="@result.Address?.Postcode" type="hidden" />
+                    @foreach (var result in Model.Organisations)
+                    {
+                        <tr>
+                            <td>
+                                <form method="post" asp-action="@("OrganisationChosen")" asp-controller="OrganisationSearch" novalidate>
+                                    <input asp-for="SearchString" type="hidden" />
+                                    <input asp-for="Name" value="@result.Name" type="hidden" />
+                                    <input asp-for="Ukprn" value="@result.Ukprn" type="hidden" />
+                                    <input asp-for="OrganisationType" value="@result.OrganisationType" type="hidden" />
+                                    <input asp-for="Postcode" value="@result.Address?.Postcode" type="hidden" />
 
+                                    <p>
+                                        <button type="submit" class="button-looks-like-a-link">@result.Name</button>
+                                    </p>
+                                </form>
                                 <p>
-                                    <button type="submit" class="button-looks-like-a-link">@result.Name</button>
+                                    <span class="bold">Address:</span>
+                                    @if (result.Address?.Postcode == null)
+                                    {
+                                        @("Unknown");
+                                    }
+                                    else
+                                    {
+                                        @string.Join(", ", @result.Address?.Address1, @result.Address?.City, @result.Address.Postcode);
+                                    }
                                 </p>
-                            </form>
-                            <p>
-                                <span class="bold">Address:</span>
-                                @if (result.Address?.Postcode == null)
+                                @if (result.OrganisationType != null)
                                 {
-                                    @("Unknown");
+                                    <p class="govuk-margin-bottom-0">
+                                        <span class="bold">Type:</span>
+                                        @result.OrganisationType
+                                    </p>
                                 }
-                                else
+                                @if (!string.Equals(configuration["EnvironmentName"], "PROD", StringComparison.InvariantCultureIgnoreCase))
                                 {
-                                    @string.Join(", ", @result.Address?.Address1, @result.Address?.City, @result.Address.Postcode);
-                                }
-                            </p>
-                            @if (result.OrganisationType != null)
-                            {
-                                <p class="govuk-margin-bottom-0">
-                                    <span class="bold">Type:</span>
-                                    @result.OrganisationType
-                                </p>
-                            }
-                            @if (!string.Equals(configuration["EnvironmentName"], "PROD", StringComparison.InvariantCultureIgnoreCase))
-                            {
-                                        @* ON-1205 - request to show flags of what results were found in non-PROD environments *@
-                                <p class="govuk-margin-bottom-0">
-                                    <span class="bold">Found on:</span>
-                                    @if (result.RoEPAOApproved)
-                                    {
-                                        <span>RoEPAO</span>
-                                    }
-                                    @if (result.RoEPAOApproved && result.RoATPApproved)
-                                    {
-                                        <span> and </span>
-                                    }
-                                    @if (result.RoATPApproved)
-                                    {
-                                        <span>RoATP</span>
-                                    }
-                                    @if (!result.RoEPAOApproved && !result.RoATPApproved)
-                                    {
-                                        switch (result.EasApiOrganisationType)
+                                    @* ON-1205 - request to show flags of what results were found in non-PROD environments *@
+                                    <p class="govuk-margin-bottom-0">
+                                        <span class="bold">Found on:</span>
+                                        @if (result.RoEPAOApproved)
                                         {
-                                            case "Charity":<span>Charity Commission</span> break;
-                                            case "Company": <span>Companies House</span> break;
-                                            case "PublicSector": <span>EASAPI - Public Sector</span>break;
-                                            case "EducationOrganisation": <span>EASAPI - Education Organisation</span> break;
-                                            default: <span>EASAPI</span>break;
+                                            <span>RoEPAO</span>
                                         }
-                                    }
-                                </p>
-                            }
-                        </td>
-                    </tr>
-                }
+                                        @if (result.RoEPAOApproved && result.RoATPApproved)
+                                        {
+                                            <span> and </span>
+                                        }
+                                        @if (result.RoATPApproved)
+                                        {
+                                            <span>RoATP</span>
+                                        }
+                                        @if (!result.RoEPAOApproved && !result.RoATPApproved)
+                                        {
+                                            switch (result.EasApiOrganisationType)
+                                            {
+                                                case "Charity":<span>Charity Commission</span> break;
+                                                case "Company": <span>Companies House</span> break;
+                                                case "PublicSector": <span>EASAPI - Public Sector</span>break;
+                                                case "EducationOrganisation": <span>EASAPI - Education Organisation</span> break;
+                                                default: <span>EASAPI</span>break;
+                                            }
+                                        }
+                                    </p>
+                                }
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         }
@@ -140,3 +147,8 @@
         }
     </div>
 </div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

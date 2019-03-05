@@ -4,7 +4,7 @@
     ViewData["Title"] = "Access Denied";
     string epaoId = TempData["EpaoId"] as string;
 }
-<a asp-action="Index" asp-controller="OrganisationSearch" class="link-back">Search again</a>
+<a asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.SearchString" class="link-back">Back to search results</a>
 
 <div class="grid-row">
     <div class="column-two-thirds">

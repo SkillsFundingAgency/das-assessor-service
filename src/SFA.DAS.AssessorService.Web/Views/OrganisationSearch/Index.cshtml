@@ -1,4 +1,6 @@
 ﻿@model SFA.DAS.AssessorService.Web.ViewModels.Organisation.OrganisationSearchViewModel
+@inject Microsoft.Extensions.Configuration.IConfiguration configuration
+
 @{
     ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Organisation search";
     Layout = "_Layout";
@@ -10,7 +12,6 @@
 <div class="grid-row">
     <div class="column-two-thirds">
         <form method="get" asp-action="Results" class="js-disable-on-submit" asp-controller="OrganisationSearch" novalidate>
-
             @* hidden with css by default *@
             <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
                 <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
@@ -36,7 +37,7 @@
                     <h1 class="heading-xlarge">
                         Search for your organisation
                     </h1>
-                    <label class="form-label" for="SearchString">
+                    <label class="form-label">
                         <p>Search using either the:</p>
                         <ul class="list list-bullet">
                             <li>organisation name</li>
@@ -55,11 +56,11 @@
                             </span>
                         }
                     </label>
-                    <input class="form-control" sfa-validation-for="SearchString" sfa-validationerror-class="form-control-error" asp-for="SearchString" minlength="2" required />
-                </div>
-            </div>
+                    <input class="form-control" sfa-validation-for="SearchString" sfa-validationerror-class="form-control-error" asp-for="SearchString" minlength="2" />
 
-            <button type="submit" class="button">Search</button>
+                </div>
+                <button type="submit" class="button">Search</button>
+            </div>
         </form>
     </div>
 </div>

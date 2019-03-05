@@ -6,8 +6,7 @@
 @{
     ViewBag.Title = "Confirm organisation";
     Layout = "_Layout";
-
-    bool showErrors = TempData["ShowErrors"] as bool? ?? false;
+    
     var organisation = Model.Organisations?.FirstOrDefault();
     var organisationType = Model.OrganisationTypes?.FirstOrDefault(ot => ot.Type == organisation?.OrganisationType);
 
@@ -79,7 +78,7 @@
                 <button type="submit" class="button">Confirm</button>
             </form>
 
-            <p>
+            <p class="govuk-body-anchor">
                 <a class="link" asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.SearchString">Choose a different organisation</a>
             </p>
         </div>
@@ -99,7 +98,7 @@
                 </ul>
             </div>
 
-            <p>
+            <p class="govuk-body-anchor">
                 <a class="link" asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.SearchString">Back to search results</a>
             </p>
         </div>
