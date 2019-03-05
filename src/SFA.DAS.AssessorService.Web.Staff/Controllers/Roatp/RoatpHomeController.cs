@@ -6,7 +6,7 @@
     [Authorize]
     public class RoatpHomeController : Controller
     {
-        [Route("manage-apprenticeship-training-providers")]
+        [Route("search-apprenticeship-training-providers")]
         public IActionResult Index()
         {
             return View("~/Views/Roatp/Index.cshtml");
