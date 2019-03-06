@@ -74,7 +74,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.Pri
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.EpaoDataSync", "SFA.DAS.AssessorService.EpaoDataSync\SFA.DAS.AssessorService.EpaoDataSync.csproj", "{2CD0ED7B-43B3-4736-8A59-086AD47C41EF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AssessorService.ApplyTypes", "SFA.DAS.AssessorService.ApplyTypes\SFA.DAS.AssessorService.ApplyTypes.csproj", "{7F682D43-DA65-439A-B4AC-27503270FA73}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.ApplyTypes", "SFA.DAS.AssessorService.ApplyTypes\SFA.DAS.AssessorService.ApplyTypes.csproj", "{7F682D43-DA65-439A-B4AC-27503270FA73}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Session", "SFA.DAS.AssessorService.Session\SFA.DAS.AssessorService.Session.csproj", "{79A3E336-BE53-446D-B00B-5CD25A4D694E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -188,6 +190,10 @@ Global
 		{7F682D43-DA65-439A-B4AC-27503270FA73}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7F682D43-DA65-439A-B4AC-27503270FA73}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7F682D43-DA65-439A-B4AC-27503270FA73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79A3E336-BE53-446D-B00B-5CD25A4D694E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79A3E336-BE53-446D-B00B-5CD25A4D694E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79A3E336-BE53-446D-B00B-5CD25A4D694E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79A3E336-BE53-446D-B00B-5CD25A4D694E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

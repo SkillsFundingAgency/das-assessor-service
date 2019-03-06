@@ -1,0 +1,12 @@
+﻿@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp.AddOrganisationViewModel
+
+@if (Model != null)
+{
+    <input type="hidden" asp-for="ProviderTypeId" />
+    <input type="hidden" asp-for="LegalName" />
+    <input type="hidden" asp-for="TradingName" />
+    <input type="hidden" asp-for="OrganisationTypeId" />
+    <input type="hidden" asp-for="UKPRN" />
+    <input type="hidden" asp-for="CompanyNumber" />
+    <input type="hidden" asp-for="CharityNumber" />
+}
