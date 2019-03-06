@@ -7,6 +7,10 @@
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Diagnostics;
+    using Newtonsoft.Json;
+    using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
+    using System.Net;
 
     public class RoatpApiClient : IRoatpApiClient
     {
@@ -40,6 +44,23 @@
             return await Get<IEnumerable<IDictionary<string, object>>>($"{_baseUrl}/api/v1/download/complete");
         }
 
+        public async Task<IEnumerable<OrganisationType>> GetOrganisationTypes(int providerTypeId)
+        {
+            return await Get<IEnumerable<OrganisationType>>($"{_baseUrl}/api/v1/lookupData/organisationTypes?providerTypeId={providerTypeId}");
+        }
+
+        public async Task<IEnumerable<ProviderType>> GetProviderTypes()
+        {
+            return await Get<IEnumerable<ProviderType>>($"{_baseUrl}/api/v1/lookupData/providerTypes");
+        }
+        
+        public async Task<bool> CreateOrganisation(CreateOrganisationRequest organisationRequest)
+        {
+           HttpStatusCode result = await Post<CreateOrganisationRequest>($"{_baseUrl}/api/v1/organisation/create", organisationRequest);
+
+           return await Task.FromResult(result == HttpStatusCode.OK);
+        }
+
         private async Task<T> Get<T>(string uri)
         {
             _client.DefaultRequestHeaders.Authorization =
@@ -50,6 +71,18 @@
                 return await response.Content.ReadAsAsync<T>();
             }
         }
+
+        private async Task<HttpStatusCode> Post<T>(string uri, T model)
+        {
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            var serializeObject = JsonConvert.SerializeObject(model);
+
+            var response = await _client.PostAsync(new Uri(uri, UriKind.Absolute),
+                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json"));
+
+             return response.StatusCode;
+         }
 
     }
 }
