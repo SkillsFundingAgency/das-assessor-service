@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.WsFederation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Orchestrators.Login;
 
@@ -18,12 +19,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly ILogger<AccountController> _logger;
         private readonly ILoginOrchestrator _loginOrchestrator;
         private readonly ISessionService _sessionService;
+        private readonly IWebConfiguration _config;
 
-        public AccountController(ILogger<AccountController> logger, ILoginOrchestrator loginOrchestrator, ISessionService sessionService)
+        public AccountController(ILogger<AccountController> logger, ILoginOrchestrator loginOrchestrator, ISessionService sessionService, IWebConfiguration config)
         {
             _logger = logger;
             _loginOrchestrator = loginOrchestrator;
             _sessionService = sessionService;
+            _config = config;
         }
 
         [HttpGet]
@@ -53,6 +56,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     ResetCookies();
                     _sessionService.Set("OrganisationName", loginResult.OrganisationName);
                     return RedirectToAction("InvitePending", "Home");
+                case LoginResult.Applying:
+                    return Redirect($"{_config.ApplyBaseAddress}/Applications");
                 case LoginResult.Rejected:
                     ResetCookies();
                     _sessionService.Set("OrganisationName", loginResult.OrganisationName);

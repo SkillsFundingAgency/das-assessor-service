@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Apprenticeships.Api.Types.AssessmentOrgs;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
+using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Settings;
+using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
@@ -14,12 +18,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
     public class OrganisationsApiClient : ApiClientBase, IOrganisationsApiClient
     {
-        public OrganisationsApiClient(string baseUri, ITokenService tokenService,
+        public OrganisationsApiClient(string baseUri, IEnumerable<ITokenService> tokenService,
             ILogger<OrganisationsApiClient> logger) : base(baseUri, tokenService, logger)
         {
         }
 
-        public OrganisationsApiClient(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger) : base(httpClient, tokenService, logger)
+        public OrganisationsApiClient(HttpClient httpClient, IEnumerable<ITokenService> tokenService, ILogger<ApiClientBase> logger) : base(httpClient, tokenService, logger)
         {
         }
 
@@ -185,17 +189,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         }
 
 
-        public async Task<IEnumerable<OrganisationSearchResult>> SearchForOrganisations(string searchTerm)
-        {
-
-            using (var request = new HttpRequestMessage(HttpMethod.Get,
-                $"/api/v1/organisations/search/{searchTerm}"))
-            {
-                return await RequestAndDeserialiseAsync<List<OrganisationSearchResult>>(request,
-                    $"Could not retrieve organisations for search {searchTerm}.");
-            }
-        }
-
+      
         public async Task SendEmailsToOrgApprovedUsers(EmailAllApprovedContactsRequest emailAllApprovedContactsRequest)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Put,
@@ -204,6 +198,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                  await PostPutRequest (request, emailAllApprovedContactsRequest);
             }
         }
+        
 
         private string SanitizeUrlParam(string rawParam)
         {
@@ -250,7 +245,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<ValidationResponse> ValidateUpdateOrganisationStandard(string organisationId, int standardId, DateTime? effectiveFrom, DateTime? effectiveTo, Guid? contactId, List<int> deliveryAreas, string actionChoice, string organisationStandardStatus, string organisationStatus);
         Task<EpaOrganisation> GetEpaOrganisation(string organisationId);
         Task<List<OrganisationType>> GetOrganisationTypes();
-        Task<IEnumerable<OrganisationSearchResult>> SearchForOrganisations(string searchTerm);
         Task SendEmailsToOrgApprovedUsers(EmailAllApprovedContactsRequest emailAllApprovedContactsRequest);
 
     }

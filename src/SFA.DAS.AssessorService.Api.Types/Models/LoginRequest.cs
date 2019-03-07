@@ -23,6 +23,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         NotRegistered,
         InvalidRole,
         Rejected,
-        InvitePending
+        InvitePending,
+        Applying
     }
 }

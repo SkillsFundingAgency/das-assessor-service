@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -15,7 +16,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public abstract class ApiClientBase : IDisposable
     {
-        protected readonly ITokenService TokenService;
+        protected ITokenService TokenService;
         private readonly ILogger<ApiClientBase> _logger;
         protected HttpClient HttpClient;
 
@@ -27,9 +28,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             NullValueHandling = NullValueHandling.Ignore
         };
 
-        protected ApiClientBase(string baseUri, ITokenService tokenService, ILogger<ApiClientBase> logger)
+        protected ApiClientBase(string baseUri, IEnumerable<ITokenService> tokenService, ILogger<ApiClientBase> logger, string tokenType= "TokenService")
         {
-            TokenService = tokenService;
+
+            InitialiseTokenService(tokenService, tokenType);
+
             _logger = logger;
 
             HttpClient = new HttpClient { BaseAddress = new Uri($"{baseUri}") };
@@ -41,9 +44,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                     retryAttempt)));
         }
 
-        protected ApiClientBase(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger)
+        protected ApiClientBase(HttpClient httpClient, IEnumerable<ITokenService> tokenService, ILogger<ApiClientBase> logger, string tokenType = "")
         {
-            TokenService = tokenService;
+            InitialiseTokenService(tokenService, tokenType);
+
             _logger = logger;
 
             HttpClient = httpClient;
@@ -54,6 +58,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2,
                     retryAttempt)));
         }
+
 
         protected static void RaiseResponseError(string message, HttpRequestMessage failedRequest, HttpResponseMessage failedResponse)
         {
@@ -204,6 +209,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             {
                 throw new HttpRequestException();
             }
+        }
+
+        private void InitialiseTokenService(IEnumerable<ITokenService> tokenService, string tokenType)
+        {
+            
+            foreach (var token in tokenService)
+            {
+                if (token.GetType().Name == tokenType)
+                {
+                    TokenService = token;
+                    break;
+                }
+            }
+           
         }
 
         public void Dispose()

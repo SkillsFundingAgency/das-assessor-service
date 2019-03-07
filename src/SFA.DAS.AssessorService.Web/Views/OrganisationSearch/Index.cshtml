@@ -34,7 +34,7 @@
 
             <div sfa-anyvalidationerror-class="after-error-summary">
                 <div class="form-group" sfa-validation-for="SearchString" sfa-validationerror-class="form-group-error">
-                    <h1 class="heading-xlarge">
+                    <h1 class="heading-xlarge heading-xlarge--margin-bottom">
                         Search for your organisation
                     </h1>
                     <label class="form-label">
@@ -46,7 +46,7 @@
                             <li>company number</li>
                             <li>charity number</li>
                         </ul>
-                        <span id="search-string-hint" class="form-hint">
+                        <span id="search-string-hint" class="form-hint form-hint--margin-bottom">
                             A UKPRN consists of 8 numbers.<br />An EPAO ID consists of 3 letters and 4 numbers.
                         </span>
                         @if (!ViewData.ModelState.IsValid || showErrors)

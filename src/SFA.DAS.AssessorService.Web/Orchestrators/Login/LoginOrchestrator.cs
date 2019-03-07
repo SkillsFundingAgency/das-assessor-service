@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Web.Infrastructure;
 
 namespace SFA.DAS.AssessorService.Web.Orchestrators.Login
 {
@@ -44,7 +45,6 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators.Login
                 Email = email,
                 SignInId = Guid.Parse(signinId)
             });
-
             return loginResult;
         }
     }

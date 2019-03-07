@@ -29,6 +29,15 @@
 
 
                 <div class="form-group">
+                    @if (organisation.OrganisationReferenceType  != "RoEPAO")
+                    {
+                        <div class="panel panel-border-wide">
+                            <p>
+                                <span class="bold-small"> @Model.Name</span> is not recognised as a registered organisation.
+                                If you continue, you will be taken to the new organisation registration application.
+                            </p>
+                        </div>
+                    }
                     <h1 class="heading-xlarge">Confirm organisation</h1>
 
                     <h2 class="heading-medium">@organisation.Name</h2>

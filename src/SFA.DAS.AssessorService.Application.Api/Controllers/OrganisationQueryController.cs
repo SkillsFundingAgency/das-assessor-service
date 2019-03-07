@@ -5,7 +5,6 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using AutoMapper;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
@@ -93,24 +92,5 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(organisation);
         }
 
-        [HttpGet("search/{searchTerm}", Name = "SearchForOrganisations")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IEnumerable<OrganisationSearchResult>))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> SearchForOrganisations(string searchTerm)
-        {
-            _logger.LogInformation($@"Search organisations for search term {searchTerm}");
-
-            using (var httpClient = new HttpClient()
-                {BaseAddress = new Uri(_config.ApplyApiAuthentication.ApiBaseAddress)})
-            {
-                httpClient.DefaultRequestHeaders.Authorization =
-                    new AuthenticationHeaderValue("Bearer", _config.ApplyApiAuthentication.ClientSecret);
-
-                var response = await httpClient.GetAsync($"/OrganisationSearch?searchTerm={searchTerm}");
-
-                return Ok(await response.Content.ReadAsAsync<IEnumerable<OrganisationSearchResult>>());
-            }
-        }
-    
     }
 }

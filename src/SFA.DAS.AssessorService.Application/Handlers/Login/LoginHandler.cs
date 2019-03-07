@@ -38,7 +38,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
             var response =new LoginResponse();
 
             var contact = await _contactQueryRepository.GetBySignInId(request.SignInId);
-            
+           
+
             if (await UserDoesNotHaveAcceptableRole(contact.Id))
             {
                 _logger.LogInformation("Invalid Role");
@@ -51,11 +52,21 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
 
             if (contact.OrganisationId == null)
             {
-                response.Result = LoginResult.NotRegistered;
-                return response;
+                var userStatus = await GetUserStatus(null, request.SignInId);
+                if (userStatus != ContactStatus.Applying)
+                {
+                    response.Result = LoginResult.NotRegistered;
+                    return response;
+                }
+                else
+                {
+                    response.Result = LoginResult.Applying;
+                    return response;
+                }
             }
 
             var organisation = await _organisationQueryRepository.Get(contact.OrganisationId.Value);
+          
 
             if (organisation == null)
             {

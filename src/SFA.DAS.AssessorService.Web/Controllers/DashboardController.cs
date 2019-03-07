@@ -16,21 +16,19 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     [CheckSession]
     public class DashboardController : Controller
     {
-        private readonly ISessionService _sessionService;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IOrganisationsApiClient _organisationApiClient;
         private readonly IStandardsApiClient _standardsApiClient;
         private readonly ICertificateApiClient _certificateApiClient;
         private readonly IWebConfiguration _webConfiguration;
 
-        public DashboardController(ISessionService sessionService,  
+        public DashboardController(
             IHttpContextAccessor contextAccessor , 
             IStandardsApiClient standardsApiClient,
             IOrganisationsApiClient organisationApiClient, 
             ICertificateApiClient certificateApiClieet,
             IWebConfiguration webConfiguration)
         {
-            _sessionService = sessionService;
             _organisationApiClient = organisationApiClient;
             _contextAccessor = contextAccessor;
             _certificateApiClient = certificateApiClieet;

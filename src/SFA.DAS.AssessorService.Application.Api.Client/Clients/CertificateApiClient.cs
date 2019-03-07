@@ -11,11 +11,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public class CertificateApiClient : ApiClientBase, ICertificateApiClient
     {
-        public CertificateApiClient(string baseUri, ITokenService tokenService, ILogger<ApiClientBase> logger) : base(baseUri, tokenService, logger)
+        public CertificateApiClient(string baseUri, IEnumerable<ITokenService> tokenService, ILogger<ApiClientBase> logger) : base(baseUri, tokenService, logger)
         {
         }
 
-        public CertificateApiClient(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger) : base(httpClient, tokenService, logger)
+        public CertificateApiClient(HttpClient httpClient, IEnumerable<ITokenService> tokenService, ILogger<ApiClientBase> logger) : base(httpClient, tokenService, logger)
         {
         }
 

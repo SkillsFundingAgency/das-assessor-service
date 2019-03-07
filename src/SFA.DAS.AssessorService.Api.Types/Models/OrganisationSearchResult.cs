@@ -43,4 +43,5 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public string City { get; set; }
         public string Postcode { get; set; }
     }
+    
 }
