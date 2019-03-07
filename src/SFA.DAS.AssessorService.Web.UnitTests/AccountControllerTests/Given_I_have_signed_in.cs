@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Controllers;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Orchestrators.Login;
@@ -21,11 +22,13 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
         private Mock<IHttpContextAccessor> _contextAccessor;
         private AccountController _accountController;
         private Mock<ILoginOrchestrator> _loginOrchestrator;
+        private Mock<IWebConfiguration> _webConfigurationMock;
 
         [SetUp]
         public void Arrange()
         {
             _contextAccessor = new Mock<IHttpContextAccessor>();
+            _webConfigurationMock = new Mock<IWebConfiguration>();
 
             _contextAccessor.Setup(a => a.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn"))
                 .Returns(new Claim("http://schemas.portal.com/ukprn", "12345"));
@@ -36,7 +39,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
 
             _loginOrchestrator = new Mock<ILoginOrchestrator>();
 
-            _accountController = new AccountController(new Mock<ILogger<AccountController>>().Object, _loginOrchestrator.Object, new Mock<ISessionService>().Object);
+            _accountController = new AccountController(new Mock<ILogger<AccountController>>().Object, _loginOrchestrator.Object, new Mock<ISessionService>().Object, _webConfigurationMock.Object);
         }
 
         [Test]

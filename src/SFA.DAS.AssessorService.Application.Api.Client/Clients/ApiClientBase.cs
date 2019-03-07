@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                     retryAttempt)));
         }
 
-        protected ApiClientBase(HttpClient httpClient, IEnumerable<ITokenService> tokenService, ILogger<ApiClientBase> logger, string tokenType = "")
+        protected ApiClientBase(HttpClient httpClient, IEnumerable<ITokenService> tokenService, ILogger<ApiClientBase> logger, string tokenType = "TokenService")
         {
             InitialiseTokenService(tokenService, tokenType);
 

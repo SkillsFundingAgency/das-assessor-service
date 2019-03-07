@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Controllers;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Orchestrators.Login;
@@ -16,10 +17,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
     public class Given_I_request_Sign_In
     {
         private AccountController _accountController;
+        private Mock<IWebConfiguration> _webConfigurstionMock;
 
         [SetUp]
         public void Arrange()
         {
+            _webConfigurstionMock = new Mock<IWebConfiguration>();
             var mockUrlHelper = new Mock<IUrlHelper>(MockBehavior.Strict);
             mockUrlHelper
                 .Setup(
@@ -30,7 +33,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
                 .Returns("callbackUrl")
                 .Verifiable();
 
-            _accountController = new AccountController(new Mock<ILogger<AccountController>>().Object, new Mock<ILoginOrchestrator>().Object, new Mock<ISessionService>().Object);
+            _accountController = new AccountController(new Mock<ILogger<AccountController>>().Object, new Mock<ILoginOrchestrator>().Object, new Mock<ISessionService>().Object, _webConfigurstionMock.Object);
 
             _accountController.Url = mockUrlHelper.Object;
         }
