@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using FizzWare.NBuilder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Hosting.Internal;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;

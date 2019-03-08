@@ -140,10 +140,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     TempData["EpaoId"] = organisationSearchResult.OrganisationReferenceId;
                     return View(nameof(NoAccess), viewModel);
                 }
-                
+                viewModel.Organisations = new List<OrganisationSearchResult> {organisationSearchResult};
+                viewModel.OrganisationTypes = await _organisationsApiClient.GetOrganisationTypes();
+
+                if (organisationSearchResult.OrganisationType == null)
+                {
+                    return View(nameof(Type), viewModel);
+                }
             }
-            viewModel.OrganisationTypes = await _organisationsApiClient.GetOrganisationTypes();
-            return View(nameof(Type), viewModel);
+            return View(nameof(Confirm),viewModel);
         }
 
 

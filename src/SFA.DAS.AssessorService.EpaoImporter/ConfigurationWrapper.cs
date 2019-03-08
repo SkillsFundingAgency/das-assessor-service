@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using SFA.DAS.AssessorService.EpaoImporter.InfrastructureServices;
+﻿using SFA.DAS.AssessorService.EpaoImporter.InfrastructureServices;
 using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.EpaoImporter
