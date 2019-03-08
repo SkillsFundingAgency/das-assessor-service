@@ -21,6 +21,9 @@
         private const string AuditHistoryWorksheetName = "Provider history";
         private const string ExcelFileName = "_RegisterOfApprenticeshipTrainingProviders.xlsx";
 
+        private const string RoatpExcelFileName = "roatp.xlsx";
+        private const string RoatpWorksheetName = "RoATP";
+
         public DownloadRoatpController(IRoatpApiClient apiClient, IDataTableHelper dataTableHelper,
                                        ILogger<DownloadRoatpController> logger)
         {
@@ -57,6 +60,26 @@
                 }
 
                 return File(package.GetAsByteArray(), "application/excel", $"{DateTime.Now.ToString("yyyyMMdd")}{ExcelFileName}");
+            }
+        }
+
+        [Route("download-roatp-summary")]
+        public async Task<IActionResult> DownloadRoatpSummary()
+        {
+            using (var package = new ExcelPackage())
+            {
+                var roatpWorksheet = package.Workbook.Worksheets.Add(RoatpWorksheetName);
+                var registerData = await _apiClient.GetRoatpSummary();
+                if (registerData != null && registerData.Any())
+                {
+                    roatpWorksheet.Cells.LoadFromDataTable(_dataTableHelper.ToDataTable(registerData), true);
+                }
+                else
+                {
+                    _logger.LogError("Unable to retrieve roatp summary from RoATP API");
+                }
+
+                return File(package.GetAsByteArray(), "application/excel", $"{ExcelFileName}");
             }
         }
     }

@@ -8,7 +8,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
     public interface IRoatpApiClient
     {
        Task<IEnumerable<IDictionary<string, object>>> GetCompleteRegister();
-       Task<IEnumerable<IDictionary<string, object>>> GetAuditHistory();
+        Task<IEnumerable<IDictionary<string, object>>> GetRoatpSummary();
+        Task<IEnumerable<IDictionary<string, object>>> GetAuditHistory();
        Task<IEnumerable<ProviderType>> GetProviderTypes();
        Task<IEnumerable<OrganisationType>> GetOrganisationTypes(int providerTypeId);
        Task<bool> CreateOrganisation(CreateOrganisationRequest organisationRequest);

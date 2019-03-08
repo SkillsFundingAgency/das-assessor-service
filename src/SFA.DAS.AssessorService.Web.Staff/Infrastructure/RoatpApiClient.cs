@@ -29,6 +29,14 @@
             _client = new HttpClient { BaseAddress = new Uri($"{_baseUrl}") };
         }
 
+        public async Task<IEnumerable<IDictionary<string, object>>> GetRoatpSummary()
+        {
+            string url = $"{_baseUrl}/api/v1/download/roatp-summary";
+            _logger.LogInformation($"Retrieving RoATP summary data from {url}");
+
+            return await Get<IEnumerable<IDictionary<string, object>>>(url);
+        }
+
         public async Task<IEnumerable<IDictionary<string, object>>> GetAuditHistory()
         {
             string url = $"{_baseUrl}/api/v1/download/audit";
