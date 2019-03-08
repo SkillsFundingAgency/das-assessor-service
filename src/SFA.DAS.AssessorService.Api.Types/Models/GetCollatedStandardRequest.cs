@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using MediatR;
-using SFA.DAS.AssessorService.ExternalApis.StandardCollationApiClient.Types;
+﻿using MediatR;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {

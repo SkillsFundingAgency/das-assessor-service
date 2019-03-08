@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace SFA.DAS.AssessorService.ExternalApis.StandardCollationApiClient.Types
+namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
 {
     public class StandardData
     {

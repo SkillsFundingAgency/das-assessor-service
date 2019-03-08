@@ -36,8 +36,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
                 var deliveryAreas = await _registerQueryRepository.GetDeliveryAreaIdsByOrganisationStandardId(orgStandard.Id);
                 orgStandard.DeliveryAreas = deliveryAreas.ToList();
             }
-            
+
             var allStandards = _standardService.GetAllStandardsV2().Result;
+
+            //var allStandards = await _standardService.GetStandardCollations();
 
             foreach (var organisationStandard in orgStandards)
             {

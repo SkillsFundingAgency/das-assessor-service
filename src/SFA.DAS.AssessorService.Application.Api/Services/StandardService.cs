@@ -4,28 +4,30 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Apprenticeships.Api.Types;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.IFAStandards;
 using SFA.DAS.AssessorService.ExternalApis.IFAStandards.Types;
-using SFA.DAS.AssessorService.ExternalApis.StandardCollationApiClient;
-using SFA.DAS.AssessorService.ExternalApis.StandardCollationApiClient.Types;
+using SFA.DAS.AssessorService.ExternalApis.Services;
 
-namespace SFA.DAS.AssessorService.ExternalApis.Services
+namespace SFA.DAS.AssessorService.Application.Api.Services
 {
-    public class StandardService: IStandardService
+    public class StandardService : IStandardService
     {
         private readonly CacheService _cacheService;
         private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
         private readonly IIfaStandardsApiClient _ifaStandardsApiClient;
         private readonly ILogger<StandardService> _logger;
-        private readonly IStandardCollationApiClient _standardCollationApiClient;
-        public StandardService(CacheService cacheService, IAssessmentOrgsApiClient assessmentOrgsApiClient, IIfaStandardsApiClient ifaStandardsApiClient, ILogger<StandardService> logger, IStandardCollationApiClient standardCollationApiClient)
+        private readonly IStandardRepository _standardRepository;
+
+        public StandardService(CacheService cacheService, IAssessmentOrgsApiClient assessmentOrgsApiClient, IIfaStandardsApiClient ifaStandardsApiClient, ILogger<StandardService> logger, IStandardRepository standardRepository)
         {
             _cacheService = cacheService;
             _assessmentOrgsApiClient = assessmentOrgsApiClient;
             _ifaStandardsApiClient = ifaStandardsApiClient;
             _logger = logger;
-            _standardCollationApiClient = standardCollationApiClient;
+            _standardRepository = standardRepository;
         }
 
         public async Task<IEnumerable<StandardSummary>> GetAllStandardsV2()
@@ -35,13 +37,12 @@ namespace SFA.DAS.AssessorService.ExternalApis.Services
             if (results != null)
                 return results;
 
-            var standardCollations = await _standardCollationApiClient.GetStandardCollations();
-
+            var standardCollations = await _standardRepository.GetStandardCollations();
             var standardSummaries = await _assessmentOrgsApiClient.GetAllStandardsV2();
 
             foreach (var standard in standardSummaries)
             {
-                var match = standardCollations.FirstOrDefault(x => x.StandardId?.ToString() == standard.Id  && !string.Equals(x.Title, standard.Title, StringComparison.CurrentCultureIgnoreCase));
+                var match = standardCollations.FirstOrDefault(x => x.StandardId?.ToString() == standard.Id && !string.Equals(x.Title, standard.Title, StringComparison.CurrentCultureIgnoreCase));
                 if (match != null)
                     standard.Title = match.Title;
             }
@@ -52,7 +53,7 @@ namespace SFA.DAS.AssessorService.ExternalApis.Services
 
         public async Task<IEnumerable<Standard>> GetAllStandards()
         {
-            var standardCollations = await _standardCollationApiClient.GetStandardCollations();
+            var standardCollations = await _standardRepository.GetStandardCollations();
             var standards = await _assessmentOrgsApiClient.GetAllStandards();
 
             foreach (var standard in standards)
@@ -66,9 +67,9 @@ namespace SFA.DAS.AssessorService.ExternalApis.Services
 
         public async Task<Standard> GetStandard(int standardId)
         {
-            var standardCollation = await _standardCollationApiClient.GetStandardCollation(standardId);
+            var standardCollation = await _standardRepository.GetStandardCollationByStandardId(standardId);
             var standard = await _assessmentOrgsApiClient.GetStandard(standardId);
-            if (standardCollation != null && standard !=null && !string.Equals(standard.Title, standardCollation.Title, StringComparison.CurrentCultureIgnoreCase))
+            if (standardCollation != null && standard != null && !string.Equals(standard.Title, standardCollation.Title, StringComparison.CurrentCultureIgnoreCase))
                 standard.Title = standardCollation.Title;
 
             return standard;
@@ -76,7 +77,7 @@ namespace SFA.DAS.AssessorService.ExternalApis.Services
 
         public async Task<IEnumerable<StandardSummary>> GetAllStandardSummaries()
         {
-            var standardCollations = await _standardCollationApiClient.GetStandardCollations();
+            var standardCollations = await _standardRepository.GetStandardCollations();
             var standardSummaries = await _assessmentOrgsApiClient.GetAllStandardSummaries();
             foreach (var standard in standardSummaries)
             {
@@ -155,8 +156,8 @@ namespace SFA.DAS.AssessorService.ExternalApis.Services
                     Ssa2 = ifaStandard?.Ssa2,
                     OverviewOfRole = ifaStandard?.OverviewOfRole,
                     IsActiveStandardInWin = winStandard?.IsActiveStandard,
-                    FatUri =  winStandard?.Uri,
-                    IfaUri =  ifaStandard?.Uri,
+                    FatUri = winStandard?.Uri,
+                    IfaUri = ifaStandard?.Uri,
                     AssessmentPlanUrl = ifaStandard?.AssessmentPlanUrl
                 }
             };
@@ -171,16 +172,6 @@ namespace SFA.DAS.AssessorService.ExternalApis.Services
             }
 
             return fullIfaStandards;
-        }     
-    }
-
-    public interface IStandardService
-    {
-        Task<IEnumerable<StandardSummary>> GetAllStandardsV2();
-        Task<IEnumerable<Standard>> GetAllStandards();
-        Task<IEnumerable<StandardCollation>> GatherAllStandardDetails();
-        Task<Standard> GetStandard(int standardId);
-        Task<IEnumerable<StandardSummary>> GetAllStandardSummaries();
-
+        }
     }
 }
