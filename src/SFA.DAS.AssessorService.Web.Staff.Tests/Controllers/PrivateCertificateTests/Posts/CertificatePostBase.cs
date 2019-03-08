@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
 using SFA.DAS.Apprenticeships.Api.Types;
+using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
@@ -80,7 +81,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
                 },
             };
 
-            //MFCMFC
             MockStandardService.Setup(s => s.GetAllStandardSummaries()).Returns(Task.FromResult(standards.AsEnumerable()));
             MockStandardService.Setup(s => s.GetAllStandardsV2()).Returns(Task.FromResult(standards.AsEnumerable()));
 

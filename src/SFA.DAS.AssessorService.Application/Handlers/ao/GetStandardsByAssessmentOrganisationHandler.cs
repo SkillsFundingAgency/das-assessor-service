@@ -39,8 +39,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
 
             var allStandards = _standardService.GetAllStandardsV2().Result;
 
-            //var allStandards = await _standardService.GetStandardCollations();
-
             foreach (var organisationStandard in orgStandards)
             {
                 var std = allStandards.FirstOrDefault(x => x.Id == organisationStandard.StandardCode.ToString());
