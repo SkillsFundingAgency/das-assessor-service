@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 
             if (HttpContext.User.HasRoatpRoleOnly())
             {
-                return RedirectToAction("Index", "Roatp");
+                return RedirectToAction("Index", "RoatpHome");
             }
 
             return RedirectToAction("Index", "Dashboard");

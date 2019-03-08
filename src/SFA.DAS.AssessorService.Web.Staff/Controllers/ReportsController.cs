@@ -14,7 +14,7 @@ using SFA.DAS.AssessorService.Web.Staff.Helpers;
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers
 {
     [Authorize(Roles = Roles.OperationsTeam + "," + Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
-    public class ReportsController : Controller
+    public class ReportsController : ExcelAwareController
     {
         private readonly ILogger<ReportsController> _logger;
         private readonly ApiClient _apiClient;

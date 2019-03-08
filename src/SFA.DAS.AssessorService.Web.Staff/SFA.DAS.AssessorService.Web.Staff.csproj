@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\RoatpController.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <DotNetCliToolReference Include="BundlerMinifier.Core" Version="2.6.362" />
   </ItemGroup>
 
@@ -34,6 +38,7 @@
     <ProjectReference Include="..\SFA.DAS.AssessorService.Application.Api\SFA.DAS.AssessorService.Application.Api.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Application\SFA.DAS.AssessorService.Application.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.ApplyTypes\SFA.DAS.AssessorService.ApplyTypes.csproj" />
+    <ProjectReference Include="..\SFA.DAS.AssessorService.Data.IntegrationTests\SFA.DAS.AssessorService.Data.IntegrationTests.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Domain\SFA.DAS.AssessorService.Domain.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Settings\SFA.DAS.AssessorService.Settings.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Web.Extensions\SFA.DAS.AssessorService.Web.Extensions.csproj" />
@@ -115,7 +120,22 @@
     <Content Update="Views\Reports\_ReportScriptsPartial.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Roatp\AddOrganisationPreview.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Roatp\AddOrganisationDetails.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Roatp\AddOrganisation.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Roatp\Index.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Roatp\_AddOrganisationValidationErrorsPartial.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Roatp\_AddOrganisationFieldsPartial.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\Shared\_ValidationScriptsPartial.cshtml">
