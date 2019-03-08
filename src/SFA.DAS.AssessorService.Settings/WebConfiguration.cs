@@ -32,5 +32,6 @@ namespace SFA.DAS.AssessorService.Settings
         [JsonRequired] public AuthSettings StaffAuthentication { get; set; }
         [JsonRequired] public ClientApiAuthentication ApplyApiAuthentication { get; set; }
         [JsonRequired] public string ApplyBaseAddress { get; set; }
+        [JsonRequired] public string ServiceLink { get; set; }
     }
 }

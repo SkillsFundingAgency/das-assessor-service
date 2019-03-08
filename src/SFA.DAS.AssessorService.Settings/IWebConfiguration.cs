@@ -18,5 +18,6 @@
         AuthSettings StaffAuthentication { get; set; }
         ClientApiAuthentication ApplyApiAuthentication { get; set; }
         string ApplyBaseAddress { get; set; }
+        string ServiceLink { get; set; }
     }
 }

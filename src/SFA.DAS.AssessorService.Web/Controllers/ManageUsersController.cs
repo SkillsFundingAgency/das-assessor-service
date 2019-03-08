@@ -11,6 +11,7 @@ using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Constants;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 
@@ -20,20 +21,20 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     [CheckSession]
     public class ManageUsersController : Controller
     {
-        private readonly ISessionService _sessionService;
         private readonly IContactsApiClient _contactsApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IOrganisationsApiClient _organisationsApiClient;
         private readonly IEmailApiClient _emailApiClient;
+        private readonly IWebConfiguration _config;
 
-        public ManageUsersController(ISessionService sessionService, IContactsApiClient contactsApiClient,
+        public ManageUsersController(IWebConfiguration config, IContactsApiClient contactsApiClient,
             IHttpContextAccessor contextAccessor, IOrganisationsApiClient organisationsApiClient, IEmailApiClient emailApiClient)
         {
-            _sessionService = sessionService;
             _contactsApiClient = contactsApiClient;
             _contextAccessor = contextAccessor;
             _organisationsApiClient = organisationsApiClient;
             _emailApiClient = emailApiClient;
+            _config = config;
         }
 
         [HttpGet]
@@ -73,7 +74,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     await _emailApiClient.SendEmailWithTemplate(new SendEmailRequest(contactResponse.Email,
                         emailTemplate, new
                         {
-                            contactname = $"{contactResponse.DisplayName}"
+                            contactname = $"{contactResponse.DisplayName}",
+                            ServiceLink = _config.ServiceLink
                         }));
                 }
             }

@@ -173,7 +173,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                         ContactStatus.InvitePending));
                     await _organisationsApiClient.SendEmailsToOrgApprovedUsers(new EmailAllApprovedContactsRequest(
                         user.DisplayName, organisationSearchResult
-                            .OrganisationReferenceId));
+                            .OrganisationReferenceId,  _config.ServiceLink));
                 }
                 else
                 {

@@ -108,7 +108,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                {
                    await _mediator.Send(new SendEmailRequest(contact.Email, emailTemplate, new
                    {
-                       username = $"{emailAllApprovedContactsRequest.DisplayName}"
+                       username = $"{emailAllApprovedContactsRequest.DisplayName}",
+                       ServiceLink = $"{emailAllApprovedContactsRequest.ServiceLink}"
                    }));
                }
             }
