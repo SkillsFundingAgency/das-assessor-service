@@ -183,6 +183,17 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             }
         }
 
+        [HttpGet("grades")]
+        [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(SwaggerHelpers.Examples.GetGradesResponseExample))]
+        [SwaggerResponse((int)HttpStatusCode.OK, "The list of valid pass grades.", typeof(string[]))]
+        [SwaggerOperation("Get Grades", "To get the list of valid pass grades, to use when creating certificates.", Produces = new string[] { "application/json" })]
+        public IActionResult GetGrades()
+        {
+            string[] grades = { "Pass", "Credit", "Merit", "Distinction", "Pass with excellence", "No grade awarded" };
+
+            return Ok(grades);
+        }
+
         #region Utility Functions
         private bool IsDraftCertificateDeemedAsReady(Certificate certificate)
         {
