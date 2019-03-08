@@ -20,7 +20,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
         }
         public async Task<StandardCollation> Handle(GetCollatedStandardRequest request, CancellationToken cancellationToken)
         {
-            return await _standardRepository.GetStandardCollationByStandardId(request.StandardId);
+            StandardCollation result = null;
+
+            if (request.StandardId.HasValue)
+            {
+                result = await _standardRepository.GetStandardCollationByStandardId(request.StandardId.Value);
+            }
+            else if (request.ReferenceNumber != null)
+            {
+                result = await _standardRepository.GetStandardCollationByReferenceNumber(request.ReferenceNumber);
+            }
+
+            return result;
         }
     }
 }

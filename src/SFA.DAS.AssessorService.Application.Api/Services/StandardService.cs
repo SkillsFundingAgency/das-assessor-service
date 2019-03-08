@@ -75,6 +75,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
             return standard;
         }
 
+        public async Task<Standard> GetStandard(string referenceNumber)
+        {
+            var standardCollation = await _standardRepository.GetStandardCollationByReferenceNumber(referenceNumber);
+
+            if (standardCollation?.StandardId is null)
+            {
+                return null;
+            }
+
+            return await GetStandard(standardCollation.StandardId.Value);
+        }
+
         public async Task<IEnumerable<StandardSummary>> GetAllStandardSummaries()
         {
             var standardCollations = await _standardRepository.GetStandardCollations();

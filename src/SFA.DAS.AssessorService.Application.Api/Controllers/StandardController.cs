@@ -58,5 +58,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             return Ok(await _mediator.Send(new GetCollatedStandardRequest {StandardId = standardId}));
         }
+
+        [HttpGet("assessment-organisations/collated-standards/by-reference/{*referenceNumber}", Name = "GetCollatedStandardByReferenceNumber")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(StandardCollation))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetCollatedStandardByReferenceNumber(string referenceNumber)
+        {
+            return Ok(await _mediator.Send(new GetCollatedStandardRequest { ReferenceNumber = referenceNumber }));
+        }
     }
 }

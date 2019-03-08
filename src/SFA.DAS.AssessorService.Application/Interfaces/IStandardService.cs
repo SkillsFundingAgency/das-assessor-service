@@ -11,6 +11,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<IEnumerable<Standard>> GetAllStandards();
         Task<IEnumerable<StandardCollation>> GatherAllStandardDetails();
         Task<Standard> GetStandard(int standardId);
+        Task<Standard> GetStandard(string referenceNumber);
         Task<IEnumerable<StandardSummary>> GetAllStandardSummaries();
 
     }
