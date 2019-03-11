@@ -57,31 +57,6 @@
             _client.VerifyAll();
         }
 
-        [TestCase(0)]
-        [TestCase(-1)]
-        [TestCase(4)]
-        public void Add_organisation_details_shows_validation_message_for_invalid_provider_type(int providerTypeId)
-        {
-            var model = new AddOrganisationProviderTypeViewModel { ProviderTypeId = providerTypeId};
-
-            var validationResult = new ValidationResponse
-            {
-                Errors = new List<ValidationErrorDetail>
-                {
-                    new ValidationErrorDetail("ProviderTypeId", "Invalid provider type")
-                }
-            };
-            _validator.Setup(x => x.ValidateOrganisationDetails(It.IsAny<AddOrganisationViewModel>()))
-                .ReturnsAsync(validationResult);
-
-            var result = _controller.AddOrganisationDetails(model).GetAwaiter().GetResult();
-
-            var viewResult = result as ViewResult;
-            var validationModel = viewResult.Model as AddOrganisationViewModel;
-
-            _controller.ModelState.ErrorCount.Should().Be(1);
-        }
-
         [Test]
         public void Add_organisation_details_initialises_with_list_of_organisation_types()
         {
@@ -101,7 +76,6 @@
             };
             _client.Setup(x => x.GetOrganisationTypes(It.IsAny<int>())).ReturnsAsync(organisationTypes).Verifiable();
 
-           // _sessionService.Setup(x => x.GetAddOrganisationDetails(It.IsAny<Guid>())).Returns(model);
             _sessionService.Setup(x => x.SetAddOrganisationDetails(It.IsAny<AddOrganisationViewModel>()));
 
             var result = _controller.AddOrganisationDetails(model).GetAwaiter().GetResult();
@@ -109,75 +83,7 @@
             result.Should().BeAssignableTo<ViewResult>();
             _client.VerifyAll();
         }
-
-        //[Test]
-        //public void Add_organisation_details_resets_organisation_type_if_the_provider_type_has_been_changed()
-        //{
-        //    var model = new AddOrganisationViewModel {ProviderTypeId = 1, OrganisationTypeId = 2};
-
-        //    var validationResult = new ValidationResponse
-        //    {
-        //        Errors = new List<ValidationErrorDetail>()
-        //    };
-        //    _validator.Setup(x => x.ValidateOrganisationDetails(It.IsAny<AddOrganisationViewModel>()))
-        //        .ReturnsAsync(validationResult);
-
-        //    var organisationTypes = new List<OrganisationType>
-        //    {
-        //        new OrganisationType {Id = 1, Type = "Education"},
-        //        new OrganisationType {Id = 2, Type = "Public sector body"}
-        //    };
-        //    _client.Setup(x => x.GetOrganisationTypes(It.IsAny<int>())).ReturnsAsync(organisationTypes).Verifiable();
-
-        //    var previousVersionModel = new AddOrganisationViewModel {ProviderTypeId = 2};
-        //    _sessionService.Setup(x => x.GetAddOrganisationDetails(It.IsAny<Guid>())).Returns(previousVersionModel);
-        //    _sessionService.Setup(x => x.SetAddOrganisationDetails(It.IsAny<AddOrganisationViewModel>()));
-
-        //    var result = _controller.AddOrganisationDetails(model).GetAwaiter().GetResult();
-
-        //    var viewResult = result as ViewResult;
-        //    var addOrganisationModel = viewResult.Model as AddOrganisationViewModel;
-        //    addOrganisationModel.OrganisationTypeId.Should().Be(0);
-        //    _client.VerifyAll();
-        //}
-
-        [Test]
-        public void Add_organisation_confirmation_shows_validation_messages_if_raised()
-        {
-            var model = new AddOrganisationViewModel {ProviderTypeId = 1, UKPRN = "", LegalName = "a"};
-
-            var providerTypes = new List<ProviderType>
-            {
-                new ProviderType {Id = 1, Type = "Main provider"},
-                new ProviderType {Id = 2, Type = "Employer provider"}
-            };
-            _client.Setup(x => x.GetProviderTypes()).ReturnsAsync(providerTypes).Verifiable();
-
-            var organisationTypes = new List<OrganisationType>
-            {
-                new OrganisationType {Id = 1, Type = "Education"},
-                new OrganisationType {Id = 2, Type = "Public sector body"}
-            };
-
-            var validationResult = new ValidationResponse
-            {
-                Errors = new List<ValidationErrorDetail>
-                {
-                    new ValidationErrorDetail("LegalName", "Invalid legal name"),
-                    new ValidationErrorDetail("UKPRN", "UKPRN is mandatory")
-                }
-            };
-            _validator.Setup(x => x.ValidateOrganisationDetails(It.IsAny<AddOrganisationViewModel>()))
-                .ReturnsAsync(validationResult);
-
-            var result = _controller.AddOrganisationPreview(model).GetAwaiter().GetResult();
-
-            var viewResult = result as ViewResult;
-            var validationModel = viewResult.Model as AddOrganisationViewModel;
-
-            _controller.ModelState.ErrorCount.Should().Be(2);
-        }
-
+        
         [Test]
         public void Add_organisation_confirmation_shows_organisation_to_be_created()
         {
@@ -232,10 +138,9 @@
 
             var result = _controller.CreateOrganisation(model).GetAwaiter().GetResult();
 
-            var viewResult = result as ViewResult;
-            var validationModel = viewResult.Model as AddOrganisationViewModel;
-
-            _controller.ModelState.ErrorCount.Should().Be(1);
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ActionName.Should().Be("Error");
+            redirectResult.ControllerName.Should().Be("Home");
         }
 
         [Test]
@@ -259,7 +164,7 @@
             var viewResult = result as ViewResult;
             var successModel = viewResult.Model as BannerViewModel;
 
-            successModel.CreateOrganisationCompanyName.Should().Be(model.LegalName);
+            successModel.CreateOrganisationCompanyName.Should().Be(model.LegalName.ToUpper());
         }
 
         [Test]

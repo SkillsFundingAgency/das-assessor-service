@@ -22,7 +22,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class RoatpOrganisationValidation {
+    public class RoatpOrganisationValidation {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Resources {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SFA.DAS.AssessorService.Web.Staff.Resources.RoatpOrganisationValidation", typeof(RoatpOrganisationValidation).Assembly);
@@ -51,7 +51,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Resources {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Resources {
         /// <summary>
         ///   Looks up a localized string similar to This is an existing charity number for ‘{0}’.
         /// </summary>
-        internal static string CharityNumberDuplicateMatch {
+        public static string CharityNumberDuplicateMatch {
             get {
                 return ResourceManager.GetString("CharityNumberDuplicateMatch", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Enter a valid charity registration number.
         /// </summary>
-        internal static string CharityNumberFormat {
+        public static string CharityNumberFormat {
             get {
                 return ResourceManager.GetString("CharityNumberFormat", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Enter a charity registration number using 14 characters or less.
         /// </summary>
-        internal static string CharityNumberLength {
+        public static string CharityNumberLength {
             get {
                 return ResourceManager.GetString("CharityNumberLength", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Resources {
         /// <summary>
         ///   Looks up a localized string similar to This is an existing company number for ‘{0}’.
         /// </summary>
-        internal static string CompanyNumberDuplicateMatch {
+        public static string CompanyNumberDuplicateMatch {
             get {
                 return ResourceManager.GetString("CompanyNumberDuplicateMatch", resourceCulture);
             }
@@ -99,7 +99,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Enter a valid company number.
         /// </summary>
-        internal static string CompanyNumberFormat {
+        public static string CompanyNumberFormat {
             get {
                 return ResourceManager.GetString("CompanyNumberFormat", resourceCulture);
             }
@@ -108,7 +108,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Enter a company number using 8 characters.
         /// </summary>
-        internal static string CompanyNumberLength {
+        public static string CompanyNumberLength {
             get {
                 return ResourceManager.GetString("CompanyNumberLength", resourceCulture);
             }
@@ -117,7 +117,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Tell us what the new training provider is.
         /// </summary>
-        internal static string InvalidProviderTypeId {
+        public static string InvalidProviderTypeId {
             get {
                 return ResourceManager.GetString("InvalidProviderTypeId", resourceCulture);
             }
@@ -126,7 +126,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Enter a legal name.
         /// </summary>
-        internal static string LegalNameMandatory {
+        public static string LegalNameMandatory {
             get {
                 return ResourceManager.GetString("LegalNameMandatory", resourceCulture);
             }
@@ -135,7 +135,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Enter a legal name using 200 characters or less.
         /// </summary>
-        internal static string LegalNameMaxLength {
+        public static string LegalNameMaxLength {
             get {
                 return ResourceManager.GetString("LegalNameMaxLength", resourceCulture);
             }
@@ -144,7 +144,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Enter a trading name using 200 characters or less.
         /// </summary>
-        internal static string TradingNameMaxLength {
+        public static string TradingNameMaxLength {
             get {
                 return ResourceManager.GetString("TradingNameMaxLength", resourceCulture);
             }
@@ -153,7 +153,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Resources {
         /// <summary>
         ///   Looks up a localized string similar to This is an existing UKPRN for ‘{0}’.
         /// </summary>
-        internal static string UKPRNDuplicateMatch {
+        public static string UKPRNDuplicateMatch {
             get {
                 return ResourceManager.GetString("UKPRNDuplicateMatch", resourceCulture);
             }
@@ -162,7 +162,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Enter a valid UKPRN.
         /// </summary>
-        internal static string UKPRNFormat {
+        public static string UKPRNFormat {
             get {
                 return ResourceManager.GetString("UKPRNFormat", resourceCulture);
             }
@@ -171,7 +171,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Enter a UKPRN using 8 numbers.
         /// </summary>
-        internal static string UKPRNLength {
+        public static string UKPRNLength {
             get {
                 return ResourceManager.GetString("UKPRNLength", resourceCulture);
             }
@@ -180,7 +180,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Enter a UKPRN.
         /// </summary>
-        internal static string UKPRNMandatory {
+        public static string UKPRNMandatory {
             get {
                 return ResourceManager.GetString("UKPRNMandatory", resourceCulture);
             }

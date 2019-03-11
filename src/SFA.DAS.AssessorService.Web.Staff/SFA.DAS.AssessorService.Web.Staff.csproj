@@ -158,7 +158,7 @@
 
   <ItemGroup>
     <EmbeddedResource Update="Resources\RoatpOrganisationValidation.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>RoatpOrganisationValidation.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
