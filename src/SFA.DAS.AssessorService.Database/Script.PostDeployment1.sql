@@ -50,6 +50,7 @@ UPDATE organisationStandard
 -- patch FundingModel, where this was not set by data sync
 UPDATE Ilrs SET FundingModel = 36 WHERE FundingModel IS NULL
 
+/* DONE
 -- fix options
 UPDATE [Certificates]
 SET [CertificateData] = JSON_MODIFY([CertificateData], '$.CourseOption','Alcoholic Beverage Service') 
@@ -58,6 +59,20 @@ WHERE json_value(certificatedata,'$.CourseOption') = 'Alcholic beverage service'
 UPDATE [Options] 
 SET [OptionName] = 'Alcoholic Beverage Service'
 WHERE [OptionName] = 'Alcholic beverage service'
+*/
 
+-- ON-613 Patch Certificates with STxxxx StandardReference, where it is not yet included. 
+-- AB 11/03/19 Keep this active for new deployments, for now
+-- ****************************************************************************
+MERGE INTO certificates ma1
+USING (
+SELECT ce1.[Id],JSON_MODIFY([CertificateData],'$.StandardReference',st1.ReferenceNumber) newData
+  FROM [Certificates] ce1 
+  JOIN [StandardCollation] st1 ON ce1.StandardCode = st1.StandardId
+  WHERE st1.ReferenceNumber IS NOT NULL 
+  AND JSON_VALUE([CertificateData],'$.StandardReference') IS NULL) up1
+ON (ma1.id = up1.id)
+WHEN MATCHED THEN UPDATE SET ma1.[CertificateData] = up1.[newData];
 
+-- ****************************************************************************
 

@@ -139,6 +139,8 @@ namespace SFA.DAS.AssessorService.Web.Staff
                 config.For<IRegisterValidator>().Use<RegisterValidator>();
 
                 config.For<IStandardService>().Use<StandardService>();
+                config.For<ISessionService>().Use<SessionService>().Ctor<string>("environment")
+                    .Is(Configuration["EnvironmentName"]);
                 config.Populate(services);
             });
             return container.GetInstance<IServiceProvider>();
