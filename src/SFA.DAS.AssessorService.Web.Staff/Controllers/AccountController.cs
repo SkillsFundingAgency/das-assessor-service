@@ -40,6 +40,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 return RedirectToAction("InvalidRole", "Home");
             }
 
+            if (HttpContext.User.HasRoatpRoleOnly())
+            {
+                return RedirectToAction("Index", "RoatpHome");
+            }
+
             return RedirectToAction("Index", "Dashboard");
         }
 
