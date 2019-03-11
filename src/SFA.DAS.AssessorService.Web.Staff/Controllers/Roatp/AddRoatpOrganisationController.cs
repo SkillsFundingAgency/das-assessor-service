@@ -10,8 +10,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
     using SFA.DAS.AssessorService.Web.Staff.Validators.Roatp;
     using SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp;
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
 
     public class AddRoatpOrganisationController : Controller
@@ -35,42 +33,46 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         }
         
         [Route("new-training-provider")]
-        public async Task<IActionResult> AddOrganisation(AddOrganisationViewModel model)
+        public async Task<IActionResult> AddOrganisation(AddOrganisationProviderTypeViewModel model)
         {
             if (model == null)
             {
-                model = new AddOrganisationViewModel();
+                model = new AddOrganisationProviderTypeViewModel();     
             }
 
             model.ProviderTypes = await _apiClient.GetProviderTypes();
 
-            _sessionService.SetAddOrganisationDetails(model);
+            ModelState.Clear();
 
             return View("~/Views/Roatp/AddOrganisation.cshtml", model);
         }
 
         [Route("enter-details")]
-        public async Task<IActionResult> AddOrganisationDetails(AddOrganisationViewModel model)
+        public async Task<IActionResult> AddOrganisationDetails(AddOrganisationProviderTypeViewModel model)
         {
-            var validationMessages = _validator.ValidateProviderType(model.ProviderTypeId);
-            if (validationMessages.Any())
+            if (!ModelState.IsValid)
             {
-                model.ValidationErrors = new List<string>(validationMessages);
                 model.ProviderTypes = await _apiClient.GetProviderTypes();
                 return View("~/Views/Roatp/AddOrganisation.cshtml", model);
             }
 
-            model.OrganisationTypes = await _apiClient.GetOrganisationTypes(model.ProviderTypeId);
-
-            var sessionModel = _sessionService.GetAddOrganisationDetails(model.OrganisationId);
-            if (sessionModel.ProviderTypeId != model.ProviderTypeId)
+            var addOrganisationModel = _sessionService.GetAddOrganisationDetails();
+            if (addOrganisationModel == null)
             {
-                model.OrganisationTypeId = 0;
+                addOrganisationModel = new AddOrganisationViewModel
+                {
+                    OrganisationId = model.OrganisationId,
+                    ProviderTypeId = model.ProviderTypeId
+                };
             }
 
-            _sessionService.SetAddOrganisationDetails(model);
+            addOrganisationModel.OrganisationTypes = await _apiClient.GetOrganisationTypes(model.ProviderTypeId);
+            
+            _sessionService.SetAddOrganisationDetails(addOrganisationModel);
 
-            return View("~/Views/Roatp/AddOrganisationDetails.cshtml", model);
+            ModelState.Clear();
+
+            return View("~/Views/Roatp/AddOrganisationDetails.cshtml", addOrganisationModel);
         }
 
         [Route("confirm-details")]
@@ -79,12 +81,16 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             model.OrganisationTypes = await _apiClient.GetOrganisationTypes(model.ProviderTypeId);
             model.ProviderTypes = await _apiClient.GetProviderTypes();
 
-            var validationMessages = _validator.ValidateOrganisationDetails(model);
-            if (validationMessages.Any())
+            if (!ModelState.IsValid)
             {
-                model.ValidationErrors = new List<string>(validationMessages);
                 model.ProviderTypes = await _apiClient.GetProviderTypes();
                 return View("~/Views/Roatp/AddOrganisationDetails.cshtml", model);
+            }
+
+            model.LegalName = model.LegalName.ToUpper();
+            if (!String.IsNullOrWhiteSpace(model.TradingName))
+            {
+                model.TradingName = model.TradingName.ToUpper();
             }
 
             _sessionService.SetAddOrganisationDetails(model);
@@ -101,16 +107,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
 
             if (!success)
             {
-                model.OrganisationTypes = await _apiClient.GetOrganisationTypes(model.ProviderTypeId);
-                model.ProviderTypes = await _apiClient.GetProviderTypes();
-                model.ValidationErrors = new List<string>
-                {
-                    $"An error occurred when adding the organisation '{model.LegalName}'.<br/> Please try again later."
-                };
-                return View("~/Views/Roatp/AddOrganisationPreview.cshtml", model);
+                return RedirectToAction("Error", "Home");
             }
 
-            var bannerModel = new BannerViewModel { CreateOrganisationCompanyName = model.LegalName };
+            var bannerModel = new BannerViewModel { CreateOrganisationCompanyName = model.LegalName.ToUpper() };
 
             return View("~/Views/Roatp/Index.cshtml", bannerModel);
         }
@@ -118,7 +118,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         [Route("back")]
         public async Task<IActionResult> Back(string action, Guid organisationId)
         {
-            var model = _sessionService.GetAddOrganisationDetails(organisationId);
+            var model = _sessionService.GetAddOrganisationDetails();
 
             return RedirectToAction(action, model);
         }
@@ -138,8 +138,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             var organisation = new Organisation
             {
                 Id = Guid.NewGuid(),
-                LegalName = model.LegalName,
-                TradingName = model.TradingName,
+                LegalName = model.LegalName.ToUpper(),
+                TradingName = model.TradingName?.ToUpper(),
                 OrganisationData = new OrganisationData
                 {
                     CharityNumber = model.CharityNumber,

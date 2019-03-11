@@ -45,6 +45,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Resources\RoatpOrganisationValidation.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RoatpOrganisationValidation.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Update="nlog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -132,9 +140,6 @@
     <Content Update="Views\Roatp\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\Roatp\_AddOrganisationValidationErrorsPartial.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
     <Content Update="Views\Roatp\_AddOrganisationFieldsPartial.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
@@ -149,6 +154,13 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\RoatpOrganisationValidation.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>RoatpOrganisationValidation.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

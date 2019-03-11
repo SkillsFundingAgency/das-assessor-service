@@ -7,7 +7,6 @@
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Diagnostics;
     using Newtonsoft.Json;
     using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
     using System.Net;
@@ -60,6 +59,36 @@
 
            return await Task.FromResult(result == HttpStatusCode.OK);
         }
+        
+        public async Task<DuplicateCheckResponse> DuplicateUKPRNCheck(Guid organisationId, long ukprn)
+        {
+            var request = new DuplicateUKPRNCheckRequest
+            {
+                OrganisationId = organisationId,
+                UKPRN = ukprn
+            };
+            return await Post<DuplicateUKPRNCheckRequest, DuplicateCheckResponse>($"{_baseUrl}/api/v1/duplicateCheck/ukprn", request);
+        }
+
+        public async Task<DuplicateCheckResponse> DuplicateCompanyNumberCheck(Guid organisationId, string companyNumber)
+        {
+            var request = new DuplicateCompanyNumberCheckRequest
+            {
+                OrganisationId = organisationId,
+                CompanyNumber = companyNumber
+            };
+            return await Post<DuplicateCompanyNumberCheckRequest, DuplicateCheckResponse>($"{_baseUrl}/api/v1/duplicateCheck/companyNumber", request);
+        }
+
+        public async Task<DuplicateCheckResponse> DuplicateCharityNumberCheck(Guid organisationId, string charityNumber)
+        {
+            var request = new DuplicateCharityNumberCheckRequest
+            {
+                OrganisationId = organisationId,
+                CharityNumber = charityNumber
+            };
+            return await Post<DuplicateCharityNumberCheckRequest, DuplicateCheckResponse>($"{_baseUrl}/api/v1/duplicateCheck/charityNumber", request);
+        }
 
         private async Task<T> Get<T>(string uri)
         {
@@ -84,5 +113,16 @@
              return response.StatusCode;
          }
 
+        private async Task<U> Post<T, U>(string uri, T model)
+        {
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            var serializeObject = JsonConvert.SerializeObject(model);
+
+            var response = await _client.PostAsync(new Uri(uri, UriKind.Absolute),
+                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json"));
+
+            return await response.Content.ReadAsAsync<U>();
+        }
     }
 }
