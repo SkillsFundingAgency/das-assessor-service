@@ -20,8 +20,8 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public bool Complete { get; set; }
         public bool AllowMultipleAnswers { get; set; }
         public int? Order { get; set; }
-        public bool Active { get; set; }        
-        public bool Visible { get; set; }
+        public bool Active { get; set; }
+        public bool NotRequired { get; set; }
         public string BodyText { get; set; }
         public FinancialApplicationGrade FinancialApplicationGrade { get; set; }
         
