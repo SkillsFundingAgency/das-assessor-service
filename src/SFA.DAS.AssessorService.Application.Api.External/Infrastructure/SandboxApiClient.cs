@@ -24,6 +24,11 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
         {
             var validationErrors = PerformBasicGetCertificateValidation(request);
 
+            if (!int.TryParse(request.Standard, out int standardCode))
+            {
+                standardCode = 9999;
+            }
+
             var response = new GetCertificateResponse
             {
                 ValidationErrors = validationErrors,
@@ -34,14 +39,14 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                         CertificateReference = "SANDBOX",
                         Learner = new Learner { FamilyName = request.FamilyName, GivenNames = "FIRSTNAME", Uln = request.Uln },
                         LearningDetails = new LearningDetails { CourseOption = "COURSEOPTION", OverallGrade = "Pass", AchievementDate = DateTime.UtcNow, LearningStartDate = DateTime.UtcNow.AddYears(-1), ProviderName = "PROVIDER", ProviderUkPrn = request.UkPrn },
-                        Standard = new Standard { Level = 1, StandardCode = request.StandardCode, StandardName = "STANDARD" },
+                        Standard = new Standard { Level = 1, StandardCode = standardCode, StandardReference = request.Standard, StandardName = "STANDARD" },
                         PostalContact = new PostalContact { AddressLine1 = "ADDRESS1", City = "CITY", ContactName = "CONTACT", Organisation = "ORGANISATION", PostCode = "AB1 1AA" }
                     },
                     Status = new Status { CurrentStatus = "Draft" },
                     Created = new Created { CreatedAt = DateTime.UtcNow, CreatedBy = request.Email },
                 },
                 FamilyName = request.FamilyName,
-                StandardCode = request.StandardCode,
+                Standard = request.Standard,
                 Uln = request.Uln
             };
 
@@ -188,7 +193,11 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                 {
                     validationErrors.Add("Enter the apprentice's last name");
                 }
-                if (request.StandardCode < 1)
+                if (string.IsNullOrEmpty(request.Standard))
+                {
+                    validationErrors.Add("A standard should be selected");
+                }
+                else if (int.TryParse(request.Standard, out int standardCode) && standardCode < 1)
                 {
                     validationErrors.Add("A standard should be selected");
                 }

@@ -35,16 +35,16 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
             _apiClient = apiClient;
         }
 
-        [HttpGet("{uln}/{familyName}/{standardCode}")]
+        [HttpGet("{uln}/{familyName}/{*standard}")]
         [SwaggerResponseExample((int)HttpStatusCode.OK, typeof(SwaggerHelpers.Examples.CertificateExample))]
         [SwaggerResponse((int)HttpStatusCode.OK, "The current Certificate.", typeof(Certificate))]
         [SwaggerResponse((int)HttpStatusCode.NoContent, "There is no Certificate and you may create one.")]
         [SwaggerResponseExample((int)HttpStatusCode.Forbidden, typeof(SwaggerHelpers.Examples.ApiResponseExample))]
         [SwaggerResponse((int)HttpStatusCode.Forbidden, "There are validation errors preventing you from retrieving the Certificate.", typeof(ApiResponse))]
         [SwaggerOperation("Get Certificate", "Gets the specified Certificate.", Produces = new string[] { "application/json" })]
-        public async Task<IActionResult> GetCertificate(long uln, string familyName, int standardCode)
+        public async Task<IActionResult> GetCertificate(long uln, string familyName, [SwaggerParameter("Standard Code or Standard Reference Number")] string standard)
         {
-            GetCertificateRequest getRequest = new GetCertificateRequest { UkPrn = _headerInfo.Ukprn, Email = _headerInfo.Email, Uln = uln, FamilyName = familyName, StandardCode = standardCode };
+            GetCertificateRequest getRequest = new GetCertificateRequest { UkPrn = _headerInfo.Ukprn, Email = _headerInfo.Email, Uln = uln, FamilyName = familyName, Standard = standard };
             var response = await _apiClient.GetCertificate(getRequest);
 
             if (response.ValidationErrors.Any())
@@ -78,13 +78,13 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerOperation("Create Certificates", "Creates a new Certificate for each valid item within the request.", Consumes = new string[] { "application/json" }, Produces = new string[] { "application/json" })]
         public async Task<IActionResult> CreateCertificates([FromBody] IEnumerable<CreateCertificate> request)
         {
-            IEnumerable<BatchCertificateRequest> bcRequest = request.Select(req => 
+            IEnumerable<BatchCertificateRequest> bcRequest = request.Select(req =>
                 new BatchCertificateRequest {
                     UkPrn = _headerInfo.Ukprn,
                     Email = _headerInfo.Email,
                     RequestId = req.RequestId,
                     CertificateData = new CertificateData
-                        {
+                    {
                         Standard = req.Standard,
                         Learner = req.Learner,
                         LearningDetails = req.LearningDetails,
@@ -148,13 +148,15 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
         [SwaggerOperation("Submit Certificates", "Submits the specified Certificate for each valid request.", Consumes = new string[] { "application/json" }, Produces = new string[] { "application/json" })]
         public async Task<IActionResult> SubmitCertificates([FromBody] IEnumerable<SubmitCertificate> request)
         {
-            IEnumerable<SubmitBatchCertificateRequest> scRequest = request.Select(req => 
+            IEnumerable<SubmitBatchCertificateRequest> scRequest = request.Select(req =>
                 new SubmitBatchCertificateRequest
                 {
                     UkPrn = _headerInfo.Ukprn,
                     Email = _headerInfo.Email,
-                    RequestId = req.RequestId, Uln = req.Uln,
-                    StandardCode = req.StandardCode, FamilyName = req.FamilyName,
+                    RequestId = req.RequestId,
+                    Uln = req.Uln,
+                    StandardCode = req.StandardCode,
+                    FamilyName = req.FamilyName,
                     CertificateReference = req.CertificateReference
                 });
 

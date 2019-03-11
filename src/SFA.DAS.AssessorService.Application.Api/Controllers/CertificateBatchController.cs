@@ -2,11 +2,12 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates.Batch;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Api.Validators.Certificates;
-using SFA.DAS.AssessorService.Domain.Entities;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,17 +39,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _deleteValidator = deleteValidator;
         }
 
-        [HttpGet("{uln}/{lastname}/{standardcode}/{ukPrn}/{email}")]
+        [HttpGet("{uln}/{lastname}/{standard}/{ukPrn}/{*email}")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(GetBatchCertificateResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> Get(long uln, string lastname, int standardcode, int ukPrn, string email)
+        public async Task<IActionResult> Get(long uln, string lastname, string standard, int ukPrn, string email)
         {
+            var collatedStandard = await GetCollatedStandard(standard);
+
             var request = new GetBatchCertificateRequest
             {
                 Uln = uln,
                 FamilyName = lastname,
-                StandardCode = standardcode,
+                StandardCode = collatedStandard?.StandardId ?? int.MinValue,
+                StandardReference = collatedStandard?.ReferenceNumber,
                 UkPrn = ukPrn,
                 Email = email
             };
@@ -58,7 +62,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             GetBatchCertificateResponse getResponse = new GetBatchCertificateResponse
             {
                 Uln = request.Uln,
-                StandardCode = request.StandardCode,
+                Standard = standard,
                 FamilyName = request.FamilyName,
                 ValidationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList()
             };
@@ -201,6 +205,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 ApiResponse response = new ApiResponse((int)HttpStatusCode.Forbidden, string.Join("; ", validationResult.Errors));
                 return BadRequest(response);
             }
+        }
+
+
+        private async Task<StandardCollation> GetCollatedStandard(string standard)
+        {
+            if (int.TryParse(standard, out int standardCode))
+            {
+                return await _mediator.Send(new GetCollatedStandardRequest { StandardId = standardCode });
+            }
+
+            return await _mediator.Send(new GetCollatedStandardRequest { ReferenceNumber = standard });
         }
     }
 }

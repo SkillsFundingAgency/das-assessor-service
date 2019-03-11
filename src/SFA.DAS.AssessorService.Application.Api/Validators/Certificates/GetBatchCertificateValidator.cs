@@ -65,6 +65,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
             });
 
             RuleFor(m => m.StandardCode).GreaterThan(0).WithMessage("A standard should be selected");
+
+            // NOTE: StandardReference is ignored for now
         }
     }
 }
