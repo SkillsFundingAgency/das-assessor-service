@@ -72,6 +72,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                     }
                 });
             });
+
+            // NOTE: StandardReference is ignored for now
         }
     }
 }

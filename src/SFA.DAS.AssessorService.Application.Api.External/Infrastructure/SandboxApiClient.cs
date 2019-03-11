@@ -323,7 +323,11 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                 {
                     validationErrors.Add("Enter the apprentice's last name");
                 }
-                if (request.StandardCode < 1)
+                if (string.IsNullOrEmpty(request.Standard))
+                {
+                    validationErrors.Add("A standard should be selected");
+                }
+                else if (int.TryParse(request.Standard, out int standardCode) && standardCode < 1)
                 {
                     validationErrors.Add("A standard should be selected");
                 }

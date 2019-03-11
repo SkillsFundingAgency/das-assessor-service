@@ -170,17 +170,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(response);
         }
 
-        [HttpDelete("{uln}/{lastname}/{standardcode}/{certificateReference}/{ukPrn}/{email}")]
+        [HttpDelete("{uln}/{lastname}/{standard}/{certificateReference}/{ukPrn}/{*email}")]
         [SwaggerResponse((int)HttpStatusCode.NoContent)]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> Delete(long uln, string lastname, int standardcode, string certificateReference, int ukPrn, string email)
+        public async Task<IActionResult> Delete(long uln, string lastname, string standard, string certificateReference, int ukPrn, string email)
         {
+            var collatedStandard = await GetCollatedStandard(standard);
+
             var request = new DeleteBatchCertificateRequest
             {
                 Uln = uln,
                 FamilyName = lastname,
-                StandardCode = standardcode,
+                StandardCode = collatedStandard?.StandardId ?? int.MinValue,
+                StandardReference = collatedStandard?.ReferenceNumber,
                 CertificateReference = certificateReference,
                 UkPrn = ukPrn,
                 Email = email
