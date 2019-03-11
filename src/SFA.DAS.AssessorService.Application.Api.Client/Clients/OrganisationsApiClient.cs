@@ -2,15 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.Apprenticeships.Api.Types.AssessmentOrgs;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
-using SFA.DAS.AssessorService.ApplyTypes;
-using SFA.DAS.AssessorService.Settings;
-using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
@@ -18,12 +13,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
     public class OrganisationsApiClient : ApiClientBase, IOrganisationsApiClient
     {
-        public OrganisationsApiClient(string baseUri, IEnumerable<ITokenService> tokenService,
+        public OrganisationsApiClient(string baseUri, ITokenService tokenService,
             ILogger<OrganisationsApiClient> logger) : base(baseUri, tokenService, logger)
         {
         }
 
-        public OrganisationsApiClient(HttpClient httpClient, IEnumerable<ITokenService> tokenService, ILogger<ApiClientBase> logger) : base(httpClient, tokenService, logger)
+        public OrganisationsApiClient(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger) : base(httpClient, tokenService, logger)
         {
         }
 

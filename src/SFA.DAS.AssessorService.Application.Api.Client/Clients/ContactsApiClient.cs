@@ -10,12 +10,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
     {
         private readonly ILogger<ContactsApiClient> _logger;
 
-        public ContactsApiClient(string baseUri, IEnumerable<ITokenService> tokenService, ILogger<ContactsApiClient> logger) : base(baseUri, tokenService, logger)
+        public ContactsApiClient(string baseUri, ITokenService tokenService, ILogger<ContactsApiClient> logger) : base(baseUri, tokenService, logger)
         {
             _logger = logger;
         }
 
-        public ContactsApiClient(HttpClient httpClient, IEnumerable<ITokenService> tokenService, ILogger<ApiClientBase> logger) : base(httpClient, tokenService, logger)
+        public ContactsApiClient(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger) : base(httpClient, tokenService, logger)
         {
         }
 

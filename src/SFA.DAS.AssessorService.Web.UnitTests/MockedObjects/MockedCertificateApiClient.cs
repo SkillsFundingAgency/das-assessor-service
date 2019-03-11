@@ -24,7 +24,6 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
                 .Setup(m => m.EnvironmentName)
                 .Returns(EnvironmentName.Development);
             var tokenServiceMock = new TokenService(webConfigMock.Object,hostMock.Object);
-            var mockOfTokenService = new List<ITokenService> {tokenServiceMock};
 
             var options = Builder<Option>.CreateListOfSize(10)
                 .Build();
@@ -59,7 +58,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.MockedObjects
                 .When(System.Net.Http.HttpMethod.Put, "http://localhost:59022/api/v1/certificates/update")
                 .Respond(System.Net.HttpStatusCode.OK, "application/json", "{'status' : 'OK'}");
 
-            var apiClient = new CertificateApiClient(client, mockOfTokenService, apiClientLoggerMock.Object);
+            var apiClient = new CertificateApiClient(client, tokenServiceMock, apiClientLoggerMock.Object);
 
             return apiClient;
         }

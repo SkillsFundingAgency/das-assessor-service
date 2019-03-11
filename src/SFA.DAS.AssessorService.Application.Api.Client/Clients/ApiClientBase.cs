@@ -28,12 +28,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             NullValueHandling = NullValueHandling.Ignore
         };
 
-        protected ApiClientBase(string baseUri, IEnumerable<ITokenService> tokenService, ILogger<ApiClientBase> logger, string tokenType= "TokenService")
+        protected ApiClientBase(string baseUri, ITokenService tokenService, ILogger<ApiClientBase> logger)
         {
 
-            InitialiseTokenService(tokenService, tokenType);
-
-            _logger = logger;
+            TokenService = tokenService;
 
             HttpClient = new HttpClient { BaseAddress = new Uri($"{baseUri}") };
 
@@ -44,9 +42,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                     retryAttempt)));
         }
 
-        protected ApiClientBase(HttpClient httpClient, IEnumerable<ITokenService> tokenService, ILogger<ApiClientBase> logger, string tokenType = "TokenService")
+        protected ApiClientBase(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger)
         {
-            InitialiseTokenService(tokenService, tokenType);
+            TokenService = tokenService;
 
             _logger = logger;
 
@@ -209,20 +207,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             {
                 throw new HttpRequestException();
             }
-        }
-
-        private void InitialiseTokenService(IEnumerable<ITokenService> tokenService, string tokenType)
-        {
-            
-            foreach (var token in tokenService)
-            {
-                if (token.GetType().Name == tokenType)
-                {
-                    TokenService = token;
-                    break;
-                }
-            }
-           
         }
 
         public void Dispose()
