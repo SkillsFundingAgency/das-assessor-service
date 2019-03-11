@@ -10,6 +10,7 @@ using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Controllers;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Orchestrators.Login;
+using SFA.DAS.AssessorService.Web.Validators;
 
 namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
 {
@@ -18,10 +19,12 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
     {
         private AccountController _accountController;
         private Mock<IWebConfiguration> _webConfigurstionMock;
+        private Mock<CreateAccountValidator> _validatorMock;
 
         [SetUp]
         public void Arrange()
         {
+            _validatorMock = new Mock<CreateAccountValidator>();
             _webConfigurstionMock = new Mock<IWebConfiguration>();
             var mockUrlHelper = new Mock<IUrlHelper>(MockBehavior.Strict);
             mockUrlHelper
@@ -33,7 +36,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
                 .Returns("callbackUrl")
                 .Verifiable();
 
-            _accountController = new AccountController(new Mock<ILogger<AccountController>>().Object, new Mock<ILoginOrchestrator>().Object, new Mock<ISessionService>().Object, _webConfigurstionMock.Object);
+            _accountController = new AccountController(new Mock<ILogger<AccountController>>().Object, new Mock<ILoginOrchestrator>().Object, new Mock<ISessionService>().Object, _webConfigurstionMock.Object,_validatorMock.Object);
 
             _accountController.Url = mockUrlHelper.Object;
         }

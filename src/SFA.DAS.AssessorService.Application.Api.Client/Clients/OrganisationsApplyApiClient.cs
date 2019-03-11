@@ -10,8 +10,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public class OrganisationsApplyApiClient:ApiClientBase, IOrganisationsApplyApiClient
     {
-        public OrganisationsApplyApiClient(string baseUri, IEnumerable<ITokenService> tokenService,
-            ILogger<OrganisationsApiClient> logger) : base(baseUri, tokenService, logger, "ApplyTokenService")
+        public OrganisationsApplyApiClient(string baseUri, IEnumerable<ITokenService> applyTokenService,
+            ILogger<OrganisationsApiClient> logger) : base(baseUri, applyTokenService, logger)
         {
         }
         

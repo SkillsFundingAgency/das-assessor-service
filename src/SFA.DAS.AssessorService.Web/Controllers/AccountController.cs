@@ -10,6 +10,8 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Orchestrators.Login;
+using SFA.DAS.AssessorService.Web.Validators;
+using SFA.DAS.AssessorService.Web.ViewModels.Account;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {
@@ -20,13 +22,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly ILoginOrchestrator _loginOrchestrator;
         private readonly ISessionService _sessionService;
         private readonly IWebConfiguration _config;
+        private readonly CreateAccountValidator _createAccountValidator;
 
-        public AccountController(ILogger<AccountController> logger, ILoginOrchestrator loginOrchestrator, ISessionService sessionService, IWebConfiguration config)
+        public AccountController(ILogger<AccountController> logger, ILoginOrchestrator loginOrchestrator,
+            ISessionService sessionService, IWebConfiguration config, CreateAccountValidator createAccountValidator)
         {
             _logger = logger;
             _loginOrchestrator = loginOrchestrator;
             _sessionService = sessionService;
             _config = config;
+            _createAccountValidator = createAccountValidator;
         }
 
         [HttpGet]
@@ -35,7 +40,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             _logger.LogInformation("Start of Sign In");
             var redirectUrl = Url.Action(nameof(PostSignIn), "Account");
             return Challenge(
-                new AuthenticationProperties { RedirectUri = redirectUrl },
+                new AuthenticationProperties {RedirectUri = redirectUrl},
                 OpenIdConnectDefaults.AuthenticationScheme);
         }
 
@@ -73,14 +78,15 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var callbackUrl = Url.Action(nameof(SignedOut), "Account", values: null, protocol: Request.Scheme);
 
             ResetCookies();
-            
+
             return SignOut(
-                CookieAuthenticationDefaults.AuthenticationScheme,OpenIdConnectDefaults.AuthenticationScheme);
+                CookieAuthenticationDefaults.AuthenticationScheme, OpenIdConnectDefaults.AuthenticationScheme);
         }
 
         [HttpGet]
         public IActionResult SignedOut()
         {
+
             if (User.Identity.IsAuthenticated)
             {
                 // Redirect to home page if the user is authenticated.
@@ -102,6 +108,26 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             {
                 Response.Cookies.Delete(cookie);
             }
+        }
+
+        [HttpGet]
+        public IActionResult CreateAnAccount()
+        {
+            var vm = new CreateAccountViewModel();
+            return View(vm);
+        }
+
+        [HttpPost]
+        public IActionResult CreateAnAccount(CreateAccountViewModel vm)
+        {
+
+            _createAccountValidator.Validate(vm);
+
+            if (!ModelState.IsValid)
+            {
+                return View(vm);
+            }
+            return View(vm);
         }
     }
 }

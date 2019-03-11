@@ -1,0 +1,81 @@
+﻿@model SFA.DAS.AssessorService.Web.ViewModels.Account.CreateAccountViewModel
+@{
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Get set up as a user";
+}
+
+<a asp-action="Index" asp-controller="Home" class="link-back">Back</a>
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <h1 class="heading-xlarge">Get set up as a user</h1>
+
+        <form class="new-account-form js-disable-on-submit" id="account-setup" asp-action="CreateAnAccount" asp-controller="Account" method="post" novalidate="">
+            
+            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                    There's a problem
+                </h2>
+                <ul class="js-error-summary-list error-summary-list"></ul>
+            </div>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="error-summary" aria-labelledby="error-summary-heading" role="alert" tabindex="-1" data-module="error-summary">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                        There's a problem
+                    </h2>
+                    <ul class="error-summary-list">
+                        <li><a sfa-validation-for="GivenName"></a></li>
+                        <li><a sfa-validation-for="FamilyName"></a></li>
+                        <li><a sfa-validation-for="Email"></a></li>
+                    </ul>
+                </div>
+            }
+
+            <div sfa-anyvalidationerror-class="after-error-summary">
+                <div class="form-group" sfa-validation-for="GivenName" sfa-validationerror-class="form-group-error">
+                    <label for="GivenName">
+                        <span class="form-label-bold">First Name</span>
+                        <span class="form-hint visually-hidden">
+                            First Name
+                        </span>
+                        <span class="error-message" asp-validation-for="GivenName"></span>
+                    </label>
+                    <input class="form-control" name="GivenName" sfa-validation-for="GivenName" sfa-validationerror-class="form-control-error" asp-for="GivenName" type="text" maxlength="100" />
+
+                </div>
+
+                <div class="form-group" sfa-validation-for="FamilyName" sfa-validationerror-class="form-group-error">
+                    <label for="FamilyName">
+                        <span class="form-label-bold ">Last Name</span>
+                        <span class="form-hint visually-hidden">
+                           Last Name
+                        </span>
+                        <span class="error-message" asp-validation-for="FamilyName"></span>
+                    </label>
+                    <input class="form-control" name="FamilyName" sfa-validation-for="FamilyName" sfa-validationerror-class="form-control-error" asp-for="FamilyName" type="text" maxlength="100" />
+                </div>
+
+                <div class="form-group" sfa-validation-for="Email" sfa-validationerror-class="form-group-error">
+                    <label for="Email">
+                        <span class="form-label-bold ">Email</span>
+                        <span class="form-hint">
+                            We'll send you a security code by email
+                        </span>
+                        <span class="error-message" asp-validation-for="Email"></span>
+                    </label>
+                    <input class="form-control" name="Email" sfa-validation-for="Email" sfa-validationerror-class="form-control-error" asp-for="Email" type="text" maxlength="100" />
+                </div>
+            </div>
+            <button type="submit" class="button">
+                Set me up
+            </button>
+        </form>
+    </div>
+</div>
+
+@*Not using javascript validation for now*@
+@*@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    @{await Html.RenderPartialAsync("~/Views/Account/_AccountScriptsPartial.cshtml"); }
+}*@
