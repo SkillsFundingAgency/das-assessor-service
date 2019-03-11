@@ -62,32 +62,17 @@
         
         public async Task<DuplicateCheckResponse> DuplicateUKPRNCheck(Guid organisationId, long ukprn)
         {
-            var request = new DuplicateUKPRNCheckRequest
-            {
-                OrganisationId = organisationId,
-                UKPRN = ukprn
-            };
-            return await Post<DuplicateUKPRNCheckRequest, DuplicateCheckResponse>($"{_baseUrl}/api/v1/duplicateCheck/ukprn", request);
+            return await Get<DuplicateCheckResponse>($"{_baseUrl}/api/v1/duplicateCheck/ukprn?ukprn={ukprn}&organisationId={organisationId}");
         }
 
         public async Task<DuplicateCheckResponse> DuplicateCompanyNumberCheck(Guid organisationId, string companyNumber)
         {
-            var request = new DuplicateCompanyNumberCheckRequest
-            {
-                OrganisationId = organisationId,
-                CompanyNumber = companyNumber
-            };
-            return await Post<DuplicateCompanyNumberCheckRequest, DuplicateCheckResponse>($"{_baseUrl}/api/v1/duplicateCheck/companyNumber", request);
+            return await Get<DuplicateCheckResponse>($"{_baseUrl}/api/v1/duplicateCheck/companyNumber?companyNumber={companyNumber}&organisationId={organisationId}");
         }
 
         public async Task<DuplicateCheckResponse> DuplicateCharityNumberCheck(Guid organisationId, string charityNumber)
         {
-            var request = new DuplicateCharityNumberCheckRequest
-            {
-                OrganisationId = organisationId,
-                CharityNumber = charityNumber
-            };
-            return await Post<DuplicateCharityNumberCheckRequest, DuplicateCheckResponse>($"{_baseUrl}/api/v1/duplicateCheck/charityNumber", request);
+            return await Get<DuplicateCheckResponse>($"{_baseUrl}/api/v1/duplicateCheck/charityNumber?charityNumber={charityNumber}&organisationId={organisationId}");
         }
 
         private async Task<T> Get<T>(string uri)
