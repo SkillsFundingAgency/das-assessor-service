@@ -111,8 +111,9 @@ namespace SFA.DAS.AssessorService.Web
                 });
 
                 //config.For<ICache>().Use<SessionCache>();
-                config.For<ITokenService>().Use<TokenService>().Named("Token");
-                config.For<ITokenService>().Use<ApplyTokenService>().Named("ApplyToken");
+                config.For<ITokenService>().Use<TokenService>();
+                config.For<IOrganisationsApplyApiClient>().Use<OrganisationsApplyApiClient>()
+                    .Ctor<ITokenService>("applyTokenService").Is(config.For<ITokenService>().Use<ApplyTokenService>());
                 config.For<IWebConfiguration>().Use(Configuration);
                 config.For<ISessionService>().Use<SessionService>().Ctor<string>().Is(_env.EnvironmentName);
                 config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
