@@ -27,7 +27,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
             services.AddAuthentication(options =>
                 {
                     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = "oidc";
                 })
                 .AddCookie(options => { 
                     options.Cookie.Name = ".Apply.Cookies";
