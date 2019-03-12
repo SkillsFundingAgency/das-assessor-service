@@ -10,6 +10,7 @@ using Microsoft.Extensions.Primitives;
 using Moq;
 using Newtonsoft.Json;
 using SFA.DAS.Apprenticeships.Api.Types;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
@@ -31,7 +32,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
 
         protected Certificate Certificate;
         protected CertificateData CertificateData;
-        protected Mock<IStandardService> MockStandardService;
+        protected Mock<IStandardServiceClient> MockStandardServiceClient;
 
         public CertificateQueryBase()
         {
@@ -42,7 +43,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
 
             MockHttpContextAccessor = MockedHttpContextAccessor.Setup();
             MockApiClient = MockedApiClient.Setup(Certificate, mockedApiClientLogger);
-            MockStandardService = new Mock<IStandardService>();
+            MockStandardServiceClient = new Mock<IStandardServiceClient>();
 
             var standards = new List<StandardSummary>
             {
@@ -78,7 +79,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
                 },
             };
 
-            MockStandardService.Setup(s => s.GetAllStandardSummaries()).Returns(Task.FromResult(standards.AsEnumerable()));
+            MockStandardServiceClient.Setup(s => s.GetAllStandardSummaries()).Returns(Task.FromResult(standards.AsEnumerable()));
 
 
 

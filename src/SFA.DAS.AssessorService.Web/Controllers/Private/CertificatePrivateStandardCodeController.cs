@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.Apprenticeships.Api.Types;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
@@ -27,21 +28,21 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
         private readonly CacheHelper _cacheHelper;
         private readonly ICertificateApiClient _certificateApiClient;
         private readonly ISessionService _sessionService;
-        private readonly IStandardService _standardService;
+        private readonly IStandardServiceClient _standardServiceClient;
 
         public CertificatePrivateStandardCodeController(ILogger<CertificateController> logger,
             IHttpContextAccessor contextAccessor,
             IAssessmentOrgsApiClient assessmentOrgsApiClient,
             CacheHelper cacheHelper,
-            ICertificateApiClient certificateApiClient, ISessionService sessionService, 
-            IStandardService standardService)
+            ICertificateApiClient certificateApiClient, ISessionService sessionService,
+            IStandardServiceClient standardServiceClient)
             : base(logger, contextAccessor, certificateApiClient, sessionService)
         {
             _assessmentOrgsApiClient = assessmentOrgsApiClient;
             _cacheHelper = cacheHelper;
             _certificateApiClient = certificateApiClient;
             _sessionService = sessionService;
-            _standardService = standardService;
+            _standardServiceClient = standardServiceClient;
         }
 
         [HttpGet]
@@ -73,7 +74,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
 
             vm.StandardCodes = GetSelectListItems(standards, filteredStandardCodes);
             if (!string.IsNullOrEmpty(vm.SelectedStandardCode))
-            {               
+            {
                 var selectedStandard = standards.First(q => q.Id == vm.SelectedStandardCode);
                 vm.Standard = selectedStandard.Title;
                 vm.Level = selectedStandard.Level;
@@ -132,7 +133,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers.Private
             var results = await _cacheHelper.RetrieveFromCache<IEnumerable<StandardSummary>>("Standards");
             if (results == null)
             {
-                var standards = await _standardService.GetAllStandardSummaries();
+                var standards = await _standardServiceClient.GetAllStandardSummaries();
                 await _cacheHelper.SaveToCache("Standards", standards, 1);
 
                 results = standards;

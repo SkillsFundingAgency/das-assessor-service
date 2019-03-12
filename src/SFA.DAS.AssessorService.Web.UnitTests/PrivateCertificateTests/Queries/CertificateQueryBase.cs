@@ -28,7 +28,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Queries
         protected IAssessmentOrgsApiClient MockAssessmentOrgsApiClient;
 
         protected Mock<ISessionService> MockSession;
-        protected Mock<IStandardService> MockStandardService;
+        protected Mock<IStandardServiceClient> MockStandardServiceClient;
 
         protected Certificate Certificate;
         protected CertificateData CertificateData;
@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Queries
             var mockedApiClientLogger = new Mock<ILogger<CertificateApiClient>>();
 
             MockSession = new Mock<ISessionService>();
-            MockStandardService = new Mock<IStandardService>();
+            MockStandardServiceClient = new Mock<IStandardServiceClient>();
             MockHttpContextAccessor = MockedHttpContextAccessor.Setup();
             MockCertificateApiClient = MockedCertificateApiClient.Setup(Certificate, mockedApiClientLogger);
 

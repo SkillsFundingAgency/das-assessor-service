@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Posts
         protected Mock<IHttpContextAccessor> MockHttpContextAccessor;
         protected ICertificateApiClient MockCertificateApiClient;
         protected IAssessmentOrgsApiClient MockAssessmentOrgsApiClient;
-        protected Mock<IStandardService> MockStandardService;
+        protected Mock<IStandardServiceClient> MockStandardServiceClient;
 
         protected Mock<ISessionService> MockSession;
 
@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Posts
             var mockedApiClientLogger = new Mock<ILogger<CertificateApiClient>>();
 
             MockSession = new Mock<ISessionService>();
-            MockStandardService = new Mock<IStandardService>();
+            MockStandardServiceClient = new Mock<IStandardServiceClient>();
 
             var standards = new List<StandardSummary>
             {
@@ -80,7 +80,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Posts
                 },
             };
 
-            MockStandardService.Setup(s => s.GetAllStandardSummaries()).Returns(Task.FromResult(standards.AsEnumerable()));
+            MockStandardServiceClient.Setup(s => s.GetAllStandardSummaries()).Returns(Task.FromResult(standards.AsEnumerable()));
 
             MockHttpContextAccessor = MockedHttpContextAccessor.Setup();
             MockCertificateApiClient = MockedCertificateApiClient.Setup(Certificate, mockedApiClientLogger);

@@ -26,7 +26,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Queries
                     new CacheHelper(mockDistributedCache.Object),
                     MockCertificateApiClient,
                     MockSession.Object,
-                    MockStandardService.Object
+                    MockStandardServiceClient.Object
                     );
           
             MockSession.Setup(q => q.Get("EndPointAsessorOrganisationId"))

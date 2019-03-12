@@ -10,6 +10,7 @@ using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.Services;
@@ -23,12 +24,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
     public class RegisterController: Controller
     {
         private readonly ApiClient _apiClient;
-        private readonly IStandardService _standardService;
+        private readonly IStandardServiceClient _standardServiceClient;
         private readonly IHostingEnvironment _env;
-        public RegisterController(ApiClient apiClient, IStandardService standardService,  IHostingEnvironment env)
+
+        public RegisterController(ApiClient apiClient, IStandardServiceClient standardServiceClient,  IHostingEnvironment env)
         {
             _apiClient = apiClient;
-            _standardService = standardService;
+            _standardServiceClient = standardServiceClient;
             _env = env;
         }
 
@@ -391,7 +393,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         private async Task<RegisterAddOrganisationStandardViewModel> ConstructOrganisationAndStandardDetails(RegisterAddOrganisationStandardViewModel vm)
         {
             var organisation = await _apiClient.GetEpaOrganisation(vm.OrganisationId);
-            var standard = await _standardService.GetStandard(vm.StandardId);
+            var standard = await _standardServiceClient.GetStandard(vm.StandardId);
             var availableDeliveryAreas = await _apiClient.GetDeliveryAreas();
 
             vm.Contacts = await _apiClient.GetEpaOrganisationContacts(vm.OrganisationId);
@@ -437,7 +439,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         {
             var organisationStandards = _apiClient.GetEpaOrganisationStandards(viewAndEditModel.OrganisationId).Result;
 
-            var allStandards = _standardService.GetAllStandardSummaries().Result;
+            var allStandards = _standardServiceClient.GetAllStandardSummaries().Result;
 
             foreach (var organisationStandard in organisationStandards)
             {
