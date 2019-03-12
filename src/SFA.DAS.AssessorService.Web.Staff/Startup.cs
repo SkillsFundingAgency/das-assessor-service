@@ -123,7 +123,7 @@ namespace SFA.DAS.AssessorService.Web.Staff
                     .Use<CertificateLearnerStartDateViewModelValidator>();
                 config.For<IRegisterValidator>().Use<RegisterValidator>();
 
-                config.For<IStandardService>().Use<StandardService>();
+                config.For<IStandardServiceClient>().Use<StandardServiceClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<ISessionService>().Use<SessionService>().Ctor<string>("environment")
                     .Is(Configuration["EnvironmentName"]);
                 config.Populate(services);

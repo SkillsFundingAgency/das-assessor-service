@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Posts
                     new CacheHelper(distributedCacheMock.Object), 
                     MockCertificateApiClient,
                     MockSession.Object,
-                    MockStandardService.Object
+                    MockStandardServiceClient.Object
                     );
 
             var vm = new CertificateStandardCodeListViewModel
