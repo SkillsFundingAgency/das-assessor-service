@@ -151,7 +151,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                             CertificateReference = "SANDBOX",
                             Learner = new Learner { FamilyName = req.FamilyName, GivenNames = "FIRSTNAME", Uln = req.Uln },
                             LearningDetails = new LearningDetails { CourseOption = "COURSEOPTION", OverallGrade = "Pass", AchievementDate = DateTime.UtcNow, LearningStartDate = DateTime.UtcNow.AddYears(-1), ProviderName = "PROVIDER", ProviderUkPrn = req.UkPrn },
-                            Standard = new Standard { Level = 1, StandardCode = req.StandardCode, StandardName = "STANDARD" },
+                            Standard = new Standard { Level = 1, StandardCode = req.StandardCode ?? 9999, StandardReference = req.StandardReference ?? "ST9999", StandardName = "STANDARD" },
                             PostalContact = new PostalContact { AddressLine1 = "ADDRESS1", City = "CITY", ContactName = "CONTACT", Organisation = "ORGANISATION", PostCode = "AB1 1AA" }
                         },
                         Status = new Status { CurrentStatus = "Submitted" },
@@ -292,7 +292,11 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                 {
                     validationErrors.Add("Enter the apprentice's last name");
                 }
-                if (request.StandardCode < 1)
+                if (request.StandardCode is null && string.IsNullOrEmpty(request.StandardReference))
+                {
+                    validationErrors.Add("A standard should be selected");
+                }
+                else if (request.StandardCode.HasValue && request.StandardCode < 1)
                 {
                     validationErrors.Add("A standard should be selected");
                 }

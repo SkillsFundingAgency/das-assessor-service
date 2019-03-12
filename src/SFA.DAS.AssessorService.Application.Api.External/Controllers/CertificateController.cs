@@ -156,6 +156,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Controllers
                     RequestId = req.RequestId,
                     Uln = req.Uln,
                     StandardCode = req.StandardCode,
+                    StandardReference = req.StandardReference,
                     FamilyName = req.FamilyName,
                     CertificateReference = req.CertificateReference
                 });

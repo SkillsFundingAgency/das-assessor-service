@@ -15,7 +15,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
 {
     public class SubmitBatchCertificateRequestValidator : AbstractValidator<SubmitBatchCertificateRequest>
     {
-        public SubmitBatchCertificateRequestValidator(IStringLocalizer<SubmitBatchCertificateRequestValidator> localiser, IOrganisationQueryRepository organisationQueryRepository, IIlrRepository ilrRepository, ICertificateRepository certificateRepository, IAssessmentOrgsApiClient assessmentOrgsApiClient, IStandardService standardService)
+        public SubmitBatchCertificateRequestValidator(IStringLocalizer<SubmitBatchCertificateRequestValidator> localiser, IOrganisationQueryRepository organisationQueryRepository, IIlrRepository ilrRepository, ICertificateRepository certificateRepository, IAssessmentOrgsApiClient assessmentOrgsApiClient, IStandardRepository standardRepository)
         {
             RuleFor(m => m.UkPrn).InclusiveBetween(10000000, 99999999).WithMessage("The UKPRN should contain exactly 8 numbers");
             RuleFor(m => m.Email).NotEmpty();
@@ -33,7 +33,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
 
                         if (requestedIlr is null || !string.Equals(requestedIlr.FamilyName, m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
                         {
-                            context.AddFailure(new ValidationFailure("Uln", "Cannot find apprentice with the specified Uln, FamilyName & StandardCode"));
+                            if (!string.IsNullOrEmpty(m.StandardReference))
+                            {
+                                context.AddFailure(new ValidationFailure("Uln", "Cannot find apprentice with the specified Uln, FamilyName & StandardReference"));
+                            }
+                            else
+                            {
+                                context.AddFailure(new ValidationFailure("Uln", "Cannot find apprentice with the specified Uln, FamilyName & StandardCode"));
+                            }
                         }
                         else if (sumbittingEpao is null)
                         {
@@ -45,14 +52,36 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
 
                             if (!providedStandards.Any(s => s.StandardCode == m.StandardCode.ToString()))
                             {
-                                context.AddFailure(new ValidationFailure("StandardCode", "EPAO is not registered for this Standard"));
+                                context.AddFailure("EPAO is not registered for this Standard");
                             }
                         }
                     });
                 });
             });
 
-            RuleFor(m => m.StandardCode).GreaterThan(0).WithMessage("A standard should be selected");
+            RuleFor(m => m).Custom((m, context) =>
+            {
+                if(m.StandardCode < 1)
+                {
+                    if (string.IsNullOrEmpty(m.StandardReference))
+                    {
+                        context.AddFailure("A standard should be selected");
+                    }
+                    else
+                    {
+                        context.AddFailure(new ValidationFailure("StandardReference", "Standard not found"));
+                    }
+                }
+                else if(!string.IsNullOrEmpty(m.StandardReference))
+                {
+                    var collatedStandard = standardRepository.GetStandardCollationByReferenceNumber(m.StandardReference).GetAwaiter().GetResult();
+                    if (m.StandardCode != collatedStandard?.StandardId)
+                    {
+                        context.AddFailure("StandardReference and StandardCode relate to different standards");
+                    }
+                }
+            });
+
             RuleFor(m => m.CertificateReference).NotEmpty().WithMessage("Enter the certificate reference").DependentRules(() =>
             {
                 RuleFor(m => m).Custom((m, context) =>

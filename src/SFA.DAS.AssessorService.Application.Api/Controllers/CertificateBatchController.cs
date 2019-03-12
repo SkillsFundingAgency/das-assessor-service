@@ -151,6 +151,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             foreach (SubmitBatchCertificateRequest request in batchRequest)
             {
+                if (request.StandardCode < 1)
+                {
+                    var collatedStandard = await GetCollatedStandard(request.StandardReference);
+
+                    if (collatedStandard?.StandardId != null)
+                    {
+                        request.StandardCode = collatedStandard.StandardId.Value;
+                    }
+                }
+
                 ValidationResult validationResult = _submitValidator.Validate(request);
 
                 SubmitBatchCertificateResponse submitResponse = new SubmitBatchCertificateResponse
