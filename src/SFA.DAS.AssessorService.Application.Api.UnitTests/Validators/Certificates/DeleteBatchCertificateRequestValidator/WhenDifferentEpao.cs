@@ -17,6 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
             DeleteBatchCertificateRequest request = Builder<DeleteBatchCertificateRequest>.CreateNew()
                 .With(i => i.Uln = 1234567890)
                 .With(i => i.StandardCode = 1)
+                .With(i => i.StandardReference = null)
                 .With(i => i.UkPrn = 99999999)
                 .With(i => i.FamilyName = "Test")
                 .With(i => i.CertificateReference = "1234567890-1")
