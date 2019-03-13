@@ -112,7 +112,7 @@ namespace SFA.DAS.AssessorService.EpaoImporter.DomainServices
                         {
                             StandardTitle = c.CertificateData.StandardName,
                             Level = $"LEVEL {c.CertificateData.StandardLevel}",
-                            Option = string.IsNullOrWhiteSpace(c.CertificateData?.CourseOption) ? string.Empty: $"({c.CertificateData.CourseOption}) :",
+                            Option = string.IsNullOrWhiteSpace(c.CertificateData?.CourseOption) ? string.Empty: $"({c.CertificateData.CourseOption}):",
                             GradeText = gradeText,
                             Grade = grade,
                             AchievementDate = $"{c.CertificateData.AchievementDate.Value:dd MMMM yyyy}",
