@@ -1261,3 +1261,54 @@
         line-height: 1.15;
     }
 }
+
+.govuk-heading-xl {
+    color: #0b0c0c;
+    font-family: "nta", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 700;
+    font-size: 32px;
+    font-size: 2rem;
+    line-height: 1.09375;
+    display: block;
+    margin-top: 0;
+    margin-bottom: 30px;
+}
+
+@media print {
+    .govuk-heading-xl {
+        color: #000000;
+    }
+}
+
+@media print {
+    .govuk-heading-xl {
+        font-family: sans-serif;
+    }
+}
+
+@media (min-width: 40.0625em) {
+    .govuk-heading-xl {
+        font-size: 48px;
+        font-size: 3rem;
+        line-height: 1.04167;
+    }
+}
+
+@media print {
+    .govuk-heading-xl {
+        font-size: 32pt;
+        line-height: 1.15;
+    }
+}
+
+@media (min-width: 40.0625em) {
+    .govuk-heading-xl {
+        margin-bottom: 50px;
+    }
+}
+
+.roatp-org-search-result {
+    display: block;
+}
