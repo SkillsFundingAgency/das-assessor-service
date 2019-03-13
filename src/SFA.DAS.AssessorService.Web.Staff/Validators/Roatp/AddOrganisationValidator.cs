@@ -42,10 +42,13 @@
             }
             else
             {
-                fieldValidationErrors = IsDuplicateUKPRN(viewModel.OrganisationId, viewModel.UKPRN);
-                if (fieldValidationErrors.Any())
+                if (!String.IsNullOrWhiteSpace(viewModel.UKPRN))
                 {
-                    validationResponse.Errors.AddRange(fieldValidationErrors);
+                    fieldValidationErrors = IsDuplicateUKPRN(viewModel.OrganisationId, viewModel.UKPRN);
+                    if (fieldValidationErrors.Any())
+                    {
+                        validationResponse.Errors.AddRange(fieldValidationErrors);
+                    }
                 }
             }
 
@@ -56,10 +59,13 @@
             }
             else
             {
-                fieldValidationErrors = IsDuplicateCompanyNumber(viewModel.OrganisationId, viewModel.CompanyNumber);
-                if (fieldValidationErrors.Any())
+                if (!String.IsNullOrWhiteSpace(viewModel.CompanyNumber))
                 {
-                    validationResponse.Errors.AddRange(fieldValidationErrors);
+                    fieldValidationErrors = IsDuplicateCompanyNumber(viewModel.OrganisationId, viewModel.CompanyNumber);
+                    if (fieldValidationErrors.Any())
+                    {
+                        validationResponse.Errors.AddRange(fieldValidationErrors);
+                    }
                 }
             }
 
@@ -70,10 +76,13 @@
             }
             else
             {
-                fieldValidationErrors = IsDuplicateCharityNumber(viewModel.OrganisationId, viewModel.CharityNumber);
-                if (fieldValidationErrors.Any())
+                if (!String.IsNullOrWhiteSpace(viewModel.CharityNumber))
                 {
-                    validationResponse.Errors.AddRange(fieldValidationErrors);
+                    fieldValidationErrors = IsDuplicateCharityNumber(viewModel.OrganisationId, viewModel.CharityNumber);
+                    if (fieldValidationErrors.Any())
+                    {
+                        validationResponse.Errors.AddRange(fieldValidationErrors);
+                    }
                 }
             }
 
@@ -89,6 +98,12 @@
         private List<ValidationErrorDetail> IsValidUKPRN(string ukprn)
         {
             var errorMessages = new List<ValidationErrorDetail>();
+
+            if (String.IsNullOrWhiteSpace(ukprn))
+            {
+               errorMessages.Add(new ValidationErrorDetail("UKPRN", RoatpOrganisationValidation.UKPRNMandatory));
+               return errorMessages;
+            }
 
             long ukprnValue = 0;
             bool isParsed = long.TryParse(ukprn, out ukprnValue);

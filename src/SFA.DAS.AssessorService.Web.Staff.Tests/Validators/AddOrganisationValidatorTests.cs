@@ -103,7 +103,6 @@
         }
 
         [TestCase("A1234567")]
-        [TestCase(" ")]
         [TestCase("1 234567")]
         public void Validator_rejects_invalid_characters_in_UKPRN(string ukprn)
         {
@@ -115,6 +114,21 @@
 
             ukprnError.Should().NotBeNull();
             ukprnError.ErrorMessage.Should().Be(RoatpOrganisationValidation.UKPRNFormat);
+        }
+
+        [TestCase("")]
+        [TestCase(" ")]
+        [TestCase(null)]
+        public void Validator_rejects_null_or_empty_UKPRN(string ukprn)
+        {
+            _viewModel.UKPRN = ukprn;
+
+            var validationResponse = _validator.ValidateOrganisationDetails(_viewModel).GetAwaiter().GetResult();
+
+            var ukprnError = validationResponse.Errors.FirstOrDefault(x => x.Field == "UKPRN");
+
+            ukprnError.Should().NotBeNull();
+            ukprnError.ErrorMessage.Should().Be(RoatpOrganisationValidation.UKPRNMandatory);
         }
 
         [Test]
