@@ -12,7 +12,8 @@
 
     public class AddOrganisationValidator : IAddOrganisationValidator
     {
-        private const string CompaniesHouseNumberRegex = "[A-Za-z0-9]{2}[0-9]{6}";
+        private const string CompaniesHouseNumberRegexWithPrefix = "[A-Z]{2}[0-9]{6}";
+        private const string CompaniesHouseNumberRegexNumeric = "[0-9]{8}";
         private const string CharityNumberInvalidCharactersRegex = "[^a-zA-Z0-9\\-]";
         
         private IRoatpApiClient _apiClient;
@@ -130,7 +131,7 @@
 
             var duplicateCheckResponse = _apiClient.DuplicateUKPRNCheck(organisationId, ukprnValue).Result;
 
-            if (duplicateCheckResponse.DuplicateFound)
+            if (duplicateCheckResponse != null && duplicateCheckResponse.DuplicateFound)
             {
                 var duplicateErrorMessage = string.Format(RoatpOrganisationValidation.UKPRNDuplicateMatch,
                     duplicateCheckResponse.DuplicateOrganisationName);
@@ -189,7 +190,8 @@
                 errorMessages.Add(new ValidationErrorDetail("CompanyNumber", RoatpOrganisationValidation.CompanyNumberLength));
             }
 
-            if (!Regex.IsMatch(companyNumber, CompaniesHouseNumberRegex))
+            if (!Regex.IsMatch(companyNumber, CompaniesHouseNumberRegexWithPrefix)
+                && (!Regex.IsMatch(companyNumber, CompaniesHouseNumberRegexNumeric)))
             {
                 errorMessages.Add(new ValidationErrorDetail("CompanyNumber", RoatpOrganisationValidation.CompanyNumberFormat));
             }
@@ -203,7 +205,7 @@
 
             var duplicateCheckResponse = _apiClient.DuplicateCompanyNumberCheck(organisationId, companyNumber).Result;
 
-            if (duplicateCheckResponse.DuplicateFound)
+            if (duplicateCheckResponse != null && duplicateCheckResponse.DuplicateFound)
             {
                 var duplicateErrorMessage = string.Format(RoatpOrganisationValidation.CompanyNumberDuplicateMatch,
                     duplicateCheckResponse.DuplicateOrganisationName);
@@ -241,7 +243,7 @@
 
             var duplicateCheckResponse = _apiClient.DuplicateCharityNumberCheck(organisationId, charityNumber).Result;
 
-            if (duplicateCheckResponse.DuplicateFound)
+            if (duplicateCheckResponse != null && duplicateCheckResponse.DuplicateFound)
             {
                 var duplicateErrorMessage = string.Format(RoatpOrganisationValidation.CharityNumberDuplicateMatch,
                     duplicateCheckResponse.DuplicateOrganisationName);
