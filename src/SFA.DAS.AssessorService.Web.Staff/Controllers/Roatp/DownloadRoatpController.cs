@@ -79,7 +79,7 @@
                     _logger.LogError("Unable to retrieve roatp summary from RoATP API");
                 }
 
-                return File(package.GetAsByteArray(), "application/excel", $"{ExcelFileName}");
+                return File(package.GetAsByteArray(), "application/excel", $"{RoatpExcelFileName}");
             }
         }
     }
