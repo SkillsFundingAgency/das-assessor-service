@@ -85,13 +85,24 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             foreach (CreateBatchCertificateRequest request in batchRequest)
             {
-                ValidationResult validationResult = _createValidator.Validate(request);
+                if (request.StandardCode < 1)
+                {
+                    var collatedStandard = await GetCollatedStandard(request.StandardReference);
 
+                    if (collatedStandard?.StandardId != null)
+                    {
+                        request.StandardCode = collatedStandard.StandardId.Value;
+                    }
+                }
+
+                ValidationResult validationResult = _createValidator.Validate(request);
+                
                 BatchCertificateResponse certResponse = new BatchCertificateResponse
                 {
                     RequestId = request.RequestId,
                     Uln = request.Uln,
                     StandardCode = request.StandardCode,
+                    StandardReference = request.StandardReference,
                     FamilyName = request.FamilyName,
                     ValidationErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList()
                 };

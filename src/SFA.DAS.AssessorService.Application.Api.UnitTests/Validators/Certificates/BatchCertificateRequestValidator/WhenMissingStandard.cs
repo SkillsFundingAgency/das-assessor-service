@@ -8,7 +8,7 @@ using System;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certificates.BatchCertificateRequestValidator
 {
-    public class WhenMissingOverallGrade : BatchCertificateRequestValidatorTestBase
+    public class WhenMissingStandard : BatchCertificateRequestValidatorTestBase
     {
         private ValidationResult _validationResult;
 
@@ -17,14 +17,14 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
         {
             BatchCertificateRequest request = Builder<BatchCertificateRequest>.CreateNew()
                 .With(i => i.Uln = 1234567890)
-                .With(i => i.StandardCode = 99)
+                .With(i => i.StandardCode = 0)
                 .With(i => i.StandardReference = null)
                 .With(i => i.UkPrn = 12345678)
                 .With(i => i.FamilyName = "Test")
                 .With(i => i.CertificateData = Builder<CertificateData>.CreateNew()
                                 .With(cd => cd.ContactPostCode = "AA11AA")
                                 .With(cd => cd.AchievementDate = DateTime.UtcNow)
-                                .With(cd => cd.OverallGrade = null)
+                                .With(cd => cd.OverallGrade = "Pass")
                                 .With(cd => cd.CourseOption = "English")
                                 .Build())
                 .Build();

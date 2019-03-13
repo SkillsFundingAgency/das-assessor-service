@@ -4,7 +4,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
 {
     public class Standard : IEquatable<Standard>
     {
-        public int StandardCode { get; set; }
+        public int? StandardCode { get; set; }
         public string StandardReference { get; set; }
         public string StandardName { get; set; }
         public int Level { get; set; }

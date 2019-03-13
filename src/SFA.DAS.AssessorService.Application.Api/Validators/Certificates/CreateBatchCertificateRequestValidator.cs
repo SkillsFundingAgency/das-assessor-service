@@ -11,9 +11,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
 {
     public class CreateBatchCertificateRequestValidator : AbstractValidator<BatchCertificateRequest>
     {
-        public CreateBatchCertificateRequestValidator(IStringLocalizer<BatchCertificateRequestValidator> localiser, IOrganisationQueryRepository organisationQueryRepository, IIlrRepository ilrRepository, ICertificateRepository certificateRepository, IAssessmentOrgsApiClient assessmentOrgsApiClient)
+        public CreateBatchCertificateRequestValidator(IStringLocalizer<BatchCertificateRequestValidator> localiser, IOrganisationQueryRepository organisationQueryRepository, IIlrRepository ilrRepository, ICertificateRepository certificateRepository, IAssessmentOrgsApiClient assessmentOrgsApiClient, IStandardRepository standardRepository)
         {
-            Include(new BatchCertificateRequestValidator(localiser, organisationQueryRepository, ilrRepository, certificateRepository, assessmentOrgsApiClient));
+            Include(new BatchCertificateRequestValidator(localiser, organisationQueryRepository, ilrRepository, certificateRepository, assessmentOrgsApiClient, standardRepository));
 
             RuleFor(m => m.CertificateReference).Empty().WithMessage("Certificate reference must be empty").DependentRules(() =>
             {

@@ -82,6 +82,15 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                     responseItem.Certificate.CertificateData.LearningDetails.ProviderName = "PROVIDER";
                     responseItem.Certificate.CertificateData.LearningDetails.ProviderUkPrn = req.UkPrn;
                     responseItem.Certificate.CertificateData.LearningDetails.LearningStartDate = DateTime.UtcNow.AddYears(-1);
+
+                    if(responseItem.Certificate.CertificateData.Standard.StandardCode is null)
+                    {
+                        responseItem.Certificate.CertificateData.Standard.StandardCode = 9999;
+                    }
+                    if(string.IsNullOrEmpty(responseItem.Certificate.CertificateData.Standard.StandardReference))
+                    {
+                        responseItem.Certificate.CertificateData.Standard.StandardReference = "ST9999";
+                    }
                 }
 
                 response.Add(responseItem);
@@ -226,7 +235,12 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                 {
                     validationErrors.Add("Enter the apprentice's last name");
                 }
-                if (cert.Standard?.StandardCode < 1)
+
+                if (cert.Standard?.StandardCode is null && string.IsNullOrEmpty(cert.Standard?.StandardReference))
+                {
+                    validationErrors.Add("A standard should be selected");
+                }
+                else if (cert.Standard?.StandardCode != null && cert.Standard.StandardCode < 1)
                 {
                     validationErrors.Add("A standard should be selected");
                 }

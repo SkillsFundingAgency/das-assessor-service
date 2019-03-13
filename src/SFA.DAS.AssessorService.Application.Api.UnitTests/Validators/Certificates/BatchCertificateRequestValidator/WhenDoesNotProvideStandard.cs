@@ -18,6 +18,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Validators.Certifica
             BatchCertificateRequest request = Builder<BatchCertificateRequest>.CreateNew()
                 .With(i => i.Uln = 1234567890)
                 .With(i => i.StandardCode = 98)
+                .With(i => i.StandardReference = null)
                 .With(i => i.UkPrn = 99999999)
                 .With(i => i.FamilyName = "Test")
                 .With(i => i.CertificateData = Builder<CertificateData>.CreateNew()
