@@ -11,7 +11,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
         private RedirectToActionResult _result;        
 
         [SetUp]
-        public void Arrange()
+        public void WhenValidModelContainsNoErrors()
         {
             var certificatePrivateFirstNameController =
                 new CertificatePrivateFirstNameController(MockLogger.Object,
@@ -29,7 +29,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
                 Level = 2,
                 Standard = "91",
                 IsPrivatelyFunded = true,
-                ReasonForChange = "stuff"
+                ReasonForChange = "Required reason for change"
             };                      
 
             var result = certificatePrivateFirstNameController.FirstName(vm).GetAwaiter().GetResult();
