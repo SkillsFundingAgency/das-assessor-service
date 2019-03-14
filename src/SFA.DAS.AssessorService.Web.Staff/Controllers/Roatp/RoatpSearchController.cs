@@ -38,7 +38,8 @@
                 SearchTerm = model.SearchTerm,
                 Title = BuildSearchResultsTitle(searchResults.TotalCount, model.SearchTerm),
                 SearchResults = searchResults.SearchResults,
-                TotalCount = searchResults.TotalCount
+                TotalCount = searchResults.TotalCount,
+                SelectedIndex = 0
             };
             _sessionService.SetSearchResults(viewModel);
             var actionName = "SearchResults";
@@ -50,9 +51,15 @@
         }
 
         [Route("results-found")]
-        public async Task<IActionResult> SearchResults()
+        public async Task<IActionResult> SearchResults(int index = 0)
         {
             var model = _sessionService.GetSearchResults();
+            if (index >= model.SearchResults.Count)
+            {
+                index = 0;
+            }
+
+            model.SelectedIndex = index;
 
             return View("~/Views/Roatp/SearchResults.cshtml", model);
         }
