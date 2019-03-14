@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using FizzWare.NBuilder;
 using FluentAssertions;
+using MediatR;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
@@ -13,7 +14,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Contacts
 {
     public class WhenOrganisationHasExistingContractsCreateContactHandlerSucceeds
     { 
-        private Contact _result;
+        private ContactBoolResponse _result;
 
         [SetUp]
         public void Arrange()
@@ -27,8 +28,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Contacts
             var contactResponse = Builder<Contact>.CreateNew().Build();
             var createContactRequest = Builder<CreateContactRequest>.CreateNew().Build();
             var contactRepositoryMock = CreateContactRepositoryMock(contactResponse);
+            var mediator = new Mock<IMediator>();
+            var defSignInService = new Mock<IDfeSignInService>();
 
-            var createContactHandler = new CreateContactHandler(organisationRepositoryMock.Object, organisationQueryRepositoryMock.Object, contactRepositoryMock.Object);
+            var createContactHandler = new CreateContactHandler(organisationRepositoryMock.Object, organisationQueryRepositoryMock.Object, contactRepositoryMock.Object, defSignInService.Object,mediator.Object);
 
             _result = createContactHandler.Handle(createContactRequest, new CancellationToken()).Result;
         }
@@ -36,8 +39,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Contacts
         [Test]
         public void ItShouldReturnResult()
         {
-            var result = _result as Contact;
-            result.Should().NotBeNull();
+            var result = _result as ContactBoolResponse;
+            result.Result.Should().BeTrue();
         }
 
         private static Mock<IContactRepository> CreateContactRepositoryMock(Contact contactResponse)

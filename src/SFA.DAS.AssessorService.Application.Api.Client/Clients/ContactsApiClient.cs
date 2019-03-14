@@ -9,10 +9,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
     public class ContactsApiClient : ApiClientBase, IContactsApiClient
     {
         private readonly ILogger<ContactsApiClient> _logger;
+        private readonly IContactApplyClient _contactApplyClient;
 
-        public ContactsApiClient(string baseUri, ITokenService tokenService, ILogger<ContactsApiClient> logger) : base(baseUri, tokenService, logger)
+        public ContactsApiClient(string baseUri, ITokenService tokenService, ILogger<ContactsApiClient> logger, IContactApplyClient contactApplyClient) : base(baseUri, tokenService, logger)
         {
             _logger = logger;
+            _contactApplyClient = contactApplyClient;
         }
 
         public ContactsApiClient(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger) : base(httpClient, tokenService, logger)
@@ -34,14 +36,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 return await RequestAndDeserialiseAsync<ContactResponse>(request, $"Could not find the contact");
             }
         }
-
-        public async Task<ContactResponse> Create(CreateContactRequest contact)
-        {
-            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/contacts/"))
-            {
-                return await PostPutRequestWithResponse<CreateContactRequest, ContactResponse>(request, contact);
-            }
-        }
+        
 
         public async Task<ContactResponse> Update(UpdateContactRequest updateContactRequest)
         {
@@ -91,14 +86,49 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task<ContactBoolResponse> InviteUser(CreateContactRequest createContactRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/contacts"))
+            {
+                var response =
+                    await PostPutRequestWithResponse<CreateContactRequest, ContactBoolResponse>(request,
+                        createContactRequest);
+                if (response.Result)
+                {
+                    await _contactApplyClient.CreateAccountInApply(new NewApplyContact
+                    {
+                        Email = createContactRequest.Email, GivenName = createContactRequest.GivenName,
+                        FamilyName = createContactRequest.FamilyName,
+                        FromAssessor = true
+                    });
+                }
+
+                return response;
+            }
+        }
+
+        public async Task Callback(DfeSignInCallback callback)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/contacts/callback"))
+            {
+                await PostPutRequest(request, callback);
+                var response = await GetContactBySignInId(callback.Sub);
+                await _contactApplyClient.UpdateApplySignInId(new AddToApplyContactASignInId
+                {
+                    Email = response.Email,
+                    SignInId = callback.Sub,
+                    ContactId = callback.SourceId,
+                    UpdatedBy = "AssessorSignIn"
+                });
+            }
+        }
+
     }
 
     public interface IContactsApiClient
     {
         Task<ContactResponse> GetByUsername(string username);
-
-        Task<ContactResponse> Create(CreateContactRequest contact);
-
+        
         Task<ContactResponse> Update(UpdateContactRequest updateContactRequest);
 
         Task<List<ContactsWithPrivilegesResponse>> GetContactsWithPrivileges(string endPointAssessorOrganisationId);
@@ -112,6 +142,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         Task<ContactResponse> UpdateOrgAndStatus(
             UpdateContactWithOrgAndStausRequest updateContactWithOrgAndStausRequest);
+
+        Task<ContactBoolResponse> InviteUser(CreateContactRequest createAccountRequest);
+        Task Callback(DfeSignInCallback callback);
 
     }
 }

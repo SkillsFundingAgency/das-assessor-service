@@ -152,40 +152,5 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
                 });
             }
         }
-
-        private async Task CreateNewContact(string email, Organisation organisation, string displayName,
-            string username)
-        {
-            _logger.LogInformation($"Creating new contact.  Email: {email}, DisplayName: {displayName}, Username: {username}, EndPointAssessorOrganisationId: {organisation.EndPointAssessorOrganisationId}");
-
-            var contact = await _mediator.Send(new CreateContactRequest(){
-                Email = email,
-                DisplayName = displayName,
-                Username = username,
-                EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId
-            });
-
-            _logger.LogInformation($"New contact created");
-
-            await SetNewOrganisationPrimaryContact(organisation, contact);
-        }
-
-        private async Task SetNewOrganisationPrimaryContact(Organisation organisation, Contact contact)
-        {
-            if (organisation.Status == OrganisationStatus.New)
-            {
-                _logger.LogInformation($"Org status is New. Setting Org {organisation.EndPointAssessorUkprn} with primary contact of {contact.Username}");
-
-                await _mediator.Send(new UpdateOrganisationRequest()
-                {
-                    EndPointAssessorName = organisation.EndPointAssessorName,
-                    EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
-                    PrimaryContact = contact.Username,
-                    EndPointAssessorUkprn = organisation.EndPointAssessorUkprn,
-                    ApiEnabled = organisation.ApiEnabled,
-                    ApiUser = organisation.ApiUser
-                });
-            }
-        }
     }
 }

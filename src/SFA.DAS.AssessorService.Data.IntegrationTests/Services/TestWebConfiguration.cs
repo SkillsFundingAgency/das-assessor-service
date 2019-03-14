@@ -23,6 +23,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests.Services
         public ClientApiAuthentication ApplyApiAuthentication { get; set; }
         public string ApplyBaseAddress { get; set; }
         public string ServiceLink { get; set; }
+        public DfeSignInConfig DfeSignIn { get; set; }
     }
 
 }

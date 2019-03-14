@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
@@ -9,43 +10,72 @@ using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
 {
-    public class CreateContactHandler : IRequestHandler<CreateContactRequest, Contact>
+    public class CreateContactHandler : IRequestHandler<CreateContactRequest, ContactBoolResponse>
     {
         private readonly IOrganisationRepository _organisationRepository;
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
         private readonly IContactRepository _contactRepository;
+        private readonly IDfeSignInService _dfeSignInService;
+        private readonly IMediator _mediator;
 
         public CreateContactHandler(
             IOrganisationRepository organisationRepository,
             IOrganisationQueryRepository organisationQueryRepository,
-            IContactRepository contactRepository)
+            IContactRepository contactRepository,
+            IDfeSignInService dfeSignInService,
+            IMediator mediator)
         {
             _organisationRepository = organisationRepository;
             _contactRepository = contactRepository;
             _organisationQueryRepository = organisationQueryRepository;
+            _dfeSignInService = dfeSignInService;
+            _mediator = mediator;
         }
 
-        public async Task<Contact> Handle(CreateContactRequest createContactRequest, CancellationToken cancellationToken)
+        public async Task<ContactBoolResponse> Handle(CreateContactRequest createContactRequest, CancellationToken cancellationToken)
         {
-            var organisation = await _organisationQueryRepository.Get(createContactRequest.EndPointAssessorOrganisationId);
-                
+            Contact contactResponse = null;
+            var response = new ContactBoolResponse(true);
             var newContact = Mapper.Map<Contact>(createContactRequest);           
-            newContact.OrganisationId = organisation.Id;
-            newContact.Status = ContactStatus.InvitePending;
+            newContact.OrganisationId = null;
+            newContact.Status = ContactStatus.New;
 
-            if (!(await _organisationQueryRepository.CheckIfOrganisationHasContacts(createContactRequest.EndPointAssessorOrganisationId)))
+            var existingContact = await _contactRepository.GetContact(newContact.Email);
+            if (existingContact == null)
             {
-                var contactResponse = await _contactRepository.CreateNewContact(newContact);
-
-                await SetOrganisationStatusToLiveAndSetPrimaryContact(createContactRequest, contactResponse);
-
-                return contactResponse;
+                contactResponse = await _contactRepository.CreateNewContact(newContact);
+                var invitationResult = await _dfeSignInService.InviteUser(createContactRequest.Email, createContactRequest.GivenName, createContactRequest.FamilyName, newContact.Id);
+                if (!invitationResult.IsSuccess)
+                {
+                    response.Result = false;
+                    return response;
+                }
             }
             else
             {
-                var contactResponse = await _contactRepository.CreateNewContact(newContact);
-                return contactResponse;
-            }           
+                if (existingContact.SignInId == null)
+                {
+                   
+                    var invitationResult = await _dfeSignInService.InviteUser(createContactRequest.Email, createContactRequest.GivenName, createContactRequest.FamilyName, existingContact.Id);
+                    if (!invitationResult.IsSuccess)
+                    {
+                        response.Result = false;
+                        return response;
+                    }
+                }
+                // otherwise advise they already have an account (by Email)
+               var emailTemplate =  await _mediator.Send(new GetEMailTemplateRequest {TemplateName = "ApplySignupError"}, cancellationToken);
+               await _mediator.Send(new SendEmailRequest(createContactRequest.Email, emailTemplate, new { }), cancellationToken);
+            }
+
+            if (createContactRequest
+                .EndPointAssessorOrganisationId != null && !(await _organisationQueryRepository.CheckIfOrganisationHasContacts(createContactRequest
+                .EndPointAssessorOrganisationId)))
+            {
+                await SetOrganisationStatusToLiveAndSetPrimaryContact(createContactRequest, contactResponse);
+            }
+
+            return response;
         }
 
         private async Task SetOrganisationStatusToLiveAndSetPrimaryContact(CreateContactRequest createContactRequest, Contact contact)

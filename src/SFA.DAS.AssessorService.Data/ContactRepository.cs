@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
 using Microsoft.EntityFrameworkCore;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
@@ -106,6 +108,27 @@ namespace SFA.DAS.AssessorService.Data
             _assessorDbContext.MarkAsModified(contactEntity);
 
             await _assessorDbContext.SaveChangesAsync();
+        }
+
+        public async Task UpdateSignInId(Guid contactId, Guid signInId)
+        {
+            var contactEntity =
+                await _assessorDbContext.Contacts.FirstAsync(q => q.Id == contactId);
+
+            contactEntity.SignInId = signInId;
+            contactEntity.Status = ContactStatus.New;
+
+            // Workaround for Mocking
+            _assessorDbContext.MarkAsModified(contactEntity);
+
+            await _assessorDbContext.SaveChangesAsync();
+        }
+
+        public async Task<Contact> GetContact(string email)
+        {
+           
+            return  await _assessorDbContext.Contacts.FirstOrDefaultAsync(q => q.Email == email);
+
         }
     }
 }

@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts
 
             MappingBootstrapper.Initialize();
 
-            var contact = Builder<Contact>.CreateNew().Build();
+            var contact = Builder<ContactBoolResponse>.CreateNew().Build();
 
             Mediator.Setup(q => q.Send(Moq.It.IsAny<CreateContactRequest>(), Moq.It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult((contact)));

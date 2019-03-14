@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.Entities;
 
@@ -12,5 +13,8 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task LinkOrganisation(string endPointAssessorOrganisationId, string userName);
         Task UpdateStatus(UpdateContactStatusRequest updateContactRequest);
         Task UpdateContactWithOrganisationData(UpdateContactWithOrgAndStausRequest updateContactWithOrgAndStaus);
+
+        Task UpdateSignInId(Guid contactId, Guid signInId);
+        Task<Contact> GetContact(string email);
     }
 }

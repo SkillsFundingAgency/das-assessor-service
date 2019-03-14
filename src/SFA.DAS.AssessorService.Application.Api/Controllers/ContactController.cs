@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -30,8 +31,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpPost(Name = "CreateContract")]
-        [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(ContactResponse))]
+        [HttpPost(Name = "CreateContact")]
+        [SwaggerResponse((int)HttpStatusCode.Created, Type = typeof(ContactBoolResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> CreateContact(
@@ -39,10 +40,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         {
             _logger.LogInformation("Received Create Contact Request");
 
-            var contactResponse = Mapper.Map<ContactResponse>(await _mediator.Send(createContactRequest));
+            var contactResponse =await _mediator.Send(createContactRequest);
 
-            return CreatedAtRoute("CreateContract",
-                new { Username = contactResponse.Username },
+            return CreatedAtRoute("CreateContact",
                 contactResponse);
         }
 
@@ -109,5 +109,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             return NoContent();
         }
+
+        [PerformValidation]
+        [HttpPost("callback", Name= "Callback")]
+        public async Task<ActionResult> Callback([FromBody] DfeSignInCallback callback)
+        {
+            _logger.LogInformation($"Received callback from DfE: Sub: {callback.Sub} SourceId: {callback.SourceId}");
+            await _mediator.Send(new UpdateSignInIdRequest(Guid.Parse(callback.Sub), Guid.Parse(callback.SourceId)));
+            return NoContent(); 
+        }
+        
     }
 }

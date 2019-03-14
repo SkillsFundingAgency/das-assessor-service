@@ -23,6 +23,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
             IWebConfiguration configuration, ILogger<Startup> logger)
         {
             _configuration = configuration;
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
             services.AddAuthentication(options =>
                 {
@@ -33,7 +34,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                     options.Cookie.Name = ".Apply.Cookies";
                     options.Cookie.HttpOnly = true;
                 })
-                .AddOpenIdConnect(options =>
+                .AddOpenIdConnect("oidc",options =>
                 {
                     options.CorrelationCookie = new CookieBuilder()
                     {
@@ -43,21 +44,13 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                         SecurePolicy = CookieSecurePolicy.SameAsRequest
                     };
                     
-                    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                    options.MetadataAddress = "https://signin-test-oidc-as.azurewebsites.net/.well-known/openid-configuration";
-
-                    options.ClientId = "DasAssessorServivce";
-                    const string envKeyClientSecret = "tussock-sentient-onshore";
-                    var clientSecret = "tussock-sentient-onshore";
-                    if (string.IsNullOrWhiteSpace(clientSecret))
-                    {
-                        throw new Exception("Missing environment variable " + envKeyClientSecret +
-                                            " - get this from the DfE Sign-in team.");
-                    }
-
-                    options.ClientSecret = clientSecret;
-                    options.ResponseType = OpenIdConnectResponseType.Code;
-                    options.GetClaimsFromUserInfoEndpoint = true;
+                  //  options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.MetadataAddress = _configuration.DfeSignIn.MetadataAddress;
+                    options.RequireHttpsMetadata = false;
+                    options.ClientId = _configuration.DfeSignIn.ClientId;
+                   // options.ClientSecret = _configuration.DfeSignIn.ClientSecret;
+                  //  options.ResponseType = OpenIdConnectResponseType.Code;
+                  //  options.GetClaimsFromUserInfoEndpoint = true;
 
                     // using this property would align the expiration of the cookie
                     // with the expiration of the identity token
@@ -65,28 +58,16 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 
                     options.Scope.Clear();
                     options.Scope.Add("openid");
-                    options.Scope.Add("email");
-                    options.Scope.Add("profile");
+                    // options.Scope.Add("email");
+                    //options.Scope.Add("profile");
 
-                    options.Scope.Add("offline_access");
+                   // options.Scope.Add("offline_access");
 
                     options.SaveTokens = true;
                     //options.CallbackPath = new PathString(Configuration["auth:oidc:callbackPath"]);
                     //options.SignedOutCallbackPath = new PathString("/SignedOut");
                     //options.SignedOutRedirectUri = new PathString("/SignedOut");
-                    options.SecurityTokenValidator = new JwtSecurityTokenHandler
-                    {
-                        InboundClaimTypeMap = new Dictionary<string, string>(),
-                        TokenLifetimeInMinutes = 20,
-                        SetDefaultTimesOnTokenCreation = true,
-                    };
-                    options.ProtocolValidator = new OpenIdConnectProtocolValidator
-                    {
-                        RequireSub = true,
-                        RequireStateValidation = false,
-                        NonceLifetime = TimeSpan.FromMinutes(15)
-                    };
-
+                
                     options.DisableTelemetry = true;
                     options.Events = new OpenIdConnectEvents
                     {
@@ -117,18 +98,16 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                         // This is derived from the recommended approach: https://github.com/aspnet/Security/issues/1165
                         OnRemoteFailure = ctx =>
                         {
-                            ctx.Response.Redirect(ctx.Failure.Message.Contains("Could not find contact")
-                                ? configuration.ApplyBaseAddress
-                                : "/");
+                            ctx.Response.Redirect( "/");
                             ctx.HandleResponse();
                             return Task.FromResult(0);
                         },
 
-                        OnRedirectToIdentityProvider = context =>
-                        {
-                            context.ProtocolMessage.Prompt = "consent";
-                            return Task.CompletedTask;
-                        },
+                       // OnRedirectToIdentityProvider = context =>
+                      //  {
+                       //     context.ProtocolMessage.Prompt = "consent";
+                       //     return Task.CompletedTask;
+                      //  },
 
                         OnTokenValidated = async context =>
                         {
@@ -151,6 +130,8 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                                     identity.AddClaim(new Claim("http://schemas.portal.com/ukprn",
                                         organisation?.Ukprn.ToString()));
                                 }
+                                identity.AddClaim(new Claim("display_name", user?.DisplayName));
+                                identity.AddClaim(new Claim("email", user?.Email));
                             }
 
                             context.Principal.AddIdentity(identity);

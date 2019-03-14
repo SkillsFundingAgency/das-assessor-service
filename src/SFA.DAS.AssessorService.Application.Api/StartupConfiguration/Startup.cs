@@ -19,8 +19,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Extensions;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
+using SFA.DAS.AssessorService.Application.Api.Services;
 using SFA.DAS.AssessorService.Data;
 using SFA.DAS.AssessorService.Data.TestData;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
@@ -157,7 +159,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 config.For<IAssessmentOrgsApiClient>().Use(() => new AssessmentOrgsApiClient(Configuration.AssessmentOrgsApiClientBaseUrl));  
                 config.For<IIfaStandardsApiClient>().Use(() => new IfaStandardsApiClient(Configuration.IfaApiClientBaseUrl));
                 config.For<IDateTimeProvider>().Use<UtcDateTimeProvider>();
-
+                config.For<IDfeSignInService>().Use<DfeSignInService>();
                 var option = new DbContextOptionsBuilder<AssessorDbContext>();
                 option.UseSqlServer(Configuration.SqlConnectionString, options => options.EnableRetryOnFailure(3));
 
