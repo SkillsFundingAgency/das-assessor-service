@@ -133,6 +133,15 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                     responseItem.Certificate.CertificateData.LearningDetails.ProviderName = "PROVIDER";
                     responseItem.Certificate.CertificateData.LearningDetails.ProviderUkPrn = req.UkPrn;
                     responseItem.Certificate.CertificateData.LearningDetails.LearningStartDate = DateTime.UtcNow.AddYears(-1);
+
+                    if (responseItem.Certificate.CertificateData.Standard.StandardCode is null)
+                    {
+                        responseItem.Certificate.CertificateData.Standard.StandardCode = 9999;
+                    }
+                    if (string.IsNullOrEmpty(responseItem.Certificate.CertificateData.Standard.StandardReference))
+                    {
+                        responseItem.Certificate.CertificateData.Standard.StandardReference = "ST9999";
+                    }
                 }
 
                 response.Add(responseItem);
