@@ -28,9 +28,15 @@
                     <ul class="govuk-list">
                         @foreach (var result in Model.SearchResults)
                         {
-                            @*selected-item*@
                             <li class="govuk-section-break govuk-!-padding-left-2 govuk-!-padding-top-2 govuk-!-padding-bottom-1">
-                                <a href="#" class="govuk-!-font-weight-bold_ roatp-org-search-result">@Html.Raw(result.LegalName)</a>
+                                @if (result.OrganisationStatus.Id == 0)
+                                {
+                                    <a href="#" class="govuk-!-font-weight-bold_ roatp-org-search-result">@Html.Raw(result.LegalName) (Removed)</a>
+                                }
+                                else 
+                                {
+                                    <a href="#" class="govuk-!-font-weight-bold_ roatp-org-search-result">@Html.Raw(result.LegalName)</a>
+                                }
                                 <span class="block">UKPRN @Html.Raw(result.UKPRN)</span>
                             </li>
                         }
