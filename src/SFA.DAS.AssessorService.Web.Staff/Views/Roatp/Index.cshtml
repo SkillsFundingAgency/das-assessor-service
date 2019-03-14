@@ -26,10 +26,10 @@
             <div class="govuk-grid-column-full">
 
                 <form method="post" asp-controller="RoatpSearch" asp-action="Search">
-                    <div id="searchControls" class="govuk-form-group govuk-!-margin-bottom-1" sfa-validation-for="SearchTerm" sfa-validationerror-class="form-group-error">
+                    <div id="searchControls" class="govuk-form-group govuk-!-margin-bottom-1 govuk-!-width-three-quarters" sfa-validation-for="SearchTerm" sfa-validationerror-class="form-group-error">
                         <span class="error-message" asp-validation-for="SearchTerm"></span>
                         <label for="search" class="govuk-label govuk-!-font-size-24 roatp-search-label">Organisation name or UKPRN </label>
-                        <input asp-for="SearchTerm" autocomplete="off" type="search" id="SearchTerm" class="govuk-input govuk-!-width-three-quarters govuk-!-font-size-36 govuk-!-padding-2 roatp-search-field" name="SearchTerm"
+                        <input asp-for="SearchTerm" autocomplete="off" type="search" id="SearchTerm" class="govuk-input govuk-!-font-size-36 govuk-!-padding-2 roatp-search-field" name="SearchTerm"
                                sfa-validation-for="SearchTerm" sfa-validationerror-class="form-control-error" />
                         <input type="submit" class="roatp-search-button" value="Search">
                     </div>
