@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Microsoft.WindowsAzure.Storage.Blob.Protocol;
     using Resources;
     using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 
@@ -15,8 +14,7 @@
             {
                 Errors = new List<ValidationErrorDetail>()
             };
-
-
+            
             if (String.IsNullOrWhiteSpace(searchTerm))
             {
                 validationResponse.Errors.Add(new ValidationErrorDetail("SearchTerm", RoatpSearchValidation.SearchTermMandatory));
