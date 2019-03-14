@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
         private ViewResult _result;
 
         [SetUp]
-        public void Arrange()
+        public void WhenInvalidModelContainsOneError()
         {
             var mockStringLocaliserBuildernew = new MockStringLocaliserBuilder();            
 
@@ -34,12 +34,16 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
                 Day = "12",
                 Month = "12",
                 Year = "2017",
-                IsPrivatelyFunded = true
-            };        
+                IsPrivatelyFunded = true,
+                ReasonForChange = "Required reason for change"
+            };
 
+            // view model validation errors will not be trigged as they are attached via fluent
+            // validation and these are not connected in tests however this test is actually testing
+            // the correct view is returned so the actual error is irrelevant and can be forced
             certificatePrivateLearnerStartDateController.ModelState.AddModelError("", "Error");
-            var result = certificatePrivateLearnerStartDateController.LearnerStartDate(vm).GetAwaiter().GetResult();
 
+            var result = certificatePrivateLearnerStartDateController.LearnerStartDate(vm).GetAwaiter().GetResult();
             _result = result as ViewResult;
         }
 
@@ -47,6 +51,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
         public void ThenShouldReturnInvalidModelWithOneError()
         {
             _result.ViewData.ModelState.ErrorCount.Should().Be(1);
+        }
+
+        [Test]
+        public void ThenShouldReturnLearnerStartDateView()
+        {
+            _result.ViewName.Should().Be("~/Views/CertificateAmend/LearnerStartDate.cshtml");
         }
     }
 }
