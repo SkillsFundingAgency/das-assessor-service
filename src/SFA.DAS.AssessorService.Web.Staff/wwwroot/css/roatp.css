@@ -1313,30 +1313,34 @@
     display: block;
 }
 
-.well {
-    background-color: #f8f8f8;
-}
-
-.govuk-\!-padding-2 {
-    padding: 10px !important;
-}
-
-@media (min-width: 40.0625em) {
-    .govuk-\!-padding-2 {
-        padding: 10px !important;
-    }
-}
-
-.govuk-\!-padding-top-2 {
-    padding-top: 10px !important;
-}
-
-@media (min-width: 40.0625em) {
-    .govuk-\!-padding-top-2 {
-        padding-top: 10px !important;
-    }
-}
-
 .block {
     display: block;
+}
+
+.govuk-\!-margin-bottom-1 {
+    margin-bottom: 5px !important;
+}
+
+@media (min-width: 40.0625em) {
+    .govuk-\!-margin-bottom-1 {
+        margin-bottom: 5px !important;
+    }
+}
+
+.govuk-tag--attention {
+    background-color: #b10e1e;
+}
+
+.govuk-visually-hidden {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    clip: rect(0 0 0 0) !important;
+    -webkit-clip-path: inset(50%) !important;
+    clip-path: inset(50%) !important;
+    border: 0 !important;
+    white-space: nowrap !important;
 }
