@@ -73,6 +73,9 @@ namespace SFA.DAS.AssessorService.PrintFunction.Tests
             _assessorServiceApi.Setup(api => api.GetSchedule(ScheduleType.PrintRun))
                 .ReturnsAsync(new ScheduleRun() { Id = Guid.NewGuid() });
 
+            _fileTransferClient.Setup(client => client.GetListOfDownloadedFiles())
+                .ReturnsAsync(new List<string>());
+
             _printProcessCommand.Execute().GetAwaiter().GetResult();
         }
 
