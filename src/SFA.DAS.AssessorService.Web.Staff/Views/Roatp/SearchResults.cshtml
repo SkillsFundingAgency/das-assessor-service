@@ -1,4 +1,5 @@
-﻿@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp.OrganisationSearchResultsViewModel
+﻿@using SFA.DAS.AssessorService.Web.Staff.Helpers.Roatp
+@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp.OrganisationSearchResultsViewModel
 
 @{
     ViewBag.Title = Model.Title;
@@ -23,34 +24,239 @@
     <main class="govuk-main-wrapper " id="main-content" role="main">
 
         <h1 class="govuk-heading-xl govuk-!-width-two-thirds">@Html.Raw(Model.Title)</h1>
-            <div class="govuk-body govuk-grid-row">
-                <div id="searchResultsList" class="govuk-grid-column-one-third">
-                    <ul class="govuk-list">
-                        @foreach (var result in Model.SearchResults)
-                        {
-                            <li class="govuk-section-break govuk-!-padding-left-2 govuk-!-padding-top-2 govuk-!-padding-bottom-1">
-                                @if (result.OrganisationStatus.Id == 0)
-                                {
-                                    <a href="#" class="govuk-!-font-weight-bold_ roatp-org-search-result">@Html.Raw(result.LegalName) (Removed)</a>
-                                }
-                                else 
-                                {
-                                    <a href="#" class="govuk-!-font-weight-bold_ roatp-org-search-result">@Html.Raw(result.LegalName)</a>
-                                }
-                                <span class="block">UKPRN @Html.Raw(result.UKPRN)</span>
-                            </li>
-                        }
-                    </ul>
-                    @if (Model.TotalCount > 5)
+        <div class="govuk-body govuk-grid-row">
+            <div id="searchResultsList" class="govuk-grid-column-one-third">
+                <ul class="govuk-list">
+                    @for(var index = 0; index < Model.SearchResults.Count; index++)
                     {
-                        <div class="well govuk-!-font-size-16 govuk-!-padding-2">
+                        <li class="govuk-section-break govuk-!-padding-left-2 govuk-!-padding-top-2 govuk-!-padding-bottom-1">
+                            @if (Model.SearchResults[index].OrganisationStatus.Id == 0)
+                            {
+                                <a href="/results-found?index=@Html.Raw(index)" class="govuk-!-font-weight-bold_ roatp-org-search-result">@Html.Raw(Model.SearchResults[index].LegalName) (Removed)</a>
+                            }
+                            else
+                            {
+                                <a href="/results-found?index=@Html.Raw(index)" class="govuk-!-font-weight-bold_ roatp-org-search-result">@Html.Raw(Model.SearchResults[index].LegalName)</a>
+                            }
+                            <span class="block">UKPRN @Html.Raw(Model.SearchResults[index].UKPRN)</span>
+                        </li>
+                    }
+                </ul>
+                @if (Model.TotalCount > 5)
+                {
+                    <div class="well govuk-!-font-size-16 govuk-!-padding-2">
                         Result limited to 5.
                         <a class="block govuk-link govuk-link--no-visited-state" asp-controller="RoatpSearch" asp-action="RefineSearch" asp-all-route-data="searchParams">Refine search</a>
                     </div>
-                    }
+                }
+            </div>
+            @if (Model.SearchResults.Count > 0)
+            {
+                <div id="organisationDetails" class="govuk-grid-column-two-thirds">
+                <dl class="govuk-summary-list">
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Legal name
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Html.Raw(Model.SelectedResult.LegalName)
+                        </dd>
+
+                        <dd class="govuk-summary-list__actions">
+
+                            <a class="govuk-link" href="#">
+                                Change<span class="govuk-visually-hidden"> legal name</span>
+                            </a>
+
+                        </dd>
+
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            UKPRN
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Html.Raw(Model.SelectedResult.UKPRN)
+                        </dd>
+
+                        <dd class="govuk-summary-list__actions">
+
+                            <a class="govuk-link" href="#">
+                                Change<span class="govuk-visually-hidden"> UKPRN</span>
+                            </a>
+
+                        </dd>
+
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Status
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Html.OrgansationStatus(Model.SelectedResult)
+                        </dd>
+
+                        <dd class="govuk-summary-list__actions">
+
+                            <a class="govuk-link" href="#">
+                                Change<span class="govuk-visually-hidden"> status</span>
+                            </a>
+
+                        </dd>
+
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Type of provider
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Html.ProviderType(Model.SelectedResult)
+                        </dd>
+
+                        <dd class="govuk-summary-list__actions">
+
+                            <a class="govuk-link" href="#">
+                                Change<span class="govuk-visually-hidden"> type of provider</span>
+                            </a>
+
+                        </dd>
+
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Type of organisation
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Html.Raw(Model.SelectedResult.OrganisationType.Type)
+                        </dd>
+
+                        <dd class="govuk-summary-list__actions">
+
+                            @*<a class="govuk-link" href="#">
+                                Change<span class="govuk-visually-hidden"> organisation type</span>
+                            </a>*@
+
+                        </dd>
+
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Company number
+                        </dt>
+                        @if (!String.IsNullOrWhiteSpace(Model.SelectedResult.OrganisationData.CompanyNumber))
+                        {
+                            <dd class="govuk-summary-list__value">
+                                @Html.Raw(Model.SelectedResult.OrganisationData.CompanyNumber)
+                            </dd>
+                        }
+                        else
+                        {
+                            <dd class="govuk-summary-list__value">
+                                <span class='govuk-hint'>Not applicable</span>
+                            </dd>
+                        }
+
+                        <dd class="govuk-summary-list__actions">
+
+                            @*<a class="govuk-link" href="#">
+                                Change<span class="govuk-visually-hidden"> companies house number</span>
+                            </a>*@
+
+                        </dd>
+
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Charity registration number
+                        </dt>
+                        @if (!String.IsNullOrWhiteSpace(Model.SelectedResult.OrganisationData.CharityNumber))
+                        {
+                            <dd class="govuk-summary-list__value">
+                                @Html.Raw(Model.SelectedResult.OrganisationData.CharityNumber)
+                            </dd>
+                        }
+                        else
+                        {
+                            <dd class="govuk-summary-list__value">
+                                <span class='govuk-hint'>Not applicable</span>
+                            </dd>
+                        }
+                        <dd class="govuk-summary-list__actions">
+
+                            @*<a class="govuk-link" href="#">
+                                Change<span class="govuk-visually-hidden"> charity number</span>
+                            </a>*@
+                        </dd>
+
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Trading name
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Html.Raw(Model.SelectedResult.TradingName)
+                        </dd>
+
+                        <dd class="govuk-summary-list__actions">
+
+                            <a class="govuk-link" href="#">
+                                Change<span class="govuk-visually-hidden"> trading name</span>
+                            </a>
+
+                        </dd>
+
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Parent company guarantee
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Html.BooleanYesNo(Model.SelectedResult.OrganisationData.ParentCompanyGuarantee)
+                        </dd>
+
+                        <dd class="govuk-summary-list__actions">
+
+                            <a class="govuk-link" href="#">
+                                Change<span class="govuk-visually-hidden"> parent company guarantee</span>
+                            </a>
+
+                        </dd>
+
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Financial track record
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Html.BooleanYesNo(Model.SelectedResult.OrganisationData.FinancialTrackRecord)
+                        </dd>
+
+                        <dd class="govuk-summary-list__actions">
+
+                            <a class="govuk-link" href="#">
+                                Change<span class="govuk-visually-hidden"> financial track record</span>
+                            </a>
+
+                        </dd>
+
+                    </div>
+
+                </dl>
+
                 </div>
 
-            </div>
+            }
+        </div>
 
 
         </main>
