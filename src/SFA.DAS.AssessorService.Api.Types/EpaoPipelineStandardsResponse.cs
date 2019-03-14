@@ -7,7 +7,6 @@ namespace SFA.DAS.AssessorService.Api.Types
     public class EpaoPipelineStandardsResponse
     {
         public string StandardName { get; set; }
-        public string TrainingProvider { get; set; }
         public int Pipeline { get; set; }
         public string EstimatedDate { get; set; }
     }
