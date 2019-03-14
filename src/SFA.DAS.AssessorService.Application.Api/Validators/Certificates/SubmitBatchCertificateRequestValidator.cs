@@ -21,20 +21,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
             RuleFor(m => m.Email).NotEmpty();
 
             RuleFor(m => m.FamilyName).NotEmpty().WithMessage("Enter the apprentice's last name");
-            RuleFor(m => m.StandardCode).GreaterThan(0).WithMessage("A Standard should be selected").DependentRules(() =>
-            {
-                RuleFor(m => m).Custom((m, context) =>
-                {
-                    if (!string.IsNullOrEmpty(m.StandardReference))
-                    {
-                        var collatedStandard = standardRepository.GetStandardCollationByReferenceNumber(m.StandardReference).GetAwaiter().GetResult();
-                        if (m.StandardCode != collatedStandard?.StandardId)
-                        {
-                            context.AddFailure("StandardReference and StandardCode relate to different standards");
-                        }
-                    }
-                });
-            });
 
             RuleFor(m => m.Uln).InclusiveBetween(1000000000, 9999999999).WithMessage("The apprentice's ULN should contain exactly 10 numbers").DependentRules(() =>
             {
@@ -63,6 +49,21 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                             }
                         }
                     });
+                });
+            });
+
+            RuleFor(m => m.StandardCode).GreaterThan(0).WithMessage("A Standard should be selected").DependentRules(() =>
+            {
+                RuleFor(m => m).Custom((m, context) =>
+                {
+                    if (!string.IsNullOrEmpty(m.StandardReference))
+                    {
+                        var collatedStandard = standardRepository.GetStandardCollationByReferenceNumber(m.StandardReference).GetAwaiter().GetResult();
+                        if (m.StandardCode != collatedStandard?.StandardId)
+                        {
+                            context.AddFailure("StandardReference and StandardCode relate to different standards");
+                        }
+                    }
                 });
             });
 
