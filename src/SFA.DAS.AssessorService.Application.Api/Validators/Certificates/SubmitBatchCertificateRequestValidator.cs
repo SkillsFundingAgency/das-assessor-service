@@ -21,6 +21,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
             RuleFor(m => m.Email).NotEmpty();
 
             RuleFor(m => m.FamilyName).NotEmpty().WithMessage("Enter the apprentice's last name");
+            RuleFor(m => m.StandardCode).GreaterThan(0).WithMessage("A Standard should be selected").DependentRules(() =>
+            {
+                RuleFor(m => m).Custom((m, context) =>
+                {
+                    if (!string.IsNullOrEmpty(m.StandardReference))
+                    {
+                        var collatedStandard = standardRepository.GetStandardCollationByReferenceNumber(m.StandardReference).GetAwaiter().GetResult();
+                        if (m.StandardCode != collatedStandard?.StandardId)
+                        {
+                            context.AddFailure("StandardReference and StandardCode relate to different standards");
+                        }
+                    }
+                });
+            });
 
             RuleFor(m => m.Uln).InclusiveBetween(1000000000, 9999999999).WithMessage("The apprentice's ULN should contain exactly 10 numbers").DependentRules(() =>
             {
@@ -33,14 +47,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
 
                         if (requestedIlr is null || !string.Equals(requestedIlr.FamilyName, m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
                         {
-                            if (!string.IsNullOrEmpty(m.StandardReference))
-                            {
-                                context.AddFailure(new ValidationFailure("Uln", "Cannot find apprentice with the specified Uln, FamilyName & StandardReference"));
-                            }
-                            else
-                            {
-                                context.AddFailure(new ValidationFailure("Uln", "Cannot find apprentice with the specified Uln, FamilyName & StandardCode"));
-                            }
+                            context.AddFailure(new ValidationFailure("Uln", "Cannot find apprentice with the specified Uln, FamilyName & Standard"));
                         }
                         else if (sumbittingEpao is null)
                         {
@@ -57,29 +64,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                         }
                     });
                 });
-            });
-
-            RuleFor(m => m).Custom((m, context) =>
-            {
-                if(m.StandardCode < 1)
-                {
-                    if (string.IsNullOrEmpty(m.StandardReference))
-                    {
-                        context.AddFailure("A standard should be selected");
-                    }
-                    else
-                    {
-                        context.AddFailure(new ValidationFailure("StandardReference", "Standard not found"));
-                    }
-                }
-                else if(!string.IsNullOrEmpty(m.StandardReference))
-                {
-                    var collatedStandard = standardRepository.GetStandardCollationByReferenceNumber(m.StandardReference).GetAwaiter().GetResult();
-                    if (m.StandardCode != collatedStandard?.StandardId)
-                    {
-                        context.AddFailure("StandardReference and StandardCode relate to different standards");
-                    }
-                }
             });
 
             RuleFor(m => m.CertificateReference).NotEmpty().WithMessage("Enter the certificate reference").DependentRules(() =>

@@ -45,7 +45,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> Get(long uln, string lastname, string standard, int ukPrn, string email)
         {
-            var collatedStandard = await GetCollatedStandard(standard);
+            var collatedStandard = int.TryParse(standard, out int standardCode) ? await GetCollatedStandard(standardCode) : await GetCollatedStandard(standard);
 
             var request = new GetBatchCertificateRequest
             {
@@ -85,14 +85,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             foreach (CreateBatchCertificateRequest request in batchRequest)
             {
-                if (request.StandardCode < 1)
-                {
-                    var collatedStandard = await GetCollatedStandard(request.StandardReference);
+                var collatedStandard = request.StandardCode > 0 ? await GetCollatedStandard(request.StandardCode) : await GetCollatedStandard(request.StandardReference);
 
-                    if (collatedStandard?.StandardId != null)
-                    {
-                        request.StandardCode = collatedStandard.StandardId.Value;
-                    }
+                if(collatedStandard != null)
+                {
+                    request.StandardCode = collatedStandard.StandardId ?? int.MinValue;
+                    request.StandardReference = collatedStandard.ReferenceNumber;
                 }
 
                 ValidationResult validationResult = _createValidator.Validate(request);
@@ -129,14 +127,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             foreach (UpdateBatchCertificateRequest request in batchRequest)
             {
-                if (request.StandardCode < 1)
-                {
-                    var collatedStandard = await GetCollatedStandard(request.StandardReference);
+                var collatedStandard = request.StandardCode > 0 ? await GetCollatedStandard(request.StandardCode) : await GetCollatedStandard(request.StandardReference);
 
-                    if (collatedStandard?.StandardId != null)
-                    {
-                        request.StandardCode = collatedStandard.StandardId.Value;
-                    }
+                if (collatedStandard != null)
+                {
+                    request.StandardCode = collatedStandard.StandardId ?? int.MinValue;
+                    request.StandardReference = collatedStandard.ReferenceNumber;
                 }
 
                 ValidationResult validationResult = _updateValidator.Validate(request);
@@ -173,14 +169,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             foreach (SubmitBatchCertificateRequest request in batchRequest)
             {
-                if (request.StandardCode < 1)
-                {
-                    var collatedStandard = await GetCollatedStandard(request.StandardReference);
+                var collatedStandard = request.StandardCode > 0 ? await GetCollatedStandard(request.StandardCode) : await GetCollatedStandard(request.StandardReference);
 
-                    if (collatedStandard?.StandardId != null)
-                    {
-                        request.StandardCode = collatedStandard.StandardId.Value;
-                    }
+                if (collatedStandard != null)
+                {
+                    request.StandardCode = collatedStandard.StandardId ?? int.MinValue;
+                    request.StandardReference = collatedStandard.ReferenceNumber;
                 }
 
                 ValidationResult validationResult = _submitValidator.Validate(request);
@@ -208,7 +202,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Type = typeof(ApiResponse))]
         public async Task<IActionResult> Delete(long uln, string lastname, string standard, string certificateReference, int ukPrn, string email)
         {
-            var collatedStandard = await GetCollatedStandard(standard);
+            var collatedStandard = int.TryParse(standard, out int standardCode) ? await GetCollatedStandard(standardCode) : await GetCollatedStandard(standard);
 
             var request = new DeleteBatchCertificateRequest
             {
@@ -243,14 +237,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
 
-        private async Task<StandardCollation> GetCollatedStandard(string standard)
+        private async Task<StandardCollation> GetCollatedStandard(string referenceNumber)
         {
-            if (int.TryParse(standard, out int standardCode))
-            {
-                return await _mediator.Send(new GetCollatedStandardRequest { StandardId = standardCode });
-            }
+            return await _mediator.Send(new GetCollatedStandardRequest { ReferenceNumber = referenceNumber });
+        }
 
-            return await _mediator.Send(new GetCollatedStandardRequest { ReferenceNumber = standard });
+        private async Task<StandardCollation> GetCollatedStandard(int standardId)
+        {
+            return await _mediator.Send(new GetCollatedStandardRequest { StandardId = standardId });
         }
     }
 }

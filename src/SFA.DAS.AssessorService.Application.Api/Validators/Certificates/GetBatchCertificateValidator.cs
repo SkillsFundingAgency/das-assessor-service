@@ -31,7 +31,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
 
                         if (requestedIlr is null || !string.Equals(requestedIlr.FamilyName, m.FamilyName, StringComparison.InvariantCultureIgnoreCase))
                         {
-                            context.AddFailure(new ValidationFailure("Uln", "Cannot find apprentice with the specified Uln, FamilyName & StandardCode"));
+                            context.AddFailure(new ValidationFailure("Uln", "Cannot find apprentice with the specified Uln, FamilyName & Standard"));
                         }
                         else if (sumbittingEpao is null)
                         {
@@ -64,7 +64,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
                 });
             });
 
-            RuleFor(m => m.StandardCode).GreaterThan(0).WithMessage("A standard should be selected");
+            RuleFor(m => m.StandardCode).GreaterThan(0).WithMessage("A Standard should be selected");
 
             // NOTE: StandardReference is ignored for now
         }
