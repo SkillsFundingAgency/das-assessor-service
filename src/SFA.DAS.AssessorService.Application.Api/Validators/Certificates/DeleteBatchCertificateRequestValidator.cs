@@ -49,7 +49,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators.Certificates
             });
 
             RuleFor(m => m.FamilyName).NotEmpty().WithMessage("Enter the apprentice's last name");
-            RuleFor(m => m.StandardCode).GreaterThan(0).NotEmpty().WithMessage("A Standard should be selected");
+            RuleFor(m => m.StandardCode).GreaterThan(0).WithMessage("A Standard should be selected");
             RuleFor(m => m.CertificateReference).NotEmpty().WithMessage("Enter the certificate reference").DependentRules(() =>
             {
                 RuleFor(m => m).Custom((m, context) =>
