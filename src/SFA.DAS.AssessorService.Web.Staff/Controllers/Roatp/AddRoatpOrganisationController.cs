@@ -88,11 +88,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             }
 
             model.LegalName = model.LegalName.ToUpper();
-            if (!String.IsNullOrWhiteSpace(model.TradingName))
-            {
-                model.TradingName = model.TradingName.ToUpper();
-            }
-
+  
             _sessionService.SetAddOrganisationDetails(model);
 
             return View("~/Views/Roatp/AddOrganisationPreview.cshtml", model);
@@ -139,7 +135,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             {
                 Id = Guid.NewGuid(),
                 LegalName = model.LegalName.ToUpper(),
-                TradingName = model.TradingName?.ToUpper(),
+                TradingName = model.TradingName,
                 OrganisationData = new OrganisationData
                 {
                     CharityNumber = model.CharityNumber,
