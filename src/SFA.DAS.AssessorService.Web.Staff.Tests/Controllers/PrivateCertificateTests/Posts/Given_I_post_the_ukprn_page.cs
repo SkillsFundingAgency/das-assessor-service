@@ -11,7 +11,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
         private RedirectToActionResult _result;        
 
         [SetUp]
-        public void Arrange()
+        public void WhenValidModelContainsNoErrors()
         {
             var certificatePrivateProviderUkprnController =
                 new CertificatePrivateProviderUkprnController(MockLogger.Object,
@@ -23,7 +23,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
             {
                 Id = Certificate.Id,
                 Ukprn = "10000008",                            
-                IsPrivatelyFunded = true
+                IsPrivatelyFunded = true,
+                ReasonForChange = "Required reason for change"
             };                      
 
             var result = certificatePrivateProviderUkprnController.Ukprn(vm).GetAwaiter().GetResult();
