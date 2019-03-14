@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
-using Dapper;
 using Microsoft.EntityFrameworkCore;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
@@ -27,6 +25,23 @@ namespace SFA.DAS.AssessorService.Data
             await _assessorDbContext.SaveChangesAsync();
 
             return newContact;
+        }
+
+        public async Task AssociateRoleWithContact(string roleName, Contact newContact)
+        {
+            var contactRoleEntity =
+                await _assessorDbContext.ContactRoles.FirstOrDefaultAsync(q =>
+                    q.ContactId == newContact.Id && q.RoleName == roleName);
+            if (contactRoleEntity == null)
+            {
+                _assessorDbContext.ContactRoles.Add(new ContactRole
+                {
+                    ContactId = newContact.Id,
+                    Id = Guid.NewGuid(),
+                    RoleName = roleName
+                });
+                await _assessorDbContext.SaveChangesAsync();
+            }
         }
 
         public async Task Update(UpdateContactRequest updateContactRequest)

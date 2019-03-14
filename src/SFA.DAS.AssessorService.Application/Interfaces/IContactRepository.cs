@@ -16,5 +16,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
         Task UpdateSignInId(Guid contactId, Guid signInId);
         Task<Contact> GetContact(string email);
+        Task AssociateRoleWithContact(string roleName, Contact newContact);
     }
 }

@@ -44,12 +44,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
             if (existingContact == null)
             {
                 contactResponse = await _contactRepository.CreateNewContact(newContact);
+                await _contactRepository.AssociateRoleWithContact("SuperUser", newContact);
                 var invitationResult = await _dfeSignInService.InviteUser(createContactRequest.Email, createContactRequest.GivenName, createContactRequest.FamilyName, newContact.Id);
                 if (!invitationResult.IsSuccess)
                 {
                     response.Result = false;
                     return response;
                 }
+
             }
             else
             {
@@ -68,8 +70,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
                await _mediator.Send(new SendEmailRequest(createContactRequest.Email, emailTemplate, new { }), cancellationToken);
             }
 
-            if (createContactRequest
-                .EndPointAssessorOrganisationId != null && !(await _organisationQueryRepository.CheckIfOrganisationHasContacts(createContactRequest
+            if (newContact
+                .EndPointAssessorOrganisationId != null && !(await _organisationQueryRepository.CheckIfOrganisationHasContacts(newContact
                 .EndPointAssessorOrganisationId)))
             {
                 await SetOrganisationStatusToLiveAndSetPrimaryContact(createContactRequest, contactResponse);
