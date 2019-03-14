@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.EpaoDataSync.Infrastructure
         [JsonRequired] public string SqlConnectionString { get; set; }
         
         [JsonRequired] public ProviderEventsClientConfiguration ProviderEventsClientConfiguration { get; set; }
-        [JsonRequired] public string SessionRedisConnectionString { get; set; }
-
+        [JsonRequired]  public string SessionRedisConnectionString { get; set; }
+        [JsonRequired] public ProviderEventsSubmissionClientConfig ProviderEventsSubmissionClientConfig { get; set; }
     }
 }

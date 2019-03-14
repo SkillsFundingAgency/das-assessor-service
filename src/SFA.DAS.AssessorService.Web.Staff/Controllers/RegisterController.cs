@@ -92,6 +92,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 Ukprn = viewModel.Ukprn,
                 OrganisationTypeId = viewModel.OrganisationTypeId,
                 LegalName = viewModel.LegalName,
+                TradingName = viewModel.TradingName,
                 WebsiteLink = viewModel.WebsiteLink,
                 Address1 = viewModel.Address1,
                 Address2 = viewModel.Address2,
@@ -203,9 +204,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 ContactId = viewModel.ContactId.ToString(),
                 DeliveryAreas = viewModel.DeliveryAreas,
                 Comments = viewModel.Comments,
-                OrganisationStatus = viewModel.OrganisationStatus,
-                OrganisationStandardStatus = viewModel.Status,
-                ActionChoice = viewModel.ActionChoice,
                 DeliveryAreasComments = viewModel.DeliveryAreasComments
             };
 
@@ -329,6 +327,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 Ukprn = viewModel.Ukprn,
                 OrganisationTypeId = viewModel.OrganisationTypeId,
                 LegalName = viewModel.LegalName,
+                TradingName = viewModel.TradingName,
                 WebsiteLink = viewModel.WebsiteLink,
                 Address1 = viewModel.Address1,
                 Address2 = viewModel.Address2,
@@ -495,6 +494,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 OrganisationTypeId = organisation.OrganisationTypeId,
                 OrganisationType = notSetDescription,
                 LegalName = organisation.OrganisationData?.LegalName,
+                TradingName = organisation.OrganisationData?.TradingName,
                 WebsiteLink = organisation.OrganisationData?.WebsiteLink,
                 Address1 = organisation.OrganisationData?.Address1,
                 Address2 = organisation.OrganisationData?.Address2,

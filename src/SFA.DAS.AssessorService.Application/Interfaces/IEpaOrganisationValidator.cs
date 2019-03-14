@@ -33,8 +33,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         string CheckIfEmailAlreadyPresentInOrganisationNotAssociatedWithContact(string email, string contactId);
         string CheckIfDeliveryAreasAreValid(List<int> DeliveryAreas);
 
-        string CheckOrganisationStandardMakeLiveOrganisationStatus(string organisationStatus, string organisationStandardStatus);
-        string CheckOrganisationStandardMakeLiveEffectiveFrom(DateTime? effectiveFrom, string organisationStandardStatus);
+        string CheckOrganisationStandardEffectiveFromIsEntered(DateTime? effectiveFrom);
         string CheckIfContactDetailsAlreadyPresentInSystem(string displayName, string email, string phone,
             string contactId);
 
@@ -52,8 +51,10 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
         string CheckCompanyNumberIsValid(string companyNumber);
         string CheckIfOrganisationCompanyNumberExists(string organisationIdToExclude, string companyNumber);
+        string CheckIfOrganisationCompanyNumberExists(string companyNumber);
         string CheckCharityNumberIsValid(string charityNumber);
         string CheckIfOrganisationCharityNumberExists(string organisationIdToExclude, string charityNumber);
+        string CheckIfOrganisationCharityNumberExists(string charityNumber);
 
         ValidationResponse ValidatorCreateEpaOrganisationRequest(CreateEpaOrganisationRequest request);
         ValidationResponse ValidatorCreateEpaOrganisationContactRequest(CreateEpaOrganisationContactRequest request);

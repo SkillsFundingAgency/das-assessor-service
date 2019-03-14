@@ -77,6 +77,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 OrganisationTypeId = organisation.OrganisationTypeId,
                 OrganisationType = notSetDescription,
                 LegalName = organisation.OrganisationData?.LegalName,
+                TradingName = organisation.OrganisationData?.TradingName,
                 WebsiteLink = organisation.OrganisationData?.WebsiteLink,
                 Address1 = organisation.OrganisationData?.Address1,
                 Address2 = organisation.OrganisationData?.Address2,

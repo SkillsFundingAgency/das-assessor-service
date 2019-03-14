@@ -21,6 +21,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Login
                 EndPointAssessorUkprn = 12345,
             });
             ContactQueryRepository.Setup(r => r.GetContact("username")).ReturnsAsync(default(Contact));
+            ContactQueryRepository.Setup(r => r.GetContactFromEmailAddress("email@domain.com")).ReturnsAsync(default(Contact));
             Mediator.Setup(m => m.Send(It.IsAny<CreateContactRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(
                 new Contact()
                 {

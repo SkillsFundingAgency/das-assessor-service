@@ -8,7 +8,6 @@ using SFA.DAS.AssessorService.EpaoDataSync.Data;
 using SFA.DAS.AssessorService.EpaoDataSync.Domain;
 using SFA.DAS.AssessorService.EpaoDataSync.Infrastructure;
 using SFA.DAS.AssessorService.EpaoDataSync.Logger;
-using SFA.DAS.AssessorService.EpaoDataSync.Startup.DependencyResolution;
 using StructureMap;
 
 namespace SFA.DAS.AssessorService.EpaoDataSync.Startup
@@ -39,7 +38,6 @@ namespace SFA.DAS.AssessorService.EpaoDataSync.Startup
                 configure.For<IProviderEventServiceApi>().Use<ProviderEventsServiceApi>().Singleton();
                 configure.For<IDbConnection>().Use(c => new SqlConnection(configuration.SqlConnectionString));
                 configure.For<IIlrsRefresherService>().Use<IlrsRefresherService>().Singleton();
-                configure.AddRegistry<HttpRegistry>();
             });
 
             var language = "en-GB";

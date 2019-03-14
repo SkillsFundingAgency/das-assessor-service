@@ -8,7 +8,7 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <a href="@Url.Action("NewApplications", "Financial")" class="link-back">Back</a>
+        <a asp-action="OpenApplications" asp-controller="Financial" class="link-back">Back</a>
 
         @if (!ViewData.ModelState.IsValid)
         {
@@ -30,18 +30,42 @@
         <h2 class="heading-medium">Organisation details</h2>
 
         <table class="table-spaced">
-            <tr>
-                <td class="bold-small">Registered name</td>
-                <td>@Model.Organisation.OrganisationDetails.LegalName</td>
-            </tr>
-            @if (!string.IsNullOrWhiteSpace(Model.Organisation.OrganisationDetails.TradingName))
+            @if (!string.IsNullOrWhiteSpace(Model.ApplicationReference))
             {
-            <tr>
-                <td class="bold-small">Trading name</td>
-                <td>@Model.Organisation.OrganisationDetails.TradingName</td>
-            </tr>
+                <tr>
+                    <td class="bold-small">Application reference</td>
+                    <td>@Model.ApplicationReference</td>
+                </tr>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.LegalName))
+            {
+                <tr>
+                    <td class="bold-small">Registered name</td>
+                    <td>@Model.LegalName</td>
+                </tr>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.TradingName) || !string.IsNullOrWhiteSpace(Model.ProviderName))
+            {
+                <tr>
+                    <td class="bold-small">Trading name</td>
+                    <td>@(Model.TradingName ?? Model.ProviderName)</td>
+                </tr>
+            }
+            @if (Model.Ukprn.HasValue)
+            {
+                <tr>
+                    <td class="bold-small">Ukprn</td>
+                    <td>@Model.Ukprn</td>
+                </tr>
             }
         </table>
+
+        @if (!string.IsNullOrWhiteSpace(Model.CompanyNumber))
+        {
+            <div class="form-group">
+                <a target="_blank" href="@string.Format("https://beta.companieshouse.gov.uk/company/{0}", Model.CompanyNumber)">View companies house information</a>
+            </div>
+        }
 
         @if (Model.Section.PagesContainingUploadQuestions.Any())
         {
@@ -87,7 +111,7 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <form asp-action="Grade" asp-controller="Financial">
+        <form class="js-disable-on-submit" asp-action="Grade" asp-controller="Financial">
             <input type="hidden" name="ApplicationId" value="@Model.ApplicationId" />
             <div class="form-group">
                 <fieldset>

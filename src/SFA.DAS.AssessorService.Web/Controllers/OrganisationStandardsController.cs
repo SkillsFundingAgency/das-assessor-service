@@ -120,7 +120,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var orderedListResultViewModel = await GetPipeline(null, TableColumnOrder.None, 0,null);
             string[] columnHeaders = {
                 "Standard Name",
-                "Training Provider",
                 "Apprentices",
                 "Estimated Gateway"
             };
@@ -129,7 +128,6 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 select new object[]
                 {
                     $"{pipeline.StandardName}",
-                    $"\"{pipeline.TrainingProvider}\"",
                     $"\"{pipeline.Pipeline}\"",
                     $"\"{pipeline.EstimatedDate}\"",
 

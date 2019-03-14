@@ -23,7 +23,7 @@
         }
 
         <div class="form-group">
-            <form asp-controller="Application" asp-action="Return" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId">
+            <form class="js-disable-on-submit" asp-controller="Application" asp-action="Return" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId">
                 @if (!Model.HasNewFeedback)
                 {
                     if (Model.SequenceId == 1)

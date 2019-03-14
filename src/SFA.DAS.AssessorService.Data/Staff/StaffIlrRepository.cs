@@ -38,20 +38,51 @@ namespace SFA.DAS.AssessorService.Data.Staff
         public async Task<IEnumerable<Ilr>> SearchForLearnerByUln(StaffSearchRequest searchRequest)
         {
             long.TryParse(searchRequest.SearchQuery, out var uln);
-
+            /* get rows from Certificates and/or Ilrs  - there must be a better way! - and it does not need paging as there will never be as many as 10 rows*/
             return (await _connection.QueryAsync<Ilr>(
-                            @"SELECT ilr.*
-                            	FROM
-	                            (
-		                            SELECT *,
-		                            DENSE_RANK() OVER (PARTITION BY [Uln], [StdCode] ORDER BY [Source] DESC,[LearnStartDate] DESC) AS rownumber
-		                            FROM ilrs 
-		                            WHERE [Uln] = @uln
-	                            ) AS ilr
-                            WHERE rownumber = 1
-                            ORDER BY [Id] DESC
+                            @"SELECT [Id] ,[Uln] ,[GivenNames] ,[FamilyName] ,[UkPrn] ,[StdCode] ,[LearnStartDate] ,[EpaOrgId] ,[FundingModel] ,[ApprenticeshipId] ,
+                                     [EmployerAccountId] ,[Source] ,[CreatedAt] ,[UpdatedAt] ,[LearnRefNumber] ,[CompletionStatus] ,[EventId] ,[PlannedEndDate]
+                            FROM (
+                            SELECT [Id] ,[Uln] ,[GivenNames] ,[FamilyName] ,[UkPrn] ,[StdCode] ,[LearnStartDate] ,[EpaOrgId] ,[FundingModel] ,[ApprenticeshipId] ,
+                                   [EmployerAccountId] ,[Source] ,[CreatedAt] ,[UpdatedAt] ,[LearnRefNumber] ,[CompletionStatus] ,[EventId] ,[PlannedEndDate],
+                             row_number() OVER (PARTITION BY uln,Stdcode ORDER BY choice) rownumber2
+                            FROM (
+                            SELECT [Id] ,[Uln] ,[GivenNames] ,[FamilyName] ,[UkPrn] ,[StdCode] ,[LearnStartDate] ,[EpaOrgId] ,[FundingModel] ,[ApprenticeshipId] ,
+                                  [EmployerAccountId] ,[Source] ,[CreatedAt] ,[UpdatedAt] ,[LearnRefNumber] ,[CompletionStatus] ,[EventId] ,[PlannedEndDate], 2 choice
+                            FROM (
+                            SELECT Row_number() OVER (ORDER BY certificatereferenceid DESC) rownumber, 
+                            ce.id,Uln,
+                            json_value(certificatedata, '$.LearnerFamilyName') FamilyName,
+                            json_value(certificatedata, '$.LearnerGivenNames') GivenNames,
+                            ProviderUkPrn Ukprn,
+                            Standardcode Stdcode, 
+                            json_value(certificatedata, '$.LearningStartDate') LearnStartDate,
+                            og.EndPointAssessorOrganisationId EPAOrgId,
+                            NULL FundingModel,
+                            NULL ApprenticeshipId,
+                            NULL EmployerAccountId,
+                            NULL [Source],
+                            ce.CreatedAt,
+                            ce.UpdatedAt,
+                            [LearnRefNumber],
+                            1 [CompletionStatus],
+                            NULL [EventId],
+                            NULL [PlannedEndDate]
+                            FROM [Certificates] ce 
+                            JOIN [Organisations] og ON ce.OrganisationId = og.Id
+                            WHERE ce.[Status] <> 'Deleted'
+                            AND [Uln] = @uln 
+                            ) ab1 WHERE rownumber = 1
+                            UNION
+                            SELECT [Id] ,[Uln] ,[GivenNames] ,[FamilyName] ,[UkPrn] ,[StdCode] ,[LearnStartDate] ,[EpaOrgId] ,[FundingModel] ,[ApprenticeshipId] ,
+                                  [EmployerAccountId] ,[Source] ,[CreatedAt] ,[UpdatedAt] ,[LearnRefNumber] ,[CompletionStatus] ,[EventId] ,[PlannedEndDate], 4 choice
+                            FROM [Ilrs] 
+                            WHERE [Uln] = @uln 
+                            ) ab2 
+                            ) ab3 WHERE rownumber2 = 1 
+                            ORDER BY [UpdatedAt] DESC, [CreatedAt] DESC  
                             OFFSET @skip ROWS 
-		                    FETCH NEXT @take ROWS ONLY",
+                            FETCH NEXT @take ROWS ONLY",
                 new { uln, skip = (searchRequest.Page - 1) * 10, take = 10 })).ToList();
         }
 
@@ -78,19 +109,17 @@ namespace SFA.DAS.AssessorService.Data.Staff
             {
                 PageOfResults = (await _connection.QueryAsync<Ilr>(
                         @"SELECT org.EndPointAssessorOrganisationId, cert.Uln, JSON_VALUE(CertificateData, '$.LearnerGivenNames') AS GivenNames, JSON_VALUE(CertificateData, '$.LearnerFamilyName') AS FamilyName, cert.StandardCode AS StdCode, cert.UpdatedAt 
-		                    FROM Certificates cert
+                            FROM Certificates cert
                             INNER JOIN Organisations org ON org.Id = cert.OrganisationId
-                            INNER JOIN Ilrs ilr ON ilr.Uln = cert.Uln AND ilr.StdCode = cert.StandardCode
                             WHERE org.EndPointAssessorOrganisationId = @epaOrgId
-		                    ORDER BY cert.UpdatedAt DESC 		            
-		                    OFFSET @skip ROWS 
-		                    FETCH NEXT @take ROWS ONLY",
+                            ORDER BY cert.UpdatedAt DESC                     
+                            OFFSET @skip ROWS 
+                            FETCH NEXT @take ROWS ONLY",
                         new { epaOrgId = searchRequest.SearchQuery.ToLower(), skip = (searchRequest.Page - 1) * 10, take = 10 }))
                     .ToList(),
                 TotalCount = await _connection.ExecuteScalarAsync<int>(@"SELECT COUNT(1)
                     FROM Certificates cert
                         INNER JOIN Organisations org ON org.Id = cert.OrganisationId
-                    INNER JOIN Ilrs ilr ON ilr.Uln = cert.Uln AND ilr.StdCode = cert.StandardCode
                     WHERE org.EndPointAssessorOrganisationId = @epaOrgId", new { epaOrgId = searchRequest.SearchQuery.ToLower() })
             };
 

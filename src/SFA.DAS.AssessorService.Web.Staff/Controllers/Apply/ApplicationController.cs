@@ -77,35 +77,41 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
         [HttpGet("/Applications/{applicationId}")]
         public async Task<IActionResult> Application(Guid applicationId)
         {
+            var application = await _applyApiClient.GetApplication(applicationId);
             var activeSequence = await _applyApiClient.GetActiveSequence(applicationId);
+            var sequenceVm = new ApplicationSequenceViewModel(applicationId, activeSequence?.SequenceId ?? 1, activeSequence, application);
 
             if (activeSequence?.Status == ApplicationSequenceStatus.Submitted)
             {
                 await _applyApiClient.StartApplicationReview(applicationId, activeSequence.SequenceId);
             }
 
-            return View("~/Views/Apply/Applications/Sequence.cshtml", activeSequence);
+            return View("~/Views/Apply/Applications/Sequence.cshtml", sequenceVm);
         }
 
         [HttpGet("/Applications/{applicationId}/Sequence/{sequenceId}")]
         public async Task<IActionResult> Sequence(Guid applicationId, int sequenceId)
         {
+            var application = await _applyApiClient.GetApplication(applicationId);
             var sequence = await _applyApiClient.GetSequence(applicationId, sequenceId);
+            var sequenceVm = new ApplicationSequenceViewModel(applicationId, sequenceId, sequence, application);
+
             if (sequence?.Status == ApplicationSequenceStatus.Submitted)
             {
-                return View("~/Views/Apply/Applications/Sequence.cshtml", sequence);
+                return View("~/Views/Apply/Applications/Sequence.cshtml", sequenceVm);
             }
             else
             {
-                return View("~/Views/Apply/Applications/Sequence_ReadOnly.cshtml", sequence);
+                return View("~/Views/Apply/Applications/Sequence_ReadOnly.cshtml", sequenceVm);
             }
         }
 
         [HttpGet("/Applications/{applicationId}/Sequence/{sequenceId}/Section/{sectionId}")]
         public async Task<IActionResult> Section(Guid applicationId, int sequenceId, int sectionId)
         {
+            var application = await _applyApiClient.GetApplication(applicationId);
             var section = await _applyApiClient.GetSection(applicationId, sequenceId, sectionId);
-            var sectionVm = new ApplicationSectionViewModel(applicationId, sequenceId, sectionId, section);
+            var sectionVm = new ApplicationSectionViewModel(applicationId, sequenceId, sectionId, section, application);
 
             var sequence = await _applyApiClient.GetSequence(applicationId, sequenceId);
             if (sequence?.Status == ApplicationSequenceStatus.Submitted)
@@ -133,10 +139,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
                 foreach(var error in errorMessages)
                 {
                     ModelState.AddModelError(error.Key, error.Value);
-                }               
+                }
 
+                var application = await _applyApiClient.GetApplication(applicationId);
                 var section = await _applyApiClient.GetSection(applicationId, sequenceId, sectionId);
-                var sectionVm = new ApplicationSectionViewModel(applicationId, sequenceId, sectionId, section);
+                var sectionVm = new ApplicationSectionViewModel(applicationId, sequenceId, sectionId, section, application);
                 return View("~/Views/Apply/Applications/Section.cshtml", sectionVm);
             }
 
@@ -149,6 +156,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
         public async Task<IActionResult> Page(Guid applicationId, int sequenceId, int sectionId, string pageId)
         {
             var page = await _applyApiClient.GetPage(applicationId, sequenceId, sectionId, pageId);
+
+            if (page?.Active == false || page?.NotRequired == true)
+            {
+                // DO NOT show any information
+                page = null;
+            }
+
             var pageVm = new PageViewModel(applicationId, sequenceId, sectionId, pageId, page);
 
             var sequence = await _applyApiClient.GetSequence(applicationId, sequenceId);

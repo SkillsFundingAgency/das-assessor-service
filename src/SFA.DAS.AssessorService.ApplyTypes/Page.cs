@@ -20,8 +20,8 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public bool Complete { get; set; }
         public bool AllowMultipleAnswers { get; set; }
         public int? Order { get; set; }
-        public bool Active { get; set; }        
-        public bool Visible { get; set; }
+        public bool Active { get; set; }
+        public bool NotRequired { get; set; }
         public string BodyText { get; set; }
         public FinancialApplicationGrade FinancialApplicationGrade { get; set; }
         
@@ -76,7 +76,8 @@ namespace SFA.DAS.AssessorService.ApplyTypes
                                 var displayAnswer = new DisplayAnswer
                                 {
                                     Answer = answer.Value,
-                                    Label = question.Label
+                                    Label = question.Label,
+                                    QuestionId = question.QuestionId
                                 };
 
                                 displayAnswerPage.DisplayAnswers.Add(displayAnswer);
