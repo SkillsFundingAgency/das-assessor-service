@@ -1312,3 +1312,31 @@
 .roatp-org-search-result {
     display: block;
 }
+
+.well {
+    background-color: #f8f8f8;
+}
+
+.govuk-\!-padding-2 {
+    padding: 10px !important;
+}
+
+@media (min-width: 40.0625em) {
+    .govuk-\!-padding-2 {
+        padding: 10px !important;
+    }
+}
+
+.govuk-\!-padding-top-2 {
+    padding-top: 10px !important;
+}
+
+@media (min-width: 40.0625em) {
+    .govuk-\!-padding-top-2 {
+        padding-top: 10px !important;
+    }
+}
+
+.block {
+    display: block;
+}
