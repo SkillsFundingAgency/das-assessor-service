@@ -3,8 +3,8 @@
 namespace SFA.DAS.AssessorService.Api.Types.Models.Roatp
 {
     using MediatR;
-
-    public class CreateOrganisationRequest : IRequest<bool>
+    
+    public class CreateOrganisationRequest : IRequest<Guid?>
     {
         public int ProviderTypeId { get; set; }
         public int OrganisationTypeId { get; set; }
