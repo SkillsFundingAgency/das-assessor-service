@@ -127,35 +127,21 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         {
             var request = new CreateOrganisationRequest
             {
-                Username = HttpContext.User.OperatorName(),
-                Organisation = CreateOrganisationFromModel(model)
+                CharityNumber = model.CharityNumber,
+                CompanyNumber = model.CompanyNumber,
+                FinancialTrackRecord = true,
+                LegalName = model.LegalName,
+                NonLevyContract = false,
+                OrganisationStatusId = 1,
+                OrganisationTypeId = model.OrganisationTypeId,
+                ParentCompanyGuarantee = false,
+                ProviderTypeId = model.ProviderTypeId,
+                StatusDate = DateTime.Now,
+                Ukprn = Convert.ToInt64(model.UKPRN),
+                TradingName = model.TradingName,
+                Username = HttpContext.User.OperatorName()
             };
             return request;
-        }
-
-        private Organisation CreateOrganisationFromModel(AddOrganisationViewModel model)
-        {
-            var organisation = new Organisation
-            {
-                Id = Guid.NewGuid(),
-                LegalName = model.LegalName,
-                TradingName = model.TradingName,
-                OrganisationData = new OrganisationData
-                {
-                    CharityNumber = model.CharityNumber,
-                    CompanyNumber = model.CompanyNumber,
-                    FinancialTrackRecord = true,
-                    NonLevyContract = false,
-                    ParentCompanyGuarantee = false
-                },
-                UKPRN = Convert.ToInt64(model.UKPRN),
-                OrganisationStatus = new OrganisationStatus { Id = 1 }, // Active
-                StatusDate = DateTime.Now,
-                OrganisationType = new OrganisationType { Id = model.OrganisationTypeId },
-                ProviderType = new ProviderType { Id = model.ProviderTypeId }
-            };
-
-            return organisation;
         }
     }
 }
