@@ -10,5 +10,8 @@
         OrganisationSearchResultsViewModel GetSearchResults();
         void SetSearchResults(OrganisationSearchResultsViewModel model);
         void ClearSearchResults();
+        string GetSearchTerm();
+        void SetSearchTerm(string searchTerm);
+        void ClearSearchTerm();
     }
 }

@@ -1,8 +1,13 @@
+@using SFA.DAS.AssessorService.Web.Staff.Infrastructure
 @model SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp.OrganisationSearchViewModel
-
+@inject RoatpSessionService sessionService
 @{ ViewBag.Title = "Search for an apprenticeship training provider"; }
 
 @{ await Html.RenderPartialAsync("~/Views/Roatp/_StylesPartial.cshtml"); }
+
+@{
+    var searchTerm = sessionService.GetSearchTerm();
+}
 
 @if (Model != null && !String.IsNullOrWhiteSpace(Model.BannerMessage))
 {
@@ -29,8 +34,8 @@
                     <div id="searchControls" class="govuk-form-group govuk-!-margin-bottom-1 govuk-!-width-three-quarters" sfa-validation-for="SearchTerm" sfa-validationerror-class="form-group-error">
                         <span class="error-message" asp-validation-for="SearchTerm"></span>
                         <label for="search" class="govuk-label govuk-!-font-size-24 roatp-search-label">Organisation name or UKPRN </label>
-                        <input asp-for="SearchTerm" autocomplete="off" type="search" id="SearchTerm" class="govuk-input govuk-!-font-size-36 govuk-!-padding-2 roatp-search-field" name="SearchTerm"
-                               sfa-validation-for="SearchTerm" sfa-validationerror-class="form-control-error" />
+                        <input autocomplete="off" type="search" id="SearchTerm" class="govuk-input govuk-!-font-size-36 govuk-!-padding-2 roatp-search-field" name="SearchTerm"
+                               sfa-validation-for="SearchTerm" sfa-validationerror-class="form-control-error" value="@searchTerm" />
                         <input type="submit" class="roatp-search-button" value="Search">
                     </div>
 

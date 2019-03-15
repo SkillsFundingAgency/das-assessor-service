@@ -68,9 +68,9 @@
         [Route("refine-search")]
         public async Task<IActionResult> RefineSearch(string searchTerm)
         {
-            var model = new OrganisationSearchViewModel {SearchTerm = searchTerm};
+            _sessionService.SetSearchTerm(searchTerm);
 
-            return View("~/views/Roatp/Index.cshtml", model);
+            return RedirectToAction("Index", "RoatpHome");
         }
 
         private string BuildSearchResultsTitle(int totalCount, string searchTerm)

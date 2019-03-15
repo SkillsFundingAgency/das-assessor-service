@@ -8,6 +8,7 @@
         private ISessionService _sessionService;
 
         private const string _addOrganisationSessionKey = "Roatp_AddOrganisation";
+        private const string _searchTermKey = "Roatp_SearchTerm";
         private const string _searchResultsSessionKey = "Roatp_SearchResults";
 
         public RoatpSessionService(ISessionService sessionService)
@@ -62,6 +63,21 @@
         public void ClearSearchResults()
         {
             _sessionService.Remove(_searchResultsSessionKey);
+        }
+
+        public string GetSearchTerm()
+        {
+            return _sessionService.Get(_searchTermKey);
+        }
+
+        public void SetSearchTerm(string searchTerm)
+        {
+            _sessionService.Set(_searchTermKey, searchTerm);
+        }
+
+        public void ClearSearchTerm()
+        {
+            _sessionService.Remove(_searchTermKey);
         }
     }
 }
