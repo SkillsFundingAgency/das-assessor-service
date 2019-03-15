@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
         private CertificateFirstNameViewModel _viewModelResponse;
 
         [SetUp]
-        public void Arrange()
+        public void WhenValidModelContainsNoErrors()
         {
              var distributedCacheMock = new Mock<IDistributedCache>();
 
@@ -36,7 +36,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
                 FullName = "James Corley",
                 SelectedStandardCode = "93",
                 IsPrivatelyFunded = true,
-                ReasonForChange = "stuff"
+                ReasonForChange = "Required reason for change"
             };                     
 
             MockSession.Setup(q => q.Get("EndPointAsessorOrganisationId"))

@@ -11,7 +11,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
         private ViewResult _result;
 
         [SetUp]
-        public void Arrange()
+        public void WhenInvalidModelContainsOneError()
         {
             var certificatePrivateProviderUkprnController =
                 new CertificatePrivateProviderUkprnController(MockLogger.Object,
@@ -24,9 +24,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
                 Id = Certificate.Id,
                 Ukprn = "",
                 IsPrivatelyFunded = true,
-                ReasonForChange = "stuff"
-            };          
+                ReasonForChange = "Required reason for change"
+            };
 
+            // view model validation errors will not be trigged as they are attached via fluent
+            // validation and these are not connected in tests however this test is actually testing
+            // the correct view is returned so the actual error is irrelevant and can be forced
             certificatePrivateProviderUkprnController.ModelState.AddModelError("", "Error");
 
             var result = certificatePrivateProviderUkprnController.Ukprn(vm).GetAwaiter().GetResult();
@@ -38,6 +41,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
         public void ThenShouldReturnInvalidModelWithOneError()
         {
             _result.ViewData.ModelState.ErrorCount.Should().Be(1);
+        }
+
+        [Test]
+        public void ThenShouldReturnUkprnView()
+        {
+            _result.ViewName.Should().Be("~/Views/CertificateAmend/Ukprn.cshtml");
         }
     }
 }

@@ -13,7 +13,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
         private RedirectToActionResult _result;      
 
         [SetUp]
-        public void Arrange()
+        public void WhenTheModelIsValid()
         {
             var mockStringLocaliserBuildernew = new MockStringLocaliserBuilder();
             
@@ -35,7 +35,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Controllers.PrivateCertificate
                 Month = "12",
                 Year = "2017",
                 IsPrivatelyFunded = true,
-                ReasonForChange = "stuff"
+                ReasonForChange = "Required reason for change"
             };
                     
 
