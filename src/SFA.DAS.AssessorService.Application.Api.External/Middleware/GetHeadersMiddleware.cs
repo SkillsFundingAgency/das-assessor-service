@@ -36,17 +36,6 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Middleware
                 context.Request.Headers.TryGetValue(_UserEmailHeader, out var emailHeaderValue);
                 context.Request.Headers.TryGetValue(_UserNoteHeader, out var noteHeaderValue);
 
-                ///////////////////////////////////////
-                ///////////// REMOVE AFTER TESTING
-                ///////////////////////////////////////
-                emailHeaderValue = "blah@blah.com";
-                noteHeaderValue = "10022682";
-                ///////////////////////////////////////
-                ///////////// REMOVE AFTER TESTING
-                ///////////////////////////////////////
-
-
-
                 string email = emailHeaderValue.FirstOrDefault();
 
                 if(!TryExtractUkprnFromHeader(noteHeaderValue, out var ukprn))
