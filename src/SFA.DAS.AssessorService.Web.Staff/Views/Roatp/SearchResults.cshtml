@@ -48,6 +48,16 @@
                         <a class="block govuk-link govuk-link--no-visited-state" asp-controller="RoatpSearch" asp-action="RefineSearch" asp-all-route-data="searchParams">Refine search</a>
                     </div>
                     }
+                    
+                    @if (!Model.SearchResults.Any())
+                    {
+                        <div class="govuk-grid-row">
+                            <a asp-controller="RoatpHome" asp-action="Index" class="roatp-button">Search again</a>
+                        </div>
+                        <div class="govuk-grid-row">
+                            <a class="govuk-link govuk-body-m" asp-controller="AddRoatpOrganisation" asp-action="AddOrganisation">Add a new training provider</a>
+                        </div>
+                    }
                 </div>
 
             </div>
