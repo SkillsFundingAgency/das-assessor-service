@@ -201,12 +201,21 @@
                         <dt class="govuk-summary-list__key">
                             Trading name
                         </dt>
+
                         <dd class="govuk-summary-list__value">
-                            @Html.Raw(Model.SelectedResult.TradingName)
+
+                            @if (!String.IsNullOrWhiteSpace(Model.SelectedResult.TradingName))
+                            {
+                                @Html.Raw(Model.SelectedResult.TradingName)
+                            }
+                            else
+                            {
+                                <span class='govuk-hint'>Not applicable</span>
+                            }
                         </dd>
 
                         <dd class="govuk-summary-list__actions">
-
+              
                             <a class="govuk-link" href="#">
                                 Change<span class="govuk-visually-hidden"> trading name</span>
                             </a>
