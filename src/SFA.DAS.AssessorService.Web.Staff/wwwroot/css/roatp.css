@@ -1153,7 +1153,7 @@
 
 
 .govuk-back-link {
-    font-size: 14px;
+    font-size: 14px !important;
     font-size: 0.875rem;
     line-height: 1.14286;
     font-family: "nta", Arial, sans-serif;
@@ -1178,7 +1178,7 @@
 
 @media print {
     .govuk-back-link {
-        font-size: 14pt;
+        font-size: 14pt !important;
         line-height: 1.2;
     }
 }

@@ -6,11 +6,6 @@
 
     public class AddOrganisationViewModel
     {
-        public AddOrganisationViewModel()
-        {
-            OrganisationId = Guid.NewGuid();
-        }
-
         public Guid OrganisationId { get; set; }
         public int ProviderTypeId { get; set; }
         public string LegalName { get; set; }
@@ -23,7 +18,14 @@
         public IEnumerable<ProviderType> ProviderTypes { get; set; }
         public IEnumerable<OrganisationType> OrganisationTypes { get; set; }
 
-        public List<string> ValidationErrors { get; set; }
+    }
+
+    public class AddOrganisationProviderTypeViewModel : AddOrganisationViewModel
+    {
+        public AddOrganisationProviderTypeViewModel()
+        {
+            OrganisationId = Guid.NewGuid();
+        }
 
     }
 }

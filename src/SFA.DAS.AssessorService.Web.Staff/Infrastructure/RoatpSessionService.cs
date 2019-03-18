@@ -1,26 +1,26 @@
 ﻿namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
 {
     using Newtonsoft.Json;
-    using System;
     using ViewModels.Roatp;
 
     public class RoatpSessionService : IRoatpSessionService
     {
         private ISessionService _sessionService;
 
+        private const string _addOrganisationSessionKey = "Roatp_AddOrganisation";
+
         public RoatpSessionService(ISessionService sessionService)
         {
             _sessionService = sessionService;
         }
 
-        public AddOrganisationViewModel GetAddOrganisationDetails(Guid id)
+        public AddOrganisationViewModel GetAddOrganisationDetails()
         {
-            var sessionKey = $"Roatp_AddOrganisation_{id}";
-            var modelJson = _sessionService.Get(sessionKey);
+            var modelJson = _sessionService.Get(_addOrganisationSessionKey);
 
             if (modelJson == null)
             {
-                return new AddOrganisationViewModel {OrganisationId = id};
+                return null;
             }
             var model = JsonConvert.DeserializeObject<AddOrganisationViewModel>(modelJson);
 
@@ -29,11 +29,14 @@
 
         public void SetAddOrganisationDetails(AddOrganisationViewModel model)
         {
-            var sessionKey = $"Roatp_AddOrganisation_{model.OrganisationId}";
-            
             var modelJson = JsonConvert.SerializeObject(model);
 
-            _sessionService.Set(sessionKey, modelJson);
+            _sessionService.Set(_addOrganisationSessionKey, modelJson);
+        }
+
+        public void ClearAddOrganisationDetails()
+        {
+            _sessionService.Remove(_addOrganisationSessionKey);
         }
     }
 }
