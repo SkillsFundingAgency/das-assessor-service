@@ -27,7 +27,8 @@ namespace SFA.DAS.AssessorService.Data.Staff
         {
             return (await _connection.QueryAsync<CertificateForSearch>(@"SELECT 
                                                                             org.EndPointAssessorOrganisationId,
-                                                                            cert.StandardCode, 
+                                                                            cert.StandardCode,
+                                                                            JSON_VALUE(CertificateData, '$.StandardName') AS StandardName, 
                                                                             cert.Uln, 
                                                                             cert.CertificateReference, 
                                                                             JSON_VALUE(CertificateData, '$.LearnerGivenNames') AS GivenNames, 
