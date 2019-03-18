@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -17,5 +18,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task UpdateSignInId(Guid contactId, Guid signInId);
         Task<Contact> GetContact(string email);
         Task AssociateRoleWithContact(string roleName, Contact newContact);
+        Task AssociatePrivilegesWithContact(Guid contactId, IEnumerable<Privilege> privileges);
     }
 }

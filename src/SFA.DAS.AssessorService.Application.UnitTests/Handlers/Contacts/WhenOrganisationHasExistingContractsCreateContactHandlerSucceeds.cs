@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using FizzWare.NBuilder;
 using FluentAssertions;
@@ -22,24 +23,30 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Contacts
             MappingBootstrapper.Initialize();
 
             var organisationRepositoryMock = new Mock<IOrganisationRepository>();
+            var dfeSignInServiceMock = new Mock<IDfeSignInService>();
             var organisation = Builder<Organisation>.CreateNew().Build();
             var organisationQueryRepositoryMock = CreateOrganisationQueryRepositoryMock(organisation);
-
             var contactResponse = Builder<Contact>.CreateNew().Build();
-            var createContactRequest = Builder<CreateContactRequest>.CreateNew().Build();
+            var contactRequest = Builder<CreateContactRequest>
+                .CreateNew().Build();
             var contactRepositoryMock = CreateContactRepositoryMock(contactResponse);
             var mediator = new Mock<IMediator>();
-            var defSignInService = new Mock<IDfeSignInService>();
+            var contactQueryRepository = new Mock<IContactQueryRepository>();
 
-            var createContactHandler = new CreateContactHandler(organisationRepositoryMock.Object, organisationQueryRepositoryMock.Object, contactRepositoryMock.Object, defSignInService.Object,mediator.Object);
+            dfeSignInServiceMock.Setup(x =>
+                    x.InviteUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Guid>()))
+                .Returns(Task.FromResult(new InviteUserResponse{IsSuccess=true}));
+            var createContactHandler = new CreateContactHandler(organisationRepositoryMock.Object,
+                organisationQueryRepositoryMock.Object, contactRepositoryMock.Object, contactQueryRepository.Object,
+                dfeSignInServiceMock.Object, mediator.Object);
 
-            _result = createContactHandler.Handle(createContactRequest, new CancellationToken()).Result;
+            _result = createContactHandler.Handle(contactRequest, new CancellationToken()).Result;
         }
 
         [Test]
         public void ItShouldReturnResult()
         {
-            var result = _result as ContactBoolResponse;
+            var result = _result;
             result.Result.Should().BeTrue();
         }
 

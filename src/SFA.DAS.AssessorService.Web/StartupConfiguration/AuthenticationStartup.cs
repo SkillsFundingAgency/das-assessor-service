@@ -67,7 +67,15 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                     //options.CallbackPath = new PathString(Configuration["auth:oidc:callbackPath"]);
                     //options.SignedOutCallbackPath = new PathString("/SignedOut");
                     //options.SignedOutRedirectUri = new PathString("/SignedOut");
-                
+
+                    //options.ProtocolValidator = new OpenIdConnectProtocolValidator
+                    //{
+                    //    RequireSub = true,
+                    //    RequireStateValidation = false,
+                    //    NonceLifetime = TimeSpan.FromMinutes(15),
+                    //    RequireNonce = false
+                    //};
+
                     options.DisableTelemetry = true;
                     options.Events = new OpenIdConnectEvents
                     {

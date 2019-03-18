@@ -56,6 +56,10 @@ namespace SFA.DAS.AssessorService.Data
 
             return groupedContactPrivileges;
         }
+        public async Task<IEnumerable<Privilege>> GetAllPrivileges()
+        {
+            return await _assessorDbContext.Privileges.ToListAsync();
+        }
 
         public async Task<Contact> GetContact(string userName)
         {
@@ -81,6 +85,7 @@ namespace SFA.DAS.AssessorService.Data
             return contact;
         }
 
+      
         public async Task<Contact> GetBySignInId(Guid requestSignInId)
         {
             return await _assessorDbContext.Contacts.FirstOrDefaultAsync(c => c.SignInId == requestSignInId);

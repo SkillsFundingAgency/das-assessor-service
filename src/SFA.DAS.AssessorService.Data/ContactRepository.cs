@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -42,6 +43,19 @@ namespace SFA.DAS.AssessorService.Data
                 });
                 await _assessorDbContext.SaveChangesAsync();
             }
+        }
+
+        public async Task AssociatePrivilegesWithContact(Guid contactId, IEnumerable<Privilege> privileges)
+        {
+            foreach (var privilege in privileges)
+            {
+                _assessorDbContext.ContactsPrivileges.Add(new ContactsPrivilege
+                {
+                    ContactId = contactId,
+                    PrivilegeId = privilege.Id
+                });
+            }
+            await _assessorDbContext.SaveChangesAsync();
         }
 
         public async Task Update(UpdateContactRequest updateContactRequest)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -16,17 +17,20 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
         private readonly IContactRepository _contactRepository;
         private readonly IDfeSignInService _dfeSignInService;
+        private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IMediator _mediator;
 
         public CreateContactHandler(
             IOrganisationRepository organisationRepository,
             IOrganisationQueryRepository organisationQueryRepository,
             IContactRepository contactRepository,
+            IContactQueryRepository contactQueryRepository,
             IDfeSignInService dfeSignInService,
             IMediator mediator)
         {
             _organisationRepository = organisationRepository;
             _contactRepository = contactRepository;
+            _contactQueryRepository = contactQueryRepository;
             _organisationQueryRepository = organisationQueryRepository;
             _dfeSignInService = dfeSignInService;
             _mediator = mediator;
@@ -45,6 +49,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
             {
                 contactResponse = await _contactRepository.CreateNewContact(newContact);
                 await _contactRepository.AssociateRoleWithContact("SuperUser", newContact);
+                var privileges = await _contactQueryRepository.GetAllPrivileges();
+                var defaultPrivileges=privileges.Where(x =>
+                    x.UserPrivilege != Privileges.ManageUsers);
+                await _contactRepository.AssociatePrivilegesWithContact(contactResponse.Id, defaultPrivileges);
+
                 var invitationResult = await _dfeSignInService.InviteUser(createContactRequest.Email, createContactRequest.GivenName, createContactRequest.FamilyName, newContact.Id);
                 if (!invitationResult.IsSuccess)
                 {

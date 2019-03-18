@@ -6,6 +6,10 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
 
     public class CreateContactRequest : IRequest<ContactBoolResponse>
     {
+        public CreateContactRequest()
+        {
+        }
+
         public CreateContactRequest(string givenName, string familyName, string email, string epaOrg, string userName)
         {
             GivenName = givenName;
@@ -22,7 +26,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public string Username { get; set; }
         public string DisplayName { get; set; }
         public string Email { get; set; }
-        public string FamilyName { get; }
-        public string GivenName { get; }
+        public string FamilyName { get; set; }
+        public string GivenName { get; set; }
     }
 }
