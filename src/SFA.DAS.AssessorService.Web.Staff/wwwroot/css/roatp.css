@@ -1344,3 +1344,27 @@
     border: 0 !important;
     white-space: nowrap !important;
 }
+
+.well {
+    background-color: #f8f8f8;
+}
+
+.govuk-\!-padding-2 {
+    padding: 10px !important;
+}
+
+@media (min-width: 40.0625em) {
+    .govuk-\!-padding-2 {
+        padding: 10px !important;
+    }
+}
+
+.govuk-\!-padding-top-2 {
+    padding-top: 10px !important;
+}
+
+@media (min-width: 40.0625em) {
+    .govuk-\!-padding-top-2 {
+        padding-top: 10px !important;
+    }
+}
