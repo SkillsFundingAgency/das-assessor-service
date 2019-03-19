@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using FizzWare.NBuilder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
@@ -7,10 +9,13 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 using Moq;
 using Newtonsoft.Json;
+using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
+using SFA.DAS.AssessorService.ExternalApis.Services;
 using SFA.DAS.AssessorService.Web.Controllers;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.UnitTests.MockedObjects;
@@ -24,6 +29,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Posts
         protected Mock<IHttpContextAccessor> MockHttpContextAccessor;
         protected ICertificateApiClient MockCertificateApiClient;
         protected IAssessmentOrgsApiClient MockAssessmentOrgsApiClient;
+        protected Mock<IStandardServiceClient> MockStandardServiceClient;
 
         protected Mock<ISessionService> MockSession;
 
@@ -38,6 +44,43 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Posts
             var mockedApiClientLogger = new Mock<ILogger<CertificateApiClient>>();
 
             MockSession = new Mock<ISessionService>();
+            MockStandardServiceClient = new Mock<IStandardServiceClient>();
+
+            var standards = new List<StandardSummary>
+            {
+                new StandardSummary
+                {
+                    Id = "91",
+                    Level = 2,
+                    Title = "Test Title 1"
+                },
+                new StandardSummary
+                {
+                    Id = "92",
+                    Level = 3,
+                    Title = "Test Title 2"
+                },
+                new StandardSummary
+                {
+                    Id = "93",
+                    Level = 5,
+                    Title = "Test Title 3"
+                },
+                new StandardSummary
+                {
+                    Id = "94",
+                    Level = 2,
+                    Title = "Test Title 4"
+                },
+                new StandardSummary
+                {
+                    Id = "95",
+                    Level = 2,
+                    Title = "Test Title 5"
+                },
+            };
+
+            MockStandardServiceClient.Setup(s => s.GetAllStandardSummaries()).Returns(Task.FromResult(standards.AsEnumerable()));
 
             MockHttpContextAccessor = MockedHttpContextAccessor.Setup();
             MockCertificateApiClient = MockedCertificateApiClient.Setup(Certificate, mockedApiClientLogger);

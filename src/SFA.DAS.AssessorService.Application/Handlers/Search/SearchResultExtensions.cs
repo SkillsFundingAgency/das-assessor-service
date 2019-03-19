@@ -9,21 +9,22 @@ using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
+using SFA.DAS.AssessorService.ExternalApis.Services;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Search
 {
     static class SearchResultExtensions
     {
-        public static List<SearchResult> PopulateStandards(this List<SearchResult> searchResults, IAssessmentOrgsApiClient assessmentOrgsApiClient, ILogger<SearchHandler> logger)
+        public static List<SearchResult> PopulateStandards(this List<SearchResult> searchResults, IStandardService standardService, ILogger<SearchHandler> logger)
         {
-            var allStandards = assessmentOrgsApiClient.GetAllStandards().Result;
+            var allStandards = standardService.GetAllStandards().Result;
 
             foreach (var searchResult in searchResults)
             {
                 var standard = allStandards.SingleOrDefault(s => s.StandardId == searchResult.StdCode.ToString());
                 if (standard == null)
                 {
-                    standard = assessmentOrgsApiClient.GetStandard(searchResult.StdCode).Result;
+                    standard = standardService.GetStandard(searchResult.StdCode).Result;
                 }
                 searchResult.Standard = standard.Title;
                 searchResult.Level = standard.Level;
