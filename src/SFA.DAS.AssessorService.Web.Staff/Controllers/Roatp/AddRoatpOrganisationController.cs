@@ -106,7 +106,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
                 return RedirectToAction("Error", "Home");
             }
 
-            var bannerModel = new BannerViewModel { CreateOrganisationCompanyName = model.LegalName.ToUpper() };
+            var bannerModel = new OrganisationSearchViewModel { BannerMessage = model.LegalName.ToUpper() };
             _sessionService.ClearAddOrganisationDetails();
             return View("~/Views/Roatp/Index.cshtml", bannerModel);
         }

@@ -1,7 +1,6 @@
 ﻿namespace SFA.DAS.AssessorService.Web.Staff.Validators.Roatp
 {
     using FluentValidation;
-    using FluentValidation.Results;
     using SFA.DAS.AssessorService.Api.Types.Models.Validation;
     using SFA.DAS.AssessorService.Web.Staff.Resources;
     using System.Collections.Generic;

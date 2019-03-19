@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
@@ -18,7 +19,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         string CheckOrganisationTypeExists(int? organisationTypeId);
         string CheckIfOrganisationNotFound(string organisationId); 
         string CheckUkprnIsValid(long? ukprn);
-        Standard GetStandard(int standardCode);
+        Task<Standard> GetStandard(int standardCode);
         string CheckIfOrganisationStandardAlreadyExists(string organisationId, int standardCode);
         string CheckOrganisationNameNotUsed(string name);
         string CheckOrganisationNameNotUsedForOtherOrganisations(string name, string organisationIdToIgnore);

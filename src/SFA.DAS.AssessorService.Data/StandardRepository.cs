@@ -13,6 +13,7 @@ using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.ExternalApis.IFAStandards.Types;
 using SFA.DAS.AssessorService.Settings;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -45,6 +46,36 @@ namespace SFA.DAS.AssessorService.Data
                 } 
         }
 
+        public async Task<StandardCollation> GetStandardCollationByStandardId(int standardId)
+        {
+            var connectionString = _configuration.SqlConnectionString;
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                var standards = await connection.QueryAsync<StandardCollation>("select * from [StandardCollation] where standardId = @standardId",new {standardId});
+
+                return standards.FirstOrDefault();
+
+
+            }
+        }
+
+        public async Task<StandardCollation> GetStandardCollationByReferenceNumber(string referenceNumber)
+        {
+            var connectionString = _configuration.SqlConnectionString;
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                var standards = await connection.QueryAsync<StandardCollation>("select * from [StandardCollation] where ReferenceNumber = @referenceNumber", new { referenceNumber });
+                return standards.FirstOrDefault();
+            }
+        }
 
         public async Task<DateTime?> GetDateOfLastStandardCollation()
         {
@@ -237,5 +268,7 @@ namespace SFA.DAS.AssessorService.Data
             }
             return countRemoved;
         }
+
+      
     }
 }

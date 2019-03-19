@@ -75,6 +75,11 @@
             return await Get<DuplicateCheckResponse>($"{_baseUrl}/api/v1/duplicateCheck/charityNumber?charityNumber={charityNumber}&organisationId={organisationId}");
         }
 
+        public async Task<OrganisationSearchResults> Search(string searchTerm)
+        {
+            return await Get<OrganisationSearchResults>($"{_baseUrl}/api/v1/search?searchTerm={searchTerm}");
+        }
+
         private async Task<T> Get<T>(string uri)
         {
             _client.DefaultRequestHeaders.Authorization =
