@@ -135,7 +135,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
                 StatusDate = DateTime.Now,
                 Ukprn = Convert.ToInt64(model.UKPRN),
                 TradingName = model.TradingName,
-                Username = HttpContext.User.OperatorName()
+                Username = HttpContext.User.OperatorName(),
+                StartDate = DateTime.Today
             };
             return request;
         }
