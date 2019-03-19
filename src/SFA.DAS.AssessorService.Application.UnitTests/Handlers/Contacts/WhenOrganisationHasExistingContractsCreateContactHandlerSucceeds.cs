@@ -21,11 +21,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Contacts
         public void Arrange()
         {
             MappingBootstrapper.Initialize();
-
-            var organisationRepositoryMock = new Mock<IOrganisationRepository>();
+            
             var dfeSignInServiceMock = new Mock<IDfeSignInService>();
-            var organisation = Builder<Organisation>.CreateNew().Build();
-            var organisationQueryRepositoryMock = CreateOrganisationQueryRepositoryMock(organisation);
             var contactResponse = Builder<Contact>.CreateNew().Build();
             var contactRequest = Builder<CreateContactRequest>
                 .CreateNew().Build();
@@ -36,8 +33,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Contacts
             dfeSignInServiceMock.Setup(x =>
                     x.InviteUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Guid>()))
                 .Returns(Task.FromResult(new InviteUserResponse{IsSuccess=true}));
-            var createContactHandler = new CreateContactHandler(organisationRepositoryMock.Object,
-                organisationQueryRepositoryMock.Object, contactRepositoryMock.Object, contactQueryRepository.Object,
+            var createContactHandler = new CreateContactHandler( contactRepositoryMock.Object, contactQueryRepository.Object,
                 dfeSignInServiceMock.Object, mediator.Object);
 
             _result = createContactHandler.Handle(contactRequest, new CancellationToken()).Result;

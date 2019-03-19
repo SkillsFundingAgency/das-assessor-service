@@ -95,7 +95,7 @@ namespace SFA.DAS.AssessorService.Data
             await _assessorDbContext.SaveChangesAsync();
         }
 
-        public async Task UpdateContactWithOrganisationData(UpdateContactWithOrgAndStausRequest updateContactWithOrgAndStaus)
+        public async Task<Contact> UpdateContactWithOrganisationData(UpdateContactWithOrgAndStausRequest updateContactWithOrgAndStaus)
         {
             var contactEntity =
                 await _assessorDbContext.Contacts.FirstAsync(q => q.Id == Guid.Parse(updateContactWithOrgAndStaus.ContactId));
@@ -107,6 +107,9 @@ namespace SFA.DAS.AssessorService.Data
             _assessorDbContext.MarkAsModified(contactEntity);
 
             await _assessorDbContext.SaveChangesAsync();
+
+            //return updated contact
+            return await _assessorDbContext.Contacts.FirstAsync(q => q.Id == Guid.Parse(updateContactWithOrgAndStaus.ContactId));
         }
 
         public async Task LinkOrganisation(string endPointAssessorOrganisationId, string userName)

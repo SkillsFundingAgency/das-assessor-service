@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Logging;
 using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Login
@@ -124,44 +120,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
         {
             return await _contactQueryRepository.GetContactStatus(endPointAssessorOrganisationId, signInId);
         }
-
-        private async Task<Contact> GetContact(string username, string email, string displayName)
-        {
-            _logger.LogInformation($"Getting Contact with username: {username}");
-            var contact = await _contactQueryRepository.GetContact(username);
-
-            if (contact != null)
-            {
-                _logger.LogInformation($"Got Existing Contact from username");
-                await CheckStoredUserDetailsForUpdate(contact.Username, email, displayName, contact);
-            }
-            else
-            {
-                _logger.LogInformation($"Getting Contact with email: {email}");
-                contact = await _contactQueryRepository.GetContactFromEmailAddress(email);
-                if (contact != null)
-                {
-                    _logger.LogInformation($"Got Existing Contact from email");
-                    await CheckStoredUserDetailsForUpdate(username, contact.Email, displayName, contact);
-                }
-            }
-
-            return contact;
-        }
-
-        private async Task CheckStoredUserDetailsForUpdate(string username, string email, string displayName, Contact contact)
-        {
-            if (contact.Username != username || contact.Email != email || contact.DisplayName != displayName)
-            {
-                _logger.LogInformation($"Existing contact has updated details.  Updating");
-
-                await _mediator.Send(new UpdateContactRequest()
-                {
-                    Email = email,
-                    DisplayName = displayName,
-                    UserName = username
-                });
-            }
-        }
+        
     }
 }

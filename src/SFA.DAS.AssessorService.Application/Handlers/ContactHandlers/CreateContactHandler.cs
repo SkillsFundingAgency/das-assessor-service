@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
@@ -13,25 +11,20 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
 {
     public class CreateContactHandler : IRequestHandler<CreateContactRequest, ContactBoolResponse>
     {
-        private readonly IOrganisationRepository _organisationRepository;
-        private readonly IOrganisationQueryRepository _organisationQueryRepository;
+        
         private readonly IContactRepository _contactRepository;
         private readonly IDfeSignInService _dfeSignInService;
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IMediator _mediator;
 
         public CreateContactHandler(
-            IOrganisationRepository organisationRepository,
-            IOrganisationQueryRepository organisationQueryRepository,
             IContactRepository contactRepository,
             IContactQueryRepository contactQueryRepository,
             IDfeSignInService dfeSignInService,
             IMediator mediator)
         {
-            _organisationRepository = organisationRepository;
             _contactRepository = contactRepository;
             _contactQueryRepository = contactQueryRepository;
-            _organisationQueryRepository = organisationQueryRepository;
             _dfeSignInService = dfeSignInService;
             _mediator = mediator;
         }
@@ -59,7 +52,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
                     response.Result = false;
                     return response;
                 }
-
             }
             else
             {
@@ -76,26 +68,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
                var emailTemplate =  await _mediator.Send(new GetEMailTemplateRequest {TemplateName = "ApplySignupError"}, cancellationToken);
                await _mediator.Send(new SendEmailRequest(createContactRequest.Email, emailTemplate, new { }), cancellationToken);
             }
-
-            if (newContact
-                .EndPointAssessorOrganisationId != null && !(await _organisationQueryRepository.CheckIfOrganisationHasContacts(newContact
-                .EndPointAssessorOrganisationId)))
-            {
-                await SetOrganisationStatusToLiveAndSetPrimaryContact(createContactRequest, contactResponse);
-            }
-
             return response;
-        }
-
-        private async Task SetOrganisationStatusToLiveAndSetPrimaryContact(CreateContactRequest createContactRequest, Contact contact)
-        {
-            var organisation =
-                await _organisationQueryRepository.Get(createContactRequest.EndPointAssessorOrganisationId);
-            
-            organisation.PrimaryContact = contact.Username;
-            organisation.Status = OrganisationStatus.Live;
-
-            await _organisationRepository.UpdateOrganisation(organisation);
         }
     }
 }

@@ -78,3 +78,13 @@ BEGIN
 INSERT EMailTemplates VALUES (N'4df42e62-c08f-4e1c-ae8e-7ddf599ed3f6', N'EPAOUserApproveConfirm', N'539204f8-e99a-4efa-9d1f-d0e58b26dd7b', NULL, GETDATE(), NULL, NULL)
 END
 
+IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'EPAOUserApproveRequest')
+BEGIN
+INSERT EMailTemplates VALUES (N'4df42e62-c08f-4e1c-ae8e-7ddf599ed3f9', N'EPAOUserApproveRequest', N'5bb920f4-06ec-43c7-b00a-8fad33ce8066', NULL, GETDATE(), NULL, NULL)
+END
+
+IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'ApplySignupError')
+BEGIN
+INSERT EMailTemplates VALUES (N'01dd414e-585c-47cf-8c89-ba1b84cfb103', N'EPAOUserApproveRequest', N'88799189-fe12-4887-a13f-f7f76cd6945a', NULL, GETDATE(), NULL, NULL)
+END
+

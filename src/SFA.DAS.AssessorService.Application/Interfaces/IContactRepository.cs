@@ -13,7 +13,9 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task Delete(string userName);
         Task LinkOrganisation(string endPointAssessorOrganisationId, string userName);
         Task UpdateStatus(UpdateContactStatusRequest updateContactRequest);
-        Task UpdateContactWithOrganisationData(UpdateContactWithOrgAndStausRequest updateContactWithOrgAndStaus);
+
+        Task<Contact> UpdateContactWithOrganisationData(
+            UpdateContactWithOrgAndStausRequest updateContactWithOrgAndStaus);
 
         Task UpdateSignInId(Guid contactId, Guid signInId);
         Task<Contact> GetContact(string email);
