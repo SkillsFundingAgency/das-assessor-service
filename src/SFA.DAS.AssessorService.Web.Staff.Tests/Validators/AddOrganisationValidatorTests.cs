@@ -108,6 +108,7 @@
         {
             _viewModel.UKPRN = ukprn;
 
+
             var validationResponse = _validator.ValidateOrganisationDetails(_viewModel).GetAwaiter().GetResult();
 
             var ukprnError = validationResponse.Errors.FirstOrDefault(x => x.Field == "UKPRN");

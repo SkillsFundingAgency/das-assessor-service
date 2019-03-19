@@ -16,5 +16,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
        Task<DuplicateCheckResponse> DuplicateUKPRNCheck(Guid organisationId, long ukprn);
        Task<DuplicateCheckResponse> DuplicateCompanyNumberCheck(Guid organisationId, string companyNumber);
        Task<DuplicateCheckResponse> DuplicateCharityNumberCheck(Guid organisationId, string charityNumber);
+       Task<OrganisationSearchResults> Search(string searchTerm);
     }
 }

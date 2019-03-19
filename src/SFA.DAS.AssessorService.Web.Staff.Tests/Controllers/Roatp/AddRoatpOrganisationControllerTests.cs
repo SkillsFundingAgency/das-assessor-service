@@ -162,9 +162,9 @@
             var result = _controller.CreateOrganisation(model).GetAwaiter().GetResult();
 
             var viewResult = result as ViewResult;
-            var successModel = viewResult.Model as BannerViewModel;
+            var successModel = viewResult.Model as OrganisationSearchViewModel;
 
-            successModel.CreateOrganisationCompanyName.Should().Be(model.LegalName.ToUpper());
+            successModel.BannerMessage.Should().Be(model.LegalName.ToUpper());
         }
 
         [Test]

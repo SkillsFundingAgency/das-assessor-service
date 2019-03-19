@@ -50,6 +50,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>RoatpOrganisationValidation.resx</DependentUpon>
     </Compile>
+    <Compile Update="Resources\RoatpSearchValidation.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RoatpSearchValidation.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -160,6 +165,10 @@
     <EmbeddedResource Update="Resources\RoatpOrganisationValidation.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>RoatpOrganisationValidation.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\RoatpSearchValidation.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>RoatpSearchValidation.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
 
