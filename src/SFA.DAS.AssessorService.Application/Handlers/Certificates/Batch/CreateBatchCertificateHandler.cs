@@ -15,6 +15,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.ExternalApis.Services;
 
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
@@ -27,9 +28,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly ILogger<CreateBatchCertificateHandler> _logger;
+        private readonly IStandardService _standardService;
 
         public CreateBatchCertificateHandler(ICertificateRepository certificateRepository, IIlrRepository ilrRepository, IAssessmentOrgsApiClient assessmentOrgsApiClient,
-            IOrganisationQueryRepository organisationQueryRepository, IContactQueryRepository contactQueryRepository, ILogger<CreateBatchCertificateHandler> logger)
+            IOrganisationQueryRepository organisationQueryRepository, IContactQueryRepository contactQueryRepository, ILogger<CreateBatchCertificateHandler> logger, IStandardService standardService)
         {
             _certificateRepository = certificateRepository;
             _ilrRepository = ilrRepository;
@@ -37,6 +39,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             _organisationQueryRepository = organisationQueryRepository;
             _contactQueryRepository = contactQueryRepository;
             _logger = logger;
+            _standardService = standardService;
         }
 
         public async Task<Certificate> Handle(CreateBatchCertificateRequest request, CancellationToken cancellationToken)
@@ -53,7 +56,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates.Batch
             _logger.LogInformation("CreateNewCertificate Before Get Organisation from db");
             var organisation = await _organisationQueryRepository.GetByUkPrn(request.UkPrn);
             _logger.LogInformation("CreateNewCertificate Before Get Standard from API");
-            var standard = await _assessmentOrgsApiClient.GetStandard(ilr.StdCode);
+            var standard = await _standardService.GetStandard(ilr.StdCode);
             _logger.LogInformation("CreateNewCertificate Before Get Provider from API");
             var provider = await GetProviderFromUkprn(ilr.UkPrn);
 

@@ -14,7 +14,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Handlers.ao;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Data;
-using SFA.DAS.AssessorService.Web.Staff.Services;
+using SFA.DAS.AssessorService.ExternalApis.Services;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
 {
@@ -91,7 +91,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             RegisterQueryRepository.Setup(r => r.GetDeliveryAreaIdsByOrganisationStandardId(_id1))
                 .Returns(Task.FromResult(_expectedDeliveryAreas.AsEnumerable()));
 
-            _standardService.Setup(s => s.GetAllStandardSummaries()).Returns(Task.FromResult(_allStandardSummaries.AsEnumerable()));
+            _standardService.Setup(s => s.GetAllStandardsV2()).Returns(Task.FromResult(_allStandardSummaries.AsEnumerable()));
             
             GetStandardsByAssessmentOrganisationHandler =
                 new GetStandardsByAssessmentOrganisationHandler(RegisterQueryRepository.Object, _standardService.Object,Logger.Object);
@@ -103,7 +103,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Query
             GetStandardsByAssessmentOrganisationHandler.Handle(_request, new CancellationToken()).Wait();
             RegisterQueryRepository.Verify(r => r.GetOrganisationStandardByOrganisationId(_organisationId));
             RegisterQueryRepository.Verify(r => r.GetDeliveryAreaIdsByOrganisationStandardId(_id1));
-            _standardService.Verify(s => s.GetAllStandardSummaries());
+            _standardService.Verify(s => s.GetAllStandardsV2());
         }
 
 
