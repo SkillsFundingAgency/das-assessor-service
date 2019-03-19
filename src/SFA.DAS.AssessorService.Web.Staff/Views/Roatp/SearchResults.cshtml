@@ -29,7 +29,12 @@
                 <ul class="govuk-list">
                     @for(var index = 0; index < Model.SearchResults.Count; index++)
                     {
-                        <li class="govuk-section-break govuk-!-padding-left-2 govuk-!-padding-top-2 govuk-!-padding-bottom-1">
+                        var addClass = "";
+                        if (index == Model.SelectedIndex)
+                        {
+                            addClass = "selected-item";
+                        }
+                        <li class="govuk-section-break govuk-!-padding-left-2 govuk-!-padding-right-2 govuk-!-padding-top-2 govuk-!-padding-bottom-1 @Html.Raw(addClass)">
                             @if (Model.SearchResults[index].OrganisationStatus.Id == 0)
                             {
                                 <a href="/results-found?index=@Html.Raw(index)" class="govuk-!-font-weight-bold_ roatp-org-search-result">@Html.Raw(Model.SearchResults[index].LegalName) (Removed)</a>
