@@ -48,11 +48,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
             if (existingContact == null)
             {
                 contactResponse = await _contactRepository.CreateNewContact(newContact);
+                //Todo: The role should be associated after the user has been created by another mechanism
                 await _contactRepository.AssociateRoleWithContact("SuperUser", newContact);
                 var privileges = await _contactQueryRepository.GetAllPrivileges();
-                var defaultPrivileges=privileges.Where(x =>
-                    x.UserPrivilege != Privileges.ManageUsers);
-                await _contactRepository.AssociatePrivilegesWithContact(contactResponse.Id, defaultPrivileges);
+                await _contactRepository.AssociatePrivilegesWithContact(contactResponse.Id, privileges);
 
                 var invitationResult = await _dfeSignInService.InviteUser(createContactRequest.Email, createContactRequest.GivenName, createContactRequest.FamilyName, newContact.Id);
                 if (!invitationResult.IsSuccess)
@@ -66,7 +65,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
             {
                 if (existingContact.SignInId == null)
                 {
-                   
                     var invitationResult = await _dfeSignInService.InviteUser(createContactRequest.Email, createContactRequest.GivenName, createContactRequest.FamilyName, existingContact.Id);
                     if (!invitationResult.IsSuccess)
                     {

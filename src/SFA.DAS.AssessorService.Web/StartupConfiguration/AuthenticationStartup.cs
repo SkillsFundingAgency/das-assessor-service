@@ -48,33 +48,11 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                     options.MetadataAddress = _configuration.DfeSignIn.MetadataAddress;
                     options.RequireHttpsMetadata = false;
                     options.ClientId = _configuration.DfeSignIn.ClientId;
-                   // options.ClientSecret = _configuration.DfeSignIn.ClientSecret;
-                  //  options.ResponseType = OpenIdConnectResponseType.Code;
-                  //  options.GetClaimsFromUserInfoEndpoint = true;
-
-                    // using this property would align the expiration of the cookie
-                    // with the expiration of the identity token
-                    // UseTokenLifetime = true;
 
                     options.Scope.Clear();
                     options.Scope.Add("openid");
-                    // options.Scope.Add("email");
-                    //options.Scope.Add("profile");
-
-                   // options.Scope.Add("offline_access");
 
                     options.SaveTokens = true;
-                    //options.CallbackPath = new PathString(Configuration["auth:oidc:callbackPath"]);
-                    //options.SignedOutCallbackPath = new PathString("/SignedOut");
-                    //options.SignedOutRedirectUri = new PathString("/SignedOut");
-
-                    //options.ProtocolValidator = new OpenIdConnectProtocolValidator
-                    //{
-                    //    RequireSub = true,
-                    //    RequireStateValidation = false,
-                    //    NonceLifetime = TimeSpan.FromMinutes(15),
-                    //    RequireNonce = false
-                    //};
 
                     options.DisableTelemetry = true;
                     options.Events = new OpenIdConnectEvents
@@ -111,12 +89,6 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                             return Task.FromResult(0);
                         },
 
-                       // OnRedirectToIdentityProvider = context =>
-                      //  {
-                       //     context.ProtocolMessage.Prompt = "consent";
-                       //     return Task.CompletedTask;
-                      //  },
-
                         OnTokenValidated = async context =>
                         {
                             var identity = new ClaimsIdentity();
@@ -135,11 +107,20 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                                 {
                                     var organisation =
                                         await orgClient.GetEpaOrganisation(user.EndPointAssessorOrganisationId);
+
+                                    if (organisation.ApiEnabled && !string.IsNullOrEmpty(organisation.ApiUser))
+                                    {
+                                        identity.AddClaim(new Claim("http://schemas.portal.com/service", Roles.ExternalApiAccess));
+                                        identity.AddClaim(new Claim("http://schemas.portal.com/service", Roles.EpaoUser));
+                                    }
                                     identity.AddClaim(new Claim("http://schemas.portal.com/ukprn",
                                         organisation?.Ukprn.ToString()));
                                 }
                                 identity.AddClaim(new Claim("display_name", user?.DisplayName));
                                 identity.AddClaim(new Claim("email", user?.Email));
+
+                                //Todo: Need to determine privileges dynamically
+                                identity.AddClaim(new Claim("http://schemas.portal.com/service", Privileges.ManageUsers));
                             }
 
                             context.Principal.AddIdentity(identity);
@@ -149,28 +130,41 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                 });
 
 
-            //services.AddAuthorization(options =>
-            //{
-            //    options.AddPolicy(Policies.ExternalApiAccess,
-            //        policy =>
-            //        {
-            //            policy.RequireAssertion(context =>
-            //                context.User.HasClaim("http://schemas.portal.com/service", Roles.ExternalApiAccess)
-            //                && context.User.HasClaim("http://schemas.portal.com/service", Roles.EpaoUser)
-            //                );
-            //        });
-            //});
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(Policies.ExternalApiAccess,
+                    policy =>
+                    {
+                        policy.RequireAssertion(context =>
+                            context.User.HasClaim("http://schemas.portal.com/service", Roles.ExternalApiAccess)
+                            && context.User.HasClaim("http://schemas.portal.com/service", Roles.EpaoUser)
+                            );
+                    });
+                options.AddPolicy(Policies.SuperUserPolicy,
+                    policy =>
+                    {
+                        policy.RequireAssertion(context =>
+                            context.User.HasClaim("http://schemas.portal.com/service", Privileges.ManageUsers)
+                        );
+                    });
+            });
         }
     }
 
     public class Policies
     {
         public const string ExternalApiAccess = "ExternalApiAccess";
+        public const string SuperUserPolicy = "SuperUserPolicy";
     }
     
     public class Roles
     {
         public const string ExternalApiAccess = "EPI";
         public const string EpaoUser = "EPA";
+    }
+
+    public class Privileges
+    {
+        public const string ManageUsers = "ManageUser";
     }
 }

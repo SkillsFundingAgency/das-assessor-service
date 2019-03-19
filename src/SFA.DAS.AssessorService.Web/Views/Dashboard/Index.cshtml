@@ -82,10 +82,10 @@
                                 <a asp-controller="Organisation" asp-action="OrganisationDetails">View organisation details</a>
                             </li>
                             <li class="dashboard__link ">
-                                <a asp-controller="ManageUsers" asp-action="Index">Manage users</a>
+                                <a sfa-policy-exists-show="@Policies.SuperUserPolicy" asp-controller="ManageUsers" asp-action="Index">Manage users</a>
                             </li>
                             <li class="dashboard__link">
-                                 @*<a sfa-policy-exists-show="@Policies.ExternalApiAccess" asp-controller="ExternalApi" asp-action="Index">External API keys</a>*@
+                                 <a sfa-policy-exists-show="@Policies.ExternalApiAccess" asp-controller="ExternalApi" asp-action="Index">External API keys</a>
                             </li>
                         </ul>
                     </div>
