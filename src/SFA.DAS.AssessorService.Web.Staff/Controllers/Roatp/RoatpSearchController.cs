@@ -61,6 +61,7 @@
 
             model.SelectedIndex = index;
 
+            _sessionService.ClearSearchTerm();
             return View("~/Views/Roatp/SearchResults.cshtml", model);
         }
 
