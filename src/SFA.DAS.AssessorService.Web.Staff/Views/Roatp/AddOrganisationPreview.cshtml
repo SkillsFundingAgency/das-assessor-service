@@ -1,7 +1,5 @@
 @model SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp.AddOrganisationViewModel
 
-@using SFA.DAS.AssessorService.Web.Staff
-@using SFA.DAS.AssessorService.Web.Staff.Domain
 @{ ViewBag.Title = "Confirm details"; }
 
 @{
@@ -18,9 +16,6 @@
         </form>
     </div>
 
-    @{
-        await Html.RenderPartialAsync("~/Views/Roatp/_AddOrganisationValidationErrorsPartial.cshtml");
-    }
     <div class="grid-row">
         <div class="column-two-thirds">
             <h1 class="heading-xlarge roatp-heading">Confirm details</h1>

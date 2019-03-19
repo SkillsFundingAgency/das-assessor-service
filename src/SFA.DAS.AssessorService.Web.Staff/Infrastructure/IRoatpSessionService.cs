@@ -1,11 +1,11 @@
 ﻿namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
 {
-    using System;
     using ViewModels.Roatp;
 
     public interface IRoatpSessionService
     {
-        AddOrganisationViewModel GetAddOrganisationDetails(Guid id);
+        AddOrganisationViewModel GetAddOrganisationDetails();
         void SetAddOrganisationDetails(AddOrganisationViewModel model);
+        void ClearAddOrganisationDetails();
     }
 }
