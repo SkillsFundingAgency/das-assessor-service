@@ -49,6 +49,7 @@ UPDATE organisationStandard
 -- patch FundingModel, where this was not set by data sync
 UPDATE Ilrs SET FundingModel = 36 WHERE FundingModel IS NULL
 
+/* DONE
 -- fix options
 UPDATE [Certificates]
 SET [CertificateData] = JSON_MODIFY([CertificateData], '$.CourseOption','Alcoholic Beverage Service') 
@@ -57,10 +58,33 @@ WHERE json_value(certificatedata,'$.CourseOption') = 'Alcholic beverage service'
 UPDATE [Options] 
 SET [OptionName] = 'Alcoholic Beverage Service'
 WHERE [OptionName] = 'Alcholic beverage service'
+*/
 
+-- ON-613 Patch Certificates with STxxxx StandardReference, where it is not yet included. 
+-- AB 11/03/19 Keep this active for new deployments, for now
+-- ****************************************************************************
+MERGE INTO certificates ma1
+USING (
+SELECT ce1.[Id],JSON_MODIFY([CertificateData],'$.StandardReference',st1.ReferenceNumber) newData
+  FROM [Certificates] ce1 
+  JOIN [StandardCollation] st1 ON ce1.StandardCode = st1.StandardId
+  WHERE st1.ReferenceNumber IS NOT NULL 
+  AND JSON_VALUE([CertificateData],'$.StandardReference') IS NULL) up1
+ON (ma1.id = up1.id)
+WHEN MATCHED THEN UPDATE SET ma1.[CertificateData] = up1.[newData];
 
 IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'EPAOUserApproveConfirm')
 BEGIN
 INSERT EMailTemplates VALUES (N'4df42e62-c08f-4e1c-ae8e-7ddf599ed3f6', N'EPAOUserApproveConfirm', N'539204f8-e99a-4efa-9d1f-d0e58b26dd7b', NULL, GETDATE(), NULL, NULL)
+END
+
+IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'EPAOUserApproveRequest')
+BEGIN
+INSERT EMailTemplates VALUES (N'4df42e62-c08f-4e1c-ae8e-7ddf599ed3f9', N'EPAOUserApproveRequest', N'5bb920f4-06ec-43c7-b00a-8fad33ce8066', NULL, GETDATE(), NULL, NULL)
+END
+
+IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'ApplySignupError')
+BEGIN
+INSERT EMailTemplates VALUES (N'01dd414e-585c-47cf-8c89-ba1b84cfb103', N'EPAOUserApproveRequest', N'88799189-fe12-4887-a13f-f7f76cd6945a', NULL, GETDATE(), NULL, NULL)
 END
 

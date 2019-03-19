@@ -84,8 +84,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 Address3 = organisation.OrganisationData?.Address3,
                 Address4 = organisation.OrganisationData?.Address4,
                 Postcode = organisation.OrganisationData?.Postcode,
-                PrimaryContact = organisation.PrimaryContact,
-                PrimaryContactName = notSetDescription,
+                PrimaryContact = !string.IsNullOrEmpty(organisation.PrimaryContact)
+                    ? organisation.PrimaryContact
+                    : notSetDescription,
+                PrimaryContactName = !string.IsNullOrEmpty(organisation.PrimaryContact)
+                    ? organisation.PrimaryContact
+                    : notSetDescription,
                 CharityNumber = organisation.OrganisationData?.CharityNumber,
                 CompanyNumber = organisation.OrganisationData?.CompanyNumber,
                 Status = organisation.Status,
@@ -95,7 +99,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
             if (viewModel.OrganisationTypeId == null) return viewModel;
             var organisationTypes = viewModel.OrganisationTypes;
-            viewModel.OrganisationType = organisationTypes.FirstOrDefault(x => x.Id == viewModel.OrganisationTypeId)?.Type;
+            viewModel.OrganisationType =
+                organisationTypes.FirstOrDefault(x => x.Id == viewModel.OrganisationTypeId)?.Type;
 
             return viewModel;
         }

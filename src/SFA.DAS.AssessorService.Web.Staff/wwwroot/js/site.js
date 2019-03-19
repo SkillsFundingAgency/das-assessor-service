@@ -19,6 +19,13 @@ $(document).ready(function() {
 
   // Details/summary polyfill from frontend toolkit
   GOVUK.details.init();
+
+  // Prevent multiple form submissions
+  $('form.js-disable-on-submit').on('submit', function() {
+    if (!$.validator || $(this).valid()) {
+      $('form .button[type=submit]').prop('disabled', true);
+    }
+  });
 });
 
 $(window).load(function() {

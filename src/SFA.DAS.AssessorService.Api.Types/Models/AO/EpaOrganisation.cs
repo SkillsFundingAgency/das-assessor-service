@@ -15,5 +15,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
         public DateTime? UpdatedAt { get; set; }
         public int? OrganisationTypeId { get; set; }
         public OrganisationData OrganisationData { get; set; }
+        public bool ApiEnabled { get; set; }
+        public string ApiUser { get; set; }
     }
 }

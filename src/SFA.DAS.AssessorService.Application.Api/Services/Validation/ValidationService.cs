@@ -1,9 +1,9 @@
-﻿using SFA.DAS.AssessorService.Application.Interfaces;
+﻿using SFA.DAS.AssessorService.Application.Interfaces.Validation;
 using System;
 using System.Text.RegularExpressions;
 using System.Web;
 
-namespace SFA.DAS.AssessorService.Application.Api.Services
+namespace SFA.DAS.AssessorService.Application.Api.Services.Validation
 {
     public class ValidationService : IValidationService
     {

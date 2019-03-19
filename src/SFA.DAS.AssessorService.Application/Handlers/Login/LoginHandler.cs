@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Logging;
 using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Login
@@ -124,68 +120,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
         {
             return await _contactQueryRepository.GetContactStatus(endPointAssessorOrganisationId, signInId);
         }
-
-        private async Task<Contact> GetContact(string username, string email, string displayName)
-        {
-            _logger.LogInformation($"Getting Contact with username: {username}");
-            var contact = await _contactQueryRepository.GetContact(username);
-            if (contact == null)
-            {
-                return null;
-            }
-            _logger.LogInformation($"Got Existing Contact");
-            await CheckStoredUserDetailsForUpdate(contact.Username, email, displayName, contact);
-            return contact;
-        }
-
-        private async Task CheckStoredUserDetailsForUpdate(string username, string email, string displayName, Contact contact)
-        {
-            if (contact.Email != email || contact.DisplayName != displayName)
-            {
-                _logger.LogInformation($"Existing contact has updated details.  Updating");
-
-                await _mediator.Send(new UpdateContactRequest()
-                {
-                    Email = email,
-                    DisplayName = displayName,
-                    UserName = username
-                });
-            }
-        }
-
-        private async Task CreateNewContact(string email, Organisation organisation, string displayName,
-            string username)
-        {
-            _logger.LogInformation($"Creating new contact.  Email: {email}, DisplayName: {displayName}, Username: {username}, EndPointAssessorOrganisationId: {organisation.EndPointAssessorOrganisationId}");
-
-            var contact = await _mediator.Send(new CreateContactRequest(){
-                Email = email,
-                DisplayName = displayName,
-                Username = username,
-                EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId
-            });
-
-            _logger.LogInformation($"New contact created");
-
-            await SetNewOrganisationPrimaryContact(organisation, contact);
-        }
-
-        private async Task SetNewOrganisationPrimaryContact(Organisation organisation, Contact contact)
-        {
-            if (organisation.Status == OrganisationStatus.New)
-            {
-                _logger.LogInformation($"Org status is New. Setting Org {organisation.EndPointAssessorUkprn} with primary contact of {contact.Username}");
-
-                await _mediator.Send(new UpdateOrganisationRequest()
-                {
-                    EndPointAssessorName = organisation.EndPointAssessorName,
-                    EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
-                    PrimaryContact = contact.Username,
-                    EndPointAssessorUkprn = organisation.EndPointAssessorUkprn,
-                    ApiEnabled = organisation.ApiEnabled,
-                    ApiUser = organisation.ApiUser
-                });
-            }
-        }
+        
     }
 }

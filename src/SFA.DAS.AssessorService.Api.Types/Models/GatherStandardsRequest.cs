@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using MediatR;
-using SFA.DAS.AssessorService.ExternalApis.IFAStandards.Types;
+﻿using MediatR;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models
 {

@@ -9,54 +9,66 @@ using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
 {
-    public class CreateContactHandler : IRequestHandler<CreateContactRequest, Contact>
+    public class CreateContactHandler : IRequestHandler<CreateContactRequest, ContactBoolResponse>
     {
-        private readonly IOrganisationRepository _organisationRepository;
-        private readonly IOrganisationQueryRepository _organisationQueryRepository;
+        
         private readonly IContactRepository _contactRepository;
+        private readonly IDfeSignInService _dfeSignInService;
+        private readonly IContactQueryRepository _contactQueryRepository;
+        private readonly IMediator _mediator;
 
         public CreateContactHandler(
-            IOrganisationRepository organisationRepository,
-            IOrganisationQueryRepository organisationQueryRepository,
-            IContactRepository contactRepository)
+            IContactRepository contactRepository,
+            IContactQueryRepository contactQueryRepository,
+            IDfeSignInService dfeSignInService,
+            IMediator mediator)
         {
-            _organisationRepository = organisationRepository;
             _contactRepository = contactRepository;
-            _organisationQueryRepository = organisationQueryRepository;
+            _contactQueryRepository = contactQueryRepository;
+            _dfeSignInService = dfeSignInService;
+            _mediator = mediator;
         }
 
-        public async Task<Contact> Handle(CreateContactRequest createContactRequest, CancellationToken cancellationToken)
+        public async Task<ContactBoolResponse> Handle(CreateContactRequest createContactRequest, CancellationToken cancellationToken)
         {
-            var organisation = await _organisationQueryRepository.Get(createContactRequest.EndPointAssessorOrganisationId);
-                
+            Contact contactResponse = null;
+            var response = new ContactBoolResponse(true);
             var newContact = Mapper.Map<Contact>(createContactRequest);           
-            newContact.OrganisationId = organisation.Id;
-            newContact.Status = ContactStatus.InvitePending;
+            newContact.OrganisationId = null;
+            newContact.Status = ContactStatus.New;
 
-            if (!(await _organisationQueryRepository.CheckIfOrganisationHasContacts(createContactRequest.EndPointAssessorOrganisationId)))
+            var existingContact = await _contactRepository.GetContact(newContact.Email);
+            if (existingContact == null)
             {
-                var contactResponse = await _contactRepository.CreateNewContact(newContact);
+                contactResponse = await _contactRepository.CreateNewContact(newContact);
+                //Todo: The role should be associated after the user has been created by another mechanism
+                await _contactRepository.AssociateRoleWithContact("SuperUser", newContact);
+                var privileges = await _contactQueryRepository.GetAllPrivileges();
+                await _contactRepository.AssociatePrivilegesWithContact(contactResponse.Id, privileges);
 
-                await SetOrganisationStatusToLiveAndSetPrimaryContact(createContactRequest, contactResponse);
-
-                return contactResponse;
+                var invitationResult = await _dfeSignInService.InviteUser(createContactRequest.Email, createContactRequest.GivenName, createContactRequest.FamilyName, newContact.Id);
+                if (!invitationResult.IsSuccess)
+                {
+                    response.Result = false;
+                    return response;
+                }
             }
             else
             {
-                var contactResponse = await _contactRepository.CreateNewContact(newContact);
-                return contactResponse;
-            }           
-        }
-
-        private async Task SetOrganisationStatusToLiveAndSetPrimaryContact(CreateContactRequest createContactRequest, Contact contact)
-        {
-            var organisation =
-                await _organisationQueryRepository.Get(createContactRequest.EndPointAssessorOrganisationId);
-            
-            organisation.PrimaryContact = contact.Username;
-            organisation.Status = OrganisationStatus.Live;
-
-            await _organisationRepository.UpdateOrganisation(organisation);
+                if (existingContact.SignInId == null)
+                {
+                    var invitationResult = await _dfeSignInService.InviteUser(createContactRequest.Email, createContactRequest.GivenName, createContactRequest.FamilyName, existingContact.Id);
+                    if (!invitationResult.IsSuccess)
+                    {
+                        response.Result = false;
+                        return response;
+                    }
+                }
+                // otherwise advise they already have an account (by Email)
+               var emailTemplate =  await _mediator.Send(new GetEMailTemplateRequest {TemplateName = "ApplySignupError"}, cancellationToken);
+               await _mediator.Send(new SendEmailRequest(createContactRequest.Email, emailTemplate, new { }), cancellationToken);
+            }
+            return response;
         }
     }
 }

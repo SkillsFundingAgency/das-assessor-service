@@ -13,32 +13,33 @@ using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
+using SFA.DAS.AssessorService.ExternalApis.Services;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 {
     public class LearnerDetailHandler : IRequestHandler<LearnerDetailRequest, LearnerDetail>
     {
         private readonly IIlrRepository _ilrRepository;
-        private readonly IAssessmentOrgsApiClient _apiClient;
         private readonly ICertificateRepository _certificateRepository;
         private readonly IStaffCertificateRepository _staffCertificateRepository;
         private readonly ILogger<LearnerDetailHandler> _logger;
         private readonly IOrganisationQueryRepository _organisationRepository;
+        private readonly IStandardService _standardService;
 
-        public LearnerDetailHandler(IIlrRepository ilrRepository, IAssessmentOrgsApiClient apiClient, ICertificateRepository certificateRepository, 
-            IStaffCertificateRepository staffCertificateRepository, ILogger<LearnerDetailHandler> logger, IOrganisationQueryRepository organisationRepository)
+        public LearnerDetailHandler(IIlrRepository ilrRepository, ICertificateRepository certificateRepository, 
+            IStaffCertificateRepository staffCertificateRepository, ILogger<LearnerDetailHandler> logger, IOrganisationQueryRepository organisationRepository, IStandardService standardService)
         {
             _ilrRepository = ilrRepository;
-            _apiClient = apiClient;
             _certificateRepository = certificateRepository;
             _staffCertificateRepository = staffCertificateRepository;
             _logger = logger;
             _organisationRepository = organisationRepository;
+            _standardService = standardService;
         }
         public async Task<LearnerDetail> Handle(LearnerDetailRequest request, CancellationToken cancellationToken)
         {
             var learner = await _ilrRepository.Get(request.Uln, request.StdCode);
-            var standard = await _apiClient.GetStandard(request.StdCode);
+            var standard = await _standardService.GetStandard(request.StdCode);
             var certificate = await _certificateRepository.GetCertificate(request.Uln, request.StdCode);
 
             var logs = new List<CertificateLogSummary>();
@@ -64,8 +65,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 FamilyName = !string.IsNullOrEmpty(certificateData?.LearnerFamilyName) ?  certificateData.LearnerFamilyName : learner?.FamilyName,
                 GivenNames = !string.IsNullOrEmpty(certificateData?.LearnerGivenNames) ?  certificateData.LearnerGivenNames : learner?.GivenNames,
                 LearnStartDate = certificateData?.LearningStartDate != null ? certificateData?.LearningStartDate : learner?.LearnStartDate,
-                StandardCode = request.StdCode,
-                Standard = standard.Title,
+                StandardCode = certificate.StandardCode,
+                Standard = !string.IsNullOrEmpty(certificateData?.StandardName) ? certificateData.StandardName : standard?.Title,
                 CertificateReference = certificate?.CertificateReference, 
                 CertificateStatus = certificate?.Status, 
                 Level = standard.Level,

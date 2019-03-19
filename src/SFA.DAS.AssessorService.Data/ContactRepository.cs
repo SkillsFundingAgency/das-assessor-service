@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -27,11 +28,47 @@ namespace SFA.DAS.AssessorService.Data
             return newContact;
         }
 
+        public async Task AssociateRoleWithContact(string roleName, Contact newContact)
+        {
+            var contactRoleEntity =
+                await _assessorDbContext.ContactRoles.FirstOrDefaultAsync(q =>
+                    q.ContactId == newContact.Id && q.RoleName == roleName);
+            if (contactRoleEntity == null)
+            {
+                _assessorDbContext.ContactRoles.Add(new ContactRole
+                {
+                    ContactId = newContact.Id,
+                    Id = Guid.NewGuid(),
+                    RoleName = roleName
+                });
+                await _assessorDbContext.SaveChangesAsync();
+            }
+        }
+
+        public async Task AssociatePrivilegesWithContact(Guid contactId, IEnumerable<Privilege> privileges)
+        {
+            foreach (var privilege in privileges)
+            {
+                _assessorDbContext.ContactsPrivileges.Add(new ContactsPrivilege
+                {
+                    ContactId = contactId,
+                    PrivilegeId = privilege.Id
+                });
+            }
+            await _assessorDbContext.SaveChangesAsync();
+        }
+
         public async Task Update(UpdateContactRequest updateContactRequest)
         {
-            var contactEntity =
-                await _assessorDbContext.Contacts.FirstAsync(q => q.Username == updateContactRequest.UserName);
+            var contactEntity = await _assessorDbContext.Contacts.FirstOrDefaultAsync(q => q.Username == updateContactRequest.UserName);
 
+            if(contactEntity == null)
+                contactEntity = await _assessorDbContext.Contacts.OrderBy(q => q.CreatedAt).FirstOrDefaultAsync(q => q.Email == updateContactRequest.Email);
+
+            if (contactEntity == null)
+                throw new NotFound();
+
+            contactEntity.Username = updateContactRequest.UserName;
             contactEntity.DisplayName = updateContactRequest.DisplayName;
             contactEntity.Email = updateContactRequest.Email;
 
@@ -58,7 +95,7 @@ namespace SFA.DAS.AssessorService.Data
             await _assessorDbContext.SaveChangesAsync();
         }
 
-        public async Task UpdateContactWithOrganisationData(UpdateContactWithOrgAndStausRequest updateContactWithOrgAndStaus)
+        public async Task<Contact> UpdateContactWithOrganisationData(UpdateContactWithOrgAndStausRequest updateContactWithOrgAndStaus)
         {
             var contactEntity =
                 await _assessorDbContext.Contacts.FirstAsync(q => q.Id == Guid.Parse(updateContactWithOrgAndStaus.ContactId));
@@ -70,6 +107,9 @@ namespace SFA.DAS.AssessorService.Data
             _assessorDbContext.MarkAsModified(contactEntity);
 
             await _assessorDbContext.SaveChangesAsync();
+
+            //return updated contact
+            return await _assessorDbContext.Contacts.FirstAsync(q => q.Id == Guid.Parse(updateContactWithOrgAndStaus.ContactId));
         }
 
         public async Task LinkOrganisation(string endPointAssessorOrganisationId, string userName)
@@ -106,6 +146,27 @@ namespace SFA.DAS.AssessorService.Data
             _assessorDbContext.MarkAsModified(contactEntity);
 
             await _assessorDbContext.SaveChangesAsync();
+        }
+
+        public async Task UpdateSignInId(Guid contactId, Guid signInId)
+        {
+            var contactEntity =
+                await _assessorDbContext.Contacts.FirstAsync(q => q.Id == contactId);
+
+            contactEntity.SignInId = signInId;
+            contactEntity.Status = ContactStatus.New;
+
+            // Workaround for Mocking
+            _assessorDbContext.MarkAsModified(contactEntity);
+
+            await _assessorDbContext.SaveChangesAsync();
+        }
+
+        public async Task<Contact> GetContact(string email)
+        {
+           
+            return  await _assessorDbContext.Contacts.FirstOrDefaultAsync(q => q.Email == email);
+
         }
     }
 }

@@ -90,6 +90,9 @@
     <Content Update="nlog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Update="Views\Account\_AccountScriptsPartial.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Certificate\AddressSummary.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

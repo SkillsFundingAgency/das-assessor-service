@@ -12,6 +12,7 @@ using SFA.DAS.AssessorService.Application.Handlers.Search;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
+using SFA.DAS.AssessorService.ExternalApis.Services;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
@@ -37,11 +38,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                 });
 
             var assessmentOrgsApiClient = new Mock<IAssessmentOrgsApiClient>();
-            assessmentOrgsApiClient.Setup(c => c.GetAllStandards())
+            var standardService = new Mock<IStandardService>();
+            standardService.Setup(c => c.GetAllStandards())
                 .ReturnsAsync(new List<Standard> { new Standard{Title = "Standard Title", Level = 2}});
             assessmentOrgsApiClient.Setup(c => c.FindAllStandardsByOrganisationIdAsync("EPA0001"))
                 .ReturnsAsync(new List<StandardOrganisationSummary>(){new StandardOrganisationSummary(){StandardCode = "5"}});
-            assessmentOrgsApiClient.Setup(c => c.GetStandard(It.IsAny<int>()))
+            standardService.Setup(c => c.GetStandard(It.IsAny<int>()))
                 .ReturnsAsync(new Standard() {Title = "Standard Title", Level = 2});
             
             
@@ -55,7 +57,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
             
             var handler = new SearchHandler(assessmentOrgsApiClient.Object,
                 organisationRepository.Object, ilrRepository.Object,
-                certificateRepository.Object, new Mock<ILogger<SearchHandler>>().Object, new Mock<IContactQueryRepository>().Object);
+                certificateRepository.Object, new Mock<ILogger<SearchHandler>>().Object, new Mock<IContactQueryRepository>().Object, standardService.Object);
 
             var result = handler.Handle(new SearchQuery{ Surname = "James", Uln = 1111111111, UkPrn = 12345, Username = "user@name"}, new CancellationToken()).Result;
 
@@ -80,11 +82,12 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                 });
 
             var assessmentOrgsApiClient = new Mock<IAssessmentOrgsApiClient>();
-            assessmentOrgsApiClient.Setup(c => c.GetAllStandards())
+            var standardService = new Mock<IStandardService>();
+            standardService.Setup(c => c.GetAllStandards())
                 .ReturnsAsync(new List<Standard> { new Standard{Title = "Standard Title", Level = 2}});
             assessmentOrgsApiClient.Setup(c => c.FindAllStandardsByOrganisationIdAsync("EPA0001"))
                 .ReturnsAsync(new List<StandardOrganisationSummary>(){new StandardOrganisationSummary(){StandardCode = "2"}});
-            assessmentOrgsApiClient.Setup(c => c.GetStandard(It.IsAny<int>()))
+            standardService.Setup(c => c.GetStandard(It.IsAny<int>()))
                 .ReturnsAsync(new Standard() {Title = "Standard Title", Level = 2});
             
             
@@ -98,7 +101,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
             
             var handler = new SearchHandler(assessmentOrgsApiClient.Object,
                 organisationRepository.Object, ilrRepository.Object,
-                certificateRepository.Object, new Mock<ILogger<SearchHandler>>().Object, new Mock<IContactQueryRepository>().Object);
+                certificateRepository.Object, new Mock<ILogger<SearchHandler>>().Object, new Mock<IContactQueryRepository>().Object, standardService.Object);
 
             var result = handler.Handle(new SearchQuery{ Surname = "James", Uln = 1111111111, UkPrn = 12345, Username = "user@name"}, new CancellationToken()).Result;
 

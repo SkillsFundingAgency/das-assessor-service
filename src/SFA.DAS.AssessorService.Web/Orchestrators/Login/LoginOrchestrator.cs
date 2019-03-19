@@ -33,15 +33,13 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators.Login
 
             _logger.LogInformation("Start of PostSignIn");
 
-
             var signinId = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "sub")?.Value;
             var email = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "email")?.Value;
-            var givenName = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "given_name")?.Value;
-            var familyName = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "family_name")?.Value;
+            var displayName = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "display_name")?.Value;
 
             var loginResult = await _loginApiClient.Login(new LoginRequest()
             {
-                DisplayName = givenName + " " + familyName,
+                DisplayName = displayName,
                 Email = email,
                 SignInId = Guid.Parse(signinId)
             });

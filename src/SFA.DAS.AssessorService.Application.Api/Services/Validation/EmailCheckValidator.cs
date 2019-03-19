@@ -1,13 +1,12 @@
 using FluentValidation;
 
-namespace SFA.DAS.AssessorService.Application.Api.Services
+namespace SFA.DAS.AssessorService.Application.Api.Services.Validation
 {
     public class EmailCheckValidator : AbstractValidator<EmailCheck>
     {
             public EmailCheckValidator()
             {
-                RuleFor(x => x.EmailToCheck)
-                .EmailAddress();
+                DefaultValidatorExtensions.EmailAddress<EmailCheck>(RuleFor(x => x.EmailToCheck));
             }
     }
 }
