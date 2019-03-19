@@ -10,5 +10,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
         public string ReferenceNumber { get; set; }
         public string Title { get; set; }
         public StandardData StandardData { get; set; }
+
+        public List<string> Options { get; set; }
     }
 }

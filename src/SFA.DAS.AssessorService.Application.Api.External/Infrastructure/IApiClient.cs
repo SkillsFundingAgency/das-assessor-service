@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Application.Api.External.Messages;
 using SFA.DAS.AssessorService.Application.Api.External.Middleware;
+using SFA.DAS.AssessorService.Application.Api.External.Models.Standards;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
 {
@@ -12,5 +13,8 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
         Task<GetCertificateResponse> GetCertificate(GetCertificateRequest request);
         Task<IEnumerable<SubmitBatchCertificateResponse>> SubmitCertificates(IEnumerable<SubmitBatchCertificateRequest> request);
         Task<IEnumerable<BatchCertificateResponse>> UpdateCertificates(IEnumerable<BatchCertificateRequest> request);
+
+        Task<IEnumerable<StandardOptions>> GetStandards();
+        Task<StandardOptions> GetStandard(string standard);
     }
 }

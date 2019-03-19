@@ -5,6 +5,7 @@ using Newtonsoft.Json.Serialization;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.External.Messages;
 using SFA.DAS.AssessorService.Application.Api.External.Middleware;
+using SFA.DAS.AssessorService.Application.Api.External.Models.Standards;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -113,6 +114,30 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             var apiResponse = await Delete<ApiResponse>($"/api/v1/certificates/batch/{request.Uln}/{request.FamilyName}/{request.Standard}/{request.CertificateReference}/{request.UkPrn}/{request.Email}");
 
             return apiResponse;
+        }
+
+        public async Task<IEnumerable<StandardOptions>> GetStandards()
+        {
+            var apiResponse = await Get<IEnumerable<AssessorService.Api.Types.Models.Standards.StandardCollation>>($"/api/ao/assessment-organisations/collated-standards");
+
+            return Mapper.Map<IEnumerable<AssessorService.Api.Types.Models.Standards.StandardCollation>, IEnumerable<StandardOptions>>(apiResponse);
+        }
+
+        public async Task<StandardOptions> GetStandard(string standard)
+        {
+            AssessorService.Api.Types.Models.Standards.StandardCollation apiResponse = null;
+
+            if(int.TryParse(standard, out int standardId))
+            {
+                apiResponse = await Get<AssessorService.Api.Types.Models.Standards.StandardCollation>($"/api/ao/assessment-organisations/collated-standards/{standardId}");
+            }
+
+            if (apiResponse is null)
+            {
+                apiResponse = await Get<AssessorService.Api.Types.Models.Standards.StandardCollation>($"/api/ao/assessment-organisations/collated-standards/by-reference/{standard}");
+            }
+
+            return Mapper.Map<AssessorService.Api.Types.Models.Standards.StandardCollation, StandardOptions>(apiResponse);
         }
     }
 }

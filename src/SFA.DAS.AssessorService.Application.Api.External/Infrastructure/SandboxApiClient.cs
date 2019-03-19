@@ -1,6 +1,7 @@
 ﻿using SFA.DAS.AssessorService.Application.Api.External.Messages;
 using SFA.DAS.AssessorService.Application.Api.External.Middleware;
 using SFA.DAS.AssessorService.Application.Api.External.Models.Certificates;
+using SFA.DAS.AssessorService.Application.Api.External.Models.Standards;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -83,11 +84,11 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
                     responseItem.Certificate.CertificateData.LearningDetails.ProviderUkPrn = req.UkPrn;
                     responseItem.Certificate.CertificateData.LearningDetails.LearningStartDate = DateTime.UtcNow.AddYears(-1);
 
-                    if(responseItem.Certificate.CertificateData.Standard.StandardCode is null)
+                    if (responseItem.Certificate.CertificateData.Standard.StandardCode is null)
                     {
                         responseItem.Certificate.CertificateData.Standard.StandardCode = 9999;
                     }
-                    if(string.IsNullOrEmpty(responseItem.Certificate.CertificateData.Standard.StandardReference))
+                    if (string.IsNullOrEmpty(responseItem.Certificate.CertificateData.Standard.StandardReference))
                     {
                         responseItem.Certificate.CertificateData.Standard.StandardReference = "ST9999";
                     }
@@ -365,6 +366,35 @@ namespace SFA.DAS.AssessorService.Application.Api.External.Infrastructure
             }
 
             return validationErrors;
+        }
+
+
+        private readonly List<StandardOptions> standards = new List<StandardOptions> {
+                new StandardOptions { StandardCode = 6, StandardReference = "ST0156", CourseOption = new[] { "Overhead lines", "Substation fitting", "Underground cables" } },
+                new StandardOptions { StandardCode = 7, StandardReference = "ST0184", CourseOption = new[] { "Card services", "Corporate/Commercial", "Retail", "Wealth", } },
+                new StandardOptions { StandardCode = 314, StandardReference = "ST0018", CourseOption = new[] { "Container based system", "Soil based system" } } };
+
+
+        public async Task<IEnumerable<StandardOptions>> GetStandards()
+        {
+            return await Task.FromResult(standards);
+        }
+
+        public async Task<StandardOptions> GetStandard(string standard)
+        {
+            StandardOptions standardOption = null;
+
+            if (int.TryParse(standard, out int standardId))
+            {
+                standardOption = standards.Where(s => s.StandardCode == standardId).FirstOrDefault();
+            }
+
+            if (standardOption is null)
+            {
+                standardOption = standards.Where(s => s.StandardReference == standard).FirstOrDefault();
+            }
+
+            return await Task.FromResult(standardOption);
         }
     }
 }

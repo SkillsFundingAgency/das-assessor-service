@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Exampl
     {
         public object GetExamples()
         {
-            return new ApiResponse((int)HttpStatusCode.Forbidden, "Cannot find apprentice with the specified Uln, FamilyName & StandardCode");
+            return new ApiResponse((int)HttpStatusCode.Forbidden, "Cannot find apprentice with the specified Uln, FamilyName & Standard");
         }
     }
 }
