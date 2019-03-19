@@ -8,9 +8,11 @@ using Microsoft.Extensions.Primitives;
 using Moq;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
+using SFA.DAS.AssessorService.ExternalApis.Services;
 using SFA.DAS.AssessorService.Web.Controllers;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.UnitTests.MockedObjects;
@@ -26,6 +28,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Queries
         protected IAssessmentOrgsApiClient MockAssessmentOrgsApiClient;
 
         protected Mock<ISessionService> MockSession;
+        protected Mock<IStandardServiceClient> MockStandardServiceClient;
 
         protected Certificate Certificate;
         protected CertificateData CertificateData;
@@ -38,7 +41,7 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.PrivateCertificateTests.Queries
             var mockedApiClientLogger = new Mock<ILogger<CertificateApiClient>>();
 
             MockSession = new Mock<ISessionService>();
-
+            MockStandardServiceClient = new Mock<IStandardServiceClient>();
             MockHttpContextAccessor = MockedHttpContextAccessor.Setup();
             MockCertificateApiClient = MockedCertificateApiClient.Setup(Certificate, mockedApiClientLogger);
 

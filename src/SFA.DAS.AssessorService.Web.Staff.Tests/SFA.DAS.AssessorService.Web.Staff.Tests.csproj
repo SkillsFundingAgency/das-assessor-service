@@ -13,6 +13,7 @@
     <PackageReference Include="NBuilder" Version="5.1.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\SFA.DAS.AssessorService.Api.Types\SFA.DAS.AssessorService.Api.Types.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Web.Staff\SFA.DAS.AssessorService.Web.Staff.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Web\SFA.DAS.AssessorService.Web.csproj" />
   </ItemGroup>

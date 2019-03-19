@@ -7,6 +7,7 @@
 	[DeletedAt] [datetime2](7) NULL,	
 	[UpdatedAt] [datetime2](7) NULL,	
    
+    [RecipientTemplate] NVARCHAR(MAX) NULL, 
     CONSTRAINT [PK_EMailTemplates] PRIMARY KEY ([Id]),
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO

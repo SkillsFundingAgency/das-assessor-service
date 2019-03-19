@@ -60,9 +60,15 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task Update(UpdateContactRequest updateContactRequest)
         {
-            var contactEntity =
-                await _assessorDbContext.Contacts.FirstAsync(q => q.Username == updateContactRequest.UserName);
+            var contactEntity = await _assessorDbContext.Contacts.FirstOrDefaultAsync(q => q.Username == updateContactRequest.UserName);
 
+            if(contactEntity == null)
+                contactEntity = await _assessorDbContext.Contacts.OrderBy(q => q.CreatedAt).FirstOrDefaultAsync(q => q.Email == updateContactRequest.Email);
+
+            if (contactEntity == null)
+                throw new NotFound();
+
+            contactEntity.Username = updateContactRequest.UserName;
             contactEntity.DisplayName = updateContactRequest.DisplayName;
             contactEntity.Email = updateContactRequest.Email;
 

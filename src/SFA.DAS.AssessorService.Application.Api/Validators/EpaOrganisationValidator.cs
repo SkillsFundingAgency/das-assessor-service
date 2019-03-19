@@ -15,6 +15,7 @@ using SFA.DAS.AssessorService.Application.Api.Consts;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
+using SFA.DAS.AssessorService.ExternalApis.Services;
 using StructureMap.Diagnostics;
 using Swashbuckle.AspNetCore.Swagger;
 using ValidationResult = FluentValidation.Results.ValidationResult;
@@ -27,18 +28,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         private readonly IRegisterQueryRepository _registerQueryRepository;
         private readonly IStringLocalizer<EpaOrganisationValidator> _localizer;
         private readonly ISpecialCharacterCleanserService _cleanserService;
+        private readonly IStandardService _standardService;
 
         private const string CompaniesHouseNumberRegex = "[A-Za-z0-9]{2}[0-9]{6}";
         private const string CharityNumberInvalidCharactersRegex = "[^a-zA-Z0-9\\-]";
 
 
         public EpaOrganisationValidator( IRegisterValidationRepository registerRepository,  IRegisterQueryRepository registerQueryRepository, 
-                                         ISpecialCharacterCleanserService cleanserService, IStringLocalizer<EpaOrganisationValidator> localizer) 
+                                         ISpecialCharacterCleanserService cleanserService, IStringLocalizer<EpaOrganisationValidator> localizer, IStandardService standardService) 
         {
             _registerRepository = registerRepository;
             _registerQueryRepository = registerQueryRepository;
             _cleanserService = cleanserService;
             _localizer = localizer;
+            _standardService = standardService;
         }
         
         public string CheckOrganisationIdIsPresentAndValid(string organisationId)
@@ -182,19 +185,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 FormatErrorMessage(EpaOrganisationValidatorMessageName.OrganisationNotFound);
         }
 
-        public Standard GetStandard(int standardCode)
+        public async Task<Standard> GetStandard(int standardCode)
         {
-            var apiClient = new AssessmentOrgsApiClient();
-
-            try
-            {
-                var res = apiClient.GetStandard(standardCode).Result;
-                return res;
-            }
-            catch
-            {
-                return (Standard)null;
-            }
+            return await _standardService.GetStandard(standardCode);
         }
 
         public string CheckIfOrganisationStandardAlreadyExists(string organisationId, int standardCode)
@@ -478,7 +471,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             RunValidationCheckAndAppendAnyError("OrganisationId", CheckIfOrganisationStandardAlreadyExists(request.OrganisationId, request.StandardCode), validationResult, ValidationStatusCode.AlreadyExists);
             if (!validationResult.IsValid) return validationResult;
 
-            var standard = GetStandard(request.StandardCode);
+            var standard = GetStandard(request.StandardCode).Result;
             if (standard is null)
             {
                 var standardErrorMessage = FormatErrorMessage(EpaOrganisationValidatorMessageName.StandardNotFound);
@@ -501,7 +494,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         public ValidationResponse ValidatorUpdateEpaOrganisationStandardRequest(UpdateEpaOrganisationStandardRequest request)
         {
             var validationResult = new ValidationResponse();
-            var standard = GetStandard(request.StandardCode);
+            var standard = GetStandard(request.StandardCode).Result;
             if (standard is null)
             {
                 var standardErrorMessage = FormatErrorMessage(EpaOrganisationValidatorMessageName.StandardNotFound);
