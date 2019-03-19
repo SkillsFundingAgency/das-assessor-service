@@ -7,7 +7,6 @@
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Diagnostics;
     using Newtonsoft.Json;
     using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
     using System.Net;
@@ -60,6 +59,21 @@
 
            return await Task.FromResult(result == HttpStatusCode.OK);
         }
+        
+        public async Task<DuplicateCheckResponse> DuplicateUKPRNCheck(Guid organisationId, long ukprn)
+        {
+            return await Get<DuplicateCheckResponse>($"{_baseUrl}/api/v1/duplicateCheck/ukprn?ukprn={ukprn}&organisationId={organisationId}");
+        }
+
+        public async Task<DuplicateCheckResponse> DuplicateCompanyNumberCheck(Guid organisationId, string companyNumber)
+        {
+            return await Get<DuplicateCheckResponse>($"{_baseUrl}/api/v1/duplicateCheck/companyNumber?companyNumber={companyNumber}&organisationId={organisationId}");
+        }
+
+        public async Task<DuplicateCheckResponse> DuplicateCharityNumberCheck(Guid organisationId, string charityNumber)
+        {
+            return await Get<DuplicateCheckResponse>($"{_baseUrl}/api/v1/duplicateCheck/charityNumber?charityNumber={charityNumber}&organisationId={organisationId}");
+        }
 
         private async Task<T> Get<T>(string uri)
         {
@@ -84,5 +98,16 @@
              return response.StatusCode;
          }
 
+        private async Task<U> Post<T, U>(string uri, T model)
+        {
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            var serializeObject = JsonConvert.SerializeObject(model);
+
+            var response = await _client.PostAsync(new Uri(uri, UriKind.Absolute),
+                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json"));
+
+            return await response.Content.ReadAsAsync<U>();
+        }
     }
 }
