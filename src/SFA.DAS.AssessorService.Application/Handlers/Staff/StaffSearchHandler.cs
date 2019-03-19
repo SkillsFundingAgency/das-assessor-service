@@ -134,6 +134,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 searchResult.GivenNames = certificate.GivenNames;
                 searchResult.FamilyName = certificate.FamilyName;
                 searchResult.EndpointAssessorOrganisationId = certificate.EndPointAssessorOrganisationId;
+                searchResult.Standard = certificate.StandardName;
 
                 if (searchResult.LastUpdatedAt == null)
                 {
@@ -147,15 +148,14 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
         {
             var allStandards = await standardService.GetAllStandards();
 
-            foreach (var searchResult in searchResults)
+            foreach (var searchResult in searchResults.Where(sr => string.IsNullOrEmpty(sr.Standard)))
             {
-                var standard = allStandards.SingleOrDefault(s => s.StandardId == searchResult.StandardCode.ToString());
-                if (standard == null)
+                var standard = allStandards.SingleOrDefault(s => s.StandardId == searchResult.StandardCode.ToString()) ?? await standardService.GetStandard(searchResult.StandardCode);
+
+                if (standard != null)
                 {
-                    standard = standardService.GetStandard(searchResult.StandardCode).Result;
+                    searchResult.Standard = standard.Title;
                 }
-                searchResult.Standard = standard.Title;
-                searchResult.Standard = standard.Title;
             }
 
             return searchResults;

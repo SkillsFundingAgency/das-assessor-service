@@ -1,50 +1,57 @@
-@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp.BannerViewModel
-
+@using SFA.DAS.AssessorService.Web.Staff.Infrastructure
+@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp.OrganisationSearchViewModel
+@inject RoatpSessionService sessionService
 @{ ViewBag.Title = "Search for an apprenticeship training provider"; }
 
 @{ await Html.RenderPartialAsync("~/Views/Roatp/_StylesPartial.cshtml"); }
 
-    @if (Model != null && !String.IsNullOrWhiteSpace(Model.CreateOrganisationCompanyName))
-    {
-        <div class="roatp-panel roatp-panel--confirmation govuk-!-margin-bottom-9">
-            <h1 class="roatp-panel__title govuk-!-font-size-27">
-                @Html.Raw(Model.CreateOrganisationCompanyName) successfully added to the register
-            </h1>
-        </div>
-    }
+@{
+    var searchTerm = sessionService.GetSearchTerm();
+}
 
-    <div class="grid-row">
-        <div class="column-two-thirds">
-            <h1 class="heading-xlarge">Search for an apprenticeship training provider</h1>
-        </div>
+@if (Model != null && !String.IsNullOrWhiteSpace(Model.BannerMessage))
+{
+    <div class="roatp-panel roatp-panel--confirmation govuk-!-margin-bottom-9">
+        <h1 class="roatp-panel__title govuk-!-font-size-27">
+            @Html.Raw(Model.BannerMessage) successfully added to the register
+        </h1>
     </div>
-    <div class="govuk-width-container">
+}
 
-        <main class="govuk-main-wrapper " id="main-content" role="main">
-
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-full">
-
-                    <form method="post">
-                        <div id="searchControls" class="govuk-form-group govuk-!-margin-bottom-1">
-                            <label for="search" class="govuk-label govuk-!-font-size-24 roatp-search-label">Organisation name or UKPRN </label>
-                            <input autocomplete="off" type="search" id="search" class="govuk-input govuk-!-width-three-quarters govuk-!-font-size-36 govuk-!-padding-2 roatp-search-field" name="search">
-                            <input type="submit" class="roatp-search-button" value="Search">
-                        </div>
-
-                    </form>
-                </div>
-            </div>
-
-            <div class="grid-row">
-                <div class="column-two-thirds">
-                    <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
-
-                    <ul class="govuk-list govuk-!-margin-top-9">
-                        <li><a class="govuk-link govuk-body-l" asp-controller="AddRoatpOrganisation" asp-action="AddOrganisation">Add a new training provider</a></li>
-                        <li><a class=" govuk-link govuk-body-l" asp-controller="DownloadRoatp" asp-action="Download">Download the register</a></li>
-                    </ul>
-                </div>
-            </div>
-        </main>
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <h1 class="heading-xlarge">Search for an apprenticeship training provider</h1>
     </div>
+</div>
+<div class="govuk-width-container">
+
+    <main class="govuk-main-wrapper " id="main-content" role="main">
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+
+                <form method="post" asp-controller="RoatpSearch" asp-action="Search">
+                    <div id="searchControls" class="govuk-form-group govuk-!-margin-bottom-1 govuk-!-width-three-quarters" sfa-validation-for="SearchTerm" sfa-validationerror-class="form-group-error">
+                        <span class="error-message" asp-validation-for="SearchTerm"></span>
+                        <label for="search" class="govuk-label govuk-!-font-size-24 roatp-search-label">Organisation name or UKPRN </label>
+                        <input autocomplete="off" type="search" id="SearchTerm" class="govuk-input govuk-!-font-size-36 govuk-!-padding-2 roatp-search-field" name="SearchTerm"
+                               sfa-validation-for="SearchTerm" sfa-validationerror-class="form-control-error" value="@searchTerm" />
+                        <input type="submit" class="roatp-search-button" value="Search">
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+        <div class="grid-row">
+            <div class="column-two-thirds">
+                <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+
+                <ul class="govuk-list govuk-!-margin-top-9">
+                    <li><a class="govuk-link govuk-body-l" asp-controller="AddRoatpOrganisation" asp-action="AddOrganisation">Add a new training provider</a></li>
+                    <li><a class=" govuk-link govuk-body-l" asp-controller="DownloadRoatp" asp-action="Download">Download the register</a></li>
+                </ul>
+            </div>
+        </div>
+    </main>
+</div>
