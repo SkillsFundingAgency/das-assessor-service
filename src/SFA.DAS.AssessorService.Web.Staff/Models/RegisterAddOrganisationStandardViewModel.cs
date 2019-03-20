@@ -14,6 +14,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Models
 
         public int StandardId { get; set; }
         public string StandardTitle { get; set; }
+        public int StandardLevel { get; internal set; }
         public DateTime? StandardEffectiveFrom { get; set; }
         public DateTime? StandardEffectiveTo { get; set; }
         public DateTime? StandardLastDateForNewStarts { get; set; }
@@ -32,6 +33,5 @@ namespace SFA.DAS.AssessorService.Web.Staff.Models
         public List<int> DeliveryAreas { get; set; }
         public string Comments { get; set; }
         public string DeliveryAreasComments { get; set; }
-
     }
 }

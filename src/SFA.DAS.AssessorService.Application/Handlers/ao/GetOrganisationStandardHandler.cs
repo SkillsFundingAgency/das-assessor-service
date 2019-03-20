@@ -37,6 +37,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ao
 
             var standard = await _standardService.GetStandard(organisationStandard.StandardId);
             organisationStandard.StandardTitle = standard?.Title;
+            organisationStandard.StandardLevel = standard?.Level ?? organisationStandard.StandardLevel;
             organisationStandard.StandardEffectiveFrom = standard?.EffectiveFrom;
             organisationStandard.StandardEffectiveTo = standard?.EffectiveTo;
             organisationStandard.StandardLastDateForNewStarts = standard?.LastDateForNewStarts;

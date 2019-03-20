@@ -16,6 +16,7 @@
             @Html.HiddenFor(c => c.Ukprn)
             @Html.HiddenFor(c => c.OrganisationName)
             @Html.HiddenFor(c => c.StandardTitle)
+            @Html.HiddenFor(c => c.StandardLevel)
             @Html.HiddenFor(m => m.StandardEffectiveFrom)
             @Html.HiddenFor(m => m.StandardEffectiveTo)
             @Html.HiddenFor(c => c.StandardLastDateForNewStarts)
@@ -56,10 +57,10 @@
                     <tr>
                         <td><span class="bold-small">Organisation</span></td>
                         <td>@Model.OrganisationName</td>
-                </tr>
-                <tr>
-                    <td><span class="bold-small">Organisation status</span></td>
-                    <td>@Model.OrganisationStatus</td>
+                    </tr>
+                    <tr>
+                        <td><span class="bold-small">Organisation status</span></td>
+                        <td>@Model.OrganisationStatus</td>
                     </tr>
                     <tr>
                         <td><span class="bold-small">Organisation ID</span></td>
@@ -72,6 +73,10 @@
                     <tr>
                         <td><span class="bold-small">Standard</span></td>
                         <td>@Model.StandardTitle (@Model.StandardId)</td>
+                    </tr>
+                    <tr>
+                        <td><span class="bold-small">Level</span></td>
+                        <td>@Model.StandardLevel</td>
                     </tr>
                     <tr>
                         <td><span class="bold-small">Standard effective from</span></td>

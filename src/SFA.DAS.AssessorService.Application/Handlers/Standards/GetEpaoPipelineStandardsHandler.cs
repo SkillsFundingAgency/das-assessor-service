@@ -34,7 +34,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Standards
                 {
                     EstimatedDate = o.EstimateDate.UtcToTimeZoneTime().Date.ToString("MMM yyyy"),
                     Pipeline = o.Pipeline,
-                    StandardName= o.Title
+                    StandardName= o.Title,
+                    StandardCode = o.StdCode
                 }).ToList();
 
             return new PaginatedList<EpaoPipelineStandardsResponse>(epaoPipelinStandardsResult, result.TotalCount, request.PageIndex ?? 1, request.PageSize);

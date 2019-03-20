@@ -22,6 +22,9 @@
                         @Localizer["Standard"]
                     </th>
                     <th class="numeric">
+                        @Localizer["Reference"]
+                    </th>
+                    <th class="numeric">
                         @Localizer["Code"]
                     </th>
                     <th class="numeric">
@@ -35,6 +38,9 @@
                     <tr>
                         <td data-label="@Localizer["Standard name"]" class="nowrap">
                             @Html.DisplayFor(modelItem => item.StandardName)
+                        </td>
+                        <td data-label="@Localizer["Standard reference"]" class="numeric">
+                            @Html.DisplayFor(modelItem => item.StandardReference)
                         </td>
                         <td data-label="@Localizer["Standard code"]" class="numeric">
                             @Html.DisplayFor(modelItem => item.StandardCode)

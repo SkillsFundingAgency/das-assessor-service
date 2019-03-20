@@ -65,7 +65,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 FamilyName = !string.IsNullOrEmpty(certificateData?.LearnerFamilyName) ?  certificateData.LearnerFamilyName : learner?.FamilyName,
                 GivenNames = !string.IsNullOrEmpty(certificateData?.LearnerGivenNames) ?  certificateData.LearnerGivenNames : learner?.GivenNames,
                 LearnStartDate = certificateData?.LearningStartDate != null ? certificateData?.LearningStartDate : learner?.LearnStartDate,
-                StandardCode = certificate.StandardCode,
+                StandardCode = certificate?.StandardCode ?? request.StdCode,
                 Standard = !string.IsNullOrEmpty(certificateData?.StandardName) ? certificateData.StandardName : standard?.Title,
                 CertificateReference = certificate?.CertificateReference, 
                 CertificateStatus = certificate?.Status, 

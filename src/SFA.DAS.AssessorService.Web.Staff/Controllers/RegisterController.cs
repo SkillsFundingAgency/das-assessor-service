@@ -400,6 +400,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             vm.OrganisationName = organisation.Name;
             vm.Ukprn = organisation.Ukprn;
             vm.StandardTitle = standard.Title;
+            vm.StandardLevel = standard.Level;
             vm.StandardEffectiveFrom = standard.EffectiveFrom;
             vm.StandardEffectiveTo = standard.EffectiveTo;
             vm.StandardLastDateForNewStarts = standard.LastDateForNewStarts;
@@ -531,6 +532,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 OrganisationStandardId = organisationStandard.Id,
                 StandardId = organisationStandard.StandardId,
                 StandardTitle = organisationStandard.StandardTitle,
+                StandardLevel = organisationStandard.StandardLevel,
                 OrganisationId = organisationStandard.OrganisationId,
                 Ukprn = organisationStandard.Ukprn,
                 EffectiveFrom = organisationStandard.EffectiveFrom,

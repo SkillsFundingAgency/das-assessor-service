@@ -20,17 +20,21 @@
                             <td><span class="bold-small">Organisation</span></td>
                             <td> @Model.OrganisationName</td>
                         </tr>
-                    <tr>
-                        <td><span class="bold-small">Organisation status</span></td>
-                        <td> @Model.OrganisationStatus</td>
-                    </tr>
-                    <tr>
-                        <td><span class="bold-small">Organisation ID</span></td>
-                        <td>@Model.OrganisationId</td>
-                    </tr>
+                        <tr>
+                            <td><span class="bold-small">Organisation status</span></td>
+                            <td> @Model.OrganisationStatus</td>
+                        </tr>
+                        <tr>
+                            <td><span class="bold-small">Organisation ID</span></td>
+                            <td>@Model.OrganisationId</td>
+                        </tr>
                         <tr>
                             <td><span class="bold-small">Standard</span></td>
                             <td> @Model.StandardTitle (@Model.StandardId)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="bold-small">Level</span></td>
+                            <td> @Model.StandardLevel</td>
                         </tr>
                         <tr>
                             <td><span class="bold-small">Effective from</span></td>
@@ -65,25 +69,25 @@
                                 }
                             </td>
                         </tr>
-                    <tr>
-                        <td><span class="bold-small">Delivery Areas</span></td>
-                        <td>
-                            @if (Model.DeliveryAreasDetails != null && Model.DeliveryAreasDetails.Any())
-                            {
-                                for (var index = 0; index < Model.DeliveryAreas.Count; index++)
+                        <tr>
+                            <td><span class="bold-small">Delivery Areas</span></td>
+                            <td>
+                                @if (Model.DeliveryAreasDetails != null && Model.DeliveryAreasDetails.Any())
                                 {
-                                    var deliveryArea = Model.DeliveryAreasDetails[index];
-                                    @deliveryArea.DeliveryArea
-                                    if (index < Model.DeliveryAreasDetails.Count - 1)
-                                    { @Html.Raw(", ")}
+                                    for (var index = 0; index < Model.DeliveryAreas.Count; index++)
+                                    {
+                                        var deliveryArea = Model.DeliveryAreasDetails[index];
+                                        @deliveryArea.DeliveryArea
+                                        if (index < Model.DeliveryAreasDetails.Count - 1)
+                                        { @Html.Raw(", ")}
                                 }
                             }
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><span class="bold-small">Delivery Area Notes</span></td>
-                        <td> @Model.DeliveryAreasComments</td>
-                    </tr>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><span class="bold-small">Delivery Area Notes</span></td>
+                            <td> @Model.DeliveryAreasComments</td>
+                        </tr>
                         <tr>
                             <td><span class="bold-small">Comments</span></td>
                             <td> @Model.Comments</td>

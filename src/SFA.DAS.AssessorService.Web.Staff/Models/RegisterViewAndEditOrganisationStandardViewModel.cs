@@ -21,6 +21,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Models
         public string OrganisationStatus { get; set; }
         public int StandardId { get; set; }
         public string StandardTitle { get; set; }
+        public int StandardLevel { get; set; }
         public DateTime? EffectiveFrom { get; set; }
         public DateTime? EffectiveTo { get; set; }
         public DateTime? DateStandardApprovedOnRegister { get; set; }

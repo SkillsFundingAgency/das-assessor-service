@@ -7,6 +7,7 @@ BEGIN
 select 
 	os.StandardCode as StandardCode,
 	sc.Title as 'StandardName',
+	sc.ReferenceNumber as 'StandardReference',
 	JSON_VALUE(sc.StandardData, '$.Level') as [Level] FROM organisationStandard os 
 	INNER join organisations o on os.EndPointAssessorOrganisationId = o.EndPointAssessorOrganisationId and o.EndPointAssessorOrganisationId = @EPAOID
 	LEFT outer join StandardCollation sc on os.StandardCode = sc.StandardId

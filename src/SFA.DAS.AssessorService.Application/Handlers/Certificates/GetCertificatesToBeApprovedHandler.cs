@@ -98,6 +98,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                         FullName = certificateData.FullName,
                         OverallGrade = certificateData.OverallGrade,
                         StandardName = certificateData.StandardName,
+                        StandardCode = certificate.StandardCode,
                         Level = certificateData.StandardLevel,
                         AchievementDate = certificateData.AchievementDate,
                         LearningStartDate = certificateData.LearningStartDate,

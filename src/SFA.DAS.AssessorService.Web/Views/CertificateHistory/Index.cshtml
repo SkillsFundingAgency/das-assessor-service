@@ -64,7 +64,7 @@
                                         <p><span class="bold">@Localizer["RecordedBy"]:</span> @Html.DisplayFor(modelItem => item.RecordedBy)</p>
                                     </li>
                                     <li>
-                                        <p><span class="bold">@Localizer["Standard"]:</span> @Html.DisplayFor(modelItem => item.StandardName)</p>
+                                        <p><span class="bold">@Localizer["Standard"]:</span> @item.StandardName (@item.StandardCode)</p>
                                     </li>
                                     <li>
                                         <p><span class="bold">@Localizer["Level"]:</span> @Html.DisplayFor(modelItem => item.Level)</p>
@@ -72,10 +72,12 @@
                                     <li>
                                         <p><span class="bold">@Localizer["Grade"]:</span> @Html.DisplayFor(modelItem => item.OverallGrade)</p>
                                     </li>
-
+                                    @if (!string.IsNullOrEmpty(item.CourseOption))
+                                    {
                                     <li>
                                         <p><span class="bold">@Localizer["Option"]:</span> @Html.DisplayFor(modelItem => item.CourseOption)</p>
                                     </li>
+                                    }
                                     <li>
                                         <p>
                                             <span class="bold">@Localizer["AchievementStartDate"]:</span>
