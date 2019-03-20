@@ -6,9 +6,9 @@ SET NOCOUNT ON;
 
 CREATE TABLE #OrganisationStandardDeliveryAreaDetails
 (
-	organisationStandardId int,
-	cntr int,
-	DeliveryAreaList VARCHAR (500)
+    organisationStandardId int,
+    cntr int,
+    DeliveryAreaList VARCHAR (500)
  
 )
 
@@ -16,7 +16,7 @@ insert into #OrganisationStandardDeliveryAreaDetails (organisationStandardId, cn
 select OrganisationStandardId, count(0) from OrganisationStandardDeliveryArea
 group by OrganisationStandardId
 
-update #OrganisationStandardDeliveryAreaDetails set DeliveryAreaList = 'All' where cntr = 9
+update #OrganisationStandardDeliveryAreaDetails set DeliveryAreaList = 'All' where cntr = (SELECT COUNT(*) FROM [dbo].[DeliveryArea] WHERE [Status] = 'Live')
 
 DECLARE @osId int
 DECLARE @details varchar(500)
@@ -25,9 +25,9 @@ SELECT @osId = 0
 while exists(select * from #OrganisationStandardDeliveryAreaDetails where DeliveryAreaList is null AND OrganisationStandardId != @osId)
   BEGIN
    select top 1 @osId = OrganisationStandardId from #OrganisationStandardDeliveryAreaDetails where DeliveryAreaList is null AND OrganisationStandardId != @osId
-		  SELECT @details = COALESCE(@details + ', ', '') + Area
-				FROM DeliveryArea
-				WHERE Id in (select DeliveryAreaId from OrganisationStandardDeliveryArea where OrganisationStandardId = @osId )
+          SELECT @details = COALESCE(@details + ', ', '') + Area
+                FROM DeliveryArea
+                WHERE Id in (select DeliveryAreaId from OrganisationStandardDeliveryArea where OrganisationStandardId = @osId )
   update #OrganisationStandardDeliveryAreaDetails set DeliveryAreaList = @details where organisationStandardId = @osId
   set @Details = null
   END
@@ -40,11 +40,13 @@ select os.EndPointAssessorOrganisationId EPA_organisation_identifier,
   JSON_Value(os.OrganisationStandardData,'$.DeliveryAreasComments') as Comments
   --,os.EffectiveTo
  from OrganisationStandard os 
-inner join Organisations o on o.EndPointAssessorOrganisationId = os.EndPointAssessorOrganisationId --and os.EffectiveTo is null
+inner join Organisations o on o.EndPointAssessorOrganisationId = os.EndPointAssessorOrganisationId  and o.[Status] = 'Live'
 left outer join StandardCollation sc on os.StandardCode = sc.StandardId
 left outer join #OrganisationStandardDeliveryAreaDetails  dad on dad.organisationStandardId = os.Id
 where DeliveryAreaList is not null
 and o.EndPointAssessorOrganisationId <> 'EPA0000'
+and os.[Status] = 'Live'
+and (os.effectiveTo is null OR os.EffectiveTo > GETDATE())
 order by o.EndPointAssessorOrganisationId, sc.Title
 
 drop table #OrganisationStandardDeliveryAreaDetails
