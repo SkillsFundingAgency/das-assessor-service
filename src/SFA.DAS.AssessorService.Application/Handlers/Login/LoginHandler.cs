@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -68,6 +69,35 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
             {
                 await CreateNewContact(request.Email, organisation, request.DisplayName, request.Username);
             }
+            else if(string.IsNullOrWhiteSpace(organisation.PrimaryContact))
+            {
+                await _mediator.Send(new UpdateOrganisationRequest()
+                {
+                    EndPointAssessorName = organisation.EndPointAssessorName,
+                    EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
+                    EndPointAssessorUkprn = organisation.EndPointAssessorUkprn,
+                    PrimaryContact = contact.Username,
+                    ApiEnabled = organisation.ApiEnabled,
+                    ApiUser = organisation.ApiUser
+                });
+            }
+            else if(organisation.PrimaryContact.StartsWith("unknown", StringComparison.InvariantCultureIgnoreCase))
+            {
+                var primaryContact = await _contactQueryRepository.GetContact(organisation.PrimaryContact);
+
+                if(primaryContact == null)
+                {
+                    await _mediator.Send(new UpdateOrganisationRequest()
+                    {
+                        EndPointAssessorName = organisation.EndPointAssessorName,
+                        EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
+                        EndPointAssessorUkprn = organisation.EndPointAssessorUkprn,
+                        PrimaryContact = contact.Username,
+                        ApiEnabled = organisation.ApiEnabled,
+                        ApiUser = organisation.ApiUser
+                    });
+                }
+            }
 
             _logger.LogInformation(LoggingConstants.SignInSuccessful);
 
@@ -85,18 +115,29 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
         {
             _logger.LogInformation($"Getting Contact with username: {username}");
             var contact = await _contactQueryRepository.GetContact(username);
-            if (contact == null)
+
+            if (contact != null)
             {
-                return null;
+                _logger.LogInformation($"Got Existing Contact from username");
+                await CheckStoredUserDetailsForUpdate(contact.Username, email, displayName, contact);
             }
-            _logger.LogInformation($"Got Existing Contact");
-            await CheckStoredUserDetailsForUpdate(contact.Username, email, displayName, contact);
+            else
+            {
+                _logger.LogInformation($"Getting Contact with email: {email}");
+                contact = await _contactQueryRepository.GetContactFromEmailAddress(email);
+                if (contact != null)
+                {
+                    _logger.LogInformation($"Got Existing Contact from email");
+                    await CheckStoredUserDetailsForUpdate(username, contact.Email, displayName, contact);
+                }
+            }
+
             return contact;
         }
 
         private async Task CheckStoredUserDetailsForUpdate(string username, string email, string displayName, Contact contact)
         {
-            if (contact.Email != email || contact.DisplayName != displayName)
+            if (contact.Username != username || contact.Email != email || contact.DisplayName != displayName)
             {
                 _logger.LogInformation($"Existing contact has updated details.  Updating");
 
