@@ -80,6 +80,13 @@
             return await Get<OrganisationSearchResults>($"{_baseUrl}/api/v1/search?searchTerm={searchTerm}");
         }
 
+        public async Task<bool> UpdateOrganisationLegalName(UpdateOrganisationLegalNameRequest request)
+        {
+            HttpStatusCode result = await Put<UpdateOrganisationLegalNameRequest>($"{_baseUrl}/api/v1/updateOrganisation/legalName", request);
+
+            return await Task.FromResult(result == HttpStatusCode.OK);
+        }
+
         private async Task<T> Get<T>(string uri)
         {
             _client.DefaultRequestHeaders.Authorization =
@@ -101,7 +108,19 @@
                 new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json"));
 
              return response.StatusCode;
-         }
+        }
+
+        private async Task<HttpStatusCode> Put<T>(string uri, T model)
+        {
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            var serializeObject = JsonConvert.SerializeObject(model);
+
+            var response = await _client.PutAsync(new Uri(uri, UriKind.Absolute),
+                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json"));
+
+            return response.StatusCode;
+        }
 
         private async Task<U> Post<T, U>(string uri, T model)
         {

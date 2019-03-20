@@ -55,6 +55,7 @@
                     </div>
                 }
                 
+                  
                 @if (!Model.SearchResults.Any())
                 {
                     <div class="govuk-grid-row">
@@ -80,7 +81,7 @@
 
                         <dd class="govuk-summary-list__actions">
 
-                            <a class="govuk-link" href="#">
+                            <a class="govuk-link" asp-controller="UpdateRoatpOrganisation" asp-action="UpdateOrganisationLegalName">
                                 Change<span class="govuk-visually-hidden"> legal name</span>
                             </a>
 
@@ -276,7 +277,6 @@
                     </div>
 
                 </dl>
-
 
                 </div>
 

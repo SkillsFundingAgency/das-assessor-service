@@ -28,8 +28,8 @@
                 .ReturnsAsync(new DuplicateCheckResponse { DuplicateFound = false, DuplicateOrganisationName = null });
             _apiClient.Setup(x => x.DuplicateCharityNumberCheck(It.IsAny<Guid>(), It.IsAny<string>()))
                 .ReturnsAsync(new DuplicateCheckResponse { DuplicateFound = false, DuplicateOrganisationName = null });
-
-            _validator = new AddOrganisationValidator(_apiClient.Object);
+            
+            _validator = new AddOrganisationValidator(_apiClient.Object, new RoatpOrganisationValidator());
 
             _viewModel = new AddOrganisationViewModel
             {
