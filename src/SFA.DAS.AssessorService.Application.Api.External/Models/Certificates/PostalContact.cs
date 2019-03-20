@@ -1,16 +1,22 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
 {
     public class PostalContact : IEquatable<PostalContact>
     {
+        [Required]
         public string ContactName { get; set; }
         public string Department { get; set; }
+        [Required]
         public string Organisation { get; set; }
+        [Required]
         public string AddressLine1 { get; set; }
         public string AddressLine2 { get; set; }
         public string AddressLine3 { get; set; }
+        [Required]
         public string City { get; set; }
+        [Required]
         public string PostCode { get; set; }
 
         #region GetHashCode, Equals and IEquatable

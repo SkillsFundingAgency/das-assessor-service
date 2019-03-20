@@ -1,14 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
 {
     public class Learner : IEquatable<Learner>
     {
+        [Required]
         public long Uln { get; set; }
         public string GivenNames { get; set; }
+        [Required]
         public string FamilyName { get; set; }
 
         #region GetHashCode, Equals and IEquatable

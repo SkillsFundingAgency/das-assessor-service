@@ -1,10 +1,12 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
 {
     public class LearningDetails : IEquatable<LearningDetails>
     {
         public string CourseOption { get; set; }
+        [Required]
         public string OverallGrade { get; set; }
         public DateTime? AchievementDate { get; set; }
         public DateTime LearningStartDate { get; set; }

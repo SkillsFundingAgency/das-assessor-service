@@ -1,14 +1,18 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace SFA.DAS.AssessorService.Application.Api.External.Models.Certificates
 {
     public class SubmitCertificate : IEquatable<SubmitCertificate>
     {
         public string RequestId { get; set; }
+        [Required]
         public long Uln { get; set; }
         public int? StandardCode { get; set; }
         public string StandardReference { get; set; }
+        [Required]
         public string FamilyName { get; set; }
+        [Required]
         public string CertificateReference { get; set; }
 
         #region GetHashCode, Equals and IEquatable

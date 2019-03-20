@@ -51,7 +51,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Exampl
                 new BatchCertificateResponse
                 {
                     RequestId = "3",
-                    ValidationErrors = new List<string>{ "Enter the apprentice's last name" },
+                    ValidationErrors = new List<string>{ "Cannot find apprentice with the specified Uln, FamilyName & Standard" },
                     Certificate = null
                 }
             };

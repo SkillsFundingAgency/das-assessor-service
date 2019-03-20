@@ -30,6 +30,7 @@ namespace SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers.Exampl
                 {
                     RequestId = "3",
                     CertificateReference = "55555555",
+                    FamilyName = "Unknown",
                     StandardCode = 555,
                     StandardReference = "ST0555",
                     Uln = 5555555555
