@@ -8,6 +8,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Apprenticeships.Api.Types;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Application.Api.Services;
+using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.Services;
@@ -22,6 +26,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
     public class CertificatePrivateStandardCodeController : CertificateBaseController
     {
         private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
+        private readonly IStandardServiceClient _standardServiceClient;
         private readonly CacheService _cacheHelper;
         private readonly ApiClient _apiClient;       
 
@@ -29,12 +34,14 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
             IHttpContextAccessor contextAccessor,
             IAssessmentOrgsApiClient assessmentOrgsApiClient,
             CacheService cacheHelper,
-            ApiClient apiClient)
+            ApiClient apiClient,
+            IStandardServiceClient standardServiceClient)
             : base(logger, contextAccessor, apiClient)
         {
             _assessmentOrgsApiClient = assessmentOrgsApiClient;
             _cacheHelper = cacheHelper;
             _apiClient = apiClient;
+            _standardServiceClient = standardServiceClient;
         }
 
         [HttpGet]
@@ -106,7 +113,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Private
             var results = await _cacheHelper.RetrieveFromCache<IEnumerable<StandardSummary>>("Standards");
             if (results == null)
             {
-                var standards = await _assessmentOrgsApiClient.GetAllStandardSummaries();
+                var standards = await _standardServiceClient.GetAllStandardSummaries();
                 await _cacheHelper.SaveToCache("Standards", standards, 1);
 
                 results = standards;

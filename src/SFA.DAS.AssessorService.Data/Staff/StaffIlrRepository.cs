@@ -26,11 +26,16 @@ namespace SFA.DAS.AssessorService.Data.Staff
 
         public async Task<IEnumerable<Ilr>> SearchForLearnerByCertificateReference(string certRef)
         {
+            var results = new List<Ilr>();
+            
             var cert = await _context.Certificates.FirstOrDefaultAsync(c => c.CertificateReference == certRef);
-            IEnumerable<Ilr> results =
-                cert != null
-                    ? new List<Ilr> { await _ilrRepository.Get(cert.Uln, cert.StandardCode) }
-                    : new List<Ilr>();
+
+            if(cert != null)
+            {
+                var ilr = await _ilrRepository.Get(cert.Uln, cert.StandardCode);
+
+                if (ilr != null) results.Add(ilr);
+            }
 
             return results;
         }

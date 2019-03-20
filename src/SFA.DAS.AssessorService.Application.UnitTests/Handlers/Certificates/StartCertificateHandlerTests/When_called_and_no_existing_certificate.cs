@@ -12,6 +12,7 @@ using SFA.DAS.AssessorService.Application.Handlers.Staff;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
+using SFA.DAS.AssessorService.ExternalApis.Services;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.StartCertificateHandlerTests
@@ -50,14 +51,16 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Certificates.St
             organisationQueryRepository.Setup(r => r.GetByUkPrn(88888888)).ReturnsAsync(new Organisation() { Id = _organisationId});
 
             var assessmentOrgsApiClient = new Mock<IAssessmentOrgsApiClient>();
-            assessmentOrgsApiClient.Setup(c => c.GetStandard(30))
+            var standardService = new Mock<IStandardService>();
+
+            standardService.Setup(c => c.GetStandard(30))
                 .ReturnsAsync(new Standard() {Title = "Standard Name", EffectiveFrom = new DateTime(2016,09,01)});
             assessmentOrgsApiClient.Setup(c => c.GetProvider(It.IsAny<long>()))
                 .ReturnsAsync(new Provider {ProviderName = "A Provider"});
 
             _startCertificateHandler = new StartCertificateHandler(_certificateRepository.Object,
                 ilrRepository.Object, assessmentOrgsApiClient.Object,
-                organisationQueryRepository.Object, new Mock<ILogger<StartCertificateHandler>>().Object);
+                organisationQueryRepository.Object, new Mock<ILogger<StartCertificateHandler>>().Object, standardService.Object);
 
             _returnedCertificate = _startCertificateHandler
                 .Handle(
