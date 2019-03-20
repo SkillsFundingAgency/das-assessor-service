@@ -44,7 +44,7 @@ select distinct os.EndPointAssessorOrganisationId, osda.DeliveryAreaId, da.Area
     inner join OrganisationStandard os on osda.OrganisationStandardId = os.Id and os.[Status] = 'Live' AND ( os.[EffectiveTo] IS NULL or os.[EffectiveTo] > GETDATE() )
     inner join Organisations o on o.EndPointAssessorOrganisationId = os.EndPointAssessorOrganisationId AND o.[Status] = 'Live'
     inner join DeliveryArea da on osda.DeliveryAreaId = da.Id
-    order by EndPointAssessorOrganisationId, DeliveryAreaId
+    order by os.EndPointAssessorOrganisationId, DeliveryAreaId
 
 CREATE TABLE #DeliveryAreaSummary
 (
