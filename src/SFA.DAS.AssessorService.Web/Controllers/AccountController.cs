@@ -42,10 +42,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             switch (loginResult.Result)
             {
                 case LoginResult.Valid:
-                    _sessionService.Set("OrganisationName", loginResult.OrganisationName);
+                    _sessionService.Set("OrganisationName", loginResult.EndPointAssessorName);
                     return RedirectToAction("Index", "Dashboard");
                 case LoginResult.NotRegistered:
                     return RedirectToAction("NotRegistered", "Home");
+                case LoginResult.NotActivated:
+                    return RedirectToAction("NotActivated", "Home", new { epaoId = loginResult.EndPointAssessorOrganisationId });
                 case LoginResult.InvalidRole:
                     return RedirectToAction("InvalidRole", "Home");
                 default:

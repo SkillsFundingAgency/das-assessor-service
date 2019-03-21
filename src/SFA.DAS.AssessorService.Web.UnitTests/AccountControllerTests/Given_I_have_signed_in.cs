@@ -70,10 +70,25 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.AccountControllerTests
         }
 
         [Test]
+        public void And_I_am_not_activated_Then_redirect_to_NotActivated_page()
+        {
+            _loginOrchestrator.Setup(o => o.Login())
+                .ReturnsAsync(new LoginResponse() { Result = LoginResult.NotActivated, EndPointAssessorName = "EPA01", EndPointAssessorOrganisationId = "EPA0001" });
+
+            var result = _accountController.PostSignIn().Result;
+
+            result.Should().BeOfType<RedirectToActionResult>();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ControllerName.Should().Be("Home");
+            redirectResult.ActionName.Should().Be("NotActivated");
+        }
+
+        [Test]
         public void And_I_am_valid_Then_redirect_to_Search_page()
         {
             _loginOrchestrator.Setup(o => o.Login())
-                .ReturnsAsync(new LoginResponse() { Result = LoginResult.Valid, OrganisationName = "EPA01"});
+                .ReturnsAsync(new LoginResponse() { Result = LoginResult.Valid, EndPointAssessorName = "EPA01", EndPointAssessorOrganisationId = "EPA0001"});
 
             var result = _accountController.PostSignIn().Result;
 

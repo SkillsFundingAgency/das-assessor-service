@@ -16,7 +16,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Login
         {
             OrgQueryRepository.Setup(r => r.GetByUkPrn(12345)).ReturnsAsync(new Organisation
             {
-                Status = OrganisationStatus.New,
+                Status = OrganisationStatus.Live,
                 EndPointAssessorOrganisationId = "EPA001",
                 EndPointAssessorUkprn = 12345,
             });

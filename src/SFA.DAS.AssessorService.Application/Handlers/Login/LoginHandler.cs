@@ -53,12 +53,24 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
                 response.Result = LoginResult.NotRegistered;
                 return response;
             }
+            else
+            {
+                response.EndPointAssessorName = organisation.EndPointAssessorName;
+                response.EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId;
+            }
 
             if (organisation.Status == OrganisationStatus.Deleted)
             {
                 _logger.LogInformation($"Org found, but Deleted");
                 _logger.LogInformation(LoggingConstants.SignInEpaoDeleted);
                 response.Result = LoginResult.NotRegistered;
+                return response;
+            }
+            else if (organisation.Status == OrganisationStatus.New)
+            {
+                _logger.LogInformation($"Org found, but New");
+                _logger.LogInformation(LoggingConstants.SignInEpaoNew);
+                response.Result = LoginResult.NotActivated;
                 return response;
             }
 
@@ -100,9 +112,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
             }
 
             _logger.LogInformation(LoggingConstants.SignInSuccessful);
-
             response.Result = LoginResult.Valid;
-            response.OrganisationName = organisation.EndPointAssessorName;
+            
             return response;
         }
 
