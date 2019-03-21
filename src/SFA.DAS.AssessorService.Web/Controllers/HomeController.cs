@@ -1,11 +1,12 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.Domain.Paging;
+using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
 using SFA.DAS.AssessorService.Web.Models;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
@@ -44,9 +45,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             try
             {
                 var standards = await _standardsApiClient.GetEpaoRegisteredStandards(epaoId, 1);
-                standard = standards.Items.FirstOrDefault();
+                standard = standards.Items.FirstOrDefault(s => !string.IsNullOrEmpty(s.StandardName));
             }
-            catch
+            catch (Exception ex) when (ex is EntityNotFoundException || ex is NullReferenceException)
             {
                 standard = null;
             }
