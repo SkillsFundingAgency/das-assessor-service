@@ -1858,3 +1858,23 @@
     color: #ffffff;
     text-decoration: none;
 }
+
+#organisationDetails {
+    border-left: 1px solid #bfc1c3;
+}
+
+.govuk-summary-list__key, .govuk-summary-list__value, .govuk-summary-list__actions {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #bfc1c3;
+}
+
+@media (min-width: 40.0625em) .govuk-grid-column-two-thirds {
+    width: 66.6666%;
+    float: left;
+}
+
+.govuk-grid-column-two-thirds {
+    box-sizing: border-box;
+    padding: 0 15px;
+}
