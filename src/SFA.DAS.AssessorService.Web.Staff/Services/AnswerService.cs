@@ -41,6 +41,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             var charityNumber = await GetAnswer(applicationId, "charity-number");
             var standardWebsite = await GetAnswer(applicationId, "standard-website");
             var organisation = await _applyApiClient.GetOrganisationForApplication(applicationId);
+            var organisationCreatedBy = organisation.CreatedBy;
             var organisationName = organisation?.Name;
             var organisationType = organisation?.OrganisationType;
             var organisationUkprn = organisation?.OrganisationUkprn;
@@ -67,7 +68,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                 companyUkprn,
                 companyNumber,
                 charityNumber,
-                standardWebsite);
+                standardWebsite,
+                organisationCreatedBy);
 
             return command;
         }

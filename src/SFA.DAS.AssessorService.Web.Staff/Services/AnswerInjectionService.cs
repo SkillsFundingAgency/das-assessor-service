@@ -25,7 +25,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
         private readonly IEpaOrganisationIdGenerator _organisationIdGenerator;
         private readonly ISpecialCharacterCleanserService _cleanser;
 
-        public AnswerInjectionService( IValidationService validationService, IAssessorValidationService assessorValidationService, IRegisterQueryRepository registerQueryRepository, IRegisterRepository registerRepository, IEpaOrganisationIdGenerator organisationIdGenerator, ISpecialCharacterCleanserService cleanser, ILogger<AnswerService> logger)
+        public AnswerInjectionService(IValidationService validationService,
+            IAssessorValidationService assessorValidationService, IRegisterQueryRepository registerQueryRepository,
+            IRegisterRepository registerRepository, IEpaOrganisationIdGenerator organisationIdGenerator,
+            ISpecialCharacterCleanserService cleanser, ILogger<AnswerService> logger)
         {
             _validationService = validationService;
             _assessorValidationService = assessorValidationService;
@@ -96,8 +99,21 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                     throw new Exception("A valid contact user name could not be generated");
                 }
                 newOrganisationId = await _registerRepository.CreateEpaOrganisation(organisation);
-                var contact = MapCommandToContact(command.ContactName, command.ContactEmail, newOrganisationId, command.ContactPhoneNumber, newUsername);
-                await _registerRepository.CreateEpaOrganisationContact(contact);
+                var contact = MapCommandToContact(command.CreatedBy,command.ContactName, command.ContactEmail, newOrganisationId, command.ContactPhoneNumber, newUsername);
+                var assessorContact = await _registerQueryRepository.GetContactByContactId(contact.Id);
+                if (assessorContact != null)
+                {
+                    //Update existing contact entry
+                    var newOrganisation = await _registerQueryRepository.GetEpaOrganisationByOrganisationId(newOrganisationId);
+                    await _registerRepository.AssociateOrganisationWithContact(assessorContact.Id, newOrganisation,
+                        "Live", "MakePrimaryContact");
+                }
+                else
+                {
+                    //Create a new contact entry
+                    await _registerRepository.CreateEpaOrganisationContact(contact);
+                }
+              
                 response.OrganisationId = newOrganisationId;
             }
 
@@ -263,7 +279,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             return organisation;
         }
 
-        private EpaContact MapCommandToContact(string contactName, string contactEmail, string organisationId, string contactPhoneNumber, string username)
+        private EpaContact MapCommandToContact(string id, string contactName, string contactEmail, string organisationId, string contactPhoneNumber, string username)
         {
             contactName = _cleanser.CleanseStringForSpecialCharacters(contactName);
             contactEmail = _cleanser.CleanseStringForSpecialCharacters(contactEmail);
@@ -274,7 +290,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                 DisplayName = contactName,
                 Email = contactEmail,
                 EndPointAssessorOrganisationId = organisationId,
-                Id = Guid.NewGuid(),
+                Id = string.IsNullOrEmpty(id)?Guid.NewGuid():Guid.Parse(id),
                 PhoneNumber = contactPhoneNumber,
                 Username = username
             };

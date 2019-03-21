@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Domain.Entities;
 
@@ -12,5 +13,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<Contact> GetContact(string userName);
         Task<Contact> GetContactFromEmailAddress(string email);
         Task<IEnumerable<Contact>> GetAllContacts(string endPointAssessorOrganisationId);
+        Task<Contact> GetContactById(Guid id);
     }
 }

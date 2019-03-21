@@ -27,8 +27,14 @@ namespace SFA.DAS.AssessorService.Api.Types.Commands
         public string CompanyNumber { get; set; }
         public string CharityNumber { get; set; }
         public string StandardWebsite { get; set; }
+        public string CreatedBy { get; set; }
 
-        public CreateOrganisationContactCommand(string organisationName, string organisationType, string organisationUkprn, string organisationReferenceType, bool? isEpaoApproved, string tradingName, bool useTradingName, string contactName, string contactAddress1, string contactAddress2, string contactAddress3, string contactAddress4, string contactPostcode, string contactEmail, string contactPhoneNumber, string companyUkprn, string companyNumber, string charityNumber, string standardWebsite)
+        public CreateOrganisationContactCommand(string organisationName, string organisationType,
+            string organisationUkprn, string organisationReferenceType, bool? isEpaoApproved, string tradingName,
+            bool useTradingName, string contactName, string contactAddress1, string contactAddress2,
+            string contactAddress3, string contactAddress4, string contactPostcode, string contactEmail,
+            string contactPhoneNumber, string companyUkprn, string companyNumber, string charityNumber,
+            string standardWebsite, string createdBy)
         {
             OrganisationName = organisationName;
             OrganisationType = organisationType;
@@ -49,6 +55,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Commands
             CompanyNumber = companyNumber;
             CharityNumber = charityNumber;
             StandardWebsite = standardWebsite;
+            CreatedBy = createdBy;
         }
 
         public CreateOrganisationContactCommand()
