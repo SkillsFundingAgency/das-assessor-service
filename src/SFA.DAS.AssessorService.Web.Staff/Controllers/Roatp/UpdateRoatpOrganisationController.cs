@@ -27,6 +27,7 @@
 
             var model = new UpdateOrganisationLegalNameViewModel
             {
+                CurrentLegalName = searchModel.SelectedResult.LegalName,
                 LegalName = searchModel.SelectedResult.LegalName,
                 OrganisationId = searchModel.SelectedResult.Id
             };
@@ -58,7 +59,7 @@
         {
             return new UpdateOrganisationLegalNameRequest
             {
-                LegalName = model.LegalName,
+                LegalName = model.LegalName.ToUpper(),
                 OrganisationId = model.OrganisationId,
                 UpdatedBy = model.UpdatedBy
             };
