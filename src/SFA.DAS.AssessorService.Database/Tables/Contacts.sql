@@ -8,7 +8,7 @@
 	[OrganisationId] [uniqueidentifier] NULL,
 	[Status] [nvarchar](20) NOT NULL,
 	[UpdatedAt] [datetime2](7) NULL,
-	[Username] [nvarchar](30) NOT NULL,
+	[Username] [nvarchar](120) NOT NULL,
 	[PhoneNumber] [NVARCHAR] (50) NULL
  CONSTRAINT [PK_Contacts] PRIMARY KEY CLUSTERED 
 (
