@@ -73,6 +73,19 @@
         }
 
         [Test]
+        public void Validator_rejects_legal_name_too_short()
+        {
+            _viewModel.LegalName = "A";
+
+            var validationResponse = _validator.ValidateOrganisationDetails(_viewModel).GetAwaiter().GetResult();
+
+            var legalNameError = validationResponse.Errors.FirstOrDefault(x => x.Field == "LegalName");
+
+            legalNameError.Should().NotBeNull();
+            legalNameError.ErrorMessage.Should().Be(RoatpOrganisationValidation.LegalNameMinLength);
+        }
+
+        [Test]
         public void Validator_rejects_trading_name_too_long()
         {
             _viewModel.TradingName = new string('A', 201);

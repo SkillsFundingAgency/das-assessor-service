@@ -27,6 +27,11 @@
                 errorMessages.Add(new ValidationErrorDetail("LegalName", RoatpOrganisationValidation.LegalNameMaxLength));
             }
 
+            if (legalName.Length < 2)
+            {
+                errorMessages.Add(new ValidationErrorDetail("LegalName", RoatpOrganisationValidation.LegalNameMinLength));
+            }
+
             return errorMessages;
         }
         
