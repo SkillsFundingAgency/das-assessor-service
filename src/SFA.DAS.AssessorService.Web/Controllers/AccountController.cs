@@ -136,7 +136,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return inviteSuccess.Result ? RedirectToAction("InviteSent") : RedirectToAction("Error", "Home");
             
         }
-
+        [HttpGet]
         public IActionResult InviteSent()
         {
             CreateAccountViewModel viewModel;
@@ -152,6 +152,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return View(viewModel);
         }
 
+        [HttpPost]
         public async Task<IActionResult> Callback([FromBody] DfeSignInCallback callback)
         {
             await _contactsApiClient.Callback(callback);
