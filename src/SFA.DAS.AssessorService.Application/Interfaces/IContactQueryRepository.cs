@@ -21,5 +21,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<Contact> GetBySignInId(Guid requestSignInId);
         Task<IList<ContactRole>> GetRolesFor(Guid contactId);
         Task<IEnumerable<Privilege>> GetAllPrivileges();
+        Task<Contact> GetContactById(Guid id);
     }
 }

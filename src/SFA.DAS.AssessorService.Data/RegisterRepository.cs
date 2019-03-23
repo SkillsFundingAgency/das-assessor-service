@@ -13,6 +13,7 @@ using System.Runtime.InteropServices.ComTypes;
 using System.Transactions;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 using SFA.DAS.AssessorService.Application.Exceptions;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -201,6 +202,30 @@ namespace SFA.DAS.AssessorService.Data
                         new {contact.Id});
 
                 return contact.Id.ToString();
+            }
+        }
+
+        public async Task<string> AssociateOrganisationWithContact(Guid contactId, EpaOrganisation org, string status, string actionChoice)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+
+                connection.Execute(
+                    "UPDATE [Contacts] SET [EndPointAssessorOrganisationId] = @OrganisationId, [OrganisationId] = @Id, " +
+                    "[Status] = @status, [updatedAt] = getUtcDate() " +
+                    "WHERE [Id] = @contactId ",
+                    new { org.OrganisationId, org.Id, contactId,  status });
+
+                if (actionChoice == "MakePrimaryContact")
+                    connection.Execute("update o set PrimaryContact = c.Username from organisations o " +
+                                       "inner join contacts c on o.EndPointAssessorOrganisationId = c.EndPointAssessorOrganisationId " +
+                                       "Where c.id = @contactId",
+                        new { contactId });
+
+                return contactId.ToString();
             }
         }
     }
