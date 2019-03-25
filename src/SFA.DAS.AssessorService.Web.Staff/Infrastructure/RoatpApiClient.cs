@@ -52,7 +52,17 @@
         {
             return await Get<IEnumerable<ProviderType>>($"{_baseUrl}/api/v1/lookupData/providerTypes");
         }
-        
+
+        public async Task<IEnumerable<OrganisationStatus>> GetOrganisationStatuses()
+        {
+            return await Get<IEnumerable<OrganisationStatus>>($"{_baseUrl}/api/v1/lookupData/organisationStatuses");
+        }
+
+        public async Task<IEnumerable<RemovedReason>> GetRemovedReasons()
+        {
+            return await Get<IEnumerable<RemovedReason>>($"{_baseUrl}/api/v1/lookupData/removedReasons");
+        }
+
         public async Task<bool> CreateOrganisation(CreateOrganisationRequest organisationRequest)
         {
            HttpStatusCode result = await Post<CreateOrganisationRequest>($"{_baseUrl}/api/v1/organisation/create", organisationRequest);
@@ -83,6 +93,13 @@
         public async Task<bool> UpdateOrganisationLegalName(UpdateOrganisationLegalNameRequest request)
         {
             HttpStatusCode result = await Put<UpdateOrganisationLegalNameRequest>($"{_baseUrl}/api/v1/updateOrganisation/legalName", request);
+
+            return await Task.FromResult(result == HttpStatusCode.OK);
+        }
+        
+        public async Task<bool> UpdateOrganisationStatus(UpdateOrganisationStatusRequest request)
+        {
+            HttpStatusCode result = await Put<UpdateOrganisationStatusRequest>($"{_baseUrl}/api/v1/updateOrganisation/status", request);
 
             return await Task.FromResult(result == HttpStatusCode.OK);
         }
@@ -133,5 +150,6 @@
 
             return await response.Content.ReadAsAsync<U>();
         }
+
     }
 }

@@ -112,12 +112,12 @@
                             Status
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @Html.OrgansationStatus(Model.SelectedResult)
+                            @Html.OrganisationStatus(Model.SelectedResult)
                         </dd>
 
                         <dd class="govuk-summary-list__actions">
 
-                            <a class="govuk-link" href="#">
+                            <a class="govuk-link" asp-controller="UpdateRoatpOrganisation" asp-action="UpdateOrganisationStatus">
                                 Change<span class="govuk-visually-hidden"> status</span>
                             </a>
 

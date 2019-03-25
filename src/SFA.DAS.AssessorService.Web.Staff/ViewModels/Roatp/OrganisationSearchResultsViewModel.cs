@@ -15,7 +15,7 @@
         {
             get
             {
-                if (SearchResults.Count > 0)
+                if (SearchResults != null && SearchResults.Count > 0)
                 {
                     return SearchResults[SelectedIndex];
                 }
