@@ -10,6 +10,7 @@ UNIQUE NONCLUSTERED
 ) ON [PRIMARY]
 GO
 
+/*
 ALTER TABLE [dbo].[ContactsPrivileges]  WITH CHECK ADD FOREIGN KEY([ContactId])
 REFERENCES [dbo].[Contacts] ([Id])
 GO
@@ -20,3 +21,4 @@ GO
 
 ALTER TABLE [dbo].[ContactsPrivileges] CHECK CONSTRAINT [FK__ContactsR__PrivilegeI__09746778]
 GO
+*/
