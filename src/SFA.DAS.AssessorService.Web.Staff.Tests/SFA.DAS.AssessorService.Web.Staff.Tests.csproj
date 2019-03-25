@@ -15,6 +15,5 @@
   <ItemGroup>
     <ProjectReference Include="..\SFA.DAS.AssessorService.Api.Types\SFA.DAS.AssessorService.Api.Types.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Web.Staff\SFA.DAS.AssessorService.Web.Staff.csproj" />
-    <ProjectReference Include="..\SFA.DAS.AssessorService.Web\SFA.DAS.AssessorService.Web.csproj" />
   </ItemGroup>
 </Project>

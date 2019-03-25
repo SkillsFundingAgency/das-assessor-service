@@ -63,6 +63,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [Route("/[controller]/status/{id}/{status}")]
         public async Task<IActionResult> SetStatusAndNotify(string id, string status)
         {
+            const string epaoApproveConfirmTemplate = "EPAOUserApproveConfirm";
+
             if (!string.IsNullOrEmpty(id) && !string.IsNullOrEmpty(status))
             {
                 await _contactsApiClient.UpdateStatus(new UpdateContactStatusRequest(id, status));
@@ -70,7 +72,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 {
                     var contactResponse = await _contactsApiClient.GetById(id);
                     var emailTemplate =
-                        await _emailApiClient.GetEmailTemplate(EmailTemplateName.AssessorEpaoApproveConfirm);
+                        await _emailApiClient.GetEmailTemplate(epaoApproveConfirmTemplate);
                     await _emailApiClient.SendEmailWithTemplate(new SendEmailRequest(contactResponse.Email,
                         emailTemplate, new
                         {
