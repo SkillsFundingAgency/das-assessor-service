@@ -88,22 +88,24 @@ BEGIN
 INSERT EMailTemplates VALUES (N'01dd414e-585c-47cf-8c89-ba1b84cfb103', N'EPAOUserApproveRequest', N'88799189-fe12-4887-a13f-f7f76cd6945a', NULL, GETDATE(), NULL, NULL)
 END
 
-IF NOT EXISTS (SELECT * FROM UserPrivileges WHERE Privileges = N'Manage users')
+-- setup Privileges
+IF NOT EXISTS (SELECT * FROM [Privileges] WHERE [UserPrivilege] = N'Manage users')
 BEGIN
-INSERT UserPrivileges VALUES (N'A1DD96ED-3571-4936-8877-42B69E4C3FFD', N'Manage users')
+INSERT [Privileges] ([Id],[UserPrivilege]) VALUES (NEWID(), N'Manage users')
 END
 
-IF NOT EXISTS (SELECT * FROM UserPrivileges WHERE Privileges = N'Record grades and issue certificates')
+IF NOT EXISTS (SELECT * FROM [Privileges] WHERE [UserPrivilege] =  N'Record grades and issue certificates')
 BEGIN
-INSERT UserPrivileges VALUES (N'1F3F5940-401A-442A-8DBD-4E5F61AE2B5D', N'Record grades and issue certificates')
+INSERT [Privileges] ([Id],[UserPrivilege]) VALUES (NEWID(), N'Record grades and issue certificates')
 END
 
-IF NOT EXISTS (SELECT * FROM UserPrivileges WHERE Privileges = N'View standards')
+IF NOT EXISTS (SELECT * FROM [Privileges] WHERE [UserPrivilege] =  N'View standards')
 BEGIN
-INSERT UserPrivileges VALUES (N'9D80EAE0-3CA1-48BE-B1E2-866A926E877E', N'View standards')
+INSERT [Privileges] ([Id],[UserPrivilege]) VALUES (NEWID(), N'View standards')
 END
 
-IF NOT EXISTS (SELECT * FROM UserPrivileges WHERE Privileges = N'Apply for standards')
+IF NOT EXISTS (SELECT * FROM [Privileges] WHERE [UserPrivilege] =  N'Apply for standards')
 BEGIN
-INSERT UserPrivileges VALUES (N'6DB26127-9583-41D5-AB1A-E32B2FD0EEC9', N'Apply for standards')
+INSERT [Privileges] ([Id],[UserPrivilege]) VALUES (NEWID(), N'Apply for standards')
 END
+
