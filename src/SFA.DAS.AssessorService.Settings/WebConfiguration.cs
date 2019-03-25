@@ -4,7 +4,7 @@ namespace SFA.DAS.AssessorService.Settings
 {
     public class WebConfiguration : IWebConfiguration
     {
-        [JsonRequired] public AuthSettings Authentication { get; set; }
+        public AuthSettings Authentication { get; set; }
 
         [JsonRequired] public ApiAuthentication ApiAuthentication { get; set; }
 
