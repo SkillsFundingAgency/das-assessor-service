@@ -14,6 +14,7 @@ using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.ViewModels.Organisation;
+using FHADetails = SFA.DAS.AssessorService.ApplyTypes.FHADetails;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
 {

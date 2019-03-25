@@ -9,6 +9,7 @@ using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.Web.Staff.Domain;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
+using SFA.DAS.AssessorService.Web.Staff.Services;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Applications;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
@@ -17,10 +18,14 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
     public class ApplicationController : Controller
     {
         private readonly ApplyApiClient _applyApiClient;
+        private readonly IAnswerService _answerService;
+        private readonly IAnswerInjectionService _answerInjectionService;
 
-        public ApplicationController(ApplyApiClient applyApiClient)
+        public ApplicationController(ApplyApiClient applyApiClient, IAnswerService answerService, IAnswerInjectionService answerInjectionService)
         {
             _applyApiClient = applyApiClient;
+            _answerService = answerService;
+            _answerInjectionService = answerInjectionService;
         }
 
         [HttpGet("/Applications/Midpoint")]
@@ -129,14 +134,14 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
         {
             var errorMessages = new Dictionary<string, string>();
 
-            if(!isSectionComplete.HasValue)
+            if (!isSectionComplete.HasValue)
             {
                 errorMessages["IsSectionComplete"] = "Please state if this section is completed";
             }
 
             if (errorMessages.Any())
             {
-                foreach(var error in errorMessages)
+                foreach (var error in errorMessages)
                 {
                     ModelState.AddModelError(error.Key, error.Value);
                 }
@@ -202,7 +207,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
 
             await _applyApiClient.AddFeedback(applicationId, sequenceId, sectionId, pageId, feedback);
 
-            return RedirectToAction("Section", new {applicationId, sequenceId, sectionId});
+            return RedirectToAction("Section", new { applicationId, sequenceId, sectionId });
         }
 
         [HttpPost("/Applications/{applicationId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}/DeleteFeedback")]
@@ -233,7 +238,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
         {
             var errorMessages = new Dictionary<string, string>();
 
-            if(string.IsNullOrWhiteSpace(returnType))
+            if (string.IsNullOrWhiteSpace(returnType))
             {
                 errorMessages["ReturnType"] = "Please state what you would like to do next";
             }
@@ -250,31 +255,38 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
                 return View("~/Views/Apply/Applications/Assessment.cshtml", viewModel);
             }
 
+            var warningMessages = new List<string>();
+            if (sequenceId == 2 && returnType == "Approve")
+            {
+                var command = await _answerService.GatherAnswersForOrganisationAndContactForApplication(applicationId);
+                var response = await _answerInjectionService.InjectApplyOrganisationAndContactDetailsIntoRegister(command);
+                warningMessages = response.WarningMessages;
+            }
+
             await _applyApiClient.ReturnApplication(applicationId, sequenceId, returnType);
 
-            return RedirectToAction("Returned", new { applicationId, sequenceId });
+            return RedirectToAction("Returned", new { applicationId, sequenceId, warningMessages});
         }
 
         [HttpGet("/Applications/Returned")]
-        public IActionResult Returned(Guid applicationId, int sequenceId)
+        public IActionResult Returned(Guid applicationId, int sequenceId, List<string> warningMessages)
         {
-            var viewModel = new ApplicationReturnedViewModel(applicationId, sequenceId);
+            var viewModel = new ApplicationReturnedViewModel(applicationId, sequenceId, warningMessages);
             return View("~/Views/Apply/Applications/Returned.cshtml", viewModel);
         }
-        
+
         [HttpGet("Application/{applicationId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}/Question/{questionId}/{filename}/Download")]
-        
         //[HttpGet("/Application/{applicationId}/Page/{pageId}/Question/{questionId}/File/{filename}/Download")]
         public async Task<IActionResult> Download(Guid applicationId, int sequenceId, int sectionId, string pageId, string questionId, string filename)
         {
             var userId = Guid.NewGuid();
 
             var fileInfo = await _applyApiClient.FileInfo(applicationId, userId, sequenceId, sectionId, pageId, questionId, filename);
-            
-            var file = await _applyApiClient.Download(applicationId, userId, sequenceId,sectionId, pageId, questionId, filename);
+
+            var file = await _applyApiClient.Download(applicationId, userId, sequenceId, sectionId, pageId, questionId, filename);
 
             var fileStream = await file.Content.ReadAsStreamAsync();
-            
+
             return File(fileStream, fileInfo.ContentType, fileInfo.Filename);
         }
     }

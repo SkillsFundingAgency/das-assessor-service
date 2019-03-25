@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Applications
 {
@@ -7,10 +8,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Applications
         public Guid ApplicationId { get; }
         public int SequenceId { get; }
 
-        public ApplicationReturnedViewModel(Guid applicationId, int sequenceId)
+        public List<string> WarningMessages { get; set; }
+        public ApplicationReturnedViewModel(Guid applicationId, int sequenceId, List<string> warningMessages)
         {
             ApplicationId = applicationId;
             SequenceId = sequenceId;
+            WarningMessages = warningMessages;
         }
     }
 }
