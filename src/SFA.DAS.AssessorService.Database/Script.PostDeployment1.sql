@@ -118,7 +118,7 @@ delete from[ContactsPrivileges]
 insert into [ContactsPrivileges]
 select co1.id, pr1.id 
 from Contacts co1 
-cross  join Privileges pr1
+cross  join [Privileges] pr1
 where co1.status = 'Live'  and co1.username not like 'unknown%' and co1.username != 'manual'
 
 
