@@ -1,6 +1,4 @@
 ﻿
-using System;
-
 namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
 {
     using System;
@@ -14,12 +12,15 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
        Task<IEnumerable<IDictionary<string, object>>> GetAuditHistory();
        Task<IEnumerable<ProviderType>> GetProviderTypes();
        Task<IEnumerable<OrganisationType>> GetOrganisationTypes(int providerTypeId);
+       Task<IEnumerable<OrganisationStatus>> GetOrganisationStatuses();
+       Task<IEnumerable<RemovedReason>> GetRemovedReasons();
        Task<bool> CreateOrganisation(CreateOrganisationRequest organisationRequest);
        Task<DuplicateCheckResponse> DuplicateUKPRNCheck(Guid organisationId, long ukprn);
        Task<DuplicateCheckResponse> DuplicateCompanyNumberCheck(Guid organisationId, string companyNumber);
        Task<DuplicateCheckResponse> DuplicateCharityNumberCheck(Guid organisationId, string charityNumber);
        Task<OrganisationSearchResults> Search(string searchTerm);
        Task<bool> UpdateOrganisationLegalName(UpdateOrganisationLegalNameRequest request);
+       Task<bool> UpdateOrganisationStatus(UpdateOrganisationStatusRequest request);
        Task<bool> UpdateOrganisationTradingName(UpdateOrganisationTradingNameRequest request);
 
 
