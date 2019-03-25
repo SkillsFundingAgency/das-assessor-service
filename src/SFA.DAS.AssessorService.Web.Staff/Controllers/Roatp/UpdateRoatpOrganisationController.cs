@@ -87,6 +87,37 @@
                 return View("~/Views/Roatp/UpdateOrganisationStatus.cshtml", model);
             }
 
+        [Route("change-status")]
+        public async Task<IActionResult> UpdateOrganisationStatus()
+        {
+            var searchModel = _sessionService.GetSearchResults();
+
+            var organisationStatuses = _apiClient.GetOrganisationStatuses().Result.OrderBy(x => x.Status);
+            var removedReasons = _apiClient.GetRemovedReasons().Result.OrderBy(x => x.Id);
+            
+            var model = new UpdateOrganisationStatusViewModel
+            {
+                LegalName = searchModel.SelectedResult.LegalName,
+                OrganisationId = searchModel.SelectedResult.Id,
+                OrganisationStatusId = searchModel.SelectedResult.OrganisationStatus.Id,
+                OrganisationStatuses = organisationStatuses,
+                RemovedReasons = removedReasons
+            };
+            if (model.OrganisationStatusId == 0) // Removed
+            {
+                model.RemovedReasonId = searchModel.SelectedResult.OrganisationData.RemovedReason.Id;
+            }
+            return View("~/Views/Roatp/UpdateOrganisationStatus.cshtml", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateStatus(UpdateOrganisationStatusViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("~/Views/Roatp/UpdateOrganisationStatus.cshtml", model);
+            }
+
             model.UpdatedBy = HttpContext.User.OperatorName();
 
             var result = await _apiClient.UpdateOrganisationStatus(CreateUpdateOrganisationStatusRequest(model));

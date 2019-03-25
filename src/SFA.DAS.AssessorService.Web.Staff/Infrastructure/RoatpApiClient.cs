@@ -104,6 +104,14 @@
             return await Task.FromResult(result == HttpStatusCode.OK);
         }
 
+        
+        public async Task<bool> UpdateOrganisationStatus(UpdateOrganisationStatusRequest request)
+        {
+            HttpStatusCode result = await Put<UpdateOrganisationStatusRequest>($"{_baseUrl}/api/v1/updateOrganisation/status", request);
+
+            return await Task.FromResult(result == HttpStatusCode.OK);
+        }
+
         public async Task<bool> UpdateOrganisationTradingName(UpdateOrganisationTradingNameRequest request)
         {
             HttpStatusCode result = await Put<UpdateOrganisationTradingNameRequest>($"{_baseUrl}/api/v1/updateOrganisation/tradingName", request);

@@ -21,6 +21,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
        Task<OrganisationSearchResults> Search(string searchTerm);
        Task<bool> UpdateOrganisationLegalName(UpdateOrganisationLegalNameRequest request);
        Task<bool> UpdateOrganisationStatus(UpdateOrganisationStatusRequest request);
+       Task<bool> UpdateOrganisationStatus(UpdateOrganisationStatusRequest request);
        Task<bool> UpdateOrganisationTradingName(UpdateOrganisationTradingNameRequest request);
 
 
