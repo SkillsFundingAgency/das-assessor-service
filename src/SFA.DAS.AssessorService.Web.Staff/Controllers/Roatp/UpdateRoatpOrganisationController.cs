@@ -35,6 +35,21 @@
             return View("~/Views/Roatp/UpdateOrganisationLegalName.cshtml", model);
         }
 
+        [Route("change-trading-name")]
+        public async Task<IActionResult> UpdateOrganisationTradingName()
+        {
+            var searchModel = _sessionService.GetSearchResults();
+
+            var model = new UpdateOrganisationTradingNameViewModel
+            {
+                CurrentTradingName = searchModel.SelectedResult.TradingName,
+                TradingName = searchModel.SelectedResult.TradingName,
+                OrganisationId = searchModel.SelectedResult.Id
+            };
+
+            return View("~/Views/Roatp/UpdateOrganisationTradingName.cshtml", model);
+        }
+
         [HttpPost]
         public async Task<IActionResult> UpdateLegalName(UpdateOrganisationLegalNameViewModel model)
         {
@@ -55,6 +70,27 @@
             return View("~/Views/Roatp/UpdateOrganisationLegalName.cshtml", model);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> UpdateTradingName(UpdateOrganisationTradingNameViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("~/Views/Roatp/UpdateOrganisationTradingName.cshtml", model);
+            }
+
+            model.UpdatedBy = HttpContext.User.OperatorName();
+
+            var result = await _apiClient.UpdateOrganisationTradingName(CreateUpdateTradingNameRequest(model));
+
+            if (result)
+            {
+                return await RefreshSearchResults();
+            }
+
+            return View("~/Views/Roatp/UpdateOrganisationTradingName.cshtml", model);
+        }
+
+
         private UpdateOrganisationLegalNameRequest CreateUpdateLegalNameRequest(UpdateOrganisationLegalNameViewModel model)
         {
             return new UpdateOrganisationLegalNameRequest
@@ -64,6 +100,15 @@
                 UpdatedBy = model.UpdatedBy
             };
         }
-      
+
+        private UpdateOrganisationTradingNameRequest CreateUpdateTradingNameRequest(UpdateOrganisationTradingNameViewModel model)
+        {
+            return new UpdateOrganisationTradingNameRequest
+            {
+                TradingName = model.TradingName,
+                OrganisationId = model.OrganisationId,
+                UpdatedBy = model.UpdatedBy
+            };
+        }
     }
 }
