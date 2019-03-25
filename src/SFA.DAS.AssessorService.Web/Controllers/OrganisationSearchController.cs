@@ -7,9 +7,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
-using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Settings;
@@ -167,6 +166,39 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 viewModel.Ukprn, viewModel.OrganisationType, viewModel.Postcode);
             if (organisationSearchResult != null)
             {
+                var orgDetails = new OrganisationDetails
+                {
+                    OrganisationReferenceType = organisationSearchResult.OrganisationReferenceType,
+                    OrganisationReferenceId = organisationSearchResult.OrganisationReferenceId,
+                    LegalName = organisationSearchResult.LegalName,
+                    TradingName = organisationSearchResult.TradingName,
+                    ProviderName = organisationSearchResult.ProviderName,
+                    CompanyNumber = organisationSearchResult.CompanyNumber,
+                    CharityNumber = organisationSearchResult.CharityNumber,
+                    Address1 = organisationSearchResult.Address?.Address1,
+                    Address2 = organisationSearchResult.Address?.Address2,
+                    Address3 = organisationSearchResult.Address?.Address3,
+                    City = organisationSearchResult.Address?.City,
+                    Postcode = organisationSearchResult.Address?.Postcode,
+                    FHADetails = new FHADetails()
+                    {
+                        FinancialDueDate = organisationSearchResult.FinancialDueDate,
+                        FinancialExempt = organisationSearchResult.FinancialExempt
+                    }
+                };
+
+                var request = new ApplyTypes.CreateOrganisationRequest
+                {
+                    Name = organisationSearchResult.Name,
+                    OrganisationType = organisationSearchResult.OrganisationType,
+                    OrganisationUkprn = organisationSearchResult.Ukprn,
+                    RoEPAOApproved = organisationSearchResult.RoEPAOApproved,
+                    RoATPApproved = organisationSearchResult.RoATPApproved,
+                    OrganisationDetails = orgDetails,
+                    CreatedBy = user.Id,
+                    PrimaryContactEmail = organisationSearchResult.Email
+                };
+
                 if (organisationSearchResult.OrganisationReferenceType == "RoEPAO")
                 {
                     var registeredOrganisation =
@@ -177,44 +209,27 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                         registeredOrganisation.Id.ToString(),
                         organisationSearchResult.Id,
                         ContactStatus.InvitePending));
+
+
+                    try
+                    {
+                        await _organisationsApplyApiClient.DoesOrganisationExist(request.Name);
+                    }
+                    catch (EntityNotFoundException e)
+                    {
+                       _logger.LogInformation($"{e.Message}");
+                        //Try creating an organisation
+                        await _organisationsApplyApiClient.CreateNewOrganisation(request);
+                    }
+                 
+
                     await _organisationsApiClient.SendEmailsToOrgApprovedUsers(new EmailAllApprovedContactsRequest(
                         user.DisplayName, organisationSearchResult
                             .OrganisationReferenceId,  _config.ServiceLink));
                 }
                 else
                 {
-                    var orgDetails = new OrganisationDetails
-                    {
-                        OrganisationReferenceType = organisationSearchResult.OrganisationReferenceType,
-                        OrganisationReferenceId = organisationSearchResult.OrganisationReferenceId,
-                        LegalName = organisationSearchResult.LegalName,
-                        TradingName = organisationSearchResult.TradingName,
-                        ProviderName = organisationSearchResult.ProviderName,
-                        CompanyNumber = organisationSearchResult.CompanyNumber,
-                        CharityNumber = organisationSearchResult.CharityNumber,
-                        Address1 = organisationSearchResult.Address?.Address1,
-                        Address2 = organisationSearchResult.Address?.Address2,
-                        Address3 = organisationSearchResult.Address?.Address3,
-                        City = organisationSearchResult.Address?.City,
-                        Postcode = organisationSearchResult.Address?.Postcode,
-                        FHADetails = new FHADetails()
-                        {
-                            FinancialDueDate = organisationSearchResult.FinancialDueDate,
-                            FinancialExempt = organisationSearchResult.FinancialExempt
-                        }
-                    };
-
-                    var request = new ApplyTypes.CreateOrganisationRequest
-                    {
-                        Name = organisationSearchResult.Name,
-                        OrganisationType = organisationSearchResult.OrganisationType,
-                        OrganisationUkprn = organisationSearchResult.Ukprn,
-                        RoEPAOApproved = organisationSearchResult.RoEPAOApproved,
-                        RoATPApproved = organisationSearchResult.RoATPApproved,
-                        OrganisationDetails = orgDetails,
-                        CreatedBy = user.Id,
-                        PrimaryContactEmail = organisationSearchResult.Email
-                    };
+                   
                     await _contactsApiClient.UpdateStatus(new UpdateContactStatusRequest(user.Id.ToString(), ContactStatus.Applying));
                     await _organisationsApplyApiClient.ConfirmSearchedOrganisation(request);
 
