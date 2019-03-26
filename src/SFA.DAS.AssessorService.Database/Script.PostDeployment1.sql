@@ -113,7 +113,7 @@ INSERT [Privileges] ([Id],[UserPrivilege]) VALUES (NEWID(), N'Apply for standard
 END
 
 -- Setup ContactsPrivileges
-delete from[ContactsPrivileges]
+delete from [ContactsPrivileges]
 
 insert into [ContactsPrivileges]
 select co1.id, pr1.id 
