@@ -67,6 +67,11 @@ namespace SFA.DAS.AssessorService.Web
 
             if (_env.IsDevelopment())
             {
+                var redis = ConnectionMultiplexer.Connect($"{Configuration.SessionRedisConnectionString}");
+
+                services.AddDataProtection()
+                    .PersistKeysToStackExchangeRedis(redis, "AssessorApply-DataProtectionKeys")
+                    .SetApplicationName("AssessorApply");
                 services.AddDistributedMemoryCache();
             }
             else
