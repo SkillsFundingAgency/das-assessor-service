@@ -121,4 +121,12 @@ from Contacts co1
 cross  join [Privileges] pr1
 where co1.status = 'Live'  and co1.username not like 'unknown%' and co1.username != 'manual'
 
-
+--Setup contact roles
+INSERT INTO [ContactRoles]
+SELECT ab1.*, co1.id contactid FROM (
+SELECT newid() Id,'SuperUser' Rolename ) ab1
+CROSS JOIN [Contacts] co1
+WHERE co1.[Status] = 'Live'
+AND co1.username not like 'unknown%'
+AND EXISTS ( SELECT NULL FROM Organisations og1 WHERE og1.id = co1.OrganisationId AND og1.[Status] = 'Live')
+AND NOT EXISTS (SELECT NULL FROM [ContactRoles] co2 WHERE co2.ContactId = co1.Id)
