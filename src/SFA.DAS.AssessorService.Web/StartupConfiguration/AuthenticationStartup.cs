@@ -27,25 +27,25 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 
             services.AddAuthentication(options =>
                 {
-                    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultScheme = "Cookies";
                     options.DefaultChallengeScheme = "oidc";
                 })
                 .AddCookie(options => { 
-                    options.Cookie.Name = ".Apply.Cookies";
+                    options.Cookie.Name = ".Assessor.Cookies";
                     options.Cookie.HttpOnly = true;
                 })
                 .AddOpenIdConnect("oidc",options =>
                 {
                     options.CorrelationCookie = new CookieBuilder()
                     {
-                        Name = ".Apply.Correlation.", 
+                        Name = ".Assessor.Correlation.", 
                         HttpOnly = true,
                         SameSite = SameSiteMode.None,
                         SecurePolicy = CookieSecurePolicy.SameAsRequest
                     };
                     
-                  //  options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                    options.MetadataAddress = _configuration.DfeSignIn.MetadataAddress;
+                    options.SignInScheme = "Cookies";
+                    options.Authority = _configuration.DfeSignIn.MetadataAddress;
                     options.RequireHttpsMetadata = false;
                     options.ClientId = _configuration.DfeSignIn.ClientId;
 
