@@ -14,7 +14,7 @@
 
             RuleFor(vm => vm).Custom((vm, context) =>
             {
-                var validationErrors = _validator.IsValidLegalName(vm.TradingName);
+                var validationErrors = _validator.IsValidTradingName(vm.TradingName);
                 if (!validationErrors.Any()) return;
                 foreach (var error in validationErrors)
                 {
