@@ -63,27 +63,25 @@ namespace SFA.DAS.AssessorService.Web
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            var redis = ConnectionMultiplexer.Connect("localhost");
-            
-            services.AddDataProtection()
-                .PersistKeysToStackExchangeRedis(redis, "AssessorApply-DataProtectionKeys")
-                .SetApplicationName("AssessorApply");
-            
-
             services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Assessors.AntiForgery", HttpOnly = true });
 
             if (_env.IsDevelopment())
             {
                 services.AddDistributedMemoryCache();
-                
             }
             else
             {
                 try
                 {
+                    var redis = ConnectionMultiplexer.Connect($"{Configuration.SessionRedisConnectionString},DefaultDatabase=1");
+            
+                    services.AddDataProtection()
+                        .PersistKeysToStackExchangeRedis(redis, "AssessorApply-DataProtectionKeys")
+                        .SetApplicationName("AssessorApply");
+                    
                     services.AddDistributedRedisCache(options =>
                     {
-                        options.Configuration = Configuration.SessionRedisConnectionString;
+                        options.Configuration = $"{Configuration.SessionRedisConnectionString},DefaultDatabase=0";
                     });
                 }
                 catch (Exception e)
