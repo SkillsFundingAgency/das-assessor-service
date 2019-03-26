@@ -7,6 +7,7 @@ using SFA.DAS.AssessorService.Application.Api.Controllers;
 using SFA.DAS.AssessorService.Application.Api.UnitTests.Helpers;
 using SFA.DAS.AssessorService.Application.Api.Validators;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts.Query
 {
@@ -48,7 +49,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Contacts
                 ContactQueryRepositoryMock.Object,
                 _searchOrganisationForContactsValidator,
                 MediatorMock.Object,
-                ControllerLoggerMock.Object);
+                ControllerLoggerMock.Object, new Mock<IWebConfiguration>().Object);
         }
 
         private void SetupControllerMocks()
