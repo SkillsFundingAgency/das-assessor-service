@@ -123,6 +123,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task MigrateUsers()
+        {
+            await HttpClient.PostAsync("/api/v1/contacts/MigrateUsers", new StringContent(""));
+        }
     }
 
     public interface IContactsApiClient
@@ -146,5 +150,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<ContactBoolResponse> InviteUser(CreateContactRequest createAccountRequest);
         Task Callback(DfeSignInCallback callback);
 
+        Task MigrateUsers();
     }
 }
