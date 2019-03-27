@@ -128,5 +128,5 @@ SELECT newid() Id,'SuperUser' Rolename ) ab1
 CROSS JOIN [Contacts] co1
 WHERE co1.[Status] = 'Live'
 AND co1.username not like 'unknown%'
-AND EXISTS ( SELECT NULL FROM Organisations og1 WHERE og1.id = co1.OrganisationId AND og1.[Status] = 'Live')
+AND EXISTS ( SELECT NULL FROM Organisations og1 WHERE og1.id = co1.OrganisationId AND og1.[Status] != 'Deleted')
 AND NOT EXISTS (SELECT NULL FROM [ContactRoles] co2 WHERE co2.ContactId = co1.Id)
