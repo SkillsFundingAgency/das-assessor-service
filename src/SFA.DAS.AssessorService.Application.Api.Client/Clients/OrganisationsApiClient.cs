@@ -183,6 +183,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+
+      
+        public async Task SendEmailsToOrgApprovedUsers(EmailAllApprovedContactsRequest emailAllApprovedContactsRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Put,
+                $"/api/v1/organisations/NotifyAllApprovedUsers"))
+            {
+                 await PostPutRequest (request, emailAllApprovedContactsRequest);
+            }
+        }
+        
+
         private string SanitizeUrlParam(string rawParam)
         {
             var result = rawParam;
@@ -228,5 +240,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<ValidationResponse> ValidateUpdateOrganisationStandard(string organisationId, int standardId, DateTime? effectiveFrom, DateTime? effectiveTo, Guid? contactId, List<int> deliveryAreas, string actionChoice, string organisationStandardStatus, string organisationStatus);
         Task<EpaOrganisation> GetEpaOrganisation(string organisationId);
         Task<List<OrganisationType>> GetOrganisationTypes();
+        Task SendEmailsToOrgApprovedUsers(EmailAllApprovedContactsRequest emailAllApprovedContactsRequest);
+
     }
 }

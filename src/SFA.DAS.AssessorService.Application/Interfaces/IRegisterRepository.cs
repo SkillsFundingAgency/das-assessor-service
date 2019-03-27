@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Interfaces
 {
@@ -14,5 +15,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<string> UpdateEpaOrganisationStandard(EpaOrganisationStandard organisationStandard, List<int> deliveryAreas);
         Task<string> CreateEpaOrganisationContact(EpaContact contact);
         Task<string> UpdateEpaOrganisationContact(EpaContact contact, string actionChoice);
+        Task<string> AssociateOrganisationWithContact(Guid id, EpaOrganisation org, string status, string actionChoice);
     }
 }

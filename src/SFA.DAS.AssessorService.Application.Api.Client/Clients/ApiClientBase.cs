@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -15,7 +16,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public abstract class ApiClientBase : IDisposable
     {
-        protected readonly ITokenService TokenService;
+        protected ITokenService TokenService;
         private readonly ILogger<ApiClientBase> _logger;
         protected HttpClient HttpClient;
 
@@ -29,8 +30,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         protected ApiClientBase(string baseUri, ITokenService tokenService, ILogger<ApiClientBase> logger)
         {
+
             TokenService = tokenService;
-            _logger = logger;
 
             HttpClient = new HttpClient { BaseAddress = new Uri($"{baseUri}") };
 
@@ -44,6 +45,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         protected ApiClientBase(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger)
         {
             TokenService = tokenService;
+
             _logger = logger;
 
             HttpClient = httpClient;
@@ -54,6 +56,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2,
                     retryAttempt)));
         }
+
 
         protected static void RaiseResponseError(string message, HttpRequestMessage failedRequest, HttpResponseMessage failedResponse)
         {

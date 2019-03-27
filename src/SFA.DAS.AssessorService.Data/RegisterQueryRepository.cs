@@ -77,7 +77,7 @@ namespace SFA.DAS.AssessorService.Data
                     await connection.OpenAsync();
                 var sqlForMainDetails =
                     "select Id, CreatedAt, DeletedAt, EndPointAssessorName as Name,  EndPointAssessorOrganisationId as OrganisationId, EndPointAssessorUkprn as ukprn, " +
-                    "primaryContact, Status, UpdatedAt, OrganisationTypeId, OrganisationData " +
+                    "primaryContact, Status, UpdatedAt, OrganisationTypeId, OrganisationData, ApiEnabled, ApiUser " +
                     " FROM [Organisations] " +
                     "WHERE EndPointAssessorOrganisationId = @organisationId";
                 var orgs = await connection.QueryAsync<EpaOrganisation>(sqlForMainDetails, new {organisationId});
