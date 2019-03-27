@@ -31,7 +31,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
 
         public async Task<ContactBoolResponse> Handle(CreateContactRequest createContactRequest, CancellationToken cancellationToken)
         {
-            Contact contactResponse = null;
             var response = new ContactBoolResponse(true);
             var newContact = Mapper.Map<Contact>(createContactRequest);           
             newContact.OrganisationId = null;
@@ -40,7 +39,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
             var existingContact = await _contactRepository.GetContact(newContact.Email);
             if (existingContact == null)
             {
-                contactResponse = await _contactRepository.CreateNewContact(newContact);
+                var contactResponse = await _contactRepository.CreateNewContact(newContact);
                 //Todo: The role should be associated after the user has been created by another mechanism
                 await _contactRepository.AssociateRoleWithContact("SuperUser", newContact);
                 var privileges = await _contactQueryRepository.GetAllPrivileges();
@@ -65,7 +64,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
                     }
                 }
                 // otherwise advise they already have an account (by Email)
-               var emailTemplate =  await _mediator.Send(new GetEMailTemplateRequest {TemplateName = "ApplySignupError"}, cancellationToken);
+               var emailTemplate =  await _mediator.Send(new GetEMailTemplateRequest {TemplateName = "AssessorSignupError"}, cancellationToken);
                await _mediator.Send(new SendEmailRequest(createContactRequest.Email, emailTemplate, new { }), cancellationToken);
             }
             return response;
