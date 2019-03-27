@@ -18,5 +18,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
        Task<DuplicateCheckResponse> DuplicateCharityNumberCheck(Guid organisationId, string charityNumber);
        Task<OrganisationSearchResults> Search(string searchTerm);
        Task<bool> UpdateOrganisationLegalName(UpdateOrganisationLegalNameRequest request);
+
+
+
+        Task<bool> UpdateOrganisationParentCompanyGuarantee(UpdateOrganisationParentCompanyGuaranteeRequest request);
     }
 }

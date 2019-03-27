@@ -64,6 +64,91 @@
                 UpdatedBy = model.UpdatedBy
             };
         }
-      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        [Route("change-parent-company-guarantee")]
+        public async Task<IActionResult> UpdateOrganisationParentCompanyGuarantee()
+        {
+            var searchModel = _sessionService.GetSearchResults();
+
+            var model = new UpdateOrganisationParentCompanyGuaranteeViewModel
+            {
+                CurrentParentCompanyGuarantee = searchModel.SelectedResult.OrganisationData.ParentCompanyGuarantee,
+                ParentCompanyGuarantee = searchModel.SelectedResult.OrganisationData.ParentCompanyGuarantee,
+                OrganisationId = searchModel.SelectedResult.Id,
+                LegalName = searchModel.SelectedResult.LegalName
+            };
+
+            return View("~/Views/Roatp/UpdateOrganisationParentCompanyGuarantee.cshtml", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateParentCompanyGuarantee(UpdateOrganisationParentCompanyGuaranteeViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("~/Views/Roatp/UpdateOrganisationParentCompanyGuarantee.cshtml", model);
+            }
+
+            model.UpdatedBy = HttpContext.User.OperatorName();
+
+            var result = await _apiClient.UpdateOrganisationParentCompanyGuarantee(CreateUpdateParentCompanyGuaranteeRequest(model));
+
+            if (result)
+            {
+                return await RefreshSearchResults();
+            }
+
+            return View("~/Views/Roatp/UpdateOrganisationParentCompanyGuarantree.cshtml", model);
+        }
+
+        private UpdateOrganisationParentCompanyGuaranteeRequest CreateUpdateParentCompanyGuaranteeRequest(UpdateOrganisationParentCompanyGuaranteeViewModel model)
+        {
+            return new UpdateOrganisationParentCompanyGuaranteeRequest
+            {
+                ParentCompanyGuarantee = model.ParentCompanyGuarantee,
+                OrganisationId = model.OrganisationId,
+                UpdatedBy = model.UpdatedBy
+            };
+        }
     }
 }

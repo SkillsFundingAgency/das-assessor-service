@@ -1,0 +1,86 @@
+﻿@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp.UpdateOrganisationParentCompanyGuaranteeViewModel
+
+@using SFA.DAS.AssessorService.Web.Staff
+@using SFA.DAS.AssessorService.Web.Staff.Domain
+@{ ViewBag.Title = "Enter details"; }
+
+@{
+    await Html.RenderPartialAsync("~/Views/Roatp/_StylesPartial.cshtml");
+}
+<div class="grid-row">
+    <form asp-controller="RoatpSearch" asp-action="SearchResults" method="post" name="backForm">
+        <div class="govuk-grid-column-one-half">
+            <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
+        </div>
+    </form>
+</div>
+
+<div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+        There is a problem
+    </h2>
+    <ul class="js-error-summary-list error-summary-list"></ul>
+</div>
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+        <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+            There is a problem
+        </h2>
+        <ul class="error-summary-list">
+            <li><a sfa-validation-for="ParentCompanyGuarantee"></a></li>
+        </ul>
+    </div>
+}
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <h1 class="heading-xlarge roatp-heading">Change Parent Company Guarantee for @Html.Raw(Model.LegalName)</h1>
+    </div>
+</div>
+<div class="govuk-width-container">
+
+    <main class="govuk-main-wrapper " id="main-content" role="main">
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <form method="post" asp-action="UpdateParentCompanyGuarantee" asp-controller="UpdateRoatpOrganisation">
+                    @Html.HiddenFor(x => x.OrganisationId)
+
+                    
+                    <div class="govuk-form-group" sfa-validation-for="ParentCompanyGuarantee" sfa-validationerror-class="form-group-error">
+                        <label for="ParentCompanyGuarantee" class="roatp-label">Parent Company Guarantee</label>
+                        <span class="error-message" asp-validation-for="ParentCompanyGuarantee"></span>
+                        <fieldset class="govuk-fieldset">
+
+                            <div class="roatp-radios">
+
+                                <div class="roatp-radios__item">
+
+                                    <input asp-for="ParentCompanyGuarantee" class="roatp-radios__input" id="route-true"
+                                           name="ParentCompanyGuarantee" type="radio" value="true"
+                                           sfa-validation-for="ParentCompanyGuarantee" sfa-validationerror-class="form-control-error">
+                                    <label class="roatp-label roatp-radios__label" for="route-true">
+                                        Yes
+                                    </label>
+                                </div>
+                                <div class="roatp-radios__item">
+
+                                    <input asp-for="ParentCompanyGuarantee" class="roatp-radios__input" id="route-false"
+                                           name="ParentCompanyGuarantee" type="radio" value="false"
+                                           sfa-validation-for="ParentCompanyGuarantee" sfa-validationerror-class="form-control-error">
+                                    <label class="roatp-label roatp-radios__label" for="route-false">
+                                        No
+                                    </label>
+                                </div>
+
+                            </div>
+                        </fieldset>
+                    </div>
+                    @Html.HiddenFor(x => x.CurrentParentCompanyGuarantee)
+                    <input type="submit" class="roatp-button" value="Change" />
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
