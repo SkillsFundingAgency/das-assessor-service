@@ -30,6 +30,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         protected ApiClientBase(string baseUri, ITokenService tokenService, ILogger<ApiClientBase> logger)
         {
+            _logger = logger;
 
             TokenService = tokenService;
 
