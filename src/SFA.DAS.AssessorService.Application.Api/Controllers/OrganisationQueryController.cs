@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using AutoMapper;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
@@ -14,6 +15,7 @@ using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Validators;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Settings;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
@@ -26,18 +28,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
         private readonly UkPrnValidator _ukPrnValidator;
         private readonly IStringLocalizer<OrganisationQueryController> _localizer;
-        private readonly IMediator _mediator;
+        private readonly IWebConfiguration _config;
 
         public OrganisationQueryController(
             ILogger<OrganisationQueryController> logger, IOrganisationQueryRepository organisationQueryRepository, UkPrnValidator ukPrnValidator, IStringLocalizer<OrganisationQueryController> localizer,
-            IMediator mediator
+            IWebConfiguration config
         )
         {
             _logger = logger;
             _organisationQueryRepository = organisationQueryRepository;
             _ukPrnValidator = ukPrnValidator;
             _localizer = localizer;
-            _mediator = mediator;
+            _config = config;
         }
         
         [HttpGet("ukprn/{ukprn}", Name = "SearchOrganisation")]
@@ -89,5 +91,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             return Ok(organisation);
         }
+
     }
 }

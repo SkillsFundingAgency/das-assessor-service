@@ -4,7 +4,7 @@ namespace SFA.DAS.AssessorService.Settings
 {
     public class WebConfiguration : IWebConfiguration
     {
-        [JsonRequired] public AuthSettings Authentication { get; set; }
+        public AuthSettings Authentication { get; set; }
 
         [JsonRequired] public ApiAuthentication ApiAuthentication { get; set; }
 
@@ -31,6 +31,9 @@ namespace SFA.DAS.AssessorService.Settings
         [JsonRequired] public string SessionRedisConnectionString { get; set; }
         [JsonRequired] public AuthSettings StaffAuthentication { get; set; }
         [JsonRequired] public ClientApiAuthentication ApplyApiAuthentication { get; set; }
+        [JsonRequired] public string ApplyBaseAddress { get; set; }
+        [JsonRequired] public string ServiceLink { get; set; }
+        [JsonRequired] public DfeSignInConfig DfeSignIn { get; set; }
 
         [JsonRequired] public string RoatpApiClientBaseUrl { get; set; }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,6 +28,9 @@ namespace SFA.DAS.AssessorService.Data
         public virtual DbSet<BatchLog> BatchLogs { get; set; }
         public virtual DbSet<SearchLog> SearchLogs { get; set; }
         public virtual DbSet<StaffReport> StaffReports { get; set; }
+        public virtual DbSet<ContactsPrivilege> ContactsPrivileges { get; set; }
+        public virtual DbSet<Privilege> Privileges { get; set; }
+        public virtual DbSet<ContactRole> ContactRoles { get; set; }
 
         public override int SaveChanges()
         {
@@ -58,6 +62,22 @@ namespace SFA.DAS.AssessorService.Data
         public virtual void MarkAsModified<T>(T item) where T : class
         {
             Entry(item).State = EntityState.Modified;
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<ContactsPrivilege>().HasKey(sc => new { sc.ContactId, sc.PrivilegeId });
+
+            modelBuilder.Entity<ContactsPrivilege>()
+                .HasOne<Contact>(sc => sc.Contact)
+                .WithMany(s => s.ContactsPrivileges)
+                .HasForeignKey(sc => sc.ContactId);
+
+
+            modelBuilder.Entity<ContactsPrivilege>()
+                .HasOne<Privilege>(sc => sc.Privilege)
+                .WithMany(s => s.ContactsPrivileges)
+                .HasForeignKey(sc => sc.PrivilegeId);
         }
     }
 }

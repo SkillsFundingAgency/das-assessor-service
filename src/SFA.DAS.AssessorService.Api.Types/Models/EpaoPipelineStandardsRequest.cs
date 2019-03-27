@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using MediatR;
+﻿using MediatR;
 using SFA.DAS.AssessorService.Domain.Paging;
 
-namespace SFA.DAS.AssessorService.Api.Types
+namespace SFA.DAS.AssessorService.Api.Types.Models
 {
     public class EpaoPipelineStandardsRequest: IRequest<PaginatedList<EpaoPipelineStandardsResponse>>
     {
@@ -22,8 +19,6 @@ namespace SFA.DAS.AssessorService.Api.Types
 
         public string OrderBy { get; private set; }
         public string OrderDirection { get; private set; }
-
-
 
     }
 }
