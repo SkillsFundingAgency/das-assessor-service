@@ -24,7 +24,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
         public async Task<InviteUserResponse> InviteUser(string email, string givenName, string familyName, Guid userId)
         {
             var client = new HttpClient();
-            var disco = await client.GetDiscoveryDocumentAsync("https://localhost:5001");
+            var disco = await client.GetDiscoveryDocumentAsync(_config.DfeSignIn.MetadataAddress);
             if (disco.IsError)
             {
                 _logger.LogError(disco.Error);
