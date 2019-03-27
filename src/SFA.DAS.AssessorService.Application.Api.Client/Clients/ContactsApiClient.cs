@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
@@ -125,7 +126,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         public async Task MigrateUsers()
         {
-            await HttpClient.PostAsync("/api/v1/contacts/MigrateUsers", new StringContent(""));
+            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/MigrateUsers"))
+            {
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
+                request.Headers.Add("Accept", "application/json");
+                request.Content = new StringContent("", System.Text.Encoding.UTF8, "application/json");
+
+                await HttpClient.SendAsync(request);
+            }
         }
     }
 
