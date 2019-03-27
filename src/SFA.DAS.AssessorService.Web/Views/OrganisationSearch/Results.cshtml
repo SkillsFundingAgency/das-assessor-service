@@ -1,0 +1,154 @@
+﻿@model SFA.DAS.AssessorService.Web.ViewModels.Organisation.OrganisationSearchViewModel
+@inject Microsoft.Extensions.Configuration.IConfiguration configuration
+
+@{
+    ViewBag.Title = "Search results";
+    Layout = "_Layout";
+
+    bool showErrors = TempData["ShowErrors"] as bool? ?? false;
+}
+
+<a asp-action="Index" asp-controller="OrganisationSearch" class="link-back">Search again</a>
+
+<div class="grid-row">
+    <div class="column-full">
+        <form method="get" asp-action="FromResults" asp-controller="OrganisationSearch" class="js-disable-on-submit" novalidate>
+
+            @* hidden with css by default *@
+            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                    There's a problem
+                </h2>
+                <ul class="js-error-summary-list error-summary-list"></ul>
+            </div>
+
+            @if (!ViewData.ModelState.IsValid || showErrors)
+            {
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                        There's a problem
+                    </h2>
+                    <ul class="error-summary-list">
+                        <li><a sfa-validation-for="SearchString">Enter some text to identify your organisation</a></li>
+                    </ul>
+                </div>
+            }
+
+            <div sfa-anyvalidationerror-class="after-error-summary">
+                <div class="form-group" sfa-validation-for="SearchString" sfa-validationerror-class="form-group-error">
+                    <h1 class="heading-xlarge">
+                        Select your organisation
+                    </h1>
+                    <span class="form-hint form-hint--margin-bottom">
+                        or search again
+                    </span>
+                    @if (!ViewData.ModelState.IsValid || showErrors)
+                    {
+                        <span id="search-string-error" class="error-message">
+                            Enter some text to identify your organisation
+                        </span>
+                    }
+                    <input class="form-control" sfa-validationerror-class="form-control-error" sfa-validation-for="SearchString" asp-for="SearchString" minlength="2" required />
+                </div>
+                <button type="submit" class="button">Search</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="grid-row search-results">
+    <div class="column-two-thirds">
+        @if (@Model.Organisations != null && @Model.Organisations.Any())
+        {
+            <table class="table.responsive">
+                <tbody>
+                    @foreach (var result in Model.Organisations)
+                    {
+                        <tr>
+                            <td>
+                                <form method="post" asp-action="@("OrganisationChosen")" asp-controller="OrganisationSearch" novalidate>
+                                    <input asp-for="SearchString" type="hidden" />
+                                    <input asp-for="Name" value="@result.Name" type="hidden" />
+                                    <input asp-for="Ukprn" value="@result.Ukprn" type="hidden" />
+                                    <input asp-for="OrganisationType" value="@result.OrganisationType" type="hidden" />
+                                    <input asp-for="Postcode" value="@result.Address?.Postcode" type="hidden" />
+
+                                    <p>
+                                        <button type="submit" class="button-looks-like-a-link">@result.Name</button>
+                                    </p>
+                                </form>
+                                <p>
+                                    <span class="bold">Address:</span>
+                                    @if (result.Address?.Postcode == null)
+                                    {
+                                        @("Unknown");
+                                    }
+                                    else
+                                    {
+                                        @string.Join(", ", @result.Address?.Address1, @result.Address?.City, @result.Address.Postcode);
+                                    }
+                                </p>
+                                @if (result.OrganisationType != null)
+                                {
+                                    <p class="govuk-margin-bottom-0">
+                                        <span class="bold">Type:</span>
+                                        @result.OrganisationType
+                                    </p>
+                                }
+                                @if (!string.Equals(configuration["EnvironmentName"], "PROD", StringComparison.InvariantCultureIgnoreCase))
+                                {
+                                    @* ON-1205 - request to show flags of what results were found in non-PROD environments *@
+                                    <p class="govuk-margin-bottom-0">
+                                        <span class="bold">Found on:</span>
+                                        @if (result.RoEPAOApproved)
+                                        {
+                                            <span>RoEPAO</span>
+                                        }
+                                        @if (result.RoEPAOApproved && result.RoATPApproved)
+                                        {
+                                            <span> and </span>
+                                        }
+                                        @if (result.RoATPApproved)
+                                        {
+                                            <span>RoATP</span>
+                                        }
+                                        @if (!result.RoEPAOApproved && !result.RoATPApproved)
+                                        {
+                                            switch (result.EasApiOrganisationType)
+                                            {
+                                                case "Charity":<span>Charity Commission</span> break;
+                                                case "Company": <span>Companies House</span> break;
+                                                case "PublicSector": <span>EASAPI - Public Sector</span>break;
+                                                case "EducationOrganisation": <span>EASAPI - Education Organisation</span> break;
+                                                default: <span>EASAPI</span>break;
+                                            }
+                                        }
+                                    </p>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="form-group">
+                <h1 class="heading-medium">We cannot find your organisation details</h1>
+                <p>Check the:</p>
+                <ul class="list list-bullet">
+                    <li>spelling of the name</li>
+                    <li><abbr title="UK provider reference number">UKPRN</abbr> is correct</li>
+                    <li><abbr title="End-point assessor organisation">EPAO ID</abbr> is correct</li>
+                    <li>company number</li>
+                    <li>charity number</li>
+                </ul>
+            </div>
+        }
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

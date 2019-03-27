@@ -43,9 +43,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         [HttpGet]
         [Route("/[controller]/")]
+        [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Standards })]
         public async Task<IActionResult> Index(int? pageIndex)
         {
-            _sessionService.Set("CurrentPage", Pages.Standards);
             var epaoRegisteredStandardsResponse =
                 new PaginatedList<GetEpaoRegisteredStandardsResponse>(new List<GetEpaoRegisteredStandardsResponse>(), 0,
                     1, 1);

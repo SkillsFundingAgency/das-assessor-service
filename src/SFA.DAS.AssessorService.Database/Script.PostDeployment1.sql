@@ -26,8 +26,7 @@ update deliveryarea set Ordering=5 where Area='West Midlands'
 update deliveryarea set Ordering=6 where Area='East of England'
 update deliveryarea set Ordering=7 where Area='London'
 update deliveryarea set Ordering=8 where Area='South East'
-update deliveryarea set Ordering=9 where Area='South West'
-*/
+update deliveryarea set Ordering=9 where Area='South West*/
 
 -- ON-1374 update any new organisation standards to 'Live' if minimum acceptance criteria for live is available
 UPDATE organisationStandard 
@@ -74,5 +73,52 @@ SELECT ce1.[Id],JSON_MODIFY([CertificateData],'$.StandardReference',st1.Referenc
 ON (ma1.id = up1.id)
 WHEN MATCHED THEN UPDATE SET ma1.[CertificateData] = up1.[newData];
 
--- ****************************************************************************
+IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'EPAOUserApproveConfirm')
+BEGIN
+INSERT EMailTemplates ([Id],[TemplateName],[TemplateId],[Recipients],[CreatedAt]) 
+VALUES (NEWID(), N'EPAOUserApproveConfirm', N'539204f8-e99a-4efa-9d1f-d0e58b26dd7b', NULL, GETDATE())
+END
+
+IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'EPAOUserApproveRequest')
+BEGIN
+INSERT EMailTemplates ([Id],[TemplateName],[TemplateId],[Recipients],[CreatedAt]) 
+VALUES (NEWID(), N'EPAOUserApproveRequest', N'5bb920f4-06ec-43c7-b00a-8fad33ce8066', NULL, GETDATE())
+END
+
+IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'ApplySignupError')
+BEGIN
+INSERT EMailTemplates ([Id],[TemplateName],[TemplateId],[Recipients],[CreatedAt]) 
+VALUES (NEWID(), N'EPAOUserApproveRequest', N'88799189-fe12-4887-a13f-f7f76cd6945a', NULL, GETDATE())
+END
+
+-- setup Privileges
+IF NOT EXISTS (SELECT * FROM [Privileges] WHERE [UserPrivilege] = N'Manage users')
+BEGIN
+INSERT [Privileges] ([Id],[UserPrivilege]) VALUES (NEWID(), N'Manage users')
+END
+
+IF NOT EXISTS (SELECT * FROM [Privileges] WHERE [UserPrivilege] =  N'Record grades and issue certificates')
+BEGIN
+INSERT [Privileges] ([Id],[UserPrivilege]) VALUES (NEWID(), N'Record grades and issue certificates')
+END
+
+IF NOT EXISTS (SELECT * FROM [Privileges] WHERE [UserPrivilege] =  N'View standards')
+BEGIN
+INSERT [Privileges] ([Id],[UserPrivilege]) VALUES (NEWID(), N'View standards')
+END
+
+IF NOT EXISTS (SELECT * FROM [Privileges] WHERE [UserPrivilege] =  N'Apply for standards')
+BEGIN
+INSERT [Privileges] ([Id],[UserPrivilege]) VALUES (NEWID(), N'Apply for standards')
+END
+
+-- Setup ContactsPrivileges
+delete from[ContactsPrivileges]
+
+insert into [ContactsPrivileges]
+select co1.id, pr1.id 
+from Contacts co1 
+cross  join Privileges pr1
+where co1.status = 'Live'  and co1.username not like 'unknown%' and co1.username != 'manual'
+
 

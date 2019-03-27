@@ -1,9 +1,13 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Web.Infrastructure;
 
 namespace SFA.DAS.AssessorService.Web.Orchestrators.Login
 {
@@ -29,23 +33,16 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators.Login
 
             _logger.LogInformation("Start of PostSignIn");
 
-            var ukprn = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "http://schemas.portal.com/ukprn")?.Value;
-            var username = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
-            var email = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "http://schemas.portal.com/mail")?.Value;
-            var displayName = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "http://schemas.portal.com/displayname")?.Value;
-
-            var roles = _contextAccessor.HttpContext.User.Claims.Where(c => c.Type == "http://schemas.portal.com/service")
-                .Select(c => c.Value).ToList();
+            var signinId = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "sub")?.Value;
+            var email = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "email")?.Value;
+            var displayName = _contextAccessor.HttpContext.User.Claims.First(c => c.Type == "display_name")?.Value;
 
             var loginResult = await _loginApiClient.Login(new LoginRequest()
             {
                 DisplayName = displayName,
                 Email = email,
-                UkPrn = int.Parse(ukprn),
-                Username = username,
-                Roles = roles
+                SignInId = Guid.Parse(signinId)
             });
-
             return loginResult;
         }
     }
