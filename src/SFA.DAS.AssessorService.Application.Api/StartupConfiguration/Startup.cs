@@ -152,6 +152,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 config.For<IMediator>().Use<Mediator>();
                 config.For<IAssessmentOrgsApiClient>().Use(() => new AssessmentOrgsApiClient(Configuration.AssessmentOrgsApiClientBaseUrl));  
                 config.For<IIfaStandardsApiClient>().Use(() => new IfaStandardsApiClient(Configuration.IfaApiClientBaseUrl));
+          
                 config.For<IDateTimeProvider>().Use<UtcDateTimeProvider>();
 
                 var option = new DbContextOptionsBuilder<AssessorDbContext>();

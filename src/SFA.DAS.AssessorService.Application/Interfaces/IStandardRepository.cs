@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.ExternalApis.IFAStandards.Types;
 
 namespace SFA.DAS.AssessorService.Application.Interfaces
@@ -9,6 +10,8 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
     {
         Task<string> UpsertStandards(List<StandardCollation> standards);
         Task<List<StandardCollation>> GetStandardCollations();
+        Task<StandardCollation> GetStandardCollationByStandardId(int standardId);
+        Task<StandardCollation> GetStandardCollationByReferenceNumber(string referenceNumber);
         Task<DateTime?> GetDateOfLastStandardCollation();
         Task<int> GetEpaoStandardsCount(string endPointAssessorOrganisationId);
         Task<int> GetEpaoPipelineCount(string endPointAssessorOrganisationId);

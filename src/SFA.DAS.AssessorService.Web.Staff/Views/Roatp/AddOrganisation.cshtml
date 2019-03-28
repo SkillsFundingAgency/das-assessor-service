@@ -1,4 +1,4 @@
-@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp.AddOrganisationViewModel
+@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp.AddOrganisationProviderTypeViewModel
 
 @using SFA.DAS.AssessorService.Web.Staff
 @using SFA.DAS.AssessorService.Web.Staff.Domain
@@ -15,8 +15,22 @@
         </form>
     </div>
 
-    @{
-        await Html.RenderPartialAsync("~/Views/Roatp/_AddOrganisationValidationErrorsPartial.cshtml");
+    <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+        <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+            There is a problem
+        </h2>
+        <ul class="js-error-summary-list error-summary-list"></ul>
+    </div>
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+            <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                There is a problem
+            </h2>
+            <ul class="error-summary-list">
+                <li><a sfa-validation-for="ProviderTypeId"></a></li>              
+            </ul>
+        </div>
     }
 
     <div class="grid-row">
@@ -32,7 +46,8 @@
                 <div class="govuk-grid-column-two-thirds">
                     <form method="post" asp-action="AddOrganisationDetails" asp-controller="AddRoatpOrganisation">
 
-                        <div class="govuk-form-group">
+                        <div class="govuk-form-group" sfa-validation-for="ProviderTypeId" sfa-validationerror-class="form-group-error">
+                            <span class="error-message" asp-validation-for="ProviderTypeId"></span>
                             <fieldset class="govuk-fieldset">
 
                                 <div class="roatp-radios">
@@ -41,7 +56,9 @@
                                     {
                                         <div class="roatp-radios__item">
 
-                                            <input asp-for="ProviderTypeId" class="roatp-radios__input" id="route-@providerType.Id" name="ProviderTypeId" type="radio" value="@providerType.Id">
+                                            <input asp-for="ProviderTypeId" class="roatp-radios__input" id="route-@providerType.Id" 
+                                                   name="ProviderTypeId" type="radio" value="@providerType.Id"
+                                                   sfa-validation-for="ProviderTypeId" sfa-validationerror-class="form-control-error">
                                             <label class="roatp-label roatp-radios__label" for="route-@providerType.Id">
                                                 @providerType.Type
                                             </label>
@@ -50,12 +67,6 @@
                                 </div>
                             </fieldset>
                         </div>
-                        <input type="hidden" asp-for="LegalName" />
-                        <input type="hidden" asp-for="TradingName" />
-                        <input type="hidden" asp-for="OrganisationTypeId" />
-                        <input type="hidden" asp-for="UKPRN" />
-                        <input type="hidden" asp-for="CompanyNumber" />
-                        <input type="hidden" asp-for="CharityNumber" />
                         <input type="submit" class="roatp-button" value="Continue" />
                     </form>
                 </div>

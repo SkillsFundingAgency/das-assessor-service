@@ -29,7 +29,6 @@ using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.Helpers;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
-using SFA.DAS.AssessorService.Web.Staff.Services;
 using SFA.DAS.AssessorService.Web.Staff.Validators;
 using StructureMap;
 using CheckSessionFilter = SFA.DAS.AssessorService.Web.Staff.Infrastructure.CheckSessionFilter;
@@ -131,14 +130,13 @@ namespace SFA.DAS.AssessorService.Web.Staff
                 
                 config.For<IAssessmentOrgsApiClient>().Use(() => new AssessmentOrgsApiClient(ApplicationConfiguration.AssessmentOrgsApiClientBaseUrl));
                 config.For<IIfaStandardsApiClient>().Use(() => new IfaStandardsApiClient(ApplicationConfiguration.IfaApiClientBaseUrl));
-                config.For<IAzureTokenService>().Use<AzureTokenService>();
                 config.For<IAzureApiClient>().Use<AzureApiClient>().Ctor<string>().Is(ApplicationConfiguration.AzureApiAuthentication.ApiBaseAddress);
                 config.For<CacheService>().Use<CacheService>();
                 config.For<CertificateLearnerStartDateViewModelValidator>()
                     .Use<CertificateLearnerStartDateViewModelValidator>();
                 config.For<IRegisterValidator>().Use<RegisterValidator>();
 
-                config.For<IStandardService>().Use<StandardService>();
+                config.For<IStandardServiceClient>().Use<StandardServiceClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<ISessionService>().Use<SessionService>().Ctor<string>("environment")
                     .Is(Configuration["EnvironmentName"]);
                 config.Populate(services);

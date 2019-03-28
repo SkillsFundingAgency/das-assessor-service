@@ -1,11 +1,11 @@
 ﻿namespace SFA.DAS.AssessorService.Web.Staff.Validators.Roatp
 {
-    using System.Collections.Generic;
+    using System.Threading.Tasks;
+    using Api.Types.Models.Validation;
     using ViewModels.Roatp;
 
     public interface IAddOrganisationValidator
     {
-        IEnumerable<string> ValidateProviderType(int providerTypeId);
-        IEnumerable<string> ValidateOrganisationDetails(AddOrganisationViewModel viewModel);
+        Task<ValidationResponse> ValidateOrganisationDetails(AddOrganisationViewModel viewModel);
     }
 }

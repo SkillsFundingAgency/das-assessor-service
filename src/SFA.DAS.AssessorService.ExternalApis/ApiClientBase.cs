@@ -59,7 +59,7 @@ namespace SFA.DAS.AssessorService.ExternalApis
             using (var response = _httpClient.SendAsync(request))
             {
                 var result = await response;
-                if (result.StatusCode == HttpStatusCode.OK)
+                if (result.StatusCode == HttpStatusCode.OK || result.StatusCode==HttpStatusCode.NoContent)
                 {
                     var json = await result.Content.ReadAsStringAsync();
                     return await Task.Factory.StartNew(() => JsonConvert.DeserializeObject<T>(json, _jsonSettings));
