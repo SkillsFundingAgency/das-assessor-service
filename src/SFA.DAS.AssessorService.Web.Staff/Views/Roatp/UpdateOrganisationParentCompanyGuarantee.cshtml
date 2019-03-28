@@ -33,11 +33,6 @@
     </div>
 }
 
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <h1 class="heading-xlarge roatp-heading">Change Parent Company Guarantee for @Html.Raw(Model.LegalName)</h1>
-    </div>
-</div>
 <div class="govuk-width-container">
 
     <main class="govuk-main-wrapper " id="main-content" role="main">
@@ -46,37 +41,32 @@
             <div class="govuk-grid-column-two-thirds">
                 <form method="post" asp-action="UpdateParentCompanyGuarantee" asp-controller="UpdateRoatpOrganisation">
                     @Html.HiddenFor(x => x.OrganisationId)
+                    <div class="govuk-form-group">
+                        <fieldset class="govuk-fieldset" aria-describedby="radio-hint">
+                            <div>
+                                <h1 class="heading-xlarge roatp-heading">Change parent company guarantee for @Html.Raw(Model.LegalName)</h1>
+                            </div>
 
-                    
-                    <div class="govuk-form-group" sfa-validation-for="ParentCompanyGuarantee" sfa-validationerror-class="form-group-error">
-                        <label for="ParentCompanyGuarantee" class="roatp-label">Parent Company Guarantee</label>
-                        <span class="error-message" asp-validation-for="ParentCompanyGuarantee"></span>
-                        <fieldset class="govuk-fieldset">
-
-                            <div class="roatp-radios">
-
+                            <div class="roatp-radios roatp-radios--inline">
                                 <div class="roatp-radios__item">
-
-                                    <input asp-for="ParentCompanyGuarantee" class="roatp-radios__input" id="route-true"
-                                           name="ParentCompanyGuarantee" type="radio" value="true"
-                                           sfa-validation-for="ParentCompanyGuarantee" sfa-validationerror-class="form-control-error">
-                                    <label class="roatp-label roatp-radios__label" for="route-true">
+                                    <input asp-for="ParentCompanyGuarantee" class="roatp-radios__input" id="radio-1"
+                                           name="ParentCompanyGuarantee" type="radio" value="true" />
+                                    <label class="roatp-label roatp-radios__label" for="radio-1">
                                         Yes
                                     </label>
                                 </div>
                                 <div class="roatp-radios__item">
-
-                                    <input asp-for="ParentCompanyGuarantee" class="roatp-radios__input" id="route-false"
-                                           name="ParentCompanyGuarantee" type="radio" value="false"
-                                           sfa-validation-for="ParentCompanyGuarantee" sfa-validationerror-class="form-control-error">
-                                    <label class="roatp-label roatp-radios__label" for="route-false">
+                                    <input asp-for="ParentCompanyGuarantee" class="roatp-radios__input" id="radio-2"
+                                           name="ParentCompanyGuarantee" type="radio" value="false" />
+                                    <label class="roatp-label roatp-radios__label" for="radio-2">
                                         No
                                     </label>
                                 </div>
-
                             </div>
                         </fieldset>
                     </div>
+                    
+                    
                     @Html.HiddenFor(x => x.CurrentParentCompanyGuarantee)
                     <input type="submit" class="roatp-button" value="Change" />
                 </form>
