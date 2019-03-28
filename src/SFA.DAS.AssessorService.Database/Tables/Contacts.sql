@@ -9,7 +9,9 @@
 	[Status] [nvarchar](20) NOT NULL,
 	[UpdatedAt] [datetime2](7) NULL,
 	[Username] [nvarchar](120) NOT NULL,
-	[PhoneNumber] [NVARCHAR] (50) NULL
+	[PhoneNumber] [NVARCHAR] (50) NULL,
+	[GivenNames] [NVARCHAR](120) NOT NULL DEFAULT '',
+	[FamilyName] [NVARCHAR](120) NOT NULL DEFAULT '',
  CONSTRAINT [PK_Contacts] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
