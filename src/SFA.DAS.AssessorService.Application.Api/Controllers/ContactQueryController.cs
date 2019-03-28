@@ -165,15 +165,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 var usersToMigrate = await _contactQueryRepository.GetUsersToMigrate();
                 foreach (var user in usersToMigrate)
                 {
-                    var lastSpaceIndex = user.DisplayName.LastIndexOf(" ", StringComparison.Ordinal);
-                    var givenName = user.DisplayName.Substring(0, lastSpaceIndex);
-                    var familyName = user.DisplayName.Substring(lastSpaceIndex + 1);
-                    
                     var result = await httpClient.PostAsJsonAsync(endpoint, new
                     {
                         ClientId = _config.DfeSignIn.ClientId, 
-                        GivenName = givenName, 
-                        FamilyName = familyName, 
+                        GivenName = user.GivenNames, 
+                        FamilyName = user.FamilyName, 
                         Email = user.Email
                     });
 
