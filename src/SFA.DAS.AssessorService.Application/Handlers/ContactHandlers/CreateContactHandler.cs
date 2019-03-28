@@ -60,24 +60,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
             }
             else
             {
-                if (existingContact.SignInId == null)
+                var invitationResult = await _dfeSignInService.InviteUser(createContactRequest.Email, createContactRequest.GivenName, createContactRequest.FamilyName, existingContact.Id);
+                if (!invitationResult.IsSuccess)
                 {
-                    var invitationResult = await _dfeSignInService.InviteUser(createContactRequest.Email, createContactRequest.GivenName, createContactRequest.FamilyName, existingContact.Id);
-                    if (!invitationResult.IsSuccess)
+                    if (invitationResult.UserExists)
                     {
-                        if (invitationResult.UserExists)
-                        {
-                            await _contactRepository.UpdateSignInId(existingContact.Id, invitationResult.ExistingUserId);
-                            response.Result = true;
-                            return response;
-                        }
-                        response.Result = false;
+                        await _contactRepository.UpdateSignInId(existingContact.Id, invitationResult.ExistingUserId);
+                        response.Result = true;
                         return response;
                     }
+                    response.Result = false;
+                    return response;
                 }
-                // otherwise advise they already have an account (by Email)
-               var emailTemplate =  await _mediator.Send(new GetEMailTemplateRequest {TemplateName = "AssessorSignupError"}, cancellationToken);
-               await _mediator.Send(new SendEmailRequest(createContactRequest.Email, emailTemplate, new { }), cancellationToken);
             }
             return response;
         }
