@@ -138,7 +138,7 @@
                 return await RefreshSearchResults();
             }
 
-            return View("~/Views/Roatp/UpdateOrganisationParentCompanyGuarantree.cshtml", model);
+            return View("~/Views/Roatp/UpdateOrganisationParentCompanyGuarantee.cshtml", model);
         }
 
         private UpdateOrganisationParentCompanyGuaranteeRequest CreateUpdateParentCompanyGuaranteeRequest(UpdateOrganisationParentCompanyGuaranteeViewModel model)
