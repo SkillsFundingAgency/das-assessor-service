@@ -132,7 +132,13 @@ AND EXISTS ( SELECT NULL FROM Organisations og1 WHERE og1.id = co1.OrganisationI
 AND NOT EXISTS (SELECT NULL FROM [ContactRoles] co2 WHERE co2.ContactId = co1.Id)
 
 -- DisplayName fix
-WITH t AS (
+MERGE INTO [Contacts] co1
+USING (
+SELECT T.id,
+    T.DisplayName, T.Email,
+	CASE WHEN SecondSpace.j = 0 OR SUBSTRING(T.DisplayName,1,FirstSpace.i) = 'null' THEN NULL ELSE SUBSTRING(T.DisplayName,1,FirstSpace.i) END Title,
+    GivenNames.g "GivenNames", FamilyName.f "FamilyName"
+FROM (
 SELECT 
 CASE WHEN [Id] = '9A60D39C-19D8-48E2-AE10-08D5D52AA3F6' THEN 'null Agnes Varadi'
      WHEN [Id] = 'A671441F-A6C9-458E-A68C-08D64A4EB5A1' THEN 'null Emma Tune'
@@ -143,14 +149,7 @@ CASE WHEN [Id] = '9A60D39C-19D8-48E2-AE10-08D5D52AA3F6' THEN 'null Agnes Varadi'
 	 WHEN [Id] IN ( '19D57EAC-7626-4F63-996D-ED9E2602F6E7' , 'B8764FF2-4883-43A6-84FB-7FB6C85A77E6' , 'E85A99EC-323A-41B5-A328-E12036966407') THEN 'null ' + TRIM(DisplayName)
 	 ELSE TRIM(DisplayName) END DisplayName, Id, Email
  FROM [Contacts] co1
- )
-MERGE INTO [Contacts] co1
-USING (
-SELECT T.id,
-    T.DisplayName, T.Email,
-	CASE WHEN SecondSpace.j = 0 OR SUBSTRING(T.DisplayName,1,FirstSpace.i) = 'null' THEN NULL ELSE SUBSTRING(T.DisplayName,1,FirstSpace.i) END Title,
-    GivenNames.g "GivenNames", FamilyName.f "FamilyName"
-FROM t
+ ) t
     CROSS APPLY (SELECT CHARINDEX(' ', T.DisplayName, 1)) AS FirstSpace(i)
     CROSS APPLY (SELECT CHARINDEX(' ', T.DisplayName, FirstSpace.i + 1)) AS SecondSpace(j)
     CROSS APPLY (SELECT CHARINDEX(' ', T.DisplayName, SecondSpace.j + 1)) AS ThirdSpace(k)
