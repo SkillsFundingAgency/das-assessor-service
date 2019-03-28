@@ -10,8 +10,10 @@
 	[UpdatedAt] [datetime2](7) NULL,
 	[Username] [nvarchar](120) NOT NULL,
 	[PhoneNumber] [NVARCHAR] (50) NULL,
+	[Title] [NVARCHAR](120) NOT NULL DEFAULT '',
 	[GivenNames] [NVARCHAR](120) NOT NULL DEFAULT '',
 	[FamilyName] [NVARCHAR](120) NOT NULL DEFAULT '',
+	[SignInType] [NVARCHAR](20) NOT NULL DEFAULT '',
  CONSTRAINT [PK_Contacts] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC

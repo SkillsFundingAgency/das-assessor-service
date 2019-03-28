@@ -64,18 +64,27 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
                 var content = await response.Content.ReadAsStringAsync();
 
+                var responseObject = JsonConvert.DeserializeObject<CreateInvitationResponse>(content);
+                
                 _logger.LogInformation("Returned from DfE Invitation Service. Status Code: {0}. Message: {0}",
-                    (int)response.StatusCode, content);
+                    (int) response.StatusCode, content);
 
-                if (!response.IsSuccessStatusCode)
-                {
-                    _logger.LogError("Error from DfE Invitation Service. Status Code: {0}. Message: {0}",
-                        (int)response.StatusCode, content);
-                    return new InviteUserResponse() { IsSuccess = false };
-                }
-
-                return new InviteUserResponse();
+                if (response.IsSuccessStatusCode)
+                    return responseObject.Message == "User already exists"
+                        ? new InviteUserResponse() {UserExists = true, IsSuccess = false, ExistingUserId = responseObject.ExistingUserId}
+                        : new InviteUserResponse();
+                
+                _logger.LogError("Error from DfE Invitation Service. Status Code: {0}. Message: {0}",
+                    (int) response.StatusCode, content);
+                return new InviteUserResponse() {IsSuccess = false};
             }
+        }
+        private class CreateInvitationResponse
+        {
+            public string Message { get; set; }
+            public bool Invited { get; set; }
+            public Guid InvitationId { get; set; }
+            public Guid ExistingUserId { get; set; }
         }
     }
 }

@@ -45,9 +45,15 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
                 var privileges = await _contactQueryRepository.GetAllPrivileges();
                 await _contactRepository.AssociatePrivilegesWithContact(contactResponse.Id, privileges);
 
-                var invitationResult = await _dfeSignInService.InviteUser(createContactRequest.Email, createContactRequest.GivenName, createContactRequest.FamilyName, newContact.Id);
+                var invitationResult = await _dfeSignInService.InviteUser(createContactRequest.Email, createContactRequest.GivenName, createContactRequest.FamilyName, contactResponse.Id);
                 if (!invitationResult.IsSuccess)
                 {
+                    if (invitationResult.UserExists)
+                    {
+                        await _contactRepository.UpdateSignInId(contactResponse.Id, invitationResult.ExistingUserId);
+                        response.Result = true;
+                        return response;
+                    }
                     response.Result = false;
                     return response;
                 }
@@ -59,6 +65,12 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
                     var invitationResult = await _dfeSignInService.InviteUser(createContactRequest.Email, createContactRequest.GivenName, createContactRequest.FamilyName, existingContact.Id);
                     if (!invitationResult.IsSuccess)
                     {
+                        if (invitationResult.UserExists)
+                        {
+                            await _contactRepository.UpdateSignInId(existingContact.Id, invitationResult.ExistingUserId);
+                            response.Result = true;
+                            return response;
+                        }
                         response.Result = false;
                         return response;
                     }
