@@ -64,8 +64,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Services
 
                 var content = await response.Content.ReadAsStringAsync();
 
-                var responseObject = JsonConvert.DeserializeObject<CreateInvitationResponse>(content);
-                
+                var settings = new JsonSerializerSettings
+                {
+                    NullValueHandling = NullValueHandling.Ignore,
+                    MissingMemberHandling = MissingMemberHandling.Ignore
+                };
+
+                var responseObject = JsonConvert.DeserializeObject<CreateInvitationResponse>(content, settings);
+
                 _logger.LogInformation("Returned from DfE Invitation Service. Status Code: {0}. Message: {0}",
                     (int) response.StatusCode, content);
 
