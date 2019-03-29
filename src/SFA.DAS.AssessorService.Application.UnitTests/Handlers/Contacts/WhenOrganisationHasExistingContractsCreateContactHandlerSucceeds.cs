@@ -4,8 +4,10 @@ using System.Threading.Tasks;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using OfficeOpenXml.ConditionalFormatting;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Handlers.ContactHandlers;
 using SFA.DAS.AssessorService.Application.Interfaces;
@@ -34,7 +36,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Contacts
                     x.InviteUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Guid>()))
                 .Returns(Task.FromResult(new InviteUserResponse{IsSuccess=true}));
             var createContactHandler = new CreateContactHandler( contactRepositoryMock.Object, contactQueryRepository.Object,
-                dfeSignInServiceMock.Object, mediator.Object);
+                dfeSignInServiceMock.Object, mediator.Object, new Mock<ILogger<CreateContactHandler>>().Object);
 
             _result = createContactHandler.Handle(contactRequest, new CancellationToken()).Result;
         }
