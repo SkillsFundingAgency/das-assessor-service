@@ -55,6 +55,138 @@
             return View("~/Views/Roatp/UpdateOrganisationLegalName.cshtml", model);
         }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        [Route("change-financial-track-record")]
+        public async Task<IActionResult> UpdateOrganisationFinancialTrackRecord()
+        {
+            var searchModel = _sessionService.GetSearchResults();
+
+            var model = new UpdateOrganisationFinancialTrackRecordViewModel
+            {
+                CurrentFinancialTrackRecord = searchModel.SelectedResult.OrganisationData.FinancialTrackRecord,
+                FinancialTrackRecord = searchModel.SelectedResult.OrganisationData.FinancialTrackRecord,
+                OrganisationId = searchModel.SelectedResult.Id,
+                LegalName = searchModel.SelectedResult.LegalName
+            };
+
+            return View("~/Views/Roatp/UpdateOrganisationFinancialTrackRecord.cshtml", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateFinancialTrackRecord(UpdateOrganisationFinancialTrackRecordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("~/Views/Roatp/UpdateOrganisationFinancialTrackRecord.cshtml", model);
+            }
+
+            model.UpdatedBy = HttpContext.User.OperatorName();
+
+            var result = await _apiClient.UpdateOrganisationFinancialTrackRecord(CreateUpdateFinancialTrackRecordRequest(model));
+
+            if (result)
+            {
+                return await RefreshSearchResults();
+            }
+
+            return View("~/Views/Roatp/UpdateOrganisationFinancialTrackRecord.cshtml", model);
+        }
+
+        private UpdateOrganisationFinancialTrackRecordRequest CreateUpdateFinancialTrackRecordRequest(UpdateOrganisationFinancialTrackRecordViewModel model)
+        {
+            return new UpdateOrganisationFinancialTrackRecordRequest
+            {
+                FinancialTrackRecord = model.FinancialTrackRecord,
+                OrganisationId = model.OrganisationId,
+                UpdatedBy = model.UpdatedBy
+            };
+        }
+
+
         private UpdateOrganisationLegalNameRequest CreateUpdateLegalNameRequest(UpdateOrganisationLegalNameViewModel model)
         {
             return new UpdateOrganisationLegalNameRequest
