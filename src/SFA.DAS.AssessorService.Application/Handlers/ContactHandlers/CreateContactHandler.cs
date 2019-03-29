@@ -31,7 +31,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
 
         public async Task<ContactBoolResponse> Handle(CreateContactRequest createContactRequest, CancellationToken cancellationToken)
         {
-            Contact contactResponse = null;
             var response = new ContactBoolResponse(true);
             var newContact = Mapper.Map<Contact>(createContactRequest);           
             newContact.OrganisationId = null;
@@ -40,33 +39,39 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
             var existingContact = await _contactRepository.GetContact(newContact.Email);
             if (existingContact == null)
             {
-                contactResponse = await _contactRepository.CreateNewContact(newContact);
+                var contactResponse = await _contactRepository.CreateNewContact(newContact);
                 //Todo: The role should be associated after the user has been created by another mechanism
                 await _contactRepository.AssociateRoleWithContact("SuperUser", newContact);
                 var privileges = await _contactQueryRepository.GetAllPrivileges();
                 await _contactRepository.AssociatePrivilegesWithContact(contactResponse.Id, privileges);
 
-                var invitationResult = await _dfeSignInService.InviteUser(createContactRequest.Email, createContactRequest.GivenName, createContactRequest.FamilyName, newContact.Id);
+                var invitationResult = await _dfeSignInService.InviteUser(createContactRequest.Email, createContactRequest.GivenName, createContactRequest.FamilyName, contactResponse.Id);
                 if (!invitationResult.IsSuccess)
                 {
+                    if (invitationResult.UserExists)
+                    {
+                        await _contactRepository.UpdateSignInId(contactResponse.Id, invitationResult.ExistingUserId);
+                        response.Result = true;
+                        return response;
+                    }
                     response.Result = false;
                     return response;
                 }
             }
             else
             {
-                if (existingContact.SignInId == null)
+                var invitationResult = await _dfeSignInService.InviteUser(createContactRequest.Email, createContactRequest.GivenName, createContactRequest.FamilyName, existingContact.Id);
+                if (!invitationResult.IsSuccess)
                 {
-                    var invitationResult = await _dfeSignInService.InviteUser(createContactRequest.Email, createContactRequest.GivenName, createContactRequest.FamilyName, existingContact.Id);
-                    if (!invitationResult.IsSuccess)
+                    if (invitationResult.UserExists)
                     {
-                        response.Result = false;
+                        await _contactRepository.UpdateSignInId(existingContact.Id, invitationResult.ExistingUserId);
+                        response.Result = true;
                         return response;
                     }
+                    response.Result = false;
+                    return response;
                 }
-                // otherwise advise they already have an account (by Email)
-               var emailTemplate =  await _mediator.Send(new GetEMailTemplateRequest {TemplateName = "ApplySignupError"}, cancellationToken);
-               await _mediator.Send(new SendEmailRequest(createContactRequest.Email, emailTemplate, new { }), cancellationToken);
             }
             return response;
         }
