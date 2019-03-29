@@ -1,6 +1,4 @@
 ﻿
-using System;
-
 namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
 {
     using System;
