@@ -40,6 +40,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.ContactHandlers
             newContact.OrganisationId = null;
             newContact.Status = ContactStatus.New;
             newContact.SignInType = "ASLogin";
+            newContact.Title = "";
+            newContact.GivenNames = createContactRequest.GivenName;
             
             var existingContact = await _contactRepository.GetContact(newContact.Email);
             if (existingContact == null)
