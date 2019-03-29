@@ -116,5 +116,32 @@ namespace SFA.DAS.AssessorService.Data
         {
             return await _assessorDbContext.Contacts.Where(x => x.Id == id).FirstOrDefaultAsync();
         }
+
+        public async Task<List<Contact>> GetUsersToMigrate()
+        {
+//            SELECT *
+//                FROM [dbo].[Contacts] co1
+//            WHERE [Status] = 'Live'
+//            AND username not like 'unknown%'
+//            AND EXISTS ( SELECT NULL FROM Organisations og1 WHERE og1.id = co1.OrganisationId AND og1.[Status] = 'Live')
+            
+            
+            return await _assessorDbContext.Contacts.Where(c => 
+                c.SignInId == null 
+                && c.Status == "Live" 
+                && !c.Username.StartsWith("unknown")
+                && c.Organisation != null 
+                && c.Organisation.Status == "Live").ToListAsync();
+        }
+
+        public async Task UpdateMigratedContact(Guid contactId, Guid signInId)
+        {
+            var contact = await _assessorDbContext.Contacts.SingleOrDefaultAsync(c => c.Id == contactId);
+            if (contact != null)
+            {
+                contact.SignInId = signInId;
+                await _assessorDbContext.SaveChangesAsync();
+            }
+        }
     }
 }
