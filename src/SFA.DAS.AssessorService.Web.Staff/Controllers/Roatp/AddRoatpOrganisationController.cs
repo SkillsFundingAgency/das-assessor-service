@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         private const string AuditHistoryWorksheetName = "Provider history";
         private const string ExcelFileName = "_RegisterOfApprenticeshipTrainingProviders.xlsx";
 
-        public AddRoatpOrganisationController(IRoatpApiClient apiClient, ILogger<AddRoatpOrganisationController> logger, 
+        public AddRoatpOrganisationController(IRoatpApiClient apiClient, ILogger<AddRoatpOrganisationController> logger,
             IAddOrganisationValidator validator, IRoatpSessionService sessionService)
         {
             _apiClient = apiClient;
@@ -31,13 +31,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             _validator = validator;
             _sessionService = sessionService;
         }
-        
+
         [Route("new-training-provider")]
         public async Task<IActionResult> AddOrganisation(AddOrganisationProviderTypeViewModel model)
         {
             if (model == null)
             {
-                model = new AddOrganisationProviderTypeViewModel();     
+                model = new AddOrganisationProviderTypeViewModel();
             }
 
             model.ProviderTypes = await _apiClient.GetProviderTypes();
@@ -67,7 +67,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             }
 
             addOrganisationModel.OrganisationTypes = await _apiClient.GetOrganisationTypes(model.ProviderTypeId);
-            
+
             _sessionService.SetAddOrganisationDetails(addOrganisationModel);
 
             ModelState.Clear();
@@ -88,7 +88,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             }
 
             model.LegalName = model.LegalName.ToUpper();
-  
+
             _sessionService.SetAddOrganisationDetails(model);
 
             return View("~/Views/Roatp/AddOrganisationPreview.cshtml", model);
@@ -123,35 +123,22 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         {
             var request = new CreateOrganisationRequest
             {
+                CharityNumber = model.CharityNumber,
+                CompanyNumber = model.CompanyNumber,
+                FinancialTrackRecord = true,
+                LegalName = model.LegalName.ToUpper(),
+                NonLevyContract = false,
+                OrganisationStatusId = 1,
+                OrganisationTypeId = model.OrganisationTypeId,
+                ParentCompanyGuarantee = false,
+                ProviderTypeId = model.ProviderTypeId,
+                StatusDate = DateTime.Now,
+                Ukprn = Convert.ToInt64(model.UKPRN),
+                TradingName = model.TradingName,
                 Username = HttpContext.User.OperatorName(),
-                Organisation = CreateOrganisationFromModel(model)
+                StartDate = DateTime.Today
             };
             return request;
-        }
-
-        private Organisation CreateOrganisationFromModel(AddOrganisationViewModel model)
-        {
-            var organisation = new Organisation
-            {
-                Id = Guid.NewGuid(),
-                LegalName = model.LegalName.ToUpper(),
-                TradingName = model.TradingName,
-                OrganisationData = new OrganisationData
-                {
-                    CharityNumber = model.CharityNumber,
-                    CompanyNumber = model.CompanyNumber,
-                    FinancialTrackRecord = true,
-                    NonLevyContract = false,
-                    ParentCompanyGuarantee = false
-                },
-                UKPRN = Convert.ToInt64(model.UKPRN),
-                OrganisationStatus = new OrganisationStatus { Id = 1 }, // Active
-                StatusDate = DateTime.Now,
-                OrganisationType = new OrganisationType { Id = model.OrganisationTypeId },
-                ProviderType = new ProviderType { Id = model.ProviderTypeId }
-            };
-
-            return organisation;
         }
     }
 }
