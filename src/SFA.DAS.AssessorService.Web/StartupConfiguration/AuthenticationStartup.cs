@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
 using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Web.StartupConfiguration
@@ -27,25 +28,28 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 
             services.AddAuthentication(options =>
                 {
-                    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultScheme = "Cookies";
                     options.DefaultChallengeScheme = "oidc";
                 })
                 .AddCookie(options => { 
-                    options.Cookie.Name = ".Apply.Cookies";
+                    options.Cookie.Name = ".Assessors.Cookies";
+                    options.Cookie.Domain = ".apprenticeships.education.gov.uk";
                     options.Cookie.HttpOnly = true;
+                    options.SlidingExpiration = true;
+                    options.ExpireTimeSpan = TimeSpan.FromHours(1);
                 })
                 .AddOpenIdConnect("oidc",options =>
                 {
                     options.CorrelationCookie = new CookieBuilder()
                     {
-                        Name = ".Apply.Correlation.", 
+                        Name = ".Assessors.Correlation.", 
                         HttpOnly = true,
                         SameSite = SameSiteMode.None,
                         SecurePolicy = CookieSecurePolicy.SameAsRequest
                     };
                     
-                  //  options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                    options.MetadataAddress = _configuration.DfeSignIn.MetadataAddress;
+                    options.SignInScheme = "Cookies";
+                    options.Authority = _configuration.DfeSignIn.MetadataAddress;
                     options.RequireHttpsMetadata = false;
                     options.ClientId = _configuration.DfeSignIn.ClientId;
 
@@ -96,31 +100,43 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                             var orgClient = context.HttpContext.RequestServices
                                 .GetRequiredService<IOrganisationsApiClient>();
                             var signInId = context.Principal.FindFirst("sub")?.Value;
-                            var user = await contactClient.GetContactBySignInId(signInId);
-                            if (user != null)
+                            try
                             {
-                                identity.AddClaim(new Claim("UserId", user?.Id.ToString()));
-                                identity.AddClaim(new Claim(
-                                    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn",
-                                    user?.Username));
-                                if (user.EndPointAssessorOrganisationId != null)
+                                var user = await contactClient.GetContactBySignInId(signInId);
+                                if (user != null)
                                 {
-                                    var organisation =
-                                        await orgClient.GetEpaOrganisation(user.EndPointAssessorOrganisationId);
-
-                                    if (organisation.ApiEnabled && !string.IsNullOrEmpty(organisation.ApiUser))
+                                    identity.AddClaim(new Claim("UserId", user?.Id.ToString()));
+                                    identity.AddClaim(new Claim(
+                                        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn",
+                                        user?.Username));
+                                    if (user.EndPointAssessorOrganisationId != null)
                                     {
-                                        identity.AddClaim(new Claim("http://schemas.portal.com/service", Roles.ExternalApiAccess));
-                                        identity.AddClaim(new Claim("http://schemas.portal.com/service", Roles.EpaoUser));
-                                    }
-                                    identity.AddClaim(new Claim("http://schemas.portal.com/ukprn",
-                                        organisation?.Ukprn.ToString()));
-                                }
-                                identity.AddClaim(new Claim("display_name", user?.DisplayName));
-                                identity.AddClaim(new Claim("email", user?.Email));
+                                        var organisation =
+                                            await orgClient.GetEpaOrganisation(user.EndPointAssessorOrganisationId);
 
-                                //Todo: Need to determine privileges dynamically
-                                identity.AddClaim(new Claim("http://schemas.portal.com/service", Privileges.ManageUsers));
+                                        if (organisation.ApiEnabled && !string.IsNullOrEmpty(organisation.ApiUser))
+                                        {
+                                            identity.AddClaim(new Claim("http://schemas.portal.com/service",
+                                                Roles.ExternalApiAccess));
+                                            identity.AddClaim(new Claim("http://schemas.portal.com/service",
+                                                Roles.EpaoUser));
+                                        }
+
+                                        identity.AddClaim(new Claim("http://schemas.portal.com/ukprn",
+                                            organisation?.Ukprn.ToString()));
+                                    }
+
+                                    identity.AddClaim(new Claim("display_name", user?.DisplayName));
+                                    identity.AddClaim(new Claim("email", user?.Email));
+
+                                    //Todo: Need to determine privileges dynamically
+                                    identity.AddClaim(new Claim("http://schemas.portal.com/service",
+                                        Privileges.ManageUsers));
+                                }
+                            }
+                            catch (EntityNotFoundException e)
+                            {
+                                logger.LogError(e,"Failed to retrieve user.");
                             }
 
                             context.Principal.AddIdentity(identity);

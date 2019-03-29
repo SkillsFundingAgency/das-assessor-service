@@ -69,6 +69,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     ResetCookies();
                     _sessionService.Set("OrganisationName", loginResult.OrganisationName);
                     return RedirectToAction("Rejected", "Home");
+                case LoginResult.ContactDoesNotExist:
+                    ResetCookies();
+                    return RedirectToAction("NotRegistered", "Home");
                 default:
                     throw new ApplicationException();
             }

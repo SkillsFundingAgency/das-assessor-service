@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
@@ -15,6 +16,7 @@ using SFA.DAS.AssessorService.Application.Api.Validators;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Settings;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
@@ -27,14 +29,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IMediator _mediator;
         private readonly ILogger<ContactQueryController> _logger;
+        private readonly IWebConfiguration _config;
 
         public ContactQueryController(IContactQueryRepository contactQueryRepository,
             SearchOrganisationForContactsValidator searchOrganisationForContactsValidator,
             IMediator mediator,
-            ILogger<ContactQueryController> logger)
+            ILogger<ContactQueryController> logger, IWebConfiguration config)
         {
             _contactQueryRepository = contactQueryRepository;
             _logger = logger;
+            _config = config;
             _searchOrganisationForContactsValidator = searchOrganisationForContactsValidator;
             _mediator = mediator;
         }
@@ -151,5 +155,36 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             return Ok(Mapper.Map<ContactResponse>(contact));
         }
+        
+        [HttpPost("MigrateUsers", Name= "MigrateUsers")]
+        public async Task<ActionResult> MigrateUsers()
+        {
+            var endpoint = new Uri(new Uri(_config.DfeSignIn.MetadataAddress), "/Migrate"); 
+            using (var httpClient = new HttpClient())
+            {
+                var usersToMigrate = await _contactQueryRepository.GetUsersToMigrate();
+                foreach (var user in usersToMigrate)
+                {
+                    var result = await httpClient.PostAsJsonAsync(endpoint, new
+                    {
+                        ClientId = _config.DfeSignIn.ClientId, 
+                        GivenName = user.GivenNames, 
+                        FamilyName = user.FamilyName, 
+                        Email = user.Email
+                    });
+
+                    var migrateResult = await result.Content.ReadAsAsync<MigrateUserResult>();
+
+                    await _contactQueryRepository.UpdateMigratedContact(user.Id, migrateResult.NewUserId);
+                }
+            }
+            
+            
+            return Ok(); 
+        }
+    }
+    public class MigrateUserResult
+    {
+        public Guid NewUserId { get; set; }
     }
 }

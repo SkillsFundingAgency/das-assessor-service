@@ -30,6 +30,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         protected ApiClientBase(string baseUri, ITokenService tokenService, ILogger<ApiClientBase> logger)
         {
+            _logger = logger;
 
             TokenService = tokenService;
 
@@ -107,7 +108,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             {
                 if (message == null)
                 {
-                    message = "Could not find " + request.RequestUri.PathAndQuery;
+                    if(!request.RequestUri.IsAbsoluteUri)
+                        message = "Could not find " + request.RequestUri;
+                    else
+                        message = "Could not find " + request.RequestUri.PathAndQuery;
                 }
 
                 RaiseResponseError(message, clonedRequest, result);

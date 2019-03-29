@@ -55,90 +55,15 @@
             return View("~/Views/Roatp/UpdateOrganisationLegalName.cshtml", model);
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        private UpdateOrganisationLegalNameRequest CreateUpdateLegalNameRequest(UpdateOrganisationLegalNameViewModel model)
+        {
+            return new UpdateOrganisationLegalNameRequest
+            {
+                LegalName = model.LegalName.ToUpper(),
+                OrganisationId = model.OrganisationId,
+                UpdatedBy = model.UpdatedBy
+            };
+        }
 
         [Route("change-financial-track-record")]
         public async Task<IActionResult> UpdateOrganisationFinancialTrackRecord()
@@ -186,16 +111,5 @@
             };
         }
 
-
-        private UpdateOrganisationLegalNameRequest CreateUpdateLegalNameRequest(UpdateOrganisationLegalNameViewModel model)
-        {
-            return new UpdateOrganisationLegalNameRequest
-            {
-                LegalName = model.LegalName.ToUpper(),
-                OrganisationId = model.OrganisationId,
-                UpdatedBy = model.UpdatedBy
-            };
-        }
-      
     }
 }
