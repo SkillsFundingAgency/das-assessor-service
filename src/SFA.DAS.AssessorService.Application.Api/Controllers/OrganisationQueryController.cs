@@ -15,6 +15,7 @@ using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Validators;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Settings;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -80,7 +81,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpGet("organisation/{id}", Name = "GetOrganisation")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<OrganisationResponse>))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Organisation))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetOrganisation(Guid id)
         {
@@ -91,6 +92,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             return Ok(organisation);
         }
-
+        
     }
 }

@@ -31,4 +31,5 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
         public int TotalCount { get; set; }
     }
+
 }
