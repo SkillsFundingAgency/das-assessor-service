@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                 })
                 .AddCookie(options => { 
                     options.Cookie.Name = ".Assessors.Cookies";
-                    options.Cookie.Domain = ".apprenticeships.education.gov.uk";
+                    //options.Cookie.Domain = ".apprenticeships.education.gov.uk";
                     options.Cookie.HttpOnly = true;
                     options.SlidingExpiration = true;
                     options.ExpireTimeSpan = TimeSpan.FromHours(1);
@@ -123,7 +123,11 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                                         }
 
                                         identity.AddClaim(new Claim("http://schemas.portal.com/ukprn",
-                                            organisation?.Ukprn.ToString()));
+                                            organisation?.Ukprn == null ? "":organisation?.Ukprn.ToString()));
+                                        identity.AddClaim(new Claim("http://schemas.portal.com/orgname",
+                                            organisation?.Name));
+                                        identity.AddClaim(new Claim("http://schemas.portal.com/epaoid",
+                                            organisation?.OrganisationId));
                                     }
 
                                     identity.AddClaim(new Claim("display_name", user?.DisplayName));
@@ -134,7 +138,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                                         Privileges.ManageUsers));
                                 }
                             }
-                            catch (EntityNotFoundException e)
+                                catch (EntityNotFoundException e)
                             {
                                 logger.LogError(e,"Failed to retrieve user.");
                             }

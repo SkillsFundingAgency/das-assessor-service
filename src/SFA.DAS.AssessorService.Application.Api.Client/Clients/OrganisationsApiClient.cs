@@ -241,6 +241,5 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<EpaOrganisation> GetEpaOrganisation(string organisationId);
         Task<List<OrganisationType>> GetOrganisationTypes();
         Task SendEmailsToOrgApprovedUsers(EmailAllApprovedContactsRequest emailAllApprovedContactsRequest);
-
     }
 }
