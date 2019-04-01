@@ -112,7 +112,6 @@
 
             var model = new UpdateOrganisationParentCompanyGuaranteeViewModel
             {
-                CurrentParentCompanyGuarantee = searchModel.SelectedResult.OrganisationData.ParentCompanyGuarantee,
                 ParentCompanyGuarantee = searchModel.SelectedResult.OrganisationData.ParentCompanyGuarantee,
                 OrganisationId = searchModel.SelectedResult.Id,
                 LegalName = searchModel.SelectedResult.LegalName
