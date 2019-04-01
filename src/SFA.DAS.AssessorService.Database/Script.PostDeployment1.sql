@@ -85,12 +85,6 @@ INSERT EMailTemplates ([Id],[TemplateName],[TemplateId],[Recipients],[CreatedAt]
 VALUES (NEWID(), N'EPAOUserApproveRequest', N'5bb920f4-06ec-43c7-b00a-8fad33ce8066', NULL, GETDATE())
 END
 
-IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'ApplySignupError')
-BEGIN
-INSERT EMailTemplates ([Id],[TemplateName],[TemplateId],[Recipients],[CreatedAt]) 
-VALUES (NEWID(), N'EPAOUserApproveRequest', N'88799189-fe12-4887-a13f-f7f76cd6945a', NULL, GETDATE())
-END
-
 -- setup Privileges
 IF NOT EXISTS (SELECT * FROM [Privileges] WHERE [UserPrivilege] = N'Manage users')
 BEGIN

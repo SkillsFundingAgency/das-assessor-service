@@ -27,6 +27,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         InvalidRole,
         Rejected,
         InvitePending,
-        Applying
+        Applying,
+        ContactDoesNotExist
     }
 }
