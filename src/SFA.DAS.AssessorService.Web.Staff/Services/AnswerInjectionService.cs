@@ -90,8 +90,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             RaiseWarningIfEmailIsMissingInvalidOrAlreadyUsed(command.ContactEmail, warningMessages);
             RaiseWarningIfContactNameIsMissingOrTooShort(command.ContactName, warningMessages);
 
-            if (warningMessages.Count == 0)
-            {
+            //if (warningMessages.Count == 0) //Taken out because of Deen
+           // {
                 var newUsername = _organisationIdGenerator.GetNextContactUsername();
                 if (newUsername == string.Empty)
                 {
@@ -115,7 +115,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                 }
               
                 response.OrganisationId = newOrganisationId;
-            }
+         //   }
 
             response.WarningMessages = warningMessages;
             

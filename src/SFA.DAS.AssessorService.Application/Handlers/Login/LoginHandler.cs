@@ -96,6 +96,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
                 case ContactStatus.Inactive:
                     response.Result = LoginResult.Rejected;
                     break;
+                case ContactStatus.Applying:
+                    response.Result = LoginResult.Applying;
+                    break;
                 default:
                     response.Result = LoginResult.NotRegistered;
                     break;
