@@ -106,7 +106,7 @@
 
             var model = new UpdateOrganisationTradingNameViewModel
             {
-                CurrentTradingName = searchModel.SelectedResult.TradingName,
+                LegalName = searchModel.SelectedResult.LegalName,
                 TradingName = searchModel.SelectedResult.TradingName,
                 OrganisationId = searchModel.SelectedResult.Id
             };
