@@ -49,7 +49,7 @@ namespace SFA.DAS.AssessorService.Web
             //services.AddApplicationInsightsTelemetry();
 
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
-            services.AddAndConfigureAuthentication(Configuration, _logger);
+            services.AddAndConfigureAuthentication(Configuration, _logger, _env);
             services.Configure<RequestLocalizationOptions>(options =>
             {
                 options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("en-GB");
