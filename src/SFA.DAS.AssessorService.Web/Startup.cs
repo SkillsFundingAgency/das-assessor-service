@@ -65,10 +65,14 @@ namespace SFA.DAS.AssessorService.Web
 
             services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Assessors.AntiForgery", HttpOnly = true });
 
+
+            var keysPath = Path.Join(Environment.SpecialFolder.Personal.ToString(), "keys");
+            
+            
             if (_env.IsDevelopment())
             {
                 services.AddDataProtection()
-                    .PersistKeysToFileSystem(new DirectoryInfo(@"c:\keys"))
+                    .PersistKeysToFileSystem(new DirectoryInfo(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "keys")))
                     .SetApplicationName("AssessorApply");
 
                 services.AddDistributedMemoryCache();
