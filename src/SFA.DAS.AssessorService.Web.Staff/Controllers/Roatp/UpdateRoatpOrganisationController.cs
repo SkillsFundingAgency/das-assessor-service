@@ -72,7 +72,6 @@
 
             var model = new UpdateOrganisationFinancialTrackRecordViewModel
             {
-                CurrentFinancialTrackRecord = searchModel.SelectedResult.OrganisationData.FinancialTrackRecord,
                 FinancialTrackRecord = searchModel.SelectedResult.OrganisationData.FinancialTrackRecord,
                 OrganisationId = searchModel.SelectedResult.Id,
                 LegalName = searchModel.SelectedResult.LegalName

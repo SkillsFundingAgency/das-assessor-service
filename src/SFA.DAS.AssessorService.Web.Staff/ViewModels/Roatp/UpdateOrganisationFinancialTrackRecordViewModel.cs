@@ -5,7 +5,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp
 {
     public class UpdateOrganisationFinancialTrackRecordViewModel
     {
-        public bool CurrentFinancialTrackRecord { get; set; }
         public Guid OrganisationId { get; set; }
         public bool FinancialTrackRecord { get; set; }
         public string UpdatedBy { get; set; }
