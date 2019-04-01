@@ -7,7 +7,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp
 {
     public class UpdateOrganisationParentCompanyGuaranteeViewModel
     {
-        public bool CurrentParentCompanyGuarantee { get; set; }
         public Guid OrganisationId { get; set; }
         public bool ParentCompanyGuarantee { get; set; }
         public string UpdatedBy { get; set; }
