@@ -35,7 +35,7 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <h1 class="heading-xlarge roatp-heading">Change trading name for @Html.Raw(Model.CurrentTradingName)</h1>
+        <h1 class="heading-xlarge roatp-heading">Change trading name for @Html.Raw(Model.LegalName)</h1>
     </div>
 </div>
 <div class="govuk-width-container">
@@ -52,7 +52,7 @@
                         <input id="TradingName" name="TradingName" type="text" class="roatp-input" asp-for="TradingName"
                                sfa-validation-for="TradingName" sfa-validationerror-class="form-control-error" />
                     </div>
-                    @Html.HiddenFor(x => x.CurrentTradingName)
+                    @Html.HiddenFor(x => x.LegalName)
                     <input type="submit" class="roatp-button" value="Change" />
                 </form>
             </div>
