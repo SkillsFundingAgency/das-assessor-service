@@ -63,8 +63,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             var organisationName = DecideOrganisationName(command.UseTradingName, command.TradingName, command.OrganisationName);
             var ukprnAsLong = GetUkprnFromRequestDetails(command.OrganisationUkprn, command.CompanyUkprn);
             var organisationTypeId = await GetOrganisationTypeIdFromDescriptor(command.OrganisationType);
-            var companyNumber = command.CompanyNumber;
-            var charityNumber = command.CharityNumber;
 
             // organisation checks ////////////////////////////////
             RaiseWarningIfNoOrganisationName(organisationName, warningMessages);
@@ -73,10 +71,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             RaiseWarningOrganisationTypeNotIdentified(organisationTypeId, warningMessages);
             RaiseWarningIfUkprnIsInvalid(ukprnAsLong, warningMessages);
             await RaiseWarningIfUkprnIsAlreadyUsed(ukprnAsLong, warningMessages);
-            RaiseWarningIfCompanyNumberIsInvalid(companyNumber, warningMessages);
-            await RaiseWarningIfCompanyNumberAlreadyUsed(companyNumber, warningMessages);
-            RaiseWarningIfCharityNumberIsInvalid(charityNumber, warningMessages);
-            await RaiseWarningIfCharityNumberAlreadyUsed(charityNumber, warningMessages);
+            RaiseWarningIfCompanyNumberIsInvalid(command.CompanyNumber, warningMessages);
+            await RaiseWarningIfCompanyNumberAlreadyUsed(command.CompanyNumber, warningMessages);
+            RaiseWarningIfCharityNumberIsInvalid(command.CharityNumber, warningMessages);
+            await RaiseWarningIfCharityNumberAlreadyUsed(command.CharityNumber, warningMessages);
 
             var newOrganisationId = _organisationIdGenerator.GetNextOrganisationId();
             if (newOrganisationId == string.Empty)
@@ -84,8 +82,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                 _logger.LogError("A valid organisation Id could not be generated");
                 throw new Exception("A valid organisation Id could not be generated");
             }
-            var organisation = MapCommandToOrganisation(command, newOrganisationId, organisationName, companyNumber, charityNumber,
-                ukprnAsLong, organisationTypeId);
+            var organisation = MapCommandToOrganisation(command, newOrganisationId, organisationName, ukprnAsLong, organisationTypeId);
 
             // Contact checks ////////////////////////////////   
             RaiseWarningIfEmailIsMissingInvalidOrAlreadyUsed(command.ContactEmail, warningMessages);
@@ -103,7 +100,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                 _logger.LogInformation("Injecting new organisation into register");
                 newOrganisationId = await _registerRepository.CreateEpaOrganisation(organisation);
 
-                var contact = MapCommandToContact(command.CreatedBy,command.ContactName, command.ContactEmail, newOrganisationId, command.ContactPhoneNumber, newUsername);
+                var contact = MapCommandToContact(command, newOrganisationId, newUsername);
                 var assessorContact = await _registerQueryRepository.GetContactByContactId(contact.Id);
 
                 if (assessorContact != null)
@@ -289,7 +286,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             }
         }
 
-        private EpaOrganisation MapCommandToOrganisation(CreateOrganisationContactCommand command, string newOrganisationId, string organisationName, string companyNumber, string charityNumber, long? ukprnAsLong, int? organisationTypeId)
+        private EpaOrganisation MapCommandToOrganisation(CreateOrganisationContactCommand command, string newOrganisationId, string organisationName, long? ukprnAsLong, int? organisationTypeId)
         {
             organisationName = _cleanser.CleanseStringForSpecialCharacters(organisationName);
             var legalName = _cleanser.CleanseStringForSpecialCharacters(command.OrganisationName);
@@ -300,8 +297,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             var address3 = _cleanser.CleanseStringForSpecialCharacters(command.ContactAddress3);
             var address4 = _cleanser.CleanseStringForSpecialCharacters(command.ContactAddress4);
             var postcode = _cleanser.CleanseStringForSpecialCharacters(command.ContactPostcode);
-            companyNumber = _cleanser.CleanseStringForSpecialCharacters(companyNumber);
-            charityNumber = _cleanser.CleanseStringForSpecialCharacters(charityNumber);
+            var companyNumber = _cleanser.CleanseStringForSpecialCharacters(command.CompanyNumber);
+            var charityNumber = _cleanser.CleanseStringForSpecialCharacters(command.CharityNumber);
 
             if (!string.IsNullOrWhiteSpace(companyNumber))
             {
@@ -333,11 +330,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             return organisation;
         }
 
-        private EpaContact MapCommandToContact(string id, string contactName, string contactEmail, string organisationId, string contactPhoneNumber, string username)
+        private EpaContact MapCommandToContact(CreateOrganisationContactCommand command, string organisationId, string newUsername)
         {
-            contactName = _cleanser.CleanseStringForSpecialCharacters(contactName);
-            contactEmail = _cleanser.CleanseStringForSpecialCharacters(contactEmail);
-            contactPhoneNumber = _cleanser.CleanseStringForSpecialCharacters(contactPhoneNumber);
+            var id = command.CreatedBy;
+            var contactName = _cleanser.CleanseStringForSpecialCharacters(command.ContactName);
+            var contactEmail = _cleanser.CleanseStringForSpecialCharacters(command.ContactEmail);
+            var contactPhoneNumber = _cleanser.CleanseStringForSpecialCharacters(command.ContactPhoneNumber); 
 
             return new EpaContact
             {
@@ -346,7 +344,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                 EndPointAssessorOrganisationId = organisationId,
                 Id = string.IsNullOrEmpty(id)?Guid.NewGuid():Guid.Parse(id),
                 PhoneNumber = contactPhoneNumber,
-                Username = username
+                Username = newUsername
             };
         }
 
