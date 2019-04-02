@@ -61,7 +61,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The charity number is already used by another organisation so not added to this organisation in register.
+        ///   Looks up a localized string similar to The charity number is already used by another organisation.
         /// </summary>
         internal static string CharityNumberAlreadyUsed {
             get {
@@ -70,7 +70,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Charity number is an invalid format so not added to this organisation in register.
+        ///   Looks up a localized string similar to Charity number is an invalid format.
         /// </summary>
         internal static string CharityNumberNotValid {
             get {
@@ -79,7 +79,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The company number is already used by another organisation so not added to this organisation in register.
+        ///   Looks up a localized string similar to The company number is already used by another organisation.
         /// </summary>
         internal static string CompanyNumberAlreadyUsed {
             get {
@@ -88,7 +88,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Company number is an invalid format so not added to this organisation in register.
+        ///   Looks up a localized string similar to Company number is an invalid format.
         /// </summary>
         internal static string CompanyNumberNotValid {
             get {
@@ -97,7 +97,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The contact name is missing so the contact will not be added to the register.
+        ///   Looks up a localized string similar to The contact name is missing.
         /// </summary>
         internal static string ContactNameIsMissing {
             get {
@@ -106,7 +106,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The contact name is too short so the contact will not be added to the register.
+        ///   Looks up a localized string similar to The contact name is too short.
         /// </summary>
         internal static string ContactNameIsTooShort {
             get {
@@ -115,7 +115,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The email is already used by another organisation so the contact will not be added to the register.
+        ///   Looks up a localized string similar to The email is already used by another organisation.
         /// </summary>
         internal static string EmailAlreadyUsed {
             get {
@@ -124,7 +124,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The email is invalid so the contact will not be added to the register.
+        ///   Looks up a localized string similar to The email is invalid.
         /// </summary>
         internal static string EmailIsInvalid {
             get {
@@ -133,7 +133,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The email is missing so the contact will not be added to the register.
+        ///   Looks up a localized string similar to The email is missing.
         /// </summary>
         internal static string EmailIsMissing {
             get {
@@ -142,7 +142,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Organisation name missing - no organisation or contact added.
+        ///   Looks up a localized string similar to Organisation name is missing.
         /// </summary>
         internal static string NoOrganisationName {
             get {
@@ -151,7 +151,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Organisation name already used - no organisation or contact added.
+        ///   Looks up a localized string similar to Organisation name already used.
         /// </summary>
         internal static string OrganisationNameAlreadyUsed {
             get {
@@ -160,7 +160,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Organisation name too short - no organisation or contact added.
+        ///   Looks up a localized string similar to Organisation name too short.
         /// </summary>
         internal static string OrganisationNameTooShort {
             get {
@@ -169,7 +169,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Organisation type not identified so not added to organisation in register.
+        ///   Looks up a localized string similar to Organisation type not identified.
         /// </summary>
         internal static string OrganisationTypeNotIdentified {
             get {
@@ -178,7 +178,25 @@ namespace SFA.DAS.AssessorService.Web.Staff.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The ukprn is already used by another organisation so not added to this organisation in register.
+        ///   Looks up a localized string similar to Standard already added to this organisation.
+        /// </summary>
+        internal static string StandardAlreadyUsed {
+            get {
+                return ResourceManager.GetString("StandardAlreadyUsed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Standard code is an invalid format.
+        /// </summary>
+        internal static string StandardInvalid {
+            get {
+                return ResourceManager.GetString("StandardInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The ukprn is already used by another organisation.
         /// </summary>
         internal static string UkprnAlreadyUsed {
             get {
@@ -187,7 +205,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ukprn is an invalid format so not added to this organisation in register.
+        ///   Looks up a localized string similar to Ukprn is an invalid format.
         /// </summary>
         internal static string UkprnIsInvalidFormat {
             get {

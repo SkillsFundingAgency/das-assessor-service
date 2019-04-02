@@ -178,6 +178,24 @@ namespace SFA.DAS.AssessorService.Application.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Standard already added to this organisation in register.
+        /// </summary>
+        internal static string StandardAlreadyUsed {
+            get {
+                return ResourceManager.GetString("StandardAlreadyUsed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Standard code is an invalid format so not added to this organisation in register.
+        /// </summary>
+        internal static string StandardInvalid {
+            get {
+                return ResourceManager.GetString("StandardInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The ukprn is already used by another organisation so not added to this organisation in register.
         /// </summary>
         internal static string UkprnAlreadyUsed {

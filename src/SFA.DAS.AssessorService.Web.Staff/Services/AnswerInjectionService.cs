@@ -46,18 +46,19 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             if (command.OrganisationReferenceType != null &&
                 command.OrganisationReferenceType.ToLower().Contains("epao"))
             {
+                _logger.LogInformation("Source reference type is EPAO. No need to inject organisation details into register");
                 response.ApplySourceIsEpao = true;
                 return response;
             }
 
             if (command.IsEpaoApproved.Value)
             {
+                _logger.LogInformation("Source is RoEPAO approved. No need to inject organisation details into register");
                 response.IsEpaoApproved = true;
                 return response;
             }
 
             var warningMessages = new List<string>();
-
 
             var organisationName = DecideOrganisationName(command.UseTradingName, command.TradingName, command.OrganisationName);
             var ukprnAsLong = GetUkprnFromRequestDetails(command.OrganisationUkprn, command.CompanyUkprn);
@@ -80,7 +81,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             var newOrganisationId = _organisationIdGenerator.GetNextOrganisationId();
             if (newOrganisationId == string.Empty)
             {
-                _logger.LogWarning("A valid organisation Id could not be generated");
+                _logger.LogError("A valid organisation Id could not be generated");
                 throw new Exception("A valid organisation Id could not be generated");
             }
             var organisation = MapCommandToOrganisation(command, newOrganisationId, organisationName, companyNumber, charityNumber,
@@ -95,32 +96,78 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                 var newUsername = _organisationIdGenerator.GetNextContactUsername();
                 if (newUsername == string.Empty)
                 {
-                    _logger.LogWarning("A valid contact user name could not be generated");
+                    _logger.LogError("A valid contact user name could not be generated");
                     throw new Exception("A valid contact user name could not be generated");
                 }
+
+                _logger.LogInformation("Injecting new organisation into register");
                 newOrganisationId = await _registerRepository.CreateEpaOrganisation(organisation);
+
                 var contact = MapCommandToContact(command.CreatedBy,command.ContactName, command.ContactEmail, newOrganisationId, command.ContactPhoneNumber, newUsername);
                 var assessorContact = await _registerQueryRepository.GetContactByContactId(contact.Id);
+
                 if (assessorContact != null)
                 {
                     //Update existing contact entry
                     var newOrganisation = await _registerQueryRepository.GetEpaOrganisationByOrganisationId(newOrganisationId);
-                    await _registerRepository.AssociateOrganisationWithContact(assessorContact.Id, newOrganisation,
-                        "Live", "MakePrimaryContact");
+                    await _registerRepository.AssociateOrganisationWithContact(assessorContact.Id, newOrganisation, "Live", "MakePrimaryContact");
                 }
                 else
                 {
                     //Create a new contact entry
+                    _logger.LogInformation("Injecting new contact into register");
                     await _registerRepository.CreateEpaOrganisationContact(contact);
                 }
               
-                response.OrganisationId = newOrganisationId;
+                response.EpaOrganisationId = newOrganisationId;
+            }
+            else
+            {
+                _logger.LogWarning("Source has invalid data. Cannot inject organisation details into register at this time");
+            }
+
+            response.WarningMessages = warningMessages;          
+
+            return response;
+        }
+
+
+        public async Task<CreateOrganisationStandardFromApplyResponse> InjectApplyOrganisationStandardDetailsIntoRegister(CreateOrganisationStandardCommand command)
+        {
+            var response = new CreateOrganisationStandardFromApplyResponse { WarningMessages = new List<string>() };
+
+            var warningMessages = new List<string>();
+
+            var organisationName = DecideOrganisationName(command.UseTradingName, command.TradingName, command.OrganisationName);
+            var organisationId = await GetEndPointAssessorOrganisationId(command.EndPointAssessorOrganisationId, organisationName);
+
+            // Standard checks ///////////////////////////////////
+            RaiseWarningIfStandardInvalidOrAlreadyUsed(command.StandardCode, organisationId, warningMessages);
+
+            if (warningMessages.Count == 0)
+            {
+                var standard = MapCommandToOrganisationStandard(command, organisationId);
+                var deliveryAreas = await MapCommandToDeliveryAreas(command);
+
+                _logger.LogInformation("Injecting new standard into register");
+                response.EpaoStandardId = await _registerRepository.CreateEpaOrganisationStandard(standard, deliveryAreas);
+            }
+            else
+            {
+                _logger.LogWarning("Source has invalid data. Cannot inject standard details into register at this time");
             }
 
             response.WarningMessages = warningMessages;
-            
 
             return response;
+        }
+
+        private async Task<string> GetEndPointAssessorOrganisationId(string epaoId, string organisationName)
+        {
+            if (!string.IsNullOrEmpty(epaoId)) return epaoId;
+
+            var org = await _registerQueryRepository.GetAssessmentOrganisationsByNameOrCharityNumberOrCompanyNumber(organisationName);
+            return org?.FirstOrDefault()?.Id;
         }
 
         private static string DecideOrganisationName(bool useTradingName, string tradingName, string organisationName)
@@ -235,6 +282,18 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                 warningMessagesContact.Add(OrganisationAndContactMessages.ContactNameIsTooShort);
         }
 
+        private void RaiseWarningIfStandardInvalidOrAlreadyUsed(int standardCode, string organisationId, List<string> warningMessagesStandard)
+        {
+            if (standardCode < 1)
+            {
+                warningMessagesStandard.Add(OrganisationAndContactMessages.StandardInvalid);
+            }
+            else if (_assessorValidationService.IsOrganisationStandardTaken(organisationId, standardCode).Result)
+            {
+                warningMessagesStandard.Add(OrganisationAndContactMessages.StandardAlreadyUsed);
+            }
+        }
+
         private EpaOrganisation MapCommandToOrganisation(CreateOrganisationContactCommand command, string newOrganisationId, string organisationName, string companyNumber, string charityNumber, long? ukprnAsLong, int? organisationTypeId)
         {
             organisationName = _cleanser.CleanseStringForSpecialCharacters(organisationName);
@@ -294,6 +353,40 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                 PhoneNumber = contactPhoneNumber,
                 Username = username
             };
+        }
+
+        private EpaOrganisationStandard MapCommandToOrganisationStandard(CreateOrganisationStandardCommand command, string organisationId)
+        {
+            Guid? contactId = null;
+            if (Guid.TryParse(command.CreatedBy, out var contactIdGuid))
+            {
+                contactId = contactIdGuid;
+            }
+
+            var standard = new EpaOrganisationStandard
+            {
+                OrganisationId = organisationId,
+                StandardCode = command.StandardCode,
+                EffectiveFrom = command.EffectiveFrom,
+                ContactId = contactId,
+                OrganisationStandardData = new OrganisationStandardData
+                {
+                    DeliveryAreasComments = string.Empty
+                }
+            };
+
+            return standard;
+        }
+
+        private async Task<List<int>> MapCommandToDeliveryAreas(CreateOrganisationStandardCommand command)
+        {
+            if (command.DeliveryAreas != null)
+            {
+                var areas = await _registerQueryRepository.GetDeliveryAreas();
+                return areas.Where(a => command.DeliveryAreas.Contains(a.Area)).Select(a => a.Id).ToList();
+            }
+
+            return new List<int>();
         }
     }
 }

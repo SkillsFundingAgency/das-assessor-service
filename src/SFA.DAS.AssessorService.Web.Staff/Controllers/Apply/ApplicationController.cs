@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.Web.Staff.Domain;
@@ -20,12 +21,14 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
         private readonly ApplyApiClient _applyApiClient;
         private readonly IAnswerService _answerService;
         private readonly IAnswerInjectionService _answerInjectionService;
+        private readonly ILogger<ApplicationController> _logger;
 
-        public ApplicationController(ApplyApiClient applyApiClient, IAnswerService answerService, IAnswerInjectionService answerInjectionService)
+        public ApplicationController(ApplyApiClient applyApiClient, IAnswerService answerService, IAnswerInjectionService answerInjectionService, ILogger<ApplicationController> logger)
         {
             _applyApiClient = applyApiClient;
             _answerService = answerService;
             _answerInjectionService = answerInjectionService;
+            _logger = logger;
         }
 
         [HttpGet("/Applications/Midpoint")]
@@ -258,9 +261,19 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
             var warningMessages = new List<string>();
             if (sequenceId == 2 && returnType == "Approve")
             {
+                _logger.LogInformation($"Attempting to inject organisation into register for application {applicationId}");
                 var command = await _answerService.GatherAnswersForOrganisationAndContactForApplication(applicationId);
                 var response = await _answerInjectionService.InjectApplyOrganisationAndContactDetailsIntoRegister(command);
-                warningMessages = response.WarningMessages;
+                if(response.WarningMessages != null) warningMessages.AddRange(response.WarningMessages ?? new List<string>());
+
+                // only try to inject standard if no errors and initial application
+                if (!warningMessages.Any() && !response.IsEpaoApproved && !response.ApplySourceIsEpao)
+                {
+                    _logger.LogInformation($"Attempting to inject standard into register for application {applicationId}");
+                    var command2 = await _answerService.GatherAnswersForOrganisationStandardForApplication(applicationId, response.EpaOrganisationId);
+                    var response2 = await _answerInjectionService.InjectApplyOrganisationStandardDetailsIntoRegister(command2);
+                    if (response2.WarningMessages != null) warningMessages.AddRange(response2.WarningMessages ?? new List<string>());
+                }
             }
 
             await _applyApiClient.ReturnApplication(applicationId, sequenceId, returnType);

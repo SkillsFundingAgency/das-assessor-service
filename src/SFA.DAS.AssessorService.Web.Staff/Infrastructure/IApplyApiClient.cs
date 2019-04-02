@@ -14,6 +14,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         Task<HttpResponseMessage> Download(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId, string filename);
         Task<FileInfoResponse> FileInfo(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId, string filename);
         Task<GetAnswersResponse> GetAnswer(Guid applicationId, string questionTag);
+        Task<ApplyTypes.Application> GetApplication(Guid applicationId);
         Task<Organisation> GetOrganisationForApplication(Guid applicationId);
     }
     

@@ -89,9 +89,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
                 .Returns(Task.FromResult(testCase.IsEmailTaken));
 
             _mockEpaOrganisationIdGenerator.Setup(g => g.GetNextOrganisationId())
-                .Returns(testCase.ExpectedResponse.OrganisationId);
+                .Returns(testCase.ExpectedResponse.EpaOrganisationId);
             _mockRegisterRepository.Setup(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()))
-                .Returns(Task.FromResult(testCase.ExpectedResponse.OrganisationId));
+                .Returns(Task.FromResult(testCase.ExpectedResponse.EpaOrganisationId));
 
             var actualResponse = _answerInjectionService
                 .InjectApplyOrganisationAndContactDetailsIntoRegister(testCase.Command).Result;
@@ -208,7 +208,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
                     IsEpaoApproved = isEpaoApproved,
                     ApplySourceIsEpao = isEpaoSource,
                     WarningMessages = warningMessages,
-                    OrganisationId = organisationId
+                    EpaOrganisationId = organisationId
                 };
                 //Command = new CreateOrganisationContactCommand();
                 //{OrganisationReferenceType = organisationReferenceType};

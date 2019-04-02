@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Api.Types.Commands;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Application.Interfaces.Validation;
+﻿using SFA.DAS.AssessorService.Api.Types.Commands;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
-using SFA.DAS.AssessorService.Web.Staff.Resources;
-using Microsoft.Extensions.Logging;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Services
 {
@@ -40,8 +32,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             var companyNumber = await GetAnswer(applicationId, "company-number");
             var charityNumber = await GetAnswer(applicationId, "charity-number");
             var standardWebsite = await GetAnswer(applicationId, "standard-website");
+
             var organisation = await _applyApiClient.GetOrganisationForApplication(applicationId);
-            var organisationCreatedBy = organisation.CreatedBy;
+            var application = await _applyApiClient.GetApplication(applicationId);
+
+            var createdBy = application?.CreatedBy ?? organisation?.CreatedBy;
+
             var organisationName = organisation?.Name;
             var organisationType = organisation?.OrganisationType;
             var organisationUkprn = organisation?.OrganisationUkprn;
@@ -69,18 +65,50 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                 companyNumber,
                 charityNumber,
                 standardWebsite,
-                organisationCreatedBy);
+                createdBy);
 
             return command;
         }
+
+        public async Task<CreateOrganisationStandardCommand> GatherAnswersForOrganisationStandardForApplication(Guid applicationId, string endPointAssessorOrganisationId)
+        {
+            var application = await _applyApiClient.GetApplication(applicationId);
+            var organisation = await _applyApiClient.GetOrganisationForApplication(applicationId);
+
+            var createdBy = application?.CreatedBy ?? organisation?.CreatedBy;
+
+            var standardCode = application?.ApplicationData?.StandardCode;
+            var effectiveFrom = DateTime.UtcNow.Date;
+            if(DateTime.TryParse(await GetAnswer(applicationId, "effective-from"), out var effectiveFromDate))
+            {
+                effectiveFrom = effectiveFromDate.Date;
+            }
+                
+            var deliveryAreas = await GetAnswer(applicationId, "delivery-areas");
+            
+            var organisationName = organisation?.Name;
+            var tradingName = await GetAnswer(applicationId, "trading-name");
+            var useTradingNameString = await GetAnswer(applicationId, "use-trading-name");
+            var useTradingName = useTradingNameString != null && (useTradingNameString.ToLower() == "yes" || useTradingNameString.ToLower() == "true" || useTradingNameString.ToLower() == "1");
+
+            var command = new CreateOrganisationStandardCommand
+            (organisationName,
+                tradingName,
+                useTradingName,
+                createdBy,
+                endPointAssessorOrganisationId,
+                standardCode ?? 0,
+                effectiveFrom,
+                deliveryAreas?.Split(',').ToList());
+
+            return command;
+        }
+
         public async Task<string> GetAnswer(Guid applicationId, string questionTag)
         {
            var response= await _applyApiClient.GetAnswer(applicationId, questionTag);
-            return response.Answer;
+           return response.Answer;
         }
-
-   
     }
-
-  
 }
+

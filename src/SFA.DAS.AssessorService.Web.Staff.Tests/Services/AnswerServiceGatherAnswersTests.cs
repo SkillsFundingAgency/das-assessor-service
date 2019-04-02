@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -188,6 +189,101 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
             {
                 QuestionTag = questionTag;
                 Answer = answer;
+            }
+        }
+
+
+        [Test, TestCaseSource(nameof(StandardCommandTestCases))]
+        public void WhenGatheringAnswersForAnOrganisationStandard(StandardCommandTest commandTestSetup)
+        {
+            var expectedCommand = new CreateOrganisationStandardCommand
+            { 
+                OrganisationName = commandTestSetup.OrganisationName,
+                TradingName = commandTestSetup.TradingName,
+                UseTradingName = commandTestSetup.UseTradingName,
+                CreatedBy = commandTestSetup.CreatedBy,
+                EndPointAssessorOrganisationId = commandTestSetup.EndPointAssessorOrganisationId,
+                StandardCode = commandTestSetup.StandardCode,
+                EffectiveFrom = commandTestSetup.EffectiveFrom,
+                DeliveryAreas = commandTestSetup.DeliveryAreas
+            };
+
+            var organisationFromApplicationId = new ApplyTypes.Organisation
+            {
+                Name = commandTestSetup.OrganisationName
+            };
+
+            var applicationFromApplicationId = new ApplyTypes.Application
+            {
+                Id = _applicationId,
+                CreatedBy = commandTestSetup.CreatedBy,
+                ApplicationData = new ApplicationData
+                {
+                    StandardCode = commandTestSetup.StandardCode
+                }
+            };
+
+            _mockApplyApiClient.Setup(x => x.GetAnswer(_applicationId, It.IsAny<string>()))
+                .Returns(Task.FromResult(new GetAnswersResponse { Answer = null }));
+
+            foreach (var answerPair in commandTestSetup.AnswerPairs)
+            {
+                _mockApplyApiClient.Setup(x => x.GetAnswer(_applicationId, answerPair.QuestionTag))
+                    .Returns(Task.FromResult(new GetAnswersResponse { Answer = answerPair.Answer }));
+            }
+
+            _mockApplyApiClient.Setup(x => x.GetApplication(_applicationId))
+                .Returns(Task.FromResult(applicationFromApplicationId));
+
+            _mockApplyApiClient.Setup(x => x.GetOrganisationForApplication(_applicationId))
+                .Returns(Task.FromResult(organisationFromApplicationId));
+
+            var actualCommand = _answerService.GatherAnswersForOrganisationStandardForApplication(_applicationId, commandTestSetup.EndPointAssessorOrganisationId).Result;
+
+            Assert.AreEqual(JsonConvert.SerializeObject(expectedCommand), JsonConvert.SerializeObject(actualCommand));
+        }
+
+        public class StandardCommandTest
+        {
+            public string OrganisationName { get; set; }
+            public string TradingName { get; set; }
+            public bool UseTradingName { get; set; }
+            public string CreatedBy { get; set; }
+            public string EndPointAssessorOrganisationId { get; set; }
+            public int StandardCode { get; set; }
+            public DateTime EffectiveFrom { get; set; }
+            public string DeliveryAreasString { get; set; }
+            public List<string> DeliveryAreas => DeliveryAreasString?.Split(",").ToList();
+
+            public List<GetAnswerPair> AnswerPairs { get; set; }
+            public StandardCommandTest(string organisationName, string tradingName, bool useTradingName, string createdBy
+               , string endPointAssessorOrganisationId, int standardCode, DateTime effectiveFrom, string deliveryAreasString)
+            {
+                OrganisationName = organisationName;
+                TradingName = tradingName;
+                UseTradingName = useTradingName;
+                CreatedBy = createdBy;
+                EndPointAssessorOrganisationId = endPointAssessorOrganisationId;
+                StandardCode = standardCode;
+                EffectiveFrom = DateTime.Parse(effectiveFrom.ToString());
+                DeliveryAreasString = deliveryAreasString;
+
+                AnswerPairs = new List<GetAnswerPair>
+                {
+                    new GetAnswerPair("trading-name", tradingName),
+                    new GetAnswerPair("use-trading-name", useTradingName.ToString()),
+                    new GetAnswerPair("effective-from", effectiveFrom.ToString()),
+                    new GetAnswerPair("delivery-areas", deliveryAreasString)
+                };
+            }
+        }
+
+        protected static IEnumerable<StandardCommandTest> StandardCommandTestCases
+        {
+            get
+            {
+                yield return new StandardCommandTest("organisation name", "trading name", true, Guid.NewGuid().ToString(), "EPA0001", 1, DateTime.UtcNow.Date, "East Midlands");
+                yield return new StandardCommandTest("organisation name", "trading name", false, Guid.NewGuid().ToString(), "EPA0001", 1, DateTime.UtcNow.Date, "East Midlands");
             }
         }
     }

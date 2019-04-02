@@ -123,5 +123,15 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Services
             var checkResult = _assessorValidationService.IsOrganisationUkprnTaken(1234).Result;
             Assert.AreEqual(checkResult, result);
         }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void IsOrganisationStandardTaken(bool result)
+        {
+            _registerValidationRepository.Setup(r => r.EpaOrganisationStandardExists(It.IsAny<string>(), It.IsAny<int>()))
+                .Returns(Task.FromResult(result));
+            var checkResult = _assessorValidationService.IsOrganisationStandardTaken("EPA0001", 1).Result;
+            Assert.AreEqual(checkResult, result);
+        }
     }
 }

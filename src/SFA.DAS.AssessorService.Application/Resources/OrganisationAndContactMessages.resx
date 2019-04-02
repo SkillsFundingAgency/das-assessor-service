@@ -156,6 +156,12 @@
   <data name="OrganisationTypeNotIdentified" xml:space="preserve">
     <value>Organisation type not identified so not added to organisation in register</value>
   </data>
+  <data name="StandardAlreadyUsed" xml:space="preserve">
+    <value>Standard already added to this organisation in register</value>
+  </data>
+  <data name="StandardInvalid" xml:space="preserve">
+    <value>Standard code is an invalid format so not added to this organisation in register</value>
+  </data>
   <data name="UkprnAlreadyUsed" xml:space="preserve">
     <value>The ukprn is already used by another organisation so not added to this organisation in register</value>
   </data>

@@ -9,6 +9,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public bool IsEpaoApproved { get; set; }
         public List<string> WarningMessages { get; set; }
         public bool ApplySourceIsEpao { get; set; }
-        public string OrganisationId { get; set; }
+        public string EpaOrganisationId { get; set; }
     }
 }
