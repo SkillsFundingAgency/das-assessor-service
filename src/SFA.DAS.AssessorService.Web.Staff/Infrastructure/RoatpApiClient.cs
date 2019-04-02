@@ -87,6 +87,13 @@
             return await Task.FromResult(result == HttpStatusCode.OK);
         }
 
+        public async Task<bool> UpdateOrganisationUkprn(UpdateOrganisationUkprnRequest request)
+        {
+            HttpStatusCode result = await Put<UpdateOrganisationUkprnRequest>($"{_baseUrl}/api/v1/updateOrganisation/ukprn", request);
+
+            return await Task.FromResult(result == HttpStatusCode.OK);
+        }
+
         private async Task<T> Get<T>(string uri)
         {
             _client.DefaultRequestHeaders.Authorization =

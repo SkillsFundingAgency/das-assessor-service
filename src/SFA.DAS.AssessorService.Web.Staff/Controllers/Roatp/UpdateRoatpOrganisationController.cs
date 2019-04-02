@@ -64,6 +64,182 @@
                 UpdatedBy = model.UpdatedBy
             };
         }
-      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        [Route("change-ukprn")]
+        public async Task<IActionResult> UpdateOrganisationUkprn()
+        {
+            var searchModel = _sessionService.GetSearchResults();
+
+            var model = new UpdateOrganisationUkprnViewModel
+            {
+                Ukprn = searchModel.SelectedResult?.UKPRN.ToString(),
+                LegalName = searchModel.SelectedResult.LegalName,
+                OrganisationId = searchModel.SelectedResult.Id
+            };
+
+            return View("~/Views/Roatp/UpdateOrganisationUkprn.cshtml", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateUkprn(UpdateOrganisationUkprnViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("~/Views/Roatp/UpdateOrganisationUkprn.cshtml", model);
+            }
+
+            model.UpdatedBy = HttpContext.User.OperatorName();
+
+            var result = await _apiClient.UpdateOrganisationUkprn(CreateUpdateUkprnRequest(model));
+
+            if (result)
+            {
+                return await RefreshSearchResults();
+            }
+
+            return View("~/Views/Roatp/UpdateOrganisationUkprn.cshtml", model);
+        }
+
+        private UpdateOrganisationUkprnRequest CreateUpdateUkprnRequest(UpdateOrganisationUkprnViewModel model)
+        {
+            return new UpdateOrganisationUkprnRequest
+            {
+                Ukprn = model.Ukprn,
+                OrganisationId = model.OrganisationId,
+                UpdatedBy = model.UpdatedBy
+            };
+        }
+
     }
 }
