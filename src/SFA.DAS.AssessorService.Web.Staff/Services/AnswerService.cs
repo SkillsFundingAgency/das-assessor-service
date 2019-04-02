@@ -29,8 +29,19 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             var contactEmail = await GetAnswer(applicationId, "contact-email");
             var contactPhoneNumber = await GetAnswer(applicationId, "contact-phone-number");
             var companyUkprn = await GetAnswer(applicationId, "company-ukprn");
+
             var companyNumber = await GetAnswer(applicationId, "company-number");
+            if ("no".Equals(companyNumber, StringComparison.InvariantCultureIgnoreCase))
+            {
+                companyNumber = null;
+            }
+
             var charityNumber = await GetAnswer(applicationId, "charity-number");
+            if ("no".Equals(charityNumber, StringComparison.InvariantCultureIgnoreCase))
+            {
+                charityNumber = null;
+            }
+
             var standardWebsite = await GetAnswer(applicationId, "standard-website");
 
             var organisation = await _applyApiClient.GetOrganisationForApplication(applicationId);
@@ -43,7 +54,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             var organisationUkprn = organisation?.OrganisationUkprn;
             var organisationReferenceType = organisation?.OrganisationDetails?.OrganisationReferenceType;
             var isEpaoApproved = organisation?.RoEPAOApproved;
-            var useTradingName = useTradingNameString != null && (useTradingNameString.ToLower() == "yes" || useTradingNameString.ToLower() == "true" || useTradingNameString.ToLower() == "1");
+            var useTradingName = "yes".Equals(useTradingNameString, StringComparison.InvariantCultureIgnoreCase) || "true".Equals(useTradingNameString, StringComparison.InvariantCultureIgnoreCase) || "1".Equals(useTradingNameString, StringComparison.InvariantCultureIgnoreCase);
             
             var command = new CreateOrganisationContactCommand
             (organisationName,
@@ -89,7 +100,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             var organisationName = organisation?.Name;
             var tradingName = await GetAnswer(applicationId, "trading-name");
             var useTradingNameString = await GetAnswer(applicationId, "use-trading-name");
-            var useTradingName = useTradingNameString != null && (useTradingNameString.ToLower() == "yes" || useTradingNameString.ToLower() == "true" || useTradingNameString.ToLower() == "1");
+            var useTradingName = "yes".Equals(useTradingNameString, StringComparison.InvariantCultureIgnoreCase) || "true".Equals(useTradingNameString, StringComparison.InvariantCultureIgnoreCase) || "1".Equals(useTradingNameString, StringComparison.InvariantCultureIgnoreCase);
 
             var command = new CreateOrganisationStandardCommand
             (organisationName,

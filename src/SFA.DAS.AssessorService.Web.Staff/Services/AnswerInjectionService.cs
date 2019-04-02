@@ -71,12 +71,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             RaiseWarningIfOrganisationNameTooShort(organisationName, warningMessages);
             await RaiseWarningIfOrganisationNameAlreadyUsed(organisationName, warningMessages);
             RaiseWarningOrganisationTypeNotIdentified(organisationTypeId, warningMessages);
-            ukprnAsLong = RaiseWarningAndResetIfUkprnIsInvalid(ukprnAsLong, warningMessages);
-            ukprnAsLong = await RaiseWarningAndResetIfUkprnIsAlreadyUsed(warningMessages, ukprnAsLong);
-            companyNumber = RaiseWarningAndResetIfCompanyNumberIsInvalid(companyNumber, warningMessages);
-            companyNumber = await RaiseWarningAndResetIfCompanyNumberAlreadyUsed(companyNumber, warningMessages);
-            charityNumber = RaiseWarningAndResetIfCharityNumberIsInvalid(charityNumber, warningMessages);
-            charityNumber = await RaiseWarningAndResetIfCharityNumberAlreadyUsed(charityNumber, warningMessages);
+            RaiseWarningIfUkprnIsInvalid(ukprnAsLong, warningMessages);
+            await RaiseWarningIfUkprnIsAlreadyUsed(ukprnAsLong, warningMessages);
+            RaiseWarningIfCompanyNumberIsInvalid(companyNumber, warningMessages);
+            await RaiseWarningIfCompanyNumberAlreadyUsed(companyNumber, warningMessages);
+            RaiseWarningIfCharityNumberIsInvalid(charityNumber, warningMessages);
+            await RaiseWarningIfCharityNumberAlreadyUsed(charityNumber, warningMessages);
 
             var newOrganisationId = _organisationIdGenerator.GetNextOrganisationId();
             if (newOrganisationId == string.Empty)
@@ -220,45 +220,40 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                 warningMessages.Add(OrganisationAndContactMessages.OrganisationTypeNotIdentified);
         }
 
-        private long? RaiseWarningAndResetIfUkprnIsInvalid(long? ukprnAsLong, ICollection<string> warningMessages)
+        private void RaiseWarningIfUkprnIsInvalid(long? ukprnAsLong, ICollection<string> warningMessages)
         {
-            if (_validationService.UkprnIsValid(ukprnAsLong?.ToString())) return ukprnAsLong;
+            if (ukprnAsLong.HasValue && !_validationService.UkprnIsValid(ukprnAsLong.Value.ToString()))
             warningMessages.Add(OrganisationAndContactMessages.UkprnIsInvalidFormat);
-            return null;
         }
 
-        private async Task<long?> RaiseWarningAndResetIfUkprnIsAlreadyUsed(ICollection<string> warningMessages, long? ukprnAsLong)
+        private async Task RaiseWarningIfUkprnIsAlreadyUsed(long? ukprnAsLong, ICollection<string> warningMessages)
         {
-            if (!ukprnAsLong.HasValue || !await _assessorValidationService.IsOrganisationUkprnTaken(ukprnAsLong.Value)) return ukprnAsLong;
+            if (ukprnAsLong.HasValue && await _assessorValidationService.IsOrganisationUkprnTaken(ukprnAsLong.Value))
             warningMessages.Add(OrganisationAndContactMessages.UkprnAlreadyUsed);
-            return null;
         }
 
-        private string RaiseWarningAndResetIfCompanyNumberIsInvalid(string companyNumber, ICollection<string> warningMessages)
+        private void RaiseWarningIfCompanyNumberIsInvalid(string companyNumber, ICollection<string> warningMessages)
         {
-            if (_validationService.CompanyNumberIsValid(companyNumber)) return companyNumber;
+            if (!string.IsNullOrEmpty(companyNumber) && !_validationService.CompanyNumberIsValid(companyNumber))
             warningMessages.Add(OrganisationAndContactMessages.CompanyNumberNotValid);
-            return null;
         }
 
-        private async Task<string> RaiseWarningAndResetIfCompanyNumberAlreadyUsed(string companyNumber, ICollection<string> warningMessages)
+        private async Task RaiseWarningIfCompanyNumberAlreadyUsed(string companyNumber, ICollection<string> warningMessages)
         {
-            if (!await _assessorValidationService.IsCompanyNumberTaken(companyNumber)) return companyNumber;
+            if (!string.IsNullOrEmpty(companyNumber) && await _assessorValidationService.IsCompanyNumberTaken(companyNumber))
             warningMessages.Add(OrganisationAndContactMessages.CompanyNumberAlreadyUsed);
-            return null;
         }
 
-        private string RaiseWarningAndResetIfCharityNumberIsInvalid(string charityNumber, ICollection<string> warningMessages)
+        private void RaiseWarningIfCharityNumberIsInvalid(string charityNumber, ICollection<string> warningMessages)
         {
-            if (_validationService.CharityNumberIsValid(charityNumber)) return charityNumber;
+            if (!string.IsNullOrEmpty(charityNumber) && !_validationService.CharityNumberIsValid(charityNumber))
             warningMessages.Add(OrganisationAndContactMessages.CharityNumberNotValid);
-            return null;
         }
-        private async Task<string> RaiseWarningAndResetIfCharityNumberAlreadyUsed(string charityNumber, ICollection<string> warningMessages)
+
+        private async Task RaiseWarningIfCharityNumberAlreadyUsed(string charityNumber, ICollection<string> warningMessages)
         {
-            if (!await _assessorValidationService.IsCharityNumberTaken(charityNumber)) return charityNumber;
+            if (!string.IsNullOrEmpty(charityNumber) && await _assessorValidationService.IsCharityNumberTaken(charityNumber))
             warningMessages.Add(OrganisationAndContactMessages.CharityNumberAlreadyUsed);
-            return null;
         }
 
         private void RaiseWarningIfEmailIsMissingInvalidOrAlreadyUsed(string email, ICollection<string> warningMessagesContact)
