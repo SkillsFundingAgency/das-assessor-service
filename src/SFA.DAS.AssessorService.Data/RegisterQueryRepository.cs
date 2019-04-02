@@ -366,7 +366,7 @@ namespace SFA.DAS.AssessorService.Data
                 var sql =
                     "select Id, EndPointAssessorOrganisationId, Username, DisplayName, Email, Status, PhoneNumber " +
                     " from Contacts where Id = @contactId";
-                var contact = await connection.QuerySingleAsync<EpaContact>(sql, new { contactId });
+                var contact = await connection.QuerySingleOrDefaultAsync<EpaContact>(sql, new { contactId });
                 return contact;
             }
         }
