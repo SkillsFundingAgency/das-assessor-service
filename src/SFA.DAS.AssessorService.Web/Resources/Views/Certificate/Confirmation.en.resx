@@ -127,7 +127,7 @@
     <value>Continue</value>
   </data>
   <data name="DoNextFeedback" xml:space="preserve">
-    <value>Leave feedback</value>
+    <value>What do you think of this service?</value>
   </data>
   <data name="DoNextHeader" xml:space="preserve">
     <value>What do you want to do next?</value>
