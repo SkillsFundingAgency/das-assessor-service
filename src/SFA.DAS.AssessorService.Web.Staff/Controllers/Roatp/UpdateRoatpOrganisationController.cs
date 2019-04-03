@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
+﻿using AutoMapper;
+
+namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
 {
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
@@ -45,7 +47,11 @@
 
             model.UpdatedBy = HttpContext.User.OperatorName();
 
-            var result = await _apiClient.UpdateOrganisationLegalName(CreateUpdateLegalNameRequest(model));
+            var request = Mapper.Map<UpdateOrganisationLegalNameRequest>(model);
+            request.LegalName = request.LegalName.ToUpper();
+
+
+            var result = await _apiClient.UpdateOrganisationLegalName(request);
 
             if (result)
             {
@@ -54,146 +60,6 @@
 
             return View("~/Views/Roatp/UpdateOrganisationLegalName.cshtml", model);
         }
-
-        private UpdateOrganisationLegalNameRequest CreateUpdateLegalNameRequest(UpdateOrganisationLegalNameViewModel model)
-        {
-            return new UpdateOrganisationLegalNameRequest
-            {
-                LegalName = model.LegalName.ToUpper(),
-                OrganisationId = model.OrganisationId,
-                UpdatedBy = model.UpdatedBy
-            };
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
         [Route("change-ukprn")]
@@ -220,8 +86,8 @@
             }
 
             model.UpdatedBy = HttpContext.User.OperatorName();
-
-            var result = await _apiClient.UpdateOrganisationUkprn(CreateUpdateUkprnRequest(model));
+            var request = Mapper.Map<UpdateOrganisationUkprnRequest>(model);
+            var result = await _apiClient.UpdateOrganisationUkprn(request);
 
             if (result)
             {
@@ -229,16 +95,6 @@
             }
 
             return View("~/Views/Roatp/UpdateOrganisationUkprn.cshtml", model);
-        }
-
-        private UpdateOrganisationUkprnRequest CreateUpdateUkprnRequest(UpdateOrganisationUkprnViewModel model)
-        {
-            return new UpdateOrganisationUkprnRequest
-            {
-                Ukprn = model.Ukprn,
-                OrganisationId = model.OrganisationId,
-                UpdatedBy = model.UpdatedBy
-            };
         }
 
     }
