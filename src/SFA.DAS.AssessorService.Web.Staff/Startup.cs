@@ -117,7 +117,8 @@ namespace SFA.DAS.AssessorService.Web.Staff
                 config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<IContactsApiClient>().Use<ContactsApiClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<IApplyApiClient>().Use<ApplyApiClient>().Ctor<string>().Is(ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress);
-             
+                config.For<IApiClient>().Use<ApiClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
+
                 config.For<IRegisterQueryRepository>().Use<RegisterQueryRepository>();
                 config.For<IRegisterRepository>().Use<RegisterRepository>();
 

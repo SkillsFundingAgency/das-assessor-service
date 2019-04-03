@@ -91,13 +91,15 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
         {
             get
             {
-                yield return new InjectionTestCase("organisation name", "trading name", false, Guid.NewGuid().ToString(), "EPA0001",
+                yield return new InjectionTestCase(Guid.NewGuid().ToString(), "EPA0001",
                     1, DateTime.UtcNow.Date, "East Midlands", false, "EPA Standard Id", null);
-                yield return new InjectionTestCase("organisation name", "trading name", false, Guid.NewGuid().ToString(), "EPA0001",
+                yield return new InjectionTestCase(Guid.NewGuid().ToString(), null,
+                    0, DateTime.UtcNow.Date, "East Midlands", false, null, "organisation id missing");
+                yield return new InjectionTestCase(Guid.NewGuid().ToString(), "INVALID",
+                    0, DateTime.UtcNow.Date, "East Midlands", false, null, "organisation id invalid");
+                yield return new InjectionTestCase(Guid.NewGuid().ToString(), "EPA0001",
                     0, DateTime.UtcNow.Date, "East Midlands", false, null, "standard invalid");
-                yield return new InjectionTestCase("organisation name", "trading name", false, Guid.NewGuid().ToString(), "EPA0001",
-                    99, DateTime.UtcNow.Date, "East Midlands", true, null, "standard taken");
-                yield return new InjectionTestCase("organisation name", "trading name", true, Guid.NewGuid().ToString(), "EPA0001",
+                yield return new InjectionTestCase(Guid.NewGuid().ToString(), "EPA0001",
                     99, DateTime.UtcNow.Date, "East Midlands", true, null, "standard taken");
             }
         }
@@ -110,8 +112,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
             public bool IsOrganisationStandardTaken { get; set; }
 
 
-            public InjectionTestCase(string organisationName, string tradingName, bool useTradingName, string createdBy,
-                string endPointAssessorOrganisationId, int standardCode, DateTime effectiveFrom, string deliveryAreas,
+            public InjectionTestCase(string createdBy,
+                string organisationId, int standardCode, DateTime effectiveFrom, string deliveryAreas,
                 bool isOrganisationStandardTaken, string epaoStandardId, string warningMessage)
             {
                 var warningMessages = new List<string>();
@@ -130,12 +132,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
 
                 Command = new CreateOrganisationStandardCommand
                 {
-                    OrganisationName = organisationName,
-                    TradingName = tradingName,
-                    UseTradingName = useTradingName,
                     CreatedBy = createdBy,
-
-                    EndPointAssessorOrganisationId = endPointAssessorOrganisationId,
+                    OrganisationId = organisationId,
                     StandardCode = standardCode,
                     EffectiveFrom = DateTime.Parse(effectiveFrom.ToString()),
                     DeliveryAreas = deliveryAreas?.Split(",").ToList(),

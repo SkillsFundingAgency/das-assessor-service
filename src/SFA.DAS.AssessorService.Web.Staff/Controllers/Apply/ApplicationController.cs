@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.Web.Staff.Domain;
@@ -261,24 +262,44 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
             var warningMessages = new List<string>();
             if (sequenceId == 2 && returnType == "Approve")
             {
-                _logger.LogInformation($"Attempting to inject organisation into register for application {applicationId}");
-                var command = await _answerService.GatherAnswersForOrganisationAndContactForApplication(applicationId);
-                var response = await _answerInjectionService.InjectApplyOrganisationAndContactDetailsIntoRegister(command);
-                if(response.WarningMessages != null) warningMessages.AddRange(response.WarningMessages ?? new List<string>());
+                var sequneceOne = await _applyApiClient.GetSequence(applicationId, 1);
 
-                // only try to inject standard if no errors and initial application
-                if (!warningMessages.Any() && !response.IsEpaoApproved && !response.ApplySourceIsEpao)
+                if (sequneceOne?.NotRequired is true)
                 {
-                    _logger.LogInformation($"Attempting to inject standard into register for application {applicationId}");
-                    var command2 = await _answerService.GatherAnswersForOrganisationStandardForApplication(applicationId, response.EpaOrganisationId);
-                    var response2 = await _answerInjectionService.InjectApplyOrganisationStandardDetailsIntoRegister(command2);
-                    if (response2.WarningMessages != null) warningMessages.AddRange(response2.WarningMessages ?? new List<string>());
+                    var response = await AddOrganisationStandardIntoRegister(applicationId);
+                    if (response.WarningMessages != null) warningMessages.AddRange(response.WarningMessages);
+                }
+                else
+                {
+                    var response = await AddOrganisationAndContactIntoRegister(applicationId);
+                    if (response.WarningMessages != null) warningMessages.AddRange(response.WarningMessages);
+
+                    // only try to inject standard if no errors and initial application
+                    if (!warningMessages.Any() && !response.IsEpaoApproved && !response.ApplySourceIsEpao)
+                    {
+                        var response2 = await AddOrganisationStandardIntoRegister(applicationId);
+                        if (response2.WarningMessages != null) warningMessages.AddRange(response2.WarningMessages);
+                    }
                 }
             }
 
             await _applyApiClient.ReturnApplication(applicationId, sequenceId, returnType);
 
             return RedirectToAction("Returned", new { applicationId, sequenceId, warningMessages});
+        }
+
+        private async Task<CreateOrganisationAndContactFromApplyResponse> AddOrganisationAndContactIntoRegister(Guid applicationId)
+        {
+            _logger.LogInformation($"Attempting to inject organisation into register for application {applicationId}");
+            var command = await _answerService.GatherAnswersForOrganisationAndContactForApplication(applicationId);
+            return await _answerInjectionService.InjectApplyOrganisationAndContactDetailsIntoRegister(command);
+        }
+
+        private async Task<CreateOrganisationStandardFromApplyResponse> AddOrganisationStandardIntoRegister(Guid applicationId)
+        {
+            _logger.LogInformation($"Attempting to inject standard into register for application {applicationId}");
+            var command = await _answerService.GatherAnswersForOrganisationStandardForApplication(applicationId);
+            return await _answerInjectionService.InjectApplyOrganisationStandardDetailsIntoRegister(command);
         }
 
         [HttpGet("/Applications/Returned")]

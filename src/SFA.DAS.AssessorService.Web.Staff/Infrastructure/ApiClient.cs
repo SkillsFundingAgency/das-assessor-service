@@ -19,7 +19,7 @@ using SFA.DAS.Apprenticeships.Api.Types;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
 {
-    public class ApiClient
+    public class ApiClient : IApiClient
     {
         private readonly HttpClient _client;
         private readonly ILogger<ApiClient> _logger;
@@ -28,6 +28,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         public ApiClient(HttpClient client, ILogger<ApiClient> logger, ITokenService tokenService)
         {
             _client = client;
+            _logger = logger;
+            _tokenService = tokenService;
+        }
+
+        public ApiClient(string baseUri, ILogger<ApiClient> logger, ITokenService tokenService)
+        {
+            _client = new HttpClient { BaseAddress = new Uri(baseUri) };
             _logger = logger;
             _tokenService = tokenService;
         }

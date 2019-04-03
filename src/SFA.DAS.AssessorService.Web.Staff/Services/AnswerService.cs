@@ -9,11 +9,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
     public class AnswerService : IAnswerService
     {
         private readonly IApplyApiClient _applyApiClient;
-      
+        private readonly IApiClient _assessorApiClient;
 
-        public AnswerService(IApplyApiClient applyApiClient)
+
+        public AnswerService(IApplyApiClient applyApiClient, IApiClient assessorApiClient)
         {
             _applyApiClient = applyApiClient;
+            _assessorApiClient = assessorApiClient;
         }
 
         public async Task<CreateOrganisationContactCommand> GatherAnswersForOrganisationAndContactForApplication(Guid applicationId)
@@ -81,14 +83,19 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             return command;
         }
 
-        public async Task<CreateOrganisationStandardCommand> GatherAnswersForOrganisationStandardForApplication(Guid applicationId, string endPointAssessorOrganisationId)
+        public async Task<CreateOrganisationStandardCommand> GatherAnswersForOrganisationStandardForApplication(Guid applicationId)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
             var organisation = await _applyApiClient.GetOrganisationForApplication(applicationId);
 
-            var createdBy = application?.CreatedBy ?? organisation?.CreatedBy;
+            if (application is null || organisation is null) return new CreateOrganisationStandardCommand();
 
-            var standardCode = application?.ApplicationData?.StandardCode;
+            var assessorOrganisation = (await _assessorApiClient.SearchOrganisations(organisation.Name)).FirstOrDefault();
+
+            var organisationId = assessorOrganisation?.Id;
+            var createdBy = application.CreatedBy ?? organisation.CreatedBy;
+            var standardCode = application.ApplicationData?.StandardCode;
+
             var effectiveFrom = DateTime.UtcNow.Date;
             if(DateTime.TryParse(await GetAnswer(applicationId, "effective-from"), out var effectiveFromDate))
             {
@@ -97,17 +104,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                 
             var deliveryAreas = await GetAnswer(applicationId, "delivery-areas");
             
-            var organisationName = organisation?.Name;
-            var tradingName = await GetAnswer(applicationId, "trading-name");
-            var useTradingNameString = await GetAnswer(applicationId, "use-trading-name");
-            var useTradingName = "yes".Equals(useTradingNameString, StringComparison.InvariantCultureIgnoreCase) || "true".Equals(useTradingNameString, StringComparison.InvariantCultureIgnoreCase) || "1".Equals(useTradingNameString, StringComparison.InvariantCultureIgnoreCase);
 
             var command = new CreateOrganisationStandardCommand
-            (organisationName,
-                tradingName,
-                useTradingName,
-                createdBy,
-                endPointAssessorOrganisationId,
+            (createdBy,
+                organisationId,
                 standardCode ?? 0,
                 effectiveFrom,
                 deliveryAreas?.Split(',').ToList());

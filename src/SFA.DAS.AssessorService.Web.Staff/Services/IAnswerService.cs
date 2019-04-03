@@ -11,6 +11,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
     {
         Task<string> GetAnswer(Guid applicationId, string questionTag);
         Task<CreateOrganisationContactCommand> GatherAnswersForOrganisationAndContactForApplication(Guid applicationId);
-        Task<CreateOrganisationStandardCommand> GatherAnswersForOrganisationStandardForApplication(Guid applicationId, string endPointAssessorOrganisationId);
+        Task<CreateOrganisationStandardCommand> GatherAnswersForOrganisationStandardForApplication(Guid applicationId);
     }
 }

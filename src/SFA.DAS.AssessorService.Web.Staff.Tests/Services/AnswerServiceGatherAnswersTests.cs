@@ -12,6 +12,7 @@ using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.Services;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Api.Types.Commands;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
 {
@@ -21,6 +22,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
 
         private AnswerService _answerService;
         private Mock<IApplyApiClient> _mockApplyApiClient;
+        private Mock<IApiClient> _mockAssessorApiClient;
 
         private Guid _applicationId;
 
@@ -30,8 +32,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
         {
             _applicationId = Guid.NewGuid();
             _mockApplyApiClient = new Mock<IApplyApiClient>();
+            _mockAssessorApiClient = new Mock<IApiClient>();
             _answerService = new AnswerService(
-                _mockApplyApiClient.Object
+                _mockApplyApiClient.Object,
+                _mockAssessorApiClient.Object
             );
         }
 
@@ -198,11 +202,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
         {
             var expectedCommand = new CreateOrganisationStandardCommand
             { 
-                OrganisationName = commandTestSetup.OrganisationName,
-                TradingName = commandTestSetup.TradingName,
-                UseTradingName = commandTestSetup.UseTradingName,
                 CreatedBy = commandTestSetup.CreatedBy,
-                EndPointAssessorOrganisationId = commandTestSetup.EndPointAssessorOrganisationId,
+                OrganisationId = commandTestSetup.EndPointAssessorOrganisationId,
                 StandardCode = commandTestSetup.StandardCode,
                 EffectiveFrom = commandTestSetup.EffectiveFrom,
                 DeliveryAreas = commandTestSetup.DeliveryAreas
@@ -238,7 +239,16 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
             _mockApplyApiClient.Setup(x => x.GetOrganisationForApplication(_applicationId))
                 .Returns(Task.FromResult(organisationFromApplicationId));
 
-            var actualCommand = _answerService.GatherAnswersForOrganisationStandardForApplication(_applicationId, commandTestSetup.EndPointAssessorOrganisationId).Result;
+            var assesorOrganisation = new AssessmentOrganisationSummary
+            {
+                Name = commandTestSetup.OrganisationName,
+                Id = commandTestSetup.EndPointAssessorOrganisationId
+            };
+
+            _mockAssessorApiClient.Setup(x => x.SearchOrganisations(commandTestSetup.OrganisationName))
+                .ReturnsAsync(new List<AssessmentOrganisationSummary> { assesorOrganisation });
+
+            var actualCommand = _answerService.GatherAnswersForOrganisationStandardForApplication(_applicationId).Result;
 
             Assert.AreEqual(JsonConvert.SerializeObject(expectedCommand), JsonConvert.SerializeObject(actualCommand));
         }
@@ -246,8 +256,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
         public class StandardCommandTest
         {
             public string OrganisationName { get; set; }
-            public string TradingName { get; set; }
-            public bool UseTradingName { get; set; }
             public string CreatedBy { get; set; }
             public string EndPointAssessorOrganisationId { get; set; }
             public int StandardCode { get; set; }
@@ -256,12 +264,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
             public List<string> DeliveryAreas => DeliveryAreasString?.Split(",").ToList();
 
             public List<GetAnswerPair> AnswerPairs { get; set; }
-            public StandardCommandTest(string organisationName, string tradingName, bool useTradingName, string createdBy
+            public StandardCommandTest(string organisationName, string createdBy
                , string endPointAssessorOrganisationId, int standardCode, DateTime effectiveFrom, string deliveryAreasString)
             {
                 OrganisationName = organisationName;
-                TradingName = tradingName;
-                UseTradingName = useTradingName;
                 CreatedBy = createdBy;
                 EndPointAssessorOrganisationId = endPointAssessorOrganisationId;
                 StandardCode = standardCode;
@@ -270,8 +276,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
 
                 AnswerPairs = new List<GetAnswerPair>
                 {
-                    new GetAnswerPair("trading-name", tradingName),
-                    new GetAnswerPair("use-trading-name", useTradingName.ToString()),
                     new GetAnswerPair("effective-from", effectiveFrom.ToString()),
                     new GetAnswerPair("delivery-areas", deliveryAreasString)
                 };
@@ -282,8 +286,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
         {
             get
             {
-                yield return new StandardCommandTest("organisation name", "trading name", true, Guid.NewGuid().ToString(), "EPA0001", 1, DateTime.UtcNow.Date, "East Midlands");
-                yield return new StandardCommandTest("organisation name", "trading name", false, Guid.NewGuid().ToString(), "EPA0001", 1, DateTime.UtcNow.Date, "East Midlands");
+                yield return new StandardCommandTest("organisation name", Guid.NewGuid().ToString(), "EPA0001", 1, DateTime.UtcNow.Date, "East Midlands");
             }
         }
     }

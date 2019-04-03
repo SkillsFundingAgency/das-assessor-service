@@ -135,15 +135,16 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
 
             var warningMessages = new List<string>();
 
-            var organisationName = DecideOrganisationName(command.UseTradingName, command.TradingName, command.OrganisationName);
-            var organisationId = await GetEndPointAssessorOrganisationId(command.EndPointAssessorOrganisationId, organisationName);
+            // organisation checks ////////////////////////////////
+            RaiseWarningIfNoOrganisationId(command.OrganisationId, warningMessages);
+            RaiseWarningIfOrganisationIdIsInvalid(command.OrganisationId, warningMessages);
 
             // Standard checks ///////////////////////////////////
-            RaiseWarningIfStandardInvalidOrAlreadyUsed(command.StandardCode, organisationId, warningMessages);
+            RaiseWarningIfStandardInvalidOrAlreadyUsed(command.StandardCode, command.OrganisationId, warningMessages);
 
             if (warningMessages.Count == 0)
             {
-                var standard = MapCommandToOrganisationStandard(command, organisationId);
+                var standard = MapCommandToOrganisationStandard(command);
                 var deliveryAreas = await MapCommandToDeliveryAreas(command);
 
                 _logger.LogInformation("Injecting new standard into register");
@@ -157,14 +158,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             response.WarningMessages = warningMessages;
 
             return response;
-        }
-
-        private async Task<string> GetEndPointAssessorOrganisationId(string epaoId, string organisationName)
-        {
-            if (!string.IsNullOrEmpty(epaoId)) return epaoId;
-
-            var org = await _registerQueryRepository.GetAssessmentOrganisationsByNameOrCharityNumberOrCompanyNumber(organisationName);
-            return org?.FirstOrDefault()?.Id;
         }
 
         private static string DecideOrganisationName(bool useTradingName, string tradingName, string organisationName)
@@ -274,6 +267,18 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                 warningMessagesContact.Add(OrganisationAndContactMessages.ContactNameIsTooShort);
         }
 
+        private void RaiseWarningIfNoOrganisationId(string organisationId, List<string> warningMessages)
+        {
+            if (!_validationService.IsNotEmpty(organisationId))
+                warningMessages.Add(OrganisationAndContactMessages.NoOrganisationId);
+        }
+
+        private void RaiseWarningIfOrganisationIdIsInvalid(string organisationId, List<string> warningMessages)
+        {
+            if (!_validationService.OrganisationIdIsValid(organisationId))
+                warningMessages.Add(OrganisationAndContactMessages.OrganisationIdNotValid);
+        }
+
         private void RaiseWarningIfStandardInvalidOrAlreadyUsed(int standardCode, string organisationId, List<string> warningMessagesStandard)
         {
             if (standardCode < 1)
@@ -348,7 +353,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             };
         }
 
-        private EpaOrganisationStandard MapCommandToOrganisationStandard(CreateOrganisationStandardCommand command, string organisationId)
+        private EpaOrganisationStandard MapCommandToOrganisationStandard(CreateOrganisationStandardCommand command)
         {
             Guid? contactId = null;
             if (Guid.TryParse(command.CreatedBy, out var contactIdGuid))
@@ -358,7 +363,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
 
             var standard = new EpaOrganisationStandard
             {
-                OrganisationId = organisationId,
+                OrganisationId = command.OrganisationId,
                 StandardCode = command.StandardCode,
                 EffectiveFrom = command.EffectiveFrom,
                 ContactId = contactId,

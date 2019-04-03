@@ -144,8 +144,14 @@
   <data name="EmailIsMissing" xml:space="preserve">
     <value>The email is missing so the contact will not be added to the register</value>
   </data>
+  <data name="NoOrganisationId" xml:space="preserve">
+    <value>Organisation ID missing - no standard added</value>
+  </data>
   <data name="NoOrganisationName" xml:space="preserve">
     <value>Organisation name missing - no organisation or contact added</value>
+  </data>
+  <data name="OrganisationIdNotValid" xml:space="preserve">
+    <value>Organisation ID is an invalid format - no standard added</value>
   </data>
   <data name="OrganisationNameAlreadyUsed" xml:space="preserve">
     <value>Organisation name already used - no organisation or contact added</value>

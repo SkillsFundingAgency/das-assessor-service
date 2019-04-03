@@ -142,11 +142,29 @@ namespace SFA.DAS.AssessorService.Web.Staff.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Organisation ID missing.
+        /// </summary>
+        internal static string NoOrganisationId {
+            get {
+                return ResourceManager.GetString("NoOrganisationId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Organisation name is missing.
         /// </summary>
         internal static string NoOrganisationName {
             get {
                 return ResourceManager.GetString("NoOrganisationName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Organisation ID is an invalid format.
+        /// </summary>
+        internal static string OrganisationIdNotValid {
+            get {
+                return ResourceManager.GetString("OrganisationIdNotValid", resourceCulture);
             }
         }
         
