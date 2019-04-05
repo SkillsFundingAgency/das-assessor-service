@@ -129,7 +129,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                                         identity.AddClaim(new Claim("http://schemas.portal.com/ukprn",
                                             organisation?.Ukprn == null ? "":organisation?.Ukprn.ToString()));
                                         identity.AddClaim(new Claim("http://schemas.portal.com/orgname",
-                                            organisation?.Name));
+                                            organisation.OrganisationData?.LegalName));
                                         identity.AddClaim(new Claim("http://schemas.portal.com/epaoid",
                                             organisation?.OrganisationId));
                                     }
