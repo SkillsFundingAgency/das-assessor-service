@@ -1,5 +1,6 @@
 @using SFA.DAS.AssessorService.ApplyTypes
 @using SFA.DAS.AssessorService.Web.Staff.Helpers;
+@using SFA.DAS.AssessorService.Domain.Extensions
 
 @model SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Applications.ApplicationSequenceViewModel
 
@@ -48,6 +49,13 @@
                     <tr>
                         <td class="bold-small">Ukprn</td>
                         <td>@Model.Ukprn</td>
+                    </tr>
+                }
+                @if (Model.FinancialDueDate.HasValue)
+                {
+                    <tr>
+                        <td class="bold-small">Financial due date</td>
+                        <td>@Model.FinancialDueDate.ToSfaShortDateString()</td>
                     </tr>
                 }
             </table>
