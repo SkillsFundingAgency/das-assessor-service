@@ -1,6 +1,7 @@
 ﻿
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
 {
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
@@ -12,6 +13,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
     using System;
     using System.Threading.Tasks;
 
+    [Authorize]
     public class AddRoatpOrganisationController : Controller
     {
         private IRoatpApiClient _apiClient;
