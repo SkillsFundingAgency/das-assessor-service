@@ -134,6 +134,15 @@ namespace SFA.DAS.AssessorService.Data
                 && c.Organisation.Status == "Live").ToListAsync();
         }
 
+        public async Task<List<Contact>> GetExsitingContactsToMigrateToApply()
+        {
+            return await _assessorDbContext.Contacts.Include( x => x.Organisation).Include(x => x.Organisation.OrganisationType).Where(c =>
+                c.SignInId != null
+                && c.Organisation != null
+                && c.Organisation.OrganisationType != null).ToListAsync();
+        }
+
+
         public async Task UpdateMigratedContact(Guid contactId, Guid signInId)
         {
             var contact = await _assessorDbContext.Contacts.SingleOrDefaultAsync(c => c.Id == contactId);

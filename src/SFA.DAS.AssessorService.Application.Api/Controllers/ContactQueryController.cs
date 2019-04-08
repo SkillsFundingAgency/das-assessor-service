@@ -9,15 +9,15 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Api.Types;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Validators;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Settings;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Contact = SFA.DAS.AssessorService.Domain.Entities.Contact;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
 {
@@ -182,9 +182,104 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             
             return Ok(); 
         }
+
+        [HttpPost("MigrateContactsAndOrgsToApply", Name = "MigrateContactsAndOrgsToApply")]
+        public async Task<ActionResult> MigrateContactsAndOrgsToApply()
+        {
+            var endpoint = new Uri(new Uri(_config.ApplyBaseAddress), "/MigrateContactAndOrgs");
+            using (var httpClient = new HttpClient())
+            {
+                var contactsToMigrate = await _contactQueryRepository.GetExsitingContactsToMigrateToApply();
+                foreach (var contact in contactsToMigrate)
+                {
+                    var request = MapAssessorToApply(contact);
+                    
+                    await httpClient.PostAsJsonAsync(endpoint, request);
+
+                }
+            }
+            return Ok();
+        }
+
+        private MigrateContactOrganisation MapAssessorToApply(Contact contact)
+        {
+            var request = new MigrateContactOrganisation
+            {
+                contact = new ApplyTypes.Contact
+                {
+                    Id = contact.Id,
+                    CreatedAt = contact.CreatedAt,
+                    CreatedBy = contact.Email,
+                    DeletedAt = null,
+                    DeletedBy = null,
+                    Email = contact.Email,
+                    FamilyName = contact.FamilyName,
+                    GivenNames = contact.GivenNames,
+                    IsApproved = true,
+                    SigninId = contact.SignInId,
+                    SigninType = "ASLogin",
+                    ApplyOrganisationId = Guid.Empty,
+                    Status = "Live",
+                    UpdatedAt = null,
+                    UpdatedBy = null
+                }
+            };
+
+
+            if (contact.Organisation != null)
+            {
+                request.organisation = new ApplyTypes.Organisation
+                {
+                    CreatedAt = contact.Organisation.CreatedAt,
+                    CreatedBy = contact.Email,
+                    DeletedAt = null,
+                    DeletedBy = null,
+                    Id = Guid.Empty,
+                    Name = contact.Organisation.EndPointAssessorName,
+                    OrganisationType = contact.Organisation.OrganisationType?.Type,
+                    OrganisationUkprn = contact.Organisation.EndPointAssessorUkprn,
+                    RoATPApproved = true,
+                    RoEPAOApproved = true,
+                    Status = "New",
+                    UpdatedAt = null,
+                    UpdatedBy = null,
+                    OrganisationDetails = new OrganisationDetails
+                    {
+                        Address1 = contact.Organisation.OrganisationDataFromJson?.Address1,
+                        Address2 = contact.Organisation.OrganisationDataFromJson?.Address2,
+                        Address3 = contact.Organisation.OrganisationDataFromJson?.Address3,
+                        CharityNumber = contact.Organisation.OrganisationDataFromJson?.CharityNumber,
+                        City = contact.Organisation.OrganisationDataFromJson?.Address4,
+                        CompanyNumber = contact.Organisation.OrganisationDataFromJson?.CompanyNumber,
+                        LegalName = contact.Organisation.OrganisationDataFromJson?.LegalName,
+                        OrganisationReferenceId = contact.Organisation.EndPointAssessorUkprn == null
+                            ? contact.Organisation.EndPointAssessorOrganisationId
+                            : contact.Organisation.EndPointAssessorUkprn.ToString(),
+                        OrganisationReferenceType = "RoEPAO",
+                        Postcode = contact.Organisation.OrganisationDataFromJson?.Postcode,
+                        ProviderName = null,
+                        TradingName = contact.Organisation.OrganisationDataFromJson?.TradingName,
+                        FHADetails = new FHADetails
+                        {
+                            FinancialDueDate = contact.Organisation.OrganisationDataFromJson?.FhaDetails?.FinancialDueDate,
+                            FinancialExempt = contact.Organisation.OrganisationDataFromJson?.FhaDetails?.FinancialExempt
+                        },
+                        EndPointAssessmentOrgId = contact.EndPointAssessorOrganisationId
+                    }
+                };
+            }
+
+            return request;
+        }
     }
     public class MigrateUserResult
     {
         public Guid NewUserId { get; set; }
+    }
+
+    public class MigrateContactOrganisation
+    {
+        public ApplyTypes.Contact contact { get; set; }
+        public Organisation organisation { get; set; }
     }
 }

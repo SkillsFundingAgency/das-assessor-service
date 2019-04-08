@@ -135,6 +135,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 await HttpClient.SendAsync(request);
             }
         }
+
+        public async Task MigrateContactsAndOrgsToApply()
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/MigrateContactsAndOrgsToApply"))
+            {
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
+                request.Headers.Add("Accept", "application/json");
+                request.Content = new StringContent("", System.Text.Encoding.UTF8, "application/json");
+
+                await HttpClient.SendAsync(request);
+            }
+        }
     }
 
     public interface IContactsApiClient
@@ -159,5 +171,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task Callback(DfeSignInCallback callback);
 
         Task MigrateUsers();
+
+        Task MigrateContactsAndOrgsToApply();
     }
 }
