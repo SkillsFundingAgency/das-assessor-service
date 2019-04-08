@@ -243,7 +243,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 }
                 else
                 {
-                   
+                    //Try creating a contact and an organisation in apply
+                    await _contactsApiClient.MigrateSingleContactToApply(Guid.Parse(signinId));
+
                     await _contactsApiClient.UpdateStatus(new UpdateContactStatusRequest(user.Id.ToString(), ContactStatus.Applying));
                     await _organisationsApplyApiClient.ConfirmSearchedOrganisation(request);
 

@@ -3,7 +3,10 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Microsoft.WindowsAzure.Storage.Blob;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
@@ -37,7 +40,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 return await RequestAndDeserialiseAsync<ContactResponse>(request, $"Could not find the contact");
             }
         }
-        
+
 
         public async Task<ContactResponse> Update(UpdateContactRequest updateContactRequest)
         {
@@ -67,7 +70,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/signInId/{signInId}"))
             {
-                return await RequestAndDeserialiseAsync<ContactResponse>(request, $"Could not find contact with {signInId}");
+                var result = await RequestAndDeserialiseAsync<ContactResponse>(request, $"Could not find contact with {signInId}");
+                return result;
             }
         }
 
@@ -83,7 +87,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/contacts/updateContactWithOrgAndStatus"))
             {
-                return await PostPutRequestWithResponse<UpdateContactWithOrgAndStausRequest, ContactResponse>(request,updateContactWithOrgAndStausRequest);
+                return await PostPutRequestWithResponse<UpdateContactWithOrgAndStausRequest, ContactResponse>(request, updateContactWithOrgAndStausRequest);
             }
         }
 
@@ -94,15 +98,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 var response =
                     await PostPutRequestWithResponse<CreateContactRequest, ContactBoolResponse>(request,
                         createContactRequest);
-                if (response.Result)
-                {
-                    await _contactApplyClient.CreateAccountInApply(new NewApplyContact
-                    {
-                        Email = createContactRequest.Email, GivenName = createContactRequest.GivenName,
-                        FamilyName = createContactRequest.FamilyName,
-                        FromAssessor = true
-                    });
-                }
 
                 return response;
             }
@@ -113,14 +108,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/contacts/callback"))
             {
                 await PostPutRequest(request, callback);
-                var response = await GetContactBySignInId(callback.Sub);
-                await _contactApplyClient.UpdateApplySignInId(new AddToApplyContactASignInId
-                {
-                    Email = response.Email,
-                    SignInId = callback.Sub,
-                    ContactId = callback.SourceId,
-                    UpdatedBy = "AssessorSignIn"
-                });
             }
         }
 
@@ -145,6 +132,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 request.Content = new StringContent("", System.Text.Encoding.UTF8, "application/json");
 
                 await HttpClient.SendAsync(request);
+            }
+        }
+
+        public async Task MigrateSingleContactToApply(System.Guid signinId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/MigrateSingleContactToApply"))
+            {
+                await PostPutRequest(request,
+                        new SigninIdWrapper(signinId));
             }
         }
     }
@@ -173,5 +169,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task MigrateUsers();
 
         Task MigrateContactsAndOrgsToApply();
+
+        Task MigrateSingleContactToApply(System.Guid signinId);
     }
 }
