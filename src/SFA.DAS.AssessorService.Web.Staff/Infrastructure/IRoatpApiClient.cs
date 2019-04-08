@@ -10,6 +10,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
     {
        Task<IEnumerable<IDictionary<string, object>>> GetCompleteRegister();
        Task<IEnumerable<IDictionary<string, object>>> GetAuditHistory();
+       Task<IEnumerable<IDictionary<string, object>>> GetRoatpSummary();
        Task<IEnumerable<ProviderType>> GetProviderTypes();
        Task<IEnumerable<OrganisationType>> GetOrganisationTypes(int providerTypeId);
        Task<bool> CreateOrganisation(CreateOrganisationRequest organisationRequest);

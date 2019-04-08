@@ -20,15 +20,17 @@
         private const string CompleteRegisterWorksheetName = "Providers";
         private const string AuditHistoryWorksheetName = "Provider history";
         private const string ExcelFileName = "_RegisterOfApprenticeshipTrainingProviders.xlsx";
+        private const string FatFileName = "roatp {0}.xlsx";
+        private const string FatWorksheetName = "roatp";
 
         public DownloadRoatpController(IRoatpApiClient apiClient, IDataTableHelper dataTableHelper,
-                                       ILogger<DownloadRoatpController> logger)
+            ILogger<DownloadRoatpController> logger)
         {
             _apiClient = apiClient;
             _dataTableHelper = dataTableHelper;
             _logger = logger;
         }
-        
+
         [Route("download-register")]
         public async Task<IActionResult> Download()
         {
@@ -56,7 +58,30 @@
                     _logger.LogError("Unable to retrieve audit history data from RoATP API");
                 }
 
-                return File(package.GetAsByteArray(), "application/excel", $"{DateTime.Now.ToString("yyyyMMdd")}{ExcelFileName}");
+                return File(package.GetAsByteArray(), "application/excel",
+                    $"{DateTime.Now.ToString("yyyyMMdd")}{ExcelFileName}");
+            }
+        }
+
+        [Route("download-fat-file")]
+        public async Task<IActionResult> DownloadFatFile()
+        {
+            using (var package = new ExcelPackage())
+            {
+                var roatpSummaryWorksheet = package.Workbook.Worksheets.Add(FatWorksheetName);
+                var roatpData = await _apiClient.GetRoatpSummary();
+                if (roatpData != null && roatpData.Any())
+                {
+                    roatpSummaryWorksheet.Cells.LoadFromDataTable(_dataTableHelper.ToDataTable(roatpData), true);
+                }
+                else
+                {
+                    _logger.LogError("Unable to retrieve summary data from RoATP API");
+                }
+
+                var fatSpreadsheetFilename = string.Format(FatFileName, DateTime.Now.ToString("dd.MM.yyyy"));
+
+                return File(package.GetAsByteArray(), "application/excel", fatSpreadsheetFilename);
             }
         }
     }

@@ -38,9 +38,16 @@
 
         public async Task<IEnumerable<IDictionary<string, object>>> GetCompleteRegister()
         {
-            string url = "{_baseUrl}/api/v1/download/complete";
+            string url = $"{_baseUrl}/api/v1/download/complete";
             _logger.LogInformation($"Retrieving RoATP complete register data from {url}");
             return await Get<IEnumerable<IDictionary<string, object>>>($"{_baseUrl}/api/v1/download/complete");
+        }
+
+        public async Task<IEnumerable<IDictionary<string, object>>> GetRoatpSummary()
+        {
+            string url = $"{_baseUrl}/api/v1/download/roatp-summary";
+            _logger.LogInformation($"Retrieving RoATP summary data from {url}");
+            return await Get<IEnumerable<IDictionary<string, object>>>($"{_baseUrl}/api/v1/download/roatp-summary");
         }
 
         public async Task<IEnumerable<OrganisationType>> GetOrganisationTypes(int providerTypeId)
