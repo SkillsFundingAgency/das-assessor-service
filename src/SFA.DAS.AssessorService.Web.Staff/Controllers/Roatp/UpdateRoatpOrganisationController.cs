@@ -4,6 +4,7 @@
     using Microsoft.Extensions.Logging;
     using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
     using System.Threading.Tasks;
+    using AutoMapper;
     using ViewModels.Roatp;
     using SFA.DAS.AssessorService.Web.Staff.Domain;
     using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
@@ -45,7 +46,10 @@
 
             model.UpdatedBy = HttpContext.User.OperatorName();
 
-            var result = await _apiClient.UpdateOrganisationLegalName(CreateUpdateLegalNameRequest(model));
+            var request = Mapper.Map<UpdateOrganisationLegalNameRequest>(model);
+            request.LegalName = request.LegalName.ToUpper();
+
+            var result = await _apiClient.UpdateOrganisationLegalName(request);
 
             if (result)
             {
@@ -53,16 +57,6 @@
             }
 
             return View("~/Views/Roatp/UpdateOrganisationLegalName.cshtml", model);
-        }
-
-        private UpdateOrganisationLegalNameRequest CreateUpdateLegalNameRequest(UpdateOrganisationLegalNameViewModel model)
-        {
-            return new UpdateOrganisationLegalNameRequest
-            {
-                LegalName = model.LegalName.ToUpper(),
-                OrganisationId = model.OrganisationId,
-                UpdatedBy = model.UpdatedBy
-            };
         }
 
         [Route("change-financial-track-record")]
@@ -90,7 +84,8 @@
 
             model.UpdatedBy = HttpContext.User.OperatorName();
 
-            var result = await _apiClient.UpdateOrganisationFinancialTrackRecord(CreateUpdateFinancialTrackRecordRequest(model));
+            var request = Mapper.Map<UpdateOrganisationFinancialTrackRecordRequest>(model);
+            var result = await _apiClient.UpdateOrganisationFinancialTrackRecord(request);
 
             if (result)
             {
@@ -98,16 +93,6 @@
             }
 
             return View("~/Views/Roatp/UpdateOrganisationFinancialTrackRecord.cshtml", model);
-        }
-
-        private UpdateOrganisationFinancialTrackRecordRequest CreateUpdateFinancialTrackRecordRequest(UpdateOrganisationFinancialTrackRecordViewModel model)
-        {
-            return new UpdateOrganisationFinancialTrackRecordRequest
-            {
-                FinancialTrackRecord = model.FinancialTrackRecord,
-                OrganisationId = model.OrganisationId,
-                UpdatedBy = model.UpdatedBy
-            };
         }
 
     }
