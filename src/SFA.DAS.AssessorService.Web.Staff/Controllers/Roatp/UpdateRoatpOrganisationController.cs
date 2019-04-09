@@ -9,6 +9,7 @@
     using SFA.DAS.AssessorService.Web.Staff.Domain;
     using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
     using System.Collections.Generic;
+    using AutoMapper;
 
     public class UpdateRoatpOrganisationController : RoatpSearchResultsControllerBase
     {
@@ -47,7 +48,9 @@
 
             model.UpdatedBy = HttpContext.User.OperatorName();
 
-            var result = await _apiClient.UpdateOrganisationLegalName(CreateUpdateLegalNameRequest(model));
+            var request = Mapper.Map<UpdateOrganisationLegalNameRequest>(model);
+            request.LegalName = request.LegalName.ToUpper();
+            var result = await _apiClient.UpdateOrganisationLegalName(request);
 
             if (result)
             {
@@ -90,7 +93,17 @@
 
             model.UpdatedBy = HttpContext.User.OperatorName();
 
-            var result = await _apiClient.UpdateOrganisationStatus(CreateUpdateOrganisationStatusRequest(model));
+            var request = Mapper.Map<UpdateOrganisationStatusRequest>(model);
+            if (model.OrganisationStatusId == 0)
+            {
+                request.RemovedReasonId = model.RemovedReasonId;
+            }
+            else
+            {
+                request.RemovedReasonId = null;
+            }
+
+            var result = await _apiClient.UpdateOrganisationStatus(request);
 
             if (result)
             {
@@ -125,7 +138,8 @@
 
             model.UpdatedBy = HttpContext.User.OperatorName();
 
-            var result = await _apiClient.UpdateOrganisationTradingName(CreateUpdateTradingNameRequest(model));
+            var request = Mapper.Map<UpdateOrganisationTradingNameRequest>(model);
+            var result = await _apiClient.UpdateOrganisationTradingName(request);
 
             if (result)
             {
@@ -160,7 +174,8 @@
 
             model.UpdatedBy = HttpContext.User.OperatorName();
 
-            var result = await _apiClient.UpdateOrganisationParentCompanyGuarantee(CreateUpdateParentCompanyGuaranteeRequest(model));
+            var request = Mapper.Map<UpdateOrganisationParentCompanyGuaranteeRequest>(model);
+            var result = await _apiClient.UpdateOrganisationParentCompanyGuarantee(request);
 
             if (result)
             {
@@ -195,7 +210,8 @@
 
             model.UpdatedBy = HttpContext.User.OperatorName();
 
-            var result = await _apiClient.UpdateOrganisationFinancialTrackRecord(CreateUpdateFinancialTrackRecordRequest(model));
+            var request = Mapper.Map<UpdateOrganisationFinancialTrackRecordRequest>(model);
+            var result = await _apiClient.UpdateOrganisationFinancialTrackRecord(request);
 
             if (result)
             {
@@ -249,7 +265,8 @@
                 model.OrganisationTypeId = searchModel.SelectedResult.OrganisationType.Id;
             }
 
-            var result = await _apiClient.UpdateOrganisationProviderType(CreateUpdateOrganisationProviderTypeRequest(model));
+            var request = Mapper.Map<UpdateOrganisationProviderTypeRequest>(model);
+            var result = await _apiClient.UpdateOrganisationProviderType(request);
 
             if (result)
             {
@@ -257,76 +274,6 @@
             }
 
             return View("~/Views/Roatp/UpdateOrganisationProviderType.cshtml", model);
-        }
-
-        private UpdateOrganisationLegalNameRequest CreateUpdateLegalNameRequest(UpdateOrganisationLegalNameViewModel model)
-        {
-            return new UpdateOrganisationLegalNameRequest
-            {
-                LegalName = model.LegalName.ToUpper(),
-                OrganisationId = model.OrganisationId,
-                UpdatedBy = model.UpdatedBy
-            };
-        }
-
-        private UpdateOrganisationStatusRequest CreateUpdateOrganisationStatusRequest(UpdateOrganisationStatusViewModel model)
-        {
-            var request = new UpdateOrganisationStatusRequest
-            {
-                RemovedReasonId = null,
-                OrganisationStatusId = model.OrganisationStatusId,
-                OrganisationId = model.OrganisationId,
-                UpdatedBy = model.UpdatedBy
-            };
-
-            if (model.OrganisationStatusId == 0)
-            {
-                request.RemovedReasonId = model.RemovedReasonId;
-            }
-
-            return request;
-        }
-
-        private UpdateOrganisationTradingNameRequest CreateUpdateTradingNameRequest(UpdateOrganisationTradingNameViewModel model)
-        {
-            return new UpdateOrganisationTradingNameRequest
-            {
-                TradingName = model.TradingName,
-                OrganisationId = model.OrganisationId,
-                UpdatedBy = model.UpdatedBy
-            };
-        }
-
-        private UpdateOrganisationProviderTypeRequest CreateUpdateOrganisationProviderTypeRequest(UpdateOrganisationProviderTypeViewModel model)
-        {
-
-            return new UpdateOrganisationProviderTypeRequest
-            {
-                OrganisationId = model.OrganisationId,
-                OrganisationTypeId = model.OrganisationTypeId,
-                ProviderTypeId = model.ProviderTypeId,
-                UpdatedBy = model.UpdatedBy
-            };
-        }
-
-        private UpdateOrganisationParentCompanyGuaranteeRequest CreateUpdateParentCompanyGuaranteeRequest(UpdateOrganisationParentCompanyGuaranteeViewModel model)
-        {
-            return new UpdateOrganisationParentCompanyGuaranteeRequest
-            {
-                ParentCompanyGuarantee = model.ParentCompanyGuarantee,
-                OrganisationId = model.OrganisationId,
-                UpdatedBy = model.UpdatedBy
-            };
-        }
-        
-        private UpdateOrganisationFinancialTrackRecordRequest CreateUpdateFinancialTrackRecordRequest(UpdateOrganisationFinancialTrackRecordViewModel model)
-        {
-            return new UpdateOrganisationFinancialTrackRecordRequest
-            {
-                FinancialTrackRecord = model.FinancialTrackRecord,
-                OrganisationId = model.OrganisationId,
-                UpdatedBy = model.UpdatedBy
-            };
         }
 
     }
