@@ -12,6 +12,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
     using System;
     using System.Threading.Tasks;
 
+    //MFCMFC
+    //[Authorize]
     public class AddRoatpOrganisationController : Controller
     {
         private IRoatpApiClient _apiClient;

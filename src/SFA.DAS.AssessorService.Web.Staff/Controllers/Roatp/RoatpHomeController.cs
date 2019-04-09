@@ -3,7 +3,8 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
-    [Authorize]
+    //MFCMFC
+    //[Authorize]
     public class RoatpHomeController : Controller
     {
         [Route("search-apprenticeship-training-providers")]

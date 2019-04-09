@@ -8,6 +8,8 @@
     using SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp;
     using System.Threading.Tasks;
 
+    //MFCMFC
+    //[Authorize]
     public class RoatpSearchResultsControllerBase : Controller
     {
         protected IRoatpSessionService _sessionService;

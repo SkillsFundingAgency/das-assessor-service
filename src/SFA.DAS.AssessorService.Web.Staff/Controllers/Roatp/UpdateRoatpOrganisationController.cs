@@ -8,7 +8,9 @@
     using ViewModels.Roatp;
     using SFA.DAS.AssessorService.Web.Staff.Domain;
     using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
-    
+
+    //MFCMFC
+    //[Authorize]
     public class UpdateRoatpOrganisationController : RoatpSearchResultsControllerBase
     {
         private ILogger<UpdateRoatpOrganisationController> _logger;
@@ -59,9 +61,10 @@
         [Route("change-status")]
         public async Task<IActionResult> UpdateOrganisationStatus()
         {
+            const int OrganisationStatusIdRemoved = 0;
             var searchModel = _sessionService.GetSearchResults();
 
-            var organisationStatuses = _apiClient.GetOrganisationStatuses().Result.OrderBy(x => x.Status);
+            var organisationStatuses = _apiClient.GetOrganisationStatuses(searchModel.SelectedResult?.ProviderType?.Id).Result.OrderBy(x => x.Status);
             var removedReasons = _apiClient.GetRemovedReasons().Result.OrderBy(x => x.Id);
             
             var model = new UpdateOrganisationStatusViewModel
@@ -70,9 +73,10 @@
                 OrganisationId = searchModel.SelectedResult.Id,
                 OrganisationStatusId = searchModel.SelectedResult.OrganisationStatus.Id,
                 OrganisationStatuses = organisationStatuses,
-                RemovedReasons = removedReasons
+                RemovedReasons = removedReasons,
+                ProviderTypeId = searchModel.SelectedResult.ProviderType.Id
             };
-            if (model.OrganisationStatusId == 0) // Removed
+            if (model.OrganisationStatusId == OrganisationStatusIdRemoved)
             {
                 model.RemovedReasonId = searchModel.SelectedResult.OrganisationData.RemovedReason.Id;
             }
@@ -82,13 +86,15 @@
         [HttpPost]
         public async Task<IActionResult> UpdateStatus(UpdateOrganisationStatusViewModel model)
         {
+            model.OrganisationStatuses = _apiClient.GetOrganisationStatuses(model.ProviderTypeId).Result.OrderBy(x => x.Status);
+            model.RemovedReasons = _apiClient.GetRemovedReasons().Result.OrderBy(x => x.Id);
+
             if (!ModelState.IsValid)
             {
                 return View("~/Views/Roatp/UpdateOrganisationStatus.cshtml", model);
             }
 
             model.UpdatedBy = HttpContext.User.OperatorName();
-
             var result = await _apiClient.UpdateOrganisationStatus(CreateUpdateOrganisationStatusRequest(model));
 
             if (result)

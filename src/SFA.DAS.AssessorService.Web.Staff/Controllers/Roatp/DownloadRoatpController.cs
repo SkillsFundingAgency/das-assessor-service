@@ -10,7 +10,8 @@
     using SFA.DAS.AssessorService.Web.Staff.Helpers;
     using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 
-    [Authorize]
+    //MFCMFC
+    //[Authorize]
     public class DownloadRoatpController : Controller
     {
         private IRoatpApiClient _apiClient;

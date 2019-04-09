@@ -53,9 +53,9 @@
             return await Get<IEnumerable<ProviderType>>($"{_baseUrl}/api/v1/lookupData/providerTypes");
         }
 
-        public async Task<IEnumerable<OrganisationStatus>> GetOrganisationStatuses()
+        public async Task<IEnumerable<OrganisationStatus>> GetOrganisationStatuses(int? providerTypeId)
         {
-            return await Get<IEnumerable<OrganisationStatus>>($"{_baseUrl}/api/v1/lookupData/organisationStatuses");
+            return await Get<IEnumerable<OrganisationStatus>>($"{_baseUrl}/api/v1/lookupData/organisationStatuses?providerTypeId={providerTypeId}");
         }
 
         public async Task<IEnumerable<RemovedReason>> GetRemovedReasons()
