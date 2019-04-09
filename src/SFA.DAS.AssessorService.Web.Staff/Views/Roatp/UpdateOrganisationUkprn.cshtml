@@ -49,7 +49,7 @@
                     <div class="govuk-form-group" sfa-validation-for="Ukprn" sfa-validationerror-class="form-group-error">
                         <label for="LegalName" class="roatp-label">UKPRN</label>
                         <span class="error-message" asp-validation-for="Ukprn"></span>
-                        <input id="Ukprn" name="Ukprn" type="number" class="roatp-input" asp-for="Ukprn"
+                        <input id="Ukprn" name="Ukprn" type="text" class="roatp-input" asp-for="Ukprn"
                                sfa-validation-for="Ukprn" sfa-validationerror-class="form-control-error" />
                     </div>
                     @Html.HiddenFor(x => x.LegalName)
