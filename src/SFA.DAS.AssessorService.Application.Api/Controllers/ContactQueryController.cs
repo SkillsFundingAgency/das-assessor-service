@@ -223,7 +223,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 {
                     Id = contact.Id,
                     CreatedAt = contact.CreatedAt,
-                    CreatedBy = contact.Email,
+                    CreatedBy = contact.Id.ToString(),
                     DeletedAt = null,
                     DeletedBy = null,
                     Email = contact.Email,
@@ -245,7 +245,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 request.organisation = new ApplyTypes.Organisation
                 {
                     CreatedAt = contact.Organisation.CreatedAt,
-                    CreatedBy = contact.Email,
+                    CreatedBy = contact.Id.ToString(),
                     DeletedAt = null,
                     DeletedBy = null,
                     Id = Guid.Empty,
