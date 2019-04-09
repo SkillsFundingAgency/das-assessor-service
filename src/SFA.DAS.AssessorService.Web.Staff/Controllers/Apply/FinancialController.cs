@@ -111,7 +111,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
                     {
                         foreach (var uploadQuestion in uploadPage.UploadQuestions)
                         {
-                            var answers = section.QnAData.Pages.SelectMany(p => p.PageOfAnswers).SelectMany(a => a.Answers).Where(a => a.QuestionId == uploadQuestion.QuestionId).ToList();
+                            var answers = section.QnAData.Pages.SelectMany(p => p.PageOfAnswers)
+                                .SelectMany(a => a.Answers)
+                                .Where(a => a.QuestionId == uploadQuestion.QuestionId && !string.IsNullOrWhiteSpace(a.Value)).ToList();
 
                             foreach (var answer in answers)
                             {
