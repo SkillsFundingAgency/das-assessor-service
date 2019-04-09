@@ -8,6 +8,7 @@
     using ViewModels.Roatp;
     using SFA.DAS.AssessorService.Web.Staff.Domain;
     using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
+    using AutoMapper;
 
     //MFCMFC
     //[Authorize]
@@ -48,7 +49,10 @@
 
             model.UpdatedBy = HttpContext.User.OperatorName();
 
-            var result = await _apiClient.UpdateOrganisationLegalName(CreateUpdateLegalNameRequest(model));
+            var request = Mapper.Map<UpdateOrganisationLegalNameRequest>(model);
+            request.LegalName = request.LegalName.ToUpper();
+
+            var result = await _apiClient.UpdateOrganisationLegalName(request);
 
             if (result)
             {
@@ -95,7 +99,17 @@
             }
 
             model.UpdatedBy = HttpContext.User.OperatorName();
-            var result = await _apiClient.UpdateOrganisationStatus(CreateUpdateOrganisationStatusRequest(model));
+            var request = Mapper.Map<UpdateOrganisationStatusRequest>(model);
+            if (model.OrganisationStatusId == 0) // Removed
+            {
+                request.RemovedReasonId = model.RemovedReasonId;
+            }
+            else
+            {
+                request.RemovedReasonId = null;
+            }
+
+            var result = await _apiClient.UpdateOrganisationStatus(request);
 
             if (result)
             {
@@ -104,32 +118,6 @@
 
             return View("~/Views/Roatp/UpdateOrganisationStatus.cshtml", model);
         }
-        private UpdateOrganisationLegalNameRequest CreateUpdateLegalNameRequest(UpdateOrganisationLegalNameViewModel model)
-        {
-            return new UpdateOrganisationLegalNameRequest
-            {
-                LegalName = model.LegalName.ToUpper(),
-                OrganisationId = model.OrganisationId,
-                UpdatedBy = model.UpdatedBy
-            };
-        }
 
-        private UpdateOrganisationStatusRequest CreateUpdateOrganisationStatusRequest(UpdateOrganisationStatusViewModel model)
-        {
-            var request = new UpdateOrganisationStatusRequest
-            {
-                RemovedReasonId = null,
-                OrganisationStatusId = model.OrganisationStatusId,
-                OrganisationId = model.OrganisationId,
-                UpdatedBy = model.UpdatedBy
-            };
-
-            if (model.OrganisationStatusId == 0)
-            {
-                request.RemovedReasonId = model.RemovedReasonId;
-            }
-
-            return request;
-        }
     }
 }
