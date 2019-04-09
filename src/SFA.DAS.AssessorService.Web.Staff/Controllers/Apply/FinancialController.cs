@@ -111,19 +111,22 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
                     {
                         foreach (var uploadQuestion in uploadPage.UploadQuestions)
                         {
-                            var answer = section.QnAData.Pages.SelectMany(p => p.PageOfAnswers).SelectMany(a => a.Answers).SingleOrDefault(a => a.QuestionId == uploadQuestion.QuestionId);
+                            var answers = section.QnAData.Pages.SelectMany(p => p.PageOfAnswers).SelectMany(a => a.Answers).Where(a => a.QuestionId == uploadQuestion.QuestionId).ToList();
 
-                            if (answer == null || string.IsNullOrWhiteSpace(answer.Value)) continue;
-                            
-                            var fileDownloadName = answer.Value;
-
-                            var downloadedFile = await _apiClient.DownloadFile(applicationId, int.Parse(uploadPage.PageId), uploadQuestion.QuestionId, Guid.Empty, 1, 3, fileDownloadName);
-
-                            var zipEntry = zipArchive.CreateEntry(fileDownloadName);
-                            using (var entryStream = zipEntry.Open())
+                            foreach (var answer in answers)
                             {
-                                var fileStream = await downloadedFile.Content.ReadAsStreamAsync();
-                                fileStream.CopyTo(entryStream);
+                                if (answer == null || string.IsNullOrWhiteSpace(answer.Value)) continue;
+                            
+                                var fileDownloadName = answer.Value;
+
+                                var downloadedFile = await _apiClient.DownloadFile(applicationId, int.Parse(uploadPage.PageId), uploadQuestion.QuestionId, Guid.Empty, 1, 3, fileDownloadName);
+
+                                var zipEntry = zipArchive.CreateEntry(fileDownloadName);
+                                using (var entryStream = zipEntry.Open())
+                                {
+                                    var fileStream = await downloadedFile.Content.ReadAsStreamAsync();
+                                    fileStream.CopyTo(entryStream);
+                                }   
                             }
                         }
                     }
