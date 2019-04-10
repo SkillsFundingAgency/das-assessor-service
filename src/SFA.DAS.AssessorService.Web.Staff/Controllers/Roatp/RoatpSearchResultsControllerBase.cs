@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
+﻿using Microsoft.AspNetCore.Authorization;
+
+namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
 {
     using System;
     using Infrastructure;
@@ -8,8 +10,7 @@
     using SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp;
     using System.Threading.Tasks;
 
-    //MFCMFC
-    //[Authorize]
+    [Authorize]
     public class RoatpSearchResultsControllerBase : Controller
     {
         protected IRoatpSessionService _sessionService;

@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
+﻿using Microsoft.AspNetCore.Authorization;
+
+namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
 {
     using System.Linq;
     using Microsoft.AspNetCore.Mvc;
@@ -9,9 +11,9 @@
     using SFA.DAS.AssessorService.Web.Staff.Domain;
     using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
     using AutoMapper;
+    using System.Collections.Generic;
 
-    //MFCMFC
-    //[Authorize]
+    [Authorize]
     public class UpdateRoatpOrganisationController : RoatpSearchResultsControllerBase
     {
         private ILogger<UpdateRoatpOrganisationController> _logger;
@@ -117,6 +119,169 @@
             }
 
             return View("~/Views/Roatp/UpdateOrganisationStatus.cshtml", model);
+        }
+
+        [Route("change-trading-name")]
+        public async Task<IActionResult> UpdateOrganisationTradingName()
+        {
+            var searchModel = _sessionService.GetSearchResults();
+
+            var model = new UpdateOrganisationTradingNameViewModel
+            {
+                LegalName = searchModel.SelectedResult.LegalName,
+                TradingName = searchModel.SelectedResult.TradingName,
+                OrganisationId = searchModel.SelectedResult.Id
+            };
+
+            return View("~/Views/Roatp/UpdateOrganisationTradingName.cshtml", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateTradingName(UpdateOrganisationTradingNameViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("~/Views/Roatp/UpdateOrganisationTradingName.cshtml", model);
+            }
+
+            model.UpdatedBy = HttpContext.User.OperatorName();
+
+            var request = Mapper.Map<UpdateOrganisationTradingNameRequest>(model);
+            var result = await _apiClient.UpdateOrganisationTradingName(request);
+
+            if (result)
+            {
+                return await RefreshSearchResults();
+            }
+
+            return View("~/Views/Roatp/UpdateOrganisationTradingName.cshtml", model);
+        }
+
+        [Route("change-parent-company-guarantee")]
+        public async Task<IActionResult> UpdateOrganisationParentCompanyGuarantee()
+        {
+            var searchModel = _sessionService.GetSearchResults();
+
+            var model = new UpdateOrganisationParentCompanyGuaranteeViewModel
+            {
+                ParentCompanyGuarantee = searchModel.SelectedResult.OrganisationData.ParentCompanyGuarantee,
+                OrganisationId = searchModel.SelectedResult.Id,
+                LegalName = searchModel.SelectedResult.LegalName
+            };
+
+            return View("~/Views/Roatp/UpdateOrganisationParentCompanyGuarantee.cshtml", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateParentCompanyGuarantee(UpdateOrganisationParentCompanyGuaranteeViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("~/Views/Roatp/UpdateOrganisationParentCompanyGuarantee.cshtml", model);
+            }
+
+            model.UpdatedBy = HttpContext.User.OperatorName();
+
+            var request = Mapper.Map<UpdateOrganisationParentCompanyGuaranteeRequest>(model);
+            var result = await _apiClient.UpdateOrganisationParentCompanyGuarantee(request);
+
+            if (result)
+            {
+                return await RefreshSearchResults();
+            }
+
+            return View("~/Views/Roatp/UpdateOrganisationParentCompanyGuarantee.cshtml", model);
+        }
+
+        [Route("change-financial-track-record")]
+        public async Task<IActionResult> UpdateOrganisationFinancialTrackRecord()
+        {
+            var searchModel = _sessionService.GetSearchResults();
+
+            var model = new UpdateOrganisationFinancialTrackRecordViewModel
+            {
+                FinancialTrackRecord = searchModel.SelectedResult.OrganisationData.FinancialTrackRecord,
+                OrganisationId = searchModel.SelectedResult.Id,
+                LegalName = searchModel.SelectedResult.LegalName
+            };
+
+            return View("~/Views/Roatp/UpdateOrganisationFinancialTrackRecord.cshtml", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateFinancialTrackRecord(UpdateOrganisationFinancialTrackRecordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("~/Views/Roatp/UpdateOrganisationFinancialTrackRecord.cshtml", model);
+            }
+
+            model.UpdatedBy = HttpContext.User.OperatorName();
+
+            var request = Mapper.Map<UpdateOrganisationFinancialTrackRecordRequest>(model);
+            var result = await _apiClient.UpdateOrganisationFinancialTrackRecord(request);
+
+            if (result)
+            {
+                return await RefreshSearchResults();
+            }
+
+            return View("~/Views/Roatp/UpdateOrganisationFinancialTrackRecord.cshtml", model);
+        }
+
+        [Route("change-provider")]
+        public async Task<IActionResult> UpdateOrganisationProviderType()
+        {
+            var searchModel = _sessionService.GetSearchResults();
+
+            var model = new UpdateOrganisationProviderTypeViewModel
+            {
+                LegalName = searchModel.SelectedResult.LegalName,
+                OrganisationId = searchModel.SelectedResult.Id,
+                ProviderTypeId = searchModel.SelectedResult.ProviderType.Id,
+                OrganisationTypeId = searchModel.SelectedResult.OrganisationType.Id
+            };
+
+            var providerTypes = await _apiClient.GetProviderTypes();
+            model.ProviderTypes = providerTypes;
+
+            var organisationTypes = new Dictionary<int, IEnumerable<OrganisationType>>();
+            foreach (var providerType in providerTypes)
+            {
+                var organisationTypesByProvider = await _apiClient.GetOrganisationTypes(providerType.Id);
+                organisationTypes.Add(providerType.Id, organisationTypesByProvider);
+            }
+
+            model.OrganisationTypesByProviderType = organisationTypes;
+
+            return View("~/Views/Roatp/UpdateOrganisationProviderType.cshtml", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateProviderType(UpdateOrganisationProviderTypeViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("~/Views/Roatp/UpdateOrganisationProviderType.cshtml", model);
+            }
+
+            model.UpdatedBy = HttpContext.User.OperatorName();
+
+            if (model.OrganisationTypeId == 0) // if not applicable to change organisation type then use existing value
+            {
+                var searchModel = _sessionService.GetSearchResults();
+                model.OrganisationTypeId = searchModel.SelectedResult.OrganisationType.Id;
+            }
+
+            var request = Mapper.Map<UpdateOrganisationProviderTypeRequest>(model);
+            var result = await _apiClient.UpdateOrganisationProviderType(request);
+
+            if (result)
+            {
+                return await RefreshSearchResults();
+            }
+
+            return View("~/Views/Roatp/UpdateOrganisationProviderType.cshtml", model);
         }
 
     }
