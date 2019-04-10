@@ -30,6 +30,13 @@
                         <td>@Model.ApplicationReference</td>
                     </tr>
                 }
+                @if (!string.IsNullOrWhiteSpace(Model.Standard) && Model.SequenceId == 2)
+                {
+                    <tr>
+                        <td class="bold-small">Standard</td>
+                        <td>@Model.Standard</td>
+                    </tr>
+                }
                 @if (!string.IsNullOrWhiteSpace(Model.LegalName))
                 {
                     <tr>

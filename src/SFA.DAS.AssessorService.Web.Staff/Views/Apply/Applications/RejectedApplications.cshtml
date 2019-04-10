@@ -47,6 +47,7 @@
                     <tr>
                         <th>Organisation name</th>
                         <th>Application type</th>
+                        <th>Standard</th>
                         <th>Date rejected</th>
                         <th class="numeric">Current status</th>
                     </tr>
@@ -63,6 +64,16 @@
                             </td>
                             <td data-label="Date rejected">
                                 @item.FeedbackAddedDate.ToSfaShortDateString()
+                            </td>
+                            <td data-label="Standard">
+                                @if (!string.IsNullOrWhiteSpace(item.Standard) && item.SequenceId == 2)
+                                {
+                                    <text>@item.Standard</text>
+                                }
+                                else
+                                {
+                                    <text>---</text>
+                                }
                             </td>
                             <td class="numeric" data-label="Current status">
                                 @{
