@@ -57,8 +57,9 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                      options.RequireHttpsMetadata = false;
                      options.ClientId = _configuration.DfeSignIn.ClientId;
 
-                     options.Scope.Clear();
-                     options.Scope.Add("openid");
+                    options.Scope.Clear();
+                    options.Scope.Add("openid");
+                    options.Scope.Add("profile");
 
                      options.SaveTokens = true;
 

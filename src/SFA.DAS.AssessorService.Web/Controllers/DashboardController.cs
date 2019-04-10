@@ -1,8 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
 using SFA.DAS.AssessorService.Settings;
@@ -21,19 +23,21 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly IStandardsApiClient _standardsApiClient;
         private readonly ICertificateApiClient _certificateApiClient;
         private readonly IWebConfiguration _webConfiguration;
+        private readonly ILogger<DashboardController> _logger;
 
         public DashboardController(
             IHttpContextAccessor contextAccessor , 
             IStandardsApiClient standardsApiClient,
             IOrganisationsApiClient organisationApiClient, 
             ICertificateApiClient certificateApiClieet,
-            IWebConfiguration webConfiguration)
+            IWebConfiguration webConfiguration, ILogger<DashboardController> logger)
         {
             _organisationApiClient = organisationApiClient;
             _contextAccessor = contextAccessor;
             _certificateApiClient = certificateApiClieet;
             _standardsApiClient = standardsApiClient;
             _webConfiguration = webConfiguration;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -65,9 +69,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 }
 
             }
-            catch (EntityNotFoundException)
+            catch (EntityNotFoundException ex)
             {
+                _logger.LogInformation($"Dashboard.Index EntityNotFoundException: {ex.Message} : {ex.StackTrace}");
                 return RedirectToAction("NotRegistered", "Home");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation($"Dashboard.Index Exception: {ex.Message} : {ex.StackTrace}");
             }
             return View(dashboardViewModel);
         }
