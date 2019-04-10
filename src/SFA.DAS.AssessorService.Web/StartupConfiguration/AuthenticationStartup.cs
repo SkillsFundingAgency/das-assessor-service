@@ -109,19 +109,26 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                              var organisationApplyClient = context.HttpContext.RequestServices.GetRequiredService<IOrganisationsApplyApiClient>();
 
                              var signInId = context.Principal.FindFirst("sub")?.Value;
+                             var email = context.Principal.FindFirst("name")?.Value;
+                             var familyName = context.Principal.FindFirst("family_name")?.Value;
+                             var givenName = context.Principal.FindFirst("given_name")?.Value;
+
                              ContactResponse user = null;
                              try
                              {
                                  user = await contactClient.GetContactBySignInId(signInId);
                              }
-                             catch (EntityNotFoundException e)
+                             catch (EntityNotFoundException)
                              {
-                                 logger.LogError(e, "Failed to retrieve user.");
+                                 logger.LogInformation("Failed to retrieve user.");
                              }
 
                              if (user == null)
                              {
+                                 //Do all this below if the user is not found in Assessor
+                                 bool createNewContactWithNoOrg = false;
                                  logger.LogInformation("Trying to get user from apply to retrieve user.");
+
                                  var applyContact = await contactApplyClient.GetApplyContactBySignInId(Guid.Parse(signInId));
                                  if (applyContact != null)
                                  {
@@ -133,12 +140,22 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                                      }
                                      catch (EntityNotFoundException) {
                                          logger.LogInformation("Found contact in apply, but no organisation associated with it.");
+                                         createNewContactWithNoOrg = true;
                                      }
 
                                      if (applyOrganisation != null)
                                      {
                                          //Start migrating apply contact into assessor
-                                         var assessorOrg = await orgClient.GetOrganisationByName(applyOrganisation.Name);
+                                         OrganisationResponse assessorOrg = null;
+                                         try
+                                         {
+                                             assessorOrg = await orgClient.GetOrganisationByName(applyOrganisation.Name);
+                                         }
+                                         catch (EntityNotFoundException)
+                                         {
+                                             logger.LogInformation("No organisation found in Assessor, hence no RoEPAO.");
+                                             createNewContactWithNoOrg = true;
+                                         }
                                          if (assessorOrg != null)
                                          {
                                              //Organisation exists in assessor so update contact with organisation
@@ -158,28 +175,34 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                                                  EndPointAssessorOrganisationId = assessorOrg.EndPointAssessorOrganisationId,
                                                  Status = "Live"
                                              };
-                                             
-                                             // Create a new contact and Update roles 
-                                             try
-                                             {
-                                                 var contactResponse = await contactClient.CreateANewContactWithGivenId(newContact);
-                                                 await contactClient.AssociateDefaultRolesAndPrivileges(newContact);
-                                                 //try retrieveing contact again
-                                                 user = await contactClient.GetContactBySignInId(signInId);
-                                             }
-                                             catch (Exception e)
-                                             {
-                                                 logger.LogInformation($"CreateContactHandler Error: {e.Message} {e.StackTrace} {e.InnerException?.Message}");
-                                                 throw e;
-                                             }
-                                         }
-                                         else
-                                         {
-                                             //Userexists in apply but associated with org not in assessor (ie not EPAO org) so create a new user
-                                             logger.LogInformation("Creating new user.");
-                                             //Todo: create a new contact from claims data
+
+                                             user = await CreateANewContact(newContact, contactClient, logger, signInId);
+
                                          }
                                      }
+                                 }
+                                 if (createNewContactWithNoOrg)
+                                 {
+                                     //Userexists in apply but associated with org not in assessor (ie not EPAO org) so create a new user
+                                     logger.LogInformation("Creating new user.");
+                                     var newContact = new Contact
+                                     {
+                                         Id = applyContact.Id,
+                                         DisplayName = $"{givenName} {familyName}",
+                                         Email = email,
+                                         SignInId = Guid.Parse(signInId),
+                                         SignInType = "ASLogin",
+                                         CreatedAt = DateTime.UtcNow,
+                                         Username = email,
+                                         Title = "",
+                                         FamilyName = familyName,
+                                         GivenNames = givenName,
+                                         OrganisationId = null,
+                                         EndPointAssessorOrganisationId = null,
+                                         Status = "Applying"
+                                     };
+
+                                     user = await CreateANewContact(newContact, contactClient, logger, signInId);
                                  }
 
                              }
@@ -224,8 +247,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                                  identity.AddClaim(new Claim("http://schemas.portal.com/service",
                                      Privileges.ManageUsers));
                              }
-
-
+                             
                              context.Principal.AddIdentity(identity);
                          }
 
@@ -253,7 +275,21 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
             });
         }
 
-
+        private async static Task<ContactResponse> CreateANewContact(Contact newContact, IContactsApiClient contactClient, ILogger<Startup> logger, string signInId)
+        {
+            try
+            {
+                var contactResponse = await contactClient.CreateANewContactWithGivenId(newContact);
+                await contactClient.AssociateDefaultRolesAndPrivileges(newContact);
+                //try retrieveing contact again
+                return await contactClient.GetContactBySignInId(signInId);
+            }
+            catch (Exception e)
+            {
+                logger.LogInformation($"CreateContactHandler Error: {e.Message} {e.StackTrace} {e.InnerException?.Message}");
+                throw e;
+            }
+        }
     }
 
     public class Policies
