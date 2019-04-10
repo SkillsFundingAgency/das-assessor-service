@@ -18,7 +18,8 @@
         <div class="grid-row">
             <div class="column-full">
                 <div>
-                    <a href="@TempData["applyToAssessAStandard"]"  class="button button-start">Start now</a>
+                    @*<a href="@TempData["applyToAssessAStandard"]"  class="button button-start">Start now</a>*@
+                    <a  asp-action="GoToApplyToAccessStandard" asp-controller="ApplyToAccessStandard" class="button button-start">Start now</a>
                 </div>
             </div>
         </div>

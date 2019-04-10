@@ -7,10 +7,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using SFA.DAS.Apprenticeships.Api.Types.Providers;
 using SFA.DAS.AssessorService.ApplyTypes;
-using SFA.DAS.AssessorService.Web.Staff.Controllers.Apply;
 using SFA.DAS.AssessorService.Web.Staff.Services;
 using Feedback = SFA.DAS.AssessorService.ApplyTypes.Feedback;
 using Page = SFA.DAS.AssessorService.ApplyTypes.Page;
@@ -241,6 +238,16 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         public async Task<GetAnswersResponse> GetAnswer(Guid applicationId, string questionTag)
         {
             return await Get<GetAnswersResponse>($"/Answer/{questionTag}/{applicationId}");
+        }
+
+        public async Task<Contact> GetContact(Guid contactId)
+        {
+            return await Get<Contact>($"/Account/Contact/{contactId}");
+        }
+
+        public async Task UpdateRoEpaoApprovedFlag(Guid applicationId,Guid contactId, string endPointAssessorOrganisationId, bool roEpaoApprovedFlag)
+        {
+            await Post($"/organisations/{applicationId}/{contactId}/{endPointAssessorOrganisationId}/RoEpaoApproved/{roEpaoApprovedFlag}", new { roEpaoApprovedFlag });
         }
     }
 }
