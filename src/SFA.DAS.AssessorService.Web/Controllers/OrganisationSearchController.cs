@@ -64,8 +64,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return View(nameof(Index));
             }
 
-            var apiResponse = await _organisationsApplyApiClient.SearchForOrganisations(viewModel.SearchString);
-            viewModel.Organisations = apiResponse?.GroupBy(r => r.Ukprn).Select(group => @group.First()).ToList();
+            viewModel.Organisations = await _organisationsApplyApiClient.SearchForOrganisations(viewModel.SearchString);
             return View(viewModel);
         }
 
@@ -86,8 +85,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return View(nameof(Results), viewModel);
             }
 
-            var apiResponse = await _organisationsApplyApiClient.SearchForOrganisations(viewModel.SearchString);
-            viewModel.Organisations = apiResponse?.GroupBy(r => r.Ukprn).Select(group => @group.First()).ToList();
+            viewModel.Organisations = await _organisationsApplyApiClient.SearchForOrganisations(viewModel.SearchString);
             return View(nameof(Results), viewModel);
         }
 
