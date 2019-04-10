@@ -9,11 +9,7 @@ using System.Threading.Tasks;
 using Dapper;
 using Newtonsoft.Json;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
-using System.Transactions;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
-using SFA.DAS.AssessorService.Application.Exceptions;
-using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -158,10 +154,10 @@ namespace SFA.DAS.AssessorService.Data
 
 
                 connection.Execute(
-                    $@"INSERT INTO [dbo].[Contacts] ([Id],[CreatedAt],[DisplayName],[Email],[EndPointAssessorOrganisationId],[OrganisationId],[Status],[Username],[PhoneNumber]) " +
+                    $@"INSERT INTO [dbo].[Contacts] ([Id],[CreatedAt],[DisplayName],[Email],[EndPointAssessorOrganisationId],[OrganisationId],[Status],[Username],[PhoneNumber], [GivenNames], [FamilyName], [SigninId], [SigninType]) " +
                     $@"VALUES (@id,getutcdate(), @displayName, @email, @endPointAssessorOrganisationId," +
                     $@"(select id from organisations where EndPointAssessorOrganisationId=@endPointAssessorOrganisationId), " +
-                    $@"'Live', @username, @PhoneNumber);",
+                    $@"'Live', @username, @PhoneNumber, @GivenNames, @FamilyName, @SigninId, @SigninType);",
                     new
                     {
                         contact.Id,
@@ -169,7 +165,11 @@ namespace SFA.DAS.AssessorService.Data
                         contact.Email,
                         contact.EndPointAssessorOrganisationId,
                         contact.Username,
-                        contact.PhoneNumber
+                        contact.PhoneNumber,
+                        contact.GivenNames,
+                        contact.FamilyName,
+                        contact.SigninId,
+                        contact.SigninType
                     });
 
                 connection.Execute("UPDATE [dbo].[Organisations] set PrimaryContact=@username WHERE EndPointAssessorOrganisationId = @endPointAssessorOrganisationId and PrimaryContact is null",
@@ -177,6 +177,49 @@ namespace SFA.DAS.AssessorService.Data
                     {
                         contact.EndPointAssessorOrganisationId, contact.Username
                     });
+                return contact.Id.ToString();
+            }
+        }
+
+        public async Task<string> AssociateDefaultRoleWithContact(EpaContact contact)
+        {
+            using(var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+                
+                connection.Execute(
+                    @"INSERT INTO[ContactRoles] SELECT ab1.*, co1.id contactid FROM( SELECT newid() Id, 'SuperUser' Rolename) ab1 CROSS JOIN[Contacts] co1 WHERE co1.[Status] = 'Live'" +
+                    @" AND EXISTS(SELECT NULL FROM Organisations og1 WHERE og1.id = co1.OrganisationId AND og1.[Status] != 'Deleted')" +
+                    @" AND NOT EXISTS(SELECT NULL FROM[ContactRoles] co2 WHERE co2.ContactId = @Id)" +
+                    @" AND co1.Id = @Id",
+                    new
+                    {
+                        contact.Id,
+                    });
+
+                
+                return contact.Id.ToString();
+            }
+        }
+
+        public async Task<string> AssociateAllPrivilegesWithContact(EpaContact contact)
+        {
+            using (var connection = new SqlConnection(_configuration.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                connection.Execute(
+                    @" insert into[ContactsPrivileges]" +
+                    @" select co1.id, pr1.id from Contacts co1 cross join[Privileges] pr1" +
+                    @"  where co1.status = 'Live'  and co1.username not like 'unknown%' and co1.username != 'manual' and co1.Id = @Id",
+                    new
+                    {
+                        contact.Id,
+                    });
+
+
                 return contact.Id.ToString();
             }
         }

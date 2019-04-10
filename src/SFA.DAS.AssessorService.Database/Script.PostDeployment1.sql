@@ -85,12 +85,6 @@ INSERT EMailTemplates ([Id],[TemplateName],[TemplateId],[Recipients],[CreatedAt]
 VALUES (NEWID(), N'EPAOUserApproveRequest', N'5bb920f4-06ec-43c7-b00a-8fad33ce8066', NULL, GETDATE())
 END
 
-IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'ApplySignupError')
-BEGIN
-INSERT EMailTemplates ([Id],[TemplateName],[TemplateId],[Recipients],[CreatedAt]) 
-VALUES (NEWID(), N'EPAOUserApproveRequest', N'88799189-fe12-4887-a13f-f7f76cd6945a', NULL, GETDATE())
-END
-
 -- setup Privileges
 IF NOT EXISTS (SELECT * FROM [Privileges] WHERE [UserPrivilege] = N'Manage users')
 BEGIN
@@ -174,3 +168,4 @@ GivenNames = up1.GivenNames,
 FamilyName = up1.FamilyName,
 DisplayName = TRIM(up1.Title + (CASE WHEN up1.Title = '' THEN '' ELSE + ' ' END) + up1.GivenNames  + (CASE WHEN up1.GivenNames = '' THEN '' ELSE + ' ' END) + up1.FamilyName);
 
+UPDATE [OrganisationType] SET [Type] =  'Training Provider', [TypeDescription] = 'Training provider - including HEI not in England' WHERE id = 7;

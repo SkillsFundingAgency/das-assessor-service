@@ -148,7 +148,7 @@ namespace SFA.DAS.AssessorService.Data
             await _assessorDbContext.SaveChangesAsync();
         }
 
-        public async Task UpdateSignInId(Guid contactId, Guid signInId)
+        public async Task UpdateSignInId(Guid contactId, Guid? signInId)
         {
             var contactEntity =
                 await _assessorDbContext.Contacts.FirstAsync(q => q.Id == contactId);

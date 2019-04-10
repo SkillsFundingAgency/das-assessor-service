@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -21,7 +22,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
         private static IWebConfiguration _configuration;
 
         public static void AddAndConfigureAuthentication(this IServiceCollection services,
-            IWebConfiguration configuration, ILogger<Startup> logger)
+            IWebConfiguration configuration, ILogger<Startup> logger, IHostingEnvironment env)
         {
             _configuration = configuration;
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
@@ -33,7 +34,10 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                 })
                 .AddCookie(options => { 
                     options.Cookie.Name = ".Assessors.Cookies";
-                    options.Cookie.Domain = ".apprenticeships.education.gov.uk";
+                    if (!env.IsDevelopment())
+                    {
+                        options.Cookie.Domain = ".apprenticeships.education.gov.uk";   
+                    }
                     options.Cookie.HttpOnly = true;
                     options.SlidingExpiration = true;
                     options.ExpireTimeSpan = TimeSpan.FromHours(1);
@@ -55,6 +59,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 
                     options.Scope.Clear();
                     options.Scope.Add("openid");
+                    options.Scope.Add("profile");
 
                     options.SaveTokens = true;
 
@@ -123,7 +128,16 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                                         }
 
                                         identity.AddClaim(new Claim("http://schemas.portal.com/ukprn",
-                                            organisation?.Ukprn.ToString()));
+                                            organisation?.Ukprn == null ? "" : organisation?.Ukprn.ToString()));
+
+                                        var orgName = organisation.OrganisationData?.LegalName ??
+                                                      organisation.OrganisationData?.TradingName;
+
+                                        identity.AddClaim(new Claim("http://schemas.portal.com/orgname",
+                                            orgName));
+
+                                        identity.AddClaim(new Claim("http://schemas.portal.com/epaoid",
+                                            organisation?.OrganisationId));
                                     }
 
                                     identity.AddClaim(new Claim("display_name", user?.DisplayName));
@@ -134,7 +148,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                                         Privileges.ManageUsers));
                                 }
                             }
-                            catch (EntityNotFoundException e)
+                                catch (EntityNotFoundException e)
                             {
                                 logger.LogError(e,"Failed to retrieve user.");
                             }
