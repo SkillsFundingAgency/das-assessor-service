@@ -46,7 +46,7 @@ namespace SFA.DAS.AssessorService.Web.Orchestrators.Login
             var email = _contextAccessor.HttpContext.User?.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
             var displayName = _contextAccessor.HttpContext.User?.Claims.FirstOrDefault(c => c.Type == "display_name")?.Value;
 
-            if (signinId != null)
+            if (signinId != null && !string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(displayName))
             {
                 loginResult = await _loginApiClient.Login(new LoginRequest()
                 {

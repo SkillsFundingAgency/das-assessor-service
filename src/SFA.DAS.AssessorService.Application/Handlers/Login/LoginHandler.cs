@@ -19,19 +19,16 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
         private readonly IOrganisationQueryRepository _organisationQueryRepository;
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IMediator _mediator;
-        private readonly IContactApplyClient _contactApplyClient;
 
         public LoginHandler(ILogger<LoginHandler> logger, IWebConfiguration config, 
             IOrganisationQueryRepository organisationQueryRepository, 
-            IContactQueryRepository contactQueryRepository, IMediator mediator,
-            IContactApplyClient contactApplyClient)
+            IContactQueryRepository contactQueryRepository, IMediator mediator)
         {
             _logger = logger;
             _config = config;
             _organisationQueryRepository = organisationQueryRepository;
             _contactQueryRepository = contactQueryRepository;
             _mediator = mediator;
-            _contactApplyClient = contactApplyClient;
         }
 
         public async Task<LoginResponse> Handle(LoginRequest request, CancellationToken cancellationToken)
@@ -40,18 +37,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
 
             var contact = await _contactQueryRepository.GetBySignInId(request.SignInId);
            
-            if(contact == null)
-            {
-                var applyContact = await _contactApplyClient.GetApplyContactBySignInId(request.SignInId);
-                if (applyContact == null)
-                {
-                    response.Result = LoginResult.ContactDoesNotExist;
-                    return response;
-                }
-                //Migrate apply account into assessor
-                
-            }
-
             if (await UserDoesNotHaveAcceptableRole(contact.Id))
             {
                 _logger.LogInformation("Invalid Role");

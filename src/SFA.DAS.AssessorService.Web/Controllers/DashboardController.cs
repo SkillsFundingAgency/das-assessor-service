@@ -45,20 +45,25 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var dashboardViewModel = new DashboardViewModel($"{_webConfiguration.ApplyBaseAddress}/Applications");
             var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
             var epaoid = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
+
             try
             {
-               var  organisation = await _organisationApiClient.GetEpaOrganisation(epaoid);
-                if (organisation != null)
+                if (!string.IsNullOrEmpty(epaoid))
                 {
-                    dashboardViewModel.StandardsCount =
-                        (await _standardsApiClient.GetEpaoStandardsCount(epaoid)).Count;
-                    dashboardViewModel.PipelinesCount =
-                        (await _standardsApiClient.GetEpaoPipelineCount(epaoid))
-                        .Count;
-                    dashboardViewModel.AssessmentsCount =
-                    (await _certificateApiClient.GetCertificatesCount(username)).Count;
+                    var organisation = await _organisationApiClient.GetEpaOrganisation(epaoid);
+                    if (organisation != null)
+                    {
+                        dashboardViewModel.StandardsCount =
+                            (await _standardsApiClient.GetEpaoStandardsCount(epaoid)).Count;
+                        dashboardViewModel.PipelinesCount =
+                            (await _standardsApiClient.GetEpaoPipelineCount(epaoid))
+                            .Count;
+                        dashboardViewModel.AssessmentsCount =
+                        (await _certificateApiClient.GetCertificatesCount(username)).Count;
+
+                    }
                 }
-                
+
             }
             catch (EntityNotFoundException)
             {
