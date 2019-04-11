@@ -143,6 +143,26 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                         new SigninIdWrapper(signinId));
             }
         }
+
+        public async Task<ContactResponse> CreateANewContactWithGivenId(Contact contact)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/createNewContactWithGivenId"))
+            {
+                var response =
+                     await PostPutRequestWithResponse<Contact,ContactResponse>(request,contact);
+
+                return response;
+            }
+        }
+
+        public async Task AssociateDefaultRolesAndPrivileges(Contact contact)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/associateDefaultRolesAndPrivileges"))
+            {
+                 await PostPutRequest(request, contact);
+                
+            }
+        }
     }
 
     public interface IContactsApiClient
@@ -171,5 +191,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task MigrateContactsAndOrgsToApply();
 
         Task MigrateSingleContactToApply(System.Guid signinId);
+
+        Task<ContactResponse> CreateANewContactWithGivenId(Contact contact);
+
+        Task AssociateDefaultRolesAndPrivileges(Contact contact);
     }
 }

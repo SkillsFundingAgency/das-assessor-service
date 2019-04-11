@@ -20,7 +20,9 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
         private readonly IContactQueryRepository _contactQueryRepository;
         private readonly IMediator _mediator;
 
-        public LoginHandler(ILogger<LoginHandler> logger, IWebConfiguration config, IOrganisationQueryRepository organisationQueryRepository, IContactQueryRepository contactQueryRepository, IMediator mediator)
+        public LoginHandler(ILogger<LoginHandler> logger, IWebConfiguration config, 
+            IOrganisationQueryRepository organisationQueryRepository, 
+            IContactQueryRepository contactQueryRepository, IMediator mediator)
         {
             _logger = logger;
             _config = config;
@@ -35,7 +37,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Login
 
             var contact = await _contactQueryRepository.GetBySignInId(request.SignInId);
            
-
             if (await UserDoesNotHaveAcceptableRole(contact.Id))
             {
                 _logger.LogInformation("Invalid Role");

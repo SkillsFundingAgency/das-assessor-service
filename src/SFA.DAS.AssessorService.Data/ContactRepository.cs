@@ -27,6 +27,7 @@ namespace SFA.DAS.AssessorService.Data
 
             return newContact;
         }
+        
 
         public async Task AssociateRoleWithContact(string roleName, Contact newContact)
         {
@@ -168,5 +169,7 @@ namespace SFA.DAS.AssessorService.Data
             return  await _assessorDbContext.Contacts.FirstOrDefaultAsync(q => q.Email == email);
 
         }
+
+
     }
 }

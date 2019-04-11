@@ -92,6 +92,25 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             return Ok(organisation);
         }
-        
+
+        [HttpGet("{*name}", Name = "GetOrganisationByName")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(OrganisationResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.NotFound, Type = typeof(string))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetOrganisationByName(string name)
+        {
+            var decodedName = WebUtility.UrlDecode(name);
+            _logger.LogInformation($"Received request to retrieve Organisation {decodedName}");
+            
+            var organisation = await _organisationQueryRepository.GetOrganisationByName(decodedName);
+            if(organisation == null)
+            {
+                var ex = new ResourceNotFoundException(name);
+                throw ex;
+            }
+            
+            return Ok(Mapper.Map<OrganisationResponse>(organisation));
+        }
     }
 }
