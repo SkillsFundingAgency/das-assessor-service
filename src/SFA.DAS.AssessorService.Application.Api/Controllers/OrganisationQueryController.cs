@@ -93,7 +93,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(organisation);
         }
 
-        [HttpGet("{name}", Name = "GetOrganisationByName")]
+        [HttpGet("{*name}", Name = "GetOrganisationByName")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(OrganisationResponse))]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
         [SwaggerResponse((int)HttpStatusCode.NotFound, Type = typeof(string))]
@@ -109,18 +109,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 var ex = new ResourceNotFoundException(name);
                 throw ex;
             }
-
-            var response = new OrganisationResponse
-            {
-                Id = organisation.Id,
-                EndPointAssessorName = organisation.EndPointAssessorName,
-                EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
-                EndPointAssessorUkprn = organisation.EndPointAssessorUkprn,
-                PrimaryContact = organisation.PrimaryContact,
-                Status = organisation.Status
-            };
-
-            return Ok(response);
+            
+            return Ok(Mapper.Map<OrganisationResponse>(organisation));
         }
     }
 }
