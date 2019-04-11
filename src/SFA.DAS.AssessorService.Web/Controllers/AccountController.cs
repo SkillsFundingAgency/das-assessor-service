@@ -50,7 +50,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public async Task<IActionResult> PostSignIn()
         { 
             var loginResult = await _loginOrchestrator.Login();
-            _logger.LogInformation($"LoginResult returned from LoginOrchestrator: {loginResult.Result}");
+            _logger.LogInformation($"  returned from LoginOrchestrator: {loginResult.Result}");
             switch (loginResult.Result)
             {
                 case LoginResult.Valid:
