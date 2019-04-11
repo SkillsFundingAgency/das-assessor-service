@@ -114,140 +114,146 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                              var givenName = context.Principal.FindFirst("given_name")?.Value;
 
                              ContactResponse user = null;
-                             try
+                             if (!string.IsNullOrEmpty(signInId))
                              {
-                                 user = await contactClient.GetContactBySignInId(signInId);
-                             }
-                             catch (EntityNotFoundException)
-                             {
-                                 logger.LogInformation("Failed to retrieve user.");
-                             }
-
-                             if (user == null)
-                             {
-                                 //Do all this below if the user is not found in Assessor
-                                 bool createNewContactWithNoOrg = false;
-                                 logger.LogInformation("Trying to get user from apply to retrieve user.");
-
-                                 var applyContact = await contactApplyClient.GetApplyContactBySignInId(Guid.Parse(signInId));
-                                 if (applyContact != null)
+                                 try
                                  {
-                                     //Check if organisation exist in assessor 
-                                     ApplyTypes.Organisation applyOrganisation = null;
-                                     try
-                                     {
-                                         applyOrganisation = await organisationApplyClient.GetOrganisationByUserId(applyContact.Id);
-                                     }
-                                     catch (EntityNotFoundException) {
-                                         logger.LogInformation("Found contact in apply, but no organisation associated with it.");
-                                         createNewContactWithNoOrg = true;
-                                     }
+                                     user = await contactClient.GetContactBySignInId(signInId);
+                                 }
+                                 catch (EntityNotFoundException)
+                                 {
+                                     logger.LogInformation("Failed to retrieve user.");
+                                 }
 
-                                     if (applyOrganisation != null)
+                                 if (user == null)
+                                 {
+                                     //Do all this below if the user is not found in Assessor
+                                     bool createNewContactWithNoOrg = false;
+                                     logger.LogInformation("Trying to get user from apply to retrieve user.");
+
+                                     var applyContact = await contactApplyClient.GetApplyContactBySignInId(Guid.Parse(signInId));
+                                     if (applyContact == null)
+                                         createNewContactWithNoOrg = true;
+                                     else
                                      {
-                                         //Start migrating apply contact into assessor
-                                         OrganisationResponse assessorOrg = null;
+                                         //Check if organisation exist in assessor 
+                                         ApplyTypes.Organisation applyOrganisation = null;
                                          try
                                          {
-                                             assessorOrg = await orgClient.GetOrganisationByName(applyOrganisation.Name);
+                                             applyOrganisation = await organisationApplyClient.GetOrganisationByUserId(applyContact.Id);
                                          }
                                          catch (EntityNotFoundException)
                                          {
-                                             logger.LogInformation("No organisation found in Assessor, hence no RoEPAO.");
+                                             logger.LogInformation("Found contact in apply, but no organisation associated with it.");
                                              createNewContactWithNoOrg = true;
                                          }
-                                         if (assessorOrg != null)
+
+                                         if (applyOrganisation != null)
                                          {
-                                             //Organisation exists in assessor so update contact with organisation
-                                             var newContact = new Contact
+                                             //Start migrating apply contact into assessor
+                                             OrganisationResponse assessorOrg = null;
+                                             try
                                              {
-                                                 Id = applyContact.Id,
-                                                 DisplayName = $"{applyContact.GivenNames} {applyContact.FamilyName}",
-                                                 Email = applyContact.Email,
-                                                 SignInId = Guid.Parse(signInId),
-                                                 SignInType = applyContact.SigninType,
-                                                 CreatedAt = applyContact.CreatedAt,
-                                                 Username = applyContact.Email,
-                                                 Title = "",
-                                                 FamilyName = applyContact.FamilyName,
-                                                 GivenNames = applyContact.GivenNames,
-                                                 OrganisationId = assessorOrg.Id,
-                                                 EndPointAssessorOrganisationId = assessorOrg.EndPointAssessorOrganisationId,
-                                                 Status = "Live"
-                                             };
+                                                 assessorOrg = await orgClient.GetOrganisationByName(applyOrganisation.Name);
+                                             }
+                                             catch (EntityNotFoundException)
+                                             {
+                                                 logger.LogInformation("No organisation found in Assessor, hence no RoEPAO.");
+                                                 createNewContactWithNoOrg = true;
+                                             }
+                                             if (assessorOrg != null)
+                                             {
+                                                 //Organisation exists in assessor so update contact with organisation
+                                                 var newContact = new Contact
+                                                 {
+                                                     Id = applyContact.Id,
+                                                     DisplayName = $"{applyContact.GivenNames} {applyContact.FamilyName}",
+                                                     Email = applyContact.Email,
+                                                     SignInId = Guid.Parse(signInId),
+                                                     SignInType = applyContact.SigninType,
+                                                     CreatedAt = applyContact.CreatedAt,
+                                                     Username = applyContact.Email,
+                                                     Title = "",
+                                                     FamilyName = applyContact.FamilyName,
+                                                     GivenNames = applyContact.GivenNames,
+                                                     OrganisationId = assessorOrg.Id,
+                                                     EndPointAssessorOrganisationId = assessorOrg.EndPointAssessorOrganisationId,
+                                                     Status = "Live"
+                                                 };
 
-                                             user = await CreateANewContact(newContact, contactClient, logger, signInId);
+                                                 user = await CreateANewContact(newContact, contactClient, logger, signInId);
 
+                                             }
                                          }
                                      }
-                                 }
-                                 if (createNewContactWithNoOrg)
-                                 {
-                                     //Userexists in apply but associated with org not in assessor (ie not EPAO org) so create a new user
-                                     logger.LogInformation("Creating new user.");
-                                     var newContact = new Contact
+
+                                     if (createNewContactWithNoOrg)
                                      {
-                                         Id = applyContact.Id,
-                                         DisplayName = $"{givenName} {familyName}",
-                                         Email = email,
-                                         SignInId = Guid.Parse(signInId),
-                                         SignInType = "ASLogin",
-                                         CreatedAt = DateTime.UtcNow,
-                                         Username = email,
-                                         Title = "",
-                                         FamilyName = familyName,
-                                         GivenNames = givenName,
-                                         OrganisationId = null,
-                                         EndPointAssessorOrganisationId = null,
-                                         Status = "Applying"
-                                     };
+                                         //Userexists in apply but associated with org not in assessor (ie not EPAO org) so create a new user
+                                         logger.LogInformation("Creating new user.");
+                                         var newContact = new Contact
+                                         {
+                                             Id = applyContact != null ? applyContact.Id : Guid.NewGuid(),
+                                             DisplayName = $"{givenName} {familyName}",
+                                             Email = email,
+                                             SignInId = Guid.Parse(signInId),
+                                             SignInType = "ASLogin",
+                                             CreatedAt = DateTime.UtcNow,
+                                             Username = email,
+                                             Title = "",
+                                             FamilyName = familyName,
+                                             GivenNames = givenName,
+                                             OrganisationId = null,
+                                             EndPointAssessorOrganisationId = null,
+                                             Status = applyContact != null?"Applying":"New"
+                                         };
 
-                                     user = await CreateANewContact(newContact, contactClient, logger, signInId);
-                                 }
-
-                             }
-
-
-                             if (user != null)
-                             {
-                                 identity.AddClaim(new Claim("UserId", user?.Id.ToString()));
-                                 identity.AddClaim(new Claim(
-                                    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn",
-                                    user?.Username));
-                                 if (user.EndPointAssessorOrganisationId != null)
-                                 {
-                                     var organisation =
-                                        await orgClient.GetEpaOrganisation(user.EndPointAssessorOrganisationId);
-
-                                     if (organisation.ApiEnabled && !string.IsNullOrEmpty(organisation.ApiUser))
-                                     {
-                                         identity.AddClaim(new Claim("http://schemas.portal.com/service",
-                                            Roles.ExternalApiAccess));
-                                         identity.AddClaim(new Claim("http://schemas.portal.com/service",
-                                            Roles.EpaoUser));
+                                         user = await CreateANewContact(newContact, contactClient, logger, signInId);
                                      }
 
-                                     identity.AddClaim(new Claim("http://schemas.portal.com/ukprn",
-                                        organisation?.Ukprn == null ? "" : organisation?.Ukprn.ToString()));
-
-                                     var orgName = organisation.OrganisationData?.LegalName ??
-                                                  organisation.OrganisationData?.TradingName;
-
-                                     identity.AddClaim(new Claim("http://schemas.portal.com/orgname",
-                                        orgName));
-
-                                     identity.AddClaim(new Claim("http://schemas.portal.com/epaoid",
-                                        organisation?.OrganisationId));
                                  }
 
-                                 identity.AddClaim(new Claim("display_name", user?.DisplayName));
-                                 identity.AddClaim(new Claim("email", user?.Email));
 
-                                 //Todo: Need to determine privileges dynamically
-                                 identity.AddClaim(new Claim("http://schemas.portal.com/service",
-                                     Privileges.ManageUsers));
+                                 if (user != null)
+                                 {
+                                     identity.AddClaim(new Claim("UserId", user?.Id.ToString()));
+                                     identity.AddClaim(new Claim(
+                                        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn",
+                                        user?.Username));
+                                     if (user.EndPointAssessorOrganisationId != null)
+                                     {
+                                         var organisation =
+                                            await orgClient.GetEpaOrganisation(user.EndPointAssessorOrganisationId);
+
+                                         if (organisation.ApiEnabled && !string.IsNullOrEmpty(organisation.ApiUser))
+                                         {
+                                             identity.AddClaim(new Claim("http://schemas.portal.com/service",
+                                                Roles.ExternalApiAccess));
+                                             identity.AddClaim(new Claim("http://schemas.portal.com/service",
+                                                Roles.EpaoUser));
+                                         }
+
+                                         identity.AddClaim(new Claim("http://schemas.portal.com/ukprn",
+                                            organisation?.Ukprn == null ? "" : organisation?.Ukprn.ToString()));
+
+                                         var orgName = organisation.OrganisationData?.LegalName ??
+                                                      organisation.OrganisationData?.TradingName;
+
+                                         identity.AddClaim(new Claim("http://schemas.portal.com/orgname",
+                                            orgName));
+
+                                         identity.AddClaim(new Claim("http://schemas.portal.com/epaoid",
+                                            organisation?.OrganisationId));
+                                     }
+
+                                     identity.AddClaim(new Claim("display_name", user?.DisplayName));
+                                     identity.AddClaim(new Claim("email", user?.Email));
+
+                                     //Todo: Need to determine privileges dynamically
+                                     identity.AddClaim(new Claim("http://schemas.portal.com/service",
+                                         Privileges.ManageUsers));
+                                 }
                              }
-                             
                              context.Principal.AddIdentity(identity);
                          }
 
