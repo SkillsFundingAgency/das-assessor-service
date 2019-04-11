@@ -63,7 +63,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
                 CompanyUkprn = commandTestSetup.CompanyUkprn,
                 CompanyNumber = commandTestSetup.CompanyNumber,
                 CharityNumber = commandTestSetup.CharityNumber,
-                StandardWebsite = commandTestSetup.StandardWebsite                
+                StandardWebsite = commandTestSetup.StandardWebsite,
+                FinancialDueDate = commandTestSetup.FinancialDueDate,
+                IsFinancialExempt = commandTestSetup.IsFinancialExempt,
             };
 
             int? organisationUkprn = null;
@@ -79,7 +81,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
                 OrganisationUkprn = organisationUkprn,
                 OrganisationDetails = new OrganisationDetails
                 {
-                    OrganisationReferenceType = commandTestSetup.OrganisationReferenceType
+                    OrganisationReferenceType = commandTestSetup.OrganisationReferenceType,
+                    FHADetails = new ApplyTypes.FHADetails
+                    {
+                        FinancialDueDate = commandTestSetup.FinancialDueDate,
+                        FinancialExempt = commandTestSetup.IsFinancialExempt
+                    }
                 }
             };
 
@@ -105,11 +112,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
         {
             get
             {
-                yield return new CommandTest("organisation name", "trading name 1", true, true, "true", "TrainingProvider","12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234","11112222","RC333333","1221121","www.test.com");
-                yield return new CommandTest("organisation name", "trading name 1", true, true, "yes", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com");
-                yield return new CommandTest("organisation name", "trading name 1", true, true, "1", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com");
-                yield return new CommandTest("organisation name", "trading name 1", true, false, "false", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com");
-                yield return new CommandTest("organisation name", "trading name 1", true, false, "0", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", "address line 1", "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com");
+                yield return new CommandTest("organisation name", "trading name 1", true, true, "true", "TrainingProvider","12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234","11112222","RC333333","1221121","www.test.com", DateTime.MaxValue, false);
+                yield return new CommandTest("organisation name", "trading name 1", true, true, "true", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", null, true);
+                yield return new CommandTest("organisation name", "trading name 1", true, true, "yes", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
+                yield return new CommandTest("organisation name", "trading name 1", true, true, "1", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
+                yield return new CommandTest("organisation name", "trading name 1", true, false, "false", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
+                yield return new CommandTest("organisation name", "trading name 1", true, false, "0", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", "address line 1", "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
             }
         }
 
@@ -138,9 +146,14 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
             public string CompanyNumber { get; set; }
             public string CharityNumber { get; set; }
             public string StandardWebsite { get; set; }
+
+            public DateTime? FinancialDueDate { get; set; }
+            public bool? IsFinancialExempt { get; set; }
+
             public List<GetAnswerPair> AnswerPairs { get; set; }
             public CommandTest(string organisationName, string tradingName, bool isEpaoApproved, bool useTradingName, string useTradingNameString, string organisationType, string organisationUkprn 
-               , string organisationReferenceType, string contactName, string contactAddress, string contactAddress1, string contactAddress2, string contactAddress3, string contactAddress4, string contactPostcode, string contactEmail, string contactPhoneNumber, string companyUkprn, string companyNumber, string charityNumber, string standardWebsite)
+               , string organisationReferenceType, string contactName, string contactAddress, string contactAddress1, string contactAddress2, string contactAddress3, string contactAddress4, string contactPostcode
+               , string contactEmail, string contactPhoneNumber, string companyUkprn, string companyNumber, string charityNumber, string standardWebsite, DateTime? financialDueDate, bool? isFinancialExempt)
             {
                 OrganisationName = organisationName;
                 OrganisationType = organisationType;
@@ -163,6 +176,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
                 CompanyNumber = companyNumber;
                 CharityNumber = charityNumber;
                 StandardWebsite = standardWebsite;
+                FinancialDueDate = financialDueDate;
+                IsFinancialExempt = isFinancialExempt;
+                
+
                 AnswerPairs = new List<GetAnswerPair>
                 {
                     new GetAnswerPair("trading-name", tradingName),

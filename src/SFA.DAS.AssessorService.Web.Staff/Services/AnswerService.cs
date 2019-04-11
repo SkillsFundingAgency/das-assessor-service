@@ -57,7 +57,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             var organisationReferenceType = organisation?.OrganisationDetails?.OrganisationReferenceType;
             var isEpaoApproved = organisation?.RoEPAOApproved;
             var useTradingName = "yes".Equals(useTradingNameString, StringComparison.InvariantCultureIgnoreCase) || "true".Equals(useTradingNameString, StringComparison.InvariantCultureIgnoreCase) || "1".Equals(useTradingNameString, StringComparison.InvariantCultureIgnoreCase);
-            
+
+            var financialDueDate = organisation?.OrganisationDetails?.FHADetails?.FinancialDueDate;
+            var isFinancialExempt = organisation?.OrganisationDetails?.FHADetails?.FinancialExempt;
+
             var command = new CreateOrganisationContactCommand
             (organisationName,
                 organisationType,
@@ -78,7 +81,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                 companyNumber,
                 charityNumber,
                 standardWebsite,
-                createdBy);
+                createdBy,
+                financialDueDate,
+                isFinancialExempt);
 
             return command;
         }

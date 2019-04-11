@@ -93,6 +93,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
             _mockRegisterRepository.Setup(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()))
                 .Returns(Task.FromResult(testCase.ExpectedResponse.EpaOrganisationId));
 
+            _mockRegisterQueryRepository.Setup(r => r.GetAssessmentOrganisationsByNameOrCharityNumberOrCompanyNumber(It.IsAny<string>()))
+                .ReturnsAsync(new List<AssessmentOrganisationSummary> { new AssessmentOrganisationSummary { Id = testCase.ExpectedResponse.EpaOrganisationId } });
+            _mockRegisterQueryRepository.Setup(r => r.GetEpaOrganisationByOrganisationId(It.IsAny<string>()))
+                .ReturnsAsync(new EpaOrganisation { OrganisationData = new OrganisationData { FHADetails = new FHADetails() } });
+
             var actualResponse = _answerInjectionService
                 .InjectApplyOrganisationAndContactDetailsIntoRegister(testCase.Command).Result;
             if (actualResponse.WarningMessages.Count > 0)
@@ -104,18 +109,23 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
             Assert.AreEqual(JsonConvert.SerializeObject(testCase.ExpectedResponse),
                 JsonConvert.SerializeObject(actualResponse));
 
-            if (actualResponse.WarningMessages.Count > 0 || testCase.Command.IsEpaoApproved.Value ||
-                testCase.ExpectedResponse.ApplySourceIsEpao)
+            if (actualResponse.WarningMessages.Count > 0)
             {
                 _mockRegisterRepository.Verify(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Never);
-                _mockRegisterRepository.Verify(r => r.CreateEpaOrganisationContact(It.IsAny<EpaContact>()),
-                    Times.Never);
+                _mockRegisterRepository.Verify(r => r.CreateEpaOrganisationContact(It.IsAny<EpaContact>()), Times.Never);
+                _mockRegisterRepository.Verify(r => r.UpdateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Never);
+            }
+            else if(testCase.Command.IsEpaoApproved.Value || testCase.ExpectedResponse.ApplySourceIsEpao)
+            {
+                _mockRegisterRepository.Verify(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Never);
+                _mockRegisterRepository.Verify(r => r.CreateEpaOrganisationContact(It.IsAny<EpaContact>()), Times.Never);
+                _mockRegisterRepository.Verify(r => r.UpdateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Once);
             }
             else
             {
                 _mockRegisterRepository.Verify(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Once);
-                _mockRegisterRepository.Verify(r => r.CreateEpaOrganisationContact(It.IsAny<EpaContact>()),
-                    Times.Once);
+                _mockRegisterRepository.Verify(r => r.CreateEpaOrganisationContact(It.IsAny<EpaContact>()), Times.Once);
+                _mockRegisterRepository.Verify(r => r.UpdateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Never);
             }
         }
 
@@ -226,7 +236,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
                     OrganisationType = organisationType,
                     ContactEmail = email,
                     ContactName = contactName,
-                    ContactPhoneNumber = "11111111"
+                    ContactPhoneNumber = "11111111",
+                    FinancialDueDate = DateTime.MaxValue,
+                    IsFinancialExempt = false
                 };
                 ExpectedResponse = response;
             }

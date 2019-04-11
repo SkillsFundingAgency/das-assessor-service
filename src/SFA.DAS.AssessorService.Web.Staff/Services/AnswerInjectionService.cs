@@ -43,23 +43,23 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
         public async Task<CreateOrganisationAndContactFromApplyResponse> InjectApplyOrganisationAndContactDetailsIntoRegister(CreateOrganisationContactCommand command)
         {
             var response = new CreateOrganisationAndContactFromApplyResponse { IsEpaoApproved = false, ApplySourceIsEpao = false, WarningMessages = new List<string>() };
-            if (command.OrganisationReferenceType != null &&
-                command.OrganisationReferenceType.ToLower().Contains("epao"))
+
+            if ("RoEPAO".Equals(command.OrganisationReferenceType, StringComparison.InvariantCultureIgnoreCase))
             {
+                await UpdateFinancialDetails(command);
                 _logger.LogInformation("Source reference type is EPAO. No need to inject organisation details into register");
                 response.ApplySourceIsEpao = true;
                 return response;
             }
-
-            if (command.IsEpaoApproved.Value)
+            else if (command.IsEpaoApproved is true)
             {
+                await UpdateFinancialDetails(command);
                 _logger.LogInformation("Source is RoEPAO approved. No need to inject organisation details into register");
                 response.IsEpaoApproved = true;
                 return response;
             }
 
             var warningMessages = new List<string>();
-
             var organisationName = DecideOrganisationName(command.UseTradingName, command.TradingName, command.OrganisationName);
             var ukprnAsLong = GetUkprnFromRequestDetails(command.OrganisationUkprn, command.CompanyUkprn);
             var organisationTypeId = await GetOrganisationTypeIdFromDescriptor(command.OrganisationType);
@@ -158,6 +158,30 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             response.WarningMessages = warningMessages;
 
             return response;
+        }
+
+        private async Task UpdateFinancialDetails(CreateOrganisationContactCommand command)
+        {
+            var epaOrgs = await _registerQueryRepository.GetAssessmentOrganisationsByNameOrCharityNumberOrCompanyNumber(command.OrganisationName);
+            var result = epaOrgs.FirstOrDefault();
+
+            if (result != null)
+            {
+                _logger.LogInformation($"Updating FHADetails for {result.Id}");
+                var org = await _registerQueryRepository.GetEpaOrganisationByOrganisationId(result.Id);
+
+                if (org?.OrganisationData != null)
+                {
+                    if (org.OrganisationData.FHADetails is null)
+                    {
+                        org.OrganisationData.FHADetails = new FHADetails();
+                    }
+
+                    org.OrganisationData.FHADetails.FinancialDueDate = command.FinancialDueDate;
+                    org.OrganisationData.FHADetails.FinancialExempt = command.IsFinancialExempt;
+                    await _registerRepository.UpdateEpaOrganisation(org);
+                }
+            }
         }
 
         private static string DecideOrganisationName(bool useTradingName, string tradingName, string organisationName)
@@ -328,7 +352,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                     Postcode = postcode,
                     WebsiteLink = website,
                     CompanyNumber = companyNumber,
-                    CharityNumber = charityNumber
+                    CharityNumber = charityNumber,
+                    FHADetails = new FHADetails
+                    {
+                        FinancialDueDate = command.FinancialDueDate,
+                        FinancialExempt = command.IsFinancialExempt
+                    }
                 }
             };
 
