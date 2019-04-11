@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Validators.Roatp
 
             RuleFor(vm => vm).Custom((vm, context) =>
             {
-                var validationErrors = _validator.IsValidUKPRN(vm.Ukprn.ToString());
+                var validationErrors = _validator.IsValidUKPRN(vm.Ukprn?.ToString());
                 if (!validationErrors.Any())
                 {
                     validationErrors = _duplicateValidator.IsDuplicateUkprn(vm);
