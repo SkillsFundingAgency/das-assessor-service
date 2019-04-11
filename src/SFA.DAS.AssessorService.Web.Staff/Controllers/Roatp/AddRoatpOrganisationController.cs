@@ -50,7 +50,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         [Route("enter-details")]
         public async Task<IActionResult> AddOrganisationDetails(AddOrganisationProviderTypeViewModel model)
         {
-            if (!ModelState.IsValid)
+            if (!IsRedirectFromConfirmationPage() && !ModelState.IsValid)
             {
                 model.ProviderTypes = await _apiClient.GetProviderTypes();
                 return View("~/Views/Roatp/AddOrganisation.cshtml", model);
@@ -66,7 +66,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
                 };
             }
 
-            addOrganisationModel.OrganisationTypes = await _apiClient.GetOrganisationTypes(model.ProviderTypeId);
+            addOrganisationModel.OrganisationTypes = await _apiClient.GetOrganisationTypes(addOrganisationModel.ProviderTypeId);
             
             _sessionService.SetAddOrganisationDetails(addOrganisationModel);
 
@@ -116,7 +116,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         {
             var model = _sessionService.GetAddOrganisationDetails();
 
-            return RedirectToAction(action, model);
+            return RedirectToAction(action);
         }
 
         private CreateOrganisationRequest CreateAddOrganisationRequestFromModel(AddOrganisationViewModel model)
@@ -152,6 +152,23 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             };
 
             return organisation;
+        }
+
+        private bool IsRedirectFromConfirmationPage()
+        {
+            var refererHeaders = ControllerContext.HttpContext.Request.Headers["Referer"];
+            if (refererHeaders.Count == 0)
+            {
+                return false;
+            }
+            var referer = refererHeaders[0];
+
+            if (referer.Contains("confirm-details"))
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }
