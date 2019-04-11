@@ -8,8 +8,8 @@
     using Microsoft.Extensions.Logging;
     using SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp;
 
-    //MFCMFC
-    //[Authorize] -- not sure this this is needed, as base has it?
+    
+    [Authorize] // MFCMFC -- not sure this this is needed, as base has it?
     public class RoatpSearchController : RoatpSearchResultsControllerBase
     {
         private ILogger<RoatpSearchController> _logger;
