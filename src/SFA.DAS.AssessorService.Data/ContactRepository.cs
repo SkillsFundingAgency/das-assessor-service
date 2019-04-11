@@ -155,8 +155,6 @@ namespace SFA.DAS.AssessorService.Data
                 await _assessorDbContext.Contacts.FirstAsync(q => q.Id == contactId);
 
             contactEntity.SignInId = signInId;
-            contactEntity.Status = ContactStatus.New;
-
             // Workaround for Mocking
             _assessorDbContext.MarkAsModified(contactEntity);
 
