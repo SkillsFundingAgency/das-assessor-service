@@ -1,9 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <NoWarn>1701;1702;1705</NoWarn>
+    <NoWarn>NU1605;1701;1702;1705</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Settings\**" />
@@ -16,8 +17,7 @@
     <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="3.19.8" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.6" />
     <PackageReference Include="Microsoft.WindowsAzure.ConfigurationManager" Version="3.2.3" />
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2">
-    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="NLog.Extensions.Logging" Version="1.0.0" />
     <PackageReference Include="SFA.DAS.Http" Version="1.2.1" />
     <PackageReference Include="SFA.DAS.Notifications.Api.Client" Version="2.0.0.35919" />
