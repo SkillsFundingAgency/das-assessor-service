@@ -236,8 +236,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                                          identity.AddClaim(new Claim("http://schemas.portal.com/ukprn",
                                             organisation?.Ukprn == null ? "" : organisation?.Ukprn.ToString()));
 
-                                         var orgName = organisation.OrganisationData?.LegalName ??
-                                                      organisation.OrganisationData?.TradingName;
+                                         var orgName = organisation.Name;
 
                                          identity.AddClaim(new Claim("http://schemas.portal.com/orgname",
                                             orgName));
