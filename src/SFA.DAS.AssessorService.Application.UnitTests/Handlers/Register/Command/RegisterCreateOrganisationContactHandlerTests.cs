@@ -28,6 +28,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
         private CreateEpaOrganisationContactRequest _requestNoIssues;
         private string _organisationId;
         private string _displayName;
+        private string _firstName;
+        private string _lastName;
         private string _email;
         private string _phoneNumber;
         private EpaContact _expectedOrganisationContactNoIssues;
@@ -45,10 +47,13 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             _idGenerator = new Mock<IEpaOrganisationIdGenerator>();
             _organisationId = "EPA999";
             _displayName = "Testy McTestFace";
+            _firstName = "Testy";
+            _lastName = "McTestFace";
+
             _email = "testy@testface.com";
             _phoneNumber = "555 5555";
             _requestNoIssuesUserName = "username-9999";
-            _requestNoIssues = BuildRequest(_organisationId, _displayName,_email,_phoneNumber);
+            _requestNoIssues = BuildRequest(_organisationId, _displayName,_firstName,_lastName,_email,_phoneNumber);
             _expectedOrganisationContactNoIssues = BuildOrganisationContact(_requestNoIssues, _requestNoIssuesUserName);
 
             _registerRepository.Setup(r => r.CreateEpaOrganisationContact(It.IsAny<EpaContact>()))
@@ -77,13 +82,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             var result = _createEpaOrganisationContactHandler.Handle(_requestNoIssues, new CancellationToken()).Result;
             _validator.Verify(v => v.ValidatorCreateEpaOrganisationContactRequest(_requestNoIssues));
         }
-
-        [Test]
-        public void CheckOrganisationIdGeneratorIsCalledWhenHandlerInvoked()
-        {
-            var result = _createEpaOrganisationContactHandler.Handle(_requestNoIssues, new CancellationToken()).Result;
-            _idGenerator.Verify(g => g.GetNextContactUsername());
-        }
+        
 
         [Test]
         public void GetOrganisationContactDetailsWhenOrganisationContactCreated()
@@ -96,7 +95,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
         public void GeExceptionWheValidationOccurs()
         {
             const string errorMessage = "error happened";
-            var requestFailedContactDetails = BuildRequest(_organisationId, _displayName, _email, _phoneNumber);
+            var requestFailedContactDetails = BuildRequest(_organisationId, _displayName,_firstName,_lastName, _email, _phoneNumber);
             var errorResponse = BuildErrorResponse(errorMessage, ValidationStatusCode.BadRequest);
             _validator.Setup(v => v.ValidatorCreateEpaOrganisationContactRequest(requestFailedContactDetails)).Returns(errorResponse);
             var ex = Assert.ThrowsAsync<BadRequestException>(() => _createEpaOrganisationContactHandler.Handle(requestFailedContactDetails, new CancellationToken()));
@@ -112,12 +111,14 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             return validationResponse;
         }
 
-        private CreateEpaOrganisationContactRequest BuildRequest(string organisationId, string displayName, string email, string phoneNumber)
+        private CreateEpaOrganisationContactRequest BuildRequest(string organisationId, string displayName, string firstName, string lastName,string email, string phoneNumber)
         {
             return new CreateEpaOrganisationContactRequest
             {
                 EndPointAssessorOrganisationId = organisationId,
                 DisplayName = displayName,
+                FirstName = firstName,
+                LastName = lastName,
                 Email = email,
                 PhoneNumber = phoneNumber
             };

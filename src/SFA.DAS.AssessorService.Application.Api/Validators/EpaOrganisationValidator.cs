@@ -225,6 +225,28 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
                 : string.Empty;
         }
 
+        public string CheckFirstName(string name)
+        {
+            var newName = _cleanserService.CleanseStringForSpecialCharacters(name);
+            if (string.IsNullOrEmpty(newName) || newName.Trim().Length == 0)
+                return FormatErrorMessage(EpaOrganisationValidatorMessageName.FirstNameIsMissing);
+
+            return newName.Trim().Length < 2
+                ? FormatErrorMessage(EpaOrganisationValidatorMessageName.FirstNameTooShort)
+                : string.Empty;
+        }
+
+        public string CheckLastName(string name)
+        {
+            var newName = _cleanserService.CleanseStringForSpecialCharacters(name);
+            if (string.IsNullOrEmpty(newName) || newName.Trim().Length == 0)
+                return FormatErrorMessage(EpaOrganisationValidatorMessageName.LastNameIsMissing);
+
+            return newName.Trim().Length < 2
+                ? FormatErrorMessage(EpaOrganisationValidatorMessageName.LastNameTooShort)
+                : string.Empty;
+        }
+
         public string CheckIfEmailIsMissing(string emailName)
         {
             return string.IsNullOrEmpty(emailName?.Trim())
@@ -431,18 +453,30 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             return validationResult;
         }
 
-        public ValidationResponse ValidatorCreateEpaOrganisationContactRequest(CreateEpaOrganisationContactRequest request)
+        public ValidationResponse ValidatorCreateEpaOrganisationContactRequest(
+            CreateEpaOrganisationContactRequest request)
         {
             var validationResult = new ValidationResponse();
-            RunValidationCheckAndAppendAnyError("Email", CheckIfEmailIsPresentAndInSuitableFormat(request.Email), validationResult, ValidationStatusCode.BadRequest);
-            RunValidationCheckAndAppendAnyError("Email", CheckIfEmailAlreadyPresentInAnotherOrganisation(request.Email, request.EndPointAssessorOrganisationId), validationResult, ValidationStatusCode.AlreadyExists);
+            RunValidationCheckAndAppendAnyError("Email", CheckIfEmailIsPresentAndInSuitableFormat(request.Email),
+                validationResult, ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("Email",
+                CheckIfEmailAlreadyPresentInAnotherOrganisation(request.Email, request.EndPointAssessorOrganisationId),
+                validationResult, ValidationStatusCode.AlreadyExists);
 
             if (validationResult.IsValid)
-                RunValidationCheckAndAppendAnyError("ContactDetails", CheckIfContactDetailsAlreadyPresentInSystem(request.DisplayName, request.Email, request.PhoneNumber, null), validationResult, ValidationStatusCode.AlreadyExists);
+                RunValidationCheckAndAppendAnyError("ContactDetails",
+                    CheckIfContactDetailsAlreadyPresentInSystem(request.DisplayName, request.Email, request.PhoneNumber,
+                        null), validationResult, ValidationStatusCode.AlreadyExists);
 
-            RunValidationCheckAndAppendAnyError("EndPointAssessorOrganisationId", CheckIfOrganisationNotFound(request.EndPointAssessorOrganisationId), validationResult, ValidationStatusCode.BadRequest);
-            RunValidationCheckAndAppendAnyError("DisplayName", CheckDisplayName(request.DisplayName), validationResult, ValidationStatusCode.BadRequest);
-                    return validationResult;
+            RunValidationCheckAndAppendAnyError("EndPointAssessorOrganisationId",
+                CheckIfOrganisationNotFound(request.EndPointAssessorOrganisationId), validationResult,
+                ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("FirstName", CheckFirstName(request.FirstName), validationResult,
+                ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("LastName", CheckLastName(request.LastName), validationResult,
+                ValidationStatusCode.BadRequest);
+
+            return validationResult;
         }
 
         public ValidationResponse ValidatorUpdateEpaOrganisationContactRequest(UpdateEpaOrganisationContactRequest request)

@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
@@ -54,9 +53,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 throw new Exception(message);
             }
 
-            var newUsername = _organisationIdGenerator.GetNextContactUsername();
-            if (newUsername == string.Empty)
-                throw new Exception("A valid contact user name could not be generated");
+            var newUsername = request.Email;
 
             var contact = MapOrganisationContactRequestToContact(request, newUsername);
             return await _registerRepository.CreateEpaOrganisationContact(contact);
@@ -71,13 +68,20 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 EndPointAssessorOrganisationId = request.EndPointAssessorOrganisationId,
                 Id = Guid.NewGuid(),
                 PhoneNumber = request.PhoneNumber,
-                Username = newUsername
+                Username = newUsername,
+                FamilyName = request.LastName,
+                GivenNames = request.FirstName,
+                SigninType = "AsLogin",
+                SigninId = null,
+                Status="New"
             };
         }
 
         private void ProcessRequestFieldsForSpecialCharacters(CreateEpaOrganisationContactRequest request)
         {
             request.DisplayName = _cleanser.CleanseStringForSpecialCharacters(request.DisplayName);
+            request.FirstName = _cleanser.CleanseStringForSpecialCharacters(request.FirstName);
+            request.LastName = _cleanser.CleanseStringForSpecialCharacters(request.LastName);
             request.Email = _cleanser.CleanseStringForSpecialCharacters(request.Email);
             request.PhoneNumber = _cleanser.CleanseStringForSpecialCharacters(request.PhoneNumber);
         }    

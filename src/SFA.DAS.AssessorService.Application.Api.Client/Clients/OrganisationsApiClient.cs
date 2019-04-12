@@ -101,17 +101,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
         
-        public async Task<ValidationResponse> ValidateCreateContact(string name, string organisationId,
+        public async Task<ValidationResponse> ValidateCreateContact(string firstName, string lastName, string organisationId,
             string email, string phone)
         {
 
-            var newName = SanitizeUrlParam(name);
+            var newFirstName = SanitizeUrlParam(firstName);
+            var newLastName = SanitizeUrlParam(lastName);
             var newEmail = SanitizeUrlParam(email);
             using (var request = new HttpRequestMessage(HttpMethod.Get,
-                $"/api/ao/assessment-organisations/contacts/validate-new?name={newName}&organisationId={organisationId}&email={newEmail}&phone={phone}"))
+                $"/api/ao/assessment-organisations/contacts/validate-new?firstName={newFirstName}&lastName={newLastName}&organisationId={organisationId}&email={newEmail}&phone={phone}"))
             {
                 return await RequestAndDeserialiseAsync<ValidationResponse>(request,
-                    $"Could not check the validation for contact [{name}] against organisation [{organisationId}]");
+                    $"Could not check the validation for contact [{newFirstName} {newLastName}] against organisation [{organisationId}]");
             }
         }
 
@@ -243,7 +244,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<ValidationResponse> ValidateCreateOrganisation(string name, string ukprn, string organisationTypeId, string companyNumber, string charityNumber);
         Task<ValidationResponse> ValidateUpdateContact(string contactId, string displayName, string email, string phoneNumber);
         Task<ValidationResponse> ValidateUpdateOrganisation(string organisationId, string name, string ukprn, string organisationTypeId, string address1, string address2, string address3, string address4, string postcode, string status, string actionChoice, string companyNumber, string charityNumber);
-        Task<ValidationResponse> ValidateCreateContact(string name, string organisationId, string email, string phone);
+
+        Task<ValidationResponse> ValidateCreateContact(string firstName, string lastName, string organisationId,
+            string email, string phone);
 
         Task<ValidationResponse> ValidateSearchStandards(string searchstring);
 
