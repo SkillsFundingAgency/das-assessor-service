@@ -49,7 +49,7 @@ namespace SFA.DAS.AssessorService.Web
             //services.AddApplicationInsightsTelemetry();
 
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
-            services.AddAndConfigureAuthentication(Configuration, _logger);
+            services.AddAndConfigureAuthentication(Configuration, _logger, _env);
             services.Configure<RequestLocalizationOptions>(options =>
             {
                 options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("en-GB");
@@ -65,10 +65,14 @@ namespace SFA.DAS.AssessorService.Web
 
             services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Assessors.AntiForgery", HttpOnly = true });
 
+
+            var keysPath = Path.Join(Environment.SpecialFolder.Personal.ToString(), "keys");
+            
+            
             if (_env.IsDevelopment())
             {
                 services.AddDataProtection()
-                    .PersistKeysToFileSystem(new DirectoryInfo(@"c:\keys"))
+                    .PersistKeysToFileSystem(new DirectoryInfo(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "keys")))
                     .SetApplicationName("AssessorApply");
 
                 services.AddDistributedMemoryCache();

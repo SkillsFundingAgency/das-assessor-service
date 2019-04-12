@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<Contact> UpdateContactWithOrganisationData(
             UpdateContactWithOrgAndStausRequest updateContactWithOrgAndStaus);
 
-        Task UpdateSignInId(Guid contactId, Guid signInId);
+        Task UpdateSignInId(Guid contactId, Guid? signInId);
         Task<Contact> GetContact(string email);
         Task AssociateRoleWithContact(string roleName, Contact newContact);
         Task AssociatePrivilegesWithContact(Guid contactId, IEnumerable<Privilege> privileges);

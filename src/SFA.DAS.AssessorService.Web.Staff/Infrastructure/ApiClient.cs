@@ -16,6 +16,7 @@ using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.Web.Staff.Models;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels.Private;
 using SFA.DAS.Apprenticeships.Api.Types;
+using OrganisationType = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationType;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
 {

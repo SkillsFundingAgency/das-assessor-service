@@ -10,5 +10,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public List<string> WarningMessages { get; set; }
         public bool ApplySourceIsEpao { get; set; }
         public string OrganisationId { get; set; }
+        public Guid ContactId { get; set; }
     }
 }
