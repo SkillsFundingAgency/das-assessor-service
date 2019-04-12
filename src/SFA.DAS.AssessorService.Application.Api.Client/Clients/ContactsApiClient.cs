@@ -137,10 +137,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         public async Task MigrateSingleContactToApply(System.Guid signinId)
         {
+            var signinIdWrapper = new SigninIdWrapper(signinId);
+            _logger.LogInformation($"MigrateSingleContactToApply json being POSTed: {JsonConvert.SerializeObject(signinIdWrapper)}");
             using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/MigrateSingleContactToApply"))
             {
-                await PostPutRequest(request,
-                        new SigninIdWrapper(signinId));
+                await PostPutRequest(request, signinIdWrapper);
             }
         }
 
