@@ -3,7 +3,6 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
-    //MFCMFC
     [Authorize]
     public class RoatpHomeController : Controller
     {

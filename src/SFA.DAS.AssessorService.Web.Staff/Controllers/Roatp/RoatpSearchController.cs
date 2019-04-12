@@ -9,7 +9,7 @@
     using SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp;
 
     
-    [Authorize] // MFCMFC -- not sure this this is needed, as base has it?
+    [Authorize] 
     public class RoatpSearchController : RoatpSearchResultsControllerBase
     {
         private ILogger<RoatpSearchController> _logger;
