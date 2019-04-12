@@ -10,7 +10,6 @@
     using Newtonsoft.Json;
     using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
     using System.Net;
-    using Microsoft.EntityFrameworkCore.Query.ExpressionVisitors.Internal;
 
     public class RoatpApiClient : IRoatpApiClient
     {
