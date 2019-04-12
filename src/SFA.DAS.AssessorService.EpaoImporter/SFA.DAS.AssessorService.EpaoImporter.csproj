@@ -13,13 +13,13 @@
   <ItemGroup>
     <PackageReference Include="FluentDateTime" Version="1.14.0" />
     <PackageReference Include="MailKit" Version="2.0.2" />
-    <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="3.16.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="3.19.8" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.6" />
     <PackageReference Include="Microsoft.WindowsAzure.ConfigurationManager" Version="3.2.3" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.1">
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2">
     </PackageReference>
     <PackageReference Include="NLog.Extensions.Logging" Version="1.0.0" />
-    <PackageReference Include="SFA.DAS.Http" Version="1.0.0.39136" />
+    <PackageReference Include="SFA.DAS.Http" Version="1.2.1" />
     <PackageReference Include="SFA.DAS.Notifications.Api.Client" Version="2.0.0.35919" />
     <PackageReference Include="StructureMap" Version="4.6.1" />
     <PackageReference Include="Dapper" Version="1.50.5" />
