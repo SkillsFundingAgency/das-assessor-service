@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -54,7 +55,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         public async Task<CertificateAddress> GetContactPreviousAddress(string userName,
             bool isPrivatelyFunded)
         {
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/certificates/contact/previousaddress?username={userName}&isPrivatelyFunded={isPrivatelyFunded}"))
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/certificates/contact/previousaddress?username={WebUtility.UrlEncode(userName)}&isPrivatelyFunded={isPrivatelyFunded}"))
             {
                 return await RequestAndDeserialiseAsync<CertificateAddress>(httpRequest, "Could not get Certificate Address");
             }
@@ -62,7 +63,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         public async Task<List<CertificateAddress>> GetPreviousAddressess(string userName)
         {
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/certificates/addresses?userName={userName}"))
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/certificates/addresses?userName={WebUtility.UrlEncode(userName)}"))
             {
                 return await RequestAndDeserialiseAsync<List<CertificateAddress>>(httpRequest, "Could not get Certificate Addressess");
             }
@@ -70,7 +71,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         public async Task<PaginatedList<CertificateSummaryResponse>> GetCertificateHistory(int pageIndex, string userName)
         {
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/certificates/history/?pageIndex={pageIndex}&userName={userName}"))
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/certificates/history/?pageIndex={pageIndex}&userName={WebUtility.UrlEncode(userName)}"))
             {
                 return await RequestAndDeserialiseAsync<PaginatedList<CertificateSummaryResponse>>(httpRequest, "Could not get Certificate History");
             }
@@ -86,7 +87,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         public async Task<CertificatesCountResponse> GetCertificatesCount(string userName)
         {
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/certificates/count/?userName={userName}"))
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/certificates/count/?userName={WebUtility.UrlEncode(userName)}"))
             {
                 return await RequestAndDeserialiseAsync<CertificatesCountResponse>(httpRequest, "Could not get Certificates Count");
             }
