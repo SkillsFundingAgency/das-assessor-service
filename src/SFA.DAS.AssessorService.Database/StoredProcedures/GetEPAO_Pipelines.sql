@@ -14,7 +14,7 @@ AS
     SELECT StdCode, CASE WHEN PlannedEndDate > GETDATE() THEN EOMONTH(PlannedEndDate) ELSE EOMONTH(DATEADD(month, std.Duration, LearnStartDate)) END AS EstimateDate , Title
     FROM (
     -- The active records from ilr
-    SELECT Uln, StdCode, EPAORGID, LearnStartDate, PlannedEndDate
+    SELECT Uln, StdCode, LearnStartDate, PlannedEndDate
     FROM ilrs il1
     JOIN OrganisationStandard os ON il1.EpaOrgId = os.EndPointAssessorOrganisationId AND il1.StdCode = os.StandardCode AND 
          os.[Status] <> 'Deleted' AND (os.[EffectiveTo] IS NULL OR os.[EffectiveTo] >= GETDATE())
