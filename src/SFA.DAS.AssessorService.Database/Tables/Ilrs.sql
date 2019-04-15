@@ -23,5 +23,10 @@
 GO
 
 CREATE UNIQUE INDEX [IXU_Ilrs_Uln_StdCode] ON [Ilrs] ([Uln], [StdCode]) INCLUDE ([FamilyName])
+GO
 
 CREATE NONCLUSTERED INDEX [IX_Ilrs_EpaOrgId_StdCode_CompletionStatus] ON [Ilrs] ([EpaOrgId], [StdCode], [CompletionStatus]) INCLUDE ([LearnStartDate], [PlannedEndDate], [Uln])
+GO
+
+CREATE NONCLUSTERED INDEX [IX_Ilrs_EpaOrgId_StdCode_Uln] ON [Ilrs] ([EpaOrgId], [StdCode], [Uln]) INCLUDE ([LearnStartDate], [PlannedEndDate], [CompletionStatus])
+GO
