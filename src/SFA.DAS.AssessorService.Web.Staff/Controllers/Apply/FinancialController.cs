@@ -101,6 +101,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
         [HttpGet("/Financial/Download/{applicationId}")]
         public async Task<IActionResult> Download(Guid applicationId)
         {
+            var org = await _apiClient.GetOrganisationForApplication(applicationId);
             var section = await _apiClient.GetSection(applicationId, 1, 3);
 
             using (var zipStream = new MemoryStream())
@@ -133,7 +134,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
 
                 var compressedBytes = zipStream.ToArray();
                 
-                return File(compressedBytes, "application/zip", "FinancialDocuments.zip");
+                return File(compressedBytes, "application/zip", $"FinancialDocuments_{org.Name}.zip");
             }
         }
 
