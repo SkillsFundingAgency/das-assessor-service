@@ -6,8 +6,11 @@
 
     public class UpdateOrganisationLegalNameRequest : IRequest
     {
-        [DataMember] public Guid OrganisationId { get; set; }
-        [DataMember] public string LegalName { get; set; }
-        [DataMember] public string UpdatedBy { get; set; }
+        [DataMember]
+        public Guid OrganisationId { get; set; }
+        [DataMember]
+        public string LegalName { get; set; }
+        [DataMember]
+        public string UpdatedBy { get; set; }
     }
 }
