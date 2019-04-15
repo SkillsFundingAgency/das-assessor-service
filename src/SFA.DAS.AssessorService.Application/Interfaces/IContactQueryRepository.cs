@@ -23,5 +23,8 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<Contact> GetContactById(Guid id);
         Task<List<Contact>> GetUsersToMigrate();
         Task UpdateMigratedContact(Guid contactId, Guid signInId);
+        Task<List<Contact>> GetExsitingContactsToMigrateToApply();
+
+        Task<Contact> GetSingleContactsToMigrateToApply(Guid requestSignInId);
     }
 }

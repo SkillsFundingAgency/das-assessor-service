@@ -19,5 +19,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public string Postcode { get; set; }
 
         public FHADetails FHADetails { get; set; }
+
+        public string EndPointAssessmentOrgId { get; set; }
     }
 }

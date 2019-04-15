@@ -22,4 +22,4 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Roatp
 
         public string Username { get; set; }
     }
-}
+ }

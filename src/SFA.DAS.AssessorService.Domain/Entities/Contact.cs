@@ -22,6 +22,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public Guid? SignInId { get; set; }
         public string PhoneNumber { get; set; }
         public string Title { get; set; }
+        public string SignInType { get; set; }
         public string GivenNames { get; set; }
         public string FamilyName { get; set; }
 

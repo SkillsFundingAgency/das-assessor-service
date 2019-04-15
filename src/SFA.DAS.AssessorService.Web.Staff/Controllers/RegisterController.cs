@@ -502,7 +502,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 Address4 = organisation.OrganisationData?.Address4,
                 Postcode = organisation.OrganisationData?.Postcode,
                 PrimaryContact = organisation.PrimaryContact,
-                PrimaryContactName = notSetDescription,
+                PrimaryContactName = organisation.PrimaryContactName ?? notSetDescription,
                 CharityNumber = organisation.OrganisationData?.CharityNumber,
                 CompanyNumber =  organisation.OrganisationData?.CompanyNumber,
                 Status = organisation.Status,
