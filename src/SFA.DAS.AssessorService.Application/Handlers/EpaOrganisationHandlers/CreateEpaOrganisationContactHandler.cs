@@ -71,7 +71,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 Username = newUsername,
                 FamilyName = request.LastName,
                 GivenNames = request.FirstName,
-                SigninType = "AsLogin",
+                SigninType = string.Empty,
                 SigninId = null,
                 Status="New"
             };
