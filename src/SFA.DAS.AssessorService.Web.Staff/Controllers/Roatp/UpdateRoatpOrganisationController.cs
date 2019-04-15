@@ -5,6 +5,7 @@
     using Microsoft.Extensions.Logging;
     using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
     using System.Threading.Tasks;
+    using AutoMapper;
     using ViewModels.Roatp;
     using SFA.DAS.AssessorService.Web.Staff.Domain;
     using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
