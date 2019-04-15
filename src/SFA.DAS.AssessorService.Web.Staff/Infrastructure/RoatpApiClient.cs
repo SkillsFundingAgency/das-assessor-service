@@ -117,7 +117,7 @@
 
             return await Task.FromResult(result == HttpStatusCode.OK);
         }
-
+       
         public async Task<bool> UpdateOrganisationFinancialTrackRecord(UpdateOrganisationFinancialTrackRecordRequest request)
         {
             HttpStatusCode result = await Put<UpdateOrganisationFinancialTrackRecordRequest>($"{_baseUrl}/api/v1/updateOrganisation/financialTrackRecord", request);
@@ -128,6 +128,13 @@
         public async Task<bool> UpdateOrganisationProviderType(UpdateOrganisationProviderTypeRequest request)
         {
             HttpStatusCode result = await Put<UpdateOrganisationProviderTypeRequest>($"{_baseUrl}/api/v1/updateOrganisation/providerType", request);
+
+            return await Task.FromResult(result == HttpStatusCode.OK);
+        }
+
+        public async Task<bool> UpdateOrganisationUkprn(UpdateOrganisationUkprnRequest request)
+        {
+            HttpStatusCode result = await Put<UpdateOrganisationUkprnRequest>($"{_baseUrl}/api/v1/updateOrganisation/ukprn", request);
 
             return await Task.FromResult(result == HttpStatusCode.OK);
         }

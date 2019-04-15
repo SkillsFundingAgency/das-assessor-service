@@ -64,6 +64,41 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             return View("~/Views/Roatp/UpdateOrganisationLegalName.cshtml", model);
         }
 
+        [Route("change-ukprn")]
+        public async Task<IActionResult> UpdateOrganisationUkprn()
+        {
+            var searchModel = _sessionService.GetSearchResults();
+
+            var model = new UpdateOrganisationUkprnViewModel
+            {
+                Ukprn = searchModel.SelectedResult?.UKPRN.ToString(),
+                LegalName = searchModel.SelectedResult.LegalName,
+                OrganisationId = searchModel.SelectedResult.Id
+            };
+
+            return View("~/Views/Roatp/UpdateOrganisationUkprn.cshtml", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateUkprn(UpdateOrganisationUkprnViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("~/Views/Roatp/UpdateOrganisationUkprn.cshtml", model);
+            }
+
+            model.UpdatedBy = HttpContext.User.OperatorName();
+            var request = Mapper.Map<UpdateOrganisationUkprnRequest>(model);
+            var result = await _apiClient.UpdateOrganisationUkprn(request);
+			
+            if (result)
+            {
+                return await RefreshSearchResults();
+            }
+
+            return View("~/Views/Roatp/UpdateOrganisationUkprn.cshtml", model);
+		}
+		
         [Route("change-status")]
         public async Task<IActionResult> UpdateOrganisationStatus()
         {
@@ -110,6 +145,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             {
                 request.RemovedReasonId = null;
             }
+
+            
 
             var result = await _apiClient.UpdateOrganisationStatus(request);
 
