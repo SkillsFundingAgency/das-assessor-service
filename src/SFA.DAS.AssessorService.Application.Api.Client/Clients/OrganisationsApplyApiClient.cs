@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -21,11 +22,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         public async Task<IEnumerable<OrganisationSearchResult>> SearchForOrganisations(string searchTerm)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get,
-                $"/OrganisationSearch?searchTerm={searchTerm}"))
+            try
             {
-                return await RequestAndDeserialiseAsync<IEnumerable<OrganisationSearchResult>>(request,
-                    $"Could not retrieve organisations for search {searchTerm}.");
+                using (var request = new HttpRequestMessage(HttpMethod.Get,
+                    $"/OrganisationSearch?searchTerm={searchTerm}"))
+                {
+                    return await RequestAndDeserialiseAsync<IEnumerable<OrganisationSearchResult>>(request,
+                        $"Could not retrieve organisations for search {searchTerm}.");
+                }
+            }catch(HttpRequestException err)
+            {
+                if (err.Message.Contains("204"))
+                    return null;
+                throw err;
             }
             
         }
@@ -38,6 +47,30 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                return await PostPutRequestWithResponse<CreateOrganisationRequest,Organisation>(request, createOrganisationRequest);
             }
         }
+
+        public async Task<Organisation> CreateNewOrganisation(CreateOrganisationRequest createOrganisationRequest)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, "/organisations"))
+            {
+                return await PostPutRequestWithResponse<CreateOrganisationRequest, Organisation>(request, createOrganisationRequest);
+            }
+        }
+
+        public async Task<Organisation> DoesOrganisationExist(string name)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/organisations/name/{name}"))
+            {
+                return await RequestAndDeserialiseAsync<Organisation>(request);
+            }
+        }
+
+        public async Task<Organisation> GetOrganisationByUserId(Guid userId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/organisations/userid/{userId}"))
+            {
+                return await RequestAndDeserialiseAsync<Organisation>(request);
+            }
+        }
     }
 
 
@@ -45,5 +78,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
     {
         Task<IEnumerable<OrganisationSearchResult>> SearchForOrganisations(string searchTerm);
         Task<Organisation> ConfirmSearchedOrganisation(CreateOrganisationRequest createOrganisationRequest);
+        Task<Organisation> CreateNewOrganisation(CreateOrganisationRequest createOrganisationRequest);
+        Task<Organisation> DoesOrganisationExist(string name);
+        Task<Organisation> GetOrganisationByUserId(Guid userId);
     }
 }

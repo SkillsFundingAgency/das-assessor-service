@@ -50,6 +50,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public async Task<IActionResult> PostSignIn()
         { 
             var loginResult = await _loginOrchestrator.Login();
+            _logger.LogInformation($"  returned from LoginOrchestrator: {loginResult.Result}");
             switch (loginResult.Result)
             {
                 case LoginResult.Valid:
@@ -69,6 +70,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     ResetCookies();
                     _sessionService.Set("OrganisationName", loginResult.OrganisationName);
                     return RedirectToAction("Rejected", "Home");
+                case LoginResult.ContactDoesNotExist:
+                    ResetCookies();
+                    return RedirectToAction("NotRegistered", "Home");
                 default:
                     throw new ApplicationException();
             }

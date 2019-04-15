@@ -261,6 +261,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
                 var command = await _answerService.GatherAnswersForOrganisationAndContactForApplication(applicationId);
                 var response = await _answerInjectionService.InjectApplyOrganisationAndContactDetailsIntoRegister(command);
                 warningMessages = response.WarningMessages;
+                if (warningMessages.Count == 0 && !response.IsEpaoApproved)
+                {
+                   await _applyApiClient.UpdateRoEpaoApprovedFlag(applicationId,response.ContactId,response.OrganisationId, true);
+                }
             }
 
             await _applyApiClient.ReturnApplication(applicationId, sequenceId, returnType);

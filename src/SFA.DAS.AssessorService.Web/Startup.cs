@@ -49,7 +49,7 @@ namespace SFA.DAS.AssessorService.Web
             //services.AddApplicationInsightsTelemetry();
 
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
-            services.AddAndConfigureAuthentication(Configuration, _logger);
+            services.AddAndConfigureAuthentication(Configuration, _logger, _env);
             services.Configure<RequestLocalizationOptions>(options =>
             {
                 options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("en-GB");
@@ -63,27 +63,33 @@ namespace SFA.DAS.AssessorService.Web
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            var redis = ConnectionMultiplexer.Connect("localhost");
-            
-            services.AddDataProtection()
-                .PersistKeysToStackExchangeRedis(redis, "AssessorApply-DataProtectionKeys")
-                .SetApplicationName("AssessorApply");
-            
-
             services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Assessors.AntiForgery", HttpOnly = true });
 
+
+            var keysPath = Path.Join(Environment.SpecialFolder.Personal.ToString(), "keys");
+            
+            
             if (_env.IsDevelopment())
             {
+                services.AddDataProtection()
+                    .PersistKeysToFileSystem(new DirectoryInfo(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "keys")))
+                    .SetApplicationName("AssessorApply");
+
                 services.AddDistributedMemoryCache();
-                
             }
             else
             {
                 try
                 {
+                    var redis = ConnectionMultiplexer.Connect($"{Configuration.SessionRedisConnectionString},DefaultDatabase=1");
+            
+                    services.AddDataProtection()
+                        .PersistKeysToStackExchangeRedis(redis, "AssessorApply-DataProtectionKeys")
+                        .SetApplicationName("AssessorApply");
+                    
                     services.AddDistributedRedisCache(options =>
                     {
-                        options.Configuration = Configuration.SessionRedisConnectionString;
+                        options.Configuration = $"{Configuration.SessionRedisConnectionString},DefaultDatabase=0";
                     });
                 }
                 catch (Exception e)
@@ -112,10 +118,13 @@ namespace SFA.DAS.AssessorService.Web
 
                 //config.For<ICache>().Use<SessionCache>();
                 config.For<ITokenService>().Use<TokenService>();
+                config.For<ITokenService>().Add<ApplyTokenService>().Named("applyTokenService");
+
                 config.For<IOrganisationsApplyApiClient>().Use<OrganisationsApplyApiClient>()
-                    .Ctor<ITokenService>("applyTokenService").Is(config.For<ITokenService>().Use<ApplyTokenService>());
+                    .Ctor<ITokenService>("applyTokenService").Is(c=> c.GetInstance<ITokenService>("applyTokenService"));
                 config.For<IContactApplyClient>().Use<ContactApplyClient>()
-                    .Ctor<ITokenService>("applyTokenService").Is(config.For<ITokenService>().Use<ApplyTokenService>()); 
+                    .Ctor<ITokenService>("applyTokenService").Is(c=> c.GetInstance<ITokenService>("applyTokenService")); 
+                
                 config.For<IWebConfiguration>().Use(Configuration);
                 config.For<ISessionService>().Use<SessionService>().Ctor<string>().Is(_env.EnvironmentName);
                 config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);

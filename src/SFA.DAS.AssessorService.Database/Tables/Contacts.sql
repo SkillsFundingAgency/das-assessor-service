@@ -3,13 +3,17 @@
 	[CreatedAt] [datetime2](7) NOT NULL,
 	[DeletedAt] [datetime2](7) NULL,
 	[DisplayName] [nvarchar](120) NOT NULL,
-	[Email] [nvarchar](120) NULL,
+	[Email] [nvarchar](256) NULL,
 	[EndPointAssessorOrganisationId] [nvarchar](12) NULL,
 	[OrganisationId] [uniqueidentifier] NULL,
 	[Status] [nvarchar](20) NOT NULL,
 	[UpdatedAt] [datetime2](7) NULL,
-	[Username] [nvarchar](120) NOT NULL,
-	[PhoneNumber] [NVARCHAR] (50) NULL
+	[Username] [nvarchar](256) NOT NULL,
+	[PhoneNumber] [NVARCHAR] (50) NULL,
+	[Title] [NVARCHAR](120) NOT NULL DEFAULT '',
+	[GivenNames] [NVARCHAR](120) NOT NULL DEFAULT '',
+	[FamilyName] [NVARCHAR](120) NOT NULL DEFAULT '',
+	[SignInType] [NVARCHAR](20) NOT NULL DEFAULT '',
  CONSTRAINT [PK_Contacts] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC

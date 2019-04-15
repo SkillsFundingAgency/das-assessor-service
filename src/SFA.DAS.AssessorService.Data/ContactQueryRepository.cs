@@ -116,5 +116,39 @@ namespace SFA.DAS.AssessorService.Data
         {
             return await _assessorDbContext.Contacts.Where(x => x.Id == id).FirstOrDefaultAsync();
         }
+
+        public async Task<List<Contact>> GetUsersToMigrate()
+        {
+            return await _assessorDbContext.Contacts.Where(c => 
+                c.SignInId == null 
+                && c.Status == "Live" 
+                && !c.Username.StartsWith("unknown")
+                && c.Organisation != null 
+                && c.Organisation.Status == "Live").ToListAsync();
+        }
+
+        public async Task<List<Contact>> GetExsitingContactsToMigrateToApply()
+        {
+            return await _assessorDbContext.Contacts.Include( x => x.Organisation).Include(x => x.Organisation.OrganisationType).Where(c =>
+                c.SignInId != null
+                && c.Organisation != null
+                && c.Organisation.OrganisationType != null).ToListAsync();
+        }
+
+        public async Task<Contact> GetSingleContactsToMigrateToApply(Guid requestSignInId)
+        {
+            return await _assessorDbContext.Contacts.Include(x => x.Organisation).Include(x => x.Organisation.OrganisationType).
+                FirstOrDefaultAsync(c => c.SignInId == requestSignInId);
+        }
+
+        public async Task UpdateMigratedContact(Guid contactId, Guid signInId)
+        {
+            var contact = await _assessorDbContext.Contacts.SingleOrDefaultAsync(c => c.Id == contactId);
+            if (contact != null)
+            {
+                contact.SignInId = signInId;
+                await _assessorDbContext.SaveChangesAsync();
+            }
+        }
     }
 }
