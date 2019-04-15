@@ -43,20 +43,20 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         [HttpGet]
         [Route("/[controller]/")]
+        [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Standards })]
         public async Task<IActionResult> Index(int? pageIndex)
         {
-            _sessionService.Set("CurrentPage", Pages.Standards);
             var epaoRegisteredStandardsResponse =
                 new PaginatedList<GetEpaoRegisteredStandardsResponse>(new List<GetEpaoRegisteredStandardsResponse>(), 0,
                     1, 1);
             try
             {
-                var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
-                var organisation = await _organisationsApiClient.Get(ukprn);
+                var epaoid = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
+                var organisation = await _organisationsApiClient.GetEpaOrganisation(epaoid);
                 if (organisation != null)
                     epaoRegisteredStandardsResponse =
                         await _standardsApiClient.GetEpaoRegisteredStandards(
-                            organisation.EndPointAssessorOrganisationId, pageIndex ?? 1);
+                            organisation.OrganisationId, pageIndex ?? 1);
             }
             catch (EntityNotFoundException)
             {
@@ -152,13 +152,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 Response = new PaginatedList<EpaoPipelineStandardsResponse>(new List<EpaoPipelineStandardsResponse>(),
                     0, 1, 1)
             };
-            var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
+            var epaoid = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
 
-            var organisation = await _organisationsApiClient.Get(ukprn);
+            var organisation = await _organisationsApiClient.GetEpaOrganisation(epaoid);
             if (organisation != null)
             {
                 orderedListResultViewModel.Response =
-                    await _standardsApiClient.GetEpaoPipelineStandards(organisation.EndPointAssessorOrganisationId,
+                    await _standardsApiClient.GetEpaoPipelineStandards(organisation.OrganisationId,
                         orderBy, orderDirection, pageSize, pageIndex ?? 1);
             }
 
