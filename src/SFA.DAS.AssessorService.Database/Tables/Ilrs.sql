@@ -28,3 +28,7 @@ GO
 CREATE NONCLUSTERED INDEX [IX_Ilrs_EpaOrgId_StdCode_CompletionStatus] ON [Ilrs] ([EpaOrgId], [StdCode], [CompletionStatus]) INCLUDE ([LearnStartDate], [PlannedEndDate], [Uln])
 GO
 
+CREATE NONCLUSTERED INDEX [IX_Ilrs_EpaOrgId_StdCode_Uln] ON [Ilrs] ([EpaOrgId], [StdCode], [Uln]) INCLUDE ([LearnStartDate], [PlannedEndDate], [CompletionStatus])
+GO
+
+
