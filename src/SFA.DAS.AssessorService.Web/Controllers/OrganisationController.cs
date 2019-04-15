@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,28 +21,44 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     {
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IOrganisationsApiClient _apiClient;
-        private readonly ISessionService _sessionService;
+        private readonly ILogger<OrganisationController> _logger;
 
-        public OrganisationController(ILogger<OrganisationController> logger, IHttpContextAccessor contextAccessor, IOrganisationsApiClient apiClient, ISessionService sessionService)
+        public OrganisationController(ILogger<OrganisationController> logger, IHttpContextAccessor contextAccessor, IOrganisationsApiClient apiClient)
         {
             _contextAccessor = contextAccessor;
             _apiClient = apiClient;
-            _sessionService = sessionService;
+            _logger = logger;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn").Value;
-            
+            var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
+            var epaoid = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
+
             OrganisationResponse organisation;
 
             try
             {
-                organisation = await _apiClient.Get(ukprn);
+                if (ukprn != null)
+                    organisation = await _apiClient.Get(ukprn);
+                else
+                {
+                    var epaOrganisation = await _apiClient.GetEpaOrganisation(epaoid);
+                    organisation = new OrganisationResponse
+                    {
+                        EndPointAssessorName = epaOrganisation.Name,
+                        EndPointAssessorOrganisationId = epaoid,
+                        EndPointAssessorUkprn = null,
+                        Id = epaOrganisation.Id,
+                        PrimaryContact = epaOrganisation.PrimaryContact,
+                        Status = epaOrganisation.Status
+                    };
+                }
             }
-            catch (EntityNotFoundException)
+            catch (EntityNotFoundException e)
             {
+                _logger.LogWarning(e, "Failed to find organisation");
                 return RedirectToAction("NotRegistered", "Home");
             }
 
@@ -52,16 +69,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Organisations })]
         public async Task<IActionResult> OrganisationDetails()
         {
-            var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn").Value;
+            var epaoid = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
             try
             {
-                var organisationResponse = await _apiClient.Get(ukprn);
-                var organisation = await _apiClient.GetEpaOrganisation(organisationResponse.EndPointAssessorOrganisationId);
+                var organisation = await _apiClient.GetEpaOrganisation(epaoid);
                 var viewModel = MapOrganisationModel(organisation);
                 return View(viewModel);
             }
-            catch (EntityNotFoundException)
+            catch (EntityNotFoundException e)
             {
+                _logger.LogWarning(e, "Failed to find organisation");
                 return RedirectToAction("NotRegistered", "Home");
             }
         }
@@ -87,8 +104,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 PrimaryContact = !string.IsNullOrEmpty(organisation.PrimaryContact)
                     ? organisation.PrimaryContact
                     : notSetDescription,
-                PrimaryContactName = !string.IsNullOrEmpty(organisation.PrimaryContact)
-                    ? organisation.PrimaryContact
+                PrimaryContactName = !string.IsNullOrEmpty(organisation.PrimaryContactName)
+                    ? organisation.PrimaryContactName
                     : notSetDescription,
                 CharityNumber = organisation.OrganisationData?.CharityNumber,
                 CompanyNumber = organisation.OrganisationData?.CompanyNumber,

@@ -68,6 +68,18 @@
             tradingNameError.ErrorMessage.Should().Be(RoatpOrganisationValidation.TradingNameMaxLength);
         }
 
+        [Test]
+        public void Validator_accepts_trading_name_correct_length()
+        {
+            var tradingName = new string('A', 200);
+
+            var validationErrors = _validator.IsValidTradingName(tradingName);
+
+            var tradingNameErrors= validationErrors.Select(x => x.Field == "TradingName");
+
+            tradingNameErrors.Should().BeEmpty();
+        }
+
         [TestCase(1000001)]
         [TestCase(999999)]
         [TestCase(0)]

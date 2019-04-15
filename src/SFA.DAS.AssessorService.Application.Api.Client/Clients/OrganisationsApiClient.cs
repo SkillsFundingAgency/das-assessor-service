@@ -10,6 +10,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     using AssessorService.Api.Types.Models;
+    using System.Net;
 
     public class OrganisationsApiClient : ApiClientBase, IOrganisationsApiClient
     {
@@ -31,6 +32,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task<OrganisationResponse>  GetOrganisationByName(string name)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/organisations/{WebUtility.UrlEncode(name)}"))
+            {
+                return await RequestAndDeserialiseAsync<OrganisationResponse>(request,
+                    $"Could not find the organisations");
+            }
+        }
+
+       
         public async Task<OrganisationResponse> Get(string ukprn)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/organisations/ukprn/{ukprn}"))
@@ -241,6 +252,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<EpaOrganisation> GetEpaOrganisation(string organisationId);
         Task<List<OrganisationType>> GetOrganisationTypes();
         Task SendEmailsToOrgApprovedUsers(EmailAllApprovedContactsRequest emailAllApprovedContactsRequest);
-
+        Task<OrganisationResponse> GetOrganisationByName(string name);
     }
 }
