@@ -49,16 +49,16 @@ UPDATE organisationStandard
 -- patch FundingModel, where this was not set by data sync
 UPDATE Ilrs SET FundingModel = 36 WHERE FundingModel IS NULL
 
-/* DONE
+-- DONE
 -- fix options
-UPDATE [Certificates]
-SET [CertificateData] = JSON_MODIFY([CertificateData], '$.CourseOption','Alcoholic Beverage Service') 
-WHERE json_value(certificatedata,'$.CourseOption') = 'Alcholic beverage service'
+--UPDATE [Certificates]
+--SET [CertificateData] = JSON_MODIFY([CertificateData], '$.CourseOption','Alcoholic Beverage Service') 
+--WHERE json_value(certificatedata,'$.CourseOption') = 'Alcholic beverage service'
 
-UPDATE [Options] 
-SET [OptionName] = 'Alcoholic Beverage Service'
-WHERE [OptionName] = 'Alcholic beverage service'
-*/
+--UPDATE [Options] 
+--SET [OptionName] = 'Alcoholic Beverage Service'
+--WHERE [OptionName] = 'Alcholic beverage service'
+
 
 -- ON-613 Patch Certificates with STxxxx StandardReference, where it is not yet included. 
 -- AB 11/03/19 Keep this active for new deployments, for now
@@ -83,12 +83,6 @@ IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'EPAOUserAppro
 BEGIN
 INSERT EMailTemplates ([Id],[TemplateName],[TemplateId],[Recipients],[CreatedAt]) 
 VALUES (NEWID(), N'EPAOUserApproveRequest', N'5bb920f4-06ec-43c7-b00a-8fad33ce8066', NULL, GETDATE())
-END
-
-IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'ApplySignupError')
-BEGIN
-INSERT EMailTemplates ([Id],[TemplateName],[TemplateId],[Recipients],[CreatedAt]) 
-VALUES (NEWID(), N'EPAOUserApproveRequest', N'88799189-fe12-4887-a13f-f7f76cd6945a', NULL, GETDATE())
 END
 
 -- setup Privileges
@@ -174,3 +168,4 @@ GivenNames = up1.GivenNames,
 FamilyName = up1.FamilyName,
 DisplayName = TRIM(up1.Title + (CASE WHEN up1.Title = '' THEN '' ELSE + ' ' END) + up1.GivenNames  + (CASE WHEN up1.GivenNames = '' THEN '' ELSE + ' ' END) + up1.FamilyName);
 
+UPDATE [OrganisationType] SET [Type] =  'Training Provider', [TypeDescription] = 'Training provider - including HEI not in England' WHERE id = 7;

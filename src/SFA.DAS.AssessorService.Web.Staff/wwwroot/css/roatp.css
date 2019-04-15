@@ -1914,3 +1914,24 @@
     padding: 0 0 0 40px;
     clear: left;
 }
+
+.roatp-radios__conditional {
+    margin-bottom: 15px;
+    margin-left: 18px;
+    padding-left: 33px;
+    border-left: 4px solid #bfc1c3;
+}
+
+@media (min-width: 40.0625em) {
+    .roatp-radios__conditional {
+        margin-bottom: 20px;
+    }
+}
+
+.js-enabled .roatp-radios__conditional--hidden {
+    display: hidden;
+}
+
+.roatp-radios__conditional > :last-child {
+    margin-bottom: 0;
+}

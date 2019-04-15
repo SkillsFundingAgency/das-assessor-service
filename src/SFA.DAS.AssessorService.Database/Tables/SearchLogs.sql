@@ -5,5 +5,5 @@
     [Uln] BIGINT NOT NULL, 
     [SearchTime] DATETIME2 NOT NULL, 
     [NumberOfResults] INT NOT NULL, 
-    [Username] NVARCHAR(50) NOT NULL
+    [Username] NVARCHAR(256) NOT NULL
 )

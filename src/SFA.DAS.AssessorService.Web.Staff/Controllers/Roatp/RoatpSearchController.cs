@@ -42,6 +42,7 @@
             }
 
             model.SelectedIndex = index;
+            _sessionService.SetSearchResults(model);
 
             _sessionService.ClearSearchTerm();
             return View("~/Views/Roatp/SearchResults.cshtml", model);

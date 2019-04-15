@@ -1,5 +1,6 @@
 ﻿namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
 {
+    using System.Linq;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
     using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
@@ -7,7 +8,8 @@
     using ViewModels.Roatp;
     using SFA.DAS.AssessorService.Web.Staff.Domain;
     using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
-    
+    using AutoMapper;
+
     public class UpdateRoatpOrganisationController : RoatpSearchResultsControllerBase
     {
         private ILogger<UpdateRoatpOrganisationController> _logger;
@@ -45,7 +47,10 @@
 
             model.UpdatedBy = HttpContext.User.OperatorName();
 
-            var result = await _apiClient.UpdateOrganisationLegalName(CreateUpdateLegalNameRequest(model));
+            var request = Mapper.Map<UpdateOrganisationLegalNameRequest>(model);
+            request.LegalName = request.LegalName.ToUpper();
+
+            var result = await _apiClient.UpdateOrganisationLegalName(request);
 
             if (result)
             {
@@ -55,14 +60,57 @@
             return View("~/Views/Roatp/UpdateOrganisationLegalName.cshtml", model);
         }
 
-        private UpdateOrganisationLegalNameRequest CreateUpdateLegalNameRequest(UpdateOrganisationLegalNameViewModel model)
+        [Route("change-status")]
+        public async Task<IActionResult> UpdateOrganisationStatus()
         {
-            return new UpdateOrganisationLegalNameRequest
+            var searchModel = _sessionService.GetSearchResults();
+
+            var organisationStatuses = _apiClient.GetOrganisationStatuses().Result.OrderBy(x => x.Status);
+            var removedReasons = _apiClient.GetRemovedReasons().Result.OrderBy(x => x.Id);
+            
+            var model = new UpdateOrganisationStatusViewModel
             {
-                LegalName = model.LegalName.ToUpper(),
-                OrganisationId = model.OrganisationId,
-                UpdatedBy = model.UpdatedBy
+                LegalName = searchModel.SelectedResult.LegalName,
+                OrganisationId = searchModel.SelectedResult.Id,
+                OrganisationStatusId = searchModel.SelectedResult.OrganisationStatus.Id,
+                OrganisationStatuses = organisationStatuses,
+                RemovedReasons = removedReasons
             };
+            if (model.OrganisationStatusId == 0) // Removed
+            {
+                model.RemovedReasonId = searchModel.SelectedResult.OrganisationData.RemovedReason.Id;
+            }
+            return View("~/Views/Roatp/UpdateOrganisationStatus.cshtml", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateStatus(UpdateOrganisationStatusViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("~/Views/Roatp/UpdateOrganisationStatus.cshtml", model);
+            }
+
+            model.UpdatedBy = HttpContext.User.OperatorName();
+
+            var request = Mapper.Map<UpdateOrganisationStatusRequest>(model);
+            if (model.OrganisationStatusId == 0) // Removed
+            {
+                request.RemovedReasonId = model.RemovedReasonId;
+            }
+            else
+            {
+                request.RemovedReasonId = null;
+            }
+
+            var result = await _apiClient.UpdateOrganisationStatus(request);
+
+            if (result)
+            {
+                return await RefreshSearchResults();
+            }
+
+            return View("~/Views/Roatp/UpdateOrganisationStatus.cshtml", model);
         }
 
 
