@@ -144,6 +144,9 @@
     <Content Update="Views\Roatp\UpdateOrganisationStatus.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Roatp\UpdateOrganisationUkprn.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Roatp\UpdateOrganisationLegalName.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

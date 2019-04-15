@@ -50,6 +50,7 @@
 
             var request = Mapper.Map<UpdateOrganisationLegalNameRequest>(model);
             request.LegalName = request.LegalName.ToUpper();
+
             var result = await _apiClient.UpdateOrganisationLegalName(request);
 
             if (result)
@@ -60,6 +61,41 @@
             return View("~/Views/Roatp/UpdateOrganisationLegalName.cshtml", model);
         }
 
+        [Route("change-ukprn")]
+        public async Task<IActionResult> UpdateOrganisationUkprn()
+        {
+            var searchModel = _sessionService.GetSearchResults();
+
+            var model = new UpdateOrganisationUkprnViewModel
+            {
+                Ukprn = searchModel.SelectedResult?.UKPRN.ToString(),
+                LegalName = searchModel.SelectedResult.LegalName,
+                OrganisationId = searchModel.SelectedResult.Id
+            };
+
+            return View("~/Views/Roatp/UpdateOrganisationUkprn.cshtml", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateUkprn(UpdateOrganisationUkprnViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("~/Views/Roatp/UpdateOrganisationUkprn.cshtml", model);
+            }
+
+            model.UpdatedBy = HttpContext.User.OperatorName();
+            var request = Mapper.Map<UpdateOrganisationUkprnRequest>(model);
+            var result = await _apiClient.UpdateOrganisationUkprn(request);
+			
+            if (result)
+            {
+                return await RefreshSearchResults();
+            }
+
+            return View("~/Views/Roatp/UpdateOrganisationUkprn.cshtml", model);
+		}
+		
         [Route("change-status")]
         public async Task<IActionResult> UpdateOrganisationStatus()
         {
@@ -148,7 +184,7 @@
 
             return View("~/Views/Roatp/UpdateOrganisationTradingName.cshtml", model);
         }
-        
+
         [Route("change-parent-company-guarantee")]
         public async Task<IActionResult> UpdateOrganisationParentCompanyGuarantee()
         {
@@ -268,12 +304,8 @@
             var request = Mapper.Map<UpdateOrganisationProviderTypeRequest>(model);
             var result = await _apiClient.UpdateOrganisationProviderType(request);
 
-            if (result)
-            {
-                return await RefreshSearchResults();
-            }
-
             return View("~/Views/Roatp/UpdateOrganisationProviderType.cshtml", model);
+
         }
 
     }

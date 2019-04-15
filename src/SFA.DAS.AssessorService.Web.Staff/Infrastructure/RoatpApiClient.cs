@@ -10,7 +10,6 @@
     using Newtonsoft.Json;
     using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
     using System.Net;
-    using Microsoft.EntityFrameworkCore.Query.ExpressionVisitors.Internal;
 
     public class RoatpApiClient : IRoatpApiClient
     {
@@ -104,7 +103,7 @@
 
             return await Task.FromResult(result == HttpStatusCode.OK);
         }
-        
+
         public async Task<bool> UpdateOrganisationTradingName(UpdateOrganisationTradingNameRequest request)
         {
             HttpStatusCode result = await Put<UpdateOrganisationTradingNameRequest>($"{_baseUrl}/api/v1/updateOrganisation/tradingName", request);
@@ -118,7 +117,7 @@
 
             return await Task.FromResult(result == HttpStatusCode.OK);
         }
-
+       
         public async Task<bool> UpdateOrganisationFinancialTrackRecord(UpdateOrganisationFinancialTrackRecordRequest request)
         {
             HttpStatusCode result = await Put<UpdateOrganisationFinancialTrackRecordRequest>($"{_baseUrl}/api/v1/updateOrganisation/financialTrackRecord", request);
@@ -129,6 +128,13 @@
         public async Task<bool> UpdateOrganisationProviderType(UpdateOrganisationProviderTypeRequest request)
         {
             HttpStatusCode result = await Put<UpdateOrganisationProviderTypeRequest>($"{_baseUrl}/api/v1/updateOrganisation/providerType", request);
+
+            return await Task.FromResult(result == HttpStatusCode.OK);
+        }
+
+        public async Task<bool> UpdateOrganisationUkprn(UpdateOrganisationUkprnRequest request)
+        {
+            HttpStatusCode result = await Put<UpdateOrganisationUkprnRequest>($"{_baseUrl}/api/v1/updateOrganisation/ukprn", request);
 
             return await Task.FromResult(result == HttpStatusCode.OK);
         }

@@ -22,10 +22,14 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
        Task<DuplicateCheckResponse> DuplicateCharityNumberCheck(Guid organisationId, string charityNumber);
        Task<OrganisationSearchResults> Search(string searchTerm);
        Task<bool> UpdateOrganisationLegalName(UpdateOrganisationLegalNameRequest request);
-       Task<bool> UpdateOrganisationStatus(UpdateOrganisationStatusRequest request);
        Task<bool> UpdateOrganisationTradingName(UpdateOrganisationTradingNameRequest request);
-       Task<bool> UpdateOrganisationParentCompanyGuarantee(UpdateOrganisationParentCompanyGuaranteeRequest request);
+       Task<bool> UpdateOrganisationStatus(UpdateOrganisationStatusRequest request);
+
+
+
+        Task<bool> UpdateOrganisationParentCompanyGuarantee(UpdateOrganisationParentCompanyGuaranteeRequest request);
        Task<bool> UpdateOrganisationFinancialTrackRecord(UpdateOrganisationFinancialTrackRecordRequest request);
        Task<bool> UpdateOrganisationProviderType(UpdateOrganisationProviderTypeRequest request);
+       Task<bool> UpdateOrganisationUkprn(UpdateOrganisationUkprnRequest request);
     }
 }
