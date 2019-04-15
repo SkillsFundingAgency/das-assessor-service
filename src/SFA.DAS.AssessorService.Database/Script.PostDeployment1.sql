@@ -49,16 +49,16 @@ UPDATE organisationStandard
 -- patch FundingModel, where this was not set by data sync
 UPDATE Ilrs SET FundingModel = 36 WHERE FundingModel IS NULL
 
-/* DONE
+-- DONE
 -- fix options
-UPDATE [Certificates]
-SET [CertificateData] = JSON_MODIFY([CertificateData], '$.CourseOption','Alcoholic Beverage Service') 
-WHERE json_value(certificatedata,'$.CourseOption') = 'Alcholic beverage service'
+--UPDATE [Certificates]
+--SET [CertificateData] = JSON_MODIFY([CertificateData], '$.CourseOption','Alcoholic Beverage Service') 
+--WHERE json_value(certificatedata,'$.CourseOption') = 'Alcholic beverage service'
 
-UPDATE [Options] 
-SET [OptionName] = 'Alcoholic Beverage Service'
-WHERE [OptionName] = 'Alcholic beverage service'
-*/
+--UPDATE [Options] 
+--SET [OptionName] = 'Alcoholic Beverage Service'
+--WHERE [OptionName] = 'Alcholic beverage service'
+
 
 -- ON-613 Patch Certificates with STxxxx StandardReference, where it is not yet included. 
 -- AB 11/03/19 Keep this active for new deployments, for now
