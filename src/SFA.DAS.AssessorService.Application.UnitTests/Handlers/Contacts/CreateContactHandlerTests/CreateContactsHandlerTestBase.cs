@@ -1,5 +1,6 @@
 using AutoMapper;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Api.Types.Models;
@@ -31,7 +32,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Contacts.Create
             ContactQueryRepository = new Mock<IContactQueryRepository>();
             SignInService = new Mock<IDfeSignInService>();
             Mediator = new Mock<IMediator>();
-            CreateContactHandler = new CreateContactHandler(ContactRepository.Object, ContactQueryRepository.Object, SignInService.Object, Mediator.Object);
+            CreateContactHandler = new CreateContactHandler(ContactRepository.Object, ContactQueryRepository.Object, SignInService.Object, Mediator.Object, new Mock<ILogger<CreateContactHandler>>().Object);
         }
     }
 }

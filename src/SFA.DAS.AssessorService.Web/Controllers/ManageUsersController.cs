@@ -44,10 +44,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             var response = new List<ContactsWithPrivilegesResponse>();
             try
             {
-                var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
-                var organisation = await _organisationsApiClient.Get(ukprn);
+                var epaoid = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
+                var organisation = await _organisationsApiClient.GetEpaOrganisation(epaoid);
                 if (organisation != null)
-                 response = await _contactsApiClient.GetContactsWithPrivileges(organisation.EndPointAssessorOrganisationId);
+                 response = await _contactsApiClient.GetContactsWithPrivileges(organisation.OrganisationId);
                
             }
             catch (EntityNotFoundException)

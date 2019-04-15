@@ -19,5 +19,12 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             await _contacts.MigrateUsers();
             return Ok();
         }
+
+        [HttpPost("/MigrateContactsAndOrgsToApply")]
+        public async Task<IActionResult> MigrateContactsAndOrgsToApply()
+        {
+            await _contacts.MigrateContactsAndOrgsToApply();
+            return Ok();
+        }
     }
 }

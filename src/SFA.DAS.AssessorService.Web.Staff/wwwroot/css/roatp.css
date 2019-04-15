@@ -1908,7 +1908,6 @@
         display: block;
         clear: both;
     }
-
     .roatp-radios--inline .roatp-radios__item {
         margin-right: 20px;
         float: left;
@@ -1930,9 +1929,31 @@
     font-size: 16px;
     font-size: 1rem;
     line-height: 1.25;
+    display: block;
     position: relative;
     min-height: 40px;
     margin-bottom: 10px;
     padding: 0 0 0 40px;
     clear: left;
+}
+
+.roatp-radios__conditional {
+    margin-bottom: 15px;
+    margin-left: 18px;
+    padding-left: 33px;
+    border-left: 4px solid #bfc1c3;
+}
+
+@media (min-width: 40.0625em) {
+    .roatp-radios__conditional {
+        margin-bottom: 20px;
+    }
+}
+
+.js-enabled .roatp-radios__conditional--hidden {
+    display: hidden;
+}
+
+.roatp-radios__conditional > :last-child {
+    margin-bottom: 0;
 }

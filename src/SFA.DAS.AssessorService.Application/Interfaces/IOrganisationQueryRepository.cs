@@ -15,6 +15,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<bool> CheckIfAlreadyExists(string endPointAssessorOrganisationId);
         Task<bool> CheckIfAlreadyExists(Guid organisationId);
         Task<bool> CheckIfOrganisationHasContacts(string endPointAssessorOrganisationId);
+        Task<Organisation> GetOrganisationByName(string name);
     }
 
 
@@ -31,4 +32,5 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
         public int TotalCount { get; set; }
     }
+
 }

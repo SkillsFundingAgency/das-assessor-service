@@ -40,9 +40,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
         }
 
 
-        public async Task<CreateOrganisationAndContactFromApplyResponse> InjectApplyOrganisationAndContactDetailsIntoRegister(CreateOrganisationContactCommand command)
+        public async Task<CreateOrganisationAndContactFromApplyResponse>
+            InjectApplyOrganisationAndContactDetailsIntoRegister(CreateOrganisationContactCommand command)
         {
-            var response = new CreateOrganisationAndContactFromApplyResponse { IsEpaoApproved = false, ApplySourceIsEpao = false, WarningMessages = new List<string>() };
+            var response = new CreateOrganisationAndContactFromApplyResponse
+                {IsEpaoApproved = false, ApplySourceIsEpao = false, WarningMessages = new List<string>()};
             if (command.OrganisationReferenceType != null &&
                 command.OrganisationReferenceType.ToLower().Contains("epao"))
             {
@@ -59,7 +61,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             var warningMessages = new List<string>();
 
 
-            var organisationName = DecideOrganisationName(command.UseTradingName, command.TradingName, command.OrganisationName);
+            var organisationName =
+                DecideOrganisationName(command.UseTradingName, command.TradingName, command.OrganisationName);
             var ukprnAsLong = GetUkprnFromRequestDetails(command.OrganisationUkprn, command.CompanyUkprn);
             var organisationTypeId = await GetOrganisationTypeIdFromDescriptor(command.OrganisationType);
             var companyNumber = command.CompanyNumber;
@@ -83,42 +86,45 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                 _logger.LogWarning("A valid organisation Id could not be generated");
                 throw new Exception("A valid organisation Id could not be generated");
             }
-            var organisation = MapCommandToOrganisation(command, newOrganisationId, organisationName, companyNumber, charityNumber,
+
+            var organisation = MapCommandToOrganisation(command, newOrganisationId, organisationName, companyNumber,
+                charityNumber,
                 ukprnAsLong, organisationTypeId);
 
             // Contact checks ////////////////////////////////   
             RaiseWarningIfEmailIsMissingInvalidOrAlreadyUsed(command.ContactEmail, warningMessages);
             RaiseWarningIfContactNameIsMissingOrTooShort(command.ContactName, warningMessages);
 
-            if (warningMessages.Count == 0)
-            {
-                var newUsername = _organisationIdGenerator.GetNextContactUsername();
-                if (newUsername == string.Empty)
-                {
-                    _logger.LogWarning("A valid contact user name could not be generated");
-                    throw new Exception("A valid contact user name could not be generated");
-                }
+            //if (warningMessages.Count == 0) //Taken out because of Deen
+            // {
+          
                 newOrganisationId = await _registerRepository.CreateEpaOrganisation(organisation);
-                var contact = MapCommandToContact(command.CreatedBy,command.ContactName, command.ContactEmail, newOrganisationId, command.ContactPhoneNumber, newUsername);
+                var newOrganisation =
+                    await _registerQueryRepository.GetEpaOrganisationByOrganisationId(newOrganisationId);
+                var contact = MapCommandToContact(command.CreatedBy, $"{command.GivenNames} {command.FamilyName}", command.UserEmail,
+                        newOrganisationId, command.ContactPhoneNumber, command.UserEmail, command.GivenNames,
+                        command.FamilyName, command.SigninId, command.SigninType);
                 var assessorContact = await _registerQueryRepository.GetContactByContactId(contact.Id);
                 if (assessorContact != null)
                 {
                     //Update existing contact entry
-                    var newOrganisation = await _registerQueryRepository.GetEpaOrganisationByOrganisationId(newOrganisationId);
                     await _registerRepository.AssociateOrganisationWithContact(assessorContact.Id, newOrganisation,
                         "Live", "MakePrimaryContact");
                 }
                 else
                 {
-                    //Create a new contact entry
                     await _registerRepository.CreateEpaOrganisationContact(contact);
+                    await _registerRepository.AssociateDefaultRoleWithContact(contact);
+                    await _registerRepository.AssociateAllPrivilegesWithContact(contact);
                 }
-              
-                response.OrganisationId = newOrganisationId;
-            }
+                //Set the warning to zero since warnings are ignored for now on Deens instruction and until martin fixes are merged
+                 warningMessages.Clear();
+                 response.ContactId = contact.Id;
+                 response.OrganisationId = newOrganisationId;
+            //   }
 
             response.WarningMessages = warningMessages;
-            
+
 
             return response;
         }
@@ -279,20 +285,27 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             return organisation;
         }
 
-        private EpaContact MapCommandToContact(string id, string contactName, string contactEmail, string organisationId, string contactPhoneNumber, string username)
+        private EpaContact MapCommandToContact(string id, string contactName, string contactEmail,
+            string organisationId, string contactPhoneNumber, string username, string givenNames, string familyName,
+            Guid? signinId, string signinType)
         {
             contactName = _cleanser.CleanseStringForSpecialCharacters(contactName);
             contactEmail = _cleanser.CleanseStringForSpecialCharacters(contactEmail);
             contactPhoneNumber = _cleanser.CleanseStringForSpecialCharacters(contactPhoneNumber);
-
+            givenNames = _cleanser.CleanseStringForSpecialCharacters(givenNames);
+            familyName = _cleanser.CleanseStringForSpecialCharacters(familyName);
             return new EpaContact
             {
                 DisplayName = contactName,
                 Email = contactEmail,
                 EndPointAssessorOrganisationId = organisationId,
-                Id = string.IsNullOrEmpty(id)?Guid.NewGuid():Guid.Parse(id),
+                Id = string.IsNullOrEmpty(id) ? Guid.NewGuid() : Guid.Parse(id),
                 PhoneNumber = contactPhoneNumber,
-                Username = username
+                Username = username,
+                GivenNames = givenNames,
+                FamilyName = familyName,
+                SigninId = signinId,
+                SigninType = signinType
             };
         }
     }

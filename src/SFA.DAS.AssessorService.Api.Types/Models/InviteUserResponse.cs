@@ -12,6 +12,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         }
         public bool IsSuccess { get; set; }
         public bool UserExists { get; set; }
-        public Guid ExistingUserId { get; set; }
+        public Guid? ExistingUserId { get; set; }
     }
 }

@@ -5,6 +5,7 @@
     using Microsoft.Extensions.Logging;
     using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
     using System.Threading.Tasks;
+    using AutoMapper;
     using ViewModels.Roatp;
     using SFA.DAS.AssessorService.Web.Staff.Domain;
     using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
@@ -47,7 +48,10 @@
 
             model.UpdatedBy = HttpContext.User.OperatorName();
 
-            var result = await _apiClient.UpdateOrganisationLegalName(CreateUpdateLegalNameRequest(model));
+            var request = Mapper.Map<UpdateOrganisationLegalNameRequest>(model);
+            request.LegalName = request.LegalName.ToUpper();
+
+            var result = await _apiClient.UpdateOrganisationLegalName(request);
 
             if (result)
             {
@@ -90,14 +94,26 @@
 
             model.UpdatedBy = HttpContext.User.OperatorName();
 
-            var result = await _apiClient.UpdateOrganisationStatus(CreateUpdateOrganisationStatusRequest(model));
+			var request = Mapper.Map<UpdateOrganisationStatusRequest>(model);
+   
+            if (model.OrganisationStatusId == 0) // Removed
+            {
+                request.RemovedReasonId = model.RemovedReasonId;
+            }
+            else
+            {
+                request.RemovedReasonId = null;
+            }
+
+            var result = await _apiClient.UpdateOrganisationStatus(request);
 
             if (result)
             {
                 return await RefreshSearchResults();
             }
 
-            return View("~/Views/Roatp/UpdateOrganisationStatus.cshtml", model);
+
+            return View("~/Views/Roatp/UpdateOrganisationParentCompanyGuarantee.cshtml", model);
         }
 				
 		[Route("change-trading-name")]
@@ -156,6 +172,41 @@
             if (!ModelState.IsValid)
             {
                 return View("~/Views/Roatp/UpdateOrganisationParentCompanyGuarantee.cshtml", model);
+            };
+            if (model.OrganisationStatusId == 0) // Removed
+            {
+                model.RemovedReasonId = searchModel.SelectedResult.OrganisationData.RemovedReason.Id;
+            }
+            return View("~/Views/Roatp/UpdateOrganisationStatus.cshtml", model);
+        }
+        
+        [Route("change-financial-track-record")]
+        public async Task<IActionResult> UpdateOrganisationFinancialTrackRecord()
+		{
+            return View("~/Views/Roatp/UpdateOrganisationStatus.cshtml", model);
+        }
+
+        [Route("change-parent-company-guarantee")]
+        public async Task<IActionResult> UpdateOrganisationParentCompanyGuarantee()
+        {
+            var searchModel = _sessionService.GetSearchResults();
+
+            var model = new UpdateOrganisationParentCompanyGuaranteeViewModel
+            {
+                ParentCompanyGuarantee = searchModel.SelectedResult.OrganisationData.ParentCompanyGuarantee,
+                OrganisationId = searchModel.SelectedResult.Id,
+                LegalName = searchModel.SelectedResult.LegalName
+            };
+
+            return View("~/Views/Roatp/UpdateOrganisationParentCompanyGuarantee.cshtml", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateParentCompanyGuarantee(UpdateOrganisationParentCompanyGuaranteeViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("~/Views/Roatp/UpdateOrganisationParentCompanyGuarantee.cshtml", model);
             }
 
             model.UpdatedBy = HttpContext.User.OperatorName();
@@ -168,41 +219,6 @@
             }
 
             return View("~/Views/Roatp/UpdateOrganisationParentCompanyGuarantee.cshtml", model);
-        }
-        
-        [Route("change-financial-track-record")]
-        public async Task<IActionResult> UpdateOrganisationFinancialTrackRecord()
-        {
-            var searchModel = _sessionService.GetSearchResults();
-
-            var model = new UpdateOrganisationFinancialTrackRecordViewModel
-            {
-                FinancialTrackRecord = searchModel.SelectedResult.OrganisationData.FinancialTrackRecord,
-                OrganisationId = searchModel.SelectedResult.Id,
-                LegalName = searchModel.SelectedResult.LegalName
-            };
-
-            return View("~/Views/Roatp/UpdateOrganisationFinancialTrackRecord.cshtml", model);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> UpdateFinancialTrackRecord(UpdateOrganisationFinancialTrackRecordViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View("~/Views/Roatp/UpdateOrganisationFinancialTrackRecord.cshtml", model);
-            }
-
-            model.UpdatedBy = HttpContext.User.OperatorName();
-
-            var result = await _apiClient.UpdateOrganisationFinancialTrackRecord(CreateUpdateFinancialTrackRecordRequest(model));
-
-            if (result)
-            {
-                return await RefreshSearchResults();
-            }
-
-            return View("~/Views/Roatp/UpdateOrganisationFinancialTrackRecord.cshtml", model);
         }
         
         [Route("change-provider")]
@@ -259,75 +275,40 @@
             return View("~/Views/Roatp/UpdateOrganisationProviderType.cshtml", model);
         }
 
-        private UpdateOrganisationLegalNameRequest CreateUpdateLegalNameRequest(UpdateOrganisationLegalNameViewModel model)
+        [Route("change-financial-track-record")]
+        public async Task<IActionResult> UpdateOrganisationFinancialTrackRecord()
         {
-            return new UpdateOrganisationLegalNameRequest
+            var searchModel = _sessionService.GetSearchResults();
+
+            var model = new UpdateOrganisationFinancialTrackRecordViewModel
             {
-                LegalName = model.LegalName.ToUpper(),
-                OrganisationId = model.OrganisationId,
-                UpdatedBy = model.UpdatedBy
-            };
+                FinancialTrackRecord = searchModel.SelectedResult.OrganisationData.FinancialTrackRecord,
+                OrganisationId = searchModel.SelectedResult.Id,
+                LegalName = searchModel.SelectedResult.LegalName
+			};
+			
+            return View("~/Views/Roatp/UpdateOrganisationFinancialTrackRecord.cshtml", model);
         }
 
-        private UpdateOrganisationStatusRequest CreateUpdateOrganisationStatusRequest(UpdateOrganisationStatusViewModel model)
+        [HttpPost]
+        public async Task<IActionResult> UpdateFinancialTrackRecord(UpdateOrganisationFinancialTrackRecordViewModel model)
         {
-            var request = new UpdateOrganisationStatusRequest
+            if (!ModelState.IsValid)
             {
-                RemovedReasonId = null,
-                OrganisationStatusId = model.OrganisationStatusId,
-                OrganisationId = model.OrganisationId,
-                UpdatedBy = model.UpdatedBy
-            };
-
-            if (model.OrganisationStatusId == 0)
-            {
-                request.RemovedReasonId = model.RemovedReasonId;
+                return View("~/Views/Roatp/UpdateOrganisationFinancialTrackRecord.cshtml", model);
             }
 
-            return request;
-        }
+            model.UpdatedBy = HttpContext.User.OperatorName();
 
-        private UpdateOrganisationTradingNameRequest CreateUpdateTradingNameRequest(UpdateOrganisationTradingNameViewModel model)
-        {
-            return new UpdateOrganisationTradingNameRequest
+            var request = Mapper.Map<UpdateOrganisationFinancialTrackRecordRequest>(model);
+            var result = await _apiClient.UpdateOrganisationFinancialTrackRecord(request);
+
+            if (result)
             {
-                TradingName = model.TradingName,
-                OrganisationId = model.OrganisationId,
-                UpdatedBy = model.UpdatedBy
-            };
-        }
+                return await RefreshSearchResults();
+            }
 
-        private UpdateOrganisationProviderTypeRequest CreateUpdateOrganisationProviderTypeRequest(UpdateOrganisationProviderTypeViewModel model)
-        {
-
-            return new UpdateOrganisationProviderTypeRequest
-            {
-                OrganisationId = model.OrganisationId,
-                OrganisationTypeId = model.OrganisationTypeId,
-                ProviderTypeId = model.ProviderTypeId,
-                UpdatedBy = model.UpdatedBy
-            };
+            return View("~/Views/Roatp/UpdateOrganisationFinancialTrackRecord.cshtml", model);
         }
-
-        private UpdateOrganisationParentCompanyGuaranteeRequest CreateUpdateParentCompanyGuaranteeRequest(UpdateOrganisationParentCompanyGuaranteeViewModel model)
-        {
-            return new UpdateOrganisationParentCompanyGuaranteeRequest
-            {
-                ParentCompanyGuarantee = model.ParentCompanyGuarantee,
-                OrganisationId = model.OrganisationId,
-                UpdatedBy = model.UpdatedBy
-            };
-        }
-        
-        private UpdateOrganisationFinancialTrackRecordRequest CreateUpdateFinancialTrackRecordRequest(UpdateOrganisationFinancialTrackRecordViewModel model)
-        {
-            return new UpdateOrganisationFinancialTrackRecordRequest
-            {
-                FinancialTrackRecord = model.FinancialTrackRecord,
-                OrganisationId = model.OrganisationId,
-                UpdatedBy = model.UpdatedBy
-            };
-        }
-
     }
 }
