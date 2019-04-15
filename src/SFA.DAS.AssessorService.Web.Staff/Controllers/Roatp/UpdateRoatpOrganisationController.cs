@@ -141,7 +141,8 @@
 
             model.UpdatedBy = HttpContext.User.OperatorName();
 
-            var result = await _apiClient.UpdateOrganisationTradingName(CreateUpdateTradingNameRequest(model));
+            var request = Mapper.Map<UpdateOrganisationTradingNameRequest>(model);
+            var result = await _apiClient.UpdateOrganisationTradingName(request);
 
             if (result)
             {
@@ -149,41 +150,6 @@
             }
 
             return View("~/Views/Roatp/UpdateOrganisationTradingName.cshtml", model);
-        }
-        
-        [Route("change-parent-company-guarantee")]
-        public async Task<IActionResult> UpdateOrganisationParentCompanyGuarantee()
-        {
-            var searchModel = _sessionService.GetSearchResults();
-
-            var model = new UpdateOrganisationParentCompanyGuaranteeViewModel
-            {
-                ParentCompanyGuarantee = searchModel.SelectedResult.OrganisationData.ParentCompanyGuarantee,
-                OrganisationId = searchModel.SelectedResult.Id,
-                LegalName = searchModel.SelectedResult.LegalName
-            };
-
-            return View("~/Views/Roatp/UpdateOrganisationParentCompanyGuarantee.cshtml", model);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> UpdateParentCompanyGuarantee(UpdateOrganisationParentCompanyGuaranteeViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View("~/Views/Roatp/UpdateOrganisationParentCompanyGuarantee.cshtml", model);
-            };
-            if (model.OrganisationStatusId == 0) // Removed
-            {
-                model.RemovedReasonId = searchModel.SelectedResult.OrganisationData.RemovedReason.Id;
-            }
-            return View("~/Views/Roatp/UpdateOrganisationStatus.cshtml", model);
-        }
-        
-        [Route("change-financial-track-record")]
-        public async Task<IActionResult> UpdateOrganisationFinancialTrackRecord()
-		{
-            return View("~/Views/Roatp/UpdateOrganisationStatus.cshtml", model);
         }
 
         [Route("change-parent-company-guarantee")]
@@ -211,7 +177,8 @@
 
             model.UpdatedBy = HttpContext.User.OperatorName();
 
-            var result = await _apiClient.UpdateOrganisationParentCompanyGuarantee(CreateUpdateParentCompanyGuaranteeRequest(model));
+            var request = Mapper.Map<UpdateOrganisationParentCompanyGuaranteeRequest>(model);
+            var result = await _apiClient.UpdateOrganisationParentCompanyGuarantee(request);
 
             if (result)
             {
@@ -265,7 +232,8 @@
                 model.OrganisationTypeId = searchModel.SelectedResult.OrganisationType.Id;
             }
 
-            var result = await _apiClient.UpdateOrganisationProviderType(CreateUpdateOrganisationProviderTypeRequest(model));
+            var request = Mapper.Map<UpdateOrganisationProviderTypeRequest>(model);
+            var result = await _apiClient.UpdateOrganisationProviderType(request);
 
             if (result)
             {

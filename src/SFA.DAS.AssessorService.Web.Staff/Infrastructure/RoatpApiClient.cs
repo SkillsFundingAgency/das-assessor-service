@@ -110,35 +110,6 @@
 
             return await Task.FromResult(result == HttpStatusCode.OK);
         }
-
-
-
-
-
-
-
-
-
-        public async Task<bool> UpdateOrganisationParentCompanyGuarantee(UpdateOrganisationParentCompanyGuaranteeRequest request)
-        {
-            HttpStatusCode result = await Put<UpdateOrganisationParentCompanyGuaranteeRequest>($"{_baseUrl}/api/v1/updateOrganisation/parentCompanyGuarantee", request);
-
-            return await Task.FromResult(result == HttpStatusCode.OK);
-        }
-        
-        public async Task<bool> UpdateOrganisationStatus(UpdateOrganisationStatusRequest request)
-        {
-            HttpStatusCode result = await Put<UpdateOrganisationStatusRequest>($"{_baseUrl}/api/v1/updateOrganisation/status", request);
-
-            return await Task.FromResult(result == HttpStatusCode.OK);
-        }
-        
-        public async Task<bool> UpdateOrganisationTradingName(UpdateOrganisationTradingNameRequest request)
-        {
-            HttpStatusCode result = await Put<UpdateOrganisationTradingNameRequest>($"{_baseUrl}/api/v1/updateOrganisation/tradingName", request);
-
-            return await Task.FromResult(result == HttpStatusCode.OK);
-        }
         
         public async Task<bool> UpdateOrganisationParentCompanyGuarantee(UpdateOrganisationParentCompanyGuaranteeRequest request)
         {
@@ -146,7 +117,7 @@
 
             return await Task.FromResult(result == HttpStatusCode.OK);
         }
-
+       
         public async Task<bool> UpdateOrganisationFinancialTrackRecord(UpdateOrganisationFinancialTrackRecordRequest request)
         {
             HttpStatusCode result = await Put<UpdateOrganisationFinancialTrackRecordRequest>($"{_baseUrl}/api/v1/updateOrganisation/financialTrackRecord", request);
