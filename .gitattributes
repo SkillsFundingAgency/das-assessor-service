@@ -61,12 +61,3 @@
 #*.PDF   diff=astextplain
 #*.rtf   diff=astextplain
 #*.RTF   diff=astextplain
-
-###############################################################################
-# diff behavior for other document formats
-# 
-# Convert these 'binary' document formats to text before diffing them.
-# Read: https://git-scm.com/docs/gitattributes
-###############################################################################
-*.sql text working-tree-encoding=UTF-16LE eol=CRLF
-*.ps1 text working-tree-encoding=UTF-16LE eol=CRLF
