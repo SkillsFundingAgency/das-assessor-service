@@ -10,3 +10,7 @@
 	[DateRemoved] DATETIME NULL,
 	[IsLive] BIT DEFAULT 1
 )
+
+
+CREATE NONCLUSTERED INDEX [IX_StandardCollation_Title_StandardData] ON [StandardCollation] ([StandardId]) INCLUDE ([Title],[StandardData])
+GO
