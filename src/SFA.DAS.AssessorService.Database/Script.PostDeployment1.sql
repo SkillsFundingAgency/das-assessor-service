@@ -26,7 +26,7 @@ update deliveryarea set Ordering=5 where Area='West Midlands'
 update deliveryarea set Ordering=6 where Area='East of England'
 update deliveryarea set Ordering=7 where Area='London'
 update deliveryarea set Ordering=8 where Area='South East'
-update deliveryarea set Ordering=9 where Area='South West*/
+update deliveryarea set Ordering=9 where Area='South West'*/
 
 -- ON-1374 update any new organisation standards to 'Live' if minimum acceptance criteria for live is available
 UPDATE organisationStandard 
@@ -49,16 +49,16 @@ UPDATE organisationStandard
 -- patch FundingModel, where this was not set by data sync
 UPDATE Ilrs SET FundingModel = 36 WHERE FundingModel IS NULL
 
-/* DONE
+-- DONE
 -- fix options
-UPDATE [Certificates]
-SET [CertificateData] = JSON_MODIFY([CertificateData], '$.CourseOption','Alcoholic Beverage Service') 
-WHERE json_value(certificatedata,'$.CourseOption') = 'Alcholic beverage service'
+--UPDATE [Certificates]
+--SET [CertificateData] = JSON_MODIFY([CertificateData], '$.CourseOption','Alcoholic Beverage Service') 
+--WHERE json_value(certificatedata,'$.CourseOption') = 'Alcholic beverage service'
 
-UPDATE [Options] 
-SET [OptionName] = 'Alcoholic Beverage Service'
-WHERE [OptionName] = 'Alcholic beverage service'
-*/
+--UPDATE [Options] 
+--SET [OptionName] = 'Alcoholic Beverage Service'
+--WHERE [OptionName] = 'Alcholic beverage service'
+
 
 -- ON-613 Patch Certificates with STxxxx StandardReference, where it is not yet included. 
 -- AB 11/03/19 Keep this active for new deployments, for now
