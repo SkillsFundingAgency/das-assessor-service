@@ -36,4 +36,6 @@ SELECT *
 FROM Data_CTE
 CROSS JOIN Count_CTE
 ORDER BY Title,EstimateDate
+
+END
 GO
