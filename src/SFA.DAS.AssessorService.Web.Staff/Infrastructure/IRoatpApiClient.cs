@@ -24,5 +24,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
        Task<bool> UpdateOrganisationLegalName(UpdateOrganisationLegalNameRequest request);
        Task<bool> UpdateOrganisationTradingName(UpdateOrganisationTradingNameRequest request);
        Task<bool> UpdateOrganisationStatus(UpdateOrganisationStatusRequest request);
+
+
+
+        Task<bool> UpdateOrganisationParentCompanyGuarantee(UpdateOrganisationParentCompanyGuaranteeRequest request);
     }
 }
