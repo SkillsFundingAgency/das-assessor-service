@@ -29,5 +29,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
 
         Task<bool> UpdateOrganisationParentCompanyGuarantee(UpdateOrganisationParentCompanyGuaranteeRequest request);
        Task<bool> UpdateOrganisationFinancialTrackRecord(UpdateOrganisationFinancialTrackRecordRequest request);
+       Task<bool> UpdateOrganisationProviderType(UpdateOrganisationProviderTypeRequest request);
     }
 }
