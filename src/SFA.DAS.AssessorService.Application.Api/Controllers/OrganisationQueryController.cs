@@ -15,6 +15,7 @@ using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Validators;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Settings;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -80,7 +81,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpGet("organisation/{id}", Name = "GetOrganisation")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<OrganisationResponse>))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(Organisation))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetOrganisation(Guid id)
         {
@@ -92,5 +93,24 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(organisation);
         }
 
+        [HttpGet("{*name}", Name = "GetOrganisationByName")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(OrganisationResponse))]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.NotFound, Type = typeof(string))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetOrganisationByName(string name)
+        {
+            var decodedName = WebUtility.UrlDecode(name);
+            _logger.LogInformation($"Received request to retrieve Organisation {decodedName}");
+            
+            var organisation = await _organisationQueryRepository.GetOrganisationByName(decodedName);
+            if(organisation == null)
+            {
+                var ex = new ResourceNotFoundException(name);
+                throw ex;
+            }
+            
+            return Ok(Mapper.Map<OrganisationResponse>(organisation));
+        }
     }
 }

@@ -64,8 +64,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return View(nameof(Index));
             }
 
-            var apiResponse = await _organisationsApplyApiClient.SearchForOrganisations(viewModel.SearchString);
-            viewModel.Organisations = apiResponse?.GroupBy(r => r.Ukprn).Select(group => @group.First()).ToList();
+            viewModel.Organisations = await _organisationsApplyApiClient.SearchForOrganisations(viewModel.SearchString);
             return View(viewModel);
         }
 
@@ -86,8 +85,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 return View(nameof(Results), viewModel);
             }
 
-            var apiResponse = await _organisationsApplyApiClient.SearchForOrganisations(viewModel.SearchString);
-            viewModel.Organisations = apiResponse?.GroupBy(r => r.Ukprn).Select(group => @group.First()).ToList();
+            viewModel.Organisations = await _organisationsApplyApiClient.SearchForOrganisations(viewModel.SearchString);
             return View(nameof(Results), viewModel);
         }
 
@@ -201,8 +199,21 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
                 if (organisationSearchResult.OrganisationReferenceType == "RoEPAO")
                 {
-                    var registeredOrganisation =
-                        await _organisationsApiClient.Get(organisationSearchResult.Ukprn?.ToString());
+                    //Get the organisation from assessor registry
+                    OrganisationResponse registeredOrganisation;
+
+                    if (organisationSearchResult.Ukprn != null)
+                        registeredOrganisation =
+                            await _organisationsApiClient.Get(organisationSearchResult.Ukprn.ToString());
+                    else
+                    {
+                       var result =
+                            await _organisationsApiClient.GetEpaOrganisation(organisationSearchResult.Id);
+                       registeredOrganisation = new OrganisationResponse
+                       {
+                           Id = result.Id
+                       };
+                    }
 
                     await _contactsApiClient.UpdateOrgAndStatus(new UpdateContactWithOrgAndStausRequest(
                         user.Id.ToString(),
@@ -213,23 +224,26 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
                     try
                     {
+                        //Check if orgnisation exists on apply
                         await _organisationsApplyApiClient.DoesOrganisationExist(request.Name);
                     }
                     catch (EntityNotFoundException e)
                     {
-                       _logger.LogInformation($"{e.Message}");
-                        //Try creating an organisation
+                        _logger.LogInformation($"{e.Message}");
+                        //Try creating an organisation in apply
                         await _organisationsApplyApiClient.CreateNewOrganisation(request);
                     }
-                 
+
 
                     await _organisationsApiClient.SendEmailsToOrgApprovedUsers(new EmailAllApprovedContactsRequest(
                         user.DisplayName, organisationSearchResult
-                            .OrganisationReferenceId,  _config.ServiceLink));
+                            .OrganisationReferenceId, _config.ServiceLink));
                 }
                 else
                 {
-                   
+                    //Try creating a contact and an organisation in apply
+                    await _contactsApiClient.MigrateSingleContactToApply(Guid.Parse(signinId));
+
                     await _contactsApiClient.UpdateStatus(new UpdateContactStatusRequest(user.Id.ToString(), ContactStatus.Applying));
                     await _organisationsApplyApiClient.ConfirmSearchedOrganisation(request);
 

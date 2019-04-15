@@ -22,11 +22,19 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         public async Task<IEnumerable<OrganisationSearchResult>> SearchForOrganisations(string searchTerm)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get,
-                $"/OrganisationSearch?searchTerm={searchTerm}"))
+            try
             {
-                return await RequestAndDeserialiseAsync<IEnumerable<OrganisationSearchResult>>(request,
-                    $"Could not retrieve organisations for search {searchTerm}.");
+                using (var request = new HttpRequestMessage(HttpMethod.Get,
+                    $"/OrganisationSearch?searchTerm={searchTerm}"))
+                {
+                    return await RequestAndDeserialiseAsync<IEnumerable<OrganisationSearchResult>>(request,
+                        $"Could not retrieve organisations for search {searchTerm}.");
+                }
+            }catch(HttpRequestException err)
+            {
+                if (err.Message.Contains("204"))
+                    return null;
+                throw err;
             }
             
         }
@@ -55,6 +63,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 return await RequestAndDeserialiseAsync<Organisation>(request);
             }
         }
+
+        public async Task<Organisation> GetOrganisationByUserId(Guid userId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/organisations/userid/{userId}"))
+            {
+                return await RequestAndDeserialiseAsync<Organisation>(request);
+            }
+        }
     }
 
 
@@ -64,5 +80,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<Organisation> ConfirmSearchedOrganisation(CreateOrganisationRequest createOrganisationRequest);
         Task<Organisation> CreateNewOrganisation(CreateOrganisationRequest createOrganisationRequest);
         Task<Organisation> DoesOrganisationExist(string name);
+        Task<Organisation> GetOrganisationByUserId(Guid userId);
     }
 }
