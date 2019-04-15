@@ -74,7 +74,9 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 DisplayName = "Joe Cool",
                 Email = "tester@test.com",
                 PhoneNumber = "555 55555",
-                Status = OrganisationStatus.New
+                Status = OrganisationStatus.New,
+                SigninType = ""
+               
             };
         }
 
