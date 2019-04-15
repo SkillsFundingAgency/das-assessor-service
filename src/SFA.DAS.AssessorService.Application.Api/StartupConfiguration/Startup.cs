@@ -108,7 +108,7 @@ namespace SFA.DAS.AssessorService.Application.Api.StartupConfiguration
                 services.AddSwaggerGen(c =>
                 {
                     c.SwaggerDoc("v1", new Info { Title = "SFA.DAS.AssessorService.Application.Api", Version = "v1" });
-
+                    c.CustomSchemaIds(i => i.FullName);
                     if (_env.IsDevelopment())
                     {
                         var basePath = AppContext.BaseDirectory;

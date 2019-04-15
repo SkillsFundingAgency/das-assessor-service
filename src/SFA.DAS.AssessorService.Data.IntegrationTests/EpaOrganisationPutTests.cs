@@ -50,6 +50,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 OrganisationId = _organisationIdCreated,
                 Ukprn = _ukprnBefore,
                 PrimaryContact = null,
+                PrimaryContactName = null,
                 Status = OrganisationStatus.New,
                 OrganisationTypeId = _organisationTypeIdBefore,
                 OrganisationData = new OrganisationData
@@ -83,6 +84,7 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 OrganisationId = _organisationIdCreated,
                 Ukprn = _ukprnAfter,
                 PrimaryContact = null,
+                PrimaryContactName = null,
                 Status = OrganisationStatus.New,
                 UpdatedAt = _updatedAt,
                 OrganisationTypeId = _organisationTypeIdAfter,

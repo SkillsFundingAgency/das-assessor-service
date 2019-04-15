@@ -15,6 +15,7 @@
     using System.Security.Claims;
     using Api.Types.Models.Validation;
     using Microsoft.AspNetCore.Http;
+    using SFA.DAS.AssessorService.Web.Staff.Resources;
 
     [TestFixture]
     public class AddRoatpOrganisationControllerTests
@@ -164,7 +165,10 @@
             var viewResult = result as ViewResult;
             var successModel = viewResult.Model as OrganisationSearchViewModel;
 
-            successModel.BannerMessage.Should().Be(model.LegalName.ToUpper());
+            var confirmationMessage = string.Format(RoatpConfirmationMessages.AddOrganisationConfirmation,
+                model.LegalName.ToUpper());
+
+            successModel.BannerMessage.Should().Be(confirmationMessage);
         }
 
         [Test]
