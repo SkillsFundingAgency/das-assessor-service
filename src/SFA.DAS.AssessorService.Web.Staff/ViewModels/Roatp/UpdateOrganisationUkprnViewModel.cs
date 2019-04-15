@@ -2,14 +2,15 @@
 
 namespace SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp
 {
+
     using System;
 
-    public class UpdateOrganisationLegalNameViewModel
+    public class UpdateOrganisationUkprnViewModel
     {
-        public string CurrentLegalName { get; set; }
+        [DataMember]
+        public string Ukprn { get; set; }
         [DataMember]
         public Guid OrganisationId { get; set; }
-        [DataMember]
         public string LegalName { get; set; }
         [DataMember]
         public string UpdatedBy { get; set; }
