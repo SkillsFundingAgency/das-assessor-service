@@ -7,8 +7,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public interface IStandardsApiClient
     {
-        Task<EpaoStandardsCountResponse> GetEpaoStandardsCount(string epaoId);
-        Task<EpaoPipelineCountResponse> GetEpaoPipelineCount(string epaoId);
+        Task<int> GetEpaoStandardsCount(string epaoId);
+        Task<int> GetEpaoPipelineCount(string epaoId);
         Task<PaginatedList<GetEpaoRegisteredStandardsResponse>> GetEpaoRegisteredStandards(string epaoId,
             int? pageIndex);
 

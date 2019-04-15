@@ -57,14 +57,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     var organisation = await _organisationApiClient.GetEpaOrganisation(epaoid);
                     if (organisation != null)
                     {
-                        dashboardViewModel.StandardsCount =
-                            (await _standardsApiClient.GetEpaoStandardsCount(epaoid)).Count;
-                        dashboardViewModel.PipelinesCount =
-                            (await _standardsApiClient.GetEpaoPipelineCount(epaoid))
-                            .Count;
-                        dashboardViewModel.AssessmentsCount =
-                        (await _certificateApiClient.GetCertificatesCount(username)).Count;
-
+                        try
+                        {
+                            dashboardViewModel.StandardsCount = await _standardsApiClient.GetEpaoStandardsCount(epaoid);
+                            dashboardViewModel.AssessmentsCount = await _certificateApiClient.GetCertificatesCount(username);
+                            dashboardViewModel.PipelinesCount = await _standardsApiClient.GetEpaoPipelineCount(epaoid); 
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError($"Dashboard.Index Counts Exception: {ex.Message} : {ex.StackTrace}");
+                        }
                     }
                 }
 
