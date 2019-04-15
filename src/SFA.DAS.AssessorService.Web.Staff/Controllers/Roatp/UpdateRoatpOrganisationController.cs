@@ -5,11 +5,11 @@
     using Microsoft.Extensions.Logging;
     using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
     using System.Threading.Tasks;
-    using AutoMapper;
     using ViewModels.Roatp;
     using SFA.DAS.AssessorService.Web.Staff.Domain;
     using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
     using System.Collections.Generic;
+    using AutoMapper;
 
     public class UpdateRoatpOrganisationController : RoatpSearchResultsControllerBase
     {
@@ -94,9 +94,8 @@
 
             model.UpdatedBy = HttpContext.User.OperatorName();
 
-			var request = Mapper.Map<UpdateOrganisationStatusRequest>(model);
-   
-            if (model.OrganisationStatusId == 0) // Removed
+            var request = Mapper.Map<UpdateOrganisationStatusRequest>(model);
+            if (model.OrganisationStatusId == 0)
             {
                 request.RemovedReasonId = model.RemovedReasonId;
             }
@@ -112,8 +111,7 @@
                 return await RefreshSearchResults();
             }
 
-
-            return View("~/Views/Roatp/UpdateOrganisationParentCompanyGuarantee.cshtml", model);
+            return View("~/Views/Roatp/UpdateOrganisationStatus.cshtml", model);
         }
 				
 		[Route("change-trading-name")]
@@ -188,6 +186,42 @@
             return View("~/Views/Roatp/UpdateOrganisationParentCompanyGuarantee.cshtml", model);
         }
         
+        [Route("change-financial-track-record")]
+        public async Task<IActionResult> UpdateOrganisationFinancialTrackRecord()
+        {
+            var searchModel = _sessionService.GetSearchResults();
+
+            var model = new UpdateOrganisationFinancialTrackRecordViewModel
+            {
+                FinancialTrackRecord = searchModel.SelectedResult.OrganisationData.FinancialTrackRecord,
+                OrganisationId = searchModel.SelectedResult.Id,
+                LegalName = searchModel.SelectedResult.LegalName
+            };
+
+            return View("~/Views/Roatp/UpdateOrganisationFinancialTrackRecord.cshtml", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateFinancialTrackRecord(UpdateOrganisationFinancialTrackRecordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("~/Views/Roatp/UpdateOrganisationFinancialTrackRecord.cshtml", model);
+            }
+
+            model.UpdatedBy = HttpContext.User.OperatorName();
+
+            var request = Mapper.Map<UpdateOrganisationFinancialTrackRecordRequest>(model);
+            var result = await _apiClient.UpdateOrganisationFinancialTrackRecord(request);
+
+            if (result)
+            {
+                return await RefreshSearchResults();
+            }
+
+            return View("~/Views/Roatp/UpdateOrganisationFinancialTrackRecord.cshtml", model);
+        }
+        
         [Route("change-provider")]
         public async Task<IActionResult> UpdateOrganisationProviderType()
         {
@@ -243,40 +277,5 @@
             return View("~/Views/Roatp/UpdateOrganisationProviderType.cshtml", model);
         }
 
-        [Route("change-financial-track-record")]
-        public async Task<IActionResult> UpdateOrganisationFinancialTrackRecord()
-        {
-            var searchModel = _sessionService.GetSearchResults();
-
-            var model = new UpdateOrganisationFinancialTrackRecordViewModel
-            {
-                FinancialTrackRecord = searchModel.SelectedResult.OrganisationData.FinancialTrackRecord,
-                OrganisationId = searchModel.SelectedResult.Id,
-                LegalName = searchModel.SelectedResult.LegalName
-			};
-			
-            return View("~/Views/Roatp/UpdateOrganisationFinancialTrackRecord.cshtml", model);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> UpdateFinancialTrackRecord(UpdateOrganisationFinancialTrackRecordViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View("~/Views/Roatp/UpdateOrganisationFinancialTrackRecord.cshtml", model);
-            }
-
-            model.UpdatedBy = HttpContext.User.OperatorName();
-
-            var request = Mapper.Map<UpdateOrganisationFinancialTrackRecordRequest>(model);
-            var result = await _apiClient.UpdateOrganisationFinancialTrackRecord(request);
-
-            if (result)
-            {
-                return await RefreshSearchResults();
-            }
-
-            return View("~/Views/Roatp/UpdateOrganisationFinancialTrackRecord.cshtml", model);
-        }
     }
 }
