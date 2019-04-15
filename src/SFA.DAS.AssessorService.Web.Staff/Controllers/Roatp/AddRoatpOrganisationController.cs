@@ -12,6 +12,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
     using SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp;
     using System;
     using System.Threading.Tasks;
+    using Resources;
 
     [Authorize]
     public class AddRoatpOrganisationController : Controller
@@ -107,8 +108,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             {
                 return RedirectToAction("Error", "Home");
             }
+            
+            string bannerMessage = string.Format(RoatpConfirmationMessages.AddOrganisationConfirmation,
+                                                 model.LegalName.ToUpper());
 
-            var bannerModel = new OrganisationSearchViewModel { BannerMessage = model.LegalName.ToUpper() };
+            var bannerModel = new OrganisationSearchViewModel { BannerMessage = bannerMessage };
             _sessionService.ClearAddOrganisationDetails();
             return View("~/Views/Roatp/Index.cshtml", bannerModel);
         }
