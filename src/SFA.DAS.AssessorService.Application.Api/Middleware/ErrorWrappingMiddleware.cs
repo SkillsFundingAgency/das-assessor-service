@@ -37,7 +37,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Middleware
                 else
                 {
                     context.Response.StatusCode = 500;
-                    _logger.LogError($"Unhandled Exeption raised : {ex.Message} : Stack Trace : {ex.StackTrace}");
+                    _logger.LogError($"Unhandled Exception raised : {ex.Message} : Stack Trace : {ex.StackTrace}");
+                    if (ex.InnerException != null)
+                    {
+                        _logger.LogError($"Inner Exception raised : {ex.InnerException.Message} : Stack Trace : {ex.InnerException.StackTrace}");    
+                    }
                 }
 
                 context.Response.ContentType = "application/json";

@@ -59,10 +59,11 @@ namespace SFA.DAS.AssessorService.Data
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
                 var sqlForMainDetails =
-                    "select Id, CreatedAt, DeletedAt, EndPointAssessorName as Name,  EndPointAssessorOrganisationId as OrganisationId, EndPointAssessorUkprn as ukprn, " +
-                    "primaryContact, Status, UpdatedAt, OrganisationTypeId, OrganisationData " +
-                    " FROM [Organisations] " +
-                    "WHERE Id = @id";
+                    "SELECT O.Id, O.CreatedAt, O.DeletedAt, O.EndPointAssessorName as Name, O.EndPointAssessorOrganisationId as OrganisationId, O.EndPointAssessorUkprn as ukprn, " +
+                    "O.PrimaryContact, C.DisplayName as PrimaryContactName, O.Status, O.UpdatedAt, O.OrganisationTypeId, O.OrganisationData, O.ApiEnabled, O.ApiUser " +
+                    " FROM [Organisations] O " +
+                    "LEFT OUTER JOIN [Contacts] C ON C.Username = O.PrimaryContact AND C.EndPointAssessorOrganisationId = O.EndPointAssessorOrganisationId " +
+                    "WHERE O.Id = @id";
                 var orgs = await connection.QueryAsync<EpaOrganisation>(sqlForMainDetails, new {id});
                 var org = orgs.FirstOrDefault();
                 return org;
@@ -76,10 +77,11 @@ namespace SFA.DAS.AssessorService.Data
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
                 var sqlForMainDetails =
-                    "select Id, CreatedAt, DeletedAt, EndPointAssessorName as Name,  EndPointAssessorOrganisationId as OrganisationId, EndPointAssessorUkprn as ukprn, " +
-                    "primaryContact, Status, UpdatedAt, OrganisationTypeId, OrganisationData, ApiEnabled, ApiUser " +
-                    " FROM [Organisations] " +
-                    "WHERE EndPointAssessorOrganisationId = @organisationId";
+                    "SELECT O.Id, O.CreatedAt, O.DeletedAt, O.EndPointAssessorName as Name, O.EndPointAssessorOrganisationId as OrganisationId, O.EndPointAssessorUkprn as ukprn, " +
+                    "O.PrimaryContact, C.DisplayName as PrimaryContactName, O.Status, O.UpdatedAt, O.OrganisationTypeId, O.OrganisationData, O.ApiEnabled, O.ApiUser " +
+                    " FROM [Organisations] O " +
+                    "LEFT OUTER JOIN [Contacts] C ON C.Username = O.PrimaryContact AND C.EndPointAssessorOrganisationId = O.EndPointAssessorOrganisationId " +
+                    "WHERE O.EndPointAssessorOrganisationId = @organisationId";
                 var orgs = await connection.QueryAsync<EpaOrganisation>(sqlForMainDetails, new {organisationId});
                 var org = orgs.FirstOrDefault();
                 return org;
@@ -199,10 +201,11 @@ namespace SFA.DAS.AssessorService.Data
                     await connection.OpenAsync();
 
                 var sqlForOrganisationsByStandardId =
-                    "select O.Id, O.CreatedAt, O.DeletedAt, O.EndPointAssessorName as Name,  O.EndPointAssessorOrganisationId as OrganisationId, O.EndPointAssessorUkprn as ukprn, " +
-                    "O.primaryContact, O.Status, O.UpdatedAt, O.OrganisationTypeId, O.OrganisationData " +
+                    "SELECT O.Id, O.CreatedAt, O.DeletedAt, O.EndPointAssessorName as Name,  O.EndPointAssessorOrganisationId as OrganisationId, O.EndPointAssessorUkprn as ukprn, " +
+                    "O.PrimaryContact, C.DisplayName as PrimaryContactName, O.Status, O.UpdatedAt, O.OrganisationTypeId, O.OrganisationData, O.ApiEnabled, O.ApiUser " +
                     " FROM [Organisations] O " +
                     "JOIN OrganisationStandard  OS ON OS.EndPointAssessorOrganisationId = O.EndPointAssessorOrganisationId " +
+                    "LEFT OUTER JOIN [Contacts] C ON C.Username = O.PrimaryContact AND C.EndPointAssessorOrganisationId = O.EndPointAssessorOrganisationId " +
                     "WHERE OS.StandardCode = @standardId";
                 return await connection.QueryAsync<EpaOrganisation>(sqlForOrganisationsByStandardId, new {standardId});
             }
@@ -364,9 +367,9 @@ namespace SFA.DAS.AssessorService.Data
                     await connection.OpenAsync();
 
                 var sql =
-                    "select Id, EndPointAssessorOrganisationId, Username, DisplayName, Email, Status, PhoneNumber " +
+                    "select Id, EndPointAssessorOrganisationId, Username,GivenNames, DisplayName, FamilyName, SigninId, SigninType, Email, Status, PhoneNumber " +
                     " from Contacts where Id = @contactId";
-                var contact = await connection.QuerySingleAsync<EpaContact>(sql, new { contactId });
+                var contact = await connection.QuerySingleOrDefaultAsync<EpaContact>(sql, new { contactId });
                 return contact;
             }
         }

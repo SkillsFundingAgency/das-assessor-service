@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         private const string AuditHistoryWorksheetName = "Provider history";
         private const string ExcelFileName = "_RegisterOfApprenticeshipTrainingProviders.xlsx";
 
-        public AddRoatpOrganisationController(IRoatpApiClient apiClient, ILogger<AddRoatpOrganisationController> logger,
+        public AddRoatpOrganisationController(IRoatpApiClient apiClient, ILogger<AddRoatpOrganisationController> logger, 
             IAddOrganisationValidator validator, IRoatpSessionService sessionService)
         {
             _apiClient = apiClient;
@@ -31,13 +31,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             _validator = validator;
             _sessionService = sessionService;
         }
-
+        
         [Route("new-training-provider")]
         public async Task<IActionResult> AddOrganisation(AddOrganisationProviderTypeViewModel model)
         {
             if (model == null)
             {
-                model = new AddOrganisationProviderTypeViewModel();
+                model = new AddOrganisationProviderTypeViewModel();     
             }
 
             model.ProviderTypes = await _apiClient.GetProviderTypes();
@@ -67,7 +67,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             }
 
             addOrganisationModel.OrganisationTypes = await _apiClient.GetOrganisationTypes(model.ProviderTypeId);
-
+            
             _sessionService.SetAddOrganisationDetails(addOrganisationModel);
 
             ModelState.Clear();
@@ -88,7 +88,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             }
 
             model.LegalName = model.LegalName.ToUpper();
-
+  
             _sessionService.SetAddOrganisationDetails(model);
 
             return View("~/Views/Roatp/AddOrganisationPreview.cshtml", model);

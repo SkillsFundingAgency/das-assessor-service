@@ -1,16 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Api.Types.Commands;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Application.Interfaces.Validation;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
-using SFA.DAS.AssessorService.Web.Staff.Resources;
-using Microsoft.Extensions.Logging;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Services
 {
@@ -41,6 +32,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             var charityNumber = await GetAnswer(applicationId, "charity-number");
             var standardWebsite = await GetAnswer(applicationId, "standard-website");
             var organisation = await _applyApiClient.GetOrganisationForApplication(applicationId);
+            var applyContact = await _applyApiClient.GetContact(Guid.Parse(organisation.CreatedBy));
             var organisationCreatedBy = organisation.CreatedBy;
             var organisationName = organisation?.Name;
             var organisationType = organisation?.OrganisationType;
@@ -69,7 +61,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                 companyNumber,
                 charityNumber,
                 standardWebsite,
-                organisationCreatedBy);
+                organisationCreatedBy,
+                applyContact.FamilyName,
+                applyContact.GivenNames,
+                applyContact.SigninId,
+                applyContact.SigninType,
+                applyContact.Email);
 
             return command;
         }
