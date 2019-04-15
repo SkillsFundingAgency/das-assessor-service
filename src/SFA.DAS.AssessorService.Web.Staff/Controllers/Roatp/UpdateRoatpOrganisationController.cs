@@ -114,46 +114,6 @@
             return View("~/Views/Roatp/UpdateOrganisationStatus.cshtml", model);
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         [Route("change-parent-company-guarantee")]
         public async Task<IActionResult> UpdateOrganisationParentCompanyGuarantee()
         {
@@ -196,7 +156,45 @@
                 ParentCompanyGuarantee = model.ParentCompanyGuarantee,
                 OrganisationId = model.OrganisationId,
                 UpdatedBy = model.UpdatedBy
+
             };
+		}
+		
+        [Route("change-financial-track-record")]
+        public async Task<IActionResult> UpdateOrganisationFinancialTrackRecord()
+        {
+            var searchModel = _sessionService.GetSearchResults();
+
+            var model = new UpdateOrganisationFinancialTrackRecordViewModel
+            {
+                FinancialTrackRecord = searchModel.SelectedResult.OrganisationData.FinancialTrackRecord,
+                OrganisationId = searchModel.SelectedResult.Id,
+                LegalName = searchModel.SelectedResult.LegalName
+			};
+			
+            return View("~/Views/Roatp/UpdateOrganisationFinancialTrackRecord.cshtml", model);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateFinancialTrackRecord(UpdateOrganisationFinancialTrackRecordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("~/Views/Roatp/UpdateOrganisationFinancialTrackRecord.cshtml", model);
+            }
+
+            model.UpdatedBy = HttpContext.User.OperatorName();
+
+            var request = Mapper.Map<UpdateOrganisationFinancialTrackRecordRequest>(model);
+            var result = await _apiClient.UpdateOrganisationFinancialTrackRecord(request);
+
+            if (result)
+            {
+                return await RefreshSearchResults();
+            }
+
+            return View("~/Views/Roatp/UpdateOrganisationFinancialTrackRecord.cshtml", model);
+        }
+
     }
 }
