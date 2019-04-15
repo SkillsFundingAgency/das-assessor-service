@@ -7,7 +7,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
     {
         public long Uln { get; set; }
         public string Surname { get; set; }
-        public int UkPrn { get; set; }
+        public string EpaOrgId{ get; set; }
         public string Username { get; set; }
     }
 }

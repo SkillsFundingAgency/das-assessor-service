@@ -1,0 +1,106 @@
+@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp.UpdateOrganisationProviderTypeViewModel
+
+@using SFA.DAS.AssessorService.Web.Staff
+@using SFA.DAS.AssessorService.Web.Staff.Domain
+@{ ViewBag.Title = "Enter details"; }
+
+@{
+    await Html.RenderPartialAsync("~/Views/Roatp/_StylesPartial.cshtml");
+}
+<div class="grid-row">
+    <form asp-controller="RoatpSearch" asp-action="SearchResults" method="post" name="backForm">
+        <div class="govuk-grid-column-one-half">
+            <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
+        </div>
+    </form>
+</div>
+
+<div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+        There is a problem
+    </h2>
+    <ul class="js-error-summary-list error-summary-list"></ul>
+</div>
+@if (!ViewData.ModelState.IsValid)
+{
+<div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+        There is a problem
+    </h2>
+    <ul class="error-summary-list">
+        <li><a sfa-validation-for="ProviderTypeId"></a></li>
+        <li><a sfa-validation-for="OrganisationTypeId"></a></li>
+    </ul>
+</div>
+}
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <h1 class="heading-xlarge roatp-heading">Change provider type for @Html.Raw(Model.LegalName)</h1>
+    </div>
+</div>
+<div class="govuk-width-container">
+
+    <main class="govuk-main-wrapper " id="main-content" role="main">
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <form method="post" asp-action="UpdateProviderType" asp-controller="UpdateRoatpOrganisation">
+                    @Html.HiddenFor(x => x.OrganisationId)
+                    <div class="govuk-form-group" sfa-validation-for="ProviderTypeId" sfa-validationerror-class="form-group-error">
+                        <span class="error-message" asp-validation-for="ProviderTypeId"></span>
+                        <fieldset class="govuk-fieldset">
+
+                            <div class="roatp-radios roatp-radios--conditional" data-module="radios">
+
+                                @foreach (var providerType in Model.ProviderTypes)
+                                {
+                                    <div class="roatp-radios__item">
+                                        @if (Model.CanChangeOrganisationTypeForThisProvider(providerType.Id))
+                                        {
+                                            <input asp-for="ProviderTypeId" class="roatp-radios__input" id="route-@providerType.Id"
+                                                   name="ProviderTypeId" type="radio" value="@providerType.Id"
+                                                   sfa-validation-for="ProviderTypeId" sfa-validationerror-class="form-control-error" data-aria-controls="route-@providerType.Id-conditional">
+                                        }
+                                        else
+                                        {
+                                            <input asp-for="ProviderTypeId" class="roatp-radios__input" id="route-@providerType.Id"
+                                                   name="ProviderTypeId" type="radio" value="@providerType.Id"
+                                                   sfa-validation-for="ProviderTypeId" sfa-validationerror-class="form-control-error">
+                                        }
+                                        <label class="roatp-label roatp-radios__label" for="route-@providerType.Id">
+                                            @providerType.Type
+                                        </label>
+                                    </div>
+                                    @if (Model.CanChangeOrganisationTypeForThisProvider(providerType.Id))
+                                     {
+                                         <div class="roatp-radios__conditional roatp-radios__conditional--hidden" id="route-@providerType.Id-conditional">
+
+                                             <div class="govuk-form-group">
+                                                 <label class="roatp-label" for="OrganisationTypeId">
+                                                     Type of organisation
+                                                 </label>
+                                                 <select class="roatp-select govuk-!-width-full" id="OrganisationTypeId" name="OrganisationTypeId">
+                                                     @foreach (var organisationType in Model.OrganisationTypesByProviderType[providerType.Id])
+                                                     {
+                                                         <option value="@organisationType.Id">@organisationType.Type</option>
+                                                     }
+                                                 </select>
+                                             </div>
+
+                                         </div>
+                                     }                                   
+                                }
+                            </div>
+                        </fieldset>
+                    </div>
+                    <input type="submit" class="roatp-button" value="Change" />
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
+
+@section Scripts {
+    <partial name="~/Views/Roatp/_ScriptsPartial.cshtml" />
+}

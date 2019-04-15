@@ -133,6 +133,12 @@
     <Content Update="Views\Reports\_ReportScriptsPartial.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Roatp\UpdateOrganisationProviderType.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Roatp\UpdateOrganisationStatus.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Roatp\UpdateOrganisationUkprn.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

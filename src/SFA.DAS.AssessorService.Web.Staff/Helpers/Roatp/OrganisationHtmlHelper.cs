@@ -6,15 +6,18 @@
 
     public static class OrganisationHtmlHelper
     {
-        public static IHtmlContent OrgansationStatus(this IHtmlHelper htmlHelper, Organisation organisation)
+        public static IHtmlContent OrganisationStatus(this IHtmlHelper htmlHelper, Organisation organisation)
         {
             switch (organisation.OrganisationStatus.Id)
             {
                 case 0:
                 {
-                    var html = "<span class=\"govuk-tag govuk-tag--attention govuk-!-margin-bottom-1\">Removed</span>" +
-                               "<span class=\"block\">Reason: " + organisation.OrganisationData.RemovedReason.Reason + "</span>" +
-                               "<span class=\"block\">Updated: "+ organisation.StatusDate.ToString("dd MMM yyyy") + "</span>";
+                    var html = "<span class=\"govuk-tag govuk-tag--attention govuk-!-margin-bottom-1\">Removed</span>";
+                    if (organisation.OrganisationData.RemovedReason != null)
+                    {
+                        html += "<span class=\"block\">Reason: " + organisation.OrganisationData.RemovedReason.Reason + "</span>";
+                    }
+                    html += "<span class=\"block\">Updated: "+ organisation.StatusDate.ToString("dd MMM yyyy") + "</span>";
                     return new HtmlString(html);
                 }
                 case 2:

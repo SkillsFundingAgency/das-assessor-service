@@ -68,7 +68,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
         {
             var result =
                 SearchHandler.Handle(
-                    new SearchQuery() {Surname = "Lamora", UkPrn = 12345, Uln = 1111111111, Username = "username"},
+                    new SearchQuery() {Surname = "Lamora", EpaOrgId = "12345", Uln = 1111111111, Username = "username"},
                     new CancellationToken()).Result;
 
             result[0].SubmittedAt.Should().BeNull();
