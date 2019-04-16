@@ -22,6 +22,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly IOrganisationsApiClient _organisationApiClient;
         private readonly IStandardsApiClient _standardsApiClient;
         private readonly ICertificateApiClient _certificateApiClient;
+        private readonly IDashboardApiClient _dashboardApiClient;
         private readonly IWebConfiguration _webConfiguration;
         private readonly ILogger<DashboardController> _logger;
 
@@ -30,11 +31,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             IStandardsApiClient standardsApiClient,
             IOrganisationsApiClient organisationApiClient, 
             ICertificateApiClient certificateApiClieet,
+            IDashboardApiClient dashboardApiClient,
             IWebConfiguration webConfiguration, ILogger<DashboardController> logger)
         {
             _organisationApiClient = organisationApiClient;
             _contextAccessor = contextAccessor;
             _certificateApiClient = certificateApiClieet;
+            _dashboardApiClient = dashboardApiClient;
             _standardsApiClient = standardsApiClient;
             _webConfiguration = webConfiguration;
             _logger = logger;
@@ -59,9 +62,10 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     {
                         try
                         {
-                            dashboardViewModel.StandardsCount = await _standardsApiClient.GetEpaoStandardsCount(epaoid);
-                            dashboardViewModel.AssessmentsCount = await _certificateApiClient.GetCertificatesCount(username);
-                            dashboardViewModel.PipelinesCount = await _standardsApiClient.GetEpaoPipelineCount(epaoid); 
+                            var response = await _dashboardApiClient.GetEpaoDashboard(epaoid);
+                            dashboardViewModel.StandardsCount = response.StandardsCount;
+                            dashboardViewModel.PipelinesCount = response.PipelinesCount;
+                            dashboardViewModel.AssessmentsCount = response.AssessmentsCount;
                         }
                         catch (Exception ex)
                         {

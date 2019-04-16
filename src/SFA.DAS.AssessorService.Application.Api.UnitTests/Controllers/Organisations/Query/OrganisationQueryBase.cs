@@ -47,10 +47,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Organisa
             {
                 cfg.CreateMap<Organisation, OrganisationResponse>();
             });
-            EpaoStandardsCountResponse response = new EpaoStandardsCountResponse(1);
-         
-            Mediator.Setup(q => q.Send(Moq.It.IsAny<GetEpaoStandardsCountRequest>(), new CancellationToken()))
-                .Returns(Task.FromResult(response));
+
             SetupControllerMocks();
 
             OrganisationQueryController = new OrganisationQueryController(ControllerLoggerMock.Object, OrganisationQueryRepositoryMock.Object, UkPrnValidator, OrganisationControllerLocaliserMock.Object, ConfigMock.Object);
