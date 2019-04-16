@@ -1,4 +1,6 @@
 ﻿
+using Microsoft.AspNetCore.Authorization;
+
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
 {
     using Microsoft.AspNetCore.Authorization;
