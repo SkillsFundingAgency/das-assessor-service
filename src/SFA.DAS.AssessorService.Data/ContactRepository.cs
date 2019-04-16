@@ -48,6 +48,7 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task AssociatePrivilegesWithContact(Guid contactId, IEnumerable<Privilege> privileges)
         {
+            
             foreach (var privilege in privileges)
             {
                 _assessorDbContext.ContactsPrivileges.Add(new ContactsPrivilege
@@ -56,8 +57,19 @@ namespace SFA.DAS.AssessorService.Data
                     PrivilegeId = privilege.Id
                 });
             }
+
             await _assessorDbContext.SaveChangesAsync();
         }
+
+        public bool CheckIfAnyPrivelegesSet(Guid contactId)
+        {
+            var result = false;
+            if (_assessorDbContext.ContactsPrivileges != null)
+                result = _assessorDbContext.ContactsPrivileges.Any(x =>
+                    x.ContactId == contactId);
+            return result;
+        }
+
 
         public async Task Update(UpdateContactRequest updateContactRequest)
         {
