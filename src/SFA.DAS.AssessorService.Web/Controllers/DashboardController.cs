@@ -22,6 +22,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         private readonly IOrganisationsApiClient _organisationApiClient;
         private readonly IStandardsApiClient _standardsApiClient;
         private readonly ICertificateApiClient _certificateApiClient;
+        private readonly IDashboardApiClient _dashboardApiClient;
         private readonly IWebConfiguration _webConfiguration;
         private readonly ILogger<DashboardController> _logger;
 
@@ -30,11 +31,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             IStandardsApiClient standardsApiClient,
             IOrganisationsApiClient organisationApiClient, 
             ICertificateApiClient certificateApiClieet,
+            IDashboardApiClient dashboardApiClient,
             IWebConfiguration webConfiguration, ILogger<DashboardController> logger)
         {
             _organisationApiClient = organisationApiClient;
             _contextAccessor = contextAccessor;
             _certificateApiClient = certificateApiClieet;
+            _dashboardApiClient = dashboardApiClient;
             _standardsApiClient = standardsApiClient;
             _webConfiguration = webConfiguration;
             _logger = logger;
@@ -57,14 +60,17 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                     var organisation = await _organisationApiClient.GetEpaOrganisation(epaoid);
                     if (organisation != null)
                     {
-                        dashboardViewModel.StandardsCount =
-                            (await _standardsApiClient.GetEpaoStandardsCount(epaoid)).Count;
-                        dashboardViewModel.PipelinesCount =
-                            (await _standardsApiClient.GetEpaoPipelineCount(epaoid))
-                            .Count;
-                        dashboardViewModel.AssessmentsCount =
-                        (await _certificateApiClient.GetCertificatesCount(username)).Count;
-
+                        try
+                        {
+                            var response = await _dashboardApiClient.GetEpaoDashboard(epaoid);
+                            dashboardViewModel.StandardsCount = response.StandardsCount;
+                            dashboardViewModel.PipelinesCount = response.PipelinesCount;
+                            dashboardViewModel.AssessmentsCount = response.AssessmentsCount;
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError($"Dashboard.Index Counts Exception: {ex.Message} : {ex.StackTrace}");
+                        }
                     }
                 }
 

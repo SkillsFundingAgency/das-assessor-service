@@ -1,6 +1,9 @@
 ﻿
+using Microsoft.AspNetCore.Authorization;
+
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
 {
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
@@ -11,7 +14,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
     using SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp;
     using System;
     using System.Threading.Tasks;
+    using Resources;
 
+    [Authorize]
     public class AddRoatpOrganisationController : Controller
     {
         private IRoatpApiClient _apiClient;
@@ -105,8 +110,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             {
                 return RedirectToAction("Error", "Home");
             }
+            
+            string bannerMessage = string.Format(RoatpConfirmationMessages.AddOrganisationConfirmation,
+                                                 model.LegalName.ToUpper());
 
-            var bannerModel = new OrganisationSearchViewModel { BannerMessage = model.LegalName.ToUpper() };
+            var bannerModel = new OrganisationSearchViewModel { BannerMessage = bannerMessage };
             _sessionService.ClearAddOrganisationDetails();
             return View("~/Views/Roatp/Index.cshtml", bannerModel);
         }
@@ -128,15 +136,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
                 FinancialTrackRecord = true,
                 LegalName = model.LegalName.ToUpper(),
                 NonLevyContract = false,
-                OrganisationStatusId = 1,
                 OrganisationTypeId = model.OrganisationTypeId,
                 ParentCompanyGuarantee = false,
                 ProviderTypeId = model.ProviderTypeId,
                 StatusDate = DateTime.Now,
                 Ukprn = Convert.ToInt64(model.UKPRN),
                 TradingName = model.TradingName,
-                Username = HttpContext.User.OperatorName(),
-                StartDate = DateTime.Today
+                Username = HttpContext.User.OperatorName()
             };
             return request;
         }

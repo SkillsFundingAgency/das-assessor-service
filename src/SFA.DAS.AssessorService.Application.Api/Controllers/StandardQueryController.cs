@@ -30,24 +30,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             _logger = logger;
         }
 
-        [HttpGet("pipeline/count/{epaoId}", Name = "GetEpaoPipelineCount")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(int))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetEpaoPipelineCount(string epaoId)
-        {
-            _logger.LogInformation($"Received request to retrieve EPA Pipline count for Organisation {epaoId}");
-            return Ok(await _mediator.Send(new GetEpaoPipelineCountRequest(epaoId)));
-        }
-
-        [HttpGet("count/{epaoId}", Name = "GetEpaoStandardsCount")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(int))]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetEpaoStandardsCount(string epaoId)
-        {
-            _logger.LogInformation($"Received request to retrieve Standards count for Organisation {epaoId}");
-            return Ok(await _mediator.Send(new GetEpaoStandardsCountRequest(epaoId)));
-        }
-
         [HttpGet("{epaoId}", Name = "GetEpaoRegisteredStandards")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(int))]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
@@ -66,6 +48,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             var normalisedPageIndex = (pageIndex == null || pageIndex == 0) ? 1 : pageIndex;
             _logger.LogInformation($"Received request to retrieve pipeline for standards of the organisation {epaoId}");
             return Ok(await _mediator.Send(new EpaoPipelineStandardsRequest(epaoId, orderBy, orderDirection,normalisedPageIndex, pageSize)));
+        }
+
+        [HttpGet("pipelines/extract/{epaoId}", Name = "GetEpaoPipelineStandardsExtract")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(int))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetEpaoPipelineStandardsExtract(string epaoId)
+        {
+            _logger.LogInformation($"Received request to extract pipeline for standards of the organisation {epaoId}");
+            return Ok(await _mediator.Send(new EpaoPipelineStandardsExtractRequest(epaoId)));
         }
     }
 }
