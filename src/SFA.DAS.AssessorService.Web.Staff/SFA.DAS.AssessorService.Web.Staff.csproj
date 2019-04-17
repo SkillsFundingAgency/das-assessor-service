@@ -45,6 +45,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Resources\RoatpConfirmationMessages.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RoatpConfirmationMessages.resx</DependentUpon>
+    </Compile>
     <Compile Update="Resources\RoatpOrganisationValidation.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -133,6 +138,18 @@
     <Content Update="Views\Reports\_ReportScriptsPartial.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Roatp\UpdateOrganisationProviderType.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Roatp\UpdateOrganisationStatus.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Roatp\UpdateOrganisationUkprn.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Roatp\UpdateOrganisationLegalName.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Roatp\AddOrganisationPreview.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
@@ -162,6 +179,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="Resources\RoatpConfirmationMessages.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>RoatpConfirmationMessages.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Update="Resources\RoatpOrganisationValidation.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>RoatpOrganisationValidation.Designer.cs</LastGenOutput>

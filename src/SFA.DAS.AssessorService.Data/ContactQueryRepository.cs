@@ -119,13 +119,6 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<List<Contact>> GetUsersToMigrate()
         {
-//            SELECT *
-//                FROM [dbo].[Contacts] co1
-//            WHERE [Status] = 'Live'
-//            AND username not like 'unknown%'
-//            AND EXISTS ( SELECT NULL FROM Organisations og1 WHERE og1.id = co1.OrganisationId AND og1.[Status] = 'Live')
-            
-            
             return await _assessorDbContext.Contacts.Where(c => 
                 c.SignInId == null 
                 && c.Status == "Live" 
@@ -142,6 +135,11 @@ namespace SFA.DAS.AssessorService.Data
                 && c.Organisation.OrganisationType != null).ToListAsync();
         }
 
+        public async Task<Contact> GetSingleContactsToMigrateToApply(Guid requestSignInId)
+        {
+            return await _assessorDbContext.Contacts.Include(x => x.Organisation).Include(x => x.Organisation.OrganisationType).
+                FirstOrDefaultAsync(c => c.SignInId == requestSignInId);
+        }
 
         public async Task UpdateMigratedContact(Guid contactId, Guid signInId)
         {

@@ -201,6 +201,20 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok();
         }
 
+        [HttpPost("MigrateSingleContactToApply", Name = "MigrateSingleContactToApply")]
+        public async Task<ActionResult> MigrateSingleContactToApply([FromBody]SigninIdWrapper signinWrapper)
+        {
+            var endpoint = new Uri(new Uri(_config.ApplyBaseAddress), "/MigrateContactAndOrgs");
+            using (var httpClient = new HttpClient())
+            {
+                var contactToMigrate = await _contactQueryRepository.GetSingleContactsToMigrateToApply(signinWrapper.SigninId);
+                var request = MapAssessorToApply(contactToMigrate);
+                await httpClient.PostAsJsonAsync(endpoint, request);
+            }
+
+            return Ok();
+        }
+
         private MigrateContactOrganisation MapAssessorToApply(Contact contact)
         {
             var request = new MigrateContactOrganisation
@@ -209,7 +223,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 {
                     Id = contact.Id,
                     CreatedAt = contact.CreatedAt,
-                    CreatedBy = contact.Email,
+                    CreatedBy = contact.Id.ToString(),
                     DeletedAt = null,
                     DeletedBy = null,
                     Email = contact.Email,
@@ -231,7 +245,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
                 request.organisation = new ApplyTypes.Organisation
                 {
                     CreatedAt = contact.Organisation.CreatedAt,
-                    CreatedBy = contact.Email,
+                    CreatedBy = contact.Id.ToString(),
                     DeletedAt = null,
                     DeletedBy = null,
                     Id = Guid.Empty,

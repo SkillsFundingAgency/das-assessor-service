@@ -15,21 +15,6 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
         Task<bool> CheckIfAlreadyExists(string endPointAssessorOrganisationId);
         Task<bool> CheckIfAlreadyExists(Guid organisationId);
         Task<bool> CheckIfOrganisationHasContacts(string endPointAssessorOrganisationId);
+        Task<Organisation> GetOrganisationByName(string name);
     }
-
-
-    public class EpoRegisteredStandardsResult
-    {
-        public IEnumerable<EPORegisteredStandards> PageOfResults { get; set; }
-
-        public int TotalCount { get; set; }
-    }
-
-    public class EpaoPipelineStandardsResult
-    {
-        public IEnumerable<EpaoPipelineStandard> PageOfResults { get; set; }
-
-        public int TotalCount { get; set; }
-    }
-
 }

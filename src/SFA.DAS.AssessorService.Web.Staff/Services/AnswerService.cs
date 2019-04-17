@@ -1,16 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Api.Types.Commands;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
-using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Application.Interfaces.Validation;
 using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
-using SFA.DAS.AssessorService.Web.Staff.Resources;
-using Microsoft.Extensions.Logging;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Services
 {

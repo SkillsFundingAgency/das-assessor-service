@@ -26,7 +26,7 @@ update deliveryarea set Ordering=5 where Area='West Midlands'
 update deliveryarea set Ordering=6 where Area='East of England'
 update deliveryarea set Ordering=7 where Area='London'
 update deliveryarea set Ordering=8 where Area='South East'
-update deliveryarea set Ordering=9 where Area='South West*/
+update deliveryarea set Ordering=9 where Area='South West'*/
 
 -- ON-1374 update any new organisation standards to 'Live' if minimum acceptance criteria for live is available
 UPDATE organisationStandard 
@@ -49,16 +49,16 @@ UPDATE organisationStandard
 -- patch FundingModel, where this was not set by data sync
 UPDATE Ilrs SET FundingModel = 36 WHERE FundingModel IS NULL
 
-/* DONE
+-- DONE
 -- fix options
-UPDATE [Certificates]
-SET [CertificateData] = JSON_MODIFY([CertificateData], '$.CourseOption','Alcoholic Beverage Service') 
-WHERE json_value(certificatedata,'$.CourseOption') = 'Alcholic beverage service'
+--UPDATE [Certificates]
+--SET [CertificateData] = JSON_MODIFY([CertificateData], '$.CourseOption','Alcoholic Beverage Service') 
+--WHERE json_value(certificatedata,'$.CourseOption') = 'Alcholic beverage service'
 
-UPDATE [Options] 
-SET [OptionName] = 'Alcoholic Beverage Service'
-WHERE [OptionName] = 'Alcholic beverage service'
-*/
+--UPDATE [Options] 
+--SET [OptionName] = 'Alcoholic Beverage Service'
+--WHERE [OptionName] = 'Alcholic beverage service'
+
 
 -- ON-613 Patch Certificates with STxxxx StandardReference, where it is not yet included. 
 -- AB 11/03/19 Keep this active for new deployments, for now
@@ -73,6 +73,7 @@ SELECT ce1.[Id],JSON_MODIFY([CertificateData],'$.StandardReference',st1.Referenc
 ON (ma1.id = up1.id)
 WHEN MATCHED THEN UPDATE SET ma1.[CertificateData] = up1.[newData];
 
+/* DONE 
 IF NOT EXISTS (SELECT * FROM EMailTemplates WHERE TemplateName = N'EPAOUserApproveConfirm')
 BEGIN
 INSERT EMailTemplates ([Id],[TemplateName],[TemplateId],[Recipients],[CreatedAt]) 
@@ -84,7 +85,9 @@ BEGIN
 INSERT EMailTemplates ([Id],[TemplateName],[TemplateId],[Recipients],[CreatedAt]) 
 VALUES (NEWID(), N'EPAOUserApproveRequest', N'5bb920f4-06ec-43c7-b00a-8fad33ce8066', NULL, GETDATE())
 END
+*/
 
+/* DONE 
 -- setup Privileges
 IF NOT EXISTS (SELECT * FROM [Privileges] WHERE [UserPrivilege] = N'Manage users')
 BEGIN
@@ -125,6 +128,9 @@ AND co1.username not like 'unknown%'
 AND EXISTS ( SELECT NULL FROM Organisations og1 WHERE og1.id = co1.OrganisationId AND og1.[Status] != 'Deleted')
 AND NOT EXISTS (SELECT NULL FROM [ContactRoles] co2 WHERE co2.ContactId = co1.Id)
 
+*/
+
+/* DONE
 -- DisplayName fix
 MERGE INTO [Contacts] co1
 USING (
@@ -168,4 +174,9 @@ GivenNames = up1.GivenNames,
 FamilyName = up1.FamilyName,
 DisplayName = TRIM(up1.Title + (CASE WHEN up1.Title = '' THEN '' ELSE + ' ' END) + up1.GivenNames  + (CASE WHEN up1.GivenNames = '' THEN '' ELSE + ' ' END) + up1.FamilyName);
 
+*/
+
+
+/* DONE
 UPDATE [OrganisationType] SET [Type] =  'Training Provider', [TypeDescription] = 'Training provider - including HEI not in England' WHERE id = 7;
+*/
