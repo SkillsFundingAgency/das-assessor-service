@@ -126,8 +126,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             string[] columnHeaders = {
                 "Standard Name",
                 "Apprentices",
-                "Provider UKPRN",
-                "Estimated Gateway"
+                "UKPRN",
+                "Estimated EPA date"
             };
 
             var piplelineRecords = (from pipeline in response
