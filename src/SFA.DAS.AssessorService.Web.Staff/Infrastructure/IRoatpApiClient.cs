@@ -14,7 +14,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
        Task<IEnumerable<IDictionary<string, object>>> GetAuditHistory();
        Task<IEnumerable<ProviderType>> GetProviderTypes();
        Task<IEnumerable<OrganisationType>> GetOrganisationTypes(int providerTypeId);
-       Task<IEnumerable<OrganisationStatus>> GetOrganisationStatuses();
+       Task<IEnumerable<OrganisationStatus>> GetOrganisationStatuses(int? providerTypeId);
        Task<IEnumerable<RemovedReason>> GetRemovedReasons();
        Task<bool> CreateOrganisation(CreateOrganisationRequest organisationRequest);
        Task<DuplicateCheckResponse> DuplicateUKPRNCheck(Guid organisationId, long ukprn);
@@ -28,5 +28,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
 
 
         Task<bool> UpdateOrganisationParentCompanyGuarantee(UpdateOrganisationParentCompanyGuaranteeRequest request);
+       Task<bool> UpdateOrganisationFinancialTrackRecord(UpdateOrganisationFinancialTrackRecordRequest request);
+       Task<bool> UpdateOrganisationProviderType(UpdateOrganisationProviderTypeRequest request);
+       Task<bool> UpdateOrganisationUkprn(UpdateOrganisationUkprnRequest request);
     }
 }
