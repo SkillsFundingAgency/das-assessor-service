@@ -131,6 +131,7 @@ namespace SFA.DAS.AssessorService.Web
                 config.For<IOrganisationsApplyApiClient>().Use<OrganisationsApplyApiClient>().Ctor<string>().Is(Configuration.ApplyApiAuthentication.ApiBaseAddress);
                 config.For<IContactApplyClient>().Use<ContactApplyClient>().Ctor<string>().Is(Configuration.ApplyApiAuthentication.ApiBaseAddress);
                 config.For<IStandardsApiClient>().Use<StandardsApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
+                config.For<IDashboardApiClient>().Use<DashboardApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<IContactsApiClient>().Use<ContactsApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<ISearchApiClient>().Use<SearchApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<IEmailApiClient>().Use<EmailApiClient>().Ctor<string>().Is(Configuration.ClientApiAuthentication.ApiBaseAddress);

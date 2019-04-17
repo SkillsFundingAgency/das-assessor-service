@@ -11,6 +11,10 @@
     "inputFiles": [ "wwwroot/css/roatp.css" ]
   },
   {
+    "outputFileName": "wwwroot/js/roatp-ui.min.js",
+    "inputFiles": [ "wwwroot/js/roatp-ui.js" ]
+  },
+  {
     "outputFileName": "wwwroot/js/site.min.js",
     "inputFiles": [
       "wwwroot/assets/javascripts/govuk-template.js",

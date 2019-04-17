@@ -28,8 +28,8 @@
                 .ReturnsAsync(new DuplicateCheckResponse { DuplicateFound = false, DuplicateOrganisationName = null });
             _apiClient.Setup(x => x.DuplicateCharityNumberCheck(It.IsAny<Guid>(), It.IsAny<string>()))
                 .ReturnsAsync(new DuplicateCheckResponse { DuplicateFound = false, DuplicateOrganisationName = null });
-
-            _validator = new AddOrganisationValidator(_apiClient.Object);
+            
+            _validator = new AddOrganisationValidator(_apiClient.Object, new RoatpOrganisationValidator());
 
             _viewModel = new AddOrganisationViewModel
             {
@@ -70,6 +70,19 @@
 
             legalNameError.Should().NotBeNull();
             legalNameError.ErrorMessage.Should().Be(RoatpOrganisationValidation.LegalNameMaxLength);
+        }
+
+        [Test]
+        public void Validator_rejects_legal_name_too_short()
+        {
+            _viewModel.LegalName = "A";
+
+            var validationResponse = _validator.ValidateOrganisationDetails(_viewModel).GetAwaiter().GetResult();
+
+            var legalNameError = validationResponse.Errors.FirstOrDefault(x => x.Field == "LegalName");
+
+            legalNameError.Should().NotBeNull();
+            legalNameError.ErrorMessage.Should().Be(RoatpOrganisationValidation.LegalNameMinLength);
         }
 
         [Test]
