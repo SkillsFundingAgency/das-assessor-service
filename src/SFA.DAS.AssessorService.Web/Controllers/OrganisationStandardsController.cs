@@ -126,7 +126,7 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             string[] columnHeaders = {
                 "Standard Name",
                 "Apprentices",
-                "Provider UKPRN",
+                "UKPRN",
                 "Estimated Gateway"
             };
 
