@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.ExternalApis.IFAStandards.Types;
 
 namespace SFA.DAS.AssessorService.Application.Interfaces
@@ -19,5 +20,20 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
         Task<EpaoPipelineStandardsResult> GetEpaoPipelineStandards(string endPointAssessorOrganisationId,
             string orderBy, string orderDirection, int pageSize, int? pageIndex);
+        Task<List<EpaoPipelineStandardExtract>> GetEpaoPipelineStandardsExtract(string endPointAssessorOrganisationId);
+    }
+
+    public class EpoRegisteredStandardsResult
+    {
+        public IEnumerable<EPORegisteredStandards> PageOfResults { get; set; }
+
+        public int TotalCount { get; set; }
+    }
+
+    public class EpaoPipelineStandardsResult
+    {
+        public IEnumerable<EpaoPipelineStandard> PageOfResults { get; set; }
+
+        public int TotalCount { get; set; }
     }
 }
