@@ -27,6 +27,12 @@
                                "<span class=\"block\">Updated: " + organisation.StatusDate.ToString("dd MMM yyyy") + "</span>";
                     return new HtmlString(html);
                 }
+                case 3:
+                {
+                    var html = "<span class=\"govuk-tag govuk-onboarding govuk-!-margin-bottom-1\">On-boarding</span>" +
+                               "<span class=\"block\">Updated: " + organisation.StatusDate.ToString("dd MMM yyyy") + "</span>";
+                    return new HtmlString(html);
+                }
                 default:
                 {
                     var html = "<span class=\"govuk-tag govuk-!-margin-bottom-1\">Active</span>" +
