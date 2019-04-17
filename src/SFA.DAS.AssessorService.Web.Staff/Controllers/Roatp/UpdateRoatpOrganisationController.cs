@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
+﻿using Microsoft.AspNetCore.Authorization;
+
+namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
 {
     using System.Linq;
     using Microsoft.AspNetCore.Mvc;
@@ -8,9 +10,10 @@
     using ViewModels.Roatp;
     using SFA.DAS.AssessorService.Web.Staff.Domain;
     using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
-    using System.Collections.Generic;
     using AutoMapper;
+    using System.Collections.Generic;
 
+    [Authorize]
     public class UpdateRoatpOrganisationController : RoatpSearchResultsControllerBase
     {
         private ILogger<UpdateRoatpOrganisationController> _logger;
@@ -99,9 +102,10 @@
         [Route("change-status")]
         public async Task<IActionResult> UpdateOrganisationStatus()
         {
+            const int OrganisationStatusIdRemoved = 0;
             var searchModel = _sessionService.GetSearchResults();
 
-            var organisationStatuses = _apiClient.GetOrganisationStatuses().Result.OrderBy(x => x.Status);
+            var organisationStatuses = _apiClient.GetOrganisationStatuses(searchModel.SelectedResult?.ProviderType?.Id).Result.OrderBy(x => x.Status);
             var removedReasons = _apiClient.GetRemovedReasons().Result.OrderBy(x => x.Id);
             
             var model = new UpdateOrganisationStatusViewModel
@@ -110,9 +114,10 @@
                 OrganisationId = searchModel.SelectedResult.Id,
                 OrganisationStatusId = searchModel.SelectedResult.OrganisationStatus.Id,
                 OrganisationStatuses = organisationStatuses,
-                RemovedReasons = removedReasons
+                RemovedReasons = removedReasons,
+                ProviderTypeId = searchModel.SelectedResult.ProviderType.Id
             };
-            if (model.OrganisationStatusId == 0) // Removed
+            if (model.OrganisationStatusId == OrganisationStatusIdRemoved)
             {
                 model.RemovedReasonId = searchModel.SelectedResult.OrganisationData.RemovedReason.Id;
             }
@@ -122,15 +127,17 @@
         [HttpPost]
         public async Task<IActionResult> UpdateStatus(UpdateOrganisationStatusViewModel model)
         {
+            model.OrganisationStatuses = _apiClient.GetOrganisationStatuses(model.ProviderTypeId).Result.OrderBy(x => x.Status);
+            model.RemovedReasons = _apiClient.GetRemovedReasons().Result.OrderBy(x => x.Id);
+
             if (!ModelState.IsValid)
             {
                 return View("~/Views/Roatp/UpdateOrganisationStatus.cshtml", model);
             }
 
             model.UpdatedBy = HttpContext.User.OperatorName();
-
             var request = Mapper.Map<UpdateOrganisationStatusRequest>(model);
-            if (model.OrganisationStatusId == 0)
+            if (model.OrganisationStatusId == 0) // Removed
             {
                 request.RemovedReasonId = model.RemovedReasonId;
             }
@@ -138,6 +145,8 @@
             {
                 request.RemovedReasonId = null;
             }
+
+            
 
             var result = await _apiClient.UpdateOrganisationStatus(request);
 
@@ -148,8 +157,8 @@
 
             return View("~/Views/Roatp/UpdateOrganisationStatus.cshtml", model);
         }
-				
-		[Route("change-trading-name")]
+
+        [Route("change-trading-name")]
         public async Task<IActionResult> UpdateOrganisationTradingName()
         {
             var searchModel = _sessionService.GetSearchResults();
@@ -164,7 +173,7 @@
             return View("~/Views/Roatp/UpdateOrganisationTradingName.cshtml", model);
         }
 
-		[HttpPost]
+        [HttpPost]
         public async Task<IActionResult> UpdateTradingName(UpdateOrganisationTradingNameViewModel model)
         {
             if (!ModelState.IsValid)
@@ -220,7 +229,7 @@
 
             return View("~/Views/Roatp/UpdateOrganisationParentCompanyGuarantee.cshtml", model);
         }
-        
+
         [Route("change-financial-track-record")]
         public async Task<IActionResult> UpdateOrganisationFinancialTrackRecord()
         {
@@ -256,7 +265,7 @@
 
             return View("~/Views/Roatp/UpdateOrganisationFinancialTrackRecord.cshtml", model);
         }
-        
+
         [Route("change-provider")]
         public async Task<IActionResult> UpdateOrganisationProviderType()
         {
@@ -304,8 +313,12 @@
             var request = Mapper.Map<UpdateOrganisationProviderTypeRequest>(model);
             var result = await _apiClient.UpdateOrganisationProviderType(request);
 
-            return View("~/Views/Roatp/UpdateOrganisationProviderType.cshtml", model);
+            if (result)
+            {
+                return await RefreshSearchResults();
+            }
 
+            return View("~/Views/Roatp/UpdateOrganisationProviderType.cshtml", model);
         }
 
     }

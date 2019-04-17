@@ -13,5 +13,6 @@
         public int OrganisationStatusId { get; set; }
         public int? RemovedReasonId { get; set; }
         public string UpdatedBy { get; set; }
+        public int ProviderTypeId { get; set; }
     }
 }
