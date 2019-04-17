@@ -48,7 +48,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
             
             
             var organisationRepository = new Mock<IOrganisationQueryRepository>();
-            organisationRepository.Setup(r => r.GetByUkPrn(12345)).ReturnsAsync(new Organisation() { EndPointAssessorOrganisationId = "EPA0001"});
+            organisationRepository.Setup(r => r.Get("12345")).ReturnsAsync(new Organisation() { EndPointAssessorOrganisationId = "EPA0001"});
 
             var certificateRepository = new Mock<ICertificateRepository>();
             certificateRepository.Setup(r => r.GetCompletedCertificatesFor(1111111111))
@@ -59,7 +59,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
                 organisationRepository.Object, ilrRepository.Object,
                 certificateRepository.Object, new Mock<ILogger<SearchHandler>>().Object, new Mock<IContactQueryRepository>().Object, standardService.Object);
 
-            var result = handler.Handle(new SearchQuery{ Surname = "James", Uln = 1111111111, UkPrn = 12345, Username = "user@name"}, new CancellationToken()).Result;
+            var result = handler.Handle(new SearchQuery{ Surname = "James", Uln = 1111111111, EpaOrgId = "12345", Username = "user@name"}, new CancellationToken()).Result;
 
             result.Count.Should().Be(3);
         }

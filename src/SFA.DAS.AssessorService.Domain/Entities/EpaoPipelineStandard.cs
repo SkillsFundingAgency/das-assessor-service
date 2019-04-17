@@ -9,8 +9,12 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string Title { get; set; }
         public int StdCode { get; set; }
         public int Pipeline { get; set; }
-        public int UkPrn { get; set; }
         public DateTime EstimateDate { get; set; }
         public int TotalRows { get; set; }
+    }
+
+    public class EpaoPipelineStandardExtract : EpaoPipelineStandard
+    {
+        public int ProviderUkPrn { get; set; }
     }
 }

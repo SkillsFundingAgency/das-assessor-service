@@ -19,14 +19,17 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
     {
         private readonly ICertificateRepository _certificateRepository;
         private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
+        private readonly IContactQueryRepository _contactQueryRepository;
         private readonly ILogger<GetCertificatesHistoryHandler> _logger;
 
         public GetCertificatesHistoryHandler(ICertificateRepository certificateRepository,
             IAssessmentOrgsApiClient assessmentOrgsApiClient,
+            IContactQueryRepository contactQueryRepository,
             ILogger<GetCertificatesHistoryHandler> logger)
         {
             _certificateRepository = certificateRepository;
             _assessmentOrgsApiClient = assessmentOrgsApiClient;
+            _contactQueryRepository = contactQueryRepository;
             _logger = logger;
         }
 
@@ -49,10 +52,10 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
             // so dealing with it manually for now.
             var certificateHistoryResponses = MapCertificates(certificates);
 
-            return certificateHistoryResponses;
+            return await certificateHistoryResponses;
         }
 
-        private PaginatedList<CertificateSummaryResponse> MapCertificates(PaginatedList<Certificate> certificates)
+        private async Task<PaginatedList<CertificateSummaryResponse>> MapCertificates(PaginatedList<Certificate> certificates)
         {
             var trainingProviderName = string.Empty;
             var recordedBy = string.Empty;
@@ -112,6 +115,11 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Certificates
                 });
 
             var responses = certificateResponses.ToList();
+            foreach (var response in responses)
+            {
+                response.RecordedBy = (await _contactQueryRepository.GetContact(response.RecordedBy))?.DisplayName;
+            }
+
             var paginatedList = new PaginatedList<CertificateSummaryResponse>(responses,
                     certificates.TotalRecordCount,
                     certificates.PageIndex,

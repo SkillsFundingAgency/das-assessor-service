@@ -142,6 +142,15 @@ namespace SFA.DAS.AssessorService.Web.Staff.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enter a legal name using 2 characters or more.
+        /// </summary>
+        public static string LegalNameMinLength {
+            get {
+                return ResourceManager.GetString("LegalNameMinLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enter a trading name using 200 characters or less.
         /// </summary>
         public static string TradingNameMaxLength {

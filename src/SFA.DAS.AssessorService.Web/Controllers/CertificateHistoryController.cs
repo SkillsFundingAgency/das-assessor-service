@@ -33,10 +33,9 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         [HttpGet]
         [Route("/[controller]/")]
+        [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Assessments })]
         public async Task<IActionResult> Index(int? pageIndex)
         {
-
-            _sessionService.Set("CurrentPage", Pages.Assessments);
             var username = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
 
             var certificateHistory = await _certificateApiClient.GetCertificateHistory(pageIndex ?? 1, username);            

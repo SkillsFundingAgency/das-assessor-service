@@ -10,6 +10,7 @@ using SFA.DAS.AssessorService.Application.Api.Middleware;
 using SFA.DAS.AssessorService.Application.Api.Properties.Attributes;
 using SFA.DAS.AssessorService.Application.Exceptions;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using CreateOrganisationRequest = SFA.DAS.AssessorService.Api.Types.Models.CreateOrganisationRequest;
 using NotFound = SFA.DAS.AssessorService.Domain.Exceptions.NotFound;
 
 namespace SFA.DAS.AssessorService.Application.Api.Controllers
@@ -87,5 +88,38 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
             return NoContent();
         }
+
+        [HttpPut("NotifyAllApprovedUsers", Name = "NotifyAllApprovedUsers")]
+        [ValidateBadRequest]
+        [SwaggerResponse((int)HttpStatusCode.NoContent)]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(IDictionary<string, string>))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> NotifyAllApprovedUsers([FromBody]EmailAllApprovedContactsRequest emailAllApprovedContactsRequest)
+        {
+            const string epaoUserApproveRequestTemplate = "EPAOUserApproveRequest";
+            _logger.LogInformation("Received request to Notify Organisation Users");
+
+            try
+            {
+               var emailTemplate = await _mediator.Send(new GetEMailTemplateRequest
+                       {TemplateName= epaoUserApproveRequestTemplate });
+               var contacts= await _mediator.Send(new GetContactsForOrganisationRequest(emailAllApprovedContactsRequest.OrganisationReferenceId));
+               foreach (var contact in contacts)
+               {
+                   await _mediator.Send(new SendEmailRequest(contact.Email, emailTemplate, new
+                   {
+                       username = $"{emailAllApprovedContactsRequest.DisplayName}",
+                       ServiceLink = $"{emailAllApprovedContactsRequest.ServiceLink}"
+                   }));
+               }
+            }
+            catch (NotFound)
+            {
+                throw new ResourceNotFoundException();
+            }
+
+            return NoContent();
+        }
+        
     }
 }

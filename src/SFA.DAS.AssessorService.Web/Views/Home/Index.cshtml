@@ -1,41 +1,32 @@
 ﻿@{
-    ViewData["Title"] = "Record apprentice end-point assessment grades";
+    ViewData["Title"] = "Apprenticeship assessment service";
     Layout = "_Layout";
 }
 
 <div class="grid-row">
     <div class="column-two-thirds">
 
-      <h1 class="heading-xlarge">Record apprentice end-point assessment grades</h1>
-      <p><a href="https://www.gov.uk/guidance/register-of-end-point-assessment-organisations">Registered end-point assessment organisations</a> (<abbr title="End-point assessment organisations">EPAO</abbr>) can use this service to:</p>
+        <h1 class="heading-xlarge">Apprenticeship assessment service</h1>
+        <p>Use this service to apply to become an end-point assessor, you will be able to:</p>
 
-      <ul class="list list-bullet">
-        <li>record grades for a government funded apprenticeship</li>
-        <li>request a certificate</li>
-      </ul>	
-      <p>You cannot use this service to request a certificate for a:</p>	
-      <ul class="list list-bullet">	
-        <li><a href="https://www.gov.uk/guidance/how-apprentices-in-england-are-assessed">privately funded apprenticeship</a></li>
-        <li><a href="https://acecerts.co.uk/web/apprentice-application-form">framework based apprenticeship</a></li>
-      </ul>
+        <div class="form-group">
+            <ul class="list list-bullet">
+                <li>apply for standards to assess</li>
+                <li>view your pipeline of assessments</li>
+                <li>record assessments and issue certificates</li>
+            </ul>
+        </div>
 
-      <h2 class="heading-medium">Before you start</h2>
-      <p>You need:</p>
-      <ul class="list list-bullet">
-        <li>permission from the apprentice for you to apply for a certificate on their behalf</li>
-        <li>to be assigned the 'end point assessment' role in the <a href="https://logon.fasst.org.uk/">Information Management Services (IDAMS) system</a></li>
-        <li>the unique learner number (<abbr title="Unique learner number">ULN</abbr>) of the apprentice</li>
-      </ul>
+        <a asp-action="SignIn" asp-controller="Account" class="button button-start">Start now</a>
+        <span class="das-inline-button-link"> or <a class="govuk-link" asp-action="CreateAnAccount" asp-controller="Account">create an account</a></span>
 
-      <p><a asp-action="SignIn" asp-controller="Account" class="button button-start">Start <span class="visually-hidden">recording apprentice end-point assessment grades </span>now</a></p>
+        <h2 class="heading-medium">Before you start</h2>
 
-      <h2 class="heading-medium">More information</h2>
-      <p>Contact the National Apprenticeship Service for help.</p>
-      <h3 class="heading-small">National Apprenticeship Helpdesk</h3>
-      <p><a href="mailto:helpdesk@manage-apprenticeships.service.gov.uk">helpdesk@manage-apprenticeships.service.gov.uk</a><br />
-      Telephone: 08000 150 600<br />
-      8am to 10pm, 7 days a week<br />
-      <a href="https://www.gov.uk/call-charges">Find out about call charges</a></p>
-
+        <p>To get on the register of end-point assessment organisations you need to complete a two-stage process:</p>
+        <ul class="list list-number">
+            <li>Set up your organisation's account</li>
+            <li>Demonstrate your organisation’s capabilities and capacity to assess a standard</li>
+        </ul>
+         <p>It is advisable to <a href="https://www.gov.uk/guidance/register-of-end-point-assessment-organisations#how-to-apply-to-the-register-of-end-point-assessment-organisations" target="_blank">read the pre-application guidance</a> before you start.</p>
     </div>
 </div>

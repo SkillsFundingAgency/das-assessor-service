@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -18,18 +19,18 @@ namespace SFA.DAS.AssessorService.Web.UnitTests.OrchestratorTests.LoginOrchestra
 
             contextAccessor.SetupGet(a => a.HttpContext.User.Claims).Returns(new List<Claim>
             {
-                new Claim("http://schemas.portal.com/ukprn", "12345678"),
-                new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn", "username"),
-                new Claim("http://schemas.portal.com/mail", "email@domain.com"),
-                new Claim("http://schemas.portal.com/displayname", "Mr Jones")
+                new Claim("sub", Guid.NewGuid().ToString()),
+                new Claim("email", "email@domain.com"),
+                new Claim("given_name", "Jones"),
+                new Claim("family_name","Peter")
             });
 
             var organisationsApiClient = new Mock<IOrganisationsApiClient>();
             var loginApiClient = new Mock<ILoginApiClient>();
-            var loginOrchestrator = new Orchestrators.Login.LoginOrchestrator(new Mock<ILogger<Orchestrators.Login.LoginOrchestrator>>().Object, contextAccessor.Object,
-                loginApiClient.Object);
+          //  var loginOrchestrator = new Orchestrators.Login.LoginOrchestrator(new Mock<ILogger<Orchestrators.Login.LoginOrchestrator>>().Object, contextAccessor.Object,
+          //      loginApiClient.Object);
 
-            loginOrchestrator.Login().Wait();
+           // loginOrchestrator.Login().Wait();
 
 
         }
