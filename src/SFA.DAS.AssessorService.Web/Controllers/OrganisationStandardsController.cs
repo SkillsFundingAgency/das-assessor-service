@@ -117,20 +117,26 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public async Task<FileContentResult> ExportEpaPipelineAsCsv()
         {
             _logger.LogInformation("Starting to download Pipeline EPA CSV File");
-            var orderedListResultViewModel = await GetPipeline(null, TableColumnOrder.None, 0,null);
+
+            var epaoid = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
+
+            var organisation = await _organisationsApiClient.GetEpaOrganisation(epaoid);
+            var response = await _standardsApiClient.GetEpaoPipelineStandardsExtract(organisation?.OrganisationId);
+
             string[] columnHeaders = {
                 "Standard Name",
                 "Apprentices",
+                "Provider UKPRN",
                 "Estimated Gateway"
             };
 
-            var piplelineRecords = (from pipeline in orderedListResultViewModel?.Response.Items
+            var piplelineRecords = (from pipeline in response
                 select new object[]
                 {
                     $"{pipeline.StandardName}",
                     $"\"{pipeline.Pipeline}\"",
+                    $"\"{pipeline.ProviderUkPrn}\"",
                     $"\"{pipeline.EstimatedDate}\"",
-
                 }).ToList();
 
             var pipelineCsv = new StringBuilder();
