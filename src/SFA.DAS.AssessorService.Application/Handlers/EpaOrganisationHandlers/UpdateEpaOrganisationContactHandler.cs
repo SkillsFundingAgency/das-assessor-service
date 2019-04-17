@@ -56,6 +56,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             return new EpaContact
             {
                 DisplayName = request.DisplayName,
+                FirstName = request.FirstName,
+                LastName = request.LastName,
                 Email = request.Email,
                 Id = Guid.Parse(request.ContactId),
                 PhoneNumber = request.PhoneNumber
@@ -65,6 +67,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
         private void ProcessRequestFieldsForSpecialCharacters(UpdateEpaOrganisationContactRequest request)
         {
             request.DisplayName = _cleanser.CleanseStringForSpecialCharacters(request.DisplayName);
+            request.FirstName  = _cleanser.CleanseStringForSpecialCharacters(request.FirstName);
+            request.LastName = _cleanser.CleanseStringForSpecialCharacters(request.LastName);
             request.Email = _cleanser.CleanseStringForSpecialCharacters(request.Email);
             request.PhoneNumber = _cleanser.CleanseStringForSpecialCharacters(request.PhoneNumber);
         }

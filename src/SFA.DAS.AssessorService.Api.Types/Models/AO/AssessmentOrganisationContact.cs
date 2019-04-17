@@ -10,6 +10,8 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
         public DateTime CreatedAt { get; set; }
         public DateTime? DeletedAt { get; set; }
         public string DisplayName { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
         public string Email { get; set; }
         public string OrganisationId { get; set; }
         public string Status { get; set; }

@@ -246,7 +246,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         [HttpGet("register/edit-contact/{contactId}")]
         public async Task<IActionResult> EditContact(string contactId)
         {
-            var contact = await _apiClient.GetEpaCntact(contactId);
+            var contact = await _apiClient.GetEpaContact(contactId);
             var organisation = await _apiClient.GetEpaOrganisation(contact.OrganisationId);
             var viewModel = MapContactModel(contact, organisation);
             return View(viewModel);
@@ -264,7 +264,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             var request = new UpdateEpaOrganisationContactRequest
             {
                 ContactId = viewAndEditModel.ContactId,
-                DisplayName =  viewAndEditModel.DisplayName,
+                DisplayName =  $"{viewAndEditModel.FirstName} {viewAndEditModel.LastName}",
+                FirstName = viewAndEditModel.FirstName,
+                LastName = viewAndEditModel.LastName,
                 Email = viewAndEditModel.Email,
                 PhoneNumber = viewAndEditModel.PhoneNumber,
                 ActionChoice = viewAndEditModel.ActionChoice
@@ -276,7 +278,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
         [HttpGet("register/view-contact/{contactId}")]
         public async Task<IActionResult> ViewContact(string contactId)
         {
-            var contact = await _apiClient.GetEpaCntact(contactId);
+            var contact = await _apiClient.GetEpaContact(contactId);
             var organisation = await _apiClient.GetEpaOrganisation(contact.OrganisationId);
             var viewModel = MapContactModel(contact, organisation);
             return View(viewModel);
@@ -454,6 +456,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 ContactId = contact.Id.ToString(),
                 PhoneNumber = contact.PhoneNumber,
                 DisplayName = contact.DisplayName,
+                FirstName = contact.FirstName,
+                LastName = contact.LastName,
                 OrganisationName = organisation.Name,
                 OrganisationId = organisation.OrganisationId,
                 IsPrimaryContact = contact.IsPrimaryContact

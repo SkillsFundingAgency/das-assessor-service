@@ -72,12 +72,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<ValidationResponse> ValidateUpdateContact(string contactId, string displayName, string email,string phoneNumber)
+        public async Task<ValidationResponse> ValidateUpdateContact(string contactId, string displayName, string firstName, string lastName, string email,string phoneNumber)
         {
             var newName = SanitizeUrlParam(displayName);
+            var newFirstName = SanitizeUrlParam(firstName);
+            var newLastName = SanitizeUrlParam(lastName);
             var newEmail = SanitizeUrlParam(email);
             using (var request = new HttpRequestMessage(HttpMethod.Get,
-                $"/api/ao/assessment-organisations/contacts/validate-existing?displayName={newName}&email={newEmail}&contactId={contactId}&phoneNumber={phoneNumber}"))
+                $"/api/ao/assessment-organisations/contacts/validate-existing?displayName={newName}&firstName={newFirstName}&lastName={newLastName}&email={newEmail}&contactId={contactId}&phoneNumber={phoneNumber}"))
             {
                 return await RequestAndDeserialiseAsync<ValidationResponse>(request,
                     $"Could not check the validation for contact [{newName}] against contactId [{contactId}]");
@@ -242,7 +244,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task Update(UpdateOrganisationRequest organisationUpdateViewModel);
         Task Delete(Guid id);
         Task<ValidationResponse> ValidateCreateOrganisation(string name, string ukprn, string organisationTypeId, string companyNumber, string charityNumber);
-        Task<ValidationResponse> ValidateUpdateContact(string contactId, string displayName, string email, string phoneNumber);
+
+        Task<ValidationResponse> ValidateUpdateContact(string contactId, string displayName, string firstName,
+            string lastName, string email, string phoneNumber);
         Task<ValidationResponse> ValidateUpdateOrganisation(string organisationId, string name, string ukprn, string organisationTypeId, string address1, string address2, string address3, string address4, string postcode, string status, string actionChoice, string companyNumber, string charityNumber);
 
         Task<ValidationResponse> ValidateCreateContact(string firstName, string lastName, string organisationId,

@@ -69,8 +69,8 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 Id = Guid.NewGuid(),
                 PhoneNumber = request.PhoneNumber,
                 Username = newUsername,
-                FamilyName = request.LastName,
-                GivenNames = request.FirstName,
+                LastName = request.LastName,
+                FirstName = request.FirstName,
                 SigninType = "",
                 SigninId = null,
                 Status="New"
