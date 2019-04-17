@@ -1,78 +1,89 @@
 ﻿@model SFA.DAS.AssessorService.Web.ViewModels.Account.CreateAccountViewModel
 @{
-    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Get set up as a user";
+  var isError = !ViewData.ModelState.IsValid;
+  ViewBag.Title = (isError ? "Error: " : "") + "Get set up as a user";
 }
 
-<a asp-action="Index" asp-controller="Home" class="link-back">Back</a>
-
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <h1 class="heading-xlarge">Get set up as a user</h1>
+<a class="govuk-back-link" asp-controller="Home" asp-action="Index">Back</a>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">Get set up as a user</h1>
 
         <form class="new-account-form js-disable-on-submit" id="account-setup" asp-action="CreateAnAccount" asp-controller="Account" method="post" novalidate="">
             
-            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+            @*
+            <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="error-summary">
+                <h2 class="govuk-error-summary__title" id="error-summary-title">
                     There's a problem
                 </h2>
-                <ul class="js-error-summary-list error-summary-list"></ul>
+                <div class="govuk-error-summary__body">
+                    <ul class="js-error-summary-list govuk-list govuk-error-summary__list"></ul>
+                </div>
             </div>
+            *@
 
             @if (!ViewData.ModelState.IsValid)
             {
-                <div class="error-summary" aria-labelledby="error-summary-heading" role="alert" tabindex="-1" data-module="error-summary">
-                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                        There's a problem
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
                     </h2>
-                    <ul class="error-summary-list">
-                        <li><a sfa-validation-for="GivenName"></a></li>
-                        <li><a sfa-validation-for="FamilyName"></a></li>
-                        <li><a sfa-validation-for="Email"></a></li>
-                    </ul>
+                    <div class="govuk-error-summary__body">
+                        <ul class="govuk-list govuk-error-summary__list">
+                            <li><a sfa-validation-for="GivenName"></a></li>
+                            <li><a sfa-validation-for="FamilyName"></a></li>
+                            <li><a sfa-validation-for="Email"></a></li>
+                        </ul>
+                    </div>
                 </div>
             }
 
-            <div sfa-anyvalidationerror-class="after-error-summary">
-                <div class="form-group" sfa-validation-for="GivenName" sfa-validationerror-class="form-group-error">
-                    <label for="GivenName">
-                        <span class="form-label-bold">First Name</span>
-                        <span class="form-hint visually-hidden">
-                            First Name
-                        </span>
-                        <span class="error-message" asp-validation-for="GivenName"></span>
+            <div class="govuk-form-group" sfa-validation-for="GivenName" sfa-validationerror-class="govuk-form-group--error">
+                    <label class="govuk-label govuk-label--m" for="GivenName">
+                        First name
                     </label>
-                    <input class="form-control" name="GivenName" sfa-validation-for="GivenName" sfa-validationerror-class="form-control-error" asp-for="GivenName" type="text" maxlength="100" />
-
+                    @if (isError)
+                    {
+                      <span class="govuk-error-message" asp-validation-for="GivenName"></span>
+                    }
+                    <input class="govuk-input govuk-!-width-two-thirds" id="GivenName" name="GivenName" type="text" asp-for="GivenName" sfa-validation-for="GivenName" sfa-validationerror-class="govuk-input--error" autocomplete="given-name" spellcheck="false" maxlength="10000" />
                 </div>
 
-                <div class="form-group" sfa-validation-for="FamilyName" sfa-validationerror-class="form-group-error">
-                    <label for="FamilyName">
-                        <span class="form-label-bold ">Last Name</span>
-                        <span class="form-hint visually-hidden">
-                           Last Name
-                        </span>
-                        <span class="error-message" asp-validation-for="FamilyName"></span>
+                <div class="govuk-form-group" sfa-validation-for="FamilyName" sfa-validationerror-class="govuk-form-group--error">
+                    <label class="govuk-label govuk-label--m" for="FamilyName">
+                        Last name
                     </label>
-                    <input class="form-control" name="FamilyName" sfa-validation-for="FamilyName" sfa-validationerror-class="form-control-error" asp-for="FamilyName" type="text" maxlength="100" />
+                    @if (isError)
+                    {
+                      <span class="govuk-error-message" asp-validation-for="FamilyName"></span>
+                    }
+                    <input class="govuk-input govuk-!-width-two-thirds" id="FamilyName" name="FamilyName" type="text" asp-for="FamilyName" sfa-validation-for="FamilyName" sfa-validationerror-class="govuk-input--error" autocomplete="family-name" spellcheck="false" maxlength="10000" />
                 </div>
 
-                <div class="form-group" sfa-validation-for="Email" sfa-validationerror-class="form-group-error">
-                    <label for="Email">
-                        <span class="form-label-bold ">Email address</span>
-                        <span class="form-hint">
-                            We'll send you an email to confirm your identity
-                        </span>
-                        <span class="error-message" asp-validation-for="Email"></span>
+                <div class="govuk-form-group" sfa-validation-for="Email" sfa-validationerror-class="govuk-form-group--error">
+                    <label class="govuk-label govuk-label--m" for="Email">
+                        Email address
                     </label>
-                    <input class="form-control" name="Email" sfa-validation-for="Email" sfa-validationerror-class="form-control-error" asp-for="Email" type="text" maxlength="100" />
+                    <span id="email-hint" class="govuk-hint">
+                        We'll send you an email to confirm your identity
+                    </span>
+                    @if (isError)
+                    {
+                      <span class="govuk-error-message" asp-validation-for="Email"></span>
+                    }
+                    <input class="govuk-input" id="Email" name="Email" type="text" asp-for="Email"
+                        aria-describedby="email-hint" sfa-validation-for="FamilyName" sfa-validationerror-class="govuk-input--error" maxlength="320" />
                 </div>
-            </div>
-            <button type="submit" class="button">
-                Set me up
-            </button>
-        </form>
+
+                <button type="submit" class="govuk-button">
+                    Set me up
+                </button>
+
+            </form>
+        </div>
     </div>
-</div>
+</main>
 
 @*Not using javascript validation for now*@
 @*@section Scripts {

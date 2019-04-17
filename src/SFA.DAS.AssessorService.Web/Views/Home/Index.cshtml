@@ -3,30 +3,45 @@
     Layout = "_Layout";
 }
 
-<div class="grid-row">
-    <div class="column-two-thirds">
+<main class="govuk-main-wrapper " id="main-content" role="main">
 
-        <h1 class="heading-xlarge">Apprenticeship assessment service</h1>
-        <p>Use this service to apply to become an end-point assessor, you will be able to:</p>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">Apprenticeship assessment service</h1>
+            <p class="govuk-body">Use this service to apply to become an end-point assessor, you will be able to:</p>
 
-        <div class="form-group">
-            <ul class="list list-bullet">
+            <ul class="govuk-list govuk-list--bullet">
                 <li>apply for standards to assess</li>
                 <li>view your pipeline of assessments</li>
                 <li>record assessments and issue certificates</li>
             </ul>
         </div>
-
-        <a asp-action="SignIn" asp-controller="Account" class="button button-start">Start now</a>
-        <span class="das-inline-button-link"> or <a class="govuk-link" asp-action="CreateAnAccount" asp-controller="Account">create an account</a></span>
-
-        <h2 class="heading-medium">Before you start</h2>
-
-        <p>To get on the register of end-point assessment organisations you need to complete a two-stage process:</p>
-        <ul class="list list-number">
-            <li>Set up your organisation's account</li>
-            <li>Demonstrate your organisation’s capabilities and capacity to assess a standard</li>
-        </ul>
-         <p>It is advisable to <a href="https://www.gov.uk/guidance/register-of-end-point-assessment-organisations#how-to-apply-to-the-register-of-end-point-assessment-organisations" target="_blank">read the pre-application guidance</a> before you start.</p>
     </div>
-</div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">  
+            <div class="govuk-!-margin-top-2 govuk-!-margin-bottom-8">
+                <a asp-action="SignIn" asp-controller="Account" role="button" draggable="false" class="govuk-button govuk-!-margin-bottom-2">
+                    Start now
+                </a>
+                <div class="das-inline-button-link">
+                    <span class="govuk-body">or <a class="govuk-link" asp-action="CreateAnAccount" asp-controller="Account">create an account</a></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h2 class="govuk-heading-m">Before you start</h2>
+
+            <p class="govuk-body">To get on the register of end-point assessment organisations you need to complete a two-stage process:</p>
+            <ul class="govuk-list govuk-list--bullet">
+                <li>Set up your organisation's account</li>
+                <li>Demonstrate your organisation’s capabilities and capacity to assess a standard</li>
+            </ul>
+            <p class="govuk-body">It is advisable to <a href="https://www.gov.uk/guidance/register-of-end-point-assessment-organisations#how-to-apply-to-the-register-of-end-point-assessment-organisations" target="_blank">read the pre-application guidance</a> before you start.</p>
+        </div>
+    </div>
+
+</main>

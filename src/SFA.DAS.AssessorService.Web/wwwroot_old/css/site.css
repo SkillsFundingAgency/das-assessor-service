@@ -6,16 +6,6 @@ details {
   margin-bottom: 30px;
 }
 
-/*  I commented this bit of styling because the
-    button stays active and focused even when you click away.
-    The side efect is multiple submission when
-    another element is clicked. Plays havoc with buttons that 
-    do not refresh the page.
-*/
-/*.button:focus {
-  position: inherit;
-*/
-
 .govuk-margin-bottom-0 {
   margin-bottom: 0;
 }
