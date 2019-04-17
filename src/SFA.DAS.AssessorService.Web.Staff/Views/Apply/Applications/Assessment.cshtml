@@ -31,6 +31,16 @@
                         <div class="form-group">
                             <span>You are about to approve the first stage of this application. This means that the applicant will be able to apply for a standard. You are also satisfied with the information the applicant has provided so far, and require no further information.</span>
                         </div>
+
+                        @if (Model.HasInadequateFhaButNoFeedbackGiven)
+                        {
+                            <div class="form-group">
+                                <div class="notice">
+                                    <i class="icon icon-important"><span class="visually-hidden">Warning</span></i>
+                                    <strong class="bold-small">You have overridden an inadequate Financial health assessment.</strong>
+                                </div>
+                            </div>
+                        }
                     }
                     else if (Model.SequenceId == 2)
                     {
@@ -85,32 +95,32 @@
                     <button class="button" type="submit">Return application</button>
 
                     @*<div class="error-message-container" sfa-anyvalidationerror-class="form-group-error">
-                <div class="form-group">
-                    <label class="form-label-bold">
-                        Is the application approved?
-                    </label>
-                    <span id="ReturnType" class="error-message" asp-validation-for="ReturnType"></span>
-                    <div class="multiple-choice">
-                        <input name="ReturnType" id="options_feedback" type="radio" value="ReturnWithFeedback" sfa-validation-for="ReturnType" sfa-validationerror-class="form-control-error" />
-                        <label for="options_feedback">
-                            No. Send feedback and stop
-                        </label>
-                    </div>
-                    <div class="multiple-choice">
-                        <input name="ReturnType" id="options_yes" type="radio" value="ApproveWithFeedback" sfa-validation-for="ReturnType" sfa-validationerror-class="form-control-error" />
-                        <label for="options_yes">
-                            Yes. Send feedback and continue
-                        </label>
-                    </div>
-                    <div class="multiple-choice">
-                        <input name="ReturnType" id="options_no" type="radio" value="Reject" />
-                        <label for="options_no">
-                            No. Reject the application
-                        </label>
-                    </div>
-                </div>
-            </div>
-            <button class="button" type="submit">Submit assessment</button>*@
+                            <div class="form-group">
+                                <label class="form-label-bold">
+                                    Is the application approved?
+                                </label>
+                                <span id="ReturnType" class="error-message" asp-validation-for="ReturnType"></span>
+                                <div class="multiple-choice">
+                                    <input name="ReturnType" id="options_feedback" type="radio" value="ReturnWithFeedback" sfa-validation-for="ReturnType" sfa-validationerror-class="form-control-error" />
+                                    <label for="options_feedback">
+                                        No. Send feedback and stop
+                                    </label>
+                                </div>
+                                <div class="multiple-choice">
+                                    <input name="ReturnType" id="options_yes" type="radio" value="ApproveWithFeedback" sfa-validation-for="ReturnType" sfa-validationerror-class="form-control-error" />
+                                    <label for="options_yes">
+                                        Yes. Send feedback and continue
+                                    </label>
+                                </div>
+                                <div class="multiple-choice">
+                                    <input name="ReturnType" id="options_no" type="radio" value="Reject" />
+                                    <label for="options_no">
+                                        No. Reject the application
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="button" type="submit">Submit assessment</button>*@
                 }
             </form>
         </div>
