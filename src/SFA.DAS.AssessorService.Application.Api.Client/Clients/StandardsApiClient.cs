@@ -19,26 +19,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
         }
 
-        public async Task<int> GetEpaoStandardsCount(string epaoId)
-        {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standards/count/{epaoId}"))
-            {
-                var response = await RequestAndDeserialiseAsync<EpaoStandardsCountResponse>(request,
-                    $"Could not find the organisation {epaoId}");
-                return response.Count;
-            }
-        }
-
-        public async Task<int> GetEpaoPipelineCount(string epaoId)
-        {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standards/pipeline/count/{epaoId}"))
-            {
-                var response = await RequestAndDeserialiseAsync<EpaoPipelineCountResponse>(request,
-                    $"Could not find the organisation {epaoId}");
-                return response.Count;
-            }
-        }
-
         public async Task<PaginatedList<GetEpaoRegisteredStandardsResponse>> GetEpaoRegisteredStandards(string epaoId, int? pageIndex = null)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/standards/{epaoId}?pageIndex={pageIndex}"))
