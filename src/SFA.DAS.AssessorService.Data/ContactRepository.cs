@@ -27,6 +27,7 @@ namespace SFA.DAS.AssessorService.Data
 
             return newContact;
         }
+        
 
         public async Task AssociateRoleWithContact(string roleName, Contact newContact)
         {
@@ -154,8 +155,6 @@ namespace SFA.DAS.AssessorService.Data
                 await _assessorDbContext.Contacts.FirstAsync(q => q.Id == contactId);
 
             contactEntity.SignInId = signInId;
-            contactEntity.Status = ContactStatus.New;
-
             // Workaround for Mocking
             _assessorDbContext.MarkAsModified(contactEntity);
 
@@ -168,5 +167,7 @@ namespace SFA.DAS.AssessorService.Data
             return  await _assessorDbContext.Contacts.FirstOrDefaultAsync(q => q.Email == email);
 
         }
+
+
     }
 }

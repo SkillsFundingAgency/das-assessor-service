@@ -7,6 +7,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Applications
     public class ApplicationSequenceViewModel
     {
         public string ApplicationReference { get; }
+        public string Standard { get; }
         public string LegalName { get; }
         public string TradingName { get; }
         public string ProviderName { get; }
@@ -40,6 +41,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.ViewModels.Apply.Applications
                 if (application.ApplicationData != null)
                 {
                     ApplicationReference = application.ApplicationData.ReferenceNumber;
+                    Standard = $"{application.ApplicationData.StandardName} ({application.ApplicationData.StandardCode})";
                 }
 
                 if (application.ApplyingOrganisation?.OrganisationDetails != null)

@@ -104,8 +104,8 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 PrimaryContact = !string.IsNullOrEmpty(organisation.PrimaryContact)
                     ? organisation.PrimaryContact
                     : notSetDescription,
-                PrimaryContactName = !string.IsNullOrEmpty(organisation.PrimaryContact)
-                    ? organisation.PrimaryContact
+                PrimaryContactName = !string.IsNullOrEmpty(organisation.PrimaryContactName)
+                    ? organisation.PrimaryContactName
                     : notSetDescription,
                 CharityNumber = organisation.OrganisationData?.CharityNumber,
                 CompanyNumber = organisation.OrganisationData?.CompanyNumber,
