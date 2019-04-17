@@ -1,0 +1,73 @@
+﻿@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp.UpdateOrganisationFinancialTrackRecordViewModel
+
+@using SFA.DAS.AssessorService.Web.Staff
+@using SFA.DAS.AssessorService.Web.Staff.Domain
+@{ ViewBag.Title = "Enter details"; }
+
+@{
+    await Html.RenderPartialAsync("~/Views/Roatp/_StylesPartial.cshtml");
+}
+<div class="grid-row">
+    <form asp-controller="RoatpSearch" asp-action="SearchResults" method="post" name="backForm">
+        <div class="govuk-grid-column-one-half">
+            <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
+        </div>
+    </form>
+</div>
+
+<div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+        There is a problem
+    </h2>
+    <ul class="js-error-summary-list error-summary-list"></ul>
+</div>
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+        <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+            There is a problem
+        </h2>
+        <ul class="error-summary-list">
+            <li><a sfa-validation-for="FinancialTrackRecord"></a></li>
+        </ul>
+    </div>
+}
+
+<div class="govuk-width-container">
+
+    <main class="govuk-main-wrapper " id="main-content" role="main">
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <form method="post" asp-action="UpdateFinancialTrackRecord" asp-controller="UpdateRoatpOrganisation">
+                    @Html.HiddenFor(x => x.OrganisationId)
+                    <div class="govuk-form-group">
+                        <fieldset class="govuk-fieldset" aria-describedby="radio-hint">
+                            <div>
+                                <h1 class="heading-xlarge roatp-heading">Change financial track record for @Html.Raw(Model.LegalName)</h1>
+                            </div>
+
+                            <div class="roatp-radios roatp-radios--inline">
+                                <div class="roatp-radios__item">
+                                    <input asp-for="FinancialTrackRecord" class="roatp-radios__input" id="radio-1"
+                                           name="FinancialTrackRecord" type="radio" value="true" />
+                                    <label class="roatp-label roatp-radios__label" for="radio-1">
+                                        Yes
+                                    </label>
+                                </div>
+                                <div class="roatp-radios__item">
+                                    <input asp-for="FinancialTrackRecord" class="roatp-radios__input" id="radio-2"
+                                           name="FinancialTrackRecord" type="radio" value="false" />
+                                    <label class="roatp-label roatp-radios__label" for="radio-2">
+                                        No
+                                    </label>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <input type="submit" class="roatp-button" value="Change" />
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
