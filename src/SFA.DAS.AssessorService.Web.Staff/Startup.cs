@@ -179,6 +179,7 @@ namespace SFA.DAS.AssessorService.Web.Staff
             app.UseAuthentication();
             app.UseSession();
             app.UseRequestLocalization();
+            app.UseStatusCodePagesWithReExecute("/ErrorPage/{0}");
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
