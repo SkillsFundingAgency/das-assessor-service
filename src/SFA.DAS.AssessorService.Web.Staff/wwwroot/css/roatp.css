@@ -1310,6 +1310,7 @@
 
 .roatp-org-search-result {
     display: block;
+    word-break: break-all;
 }
 
 .block {
@@ -1960,4 +1961,8 @@
 
 .roatp-radios__conditional > :last-child {
     margin-bottom: 0;
+}
+
+.roatp-summary-list-long-text, .roatp-update-organisation-long-text {
+    word-break: break-all;
 }
