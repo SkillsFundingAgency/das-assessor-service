@@ -101,12 +101,15 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                          OnTokenValidated = async context =>
                          {
                              var identity = new ClaimsIdentity();
-                             var contactClient = context.HttpContext.RequestServices.GetRequiredService<IContactsApiClient>();
+                             var contactClient = context.HttpContext.RequestServices
+                                 .GetRequiredService<IContactsApiClient>();
                              var orgClient = context.HttpContext.RequestServices
                                  .GetRequiredService<IOrganisationsApiClient>();
 
-                             var contactApplyClient = context.HttpContext.RequestServices.GetRequiredService<IContactApplyClient>();
-                             var organisationApplyClient = context.HttpContext.RequestServices.GetRequiredService<IOrganisationsApplyApiClient>();
+                             var contactApplyClient = context.HttpContext.RequestServices
+                                 .GetRequiredService<IContactApplyClient>();
+                             var organisationApplyClient = context.HttpContext.RequestServices
+                                 .GetRequiredService<IOrganisationsApplyApiClient>();
 
                              var signInId = context.Principal.FindFirst("sub")?.Value;
                              var email = context.Principal.FindFirst("name")?.Value;
@@ -131,7 +134,8 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                                      bool createNewContactWithNoOrg = false;
                                      logger.LogInformation("Trying to get user from apply to retrieve user.");
 
-                                     var applyContact = await contactApplyClient.GetApplyContactBySignInId(Guid.Parse(signInId));
+                                     var applyContact =
+                                         await contactApplyClient.GetApplyContactBySignInId(Guid.Parse(signInId));
                                      if (applyContact == null)
                                          createNewContactWithNoOrg = true;
                                      else
@@ -140,11 +144,13 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                                          ApplyTypes.Organisation applyOrganisation = null;
                                          try
                                          {
-                                             applyOrganisation = await organisationApplyClient.GetOrganisationByUserId(applyContact.Id);
+                                             applyOrganisation =
+                                                 await organisationApplyClient.GetOrganisationByUserId(applyContact.Id);
                                          }
                                          catch (EntityNotFoundException)
                                          {
-                                             logger.LogInformation("Found contact in apply, but no organisation associated with it.");
+                                             logger.LogInformation(
+                                                 "Found contact in apply, but no organisation associated with it.");
                                              createNewContactWithNoOrg = true;
                                          }
 
@@ -154,20 +160,24 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                                              OrganisationResponse assessorOrg = null;
                                              try
                                              {
-                                                 assessorOrg = await orgClient.GetOrganisationByName(applyOrganisation.Name);
+                                                 assessorOrg =
+                                                     await orgClient.GetOrganisationByName(applyOrganisation.Name);
                                              }
                                              catch (EntityNotFoundException)
                                              {
-                                                 logger.LogInformation("No organisation found in Assessor, hence no RoEPAO.");
+                                                 logger.LogInformation(
+                                                     "No organisation found in Assessor, hence no RoEPAO.");
                                                  createNewContactWithNoOrg = true;
                                              }
+
                                              if (assessorOrg != null)
                                              {
                                                  //Organisation exists in assessor so update contact with organisation
                                                  var newContact = new Contact
                                                  {
                                                      Id = applyContact.Id,
-                                                     DisplayName = $"{applyContact.GivenNames} {applyContact.FamilyName}",
+                                                     DisplayName =
+                                                         $"{applyContact.GivenNames} {applyContact.FamilyName}",
                                                      Email = applyContact.Email,
                                                      SignInId = Guid.Parse(signInId),
                                                      SignInType = applyContact.SigninType,
@@ -177,11 +187,13 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                                                      FamilyName = applyContact.FamilyName,
                                                      GivenNames = applyContact.GivenNames,
                                                      OrganisationId = assessorOrg.Id,
-                                                     EndPointAssessorOrganisationId = assessorOrg.EndPointAssessorOrganisationId,
+                                                     EndPointAssessorOrganisationId =
+                                                         assessorOrg.EndPointAssessorOrganisationId,
                                                      Status = "Live"
                                                  };
 
-                                                 user = await CreateANewContact(newContact, contactClient, logger, signInId);
+                                                 user = await CreateANewContact(newContact, contactClient, logger,
+                                                     signInId);
 
                                              }
                                          }
@@ -205,7 +217,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                                              GivenNames = givenName,
                                              OrganisationId = null,
                                              EndPointAssessorOrganisationId = null,
-                                             Status = applyContact != null?"Applying":"New"
+                                             Status = applyContact != null ? "Applying" : "New"
                                          };
 
                                          user = await CreateANewContact(newContact, contactClient, logger, signInId);
@@ -218,33 +230,32 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                                  {
                                      identity.AddClaim(new Claim("UserId", user?.Id.ToString()));
                                      identity.AddClaim(new Claim(
-                                        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn",
-                                        user?.Username));
+                                         "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn",
+                                         user?.Username));
                                      if (user.EndPointAssessorOrganisationId != null)
                                      {
                                          var organisation =
-                                            await orgClient.GetEpaOrganisation(user.EndPointAssessorOrganisationId);
+                                             await orgClient.GetEpaOrganisation(user.EndPointAssessorOrganisationId);
 
-                                         if (organisation.ApiEnabled && !string.IsNullOrEmpty(organisation.ApiUser))
-                                         {
-                                             identity.AddClaim(new Claim("http://schemas.portal.com/service",
-                                                Roles.ExternalApiAccess));
-                                             identity.AddClaim(new Claim("http://schemas.portal.com/service",
-                                                Roles.EpaoUser));
-                                         }
+                                         //Fix for ON-1759 , for now untill roles and privileges are applied properly 
+                                         //allow everyone to see ExternalApiAccess
+                                         identity.AddClaim(new Claim("http://schemas.portal.com/service",
+                                             Roles.ExternalApiAccess));
+                                         identity.AddClaim(new Claim("http://schemas.portal.com/service",
+                                             Roles.EpaoUser));
 
                                          identity.AddClaim(new Claim("http://schemas.portal.com/ukprn",
-                                            organisation?.Ukprn == null ? "" : organisation?.Ukprn.ToString()));
+                                             organisation?.Ukprn == null ? "" : organisation?.Ukprn.ToString()));
 
-                                         var orgName = organisation.OrganisationData?.LegalName ??
-                                                       organisation.OrganisationData?.TradingName ??
-                                                       organisation.Name;
+                                         var orgName = organisation?.OrganisationData?.LegalName ??
+                                                       organisation?.OrganisationData?.TradingName ??
+                                                       organisation?.Name;
 
                                          identity.AddClaim(new Claim("http://schemas.portal.com/orgname",
-                                            orgName));
+                                             orgName));
 
                                          identity.AddClaim(new Claim("http://schemas.portal.com/epaoid",
-                                            organisation?.OrganisationId));
+                                             organisation?.OrganisationId));
                                      }
 
                                      identity.AddClaim(new Claim("display_name", user?.DisplayName));
@@ -255,6 +266,7 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                                          Privileges.ManageUsers));
                                  }
                              }
+
                              context.Principal.AddIdentity(identity);
                          }
 
