@@ -53,9 +53,9 @@
             return await Get<IEnumerable<ProviderType>>($"{_baseUrl}/api/v1/lookupData/providerTypes");
         }
 
-        public async Task<IEnumerable<OrganisationStatus>> GetOrganisationStatuses()
+        public async Task<IEnumerable<OrganisationStatus>> GetOrganisationStatuses(int? providerTypeId)
         {
-            return await Get<IEnumerable<OrganisationStatus>>($"{_baseUrl}/api/v1/lookupData/organisationStatuses");
+            return await Get<IEnumerable<OrganisationStatus>>($"{_baseUrl}/api/v1/lookupData/organisationStatuses?providerTypeId={providerTypeId}");
         }
 
         public async Task<IEnumerable<RemovedReason>> GetRemovedReasons()
@@ -107,6 +107,34 @@
         public async Task<bool> UpdateOrganisationTradingName(UpdateOrganisationTradingNameRequest request)
         {
             HttpStatusCode result = await Put<UpdateOrganisationTradingNameRequest>($"{_baseUrl}/api/v1/updateOrganisation/tradingName", request);
+
+            return await Task.FromResult(result == HttpStatusCode.OK);
+        }
+        
+        public async Task<bool> UpdateOrganisationParentCompanyGuarantee(UpdateOrganisationParentCompanyGuaranteeRequest request)
+        {
+            HttpStatusCode result = await Put<UpdateOrganisationParentCompanyGuaranteeRequest>($"{_baseUrl}/api/v1/updateOrganisation/parentCompanyGuarantee", request);
+
+            return await Task.FromResult(result == HttpStatusCode.OK);
+        }
+       
+        public async Task<bool> UpdateOrganisationFinancialTrackRecord(UpdateOrganisationFinancialTrackRecordRequest request)
+        {
+            HttpStatusCode result = await Put<UpdateOrganisationFinancialTrackRecordRequest>($"{_baseUrl}/api/v1/updateOrganisation/financialTrackRecord", request);
+
+            return await Task.FromResult(result == HttpStatusCode.OK);
+        }
+
+        public async Task<bool> UpdateOrganisationProviderType(UpdateOrganisationProviderTypeRequest request)
+        {
+            HttpStatusCode result = await Put<UpdateOrganisationProviderTypeRequest>($"{_baseUrl}/api/v1/updateOrganisation/providerType", request);
+
+            return await Task.FromResult(result == HttpStatusCode.OK);
+        }
+
+        public async Task<bool> UpdateOrganisationUkprn(UpdateOrganisationUkprnRequest request)
+        {
+            HttpStatusCode result = await Put<UpdateOrganisationUkprnRequest>($"{_baseUrl}/api/v1/updateOrganisation/ukprn", request);
 
             return await Task.FromResult(result == HttpStatusCode.OK);
         }
