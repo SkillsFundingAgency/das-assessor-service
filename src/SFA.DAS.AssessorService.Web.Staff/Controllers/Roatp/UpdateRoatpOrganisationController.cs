@@ -129,7 +129,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         {
             var searchModel = _sessionService.GetSearchResults();
 
-            var organisationTypes = _apiClient.GetOrganisationTypes(searchModel.SelectedResult?.ProviderType?.Id).Result.Where(x => x.Id!=0).OrderBy(x => x.Id);
+            var organisationTypes = _apiClient.GetOrganisationTypes(searchModel.SelectedResult?.ProviderType?.Id).Result.Where(x => x.Id!=OrganisationType.Unassigned).OrderBy(x => x.Id);
             var model = new UpdateOrganisationTypeViewModel
             {
                 LegalName = searchModel.SelectedResult.LegalName,
@@ -179,7 +179,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         [HttpPost]
         public async Task<IActionResult> UpdateType(UpdateOrganisationTypeViewModel model)
         {
-            model.OrganisationTypes = _apiClient.GetOrganisationTypes(model.ProviderTypeId).Result.Where(x=>x.Id!=0).OrderBy(x => x.Id);
+            model.OrganisationTypes = _apiClient.GetOrganisationTypes(model.ProviderTypeId).Result.Where(x=>x.Id!= OrganisationType.Unassigned).OrderBy(x => x.Id);
            
             if (!ModelState.IsValid)
             {
