@@ -145,7 +145,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
                 ParentCompanyGuarantee = false,
                 ProviderTypeId = model.ProviderTypeId,
                 StatusDate = DateTime.Now,
-                Ukprn = Convert.ToInt64(model.UKPRN),
+                Ukprn = model.UKPRN,
                 TradingName = model.TradingName,
                 Username = HttpContext.User.OperatorName()
             };
