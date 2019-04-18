@@ -43,7 +43,7 @@
             return await Get<IEnumerable<IDictionary<string, object>>>($"{_baseUrl}/api/v1/download/complete");
         }
 
-        public async Task<IEnumerable<OrganisationType>> GetOrganisationTypes(int providerTypeId)
+        public async Task<IEnumerable<OrganisationType>> GetOrganisationTypes(int? providerTypeId)
         {
             return await Get<IEnumerable<OrganisationType>>($"{_baseUrl}/api/v1/lookupData/organisationTypes?providerTypeId={providerTypeId}");
         }
@@ -100,6 +100,13 @@
         public async Task<bool> UpdateOrganisationStatus(UpdateOrganisationStatusRequest request)
         {
             HttpStatusCode result = await Put<UpdateOrganisationStatusRequest>($"{_baseUrl}/api/v1/updateOrganisation/status", request);
+
+            return await Task.FromResult(result == HttpStatusCode.OK);
+        }
+
+        public async Task<bool> UpdateOrganisationType(UpdateOrganisationTypeRequest request)
+        {
+            HttpStatusCode result = await Put<UpdateOrganisationTypeRequest>($"{_baseUrl}/api/v1/updateOrganisation/type", request);
 
             return await Task.FromResult(result == HttpStatusCode.OK);
         }

@@ -124,6 +124,24 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             return View("~/Views/Roatp/UpdateOrganisationStatus.cshtml", model);
         }
 
+        [Route("change-type")]
+        public async Task<IActionResult> UpdateOrganisationType()
+        {
+            var searchModel = _sessionService.GetSearchResults();
+
+            var organisationTypes = _apiClient.GetOrganisationTypes(searchModel.SelectedResult?.ProviderType?.Id).Result.Where(x => x.Id!=0).OrderBy(x => x.Id);
+            var model = new UpdateOrganisationTypeViewModel
+            {
+                LegalName = searchModel.SelectedResult.LegalName,
+                OrganisationId = searchModel.SelectedResult.Id,
+                OrganisationTypeId = searchModel.SelectedResult.OrganisationType.Id,
+                OrganisationTypes = organisationTypes,
+                ProviderTypeId = searchModel.SelectedResult.ProviderType.Id
+            };
+
+            return View("~/Views/Roatp/UpdateOrganisationType.cshtml", model);
+        }
+
         [HttpPost]
         public async Task<IActionResult> UpdateStatus(UpdateOrganisationStatusViewModel model)
         {
@@ -156,6 +174,29 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             }
 
             return View("~/Views/Roatp/UpdateOrganisationStatus.cshtml", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateType(UpdateOrganisationTypeViewModel model)
+        {
+            model.OrganisationTypes = _apiClient.GetOrganisationTypes(model.ProviderTypeId).Result.Where(x=>x.Id!=0).OrderBy(x => x.Id);
+           
+            if (!ModelState.IsValid)
+            {
+                return View("~/Views/Roatp/UpdateOrganisationType.cshtml", model);
+            }
+
+            model.UpdatedBy = HttpContext.User.OperatorName();
+            var request = Mapper.Map<UpdateOrganisationTypeRequest>(model);
+
+            var result = await _apiClient.UpdateOrganisationType(request);
+
+            if (result)
+            {
+                return await RefreshSearchResults();
+            }
+
+            return View("~/Views/Roatp/UpdateOrganisationType.cshtml", model);
         }
 
         [Route("change-trading-name")]
