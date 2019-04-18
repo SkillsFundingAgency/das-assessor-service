@@ -84,13 +84,5 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 return await RequestAndDeserialiseAsync<List<Option>>(httpRequest, "Could not get Options");
             }
         }
-
-        public async Task<CertificatesCountResponse> GetCertificatesCount(string userName)
-        {
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/certificates/count/?userName={WebUtility.UrlEncode(userName)}"))
-            {
-                return await RequestAndDeserialiseAsync<CertificatesCountResponse>(httpRequest, "Could not get Certificates Count");
-            }
-        }
     }
 }

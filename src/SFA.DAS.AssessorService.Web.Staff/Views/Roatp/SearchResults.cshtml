@@ -55,6 +55,7 @@
                     </div>
                 }
                 
+                  
                 @if (!Model.SearchResults.Any())
                 {
                     <div class="govuk-grid-row">
@@ -80,7 +81,7 @@
 
                         <dd class="govuk-summary-list__actions">
 
-                            <a class="govuk-link" href="#">
+                            <a class="govuk-link" asp-controller="UpdateRoatpOrganisation" asp-action="UpdateOrganisationLegalName">
                                 Change<span class="govuk-visually-hidden"> legal name</span>
                             </a>
 
@@ -98,7 +99,7 @@
 
                         <dd class="govuk-summary-list__actions">
 
-                            <a class="govuk-link" href="#">
+                            <a class="govuk-link" asp-controller="UpdateRoatpOrganisation" asp-action="UpdateOrganisationUkprn">
                                 Change<span class="govuk-visually-hidden"> UKPRN</span>
                             </a>
 
@@ -111,12 +112,12 @@
                             Status
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @Html.OrgansationStatus(Model.SelectedResult)
+                            @Html.OrganisationStatus(Model.SelectedResult)
                         </dd>
 
                         <dd class="govuk-summary-list__actions">
 
-                            <a class="govuk-link" href="#">
+                            <a class="govuk-link" asp-controller="UpdateRoatpOrganisation" asp-action="UpdateOrganisationStatus">
                                 Change<span class="govuk-visually-hidden"> status</span>
                             </a>
 
@@ -134,7 +135,7 @@
 
                         <dd class="govuk-summary-list__actions">
 
-                            <a class="govuk-link" href="#">
+                            <a class="govuk-link" asp-controller="UpdateRoatpOrganisation" asp-action="UpdateOrganisationProviderType">
                                 Change<span class="govuk-visually-hidden"> type of provider</span>
                             </a>
 
@@ -231,7 +232,7 @@
 
                         <dd class="govuk-summary-list__actions">
               
-                            <a class="govuk-link" href="#">
+                            <a class="govuk-link" asp-controller="UpdateRoatpOrganisation" asp-action="UpdateOrganisationTradingName">
                                 Change<span class="govuk-visually-hidden"> trading name</span>
                             </a>
 
@@ -248,8 +249,7 @@
                         </dd>
 
                         <dd class="govuk-summary-list__actions">
-
-                            <a class="govuk-link" href="#">
+                            <a class="govuk-link" asp-controller="UpdateRoatpOrganisation" asp-action="UpdateOrganisationParentCompanyGuarantee">
                                 Change<span class="govuk-visually-hidden"> parent company guarantee</span>
                             </a>
 
@@ -267,7 +267,7 @@
 
                         <dd class="govuk-summary-list__actions">
 
-                            <a class="govuk-link" href="#">
+                            <a class="govuk-link" asp-controller="UpdateRoatpOrganisation" asp-action="UpdateOrganisationFinancialTrackRecord">
                                 Change<span class="govuk-visually-hidden"> financial track record</span>
                             </a>
 

@@ -52,7 +52,17 @@
         {
             return await Get<IEnumerable<ProviderType>>($"{_baseUrl}/api/v1/lookupData/providerTypes");
         }
-        
+
+        public async Task<IEnumerable<OrganisationStatus>> GetOrganisationStatuses(int? providerTypeId)
+        {
+            return await Get<IEnumerable<OrganisationStatus>>($"{_baseUrl}/api/v1/lookupData/organisationStatuses?providerTypeId={providerTypeId}");
+        }
+
+        public async Task<IEnumerable<RemovedReason>> GetRemovedReasons()
+        {
+            return await Get<IEnumerable<RemovedReason>>($"{_baseUrl}/api/v1/lookupData/removedReasons");
+        }
+
         public async Task<bool> CreateOrganisation(CreateOrganisationRequest organisationRequest)
         {
            HttpStatusCode result = await Post<CreateOrganisationRequest>($"{_baseUrl}/api/v1/organisation/create", organisationRequest);
@@ -80,6 +90,55 @@
             return await Get<OrganisationSearchResults>($"{_baseUrl}/api/v1/search?searchTerm={searchTerm}");
         }
 
+        public async Task<bool> UpdateOrganisationLegalName(UpdateOrganisationLegalNameRequest request)
+        {
+            HttpStatusCode result = await Put<UpdateOrganisationLegalNameRequest>($"{_baseUrl}/api/v1/updateOrganisation/legalName", request);
+
+            return await Task.FromResult(result == HttpStatusCode.OK);
+        }
+        
+        public async Task<bool> UpdateOrganisationStatus(UpdateOrganisationStatusRequest request)
+        {
+            HttpStatusCode result = await Put<UpdateOrganisationStatusRequest>($"{_baseUrl}/api/v1/updateOrganisation/status", request);
+
+            return await Task.FromResult(result == HttpStatusCode.OK);
+        }
+
+        public async Task<bool> UpdateOrganisationTradingName(UpdateOrganisationTradingNameRequest request)
+        {
+            HttpStatusCode result = await Put<UpdateOrganisationTradingNameRequest>($"{_baseUrl}/api/v1/updateOrganisation/tradingName", request);
+
+            return await Task.FromResult(result == HttpStatusCode.OK);
+        }
+        
+        public async Task<bool> UpdateOrganisationParentCompanyGuarantee(UpdateOrganisationParentCompanyGuaranteeRequest request)
+        {
+            HttpStatusCode result = await Put<UpdateOrganisationParentCompanyGuaranteeRequest>($"{_baseUrl}/api/v1/updateOrganisation/parentCompanyGuarantee", request);
+
+            return await Task.FromResult(result == HttpStatusCode.OK);
+        }
+       
+        public async Task<bool> UpdateOrganisationFinancialTrackRecord(UpdateOrganisationFinancialTrackRecordRequest request)
+        {
+            HttpStatusCode result = await Put<UpdateOrganisationFinancialTrackRecordRequest>($"{_baseUrl}/api/v1/updateOrganisation/financialTrackRecord", request);
+
+            return await Task.FromResult(result == HttpStatusCode.OK);
+        }
+
+        public async Task<bool> UpdateOrganisationProviderType(UpdateOrganisationProviderTypeRequest request)
+        {
+            HttpStatusCode result = await Put<UpdateOrganisationProviderTypeRequest>($"{_baseUrl}/api/v1/updateOrganisation/providerType", request);
+
+            return await Task.FromResult(result == HttpStatusCode.OK);
+        }
+
+        public async Task<bool> UpdateOrganisationUkprn(UpdateOrganisationUkprnRequest request)
+        {
+            HttpStatusCode result = await Put<UpdateOrganisationUkprnRequest>($"{_baseUrl}/api/v1/updateOrganisation/ukprn", request);
+
+            return await Task.FromResult(result == HttpStatusCode.OK);
+        }
+
         private async Task<T> Get<T>(string uri)
         {
             _client.DefaultRequestHeaders.Authorization =
@@ -101,7 +160,19 @@
                 new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json"));
 
              return response.StatusCode;
-         }
+        }
+
+        private async Task<HttpStatusCode> Put<T>(string uri, T model)
+        {
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            var serializeObject = JsonConvert.SerializeObject(model);
+
+            var response = await _client.PutAsync(new Uri(uri, UriKind.Absolute),
+                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json"));
+
+            return response.StatusCode;
+        }
 
         private async Task<U> Post<T, U>(string uri, T model)
         {
@@ -114,5 +185,6 @@
 
             return await response.Content.ReadAsAsync<U>();
         }
+
     }
 }
