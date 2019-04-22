@@ -31,12 +31,18 @@ namespace SFA.DAS.AssessorService.Api.Types.Commands
         public DateTime? FinancialDueDate { get; set; }
         public bool? IsFinancialExempt { get; set; }
 
+        public string FamilyName { get; set; }
+        public string GivenNames { get; set; }
+        public Guid? SigninId { get; set; }
+        public string SigninType { get; set; }
+        public string UserEmail { get; set; }
+
         public CreateOrganisationContactCommand(string organisationName, string organisationType,
             string organisationUkprn, string organisationReferenceType, bool? isEpaoApproved, string tradingName,
             bool useTradingName, string contactName, string contactAddress1, string contactAddress2,
             string contactAddress3, string contactAddress4, string contactPostcode, string contactEmail,
             string contactPhoneNumber, string companyUkprn, string companyNumber, string charityNumber,
-            string standardWebsite, string createdBy, DateTime? financialDueDate, bool? isFinancialExempt)
+            string standardWebsite, string createdBy, string familyName, string givenNames, Guid? signinId, string signinType, string userEmail, DateTime? financialDueDate, bool? isFinancialExempt)
         {
             OrganisationName = organisationName;
             OrganisationType = organisationType;
@@ -60,6 +66,11 @@ namespace SFA.DAS.AssessorService.Api.Types.Commands
             CreatedBy = createdBy;
             FinancialDueDate = financialDueDate;
             IsFinancialExempt = isFinancialExempt;
+            FamilyName = familyName;
+            GivenNames = givenNames;
+            SigninId = signinId;
+            SigninType = signinType;
+            UserEmail = userEmail;
         }
 
         public CreateOrganisationContactCommand()

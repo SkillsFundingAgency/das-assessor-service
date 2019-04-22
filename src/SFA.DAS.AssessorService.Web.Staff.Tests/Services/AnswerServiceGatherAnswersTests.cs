@@ -43,6 +43,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
         [Test,TestCaseSource(nameof(CommandTestCases))]
         public void WhenGatheringAnswersForAnApplication(CommandTest commandTestSetup)
         {
+            var signinId = Guid.NewGuid();
+            var createdBy = Guid.NewGuid().ToString();
+
             var expectedCommand = new CreateOrganisationContactCommand
             {
                 UseTradingName = commandTestSetup.UseTradingName,
@@ -64,6 +67,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
                 CompanyNumber = commandTestSetup.CompanyNumber,
                 CharityNumber = commandTestSetup.CharityNumber,
                 StandardWebsite = commandTestSetup.StandardWebsite,
+                FamilyName = "",
+                GivenNames = "",
+                UserEmail ="",
+                SigninType = "",
+                SigninId = signinId,
+                CreatedBy = createdBy,
                 FinancialDueDate = commandTestSetup.FinancialDueDate,
                 IsFinancialExempt = commandTestSetup.IsFinancialExempt,
             };
@@ -81,6 +90,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
                 OrganisationUkprn = organisationUkprn,
                 OrganisationDetails = new OrganisationDetails
                 {
+                    CreatedBy = createdBy
+
                     OrganisationReferenceType = commandTestSetup.OrganisationReferenceType,
                     FHADetails = new ApplyTypes.FHADetails
                     {
@@ -92,7 +103,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
 
             _mockApplyApiClient.Setup(x => x.GetAnswer(_applicationId, It.IsAny<string>()))
                 .Returns(Task.FromResult(new GetAnswersResponse { Answer = null }));
-     
+
+            _mockApplyApiClient.Setup(x => x.GetContact(It.IsAny<Guid>())).Returns(Task.FromResult(new Contact
+                {FamilyName = "", GivenNames = "", SigninType = "", SigninId = signinId, Email = ""}));
+
+
             foreach (var answerPair in commandTestSetup.AnswerPairs)
             {
                 _mockApplyApiClient.Setup(x => x.GetAnswer(_applicationId, answerPair.QuestionTag))

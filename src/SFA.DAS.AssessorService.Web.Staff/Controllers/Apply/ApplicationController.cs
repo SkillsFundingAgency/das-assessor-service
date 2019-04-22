@@ -272,6 +272,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
                 else
                 {
                     var response = await AddOrganisationAndContactIntoRegister(applicationId);
+
                     if (response.WarningMessages != null) warningMessages.AddRange(response.WarningMessages);
 
                     // only try to inject standard if no errors and initial application
@@ -279,6 +280,10 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Apply
                     {
                         var response2 = await AddOrganisationStandardIntoRegister(applicationId);
                         if (response2.WarningMessages != null) warningMessages.AddRange(response2.WarningMessages);
+                    }
+                    if (!warningMessages.Any() && !response.IsEpaoApproved)
+                    {
+                        await _applyApiClient.UpdateRoEpaoApprovedFlag(applicationId, response.ContactId, response.OrganisationId, true);
                     }
                 }
             }

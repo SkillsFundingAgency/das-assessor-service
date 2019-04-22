@@ -19,6 +19,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         Task<ApplicationSequence> GetSequence(Guid applicationId, int sequenceId);
         Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId, int sectionId);
         Task<Organisation> GetOrganisationForApplication(Guid applicationId);
+        Task<Contact> GetContact(Guid contactId);
+        Task UpdateRoEpaoApprovedFlag(Guid applicationId, Guid contactId, string endPointAssessorOrganisationId,
+            bool roEpaoApprovedFlag);
     }
     
     public class FileInfoResponse

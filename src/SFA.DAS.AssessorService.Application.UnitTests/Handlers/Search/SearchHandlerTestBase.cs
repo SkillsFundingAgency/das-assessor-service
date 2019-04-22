@@ -43,10 +43,10 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
 
 
             var orgQueryRepo = new Mock<IOrganisationQueryRepository>();
-            orgQueryRepo.Setup(r => r.GetByUkPrn(12345))
+            orgQueryRepo.Setup(r => r.Get("12345"))
                 .ReturnsAsync(new Organisation() {EndPointAssessorOrganisationId = "EPA001"});
             
-            orgQueryRepo.Setup(r => r.GetByUkPrn(99999))
+            orgQueryRepo.Setup(r => r.Get("99999"))
                 .ReturnsAsync(new Organisation() {EndPointAssessorOrganisationId = "EPA0050"});
 
             IlrRepository = new Mock<IIlrRepository>();

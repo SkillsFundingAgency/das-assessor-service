@@ -3,6 +3,8 @@ using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Api.Types.Commands;
+using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Services
 {
@@ -47,6 +49,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             var standardWebsite = await GetAnswer(applicationId, "standard-website");
 
             var organisation = await _applyApiClient.GetOrganisationForApplication(applicationId);
+            var applyContact = await _applyApiClient.GetContact(Guid.Parse(organisation.CreatedBy));
             var application = await _applyApiClient.GetApplication(applicationId);
 
             var createdBy = application?.CreatedBy ?? organisation?.CreatedBy;
