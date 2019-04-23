@@ -75,7 +75,9 @@ namespace SFA.DAS.AssessorService.Data.IntegrationTests
                 Email = "tester@test.com",
                 PhoneNumber = "555 55555",
                 Status = OrganisationStatus.New,
-                SigninType = ""
+                SigninType = "",
+                GivenNames = "zzz",
+                FamilyName = "Ftagn"
                
             };
         }
