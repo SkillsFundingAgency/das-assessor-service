@@ -5,7 +5,7 @@
 	[EventTime] [datetime2](7) NOT NULL,
 	[Status] [nvarchar](20) NOT NULL,
  [CertificateData] NVARCHAR(MAX) NOT NULL, 
-    [Username] NVARCHAR(50) NOT NULL,
+    [Username] NVARCHAR(256) NOT NULL,
 	[BatchNumber] [int] NULL,
     [ReasonForChange] NVARCHAR(MAX) NULL, 
 	[WasRejected] BIT NULL, 

@@ -15,28 +15,29 @@ using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Extensions;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
+using SFA.DAS.AssessorService.ExternalApis.Services;
 
 namespace SFA.DAS.AssessorService.Application.Handlers.Staff
 {
     public class StaffSearchHandler : IRequestHandler<StaffSearchRequest, StaffSearchResult>
     {
-        private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
         private readonly IIlrRepository _ilrRepository;
         private readonly IStaffCertificateRepository _staffCertificateRepository;
         private readonly ILogger<SearchHandler> _logger;
         private readonly IStaffIlrRepository _staffIlrRepository;
+        private readonly IStandardService _standardService;
 
-        public StaffSearchHandler(IAssessmentOrgsApiClient assessmentOrgsApiClient,
-            IIlrRepository ilrRepository,
+        public StaffSearchHandler(IIlrRepository ilrRepository,
             IStaffCertificateRepository staffCertificateRepository,
             ILogger<SearchHandler> logger,
-            IStaffIlrRepository staffIlrRepository)
+            IStaffIlrRepository staffIlrRepository, 
+            IStandardService staffService)
         {
-            _assessmentOrgsApiClient = assessmentOrgsApiClient;
             _ilrRepository = ilrRepository;
             _staffCertificateRepository = staffCertificateRepository;
             _logger = logger;
             _staffIlrRepository = staffIlrRepository;
+            _standardService = staffService;
         }
 
         public async Task<StaffSearchResult> Handle(StaffSearchRequest request, CancellationToken cancellationToken)
@@ -69,7 +70,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             var searchResults = Mapper.Map<List<StaffSearchItems>>(searchResult.PageOfResults);
 
             searchResults = MatchUpExistingCompletedStandards(searchResults);
-            searchResults = PopulateStandards(searchResults, _assessmentOrgsApiClient, _logger);
+            searchResults = await PopulateStandards(searchResults, _standardService, _logger);
 
             return new StaffSearchResult
             {
@@ -133,6 +134,7 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
                 searchResult.GivenNames = certificate.GivenNames;
                 searchResult.FamilyName = certificate.FamilyName;
                 searchResult.EndpointAssessorOrganisationId = certificate.EndPointAssessorOrganisationId;
+                searchResult.Standard = certificate.StandardName;
 
                 if (searchResult.LastUpdatedAt == null)
                 {
@@ -142,19 +144,18 @@ namespace SFA.DAS.AssessorService.Application.Handlers.Staff
             return searchResults;
         }
 
-        private List<StaffSearchItems> PopulateStandards(List<StaffSearchItems> searchResults, IAssessmentOrgsApiClient assessmentOrgsApiClient, ILogger<SearchHandler> logger)
+        private async Task<List<StaffSearchItems>> PopulateStandards(List<StaffSearchItems> searchResults, IStandardService standardService, ILogger<SearchHandler> logger)
         {
-            var allStandards = assessmentOrgsApiClient.GetAllStandards().Result;
+            var allStandards = await standardService.GetAllStandards();
 
-            foreach (var searchResult in searchResults)
+            foreach (var searchResult in searchResults.Where(sr => string.IsNullOrEmpty(sr.Standard)))
             {
-                var standard = allStandards.SingleOrDefault(s => s.StandardId == searchResult.StandardCode.ToString());
-                if (standard == null)
+                var standard = allStandards.SingleOrDefault(s => s.StandardId == searchResult.StandardCode.ToString()) ?? await standardService.GetStandard(searchResult.StandardCode);
+
+                if (standard != null)
                 {
-                    standard = assessmentOrgsApiClient.GetStandard(searchResult.StandardCode).Result;
+                    searchResult.Standard = standard.Title;
                 }
-                searchResult.Standard = standard.Title;
-                searchResult.Standard = standard.Title;
             }
 
             return searchResults;

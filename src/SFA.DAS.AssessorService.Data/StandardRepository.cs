@@ -13,6 +13,7 @@ using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.ExternalApis.IFAStandards.Types;
 using SFA.DAS.AssessorService.Settings;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 
 namespace SFA.DAS.AssessorService.Data
 {
@@ -45,6 +46,36 @@ namespace SFA.DAS.AssessorService.Data
                 } 
         }
 
+        public async Task<StandardCollation> GetStandardCollationByStandardId(int standardId)
+        {
+            var connectionString = _configuration.SqlConnectionString;
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                var standards = await connection.QueryAsync<StandardCollation>("select * from [StandardCollation] where standardId = @standardId",new {standardId});
+
+                return standards.FirstOrDefault();
+
+
+            }
+        }
+
+        public async Task<StandardCollation> GetStandardCollationByReferenceNumber(string referenceNumber)
+        {
+            var connectionString = _configuration.SqlConnectionString;
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                var standards = await connection.QueryAsync<StandardCollation>("select * from [StandardCollation] where ReferenceNumber = @referenceNumber", new { referenceNumber });
+                return standards.FirstOrDefault();
+            }
+        }
 
         public async Task<DateTime?> GetDateOfLastStandardCollation()
         {
@@ -99,7 +130,6 @@ namespace SFA.DAS.AssessorService.Data
 
         public async Task<int> GetEpaoStandardsCount(string endPointAssessorOrganisationId)
         {
-
             var epaoId = new SqlParameter("@EPAOId", endPointAssessorOrganisationId);
             var count = new SqlParameter("@Count", SqlDbType.Int)
             {
@@ -108,23 +138,6 @@ namespace SFA.DAS.AssessorService.Data
 
             await _assessorDbContext.Database.ExecuteSqlCommandAsync("EXEC EPAO_Standards_Count @EPAOId, @Count out", epaoId, count);
             return (int)count.Value;
-        }
-
-        public async Task<int> GetEpaoPipelineCount(string endPointAssessorOrganisationId)
-        {
-            var result = await _connection.QueryAsync<EpaoPipelineStandard>("GetEPAO_Pipelines", new
-            {
-                EPAOId = endPointAssessorOrganisationId
-            },
-                commandType: CommandType.StoredProcedure);
-
-            var epaoPipelines = result?.ToList();
-            if (epaoPipelines != null && epaoPipelines.Any())
-            {
-                return epaoPipelines.Select(x => x.TotalRows).First();
-            }
-
-            return 0;
         }
 
         public async Task<EpoRegisteredStandardsResult> GetEpaoRegisteredStandards(string endPointAssessorOrganisationId, int pageSize, int? pageIndex)
@@ -196,6 +209,18 @@ namespace SFA.DAS.AssessorService.Data
 
             return epaoPipelineStandardsResult;
         }
+
+        public async Task<List<EpaoPipelineStandardExtract>> GetEpaoPipelineStandardsExtract(string endPointAssessorOrganisationId)
+        {
+            var result = await _connection.QueryAsync<EpaoPipelineStandardExtract>("GetEPAO_Pipelines_Extract", new
+            {
+                EPAOId = endPointAssessorOrganisationId
+            },
+            commandType: CommandType.StoredProcedure);
+
+            return result.ToList();
+        }
+
         private static void UpdateCurrentStandard(SqlConnection connection, StandardCollation standard, string standardData)
         {
             connection.Execute(
@@ -237,5 +262,7 @@ namespace SFA.DAS.AssessorService.Data
             }
             return countRemoved;
         }
+
+      
     }
 }

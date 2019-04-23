@@ -1,0 +1,104 @@
+@model SFA.DAS.AssessorService.Web.Staff.ViewModels.Roatp.UpdateOrganisationStatusViewModel
+
+@using SFA.DAS.AssessorService.Web.Staff
+@using SFA.DAS.AssessorService.Web.Staff.Domain
+@{ ViewBag.Title = "Enter details"; }
+
+@{
+    await Html.RenderPartialAsync("~/Views/Roatp/_StylesPartial.cshtml");
+}
+<div class="grid-row">
+    <form asp-controller="RoatpSearch" asp-action="SearchResults" method="post" name="backForm">
+        <div class="govuk-grid-column-one-half">
+            <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
+        </div>
+    </form>
+</div>
+
+<div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+        There is a problem
+    </h2>
+    <ul class="js-error-summary-list error-summary-list"></ul>
+</div>
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+        <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+            There is a problem
+        </h2>
+        <ul class="error-summary-list">
+            <li><a sfa-validation-for="OrganisationStatusId"></a></li>
+        </ul>
+    </div>
+}
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <h1 class="heading-xlarge roatp-heading">Change status for @Html.Raw(Model.LegalName)</h1>
+    </div>
+</div>
+<div class="govuk-width-container">
+
+    <main class="govuk-main-wrapper " id="main-content" role="main">
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <form method="post" asp-action="UpdateStatus" asp-controller="UpdateRoatpOrganisation">
+                    @Html.HiddenFor(x => x.OrganisationId)
+                    @Html.HiddenFor(x => x.ProviderTypeId)
+                    <div class="roatp-radios roatp-radios--conditional" data-module="radios">
+                        @foreach (var organisationStatus in Model.OrganisationStatuses)
+                        {
+                            <div class="roatp-radios__item">
+                                @if (organisationStatus.Id == Model.OrganisationStatusId)
+                                {
+                                    <input checked="checked" class="roatp-radios__input" id="status-@Html.Raw(organisationStatus.Id)" name="OrganisationStatusId" type="radio" value="@Html.Raw(organisationStatus.Id)"
+                                           data-aria-controls="conditional-organisation-status-conditional-@Html.Raw(organisationStatus.Id)" asp-for="OrganisationStatusId">
+                                }
+                                else
+                                {
+                                    <input class="roatp-radios__input" id="status-@Html.Raw(organisationStatus.Id)" name="OrganisationStatusId" type="radio" value="@Html.Raw(organisationStatus.Id)"
+                                           data-aria-controls="conditional-organisation-status-conditional-@Html.Raw(organisationStatus.Id)" asp-for="OrganisationStatusId">
+                                }
+                                <label class="roatp-label roatp-radios__label" for="status-@Html.Raw(organisationStatus.Id)">
+                                    @Html.Raw(organisationStatus.Status)
+                                </label>
+                            </div>
+                        }
+                        
+                        <div class="roatp-radios__conditional govuk-!-width-two-thirds" id="conditional-organisation-status-conditional-0">
+                            <div class="govuk-form-group">
+                                <label class="roatp-label" for="reason">
+                                    Select a reason
+                                </label>
+                                <select class="roatp-select" id="RemovedReasonId" name="RemovedReasonId" asp-for="RemovedReasonId">
+                                    @foreach (var reason in Model.RemovedReasons)
+                                    {
+                                        @if (reason.Id == Model.RemovedReasonId)
+                                         {
+                                             <option value="@Html.Raw(reason.Id)" selected="selected">@Html.Raw(reason.Reason)</option>
+                                         }
+                                         else
+                                         {
+                                             <option value="@Html.Raw(reason.Id)">@Html.Raw(reason.Reason)</option>
+                                         }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="govuk-grid-row">
+                        @Html.HiddenFor(x => x.LegalName)
+                        <input type="submit" class="roatp-button" value="Change" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
+
+@section Scripts {
+    <partial name="~/Views/Roatp/_ScriptsPartial.cshtml" />
+}

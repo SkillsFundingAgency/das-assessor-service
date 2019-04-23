@@ -8,7 +8,9 @@ using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using Microsoft.AspNetCore.Http;
 using SFA.DAS.AssessorService.ApplyTypes;
-using SFA.DAS.AssessorService.Web.Staff.Controllers.Apply;
+using SFA.DAS.AssessorService.Web.Staff.Services;
+using Feedback = SFA.DAS.AssessorService.ApplyTypes.Feedback;
+using Page = SFA.DAS.AssessorService.ApplyTypes.Page;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
 {
@@ -25,6 +27,13 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             _tokenService = tokenService;
         }
 
+        public ApplyApiClient(string baseUri, ILogger<ApplyApiClient> logger, ITokenService tokenService)
+        {
+            _client = new HttpClient { BaseAddress = new Uri(baseUri) };
+            _logger = logger;
+            _tokenService = tokenService;
+        }
+
         private async Task<T> Get<T>(string uri)
         {
             _client.DefaultRequestHeaders.Authorization =
@@ -35,7 +44,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
                 return await response.Content.ReadAsAsync<T>();
             }
         }
-        
+
         private async Task<U> Post<T, U>(string uri, T model)
         {
             _client.DefaultRequestHeaders.Authorization =
@@ -205,6 +214,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
             return downloadResponse;
         }
 
+
         public async Task UpdateFinancialGrade(Guid applicationId, FinancialApplicationGrade vmGrade)
         {
             await Post($"/Financial/{applicationId}/UpdateGrade", vmGrade);
@@ -223,6 +233,21 @@ namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
         public async Task StartApplicationReview(Guid applicationId, int sequenceId)
         {
             await Post($"/Review/Applications/{applicationId}/Sequences/{sequenceId}/StartReview", new { sequenceId });
+        }
+
+        public async Task<GetAnswersResponse> GetAnswer(Guid applicationId, string questionTag)
+        {
+            return await Get<GetAnswersResponse>($"/Answer/{questionTag}/{applicationId}");
+        }
+
+        public async Task<Contact> GetContact(Guid contactId)
+        {
+            return await Get<Contact>($"/Account/Contact/{contactId}");
+        }
+
+        public async Task UpdateRoEpaoApprovedFlag(Guid applicationId,Guid contactId, string endPointAssessorOrganisationId, bool roEpaoApprovedFlag)
+        {
+            await Post($"/organisations/{applicationId}/{contactId}/{endPointAssessorOrganisationId}/RoEpaoApproved/{roEpaoApprovedFlag}", new { roEpaoApprovedFlag });
         }
     }
 }

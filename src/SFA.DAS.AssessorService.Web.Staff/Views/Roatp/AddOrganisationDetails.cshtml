@@ -17,9 +17,28 @@
     </form>
     </div>
 
-    @{
-        await Html.RenderPartialAsync("~/Views/Roatp/_AddOrganisationValidationErrorsPartial.cshtml");
+    <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+        <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+            There is a problem
+        </h2>
+        <ul class="js-error-summary-list error-summary-list"></ul>
+    </div>
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+            <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                There is a problem
+            </h2>
+            <ul class="error-summary-list">
+                <li><a sfa-validation-for="LegalName"></a></li>
+                <li><a sfa-validation-for="UKPRN"></a></li>
+                <li><a sfa-validation-for="CompanyNumber"></a></li>
+                <li><a sfa-validation-for="CharityNumber"></a></li>
+                <li><a sfa-validation-for="TradingName"></a></li>
+            </ul>
+        </div>
     }
+
     <div class="grid-row">
         <div class="column-two-thirds">
             <h1 class="heading-xlarge roatp-heading">Enter details</h1>
@@ -34,13 +53,17 @@
                     <form method="post" asp-action="AddOrganisationPreview" asp-controller="AddRoatpOrganisation">
 
                         <input type="hidden" asp-for="ProviderTypeId" />
-                        <div class="govuk-form-group">
+                        <div class="govuk-form-group" sfa-validation-for="LegalName" sfa-validationerror-class="form-group-error">
                             <label for="LegalName" class="roatp-label">Legal name</label>
-                            <input id="LegalName" name="LegalName" type="text" class="roatp-input" asp-for="LegalName" />
+                            <span class="error-message" asp-validation-for="LegalName"></span>
+                            <input id="LegalName" name="LegalName" type="text" class="roatp-input" asp-for="LegalName" 
+                                   sfa-validation-for="LegalName" sfa-validationerror-class="form-control-error" />
                         </div>
-                        <div class="govuk-form-group">
+                        <div class="govuk-form-group" sfa-validation-for="UKPRN" sfa-validationerror-class="form-group-error">
                             <label for="UKPRN" class="roatp-label">UKPRN</label>
-                            <input id="UKPRN" name="UKPRN" type="text" class="roatp-input govuk-!-width-one-third" asp-for="UKPRN" />
+                            <span class="error-message" asp-validation-for="UKPRN"></span>
+                            <input id="UKPRN" name="UKPRN" type="text" class="roatp-input govuk-!-width-one-third" asp-for="UKPRN"
+                                   sfa-validation-for="UKPRN" sfa-validationerror-class="form-control-error" />
                         </div>
 
                         <div class="govuk-form-group">
@@ -55,18 +78,24 @@
                             </select>
                         </div>
 
-                        <div class="govuk-form-group">
+                        <div class="govuk-form-group" sfa-validation-for="CompanyNumber" sfa-validationerror-class="form-group-error">
                             <label for="CompanyNumber" class="roatp-label">Company number, if applicable</label>
-                            <input id="CompanyNumber" name="CompanyNumber" type="text" class="roatp-input govuk-!-width-one-third" asp-for="CompanyNumber" />
+                            <span class="error-message" asp-validation-for="CompanyNumber"></span>
+                            <input id="CompanyNumber" name="CompanyNumber" type="text" class="roatp-input govuk-!-width-one-third" asp-for="CompanyNumber"
+                                   sfa-validation-for="CompanyNumber" sfa-validationerror-class="form-control-error" />
                         </div>
-                        <div class="govuk-form-group">
+                        <div class="govuk-form-group" sfa-validation-for="CharityNumber" sfa-validationerror-class="form-group-error">
                             <label for="CharityNumber" class="roatp-label">Charity registration number, if applicable</label>
-                            <input id="CharityNumber" name="charityNumber" type="text" class="roatp-input govuk-!-width-one-third" asp-for="CharityNumber" />
+                            <span class="error-message" asp-validation-for="CharityNumber"></span>
+                            <input id="CharityNumber" name="charityNumber" type="text" class="roatp-input govuk-!-width-one-third" asp-for="CharityNumber"
+                                   sfa-validation-for="CharityNumber" sfa-validationerror-class="form-control-error" />
                         </div>
 
-                        <div class="govuk-form-group">
+                        <div class="govuk-form-group" sfa-validation-for="TradingName" sfa-validationerror-class="form-group-error">
                             <label for="TradingName" class="roatp-label">Trading name, if applicable</label>
-                            <input id="TradingName" name="TradingName" type="text" class="roatp-input" asp-for="TradingName" />
+                            <span class="error-message" asp-validation-for="TradingName"></span>
+                            <input id="TradingName" name="TradingName" type="text" class="roatp-input" asp-for="TradingName"
+                                   sfa-validation-for="TradingName" sfa-validationerror-class="form-control-error" />
                         </div>
                         <input type="submit" class="roatp-button" value="Add" />
                     </form>

@@ -1,0 +1,31 @@
+<script>
+
+var epaoAccountFormElement = $('.new-account-form ');
+var epaoGivenNameValidationRulesObject = {
+    rules: {
+        GivenName: {
+            required: true
+        },
+        FamilyName: {
+            required: true
+        },
+        Email: {
+            required: true
+        }
+    },
+    messages: {
+        GivenName: {
+            required: 'First name must not be empty'
+        },
+        FamilyName: {
+            required: 'Last name must not be empty'
+        },
+        Email: {
+            required: 'Email must not be empty'
+        }
+    }
+};
+
+    GOVUK.epaoValidate(epaoAccountFormElement, epaoGivenNameValidationRulesObject);
+
+</script>

@@ -8,7 +8,7 @@
     {
         [Route("search-apprenticeship-training-providers")]
         public IActionResult Index()
-        {
+        {           
             return View("~/Views/Roatp/Index.cshtml");
         }
     }

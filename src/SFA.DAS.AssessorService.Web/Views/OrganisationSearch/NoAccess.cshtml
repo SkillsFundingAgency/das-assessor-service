@@ -1,0 +1,23 @@
+﻿
+@model SFA.DAS.AssessorService.Web.ViewModels.Organisation.OrganisationSearchViewModel
+@{
+    ViewData["Title"] = "Access Denied";
+    string epaoId = TempData["EpaoId"] as string;
+}
+<a asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.SearchString" class="link-back">Back to search results</a>
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <form method="post" asp-action="Confirm" asp-controller="OrganisationSearch" class="js-disable-on-submit" novalidate>
+            <input asp-for="SearchString" type="hidden" />
+            <input asp-for="Name" type="hidden" />
+            <input asp-for="Ukprn" type="hidden" />
+            <input asp-for="OrganisationType" type="hidden" />
+            <input asp-for="Postcode" type="hidden" />
+
+            <h1 class="heading-xlarge">Access denied</h1>
+            <p>You do not have access to @epaoId's End-point assessment services.</p>
+            <p><button type="submit" class="button">Send request now</button></p>
+        </form>
+    </div>
+</div>
