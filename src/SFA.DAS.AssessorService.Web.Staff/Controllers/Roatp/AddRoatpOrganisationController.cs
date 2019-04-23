@@ -72,8 +72,15 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             }
             else
             {
-                addOrganisationModel.OrganisationId = model.OrganisationId;
-                addOrganisationModel.ProviderTypeId = model.ProviderTypeId;
+                if (model.OrganisationId != Guid.Empty)
+                {
+                    addOrganisationModel.OrganisationId = model.OrganisationId;
+                }
+
+                if (model.ProviderTypeId > 0)
+                {
+                    addOrganisationModel.ProviderTypeId = model.ProviderTypeId;
+                }
             }
 
             addOrganisationModel.OrganisationTypes = await _apiClient.GetOrganisationTypes(addOrganisationModel.ProviderTypeId);

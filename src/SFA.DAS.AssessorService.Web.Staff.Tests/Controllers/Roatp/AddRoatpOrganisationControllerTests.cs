@@ -183,7 +183,6 @@
             var redirectToActionResult = result as RedirectToActionResult;
 
             redirectToActionResult.Should().NotBeNull();
-            redirectToActionResult.RouteValues["UKPRN"].Should().Be(temporaryModel.UKPRN);
         }
 
         [Test]
