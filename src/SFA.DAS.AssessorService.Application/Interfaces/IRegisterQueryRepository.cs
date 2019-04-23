@@ -32,6 +32,7 @@ namespace SFA.DAS.AssessorService.Application.Interfaces
 
         Task<EpaContact> GetContactByContactId(Guid contactId);
         Task<EpaContact> GetContactByEmail(string email);
+        Task<EpaContact> GetContactBySignInId(string signinId);
         Task<IEnumerable<OrganisationStandardDeliveryArea>> GetDeliveryAreasByOrganisationStandardId(int organisationStandardId);
     }
 }

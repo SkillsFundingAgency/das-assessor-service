@@ -390,6 +390,23 @@ namespace SFA.DAS.AssessorService.Data
             }
         }
 
+        public async Task<EpaContact> GetContactBySignInId(string signinId)
+        {
+            var connectionString = _configuration.SqlConnectionString;
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                var sql =
+                    "select Id, EndPointAssessorOrganisationId, Username,GivenNames, DisplayName, FamilyName, SigninId, SigninType, Email, Status, PhoneNumber " +
+                    " from Contacts where SigninId = @signinId";
+                var contact = await connection.QuerySingleOrDefaultAsync<EpaContact>(sql, new { signinId });
+                return contact;
+            }
+        }
+
         public async Task<IEnumerable<OrganisationStandardDeliveryArea>> GetDeliveryAreasByOrganisationStandardId(
             int organisationStandardId)
         {

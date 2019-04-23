@@ -8,6 +8,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Interfaces.Validation;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Web.Staff.Resources;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Services
@@ -109,7 +110,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                 {
                     //Update existing contact entry
                     await _registerRepository.AssociateOrganisationWithContact(assessorContact.Id, newOrganisation,
-                        "Live", "MakePrimaryContact");
+                        ContactStatus.Live, "MakePrimaryContact");
                 }
                 //Contact does not already exist in assessor but the user details are the same as primary contact matched by email
                 else if (contact.Email.Equals(command.UserEmail, StringComparison.CurrentCultureIgnoreCase))
@@ -135,6 +136,16 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                     await _registerRepository.AssociateAllPrivilegesWithContact(contact);
                 }
                
+                //Now check if the user has a status of applying in assessor if so update its status and associate him with the organisation if he has not been associated with an
+                //org before
+                var userContact = await _registerQueryRepository.GetContactBySignInId(command.SigninId.ToString());
+                if (userContact != null && userContact.Status == ContactStatus.Applying &&
+                    userContact.EndPointAssessorOrganisationId == null)
+                {
+                    await _registerRepository.AssociateOrganisationWithContact(userContact.Id, newOrganisation,
+                        ContactStatus.Live,"");
+                }
+
                 response.OrganisationId = newOrganisationId;
             }
             else
