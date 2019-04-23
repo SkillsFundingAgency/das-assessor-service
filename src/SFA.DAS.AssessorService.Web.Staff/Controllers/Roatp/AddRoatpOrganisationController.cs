@@ -70,6 +70,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
                     ProviderTypeId = model.ProviderTypeId
                 };
             }
+            else
+            {
+                addOrganisationModel.OrganisationId = model.OrganisationId;
+                addOrganisationModel.ProviderTypeId = model.ProviderTypeId;
+            }
 
             addOrganisationModel.OrganisationTypes = await _apiClient.GetOrganisationTypes(model.ProviderTypeId);
             
@@ -140,7 +145,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
                 ParentCompanyGuarantee = false,
                 ProviderTypeId = model.ProviderTypeId,
                 StatusDate = DateTime.Now,
-                Ukprn = Convert.ToInt64(model.UKPRN),
+                Ukprn = model.UKPRN,
                 TradingName = model.TradingName,
                 Username = HttpContext.User.OperatorName()
             };
