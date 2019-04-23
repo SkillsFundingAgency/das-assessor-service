@@ -7,6 +7,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
+using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Web.Models;
 
 namespace SFA.DAS.AssessorService.Web.Controllers
@@ -14,14 +15,16 @@ namespace SFA.DAS.AssessorService.Web.Controllers
     public class HomeController : Controller
     {
         private readonly IDistributedCache _cache;
+        private readonly ISessionService _sessionService;
         private readonly IStandardsApiClient _standardsApiClient;
 
-        public HomeController(IDistributedCache cache, IStandardsApiClient standardsApiClient)
+        public HomeController(IDistributedCache cache, ISessionService sessionService, IStandardsApiClient standardsApiClient)
         {
             _cache = cache;
+            _sessionService = sessionService;
             _standardsApiClient = standardsApiClient;
         }
-
+        [HttpGet]
         [Route("/")]
         public IActionResult Index()
         {
@@ -75,5 +78,14 @@ namespace SFA.DAS.AssessorService.Web.Controllers
             return View();
         }
 
+        public IActionResult InvitePending()
+        {
+            return View((object)_sessionService.Get("OrganisationName"));
+        }
+
+        public IActionResult Rejected()
+        {
+            return View((object)_sessionService.Get("OrganisationName"));
+        }
     }
 }
