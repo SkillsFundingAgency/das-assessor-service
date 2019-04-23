@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Roatp
     {
         public int ProviderTypeId { get; set; }
         public int OrganisationTypeId { get; set; }
-        public long Ukprn { get; set; }
+        public string Ukprn { get; set; }
         public string LegalName { get; set; }
         public string TradingName { get; set; }
         public DateTime StatusDate { get; set; }
