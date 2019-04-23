@@ -43,20 +43,20 @@ namespace SFA.DAS.AssessorService.Web.Controllers
 
         [HttpGet]
         [Route("/[controller]/")]
+        [TypeFilter(typeof(MenuFilter), Arguments = new object[] { Pages.Standards })]
         public async Task<IActionResult> Index(int? pageIndex)
         {
-            _sessionService.Set("CurrentPage", Pages.Standards);
             var epaoRegisteredStandardsResponse =
                 new PaginatedList<GetEpaoRegisteredStandardsResponse>(new List<GetEpaoRegisteredStandardsResponse>(), 0,
                     1, 1);
             try
             {
-                var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
-                var organisation = await _organisationsApiClient.Get(ukprn);
+                var epaoid = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
+                var organisation = await _organisationsApiClient.GetEpaOrganisation(epaoid);
                 if (organisation != null)
                     epaoRegisteredStandardsResponse =
                         await _standardsApiClient.GetEpaoRegisteredStandards(
-                            organisation.EndPointAssessorOrganisationId, pageIndex ?? 1);
+                            organisation.OrganisationId, pageIndex ?? 1);
             }
             catch (EntityNotFoundException)
             {
@@ -117,20 +117,26 @@ namespace SFA.DAS.AssessorService.Web.Controllers
         public async Task<FileContentResult> ExportEpaPipelineAsCsv()
         {
             _logger.LogInformation("Starting to download Pipeline EPA CSV File");
-            var orderedListResultViewModel = await GetPipeline(null, TableColumnOrder.None, 0,null);
+
+            var epaoid = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
+
+            var organisation = await _organisationsApiClient.GetEpaOrganisation(epaoid);
+            var response = await _standardsApiClient.GetEpaoPipelineStandardsExtract(organisation?.OrganisationId);
+
             string[] columnHeaders = {
                 "Standard Name",
                 "Apprentices",
-                "Estimated Gateway"
+                "UKPRN",
+                "Estimated EPA date"
             };
 
-            var piplelineRecords = (from pipeline in orderedListResultViewModel?.Response.Items
+            var piplelineRecords = (from pipeline in response
                 select new object[]
                 {
                     $"{pipeline.StandardName}",
                     $"\"{pipeline.Pipeline}\"",
+                    $"\"{pipeline.ProviderUkPrn}\"",
                     $"\"{pipeline.EstimatedDate}\"",
-
                 }).ToList();
 
             var pipelineCsv = new StringBuilder();
@@ -152,13 +158,13 @@ namespace SFA.DAS.AssessorService.Web.Controllers
                 Response = new PaginatedList<EpaoPipelineStandardsResponse>(new List<EpaoPipelineStandardsResponse>(),
                     0, 1, 1)
             };
-            var ukprn = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/ukprn")?.Value;
+            var epaoid = _contextAccessor.HttpContext.User.FindFirst("http://schemas.portal.com/epaoid")?.Value;
 
-            var organisation = await _organisationsApiClient.Get(ukprn);
+            var organisation = await _organisationsApiClient.GetEpaOrganisation(epaoid);
             if (organisation != null)
             {
                 orderedListResultViewModel.Response =
-                    await _standardsApiClient.GetEpaoPipelineStandards(organisation.EndPointAssessorOrganisationId,
+                    await _standardsApiClient.GetEpaoPipelineStandards(organisation.OrganisationId,
                         orderBy, orderDirection, pageSize, pageIndex ?? 1);
             }
 

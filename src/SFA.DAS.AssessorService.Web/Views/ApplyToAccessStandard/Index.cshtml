@@ -1,0 +1,33 @@
+﻿
+@{
+    ViewData["Title"] = "Apply to assess a standard";
+    Layout = "_DashboardLayout";
+}
+<a asp-action="Index" asp-controller="Dashboard" class="link-back">Back</a>
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+
+        <h1 class="heading-xlarge">Apply to assess a standard</h1>
+        <p>Use this service to apply to:</p>
+
+        <ul class="list list-bullet">
+            <li>apply for a new standard to assess</li>
+        </ul>
+
+        <div class="grid-row">
+            <div class="column-full">
+                <div>
+                    @*<a href="@TempData["applyToAssessAStandard"]"  class="button button-start">Start now</a>*@
+                    <a  asp-action="GoToApplyToAccessStandard" asp-controller="ApplyToAccessStandard" class="button button-start">Start now</a>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="heading-medium">Before you start</h2>
+        <p>To get on the register of end point assessment organisations for a standard, you need to answer questions abount your organisations assessment capabilities and capacity.</p>
+        <p>
+            <a href="https://www.gov.uk/guidance/register-of-end-point-assessment-organisations#how-to-apply-to-the-register-of-end-point-assessment-organisations"  target="_blank">Read the pre-application guidance</a> on your organisation's capabilities and capacity to assess a standard.
+        </p>
+    </div>
+</div>

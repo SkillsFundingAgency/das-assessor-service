@@ -12,6 +12,7 @@ using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations;
 using SFA.DAS.AssessorService.Domain.Entities;
+using OrganisationData = SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations.OrganisationData;
 
 namespace SFA.DAS.AssessorService.Data
 {

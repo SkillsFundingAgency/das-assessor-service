@@ -33,7 +33,7 @@ namespace SFA.DAS.AssessorService.Application.Api.UnitTests.Controllers.Search
             _result = controller.Search(new SearchQuery
             {
                 Surname = "Smith",
-                UkPrn = 88888888,
+                EpaOrgId = "EPA0001",
                 Uln = 1111111111,
                 Username = "user"
             }).Result;
