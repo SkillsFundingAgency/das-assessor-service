@@ -94,7 +94,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         }
 
         [HttpGet("{endPointAssessorOrganisationId}/withprivileges", Name = "GetAllContactsWithTheirPrivileges")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ContactResponse>))]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(List<ContactsWithPrivilegesResponse>))]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
         public async Task<IActionResult> GetAllContactsWithTheirPrivileges(string endPointAssessorOrganisationId)
@@ -128,6 +128,37 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             }
          
             return Ok(Mapper.Map<ContactResponse>(contact));
+        }
+
+        [HttpGet("user/{id}/withprivileges", Name = "GetContactByIdWithTheirPrivileges")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ContactsWithPrivilegesResponse))]
+        [SwaggerResponse((int)HttpStatusCode.NotFound)]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> GetContactByIdWithTheirPrivileges(string id)
+        {
+            Contact contact = null;
+            _logger.LogInformation($" Get Request using user id = {id}");
+            try
+            {
+                var guidId = Guid.Parse(id);
+                contact = await _contactQueryRepository.GetContactById(guidId);
+
+                if (contact != null)
+                {
+                    contact.ContactsPrivileges = await _contactQueryRepository.GetPrivilegesFor(guidId);
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, $"Failed to retrieve contact with id : {id}");
+            }
+
+            if (contact == null)
+            {
+                throw new ResourceNotFoundException();
+            }
+
+            return Ok(new ContactsWithPrivilegesResponse { Contact = contact });
         }
 
         [HttpGet("signInId/{signInId}", Name = "GetContactBySignInId")]
