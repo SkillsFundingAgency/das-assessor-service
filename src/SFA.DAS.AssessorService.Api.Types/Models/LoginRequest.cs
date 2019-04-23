@@ -18,6 +18,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
     {
         public string EndPointAssessorName { get; set; }
         public string EndPointAssessorOrganisationId { get; set; }
+        public string OrganisationName { get; set; }
         public LoginResult Result { get; set; }
     }
 
