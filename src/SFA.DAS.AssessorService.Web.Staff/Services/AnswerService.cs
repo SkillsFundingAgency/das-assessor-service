@@ -49,7 +49,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
             var standardWebsite = await GetAnswer(applicationId, "standard-website");
 
             var organisation = await _applyApiClient.GetOrganisationForApplication(applicationId);
-            var applyContact = await _applyApiClient.GetContact(Guid.Parse(organisation.CreatedBy));
+            var applyContact = await _applyApiClient.GetContact(Guid.Parse(organisation.CreatedBy??Guid.Empty.ToString()));
             var application = await _applyApiClient.GetApplication(applicationId);
 
             var createdBy = application?.CreatedBy ?? organisation?.CreatedBy;
@@ -85,8 +85,14 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                 charityNumber,
                 standardWebsite,
                 createdBy,
+                applyContact.FamilyName,
+                applyContact.GivenNames,
+                applyContact.SigninId,
+                applyContact.SigninType,
+                applyContact.Email,
                 financialDueDate,
                 isFinancialExempt);
+
 
             return command;
         }

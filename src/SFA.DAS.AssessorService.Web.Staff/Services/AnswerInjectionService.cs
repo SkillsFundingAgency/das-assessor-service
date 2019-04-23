@@ -8,7 +8,6 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Interfaces;
 using SFA.DAS.AssessorService.Application.Interfaces.Validation;
-using SFA.DAS.AssessorService.Web.Staff.Infrastructure;
 using SFA.DAS.AssessorService.Web.Staff.Resources;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Services
@@ -84,44 +83,59 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                 throw new Exception("A valid organisation Id could not be generated");
             }
 
-            var organisation = MapCommandToOrganisation(command, newOrganisationId, organisationName, companyNumber,
-                charityNumber,
+            var organisation = MapCommandToOrganisation(command, newOrganisationId, organisationName, 
                 ukprnAsLong, organisationTypeId);
 
             // Contact checks ////////////////////////////////   
             RaiseWarningIfEmailIsMissingInvalidOrAlreadyUsed(command.ContactEmail, warningMessages);
             RaiseWarningIfContactNameIsMissingOrTooShort(command.ContactName, warningMessages);
 
-            if (warningMessages.Count == 0) //Taken out because of Deen
+            if (warningMessages.Count == 0) 
              {
           
                 newOrganisationId = await _registerRepository.CreateEpaOrganisation(organisation);
+              
                 var newOrganisation =
                     await _registerQueryRepository.GetEpaOrganisationByOrganisationId(newOrganisationId);
-                var contact = MapCommandToContact(command.CreatedBy, $"{command.GivenNames} {command.FamilyName}", command.UserEmail,
-                        newOrganisationId, command.ContactPhoneNumber, command.UserEmail, command.GivenNames,
-                        command.FamilyName, command.SigninId, command.SigninType);
-                var assessorContact = await _registerQueryRepository.GetContactByContactId(contact.Id);
 
+                var contact = MapCommandToContact(String.Empty, command.ContactName, command.ContactEmail,
+                    newOrganisationId, command.ContactPhoneNumber, command.ContactEmail, String.Empty, 
+                   string.Empty, null, string.Empty);
+
+                var assessorContact = await _registerQueryRepository.GetContactByEmail(contact.Email);
+                
+                //Does the contact already exist
                 if (assessorContact != null)
                 {
                     //Update existing contact entry
                     await _registerRepository.AssociateOrganisationWithContact(assessorContact.Id, newOrganisation,
                         "Live", "MakePrimaryContact");
                 }
+                //Contact does not already exist in assessor but the user details are the same as primary contact matched by email
+                else if (contact.Email.Equals(command.UserEmail, StringComparison.CurrentCultureIgnoreCase))
+                {
+                    if (!string.IsNullOrEmpty(command.CreatedBy))
+                    {
+                        contact = MapCommandToContact(command.CreatedBy, command.ContactName, command.ContactEmail,
+                            newOrganisationId, command.ContactPhoneNumber, command.ContactEmail, command.GivenNames,
+                            command.FamilyName, command.SigninId, command.SigninType);
+
+                        await _registerRepository.CreateEpaOrganisationContact(contact);
+                        await _registerRepository.AssociateDefaultRoleWithContact(contact);
+                        await _registerRepository.AssociateAllPrivilegesWithContact(contact);
+                    }
+                }
                 else
                 {
+                    //Create a new contact in assessor table, 
+                    //Assumption is that this user will need to have an account created in aslogon too and then when he logs in 
+                    //the signinid etc wll get populated as it does for existing users
                     await _registerRepository.CreateEpaOrganisationContact(contact);
                     await _registerRepository.AssociateDefaultRoleWithContact(contact);
                     await _registerRepository.AssociateAllPrivilegesWithContact(contact);
                 }
-                //Set the warning to zero since warnings are ignored for now on Deens instruction and until martin fixes are merged
-                // warningMessages.Clear();
-                 response.ContactId = contact.Id;
-                 response.OrganisationId = newOrganisationId;
-            //   }
-              
-                response.EpaOrganisationId = newOrganisationId;
+               
+                response.OrganisationId = newOrganisationId;
             }
             else
             {
@@ -385,7 +399,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Services
                 EndPointAssessorOrganisationId = organisationId,
                 Id = string.IsNullOrEmpty(id) ? Guid.NewGuid() : Guid.Parse(id),
                 PhoneNumber = contactPhoneNumber,
-                Username = newUsername
+                Username = username,
+                GivenNames = givenNames,
+                FamilyName = familyName,
+                SigninId = signinId,
+                SigninType = signinType
             };
         }
 

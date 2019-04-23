@@ -44,7 +44,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
         public void WhenGatheringAnswersForAnApplication(CommandTest commandTestSetup)
         {
             var signinId = Guid.NewGuid();
-            var createdBy = Guid.NewGuid().ToString();
 
             var expectedCommand = new CreateOrganisationContactCommand
             {
@@ -72,7 +71,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
                 UserEmail ="",
                 SigninType = "",
                 SigninId = signinId,
-                CreatedBy = createdBy,
+                CreatedBy = null,
                 FinancialDueDate = commandTestSetup.FinancialDueDate,
                 IsFinancialExempt = commandTestSetup.IsFinancialExempt,
             };
@@ -88,10 +87,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
                 RoEPAOApproved = commandTestSetup.IsEpaoApproved != null && commandTestSetup.IsEpaoApproved.Value,
                 OrganisationType = commandTestSetup.OrganisationType,
                 OrganisationUkprn = organisationUkprn,
+                CreatedBy = commandTestSetup.CreatedBy,
                 OrganisationDetails = new OrganisationDetails
                 {
-                    CreatedBy = createdBy
-
                     OrganisationReferenceType = commandTestSetup.OrganisationReferenceType,
                     FHADetails = new ApplyTypes.FHADetails
                     {
@@ -164,11 +162,12 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
 
             public DateTime? FinancialDueDate { get; set; }
             public bool? IsFinancialExempt { get; set; }
+            public string CreatedBy { get; set; }
 
             public List<GetAnswerPair> AnswerPairs { get; set; }
             public CommandTest(string organisationName, string tradingName, bool isEpaoApproved, bool useTradingName, string useTradingNameString, string organisationType, string organisationUkprn 
                , string organisationReferenceType, string contactName, string contactAddress, string contactAddress1, string contactAddress2, string contactAddress3, string contactAddress4, string contactPostcode
-               , string contactEmail, string contactPhoneNumber, string companyUkprn, string companyNumber, string charityNumber, string standardWebsite, DateTime? financialDueDate, bool? isFinancialExempt)
+               , string contactEmail, string contactPhoneNumber, string companyUkprn, string companyNumber, string charityNumber, string standardWebsite, DateTime? financialDueDate, bool? isFinancialExempt, string createdBy = null)
             {
                 OrganisationName = organisationName;
                 OrganisationType = organisationType;
@@ -193,7 +192,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
                 StandardWebsite = standardWebsite;
                 FinancialDueDate = financialDueDate;
                 IsFinancialExempt = isFinancialExempt;
-                
+                CreatedBy = createdBy;
 
                 AnswerPairs = new List<GetAnswerPair>
                 {

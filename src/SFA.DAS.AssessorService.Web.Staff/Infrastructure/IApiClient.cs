@@ -10,6 +10,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Staff;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.Web.Staff.ViewModels.Private;
+using OrganisationType = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationType;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Infrastructure
 {

@@ -5,7 +5,6 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
-using Microsoft.EntityFrameworkCore;
 using SFA.DAS.AssessorService.Settings;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Data.DapperTypeHandlers;
@@ -370,6 +369,23 @@ namespace SFA.DAS.AssessorService.Data
                     "select Id, EndPointAssessorOrganisationId, Username,GivenNames, DisplayName, FamilyName, SigninId, SigninType, Email, Status, PhoneNumber " +
                     " from Contacts where Id = @contactId";
                 var contact = await connection.QuerySingleOrDefaultAsync<EpaContact>(sql, new { contactId });
+                return contact;
+            }
+        }
+
+        public async Task<EpaContact> GetContactByEmail(string email)
+        {
+            var connectionString = _configuration.SqlConnectionString;
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                var sql =
+                    "select Id, EndPointAssessorOrganisationId, Username,GivenNames, DisplayName, FamilyName, SigninId, SigninType, Email, Status, PhoneNumber " +
+                    " from Contacts where Email = @email";
+                var contact = await connection.QuerySingleOrDefaultAsync<EpaContact>(sql, new { email });
                 return contact;
             }
         }
