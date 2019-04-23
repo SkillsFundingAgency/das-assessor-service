@@ -58,7 +58,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
         {
             var result =
                 SearchHandler.Handle(
-                    new SearchQuery() {Surname = "Lamora", UkPrn = 12345, Uln = 1111111111, Username = "username"},
+                    new SearchQuery() {Surname = "Lamora", EpaOrgId= "12345", Uln = 1111111111, Username = "username"},
                     new CancellationToken()).Result;
 
             result[0].LearnStartDate.Should().Be(new DateTime(2015, 06, 01));
@@ -68,7 +68,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Search
         public void Then_a_Seach_Log_entry_is_created()
         {
             SearchHandler.Handle(
-                    new SearchQuery() {Surname = "Lamora", UkPrn = 12345, Uln = 1111111111, Username = "username"},
+                    new SearchQuery() {Surname = "Lamora", EpaOrgId= "12345", Uln = 1111111111, Username = "username"},
                     new CancellationToken()).Wait();
 
             IlrRepository.Verify(r => r.StoreSearchLog(It.Is<SearchLog>(l =>

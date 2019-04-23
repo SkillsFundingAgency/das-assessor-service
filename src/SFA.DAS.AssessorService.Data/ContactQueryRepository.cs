@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -27,6 +28,7 @@ namespace SFA.DAS.AssessorService.Data
 
             return contacts;
         }
+        
 
         public async Task<IEnumerable<Contact>> GetAllContacts(string endPointAssessorOrganisationId)
         {
@@ -36,6 +38,27 @@ namespace SFA.DAS.AssessorService.Data
                 .SelectMany(q => q.Contacts).ToListAsync();
 
             return contacts;
+        }
+
+        public async Task<IEnumerable<IGrouping<Contact, ContactsPrivilege>>> GetAllContactsWithPrivileges(
+            string endPointAssessorOrganisationId)
+        {
+            var groupedContactPrivileges = await _assessorDbContext.Organisations
+                .Include(organisation => organisation.Contacts)
+                .Where(organisation => organisation.EndPointAssessorOrganisationId == endPointAssessorOrganisationId)
+                .SelectMany(q => q.Contacts).SelectMany(a => a.ContactsPrivileges.Select(c => new ContactsPrivilege
+                {
+                    ContactId = c.ContactId,
+                    PrivilegeId = c.PrivilegeId,
+                    Contact = c.Contact,
+                    Privilege = c.Privilege
+                })).GroupBy(x => x.Contact).ToListAsync();
+
+            return groupedContactPrivileges;
+        }
+        public async Task<IEnumerable<Privilege>> GetAllPrivileges()
+        {
+            return await _assessorDbContext.Privileges.ToListAsync();
         }
 
         public async Task<Contact> GetContact(string userName)
@@ -62,11 +85,70 @@ namespace SFA.DAS.AssessorService.Data
             return contact;
         }
 
+      
+        public async Task<Contact> GetBySignInId(Guid requestSignInId)
+        {
+            return await _assessorDbContext.Contacts.FirstOrDefaultAsync(c => c.SignInId == requestSignInId);
+        }
+
+        public async Task<IList<ContactRole>> GetRolesFor(Guid contactId)
+        {
+            return await _assessorDbContext.ContactRoles.Where(cr => cr.ContactId == contactId).ToListAsync();
+        }
+
         public async Task<bool> CheckContactExists(string userName)
         {
             var result = await _assessorDbContext.Contacts
                 .AnyAsync(q => q.Username == userName);
             return result;
+        }
+
+        public async Task<string> GetContactStatus(string endPointAssessorOrganisationId, Guid signInId)
+        {
+            var contactStatus = await _assessorDbContext.Contacts.Where(x =>
+                    x.EndPointAssessorOrganisationId == endPointAssessorOrganisationId && x.SignInId == signInId)
+                .FirstOrDefaultAsync();
+
+            return contactStatus?.Status;
+        }
+
+        public async Task<Contact> GetContactById(Guid id)
+        {
+            return await _assessorDbContext.Contacts.Where(x => x.Id == id).FirstOrDefaultAsync();
+        }
+
+        public async Task<List<Contact>> GetUsersToMigrate()
+        {
+            return await _assessorDbContext.Contacts.Where(c => 
+                c.SignInId == null 
+                && c.Status == "Live" 
+                && !c.Username.StartsWith("unknown")
+                && c.Organisation != null 
+                && c.Organisation.Status == "Live").ToListAsync();
+        }
+
+        public async Task<List<Contact>> GetExsitingContactsToMigrateToApply()
+        {
+            return await _assessorDbContext.Contacts.Include( x => x.Organisation).Include(x => x.Organisation.OrganisationType).Where(c =>
+                c.SignInId != null
+                && c.Organisation != null
+                && c.Organisation.OrganisationType != null).ToListAsync();
+        }
+
+        public async Task<Contact> GetSingleContactsToMigrateToApply(Guid requestSignInId)
+        {
+            return await _assessorDbContext.Contacts.Include(x => x.Organisation).Include(x => x.Organisation.OrganisationType).
+                FirstOrDefaultAsync(c => c.SignInId == requestSignInId);
+        }
+
+        public async Task UpdateMigratedContact(Guid contactId, Guid signInId)
+        {
+            var contact = await _assessorDbContext.Contacts.SingleOrDefaultAsync(c => c.Id == contactId);
+            if (contact != null)
+            {
+                contact.SignInId = signInId;
+                await _assessorDbContext.SaveChangesAsync();
+            }
         }
     }
 }
