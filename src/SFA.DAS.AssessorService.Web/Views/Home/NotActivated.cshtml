@@ -7,14 +7,13 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <h1 class="heading-large">Not activated</h1>
         @if (Model != null)
         {
-            <p>Your application to assess @Model.StandardName has been approved.</p>
+            <h1 class="heading-large">Your application to assess @Model.StandardName has been approved.</h1>
         }
         else
         {
-            <p>Your application has been approved.</p>
+            <h1 class="heading-large">Your application has been approved.</h1>
         }
         <p>Before we can add your organisation to the Register, remember to sign and return the conditions of acceptance letter to <a href="mailto:apprentice.assessment@education.gov.uk">apprentice.assessment@education.gov.uk</a></p>
     </div>
