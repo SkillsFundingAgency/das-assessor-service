@@ -92,7 +92,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             model.OrganisationTypes = await _apiClient.GetOrganisationTypes(model.ProviderTypeId);
             model.ProviderTypes = await _apiClient.GetProviderTypes();
             model.LegalName = HtmlTagRemover.StripOutTags(model?.LegalName);
-            model.TradingName = HtmlTagRemover.StripOutTags(model.TradingName);
+            model.TradingName = HtmlTagRemover.StripOutTags(model?.TradingName);
             if (!ModelState.IsValid)
             {
                 model.ProviderTypes = await _apiClient.GetProviderTypes();
