@@ -6,13 +6,11 @@
     Layout = "_Layout";
 
     bool showErrors = TempData["ShowErrors"] as bool? ?? false;
-
 }
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-
             <form method="get" asp-action="Results" class="js-disable-on-submit" asp-controller="OrganisationSearch" novalidate>
                 
                 @*
@@ -25,7 +23,6 @@
                     </div>
                 </div>
                 *@
-
 
                 @if (!ViewData.ModelState.IsValid || showErrors)
                 {
