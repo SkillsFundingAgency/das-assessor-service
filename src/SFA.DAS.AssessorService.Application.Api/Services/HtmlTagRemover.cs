@@ -8,8 +8,18 @@
             if (string.IsNullOrEmpty(inputText))
                 return inputText;
 
-            System.Text.RegularExpressions.Regex rx = new System.Text.RegularExpressions.Regex("<[^>]*>");
-            return rx.Replace(inputText, string.Empty);
+            var text = inputText;
+  
+            var rx = new System.Text.RegularExpressions.Regex("<[^>]*>");
+            text= rx.Replace(text, string.Empty);
+
+            while (text.Contains("<"))
+            {
+                text = text+">";
+                text = rx.Replace(text, string.Empty);
+            }
+
+            return text;
         }
     }
 }
