@@ -109,6 +109,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         [Route("successfully-added")]
         public async Task<IActionResult> CreateOrganisation(AddOrganisationViewModel model)
         {
+            model.LegalName = HtmlTagRemover.StripOutTags(model?.LegalName);
+            model.TradingName = HtmlTagRemover.StripOutTags(model?.TradingName);
+
             var request = CreateAddOrganisationRequestFromModel(model);
 
             var success = await _apiClient.CreateOrganisation(request);
@@ -141,14 +144,14 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
                 CharityNumber = model.CharityNumber,
                 CompanyNumber = model.CompanyNumber,
                 FinancialTrackRecord = true,
-                LegalName = model.LegalName.ToUpper(),
+                LegalName = model?.LegalName?.ToUpper(),
                 NonLevyContract = false,
                 OrganisationTypeId = model.OrganisationTypeId,
                 ParentCompanyGuarantee = false,
                 ProviderTypeId = model.ProviderTypeId,
                 StatusDate = DateTime.Now,
                 Ukprn = model.UKPRN,
-                TradingName = model.TradingName,
+                TradingName = model?.TradingName,
                 Username = HttpContext.User.OperatorName()
             };
             return request;
