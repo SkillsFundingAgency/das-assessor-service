@@ -85,7 +85,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Tests.Services
                 .Returns((string s) => s);
 
             _mockRegisterRepository.Setup(r => r.CreateEpaOrganisationContact(It.IsAny<EpaContact>()))
-                .Returns(Task.FromResult("unknown-9999"));
+                .Returns(Task.FromResult("00000000-0000-0000-0000-000000000000"));
 
         }
 
