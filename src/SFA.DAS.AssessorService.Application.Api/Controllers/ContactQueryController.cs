@@ -130,35 +130,28 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             return Ok(Mapper.Map<ContactResponse>(contact));
         }
 
-        [HttpGet("user/{id}/withprivileges", Name = "GetContactByIdWithTheirPrivileges")]
-        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ContactsWithPrivilegesResponse))]
+        [HttpGet("user/{id}/haveprivileges", Name = "DoesContactHavePrivileges")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ContactBoolResponse))]
         [SwaggerResponse((int)HttpStatusCode.NotFound)]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
-        public async Task<IActionResult> GetContactByIdWithTheirPrivileges(string id)
+        public async Task<IActionResult> DoesContactHavePrivileges(string id)
         {
-            Contact contact = null;
+            bool havePrivileges = false;
+
             _logger.LogInformation($" Get Request using user id = {id}");
             try
             {
                 var guidId = Guid.Parse(id);
-                contact = await _contactQueryRepository.GetContactById(guidId);
 
-                if (contact != null)
-                {
-                    contact.ContactsPrivileges = await _contactQueryRepository.GetPrivilegesFor(guidId);
-                }
+                var privileges = await _contactQueryRepository.GetPrivilegesFor(guidId);
+                havePrivileges = privileges != null && privileges.Any();
             }
             catch (Exception e)
             {
                 _logger.LogError(e, $"Failed to retrieve contact with id : {id}");
             }
 
-            if (contact == null)
-            {
-                throw new ResourceNotFoundException();
-            }
-
-            return Ok(new ContactsWithPrivilegesResponse { Contact = contact });
+            return Ok(new ContactBoolResponse(havePrivileges));
         }
 
         [HttpGet("signInId/{signInId}", Name = "GetContactBySignInId")]

@@ -215,12 +215,26 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                                  }
                                  else if(user.EndPointAssessorOrganisationId != null && user.Status == ContactStatus.Live)
                                  {
-                                     var response = await contactClient.GetContactWithPrivileges(user.Id.ToString());
+                                     var havePrivileges = await contactClient.DoesContactHavePrivileges(user.Id.ToString());
 
-                                     var contact = response?.Contact;
-
-                                     if (contact != null && (contact.ContactsPrivileges is null || !contact.ContactsPrivileges.Any()))
+                                     if (!havePrivileges.Result)
                                      {
+                                         var contact = new Contact
+                                         {
+                                             Id = user.Id,
+                                             DisplayName = user.DisplayName,
+                                             Email = user.Email,
+                                             SignInId = user.SignInId,
+                                             SignInType = user.SignInType,
+                                             Username = user.Username,
+                                             Title = user.Title,
+                                             FamilyName = user.FamilyName,
+                                             GivenNames = user.GivenNames,
+                                             OrganisationId = user.OrganisationId,
+                                             EndPointAssessorOrganisationId = user.EndPointAssessorOrganisationId,
+                                             Status = user.Status
+                                         };
+
                                          await contactClient.AssociateDefaultRolesAndPrivileges(contact);
                                      }                                     
                                  }
