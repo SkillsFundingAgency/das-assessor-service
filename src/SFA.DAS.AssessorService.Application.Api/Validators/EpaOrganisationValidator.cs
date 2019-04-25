@@ -1,25 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
 using SFA.DAS.Apprenticeships.Api.Types;
-using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Api.Consts;
-using SFA.DAS.AssessorService.Application.Exceptions;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
-using SFA.DAS.AssessorService.ExternalApis.Services;
-using StructureMap.Diagnostics;
-using Swashbuckle.AspNetCore.Swagger;
-using ValidationResult = FluentValidation.Results.ValidationResult;
-
 namespace SFA.DAS.AssessorService.Application.Api.Validators
 {
     public class EpaOrganisationValidator: IEpaOrganisationValidator
@@ -255,14 +244,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
         }
 
 
-        public string CheckIfContactDetailsAlreadyPresentInSystem(string displayName, string email, string phoneNumber, string contactId)
+        public string CheckIfContactDetailsAlreadyPresentInSystem(string firstName, string lastName, string email, string phoneNumber, string contactId)
         {
             Guid? newContactId = null;
 
             if (contactId!=null && Guid.TryParse(contactId, out Guid guidContactId))
                  newContactId = guidContactId;
 
-            return _registerRepository.ContactDetailsAlreadyExist(displayName, email, phoneNumber, newContactId).Result
+            return _registerRepository.ContactDetailsAlreadyExist(firstName, lastName, email, phoneNumber, newContactId).Result
                 ? FormatErrorMessage(EpaOrganisationValidatorMessageName.ContactDetailsAreDuplicates)  
                 : string.Empty;
         }
@@ -302,7 +291,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             var validationResults = new EmailValidator().Validate(new EmailChecker {EmailToCheck = email});
             return validationResults.IsValid ? string.Empty : FormatErrorMessage(validationResults.Errors.First().ErrorMessage);
         }
-
 
         public string CheckOrganisationStandardFromDateIsWithinStandardDateRanges(DateTime? effectiveFrom, DateTime? standardEffectiveFrom,
             DateTime? standardEffectiveTo, DateTime? lastDateForNewStarts)
@@ -465,13 +453,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
 
             if (validationResult.IsValid)
                 RunValidationCheckAndAppendAnyError("ContactDetails",
-                    CheckIfContactDetailsAlreadyPresentInSystem(request.DisplayName, request.Email, request.PhoneNumber,
+                    CheckIfContactDetailsAlreadyPresentInSystem(request.FirstName,request.LastName, request.Email, request.PhoneNumber,
                         null), validationResult, ValidationStatusCode.AlreadyExists);
 
             RunValidationCheckAndAppendAnyError("EndPointAssessorOrganisationId",
                 CheckIfOrganisationNotFound(request.EndPointAssessorOrganisationId), validationResult,
-                ValidationStatusCode.BadRequest);
-            RunValidationCheckAndAppendAnyError("DisplayName", CheckDisplayName(request.DisplayName), validationResult,
                 ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("FirstName", CheckFirstName(request.FirstName), validationResult,
                 ValidationStatusCode.BadRequest);
@@ -489,10 +475,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             RunValidationCheckAndAppendAnyError("Email", CheckIfEmailAlreadyPresentInOrganisationNotAssociatedWithContact(request.Email, request.ContactId), validationResult, ValidationStatusCode.AlreadyExists);
 
             if (validationResult.IsValid)
-                RunValidationCheckAndAppendAnyError("ContactDetails", CheckIfContactDetailsAlreadyPresentInSystem(request.DisplayName, request.Email, request.PhoneNumber, request.ContactId), validationResult, ValidationStatusCode.AlreadyExists);
+                RunValidationCheckAndAppendAnyError("ContactDetails", CheckIfContactDetailsAlreadyPresentInSystem(request.FirstName, request.LastName, request.Email, request.PhoneNumber, request.ContactId), validationResult, ValidationStatusCode.AlreadyExists);
 
             RunValidationCheckAndAppendAnyError("ContactId", CheckContactIdExists(request.ContactId), validationResult, ValidationStatusCode.BadRequest);
-            RunValidationCheckAndAppendAnyError("DisplayName", CheckDisplayName(request.DisplayName), validationResult, ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("FirstName", CheckFirstName(request.FirstName), validationResult,
                 ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("LastName", CheckLastName(request.LastName), validationResult,

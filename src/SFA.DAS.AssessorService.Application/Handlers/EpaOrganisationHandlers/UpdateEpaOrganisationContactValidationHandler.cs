@@ -23,7 +23,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
             return _validator.ValidatorUpdateEpaOrganisationContactRequest(new UpdateEpaOrganisationContactRequest
             {
                 ContactId = request.ContactId,
-                DisplayName = $"{request.FirstName} {request.LastName}",
                 FirstName = request.FirstName,
                 LastName = request.LastName,
                 Email = request.Email,

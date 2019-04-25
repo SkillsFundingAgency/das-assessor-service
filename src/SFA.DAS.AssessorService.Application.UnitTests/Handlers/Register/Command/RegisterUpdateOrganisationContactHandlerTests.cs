@@ -24,7 +24,8 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
         private Mock<ILogger<UpdateEpaOrganisationContactHandler>> _logger;
         private UpdateEpaOrganisationContactRequest _requestNoIssues;
         private string _contactId;
-        private string _displayName;
+        private string _firstName;
+        private string _lastName;
         private string _email;
         private string _phoneNumber;
         private EpaContact _expectedOrganisationContactNoIssues;
@@ -38,10 +39,11 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             _logger = new Mock<ILogger<UpdateEpaOrganisationContactHandler>>();
             _contactId = Guid.NewGuid().ToString();
             _email = "test@testy.com";
-            _displayName = "Joe Cool";
+            _firstName = "Joe";
+            _lastName = "Cool";
             _phoneNumber = "555 4444";
 
-            _requestNoIssues = BuildRequest(_contactId, _displayName, _email,_phoneNumber);
+            _requestNoIssues = BuildRequest(_contactId, _firstName,_lastName, _email,_phoneNumber);
             _expectedOrganisationContactNoIssues = BuildOrganisationStandard(_requestNoIssues);
 
             _registerRepository.Setup(r => r.UpdateEpaOrganisationContact(It.IsAny<EpaContact>(), It.IsAny<string>()))
@@ -81,7 +83,7 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
         public void GeExceptionWheValidationOccurs()
         {
             const string errorMessage = "error happened";
-            var requestFailedContactDetails = BuildRequest(_contactId, _displayName, _email, _phoneNumber);
+            var requestFailedContactDetails = BuildRequest(_contactId, _firstName, _lastName, _email, _phoneNumber);
             var errorResponse = BuildErrorResponse(errorMessage, ValidationStatusCode.BadRequest);
             _validator.Setup(v => v.ValidatorUpdateEpaOrganisationContactRequest(requestFailedContactDetails)).Returns(errorResponse);
             var ex = Assert.ThrowsAsync<BadRequestException>(() => _updateEpaOrganisationContactHandler.Handle(requestFailedContactDetails, new CancellationToken()));
@@ -102,18 +104,19 @@ namespace SFA.DAS.AssessorService.Application.UnitTests.Handlers.Register.Comman
             return new EpaContact
             {
                 Id = Guid.Parse(requestNoIssues.ContactId),
-                DisplayName = requestNoIssues.DisplayName,
+                DisplayName = $"{requestNoIssues.FirstName} {requestNoIssues.LastName}",
                 Email = requestNoIssues.Email,
                 PhoneNumber = requestNoIssues.PhoneNumber
             };
         }
 
-        private UpdateEpaOrganisationContactRequest BuildRequest(string contactId, string displayName,string email, string phoneNumber)
+        private UpdateEpaOrganisationContactRequest BuildRequest(string contactId, string firstName, string lastName, string email, string phoneNumber)
         {
             return new UpdateEpaOrganisationContactRequest
             {
                 ContactId = contactId,
-                DisplayName = displayName,
+                FirstName = firstName,
+                LastName =  lastName,
                 Email = email,
                 PhoneNumber = phoneNumber
             };

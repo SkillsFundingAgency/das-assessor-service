@@ -230,7 +230,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             var addContactRequest = new CreateEpaOrganisationContactRequest
             {
                 EndPointAssessorOrganisationId = viewModel.EndPointAssessorOrganisationId,
-                DisplayName =  $"{viewModel.FirstName} {viewModel.LastName}",
                 FirstName = viewModel.FirstName,
                 LastName = viewModel.LastName,
                 Email = viewModel.Email,
@@ -264,7 +263,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
             var request = new UpdateEpaOrganisationContactRequest
             {
                 ContactId = viewAndEditModel.ContactId,
-                DisplayName =  $"{viewAndEditModel.FirstName} {viewAndEditModel.LastName}",
                 FirstName = viewAndEditModel.FirstName,
                 LastName = viewAndEditModel.LastName,
                 Email = viewAndEditModel.Email,
@@ -455,7 +453,6 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers
                 Email = contact.Email,
                 ContactId = contact.Id.ToString(),
                 PhoneNumber = contact.PhoneNumber,
-                DisplayName = contact.DisplayName,
                 FirstName = contact.FirstName,
                 LastName = contact.LastName,
                 OrganisationName = organisation.Name,

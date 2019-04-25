@@ -123,19 +123,18 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<ValidationResponse> ValidateUpdateContact(string contactId, string displayName, string firstName, string lastName, string email,string phoneNumber)
+        public async Task<ValidationResponse> ValidateUpdateContact(string contactId,  string firstName, string lastName, string email,string phoneNumber)
         {
             var validationRequest = new UpdateEpaOrganisationContactValidationRequest
             {
                 ContactId = contactId,
-                DisplayName = displayName,
                 FirstName = firstName,
                 LastName = lastName,
                 Email = email,
                 PhoneNumber = phoneNumber
             };
 
-            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/ao/assessment-organisations/contacts/validate-existing/"))
+            using (var request = new HttpRequestMessage(HttpMethod.Put, $"/api/ao/assessment-organisations/contacts/validate-existing/"))
             {
                 return await PostPutRequestWithResponse<UpdateEpaOrganisationContactValidationRequest, ValidationResponse>(request,
                     validationRequest);
@@ -256,7 +255,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<ValidationResponse> ValidateUpdateOrganisation(string organisationId, string name, long? ukprn, int? organisationTypeId, string address1, string address2, string address3, string address4, string postcode, string status, string actionChoice, string companyNumber, string charityNumber);
 
         Task<ValidationResponse> ValidateCreateContact(string firstName, string lastName, string organisationId, string email, string phone);
-        Task<ValidationResponse> ValidateUpdateContact(string contactId, string displayName, string firstName, string lastName, string email, string phoneNumber);
+        Task<ValidationResponse> ValidateUpdateContact(string contactId, string firstName, string lastName, string email, string phoneNumber);
 
         Task<ValidationResponse> ValidateSearchStandards(string searchstring);
 

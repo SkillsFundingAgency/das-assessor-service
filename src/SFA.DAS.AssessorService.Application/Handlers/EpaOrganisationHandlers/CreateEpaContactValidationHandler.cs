@@ -29,7 +29,6 @@ namespace SFA.DAS.AssessorService.Application.Handlers.EpaOrganisationHandlers
                 EndPointAssessorOrganisationId = request.OrganisationId,
                 FirstName = request.FirstName,
                 LastName = request.LastName,
-                DisplayName = $"{request.FirstName} {request.LastName}",
                 Email = request.Email,
                 PhoneNumber = request.Phone
             } );   

@@ -69,7 +69,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
 
         [HttpPost("contacts/validate-new", Name = "CreateEpaContactValidate")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
-        public async Task<IActionResult> CreateContactValidate(CreateEpaContactValidationRequest request)
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.Conflict, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> CreateEpaContactValidate([FromBody] CreateEpaContactValidationRequest request)
         {
             try
             {
@@ -84,13 +87,16 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
             }
         }
 
-        [HttpPost("contacts/validate-existing", Name = "UpdateEpaContactValidate")]
+        [HttpPut("contacts/validate-existing", Name = "UpdateEpaContactValidate")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(ValidationResponse))]
-        public async Task<IActionResult> CreateContactValidate(UpdateEpaOrganisationContactValidationRequest request)
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.Conflict, Type = typeof(ApiResponse))]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, Type = typeof(ApiResponse))]
+        public async Task<IActionResult> UpdateEpaContactValidate([FromBody] UpdateEpaOrganisationContactValidationRequest request)
         {
             try
             {
-                _logger.LogInformation("Validation of creating new contact");
+                _logger.LogInformation("Validation of updating new contact");
                 var result = await _mediator.Send(request);
                 return Ok(result);
             }
