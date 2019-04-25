@@ -124,7 +124,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             return View("~/Views/Roatp/UpdateOrganisationStatus.cshtml", model);
         }
 
-        [Route("change-type")]
+        [Route("change-organisation-type")]
         public async Task<IActionResult> UpdateOrganisationType()
         {
             var searchModel = _sessionService.GetSearchResults();
@@ -307,7 +307,7 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
             return View("~/Views/Roatp/UpdateOrganisationFinancialTrackRecord.cshtml", model);
         }
 
-        [Route("change-provider")]
+        [Route("change-provider-type")]
         public async Task<IActionResult> UpdateOrganisationProviderType()
         {
             var searchModel = _sessionService.GetSearchResults();
