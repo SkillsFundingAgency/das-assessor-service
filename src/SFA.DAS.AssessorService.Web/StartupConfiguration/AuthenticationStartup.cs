@@ -228,10 +228,10 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
 
                                  if (user != null)
                                  {
-                                     identity.AddClaim(new Claim("UserId", user?.Id.ToString()));
+                                     identity.AddClaim(new Claim("UserId", user.Id.ToString()));
                                      identity.AddClaim(new Claim(
                                          "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn",
-                                         user?.Username));
+                                         user.Username));
                                      if (user.EndPointAssessorOrganisationId != null)
                                      {
                                          var organisation =
@@ -264,8 +264,9 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                                          }
                                      }
 
-                                     identity.AddClaim(new Claim("display_name", user?.DisplayName));
-                                     identity.AddClaim(new Claim("email", user?.Email));
+                                     identity.AddClaim(new Claim("display_name", user.DisplayName));
+                                     identity.AddClaim(new Claim("email", user.Email));
+                                     identity.AddClaim(new Claim("http://schemas.portal.com/mail", user.Email));
 
                                      //Todo: Need to determine privileges dynamically
                                      identity.AddClaim(new Claim("http://schemas.portal.com/service",
