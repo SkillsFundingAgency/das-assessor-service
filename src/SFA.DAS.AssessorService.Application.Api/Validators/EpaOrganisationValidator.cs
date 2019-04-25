@@ -471,6 +471,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Validators
             RunValidationCheckAndAppendAnyError("EndPointAssessorOrganisationId",
                 CheckIfOrganisationNotFound(request.EndPointAssessorOrganisationId), validationResult,
                 ValidationStatusCode.BadRequest);
+            RunValidationCheckAndAppendAnyError("DisplayName", CheckDisplayName(request.DisplayName), validationResult,
+                ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("FirstName", CheckFirstName(request.FirstName), validationResult,
                 ValidationStatusCode.BadRequest);
             RunValidationCheckAndAppendAnyError("LastName", CheckLastName(request.LastName), validationResult,
