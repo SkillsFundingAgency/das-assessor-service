@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
@@ -11,7 +10,6 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Interfaces;
-using SFA.DAS.AssessorService.Data.Consts;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Exceptions;
@@ -205,7 +203,7 @@ namespace SFA.DAS.AssessorService.Data
         }
 
 
-        public async Task<PaginatedList<Certificate>> GetCertificateHistory(string userName, int pageIndex, int pageSize)
+        public async Task<PaginatedList<Certificate>> GetCertificateHistory(string userName, int pageIndex, int pageSize, List<string> statuses)
         {
           
             var count = await GetCertificatesCount(userName, statuses);
@@ -360,6 +358,7 @@ namespace SFA.DAS.AssessorService.Data
                 .AsNoTracking()
                 .ToListAsync();
         }
+        
 
         public async Task<CertificateAddress> GetContactPreviousAddress(string userName, bool isPrivatelyFunded)
         {
