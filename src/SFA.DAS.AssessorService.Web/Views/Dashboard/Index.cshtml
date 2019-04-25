@@ -8,14 +8,14 @@
     Layout = "_DashboardLayout";
 }
 
-<div>
-    <div class="grid-row">
-        <div class="column-one-third">
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-third">
             <div class="dashboard-box__green">
                 <div class="data-background__green">
                     <div class="data data-stats">
-                        <span class="data-item bold-xxlarge">@Model.StandardsCount</span>
-                        <span class="data-item bold-medium">Standards</span>
+                        <span class="govuk-body-lead govuk-!-font-weight-bold govuk-!-font-size-80">@Model.StandardsCount</span>
+                        <span class="govuk-body-lead govuk-!-font-weight-bold govuk-!-font-size-24">Standards</span>
                     </div>
                 </div>
                 <div class="dashboard-box-content">
@@ -30,7 +30,7 @@
                 </div>
             </div>
         </div>
-        <div class="column-one-third">
+        <div class="govuk-grid-column-one-third">
             <div class="dashboard-box__lightblue">
                 <div class="data-background__lightblue">
                     <div class="data data-stats">
@@ -51,7 +51,7 @@
                 </div>
             </div>
         </div>
-        <div class="column-one-third">
+        <div class="govuk-grid-column-one-third">
             <div class="dashboard-box__darkblue">
                 <div class="data-background__darkblue">
                     <div class="data data-stats">
@@ -69,8 +69,8 @@
             </div>
         </div>
     </div>
-    <div class="grid-row">
-        <div class="column-full">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
             <div class="dashboard-box">
                 <div class="dashboard-box-content">
                     <div class="data data-custom">

@@ -84,11 +84,13 @@
     </div>
 </header>
 
-@if (!User.Identity.IsAuthenticated) {
-<div id="global-header-bar"></div>
+@if (!User.Identity.IsAuthenticated)
+{
+    <div id="global-header-bar"></div>
 }
 
-@if (User.Identity.IsAuthenticated) {
+@if (User.Identity.IsAuthenticated)
+{
     <div class="das-user-panel">
         <div class="govuk-width-container">
             <div class="das-user-panel__content">
@@ -230,7 +232,6 @@
 *@
 
 <div id="global-app-error" class="app-error hidden"></div>
-
 
 <script src="/javascripts/govuk-frontend-2.5.1.min.js"></script>
 <environment include="Development">
