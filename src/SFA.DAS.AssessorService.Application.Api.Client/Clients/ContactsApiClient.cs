@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -27,7 +28,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         public async Task<ContactResponse> GetByUsername(string username)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/user/{username}"))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/user/{WebUtility.UrlEncode(username)}"))
             {
                 return await RequestAndDeserialiseAsync<ContactResponse>(request, $"Could not find the contact");
             }
