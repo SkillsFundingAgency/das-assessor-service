@@ -1,4 +1,4 @@
-CREATE PROCEDURE [GetEPAO_Pipelines]
+CREATE PROCEDURE [GetEPAO_Pipelines_Extract]
     -- Add the parameters for the stored procedure here
       @EPAOID NVARCHAR(12)
 AS
@@ -8,11 +8,11 @@ BEGIN
 WITH Data_CTE 
 AS
 (
-    SELECT StdCode, Title, 
+    SELECT StdCode, Title, UkPrn AS ProviderUkPrn,
     COUNT(*) Pipeline, EstimateDate
     FROM (
     -- The active records from ilr
-    SELECT il.Uln, il.StdCode, LearnStartDate, PlannedEndDate,il.UpdatedAT
+    SELECT il.Uln, il.StdCode, il.UkPrn, LearnStartDate, PlannedEndDate,il.UpdatedAT
 	,CASE WHEN PlannedEndDate > GETDATE() THEN EOMONTH(PlannedEndDate) ELSE EOMONTH(DATEADD(month, std.Duration, LearnStartDate)) END AS EstimateDate , Title
     FROM ilrs il
     JOIN OrganisationStandard os ON il.EpaOrgId = os.EndPointAssessorOrganisationId AND il.StdCode = os.StandardCode AND 
@@ -27,7 +27,7 @@ AS
 	-- limit Pipeline to where the Planned End Date (or Estimated End Date) is no more than 3 months in the past.
    	AND (CASE WHEN PlannedEndDate > GETDATE() THEN EOMONTH(PlannedEndDate) ELSE EOMONTH(DATEADD(month, std.Duration, LearnStartDate)) END) >= dateadd(month,-3,GETDATE())
     ) ab0
-    GROUP BY StdCode,EstimateDate,title
+    GROUP BY StdCode,EstimateDate,title,Ukprn
 ), 
 Count_CTE 
 AS 
