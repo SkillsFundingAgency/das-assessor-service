@@ -205,7 +205,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Controllers
         [HttpPost("MigrateSingleContactToApply", Name = "MigrateSingleContactToApply")]
         public async Task<ActionResult> MigrateSingleContactToApply([FromBody]SigninIdWrapper signinWrapper)
         {
-            var endpoint = new Uri(new Uri(_config.ApplyBaseAddress), "/MigrateContactAndOrgs");
+            var endpoint = new Uri(new Uri(_config.ApplyApiAuthentication.ApiBaseAddress), "/Account/MigrateContactAndOrgs");
             using (var httpClient = new HttpClient())
             {
                 var contactToMigrate = await _contactQueryRepository.GetSingleContactsToMigrateToApply(signinWrapper.SigninId);
