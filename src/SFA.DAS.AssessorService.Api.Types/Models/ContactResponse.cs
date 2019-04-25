@@ -12,6 +12,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models
         public string DisplayName { get; set; }
         public string Email { get; set; }
         public string Title { get; set; }
+        public Guid? SignInId { get; set; }
         public string SignInType { get; set; }
         public string FamilyName { get; set; }
         public string GivenNames { get; set; }
