@@ -237,25 +237,31 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                                          var organisation =
                                              await orgClient.GetEpaOrganisation(user.EndPointAssessorOrganisationId);
 
-                                         //Fix for ON-1759 , for now untill roles and privileges are applied properly 
-                                         //allow everyone to see ExternalApiAccess
-                                         identity.AddClaim(new Claim("http://schemas.portal.com/service",
-                                             Roles.ExternalApiAccess));
-                                         identity.AddClaim(new Claim("http://schemas.portal.com/service",
-                                             Roles.EpaoUser));
+                                         if (organisation != null)
+                                         {
+                                             //Fix for ON-1759 , for now until roles and privileges are applied properly 
+                                             //allow everyone (if they have a UKPRN) to see ExternalApiAccess
+                                             if (organisation.Ukprn != null || (organisation.ApiEnabled && !string.IsNullOrEmpty(organisation.ApiUser)))
+                                             {
+                                                 identity.AddClaim(new Claim("http://schemas.portal.com/service",
+                                                    Roles.ExternalApiAccess));
+                                                 identity.AddClaim(new Claim("http://schemas.portal.com/service",
+                                                    Roles.EpaoUser));
+                                             }
 
-                                         identity.AddClaim(new Claim("http://schemas.portal.com/ukprn",
-                                             organisation?.Ukprn == null ? "" : organisation?.Ukprn.ToString()));
+                                             identity.AddClaim(new Claim("http://schemas.portal.com/ukprn",
+                                                 organisation.Ukprn == null ? "" : organisation.Ukprn.ToString()));
 
-                                         var orgName = organisation?.OrganisationData?.LegalName ??
-                                                       organisation?.OrganisationData?.TradingName ??
-                                                       organisation?.Name;
+                                             var orgName = organisation.OrganisationData?.LegalName ??
+                                                           organisation.OrganisationData?.TradingName ??
+                                                           organisation.Name;
 
-                                         identity.AddClaim(new Claim("http://schemas.portal.com/orgname",
-                                             orgName));
+                                             identity.AddClaim(new Claim("http://schemas.portal.com/orgname",
+                                                 orgName));
 
-                                         identity.AddClaim(new Claim("http://schemas.portal.com/epaoid",
-                                             organisation?.OrganisationId));
+                                             identity.AddClaim(new Claim("http://schemas.portal.com/epaoid",
+                                                 organisation.OrganisationId));
+                                         }
                                      }
 
                                      identity.AddClaim(new Claim("display_name", user?.DisplayName));
@@ -266,7 +272,6 @@ namespace SFA.DAS.AssessorService.Web.StartupConfiguration
                                          Privileges.ManageUsers));
                                  }
                              }
-
                              context.Principal.AddIdentity(identity);
                          }
 
