@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.AspNetCore.Authorization;
+using SFA.DAS.AssessorService.Application.Api.Services;
 
 namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
 {
@@ -70,6 +71,11 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
                     ProviderTypeId = model.ProviderTypeId
                 };
             }
+            else
+            {
+                addOrganisationModel.OrganisationId = model.OrganisationId;
+                addOrganisationModel.ProviderTypeId = model.ProviderTypeId;
+            }
 
             addOrganisationModel.OrganisationTypes = await _apiClient.GetOrganisationTypes(model.ProviderTypeId);
             
@@ -85,7 +91,8 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         {
             model.OrganisationTypes = await _apiClient.GetOrganisationTypes(model.ProviderTypeId);
             model.ProviderTypes = await _apiClient.GetProviderTypes();
-
+            model.LegalName = HtmlTagRemover.StripOutTags(model?.LegalName);
+            model.TradingName = HtmlTagRemover.StripOutTags(model?.TradingName);
             if (!ModelState.IsValid)
             {
                 model.ProviderTypes = await _apiClient.GetProviderTypes();
@@ -102,6 +109,9 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
         [Route("successfully-added")]
         public async Task<IActionResult> CreateOrganisation(AddOrganisationViewModel model)
         {
+            model.LegalName = HtmlTagRemover.StripOutTags(model?.LegalName);
+            model.TradingName = HtmlTagRemover.StripOutTags(model?.TradingName);
+
             var request = CreateAddOrganisationRequestFromModel(model);
 
             var success = await _apiClient.CreateOrganisation(request);
@@ -134,14 +144,14 @@ namespace SFA.DAS.AssessorService.Web.Staff.Controllers.Roatp
                 CharityNumber = model.CharityNumber,
                 CompanyNumber = model.CompanyNumber,
                 FinancialTrackRecord = true,
-                LegalName = model.LegalName.ToUpper(),
+                LegalName = model?.LegalName?.ToUpper(),
                 NonLevyContract = false,
                 OrganisationTypeId = model.OrganisationTypeId,
                 ParentCompanyGuarantee = false,
                 ProviderTypeId = model.ProviderTypeId,
                 StatusDate = DateTime.Now,
                 Ukprn = model.UKPRN,
-                TradingName = model.TradingName,
+                TradingName = model?.TradingName,
                 Username = HttpContext.User.OperatorName()
             };
             return request;
